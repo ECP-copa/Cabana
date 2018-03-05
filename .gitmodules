@@ -1,0 +1,3 @@
+[submodule "cmake/tribits"]
+	path = cmake/tribits
+	url = https://github.com/TriBITSPub/TriBITS.git
