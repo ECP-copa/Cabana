@@ -1,0 +1,8 @@
+#ifndef CABANA_CORE_CONFIG_HPP
+#define CABANA_CORE_CONFIG_HPP
+
+#cmakedefine Cabana_VERSION_STRING "@Cabana_VERSION_STRING@"
+
+#cmakedefine Cabana_GIT_COMMIT_HASH "@Cabana_GIT_COMMIT_HASH@"
+
+#endif // CABANA_CORE_CONFIG_HPP
