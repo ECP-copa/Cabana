@@ -46,12 +46,6 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // AoSoA type.
     using aosoa_type = AoSoA<MemberDataTypes<Types...>,Device,ArraySize>;
 
-    // Member data types.
-    using member_types = MemberDataTypes<Types...>;
-
-    // Number of member types.
-    static constexpr std::size_t number_of_members = member_types::size;
-
     // Device type.
     using device_type = Device;
 
@@ -63,6 +57,15 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
 
     // SoA type.
     using soa_type = SoA<array_size,Types...>;
+
+    // Member data types.
+    using member_types = MemberDataTypes<Types...>;
+
+    // Number of member types.
+    static constexpr std::size_t number_of_members = member_types::size;
+
+    // The maximum rank supported for member types.
+    static constexpr std::size_t max_supported_rank = 4;
 
     // Struct member array return type at a given index I.
     template<std::size_t I>
@@ -112,8 +115,10 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
         , _capacity( 0 )
         , _num_soa( 0 )
         , _managed_data( nullptr )
-        , _raw_data( nullptr )
-    {}
+    {
+        storeRanksAndExtents(
+            std::integral_constant<std::size_t,number_of_members-1>() );
+    }
 
     // Construct a container with n elements.
     AoSoA( const std::size_t n )
@@ -121,9 +126,10 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
         , _capacity( 0 )
         , _num_soa( 0 )
         , _managed_data( nullptr )
-        , _raw_data( nullptr )
     {
         resize( _size );
+        storeRanksAndExtents(
+            std::integral_constant<std::size_t,number_of_members-1>() );
     }
 
     // Returns the number of elements in the container.
@@ -192,16 +198,18 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
         if ( 0 < n % array_size ) ++num_soa_alloc;
         _capacity = num_soa_alloc * array_size;
 
-        soa_type* rp;
-        memory_policy::allocate( rp, num_soa_alloc );
+        soa_type* data_block;
+        memory_policy::allocate( data_block, num_soa_alloc );
         std::shared_ptr<soa_type> sp(
-            rp, memory_policy::template deallocate<soa_type> );
+            data_block, memory_policy::template deallocate<soa_type> );
 
-        if ( _raw_data != nullptr )
-            memory_policy::copy( rp, _raw_data, _num_soa );
+        if ( _managed_data != nullptr )
+            memory_policy::copy( data_block, _managed_data.get(), _num_soa );
 
         std::swap( _managed_data, sp );
-        std::swap( _raw_data, rp );
+
+        storePointersAndStrides(
+            std::integral_constant<std::size_t,number_of_members-1>() );
     }
 
     // Get the number of structs-of-arrays in the array.
@@ -220,19 +228,17 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // Member data type properties.
 
     // Get the rank of the data for a given member at index I.
-    template<std::size_t I>
     CABANA_INLINE_FUNCTION
-    constexpr std::size_t rank() const
+    std::size_t rank( const std::size_t I ) const
     {
-        return std::rank<struct_member_data_type<I> >::value;
+        return _ranks[I];
     }
 
     // Get the extent of a given member data dimension.
-    template<std::size_t I, std::size_t DIM>
     CABANA_INLINE_FUNCTION
-    constexpr std::size_t extent() const
+    std::size_t extent( const std::size_t I, const std::size_t D ) const
     {
-        return std::extent<struct_member_data_type<I>,DIM>::value;
+        return _extents[I][D];
     }
 
     // -----------------------------
@@ -374,51 +380,148 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // -------------------------------
     // Raw data access.
 
-    // Get the stride between SoA data for a given member at index I.
-    template<std::size_t I>
+    // Get the stride between SoA data for a given member at index I. Note
+    // that this strides are computed in the context of the *value_type* for
+    // each member.
     CABANA_INLINE_FUNCTION
-    constexpr std::size_t stride() const
+    std::size_t stride( const std::size_t I ) const
     {
-        static_assert( 0 ==
-                       sizeof(soa_type) % sizeof(struct_member_value_type<I>),
-                       "Stride cannont be calculated for misaligned memory!" );
-        return sizeof(soa_type) / sizeof(struct_member_value_type<I>);
+        return _strides[I];
     }
 
-    // Get a pointer to the data for a given member at index I.
-    template<std::size_t I>
+    // Get an un-typed raw pointer to the data for a given member at index
+    // I. Users will need to cast this pointer to the appropriate type for the
+    // stride associated with this member to mean anything.
     CABANA_INLINE_FUNCTION
-    struct_member_pointer_type<I> pointer()
+    void* data( const std::size_t I )
     {
-        return static_cast<struct_member_pointer_type<I> >( array<I>(0) );
+        return _pointers[I];
     }
 
-    template<std::size_t I>
     CABANA_INLINE_FUNCTION
-    struct_member_const_pointer_type<I> pointer() const
+    const void* data( const std::size_t I ) const
     {
-        return static_cast<struct_member_pointer_type<I> >( array<I>(0) );
+        return _pointers[I];
     }
 
   private:
 
-    // -------------------------------
-    // Direct array data access within a struct
+    // Get a typed pointer to the data for a given member at index I.
+    template<std::size_t I>
+    CABANA_INLINE_FUNCTION
+    struct_member_pointer_type<I> typedPointer()
+    {
+        return static_cast<struct_member_pointer_type<I> >( _pointers[I] );
+    }
 
-    // Access the data array at a given struct member index.
+    template<std::size_t I>
+    CABANA_INLINE_FUNCTION
+    struct_member_const_pointer_type<I> typedPointer() const
+    {
+        return static_cast<struct_member_pointer_type<I> >( _pointers[I] );
+    }
+
+    // Get the array at the given struct index.
     template<std::size_t I>
     CABANA_INLINE_FUNCTION
     struct_member_array_type<I> array( const std::size_t s )
     {
-
-        return getStructMember<I>( _raw_data[s] );
+        return reinterpret_cast<struct_member_array_type<I> >(
+            typedPointer<I>() + s * _strides[I] );
     }
 
     template<std::size_t I>
     CABANA_INLINE_FUNCTION
     struct_member_const_array_type<I> array( const std::size_t s ) const
     {
-        return getStructMember<I>( _raw_data[s] );
+        return reinterpret_cast<struct_member_array_type<I> >(
+            typedPointer<I>() + s * _strides[I] );
+    }
+
+    // Store the pointers and strides for each member element.
+    template<std::size_t N>
+    void assignPointersAndStrides()
+    {
+        static_assert( 0 <= N && N < number_of_members,
+                       "Static loop out of bounds!" );
+        soa_type* data_block = _managed_data.get();
+        _pointers[N] =
+            static_cast<void*>( getStructMember<N>(data_block[0]) );
+        static_assert( 0 ==
+                       sizeof(soa_type) % sizeof(struct_member_value_type<N>),
+                       "Stride cannont be calculated for misaligned memory!" );
+        _strides[N] = sizeof(soa_type) / sizeof(struct_member_value_type<N>);
+    }
+
+    // Static loop through each member element to extract pointers and strides.
+    template<std::size_t N>
+    void storePointersAndStrides( std::integral_constant<std::size_t,N> )
+    {
+        assignPointersAndStrides<N>();
+        storePointersAndStrides( std::integral_constant<std::size_t,N-1>() );
+    }
+
+    void storePointersAndStrides( std::integral_constant<std::size_t,0> )
+    {
+        assignPointersAndStrides<0>();
+    }
+
+    // Store the extents of each of the member types.
+    template<std::size_t I, std::size_t N>
+    void assignExtents()
+    {
+        static_assert( 0 <= N && N < max_supported_rank,
+                       "Static loop out of bounds!" );
+        _extents[I][N] = ( N < std::rank<struct_member_data_type<I> >::value )
+                         ? std::extent<struct_member_data_type<I>,N>::value
+                         : 0;
+    }
+
+    // Static loop over extents for each member element.
+    template<std::size_t I, std::size_t N>
+    void storeExtents( std::integral_constant<std::size_t,I>,
+                       std::integral_constant<std::size_t,N> )
+    {
+        assignExtents<I,N>();
+        storeExtents( std::integral_constant<std::size_t,I>(),
+                      std::integral_constant<std::size_t,N-1>() );
+    }
+
+    template<std::size_t I>
+    void storeExtents( std::integral_constant<std::size_t,I>,
+                       std::integral_constant<std::size_t,0> )
+    {
+        assignExtents<I,0>();
+    }
+
+    // Store the rank for each member element type.
+    template<std::size_t N>
+    void assignRanks()
+    {
+        static_assert( std::rank<struct_member_data_type<N> >::value <=
+                       max_supported_rank,
+                       "Member type rank larger than max supported rank" );
+        static_assert( 0 <= N && N < number_of_members, "Static loop out of bounds!" );
+        _ranks[N] = std::rank<struct_member_data_type<N> >::value;
+    }
+
+    // Static loop over ranks and extents for each element.
+    template<std::size_t N>
+    void storeRanksAndExtents( std::integral_constant<std::size_t,N> )
+    {
+        assignRanks<N>();
+        storeExtents(
+            std::integral_constant<std::size_t,N>(),
+            std::integral_constant<std::size_t,max_supported_rank-1>() );
+        storeRanksAndExtents( std::integral_constant<std::size_t,N-1>() );
+    }
+
+    void storeRanksAndExtents( std::integral_constant<std::size_t,0> )
+    {
+        storeExtents(
+            std::integral_constant<std::size_t,0>(),
+            std::integral_constant<std::size_t,max_supported_rank-1>() );
+        assignRanks<0>();
     }
 
   private:
@@ -432,18 +535,24 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // Number of structs-of-arrays in the array.
     std::size_t _num_soa;
 
-    // Structs-of-Arrays managed data. This shared pointer manages the memory
-    // pointed to by _raw_data such that the copy constructor and assignment
-    // operator for this class perform a shallow and reference counted copy of
-    // the data.
+    // Structs-of-Arrays managed data. This shared pointer manages the block
+    // of memory owned by this class such that the copy constructor and
+    // assignment operator for this class perform a shallow and reference
+    // counted copy of the data.
     std::shared_ptr<soa_type> _managed_data;
 
-    // Structs-of-Arrays raw data. This data will be allocated per the
-    // MemoryPolicy of the given device type on which the class is
-    // templated. This pointer is managed by _managed_data and will be
-    // deallocated per the MemoryPolicy when the last copy of this class
-    // instance is destroyed.
-    soa_type* _raw_data;
+    // Pointers to the first element of each member.
+    void* _pointers[number_of_members];
+
+    // Strides for each member. Note that these strides are computed in the
+    // context of the *value_type* of each member.
+    std::size_t _strides[number_of_members];
+
+    // The ranks of each of the data member types.
+    std::size_t _ranks[number_of_members];
+
+    // The extents of each of the data member type dimensions.
+    std::size_t _extents[number_of_members][max_supported_rank];
 };
 
 //---------------------------------------------------------------------------//

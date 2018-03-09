@@ -117,14 +117,13 @@ class MemberSlice
 
     // Get the rank of the data for this member.
     CABANA_INLINE_FUNCTION
-    constexpr std::size_t rank() const
-    { return _aosoa.template rank<I>(); }
+    std::size_t rank() const
+    { return _aosoa.rank(I); }
 
     // Get the extent of a given member data dimension.
-    template<std::size_t DIM>
     CABANA_INLINE_FUNCTION
-    constexpr std::size_t extent() const
-    { return _aosoa.template extent<I,DIM>(); }
+    std::size_t extent( const std::size_t D ) const
+    { return _aosoa.extent(I,D); }
 
     // -----------------------------
     // Array range
@@ -292,23 +291,6 @@ class MemberSlice
                        "Do not call with different template arguments!" );
         return _aosoa.template get<J>(idx,d0,d1,d2,d3);
     }
-
-    // -------------------------------
-    // Raw data access.
-
-    // Get the stride between SoA data for a given member at index I.
-    CABANA_INLINE_FUNCTION
-    constexpr std::size_t stride() const
-    { return _aosoa.template stride<I>(); }
-
-    // Get a pointer to the data for a given member at index I.
-    CABANA_INLINE_FUNCTION
-    pointer_type pointer()
-    { return _aosoa.template pointer<I>(); }
-
-    CABANA_INLINE_FUNCTION
-    const_pointer_type pointer() const
-    { return _aosoa.template pointer<I>(); }
 
   private:
 
