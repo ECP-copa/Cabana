@@ -1,5 +1,6 @@
-#include "Cabana_AoSoA.hpp"
-#include "Cabana_Serial.hpp"
+#include <Cabana_AoSoA.hpp>
+#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_Serial.hpp>
 
 #include <cstdlib>
 #include <iostream>

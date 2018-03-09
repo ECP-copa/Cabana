@@ -100,6 +100,56 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
     BOOST_TEST( slice_0.arraySize(2) == std::size_t(10) );
     BOOST_TEST( slice_0.arraySize(3) == std::size_t(5) );
 
+    BOOST_TEST( slice_0.rank() == std::size_t(3) );
+    std::size_t e00 = slice_0.extent(0);
+    BOOST_TEST( e00 == dim_1 );
+    std::size_t e01 = slice_0.extent(1);
+    BOOST_TEST( e01 == dim_2 );
+    std::size_t e02 = slice_0.extent(2);
+    BOOST_TEST( e02 == dim_3 );
+    std::size_t e03 = slice_0.extent(3);
+    BOOST_TEST( e03 == std::size_t(0) );
+
+    BOOST_TEST( slice_1.rank() == std::size_t(0) );
+    std::size_t e10 = slice_1.extent(0);
+    BOOST_TEST( e10 == std::size_t(0) );
+    std::size_t e11 = slice_1.extent(1);
+    BOOST_TEST( e11 == std::size_t(0) );
+    std::size_t e12 = slice_1.extent(2);
+    BOOST_TEST( e12 == std::size_t(0) );
+    std::size_t e13 = slice_1.extent(3);
+    BOOST_TEST( e13 == std::size_t(0) );
+
+    BOOST_TEST( slice_2.rank() == std::size_t(4) );
+    std::size_t e20 = slice_2.extent(0);
+    BOOST_TEST( e20 == dim_1 );
+    std::size_t e21 = slice_2.extent(1);
+    BOOST_TEST( e21 == dim_2 );
+    std::size_t e22 = slice_2.extent(2);
+    BOOST_TEST( e22 == dim_3 );
+    std::size_t e23 = slice_2.extent(3);
+    BOOST_TEST( e23 == dim_4 );
+
+    BOOST_TEST( slice_3.rank() == std::size_t(1) );
+    std::size_t e30 = slice_3.extent(0);
+    BOOST_TEST( e30 == dim_1 );
+    std::size_t e31 = slice_3.extent(1);
+    BOOST_TEST( e31 == std::size_t(0) );
+    std::size_t e32 = slice_3.extent(2);
+    BOOST_TEST( e32 == std::size_t(0) );
+    std::size_t e33 = slice_3.extent(3);
+    BOOST_TEST( e33 == std::size_t(0) );
+
+    BOOST_TEST( slice_4.rank() == std::size_t(2) );
+    std::size_t e40 = slice_4.extent(0);
+    BOOST_TEST( e40 == dim_1 );
+    std::size_t e41 = slice_4.extent(1);
+    BOOST_TEST( e41 == dim_2 );
+    std::size_t e42 = slice_4.extent(2);
+    BOOST_TEST( e42 == std::size_t(0) );
+    std::size_t e43 = slice_4.extent(3);
+    BOOST_TEST( e43 == std::size_t(0) );
+
     // Initialize data with the rank accessors.
     float fval = 3.4;
     double dval = 1.23;
@@ -134,78 +184,4 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
-}
-
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( slice_serial_pointer_stride_test )
-{
-    // Inner array size.
-    const std::size_t array_size = 103;
-
-    // Declare data types. Note that this test only uses rank-0 data.
-    using DataTypes =
-        Cabana::MemberDataTypes<float,
-                                int,
-                                double,
-                                int,
-                                double
-                                >;
-
-    // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,Cabana::Serial,array_size>;
-
-    // Create an AoSoA.
-    std::size_t num_data = 350;
-    AoSoA_t aosoa( num_data );
-
-    // Create some slices.
-    auto slice_0 = Cabana::slice<0>( aosoa );
-    auto slice_1 = Cabana::slice<1>( aosoa );
-    auto slice_2 = Cabana::slice<2>( aosoa );
-    auto slice_3 = Cabana::slice<3>( aosoa );
-    auto slice_4 = Cabana::slice<4>( aosoa );
-
-    // Get pointers to the data.
-    float* p0 = slice_0.pointer();
-    int* p1 = slice_1.pointer();
-    double* p2 = slice_2.pointer();
-    int* p3 = slice_3.pointer();
-    double* p4 = slice_4.pointer();
-
-    // Get the strides between the member arrays.
-    std::size_t st0 = slice_0.stride();
-    std::size_t st1 = slice_1.stride();
-    std::size_t st2 = slice_2.stride();
-    std::size_t st3 = slice_3.stride();
-    std::size_t st4 = slice_4.stride();
-
-    // Initialize the data with raw pointer/stride access. Start by looping
-    // over the structs. Each struct has a group of contiguous arrays of size
-    // array_size for each member.
-    std::size_t num_soa = slice_0.numSoA();
-    for ( std::size_t s = 0; s < num_soa; ++s )
-    {
-        // Loop over the array in each struct and set the values.
-        std::size_t local_array_size = slice_0.arraySize( s );
-        for ( std::size_t i = 0; i < local_array_size; ++i )
-        {
-            p0[ s * st0 + i ] = (s + i) * 1.0;
-            p1[ s * st1 + i ] = (s + i) * 2;
-            p2[ s * st2 + i ] = (s + i) * 3.0;
-            p3[ s * st3 + i ] = (s + i) * 4;
-            p4[ s * st4 + i ] = (s + i) * 5.0;
-        }
-    }
-
-    // Check the results.
-    for ( auto idx = aosoa.begin(); idx < aosoa.end(); ++idx )
-    {
-        std::size_t s = idx.s();
-        std::size_t i = idx.i();
-        BOOST_TEST( aosoa.get<0>(idx) == (s+i)*1.0 );
-        BOOST_TEST( aosoa.get<1>(idx) == int((s+i)*2) );
-        BOOST_TEST( aosoa.get<2>(idx) == (s+i)*3.0 );
-        BOOST_TEST( aosoa.get<3>(idx) == int((s+i)*4) );
-        BOOST_TEST( aosoa.get<4>(idx) == (s+i)*5.0 );
-    }
 }

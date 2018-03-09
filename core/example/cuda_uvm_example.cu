@@ -1,5 +1,6 @@
-#include "Cabana_AoSoA.hpp"
-#include "Cabana_Cuda.hpp"
+#include <Cabana_AoSoA.hpp>
+#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_Cuda.hpp>
 
 #include <cstdlib>
 #include <iostream>
@@ -60,7 +61,7 @@ __global__ void initializeParticles( ParticleList particles )
 {
     // Create a particle index. The Cuda block id is the struct id and the
     // thread id in the block is the array id in the struct.
-    ParticleList::Index idx( blockIdx.x, threadIdx.x );
+    Cabana::Index idx( array_size, blockIdx.x, threadIdx.x );
 
     // Only do the operation if we have a valid particle.
     if ( idx < particles.end() )
