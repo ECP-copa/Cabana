@@ -3,7 +3,8 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Index.hpp>
-#include <Cabana_Macros.hpp>
+
+#include <Kokkos_Macros.hpp>
 
 #include <cstdlib>
 #include <type_traits>
@@ -100,15 +101,15 @@ class MemberSlice
     }
 
     // Returns the number of elements in the container.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t size() const { return _aosoa.size(); }
 
     // Get the number of structs-of-arrays in the array.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t numSoA() const { return _aosoa.numSoA(); }
 
     // Get the size of the data array at a given struct member index.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t arraySize( const std::size_t s ) const
     { return _aosoa.arraySize(s); }
 
@@ -116,12 +117,12 @@ class MemberSlice
     // Member data type properties.
 
     // Get the rank of the data for this member.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t rank() const
     { return _aosoa.rank(I); }
 
     // Get the extent of a given member data dimension.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t extent( const std::size_t D ) const
     { return _aosoa.extent(I,D); }
 
@@ -129,11 +130,11 @@ class MemberSlice
     // Array range
 
     // Get the index at the beginning of the entire AoSoA.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     Index begin() const { return _aosoa.begin(); }
 
     // Get the index at end of the entire AoSoA.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     Index end() const { return _aosoa.end(); }
 
     // -------------------------------
@@ -141,7 +142,7 @@ class MemberSlice
 
     // Rank 0
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (0==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -154,7 +155,7 @@ class MemberSlice
     }
 
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (0==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -168,7 +169,7 @@ class MemberSlice
 
     // Rank 1
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -182,7 +183,7 @@ class MemberSlice
     }
 
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -197,7 +198,7 @@ class MemberSlice
 
     // Rank 2
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
@@ -210,7 +211,7 @@ class MemberSlice
     }
 
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -226,7 +227,7 @@ class MemberSlice
 
     // Rank 3
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -242,7 +243,7 @@ class MemberSlice
     }
 
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -259,7 +260,7 @@ class MemberSlice
 
     // Rank 4
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -276,7 +277,7 @@ class MemberSlice
     }
 
     template<std::size_t J = I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),

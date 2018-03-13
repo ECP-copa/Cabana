@@ -3,9 +3,10 @@
 
 #include <Cabana_MemberDataTypes.hpp>
 #include <Cabana_MemoryPolicy.hpp>
-#include <Cabana_Macros.hpp>
 #include <Cabana_SoA.hpp>
 #include <Cabana_Index.hpp>
+
+#include <Kokkos_Macros.hpp>
 
 #include <type_traits>
 #include <memory>
@@ -136,7 +137,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     //
     // This is the number of actual objects held in the container, which is
     // not necessarily equal to its storage capacity.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t size() const { return _size; }
 
     // Returns the size of the storage space currently allocated for the
@@ -153,7 +154,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     //
     // The capacity of a container can be explicitly altered by calling member
     // reserve.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t capacity() const { return _capacity; }
 
     // Resizes the container so that it contains n elements.
@@ -213,11 +214,11 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     }
 
     // Get the number of structs-of-arrays in the array.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t numSoA() const { return _num_soa; }
 
     // Get the size of the data array at a given struct member index.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t arraySize( const std::size_t s ) const
     {
         return
@@ -228,14 +229,14 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // Member data type properties.
 
     // Get the rank of the data for a given member at index I.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t rank( const std::size_t I ) const
     {
         return _ranks[I];
     }
 
     // Get the extent of a given member data dimension.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t extent( const std::size_t I, const std::size_t D ) const
     {
         return _extents[I][D];
@@ -245,14 +246,14 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // Array range
 
     // Get the index at the beginning of the entire AoSoA.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     Index begin() const
     {
         return Index( array_size, 0, 0 );
     }
 
     // Get the index at end of the entire AoSoA.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     Index end() const
     {
         std::size_t remainder = _size % array_size;
@@ -267,7 +268,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
 
     // Rank 0
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(0==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
     get( const Index& idx )
@@ -276,7 +277,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     }
 
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(0==std::rank<struct_member_data_type<I> >::value),
                             struct_member_const_reference_type<I> >::type
     get( const Index& idx ) const
@@ -286,7 +287,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
 
     // Rank 1
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(1==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
     get( const Index& idx,
@@ -296,7 +297,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     }
 
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(1==std::rank<struct_member_data_type<I> >::value),
                             struct_member_const_reference_type<I> >::type
     get( const Index& idx,
@@ -307,7 +308,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
 
     // Rank 2
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(2==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
     get( const Index& idx,
@@ -318,7 +319,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     }
 
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(2==std::rank<struct_member_data_type<I> >::value),
                             struct_member_const_reference_type<I> >::type
     get( const Index& idx,
@@ -330,7 +331,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
 
     // Rank 3
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(3==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
     get( const Index& idx,
@@ -342,7 +343,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     }
 
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(3==std::rank<struct_member_data_type<I> >::value),
                             struct_member_const_reference_type<I> >::type
     get( const Index& idx,
@@ -355,7 +356,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
 
     // Rank 4
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(4==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
     get( const Index& idx,
@@ -368,7 +369,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     }
 
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(4==std::rank<struct_member_data_type<I> >::value),
                             struct_member_const_reference_type<I> >::type
     get( const Index& idx,
@@ -386,7 +387,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // Get the stride between SoA data for a given member at index I. Note
     // that this strides are computed in the context of the *value_type* for
     // each member.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t stride( const std::size_t I ) const
     {
         return _strides[I];
@@ -395,13 +396,13 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // Get an un-typed raw pointer to the data for a given member at index
     // I. Users will need to cast this pointer to the appropriate type for the
     // stride associated with this member to mean anything.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     void* data( const std::size_t I )
     {
         return _pointers[I];
     }
 
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     const void* data( const std::size_t I ) const
     {
         return _pointers[I];
@@ -411,14 +412,14 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
 
     // Get a typed pointer to the data for a given member at index I.
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     struct_member_pointer_type<I> typedPointer()
     {
         return static_cast<struct_member_pointer_type<I> >( _pointers[I] );
     }
 
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     struct_member_const_pointer_type<I> typedPointer() const
     {
         return static_cast<struct_member_pointer_type<I> >( _pointers[I] );
@@ -426,7 +427,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
 
     // Get the array at the given struct index.
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     struct_member_array_type<I> array( const std::size_t s )
     {
         return reinterpret_cast<struct_member_array_type<I> >(
@@ -434,7 +435,7 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     }
 
     template<std::size_t I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     struct_member_const_array_type<I> array( const std::size_t s ) const
     {
         return reinterpret_cast<struct_member_array_type<I> >(
