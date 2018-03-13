@@ -50,9 +50,6 @@ class MemberSlice
     // AoSoA type this slice wraps.
     using aosoa_type = AoSoA_t;
 
-    // Device type.
-    using device_type = typename aosoa_type::device_type;
-
     // Inner array size.
     static constexpr std::size_t array_size = aosoa_type::array_size;
 

@@ -1,5 +1,4 @@
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_Serial.hpp>
 
 #include <boost/test/unit_test.hpp>
 
@@ -48,8 +47,8 @@ void checkDataMembers(
 //---------------------------------------------------------------------------//
 BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
 {
-    // Inner array size.
-    const std::size_t array_size = 10;
+    // Manually set the inner array size.
+    using inner_array_size = Cabana::InnerArraySize<10>;
 
     // Data dimensions.
     const std::size_t dim_1 = 3;
@@ -67,7 +66,7 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,Cabana::Serial,array_size>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,Kokkos::Serial>;
 
     // Make sure that it is actually an AoSoA.
     BOOST_TEST( Cabana::is_aosoa<AoSoA_t>::value );
@@ -224,8 +223,8 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
 //---------------------------------------------------------------------------//
 BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
 {
-    // Inner array size.
-    const std::size_t array_size = 103;
+    // Manually set the inner array size.
+    using inner_array_size = Cabana::InnerArraySize<103>;
 
     // Multi dimensional member sizes.
     const std::size_t dim_1 = 3;
@@ -241,7 +240,7 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,Cabana::Serial,array_size>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,Kokkos::Serial>;
 
     // Create an AoSoA using the default constructor.
     std::size_t num_data = 350;

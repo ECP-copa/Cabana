@@ -2,36 +2,189 @@
 #define CABANA_AOSOA_HPP
 
 #include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_MemoryPolicy.hpp>
 #include <Cabana_SoA.hpp>
 #include <Cabana_Index.hpp>
+#include <Cabana_InnerArraySize.hpp>
 
+#include <Kokkos_Core.hpp>
+#include <Kokkos_Core_fwd.hpp>
 #include <Kokkos_Macros.hpp>
+#include <Kokkos_HostSpace.hpp>
+#include <Kokkos_MemoryTraits.hpp>
+#include <Kokkos_ExecPolicy.hpp>
 
 #include <type_traits>
 #include <memory>
 #include <cmath>
 #include <cstdlib>
+#include <string>
 
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
+/*! \class AoSoATraits
+  \brief Traits class for accessing attributes of a AoSoA.
+
+  This is an implementation detail of AoSoA.  It is only of interest
+  to developers implementing a new specialization of AoSoA.
+
+  Template argument options:
+  - AoSoA< DataTypes >
+  - AoSoA< DataTypes , Space >
+  - AoSoA< DataTypes , Space , MemoryTraits >
+  - AoSoA< DataTypes , ArraySize >
+  - AoSoA< DataTypes , ArraySize , Space >
+  - AoSoA< DataTypes , ArraySize , MemoryTraits >
+  - AoSoA< DataTypes , ArraySize , Space , MemoryTraits >
+  - AoSoA< DataTypes , MemoryTraits >
+
+  Note that this is effectively a reimplementation of Kokkos::ViewTraits for
+  the AoSoA with ArrayLayout replaced by ArraySize.
+*/
+template<class DataTypes , class ... Properties>
+class AoSoATraits ;
+
+// Void specialization.
+template<>
+class AoSoATraits<void>
+{
+  public:
+    using execution_space = void;
+    using memory_space = void;
+    using host_mirror_space = void;
+    using array_size = void;
+    using memory_traits = void;
+};
+
+// Extract the array size.
+template<class ArraySize, class ... Properties>
+class AoSoATraits<
+    typename std::enable_if<is_inner_array_size<ArraySize>::value>::type,
+    ArraySize, Properties...>
+{
+  public:
+    using execution_space = typename AoSoATraits<void,Properties...>::execution_space;
+    using memory_space = typename AoSoATraits<void,Properties...>::memory_space;
+    using host_mirror_space = typename AoSoATraits<void,Properties...>::host_mirror_space;
+    using array_size = ArraySize;
+    using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
+};
+
+// Extract the space - either a Kokkos memory space or execution space. Can be
+// on or the other but not both.
+template<class Space, class ... Properties>
+class AoSoATraits<
+    typename std::enable_if<Kokkos::Impl::is_space<Space>::value>::type,
+    Space, Properties ...>
+{
+  public:
+    static_assert(
+        std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
+        std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
+        std::is_same<typename AoSoATraits<void,Properties...>::host_mirror_space,void>::value &&
+        std::is_same<typename AoSoATraits<void,Properties...>::array_size,void>::value
+        , "Only one AoSoA Execution or Memory Space template argument" );
+
+    using execution_space = typename Space::execution_space;
+    using memory_space = typename Space::memory_space;
+    using host_mirror_space = typename Kokkos::Impl::HostMirror<Space>::Space;
+    using array_size = ExecutionSpaceInnerArraySize<execution_space>;
+    using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
+};
+
+// Extract the memory traits - this must be the last template parameter in the pack.
+template<class MemoryTraits, class ... Properties>
+class AoSoATraits<
+    typename std::enable_if<Kokkos::Impl::is_memory_traits<MemoryTraits>::value>::type,
+    MemoryTraits, Properties...>
+{
+  public:
+    static_assert( std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
+                   std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
+                   std::is_same<typename AoSoATraits<void,Properties...>::array_size,void>::value &&
+                   std::is_same<typename AoSoATraits<void,Properties...>::memory_traits,void>::value
+                   , "MemoryTrait is the final optional template argument for a AoSoA" );
+
+    using execution_space = void;
+    using memory_space = void;
+    using host_mirror_space = void;
+    using array_size = void;
+    using memory_traits = MemoryTraits;
+};
+
+// Set the traits for a given set of properties.
+template<class DataTypes, class ... Properties>
+class AoSoATraits
+{
+  private:
+
+    typedef AoSoATraits<void,Properties...>  properties;
+
+    using ExecutionSpace =
+        typename
+        std::conditional<
+        !std::is_same<typename properties::execution_space,void>::value,
+        typename properties::execution_space,
+        Kokkos::DefaultExecutionSpace
+        >::type;
+
+    using MemorySpace =
+        typename std::conditional<
+        !std::is_same<typename properties::memory_space,void>::value,
+        typename properties::memory_space,
+        typename ExecutionSpace::memory_space
+        >::type;
+
+    using ArraySize =
+        typename std::conditional<
+        !std::is_same<typename properties::array_size,void>::value,
+        typename properties::array_size,
+        ExecutionSpaceInnerArraySize<ExecutionSpace>
+        >::type;
+
+    using HostMirrorSpace =
+        typename std::conditional<
+        !std::is_same<typename properties::host_mirror_space,void>::value,
+        typename properties::host_mirror_space,
+        typename Kokkos::Impl::HostMirror<ExecutionSpace>::Space
+        >::type;
+
+    using MemoryTraits =
+        typename std::conditional<
+        !std::is_same<typename properties::memory_traits,void>::value,
+        typename properties::memory_traits,
+        typename Kokkos::MemoryManaged
+        >::type;
+
+  public:
+
+    using data_types = DataTypes;
+    using execution_space = ExecutionSpace;
+    using memory_space = MemorySpace;
+    using device_type = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    using memory_traits = MemoryTraits;
+    using host_mirror_space = HostMirrorSpace;
+    using size_type = typename memory_space::size_type;
+
+    static constexpr std::size_t array_size = ArraySize::value;
+};
+
+//---------------------------------------------------------------------------//
 // Forward declaration.
-template<typename DataTypes, typename Device, std::size_t ArraySize>
+template<typename DataTypes, typename ... Properties>
 class AoSoA;
 
 //---------------------------------------------------------------------------//
 // Static type checker.
-template<typename >
-struct is_aosoa
-    : public std::false_type {};
+template<class >
+struct is_aosoa : public std::false_type {};
 
-template<typename DataTypes, typename Device, std::size_t ArraySize>
-struct is_aosoa<AoSoA<DataTypes,Device,ArraySize> >
+template<class DataTypes, class ... Properties>
+struct is_aosoa<AoSoA<DataTypes,Properties...> >
     : public std::true_type {};
 
-template<typename DataTypes, typename Device, std::size_t ArraySize>
-struct is_aosoa<const AoSoA<DataTypes,Device,ArraySize> >
+template<class DataTypes, class ... Properties>
+struct is_aosoa<const AoSoA<DataTypes,Properties...> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//
@@ -39,22 +192,19 @@ struct is_aosoa<const AoSoA<DataTypes,Device,ArraySize> >
   \class AoSoA
   \brief Array-of-Structs-of-Arrays
 */
-template<typename Device, std::size_t ArraySize, typename... Types>
-class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
+template<class ... Types, class ... Properties>
+class AoSoA<MemberDataTypes<Types...>,Properties...>
 {
   public:
 
+    // Traits.
+    using traits = AoSoATraits<MemberDataTypes<Types...>,Properties...>;
+
     // AoSoA type.
-    using aosoa_type = AoSoA<MemberDataTypes<Types...>,Device,ArraySize>;
+    using aosoa_type = AoSoA<MemberDataTypes<Types...>,Properties...>;
 
-    // Device type.
-    using device_type = Device;
-
-    // Memory policy.
-    using memory_policy = MemoryPolicy<device_type>;
-
-    // Inner array size (size of the arrays held by the structs).
-    static constexpr std::size_t array_size = ArraySize;
+    // Array size.
+    static constexpr std::size_t array_size = traits::array_size;
 
     // SoA type.
     using soa_type = SoA<array_size,Types...>;
@@ -173,10 +323,10 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // by inserting or erasing elements from it.
     void resize( const std::size_t n )
     {
+        reserve( n );
         _size = n;
         _num_soa = std::floor( n / array_size );
         if ( 0 < n % array_size ) ++_num_soa;
-        reserve( _size );
     }
 
     // Requests that the container capacity be at least enough to contain n
@@ -199,13 +349,16 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
         if ( 0 < n % array_size ) ++num_soa_alloc;
         _capacity = num_soa_alloc * array_size;
 
-        soa_type* data_block;
-        memory_policy::allocate( data_block, num_soa_alloc );
-        std::shared_ptr<soa_type> sp(
-            data_block, memory_policy::template deallocate<soa_type> );
+        std::shared_ptr<void> sp(
+            Kokkos::kokkos_malloc(num_soa_alloc * sizeof(soa_type)),
+            Kokkos::kokkos_free<typename traits::memory_space> );
 
         if ( _managed_data != nullptr )
-            memory_policy::copy( data_block, _managed_data.get(), _num_soa );
+            Kokkos::Impl::DeepCopy<
+                typename traits::memory_space,
+                typename traits::memory_space,
+                typename traits::execution_space>(
+                    sp.get(), _managed_data.get(), _num_soa * sizeof(soa_type) );
 
         std::swap( _managed_data, sp );
 
@@ -448,7 +601,8 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     {
         static_assert( 0 <= N && N < number_of_members,
                        "Static loop out of bounds!" );
-        soa_type* data_block = _managed_data.get();
+        soa_type* data_block =
+            std::static_pointer_cast<soa_type>(_managed_data).get();
         _pointers[N] =
             static_cast<void*>( getStructMember<N>(data_block[0]) );
         static_assert( 0 ==
@@ -542,8 +696,9 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     // Structs-of-Arrays managed data. This shared pointer manages the block
     // of memory owned by this class such that the copy constructor and
     // assignment operator for this class perform a shallow and reference
-    // counted copy of the data.
-    std::shared_ptr<soa_type> _managed_data;
+    // counted copy of the data. The underlying pointer is to an array of
+    // soa_type objects.
+    std::shared_ptr<void> _managed_data;
 
     // Pointers to the first element of each member.
     void* _pointers[number_of_members];
