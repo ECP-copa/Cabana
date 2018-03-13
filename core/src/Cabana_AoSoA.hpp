@@ -255,7 +255,10 @@ class AoSoA<MemberDataTypes<Types...>,Device,ArraySize>
     CABANA_FUNCTION
     Index end() const
     {
-        return Index( array_size, _num_soa - 1, _size % array_size );
+        std::size_t remainder = _size % array_size;
+        std::size_t s = ( 0 == remainder ) ? _num_soa : _num_soa - 1;
+        std::size_t i = ( 0 == remainder ) ? 0 : remainder;
+        return Index( array_size, s, i );
     }
 
     // -------------------------------
