@@ -343,25 +343,39 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // elements.
     void reserve( const std::size_t n )
     {
+        // If we aren't asking for more memory then we have nothing to do.
         if ( n <= _capacity ) return;
 
+        // Figure out the new capacity.
         std::size_t num_soa_alloc = std::floor( n / array_size );
         if ( 0 < n % array_size ) ++num_soa_alloc;
         _capacity = num_soa_alloc * array_size;
 
+        // Allocate a new block of memory.
         std::shared_ptr<void> sp(
             Kokkos::kokkos_malloc(num_soa_alloc * sizeof(soa_type)),
             Kokkos::kokkos_free<typename traits::memory_space> );
 
+        // Fence before continuing to ensure the allocation is completed.
+        Kokkos::fence();
+
+        // If we have already allocated memory, copy the old memory into the
+        // new memory. Fence when we are done to ensure copy is complete
+        // before continuing.
         if ( _managed_data != nullptr )
+        {
             Kokkos::Impl::DeepCopy<
                 typename traits::memory_space,
                 typename traits::memory_space,
                 typename traits::execution_space>(
                     sp.get(), _managed_data.get(), _num_soa * sizeof(soa_type) );
+            Kokkos::fence();
+        }
 
+        // Swap blocks. The old block will be destroyed when this function exits.
         std::swap( _managed_data, sp );
 
+        // Get new pointers and strides for the members.
         storePointersAndStrides(
             std::integral_constant<std::size_t,number_of_members-1>() );
     }
