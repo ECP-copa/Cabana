@@ -42,6 +42,11 @@ class Index
         , _i( offset )
     {};
 
+    // Get the inner array size.
+    KOKKOS_INLINE_FUNCTION
+    std::size_t a() const
+    { return _a; }
+
     // Get the struct index.
     KOKKOS_INLINE_FUNCTION
     std::size_t s() const

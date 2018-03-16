@@ -41,7 +41,7 @@ namespace Cabana
   Note that this is effectively a reimplementation of Kokkos::ViewTraits for
   the AoSoA with ArrayLayout replaced by ArraySize.
 */
-template<class DataTypes , class ... Properties>
+template<class DataTypes, class ... Properties>
 class AoSoATraits ;
 
 // Void specialization.
