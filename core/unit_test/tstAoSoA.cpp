@@ -144,6 +144,16 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
     BOOST_TEST( aosoa.arraySize(2) == std::size_t(10) );
     BOOST_TEST( aosoa.arraySize(3) == std::size_t(5) );
 
+    // Test bounds.
+    auto begin = aosoa.begin();
+    BOOST_TEST( begin.i() == std::size_t(0) );
+    BOOST_TEST( begin.s() == std::size_t(0) );
+    BOOST_TEST( begin.a() == std::size_t(10) );
+    auto end = aosoa.end();
+    BOOST_TEST( end.i() == std::size_t(5) );
+    BOOST_TEST( end.s() == std::size_t(3) );
+    BOOST_TEST( end.a() == std::size_t(10) );
+
     // Initialize data with the rank accessors.
     float fval = 3.4;
     double dval = 1.23;

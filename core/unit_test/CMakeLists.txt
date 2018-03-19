@@ -12,6 +12,15 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
 
 ##--------------------------------------------------------------------------##
 TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  Index_test
+  SOURCES tstIndex.cpp unit_test_main.cpp
+  COMM serial mpi
+  PASS_REGULAR_EXPRESSION "${PASS_RE}"
+  FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+  )
+
+##--------------------------------------------------------------------------##
+TRIBITS_ADD_EXECUTABLE_AND_TEST(
   SoA_test
   SOURCES tstSoA.cpp unit_test_main.cpp
   COMM serial mpi
