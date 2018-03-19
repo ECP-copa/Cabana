@@ -3,9 +3,10 @@
 
 #include <Kokkos_Macros.hpp>
 
+#include <cstdlib>
+
 namespace Cabana
 {
-
 //---------------------------------------------------------------------------//
 /*
   \class Index
@@ -102,8 +103,21 @@ class Index
     {
         return (_s > rhs._s) || ((_s == rhs._s) && (_i > rhs._i));
     }
-};
 
+    // Less-than-or-equal-to operator.
+    KOKKOS_INLINE_FUNCTION
+    bool operator<=( const Index& rhs ) const
+    {
+        return (_s < rhs._s) || ((_s == rhs._s) && (_i <= rhs._i));
+    }
+
+    // Greater-than-or-equal-to operator.
+    KOKKOS_INLINE_FUNCTION
+    bool operator>=( const Index& rhs ) const
+    {
+        return (_s > rhs._s) || ((_s == rhs._s) && (_i >= rhs._i));
+    }
+};
 
 //---------------------------------------------------------------------------//
 
