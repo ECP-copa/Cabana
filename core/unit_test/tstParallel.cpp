@@ -1,4 +1,5 @@
 #include <Cabana_Parallel.hpp>
+#include <Cabana_ExecutionPolicy.hpp>
 #include <Cabana_AoSoA.hpp>
 
 #include <boost/test/unit_test.hpp>
@@ -73,6 +74,10 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     std::size_t num_data = 155;
     AoSoA_t aosoa( num_data );
 
+    // Create an execution policy.
+    Cabana::IndexRangePolicy<Kokkos::Serial>
+        range_policy( aosoa.begin(), aosoa.end() );
+
     // Write a functor to operate on.
     float fval = 3.4;
     double dval = 1.23;
@@ -106,8 +111,7 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     };
 
     // Loop in parallel using 1D struct parallelism.
-    Cabana::parallel_for<Kokkos::Serial>(
-        aosoa.begin(), aosoa.end(), func_1, Cabana::StructParallel() );
+    Cabana::parallel_for( range_policy, func_1, Cabana::StructParallelTag() );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
@@ -145,8 +149,7 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     };
 
     // Loop in parallel using 1D array parallelism.
-    Cabana::parallel_for<Kokkos::Serial>(
-        aosoa.begin(), aosoa.end(), func_2, Cabana::ArrayParallel() );
+    Cabana::parallel_for( range_policy, func_2, Cabana::ArrayParallelTag() );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
@@ -184,8 +187,8 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     };
 
     // Loop in parallel using 2D struct and array parallelism.
-    Cabana::parallel_for<Kokkos::Serial>(
-        aosoa.begin(), aosoa.end(), func_3, Cabana::StructAndArrayParallel() );
+    Cabana::parallel_for(
+        range_policy, func_3, Cabana::StructAndArrayParallelTag() );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
