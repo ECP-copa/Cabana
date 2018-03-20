@@ -353,7 +353,8 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
         // Allocate a new block of memory.
         std::shared_ptr<void> sp(
-            Kokkos::kokkos_malloc(num_soa_alloc * sizeof(soa_type)),
+            Kokkos::kokkos_malloc<typename traits::memory_space>(
+                num_soa_alloc * sizeof(soa_type)),
             Kokkos::kokkos_free<typename traits::memory_space> );
 
         // Fence before continuing to ensure the allocation is completed.
