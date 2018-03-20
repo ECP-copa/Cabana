@@ -17,28 +17,28 @@ void checkDataMembers(
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
-                    BOOST_TEST( aosoa.template get<0>( idx, i, j, k ) ==
+                    BOOST_CHECK( aosoa.template get<0>( idx, i, j, k ) ==
                                 fval * (i+j+k) );
 
         // Member 1.
-        BOOST_TEST( aosoa.template get<1>( idx ) == ival );
+        BOOST_CHECK( aosoa.template get<1>( idx ) == ival );
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
                     for ( std::size_t l = 0; l < dim_4; ++l )
-                        BOOST_TEST( aosoa.template get<2>( idx, i, j, k, l ) ==
+                        BOOST_CHECK( aosoa.template get<2>( idx, i, j, k, l ) ==
                                     fval * (i+j+k+l) );
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            BOOST_TEST( aosoa.template get<3>( idx, i ) == dval * i );
+            BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
 
         // Member 4.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                BOOST_TEST( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
+                BOOST_CHECK( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
     }
 }
 
@@ -69,90 +69,90 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
     using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_EXECSPACE>;
 
     // Make sure that it is actually an AoSoA.
-    BOOST_TEST( Cabana::is_aosoa<AoSoA_t>::value );
+    BOOST_CHECK( Cabana::is_aosoa<AoSoA_t>::value );
 
     // Create an AoSoA.
     AoSoA_t aosoa;
 
     // Check sizes.
-    BOOST_TEST( aosoa.size() == std::size_t(0) );
-    BOOST_TEST( aosoa.capacity() == std::size_t(0) );
-    BOOST_TEST( aosoa.numSoA() == std::size_t(0) );
+    BOOST_CHECK( aosoa.size() == std::size_t(0) );
+    BOOST_CHECK( aosoa.capacity() == std::size_t(0) );
+    BOOST_CHECK( aosoa.numSoA() == std::size_t(0) );
 
     // Check member type properties.
-    BOOST_TEST( aosoa.rank(0) == std::size_t(3) );
+    BOOST_CHECK( aosoa.rank(0) == std::size_t(3) );
     std::size_t e00 = aosoa.extent(0,0);
-    BOOST_TEST( e00 == dim_1 );
+    BOOST_CHECK( e00 == dim_1 );
     std::size_t e01 = aosoa.extent(0,1);
-    BOOST_TEST( e01 == dim_2 );
+    BOOST_CHECK( e01 == dim_2 );
     std::size_t e02 = aosoa.extent(0,2);
-    BOOST_TEST( e02 == dim_3 );
+    BOOST_CHECK( e02 == dim_3 );
     std::size_t e03 = aosoa.extent(0,3);
-    BOOST_TEST( e03 == std::size_t(0) );
+    BOOST_CHECK( e03 == std::size_t(0) );
 
-    BOOST_TEST( aosoa.rank(1) == std::size_t(0) );
+    BOOST_CHECK( aosoa.rank(1) == std::size_t(0) );
     std::size_t e10 = aosoa.extent(1,0);
-    BOOST_TEST( e10 == std::size_t(0) );
+    BOOST_CHECK( e10 == std::size_t(0) );
     std::size_t e11 = aosoa.extent(1,1);
-    BOOST_TEST( e11 == std::size_t(0) );
+    BOOST_CHECK( e11 == std::size_t(0) );
     std::size_t e12 = aosoa.extent(1,2);
-    BOOST_TEST( e12 == std::size_t(0) );
+    BOOST_CHECK( e12 == std::size_t(0) );
     std::size_t e13 = aosoa.extent(1,3);
-    BOOST_TEST( e13 == std::size_t(0) );
+    BOOST_CHECK( e13 == std::size_t(0) );
 
-    BOOST_TEST( aosoa.rank(2) == std::size_t(4) );
+    BOOST_CHECK( aosoa.rank(2) == std::size_t(4) );
     std::size_t e20 = aosoa.extent(2,0);
-    BOOST_TEST( e20 == dim_1 );
+    BOOST_CHECK( e20 == dim_1 );
     std::size_t e21 = aosoa.extent(2,1);
-    BOOST_TEST( e21 == dim_2 );
+    BOOST_CHECK( e21 == dim_2 );
     std::size_t e22 = aosoa.extent(2,2);
-    BOOST_TEST( e22 == dim_3 );
+    BOOST_CHECK( e22 == dim_3 );
     std::size_t e23 = aosoa.extent(2,3);
-    BOOST_TEST( e23 == dim_4 );
+    BOOST_CHECK( e23 == dim_4 );
 
-    BOOST_TEST( aosoa.rank(3) == std::size_t(1) );
+    BOOST_CHECK( aosoa.rank(3) == std::size_t(1) );
     std::size_t e30 = aosoa.extent(3,0);
-    BOOST_TEST( e30 == dim_1 );
+    BOOST_CHECK( e30 == dim_1 );
     std::size_t e31 = aosoa.extent(3,1);
-    BOOST_TEST( e31 == std::size_t(0) );
+    BOOST_CHECK( e31 == std::size_t(0) );
     std::size_t e32 = aosoa.extent(3,2);
-    BOOST_TEST( e32 == std::size_t(0) );
+    BOOST_CHECK( e32 == std::size_t(0) );
     std::size_t e33 = aosoa.extent(3,3);
-    BOOST_TEST( e33 == std::size_t(0) );
+    BOOST_CHECK( e33 == std::size_t(0) );
 
-    BOOST_TEST( aosoa.rank(4) == std::size_t(2) );
+    BOOST_CHECK( aosoa.rank(4) == std::size_t(2) );
     std::size_t e40 = aosoa.extent(4,0);
-    BOOST_TEST( e40 == dim_1 );
+    BOOST_CHECK( e40 == dim_1 );
     std::size_t e41 = aosoa.extent(4,1);
-    BOOST_TEST( e41 == dim_2 );
+    BOOST_CHECK( e41 == dim_2 );
     std::size_t e42 = aosoa.extent(4,2);
-    BOOST_TEST( e42 == std::size_t(0) );
+    BOOST_CHECK( e42 == std::size_t(0) );
     std::size_t e43 = aosoa.extent(4,3);
-    BOOST_TEST( e43 == std::size_t(0) );
+    BOOST_CHECK( e43 == std::size_t(0) );
 
     // Resize
     std::size_t num_data = 35;
     aosoa.resize( num_data );
 
     // Check sizes for the new allocation/size.
-    BOOST_TEST( aosoa.size() == std::size_t(35) );
-    BOOST_TEST( aosoa.capacity() == std::size_t(40) );
-    BOOST_TEST( aosoa.numSoA() == std::size_t(4) );
+    BOOST_CHECK( aosoa.size() == std::size_t(35) );
+    BOOST_CHECK( aosoa.capacity() == std::size_t(40) );
+    BOOST_CHECK( aosoa.numSoA() == std::size_t(4) );
 
-    BOOST_TEST( aosoa.arraySize(0) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(1) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(2) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(3) == std::size_t(5) );
+    BOOST_CHECK( aosoa.arraySize(0) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(1) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(2) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(3) == std::size_t(5) );
 
     // Test bounds.
     auto begin = aosoa.begin();
-    BOOST_TEST( begin.i() == std::size_t(0) );
-    BOOST_TEST( begin.s() == std::size_t(0) );
-    BOOST_TEST( begin.a() == std::size_t(10) );
+    BOOST_CHECK( begin.i() == std::size_t(0) );
+    BOOST_CHECK( begin.s() == std::size_t(0) );
+    BOOST_CHECK( begin.a() == std::size_t(10) );
     auto end = aosoa.end();
-    BOOST_TEST( end.i() == std::size_t(5) );
-    BOOST_TEST( end.s() == std::size_t(3) );
-    BOOST_TEST( end.a() == std::size_t(10) );
+    BOOST_CHECK( end.i() == std::size_t(5) );
+    BOOST_CHECK( end.s() == std::size_t(3) );
+    BOOST_CHECK( end.a() == std::size_t(10) );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -195,38 +195,38 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
     aosoa.reserve( 1 );
 
     // Make sure nothing changed.
-    BOOST_TEST( aosoa.size() == std::size_t(35) );
-    BOOST_TEST( aosoa.capacity() == std::size_t(40) );
-    BOOST_TEST( aosoa.numSoA() == std::size_t(4) );
-    BOOST_TEST( aosoa.arraySize(0) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(1) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(2) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(3) == std::size_t(5) );
+    BOOST_CHECK( aosoa.size() == std::size_t(35) );
+    BOOST_CHECK( aosoa.capacity() == std::size_t(40) );
+    BOOST_CHECK( aosoa.numSoA() == std::size_t(4) );
+    BOOST_CHECK( aosoa.arraySize(0) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(1) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(2) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(3) == std::size_t(5) );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
     // Now reserve a bunch of space.
     aosoa.reserve( 1000 );
 
     // Make sure capacity changed but sizes and data did not.
-    BOOST_TEST( aosoa.size() == std::size_t(35) );
-    BOOST_TEST( aosoa.capacity() == std::size_t(1000) );
-    BOOST_TEST( aosoa.numSoA() == std::size_t(4) );
-    BOOST_TEST( aosoa.arraySize(0) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(1) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(2) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(3) == std::size_t(5) );
+    BOOST_CHECK( aosoa.size() == std::size_t(35) );
+    BOOST_CHECK( aosoa.capacity() == std::size_t(1000) );
+    BOOST_CHECK( aosoa.numSoA() == std::size_t(4) );
+    BOOST_CHECK( aosoa.arraySize(0) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(1) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(2) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(3) == std::size_t(5) );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
     // Now decrease the size of the container.
     aosoa.resize( 29 );
 
     // Make sure sizes and data changed but the capacity did not.
-    BOOST_TEST( aosoa.size() == std::size_t(29) );
-    BOOST_TEST( aosoa.capacity() == std::size_t(1000) );
-    BOOST_TEST( aosoa.numSoA() == std::size_t(3) );
-    BOOST_TEST( aosoa.arraySize(0) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(1) == std::size_t(10) );
-    BOOST_TEST( aosoa.arraySize(2) == std::size_t(9) );
+    BOOST_CHECK( aosoa.size() == std::size_t(29) );
+    BOOST_CHECK( aosoa.capacity() == std::size_t(1000) );
+    BOOST_CHECK( aosoa.numSoA() == std::size_t(3) );
+    BOOST_CHECK( aosoa.arraySize(0) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(1) == std::size_t(10) );
+    BOOST_CHECK( aosoa.arraySize(2) == std::size_t(9) );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
 
@@ -273,8 +273,8 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
     // Member 2 is multidimensional so get its extents.
     std::size_t m2e0 = aosoa.extent(2,0);
     std::size_t m2e1 = aosoa.extent(2,1);
-    BOOST_TEST( m2e0 == dim_1 );
-    BOOST_TEST( m2e1 == dim_2 );
+    BOOST_CHECK( m2e0 == dim_1 );
+    BOOST_CHECK( m2e1 == dim_2 );
 
     // Initialize the data with raw pointer/stride access. Start by looping
     // over the structs. Each struct has a group of contiguous arrays of size
@@ -305,14 +305,14 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
     {
         std::size_t s = idx.s();
         std::size_t i = idx.i();
-        BOOST_TEST( aosoa.get<0>(idx) == (s+i)*1.0 );
-        BOOST_TEST( aosoa.get<1>(idx) == int((s+i)*2) );
-        BOOST_TEST( aosoa.get<3>(idx) == int((s+i)*4) );
-        BOOST_TEST( aosoa.get<4>(idx) == (s+i)*5.0 );
+        BOOST_CHECK( aosoa.get<0>(idx) == (s+i)*1.0 );
+        BOOST_CHECK( aosoa.get<1>(idx) == int((s+i)*2) );
+        BOOST_CHECK( aosoa.get<3>(idx) == int((s+i)*4) );
+        BOOST_CHECK( aosoa.get<4>(idx) == (s+i)*5.0 );
 
         // Member 2 has some extra dimensions so check those too.
         for ( std::size_t j = 0; j < dim_1; ++j )
             for ( std::size_t k = 0; k < dim_2; ++k )
-                BOOST_TEST( aosoa.get<2>(idx,j,k) == (s+i+j+k)*3.0 );
+                BOOST_CHECK( aosoa.get<2>(idx,j,k) == (s+i+j+k)*3.0 );
     }
 }

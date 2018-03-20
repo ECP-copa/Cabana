@@ -36,11 +36,11 @@ BOOST_AUTO_TEST_CASE( soa_test )
                                  double[4][2][3][2]>;
 
     // Check that the data in the soa is contiguous.
-    BOOST_TEST( std::is_trivial<soa_type>::value );
+    BOOST_CHECK( std::is_trivial<soa_type>::value );
 
     // Check that the soa is the same size as the struct (i.e. they are
     // equivalent).
-    BOOST_TEST( sizeof(FooData) == sizeof(soa_type) );
+    BOOST_CHECK( sizeof(FooData) == sizeof(soa_type) );
 
     // Create an soa.
     soa_type soa;
@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE( soa_test )
     d6[2][1][1][1][1] = v2;
 
     // Check the data.
-    BOOST_TEST( Cabana::getStructMember<0>( soa )[3] == v1 );
-    BOOST_TEST(
+    BOOST_CHECK( Cabana::getStructMember<0>( soa )[3] == v1 );
+    BOOST_CHECK(
         Cabana::getStructMember<6>( soa )[2][1][1][1][1] == v2 );
 }

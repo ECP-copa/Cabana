@@ -19,28 +19,28 @@ void checkDataMembers(
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
-                    BOOST_TEST( aosoa.template get<0>( idx, i, j, k ) ==
+                    BOOST_CHECK( aosoa.template get<0>( idx, i, j, k ) ==
                                 fval * (i+j+k) );
 
         // Member 1.
-        BOOST_TEST( aosoa.template get<1>( idx ) == ival );
+        BOOST_CHECK( aosoa.template get<1>( idx ) == ival );
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
                     for ( std::size_t l = 0; l < dim_4; ++l )
-                        BOOST_TEST( aosoa.template get<2>( idx, i, j, k, l ) ==
+                        BOOST_CHECK( aosoa.template get<2>( idx, i, j, k, l ) ==
                                     fval * (i+j+k+l) );
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            BOOST_TEST( aosoa.template get<3>( idx, i ) == dval * i );
+            BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
 
         // Member 4.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                BOOST_TEST( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
+                BOOST_CHECK( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
     }
 }
 
