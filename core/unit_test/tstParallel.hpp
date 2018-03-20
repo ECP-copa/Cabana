@@ -68,14 +68,14 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,Kokkos::Serial>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_EXECSPACE>;
 
     // Create an AoSoA.
     std::size_t num_data = 155;
     AoSoA_t aosoa( num_data );
 
     // Create an execution policy.
-    Cabana::IndexRangePolicy<Kokkos::Serial>
+    Cabana::IndexRangePolicy<TEST_EXECSPACE>
         range_policy( aosoa.begin(), aosoa.end() );
 
     // Write a functor to operate on.
