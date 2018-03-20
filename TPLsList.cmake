@@ -1,4 +1,5 @@
 SET(Cabana_TPLS_FINDMODS_CLASSIFICATIONS
-  Kokkos       "cmake/TPLs/"        SS
-  BoostOrg     "cmake/TPLs/"        SS
+  CUDA         "cmake/tribits/tribits/core/std_tpls/" ST
+  Kokkos       "cmake/TPLs/"                          ST
+  BoostOrg     "cmake/TPLs/"                          ST
   )

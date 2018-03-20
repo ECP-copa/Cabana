@@ -38,7 +38,7 @@ IF(Cabana_ENABLE_Serial)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     AoSoA_test_Serial
-    SOURCES serial/tstAoSoA_Serial.cpp unit_test_main.cpp
+    SOURCES Serial/tstAoSoA_Serial.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -46,7 +46,7 @@ IF(Cabana_ENABLE_Serial)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     MemberSlice_test_Serial
-    SOURCES serial/tstMemberSlice_Serial.cpp unit_test_main.cpp
+    SOURCES Serial/tstMemberSlice_Serial.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -54,7 +54,7 @@ IF(Cabana_ENABLE_Serial)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Parallel_test_Serial
-    SOURCES serial/tstParallel_Serial.cpp unit_test_main.cpp
+    SOURCES Serial/tstParallel_Serial.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -69,7 +69,7 @@ IF(Cabana_ENABLE_OpenMP)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     AoSoA_test_OpenMP
-    SOURCES openmp/tstAoSoA_OpenMP.cpp unit_test_main.cpp
+    SOURCES OpenMP/tstAoSoA_OpenMP.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -77,7 +77,7 @@ IF(Cabana_ENABLE_OpenMP)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     MemberSlice_test_OpenMP
-    SOURCES openmp/tstMemberSlice_OpenMP.cpp unit_test_main.cpp
+    SOURCES OpenMP/tstMemberSlice_OpenMP.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -85,7 +85,7 @@ IF(Cabana_ENABLE_OpenMP)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Parallel_test_OpenMP
-    SOURCES openmp/tstParallel_OpenMP.cpp unit_test_main.cpp
+    SOURCES OpenMP/tstParallel_OpenMP.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -100,7 +100,7 @@ IF(Cabana_ENABLE_Cuda)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     AoSoA_test_CudaUVM
-    SOURCES cuda/tstAoSoA_CudaUVM.cpp unit_test_main.cpp
+    SOURCES Cuda/tstAoSoA_CudaUVM.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -108,7 +108,7 @@ IF(Cabana_ENABLE_Cuda)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     MemberSlice_test_CudaUVM
-    SOURCES cuda/tstMemberSlice_CudaUVM.cpp unit_test_main.cpp
+    SOURCES Cuda/tstMemberSlice_CudaUVM.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -116,7 +116,7 @@ IF(Cabana_ENABLE_Cuda)
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Parallel_test_CudaUVM
-    SOURCES cuda/tstParallel_CudaUVM.cpp unit_test_main.cpp
+    SOURCES Cuda/tstParallel_CudaUVM.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
