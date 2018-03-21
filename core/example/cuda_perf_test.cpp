@@ -15,8 +15,12 @@ int main( int argc, char* argv[] )
     // Initialize the kokkos runtime.
     Kokkos::initialize( argc, argv );
 
+    // Declare the execution and memory spaces.
+    using MemorySpace = Kokkos::CudaUVMSpace;
+    using ExecutionSpace = Kokkos::Cuda;
+
     // Declare the inner array size.
-    using inner_array_size = Cabana::InnerArraySize<1000>;
+    using inner_array_size = Cabana::InnerArraySize<32>;
 
     // Declare data types.
     using DataTypes =
@@ -26,8 +30,7 @@ int main( int argc, char* argv[] )
                                 double[3],    // V2
                                 double[3],    // RESULT
                                 double,       // S1
-                                double,       // S2
-                                int>;         // ID
+                                double>;      // S2
 
     // Enumerate the types for convenience.
     enum MyTypes { M1 = 0,
@@ -36,11 +39,10 @@ int main( int argc, char* argv[] )
                    V2,
                    RESULT,
                    S1,
-                   S2,
-                   ID };
+                   S2 };
 
-    // Declare the AoSoA type. Use CudaUVM as the memory space.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,Kokkos::CudaUVMSpace>;
+    // Declare the AoSoA type.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,MemorySpace>;
 
     // Set the total problem size.
     std::size_t num_data = 1e7;
@@ -56,10 +58,9 @@ int main( int argc, char* argv[] )
     auto result = Cabana::slice<RESULT>( aosoa );
     auto s1 = Cabana::slice<S1>( aosoa );
     auto s2 = Cabana::slice<S2>( aosoa );
-    auto id = Cabana::slice<ID>( aosoa );
 
-    // Create an execution policy. Execute with CUDA>
-    Cabana::IndexRangePolicy<Kokkos::Cuda>
+    // Create an execution policy.
+    Cabana::IndexRangePolicy<ExecutionSpace>
         range_policy( aosoa.begin(), aosoa.end() );
 
     // Initialization functor.
@@ -81,12 +82,11 @@ int main( int argc, char* argv[] )
 
         s1(idx) = 1.0;
         s2(idx) = 1.0;
-
-        id(idx) = 1.0;
     };
 
     // Initialize.
-    Cabana::parallel_for( range_policy, init_func, Cabana::StructAndArrayParallelTag() );
+    Cabana::parallel_for(
+        range_policy, init_func, Cabana::StructAndArrayParallelTag() );
 
     // Create a work functor:
     // m3 = m1 * m2
@@ -129,7 +129,8 @@ int main( int argc, char* argv[] )
 
     // Do work.
     auto start_time = std::chrono::high_resolution_clock::now();
-    Cabana::parallel_for( range_policy, work_func, Cabana::StructAndArrayParallelTag() );
+    Cabana::parallel_for(
+        range_policy, work_func, Cabana::StructAndArrayParallelTag() );
     auto end_time = std::chrono::high_resolution_clock::now();
 
     auto elapsed_time = end_time - start_time;

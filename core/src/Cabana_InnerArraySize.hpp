@@ -32,29 +32,33 @@ struct is_inner_array_size<const InnerArraySize<N> > : public std::true_type {};
   \class ExecutionSpaceInnerArraySize
   \brief Inner array sizes specific for execution spaces.
 
-  Default version has an inner array size of 1. Specializations will set this
-  specifically for the given space.
+  Specializations will set this specifically for the given space.
 */
 template<class ExecutionSpace>
-class ExecutionSpaceInnerArraySize : public InnerArraySize<1> {};
+class ExecutionSpaceInnerArraySize;
 
 //---------------------------------------------------------------------------//
-// Serial specialization.
+// Serial specialization. Inner array size is 1.
 #if defined( KOKKOS_ENABLE_SERIAL )
-
+template<>
+class ExecutionSpaceInnerArraySize<Kokkos::Serial>
+    : public InnerArraySize<1> {};
 #endif
 
 //---------------------------------------------------------------------------//
 // OpenMP specialization.
 #if defined( KOKKOS_ENABLE_OPENMP )
-
+template<>
+class ExecutionSpaceInnerArraySize<Kokkos::OpenMP>
+    : public InnerArraySize<64> {};
 #endif
 
 //---------------------------------------------------------------------------//
-// Cuda specialization. Use the warp size
+// Cuda specialization. Use the warp size of 32.
 #if defined( KOKKOS_ENABLE_CUDA )
 template<>
-class ExecutionSpaceInnerArraySize<Kokkos::Cuda> : public InnerArraySize<32> {};
+class ExecutionSpaceInnerArraySize<Kokkos::Cuda>
+    : public InnerArraySize<32> {};
 #endif
 
 //---------------------------------------------------------------------------//
