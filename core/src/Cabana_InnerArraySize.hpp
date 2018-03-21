@@ -51,9 +51,10 @@ class ExecutionSpaceInnerArraySize : public InnerArraySize<1> {};
 #endif
 
 //---------------------------------------------------------------------------//
-// Cuda specialization.
+// Cuda specialization. Use the warp size
 #if defined( KOKKOS_ENABLE_CUDA )
-
+template<>
+class ExecutionSpaceInnerArraySize<Kokkos::Cuda> : public InnerArraySize<32> {};
 #endif
 
 //---------------------------------------------------------------------------//

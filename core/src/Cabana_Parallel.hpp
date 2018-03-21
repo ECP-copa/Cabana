@@ -124,7 +124,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     // Type aliases.
     using kokkos_policy =
         Kokkos::MDRangePolicy<typename ExecutionPolicy::execution_space,
-                              Kokkos::Rank<2>,
+                              Kokkos::Rank<2,Kokkos::Iterate::Right,Kokkos::Iterate::Right>,
                               Kokkos::IndexType<std::size_t> >;
     using point_type = typename kokkos_policy::point_type;
 
