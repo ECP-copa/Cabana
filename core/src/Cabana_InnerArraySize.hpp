@@ -51,26 +51,8 @@ class ExecutionSpaceInnerArraySize : public InnerArraySize<1> {};
 #endif
 
 //---------------------------------------------------------------------------//
-// Qthread specialization
-#if defined( KOKKOS_ENABLE_QTHREADS )
-
-#endif
-
-//---------------------------------------------------------------------------//
-// Threads specialization.
-#if defined( KOKKOS_ENABLE_THREADS )
-
-#endif
-
-//---------------------------------------------------------------------------//
 // Cuda specialization.
 #if defined( KOKKOS_ENABLE_CUDA )
-
-#endif
-
-//---------------------------------------------------------------------------//
-// ROCm specialization.
-#if defined( KOKKOS_ENABLE_ROCM )
 
 #endif
 
