@@ -50,7 +50,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     // each thread loops over the inner arrays.
     std::size_t array_size = begin.a();
     auto functor_wrapper =
-        KOKKOS_LAMBDA( std::size_t s )
+        KOKKOS_LAMBDA( const std::size_t s )
         {
             std::size_t i_begin = (s == s_begin) ? begin.i() : 0;
             std::size_t i_end = ((s == s_end - 1) && (end.i() != 0))
@@ -99,7 +99,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
         // Create a wrapper for the functor. Each struct is given a thread and
         // each thread loops over the inner arrays.
         auto functor_wrapper =
-            KOKKOS_LAMBDA( std::size_t i )
+            KOKKOS_LAMBDA( const std::size_t i )
             {
                 Index idx( array_size, s, i );
                 functor( idx );
@@ -140,7 +140,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
 
     // Create a wrapper for the functor.
     auto functor_wrapper =
-        KOKKOS_LAMBDA( std::size_t s, std::size_t i )
+        KOKKOS_LAMBDA( const std::size_t s, const std::size_t i )
         {
             Index idx( array_size, s, i );
             if ( idx >= begin && idx < end ) functor( idx );

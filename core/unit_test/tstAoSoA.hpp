@@ -66,7 +66,7 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_EXECSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
 
     // Make sure that it is actually an AoSoA.
     BOOST_CHECK( Cabana::is_aosoa<AoSoA_t>::value );
@@ -250,7 +250,7 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_EXECSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
 
     // Create an AoSoA using the default constructor.
     std::size_t num_data = 350;

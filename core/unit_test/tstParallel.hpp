@@ -68,7 +68,7 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_EXECSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
 
     // Create an AoSoA.
     std::size_t num_data = 155;

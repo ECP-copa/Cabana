@@ -67,7 +67,7 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_EXECSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
 
     // Make sure that it is actually an AoSoA.
     BOOST_CHECK( Cabana::is_aosoa<AoSoA_t>::value );
