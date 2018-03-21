@@ -129,7 +129,7 @@ int main( int argc, char* argv[] )
 
     // Do work.
     auto start_time = std::chrono::high_resolution_clock::now();
-    Cabana::parallel_for( range_policy, work_func, Cabana::StructParallelTag() );
+    Cabana::parallel_for( range_policy, work_func, Cabana::StructAndArrayParallelTag() );
     auto end_time = std::chrono::high_resolution_clock::now();
 
     auto elapsed_time = end_time - start_time;
