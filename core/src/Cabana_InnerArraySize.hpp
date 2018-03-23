@@ -54,11 +54,11 @@ class ExecutionSpaceInnerArraySize<Kokkos::OpenMP>
 #endif
 
 //---------------------------------------------------------------------------//
-// Cuda specialization. Use the warp size of 32.
+// Cuda specialization. Use the warp size.
 #if defined( KOKKOS_ENABLE_CUDA )
 template<>
 class ExecutionSpaceInnerArraySize<Kokkos::Cuda>
-    : public InnerArraySize<32> {};
+    : public InnerArraySize<Kokkos::Impl::CudaTraits::WarpSize> {};
 #endif
 
 //---------------------------------------------------------------------------//

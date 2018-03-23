@@ -25,8 +25,7 @@ namespace Cabana
 /*! \class AoSoATraits
   \brief Traits class for accessing attributes of a AoSoA.
 
-  This is an implementation detail of AoSoA.  It is only of interest
-  to developers implementing a new specialization of AoSoA.
+  These traits define the template parameter structure of an AoSoA.
 
   Template argument options:
   - AoSoA< DataTypes >

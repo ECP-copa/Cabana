@@ -49,9 +49,6 @@ void checkDataMembers(
 //---------------------------------------------------------------------------//
 BOOST_AUTO_TEST_CASE( parallel_for_test )
 {
-    // Manually set the inner array size.
-    using inner_array_size = Cabana::InnerArraySize<10>;
-
     // Data dimensions.
     const std::size_t dim_1 = 3;
     const std::size_t dim_2 = 2;
@@ -67,8 +64,9 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
                                 double[dim_1][dim_2]
                                 >;
 
-    // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
+    // Declare the AoSoA type. Let the library pick an inner array size based
+    // on the execution space.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
 
     // Create an AoSoA.
     std::size_t num_data = 155;
