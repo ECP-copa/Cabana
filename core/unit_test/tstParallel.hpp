@@ -36,9 +36,6 @@ void checkDataMembers(
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
             BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            printf( "%f, %f\n", aosoa.template get<3>( idx, i ),  dval * i );
-
 
         // Member 4.
         for ( std::size_t i = 0; i < dim_1; ++i )

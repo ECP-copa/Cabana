@@ -22,6 +22,9 @@ int main( int argc, char* argv[] )
     // Declare the inner array size.
     using inner_array_size = Cabana::InnerArraySize<32>;
 
+    // Declare the parallel for algorithm tag.
+    using parallel_algorithm_tag = Cabana::StructAndArrayParallelTag;
+
     // Declare data types.
     using DataTypes =
         Cabana::MemberDataTypes<double[3][3], // M1
@@ -85,8 +88,7 @@ int main( int argc, char* argv[] )
     };
 
     // Initialize.
-    Cabana::parallel_for(
-        range_policy, init_func, Cabana::StructAndArrayParallelTag() );
+    Cabana::parallel_for( range_policy, init_func, parallel_algorithm_tag() );
 
     // Create a work functor:
     // m3 = m1 * m2
@@ -129,9 +131,7 @@ int main( int argc, char* argv[] )
 
     // Do work.
     auto start_time = std::chrono::high_resolution_clock::now();
-    Cabana::parallel_for(
-        range_policy, work_func, Cabana::StructAndArrayParallelTag() );
-
+    Cabana::parallel_for( range_policy, work_func, parallel_algorithm_tag() );
     auto end_time = std::chrono::high_resolution_clock::now();
 
     auto elapsed_time = end_time - start_time;
