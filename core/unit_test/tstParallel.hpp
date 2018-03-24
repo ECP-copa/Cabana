@@ -36,6 +36,9 @@ void checkDataMembers(
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
             BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            printf( "%f, %f\n", aosoa.template get<3>( idx, i ),  dval * i );
+
 
         // Member 4.
         for ( std::size_t i = 0; i < dim_1; ++i )
@@ -43,6 +46,66 @@ void checkDataMembers(
                 BOOST_CHECK( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
     }
 }
+
+//---------------------------------------------------------------------------//
+// Assignment operator.
+template<class AoSoA_t>
+class AssignmentOp
+{
+  public:
+    AssignmentOp( AoSoA_t aosoa,
+                  float fval,
+                  double dval,
+                  int ival )
+        : _aosoa( aosoa )
+        , _fval( fval )
+        , _dval( dval )
+        , _ival( ival )
+        , _dim_1( aosoa.extent(2,0) )
+        , _dim_2( aosoa.extent(2,1) )
+        , _dim_3( aosoa.extent(2,2) )
+        , _dim_4( aosoa.extent(2,3) )
+    {}
+
+    KOKKOS_INLINE_FUNCTION void operator()( const Cabana::Index idx ) const
+    {
+        // Member 0.
+        for ( std::size_t i = 0; i < _dim_1; ++i )
+            for ( std::size_t j = 0; j < _dim_2; ++j )
+                for ( std::size_t k = 0; k < _dim_3; ++k )
+                    _aosoa.template get<0>( idx, i, j, k ) = _fval * (i+j+k);
+
+        // Member 1.
+        _aosoa.template get<1>( idx ) = _ival;
+
+        // Member 2.
+        for ( std::size_t i = 0; i < _dim_1; ++i )
+            for ( std::size_t j = 0; j < _dim_2; ++j )
+                for ( std::size_t k = 0; k < _dim_3; ++k )
+                    for ( std::size_t l = 0; l < _dim_4; ++l )
+                        _aosoa.template get<2>( idx, i, j, k, l ) = _fval * (i+j+k+l);
+
+        // Member 3.
+        for ( std::size_t i = 0; i < _dim_1; ++i )
+            _aosoa.template get<3>( idx, i ) = _dval * i;
+
+        // Member 4.
+        for ( std::size_t i = 0; i < _dim_1; ++i )
+            for ( std::size_t j = 0; j < _dim_2; ++j )
+                _aosoa.template get<4>( idx, i, j ) = _dval * (i+j);
+    }
+
+  private:
+
+    AoSoA_t _aosoa;
+    float _fval;
+    double _dval;
+    int _ival;
+    std::size_t _dim_1 = 3;
+    std::size_t _dim_2 = 2;
+    std::size_t _dim_3 = 4;
+    std::size_t _dim_4 = 3;
+};
 
 //---------------------------------------------------------------------------//
 // TESTS
@@ -76,37 +139,11 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     Cabana::IndexRangePolicy<TEST_EXECSPACE>
         range_policy( aosoa.begin(), aosoa.end() );
 
-    // Write a functor to operate on.
+    // Create a functor to operate on.
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto func_1 = KOKKOS_LAMBDA( const Cabana::Index idx )
-    {
-        // Member 0.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    aosoa.get<0>( idx, i, j, k ) = fval * (i+j+k);
-
-        // Member 1.
-        aosoa.get<1>( idx ) = ival;
-
-        // Member 2.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    for ( std::size_t l = 0; l < dim_4; ++l )
-                        aosoa.get<2>( idx, i, j, k, l ) = fval * (i+j+k+l);
-
-        // Member 3.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            aosoa.get<3>( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                aosoa.get<4>( idx, i, j ) = dval * (i+j);
-    };
+    AssignmentOp<AoSoA_t> func_1( aosoa, fval, dval, ival );
 
     // Loop in parallel using 1D struct parallelism.
     Cabana::parallel_for( range_policy, func_1, Cabana::StructParallelTag() );
@@ -118,33 +155,7 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     fval = 93.4;
     dval = 12.1;
     ival = 4;
-    auto func_2 = KOKKOS_LAMBDA( const Cabana::Index idx )
-    {
-        // Member 0.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    aosoa.get<0>( idx, i, j, k ) = fval * (i+j+k);
-
-        // Member 1.
-        aosoa.get<1>( idx ) = ival;
-
-        // Member 2.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    for ( std::size_t l = 0; l < dim_4; ++l )
-                        aosoa.get<2>( idx, i, j, k, l ) = fval * (i+j+k+l);
-
-        // Member 3.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            aosoa.get<3>( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                aosoa.get<4>( idx, i, j ) = dval * (i+j);
-    };
+    AssignmentOp<AoSoA_t> func_2( aosoa, fval, dval, ival );
 
     // Loop in parallel using 1D array parallelism.
     Cabana::parallel_for( range_policy, func_2, Cabana::ArrayParallelTag() );
@@ -156,33 +167,7 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     fval = 7.7;
     dval = 3.2;
     ival = 9;
-    auto func_3 = KOKKOS_LAMBDA( const Cabana::Index idx )
-    {
-        // Member 0.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    aosoa.get<0>( idx, i, j, k ) = fval * (i+j+k);
-
-        // Member 1.
-        aosoa.get<1>( idx ) = ival;
-
-        // Member 2.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    for ( std::size_t l = 0; l < dim_4; ++l )
-                        aosoa.get<2>( idx, i, j, k, l ) = fval * (i+j+k+l);
-
-        // Member 3.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            aosoa.get<3>( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                aosoa.get<4>( idx, i, j ) = dval * (i+j);
-    };
+    AssignmentOp<AoSoA_t> func_3( aosoa, fval, dval, ival );
 
     // Loop in parallel using 2D struct and array parallelism.
     Cabana::parallel_for(
@@ -192,11 +177,11 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
     // Do one more loop but this time auto-dispatch. Reuse the first functor.
-    fval = 3.4;
-    dval = 1.23;
-    ival = 1;
     Cabana::parallel_for( range_policy, func_1 );
 
     // Check data members for proper initialization.
+    fval = 3.4;
+    dval = 1.23;
+    ival = 1;
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }

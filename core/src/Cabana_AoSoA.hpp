@@ -223,11 +223,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     using struct_member_array_type =
         typename ArrayTypeAtIndex<I,array_size,Types...>::return_type;
 
-    // Struct member array const return type at a given index I.
-    template<std::size_t I>
-    using struct_member_const_array_type =
-        typename std::add_const<struct_member_array_type<I> >::type;
-
     // Struct member array data type at a given index I.
     template<std::size_t I>
     using struct_member_data_type =
@@ -243,20 +238,10 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     using struct_member_reference_type =
         typename std::add_lvalue_reference<struct_member_value_type<I> >::type;
 
-    // Struct member array element const reference type at a given index I.
-    template<std::size_t I>
-    using struct_member_const_reference_type =
-        typename std::add_const<struct_member_reference_type<I> >::type;
-
     // Struct member array element pointer type at a given index I.
     template<std::size_t I>
     using struct_member_pointer_type =
         typename std::add_pointer<struct_member_value_type<I> >::type;
-
-    // Struct member array element const pointer type at a given index I.
-    template<std::size_t I>
-    using struct_member_const_pointer_type =
-        typename std::add_const<struct_member_pointer_type<I> >::type;
 
   public:
 
@@ -439,15 +424,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(0==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
-    get( const Index& idx )
-    {
-        return array<I>(idx.s())[idx.i()];
-    }
-
-    template<std::size_t I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<struct_member_data_type<I> >::value),
-                            struct_member_const_reference_type<I> >::type
     get( const Index& idx ) const
     {
         return array<I>(idx.s())[idx.i()];
@@ -459,16 +435,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     typename std::enable_if<(1==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
     get( const Index& idx,
-         const int d0 )
-    {
-        return array<I>(idx.s())[idx.i()][d0];
-    }
-
-    template<std::size_t I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<struct_member_data_type<I> >::value),
-                            struct_member_const_reference_type<I> >::type
-    get( const Index& idx,
          const int d0 ) const
     {
         return array<I>(idx.s())[idx.i()][d0];
@@ -479,17 +445,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(2==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
-    get( const Index& idx,
-         const int d0,
-         const int d1 )
-    {
-        return array<I>(idx.s())[idx.i()][d0][d1];
-    }
-
-    template<std::size_t I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<struct_member_data_type<I> >::value),
-                            struct_member_const_reference_type<I> >::type
     get( const Index& idx,
          const int d0,
          const int d1 ) const
@@ -505,18 +460,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     get( const Index& idx,
          const int d0,
          const int d1,
-         const int d2 )
-    {
-        return array<I>(idx.s())[idx.i()][d0][d1][d2];
-    }
-
-    template<std::size_t I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<struct_member_data_type<I> >::value),
-                            struct_member_const_reference_type<I> >::type
-    get( const Index& idx,
-         const int d0,
-         const int d1,
          const int d2 ) const
     {
         return array<I>(idx.s())[idx.i()][d0][d1][d2];
@@ -527,19 +470,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(4==std::rank<struct_member_data_type<I> >::value),
                             struct_member_reference_type<I> >::type
-    get( const Index& idx,
-         const int d0,
-         const int d1,
-         const int d2,
-         const int d3 )
-    {
-        return array<I>(idx.s())[idx.i()][d0][d1][d2][d3];
-    }
-
-    template<std::size_t I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<struct_member_data_type<I> >::value),
-                            struct_member_const_reference_type<I> >::type
     get( const Index& idx,
          const int d0,
          const int d1,
@@ -581,14 +511,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // Get a typed pointer to the data for a given member at index I.
     template<std::size_t I>
     KOKKOS_INLINE_FUNCTION
-    struct_member_pointer_type<I> typedPointer()
-    {
-        return static_cast<struct_member_pointer_type<I> >( _pointers[I] );
-    }
-
-    template<std::size_t I>
-    KOKKOS_INLINE_FUNCTION
-    struct_member_const_pointer_type<I> typedPointer() const
+    struct_member_pointer_type<I> typedPointer() const
     {
         return static_cast<struct_member_pointer_type<I> >( _pointers[I] );
     }
@@ -596,15 +519,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // Get the array at the given struct index.
     template<std::size_t I>
     KOKKOS_INLINE_FUNCTION
-    struct_member_array_type<I> array( const std::size_t s )
-    {
-        return reinterpret_cast<struct_member_array_type<I> >(
-            typedPointer<I>() + s * _strides[I] );
-    }
-
-    template<std::size_t I>
-    KOKKOS_INLINE_FUNCTION
-    struct_member_const_array_type<I> array( const std::size_t s ) const
+    struct_member_array_type<I> array( const std::size_t s ) const
     {
         return reinterpret_cast<struct_member_array_type<I> >(
             typedPointer<I>() + s * _strides[I] );

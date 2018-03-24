@@ -57,10 +57,6 @@ class MemberSlice
     using array_type =
         typename aosoa_type::template struct_member_array_type<I>;
 
-    // Struct member array const return type at a given index I.
-    using const_array_type =
-        typename aosoa_type::template struct_member_const_array_type<I>;
-
     // Struct member array data type at a given index I.
     using data_type =
         typename aosoa_type::template struct_member_data_type<I>;
@@ -73,17 +69,9 @@ class MemberSlice
     using reference_type =
         typename aosoa_type::template struct_member_reference_type<I>;
 
-    // Struct member array element const reference type at a given index I.
-    using const_reference_type =
-        typename aosoa_type::template struct_member_const_reference_type<I>;
-
     // Struct member array element pointer type at a given index I.
     using pointer_type =
         typename aosoa_type::template struct_member_pointer_type<I>;
-
-    // Struct member array element const pointer type at a given index I.
-    using const_pointer_type =
-        typename aosoa_type::template struct_member_const_pointer_type<I>;
 
   public:
 
@@ -144,19 +132,6 @@ class MemberSlice
         (0==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
-    operator()( const Index& idx )
-    {
-        static_assert( J == I,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx);
-    }
-
-    template<std::size_t J = I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (0==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        const_reference_type>::type
     operator()( const Index& idx ) const
     {
         static_assert( J == I,
@@ -172,20 +147,6 @@ class MemberSlice
          typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
     operator()( const Index& idx,
-                const int d0 )
-    {
-        static_assert( J == I,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx,d0);
-    }
-
-    template<std::size_t J = I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (1==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        const_reference_type>::type
-    operator()( const Index& idx,
                 const int d0 ) const
     {
         static_assert( J == I,
@@ -197,22 +158,9 @@ class MemberSlice
     template<std::size_t J = I>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (2==std::rank<typename aosoa_type::template struct_member_data_type<J> >::value),
-        reference_type>::type
-    operator()( const Index& idx,
-                const int d0,
-                const int d1 )
-    {
-        static_assert( J == I, "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx,d0,d1);
-    }
-
-    template<std::size_t J = I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
         (2==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
-        const_reference_type>::type
+        reference_type>::type
     operator()( const Index& idx,
                 const int d0,
                 const int d1 ) const
@@ -232,22 +180,6 @@ class MemberSlice
     operator()( const Index& idx,
                 const int d0,
                 const int d1,
-                const int d2 )
-    {
-        static_assert( J == I,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx,d0,d1,d2);
-    }
-
-    template<std::size_t J = I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (3==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        const_reference_type>::type
-    operator()( const Index& idx,
-                const int d0,
-                const int d1,
                 const int d2 ) const
     {
         static_assert( J == I,
@@ -262,23 +194,6 @@ class MemberSlice
         (4==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
-    operator()( const Index& idx,
-                const int d0,
-                const int d1,
-                const int d2,
-                const int d3 )
-    {
-        static_assert( J == I,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx,d0,d1,d2,d3);
-    }
-
-    template<std::size_t J = I>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (4==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        const_reference_type>::type
     operator()( const Index& idx,
                 const int d0,
                 const int d1,
