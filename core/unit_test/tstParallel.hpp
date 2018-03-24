@@ -190,4 +190,13 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+
+    // Do one more loop but this time auto-dispatch. Reuse the first functor.
+    fval = 3.4;
+    dval = 1.23;
+    ival = 1;
+    Cabana::parallel_for( range_policy, func_1 );
+
+    // Check data members for proper initialization.
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }

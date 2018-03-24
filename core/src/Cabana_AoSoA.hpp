@@ -5,6 +5,7 @@
 #include <Cabana_SoA.hpp>
 #include <Cabana_Index.hpp>
 #include <Cabana_InnerArraySize.hpp>
+#include <Cabana_PerformanceTraits.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Core_fwd.hpp>
@@ -38,7 +39,7 @@ namespace Cabana
   - AoSoA< DataTypes , MemoryTraits >
 
   Note that this is effectively a reimplementation of Kokkos::ViewTraits for
-  the AoSoA with ArrayLayout replaced by ArraySize.
+  the AoSoA with ArrayLayout replaced by InnerArraySize.
 */
 template<class DataTypes, class ... Properties>
 class AoSoATraits ;
@@ -87,7 +88,7 @@ class AoSoATraits<
     using execution_space = typename Space::execution_space;
     using memory_space = typename Space::memory_space;
     using host_mirror_space = typename Kokkos::Impl::HostMirror<Space>::Space;
-    using array_size = ExecutionSpaceInnerArraySize<execution_space>;
+    using array_size = typename PerformanceTraits<execution_space>::inner_array_size;
     using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
 };
 
@@ -138,7 +139,7 @@ class AoSoATraits
         typename std::conditional<
         !std::is_same<typename properties::array_size,void>::value,
         typename properties::array_size,
-        ExecutionSpaceInnerArraySize<ExecutionSpace>
+        typename PerformanceTraits<ExecutionSpace>::inner_array_size
         >::type;
 
     using HostMirrorSpace =

@@ -14,6 +14,11 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
+// Forward declaration of performance traits.
+template<class ExecutionSpace>
+class PerformanceTraits;
+
+//---------------------------------------------------------------------------//
 // Algorithm tags.
 
 //! 1D parallelism over structs.
@@ -24,6 +29,21 @@ class ArrayParallelTag {};
 
 //! 2D parallelism over structs and inner arrays.
 class StructAndArrayParallelTag {};
+
+//---------------------------------------------------------------------------//
+// Parallel-for with performance traits dispatch of parallel loop algorithm
+// specialization.
+template<class ExecutionPolicy, class FunctorType>
+inline void parallel_for( const ExecutionPolicy& exec_policy,
+                          const FunctorType& functor,
+                          const std::string& str = "" )
+{
+    using exec_space = typename ExecutionPolicy::execution_space;
+    parallel_for( exec_policy,
+                  functor,
+                  typename PerformanceTraits<exec_space>::parallel_for_tag(),
+                  str );
+}
 
 //---------------------------------------------------------------------------//
 // Parallel-for 1D struct parallel specialization.
@@ -122,9 +142,10 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
                           const std::string& str = "" )
 {
     // Type aliases.
+    constexpr auto kokkos_iterate= Kokkos::Iterate::Right;
     using kokkos_policy =
         Kokkos::MDRangePolicy<typename ExecutionPolicy::execution_space,
-                              Kokkos::Rank<2,Kokkos::Iterate::Right,Kokkos::Iterate::Right>,
+                              Kokkos::Rank<2,kokkos_iterate,kokkos_iterate>,
                               Kokkos::IndexType<std::size_t> >;
     using point_type = typename kokkos_policy::point_type;
 

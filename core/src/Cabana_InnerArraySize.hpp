@@ -28,40 +28,6 @@ template<std::size_t N>
 struct is_inner_array_size<const InnerArraySize<N> > : public std::true_type {};
 
 //---------------------------------------------------------------------------//
-/*!
-  \class ExecutionSpaceInnerArraySize
-  \brief Inner array sizes specific for execution spaces.
-
-  Specializations will set this specifically for the given space.
-*/
-template<class ExecutionSpace>
-class ExecutionSpaceInnerArraySize;
-
-//---------------------------------------------------------------------------//
-// Serial specialization. Inner array size is 1.
-#if defined( KOKKOS_ENABLE_SERIAL )
-template<>
-class ExecutionSpaceInnerArraySize<Kokkos::Serial>
-    : public InnerArraySize<1> {};
-#endif
-
-//---------------------------------------------------------------------------//
-// OpenMP specialization.
-#if defined( KOKKOS_ENABLE_OPENMP )
-template<>
-class ExecutionSpaceInnerArraySize<Kokkos::OpenMP>
-    : public InnerArraySize<64> {};
-#endif
-
-//---------------------------------------------------------------------------//
-// Cuda specialization. Use the warp size.
-#if defined( KOKKOS_ENABLE_CUDA )
-template<>
-class ExecutionSpaceInnerArraySize<Kokkos::Cuda>
-    : public InnerArraySize<Kokkos::Impl::CudaTraits::WarpSize> {};
-#endif
-
-//---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 
