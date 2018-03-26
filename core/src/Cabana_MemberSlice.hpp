@@ -12,8 +12,26 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-// Forward declaration.
-template<std::size_t I, typename AoSoA_t>
+/*!
+  \class MemberSlice
+
+  \brief A slice of an array-of-structs-of-arrays with data access to a single
+  member.
+
+  A slice provides a simple wrapper around a single data member of an
+  AoSoA. This does a few convenient things. First, it decouples access of the
+  member from the AoSoA meaning that functionality can be implemented using
+  multiple slices from potentially multiple AoSoA containers. Second, it
+  eliminates the member index template parameter from the AoSoA get function,
+  instead giving an operator() syntax for accessing the member data.
+
+  Construction of slices is recommended using the free helper function as:
+
+  \code
+  auto slice = Cabana::slice<M>(aosoa);
+  \endcode
+*/
+template<std::size_t M, typename AoSoA_t>
 class MemberSlice;
 
 //---------------------------------------------------------------------------//
@@ -24,28 +42,22 @@ struct is_member_slice
 
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
-template<std::size_t I, typename AoSoA_t>
-struct is_member_slice<MemberSlice<I,AoSoA_t> >
+template<std::size_t M, typename AoSoA_t>
+struct is_member_slice<MemberSlice<M,AoSoA_t> >
     : public is_aosoa<AoSoA_t>::type {};
 
-template<std::size_t I, typename AoSoA_t>
-struct is_member_slice<const MemberSlice<I,AoSoA_t> >
+template<std::size_t M, typename AoSoA_t>
+struct is_member_slice<const MemberSlice<M,AoSoA_t> >
     : public is_aosoa<AoSoA_t>::type {};
 
 //---------------------------------------------------------------------------//
-/*!
-  \class MemberSlice
-
-  \brief A slice of an array-of-structs-of-arrays with data access to a single
-  member.
-*/
-template<std::size_t I, typename AoSoA_t>
+template<std::size_t M, typename AoSoA_t>
 class MemberSlice
 {
   public:
 
     // Slice type.
-    using slice_type = MemberSlice<I,AoSoA_t>;
+    using slice_type = MemberSlice<M,AoSoA_t>;
 
     // AoSoA type this slice wraps.
     using aosoa_type = AoSoA_t;
@@ -53,47 +65,65 @@ class MemberSlice
     // Inner array size.
     static constexpr std::size_t array_size = aosoa_type::array_size;
 
-    // Struct member array return type at a given index I.
+    // Struct member array return type at a given index M.
     using array_type =
-        typename aosoa_type::template struct_member_array_type<I>;
+        typename aosoa_type::template struct_member_array_type<M>;
 
-    // Struct member array data type at a given index I.
+    // Struct member array data type at a given index M.
     using data_type =
-        typename aosoa_type::template struct_member_data_type<I>;
+        typename aosoa_type::template struct_member_data_type<M>;
 
-    // Struct member array element value type at a given index I.
+    // Struct member array element value type at a given index M.
     using value_type =
-        typename aosoa_type::template struct_member_value_type<I>;
+        typename aosoa_type::template struct_member_value_type<M>;
 
-    // Struct member array element reference type at a given index I.
+    // Struct member array element reference type at a given index M.
     using reference_type =
-        typename aosoa_type::template struct_member_reference_type<I>;
+        typename aosoa_type::template struct_member_reference_type<M>;
 
-    // Struct member array element pointer type at a given index I.
+    // Struct member array element pointer type at a given index M.
     using pointer_type =
-        typename aosoa_type::template struct_member_pointer_type<I>;
+        typename aosoa_type::template struct_member_pointer_type<M>;
 
   public:
 
-    // Constructor.
+    /*!
+      \brief Constructor.
+
+      \param aosoa The AoSoA to slice at the member index M.
+    */
     MemberSlice( aosoa_type aosoa )
         : _aosoa( aosoa )
     {
         static_assert( is_aosoa<aosoa_type>::value,
                        "MemberSlice can only wrap AoSoA objects!" );
-        static_assert( I < aosoa_type::number_of_members,
+        static_assert( M < aosoa_type::number_of_members,
                        "MemberSlice index is out of range!" );
     }
 
-    // Returns the number of elements in the container.
+    /*!
+      \brief Returns the number of elements in the container.
+
+      \return The number of elements in the container.
+    */
     KOKKOS_FUNCTION
     std::size_t size() const { return _aosoa.size(); }
 
-    // Get the number of structs-of-arrays in the array.
+    /*!
+      \brief Get the number of structs-of-arrays in the container.
+
+      \return The number of structs-of-arrays in the container.
+    */
     KOKKOS_FUNCTION
     std::size_t numSoA() const { return _aosoa.numSoA(); }
 
-    // Get the size of the data array at a given struct member index.
+    /*!
+      \brief Get the size of the data array at a given struct member index.
+
+      \param s The struct index to get the array size for.
+
+      \return The size of the array at the given struct index.
+    */
     KOKKOS_FUNCTION
     std::size_t arraySize( const std::size_t s ) const
     { return _aosoa.arraySize(s); }
@@ -101,24 +131,42 @@ class MemberSlice
     // -------------------------------
     // Member data type properties.
 
-    // Get the rank of the data for this member.
+    /*!
+      \brief Get the rank of the data for this member.
+
+      \return The rank of the data for this member.
+    */
     KOKKOS_INLINE_FUNCTION
     std::size_t rank() const
-    { return _aosoa.rank(I); }
+    { return _aosoa.rank(M); }
 
-    // Get the extent of a given member data dimension.
+    /*!
+      \brief Get the extent of a given member data dimension.
+
+      \param D The member data dimension to get the extent for.
+
+      \return The extent of the given member data dimension.
+    */
     KOKKOS_INLINE_FUNCTION
     std::size_t extent( const std::size_t D ) const
-    { return _aosoa.extent(I,D); }
+    { return _aosoa.extent(M,D); }
 
     // -----------------------------
     // Array range
 
-    // Get the index at the beginning of the entire AoSoA.
+    /*!
+      \brief Get the index at the beginning of the container.
+
+      \return An index to the beginning of the container.
+    */
     KOKKOS_FUNCTION
     Index begin() const { return _aosoa.begin(); }
 
-    // Get the index at end of the entire AoSoA.
+    /*!
+      \brief Get the index at the end of the container.
+
+      \return An index to the end of the container.
+    */
     KOKKOS_FUNCTION
     Index end() const { return _aosoa.end(); }
 
@@ -126,7 +174,7 @@ class MemberSlice
     // Access the data value at a given struct index and array index
 
     // Rank 0
-    template<std::size_t J = I>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (0==std::rank<
@@ -134,13 +182,13 @@ class MemberSlice
         reference_type>::type
     operator()( const Index& idx ) const
     {
-        static_assert( J == I,
+        static_assert( J == M,
                        "Do not call with different template arguments!" );
         return _aosoa.template get<J>(idx);
     }
 
     // Rank 1
-    template<std::size_t J = I>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<
@@ -149,13 +197,13 @@ class MemberSlice
     operator()( const Index& idx,
                 const int d0 ) const
     {
-        static_assert( J == I,
+        static_assert( J == M,
                        "Do not call with different template arguments!" );
         return _aosoa.template get<J>(idx,d0);
     }
 
     // Rank 2
-    template<std::size_t J = I>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<
@@ -165,13 +213,13 @@ class MemberSlice
                 const int d0,
                 const int d1 ) const
     {
-        static_assert( J == I,
+        static_assert( J == M,
                        "Do not call with different template arguments!" );
         return _aosoa.template get<J>(idx,d0,d1);
     }
 
     // Rank 3
-    template<std::size_t J = I>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<
@@ -182,13 +230,13 @@ class MemberSlice
                 const int d1,
                 const int d2 ) const
     {
-        static_assert( J == I,
+        static_assert( J == M,
                        "Do not call with different template arguments!" );
         return _aosoa.template get<J>(idx,d0,d1,d2);
     }
 
     // Rank 4
-    template<std::size_t J = I>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<
@@ -200,7 +248,7 @@ class MemberSlice
                 const int d2,
                 const int d3 ) const
     {
-        static_assert( J == I,
+        static_assert( J == M,
                        "Do not call with different template arguments!" );
         return _aosoa.template get<J>(idx,d0,d1,d2,d3);
     }
@@ -213,10 +261,20 @@ class MemberSlice
 };
 
 //---------------------------------------------------------------------------//
-// Free function so slice an AoSoA over a given member.
-template<std::size_t I, typename AoSoA_t>
-MemberSlice<I,AoSoA_t> slice( AoSoA_t aosoa )
-{ return MemberSlice<I,AoSoA_t>(aosoa); }
+/*!
+  \brief Free function so slice an AoSoA over a given member.
+
+  \tparam M The member of the input AoSoA to slice.
+
+  \tparam M The type of AoSoA to slice.
+
+  \param aosoa The aosoa to slice.
+
+  \return A slice for the given member index of the given AoSoA.
+*/
+template<std::size_t M, typename AoSoA_t>
+MemberSlice<M,AoSoA_t> slice( AoSoA_t aosoa )
+{ return MemberSlice<M,AoSoA_t>(aosoa); }
 
 //---------------------------------------------------------------------------//
 
