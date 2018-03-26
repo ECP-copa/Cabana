@@ -31,8 +31,38 @@ class ArrayParallelTag {};
 class StructAndArrayParallelTag {};
 
 //---------------------------------------------------------------------------//
-// Parallel-for with performance traits dispatch of parallel loop algorithm
-// specialization.
+/*!
+  \brief Execute \c functor in parallel according to the execution \c policy.
+
+  \tparam ExecutionPolicy The execution over which to execute the functor.
+
+  \tparam FunctorType The functor type to execute.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param str An optional name for the functor. Will be forwarded to the
+  Kokkos::parallel_for called by this code and can be used for identification
+  and profiling purposes.
+
+  A "functor" is a class containing the function to execute in parallel, data
+  needed for that execution, and an optional \c execution_space typedef.  Here
+  is an example functor for parallel_for:
+
+  \code
+  class FunctorType {
+  public:
+  typedef  ...  execution_space ;
+  void operator() ( Index idx ) const ;
+  };
+  \endcode
+
+  In the above example, \c Index is a Cabana index to a given AoSoA element.
+  Its <tt>operator()</tt> method defines the operation to parallelize, over
+  the range of indices <tt>idx=[begin,end]</tt>.  This compares to a single
+  iteration \c idx of a \c for loop.
+*/
 template<class ExecutionPolicy, class FunctorType>
 inline void parallel_for( const ExecutionPolicy& exec_policy,
                           const FunctorType& functor,
@@ -46,7 +76,26 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
 }
 
 //---------------------------------------------------------------------------//
-// Parallel-for 1D struct parallel specialization.
+/*!
+  \brief Parallel-for 1D struct parallel specialization.
+
+  Takes an instance of the \c StructParallelTag to indicate specialization.
+
+  Creates 1D parallel over structs with internal array loops in serial on each
+  thread:
+  \code
+  AoSoA aosoa;
+  Index begin, end;
+  parallel_for( s : num_structs )
+  {
+      for( i : array_size(s) )
+      {
+          Index idx( array_size, s, i );
+          functor( idx );
+      }
+  }
+  \endcode
+*/
 template<class ExecutionPolicy, class FunctorType>
 inline void parallel_for( const ExecutionPolicy& exec_policy,
                           const FunctorType& functor,
@@ -90,7 +139,26 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
 }
 
 //---------------------------------------------------------------------------//
-// Parallel-for 1D inner array parallel specialization.
+/*!
+  \brief Parallel-for 1D inner array parallel specialization.
+
+  Takes an instance of the \c ArrayParallelTag to indicate specialization.
+
+  Creates a serial outer loop over structs and 1D parallel loops over inner
+  arrays:
+  \code
+  AoSoA aosoa;
+  Index begin, end;
+  for( s : num_structs )
+  {
+      parallel_for( i : array_size(s) )
+      {
+          Index idx( array_size, s, i );
+          functor( idx );
+      }
+  }
+  \endcode
+*/
 template<class ExecutionPolicy, class FunctorType>
 inline void parallel_for( const ExecutionPolicy& exec_policy,
                           const FunctorType& functor,
@@ -134,7 +202,25 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
 }
 
 //---------------------------------------------------------------------------//
-// Parallel-for 2D parallel over structs and inner arrays specialization.
+/*!
+  \brief Parallel-for 2D struct and inner array parallel specialization.
+
+  Takes an instance of the \c StructAndArrayParallelTag to indicate specialization.
+
+  Creates a 2D parallel loop over structs and their inner arrays:
+  \code
+  AoSoA aosoa;
+  Index begin, end;
+  parallel_for( s : num_structs )
+  {
+      parallel_for( i : array_size(s) )
+      {
+          Index idx( array_size, s, i );
+          functor( idx );
+      }
+  }
+  \endcode
+*/
 template<class ExecutionPolicy, class FunctorType>
 inline void parallel_for( const ExecutionPolicy& exec_policy,
                           const FunctorType& functor,
@@ -164,7 +250,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
         KOKKOS_LAMBDA( const std::size_t s, const std::size_t i )
         {
             Index idx( array_size, s, i );
-            if ( idx >= begin && idx < end ) functor( idx );
+            if ( begin <= idx && idx < end ) functor( idx );
         };
 
     // Execute the functor.
