@@ -8,6 +8,7 @@
 #include <Kokkos_ExecPolicy.hpp>
 #include <Kokkos_Parallel.hpp>
 #include <KokkosExp_MDRangePolicy.hpp>
+#include <Kokkos_Pair.hpp>
 
 #include <cstdlib>
 
@@ -30,6 +31,58 @@ class ArrayParallelTag {};
 //! 2D parallelism over structs and inner arrays.
 class StructAndArrayParallelTag {};
 
+//---------------------------------------------------------------------------//
+// Helper functions
+//---------------------------------------------------------------------------//
+// Given a begin and end index get the starting and ending struct indices.
+KOKKOS_INLINE_FUNCTION
+Kokkos::pair<std::size_t,std::size_t>
+getStructBounds( const Index& begin, const Index& end )
+{
+    Kokkos::pair<std::size_t,std::size_t> struct_bounds;
+
+    // The first struct is the struct index of the beginning.
+    struct_bounds.first = begin.s();
+
+    // If the end is also at the front of an array that means the struct index
+    // of end is also the ending struct index. If not, we are not iterating
+    // all the way through the arrays of the last struct. In this case we add
+    // 1 to ensure that the loop over structs loops through all structs with
+    // data.
+    struct_bounds.second = (0 == end.i()) ? end.s() : end.s() + 1;
+
+    return struct_bounds;
+}
+
+//---------------------------------------------------------------------------//
+// Given a begin and end index, struct bounds, and a struct index get the
+// starting and ending array indices.
+KOKKOS_INLINE_FUNCTION
+Kokkos::pair<std::size_t,std::size_t>
+getArrayBounds( const Index& begin,
+                const Index& end,
+                const Kokkos::pair<std::size_t,std::size_t>& struct_bounds,
+                const std::size_t s )
+{
+    Kokkos::pair<std::size_t,std::size_t> array_bounds;
+
+    // If the given struct index is also the index of the struct index in
+    // begin, use the starting array index. If not, that means we have passed
+    // the first struct and all subsequent structs start at array index 0.
+    array_bounds.first = (s == struct_bounds.first) ? begin.i() : 0;
+
+    // If we are in the last struct unfilled struct then use the array index
+    // of end. If not, we are looping through the current array all the way to
+    // the end so use the array size.
+    array_bounds.second =
+        ((s == struct_bounds.second - 1) && (end.i() != 0))
+        ? end.i() : begin.a();
+
+    return array_bounds;
+}
+
+//---------------------------------------------------------------------------//
+// Parallel for
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute \c functor in parallel according to the execution \c policy.
@@ -111,9 +164,8 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     // unfilled struct.
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
-    std::size_t s_begin = begin.s();
-    std::size_t s_end = (0 == end.i()) ? end.s() : end.s() + 1;
-    kokkos_policy k_policy( s_begin, s_end );
+    auto struct_bounds = getStructBounds( begin, end );
+    kokkos_policy k_policy( struct_bounds.first, struct_bounds.second );
 
     // Create a wrapper for the functor. Each struct is given a thread and
     // each thread loops over the inner arrays.
@@ -121,10 +173,10 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     auto functor_wrapper =
         KOKKOS_LAMBDA( const std::size_t s )
         {
-            std::size_t i_begin = (s == s_begin) ? begin.i() : 0;
-            std::size_t i_end = ((s == s_end - 1) && (end.i() != 0))
-            ? end.i() : array_size;
-            for ( std::size_t i = i_begin; i < i_end; ++i )
+            auto array_bounds = getArrayBounds( begin, end, struct_bounds, s );
+            for ( std::size_t i = array_bounds.first;
+                  i < array_bounds.second;
+                  ++i )
             {
                 Index idx( array_size, s, i );
                 functor( idx );
@@ -173,16 +225,15 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     // add an extra struct so we loop through the last unfilled struct.
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
+    auto struct_bounds = getStructBounds( begin, end );
     std::size_t array_size = begin.a();
-    std::size_t s_begin = begin.s();
-    std::size_t s_end = (0 == end.i()) ? end.s() : end.s() + 1;
-    for ( std::size_t s = s_begin; s < s_end; ++s )
+    for ( std::size_t s = struct_bounds.first;
+          s < struct_bounds.second;
+          ++s )
     {
         // Create a range policy over the array.
-        std::size_t i_begin = (s == s_begin) ? begin.i() : 0;
-        std::size_t i_end = ((s == s_end - 1) && (end.i() != 0))
-                            ? end.i() : array_size;
-        kokkos_policy k_policy( i_begin, i_end );
+        auto array_bounds = getArrayBounds( begin, end, struct_bounds, s );
+        kokkos_policy k_policy( array_bounds.first, array_bounds.second );
 
         // Create a wrapper for the functor. Each struct is given a thread and
         // each thread loops over the inner arrays.
@@ -239,10 +290,9 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
     std::size_t array_size = begin.a();
-    std::size_t s_begin = begin.s();
-    std::size_t s_end = (0 == end.i()) ? end.s() : end.s() + 1;
-    point_type lower = { s_begin, 0 };
-    point_type upper = { s_end, array_size };
+    auto struct_bounds = getStructBounds( begin, end );
+    point_type lower = { struct_bounds.first, 0 };
+    point_type upper = { struct_bounds.second, array_size };
     kokkos_policy k_policy( lower, upper );
 
     // Create a wrapper for the functor.
