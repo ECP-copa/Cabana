@@ -62,9 +62,8 @@ int main( int argc, char* argv[] )
     auto s1 = Cabana::slice<S1>( aosoa );
     auto s2 = Cabana::slice<S2>( aosoa );
 
-    // Create an execution policy.
-    Cabana::IndexRangePolicy<ExecutionSpace>
-        range_policy( aosoa.begin(), aosoa.end() );
+    // Create an execution policy over the entire AoSoA.
+    Cabana::IndexRangePolicy<ExecutionSpace> range_policy( aosoa );
 
     // Initialization functor.
     auto init_func = KOKKOS_LAMBDA( const Cabana::Index idx )

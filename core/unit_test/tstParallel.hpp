@@ -132,7 +132,7 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     std::size_t num_data = 155;
     AoSoA_t aosoa( num_data );
 
-    // Create an execution policy.
+    // Create an execution policy using the begin and end of the AoSoA.
     Cabana::IndexRangePolicy<TEST_EXECSPACE>
         range_policy( aosoa.begin(), aosoa.end() );
 
@@ -173,8 +173,11 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
-    // Do one more loop but this time auto-dispatch. Reuse the first functor.
-    Cabana::parallel_for( range_policy, func_1 );
+    // Do one more loop but this time auto-dispatch. Reuse the first functor
+    // but this time create an execution policy that automatically grabs begin
+    // and end from the aosoa.
+    Cabana::IndexRangePolicy<TEST_EXECSPACE> aosoa_policy( aosoa );
+    Cabana::parallel_for( aosoa_policy, func_1 );
 
     // Check data members for proper initialization.
     fval = 3.4;

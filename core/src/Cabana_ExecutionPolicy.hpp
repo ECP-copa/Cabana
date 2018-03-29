@@ -17,11 +17,22 @@ class IndexRangePolicy
 
     using execution_space = ExecutionSpace;
 
+    // Range constructor.
     IndexRangePolicy( const Index& begin, const Index& end )
         : _begin( begin )
         , _end( end )
     {}
 
+    // Container constructor. The container must have a begin() and end()
+    // function that returns a Cabana::Index. C++ concepts would be really
+    // nice here. Valid containers include the AoSoA and MemberSlices.
+    template<class Container>
+    IndexRangePolicy( Container container )
+        : _begin( container.begin() )
+        , _end( container.end() )
+    {}
+
+    // Range bounds accessors.
     KOKKOS_INLINE_FUNCTION Index begin() const { return _begin; }
     KOKKOS_INLINE_FUNCTION Index end() const { return _end; }
 
