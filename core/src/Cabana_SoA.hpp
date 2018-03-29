@@ -3,7 +3,8 @@
 
 #include <Cabana_IndexSequence.hpp>
 #include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_Macros.hpp>
+
+#include <Kokkos_Macros.hpp>
 
 #include <type_traits>
 #include <cstdlib>
@@ -99,7 +100,7 @@ struct ArrayTypeAtIndex
   double*[3][3] d2 = getStructMember<2>( soa );
 */
 template<std::size_t I, std::size_t ArraySize, typename... Types>
-CABANA_INLINE_FUNCTION
+KOKKOS_INLINE_FUNCTION
 typename ArrayTypeAtIndex<I,ArraySize,Types...>::return_type
 getStructMember( SoA<ArraySize,Types...>& soa )
 {

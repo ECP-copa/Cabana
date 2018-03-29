@@ -1,6 +1,11 @@
 SET(PASS_RE "No errors detected")
 SET(FAIL_RE "detected in the test module")
 
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+INCLUDE_DIRECTORIES(REQUIRED_DURING_INSTALLATION_TESTING ${CMAKE_CURRENT_SOURCE_DIR})
+
+##--------------------------------------------------------------------------##
+## General tests.
 ##--------------------------------------------------------------------------##
 TRIBITS_ADD_EXECUTABLE_AND_TEST(
   Version_test
@@ -10,7 +15,14 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
   FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
   )
 
-##--------------------------------------------------------------------------##
+TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  Index_test
+  SOURCES tstIndex.cpp unit_test_main.cpp
+  COMM serial mpi
+  PASS_REGULAR_EXPRESSION "${PASS_RE}"
+  FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+  )
+
 TRIBITS_ADD_EXECUTABLE_AND_TEST(
   SoA_test
   SOURCES tstSoA.cpp unit_test_main.cpp
@@ -20,21 +32,96 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
   )
 
 ##--------------------------------------------------------------------------##
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
-  AoSoA_test
-  SOURCES tstAoSoA.cpp unit_test_main.cpp
-  COMM serial mpi
-  PASS_REGULAR_EXPRESSION "${PASS_RE}"
-  FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-  )
+## Serial tests.
+##--------------------------------------------------------------------------##
+IF(Cabana_ENABLE_Serial)
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    AoSoA_test_Serial
+    SOURCES Serial/tstAoSoA_Serial.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    MemberSlice_test_Serial
+    SOURCES Serial/tstMemberSlice_Serial.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Parallel_test_Serial
+    SOURCES Serial/tstParallel_Serial.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+ENDIF()
 
 ##--------------------------------------------------------------------------##
-TRIBITS_ADD_EXECUTABLE_AND_TEST(
-  MemberSlice_test
-  SOURCES tstMemberSlice.cpp unit_test_main.cpp
-  COMM serial mpi
-  PASS_REGULAR_EXPRESSION "${PASS_RE}"
-  FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-  )
+## OpenMP tests.
+##--------------------------------------------------------------------------##
+IF(Cabana_ENABLE_OpenMP)
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    AoSoA_test_OpenMP
+    SOURCES OpenMP/tstAoSoA_OpenMP.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    MemberSlice_test_OpenMP
+    SOURCES OpenMP/tstMemberSlice_OpenMP.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Parallel_test_OpenMP
+    SOURCES OpenMP/tstParallel_OpenMP.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+ENDIF()
+
+##--------------------------------------------------------------------------##
+## Cuda tests.
+##--------------------------------------------------------------------------##
+IF(Cabana_ENABLE_Cuda)
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    AoSoA_test_CudaUVM
+    SOURCES Cuda/tstAoSoA_CudaUVM.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    MemberSlice_test_CudaUVM
+    SOURCES Cuda/tstMemberSlice_CudaUVM.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Parallel_test_CudaUVM
+    SOURCES Cuda/tstParallel_CudaUVM.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+ENDIF()
 
 ##--------------------------------------------------------------------------##

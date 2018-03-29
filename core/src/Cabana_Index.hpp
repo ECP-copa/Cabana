@@ -1,11 +1,12 @@
 #ifndef CABANA_INDEX_HPP
 #define CABANA_INDEX_HPP
 
-#include <Cabana_Macros.hpp>
+#include <Kokkos_Macros.hpp>
+
+#include <cstdlib>
 
 namespace Cabana
 {
-
 //---------------------------------------------------------------------------//
 /*
   \class Index
@@ -33,7 +34,7 @@ class Index
   public:
 
     // Constructor.
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     Index( const std::size_t array_size,
            const std::size_t struct_id,
            const std::size_t offset )
@@ -42,18 +43,23 @@ class Index
         , _i( offset )
     {};
 
+    // Get the inner array size.
+    KOKKOS_INLINE_FUNCTION
+    std::size_t a() const
+    { return _a; }
+
     // Get the struct index.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t s() const
     { return _s; }
 
     // Get the array offset in the struct.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t i() const
     { return _i; }
 
     // Prefix increment operator.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     Index& operator++()
     {
         _i = ( _a - 1 == _i ) ? 0 : _i + 1;
@@ -62,7 +68,7 @@ class Index
     };
 
     // Postfix increment operator.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     Index operator++(int)
     {
         Index temp = *this;
@@ -71,34 +77,47 @@ class Index
     };
 
     // Equality comparator.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     bool operator==( const Index& rhs ) const
     {
         return (_s == rhs._s) && (_i == rhs._i);
     }
 
     // Inequality comparator.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     bool operator!=( const Index& rhs ) const
     {
         return (_s != rhs._s) || (_i != rhs._i);
     }
 
     // Less-than operator.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     bool operator<( const Index& rhs ) const
     {
         return (_s < rhs._s) || ((_s == rhs._s) && (_i < rhs._i));
     }
 
     // Greater-than operator.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     bool operator>( const Index& rhs ) const
     {
         return (_s > rhs._s) || ((_s == rhs._s) && (_i > rhs._i));
     }
-};
 
+    // Less-than-or-equal-to operator.
+    KOKKOS_INLINE_FUNCTION
+    bool operator<=( const Index& rhs ) const
+    {
+        return (_s < rhs._s) || ((_s == rhs._s) && (_i <= rhs._i));
+    }
+
+    // Greater-than-or-equal-to operator.
+    KOKKOS_INLINE_FUNCTION
+    bool operator>=( const Index& rhs ) const
+    {
+        return (_s > rhs._s) || ((_s == rhs._s) && (_i >= rhs._i));
+    }
+};
 
 //---------------------------------------------------------------------------//
 
