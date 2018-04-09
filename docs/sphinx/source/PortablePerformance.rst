@@ -55,7 +55,7 @@ are simply aliases of Kokkos memory spaces):
     device. However, a user of such memory must be sure to synchronize the
     device appropriately to avoid accessing this memory on the host while
     simultaneously accessing it in a device kernel. Memory is allocated with
-    ``cudaMallocMangaged`` and deallocated with ``cudaFree``.
+    ``cudaMallocManaged`` and deallocated with ``cudaFree``.
 
 When needed, these memory spaces will appear as template parameters in Cabana
 functions and data structures.
