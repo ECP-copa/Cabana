@@ -9,7 +9,7 @@ architectures and GPUs.
 Cabana is developed as part of the Co-Design Center for Particle Applications
 (CoPA) within the Exascale Computing Project (ECP) under the U.S. Department
 of Energy. CoPA is a multi-institution project with developers from ORNL,
-LANL, SNL, LLNL, PPNL, and ANL.
+LANL, SNL, LLNL, PPPL, and ANL.
 
 Key features of Cabana include:
 
