@@ -253,6 +253,46 @@ class MemberSlice
         return _aosoa.template get<J>(idx,d0,d1,d2,d3);
     }
 
+    // -------------------------------
+    // Raw data access.
+
+    /*!
+      \brief Get the stride between SoA data for this member.
+
+      \return The stride at the given member index.
+
+      Note that these strides are computed in the context of the *value_type*
+      for each member.
+    */
+    KOKKOS_INLINE_FUNCTION
+    std::size_t stride() const
+    {
+        return _aosoa.stride( M );
+    }
+
+    /*!
+      \brief Get a non-const raw pointer to the data for this
+      member
+
+      \return A non-const raw pointer to the member data at the given index.
+    */
+    KOKKOS_INLINE_FUNCTION
+    pointer_type data()
+    {
+        return static_cast<pointer_type>( _aosoa.data(M) );
+    }
+
+    /*!
+      \brief Get a const raw pointer to the data for this member
+
+      \return A const raw pointer to the member data at the given index.
+    */
+    KOKKOS_INLINE_FUNCTION
+    const pointer_type data() const
+    {
+        return static_cast<pointer_type>( const_cast<void*>(_aosoa.data(M)) );
+    }
+
   private:
 
     // The array-of-structs-of-arrays this slice wraps. We hold this by value

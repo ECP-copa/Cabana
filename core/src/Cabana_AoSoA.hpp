@@ -170,6 +170,7 @@ class AoSoATraits
     using memory_traits = MemoryTraits;
     using host_mirror_space = HostMirrorSpace;
     using size_type = typename memory_space::size_type;
+    using static_inner_array_size_type = StaticInnerArraySize;
 
     static constexpr std::size_t array_size = StaticInnerArraySize::value;
 };
@@ -637,6 +638,26 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     const void* data( const std::size_t M ) const
     {
         return _pointers[M];
+    }
+
+    /*!
+      \brief Get a non-const un-typed raw pointer to the entire data block.
+
+      \return A non-const un-typed raw-pointer to the entire data block.
+    */
+    void* ptr()
+    {
+        return _managed_data.get();
+    }
+
+    /*!
+      \brief Get a const un-typed raw pointer to the entire data block.
+
+      \return A const un-typed raw-pointer to the entire data block.
+    */
+    const void* ptr() const
+    {
+        return _managed_data.get();
     }
 
   private:
