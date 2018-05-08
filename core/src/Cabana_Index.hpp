@@ -58,6 +58,11 @@ class Index
     std::size_t i() const
     { return _i; }
 
+    // Get a 1-dimensional index.
+    KOKKOS_INLINE_FUNCTION
+    std::size_t oneD() const
+    { return _s * _a + _i; }
+
     // Prefix increment operator.
     KOKKOS_INLINE_FUNCTION
     Index& operator++()
