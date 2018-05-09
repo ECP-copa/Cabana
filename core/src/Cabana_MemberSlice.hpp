@@ -158,7 +158,7 @@ class MemberSlice
 
     // Rank 0
     template<std::size_t J = M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (0==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -172,7 +172,7 @@ class MemberSlice
 
     // Rank 1
     template<std::size_t J = M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -187,7 +187,7 @@ class MemberSlice
 
     // Rank 2
     template<std::size_t J = M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -203,7 +203,7 @@ class MemberSlice
 
     // Rank 3
     template<std::size_t J = M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
@@ -220,7 +220,7 @@ class MemberSlice
 
     // Rank 4
     template<std::size_t J = M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),

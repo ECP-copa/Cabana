@@ -1,7 +1,7 @@
 #ifndef CABANA_PERFORMANCETRAITS_HPP
 #define CABANA_PERFORMANCETRAITS_HPP
 
-#include <Cabana_InnerArraySize.hpp>
+#include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -23,7 +23,7 @@ template<>
 class PerformanceTraits<Kokkos::Serial>
 {
   public:
-    using inner_array_size = InnerArraySize<1>;
+    using inner_array_layout = InnerArrayLayout<1,Kokkos::LayoutRight>;
     using parallel_for_tag = StructParallelTag;
 };
 #endif
@@ -35,19 +35,20 @@ template<>
 class PerformanceTraits<Kokkos::OpenMP>
 {
   public:
-    using inner_array_size = InnerArraySize<64>;
+    using inner_array_layout = InnerArrayLayout<64,Kokkos::LayoutRight>;
     using parallel_for_tag = StructParallelTag;
 };
 #endif
 
 //---------------------------------------------------------------------------//
-// Cuda specialization. Use the warp size.
+// Cuda specialization. Use the warp traits.
 #if defined( KOKKOS_ENABLE_CUDA )
 template<>
 class PerformanceTraits<Kokkos::Cuda>
 {
   public:
-    using inner_array_size = InnerArraySize<Kokkos::Impl::CudaTraits::WarpSize>;
+    using inner_array_layout =
+        InnerArrayLayout<Kokkos::Impl::CudaTraits::WarpSize,Kokkos::LayoutLeft>;
     using parallel_for_tag = StructAndArrayParallelTag;
 };
 #endif

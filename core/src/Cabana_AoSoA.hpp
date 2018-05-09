@@ -3,7 +3,8 @@
 
 #include <Cabana_MemberDataTypes.hpp>
 #include <Cabana_SoA.hpp>
-#include <Cabana_InnerArraySize.hpp>
+#include <Cabana_Index.hpp>
+#include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_PerformanceTraits.hpp>
 #include <Cabana_Particle.hpp>
 #include <Cabana_Index.hpp>
@@ -32,14 +33,14 @@ namespace Cabana
   - AoSoA< DataTypes >
   - AoSoA< DataTypes , Space >
   - AoSoA< DataTypes , Space , MemoryTraits >
-  - AoSoA< DataTypes , StaticInnerArraySize >
-  - AoSoA< DataTypes , StaticInnerArraySize , Space >
-  - AoSoA< DataTypes , StaticInnerArraySize , MemoryTraits >
-  - AoSoA< DataTypes , StaticInnerArraySize , Space , MemoryTraits >
+  - AoSoA< DataTypes , StaticInnerArrayLayout >
+  - AoSoA< DataTypes , StaticInnerArrayLayout , Space >
+  - AoSoA< DataTypes , StaticInnerArrayLayout , MemoryTraits >
+  - AoSoA< DataTypes , StaticInnerArrayLayout , Space , MemoryTraits >
   - AoSoA< DataTypes , MemoryTraits >
 
   Note that this is effectively a reimplementation of Kokkos::ViewTraits for
-  the AoSoA with ArrayLayout replaced by InnerStaticInnerArraySize.
+  the AoSoA with ArrayLayout replaced by InnerStaticInnerArrayLayout.
 */
 template<class DataTypes, class ... Properties>
 class AoSoATraits ;
@@ -52,21 +53,21 @@ class AoSoATraits<void>
     using execution_space = void;
     using memory_space = void;
     using host_mirror_space = void;
-    using array_size = void;
+    using inner_array_layout = void;
     using memory_traits = void;
 };
 
-// Extract the array size.
-template<class StaticInnerArraySize, class ... Properties>
+// Extract the array layout.
+template<class StaticInnerArrayLayout, class ... Properties>
 class AoSoATraits<
-    typename std::enable_if<is_inner_array_size<StaticInnerArraySize>::value>::type,
-    StaticInnerArraySize, Properties...>
+    typename std::enable_if<is_inner_array_layout<StaticInnerArrayLayout>::value>::type,
+    StaticInnerArrayLayout, Properties...>
 {
   public:
     using execution_space = typename AoSoATraits<void,Properties...>::execution_space;
     using memory_space = typename AoSoATraits<void,Properties...>::memory_space;
     using host_mirror_space = typename AoSoATraits<void,Properties...>::host_mirror_space;
-    using array_size = StaticInnerArraySize;
+    using inner_array_layout = StaticInnerArrayLayout;
     using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
 };
 
@@ -82,13 +83,13 @@ class AoSoATraits<
         std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
         std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
         std::is_same<typename AoSoATraits<void,Properties...>::host_mirror_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::array_size,void>::value
+        std::is_same<typename AoSoATraits<void,Properties...>::inner_array_layout,void>::value
         , "Only one AoSoA Execution or Memory Space template argument" );
 
     using execution_space = typename Space::execution_space;
     using memory_space = typename Space::memory_space;
     using host_mirror_space = typename Kokkos::Impl::HostMirror<Space>::Space;
-    using array_size = typename PerformanceTraits<execution_space>::inner_array_size;
+    using inner_array_layout = typename PerformanceTraits<execution_space>::inner_array_layout;
     using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
 };
 
@@ -102,14 +103,14 @@ class AoSoATraits<
     static_assert(
         std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
         std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::array_size,void>::value &&
+        std::is_same<typename AoSoATraits<void,Properties...>::inner_array_layout,void>::value &&
         std::is_same<typename AoSoATraits<void,Properties...>::memory_traits,void>::value
         , "MemoryTrait is the final optional template argument for a AoSoA" );
 
     using execution_space = void;
     using memory_space = void;
     using host_mirror_space = void;
-    using array_size = void;
+    using inner_array_layout = void;
     using memory_traits = MemoryTraits;
 };
 
@@ -136,11 +137,11 @@ class AoSoATraits
         typename ExecutionSpace::memory_space
         >::type;
 
-    using StaticInnerArraySize =
+    using StaticInnerArrayLayout =
         typename std::conditional<
-        !std::is_same<typename properties::array_size,void>::value,
-        typename properties::array_size,
-        typename PerformanceTraits<ExecutionSpace>::inner_array_size
+        !std::is_same<typename properties::inner_array_layout,void>::value,
+        typename properties::inner_array_layout,
+        typename PerformanceTraits<ExecutionSpace>::inner_array_layout
         >::type;
 
     using HostMirrorSpace =
@@ -166,9 +167,9 @@ class AoSoATraits
     using memory_traits = MemoryTraits;
     using host_mirror_space = HostMirrorSpace;
     using size_type = typename memory_space::size_type;
-    using static_inner_array_size_type = StaticInnerArraySize;
+    using inner_array_layout = StaticInnerArrayLayout;
 
-    static constexpr int array_size = StaticInnerArraySize::value;
+    static constexpr std::size_t array_size = StaticInnerArrayLayout::size;
 };
 
 //---------------------------------------------------------------------------//
@@ -192,9 +193,9 @@ class AoSoATraits
 
   Valid ways in which template arguments may be specified:
   - AoSoA< DataType >
-  - AoSoA< DataType , StaticInnerArraySize >
-  - AoSoA< DataType , StaticInnerArraySize , Space >
-  - AoSoA< DataType , StaticInnerArraySize , Space , MemoryTraits >
+  - AoSoA< DataType , StaticInnerArrayLayout >
+  - AoSoA< DataType , StaticInnerArrayLayout , Space >
+  - AoSoA< DataType , StaticInnerArrayLayout , Space , MemoryTraits >
   - AoSoA< DataType , Space >
   - AoSoA< DataType , Space , MemoryTraits >
   - AoSoA< DataType , MemoryTraits >
@@ -213,8 +214,8 @@ class AoSoATraits
 
   \tparam Space (required) The memory space.
 
-  \tparam StaticInnerArraySize (optional) The size of the inner array in the
-  AoSoA. If not specified, this defaults to the preferred layout for the
+  \tparam StaticInnerArrayLayout (optional) The layout of the inner array in
+  the AoSoA. If not specified, this defaults to the preferred layout for the
   <tt>Space</tt>.
 
   \tparam MemoryTraits (optional) Assertion of the user's intended access
@@ -261,11 +262,14 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // AoSoA type.
     using aosoa_type = AoSoA<MemberDataTypes<Types...>,Properties...>;
 
+    // Inner array layout.
+    using inner_array_layout = typename traits::inner_array_layout;
+
     // Inner array size (size of the arrays held by the structs).
     static constexpr int array_size = traits::array_size;
 
     // SoA type.
-    using soa_type = SoA<array_size,Types...>;
+    using soa_type = SoA<inner_array_layout,Types...>;
 
     // Member data types.
     using member_types = MemberDataTypes<Types...>;
@@ -281,14 +285,20 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
     // Host mirror.
     using HostMirror = AoSoA<member_types,
-                             typename traits::static_inner_array_size_type,
+                             typename traits::inner_array_layout,
                              typename traits::host_mirror_space>;
 
     // Struct member type.
     template<std::size_t M>
     using struct_member_type =
         StructMember<
-        M,array_size,typename MemberDataTypeAtIndex<M,Types...>::type>;
+        M,inner_array_layout,typename MemberDataTypeAtIndex<M,Types...>::type>;
+
+    // Member data type at a given index M. Note this is the user-defined
+    // member data type - not the potentially transformed type actually stored
+    // by the structs (SoAs) to achieve a given layout.
+    template<std::size_t M>
+    using member_data_type = typename MemberDataTypeAtIndex<M,Types...>::type;
 
     // Struct member array return type at a given index M.
     template<std::size_t M>
@@ -701,8 +711,8 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     {
         static_assert( 0 <= N && N < max_supported_rank,
                        "Static loop out of bounds!" );
-        _extents[M][N] = ( N < std::rank<struct_member_data_type<M> >::value )
-                         ? std::extent<struct_member_data_type<M>,N>::value
+        _extents[M][N] = ( N < std::rank<member_data_type<M> >::value )
+                         ? std::extent<member_data_type<M>,N>::value
                          : 0;
     }
 
@@ -727,11 +737,11 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t N>
     void assignRanks()
     {
-        static_assert( std::rank<struct_member_data_type<N> >::value <=
+        static_assert( std::rank<member_data_type<N> >::value <=
                        max_supported_rank,
                        "Member type rank larger than max supported rank" );
         static_assert( 0 <= N && N < number_of_members, "Static loop out of bounds!" );
-        _ranks[N] = std::rank<struct_member_data_type<N> >::value;
+        _ranks[N] = std::rank<member_data_type<N> >::value;
     }
 
     // Static loop over ranks and extents for each element.

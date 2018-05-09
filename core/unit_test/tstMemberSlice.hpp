@@ -1,6 +1,8 @@
 #include <Cabana_MemberSlice.hpp>
 #include <Cabana_AoSoA.hpp>
 
+#include <Kokkos_Core.hpp>
+
 #include <boost/test/unit_test.hpp>
 
 //---------------------------------------------------------------------------//
@@ -49,7 +51,7 @@ void checkDataMembers(
 BOOST_AUTO_TEST_CASE( slice_serial_api_test )
 {
     // Manually set the inner array size.
-    using inner_array_size = Cabana::InnerArraySize<16>;
+    using inner_array_layout = Cabana::InnerArrayLayout<16,Kokkos::LayoutRight>;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -67,7 +69,7 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
 
     // Make sure that it is actually an AoSoA.
     BOOST_CHECK( Cabana::is_aosoa<AoSoA_t>::value );

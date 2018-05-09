@@ -3,7 +3,7 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberSlice.hpp>
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_ExecPolicy.hpp>
@@ -15,6 +15,82 @@ namespace Cabana
 {
 namespace Impl
 {
+//---------------------------------------------------------------------------//
+// Copy data between two elements of a slice.
+template<class DstSliceType, class SrcSliceType>
+class DeepCopySliceElement
+{
+  private:
+
+    DstSliceType _dst;
+    SrcSliceType _src;
+
+  public:
+
+    DeepCopySliceElement( DstSliceType dst, SrcSliceType src )
+        : _dst( dst )
+        , _src( src )
+    {}
+
+    template<typename T = typename DstSliceType::data_type>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (0==std::rank<T>::value),void>::type
+    operator()( const int particle_index ) const
+    {
+        _dst( particle_index ) = _src( particle_index );
+    }
+
+    template<typename T = typename DstSliceType::data_type>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (1==std::rank<T>::value),void>::type
+    operator()( const int particle_index ) const
+    {
+        for ( int i0 = 0; i0 < _dst.extent(0); ++i0 )
+            _dst( particle_index, i0 ) = _src( particle_index, i0 );
+    }
+
+    template<typename T = typename DstSliceType::data_type>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (2==std::rank<T>::value),void>::type
+    operator()( const int particle_index ) const
+    {
+        for ( int i0 = 0; i0 < _dst.extent(0); ++i0 )
+            for ( int i1 = 0; i1 < _dst.extent(1); ++i1 )
+                _dst( particle_index, i0, i1 ) =
+                    _src( particle_index, i0, i1 );
+    }
+
+    template<typename T = typename DstSliceType::data_type>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (3==std::rank<T>::value),void>::type
+    operator()( const int particle_index ) const
+    {
+        for ( int i0 = 0; i0 < _dst.extent(0); ++i0 )
+            for ( int i1 = 0; i1 < _dst.extent(1); ++i1 )
+                for ( int i2 = 0; i2 < _dst.extent(2); ++i2 )
+                    _dst( particle_index, i0, i1, i2 ) =
+                        _src( particle_index, i0, i1, i2 );
+    }
+
+    template<typename T = typename DstSliceType::data_type>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (4==std::rank<T>::value),void>::type
+    operator()( const int particle_index ) const
+    {
+        for ( int i0 = 0; i0 < _dst.extent(0); ++i0 )
+            for ( int i1 = 0; i1 < _dst.extent(1); ++i1 )
+                for ( int i2 = 0; i2 < _dst.extent(2); ++i2 )
+                    for ( int i3 = 0; i3 < _dst.extent(3); ++i3 )
+                        _dst( particle_index, i0, i1, i2, i3 ) =
+                            _src( particle_index, i0, i1, i2, i3 );
+    }
+};
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Deep copy a slice. Both slices must live in the same memory space.
@@ -55,37 +131,9 @@ inline void deepCopySlice(
     }
 
     Kokkos::RangePolicy<dst_execution_space> exec_policy( 0, dst.size() );
-
-    auto dst_data = dst.data();
-    auto src_data = src.data();
-
-    auto dst_stride = dst.stride();
-    auto src_stride = src.stride();
-
-    auto dst_array_size = dst_type::array_size;
-    auto src_array_size = src_type::array_size;
-
-    auto member_copy_func =
-        KOKKOS_LAMBDA( const std::size_t n )
-        {
-            std::size_t dst_struct_idx = n / dst_array_size;
-            std::size_t src_struct_idx = n / src_array_size;
-            std::size_t dst_array_idx = n - dst_array_size * dst_struct_idx;
-            std::size_t src_array_idx = n - src_array_size * src_struct_idx;
-            std::size_t dst_offset =
-                dst_struct_idx * dst_stride +
-                dst_array_idx * Impl::MemberNumberOfValues<data_type>::value;
-            std::size_t src_offset =
-                src_struct_idx * src_stride +
-                src_array_idx * Impl::MemberNumberOfValues<data_type>::value;
-            for ( std::size_t k = 0;
-                  k < Impl::MemberNumberOfValues<data_type>::value;
-                  ++k )
-                dst_data[ dst_offset + k ] = src_data[ src_offset + k ];
-        };
-
+    DeepCopySliceElement<DstSliceType,SrcSliceType> copy_func( dst, src );
     Kokkos::parallel_for(
-        "deepCopySlice", exec_policy, member_copy_func );
+        "deepCopySlice", exec_policy, copy_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -154,8 +202,8 @@ inline void deep_copy(
     using src_memory_space = typename src_type::traits::memory_space;
     using dst_soa_type = typename dst_type::soa_type;
     using src_soa_type = typename src_type::soa_type;
-    using dst_array_size = typename dst_type::traits::static_inner_array_size_type;
-    using src_array_size = typename src_type::traits::static_inner_array_size_type;
+    using dst_array_layout = typename dst_type::traits::inner_array_layout;
+    using src_array_layout = typename src_type::traits::inner_array_layout;
 
     // Check that the data types are the same.
     static_assert(
@@ -197,7 +245,7 @@ inline void deep_copy(
     // If the inner array size is the same and both AoSoAs have the same number
     // of values then we can do a byte-wise copy directly.
     if ( std::is_same<dst_soa_type,src_soa_type>::value &&
-         std::is_same<dst_array_size,src_array_size>::value )
+         std::is_same<dst_array_layout,src_array_layout>::value )
     {
         Kokkos::fence();
         Kokkos::Impl::DeepCopy<dst_memory_space,src_memory_space>(
@@ -212,7 +260,7 @@ inline void deep_copy(
         // Define a AoSoA type in the destination space with the same data
         // layout as the source.
         using src_mirror_type = AoSoA<typename src_type::member_types,
-                                      src_array_size,
+                                      src_array_layout,
                                       dst_memory_space>;
         static_assert(
             std::is_same<src_soa_type,typename src_mirror_type::soa_type>::value,

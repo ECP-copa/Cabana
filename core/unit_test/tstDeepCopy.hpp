@@ -47,7 +47,7 @@ void checkDataMembers(
 //---------------------------------------------------------------------------//
 // Perform a deep copy test.
 template<class DstMemorySpace, class SrcMemorySpace,
-         class DstInnerArraySize, class SrcInnerArraySize>
+         class DstInnerArrayLayout, class SrcInnerArrayLayout>
 void testDeepCopy()
 {
     // Data dimensions.
@@ -65,9 +65,9 @@ void testDeepCopy()
                                 double[dim_1][dim_2]
                                 >;
 
-    // Declare the AoSoA typs.
-    using DstAoSoA_t = Cabana::AoSoA<DataTypes,DstInnerArraySize,DstMemorySpace>;
-    using SrcAoSoA_t = Cabana::AoSoA<DataTypes,SrcInnerArraySize,SrcMemorySpace>;
+    // Declare the AoSoA types.
+    using DstAoSoA_t = Cabana::AoSoA<DataTypes,DstInnerArrayLayout,DstMemorySpace>;
+    using SrcAoSoA_t = Cabana::AoSoA<DataTypes,SrcInnerArrayLayout,SrcMemorySpace>;
 
     // Create AoSoAs.
     int num_data = 357;
@@ -135,7 +135,7 @@ void testDeepCopy()
     }
 
     // Deep copy
-//    Cabana::deep_copy( dst_aosoa, src_aosoa );
+    Cabana::deep_copy( dst_aosoa, src_aosoa );
 
     // Check values.
     checkDataMembers( dst_aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
@@ -144,35 +144,47 @@ void testDeepCopy()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( deep_copy_to_host_same_size_test )
+BOOST_AUTO_TEST_CASE( deep_copy_to_host_same_layout_test )
 {
-    testDeepCopy<Kokkos::HostSpace,TEST_MEMSPACE,
-                 Cabana::InnerArraySize<16>,Cabana::InnerArraySize<16>>();
+    testDeepCopy<Kokkos::HostSpace,
+                 TEST_MEMSPACE,
+                 Cabana::InnerArrayLayout<16,Kokkos::LayoutRight>,
+                 Cabana::InnerArrayLayout<16,Kokkos::LayoutRight> >();
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( deep_copy_from_host_same_size_test )
+BOOST_AUTO_TEST_CASE( deep_copy_from_host_same_layout_test )
 {
-    testDeepCopy<TEST_MEMSPACE,Kokkos::HostSpace,
-                 Cabana::InnerArraySize<16>,Cabana::InnerArraySize<16>>();
+    testDeepCopy<TEST_MEMSPACE,
+                 Kokkos::HostSpace,
+                 Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft>,
+                 Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft> >();
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( deep_copy_to_host_different_size_test )
+BOOST_AUTO_TEST_CASE( deep_copy_to_host_different_layout_test )
 {
-    testDeepCopy<Kokkos::HostSpace,TEST_MEMSPACE,
-                 Cabana::InnerArraySize<16>,Cabana::InnerArraySize<32>>();
-    testDeepCopy<Kokkos::HostSpace,TEST_MEMSPACE,
-                 Cabana::InnerArraySize<64>,Cabana::InnerArraySize<8>>();
+    testDeepCopy<Kokkos::HostSpace,
+                 TEST_MEMSPACE,
+                 Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft>,
+                 Cabana::InnerArrayLayout<32,Kokkos::LayoutRight> >();
+    testDeepCopy<Kokkos::HostSpace,
+                 TEST_MEMSPACE,
+                 Cabana::InnerArrayLayout<64,Kokkos::LayoutRight>,
+                 Cabana::InnerArrayLayout<8,Kokkos::LayoutLeft> >();
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( deep_copy_from_host_different_size_test )
+BOOST_AUTO_TEST_CASE( deep_copy_from_host_different_layout_test )
 {
-    testDeepCopy<TEST_MEMSPACE,Kokkos::HostSpace,
-                 Cabana::InnerArraySize<16>,Cabana::InnerArraySize<32>>();
-    testDeepCopy<TEST_MEMSPACE,Kokkos::HostSpace,
-                 Cabana::InnerArraySize<64>,Cabana::InnerArraySize<8>>();
+    testDeepCopy<TEST_MEMSPACE,
+                 Kokkos::HostSpace,
+                 Cabana::InnerArrayLayout<64,Kokkos::LayoutLeft>,
+                 Cabana::InnerArrayLayout<8,Kokkos::LayoutRight> >();
+    testDeepCopy<TEST_MEMSPACE,
+                 Kokkos::HostSpace,
+                 Cabana::InnerArrayLayout<16,Kokkos::LayoutRight>,
+                 Cabana::InnerArrayLayout<32,Kokkos::LayoutLeft> >();
 }
 
 //---------------------------------------------------------------------------//

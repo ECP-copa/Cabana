@@ -3,6 +3,8 @@
 
 #include <Kokkos_Core.hpp>
 
+#include <Kokkos_Core.hpp>
+
 #include <boost/test/unit_test.hpp>
 
 //---------------------------------------------------------------------------//
@@ -46,12 +48,12 @@ void checkDataMembers(
 }
 
 //---------------------------------------------------------------------------//
-// TESTS
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
+// Test an AoSoA with a given layout.
+template<class Layout>
+void testAoSoA()
 {
     // Manually set the inner array size.
-    using inner_array_size = Cabana::InnerArraySize<16>;
+    using inner_array_layout = Cabana::InnerArrayLayout<16,Layout>;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -69,7 +71,7 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
 
     // Make sure that it is actually an AoSoA.
     BOOST_CHECK( Cabana::is_aosoa<AoSoA_t>::value );
@@ -148,7 +150,7 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
 
     // Test bounds.
     auto end = aosoa.size();
-    auto end_si = Cabana::Impl::Index<inner_array_size::value>::aosoa(end);
+    auto end_si = Cabana::Impl::Index<16>::aosoa(end);
     BOOST_CHECK( end_si.second == int(3) );
     BOOST_CHECK( end_si.first == int(2) );
 
@@ -159,29 +161,29 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    aosoa.get<0>( idx, i, j, k ) = fval * (i+j+k);
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                for ( std::size_t k = 0; k < dim_3; ++k )
+                    aosoa.template get<0>( idx, i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        aosoa.get<1>( idx ) = ival;
+        aosoa.template get<1>( idx ) = ival;
 
         // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        aosoa.get<2>( idx, i, j, k, l ) = fval * (i+j+k+l);
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                for ( std::size_t k = 0; k < dim_3; ++k )
+                    for ( std::size_t l = 0; l < dim_4; ++l )
+                        aosoa.template get<2>( idx, i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            aosoa.get<3>( idx, i ) = dval * i;
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            aosoa.template get<3>( idx, i ) = dval * i;
 
         // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                aosoa.get<4>( idx, i, j ) = dval * (i+j);
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                aosoa.template get<4>( idx, i, j ) = dval * (i+j);
     }
 
     // Check data members for proper initialization.
@@ -226,10 +228,24 @@ BOOST_AUTO_TEST_CASE( aosoa_serial_api_test )
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
+// TESTS
+//---------------------------------------------------------------------------//
+BOOST_AUTO_TEST_CASE( aosoa_layout_right_test )
+{
+    testAoSoA<Kokkos::LayoutRight>();
+}
+
+//---------------------------------------------------------------------------//
+BOOST_AUTO_TEST_CASE( aosoa_layout_left_test )
+{
+    testAoSoA<Kokkos::LayoutLeft>();
+}
+
+//---------------------------------------------------------------------------//
+BOOST_AUTO_TEST_CASE( aosoa_raw_data_layout_right_test )
 {
     // Manually set the inner array size.
-    using inner_array_size = Cabana::InnerArraySize<32>;
+    using inner_array_layout = Cabana::InnerArrayLayout<32,Kokkos::LayoutRight>;
 
     // Multi dimensional member sizes.
     const int dim_1 = 3;
@@ -245,7 +261,7 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;
@@ -287,9 +303,9 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
             p4[ s * st4 + i ] = (s + i) * 5.0;
 
             // Member 2 has some extra dimensions so add those to the
-            // indexing.
-            for ( int j = 0; j < m2e0; ++j )
-                for ( int k = 0; k < m2e1; ++k )
+            // indexing. Note this is layout right.
+            for ( std::size_t j = 0; j < m2e0; ++j )
+                for ( std::size_t k = 0; k < m2e1; ++k )
                     p2[ s * st2 + i * m2e0 * m2e1 + j * m2e1 + k ] =
                         (s + i + j + k) * 3.0;
         }
@@ -298,7 +314,7 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
     // Check the results.
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
-        auto aosoa_indices = Cabana::Impl::Index<inner_array_size::value>::aosoa( idx );
+        auto aosoa_indices = Cabana::Impl::Index<32>::aosoa( idx );
         int s = aosoa_indices.first;
         int i = aosoa_indices.second;
 
@@ -310,6 +326,94 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
         // Member 2 has some extra dimensions so check those too.
         for ( int j = 0; j < dim_1; ++j )
             for ( int k = 0; k < dim_2; ++k )
+                BOOST_CHECK( aosoa.get<2>(idx,j,k) == (s+i+j+k)*3.0 );
+    }
+}
+
+//---------------------------------------------------------------------------//
+BOOST_AUTO_TEST_CASE( aosoa_raw_data_layout_left_test )
+{
+    // Manually set the inner array size.
+    using inner_array_layout = Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft>;
+
+    // Multi dimensional member sizes.
+    const std::size_t dim_1 = 3;
+    const std::size_t dim_2 = 5;
+
+    // Declare data types. Note that this test only uses rank-0 data.
+    using DataTypes =
+        Cabana::MemberDataTypes<float,
+                                int,
+                                double[dim_1][dim_2],
+                                int,
+                                double>;
+
+    // Declare the AoSoA type.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+
+    // Create an AoSoA using the default constructor.
+    std::size_t num_data = 350;
+    AoSoA_t aosoa( num_data );
+
+    // Get raw pointers to the data as one would in a C interface (no templates).
+    float* p0 = (float*) aosoa.data(0);
+    int* p1 = (int*) aosoa.data(1);
+    double* p2 = (double*) aosoa.data(2);
+    int* p3 = (int*) aosoa.data(3);
+    double* p4 = (double*) aosoa.data(4);
+
+    // Get the strides between the member arrays.
+    std::size_t st0 = aosoa.stride(0);
+    std::size_t st1 = aosoa.stride(1);
+    std::size_t st2 = aosoa.stride(2);
+    std::size_t st3 = aosoa.stride(3);
+    std::size_t st4 = aosoa.stride(4);
+
+    // Member 2 is multidimensional so get its extents.
+    std::size_t m2e0 = aosoa.extent(2,0);
+    std::size_t m2e1 = aosoa.extent(2,1);
+    BOOST_CHECK( m2e0 == dim_1 );
+    BOOST_CHECK( m2e1 == dim_2 );
+
+    // Initialize the data with raw pointer/stride access. Start by looping
+    // over the structs. Each struct has a group of contiguous arrays of size
+    // array_size for each member.
+    std::size_t num_soa = aosoa.numSoA();
+    for ( std::size_t s = 0; s < num_soa; ++s )
+    {
+        // Loop over the array in each struct and set the values.
+        std::size_t local_array_size = aosoa.arraySize( s );
+        for ( std::size_t i = 0; i < local_array_size; ++i )
+        {
+            p0[ s * st0 + i ] = (s + i) * 1.0;
+            p1[ s * st1 + i ] = (s + i) * 2;
+            p3[ s * st3 + i ] = (s + i) * 4;
+            p4[ s * st4 + i ] = (s + i) * 5.0;
+
+            // Member 2 has some extra dimensions so add those to the
+            // indexing. Note this is layout left.
+            for ( std::size_t j = 0; j < m2e0; ++j )
+                for ( std::size_t k = 0; k < m2e1; ++k )
+                    p2[ s * st2 + k * 16 * m2e0 + j * 16 + i ] =
+                        (s + i + j + k) * 3.0;
+        }
+    }
+
+    // Check the results.
+    for ( int idx = 0; idx < aosoa.size(); ++idx )
+    {
+        auto aosoa_indices = Cabana::Impl::Index<16>::aosoa( idx );
+        int s = aosoa_indices.first;
+        int i = aosoa_indices.second;
+
+        BOOST_CHECK( aosoa.get<0>(idx) == (s+i)*1.0 );
+        BOOST_CHECK( aosoa.get<1>(idx) == int((s+i)*2) );
+        BOOST_CHECK( aosoa.get<3>(idx) == int((s+i)*4) );
+        BOOST_CHECK( aosoa.get<4>(idx) == (s+i)*5.0 );
+
+        // Member 2 has some extra dimensions so check those too.
+        for ( std::size_t j = 0; j < dim_1; ++j )
+            for ( std::size_t k = 0; k < dim_2; ++k )
                 BOOST_CHECK( aosoa.get<2>(idx,j,k) == (s+i+j+k)*3.0 );
     }
 }
@@ -341,8 +445,7 @@ BOOST_AUTO_TEST_CASE( aosoa_particle_test )
     Kokkos::View<Particle_t*,TEST_MEMSPACE> particles( "particles", num_data );
 
     // Create a compatible particle AoSoA.
-    using inner_array_size = Cabana::InnerArraySize<128>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_data );
 
     // Initialize aosoa data.
@@ -420,3 +523,5 @@ BOOST_AUTO_TEST_CASE( aosoa_particle_test )
     // Check the results.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
+
+//---------------------------------------------------------------------------//
