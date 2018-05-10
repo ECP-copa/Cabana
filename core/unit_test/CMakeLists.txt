@@ -53,6 +53,14 @@ IF(Cabana_ENABLE_Serial)
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    DeepCopy_test_Serial
+    SOURCES Serial/tstDeepCopy_Serial.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Parallel_test_Serial
     SOURCES Serial/tstParallel_Serial.cpp unit_test_main.cpp
     COMM serial mpi
@@ -84,6 +92,14 @@ IF(Cabana_ENABLE_OpenMP)
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    DeepCopy_test_OpenMP
+    SOURCES OpenMP/tstDeepCopy_OpenMP.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Parallel_test_OpenMP
     SOURCES OpenMP/tstParallel_OpenMP.cpp unit_test_main.cpp
     COMM serial mpi
@@ -109,6 +125,14 @@ IF(Cabana_ENABLE_Cuda)
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     MemberSlice_test_CudaUVM
     SOURCES Cuda/tstMemberSlice_CudaUVM.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    DeepCopy_test_CudaUVM
+    SOURCES Cuda/tstDeepCopy_CudaUVM.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
