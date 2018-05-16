@@ -50,8 +50,8 @@ void checkDataMembers(
 //---------------------------------------------------------------------------//
 BOOST_AUTO_TEST_CASE( slice_serial_api_test )
 {
-    // Manually set the inner array size.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,Kokkos::LayoutRight>;
+    // Manually set the inner array size. Select a layout by default.
+    using inner_array_layout = Cabana::InnerArrayLayout<16>;
 
     // Data dimensions.
     const int dim_1 = 3;

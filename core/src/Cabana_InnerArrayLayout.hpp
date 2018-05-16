@@ -17,7 +17,7 @@ namespace Cabana
   in those arrays. The inner array size must be a power of 2.
 */
 template<std::size_t N,
-         typename ArrayLayout,
+         typename ArrayLayout = Kokkos::LayoutRight,
          typename std::enable_if<
              (Impl::IsPowerOfTwo<N>::value && N > 0),int>::type = 0>
 struct InnerArrayLayout
