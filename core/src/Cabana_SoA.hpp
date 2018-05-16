@@ -4,7 +4,7 @@
 #include <Cabana_IndexSequence.hpp>
 #include <Cabana_MemberDataTypes.hpp>
 
-#include <Kokkos_Macros.hpp>
+#include <Kokkos_Core.hpp>
 
 #include <type_traits>
 #include <cstdlib>
@@ -105,6 +105,20 @@ typename ArrayTypeAtIndex<I,ArraySize,Types...>::return_type
 getStructMember( SoA<ArraySize,Types...>& soa )
 {
     StructMember<
+        I,
+        ArraySize,
+        typename ArrayTypeAtIndex<I,ArraySize,Types...>::member_type>& base =
+        soa;
+    return base._data;
+}
+
+// Const accessor.
+template<std::size_t I, std::size_t ArraySize, typename... Types>
+KOKKOS_INLINE_FUNCTION
+const typename ArrayTypeAtIndex<I,ArraySize,Types...>::return_type
+getStructMember( const SoA<ArraySize,Types...>& soa )
+{
+    const StructMember<
         I,
         ArraySize,
         typename ArrayTypeAtIndex<I,ArraySize,Types...>::member_type>& base =

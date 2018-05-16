@@ -3,6 +3,7 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberSlice.hpp>
+#include <Cabana_MemberDataTypes.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_ExecPolicy.hpp>
@@ -37,6 +38,7 @@ inline void deepCopySlice(
     using src_memory_space = typename src_type::traits::memory_space;
     using dst_execution_space = typename dst_type::traits::execution_space;
     using src_execution_space = typename src_type::traits::execution_space;
+    using data_type = typename DstSliceType::data_type;
 
     static_assert( std::is_same<typename DstSliceType::value_type,
                    typename SrcSliceType::value_type>::value,
@@ -55,11 +57,6 @@ inline void deepCopySlice(
 
     Kokkos::RangePolicy<dst_execution_space> exec_policy( 0, dst.size() );
 
-    auto member_rank = dst.rank();
-    auto member_n_val = 1;
-    for ( std::size_t r = 0; r < member_rank; ++r )
-        member_n_val *= dst.extent( r );
-
     auto dst_data = dst.data();
     auto src_data = src.data();
 
@@ -77,10 +74,14 @@ inline void deepCopySlice(
             std::size_t dst_array_idx = n - dst_array_size * dst_struct_idx;
             std::size_t src_array_idx = n - src_array_size * src_struct_idx;
             std::size_t dst_offset =
-                dst_struct_idx * dst_stride + dst_array_idx * member_n_val;
+                dst_struct_idx * dst_stride +
+                dst_array_idx * Impl::MemberNumberOfValues<data_type>::value;
             std::size_t src_offset =
-                src_struct_idx * src_stride + src_array_idx * member_n_val;
-            for ( int k = 0; k < member_n_val; ++k )
+                src_struct_idx * src_stride +
+                src_array_idx * Impl::MemberNumberOfValues<data_type>::value;
+            for ( std::size_t k = 0;
+                  k < Impl::MemberNumberOfValues<data_type>::value;
+                  ++k )
                 dst_data[ dst_offset + k ] = src_data[ src_offset + k ];
         };
 

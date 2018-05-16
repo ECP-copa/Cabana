@@ -176,10 +176,13 @@ class AoSoATraits
 };
 
 //---------------------------------------------------------------------------//
-/*! \class AoSoA
+/*!
+  \class AoSoA
+
   \brief Array-of-Struct-of-Arrays
 
-  A AoSoA represents an array of one or more dimensions.
+  A AoSoA represents particles and their data via an
+  array-of-structs-of-arrays.
 
   This class has both required and optional template parameters.  The
   \c DataType parameter must always be provided, and must always be

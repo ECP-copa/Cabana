@@ -4,7 +4,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Index.hpp>
 
-#include <Kokkos_Macros.hpp>
+#include <Kokkos_Core.hpp>
 
 #include <cstdlib>
 #include <type_traits>
@@ -58,6 +58,9 @@ class MemberSlice
 
     // Slice type.
     using slice_type = MemberSlice<M,AoSoA_t>;
+
+    // Member id.
+    static constexpr std::size_t member_id = M;
 
     // AoSoA type this slice wraps.
     using aosoa_type = AoSoA_t;
