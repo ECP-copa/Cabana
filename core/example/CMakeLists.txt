@@ -10,3 +10,13 @@ IF(Cabana_ENABLE_Cuda)
     )
 
 ENDIF()
+
+IF(Cabana_ENABLE_Serial)
+
+  TRIBITS_ADD_EXECUTABLE(
+    SerialExample
+    SOURCES serial_example.cpp
+    COMM serial mpi
+    )
+
+ENDIF()

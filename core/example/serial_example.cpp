@@ -1,6 +1,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_Serial.hpp>
+
+#include <Kokkos_Core.hpp>
 
 #include <cstdlib>
 #include <iostream>
@@ -8,17 +9,8 @@
 //---------------------------------------------------------------------------//
 // Define particle data.
 //---------------------------------------------------------------------------//
-// Inner array size (the size of the arrays in the structs-of-arrays).
-//
-// NOTE: It would be nice to have a dynamic option for this if possible. This
-// would allow for a true SoA-only configuration where only enough memory for
-// all the particles is allocated. Although AoSoA with very large inner array
-// sizes may not perform any worse than SoA anyways so maybe this is not
-// needed.
-const std::size_t array_size = 10;
-
 // Spatial dimension.
-const std::size_t space_dim = 3;
+const int space_dim = 3;
 
 // User field enumeration. These will be used to index into the data set. Must
 // start at 0 and increment contiguously.
@@ -49,9 +41,14 @@ using ParticleDataTypes =
                             int                           // (5) status type
                             >;
 
+// Declare the memory space.
+using MemorySpace = Kokkos::HostSpace;
+
+// Declare the inner array size.
+using ArraySize = Cabana::InnerArraySize<32>;
+
 // Set the type for the particle AoSoA.
-using ParticleList =
-    Cabana::AoSoA<ParticleDataTypes,Cabana::Serial,array_size>;
+using ParticleList = Cabana::AoSoA<ParticleDataTypes,ArraySize,MemorySpace>;
 
 //---------------------------------------------------------------------------//
 // Helper functions.
