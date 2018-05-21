@@ -124,18 +124,18 @@ void packMember(
     using buffer_traits =
         BufferParticleMemberTraits<M,typename AoSoA_t::member_types>;
 
+    // Data pointer type.
+    using ptr_type = typename AoSoA_t::struct_member_pointer_type<M>;
+
     // Get the pointer to the first element of the member in the struct we are
     // working wth.
-    auto aosoa_struct_ptr =
-        static_cast<typename AoSoA_t::struct_member_pointer_type<M> >(
-            const_cast<void*>(aosoa.data(M))) +
-        index.s() * aosoa.stride(M);
+    auto aosoa_struct_ptr = static_cast<ptr_type>( aosoa.data(M) );
+    aosoa_struct_ptr += index.s() * aosoa.stride(M);
 
     // Get the pointer to the front of the element in the struct we are
     // working with and interpret it as the front of a byte stream.
-    auto aosoa_element_ptr =
-        reinterpret_cast<char*>(aosoa_struct_ptr) +
-        index.i() * buffer_traits::size;
+    auto aosoa_element_ptr = reinterpret_cast<char*>(aosoa_struct_ptr);
+    aosoa_element_ptr += index.i() * buffer_traits::size;
 
     // Get the pointer to the location in the buffer particle we will write
     // to.
@@ -165,22 +165,22 @@ void unpackMember(
     using buffer_traits =
         BufferParticleMemberTraits<M,typename AoSoA_t::member_types>;
 
+    // Data pointer type.
+    using ptr_type = typename AoSoA_t::struct_member_pointer_type<M>;
+
     // Get the pointer to the location in the buffer particle we will write
     // to.
     auto particle_ptr = particle.data + buffer_traits::offset;
 
     // Get the pointer to the first element of the member in the struct we are
     // working wth.
-    auto aosoa_struct_ptr =
-        static_cast<typename AoSoA_t::struct_member_pointer_type<M> >(
-            const_cast<void*>(aosoa.data(M))) +
-        index.s() * aosoa.stride(M);
+    auto aosoa_struct_ptr = static_cast<ptr_type>( aosoa.data(M) );
+    aosoa_struct_ptr += index.s() * aosoa.stride(M);
 
     // Get the pointer to the front of the element in the struct we are
     // working with and interpret it as the front of a byte stream.
-    auto aosoa_element_ptr =
-        reinterpret_cast<char*>(aosoa_struct_ptr) +
-        index.i() * buffer_traits::size;
+    auto aosoa_element_ptr = reinterpret_cast<char*>(aosoa_struct_ptr);
+    aosoa_element_ptr += index.i() * buffer_traits::size;
 
     // Copy the particle buffer data into the AoSoA element.
     for ( std::size_t b = 0; b < buffer_traits::size; ++b )
@@ -270,7 +270,7 @@ void pack( const Index& index,
 {
     ParticleSerializer<AoSoA_t::number_of_members-1>::pack(
         index, aosoa, particle );
-};
+}
 
 //---------------------------------------------------------------------------//
 /*!
@@ -297,7 +297,7 @@ void unpack( const Index& index,
 {
     ParticleSerializer<AoSoA_t::number_of_members-1>::unpack(
         index, particle, aosoa );
-};
+}
 
 //---------------------------------------------------------------------------//
 

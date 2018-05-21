@@ -490,6 +490,8 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
       \param M The member index to get the extent for.
 
       \param D The member data dimension to get the extent for
+
+      \return The extent of the given member data dimension.
     */
     KOKKOS_INLINE_FUNCTION
     std::size_t extent( const std::size_t M, const std::size_t D ) const
@@ -609,56 +611,27 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     }
 
     /*!
-      \brief Get a non-const un-typed raw pointer to the data for a given
-      member
+      \brief Get an un-typed raw pointer to the data for a given member
 
       \param M The member index to get the data for.
 
-      \return A non-const un-typed raw pointer to the member data at the given
-      index.
+      \return An un-typed raw pointer to the member data at the given index.
 
       Users will need to cast this pointer to the appropriate type for the
       stride associated with this member to mean anything.
     */
     KOKKOS_INLINE_FUNCTION
-    void* data( const std::size_t M )
+    void* data( const std::size_t M ) const
     {
         return _pointers[M];
     }
 
     /*!
-      \brief Get a const un-typed raw pointer to the data for a given member
+      \brief Get an un-typed raw pointer to the entire data block.
 
-      \param M The member index to get the data for.
-
-      \return A const un-typed raw pointer to the member data at the given
-      index.
-
-      Users will need to cast this pointer to the appropriate type for the
-      stride associated with this member to mean anything.
+      \return An un-typed raw-pointer to the entire data block.
     */
-    KOKKOS_INLINE_FUNCTION
-    const void* data( const std::size_t M ) const
-    {
-        return _pointers[M];
-    }
-
-    /*!
-      \brief Get a non-const un-typed raw pointer to the entire data block.
-
-      \return A non-const un-typed raw-pointer to the entire data block.
-    */
-    void* ptr()
-    {
-        return _managed_data.get();
-    }
-
-    /*!
-      \brief Get a const un-typed raw pointer to the entire data block.
-
-      \return A const un-typed raw-pointer to the entire data block.
-    */
-    const void* ptr() const
+    void* ptr() const
     {
         return _managed_data.get();
     }
