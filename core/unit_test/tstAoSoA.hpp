@@ -1,9 +1,11 @@
 #include <Cabana_AoSoA.hpp>
 
+#include <Kokkos_Core.hpp>
+
 #include <boost/test/unit_test.hpp>
 
 //---------------------------------------------------------------------------//
-// Check the data given a set of values.
+// Check the data given a set of values in an aosoa.
 template<class aosoa_type>
 void checkDataMembers(
     aosoa_type aosoa,
@@ -315,4 +317,111 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_test )
             for ( std::size_t k = 0; k < dim_2; ++k )
                 BOOST_CHECK( aosoa.get<2>(idx,j,k) == (s+i+j+k)*3.0 );
     }
+}
+
+//---------------------------------------------------------------------------//
+BOOST_AUTO_TEST_CASE( aosoa_particle_test )
+{
+    // Data dimensions.
+    const std::size_t dim_1 = 3;
+    const std::size_t dim_2 = 2;
+    const std::size_t dim_3 = 4;
+    const std::size_t dim_4 = 3;
+
+    // Declare member types.
+    using T0 = float[dim_1][dim_2][dim_3];
+    using T1 = int;
+    using T2 = float[dim_1][dim_2][dim_3][dim_4];
+    using T3 = double[dim_1];
+    using T4 = double[dim_1][dim_2];
+
+    // Declare data types.
+    using DataTypes = Cabana::MemberDataTypes<T0,T1,T2,T3,T4>;
+
+    // Declare the particle type.
+    using Particle_t = Cabana::Particle<DataTypes>;
+
+    // Create a view of particles.
+    std::size_t num_data = 453;
+    Kokkos::View<Particle_t*,TEST_MEMSPACE> particles( "particles", num_data );
+
+    // Create a compatible particle AoSoA.
+    using inner_array_size = Cabana::InnerArraySize<103>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,TEST_MEMSPACE>;
+    AoSoA_t aosoa( num_data );
+
+    // Initialize aosoa data.
+    float fval = 3.4;
+    double dval = 1.23;
+    int ival = 1;
+    for ( auto idx = aosoa.begin(); idx != aosoa.end(); ++idx )
+    {
+        // Member 0.
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                for ( std::size_t k = 0; k < dim_3; ++k )
+                    aosoa.get<0>( idx, i, j, k ) = fval * (i+j+k);
+
+        // Member 1.
+        aosoa.get<1>( idx ) = ival;
+
+        // Member 2.
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                for ( std::size_t k = 0; k < dim_3; ++k )
+                    for ( std::size_t l = 0; l < dim_4; ++l )
+                        aosoa.get<2>( idx, i, j, k, l ) = fval * (i+j+k+l);
+
+        // Member 3.
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            aosoa.get<3>( idx, i ) = dval * i;
+
+        // Member 4.
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                aosoa.get<4>( idx, i, j ) = dval * (i+j);
+    }
+
+    // Assign the AoSoA data to the particles.
+    for ( auto idx = aosoa.begin(); idx < aosoa.end(); ++idx )
+         particles( idx.oneD() ) = aosoa.getParticle( idx );
+
+    // Change the particle data.
+    fval = 2.1;
+    dval = 9.21;
+    ival = 3;
+    for ( std::size_t idx = 0; idx < num_data; ++idx )
+    {
+        // Member 0.
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                for ( std::size_t k = 0; k < dim_3; ++k )
+                    particles( idx ).get<0>( i, j, k ) = fval * (i+j+k);
+
+        // Member 1.
+        particles( idx ).get<1>() = ival;
+
+        // Member 2.
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                for ( std::size_t k = 0; k < dim_3; ++k )
+                    for ( std::size_t l = 0; l < dim_4; ++l )
+                        particles( idx ).get<2>( i, j, k, l ) = fval * (i+j+k+l);
+
+        // Member 3.
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            particles( idx ).get<3>( i ) = dval * i;
+
+        // Member 4.
+        for ( std::size_t i = 0; i < dim_1; ++i )
+            for ( std::size_t j = 0; j < dim_2; ++j )
+                particles( idx ).get<4>( i, j ) = dval * (i+j);
+    }
+
+    // Assign the particle data back to the AoSoA.
+    for ( auto idx = aosoa.begin(); idx < aosoa.end(); ++idx )
+        aosoa.setParticle( idx, particles(idx.oneD()) );
+
+    // Check the results.
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }

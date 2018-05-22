@@ -3,6 +3,7 @@
 
 #include <Cabana_IndexSequence.hpp>
 #include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -56,6 +57,10 @@ template<class DataTypes>
 struct is_particle<const Particle<DataTypes> > : public std::true_type {};
 
 //---------------------------------------------------------------------------//
+namespace Impl
+{
+
+//---------------------------------------------------------------------------//
 /*!
   \brief Particle member accessor.
 */
@@ -77,7 +82,7 @@ template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     (0==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_const_reference_type<M> >::type
+    typename Particle_t::member_value_type<M> >::type
 getParticleMember( const Particle_t& particle )
 {
     const ParticleMember<M,typename Particle_t::member_data_type<M> >&
@@ -103,7 +108,7 @@ template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     (1==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_const_reference_type<M> >::type
+    typename Particle_t::member_value_type<M> >::type
 getParticleMember( const Particle_t& particle,
                    const int d0 )
 {
@@ -131,7 +136,7 @@ template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     (2==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_const_reference_type<M> >::type
+    typename Particle_t::member_value_type<M> >::type
 getParticleMember( const Particle_t& particle,
                    const int d0,
                    const int d1 )
@@ -161,7 +166,7 @@ template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     (3==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_const_reference_type<M> >::type
+    typename Particle_t::member_value_type<M> >::type
 getParticleMember( const Particle_t& particle,
                    const int d0,
                    const int d1,
@@ -193,7 +198,7 @@ template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     (4==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_const_reference_type<M> >::type
+    typename Particle_t::member_value_type<M> >::type
 getParticleMember( const Particle_t& particle,
                    const int d0,
                    const int d1,
@@ -204,6 +209,10 @@ getParticleMember( const Particle_t& particle,
         base = particle;
     return base._data[d0][d1][d2][d3];
 }
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Impl
 
 //---------------------------------------------------------------------------//
 // Particle implementation.
@@ -236,11 +245,6 @@ struct Particle<MemberDataTypes<Types...> >
     template<std::size_t M>
     using member_reference_type =
         typename std::add_lvalue_reference<member_value_type<M> >::type;
-
-    // Const eference type at a given index M.
-    template<std::size_t M>
-    using member_const_reference_type =
-        typename std::add_const<member_reference_type<M> >::type;
 
     // -------------------------------
     // Member data type properties.
@@ -280,89 +284,89 @@ struct Particle<MemberDataTypes<Types...> >
 
     // Rank 0
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(0==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get()
     {
-        return getParticleMember<M>( *this );
+        return Impl::getParticleMember<M>( *this );
     }
 
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(0==std::rank<member_data_type<M> >::value),
-                            member_const_reference_type<M> >::type
+                            member_value_type<M> >::type
     get() const
     {
-        return getParticleMember<M>( *this );
+        return Impl::getParticleMember<M>( *this );
     }
 
     // Rank 1
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(1==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get( const int d0 )
     {
-        return getParticleMember<M>( *this, d0 );
+        return Impl::getParticleMember<M>( *this, d0 );
     }
 
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(1==std::rank<member_data_type<M> >::value),
-                            member_const_reference_type<M> >::type
+                            member_value_type<M> >::type
     get( const int d0 ) const
     {
-        return getParticleMember<M>( *this, d0 );
+        return Impl::getParticleMember<M>( *this, d0 );
     }
 
     // Rank 2
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(2==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get( const int d0,
          const int d1 )
     {
-        return getParticleMember<M>( *this, d0, d1 );
+        return Impl::getParticleMember<M>( *this, d0, d1 );
     }
 
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(2==std::rank<member_data_type<M> >::value),
-                            member_const_reference_type<M> >::type
+                            member_value_type<M> >::type
     get( const int d0,
          const int d1 ) const
     {
-        return getParticleMember<M>( *this, d0, d1 );
+        return Impl::getParticleMember<M>( *this, d0, d1 );
     }
 
     // Rank 3
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(3==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get( const int d0,
          const int d1,
          const int d2 )
     {
-        return getParticleMember<M>( *this, d0, d1, d2 );
+        return Impl::getParticleMember<M>( *this, d0, d1, d2 );
     }
 
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(3==std::rank<member_data_type<M> >::value),
-                            member_const_reference_type<M> >::type
+                            member_value_type<M> >::type
     get( const int d0,
          const int d1,
          const int d2 ) const
     {
-        return getParticleMember<M>( *this, d0, d1, d2 );
+        return Impl::getParticleMember<M>( *this, d0, d1, d2 );
     }
 
     // Rank 4
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(4==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get( const int d0,
@@ -370,19 +374,19 @@ struct Particle<MemberDataTypes<Types...> >
          const int d2,
          const int d3 )
     {
-        return getParticleMember<M>( *this, d0, d1, d2, d3 );
+        return Impl::getParticleMember<M>( *this, d0, d1, d2, d3 );
     }
 
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<(4==std::rank<member_data_type<M> >::value),
-                            member_const_reference_type<M> >::type
+                            member_value_type<M> >::type
     get( const int d0,
          const int d1,
          const int d2,
          const int d3 ) const
     {
-        return getParticleMember<M>( *this, d0, d1, d2, d3 );
+        return Impl::getParticleMember<M>( *this, d0, d1, d2, d3 );
     }
 };
 
