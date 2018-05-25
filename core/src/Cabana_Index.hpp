@@ -1,131 +1,85 @@
 #ifndef CABANA_INDEX_HPP
 #define CABANA_INDEX_HPP
 
-#include <Kokkos_Macros.hpp>
+#include <Cabana_TypeTraits.hpp>
 
-#include <cstdlib>
+#include <Kokkos_Core.hpp>
+
+#include <type_traits>
 
 namespace Cabana
 {
+namespace Impl
+{
+
 //---------------------------------------------------------------------------//
-/*
+/*!
   \class Index
 
-  \brief An index for indexing into Arrays-of-Structs-of-Arrays.
+  \brief Class for converting between integral particle indices and AoSoA
+  indices.
 
-  This index creates the appearance of a 1-dimensional outer set of indices
-  where there are actually two, allowing for the composition of loops that
-  appear 1-dimensional to the user and accessor functions that are of a single
-  dimension.
+  \tparam N The inner array size of the AoSoA. Must be a power of 2.
 */
+template<int N,
+         typename std::enable_if<(Impl::IsPowerOfTwo<N>::value),int>::type = 0>
 class Index
 {
-  private:
-
-    // The inner array size.
-    std::size_t _a;
-
-    // The struct index.
-    std::size_t _s;
-
-    // Array offset index in the struct.
-    std::size_t _i;
-
   public:
 
-    // Constructor.
-    KOKKOS_FUNCTION
-    Index( const std::size_t array_size,
-           const std::size_t struct_id,
-           const std::size_t offset )
-        : _a( array_size )
-        , _s( struct_id )
-        , _i( offset )
-    {};
+    // Inner array size.
+    static constexpr int array_size = N;
 
-    // Get the inner array size.
-    KOKKOS_INLINE_FUNCTION
-    std::size_t a() const
-    { return _a; }
+    // Array size offset.
+    static constexpr int array_size_offset = (array_size - 1);
 
-    // Get the struct index.
-    KOKKOS_INLINE_FUNCTION
-    std::size_t s() const
-    { return _s; }
+    // Number of binary bits needed to hold the array size.
+    static constexpr int array_size_binary_bits =
+        Impl::LogBase2<array_size>::value;
 
-    // Get the array offset in the struct.
-    KOKKOS_INLINE_FUNCTION
-    std::size_t i() const
-    { return _i; }
+    /*!
+      \brief Given a particle index get the AoSoA array and struct indices.
 
-    // Get a 1-dimensional index.
-    KOKKOS_INLINE_FUNCTION
-    std::size_t oneD() const
-    { return _s * _a + _i; }
+      \param particle_index The particle index.
 
-    // Prefix increment operator.
-    KOKKOS_INLINE_FUNCTION
-    Index& operator++()
+      \return The indices of the struct and the array index in that struct in
+      which the particle is located.
+    */
+    KOKKOS_FORCEINLINE_FUNCTION
+    static Kokkos::pair<int,int> aosoa( const int particle_index )
     {
-        _i = ( _a - 1 == _i ) ? 0 : _i + 1;
-        _s = ( 0 == _i ) ? _s + 1: _s;
-        return *this;
-    };
+        Kokkos::pair<int,int> indices;
 
-    // Postfix increment operator.
-    KOKKOS_INLINE_FUNCTION
-    Index operator++(int)
-    {
-        Index temp = *this;
-        ++*this;
-        return temp;
-    };
+        // Array index.
+        indices.second = particle_index & array_size_offset;
 
-    // Equality comparator.
-    KOKKOS_INLINE_FUNCTION
-    bool operator==( const Index& rhs ) const
-    {
-        return (_s == rhs._s) && (_i == rhs._i);
+        // Struct index
+        indices.first = (particle_index - indices.second) >> array_size_binary_bits;
+
+        return indices;
     }
 
-    // Inequality comparator.
-    KOKKOS_INLINE_FUNCTION
-    bool operator!=( const Index& rhs ) const
-    {
-        return (_s != rhs._s) || (_i != rhs._i);
-    }
+    /*!
+      \brief Given a struct index and array index in an AoSoA get the particle
+      index.
 
-    // Less-than operator.
-    KOKKOS_INLINE_FUNCTION
-    bool operator<( const Index& rhs ) const
-    {
-        return (_s < rhs._s) || ((_s == rhs._s) && (_i < rhs._i));
-    }
+      \param struct_index The struct index.
 
-    // Greater-than operator.
-    KOKKOS_INLINE_FUNCTION
-    bool operator>( const Index& rhs ) const
-    {
-        return (_s > rhs._s) || ((_s == rhs._s) && (_i > rhs._i));
-    }
+      \param array_index The array index.
 
-    // Less-than-or-equal-to operator.
-    KOKKOS_INLINE_FUNCTION
-    bool operator<=( const Index& rhs ) const
+      \return The particle index.
+    */
+    KOKKOS_FORCEINLINE_FUNCTION
+    static int particle( const int struct_index, const int array_index )
     {
-        return (_s < rhs._s) || ((_s == rhs._s) && (_i <= rhs._i));
-    }
-
-    // Greater-than-or-equal-to operator.
-    KOKKOS_INLINE_FUNCTION
-    bool operator>=( const Index& rhs ) const
-    {
-        return (_s > rhs._s) || ((_s == rhs._s) && (_i >= rhs._i));
+        return (struct_index << array_size_binary_bits) + array_index;
     }
 };
 
 //---------------------------------------------------------------------------//
 
-}
+} // end namespace Impl
 
-#endif // CABANA_INDEX_HPP
+} // end namespace Cabana
+
+#endif // end CABANA_INDEX_HPP

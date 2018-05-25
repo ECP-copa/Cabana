@@ -2,7 +2,6 @@
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ExecutionPolicy.hpp>
 #include <Cabana_InnerArraySize.hpp>
-#include <Cabana_Index.hpp>
 #include <Cabana_MemberSlice.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -63,10 +62,10 @@ int main( int argc, char* argv[] )
     auto s2 = Cabana::slice<S2>( aosoa );
 
     // Create an execution policy over the entire AoSoA.
-    Cabana::IndexRangePolicy<ExecutionSpace> range_policy( aosoa );
+    Cabana::RangePolicy<inner_array_size::value,ExecutionSpace> range_policy( aosoa );
 
     // Initialization functor.
-    auto init_func = KOKKOS_LAMBDA( const Cabana::Index idx )
+    auto init_func = KOKKOS_LAMBDA( const int idx )
     {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
@@ -92,7 +91,7 @@ int main( int argc, char* argv[] )
     // Create a work functor:
     // m3 = m1 * m2
     // m1 * v1 / s1 + m2 * v2 / s2 + dot(v1,v2) * v1 + m3 * v2
-    auto work_func = KOKKOS_LAMBDA( const Cabana::Index idx )
+    auto work_func = KOKKOS_LAMBDA( const int idx )
     {
         double t1[3] = {0.0, 0.0, 0.0};
         for ( int i = 0; i < 3; ++i )

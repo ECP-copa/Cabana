@@ -1,5 +1,6 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -56,9 +57,7 @@ using ParticleList = Cabana::AoSoA<ParticleDataTypes,ArraySize,MemorySpace>;
 // Function to intitialize the particles.
 void initializeParticles( ParticleList particles )
 {
-    for ( auto idx = particles.begin();
-          idx != particles.end();
-          ++idx )
+    for ( auto idx = 0; idx != particles.size(); ++idx )
     {
         // Initialize position.
         particles.get<PositionX>( idx ) = 1.1;
@@ -83,14 +82,14 @@ void initializeParticles( ParticleList particles )
 // Function to print out the data for every particle.
 void printParticles( const ParticleList particles )
 {
-    for ( auto idx = particles.begin();
-          idx != particles.end();
-          ++idx )
+    for ( auto idx = 0; idx != particles.size(); ++idx )
     {
+        auto aosoa_idx = Cabana::Impl::Index<ArraySize::value>::aosoa( idx );
+
         std::cout << std::endl;
 
-        std::cout << "Struct id: " << idx.s() << std::endl;
-        std::cout << "Struct offset: " << idx.i() << std::endl;
+        std::cout << "Struct id: " << aosoa_idx.first << std::endl;
+        std::cout << "Struct offset: " << aosoa_idx.second << std::endl;
         std::cout << "Position: "
                   << particles.get<PositionX>( idx ) << " "
                   << particles.get<PositionY>( idx ) << " "
