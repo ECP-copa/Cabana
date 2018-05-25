@@ -6,13 +6,9 @@
 #include <Cabana_Index.hpp>
 #include <Cabana_InnerArraySize.hpp>
 #include <Cabana_PerformanceTraits.hpp>
+#include <Cabana_Particle.hpp>
 
 #include <Kokkos_Core.hpp>
-#include <Kokkos_Core_fwd.hpp>
-#include <Kokkos_Macros.hpp>
-#include <Kokkos_HostSpace.hpp>
-#include <Kokkos_MemoryTraits.hpp>
-#include <Kokkos_ExecPolicy.hpp>
 
 #include <type_traits>
 #include <memory>
@@ -280,6 +276,14 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // The maximum rank supported for member types.
     static constexpr std::size_t max_supported_rank = 4;
 
+    // Particle type.
+    using particle_type = Particle<member_types>;
+
+    // Host mirror.
+    using HostMirror = AoSoA<member_types,
+                             typename traits::static_inner_array_size_type,
+                             typename traits::host_mirror_space>;
+
     // Struct member array return type at a given index M.
     template<std::size_t M>
     using struct_member_array_type =
@@ -490,6 +494,8 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
       \param M The member index to get the extent for.
 
       \param D The member data dimension to get the extent for
+
+      \return The extent of the given member data dimension.
     */
     KOKKOS_INLINE_FUNCTION
     std::size_t extent( const std::size_t M, const std::size_t D ) const
@@ -523,6 +529,43 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         std::size_t s = ( 0 == remainder ) ? _num_soa : _num_soa - 1;
         std::size_t i = ( 0 == remainder ) ? 0 : remainder;
         return Index( array_size, s, i );
+    }
+
+    // -------------------------------
+    // Particle accessors.
+
+    /*!
+      \brief Get a particle at a given index.
+
+      \param idx The index to get the particle from.
+
+      \param particle The particle to assign the data to.
+    */
+    KOKKOS_INLINE_FUNCTION
+    particle_type getParticle( const Index idx ) const
+    {
+        particle_type particle;
+        copyToParticle(
+            idx,
+            particle,
+            std::integral_constant<std::size_t,number_of_members-1>() );
+        return particle;
+    }
+
+    /*!
+      \brief Set a particle at a given index.
+
+      \param idx The index to set the particle at.
+
+      \param particle The particle to get the data from.
+    */
+    KOKKOS_INLINE_FUNCTION
+    void setParticle( const Index idx, const particle_type& particle ) const
+    {
+        copyFromParticle(
+            idx,
+            particle,
+            std::integral_constant<std::size_t,number_of_members-1>() );
     }
 
     // -------------------------------
@@ -609,56 +652,27 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     }
 
     /*!
-      \brief Get a non-const un-typed raw pointer to the data for a given
-      member
+      \brief Get an un-typed raw pointer to the data for a given member
 
       \param M The member index to get the data for.
 
-      \return A non-const un-typed raw pointer to the member data at the given
-      index.
+      \return An un-typed raw pointer to the member data at the given index.
 
       Users will need to cast this pointer to the appropriate type for the
       stride associated with this member to mean anything.
     */
     KOKKOS_INLINE_FUNCTION
-    void* data( const std::size_t M )
+    void* data( const std::size_t M ) const
     {
         return _pointers[M];
     }
 
     /*!
-      \brief Get a const un-typed raw pointer to the data for a given member
+      \brief Get an un-typed raw pointer to the entire data block.
 
-      \param M The member index to get the data for.
-
-      \return A const un-typed raw pointer to the member data at the given
-      index.
-
-      Users will need to cast this pointer to the appropriate type for the
-      stride associated with this member to mean anything.
+      \return An un-typed raw-pointer to the entire data block.
     */
-    KOKKOS_INLINE_FUNCTION
-    const void* data( const std::size_t M ) const
-    {
-        return _pointers[M];
-    }
-
-    /*!
-      \brief Get a non-const un-typed raw pointer to the entire data block.
-
-      \return A non-const un-typed raw-pointer to the entire data block.
-    */
-    void* ptr()
-    {
-        return _managed_data.get();
-    }
-
-    /*!
-      \brief Get a const un-typed raw pointer to the entire data block.
-
-      \return A const un-typed raw-pointer to the entire data block.
-    */
-    const void* ptr() const
+    void* ptr() const
     {
         return _managed_data.get();
     }
@@ -767,6 +781,160 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
             std::integral_constant<std::size_t,0>(),
             std::integral_constant<std::size_t,max_supported_rank-1>() );
         assignRanks<0>();
+    }
+
+    // Copy a member to a particle.
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (0==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyMemberToParticle( const Index idx, particle_type& particle ) const
+    {
+        particle.get<M>() = get<M>( idx );
+    }
+
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (1==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyMemberToParticle( const Index idx, particle_type& particle ) const
+    {
+        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
+            particle.get<M>( i0 ) = get<M>( idx, i0 );
+    }
+
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (2==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyMemberToParticle( const Index idx, particle_type& particle ) const
+    {
+        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
+            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
+                particle.get<M>( i0, i1 ) = get<M>( idx, i0, i1 );
+    }
+
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (3==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyMemberToParticle( const Index idx, particle_type& particle ) const
+    {
+        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
+            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
+                for ( int i2 = 0; i2 < extent(M,2); ++i2 )
+                    particle.get<M>( i0, i1, i2 ) = get<M>( idx, i0, i1, i2 );
+    }
+
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (4==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyMemberToParticle( const Index idx, particle_type& particle ) const
+    {
+        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
+            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
+                for ( int i2 = 0; i2 < extent(M,2); ++i2 )
+                    for ( int i3 = 0; i3 < extent(M,3); ++i3 )
+                        particle.get<M>( i0, i1, i2, i3 ) =
+                            get<M>( idx, i0, i1, i2, i3 );
+    }
+
+    // Copy to a particle a given index.
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    void copyToParticle( const Index idx,
+                         particle_type& particle,
+                         std::integral_constant<std::size_t,M> ) const
+    {
+        copyMemberToParticle<M>( idx, particle );
+        copyToParticle(
+            idx, particle, std::integral_constant<std::size_t,M-1>() );
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    void copyToParticle( const Index idx,
+                         particle_type& particle,
+                         std::integral_constant<std::size_t,0> ) const
+    {
+        copyMemberToParticle<0>( idx, particle );
+    }
+
+    // Copy a particle to a member.
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (0==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyParticleToMember( const Index idx, const particle_type& particle ) const
+    {
+        get<M>( idx ) = particle.get<M>();
+    }
+
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (1==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyParticleToMember( const Index idx, const particle_type& particle ) const
+    {
+        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
+            get<M>( idx, i0 ) = particle.get<M>( i0 );
+    }
+
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (2==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyParticleToMember( const Index idx, const particle_type& particle ) const
+    {
+        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
+            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
+                get<M>( idx, i0, i1 ) = particle.get<M>( i0, i1 );
+    }
+
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (3==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyParticleToMember( const Index idx, const particle_type& particle ) const
+    {
+        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
+            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
+                for ( int i2 = 0; i2 < extent(M,2); ++i2 )
+                    get<M>( idx, i0, i1, i2 ) = particle.get<M>( i0, i1, i2 );
+    }
+
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    typename std::enable_if<
+        (4==std::rank<struct_member_data_type<M> >::value),void>::type
+    copyParticleToMember( const Index idx, const particle_type& particle ) const
+    {
+        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
+            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
+                for ( int i2 = 0; i2 < extent(M,2); ++i2 )
+                    for ( int i3 = 0; i3 < extent(M,3); ++i3 )
+                        get<M>( idx, i0, i1, i2, i3 ) =
+                            particle.get<M>( i0, i1, i2, i3 );
+    }
+
+    // Copy to a given index from a particle.
+    template<std::size_t M>
+    KOKKOS_INLINE_FUNCTION
+    void copyFromParticle( const Index idx,
+                           const particle_type& particle,
+                           std::integral_constant<std::size_t,M> ) const
+    {
+        copyParticleToMember<M>( idx, particle );
+        copyFromParticle(
+            idx, particle, std::integral_constant<std::size_t,M-1>() );
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    void copyFromParticle( const Index idx,
+                           const particle_type& particle,
+                           std::integral_constant<std::size_t,0> ) const
+    {
+        copyParticleToMember<0>( idx, particle );
     }
 
   private:
