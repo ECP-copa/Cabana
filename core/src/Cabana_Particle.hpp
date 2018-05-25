@@ -3,7 +3,6 @@
 
 #include <Cabana_IndexSequence.hpp>
 #include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
 
