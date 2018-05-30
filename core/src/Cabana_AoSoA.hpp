@@ -766,7 +766,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         (0==std::rank<struct_member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int idx, particle_type& particle ) const
     {
-        particle.get<M>() = get<M>( idx );
+        particle.template get<M>() = get<M>( idx );
     }
 
     template<std::size_t M>
@@ -776,7 +776,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyMemberToParticle( const int idx, particle_type& particle ) const
     {
         for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            particle.get<M>( i0 ) = get<M>( idx, i0 );
+            particle.template get<M>( i0 ) = get<M>( idx, i0 );
     }
 
     template<std::size_t M>
@@ -787,7 +787,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     {
         for ( int i0 = 0; i0 < extent(M,0); ++i0 )
             for ( int i1 = 0; i1 < extent(M,1); ++i1 )
-                particle.get<M>( i0, i1 ) = get<M>( idx, i0, i1 );
+                particle.template get<M>( i0, i1 ) = get<M>( idx, i0, i1 );
     }
 
     template<std::size_t M>
@@ -799,7 +799,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         for ( int i0 = 0; i0 < extent(M,0); ++i0 )
             for ( int i1 = 0; i1 < extent(M,1); ++i1 )
                 for ( int i2 = 0; i2 < extent(M,2); ++i2 )
-                    particle.get<M>( i0, i1, i2 ) = get<M>( idx, i0, i1, i2 );
+                    particle.template get<M>( i0, i1, i2 ) = get<M>( idx, i0, i1, i2 );
     }
 
     template<std::size_t M>
@@ -812,7 +812,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
             for ( int i1 = 0; i1 < extent(M,1); ++i1 )
                 for ( int i2 = 0; i2 < extent(M,2); ++i2 )
                     for ( int i3 = 0; i3 < extent(M,3); ++i3 )
-                        particle.get<M>( i0, i1, i2, i3 ) =
+                        particle.template get<M>( i0, i1, i2, i3 ) =
                             get<M>( idx, i0, i1, i2, i3 );
     }
 
@@ -843,7 +843,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         (0==std::rank<struct_member_data_type<M> >::value),void>::type
     copyParticleToMember( const int idx, const particle_type& particle ) const
     {
-        get<M>( idx ) = particle.get<M>();
+        get<M>( idx ) = particle.template get<M>();
     }
 
     template<std::size_t M>
@@ -853,7 +853,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyParticleToMember( const int idx, const particle_type& particle ) const
     {
         for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            get<M>( idx, i0 ) = particle.get<M>( i0 );
+            get<M>( idx, i0 ) = particle.template get<M>( i0 );
     }
 
     template<std::size_t M>
@@ -864,7 +864,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     {
         for ( int i0 = 0; i0 < extent(M,0); ++i0 )
             for ( int i1 = 0; i1 < extent(M,1); ++i1 )
-                get<M>( idx, i0, i1 ) = particle.get<M>( i0, i1 );
+                get<M>( idx, i0, i1 ) = particle.template get<M>( i0, i1 );
     }
 
     template<std::size_t M>
@@ -876,7 +876,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         for ( int i0 = 0; i0 < extent(M,0); ++i0 )
             for ( int i1 = 0; i1 < extent(M,1); ++i1 )
                 for ( int i2 = 0; i2 < extent(M,2); ++i2 )
-                    get<M>( idx, i0, i1, i2 ) = particle.get<M>( i0, i1, i2 );
+                    get<M>( idx, i0, i1, i2 ) = particle.template get<M>( i0, i1, i2 );
     }
 
     template<std::size_t M>
@@ -890,7 +890,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
                 for ( int i2 = 0; i2 < extent(M,2); ++i2 )
                     for ( int i3 = 0; i3 < extent(M,3); ++i3 )
                         get<M>( idx, i0, i1, i2, i3 ) =
-                            particle.get<M>( i0, i1, i2, i3 );
+                            particle.template get<M>( i0, i1, i2, i3 );
     }
 
     // Copy to a given index from a particle.

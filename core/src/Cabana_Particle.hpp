@@ -68,11 +68,11 @@ namespace Impl
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (0==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_reference_type<M> >::type
+    (0==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_reference_type<M> >::type
 getParticleMember( Particle_t& particle )
 {
-    ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data;
 }
@@ -80,11 +80,11 @@ getParticleMember( Particle_t& particle )
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (0==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_value_type<M> >::type
+    (0==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_value_type<M> >::type
 getParticleMember( const Particle_t& particle )
 {
-    const ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data;
 }
@@ -93,12 +93,12 @@ getParticleMember( const Particle_t& particle )
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (1==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_reference_type<M> >::type
+    (1==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_reference_type<M> >::type
 getParticleMember( Particle_t& particle,
                    const int d0 )
 {
-    ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data[d0];
 }
@@ -106,12 +106,12 @@ getParticleMember( Particle_t& particle,
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (1==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_value_type<M> >::type
+    (1==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_value_type<M> >::type
 getParticleMember( const Particle_t& particle,
                    const int d0 )
 {
-    const ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data[d0];
 }
@@ -120,13 +120,13 @@ getParticleMember( const Particle_t& particle,
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (2==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_reference_type<M> >::type
+    (2==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_reference_type<M> >::type
 getParticleMember( Particle_t& particle,
                    const int d0,
                    const int d1 )
 {
-    ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data[d0][d1];
 }
@@ -134,13 +134,13 @@ getParticleMember( Particle_t& particle,
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (2==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_value_type<M> >::type
+    (2==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_value_type<M> >::type
 getParticleMember( const Particle_t& particle,
                    const int d0,
                    const int d1 )
 {
-    const ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data[d0][d1];
 }
@@ -149,14 +149,14 @@ getParticleMember( const Particle_t& particle,
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (3==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_reference_type<M> >::type
+    (3==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_reference_type<M> >::type
 getParticleMember( Particle_t& particle,
                    const int d0,
                    const int d1,
                    const int d2 )
 {
-    ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data[d0][d1][d2];
 }
@@ -164,14 +164,14 @@ getParticleMember( Particle_t& particle,
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (3==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_value_type<M> >::type
+    (3==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_value_type<M> >::type
 getParticleMember( const Particle_t& particle,
                    const int d0,
                    const int d1,
                    const int d2 )
 {
-    const ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data[d0][d1][d2];
 }
@@ -180,15 +180,15 @@ getParticleMember( const Particle_t& particle,
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (4==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_reference_type<M> >::type
+    (4==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_reference_type<M> >::type
 getParticleMember( Particle_t& particle,
                    const int d0,
                    const int d1,
                    const int d2,
                    const int d3 )
 {
-    ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data[d0][d1][d2][d3];
 }
@@ -196,15 +196,15 @@ getParticleMember( Particle_t& particle,
 template<std::size_t M, class Particle_t>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (4==std::rank<typename Particle_t::member_data_type<M> >::value),
-    typename Particle_t::member_value_type<M> >::type
+    (4==std::rank<typename Particle_t::template member_data_type<M> >::value),
+    typename Particle_t::template member_value_type<M> >::type
 getParticleMember( const Particle_t& particle,
                    const int d0,
                    const int d1,
                    const int d2,
                    const int d3 )
 {
-    const ParticleMember<M,typename Particle_t::member_data_type<M> >&
+    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
         base = particle;
     return base._data[d0][d1][d2][d3];
 }
