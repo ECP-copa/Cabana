@@ -1,45 +1,45 @@
 #ifndef CABANA_EXECUTIONPOLICY_HPP
 #define CABANA_EXECUTIONPOLICY_HPP
 
-#include <Cabana_Index.hpp>
-
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class IndexRangePolicy
+  \class RangePolicy
   \brief Execution policy over a range of indices.
 */
-template<class ExecutionSpace>
-class IndexRangePolicy
+template<int N, class ExecutionSpace>
+class RangePolicy
 {
   public:
+
+    static constexpr int array_size = N;
 
     using execution_space = ExecutionSpace;
 
     // Range constructor.
-    IndexRangePolicy( const Index& begin, const Index& end )
+    RangePolicy( const int begin, const int end )
         : _begin( begin )
         , _end( end )
     {}
 
-    // Container constructor. The container must have a begin() and end()
-    // function that returns a Cabana::Index. C++ concepts would be really
-    // nice here. Valid containers include the AoSoA and MemberSlices.
+    // Container constructor. The container must have a size() function that
+    // returns an int. C++ concepts would be really nice here. Valid
+    // containers include the AoSoA and MemberSlices.
     template<class Container>
-    IndexRangePolicy( Container container )
-        : _begin( container.begin() )
-        , _end( container.end() )
+    RangePolicy( Container container )
+        : _begin( 0 )
+        , _end( container.size() )
     {}
 
     // Range bounds accessors.
-    KOKKOS_INLINE_FUNCTION Index begin() const { return _begin; }
-    KOKKOS_INLINE_FUNCTION Index end() const { return _end; }
+    KOKKOS_INLINE_FUNCTION int begin() const { return _begin; }
+    KOKKOS_INLINE_FUNCTION int end() const { return _end; }
 
   private:
 
-    Index _begin;
-    Index _end;
+    int _begin;
+    int _end;
 };
 
 //---------------------------------------------------------------------------//

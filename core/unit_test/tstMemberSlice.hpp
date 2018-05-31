@@ -9,15 +9,15 @@ template<class aosoa_type>
 void checkDataMembers(
     aosoa_type aosoa,
     const float fval, const double dval, const int ival,
-    const std::size_t dim_1, const std::size_t dim_2,
-    const std::size_t dim_3, const std::size_t dim_4 )
+    const int dim_1, const int dim_2,
+    const int dim_3, const int dim_4 )
 {
-    for ( auto idx = aosoa.begin(); idx != aosoa.end(); ++idx )
+    for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
                     BOOST_CHECK( aosoa.template get<0>( idx, i, j, k ) ==
                                          fval * (i+j+k) );
 
@@ -25,20 +25,20 @@ void checkDataMembers(
         BOOST_CHECK( aosoa.template get<1>( idx ) == ival );
 
         // Member 2.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    for ( std::size_t l = 0; l < dim_4; ++l )
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    for ( int l = 0; l < dim_4; ++l )
                         BOOST_CHECK( aosoa.template get<2>( idx, i, j, k, l ) ==
                                              fval * (i+j+k+l) );
 
         // Member 3.
-        for ( std::size_t i = 0; i < dim_1; ++i )
+        for ( int i = 0; i < dim_1; ++i )
             BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
 
         // Member 4.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
                 BOOST_CHECK( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
     }
 }
@@ -49,13 +49,13 @@ void checkDataMembers(
 BOOST_AUTO_TEST_CASE( slice_serial_api_test )
 {
     // Manually set the inner array size.
-    using inner_array_size = Cabana::InnerArraySize<10>;
+    using inner_array_size = Cabana::InnerArraySize<16>;
 
     // Data dimensions.
-    const std::size_t dim_1 = 3;
-    const std::size_t dim_2 = 2;
-    const std::size_t dim_3 = 4;
-    const std::size_t dim_4 = 3;
+    const int dim_1 = 3;
+    const int dim_2 = 2;
+    const int dim_3 = 4;
+    const int dim_4 = 3;
 
     // Declare data types.
     using DataTypes =
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
     BOOST_CHECK( Cabana::is_aosoa<AoSoA_t>::value );
 
     // Create an AoSoA.
-    std::size_t num_data = 35;
+    int num_data = 35;
     AoSoA_t aosoa( num_data );
 
     // Create some slices.
@@ -91,93 +91,92 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
     BOOST_CHECK( Cabana::is_member_slice<decltype(slice_4)>::value );
 
     // Check sizes.
-    BOOST_CHECK( slice_0.size() == std::size_t(35) );
-    BOOST_CHECK( slice_0.numSoA() == std::size_t(4) );
+    BOOST_CHECK( slice_0.size() == int(35) );
+    BOOST_CHECK( slice_0.numSoA() == int(3) );
 
-    BOOST_CHECK( slice_0.arraySize(0) == std::size_t(10) );
-    BOOST_CHECK( slice_0.arraySize(1) == std::size_t(10) );
-    BOOST_CHECK( slice_0.arraySize(2) == std::size_t(10) );
-    BOOST_CHECK( slice_0.arraySize(3) == std::size_t(5) );
+    BOOST_CHECK( slice_0.arraySize(0) == int(16) );
+    BOOST_CHECK( slice_0.arraySize(1) == int(16) );
+    BOOST_CHECK( slice_0.arraySize(3) == int(3) );
 
-    BOOST_CHECK( slice_0.rank() == std::size_t(3) );
-    std::size_t e00 = slice_0.extent(0);
+    BOOST_CHECK( slice_0.rank() == int(3) );
+    int e00 = slice_0.extent(0);
     BOOST_CHECK( e00 == dim_1 );
-    std::size_t e01 = slice_0.extent(1);
+    int e01 = slice_0.extent(1);
     BOOST_CHECK( e01 == dim_2 );
-    std::size_t e02 = slice_0.extent(2);
+    int e02 = slice_0.extent(2);
     BOOST_CHECK( e02 == dim_3 );
-    std::size_t e03 = slice_0.extent(3);
-    BOOST_CHECK( e03 == std::size_t(0) );
+    int e03 = slice_0.extent(3);
+    BOOST_CHECK( e03 == int(0) );
 
-    BOOST_CHECK( slice_1.rank() == std::size_t(0) );
-    std::size_t e10 = slice_1.extent(0);
-    BOOST_CHECK( e10 == std::size_t(0) );
-    std::size_t e11 = slice_1.extent(1);
-    BOOST_CHECK( e11 == std::size_t(0) );
-    std::size_t e12 = slice_1.extent(2);
-    BOOST_CHECK( e12 == std::size_t(0) );
-    std::size_t e13 = slice_1.extent(3);
-    BOOST_CHECK( e13 == std::size_t(0) );
+    BOOST_CHECK( slice_1.rank() == int(0) );
+    int e10 = slice_1.extent(0);
+    BOOST_CHECK( e10 == int(0) );
+    int e11 = slice_1.extent(1);
+    BOOST_CHECK( e11 == int(0) );
+    int e12 = slice_1.extent(2);
+    BOOST_CHECK( e12 == int(0) );
+    int e13 = slice_1.extent(3);
+    BOOST_CHECK( e13 == int(0) );
 
-    BOOST_CHECK( slice_2.rank() == std::size_t(4) );
-    std::size_t e20 = slice_2.extent(0);
+    BOOST_CHECK( slice_2.rank() == int(4) );
+    int e20 = slice_2.extent(0);
     BOOST_CHECK( e20 == dim_1 );
-    std::size_t e21 = slice_2.extent(1);
+    int e21 = slice_2.extent(1);
     BOOST_CHECK( e21 == dim_2 );
-    std::size_t e22 = slice_2.extent(2);
+    int e22 = slice_2.extent(2);
     BOOST_CHECK( e22 == dim_3 );
-    std::size_t e23 = slice_2.extent(3);
+    int e23 = slice_2.extent(3);
     BOOST_CHECK( e23 == dim_4 );
 
-    BOOST_CHECK( slice_3.rank() == std::size_t(1) );
-    std::size_t e30 = slice_3.extent(0);
+    BOOST_CHECK( slice_3.rank() == int(1) );
+    int e30 = slice_3.extent(0);
     BOOST_CHECK( e30 == dim_1 );
-    std::size_t e31 = slice_3.extent(1);
-    BOOST_CHECK( e31 == std::size_t(0) );
-    std::size_t e32 = slice_3.extent(2);
-    BOOST_CHECK( e32 == std::size_t(0) );
-    std::size_t e33 = slice_3.extent(3);
-    BOOST_CHECK( e33 == std::size_t(0) );
+    int e31 = slice_3.extent(1);
+    BOOST_CHECK( e31 == int(0) );
+    int e32 = slice_3.extent(2);
+    BOOST_CHECK( e32 == int(0) );
+    int e33 = slice_3.extent(3);
+    BOOST_CHECK( e33 == int(0) );
 
-    BOOST_CHECK( slice_4.rank() == std::size_t(2) );
-    std::size_t e40 = slice_4.extent(0);
+    BOOST_CHECK( slice_4.rank() == int(2) );
+    int e40 = slice_4.extent(0);
     BOOST_CHECK( e40 == dim_1 );
-    std::size_t e41 = slice_4.extent(1);
+    int e41 = slice_4.extent(1);
     BOOST_CHECK( e41 == dim_2 );
-    std::size_t e42 = slice_4.extent(2);
-    BOOST_CHECK( e42 == std::size_t(0) );
-    std::size_t e43 = slice_4.extent(3);
-    BOOST_CHECK( e43 == std::size_t(0) );
+    int e42 = slice_4.extent(2);
+    BOOST_CHECK( e42 == int(0) );
+    int e43 = slice_4.extent(3);
+    BOOST_CHECK( e43 == int(0) );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( auto idx = aosoa.begin(); idx != aosoa.end(); ++idx )
+    for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
                     slice_0( idx, i, j, k ) = fval * (i+j+k);
 
         // Member 1.
         slice_1( idx ) = ival;
 
         // Member 2.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    for ( std::size_t l = 0; l < dim_4; ++l )
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    for ( int l = 0; l < dim_4; ++l )
                         slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
-        for ( std::size_t i = 0; i < dim_1; ++i )
+        for ( int i = 0; i < dim_1; ++i )
             slice_3( idx, i ) = dval * i;
 
         // Member 4.
-        for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
                 slice_4( idx, i, j ) = dval * (i+j);
     }
 

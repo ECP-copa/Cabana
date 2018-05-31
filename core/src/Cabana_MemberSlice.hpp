@@ -2,7 +2,6 @@
 #define CABANA_MEMBERSLICE_HPP
 
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -66,7 +65,7 @@ class MemberSlice
     using aosoa_type = AoSoA_t;
 
     // Inner array size.
-    static constexpr std::size_t array_size = aosoa_type::array_size;
+    static constexpr int array_size = aosoa_type::array_size;
 
     // Struct member array return type at a given index M.
     using array_type =
@@ -110,7 +109,7 @@ class MemberSlice
       \return The number of elements in the container.
     */
     KOKKOS_FUNCTION
-    std::size_t size() const { return _aosoa.size(); }
+    int size() const { return _aosoa.size(); }
 
     /*!
       \brief Get the number of structs-of-arrays in the container.
@@ -118,7 +117,7 @@ class MemberSlice
       \return The number of structs-of-arrays in the container.
     */
     KOKKOS_FUNCTION
-    std::size_t numSoA() const { return _aosoa.numSoA(); }
+    int numSoA() const { return _aosoa.numSoA(); }
 
     /*!
       \brief Get the size of the data array at a given struct member index.
@@ -128,7 +127,7 @@ class MemberSlice
       \return The size of the array at the given struct index.
     */
     KOKKOS_FUNCTION
-    std::size_t arraySize( const std::size_t s ) const
+    int arraySize( const int s ) const
     { return _aosoa.arraySize(s); }
 
     // -------------------------------
@@ -140,7 +139,7 @@ class MemberSlice
       \return The rank of the data for this member.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t rank() const
+    int rank() const
     { return _aosoa.rank(M); }
 
     /*!
@@ -151,27 +150,8 @@ class MemberSlice
       \return The extent of the given member data dimension.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t extent( const std::size_t D ) const
+    int extent( const std::size_t D ) const
     { return _aosoa.extent(M,D); }
-
-    // -----------------------------
-    // Array range
-
-    /*!
-      \brief Get the index at the beginning of the container.
-
-      \return An index to the beginning of the container.
-    */
-    KOKKOS_FUNCTION
-    Index begin() const { return _aosoa.begin(); }
-
-    /*!
-      \brief Get the index at the end of the container.
-
-      \return An index to the end of the container.
-    */
-    KOKKOS_FUNCTION
-    Index end() const { return _aosoa.end(); }
 
     // -------------------------------
     // Access the data value at a given struct index and array index
@@ -183,11 +163,11 @@ class MemberSlice
         (0==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
-    operator()( const Index& idx ) const
+    operator()( const int particle_index ) const
     {
         static_assert( J == M,
                        "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx);
+        return _aosoa.template get<J>(particle_index);
     }
 
     // Rank 1
@@ -197,12 +177,12 @@ class MemberSlice
         (1==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
-    operator()( const Index& idx,
+    operator()( const int particle_index,
                 const int d0 ) const
     {
         static_assert( J == M,
                        "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx,d0);
+        return _aosoa.template get<J>(particle_index,d0);
     }
 
     // Rank 2
@@ -212,13 +192,13 @@ class MemberSlice
         (2==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
-    operator()( const Index& idx,
+    operator()( const int particle_index,
                 const int d0,
                 const int d1 ) const
     {
         static_assert( J == M,
                        "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx,d0,d1);
+        return _aosoa.template get<J>(particle_index,d0,d1);
     }
 
     // Rank 3
@@ -228,14 +208,14 @@ class MemberSlice
         (3==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
-    operator()( const Index& idx,
+    operator()( const int particle_index,
                 const int d0,
                 const int d1,
                 const int d2 ) const
     {
         static_assert( J == M,
                        "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx,d0,d1,d2);
+        return _aosoa.template get<J>(particle_index,d0,d1,d2);
     }
 
     // Rank 4
@@ -245,7 +225,7 @@ class MemberSlice
         (4==std::rank<
          typename aosoa_type::template struct_member_data_type<J> >::value),
         reference_type>::type
-    operator()( const Index& idx,
+    operator()( const int particle_index,
                 const int d0,
                 const int d1,
                 const int d2,
@@ -253,7 +233,7 @@ class MemberSlice
     {
         static_assert( J == M,
                        "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(idx,d0,d1,d2,d3);
+        return _aosoa.template get<J>(particle_index,d0,d1,d2,d3);
     }
 
     // -------------------------------
@@ -268,7 +248,7 @@ class MemberSlice
       for each member.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t stride() const
+    int stride() const
     {
         return _aosoa.stride( M );
     }

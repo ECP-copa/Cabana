@@ -5,7 +5,6 @@
 #include <Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
-#include <Kokkos_ExecPolicy.hpp>
 #include <Kokkos_Parallel.hpp>
 #include <KokkosExp_MDRangePolicy.hpp>
 #include <Kokkos_Pair.hpp>
@@ -22,34 +21,42 @@ class PerformanceTraits;
 //---------------------------------------------------------------------------//
 // Algorithm tags.
 
-//! 1D parallelism over structs.
+//! 1D parallelism over all indices
+class IndexParallelTag {};
+
+//! 1D parallelism over structs with a thread-local loop over the inner arrays
 class StructParallelTag {};
 
-//! 1D parallelism over inner arrays.
+//! 1D parallelism over inner arrays with an outer serial loop over structs
 class ArrayParallelTag {};
 
-//! 2D parallelism over structs and inner arrays.
+//! 2D parallelism over structs and inner arrays
 class StructAndArrayParallelTag {};
 
 //---------------------------------------------------------------------------//
 // Helper functions
 //---------------------------------------------------------------------------//
 // Given a begin and end index get the starting and ending struct indices.
+template<int array_size>
 KOKKOS_INLINE_FUNCTION
-Kokkos::pair<std::size_t,std::size_t>
-getStructBounds( const Index& begin, const Index& end )
+Kokkos::pair<int,int> getStructBounds( const int begin, const int end )
 {
-    Kokkos::pair<std::size_t,std::size_t> struct_bounds;
+    Kokkos::pair<int,int> struct_bounds;
+
+    // Get the AoSoA Indices for the begin and end.
+    auto begin_si = Impl::Index<array_size>::aosoa( begin );
+    auto end_si = Impl::Index<array_size>::aosoa( end );
 
     // The first struct is the struct index of the beginning.
-    struct_bounds.first = begin.s();
+    struct_bounds.first = begin_si.first;
 
     // If the end is also at the front of an array that means the struct index
     // of end is also the ending struct index. If not, we are not iterating
     // all the way through the arrays of the last struct. In this case we add
     // 1 to ensure that the loop over structs loops through all structs with
     // data.
-    struct_bounds.second = (0 == end.i()) ? end.s() : end.s() + 1;
+    struct_bounds.second =
+        (0 == end_si.second) ? end_si.first : end_si.first + 1;
 
     return struct_bounds;
 }
@@ -57,26 +64,31 @@ getStructBounds( const Index& begin, const Index& end )
 //---------------------------------------------------------------------------//
 // Given a begin and end index, struct bounds, and a struct index get the
 // starting and ending array indices.
+template<int array_size>
 KOKKOS_INLINE_FUNCTION
-Kokkos::pair<std::size_t,std::size_t>
-getArrayBounds( const Index& begin,
-                const Index& end,
-                const Kokkos::pair<std::size_t,std::size_t>& struct_bounds,
-                const std::size_t s )
+Kokkos::pair<int,int>
+getArrayBounds( const int begin,
+                const int end,
+                const Kokkos::pair<int,int>& struct_bounds,
+                const int s )
 {
-    Kokkos::pair<std::size_t,std::size_t> array_bounds;
+    Kokkos::pair<int,int> array_bounds;
+
+    // Get the AoSoA Indices for the begin and end.
+    auto begin_si = Impl::Index<array_size>::aosoa( begin );
+    auto end_si = Impl::Index<array_size>::aosoa( end );
 
     // If the given struct index is also the index of the struct index in
     // begin, use the starting array index. If not, that means we have passed
     // the first struct and all subsequent structs start at array index 0.
-    array_bounds.first = (s == struct_bounds.first) ? begin.i() : 0;
+    array_bounds.first = (s == struct_bounds.first) ? begin_si.second : 0;
 
     // If we are in the last struct unfilled struct then use the array index
     // of end. If not, we are looping through the current array all the way to
     // the end so use the array size.
     array_bounds.second =
-        ((s == struct_bounds.second - 1) && (end.i() != 0))
-        ? end.i() : begin.a();
+        ((s == struct_bounds.second - 1) && (end_si.second != 0))
+        ? end_si.second : array_size;
 
     return array_bounds;
 }
@@ -107,7 +119,7 @@ getArrayBounds( const Index& begin,
   class FunctorType {
   public:
   typedef  ...  execution_space ;
-  void operator() ( Index idx ) const ;
+  void operator() ( const int index ) const ;
   };
   \endcode
 
@@ -130,6 +142,32 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
 
 //---------------------------------------------------------------------------//
 /*!
+  \brief Parallel-for 1D index parallel specialization.
+
+  Takes an instance of the \c IndexParallelTag to indicate specialization.
+
+  Creates 1D parallel over all indices that directly executes the functor.
+*/
+template<class ExecutionPolicy, class FunctorType>
+inline void parallel_for( const ExecutionPolicy& exec_policy,
+                          const FunctorType& functor,
+                          const IndexParallelTag&,
+                          const std::string& str = "" )
+{
+    // Create the kokkos execution policy
+    using kokkos_policy =
+        Kokkos::RangePolicy<typename ExecutionPolicy::execution_space>;
+    kokkos_policy k_policy( exec_policy.begin(), exec_policy.end() );
+
+    // Execute the functor.
+    Kokkos::parallel_for( str, k_policy, functor );
+
+    // Fence.
+    Kokkos::fence();
+}
+
+//---------------------------------------------------------------------------//
+/*!
   \brief Parallel-for 1D struct parallel specialization.
 
   Takes an instance of the \c StructParallelTag to indicate specialization.
@@ -141,11 +179,11 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
   Index begin, end;
   parallel_for( s : num_structs )
   {
-      for( i : array_size(s) )
-      {
-          Index idx( array_size, s, i );
-          functor( idx );
-      }
+  for( i : array_size(s) )
+  {
+  Index idx( array_size, s, i );
+  functor( idx );
+  }
   }
   \endcode
 */
@@ -155,33 +193,34 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
                           const StructParallelTag&,
                           const std::string& str = "" )
 {
-    // Kokkos execution policy type alias.
-    using kokkos_policy =
-        Kokkos::RangePolicy<typename ExecutionPolicy::execution_space>;
-
     // Create a range policy over the structs. If the end is not at a struct
     // boundary we need to add an extra struct so we loop through the last
     // unfilled struct.
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
-    auto struct_bounds = getStructBounds( begin, end );
-    kokkos_policy k_policy( struct_bounds.first, struct_bounds.second );
+    auto struct_bounds =
+        getStructBounds<ExecutionPolicy::array_size>( begin, end );
 
     // Create a wrapper for the functor. Each struct is given a thread and
     // each thread loops over the inner arrays.
-    std::size_t array_size = begin.a();
     auto functor_wrapper =
-        KOKKOS_LAMBDA( const std::size_t s )
+        KOKKOS_LAMBDA( const int s )
         {
-            auto array_bounds = getArrayBounds( begin, end, struct_bounds, s );
-            for ( std::size_t i = array_bounds.first;
+            auto array_bounds = getArrayBounds<ExecutionPolicy::array_size>(
+                begin, end, struct_bounds, s );
+            for ( int i = array_bounds.first;
                   i < array_bounds.second;
                   ++i )
             {
-                Index idx( array_size, s, i );
-                functor( idx );
+                functor(
+                    Impl::Index<ExecutionPolicy::array_size>::particle(s,i) );
             }
         };
+
+    // Create the kokkos execution policy
+    using kokkos_policy =
+        Kokkos::RangePolicy<typename ExecutionPolicy::execution_space>;
+    kokkos_policy k_policy( struct_bounds.first, struct_bounds.second );
 
     // Execute the functor.
     Kokkos::parallel_for( str, k_policy, functor_wrapper );
@@ -203,11 +242,11 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
   Index begin, end;
   for( s : num_structs )
   {
-      parallel_for( i : array_size(s) )
-      {
-          Index idx( array_size, s, i );
-          functor( idx );
-      }
+  parallel_for( i : array_size(s) )
+  {
+  Index idx( array_size, s, i );
+  functor( idx );
+  }
   }
   \endcode
 */
@@ -217,7 +256,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
                           const ArrayParallelTag&,
                           const std::string& str = "" )
 {
-    // Kokkos execution policy type alias.
+    // Kokkos execution policy type.
     using kokkos_policy =
         Kokkos::RangePolicy<typename ExecutionPolicy::execution_space>;
 
@@ -225,24 +264,28 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     // add an extra struct so we loop through the last unfilled struct.
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
-    auto struct_bounds = getStructBounds( begin, end );
-    std::size_t array_size = begin.a();
-    for ( std::size_t s = struct_bounds.first;
+    auto struct_bounds =
+        getStructBounds<ExecutionPolicy::array_size>( begin, end );
+    for ( int s = struct_bounds.first;
           s < struct_bounds.second;
           ++s )
     {
         // Create a range policy over the array.
-        auto array_bounds = getArrayBounds( begin, end, struct_bounds, s );
-        kokkos_policy k_policy( array_bounds.first, array_bounds.second );
+        auto array_bounds =
+            getArrayBounds<ExecutionPolicy::array_size>(
+                begin, end, struct_bounds, s );
 
         // Create a wrapper for the functor. Each struct is given a thread and
         // each thread loops over the inner arrays.
         auto functor_wrapper =
-            KOKKOS_LAMBDA( const std::size_t i )
+            KOKKOS_LAMBDA( const int i )
             {
-                Index idx( array_size, s, i );
-                functor( idx );
+                functor(
+                    Impl::Index<ExecutionPolicy::array_size>::particle(s,i) );
             };
+
+        // Create the kokkos execution policy
+        kokkos_policy k_policy( array_bounds.first, array_bounds.second );
 
         // Execute the functor.
         Kokkos::parallel_for( str, k_policy, functor_wrapper );
@@ -264,11 +307,11 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
   Index begin, end;
   parallel_for( s : num_structs )
   {
-      parallel_for( i : array_size(s) )
-      {
-          Index idx( array_size, s, i );
-          functor( idx );
-      }
+  parallel_for( i : array_size(s) )
+  {
+  Index idx( array_size, s, i );
+  functor( idx );
+  }
   }
   \endcode
 */
@@ -283,24 +326,28 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     using kokkos_policy =
         Kokkos::MDRangePolicy<typename ExecutionPolicy::execution_space,
                               Kokkos::Rank<2,kokkos_iterate,kokkos_iterate>,
-                              Kokkos::IndexType<std::size_t> >;
+                              Kokkos::IndexType<int> >;
     using point_type = typename kokkos_policy::point_type;
 
     // Make a 2D execution policy.
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
-    std::size_t array_size = begin.a();
-    auto struct_bounds = getStructBounds( begin, end );
+    auto struct_bounds =
+        getStructBounds<ExecutionPolicy::array_size>( begin, end );
     point_type lower = { struct_bounds.first, 0 };
-    point_type upper = { struct_bounds.second, array_size };
+    point_type upper = { struct_bounds.second, ExecutionPolicy::array_size };
     kokkos_policy k_policy( lower, upper );
 
     // Create a wrapper for the functor.
     auto functor_wrapper =
-        KOKKOS_LAMBDA( const std::size_t s, const std::size_t i )
+        KOKKOS_LAMBDA( const int s, const int i )
         {
-            Index idx( array_size, s, i );
-            if ( begin <= idx && idx < end ) functor( idx );
+            auto array_bounds =
+            getArrayBounds<ExecutionPolicy::array_size>(
+                begin, end, struct_bounds, s );
+            if ( i < array_bounds.second )
+                functor(
+                    Impl::Index<ExecutionPolicy::array_size>::particle(s,i) );
         };
 
     // Execute the functor.
