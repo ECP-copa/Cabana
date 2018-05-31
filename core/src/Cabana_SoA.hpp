@@ -112,20 +112,6 @@ getStructMember( SoA<ArraySize,Types...>& soa )
     return base._data;
 }
 
-// Const accessor.
-template<std::size_t I, std::size_t ArraySize, typename... Types>
-KOKKOS_INLINE_FUNCTION
-const typename ArrayTypeAtIndex<I,ArraySize,Types...>::return_type
-getStructMember( const SoA<ArraySize,Types...>& soa )
-{
-    const StructMember<
-        I,
-        ArraySize,
-        typename ArrayTypeAtIndex<I,ArraySize,Types...>::member_type>& base =
-        soa;
-    return base._data;
-}
-
 //---------------------------------------------------------------------------//
 } // end namespace Cabana
 
