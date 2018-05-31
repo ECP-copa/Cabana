@@ -9,11 +9,9 @@
 #include <iostream>
 #include <chrono>
 
-int main( int argc, char* argv[] )
+// Performance test function.
+void perfTest()
 {
-    // Initialize the kokkos runtime.
-    Kokkos::initialize( argc, argv );
-
     // Declare the execution and memory spaces.
     using MemorySpace = Kokkos::CudaUVMSpace;
     using ExecutionSpace = Kokkos::Cuda;
@@ -136,6 +134,15 @@ int main( int argc, char* argv[] )
     auto ms_elapsed =
         std::chrono::duration_cast<std::chrono::milliseconds>(elapsed_time);
     std::cout << "Run time: " << ms_elapsed.count() << "ms" << std::endl;
+}
+
+int main( int argc, char* argv[] )
+{
+    // Initialize the kokkos runtime.
+    Kokkos::initialize( argc, argv );
+
+    // Run the test.
+    perfTest();
 
     // Finalize.
     Kokkos::finalize();

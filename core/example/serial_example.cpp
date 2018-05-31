@@ -114,10 +114,8 @@ void printParticles( const ParticleList particles )
     }
 }
 
-//---------------------------------------------------------------------------//
-// Main.
-//---------------------------------------------------------------------------//
-int main()
+// example main
+void exampleMain()
 {
     // Declare a number of particles.
     int num_particle = 45;
@@ -130,7 +128,21 @@ int main()
 
     // Print particles.
     printParticles( particles );
+}
 
+//---------------------------------------------------------------------------//
+// Main.
+//---------------------------------------------------------------------------//
+int main( int argc, char* argv[] )
+{
+    // Initialize the kokkos runtime.
+    Kokkos::initialize( argc, argv );
+
+    // Run the test.
+    exampleMain();
+
+    // Finalize.
+    Kokkos::finalize();
     return 0;
 }
 
