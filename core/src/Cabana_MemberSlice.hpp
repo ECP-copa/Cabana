@@ -30,7 +30,7 @@ namespace Cabana
   auto slice = Cabana::slice<M>(aosoa);
   \endcode
 */
-template<int M, typename AoSoA_t>
+template<std::size_t M, typename AoSoA_t>
 class MemberSlice;
 
 //---------------------------------------------------------------------------//
@@ -41,16 +41,16 @@ struct is_member_slice
 
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
-template<int M, typename AoSoA_t>
+template<std::size_t M, typename AoSoA_t>
 struct is_member_slice<MemberSlice<M,AoSoA_t> >
     : public is_aosoa<AoSoA_t>::type {};
 
-template<int M, typename AoSoA_t>
+template<std::size_t M, typename AoSoA_t>
 struct is_member_slice<const MemberSlice<M,AoSoA_t> >
     : public is_aosoa<AoSoA_t>::type {};
 
 //---------------------------------------------------------------------------//
-template<int M, typename AoSoA_t>
+template<std::size_t M, typename AoSoA_t>
 class MemberSlice
 {
   public:
@@ -59,7 +59,7 @@ class MemberSlice
     using slice_type = MemberSlice<M,AoSoA_t>;
 
     // Member id.
-    static constexpr int member_id = M;
+    static constexpr std::size_t member_id = M;
 
     // AoSoA type this slice wraps.
     using aosoa_type = AoSoA_t;
@@ -150,14 +150,14 @@ class MemberSlice
       \return The extent of the given member data dimension.
     */
     KOKKOS_INLINE_FUNCTION
-    int extent( const int D ) const
+    int extent( const std::size_t D ) const
     { return _aosoa.extent(M,D); }
 
     // -------------------------------
     // Access the data value at a given struct index and array index
 
     // Rank 0
-    template<int J = M>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (0==std::rank<
@@ -171,7 +171,7 @@ class MemberSlice
     }
 
     // Rank 1
-    template<int J = M>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<
@@ -186,7 +186,7 @@ class MemberSlice
     }
 
     // Rank 2
-    template<int J = M>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<
@@ -202,7 +202,7 @@ class MemberSlice
     }
 
     // Rank 3
-    template<int J = M>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<
@@ -219,7 +219,7 @@ class MemberSlice
     }
 
     // Rank 4
-    template<int J = M>
+    template<std::size_t J = M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<
@@ -295,7 +295,7 @@ class MemberSlice
 
   \return A slice for the given member index of the given AoSoA.
 */
-template<int M, typename AoSoA_t>
+template<std::size_t M, typename AoSoA_t>
 MemberSlice<M,AoSoA_t> slice( AoSoA_t aosoa )
 { return MemberSlice<M,AoSoA_t>(aosoa); }
 
