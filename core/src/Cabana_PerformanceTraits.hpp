@@ -23,7 +23,9 @@ template<>
 class PerformanceTraits<Kokkos::Serial>
 {
   public:
-    using inner_array_layout = InnerArrayLayout<1,Kokkos::LayoutRight>;
+    static constexpr int array_size = 1;
+    using kokkos_layout = Kokkos::LayoutRight;
+    using inner_array_layout = InnerArrayLayout<array_size,kokkos_layout>;
     using parallel_for_tag = StructParallelTag;
 };
 #endif
@@ -35,7 +37,9 @@ template<>
 class PerformanceTraits<Kokkos::OpenMP>
 {
   public:
-    using inner_array_layout = InnerArrayLayout<64,Kokkos::LayoutRight>;
+    static constexpr int array_size = 64;
+    using kokkos_layout = Kokkos::LayoutRight;
+    using inner_array_layout = InnerArrayLayout<array_size,kokkos_layout>;
     using parallel_for_tag = StructParallelTag;
 };
 #endif
@@ -47,8 +51,10 @@ template<>
 class PerformanceTraits<Kokkos::Cuda>
 {
   public:
+    static constexpr int array_size = Kokkos::Impl::CudaTraits::WarpSize;
+    using kokkos_layout = Kokkos::LayoutLeft;
     using inner_array_layout =
-        InnerArrayLayout<Kokkos::Impl::CudaTraits::WarpSize,Kokkos::LayoutLeft>;
+        InnerArrayLayout<array_size,kokkos_layout>;
     using parallel_for_tag = StructAndArrayParallelTag;
 };
 #endif
