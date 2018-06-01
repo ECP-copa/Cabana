@@ -293,7 +293,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // Struct member array return type at a given index M.
     template<std::size_t M>
     using struct_member_array_type =
-        typename struct_member_type<M>::return_type;
+        typename struct_member_type<M>::pointer_type;
 
     // Struct member array data type at a given index M.
     template<std::size_t M>
@@ -563,7 +563,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     get( const int particle_index ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return getStructMember<M>(_data[ai.first])[ai.second];
+        return accessStructMember<M>( _data[ai.first], ai.second );
     }
 
     // Rank 1
@@ -575,7 +575,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
          const int d0 ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return getStructMember<M>(_data[ai.first])[ai.second][d0];
+        return accessStructMember<M>( _data[ai.first], ai.second, d0 );
     }
 
     // Rank 2
@@ -588,7 +588,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
          const int d1 ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return getStructMember<M>(_data[ai.first])[ai.second][d0][d1];
+        return accessStructMember<M>( _data[ai.first], ai.second, d0, d1 );
     }
 
     // Rank 3
@@ -602,7 +602,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
          const int d2 ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return getStructMember<M>(_data[ai.first])[ai.second][d0][d1][d2];
+        return accessStructMember<M>( _data[ai.first], ai.second, d0, d1, d2 );
     }
 
     // Rank 4
@@ -617,7 +617,8 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
          const int d3 ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return getStructMember<M>(_data[ai.first])[ai.second][d0][d1][d2][d3];
+        return accessStructMember<M>(
+            _data[ai.first], ai.second, d0, d1, d2, d3 );
     }
 
     // -------------------------------
