@@ -28,8 +28,7 @@ struct StructMember
     array_type _data;
 
     static KOKKOS_FORCEINLINE_FUNCTION
-    constexpr typename std::decay<array_type>::type
-    data( StructMember& m ) noexcept { return m._data; }
+    constexpr return_type data( StructMember& m ) noexcept { return m._data; }
 };
 
 //---------------------------------------------------------------------------//
