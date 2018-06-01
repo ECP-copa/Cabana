@@ -22,7 +22,14 @@ namespace Cabana
 template<std::size_t I, std::size_t ArraySize, typename T>
 struct StructMember
 {
-    T _data[ArraySize];
+    using array_type = T[ArraySize];
+    using return_type = typename std::decay<array_type>::type;
+
+    array_type _data;
+
+    static KOKKOS_FORCEINLINE_FUNCTION
+    constexpr typename std::decay<array_type>::type
+    data( StructMember& m ) noexcept { return m._data; }
 };
 
 //---------------------------------------------------------------------------//
@@ -34,7 +41,16 @@ template<std::size_t ArraySize, std::size_t... Indices, typename... Types>
 struct SoAImpl<ArraySize,IndexSequence<Indices...>,Types...>
     : StructMember<Indices,ArraySize,Types>...
 {
-    static constexpr std::size_t array_size = ArraySize;
+    template<std::size_t I>
+        using struct_member_type =
+        StructMember<
+            I,ArraySize,typename MemberDataTypeAtIndex<I,Types...>::type>;
+
+    template<std::size_t I>
+        static KOKKOS_FORCEINLINE_FUNCTION
+        constexpr typename struct_member_type<I>::return_type
+        data( SoAImpl& s ) noexcept
+    { return struct_member_type<I>::data(s); }
 };
 
 //---------------------------------------------------------------------------//
@@ -52,8 +68,8 @@ struct SoAImpl<ArraySize,IndexSequence<Indices...>,Types...>
 
   struct MySoA
   {
-    double _d1[4];
-    int    _d2[4];
+  double _d1[4];
+  int    _d2[4];
     double _d3[4][3][3];
   };
 
@@ -74,17 +90,23 @@ struct SoA
     : SoAImpl<ArraySize,
               typename MakeIndexSequence<sizeof...(Types)>::type,
               Types...>
-{};
+{
+    using Base = SoAImpl<ArraySize,
+                         typename MakeIndexSequence<sizeof...(Types)>::type,
+                         Types...>;
+};
 
 //---------------------------------------------------------------------------//
-// Member array types.
+// Accessor helper.
 template<std::size_t I, std::size_t ArraySize, typename... Types>
-struct ArrayTypeAtIndex
+KOKKOS_FORCEINLINE_FUNCTION
+constexpr typename
+StructMember<
+    I,ArraySize,typename MemberDataTypeAtIndex<I,Types...>::type>::return_type
+getStructMemberHelper( typename SoA<ArraySize,Types...>::Base& s ) noexcept
 {
-    using member_type = typename MemberDataTypeAtIndex<I,Types...>::type;
-    using array_type = member_type[ArraySize];
-    using return_type = typename std::decay<array_type>::type;
-};
+    return SoA<ArraySize,Types...>::Base::template data<I>( s );
+}
 
 //---------------------------------------------------------------------------//
 /*!
@@ -100,16 +122,13 @@ struct ArrayTypeAtIndex
   double*[3][3] d2 = getStructMember<2>( soa );
 */
 template<std::size_t I, std::size_t ArraySize, typename... Types>
-KOKKOS_INLINE_FUNCTION
-typename ArrayTypeAtIndex<I,ArraySize,Types...>::return_type
-getStructMember( SoA<ArraySize,Types...>& soa )
+KOKKOS_FORCEINLINE_FUNCTION
+constexpr typename
+StructMember<
+    I,ArraySize,typename MemberDataTypeAtIndex<I,Types...>::type>::return_type
+getStructMember( SoA<ArraySize,Types...>& soa ) noexcept
 {
-    StructMember<
-        I,
-        ArraySize,
-        typename ArrayTypeAtIndex<I,ArraySize,Types...>::member_type>& base =
-        soa;
-    return base._data;
+    return getStructMemberHelper<I,ArraySize,Types...>( soa );
 }
 
 //---------------------------------------------------------------------------//

@@ -284,10 +284,16 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
                              typename traits::static_inner_array_size_type,
                              typename traits::host_mirror_space>;
 
+    // Struct member type.
+    template<std::size_t M>
+    using struct_member_type =
+        StructMember<
+        M,array_size,typename MemberDataTypeAtIndex<M,Types...>::type>;
+
     // Struct member array return type at a given index M.
     template<std::size_t M>
     using struct_member_array_type =
-        typename ArrayTypeAtIndex<M,array_size,Types...>::return_type;
+        typename struct_member_type<M>::return_type;
 
     // Struct member array data type at a given index M.
     template<std::size_t M>
