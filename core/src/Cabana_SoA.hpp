@@ -22,7 +22,58 @@ namespace Cabana
 template<std::size_t I, std::size_t ArraySize, typename T>
 struct StructMember
 {
-    T _data[ArraySize];
+    using data_type = T;
+    using array_type = T[ArraySize];
+    using value_type = typename std::remove_all_extents<T>::type;
+    using reference_type = typename std::add_lvalue_reference<value_type>::type;
+    using pointer_type = typename std::decay<array_type>::type;
+
+    array_type _data;
+
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(0==std::rank<U>::value),reference_type>::type
+    access( StructMember& m,
+            const int i )
+    { return m._data[i]; }
+
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(1==std::rank<U>::value),reference_type>::type
+    access( StructMember& m,
+            const int i,
+            const int d0 )
+    { return m._data[i][d0]; }
+
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(2==std::rank<U>::value),reference_type>::type
+    access( StructMember& m,
+            const int i,
+            const int d0,
+            const int d1 )
+    { return m._data[i][d0][d1]; }
+
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(3==std::rank<U>::value),reference_type>::type
+    access( StructMember& m,
+            const int i,
+            const int d0,
+            const int d1,
+            const int d2 )
+    { return m._data[i][d0][d1][d2]; }
+
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(4==std::rank<U>::value),reference_type>::type
+    access( StructMember& m,
+            const int i,
+            const int d0,
+            const int d1,
+            const int d2,
+            const int d3 )
+    { return m._data[i][d0][d1][d2][d3]; }
 };
 
 //---------------------------------------------------------------------------//
@@ -33,9 +84,7 @@ struct SoAImpl;
 template<std::size_t ArraySize, std::size_t... Indices, typename... Types>
 struct SoAImpl<ArraySize,IndexSequence<Indices...>,Types...>
     : StructMember<Indices,ArraySize,Types>...
-{
-    static constexpr std::size_t array_size = ArraySize;
-};
+{};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -52,9 +101,9 @@ struct SoAImpl<ArraySize,IndexSequence<Indices...>,Types...>
 
   struct MySoA
   {
-    double _d1[4];
-    int    _d2[4];
-    double _d3[4][3][3];
+  double _d1[4];
+  int    _d2[4];
+  double _d3[4][3][3];
   };
 
   The SoA data is accessed through a get function. In the example above,
@@ -62,11 +111,11 @@ struct SoAImpl<ArraySize,IndexSequence<Indices...>,Types...>
   struct would be written as:
 
   SoA<4,double,int,double[3][3]> soa;
-  auto a3x3 = getStructMember<2>( soa );
+  auto a3x3 = accessStructMember<2>( soa );
   for ( int b = 0; b < 4; ++b )
-    for ( int i = 0; i < 3; ++i )
-      for ( int j = 0; j < 3; ++j )
-        a3x3[b][i][j] = some_value;
+  for ( int i = 0; i < 3; ++i )
+  for ( int j = 0; j < 3; ++j )
+  a3x3[b][i][j] = some_value;
 
 */
 template<std::size_t ArraySize, typename... Types>
@@ -77,56 +126,101 @@ struct SoA
 {};
 
 //---------------------------------------------------------------------------//
-// Member array types.
+// Helper traits.
 template<std::size_t I, std::size_t ArraySize, typename... Types>
-struct ArrayTypeAtIndex
+struct SMT
 {
-    using member_type = typename MemberDataTypeAtIndex<I,Types...>::type;
-    using array_type = member_type[ArraySize];
-    using return_type = typename std::decay<array_type>::type;
+    using type = StructMember<
+        I,ArraySize,typename MemberDataTypeAtIndex<I,Types...>::type>;
+    using data_type = typename type::data_type;
+    using reference_type = typename type::reference_type;
+    using pointer_type = typename type::pointer_type;
 };
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Member accessor.
+  \brief Access an individual element of a member.
+*/
+template<std::size_t I, std::size_t ArraySize, typename... Types>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    (0==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
+    typename SMT<I,ArraySize,Types...>::reference_type>::type
+accessStructMember( SoA<ArraySize,Types...>& s,
+                    const int i )
+{
+    return SMT<I,ArraySize,Types...>::type::access( s, i );
+}
 
-  Access the member of the struct at index I.
+template<std::size_t I, std::size_t ArraySize, typename... Types>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    (1==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
+    typename SMT<I,ArraySize,Types...>::reference_type>::type
+accessStructMember( SoA<ArraySize,Types...>& s,
+                    const int i,
+                    const int d0 )
+{
+    return SMT<I,ArraySize,Types...>::type::access(s,i,d0);
+}
 
-  Example:
+template<std::size_t I, std::size_t ArraySize, typename... Types>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    (2==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
+    typename SMT<I,ArraySize,Types...>::reference_type>::type
+accessStructMember( SoA<ArraySize,Types...>& s,
+                    const int i,
+                    const int d0,
+                    const int d1 )
+{
+    return SMT<I,ArraySize,Types...>::type::access(s,i,d0,d1);
+}
 
-  SoA<4,double,int,double[3][3]> soa;
-  double*       d0 = getStructMember<0>( soa );
-  int*          d1 = getStructMember<1>( soa );
-  double*[3][3] d2 = getStructMember<2>( soa );
+template<std::size_t I, std::size_t ArraySize, typename... Types>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    (3==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
+    typename SMT<I,ArraySize,Types...>::reference_type>::type
+accessStructMember( SoA<ArraySize,Types...>& s,
+                    const int i,
+                    const int d0,
+                    const int d1,
+                    const int d2 )
+{
+    return SMT<I,ArraySize,Types...>::type::access(s,i,d0,d1,d2);
+}
+
+template<std::size_t I, std::size_t ArraySize, typename... Types>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    (4==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
+    typename SMT<I,ArraySize,Types...>::reference_type>::type
+accessStructMember( SoA<ArraySize,Types...>& s,
+                    const int i,
+                    const int d0,
+                    const int d1,
+                    const int d2,
+                    const int d3 )
+{
+    return SMT<I,ArraySize,Types...>::type::access(s,i,d0,d1,d2,d3);
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Get a pointer to a member.
 */
 template<std::size_t I, std::size_t ArraySize, typename... Types>
 KOKKOS_INLINE_FUNCTION
-typename ArrayTypeAtIndex<I,ArraySize,Types...>::return_type
+typename SMT<I,ArraySize,Types...>::pointer_type
 getStructMember( SoA<ArraySize,Types...>& soa )
 {
-    StructMember<
-        I,
-        ArraySize,
-        typename ArrayTypeAtIndex<I,ArraySize,Types...>::member_type>& base =
-        soa;
-    return base._data;
-}
-
-// Const accessor.
-template<std::size_t I, std::size_t ArraySize, typename... Types>
-KOKKOS_INLINE_FUNCTION
-const typename ArrayTypeAtIndex<I,ArraySize,Types...>::return_type
-getStructMember( const SoA<ArraySize,Types...>& soa )
-{
-    const StructMember<
-        I,
-        ArraySize,
-        typename ArrayTypeAtIndex<I,ArraySize,Types...>::member_type>& base =
-        soa;
+    typename SMT<I,ArraySize,Types...>::type& base = soa;
     return base._data;
 }
 
 //---------------------------------------------------------------------------//
+
 } // end namespace Cabana
 
 #endif // end CABANA_SOA_HPP

@@ -284,10 +284,16 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
                              typename traits::static_inner_array_size_type,
                              typename traits::host_mirror_space>;
 
+    // Struct member type.
+    template<std::size_t M>
+    using struct_member_type =
+        StructMember<
+        M,array_size,typename MemberDataTypeAtIndex<M,Types...>::type>;
+
     // Struct member array return type at a given index M.
     template<std::size_t M>
     using struct_member_array_type =
-        typename ArrayTypeAtIndex<M,array_size,Types...>::return_type;
+        typename struct_member_type<M>::pointer_type;
 
     // Struct member array data type at a given index M.
     template<std::size_t M>
@@ -321,6 +327,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         , _capacity( 0 )
         , _num_soa( 0 )
         , _managed_data( nullptr )
+        , _data( nullptr )
     {
         storeRanksAndExtents(
             std::integral_constant<std::size_t,number_of_members-1>() );
@@ -336,6 +343,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         , _capacity( 0 )
         , _num_soa( 0 )
         , _managed_data( nullptr )
+        , _data( nullptr )
     {
         resize( _size );
         storeRanksAndExtents(
@@ -421,8 +429,8 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         _capacity = num_soa_alloc * array_size;
 
         // Allocate a new block of memory.
-        std::shared_ptr<void> sp(
-            Kokkos::kokkos_malloc<typename traits::memory_space>(
+        std::shared_ptr<soa_type> sp(
+            (soa_type*) Kokkos::kokkos_malloc<typename traits::memory_space>(
                 num_soa_alloc * sizeof(soa_type)),
             Kokkos::kokkos_free<typename traits::memory_space> );
 
@@ -444,6 +452,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
         // Swap blocks. The old block will be destroyed when this function exits.
         std::swap( _managed_data, sp );
+
+        // Assign the raw data pointer.
+        _data = _managed_data.get();
 
         // Get new pointers and strides for the members.
         storePointersAndStrides(
@@ -552,7 +563,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     get( const int particle_index ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return array<M>(ai.first)[ai.second];
+        return accessStructMember<M>( _data[ai.first], ai.second );
     }
 
     // Rank 1
@@ -564,7 +575,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
          const int d0 ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return array<M>(ai.first)[ai.second][d0];
+        return accessStructMember<M>( _data[ai.first], ai.second, d0 );
     }
 
     // Rank 2
@@ -577,7 +588,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
          const int d1 ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return array<M>(ai.first)[ai.second][d0][d1];
+        return accessStructMember<M>( _data[ai.first], ai.second, d0, d1 );
     }
 
     // Rank 3
@@ -591,7 +602,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
          const int d2 ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return array<M>(ai.first)[ai.second][d0][d1][d2];
+        return accessStructMember<M>( _data[ai.first], ai.second, d0, d1, d2 );
     }
 
     // Rank 4
@@ -606,7 +617,8 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
          const int d3 ) const
     {
         auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return array<M>(ai.first)[ai.second][d0][d1][d2][d3];
+        return accessStructMember<M>(
+            _data[ai.first], ai.second, d0, d1, d2, d3 );
     }
 
     // -------------------------------
@@ -656,33 +668,14 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
   private:
 
-    // Get a typed pointer to the data for a given member at index M.
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    struct_member_pointer_type<M> typedPointer() const
-    {
-        return static_cast<struct_member_pointer_type<M> >( _pointers[M] );
-    }
-
-    // Get the array at the given struct index.
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    struct_member_array_type<M> array( const int s ) const
-    {
-        return reinterpret_cast<struct_member_array_type<M> >(
-            typedPointer<M>() + s * _strides[M] );
-    }
-
     // Store the pointers and strides for each member element.
     template<std::size_t N>
     void assignPointersAndStrides()
     {
         static_assert( 0 <= N && N < number_of_members,
                        "Static loop out of bounds!" );
-        soa_type* data_block =
-            std::static_pointer_cast<soa_type>(_managed_data).get();
         _pointers[N] =
-            static_cast<void*>( getStructMember<N>(data_block[0]) );
+            static_cast<void*>( getStructMember<N>(_data[0]) );
         static_assert( 0 ==
                        sizeof(soa_type) % sizeof(struct_member_value_type<N>),
                        "Stride cannot be calculated for misaligned memory!" );
@@ -944,9 +937,11 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // Structs-of-Arrays managed data. This shared pointer manages the block
     // of memory owned by this class such that the copy constructor and
     // assignment operator for this class perform a shallow and reference
-    // counted copy of the data. The underlying pointer is to an array of
-    // soa_type objects.
-    std::shared_ptr<void> _managed_data;
+    // counted copy of the data.
+    std::shared_ptr<soa_type> _managed_data;
+
+    // Raw pointer to the managed data.
+    soa_type* _data;
 
     // Pointers to the first element of each member.
     void* _pointers[number_of_members];
