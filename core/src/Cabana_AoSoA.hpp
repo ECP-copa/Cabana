@@ -532,7 +532,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
       \param idx The index to get the particle from.
 
-      \param particle The particle to assign the data to.
+      \return A particle containing a copy of the data at the given index.
     */
     KOKKOS_INLINE_FUNCTION
     particle_type getParticle( const int particle_index ) const

@@ -14,7 +14,8 @@ namespace Cabana
   \class InnerArrayLayout
   \brief Static inner array layout definition. This is the layout of the arrays in
   the struct-of-arrays and the layout of the potentially multidimensional data
-  in those arrays. The inner array size must be a power of 2.
+  in those arrays. The inner array size must be a power of 2. Default to
+  layout right.
 */
 template<std::size_t N,
          typename ArrayLayout = Kokkos::LayoutRight,
