@@ -1,7 +1,8 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ExecutionPolicy.hpp>
-#include <Cabana_InnerArraySize.hpp>
+#include <Cabana_InnerArrayLayout.hpp>
+#include <Cabana_Index.hpp>
 #include <Cabana_MemberSlice.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -16,8 +17,11 @@ void perfTest()
     using MemorySpace = Kokkos::CudaUVMSpace;
     using ExecutionSpace = Kokkos::Cuda;
 
-    // Declare the inner array size.
-    using inner_array_size = Cabana::InnerArraySize<32>;
+    // Declare the inner array layout.
+    const int array_size = 32;
+    using array_layout = Kokkos::LayoutLeft;
+    using inner_array_layout =
+        Cabana::InnerArrayLayout<array_size,array_layout>;
 
     // Declare the parallel for algorithm tag.
     using parallel_algorithm_tag = Cabana::StructAndArrayParallelTag;
@@ -42,7 +46,7 @@ void perfTest()
                    S2 };
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_size,MemorySpace>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,MemorySpace>;
 
     // Set the total problem size.
     std::size_t num_data = 1e7;
@@ -60,7 +64,7 @@ void perfTest()
     auto s2 = Cabana::slice<S2>( aosoa );
 
     // Create an execution policy over the entire AoSoA.
-    Cabana::RangePolicy<inner_array_size::value,ExecutionSpace> range_policy( aosoa );
+    Cabana::RangePolicy<array_size,ExecutionSpace> range_policy( aosoa );
 
     // Initialization functor.
     auto init_func = KOKKOS_LAMBDA( const int idx )

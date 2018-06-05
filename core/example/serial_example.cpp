@@ -45,11 +45,11 @@ using ParticleDataTypes =
 // Declare the memory space.
 using MemorySpace = Kokkos::HostSpace;
 
-// Declare the inner array size.
-using ArraySize = Cabana::InnerArraySize<32>;
+// Declare the inner array layout.
+using ArrayLayout = Cabana::InnerArrayLayout<32,Kokkos::LayoutRight>;
 
 // Set the type for the particle AoSoA.
-using ParticleList = Cabana::AoSoA<ParticleDataTypes,ArraySize,MemorySpace>;
+using ParticleList = Cabana::AoSoA<ParticleDataTypes,ArrayLayout,MemorySpace>;
 
 //---------------------------------------------------------------------------//
 // Helper functions.
@@ -84,7 +84,7 @@ void printParticles( const ParticleList particles )
 {
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
-        auto aosoa_idx = Cabana::Impl::Index<ArraySize::value>::aosoa( idx );
+        auto aosoa_idx = Cabana::Impl::Index<32>::aosoa( idx );
 
         std::cout << std::endl;
 

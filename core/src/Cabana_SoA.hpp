@@ -1,6 +1,7 @@
 #ifndef CABANA_SOA_HPP
 #define CABANA_SOA_HPP
 
+#include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_IndexSequence.hpp>
 #include <Cabana_MemberDataTypes.hpp>
 
@@ -19,17 +20,21 @@ namespace Cabana
   (including multidimensional arrays) as long as the type of T is trivial. A
   struct-of-arrays will be composed of these members of different types.
 */
-template<std::size_t I, std::size_t ArraySize, typename T>
+template<std::size_t I, typename InnerArrayLayout_t, typename T>
 struct StructMember
 {
+    // type aliases
     using data_type = T;
-    using array_type = T[ArraySize];
+    using array_type = typename Impl::InnerArrayType<T,InnerArrayLayout_t>::type;
+    using array_layout = typename InnerArrayLayout_t::layout;
     using value_type = typename std::remove_all_extents<T>::type;
     using reference_type = typename std::add_lvalue_reference<value_type>::type;
     using pointer_type = typename std::decay<array_type>::type;
 
+    // data
     array_type _data;
 
+    // rank-0
     template<class U = T>
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<U>::value),reference_type>::type
@@ -37,9 +42,13 @@ struct StructMember
             const int i )
     { return m._data[i]; }
 
+    // rank-1
     template<class U = T>
     static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<U>::value),reference_type>::type
+    typename std::enable_if<
+        (1==std::rank<U>::value &&
+         std::is_same<array_layout,Kokkos::LayoutRight>::value),
+        reference_type>::type
     access( StructMember& m,
             const int i,
             const int d0 )
@@ -47,7 +56,22 @@ struct StructMember
 
     template<class U = T>
     static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<U>::value),reference_type>::type
+    typename std::enable_if<
+        (1==std::rank<U>::value &&
+         std::is_same<array_layout,Kokkos::LayoutLeft>::value),
+        reference_type>::type
+    access( StructMember& m,
+            const int i,
+            const int d0 )
+    { return m._data[d0][i]; }
+
+    // rank-2
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<
+        (2==std::rank<U>::value &&
+         std::is_same<array_layout,Kokkos::LayoutRight>::value),
+        reference_type>::type
     access( StructMember& m,
             const int i,
             const int d0,
@@ -56,7 +80,23 @@ struct StructMember
 
     template<class U = T>
     static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<U>::value),reference_type>::type
+    typename std::enable_if<
+        (2==std::rank<U>::value &&
+         std::is_same<array_layout,Kokkos::LayoutLeft>::value),
+        reference_type>::type
+    access( StructMember& m,
+            const int i,
+            const int d0,
+            const int d1 )
+    { return m._data[d1][d0][i]; }
+
+    // rank-3
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<
+        (3==std::rank<U>::value &&
+         std::is_same<array_layout,Kokkos::LayoutRight>::value),
+        reference_type>::type
     access( StructMember& m,
             const int i,
             const int d0,
@@ -66,7 +106,24 @@ struct StructMember
 
     template<class U = T>
     static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<U>::value),reference_type>::type
+    typename std::enable_if<
+        (3==std::rank<U>::value &&
+         std::is_same<array_layout,Kokkos::LayoutLeft>::value),
+        reference_type>::type
+    access( StructMember& m,
+            const int i,
+            const int d0,
+            const int d1,
+            const int d2 )
+    { return m._data[d2][d1][d0][i]; }
+
+    // rank-4
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<
+        (4==std::rank<U>::value &&
+         std::is_same<array_layout,Kokkos::LayoutRight>::value),
+        reference_type>::type
     access( StructMember& m,
             const int i,
             const int d0,
@@ -74,64 +131,58 @@ struct StructMember
             const int d2,
             const int d3 )
     { return m._data[i][d0][d1][d2][d3]; }
+
+    template<class U = T>
+    static KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<
+        (4==std::rank<U>::value &&
+         std::is_same<array_layout,Kokkos::LayoutLeft>::value),
+        reference_type>::type
+    access( StructMember& m,
+            const int i,
+            const int d0,
+            const int d1,
+            const int d2,
+            const int d3 )
+    { return m._data[d3][d2][d1][d0][i]; }
 };
 
 //---------------------------------------------------------------------------//
 // SoA implementation detail to hide the index sequence.
-template<std::size_t ArraySize, typename Sequence, typename... Types>
+template<typename InnerArrayLayout_t, typename Sequence, typename... Types>
 struct SoAImpl;
 
-template<std::size_t ArraySize, std::size_t... Indices, typename... Types>
-struct SoAImpl<ArraySize,IndexSequence<Indices...>,Types...>
-    : StructMember<Indices,ArraySize,Types>...
+template<typename InnerArrayLayout_t, std::size_t... Indices, typename... Types>
+struct SoAImpl<InnerArrayLayout_t,IndexSequence<Indices...>,Types...>
+    : StructMember<Indices,InnerArrayLayout_t,Types>...
 {};
 
 //---------------------------------------------------------------------------//
 /*!
   \brief Struct-of-Arrays
 
-  A struct-of-arrays (SoA) is composed of groups of statically sized arrays
-  of size ArraySize. The array element types, which will be composed as
-  members of the struct, are indicated through the Types parameter pack. If
-  the types of the members are contiguous then the struct itself will be
-  contiguous.
-
-  Example - The SoA defined as: SoA<4,double,int,double[3][3]>
-  gives the same data structure as:
-
-  struct MySoA
-  {
-  double _d1[4];
-  int    _d2[4];
-  double _d3[4][3][3];
-  };
-
-  The SoA data is accessed through a get function. In the example above,
-  getting the 3x3 array for a given element and assigning values in the
-  struct would be written as:
-
-  SoA<4,double,int,double[3][3]> soa;
-  auto a3x3 = accessStructMember<2>( soa );
-  for ( int b = 0; b < 4; ++b )
-  for ( int i = 0; i < 3; ++i )
-  for ( int j = 0; j < 3; ++j )
-  a3x3[b][i][j] = some_value;
-
+  A struct-of-arrays (SoA) is composed of groups of statically sized
+  arrays. The array element types, which will be composed as members of the
+  struct, are indicated through the Types parameter pack. If the types of the
+  members are contiguous then the struct itself will be contiguous. The layout
+  of the arrays is a function of the layout type. The layout type indicates
+  the size of the arrays and, if they have multidimensional data, if they are
+  row or column major order.
 */
-template<std::size_t ArraySize, typename... Types>
+template<typename InnerArrayLayout_t, typename... Types>
 struct SoA
-    : SoAImpl<ArraySize,
+    : SoAImpl<InnerArrayLayout_t,
               typename MakeIndexSequence<sizeof...(Types)>::type,
               Types...>
 {};
 
 //---------------------------------------------------------------------------//
 // Helper traits.
-template<std::size_t I, std::size_t ArraySize, typename... Types>
+template<std::size_t I, typename InnerArrayLayout_t, typename... Types>
 struct SMT
 {
     using type = StructMember<
-        I,ArraySize,typename MemberDataTypeAtIndex<I,Types...>::type>;
+        I,InnerArrayLayout_t,typename MemberDataTypeAtIndex<I,Types...>::type>;
     using data_type = typename type::data_type;
     using reference_type = typename type::reference_type;
     using pointer_type = typename type::pointer_type;
@@ -141,82 +192,82 @@ struct SMT
 /*!
   \brief Access an individual element of a member.
 */
-template<std::size_t I, std::size_t ArraySize, typename... Types>
+template<std::size_t I, typename InnerArrayLayout_t, typename... Types>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (0==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
-    typename SMT<I,ArraySize,Types...>::reference_type>::type
-accessStructMember( SoA<ArraySize,Types...>& s,
+    (0==std::rank<typename SMT<I,InnerArrayLayout_t,Types...>::data_type>::value),
+    typename SMT<I,InnerArrayLayout_t,Types...>::reference_type>::type
+accessStructMember( SoA<InnerArrayLayout_t,Types...>& s,
                     const int i )
 {
-    return SMT<I,ArraySize,Types...>::type::access( s, i );
+    return SMT<I,InnerArrayLayout_t,Types...>::type::access( s, i );
 }
 
-template<std::size_t I, std::size_t ArraySize, typename... Types>
+template<std::size_t I, typename InnerArrayLayout_t, typename... Types>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (1==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
-    typename SMT<I,ArraySize,Types...>::reference_type>::type
-accessStructMember( SoA<ArraySize,Types...>& s,
+    (1==std::rank<typename SMT<I,InnerArrayLayout_t,Types...>::data_type>::value),
+    typename SMT<I,InnerArrayLayout_t,Types...>::reference_type>::type
+accessStructMember( SoA<InnerArrayLayout_t,Types...>& s,
                     const int i,
                     const int d0 )
 {
-    return SMT<I,ArraySize,Types...>::type::access(s,i,d0);
+    return SMT<I,InnerArrayLayout_t,Types...>::type::access(s,i,d0);
 }
 
-template<std::size_t I, std::size_t ArraySize, typename... Types>
+template<std::size_t I, typename InnerArrayLayout_t, typename... Types>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (2==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
-    typename SMT<I,ArraySize,Types...>::reference_type>::type
-accessStructMember( SoA<ArraySize,Types...>& s,
+    (2==std::rank<typename SMT<I,InnerArrayLayout_t,Types...>::data_type>::value),
+    typename SMT<I,InnerArrayLayout_t,Types...>::reference_type>::type
+accessStructMember( SoA<InnerArrayLayout_t,Types...>& s,
                     const int i,
                     const int d0,
                     const int d1 )
 {
-    return SMT<I,ArraySize,Types...>::type::access(s,i,d0,d1);
+    return SMT<I,InnerArrayLayout_t,Types...>::type::access(s,i,d0,d1);
 }
 
-template<std::size_t I, std::size_t ArraySize, typename... Types>
+template<std::size_t I, typename InnerArrayLayout_t, typename... Types>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (3==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
-    typename SMT<I,ArraySize,Types...>::reference_type>::type
-accessStructMember( SoA<ArraySize,Types...>& s,
+    (3==std::rank<typename SMT<I,InnerArrayLayout_t,Types...>::data_type>::value),
+    typename SMT<I,InnerArrayLayout_t,Types...>::reference_type>::type
+accessStructMember( SoA<InnerArrayLayout_t,Types...>& s,
                     const int i,
                     const int d0,
                     const int d1,
                     const int d2 )
 {
-    return SMT<I,ArraySize,Types...>::type::access(s,i,d0,d1,d2);
+    return SMT<I,InnerArrayLayout_t,Types...>::type::access(s,i,d0,d1,d2);
 }
 
-template<std::size_t I, std::size_t ArraySize, typename... Types>
+template<std::size_t I, typename InnerArrayLayout_t, typename... Types>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
-    (4==std::rank<typename SMT<I,ArraySize,Types...>::data_type>::value),
-    typename SMT<I,ArraySize,Types...>::reference_type>::type
-accessStructMember( SoA<ArraySize,Types...>& s,
+    (4==std::rank<typename SMT<I,InnerArrayLayout_t,Types...>::data_type>::value),
+    typename SMT<I,InnerArrayLayout_t,Types...>::reference_type>::type
+accessStructMember( SoA<InnerArrayLayout_t,Types...>& s,
                     const int i,
                     const int d0,
                     const int d1,
                     const int d2,
                     const int d3 )
 {
-    return SMT<I,ArraySize,Types...>::type::access(s,i,d0,d1,d2,d3);
+    return SMT<I,InnerArrayLayout_t,Types...>::type::access(s,i,d0,d1,d2,d3);
 }
 
 //---------------------------------------------------------------------------//
 /*!
   \brief Get a pointer to a member.
 */
-template<std::size_t I, std::size_t ArraySize, typename... Types>
+template<std::size_t I, typename InnerArrayLayout_t, typename... Types>
 KOKKOS_INLINE_FUNCTION
-typename SMT<I,ArraySize,Types...>::pointer_type
-getStructMember( SoA<ArraySize,Types...>& soa )
+typename SMT<I,InnerArrayLayout_t,Types...>::pointer_type
+getStructMember( SoA<InnerArrayLayout_t,Types...>& soa )
 {
-    typename SMT<I,ArraySize,Types...>::type& base = soa;
-    return base._data;
+    return static_cast<
+        typename SMT<I,InnerArrayLayout_t,Types...>::type&>(soa)._data;
 }
 
 //---------------------------------------------------------------------------//
