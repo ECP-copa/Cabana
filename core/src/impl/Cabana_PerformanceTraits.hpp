@@ -8,6 +8,8 @@
 
 namespace Cabana
 {
+namespace Impl
+{
 //---------------------------------------------------------------------------//
 /*!
   \class PerformanceTraits
@@ -61,6 +63,7 @@ class PerformanceTraits<Kokkos::Cuda>
 
 //---------------------------------------------------------------------------//
 
+} // end namespace Impl
 } // end namespace Cabana
 
 #endif // end CABANA_PERFORMANCETRAITS_HPP

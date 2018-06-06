@@ -1,7 +1,7 @@
 #ifndef CABANA_INNERARRAYLAYOUT_HPP
 #define CABANA_INNERARRAYLAYOUT_HPP
 
-#include <Cabana_TypeTraits.hpp>
+#include <impl/Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
 

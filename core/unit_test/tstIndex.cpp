@@ -1,4 +1,4 @@
-#include <Cabana_Index.hpp>
+#include <impl/Cabana_Index.hpp>
 
 #include <boost/test/unit_test.hpp>
 

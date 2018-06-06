@@ -1,7 +1,7 @@
 #ifndef CABANA_PARTICLE_HPP
 #define CABANA_PARTICLE_HPP
 
-#include <Cabana_IndexSequence.hpp>
+#include <impl/Cabana_IndexSequence.hpp>
 #include <Cabana_MemberDataTypes.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -10,6 +10,29 @@
 #include <cstdlib>
 
 namespace Cabana
+{
+//---------------------------------------------------------------------------//
+/*!
+  \class Particle
+
+  \brief A single particle composed of general data types. A particle is
+  trivially copyable.
+*/
+template<class DataTypes>
+struct Particle;
+
+// Static type checking.
+template<class >
+struct is_particle : public std::false_type {};
+
+template<class DataTypes>
+struct is_particle<Particle<DataTypes> > : public std::true_type {};
+
+template<class DataTypes>
+struct is_particle<const Particle<DataTypes> > : public std::true_type {};
+
+//---------------------------------------------------------------------------//
+namespace Impl
 {
 //---------------------------------------------------------------------------//
 /*!
@@ -34,30 +57,6 @@ template<std::size_t... Indices, typename... Types>
 struct ParticleImpl<IndexSequence<Indices...>,Types...>
     : ParticleMember<Indices,Types>...
 {};
-
-//---------------------------------------------------------------------------//
-/*!
-  \class Particle
-
-  \brief A single particle composed of general data types. A particle is
-  trivially copyable.
-*/
-template<class DataTypes>
-struct Particle;
-
-// Static type checking.
-template<class >
-struct is_particle : public std::false_type {};
-
-template<class DataTypes>
-struct is_particle<Particle<DataTypes> > : public std::true_type {};
-
-template<class DataTypes>
-struct is_particle<const Particle<DataTypes> > : public std::true_type {};
-
-//---------------------------------------------------------------------------//
-namespace Impl
-{
 
 //---------------------------------------------------------------------------//
 /*!
@@ -217,7 +216,8 @@ getParticleMember( const Particle_t& particle,
 // Particle implementation.
 template<typename... Types>
 struct Particle<MemberDataTypes<Types...> >
-    : ParticleImpl<typename MakeIndexSequence<sizeof...(Types)>::type,Types...>
+    : Impl::ParticleImpl<
+    typename Impl::MakeIndexSequence<sizeof...(Types)>::type,Types...>
 {
     // Particle type.
     using particle_type = Particle<MemberDataTypes<Types...> >;

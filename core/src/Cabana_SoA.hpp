@@ -2,7 +2,7 @@
 #define CABANA_SOA_HPP
 
 #include <Cabana_InnerArrayLayout.hpp>
-#include <Cabana_IndexSequence.hpp>
+#include <impl/Cabana_IndexSequence.hpp>
 #include <Cabana_MemberDataTypes.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -153,7 +153,7 @@ template<typename InnerArrayLayout_t, typename Sequence, typename... Types>
 struct SoAImpl;
 
 template<typename InnerArrayLayout_t, std::size_t... Indices, typename... Types>
-struct SoAImpl<InnerArrayLayout_t,IndexSequence<Indices...>,Types...>
+struct SoAImpl<InnerArrayLayout_t,Impl::IndexSequence<Indices...>,Types...>
     : StructMember<Indices,InnerArrayLayout_t,Types>...
 {};
 
@@ -172,7 +172,7 @@ struct SoAImpl<InnerArrayLayout_t,IndexSequence<Indices...>,Types...>
 template<typename InnerArrayLayout_t, typename... Types>
 struct SoA
     : SoAImpl<InnerArrayLayout_t,
-              typename MakeIndexSequence<sizeof...(Types)>::type,
+              typename Impl::MakeIndexSequence<sizeof...(Types)>::type,
               Types...>
 {};
 

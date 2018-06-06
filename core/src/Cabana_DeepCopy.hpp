@@ -3,7 +3,7 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberSlice.hpp>
-#include <Cabana_TypeTraits.hpp>
+#include <impl/Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_ExecPolicy.hpp>

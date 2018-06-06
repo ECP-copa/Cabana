@@ -2,7 +2,6 @@
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ExecutionPolicy.hpp>
 #include <Cabana_InnerArrayLayout.hpp>
-#include <Cabana_Index.hpp>
 #include <Cabana_MemberSlice.hpp>
 
 #include <Kokkos_Core.hpp>

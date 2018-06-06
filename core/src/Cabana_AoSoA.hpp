@@ -3,11 +3,10 @@
 
 #include <Cabana_MemberDataTypes.hpp>
 #include <Cabana_SoA.hpp>
-#include <Cabana_Index.hpp>
 #include <Cabana_InnerArrayLayout.hpp>
-#include <Cabana_PerformanceTraits.hpp>
 #include <Cabana_Particle.hpp>
-#include <Cabana_Index.hpp>
+#include <impl/Cabana_Index.hpp>
+#include <impl/Cabana_PerformanceTraits.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -89,7 +88,7 @@ class AoSoATraits<
     using execution_space = typename Space::execution_space;
     using memory_space = typename Space::memory_space;
     using host_mirror_space = typename Kokkos::Impl::HostMirror<Space>::Space;
-    using inner_array_layout = typename PerformanceTraits<execution_space>::inner_array_layout;
+    using inner_array_layout = typename Impl::PerformanceTraits<execution_space>::inner_array_layout;
     using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
 };
 
@@ -141,7 +140,7 @@ class AoSoATraits
         typename std::conditional<
         !std::is_same<typename properties::inner_array_layout,void>::value,
         typename properties::inner_array_layout,
-        typename PerformanceTraits<ExecutionSpace>::inner_array_layout
+        typename Impl::PerformanceTraits<ExecutionSpace>::inner_array_layout
         >::type;
 
     using HostMirrorSpace =
