@@ -1,5 +1,5 @@
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_Index.hpp>
+#include <impl/Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
 

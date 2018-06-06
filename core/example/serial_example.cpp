@@ -1,6 +1,5 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
 

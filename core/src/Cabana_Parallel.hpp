@@ -2,7 +2,7 @@
 #define CABANA_PARALLEL_HPP
 
 #include <Cabana_ExecutionPolicy.hpp>
-#include <Cabana_Index.hpp>
+#include <impl/Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Parallel.hpp>
@@ -15,8 +15,11 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 // Forward declaration of performance traits.
+namespace Impl
+{
 template<class ExecutionSpace>
 class PerformanceTraits;
+} // end namespace impl
 
 //---------------------------------------------------------------------------//
 // Algorithm tags.
@@ -134,10 +137,11 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
                           const std::string& str = "" )
 {
     using exec_space = typename ExecutionPolicy::execution_space;
-    parallel_for( exec_policy,
-                  functor,
-                  typename PerformanceTraits<exec_space>::parallel_for_tag(),
-                  str );
+    parallel_for(
+        exec_policy,
+        functor,
+        typename Impl::PerformanceTraits<exec_space>::parallel_for_tag(),
+        str );
 }
 
 //---------------------------------------------------------------------------//

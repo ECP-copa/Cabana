@@ -1,7 +1,7 @@
 #ifndef CABANA_INDEX_HPP
 #define CABANA_INDEX_HPP
 
-#include <Cabana_TypeTraits.hpp>
+#include <impl/Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
 

@@ -5,6 +5,8 @@
 
 namespace Cabana
 {
+namespace Impl
+{
 //---------------------------------------------------------------------------//
 /*!
   \class IndexSequence
@@ -42,6 +44,7 @@ struct MakeIndexSequence<1> : IndexSequence<0> {};
 
 //---------------------------------------------------------------------------//
 
+} // end namespace Impl
 } // end namespace Cabana
 
 #endif // end CABANA_INDEXSEQUENCE_HPP
