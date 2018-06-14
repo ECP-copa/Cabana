@@ -1,4 +1,4 @@
-#include <Cabana_SoA.hpp>
+#include <impl/Cabana_SoA.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -28,14 +28,14 @@ BOOST_AUTO_TEST_CASE( soa_layout_right_test )
     using array_layout = Cabana::InnerArrayLayout<4,Kokkos::LayoutRight>;
 
     // Declare an soa type.
-    using soa_type = Cabana::SoA<array_layout,
-                                 double,
-                                 int,
-                                 float,
-                                 double[2][3],
-                                 unsigned[5],
-                                 float[3][2][2],
-                                 double[4][2][3][2]>;
+    using soa_type = Cabana::Impl::SoA<array_layout,
+                                       double,
+                                       int,
+                                       float,
+                                       double[2][3],
+                                       unsigned[5],
+                                       float[3][2][2],
+                                       double[4][2][3][2]>;
 
     // Check that the data in the soa is contiguous.
     BOOST_CHECK( std::is_trivial<soa_type>::value );
@@ -49,17 +49,17 @@ BOOST_AUTO_TEST_CASE( soa_layout_right_test )
 
     // Set some data with the soa.
     double v1 = 0.3343;
-    auto d0 = Cabana::getStructMember<0>( soa );
+    auto d0 = Cabana::Impl::getStructMember<0>( soa );
     d0[3] = v1;
 
     double v2 = 0.992;
-    auto d6 = Cabana::getStructMember<6>( soa );
+    auto d6 = Cabana::Impl::getStructMember<6>( soa );
     d6[2][1][1][1][1] = v2;
 
     // Check the data.
-    BOOST_CHECK( Cabana::getStructMember<0>( soa )[3] == v1 );
+    BOOST_CHECK( Cabana::Impl::getStructMember<0>( soa )[3] == v1 );
     BOOST_CHECK(
-        Cabana::getStructMember<6>( soa )[2][1][1][1][1] == v2 );
+        Cabana::Impl::getStructMember<6>( soa )[2][1][1][1][1] == v2 );
 }
 
 //---------------------------------------------------------------------------//
@@ -69,14 +69,14 @@ BOOST_AUTO_TEST_CASE( soa_layout_left_test )
     using array_layout = Cabana::InnerArrayLayout<4,Kokkos::LayoutLeft>;
 
     // Declare an soa type.
-    using soa_type = Cabana::SoA<array_layout,
-                                 double,
-                                 int,
-                                 float,
-                                 double[2][3],
-                                 unsigned[5],
-                                 float[3][2][2],
-                                 double[4][2][3][2]>;
+    using soa_type = Cabana::Impl::SoA<array_layout,
+                                       double,
+                                       int,
+                                       float,
+                                       double[2][3],
+                                       unsigned[5],
+                                       float[3][2][2],
+                                       double[4][2][3][2]>;
 
     // Check that the data in the soa is contiguous.
     BOOST_CHECK( std::is_trivial<soa_type>::value );
@@ -90,15 +90,15 @@ BOOST_AUTO_TEST_CASE( soa_layout_left_test )
 
     // Set some data with the soa.
     double v1 = 0.3343;
-    auto d0 = Cabana::getStructMember<0>( soa );
+    auto d0 = Cabana::Impl::getStructMember<0>( soa );
     d0[3] = v1;
 
     double v2 = 0.992;
-    auto d6 = Cabana::getStructMember<6>( soa );
+    auto d6 = Cabana::Impl::getStructMember<6>( soa );
     d6[1][1][1][1][2] = v2;
 
     // Check the data.
-    BOOST_CHECK( Cabana::getStructMember<0>( soa )[3] == v1 );
+    BOOST_CHECK( Cabana::Impl::getStructMember<0>( soa )[3] == v1 );
     BOOST_CHECK(
-        Cabana::getStructMember<6>( soa )[1][1][1][1][2] == v2 );
+        Cabana::Impl::getStructMember<6>( soa )[1][1][1][1][2] == v2 );
 }

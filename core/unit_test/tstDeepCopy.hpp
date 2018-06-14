@@ -13,34 +13,40 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
+    auto view_0 = aosoa.template view<0>();
+    auto view_1 = aosoa.template view<1>();
+    auto view_2 = aosoa.template view<2>();
+    auto view_3 = aosoa.template view<3>();
+    auto view_4 = aosoa.template view<4>();
+
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    BOOST_CHECK( aosoa.template get<0>( idx, i, j, k ) ==
+                    BOOST_CHECK( view_0( idx, i, j, k ) ==
                                  fval * (i+j+k) );
 
         // Member 1.
-        BOOST_CHECK( aosoa.template get<1>( idx ) == ival );
+        BOOST_CHECK( view_1( idx ) == ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        BOOST_CHECK( aosoa.template get<2>( idx, i, j, k, l ) ==
+                        BOOST_CHECK( view_2( idx, i, j, k, l ) ==
                                      fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
+            BOOST_CHECK( view_3( idx, i ) == dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
+                BOOST_CHECK( view_4( idx, i, j ) == dval * (i+j) );
     }
 }
 
@@ -78,60 +84,37 @@ void testDeepCopy()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
+    auto view_0 = src_aosoa.template view<0>();
+    auto view_1 = src_aosoa.template view<1>();
+    auto view_2 = src_aosoa.template view<2>();
+    auto view_3 = src_aosoa.template view<3>();
+    auto view_4 = src_aosoa.template view<4>();
     for ( auto idx = 0; idx < src_aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    src_aosoa.template get<0>( idx, i, j, k ) = fval * (i+j+k);
+                    view_0( idx, i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        src_aosoa.template get<1>( idx ) = ival;
+        view_1( idx ) = ival;
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        src_aosoa.template get<2>( idx, i, j, k, l ) = fval * (i+j+k+l);
+                        view_2( idx, i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            src_aosoa.template get<3>( idx, i ) = dval * i;
+            view_3( idx, i ) = dval * i;
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                src_aosoa.template get<4>( idx, i, j ) = dval * (i+j);
-    }
-
-    for ( auto idx = 0; idx < dst_aosoa.size(); ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    dst_aosoa.template get<0>( idx, i, j, k ) = fval * (i+j+k);
-
-        // Member 1.
-        dst_aosoa.template get<1>( idx ) = ival;
-
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        dst_aosoa.template get<2>( idx, i, j, k, l ) = fval * (i+j+k+l);
-
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            dst_aosoa.template get<3>( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                dst_aosoa.template get<4>( idx, i, j ) = dval * (i+j);
+                view_4( idx, i, j ) = dval * (i+j);
     }
 
     // Deep copy

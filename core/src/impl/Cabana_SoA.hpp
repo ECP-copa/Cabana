@@ -12,6 +12,8 @@
 
 namespace Cabana
 {
+namespace Impl
+{
 //---------------------------------------------------------------------------//
 /*!
   \brief Struct member.
@@ -272,6 +274,7 @@ getStructMember( SoA<InnerArrayLayout_t,Types...>& soa )
 
 //---------------------------------------------------------------------------//
 
+} // end namespace Impl
 } // end namespace Cabana
 
 #endif // end CABANA_SOA_HPP

@@ -1,7 +1,8 @@
 #ifndef CABANA_MEMBERSLICE_HPP
 #define CABANA_MEMBERSLICE_HPP
 
-#include <Cabana_AoSoA.hpp>
+#include <Cabana_InnerArrayLayout.hpp>
+#include <impl/Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -30,78 +31,99 @@ namespace Cabana
   auto slice = Cabana::slice<M>(aosoa);
   \endcode
 */
-template<std::size_t M, typename AoSoA_t>
-class MemberSlice;
-
 //---------------------------------------------------------------------------//
-// Static type checker.
-template<typename >
-struct is_member_slice
-    : public std::false_type {};
-
-// True only if the type is a member slice *AND* the member slice is templated
-// on an AoSoA type.
-template<std::size_t M, typename AoSoA_t>
-struct is_member_slice<MemberSlice<M,AoSoA_t> >
-    : public is_aosoa<AoSoA_t>::type {};
-
-template<std::size_t M, typename AoSoA_t>
-struct is_member_slice<const MemberSlice<M,AoSoA_t> >
-    : public is_aosoa<AoSoA_t>::type {};
-
-//---------------------------------------------------------------------------//
-template<std::size_t M, typename AoSoA_t>
+template<typename DataType, typename ArrayLayout>
 class MemberSlice
 {
   public:
 
-    // Slice type.
-    using slice_type = MemberSlice<M,AoSoA_t>;
+    // DataType
+    using data_type = DataType;
 
-    // Member id.
-    static constexpr std::size_t member_id = M;
+    // Ordered array type.
+    using ordered_array_type =
+        typename Impl::InnerArrayType<data_type,ArrayLayout>::type;
 
-    // AoSoA type this slice wraps.
-    using aosoa_type = AoSoA_t;
+    // Pointer to an array.
+    using pointer_to_array_type = typename std::decay<ordered_array_type>::type;
 
-    // Inner array size.
-    static constexpr int array_size = aosoa_type::array_size;
+    // Value type.
+    using value_type = typename std::remove_all_extents<data_type>::type;
 
-    // Struct member array return type at a given index M.
-    using array_type =
-        typename aosoa_type::template struct_member_array_type<M>;
+    // Reference type
+    using reference_type = typename std::add_lvalue_reference<value_type>::type;
 
-    // Struct member array data type at a given index M.
-    using data_type =
-        typename aosoa_type::template struct_member_data_type<M>;
+    // Poiner type.
+    using pointer_type = typename std::add_pointer<value_type>::type;
 
-    // Struct member array element value type at a given index M.
-    using value_type =
-        typename aosoa_type::template struct_member_value_type<M>;
+    // Array size.
+    static constexpr int array_size = ArrayLayout::size;
 
-    // Struct member array element reference type at a given index M.
-    using reference_type =
-        typename aosoa_type::template struct_member_reference_type<M>;
+    // Index type.
+    using index_type = Impl::Index<array_size>;
 
-    // Struct member array element pointer type at a given index M.
-    using pointer_type =
-        typename aosoa_type::template struct_member_pointer_type<M>;
+    // Maximum supported rank.
+    static constexpr int max_supported_rank = 4;
+
+    // Array layout.
+    using array_layout = typename ArrayLayout::layout;
+
+  private:
+
+    enum {
+        is_layout_left = std::is_same<array_layout,Kokkos::LayoutLeft>::value,
+        is_layout_right = std::is_same<array_layout,Kokkos::LayoutRight>::value
+    };
 
   public:
 
     /*!
       \brief Constructor.
-
-      \param aosoa The AoSoA to slice at the member index M.
     */
-    MemberSlice( aosoa_type aosoa )
-        : _aosoa( aosoa )
+    MemberSlice( const pointer_type data,
+                 const int size,
+                 const int stride,
+                 const int num_soa )
+        : _data( data )
+        , _size( size )
+        , _stride( stride )
+        , _num_soa( num_soa )
     {
-        static_assert( is_aosoa<aosoa_type>::value,
-                       "MemberSlice can only wrap AoSoA objects!" );
-        static_assert( M < aosoa_type::number_of_members,
-                       "MemberSlice index is out of range!" );
+        storeExtents(
+            std::integral_constant<std::size_t,max_supported_rank-1>() );
     }
+
+    /*!
+      \brief Copy constructor.
+    */
+    MemberSlice( const MemberSlice& slice )
+    {
+        _data = slice._data;
+        _size = slice._size;
+        _stride = slice._stride;
+        _num_soa = slice._num_soa;
+        storeExtents(
+            std::integral_constant<std::size_t,max_supported_rank-1>() );
+    }
+
+    /*!
+     * \brief Assignment operator.
+     */
+    MemberSlice& operator=( const MemberSlice& slice )
+    {
+        _data = slice._data;
+        _size = slice._size;
+        _stride = slice._stride;
+        _num_soa = slice._num_soa;
+        storeExtents(
+            std::integral_constant<std::size_t,max_supported_rank-1>() );
+    }
+
+    /*!
+     * \brief Move operators.
+     */
+    MemberSlice( MemberSlice && ) = default ;
+    MemberSlice & operator = ( MemberSlice && ) = default ;
 
     /*!
       \brief Returns the number of elements in the container.
@@ -109,7 +131,7 @@ class MemberSlice
       \return The number of elements in the container.
     */
     KOKKOS_FUNCTION
-    int size() const { return _aosoa.size(); }
+    int size() const { return _size; }
 
     /*!
       \brief Get the number of structs-of-arrays in the container.
@@ -117,7 +139,7 @@ class MemberSlice
       \return The number of structs-of-arrays in the container.
     */
     KOKKOS_FUNCTION
-    int numSoA() const { return _aosoa.numSoA(); }
+    int numSoA() const { return _num_soa; }
 
     /*!
       \brief Get the size of the data array at a given struct member index.
@@ -128,7 +150,10 @@ class MemberSlice
     */
     KOKKOS_FUNCTION
     int arraySize( const int s ) const
-    { return _aosoa.arraySize(s); }
+    {
+        return
+            ( s < _num_soa - 1 ) ? array_size : ( _size % array_size );
+    }
 
     // -------------------------------
     // Member data type properties.
@@ -139,8 +164,8 @@ class MemberSlice
       \return The rank of the data for this member.
     */
     KOKKOS_INLINE_FUNCTION
-    int rank() const
-    { return _aosoa.rank(M); }
+    constexpr int rank() const
+    { return std::rank<data_type>::value; }
 
     /*!
       \brief Get the extent of a given member data dimension.
@@ -151,89 +176,115 @@ class MemberSlice
     */
     KOKKOS_INLINE_FUNCTION
     int extent( const std::size_t D ) const
-    { return _aosoa.extent(M,D); }
+    { return _extents[D]; }
 
     // -------------------------------
-    // Access the data value at a given struct index and array index
+    // Access the data value at a given particle index.
 
     // Rank 0
-    template<std::size_t J = M>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<
-        (0==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        reference_type>::type
-    operator()( const int particle_index ) const
+    typename std::enable_if<(0==std::rank<U>::value),
+                            reference_type>::type
+    operator()( const int p ) const
     {
-        static_assert( J == M,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(particle_index);
+        return array(index_type::s(p))[index_type::i(p)];
     }
 
     // Rank 1
-    template<std::size_t J = M>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<
-        (1==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        reference_type>::type
-    operator()( const int particle_index,
+    typename std::enable_if<((1==std::rank<U>::value) && is_layout_right),
+                            reference_type>::type
+    operator()( const int p,
                 const int d0 ) const
     {
-        static_assert( J == M,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(particle_index,d0);
+        return array(index_type::s(p))[index_type::i(p)][d0];
+    }
+
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<((1==std::rank<U>::value) && is_layout_left),
+                            reference_type>::type
+    operator()( const int p,
+                const int d0 ) const
+    {
+        return array(index_type::s(p))[d0][index_type::i(p)];
     }
 
     // Rank 2
-    template<std::size_t J = M>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<
-        (2==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        reference_type>::type
-    operator()( const int particle_index,
+    typename std::enable_if<((2==std::rank<U>::value) && is_layout_right),
+                            reference_type>::type
+    operator()( const int p,
                 const int d0,
                 const int d1 ) const
     {
-        static_assert( J == M,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(particle_index,d0,d1);
+        return array(index_type::s(p))[index_type::i(p)][d0][d1];
+    }
+
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<((2==std::rank<U>::value) && is_layout_left),
+                            reference_type>::type
+    operator()( const int p,
+                const int d0,
+                const int d1 ) const
+    {
+        return array(index_type::s(p))[d1][d0][index_type::i(p)];
     }
 
     // Rank 3
-    template<std::size_t J = M>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<
-        (3==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        reference_type>::type
-    operator()( const int particle_index,
+    typename std::enable_if<((3==std::rank<U>::value) && is_layout_right),
+                            reference_type>::type
+    operator()( const int p,
                 const int d0,
                 const int d1,
                 const int d2 ) const
     {
-        static_assert( J == M,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(particle_index,d0,d1,d2);
+        return array(index_type::s(p))[index_type::i(p)][d0][d1][d2];
+    }
+
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<((3==std::rank<U>::value) && is_layout_left),
+                            reference_type>::type
+    operator()( const int p,
+                const int d0,
+                const int d1,
+                const int d2 ) const
+    {
+        return array(index_type::s(p))[d2][d1][d0][index_type::i(p)];
     }
 
     // Rank 4
-    template<std::size_t J = M>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<
-        (4==std::rank<
-         typename aosoa_type::template struct_member_data_type<J> >::value),
-        reference_type>::type
-    operator()( const int particle_index,
+    typename std::enable_if<((4==std::rank<U>::value) && is_layout_right),
+                            reference_type>::type
+    operator()( const int p,
                 const int d0,
                 const int d1,
                 const int d2,
                 const int d3 ) const
     {
-        static_assert( J == M,
-                       "Do not call with different template arguments!" );
-        return _aosoa.template get<J>(particle_index,d0,d1,d2,d3);
+        return array(index_type::s(p))[index_type::i(p)][d0][d1][d2][d3];
+    }
+
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<((4==std::rank<U>::value) && is_layout_left),
+                            reference_type>::type
+    operator()( const int p,
+                const int d0,
+                const int d1,
+                const int d2,
+                const int d3 ) const
+    {
+        return array(index_type::s(p))[d3][d2][d1][d0][index_type::i(p)];
     }
 
     // -------------------------------
@@ -250,54 +301,84 @@ class MemberSlice
     KOKKOS_INLINE_FUNCTION
     int stride() const
     {
-        return _aosoa.stride( M );
+        return _stride;
     }
 
     /*!
-      \brief Get a non-const raw pointer to the data for this
-      member
+      \brief Get a raw pointer to the data for this member
 
-      \return A non-const raw pointer to the member data at the given index.
+      \return A raw pointer to the member data at the given index.
     */
     KOKKOS_INLINE_FUNCTION
-    pointer_type data()
+    pointer_type data() const
     {
-        return static_cast<pointer_type>( _aosoa.data(M) );
-    }
-
-    /*!
-      \brief Get a const raw pointer to the data for this member
-
-      \return A const raw pointer to the member data at the given index.
-    */
-    KOKKOS_INLINE_FUNCTION
-    const pointer_type data() const
-    {
-        return static_cast<pointer_type>( const_cast<void*>(_aosoa.data(M)) );
+        return _data;
     }
 
   private:
 
-    // The array-of-structs-of-arrays this slice wraps. We hold this by value
-    // because the underlying block of data in the AoSoA is reference counted.
-    aosoa_type _aosoa;
+    // Get the array corresponding to the given struct index.
+    KOKKOS_FORCEINLINE_FUNCTION
+    pointer_to_array_type array( const int s ) const
+    {
+        return reinterpret_cast<pointer_to_array_type>( _data + s*_stride );
+    }
+
+    // Store the extents of each of the member types.
+    template<std::size_t D>
+    void assignExtents()
+    {
+        static_assert( 0 <= D && D < max_supported_rank,
+                       "Static loop out of bounds!" );
+        _extents[D] = ( D < std::rank<data_type>::value )
+                      ? std::extent<data_type,D>::value
+                      : 0;
+    }
+
+    // Static loop over extents for each member element.
+    template<std::size_t D>
+    void storeExtents( std::integral_constant<std::size_t,D> )
+    {
+        assignExtents<D>();
+        storeExtents( std::integral_constant<std::size_t,D-1>() );
+    }
+
+    void storeExtents( std::integral_constant<std::size_t,0> )
+    {
+        assignExtents<0>();
+    }
+
+  private:
+
+    // The data this slice wraps. We restrict to convince the compiler we are
+    // not aliasing.
+    pointer_type __restrict__ _data;
+
+    // Total number of elements.
+    int _size;
+
+    // Stride between tiles.
+    int _stride;
+
+    // Total number of tiles.
+    int _num_soa;
+
+    // Extents
+    int _extents[max_supported_rank];
 };
 
 //---------------------------------------------------------------------------//
-/*!
-  \brief Free function so slice an AoSoA over a given member.
+// Static type checker.
+template<typename >
+struct is_member_slice : public std::false_type {};
 
-  \tparam M The member of the input AoSoA to slice.
+// True only if the type is a member slice *AND* the member slice is templated
+// on an AoSoA type.
+template<typename T, typename Layout>
+struct is_member_slice<MemberSlice<T,Layout> > : public std::true_type {};
 
-  \tparam M The type of AoSoA to slice.
-
-  \param aosoa The aosoa to slice.
-
-  \return A slice for the given member index of the given AoSoA.
-*/
-template<std::size_t M, typename AoSoA_t>
-MemberSlice<M,AoSoA_t> slice( AoSoA_t aosoa )
-{ return MemberSlice<M,AoSoA_t>(aosoa); }
+template<typename T, typename Layout>
+struct is_member_slice<const MemberSlice<T,Layout> > : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 

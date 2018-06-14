@@ -20,3 +20,9 @@ IF(Cabana_ENABLE_Serial)
     )
 
 ENDIF()
+
+  TRIBITS_ADD_EXECUTABLE(
+    PeakFlops
+    SOURCES Cabana_peakflops.cpp
+    COMM serial mpi
+    )
