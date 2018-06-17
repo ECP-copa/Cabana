@@ -179,16 +179,16 @@ class MemberSlice
     { return _extents[D]; }
 
     // -------------------------------
-    // Access the data value at a given particle index.
+    // Access the data value at a given struct and array index..
 
     // Rank 0
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<U>::value),
                             reference_type>::type
-    operator()( const int p ) const
+    access( const int s, const int i ) const
     {
-        return array(index_type::s(p))[index_type::i(p)];
+        return array(s)[i];
     }
 
     // Rank 1
@@ -196,20 +196,20 @@ class MemberSlice
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<((1==std::rank<U>::value) && is_layout_right),
                             reference_type>::type
-    operator()( const int p,
-                const int d0 ) const
+    access( const int s, const int i,
+            const int d0 ) const
     {
-        return array(index_type::s(p))[index_type::i(p)][d0];
+        return array(s)[i][d0];
     }
 
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<((1==std::rank<U>::value) && is_layout_left),
                             reference_type>::type
-    operator()( const int p,
-                const int d0 ) const
+    access( const int s, const int i,
+            const int d0 ) const
     {
-        return array(index_type::s(p))[d0][index_type::i(p)];
+        return array(s)[d0][i];
     }
 
     // Rank 2
@@ -217,22 +217,22 @@ class MemberSlice
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<((2==std::rank<U>::value) && is_layout_right),
                             reference_type>::type
-    operator()( const int p,
-                const int d0,
-                const int d1 ) const
+    access( const int s, const int i,
+            const int d0,
+            const int d1 ) const
     {
-        return array(index_type::s(p))[index_type::i(p)][d0][d1];
+        return array(s)[i][d0][d1];
     }
 
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<((2==std::rank<U>::value) && is_layout_left),
                             reference_type>::type
-    operator()( const int p,
-                const int d0,
-                const int d1 ) const
+    access( const int s, const int i,
+            const int d0,
+            const int d1 ) const
     {
-        return array(index_type::s(p))[d1][d0][index_type::i(p)];
+        return array(s)[d1][d0][i];
     }
 
     // Rank 3
@@ -240,24 +240,24 @@ class MemberSlice
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<((3==std::rank<U>::value) && is_layout_right),
                             reference_type>::type
-    operator()( const int p,
-                const int d0,
-                const int d1,
-                const int d2 ) const
+    access( const int s, const int i,
+            const int d0,
+            const int d1,
+            const int d2 ) const
     {
-        return array(index_type::s(p))[index_type::i(p)][d0][d1][d2];
+        return array(s)[i][d0][d1][d2];
     }
 
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<((3==std::rank<U>::value) && is_layout_left),
                             reference_type>::type
-    operator()( const int p,
-                const int d0,
-                const int d1,
-                const int d2 ) const
+    access( const int s, const int i,
+            const int d0,
+            const int d1,
+            const int d2 ) const
     {
-        return array(index_type::s(p))[d2][d1][d0][index_type::i(p)];
+        return array(s)[d2][d1][d0][i];
     }
 
     // Rank 4
@@ -265,26 +265,84 @@ class MemberSlice
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<((4==std::rank<U>::value) && is_layout_right),
                             reference_type>::type
-    operator()( const int p,
-                const int d0,
-                const int d1,
-                const int d2,
-                const int d3 ) const
+    access( const int s, const int i,
+            const int d0,
+            const int d1,
+            const int d2,
+            const int d3 ) const
     {
-        return array(index_type::s(p))[index_type::i(p)][d0][d1][d2][d3];
+        return array(s)[i][d0][d1][d2][d3];
     }
 
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<((4==std::rank<U>::value) && is_layout_left),
                             reference_type>::type
+    access( const int s, const int i,
+            const int d0,
+            const int d1,
+            const int d2,
+            const int d3 ) const
+    {
+        return array(s)[d3][d2][d1][d0][i];
+    }
+
+    // -------------------------------
+    // Access the data value at a given particle index.
+
+    // Rank 0
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(0==std::rank<U>::value),reference_type>::type
+    operator()( const int p ) const
+    {
+        return access( index_type::s(p), index_type::i(p) );
+    }
+
+    // Rank 1
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(1==std::rank<U>::value),reference_type>::type
+    operator()( const int p,
+                const int d0 ) const
+    {
+        return access( index_type::s(p), index_type::i(p), d0 );
+    }
+
+    // Rank 2
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(2==std::rank<U>::value),reference_type>::type
+    operator()( const int p,
+                const int d0,
+                const int d1 ) const
+    {
+        return access( index_type::s(p), index_type::i(p), d0, d1 );
+    }
+
+    // Rank 3
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(3==std::rank<U>::value),reference_type>::type
+    operator()( const int p,
+                const int d0,
+                const int d1,
+                const int d2 ) const
+    {
+        return access( index_type::s(p), index_type::i(p), d0, d1, d2 );
+    }
+
+    // Rank 4
+    template<typename U = DataType>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(4==std::rank<U>::value),reference_type>::type
     operator()( const int p,
                 const int d0,
                 const int d1,
                 const int d2,
                 const int d3 ) const
     {
-        return array(index_type::s(p))[d3][d2][d1][d0][index_type::i(p)];
+        return access( index_type::s(p), index_type::i(p), d0, d1, d2, d3 );
     }
 
     // -------------------------------
