@@ -354,7 +354,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
       \param n The number of elements in the container.
     */
-    AoSoA( const int n )
+    explicit AoSoA( const int n )
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
