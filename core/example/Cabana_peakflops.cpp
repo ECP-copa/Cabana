@@ -141,6 +141,47 @@ void moveViews(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
 }
 
 //---------------------------------------------------------------------------//
+// Move function using struct and array indices and slice syntax.
+template<typename SliceType>
+void moveViewsWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
+                         SliceType x3, SliceType x4, SliceType x5, SliceType x6,
+                         SliceType x7, SliceType x8, SliceType x9, SliceType c,
+                         long n, int num_struct )
+{
+    long i;
+    int s;
+    int j;
+
+    asm volatile ("# ax+c loop begin");
+    for(i = 0; i<n; i++)
+    {
+        for ( s = 0; s < num_struct; ++s )
+        {
+            for(j=0; j<VECLENTH; j++)
+            {
+                x0.access(s,j) = a.access(s,j)*x0.access(s,j)+ c.access(s,j);
+                x1.access(s,j) = a.access(s,j)*x1.access(s,j)+ c.access(s,j);
+                x2.access(s,j) = a.access(s,j)*x2.access(s,j)+ c.access(s,j);
+                x3.access(s,j) = a.access(s,j)*x3.access(s,j)+ c.access(s,j);
+                x4.access(s,j) = a.access(s,j)*x4.access(s,j)+ c.access(s,j);
+                x5.access(s,j) = a.access(s,j)*x5.access(s,j)+ c.access(s,j);
+                x6.access(s,j) = a.access(s,j)*x6.access(s,j)+ c.access(s,j);
+                x7.access(s,j) = a.access(s,j)*x7.access(s,j)+ c.access(s,j);
+                x8.access(s,j) = a.access(s,j)*x8.access(s,j)+ c.access(s,j);
+                x9.access(s,j) = a.access(s,j)*x9.access(s,j)+ c.access(s,j);
+            }
+        }
+    }
+    asm volatile ("# ax+c loop end");
+    for(j=0; j<VECLENTH; j++)
+    {
+        x0.access(s,j) = x0.access(s,j)+x1.access(s,j)+x2.access(s,j)+x3.access(s,j)+
+                         x4.access(s,j)+x5.access(s,j)+x6.access(s,j)+x7.access(s,j)+
+                         x8.access(s,j)+x9.access(s,j);
+    }
+}
+
+//---------------------------------------------------------------------------//
 // Run the performance test.
 void run()
 {
@@ -230,20 +271,31 @@ void run()
     moveViews(ma,m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,mc,n,num_struct);
     unsigned long long c4 = rdtscp();
 
+    unsigned long long c5 = rdtscp();
+    moveViewsWithAccess(ma,m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,mc,n,num_struct);
+    unsigned long long c6 = rdtscp();
+
     // Calculate times and number of flops.
     unsigned long long dc1 = c2 - c1;
     unsigned long long dc2 = c4 - c3;
+    unsigned long long dc3 = c6 - c5;
     double flops = 10*2*num_particle*(double)n;
 
     // Output results.
     std::cout << std::endl;
     std::cout<<flops<<" flops" << std::endl;;
     std::cout << std::endl;
+    std::cout << "AoSoA Cast" << std::endl;
     std::cout<<dc1<<" clocks 1"<<std::endl;
     std::cout<<flops/dc1<<" flops/clock 1\n";
     std::cout << std::endl;
+    std::cout << "Slice Single Index" << std::endl;
     std::cout<<dc2<<" clocks 2"<<std::endl;
     std::cout<<flops/dc2<<" flops/clock 2\n";
+    std::cout << std::endl;
+    std::cout << "Slice Struct/Array Index" << std::endl;
+    std::cout<<dc3<<" clocks 3"<<std::endl;
+    std::cout<<flops/dc3<<" flops/clock 3\n";
     std::cout << std::endl;
 
     for (int idx = 0; idx < VECLENTH; idx++)
