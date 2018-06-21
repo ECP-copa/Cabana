@@ -184,8 +184,6 @@ void exampleMain(int num_particle, int crystal_size, std::string method, int mpi
 
     // parameter string to set the periodicity and disable the calculation of near field parts from the calling program
     std::string common_parameters = "periodicity,1,1,1,offset,0.0,0.0,0.0,near_field_flag,0";
-    // parameter string for the FMM solver
-    std::string FMM_parameters = "fmm_absrel,2,fmm_dipole_correction,0,fmm_tolerance_energy,1e-6,fmm_internal_tuning,0ll";
 
     // set the box size, so that the crystal should be stable in a periodic system
     std::vector<double> box_a{(double)(crystal_size),0.0,0.0};
