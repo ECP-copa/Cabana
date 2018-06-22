@@ -76,6 +76,14 @@ IF(Cabana_ENABLE_Serial)
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     )
 
+    TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Sort_test_Serial
+    SOURCES Serial/tstSort_Serial.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
 ENDIF()
 
 ##--------------------------------------------------------------------------##
@@ -123,6 +131,14 @@ IF(Cabana_ENABLE_OpenMP)
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     )
 
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Sort_test_OpenMP
+    SOURCES OpenMP/tstSort_OpenMP.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
 ENDIF()
 
 ##--------------------------------------------------------------------------##
@@ -165,6 +181,14 @@ IF(Cabana_ENABLE_Cuda)
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Particle_test_CudaUVM
     SOURCES Cuda/tstParticle_CudaUVM.cpp unit_test_main.cpp
+    COMM serial mpi
+    PASS_REGULAR_EXPRESSION "${PASS_RE}"
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Sort_test_CudaUVM
+    SOURCES Cuda/tstSort_CudaUVM.cpp unit_test_main.cpp
     COMM serial mpi
     PASS_REGULAR_EXPRESSION "${PASS_RE}"
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
