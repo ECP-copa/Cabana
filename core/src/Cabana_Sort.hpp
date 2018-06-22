@@ -2,6 +2,7 @@
 #define CABANA_SORT_HPP
 
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_MemberDataTypes.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Sort.hpp>
@@ -19,7 +20,7 @@ void sortMember( AoSoA_t aosoa,
                  const BinSort& bin_sort,
                  const int begin,
                  const int end,
-                 std::integral_constant<std::size_t,0> )
+                 MemberTag<0> )
 {
     auto member = slice<0>( aosoa );
     bin_sort.sort( member, begin, end );
@@ -30,14 +31,14 @@ void sortMember( AoSoA_t aosoa,
                  const BinSort& bin_sort,
                  const int begin,
                  const int end,
-                 std::integral_constant<std::size_t,M> )
+                 MemberTag<M> )
 {
     static_assert( 0 <= M && M < AoSoA_t::number_of_members,
                    "Static loop out of bounds!" );
     auto member = slice<M>( aosoa );
     bin_sort.sort( member, begin, end );
     sortMember( aosoa, bin_sort, begin, end,
-                std::integral_constant<std::size_t,M-1>() );
+                MemberTag<M-1>() );
 }
 
 //---------------------------------------------------------------------------//
@@ -60,7 +61,7 @@ void kokkosBinSort(
     bin_sort.create_permute_vector();
     sortMember(
         aosoa, bin_sort, begin, end,
-        std::integral_constant<std::size_t,AoSoA_t::number_of_members-1>() );
+        MemberTag<AoSoA_t::number_of_members-1>() );
     Kokkos::fence();
 }
 
@@ -164,7 +165,7 @@ void sortByKeyWithComparator(
     const int begin,
     const int end,
     typename std::enable_if<(
-                                 is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
+        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
     Impl::kokkosBinSort( aosoa, keys, comp, true, begin, end );
@@ -408,10 +409,12 @@ void binByKey(
 template<std::size_t Member, class AoSoA_t>
 void sortByMember(
     AoSoA_t aosoa,
+    MemberTag<Member> member_tag,
     const int begin,
     const int end,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
+    std::ignore = member_tag;
     auto keys = Impl::copySliceToKeys( slice<Member>(aosoa) );
     sortByKey( aosoa, keys, begin, end );
 }
@@ -429,9 +432,10 @@ void sortByMember(
 template<std::size_t Member, class AoSoA_t>
 void sortByMember(
     AoSoA_t aosoa,
+    MemberTag<Member> member_tag,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    sortByMember<Member>( aosoa, 0, aosoa.size() );
+    sortByMember<Member>( aosoa, member_tag, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -455,11 +459,13 @@ void sortByMember(
 template<std::size_t Member, class AoSoA_t>
 void binByMember(
     AoSoA_t aosoa,
+    MemberTag<Member> member_tag,
     const int nbin,
     const int begin,
     const int end,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
+    std::ignore = member_tag;
     auto keys = Impl::copySliceToKeys( slice<Member>(aosoa) );
     binByKey( aosoa, keys, nbin, begin, end );
 }
@@ -480,10 +486,11 @@ void binByMember(
 template<std::size_t Member, class AoSoA_t>
 void binByMember(
     AoSoA_t aosoa,
+    MemberTag<Member> member_tag,
     const int nbin,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    binByMember<Member>( aosoa, nbin, 0, aosoa.size() );
+    binByMember<Member>( aosoa, member_tag, nbin, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -497,6 +504,8 @@ void binByMember(
   \tparam AoSoA_t The AoSoA type to sort.
 
   \param aosoa The AoSoA to sort.
+
+  \param position_member Tag for the AoSoA member containing position.
 
   \param begin The begining index of the AoSoA range to sort.
 
@@ -520,9 +529,10 @@ void binByMember(
 
   \param grid_z_maz Upper grid bound in the z direction.
 */
-template<std::size_t PositionMember, class AoSoA_t>
+template<class AoSoA_t, std::size_t PositionMember>
 void binByRegularGrid3d(
     AoSoA_t aosoa,
+    MemberTag<PositionMember> position_member,
     const int begin,
     const int end,
     const double grid_dx,
@@ -537,6 +547,8 @@ void binByRegularGrid3d(
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 
 {
+    std::ignore = position_member;
+
     // Get the positions.
     auto position = slice<PositionMember>( aosoa );
     using PositionSlice = decltype(position);
@@ -583,6 +595,8 @@ void binByRegularGrid3d(
 
   \param aosoa The AoSoA to sort.
 
+  \param position_member Tag for the AoSoA member containing position.
+
   \param grid_dx Bin size in the x direction.
 
   \param grid_dy Bin size in the y direction.
@@ -601,9 +615,10 @@ void binByRegularGrid3d(
 
   \param grid_z_maz Upper grid bound in the z direction.
 */
-template<std::size_t PositionMember, class AoSoA_t>
+template<class AoSoA_t, std::size_t PositionMember>
 void binByRegularGrid3d(
     AoSoA_t aosoa,
+    MemberTag<PositionMember> position_member,
     const double grid_dx,
     const double grid_dy,
     const double grid_dz,
@@ -615,11 +630,11 @@ void binByRegularGrid3d(
     const double grid_z_max,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    binByRegularGrid3d<PositionMember>( aosoa,
-                                        0, aosoa.size(),
-                                        grid_dx, grid_dy, grid_dz,
-                                        grid_x_min, grid_y_min, grid_z_min,
-                                        grid_x_max, grid_y_max, grid_z_max );
+    binByRegularGrid3d( aosoa, position_member,
+                        0, aosoa.size(),
+                        grid_dx, grid_dy, grid_dz,
+                        grid_x_min, grid_y_min, grid_z_min,
+                        grid_x_max, grid_y_max, grid_z_max );
 }
 
 //---------------------------------------------------------------------------//

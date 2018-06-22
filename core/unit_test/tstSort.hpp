@@ -168,7 +168,7 @@ BOOST_AUTO_TEST_CASE( sort_by_member_test )
     }
 
     // Sort the aosoa by the 1D member.
-    Cabana::sortByMember<1>( aosoa );
+    Cabana::sortByMember( aosoa, Cabana::MemberTag<1>() );
 
     // Check the result of the sort.
     for ( int p = 0; p < aosoa.size(); ++p )
@@ -224,7 +224,7 @@ BOOST_AUTO_TEST_CASE( bin_by_member_test )
 
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort.
-    Cabana::binByMember<1>( aosoa, num_data );
+    Cabana::binByMember( aosoa, Cabana::MemberTag<1>(), num_data );
 
     // Check the result of the sort.
     for ( int p = 0; p < aosoa.size(); ++p )
@@ -278,10 +278,10 @@ BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
     }
 
     // Bin the particles in the grid.
-    Cabana::binByRegularGrid3d<Position>( aosoa,
-                                          dx, dx, dx,
-                                          x_min, x_min, x_min,
-                                          x_max, x_max, x_max );
+    Cabana::binByRegularGrid3d( aosoa, Cabana::MemberTag<Position>(),
+                                dx, dx, dx,
+                                x_min, x_min, x_min,
+                                x_max, x_max, x_max );
 
     // Checking the binning. The order should be reversed with the i index
     // moving the slowest.
