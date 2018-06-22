@@ -3,6 +3,7 @@
 
 #include <Cabana_InnerArrayLayout.hpp>
 #include <impl/Cabana_Index.hpp>
+#include <impl/Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -32,23 +33,30 @@ namespace Cabana
   \endcode
 */
 //---------------------------------------------------------------------------//
-template<typename DataType, typename ArrayLayout>
+template<typename DataType,
+         typename ArrayLayout,
+         typename MemorySpace,
+         typename MemoryTraits>
 class MemberSlice
 {
   public:
 
-    // DataType
-    using data_type = DataType;
+    // Slice type.
+    using slice_type =
+        MemberSlice<DataType,ArrayLayout,MemorySpace,MemoryTraits>;
 
-    // Ordered array type.
+    // Particle field member data type.
+    using member_data_type = DataType;
+
+    // Ordered array type. This is the order of the field data an the SoA.
     using ordered_array_type =
-        typename Impl::InnerArrayType<data_type,ArrayLayout>::type;
+        typename Impl::InnerArrayType<member_data_type,ArrayLayout>::type;
 
     // Pointer to an array.
     using pointer_to_array_type = typename std::decay<ordered_array_type>::type;
 
     // Value type.
-    using value_type = typename std::remove_all_extents<data_type>::type;
+    using value_type = typename std::remove_all_extents<member_data_type>::type;
 
     // Reference type
     using reference_type = typename std::add_lvalue_reference<value_type>::type;
@@ -67,6 +75,18 @@ class MemberSlice
 
     // Array layout.
     using array_layout = typename ArrayLayout::layout;
+
+    // Type aliases for compatability with Kokkos View
+    using memory_space = MemorySpace;
+    using device_type = typename memory_space::device_type;
+    using execution_space = typename memory_space::execution_space;
+    using HostMirrorSpace = typename Kokkos::Impl::HostMirror<execution_space>::Space;
+    using data_type = typename Impl::KokkosDataType<member_data_type>::type;
+    using const_data_type = typename std::add_const<data_type>::type;
+    using const_type = slice_type;
+
+    // Rank enumeration for Kokkos view compatibility.
+    enum { Rank = std::rank<member_data_type>::value + 1 };
 
   private:
 
@@ -90,7 +110,7 @@ class MemberSlice
         , _num_soa( num_soa )
     {
         storeExtents(
-            std::integral_constant<std::size_t,max_supported_rank-1>() );
+            std::integral_constant<std::size_t,max_supported_rank>() );
     }
 
     /*!
@@ -103,7 +123,7 @@ class MemberSlice
         _stride = slice._stride;
         _num_soa = slice._num_soa;
         storeExtents(
-            std::integral_constant<std::size_t,max_supported_rank-1>() );
+            std::integral_constant<std::size_t,max_supported_rank>() );
     }
 
     /*!
@@ -116,7 +136,7 @@ class MemberSlice
         _stride = slice._stride;
         _num_soa = slice._num_soa;
         storeExtents(
-            std::integral_constant<std::size_t,max_supported_rank-1>() );
+            std::integral_constant<std::size_t,max_supported_rank>() );
     }
 
     /*!
@@ -126,12 +146,18 @@ class MemberSlice
     MemberSlice & operator = ( MemberSlice && ) = default ;
 
     /*!
-      \brief Returns the number of elements in the container.
+      \brief Returns the total number of elements in the container.
 
-      \return The number of elements in the container.
+      \return The total number of elements in the container. (e.g. the product
+      of the extent of all dimensions).
     */
     KOKKOS_FUNCTION
-    int size() const { return _size; }
+    int size() const
+    {
+        int size = 1;
+        for ( int d = 0; d < rank(); ++d ) size *= extent(d);
+        return size;
+    }
 
     /*!
       \brief Get the number of structs-of-arrays in the container.
@@ -159,16 +185,20 @@ class MemberSlice
     // Member data type properties.
 
     /*!
-      \brief Get the rank of the data for this member.
+      \brief Get the rank of the data for this member. The rank is given in
+      the context of the particles being the first dimension and the member
+      data being the remaining dimensions.
 
       \return The rank of the data for this member.
     */
     KOKKOS_INLINE_FUNCTION
     constexpr int rank() const
-    { return std::rank<data_type>::value; }
+    { return std::rank<member_data_type>::value + 1; }
 
     /*!
-      \brief Get the extent of a given member data dimension.
+      \brief Get the extent of a given slice data dimension. The extent is
+      given in the context of the particles being the first dimension and the
+      member data being the remaining dimensions.
 
       \param D The member data dimension to get the extent for.
 
@@ -179,7 +209,7 @@ class MemberSlice
     { return _extents[D]; }
 
     // -------------------------------
-    // Access the data value at a given struct and array index..
+    // Access the data value at a given struct and array index.
 
     // Rank 0
     template<typename U = DataType>
@@ -388,22 +418,22 @@ class MemberSlice
     {
         static_assert( 0 <= D && D < max_supported_rank,
                        "Static loop out of bounds!" );
-        _extents[D] = ( D < std::rank<data_type>::value )
-                      ? std::extent<data_type,D>::value
-                      : 0;
+        _extents[D+1] = ( D < std::rank<member_data_type>::value )
+                        ? std::extent<member_data_type,D>::value
+                        : 0;
     }
 
     // Static loop over extents for each member element.
     template<std::size_t D>
     void storeExtents( std::integral_constant<std::size_t,D> )
     {
-        assignExtents<D>();
+        assignExtents<D-1>();
         storeExtents( std::integral_constant<std::size_t,D-1>() );
     }
 
     void storeExtents( std::integral_constant<std::size_t,0> )
     {
-        assignExtents<0>();
+        _extents[0] = _size;
     }
 
   private:
@@ -421,8 +451,9 @@ class MemberSlice
     // Total number of tiles.
     int _num_soa;
 
-    // Extents
-    int _extents[max_supported_rank];
+    // Extents. First dimension is the number of particles. Remaining
+    // dimensions are those of the particle field data type.
+    int _extents[max_supported_rank+1];
 };
 
 //---------------------------------------------------------------------------//
@@ -432,14 +463,16 @@ struct is_member_slice : public std::false_type {};
 
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
-template<typename T, typename Layout>
-struct is_member_slice<MemberSlice<T,Layout> > : public std::true_type {};
+template<typename ... Params>
+struct is_member_slice<MemberSlice<Params...> > : public std::true_type {};
 
-template<typename T, typename Layout>
-struct is_member_slice<const MemberSlice<T,Layout> > : public std::true_type {};
+template<typename ... Params>
+struct is_member_slice<const MemberSlice<Params...> > : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 
 } // end namespace Cabana
+
+//---------------------------------------------------------------------------//
 
 #endif // end CABANA_MEMBERSLICE_HPP

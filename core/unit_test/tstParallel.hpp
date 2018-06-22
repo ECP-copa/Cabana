@@ -69,10 +69,10 @@ class AssignmentOp
         , _fval( fval )
         , _dval( dval )
         , _ival( ival )
-        , _dim_1( _view_2.extent(0) )
-        , _dim_2( _view_2.extent(1) )
-        , _dim_3( _view_2.extent(2) )
-        , _dim_4( _view_2.extent(3) )
+        , _dim_1( _view_2.extent(1) )
+        , _dim_2( _view_2.extent(2) )
+        , _dim_3( _view_2.extent(3) )
+        , _dim_4( _view_2.extent(4) )
     {}
 
     KOKKOS_INLINE_FUNCTION void operator()( const int idx ) const
