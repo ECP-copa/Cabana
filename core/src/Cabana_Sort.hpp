@@ -11,6 +11,143 @@
 
 namespace Cabana
 {
+//---------------------------------------------------------------------------//
+/*!
+  \class BinningData
+  \brief Data describing the bin sizes and offsets resulting from a binning
+  operation.
+*/
+template<class MemorySpace>
+class BinningData
+{
+  public:
+
+    using memory_space = MemorySpace;
+    using size_type = typename memory_space::size_type;
+    using CountView = Kokkos::View<const int*,MemorySpace>;
+    using OffsetView = Kokkos::View<size_type*,MemorySpace>;
+
+    BinningData( CountView counts, OffsetView offsets )
+        : _nbin( counts.extent(0) )
+        , _counts( counts )
+        , _offsets( offsets )
+    {}
+
+    /*!
+      \brief Get the number of bins.
+      \return The number of bins.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int numBin() const
+    { return _nbin; }
+
+    /*!
+      \brief Given a bin get the number of particles it contains.
+      \param bin_id The bin id.
+      \return The number of particles in the bin.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int binSize( const int bin_id ) const
+    { return _counts( bin_id ); }
+
+    /*!
+      \brief Given a bin get the particle index at which it sorts.
+      \param bin_id The bin id.
+      \return The starting particle index of the bin.
+    */
+    KOKKOS_INLINE_FUNCTION
+    size_type binOffset( const int bin_id ) const
+    { return _offsets( bin_id ); }
+
+  private:
+
+    int _nbin;
+    CountView _counts;
+    OffsetView _offsets;
+};
+
+//---------------------------------------------------------------------------//
+/*!
+  \class CartesianGrid3dBinningData
+  \brief Data describing the bin sizes and offsets resulting from a binning
+  operation on a 3d regular Cartesian grid.
+*/
+template<class MemorySpace>
+class CartesianGrid3dBinningData
+{
+  public:
+
+    using memory_space = MemorySpace;
+    using size_type = typename memory_space::size_type;
+
+    CartesianGrid3dBinningData( BinningData<MemorySpace> bin_data_1d,
+                                const int nbin[3] )
+        : _bin_data( bin_data_1d )
+    {
+        _nbin[0] = nbin[0];
+        _nbin[1] = nbin[1];
+        _nbin[2] = nbin[2];
+    }
+
+    /*!
+      \brief Get the total number of bins.
+      \return the total number of bins.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int totalBins() const
+    { return _nbin[0] * _nbin[1] * _nbin[2]; }
+
+    /*!
+      \brief Get the number of bins in a given dimension.
+      \param dim The dimension to get the number of bins for.
+      \return The number of bins.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int numBin( const int dim ) const
+    { return _nbin[dim]; }
+
+    /*!
+      \brief Given the ijk index of a bin get its cardinal index.
+      \param i The i bin index (x).
+      \param j The j bin index (y).
+      \param k The k bin index (z).
+      \return The cardinal bin index.
+
+      Note that the Kokkos sort orders the bins such that the i index moves
+      the slowest and the k index mvoes the fastest.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int cardinalBinIndex( const int i, const int j, const int k ) const
+    { return i * _nbin[1] * _nbin[2] + j * _nbin[2] + k; }
+
+    /*!
+      \brief Given a bin get the number of particles it contains.
+      \param i The i bin index (x).
+      \param j The j bin index (y).
+      \param k The k bin index (z).
+      \return The number of particles in the bin.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int binSize( const int i, const int j, const int k ) const
+    { return _bin_data.binSize(cardinalBinIndex(i,j,k)); }
+
+    /*!
+      \brief Given a bin get the particle index at which it sorts.
+      \param i The i bin index (x).
+      \param j The j bin index (y).
+      \param k The k bin index (z).
+      \return The starting particle index of the bin.
+    */
+    KOKKOS_INLINE_FUNCTION
+    size_type binOffset( const int i, const int j, const int k ) const
+    { return _bin_data.binOffset(cardinalBinIndex(i,j,k)); }
+
+  private:
+
+    BinningData<MemorySpace> _bin_data;
+    int _nbin[3];
+};
+
 namespace Impl
 {
 //---------------------------------------------------------------------------//
@@ -45,7 +182,8 @@ void sortMember( AoSoA_t aosoa,
 // Sort an AoSoA over a subset of its range using a comparator over the given
 // Kokkos View of keys.
 template<class AoSoA_t, class KeyViewType, class Comparator>
-void kokkosBinSort(
+BinningData<typename KeyViewType::memory_space>
+kokkosBinSort(
     AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
@@ -63,6 +201,9 @@ void kokkosBinSort(
         aosoa, bin_sort, begin, end,
         MemberTag<AoSoA_t::number_of_members-1>() );
     Kokkos::fence();
+
+   return BinningData<typename KeyViewType::memory_space>(
+       bin_sort.get_bin_count(), bin_sort.get_bin_offsets() );
 }
 
 //---------------------------------------------------------------------------//
@@ -86,7 +227,8 @@ keyMinMax( KeyViewType keys, const int begin, const int end )
 // Sort an AoSoA over a subset of its range using the given Kokkos View of
 // keys.
 template<class AoSoA_t, class KeyViewType>
-void kokkosBinSort1d(
+BinningData<typename KeyViewType::memory_space>
+kokkosBinSort1d(
     AoSoA_t aosoa,
     KeyViewType keys,
     const int nbin,
@@ -100,15 +242,12 @@ void kokkosBinSort1d(
     // Find the minimum and maximum key values.
     auto key_bounds = Impl::keyMinMax( keys, begin, end );
 
-    // If the min and max keys are the same then there is no need to sort.
-    if( key_bounds.min_val == key_bounds.max_val ) return;
-
     // Create a sorting comparator.
     Kokkos::BinOp1D<KeyViewType> comp(
         nbin, key_bounds.min_val, key_bounds.max_val );
 
     // BinSort
-    kokkosBinSort( aosoa, keys, comp, sort_within_bins, begin, end );
+    return kokkosBinSort( aosoa, keys, comp, sort_within_bins, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -224,9 +363,12 @@ void sortByKeyWithComparator(
   \param begin The begining index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
+
+  \return The binning data (e.g. bin sizes and offsets).
 */
 template<class AoSoA_t, class KeyViewType, class Comparator>
-void binByKeyWithComparator(
+BinningData<typename KeyViewType::memory_space>
+binByKeyWithComparator(
     AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
@@ -236,7 +378,7 @@ void binByKeyWithComparator(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    Impl::kokkosBinSort( aosoa, keys, comp, false, begin, end );
+    return Impl::kokkosBinSort( aosoa, keys, comp, false, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -257,9 +399,12 @@ void binByKeyWithComparator(
 
   \param comp The comparator to use for binning. Must be compatible with
   Kokkos::BinSort.
+
+  \return The binning data (e.g. bin sizes and offsets).
 */
 template<class AoSoA_t, class KeyViewType, class Comparator>
-void binByKeyWithComparator(
+BinningData<typename KeyViewType::memory_space>
+binByKeyWithComparator(
     AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
@@ -267,7 +412,7 @@ void binByKeyWithComparator(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    Impl::kokkosBinSort( aosoa, keys, comp, false, 0, aosoa.size() );
+    return Impl::kokkosBinSort( aosoa, keys, comp, false, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -347,9 +492,12 @@ void sortByKey(
   \param begin The begining index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
+
+  \return The binning data (e.g. bin sizes and offsets).
 */
 template<class AoSoA_t, class KeyViewType>
-void binByKey(
+BinningData<typename KeyViewType::memory_space>
+binByKey(
     AoSoA_t aosoa,
     KeyViewType keys,
     const int nbin,
@@ -359,7 +507,7 @@ void binByKey(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    Impl::kokkosBinSort1d( aosoa, keys, nbin, false, begin, end );
+    return Impl::kokkosBinSort1d( aosoa, keys, nbin, false, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -378,9 +526,12 @@ void binByKey(
 
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
+
+  \return The binning data (e.g. bin sizes and offsets).
 */
 template<class AoSoA_t, class KeyViewType>
-void binByKey(
+BinningData<typename KeyViewType::memory_space>
+binByKey(
     AoSoA_t aosoa,
     KeyViewType keys,
     const int nbin,
@@ -388,7 +539,7 @@ void binByKey(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    Impl::kokkosBinSort1d( aosoa, keys, nbin, false, 0, aosoa.size() );
+    return Impl::kokkosBinSort1d( aosoa, keys, nbin, false, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -455,9 +606,12 @@ void sortByMember(
   \param begin The begining index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
+
+  \return The binning data (e.g. bin sizes and offsets).
 */
 template<std::size_t Member, class AoSoA_t>
-void binByMember(
+BinningData<typename AoSoA_t::traits::memory_space>
+binByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
     const int nbin,
@@ -467,7 +621,7 @@ void binByMember(
 {
     std::ignore = member_tag;
     auto keys = Impl::copySliceToKeys( slice<Member>(aosoa) );
-    binByKey( aosoa, keys, nbin, begin, end );
+    return binByKey( aosoa, keys, nbin, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -482,15 +636,18 @@ void binByMember(
 
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
+
+  \return The binning data (e.g. bin sizes and offsets).
 */
 template<std::size_t Member, class AoSoA_t>
-void binByMember(
+BinningData<typename AoSoA_t::traits::memory_space>
+binByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
     const int nbin,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    binByMember<Member>( aosoa, member_tag, nbin, 0, aosoa.size() );
+    return binByMember<Member>( aosoa, member_tag, nbin, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -530,7 +687,8 @@ void binByMember(
   \param grid_z_maz Upper grid bound in the z direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
-void binByRegularGrid3d(
+CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
+binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
     const int begin,
@@ -563,7 +721,7 @@ void binByRegularGrid3d(
         exec_policy( 0, position.extent(0) );
     auto copy_op = KOKKOS_LAMBDA( const int i )
                    { for ( int d = 0; d < 3; ++d ) keys(i,d) = position(i,d); };
-    Kokkos::parallel_for( "Cabana::binByRegularGrid3d::copy_op",
+    Kokkos::parallel_for( "Cabana::binByCartesianGrid3d::copy_op",
                           exec_policy,
                           copy_op );
     Kokkos::fence();
@@ -580,7 +738,12 @@ void binByRegularGrid3d(
     Kokkos::BinOp3D<KeyViewType> comp( nbin, key_min, key_max );
 
     // Do the binning.
-    Impl::kokkosBinSort( aosoa, keys, comp, false, begin, end );
+    auto bin_data_1d =
+        Impl::kokkosBinSort( aosoa, keys, comp, false, begin, end );
+
+    // Return the bin data.
+    return CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>(
+        bin_data_1d, nbin );
 }
 
 //---------------------------------------------------------------------------//
@@ -616,7 +779,8 @@ void binByRegularGrid3d(
   \param grid_z_maz Upper grid bound in the z direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
-void binByRegularGrid3d(
+CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
+binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
     const double grid_dx,
@@ -630,11 +794,11 @@ void binByRegularGrid3d(
     const double grid_z_max,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    binByRegularGrid3d( aosoa, position_member,
-                        0, aosoa.size(),
-                        grid_dx, grid_dy, grid_dz,
-                        grid_x_min, grid_y_min, grid_z_min,
-                        grid_x_max, grid_y_max, grid_z_max );
+    return binByCartesianGrid3d( aosoa, position_member,
+                                 0, aosoa.size(),
+                                 grid_dx, grid_dy, grid_dz,
+                                 grid_x_min, grid_y_min, grid_z_min,
+                                 grid_x_max, grid_y_max, grid_z_max );
 }
 
 //---------------------------------------------------------------------------//

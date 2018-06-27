@@ -113,9 +113,10 @@ BOOST_AUTO_TEST_CASE( bin_by_key_test )
 
     // Bin the aosoa by keys. Use one bin per data point to effectively make
     // this a sort.
-    Cabana::binByKey( aosoa, keys, num_data );
+    auto bin_data = Cabana::binByKey( aosoa, keys, num_data-1 );
 
     // Check the result of the sort.
+    BOOST_CHECK( bin_data.numBin() == num_data );
     for ( int p = 0; p < aosoa.size(); ++p )
     {
        for ( int i = 0; i < dim_1; ++i )
@@ -126,6 +127,9 @@ BOOST_AUTO_TEST_CASE( bin_by_key_test )
        for ( int i = 0; i < dim_1; ++i )
            for ( int j = 0; j < dim_2; ++j )
                BOOST_CHECK( v2( p, i, j ) == p + i + j );
+
+       BOOST_CHECK( bin_data.binSize(p) == 1 );
+       BOOST_CHECK( bin_data.binOffset(p) == p );
     }
 }
 
@@ -224,9 +228,11 @@ BOOST_AUTO_TEST_CASE( bin_by_member_test )
 
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort.
-    Cabana::binByMember( aosoa, Cabana::MemberTag<1>(), num_data );
+    auto bin_data =
+        Cabana::binByMember( aosoa, Cabana::MemberTag<1>(), num_data-1 );
 
     // Check the result of the sort.
+    BOOST_CHECK( bin_data.numBin() == num_data );
     for ( int p = 0; p < aosoa.size(); ++p )
     {
        for ( int i = 0; i < dim_1; ++i )
@@ -237,6 +243,9 @@ BOOST_AUTO_TEST_CASE( bin_by_member_test )
        for ( int i = 0; i < dim_1; ++i )
            for ( int j = 0; j < dim_2; ++j )
                BOOST_CHECK( v2( p, i, j ) == p + i + j );
+
+       BOOST_CHECK( bin_data.binSize(p) == 1 );
+       BOOST_CHECK( bin_data.binOffset(p) == p );
     }
 }
 
@@ -278,13 +287,18 @@ BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
     }
 
     // Bin the particles in the grid.
-    Cabana::binByRegularGrid3d( aosoa, Cabana::MemberTag<Position>(),
-                                dx, dx, dx,
-                                x_min, x_min, x_min,
-                                x_max, x_max, x_max );
+    auto bin_data =
+        Cabana::binByCartesianGrid3d( aosoa, Cabana::MemberTag<Position>(),
+                                      dx, dx, dx,
+                                      x_min, x_min, x_min,
+                                      x_max, x_max, x_max );
 
     // Checking the binning. The order should be reversed with the i index
     // moving the slowest.
+    BOOST_CHECK( bin_data.totalBins() == nx*nx*nx );
+    BOOST_CHECK( bin_data.numBin(0) == nx );
+    BOOST_CHECK( bin_data.numBin(1) == nx );
+    BOOST_CHECK( bin_data.numBin(2) == nx );
     particle_id = 0;
     for ( int i = 0; i < nx; ++i )
     {
@@ -295,6 +309,9 @@ BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
                 BOOST_CHECK( cell_id( particle_id, 0 ) == i );
                 BOOST_CHECK( cell_id( particle_id, 1 ) == j );
                 BOOST_CHECK( cell_id( particle_id, 2 ) == k );
+                BOOST_CHECK( bin_data.cardinalBinIndex(i,j,k) == particle_id );
+                BOOST_CHECK( bin_data.binSize(i,j,k) == 1 );
+                BOOST_CHECK( bin_data.binOffset(i,j,k) == particle_id );
             }
         }
     }
