@@ -27,10 +27,13 @@ class BinningData
     using CountView = Kokkos::View<const int*,MemorySpace>;
     using OffsetView = Kokkos::View<size_type*,MemorySpace>;
 
-    BinningData( CountView counts, OffsetView offsets )
+    BinningData( CountView counts,
+                 OffsetView offsets,
+                 OffsetView permute_vector )
         : _nbin( counts.extent(0) )
         , _counts( counts )
         , _offsets( offsets )
+        , _permute_vector( permute_vector )
     {}
 
     /*!
@@ -59,11 +62,20 @@ class BinningData
     size_type binOffset( const int bin_id ) const
     { return _offsets( bin_id ); }
 
+    /*!
+      \brief Given a local particle id in the binned layout, get the id of the
+      particle in the old (unbinned) layout.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int permutation( const int particle_id ) const
+    { return _permute_vector(particle_id); }
+
   private:
 
     int _nbin;
     CountView _counts;
     OffsetView _offsets;
+    OffsetView _permute_vector;
 };
 
 //---------------------------------------------------------------------------//
@@ -142,6 +154,23 @@ class CartesianGrid3dBinningData
     size_type binOffset( const int i, const int j, const int k ) const
     { return _bin_data.binOffset(cardinalBinIndex(i,j,k)); }
 
+    /*!
+      \brief Given a local particle id in the binned layout, get the id of the
+      particle in the old (unbinned) layout.
+      \param particle_id The id of the particle in the binned layout.
+      \return The particle id in the old (unbinned) layout.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int permutation( const int particle_id ) const
+    { return _bin_data.permutation(particle_id); }
+
+    /*!
+      \brief Get the 1d bin data.
+      \return The 1d bin data.
+    */
+    BinningData<MemorySpace> data1d() const
+    { return _bin_data; }
+
   private:
 
     BinningData<MemorySpace> _bin_data;
@@ -187,6 +216,7 @@ kokkosBinSort(
     AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
+    const bool create_data_only,
     const bool sort_within_bins,
     const int begin,
     const int end,
@@ -197,13 +227,19 @@ kokkosBinSort(
     Kokkos::BinSort<KeyViewType,Comparator> bin_sort(
         keys, begin, end, comp, sort_within_bins );
     bin_sort.create_permute_vector();
-    sortMember(
-        aosoa, bin_sort, begin, end,
-        MemberTag<AoSoA_t::number_of_members-1>() );
-    Kokkos::fence();
+
+    if ( !create_data_only )
+    {
+        sortMember(
+            aosoa, bin_sort, begin, end,
+            MemberTag<AoSoA_t::number_of_members-1>() );
+        Kokkos::fence();
+    }
 
    return BinningData<typename KeyViewType::memory_space>(
-       bin_sort.get_bin_count(), bin_sort.get_bin_offsets() );
+       bin_sort.get_bin_count(),
+       bin_sort.get_bin_offsets(),
+       bin_sort.get_permute_vector() );
 }
 
 //---------------------------------------------------------------------------//
@@ -232,6 +268,7 @@ kokkosBinSort1d(
     AoSoA_t aosoa,
     KeyViewType keys,
     const int nbin,
+    const bool create_data_only,
     const bool sort_within_bins,
     const int begin,
     const int end,
@@ -247,7 +284,8 @@ kokkosBinSort1d(
         nbin, key_bounds.min_val, key_bounds.max_val );
 
     // BinSort
-    return kokkosBinSort( aosoa, keys, comp, sort_within_bins, begin, end );
+    return kokkosBinSort( aosoa, keys, comp, create_data_only,
+                          sort_within_bins, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -307,7 +345,7 @@ void sortByKeyWithComparator(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    Impl::kokkosBinSort( aosoa, keys, comp, true, begin, end );
+    Impl::kokkosBinSort( aosoa, keys, comp, true, false, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -338,7 +376,7 @@ void sortByKeyWithComparator(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    Impl::kokkosBinSort( aosoa, keys, comp, true, 0, aosoa.size() );
+    Impl::kokkosBinSort( aosoa, keys, comp, false, true, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -360,6 +398,10 @@ void sortByKeyWithComparator(
   \param comp The comparator to use for binning. Must be compatible with
   Kokkos::BinSort.
 
+  \param create_data_only True if the binning data should be created (i.e. bin
+  sizes, offsets, and permutation vector) but the particles should not
+  actually be binned.
+
   \param begin The begining index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
@@ -372,13 +414,15 @@ binByKeyWithComparator(
     AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
+    const bool create_data_only,
     const int begin,
     const int end,
     typename std::enable_if<(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    return Impl::kokkosBinSort( aosoa, keys, comp, false, begin, end );
+    return Impl::kokkosBinSort(
+        aosoa, keys, comp, create_data_only, false, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -400,6 +444,10 @@ binByKeyWithComparator(
   \param comp The comparator to use for binning. Must be compatible with
   Kokkos::BinSort.
 
+  \param create_data_only True if the binning data should be created (i.e. bin
+  sizes, offsets, and permutation vector) but the particles should not
+  actually be binned.
+
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<class AoSoA_t, class KeyViewType, class Comparator>
@@ -408,11 +456,13 @@ binByKeyWithComparator(
     AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
+    const bool create_data_only,
     typename std::enable_if<(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    return Impl::kokkosBinSort( aosoa, keys, comp, false, 0, aosoa.size() );
+    return Impl::kokkosBinSort(
+        aosoa, keys, comp, create_data_only, false, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -444,7 +494,7 @@ void sortByKey(
     int>::type * = 0 )
 {
     int nbin = (end - begin) / 2;
-    Impl::kokkosBinSort1d( aosoa, keys, nbin, true, begin, end );
+    Impl::kokkosBinSort1d( aosoa, keys, nbin, false, true, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -489,6 +539,10 @@ void sortByKey(
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
 
+  \param create_data_only True if the binning data should be created (i.e. bin
+  sizes, offsets, and permutation vector) but the particles should not
+  actually be binned.
+
   \param begin The begining index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
@@ -501,13 +555,15 @@ binByKey(
     AoSoA_t aosoa,
     KeyViewType keys,
     const int nbin,
+    const bool create_data_only,
     const int begin,
     const int end,
     typename std::enable_if<(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    return Impl::kokkosBinSort1d( aosoa, keys, nbin, false, begin, end );
+    return Impl::kokkosBinSort1d(
+        aosoa, keys, nbin, create_data_only, false, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -527,6 +583,10 @@ binByKey(
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
 
+  \param create_data_only True if the binning data should be created (i.e. bin
+  sizes, offsets, and permutation vector) but the particles should not
+  actually be binned.
+
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<class AoSoA_t, class KeyViewType>
@@ -535,11 +595,13 @@ binByKey(
     AoSoA_t aosoa,
     KeyViewType keys,
     const int nbin,
+    const bool create_data_only,
     typename std::enable_if<(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    return Impl::kokkosBinSort1d( aosoa, keys, nbin, false, 0, aosoa.size() );
+    return Impl::kokkosBinSort1d(
+        aosoa, keys, nbin, create_data_only, false, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -603,6 +665,10 @@ void sortByMember(
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
 
+  \param create_data_only True if the binning data should be created (i.e. bin
+  sizes, offsets, and permutation vector) but the particles should not
+  actually be binned.
+
   \param begin The begining index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
@@ -615,13 +681,14 @@ binByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
     const int nbin,
+    const bool create_data_only,
     const int begin,
     const int end,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
     std::ignore = member_tag;
     auto keys = Impl::copySliceToKeys( slice<Member>(aosoa) );
-    return binByKey( aosoa, keys, nbin, begin, end );
+    return binByKey( aosoa, keys, nbin, create_data_only, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -637,6 +704,10 @@ binByMember(
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
 
+  \param create_data_only True if the binning data should be created (i.e. bin
+  sizes, offsets, and permutation vector) but the particles should not
+  actually be binned.
+
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<std::size_t Member, class AoSoA_t>
@@ -645,9 +716,11 @@ binByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
     const int nbin,
+    const bool create_data_only,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    return binByMember<Member>( aosoa, member_tag, nbin, 0, aosoa.size() );
+    return binByMember<Member>(
+        aosoa, member_tag, nbin, create_data_only, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -663,6 +736,10 @@ binByMember(
   \param aosoa The AoSoA to sort.
 
   \param position_member Tag for the AoSoA member containing position.
+
+  \param create_data_only True if the binning data should be created (i.e. bin
+  sizes, offsets, and permutation vector) but the particles should not
+  actually be binned.
 
   \param begin The begining index of the AoSoA range to sort.
 
@@ -691,6 +768,7 @@ CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
 binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
+    const bool create_data_only,
     const int begin,
     const int end,
     const double grid_dx,
@@ -738,8 +816,8 @@ binByCartesianGrid3d(
     Kokkos::BinOp3D<KeyViewType> comp( nbin, key_min, key_max );
 
     // Do the binning.
-    auto bin_data_1d =
-        Impl::kokkosBinSort( aosoa, keys, comp, false, begin, end );
+    auto bin_data_1d = Impl::kokkosBinSort(
+        aosoa, keys, comp, create_data_only, false, begin, end );
 
     // Return the bin data.
     return CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>(
@@ -759,6 +837,10 @@ binByCartesianGrid3d(
   \param aosoa The AoSoA to sort.
 
   \param position_member Tag for the AoSoA member containing position.
+
+  \param create_data_only True if the binning data should be created (i.e. bin
+  sizes, offsets, and permutation vector) but the particles should not
+  actually be binned.
 
   \param grid_dx Bin size in the x direction.
 
@@ -783,6 +865,7 @@ CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
 binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
+    const bool create_data_only,
     const double grid_dx,
     const double grid_dy,
     const double grid_dz,
@@ -794,7 +877,7 @@ binByCartesianGrid3d(
     const double grid_z_max,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    return binByCartesianGrid3d( aosoa, position_member,
+    return binByCartesianGrid3d( aosoa, position_member, create_data_only,
                                  0, aosoa.size(),
                                  grid_dx, grid_dy, grid_dz,
                                  grid_x_min, grid_y_min, grid_z_min,
