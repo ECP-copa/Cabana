@@ -81,6 +81,7 @@ BOOST_AUTO_TEST_CASE( bin_by_key_test )
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+    using size_type = typename AoSoA_t::traits::memory_space::size_type;
 
     // Create an AoSoA.
     int num_data = 3453;
@@ -129,7 +130,7 @@ BOOST_AUTO_TEST_CASE( bin_by_key_test )
                BOOST_CHECK( v2( p, i, j ) == p + i + j );
 
        BOOST_CHECK( bin_data.binSize(p) == 1 );
-       BOOST_CHECK( bin_data.binOffset(p) == p );
+       BOOST_CHECK( bin_data.binOffset(p) == size_type(p) );
     }
 }
 
@@ -202,6 +203,7 @@ BOOST_AUTO_TEST_CASE( bin_by_member_test )
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+    using size_type = typename AoSoA_t::traits::memory_space::size_type;
 
     // Create an AoSoA.
     int num_data = 3453;
@@ -245,7 +247,7 @@ BOOST_AUTO_TEST_CASE( bin_by_member_test )
                BOOST_CHECK( v2( p, i, j ) == p + i + j );
 
        BOOST_CHECK( bin_data.binSize(p) == 1 );
-       BOOST_CHECK( bin_data.binOffset(p) == p );
+       BOOST_CHECK( bin_data.binOffset(p) == size_type(p) );
     }
 }
 
@@ -255,8 +257,10 @@ BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
     // Make an AoSoA with positions and ijk cell ids.
     enum MyFields { Position = 0, CellId = 1 };
     using DataTypes = Cabana::MemberDataTypes<double[3],int[3]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+    using size_type = typename AoSoA_t::traits::memory_space::size_type;
     int num_p = 1000;
-    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( num_p );
+    AoSoA_t aosoa( num_p );
 
     // Set the problem so each particle lives in the center of a cell on a
     // regular grid of cell size 1 and total size 10x10x10. We are making them
@@ -311,7 +315,8 @@ BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
                 BOOST_CHECK( cell_id( particle_id, 2 ) == k );
                 BOOST_CHECK( bin_data.cardinalBinIndex(i,j,k) == particle_id );
                 BOOST_CHECK( bin_data.binSize(i,j,k) == 1 );
-                BOOST_CHECK( bin_data.binOffset(i,j,k) == particle_id );
+                BOOST_CHECK( bin_data.binOffset(i,j,k) ==
+                             size_type(particle_id) );
             }
         }
     }
