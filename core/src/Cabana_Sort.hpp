@@ -330,7 +330,7 @@ copySliceToKeys( SliceType slice )
   \param comp The comparator to use for sorting. Must be compatible with
   Kokkos::BinSort.
 
-  \param begin The begining index of the AoSoA range to sort.
+  \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
 */
@@ -402,7 +402,7 @@ void sortByKeyWithComparator(
   sizes, offsets, and permutation vector) but the particles should not
   actually be binned.
 
-  \param begin The begining index of the AoSoA range to bin.
+  \param begin The beginning index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
 
@@ -479,7 +479,7 @@ binByKeyWithComparator(
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
 
-  \param begin The begining index of the AoSoA range to sort.
+  \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
 */
@@ -543,7 +543,7 @@ void sortByKey(
   sizes, offsets, and permutation vector) but the particles should not
   actually be binned.
 
-  \param begin The begining index of the AoSoA range to bin.
+  \param begin The beginning index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
 
@@ -615,7 +615,7 @@ binByKey(
 
   \param aosoa The AoSoA to sort.
 
-  \param begin The begining index of the AoSoA range to sort.
+  \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
 */
@@ -669,7 +669,7 @@ void sortByMember(
   sizes, offsets, and permutation vector) but the particles should not
   actually be binned.
 
-  \param begin The begining index of the AoSoA range to bin.
+  \param begin The beginning index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
 
@@ -741,27 +741,15 @@ binByMember(
   sizes, offsets, and permutation vector) but the particles should not
   actually be binned.
 
-  \param begin The begining index of the AoSoA range to sort.
+  \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
 
-  \param grid_dx Bin size in the x direction.
+  \param grid_delta Bin sizes in each cardinal direction.
 
-  \param grid_dy Bin size in the y direction.
+  \param grid_min Lower grid bound in each cardinal direction.
 
-  \param grid_dz Bin size in the z direction.
-
-  \param grid_x_min Lower grid bound in the x direction.
-
-  \param grid_y_min Lower grid bound in the y direction.
-
-  \param grid_z_min Lower grid bound in the z direction.
-
-  \param grid_x_max Upper grid bound in the x direction.
-
-  \param grid_y_may Upper grid bound in the y direction.
-
-  \param grid_z_maz Upper grid bound in the z direction.
+  \param grid_max Upper grid bound in each cardinal direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
 CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
@@ -771,15 +759,9 @@ binByCartesianGrid3d(
     const bool create_data_only,
     const int begin,
     const int end,
-    const double grid_dx,
-    const double grid_dy,
-    const double grid_dz,
-    const double grid_x_min,
-    const double grid_y_min,
-    const double grid_z_min,
-    const double grid_x_max,
-    const double grid_y_max,
-    const double grid_z_max,
+    const typename AoSoA_t::struct_member_value_type<PositionMember> grid_delta[3],
+    const typename AoSoA_t::struct_member_value_type<PositionMember> grid_min[3],
+    const typename AoSoA_t::struct_member_value_type<PositionMember> grid_max[3],
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 
 {
@@ -806,14 +788,10 @@ binByCartesianGrid3d(
 
     // Create a binning operator.
     int nbin[3] =
-        { static_cast<int>(std::floor((grid_x_max-grid_x_min) / grid_dx)),
-          static_cast<int>(std::floor((grid_y_max-grid_y_min) / grid_dy)),
-          static_cast<int>(std::floor((grid_z_max-grid_z_min) / grid_dz)) };
-    typename PositionSlice::value_type key_min[3] =
-        { grid_x_min, grid_y_min, grid_z_min };
-    typename PositionSlice::value_type key_max[3] =
-        { grid_x_max, grid_y_max, grid_z_max };
-    Kokkos::BinOp3D<KeyViewType> comp( nbin, key_min, key_max );
+        { static_cast<int>(std::floor((grid_max[0]-grid_min[0]) / grid_delta[0])),
+          static_cast<int>(std::floor((grid_max[1]-grid_min[1]) / grid_delta[1])),
+          static_cast<int>(std::floor((grid_max[2]-grid_min[2]) / grid_delta[2])) };
+    Kokkos::BinOp3D<KeyViewType> comp( nbin, grid_min, grid_max );
 
     // Do the binning.
     auto bin_data_1d = Impl::kokkosBinSort(
@@ -842,23 +820,11 @@ binByCartesianGrid3d(
   sizes, offsets, and permutation vector) but the particles should not
   actually be binned.
 
-  \param grid_dx Bin size in the x direction.
+  \param grid_delta Bin sizes in each cardinal direction.
 
-  \param grid_dy Bin size in the y direction.
+  \param grid_min Lower grid bound in each cardinal direction.
 
-  \param grid_dz Bin size in the z direction.
-
-  \param grid_x_min Lower grid bound in the x direction.
-
-  \param grid_y_min Lower grid bound in the y direction.
-
-  \param grid_z_min Lower grid bound in the z direction.
-
-  \param grid_x_max Upper grid bound in the x direction.
-
-  \param grid_y_may Upper grid bound in the y direction.
-
-  \param grid_z_maz Upper grid bound in the z direction.
+  \param grid_max Upper grid bound in each cardinal direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
 CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
@@ -866,22 +832,14 @@ binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
     const bool create_data_only,
-    const double grid_dx,
-    const double grid_dy,
-    const double grid_dz,
-    const double grid_x_min,
-    const double grid_y_min,
-    const double grid_z_min,
-    const double grid_x_max,
-    const double grid_y_max,
-    const double grid_z_max,
+    const typename AoSoA_t::struct_member_value_type<PositionMember> grid_delta[3],
+    const typename AoSoA_t::struct_member_value_type<PositionMember> grid_min[3],
+    const typename AoSoA_t::struct_member_value_type<PositionMember> grid_max[3],
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
     return binByCartesianGrid3d( aosoa, position_member, create_data_only,
                                  0, aosoa.size(),
-                                 grid_dx, grid_dy, grid_dz,
-                                 grid_x_min, grid_y_min, grid_z_min,
-                                 grid_x_max, grid_y_max, grid_z_max );
+                                 grid_delta, grid_min, grid_max );
 }
 
 //---------------------------------------------------------------------------//
