@@ -34,8 +34,7 @@ class DeepCopySliceElement
 
     template<typename T = typename DstSliceType::data_type>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (0==std::rank<T>::value),void>::type
+    typename std::enable_if<(0==std::rank<T>::value),void>::type
     operator()( const int particle_index ) const
     {
         _dst( particle_index ) = _src( particle_index );
@@ -43,8 +42,7 @@ class DeepCopySliceElement
 
     template<typename T = typename DstSliceType::data_type>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (1==std::rank<T>::value),void>::type
+    typename std::enable_if<(1==std::rank<T>::value),void>::type
     operator()( const int particle_index ) const
     {
         for ( int i0 = 0; i0 < _dst.extent(0); ++i0 )
@@ -53,8 +51,7 @@ class DeepCopySliceElement
 
     template<typename T = typename DstSliceType::data_type>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (2==std::rank<T>::value),void>::type
+    typename std::enable_if<(2==std::rank<T>::value),void>::type
     operator()( const int particle_index ) const
     {
         for ( int i0 = 0; i0 < _dst.extent(0); ++i0 )
@@ -65,8 +62,7 @@ class DeepCopySliceElement
 
     template<typename T = typename DstSliceType::data_type>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (3==std::rank<T>::value),void>::type
+    typename std::enable_if<(3==std::rank<T>::value),void>::type
     operator()( const int particle_index ) const
     {
         for ( int i0 = 0; i0 < _dst.extent(0); ++i0 )
@@ -78,8 +74,7 @@ class DeepCopySliceElement
 
     template<typename T = typename DstSliceType::data_type>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (4==std::rank<T>::value),void>::type
+    typename std::enable_if<(4==std::rank<T>::value),void>::type
     operator()( const int particle_index ) const
     {
         for ( int i0 = 0; i0 < _dst.extent(0); ++i0 )
@@ -100,20 +95,18 @@ class DeepCopySliceElement
   been launched. Each slice has its own memory space so this will allow each
   slice deep copy to continue in tandem.
 */
-template<class DstSliceType, class SrcSliceType>
+template<class DstAoSoA, class SrcAoSoA, class DstSliceType, class SrcSliceType>
 inline void deepCopySlice(
     DstSliceType& dst,
     const SrcSliceType& src,
+    bool fence_upon_completion = true,
     typename std::enable_if<(is_member_slice<DstSliceType>::value &&
                              is_member_slice<SrcSliceType>::value)>::type * = 0 )
 {
-    using dst_type = typename DstSliceType::aosoa_type;
-    using src_type = typename SrcSliceType::aosoa_type;
-    using dst_memory_space = typename dst_type::traits::memory_space;
-    using src_memory_space = typename src_type::traits::memory_space;
-    using dst_execution_space = typename dst_type::traits::execution_space;
-    using src_execution_space = typename src_type::traits::execution_space;
-    using data_type = typename DstSliceType::data_type;
+    using dst_memory_space = typename DstAoSoA::traits::memory_space;
+    using src_memory_space = typename SrcAoSoA::traits::memory_space;
+    using dst_execution_space = typename DstAoSoA::traits::execution_space;
+    using src_execution_space = typename SrcAoSoA::traits::execution_space;
 
     static_assert( std::is_same<typename DstSliceType::value_type,
                    typename SrcSliceType::value_type>::value,
@@ -134,6 +127,8 @@ inline void deepCopySlice(
     DeepCopySliceElement<DstSliceType,SrcSliceType> copy_func( dst, src );
     Kokkos::parallel_for(
         "deepCopySlice", exec_policy, copy_func );
+
+    if ( fence_upon_completion ) Kokkos::fence();
 }
 
 //---------------------------------------------------------------------------//
@@ -152,9 +147,9 @@ struct DeepCopyByMember<0,DstAoSoA,SrcAoSoA>
         typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
                                  is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
     {
-        auto dst_slice = slice<0>( dst );
-        auto src_slice = slice<0>( src );
-        deepCopySlice( dst_slice, src_slice );
+        auto dst_slice = dst.template view<0>();
+        auto src_slice = src.template view<0>();
+        deepCopySlice<DstAoSoA,SrcAoSoA>( dst_slice, src_slice, false );
     }
 };
 
@@ -167,9 +162,9 @@ struct DeepCopyByMember
         typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
                                  is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
     {
-        auto dst_slice = slice<M>( dst );
-        auto src_slice = slice<M>( src );
-        deepCopySlice( dst_slice, src_slice );
+        auto dst_slice = dst.template view<M>();
+        auto src_slice = src.template view<M>();
+        deepCopySlice<DstAoSoA,SrcAoSoA>( dst_slice, src_slice, false );
         DeepCopyByMember<M-1,DstAoSoA,SrcAoSoA>::copy( dst, src );
     }
 };

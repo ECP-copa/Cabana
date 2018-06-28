@@ -14,34 +14,40 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
+    auto view_0 = aosoa.template view<0>();
+    auto view_1 = aosoa.template view<1>();
+    auto view_2 = aosoa.template view<2>();
+    auto view_3 = aosoa.template view<3>();
+    auto view_4 = aosoa.template view<4>();
+
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    BOOST_CHECK( aosoa.template get<0>( idx, i, j, k ) ==
+                    BOOST_CHECK( view_0( idx, i, j, k ) ==
                                          fval * (i+j+k) );
 
         // Member 1.
-        BOOST_CHECK( aosoa.template get<1>( idx ) == ival );
+        BOOST_CHECK( view_1( idx ) == ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        BOOST_CHECK( aosoa.template get<2>( idx, i, j, k, l ) ==
+                        BOOST_CHECK( view_2( idx, i, j, k, l ) ==
                                              fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
+            BOOST_CHECK( view_3( idx, i ) == dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
+                BOOST_CHECK( view_4( idx, i, j ) == dval * (i+j) );
     }
 }
 
@@ -79,11 +85,11 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
     AoSoA_t aosoa( num_data );
 
     // Create some slices.
-    auto slice_0 = Cabana::slice<0>( aosoa );
-    auto slice_1 = Cabana::slice<1>( aosoa );
-    auto slice_2 = Cabana::slice<2>( aosoa );
-    auto slice_3 = Cabana::slice<3>( aosoa );
-    auto slice_4 = Cabana::slice<4>( aosoa );
+    auto slice_0 = aosoa.view<0>();
+    auto slice_1 = aosoa.view<1>();
+    auto slice_2 = aosoa.view<2>();
+    auto slice_3 = aosoa.view<3>();
+    auto slice_4 = aosoa.view<4>();
 
     // Check that they are slices.
     BOOST_CHECK( Cabana::is_member_slice<decltype(slice_0)>::value );

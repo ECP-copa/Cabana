@@ -25,7 +25,7 @@ template<>
 class PerformanceTraits<Kokkos::Serial>
 {
   public:
-    static constexpr int array_size = 1;
+    static constexpr int array_size = 8;
     using kokkos_layout = Kokkos::LayoutRight;
     using inner_array_layout = InnerArrayLayout<array_size,kokkos_layout>;
     using parallel_for_tag = StructParallelTag;
