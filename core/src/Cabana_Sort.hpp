@@ -70,6 +70,24 @@ class BinningData
     int permutation( const int particle_id ) const
     { return _permute_vector(particle_id); }
 
+    /*!
+      \brief Get the entire bin count view.
+    */
+    CountView binCountView() const
+    { return _counts; }
+
+    /*!
+      \brief Get the entire bin offset view.
+    */
+    OffsetView binOffsetView() const
+    { return _offsets; }
+
+    /*!
+      \brief Get the entire permutation vector.
+    */
+    OffsetView permuteVector() const
+    { return _permute_vector; }
+
   private:
 
     int _nbin;
@@ -221,7 +239,7 @@ kokkosBinSort(
     const int begin,
     const int end,
     typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
+                  is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
     Kokkos::BinSort<KeyViewType,Comparator> bin_sort(
@@ -236,10 +254,10 @@ kokkosBinSort(
         Kokkos::fence();
     }
 
-   return BinningData<typename KeyViewType::memory_space>(
-       bin_sort.get_bin_count(),
-       bin_sort.get_bin_offsets(),
-       bin_sort.get_permute_vector() );
+    return BinningData<typename KeyViewType::memory_space>(
+        bin_sort.get_bin_count(),
+        bin_sort.get_bin_offsets(),
+        bin_sort.get_permute_vector() );
 }
 
 //---------------------------------------------------------------------------//
@@ -330,22 +348,32 @@ copySliceToKeys( SliceType slice )
   \param comp The comparator to use for sorting. Must be compatible with
   Kokkos::BinSort.
 
+  \param create_permute_vector_only True if the permutation vector should be
+  created but the data shouldn't actually be sorted.
+
   \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
+
+  \return The permutation vector associated with the sorting.
 */
 template<class AoSoA_t, class KeyViewType, class Comparator>
-void sortByKeyWithComparator(
+typename BinningData<typename KeyViewType::memory_space>::OffsetView
+sortByKeyWithComparator(
     AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
+    const bool create_permute_vector_only,
     const int begin,
     const int end,
     typename std::enable_if<(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    Impl::kokkosBinSort( aosoa, keys, comp, true, false, begin, end );
+    auto bin_data =
+        Impl::kokkosBinSort( aosoa, keys, comp, create_permute_vector_only,
+                             true, begin, end );
+    return bin_data.permuteVector();
 }
 
 //---------------------------------------------------------------------------//
@@ -366,17 +394,25 @@ void sortByKeyWithComparator(
 
   \param comp The comparator to use for sorting. Must be compatible with
   Kokkos::BinSort.
+
+  \param create_permute_vector_only True if the permutation vector should be
+  created but the data shouldn't actually be sorted.
+
+  \return The permutation vector associated with the sorting.
 */
 template<class AoSoA_t, class KeyViewType, class Comparator>
-void sortByKeyWithComparator(
+typename BinningData<typename KeyViewType::memory_space>::OffsetView
+sortByKeyWithComparator(
     AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
+    const bool create_permute_vector_only,
     typename std::enable_if<(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    Impl::kokkosBinSort( aosoa, keys, comp, false, true, 0, aosoa.size() );
+    Impl::kokkosBinSort( aosoa, keys, comp, create_permute_vector_only,
+                         true, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -430,7 +466,7 @@ binByKeyWithComparator(
   \brief Bin an entire AoSoA using a general comparator over the given Kokkos
   View of keys.
 
-  \tparam AoSoA_t The AoSoA type to bint.
+  \tparam AoSoA_t The AoSoA type to bin.
 
   \tparam KeyViewType The Kokkos::View type for keys.
 
@@ -479,14 +515,21 @@ binByKeyWithComparator(
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
 
+  \param create_permute_vector_only True if the permutation vector should be
+  created but the data shouldn't actually be sorted.
+
   \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
+
+  \return The permutation vector associated with the sorting.
 */
 template<class AoSoA_t, class KeyViewType>
-void sortByKey(
+typename BinningData<typename KeyViewType::memory_space>::OffsetView
+sortByKey(
     AoSoA_t aosoa,
     KeyViewType keys,
+    const bool create_permute_vector_only,
     const int begin,
     const int end,
     typename std::enable_if<(
@@ -494,7 +537,10 @@ void sortByKey(
     int>::type * = 0 )
 {
     int nbin = (end - begin) / 2;
-    Impl::kokkosBinSort1d( aosoa, keys, nbin, false, true, begin, end );
+    auto bin_data =
+        Impl::kokkosBinSort1d( aosoa, keys, nbin, create_permute_vector_only,
+                               true, begin, end );
+    return bin_data.permuteVector();
 }
 
 //---------------------------------------------------------------------------//
@@ -509,16 +555,25 @@ void sortByKey(
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
+
+  \param create_permute_vector_only True if the permutation vector should be
+  created but the data shouldn't actually be sorted.
+
+  \return The permutation vector associated with the sorting.
+
 */
 template<class AoSoA_t, class KeyViewType>
-void sortByKey(
+typename BinningData<typename KeyViewType::memory_space>::OffsetView
+sortByKey(
     AoSoA_t aosoa,
     KeyViewType keys,
+    const bool create_permute_vector_only,
     typename std::enable_if<(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    sortByKey( aosoa, keys, 0, aosoa.size() );
+    return
+        sortByKey( aosoa, keys, create_permute_vector_only, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -575,7 +630,7 @@ binByKey(
 
   \tparam KeyViewType The Kokkos::View type for keys.
 
-  \param aosoa The AoSoA to bint.
+  \param aosoa The AoSoA to bin.
 
   \param keys The key values to use for binning. A key value is needed for
   every element of the AoSoA.
@@ -615,21 +670,30 @@ binByKey(
 
   \param aosoa The AoSoA to sort.
 
+  \param member_tag Tag indicating which member to use as the keys for sorting.
+
+  \param create_permute_vector_only True if the permutation vector should be
+  created but the data shouldn't actually be sorted.
+
   \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
+
+  \return The permutation vector associated with the sorting.
 */
 template<std::size_t Member, class AoSoA_t>
-void sortByMember(
+typename BinningData<typename AoSoA_t::traits::memory_space>::OffsetView
+sortByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
+    const bool create_permute_vector_only,
     const int begin,
     const int end,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
     std::ignore = member_tag;
     auto keys = Impl::copySliceToKeys( slice<Member>(aosoa) );
-    sortByKey( aosoa, keys, begin, end );
+    return sortByKey( aosoa, keys, create_permute_vector_only, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -641,14 +705,24 @@ void sortByMember(
   \tparam AoSoA_t The AoSoA type to sort.
 
   \param aosoa The AoSoA to sort.
+
+  \param member_tag Tag indicating which member to use as the keys for sorting.
+
+  \param create_permute_vector_only True if the permutation vector should be
+  created but the data shouldn't actually be sorted.
+
+  \return The permutation vector associated with the sorting.
 */
 template<std::size_t Member, class AoSoA_t>
-void sortByMember(
+typename BinningData<typename AoSoA_t::traits::memory_space>::OffsetView
+sortByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
+    const bool create_permute_vector_only,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    sortByMember<Member>( aosoa, member_tag, 0, aosoa.size() );
+   return  sortByMember<Member>( aosoa, member_tag, create_permute_vector_only,
+                                 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -661,6 +735,9 @@ void sortByMember(
   \tparam AoSoA_t The AoSoA type to bin.
 
   \param aosoa The AoSoA to bin.
+
+  \param member_tag Tag indicating which member to use as the keys for
+  binning.
 
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
@@ -700,6 +777,9 @@ binByMember(
   \tparam AoSoA_t The AoSoA type to bin.
 
   \param aosoa The AoSoA to bin.
+
+  \param member_tag Tag indicating which member to use as the keys for
+  binning.
 
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.

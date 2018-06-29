@@ -51,11 +51,13 @@ BOOST_AUTO_TEST_CASE( sort_by_key_test )
     }
 
     // Sort the aosoa by keys.
-    Cabana::sortByKey( aosoa, keys );
+    auto permute_vector = Cabana::sortByKey( aosoa, keys, false );
 
     // Check the result of the sort.
     for ( int p = 0; p < aosoa.size(); ++p )
     {
+        int reverse_index = aosoa.size() - p - 1;
+
         for ( int i = 0; i < dim_1; ++i )
             BOOST_CHECK( v0( p, i ) == p + i );
 
@@ -64,6 +66,8 @@ BOOST_AUTO_TEST_CASE( sort_by_key_test )
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 BOOST_CHECK( v2( p, i, j ) == p + i + j );
+
+        BOOST_CHECK( permute_vector(p) == (unsigned) reverse_index );
     }
 }
 
@@ -176,11 +180,14 @@ BOOST_AUTO_TEST_CASE( sort_by_member_test )
     }
 
     // Sort the aosoa by the 1D member.
-    Cabana::sortByMember( aosoa, Cabana::MemberTag<1>() );
+    auto permute_vector =
+        Cabana::sortByMember( aosoa, Cabana::MemberTag<1>(), false );
 
     // Check the result of the sort.
     for ( int p = 0; p < aosoa.size(); ++p )
     {
+        int reverse_index = aosoa.size() - p - 1;
+
         for ( int i = 0; i < dim_1; ++i )
             BOOST_CHECK( v0( p, i ) == p + i );
 
@@ -189,6 +196,69 @@ BOOST_AUTO_TEST_CASE( sort_by_member_test )
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 BOOST_CHECK( v2( p, i, j ) == p + i + j );
+
+        BOOST_CHECK( permute_vector(p) == (unsigned) reverse_index );
+    }
+}
+
+//---------------------------------------------------------------------------//
+BOOST_AUTO_TEST_CASE( sort_by_member_data_only_test )
+{
+    // Data dimensions.
+    const int dim_1 = 3;
+    const int dim_2 = 2;
+
+    // Declare data types.
+    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
+                                              int,
+                                              double[dim_1][dim_2]>;
+
+    // Declare the AoSoA type.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+
+    // Create an AoSoA.
+    int num_data = 3453;
+    AoSoA_t aosoa( num_data );
+
+    // Create the AoSoA data. Create the data in reverse order so we can see
+    // that it is sorted.
+    auto v0 = Cabana::slice<0>( aosoa );
+    auto v1 = Cabana::slice<1>( aosoa );
+    auto v2 = Cabana::slice<2>( aosoa );
+    for ( int p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        for ( int i = 0; i < dim_1; ++i )
+            v0( p, i ) = reverse_index + i;
+
+        v1( p ) = reverse_index;
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                v2( p, i, j ) = reverse_index + i + j;
+    }
+
+    // Sort the aosoa by the 1D member.
+    auto permute_vector =
+        Cabana::sortByMember( aosoa, Cabana::MemberTag<1>(), true );
+
+    // Check that the data didn't get sorted and the permutation vector is
+    // corrector.
+    for ( int p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        for ( int i = 0; i < dim_1; ++i )
+            BOOST_CHECK( v0( p, i ) == reverse_index + i );
+
+        BOOST_CHECK( v1( p ) == reverse_index );
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                BOOST_CHECK( v2( p, i, j ) == reverse_index + i + j );
+
+        BOOST_CHECK( permute_vector(p) == (unsigned) reverse_index );
     }
 }
 
