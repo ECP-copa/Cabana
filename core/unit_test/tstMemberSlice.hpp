@@ -99,62 +99,70 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
     BOOST_CHECK( Cabana::is_member_slice<decltype(slice_4)>::value );
 
     // Check sizes.
-    BOOST_CHECK( slice_0.size() == int(35) );
-    BOOST_CHECK( slice_0.numSoA() == int(3) );
-
-    BOOST_CHECK( slice_0.arraySize(0) == int(16) );
-    BOOST_CHECK( slice_0.arraySize(1) == int(16) );
-    BOOST_CHECK( slice_0.arraySize(3) == int(3) );
-
-    BOOST_CHECK( slice_0.rank() == int(3) );
+    BOOST_CHECK( slice_0.size() == int(35) * dim_1 * dim_2 * dim_3 );
+    BOOST_CHECK( slice_0.rank() == int(4) );
     int e00 = slice_0.extent(0);
-    BOOST_CHECK( e00 == dim_1 );
+    BOOST_CHECK( e00 == int(35) );
     int e01 = slice_0.extent(1);
-    BOOST_CHECK( e01 == dim_2 );
+    BOOST_CHECK( e01 == dim_1 );
     int e02 = slice_0.extent(2);
-    BOOST_CHECK( e02 == dim_3 );
+    BOOST_CHECK( e02 == dim_2 );
     int e03 = slice_0.extent(3);
-    BOOST_CHECK( e03 == int(0) );
+    BOOST_CHECK( e03 == dim_3 );
+    int e04 = slice_0.extent(4);
+    BOOST_CHECK( e04 == int(0) );
 
-    BOOST_CHECK( slice_1.rank() == int(0) );
+    BOOST_CHECK( slice_1.size() == int(35) );
+    BOOST_CHECK( slice_1.rank() == int(1) );
     int e10 = slice_1.extent(0);
-    BOOST_CHECK( e10 == int(0) );
+    BOOST_CHECK( e10 == int(35) );
     int e11 = slice_1.extent(1);
     BOOST_CHECK( e11 == int(0) );
     int e12 = slice_1.extent(2);
     BOOST_CHECK( e12 == int(0) );
     int e13 = slice_1.extent(3);
     BOOST_CHECK( e13 == int(0) );
+    int e14 = slice_1.extent(4);
+    BOOST_CHECK( e14 == int(0) );
 
-    BOOST_CHECK( slice_2.rank() == int(4) );
+    BOOST_CHECK( slice_2.size() == int(35) * dim_1 * dim_2 * dim_3 * dim_4 );
+    BOOST_CHECK( slice_2.rank() == int(5) );
     int e20 = slice_2.extent(0);
-    BOOST_CHECK( e20 == dim_1 );
+    BOOST_CHECK( e20 == (35) );
     int e21 = slice_2.extent(1);
-    BOOST_CHECK( e21 == dim_2 );
+    BOOST_CHECK( e21 == dim_1 );
     int e22 = slice_2.extent(2);
-    BOOST_CHECK( e22 == dim_3 );
+    BOOST_CHECK( e22 == dim_2 );
     int e23 = slice_2.extent(3);
-    BOOST_CHECK( e23 == dim_4 );
+    BOOST_CHECK( e23 == dim_3 );
+    int e24 = slice_2.extent(4);
+    BOOST_CHECK( e24 == dim_4 );
 
-    BOOST_CHECK( slice_3.rank() == int(1) );
+    BOOST_CHECK( slice_3.size() == int(35) * dim_1 );
+    BOOST_CHECK( slice_3.rank() == int(2) );
     int e30 = slice_3.extent(0);
-    BOOST_CHECK( e30 == dim_1 );
+    BOOST_CHECK( e30 == int(35) );
     int e31 = slice_3.extent(1);
-    BOOST_CHECK( e31 == int(0) );
+    BOOST_CHECK( e31 == dim_1 );
     int e32 = slice_3.extent(2);
     BOOST_CHECK( e32 == int(0) );
     int e33 = slice_3.extent(3);
     BOOST_CHECK( e33 == int(0) );
+    int e34 = slice_3.extent(4);
+    BOOST_CHECK( e34 == int(0) );
 
-    BOOST_CHECK( slice_4.rank() == int(2) );
+    BOOST_CHECK( slice_4.size() == int(35) * dim_1 * dim_2 );
+    BOOST_CHECK( slice_4.rank() == int(3) );
     int e40 = slice_4.extent(0);
-    BOOST_CHECK( e40 == dim_1 );
+    BOOST_CHECK( e40 == int(35) );
     int e41 = slice_4.extent(1);
-    BOOST_CHECK( e41 == dim_2 );
+    BOOST_CHECK( e41 == dim_1 );
     int e42 = slice_4.extent(2);
-    BOOST_CHECK( e42 == int(0) );
+    BOOST_CHECK( e42 == dim_2 );
     int e43 = slice_4.extent(3);
     BOOST_CHECK( e43 == int(0) );
+    int e44 = slice_4.extent(4);
+    BOOST_CHECK( e44 == int(0) );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;

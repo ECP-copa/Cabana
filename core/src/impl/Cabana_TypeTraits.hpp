@@ -32,6 +32,62 @@ struct LogBase2<1>
 };
 
 //---------------------------------------------------------------------------//
+// Given a type T of the given rank give the Kokkos data type.
+template<typename T, std::size_t Rank>
+struct KokkosDataTypeImpl;
+
+template<typename T>
+struct KokkosDataTypeImpl<T,0>
+{
+    using value_type = typename std::remove_all_extents<T>::type;
+    using type = value_type*;
+};
+
+template<typename T>
+struct KokkosDataTypeImpl<T,1>
+{
+    using value_type = typename std::remove_all_extents<T>::type;
+    static constexpr std::size_t D0 = std::extent<T,0>::value;
+    using type = value_type*[D0];
+};
+
+template<typename T>
+struct KokkosDataTypeImpl<T,2>
+{
+    using value_type = typename std::remove_all_extents<T>::type;
+    static constexpr std::size_t D0 = std::extent<T,0>::value;
+    static constexpr std::size_t D1 = std::extent<T,1>::value;
+    using type = value_type*[D0][D1];
+};
+
+template<typename T>
+struct KokkosDataTypeImpl<T,3>
+{
+    using value_type = typename std::remove_all_extents<T>::type;
+    static constexpr std::size_t D0 = std::extent<T,0>::value;
+    static constexpr std::size_t D1 = std::extent<T,1>::value;
+    static constexpr std::size_t D2 = std::extent<T,2>::value;
+    using type = value_type*[D0][D1][D2];
+};
+
+template<typename T>
+struct KokkosDataTypeImpl<T,4>
+{
+    using value_type = typename std::remove_all_extents<T>::type;
+    static constexpr std::size_t D0 = std::extent<T,0>::value;
+    static constexpr std::size_t D1 = std::extent<T,1>::value;
+    static constexpr std::size_t D2 = std::extent<T,2>::value;
+    static constexpr std::size_t D3 = std::extent<T,3>::value;
+    using type = value_type*[D0][D1][D2][D3];
+};
+
+template<typename T>
+struct KokkosDataType
+{
+    using type = typename KokkosDataTypeImpl<T,std::rank<T>::value>::type;
+};
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Impl
 } // end namespace Cabana
