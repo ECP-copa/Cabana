@@ -206,7 +206,7 @@ void sortMember( AoSoA_t aosoa,
                  const int end,
                  MemberTag<0> )
 {
-    auto member = slice<0>( aosoa );
+    auto member = aosoa.template view<0>();
     bin_sort.sort( member, begin, end );
 }
 
@@ -219,7 +219,7 @@ void sortMember( AoSoA_t aosoa,
 {
     static_assert( 0 <= M && M < AoSoA_t::number_of_members,
                    "Static loop out of bounds!" );
-    auto member = slice<M>( aosoa );
+    auto member = aosoa.template view<M>();
     bin_sort.sort( member, begin, end );
     sortMember( aosoa, bin_sort, begin, end,
                 MemberTag<M-1>() );
@@ -692,7 +692,7 @@ sortByMember(
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
     std::ignore = member_tag;
-    auto keys = Impl::copySliceToKeys( slice<Member>(aosoa) );
+    auto keys = Impl::copySliceToKeys( aosoa.template view<Member>() );
     return sortByKey( aosoa, keys, create_permute_vector_only, begin, end );
 }
 
@@ -764,7 +764,7 @@ binByMember(
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
     std::ignore = member_tag;
-    auto keys = Impl::copySliceToKeys( slice<Member>(aosoa) );
+    auto keys = Impl::copySliceToKeys( aosoa.template view<Member>() );
     return binByKey( aosoa, keys, nbin, create_data_only, begin, end );
 }
 
@@ -848,7 +848,7 @@ binByCartesianGrid3d(
     std::ignore = position_member;
 
     // Get the positions.
-    auto position = slice<PositionMember>( aosoa );
+    auto position = aosoa.template view<PositionMember>();
     using PositionSlice = decltype(position);
 
     // Copy the positions into a Kokkos view. For now we need to do this

@@ -84,7 +84,7 @@ struct KokkosDataTypeImpl<T,4>
 template<typename T>
 struct KokkosDataType
 {
-    using type = KokkosDataTypeImpl<T,std::rank<T>::value>;
+    using type = typename KokkosDataTypeImpl<T,std::rank<T>::value>::type;
 };
 
 //---------------------------------------------------------------------------//

@@ -31,9 +31,9 @@ BOOST_AUTO_TEST_CASE( sort_by_key_test )
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
     // can see that it is sorted.
-    auto v0 = Cabana::slice<0>( aosoa );
-    auto v1 = Cabana::slice<1>( aosoa );
-    auto v2 = Cabana::slice<2>( aosoa );
+    auto v0 = aosoa.view<0>();
+    auto v1 = aosoa.view<1>();
+    auto v2 = aosoa.view<2>();
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -97,9 +97,9 @@ BOOST_AUTO_TEST_CASE( bin_by_key_test )
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
     // can see that it is sorted.
-    auto v0 = Cabana::slice<0>( aosoa );
-    auto v1 = Cabana::slice<1>( aosoa );
-    auto v2 = Cabana::slice<2>( aosoa );
+    auto v0 = aosoa.view<0>();
+    auto v1 = aosoa.view<1>();
+    auto v2 = aosoa.view<2>();
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -162,9 +162,9 @@ BOOST_AUTO_TEST_CASE( sort_by_member_test )
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = Cabana::slice<0>( aosoa );
-    auto v1 = Cabana::slice<1>( aosoa );
-    auto v2 = Cabana::slice<2>( aosoa );
+    auto v0 = aosoa.view<0>();
+    auto v1 = aosoa.view<1>();
+    auto v2 = aosoa.view<2>();
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -222,9 +222,9 @@ BOOST_AUTO_TEST_CASE( sort_by_member_data_only_test )
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = Cabana::slice<0>( aosoa );
-    auto v1 = Cabana::slice<1>( aosoa );
-    auto v2 = Cabana::slice<2>( aosoa );
+    auto v0 = aosoa.view<0>();
+    auto v1 = aosoa.view<1>();
+    auto v2 = aosoa.view<2>();
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -284,9 +284,9 @@ BOOST_AUTO_TEST_CASE( bin_by_member_test )
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = Cabana::slice<0>( aosoa );
-    auto v1 = Cabana::slice<1>( aosoa );
-    auto v2 = Cabana::slice<2>( aosoa );
+    auto v0 = aosoa.view<0>();
+    auto v1 = aosoa.view<1>();
+    auto v2 = aosoa.view<2>();
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -349,9 +349,9 @@ BOOST_AUTO_TEST_CASE( bin_by_member_data_only_test )
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = Cabana::slice<0>( aosoa );
-    auto v1 = Cabana::slice<1>( aosoa );
-    auto v2 = Cabana::slice<2>( aosoa );
+    auto v0 = aosoa.view<0>();
+    auto v1 = aosoa.view<1>();
+    auto v2 = aosoa.view<2>();
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -413,8 +413,8 @@ BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
     double dx = 1.0;
     double x_min = 0.0;
     double x_max = x_min + nx * dx;
-    auto pos = Cabana::slice<Position>( aosoa );
-    auto cell_id = Cabana::slice<CellId>( aosoa );
+    auto pos = aosoa.view<Position>();
+    auto cell_id = aosoa.view<CellId>();
     int particle_id = 0;
     for ( int k = 0; k < nx; ++k )
     {
