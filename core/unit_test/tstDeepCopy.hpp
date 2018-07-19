@@ -2,7 +2,10 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberSlice.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
+
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
@@ -25,28 +28,28 @@ void checkDataMembers(
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    BOOST_CHECK( view_0( idx, i, j, k ) ==
+                    EXPECT_EQ( view_0( idx, i, j, k ),
                                  fval * (i+j+k) );
 
         // Member 1.
-        BOOST_CHECK( view_1( idx ) == ival );
+        EXPECT_EQ( view_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        BOOST_CHECK( view_2( idx, i, j, k, l ) ==
+                        EXPECT_EQ( view_2( idx, i, j, k, l ),
                                      fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( view_3( idx, i ) == dval * i );
+            EXPECT_EQ( view_3( idx, i ), dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( view_4( idx, i, j ) == dval * (i+j) );
+                EXPECT_EQ( view_4( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -127,7 +130,7 @@ void testDeepCopy()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( deep_copy_to_host_same_layout_test )
+TEST_F( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
 {
     testDeepCopy<Kokkos::HostSpace,
                  TEST_MEMSPACE,
@@ -136,7 +139,7 @@ BOOST_AUTO_TEST_CASE( deep_copy_to_host_same_layout_test )
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( deep_copy_from_host_same_layout_test )
+TEST_F( TEST_CATEGORY, deep_copy_from_host_same_layout_test )
 {
     testDeepCopy<TEST_MEMSPACE,
                  Kokkos::HostSpace,
@@ -145,7 +148,7 @@ BOOST_AUTO_TEST_CASE( deep_copy_from_host_same_layout_test )
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( deep_copy_to_host_different_layout_test )
+TEST_F( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
 {
     testDeepCopy<Kokkos::HostSpace,
                  TEST_MEMSPACE,
@@ -158,7 +161,7 @@ BOOST_AUTO_TEST_CASE( deep_copy_to_host_different_layout_test )
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( deep_copy_from_host_different_layout_test )
+TEST_F( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
 {
     testDeepCopy<TEST_MEMSPACE,
                  Kokkos::HostSpace,
@@ -171,3 +174,5 @@ BOOST_AUTO_TEST_CASE( deep_copy_from_host_different_layout_test )
 }
 
 //---------------------------------------------------------------------------//
+
+} // end namespace Test

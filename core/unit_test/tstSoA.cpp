@@ -4,7 +4,18 @@
 
 #include <type_traits>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
+
+namespace Test
+{
+class cabana_soa : public ::testing::Test {
+protected:
+  static void SetUpTestCase() {
+  }
+
+  static void TearDownTestCase() {
+  }
+};
 
 //---------------------------------------------------------------------------//
 // Struct for size comparison.
@@ -20,9 +31,8 @@ struct FooData
 };
 
 //---------------------------------------------------------------------------//
-// TESTS
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( soa_layout_right_test )
+// Layout right test.
+void testLayoutRight()
 {
     // Declare an array layout.
     using array_layout = Cabana::InnerArrayLayout<4,Kokkos::LayoutRight>;
@@ -38,11 +48,11 @@ BOOST_AUTO_TEST_CASE( soa_layout_right_test )
                                        double[4][2][3][2]>;
 
     // Check that the data in the soa is contiguous.
-    BOOST_CHECK( std::is_trivial<soa_type>::value );
+    EXPECT_TRUE( std::is_trivial<soa_type>::value );
 
     // Check that the soa is the same size as the struct (i.e. they are
     // equivalent).
-    BOOST_CHECK( sizeof(FooData) == sizeof(soa_type) );
+    EXPECT_EQ( sizeof(FooData), sizeof(soa_type) );
 
     // Create an soa.
     soa_type soa;
@@ -57,13 +67,13 @@ BOOST_AUTO_TEST_CASE( soa_layout_right_test )
     d6[2][1][1][1][1] = v2;
 
     // Check the data.
-    BOOST_CHECK( Cabana::Impl::getStructMember<0>( soa )[3] == v1 );
-    BOOST_CHECK(
-        Cabana::Impl::getStructMember<6>( soa )[2][1][1][1][1] == v2 );
+    EXPECT_EQ( Cabana::Impl::getStructMember<0>( soa )[3], v1 );
+    EXPECT_EQ( Cabana::Impl::getStructMember<6>( soa )[2][1][1][1][1], v2 );
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( soa_layout_left_test )
+// Layout left test.
+void testLayoutLeft()
 {
     // Declare an array layout.
     using array_layout = Cabana::InnerArrayLayout<4,Kokkos::LayoutLeft>;
@@ -79,11 +89,11 @@ BOOST_AUTO_TEST_CASE( soa_layout_left_test )
                                        double[4][2][3][2]>;
 
     // Check that the data in the soa is contiguous.
-    BOOST_CHECK( std::is_trivial<soa_type>::value );
+    EXPECT_TRUE( std::is_trivial<soa_type>::value );
 
     // Check that the soa is the same size as the struct (i.e. they are
     // equivalent).
-    BOOST_CHECK( sizeof(FooData) == sizeof(soa_type) );
+    EXPECT_EQ( sizeof(FooData), sizeof(soa_type) );
 
     // Create an soa.
     soa_type soa;
@@ -98,7 +108,24 @@ BOOST_AUTO_TEST_CASE( soa_layout_left_test )
     d6[1][1][1][1][2] = v2;
 
     // Check the data.
-    BOOST_CHECK( Cabana::Impl::getStructMember<0>( soa )[3] == v1 );
-    BOOST_CHECK(
-        Cabana::Impl::getStructMember<6>( soa )[1][1][1][1][2] == v2 );
+    EXPECT_EQ( Cabana::Impl::getStructMember<0>( soa )[3], v1 );
+    EXPECT_EQ( Cabana::Impl::getStructMember<6>( soa )[1][1][1][1][2], v2 );
 }
+
+//---------------------------------------------------------------------------//
+// TESTS
+//---------------------------------------------------------------------------//
+TEST_F( cabana_soa, soa_layout_right_test )
+{
+    testLayoutRight();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( cabana_soa, soa_layout_left_test )
+{
+    testLayoutLeft();
+}
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Test

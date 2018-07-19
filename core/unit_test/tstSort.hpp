@@ -2,12 +2,12 @@
 #include <Cabana_MemberSlice.hpp>
 #include <Cabana_Sort.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
 
+namespace Test
+{
 //---------------------------------------------------------------------------//
-// TESTS
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( sort_by_key_test )
+void testSortByKey()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -59,20 +59,20 @@ BOOST_AUTO_TEST_CASE( sort_by_key_test )
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( v0( p, i ) == p + i );
+            EXPECT_EQ( v0( p, i ), p + i );
 
-        BOOST_CHECK( v1( p ) == p );
+        EXPECT_EQ( v1( p ), p );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( v2( p, i, j ) == p + i + j );
+                EXPECT_EQ( v2( p, i, j ), p + i + j );
 
-        BOOST_CHECK( permute_vector(p) == (unsigned) reverse_index );
+        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
     }
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( bin_by_key_test )
+void testBinByKey()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -121,28 +121,28 @@ BOOST_AUTO_TEST_CASE( bin_by_key_test )
     auto bin_data = Cabana::binByKey( aosoa, keys, num_data-1, false );
 
     // Check the result of the sort.
-    BOOST_CHECK( bin_data.numBin() == num_data );
+    EXPECT_EQ( bin_data.numBin(), num_data );
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( v0( p, i ) == p + i );
+            EXPECT_EQ( v0( p, i ), p + i );
 
-        BOOST_CHECK( v1( p ) == p );
+        EXPECT_EQ( v1( p ), p );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( v2( p, i, j ) == p + i + j );
+                EXPECT_EQ( v2( p, i, j ), p + i + j );
 
-        BOOST_CHECK( bin_data.binSize(p) == 1 );
-        BOOST_CHECK( bin_data.binOffset(p) == size_type(p) );
-        BOOST_CHECK( bin_data.permutation(p) == reverse_index );
+        EXPECT_EQ( bin_data.binSize(p), 1 );
+        EXPECT_EQ( bin_data.binOffset(p), size_type(p) );
+        EXPECT_EQ( bin_data.permutation(p), reverse_index );
     }
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( sort_by_member_test )
+void testSortByMember()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -189,20 +189,20 @@ BOOST_AUTO_TEST_CASE( sort_by_member_test )
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( v0( p, i ) == p + i );
+            EXPECT_EQ( v0( p, i ), p + i );
 
-        BOOST_CHECK( v1( p ) == p );
+        EXPECT_EQ( v1( p ), p );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( v2( p, i, j ) == p + i + j );
+                EXPECT_EQ( v2( p, i, j ), p + i + j );
 
-        BOOST_CHECK( permute_vector(p) == (unsigned) reverse_index );
+        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
     }
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( sort_by_member_data_only_test )
+void testSortByMemberDataOnly()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -250,20 +250,20 @@ BOOST_AUTO_TEST_CASE( sort_by_member_data_only_test )
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( v0( p, i ) == reverse_index + i );
+            EXPECT_EQ( v0( p, i ), reverse_index + i );
 
-        BOOST_CHECK( v1( p ) == reverse_index );
+        EXPECT_EQ( v1( p ), reverse_index );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( v2( p, i, j ) == reverse_index + i + j );
+                EXPECT_EQ( v2( p, i, j ), reverse_index + i + j );
 
-        BOOST_CHECK( permute_vector(p) == (unsigned) reverse_index );
+        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
     }
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( bin_by_member_test )
+void testBinByMember()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -307,28 +307,28 @@ BOOST_AUTO_TEST_CASE( bin_by_member_test )
         Cabana::binByMember( aosoa, Cabana::MemberTag<1>(), num_data-1, false );
 
     // Check the result of the sort.
-    BOOST_CHECK( bin_data.numBin() == num_data );
+    EXPECT_EQ( bin_data.numBin(), num_data );
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( v0( p, i ) == p + i );
+            EXPECT_EQ( v0( p, i ), p + i );
 
-        BOOST_CHECK( v1( p ) == p );
+        EXPECT_EQ( v1( p ), p );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( v2( p, i, j ) == p + i + j );
+                EXPECT_EQ( v2( p, i, j ), p + i + j );
 
-        BOOST_CHECK( bin_data.binSize(p) == 1 );
-        BOOST_CHECK( bin_data.binOffset(p) == size_type(p) );
-        BOOST_CHECK( bin_data.permutation(p) == reverse_index );
+        EXPECT_EQ( bin_data.binSize(p), 1 );
+        EXPECT_EQ( bin_data.binOffset(p), size_type(p) );
+        EXPECT_EQ( bin_data.permutation(p), reverse_index );
     }
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( bin_by_member_data_only_test )
+void testBinByMemberDataOnly()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -374,28 +374,28 @@ BOOST_AUTO_TEST_CASE( bin_by_member_data_only_test )
 
     // Check the result of the sort. Make sure nothing moved execpt the
     // binning data.
-    BOOST_CHECK( bin_data.numBin() == num_data );
+    EXPECT_EQ( bin_data.numBin(), num_data );
     for ( int p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( v0( p, i ) == reverse_index + i );
+            EXPECT_EQ( v0( p, i ), reverse_index + i );
 
-        BOOST_CHECK( v1( p ) == reverse_index );
+        EXPECT_EQ( v1( p ), reverse_index );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( v2( p, i, j ) == reverse_index + i + j );
+                EXPECT_EQ( v2( p, i, j ), reverse_index + i + j );
 
-        BOOST_CHECK( bin_data.binSize(p) == 1 );
-        BOOST_CHECK( bin_data.binOffset(p) == size_type(p) );
-        BOOST_CHECK( bin_data.permutation(p) == reverse_index );
+        EXPECT_EQ( bin_data.binSize(p), 1 );
+        EXPECT_EQ( bin_data.binOffset(p), size_type(p) );
+        EXPECT_EQ( bin_data.permutation(p), reverse_index );
     }
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
+void testGridBin3d()
 {
     // Make an AoSoA with positions and ijk cell ids.
     enum MyFields { Position = 0, CellId = 1 };
@@ -443,10 +443,10 @@ BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
 
     // Checking the binning. The order should be reversed with the i index
     // moving the slowest.
-    BOOST_CHECK( bin_data.totalBins() == nx*nx*nx );
-    BOOST_CHECK( bin_data.numBin(0) == nx );
-    BOOST_CHECK( bin_data.numBin(1) == nx );
-    BOOST_CHECK( bin_data.numBin(2) == nx );
+    EXPECT_EQ( bin_data.totalBins(), nx*nx*nx );
+    EXPECT_EQ( bin_data.numBin(0), nx );
+    EXPECT_EQ( bin_data.numBin(1), nx );
+    EXPECT_EQ( bin_data.numBin(2), nx );
     particle_id = 0;
     for ( int i = 0; i < nx; ++i )
     {
@@ -454,16 +454,62 @@ BOOST_AUTO_TEST_CASE( grid_bin_3d_test )
         {
             for ( int k = 0; k < nx; ++k, ++particle_id )
             {
-                BOOST_CHECK( cell_id( particle_id, 0 ) == i );
-                BOOST_CHECK( cell_id( particle_id, 1 ) == j );
-                BOOST_CHECK( cell_id( particle_id, 2 ) == k );
-                BOOST_CHECK( bin_data.cardinalBinIndex(i,j,k) == particle_id );
-                BOOST_CHECK( bin_data.binSize(i,j,k) == 1 );
-                BOOST_CHECK( bin_data.binOffset(i,j,k) ==
-                             size_type(particle_id) );
+                EXPECT_EQ( cell_id( particle_id, 0 ), i );
+                EXPECT_EQ( cell_id( particle_id, 1 ), j );
+                EXPECT_EQ( cell_id( particle_id, 2 ), k );
+                EXPECT_EQ( bin_data.cardinalBinIndex(i,j,k), particle_id );
+                EXPECT_EQ( bin_data.binSize(i,j,k), 1 );
+                EXPECT_EQ( bin_data.binOffset(i,j,k),
+                           size_type(particle_id) );
             }
         }
     }
 }
 
 //---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, sort_by_key_test )
+{
+    testSortByKey();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, bin_by_key_test )
+{
+    testBinByKey();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, sort_by_member_test )
+{
+    testSortByMember();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, sort_by_member_data_only_test )
+{
+    testSortByMemberDataOnly();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, bin_by_member_test )
+{
+    testBinByMember();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, bin_by_member_data_only_test )
+{
+    testBinByMemberDataOnly();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, grid_bin_3d_test )
+{
+    testGridBin3d();
+}
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Test

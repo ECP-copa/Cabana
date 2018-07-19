@@ -2,18 +2,31 @@
 
 #include <iostream>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
 
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( version_test )
+namespace Test {
+
+class cabana_version : public ::testing::Test {
+protected:
+  static void SetUpTestCase() {
+  }
+
+  static void TearDownTestCase() {
+  }
+};
+
+TEST_F( cabana_version, version_test )
 {
     auto const cabana_version = Cabana::version();
-    BOOST_CHECK( !cabana_version.empty() );
+    EXPECT_TRUE( !cabana_version.empty() );
     std::cout << "Cabana version " << cabana_version << std::endl;
 
     auto const cabana_commit_hash = Cabana::git_commit_hash();
-    BOOST_CHECK( !cabana_commit_hash.empty() );
+    EXPECT_TRUE( !cabana_commit_hash.empty() );
     std::cout << "Cabana commit hash " << cabana_commit_hash << std::endl;
 }
+
+} // end namespace Test

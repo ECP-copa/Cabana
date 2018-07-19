@@ -2,7 +2,10 @@
 #include <Cabana_ExecutionPolicy.hpp>
 #include <Cabana_AoSoA.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
+
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
@@ -25,28 +28,28 @@ void checkDataMembers(
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    BOOST_CHECK( view_0( idx, i, j, k ) ==
-                                 fval * (i+j+k) );
+                    EXPECT_EQ( view_0( idx, i, j, k ),
+                               fval * (i+j+k) );
 
         // Member 1.
-        BOOST_CHECK( view_1( idx ) == ival );
+        EXPECT_EQ( view_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        BOOST_CHECK( view_2( idx, i, j, k, l ) ==
-                                     fval * (i+j+k+l) );
+                        EXPECT_EQ( view_2( idx, i, j, k, l ),
+                                   fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( view_3( idx, i ) == dval * i );
+            EXPECT_EQ( view_3( idx, i ), dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( view_4( idx, i, j ) == dval * (i+j) );
+                EXPECT_EQ( view_4( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -121,9 +124,8 @@ class AssignmentOp
 };
 
 //---------------------------------------------------------------------------//
-// TESTS
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( parallel_for_test )
+// Parallel for test.
+void runTest()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -201,3 +203,15 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     ival = 1;
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
+
+//---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, parallel_for_test )
+{
+    runTest();
+}
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Test
