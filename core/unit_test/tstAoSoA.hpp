@@ -3,8 +3,10 @@
 
 #include <Kokkos_Core.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
 
+namespace Test
+{
 //---------------------------------------------------------------------------//
 // Check the data given a set of values in an aosoa.
 template<class aosoa_type>
@@ -26,28 +28,28 @@ void checkDataMembers(
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    BOOST_CHECK( view_0( idx, i, j, k ) ==
+                    EXPECT_EQ( view_0( idx, i, j, k ),
                                 fval * (i+j+k) );
 
         // Member 1.
-        BOOST_CHECK( view_1( idx ) == ival );
+        EXPECT_EQ( view_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        BOOST_CHECK( view_2( idx, i, j, k, l ) ==
+                        EXPECT_EQ( view_2( idx, i, j, k, l ),
                                     fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( view_3( idx, i ) == dval * i );
+            EXPECT_EQ( view_3( idx, i ), dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( view_4( idx, i, j ) == dval * (i+j) );
+                EXPECT_EQ( view_4( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -78,7 +80,7 @@ void testAoSoA()
     using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
 
     // Make sure that it is actually an AoSoA.
-    BOOST_CHECK( Cabana::is_aosoa<AoSoA_t>::value );
+    EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
 
     // Create an AoSoA.
     AoSoA_t aosoa;
@@ -91,29 +93,29 @@ void testAoSoA()
     auto view_4 = aosoa.template view<4>();
 
     // Check sizes.99
-    BOOST_CHECK( aosoa.size() == int(0) );
-    BOOST_CHECK( aosoa.capacity() == int(0) );
-    BOOST_CHECK( aosoa.numSoA() == int(0) );
+    EXPECT_EQ( aosoa.size(), int(0) );
+    EXPECT_EQ( aosoa.capacity(), int(0) );
+    EXPECT_EQ( aosoa.numSoA(), int(0) );
 
     // Resize
     int num_data = 35;
     aosoa.resize( num_data );
 
     // Check sizes for the new allocation/size.
-    BOOST_CHECK( aosoa.size() == int(35) );
-    BOOST_CHECK( aosoa.capacity() == int(48) );
-    BOOST_CHECK( aosoa.numSoA() == int(3) );
+    EXPECT_EQ( aosoa.size(), int(35) );
+    EXPECT_EQ( aosoa.capacity(), int(48) );
+    EXPECT_EQ( aosoa.numSoA(), int(3) );
 
-    BOOST_CHECK( aosoa.arraySize(0) == int(16) );
-    BOOST_CHECK( aosoa.arraySize(1) == int(16) );
-    BOOST_CHECK( aosoa.arraySize(2) == int(3) );
+    EXPECT_EQ( aosoa.arraySize(0), int(16) );
+    EXPECT_EQ( aosoa.arraySize(1), int(16) );
+    EXPECT_EQ( aosoa.arraySize(2), int(3) );
 
     // Test bounds.
     auto end = aosoa.size();
     int end_s = Cabana::Impl::Index<16>::s(end);
     int end_i = Cabana::Impl::Index<16>::i(end);
-    BOOST_CHECK( end_s == 2 );
-    BOOST_CHECK( end_i == 3 );
+    EXPECT_EQ( end_s, 2 );
+    EXPECT_EQ( end_i, 3 );
 
     // Get field views again. We invalidated the pointers by resizing the
     // views.
@@ -164,54 +166,41 @@ void testAoSoA()
     aosoa.reserve( 1 );
 
     // Make sure nothing changed.
-    BOOST_CHECK( aosoa.size() == int(35) );
-    BOOST_CHECK( aosoa.capacity() == int(48) );
-    BOOST_CHECK( aosoa.numSoA() == int(3) );
-    BOOST_CHECK( aosoa.arraySize(0) == int(16) );
-    BOOST_CHECK( aosoa.arraySize(1) == int(16) );
-    BOOST_CHECK( aosoa.arraySize(2) == int(3) );
+    EXPECT_EQ( aosoa.size(), int(35) );
+    EXPECT_EQ( aosoa.capacity(), int(48) );
+    EXPECT_EQ( aosoa.numSoA(), int(3) );
+    EXPECT_EQ( aosoa.arraySize(0), int(16) );
+    EXPECT_EQ( aosoa.arraySize(1), int(16) );
+    EXPECT_EQ( aosoa.arraySize(2), int(3) );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
     // Now reserve a bunch of space.
     aosoa.reserve( 1024 );
 
     // Make sure capacity changed but sizes and data did not.
-    BOOST_CHECK( aosoa.size() == int(35) );
-    BOOST_CHECK( aosoa.capacity() == int(1024) );
-    BOOST_CHECK( aosoa.numSoA() == int(3) );
-    BOOST_CHECK( aosoa.arraySize(0) == int(16) );
-    BOOST_CHECK( aosoa.arraySize(1) == int(16) );
-    BOOST_CHECK( aosoa.arraySize(2) == int(3) );
+    EXPECT_EQ( aosoa.size(), int(35) );
+    EXPECT_EQ( aosoa.capacity(), int(1024) );
+    EXPECT_EQ( aosoa.numSoA(), int(3) );
+    EXPECT_EQ( aosoa.arraySize(0), int(16) );
+    EXPECT_EQ( aosoa.arraySize(1), int(16) );
+    EXPECT_EQ( aosoa.arraySize(2), int(3) );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
     // Now decrease the size of the container.
     aosoa.resize( 29 );
 
     // Make sure sizes and data changed but the capacity did not.
-    BOOST_CHECK( aosoa.size() == int(29) );
-    BOOST_CHECK( aosoa.capacity() == int(1024) );
-    BOOST_CHECK( aosoa.numSoA() == int(2) );
-    BOOST_CHECK( aosoa.arraySize(0) == int(16) );
-    BOOST_CHECK( aosoa.arraySize(1) == int(13) );
+    EXPECT_EQ( aosoa.size(), int(29) );
+    EXPECT_EQ( aosoa.capacity(), int(1024) );
+    EXPECT_EQ( aosoa.numSoA(), int(2) );
+    EXPECT_EQ( aosoa.arraySize(0), int(16) );
+    EXPECT_EQ( aosoa.arraySize(1), int(13) );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
 
 //---------------------------------------------------------------------------//
-// TESTS
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( aosoa_layout_right_test )
-{
-    testAoSoA<Kokkos::LayoutRight>();
-}
-
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( aosoa_layout_left_test )
-{
-    testAoSoA<Kokkos::LayoutLeft>();
-}
-
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( aosoa_raw_data_layout_right_test )
+// Raw data layout right test.
+void testRawDataLayoutRight()
 {
     // Manually set the inner array size.
     using inner_array_layout = Cabana::InnerArrayLayout<32,Kokkos::LayoutRight>;
@@ -260,8 +249,8 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_layout_right_test )
     // Member 2 is multidimensional so get its extents.
     int m2e0 = view_2.extent(1);
     int m2e1 = view_2.extent(2);
-    BOOST_CHECK( m2e0 == dim_1 );
-    BOOST_CHECK( m2e1 == dim_2 );
+    EXPECT_EQ( m2e0, dim_1 );
+    EXPECT_EQ( m2e1, dim_2 );
 
     // Initialize the data with raw pointer/stride access. Start by looping
     // over the structs. Each struct has a group of contiguous arrays of size
@@ -293,20 +282,21 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_layout_right_test )
         int s = Cabana::Impl::Index<32>::s( idx );
         int i = Cabana::Impl::Index<32>::i( idx );
 
-        BOOST_CHECK( view_0(idx) == (s+i)*1.0 );
-        BOOST_CHECK( view_1(idx) == int((s+i)*2) );
-        BOOST_CHECK( view_3(idx) == int((s+i)*4) );
-        BOOST_CHECK( view_4(idx) == (s+i)*5.0 );
+        EXPECT_EQ( view_0(idx), (s+i)*1.0 );
+        EXPECT_EQ( view_1(idx), int((s+i)*2) );
+        EXPECT_EQ( view_3(idx), int((s+i)*4) );
+        EXPECT_EQ( view_4(idx), (s+i)*5.0 );
 
         // Member 2 has some extra dimensions so check those too.
         for ( int j = 0; j < dim_1; ++j )
             for ( int k = 0; k < dim_2; ++k )
-                BOOST_CHECK( view_2(idx,j,k) == (s+i+j+k)*3.0 );
+                EXPECT_EQ( view_2(idx,j,k), (s+i+j+k)*3.0 );
     }
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( aosoa_raw_data_layout_left_test )
+// Raw data layout left test.
+void testRawDataLayoutLeft()
 {
     // Manually set the inner array size.
     using inner_array_layout = Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft>;
@@ -354,8 +344,8 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_layout_left_test )
     // Member 2 is multidimensional so get its extents.
     int m2e0 = view_2.extent(1);
     int m2e1 = view_2.extent(2);
-    BOOST_CHECK( m2e0 == dim_1 );
-    BOOST_CHECK( m2e1 == dim_2 );
+    EXPECT_EQ( m2e0, dim_1 );
+    EXPECT_EQ( m2e1, dim_2 );
 
     // Initialize the data with raw pointer/stride access. Start by looping
     // over the structs. Each struct has a group of contiguous arrays of size
@@ -387,20 +377,21 @@ BOOST_AUTO_TEST_CASE( aosoa_raw_data_layout_left_test )
         int s = Cabana::Impl::Index<16>::s( idx );
         int i = Cabana::Impl::Index<16>::i( idx );
 
-        BOOST_CHECK( view_0(idx) == (s+i)*1.0 );
-        BOOST_CHECK( view_1(idx) == int((s+i)*2) );
-        BOOST_CHECK( view_3(idx) == int((s+i)*4) );
-        BOOST_CHECK( view_4(idx) == (s+i)*5.0 );
+        EXPECT_EQ( view_0(idx), (s+i)*1.0 );
+        EXPECT_EQ( view_1(idx), int((s+i)*2) );
+        EXPECT_EQ( view_3(idx), int((s+i)*4) );
+        EXPECT_EQ( view_4(idx), (s+i)*5.0 );
 
         // Member 2 has some extra dimensions so check those too.
         for ( int j = 0; j < dim_1; ++j )
             for ( int k = 0; k < dim_2; ++k )
-                BOOST_CHECK( view_2(idx,j,k) == (s+i+j+k)*3.0 );
+                EXPECT_EQ( view_2(idx,j,k), (s+i+j+k)*3.0 );
     }
 }
 
 //---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( aosoa_particle_test )
+// Particle test.
+void testParticle()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -511,3 +502,37 @@ BOOST_AUTO_TEST_CASE( aosoa_particle_test )
 }
 
 //---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, aosoa_layout_right_test )
+{
+    testAoSoA<Kokkos::LayoutRight>();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, aosoa_layout_left_test )
+{
+    testAoSoA<Kokkos::LayoutLeft>();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, aosoa_raw_data_layout_right_test )
+{
+    testRawDataLayoutRight();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, aosoa_raw_data_layout_left_test )
+{
+    testRawDataLayoutLeft();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, aosoa_particle_test )
+{
+    testParticle();
+}
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Test
