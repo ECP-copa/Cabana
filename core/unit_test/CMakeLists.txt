@@ -26,6 +26,7 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
   NUM_MPI_PROCS 1
   FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
   TESTONLYLIBS cabana_core_gtest
+  ARGS "--gtest_color=yes"
   )
 
 TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -35,6 +36,7 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
   NUM_MPI_PROCS 1
   FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
   TESTONLYLIBS cabana_core_gtest
+  ARGS "--gtest_color=yes"
   )
 
 TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -44,6 +46,7 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
   NUM_MPI_PROCS 1
   FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
   TESTONLYLIBS cabana_core_gtest
+  ARGS "--gtest_color=yes"
   )
 
 ##--------------------------------------------------------------------------##
@@ -58,6 +61,7 @@ IF(Cabana_ENABLE_Serial)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -67,6 +71,7 @@ IF(Cabana_ENABLE_Serial)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -76,6 +81,7 @@ IF(Cabana_ENABLE_Serial)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -85,6 +91,7 @@ IF(Cabana_ENABLE_Serial)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -94,6 +101,7 @@ IF(Cabana_ENABLE_Serial)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
     TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -103,6 +111,7 @@ IF(Cabana_ENABLE_Serial)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
 ENDIF()
@@ -119,6 +128,7 @@ IF(Cabana_ENABLE_OpenMP)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -128,6 +138,7 @@ IF(Cabana_ENABLE_OpenMP)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -137,6 +148,7 @@ IF(Cabana_ENABLE_OpenMP)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -146,6 +158,7 @@ IF(Cabana_ENABLE_OpenMP)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -155,6 +168,7 @@ IF(Cabana_ENABLE_OpenMP)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -164,6 +178,7 @@ IF(Cabana_ENABLE_OpenMP)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
 ENDIF()
@@ -180,6 +195,7 @@ IF(Cabana_ENABLE_Cuda)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -189,6 +205,7 @@ IF(Cabana_ENABLE_Cuda)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -198,6 +215,7 @@ IF(Cabana_ENABLE_Cuda)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -207,6 +225,7 @@ IF(Cabana_ENABLE_Cuda)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -216,6 +235,7 @@ IF(Cabana_ENABLE_Cuda)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
@@ -225,6 +245,7 @@ IF(Cabana_ENABLE_Cuda)
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
     TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
     )
 
 ENDIF()
