@@ -305,9 +305,9 @@ copySliceToKeys( SliceType slice )
 {
     using KeyViewType = Kokkos::View<typename SliceType::value_type*,
                                      typename SliceType::memory_space>;
-    KeyViewType keys( "slice_keys", slice.numParticle() );
+    KeyViewType keys( "slice_keys", slice.size() );
     Kokkos::RangePolicy<typename SliceType::execution_space>
-        exec_policy( 0, slice.numParticle() );
+        exec_policy( 0, slice.size() );
     auto copy_op = KOKKOS_LAMBDA( const int i ) { keys(i) = slice(i); };
     Kokkos::parallel_for( "Cabana::copySliceToKeys::copy_op",
                           exec_policy,
@@ -563,8 +563,8 @@ sortByKey(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    return
-        sortByKey( aosoa, keys, create_permute_vector_only, 0, aosoa.size() );
+    return sortByKey(
+        aosoa, keys, create_permute_vector_only, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -847,9 +847,9 @@ binByCartesianGrid3d(
     using KeyViewType = Kokkos::View<typename PositionSlice::value_type**,
                                      typename PositionSlice::memory_space>;
     KeyViewType keys(
-        "position_bin_keys", position.numParticle(), position.extent(2) );
+        "position_bin_keys", position.size(), position.extent(2) );
     Kokkos::RangePolicy<typename PositionSlice::execution_space>
-        exec_policy( 0, position.numParticle() );
+        exec_policy( 0, position.size() );
     auto copy_op = KOKKOS_LAMBDA( const int i )
                    { for ( int d = 0; d < 3; ++d ) keys(i,d) = position(i,d); };
     Kokkos::parallel_for( "Cabana::binByCartesianGrid3d::copy_op",

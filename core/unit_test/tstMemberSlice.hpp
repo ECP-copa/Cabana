@@ -140,7 +140,7 @@ void apiTest()
     EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_4)>::value );
 
     // Check field sizes.
-    EXPECT_EQ( slice_0.numParticle(), 35 );
+    EXPECT_EQ( slice_0.size(), 35 );
     EXPECT_EQ( slice_0.numSoA(), 3 );
     EXPECT_EQ( slice_0.fieldRank(), 3 );
     int e01 = slice_0.fieldExtent(0);
@@ -150,11 +150,11 @@ void apiTest()
     int e03 = slice_0.fieldExtent(2);
     EXPECT_EQ( e03, dim_3 );
 
-    EXPECT_EQ( slice_1.numParticle(), 35 );
+    EXPECT_EQ( slice_1.size(), 35 );
     EXPECT_EQ( slice_1.numSoA(), 3 );
     EXPECT_EQ( slice_1.fieldRank(), 0 );
 
-    EXPECT_EQ( slice_2.numParticle(), 35 );
+    EXPECT_EQ( slice_2.size(), 35 );
     EXPECT_EQ( slice_2.numSoA(), 3 );
     EXPECT_EQ( slice_2.fieldRank(), 4 );
     int e21 = slice_2.fieldExtent(0);
@@ -166,13 +166,13 @@ void apiTest()
     int e24 = slice_2.fieldExtent(3);
     EXPECT_EQ( e24, dim_4 );
 
-    EXPECT_EQ( slice_3.numParticle(), 35 );
+    EXPECT_EQ( slice_3.size(), 35 );
     EXPECT_EQ( slice_3.numSoA(), 3 );
     EXPECT_EQ( slice_3.fieldRank(), 1 );
     int e31 = slice_3.fieldExtent(0);
     EXPECT_EQ( e31, dim_1 );
 
-    EXPECT_EQ( slice_4.numParticle(), 35 );
+    EXPECT_EQ( slice_4.size(), 35 );
     EXPECT_EQ( slice_4.numSoA(), 3 );
     EXPECT_EQ( slice_4.fieldRank(), 2 );
     int e41 = slice_4.fieldExtent(0);
@@ -401,7 +401,8 @@ void atomicAccessTest()
     auto atomic_view = aosoa.view( Cabana::MemberTag<0>(),
                                    Cabana::AtomicAccessMemory() );
 
-    // Have every thread increment all elements of the view.
+    // Have every thread increment all elements of the view. This should
+    // create contention in parallel without the atomic.
     auto increment_op =
         KOKKOS_LAMBDA( const int i )
         {

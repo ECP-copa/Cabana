@@ -371,11 +371,11 @@ class MemberSlice
       \brief Constructor.
     */
     MemberSlice( const pointer_type data,
-                 const int num_particle,
+                 const int size,
                  const int soa_stride,
                  const int num_soa )
         : _view( data, view_wrapper::createLayout(num_soa,soa_stride) )
-        , _num_particle( num_particle )
+        , _size( size )
     {}
 
     //------------------------------
@@ -386,8 +386,8 @@ class MemberSlice
       \return The number of particles in the field.
     */
     KOKKOS_INLINE_FUNCTION
-    int numParticle() const
-    { return _num_particle; }
+    int size() const
+    { return _size; }
 
     /*!
       \brief Get the number of structs-of-arrays in the container.
@@ -405,7 +405,7 @@ class MemberSlice
     int arraySize( const int s ) const
     {
         return ( s < (int) _view.extent(0) - 1 )
-            ? vector_length : ( _num_particle % vector_length );
+            ? vector_length : ( _size % vector_length );
     }
 
     /*!
@@ -568,7 +568,7 @@ class MemberSlice
     kokkos_view _view;
 
     // Number of particles in the view.
-    int _num_particle;
+    int _size;
 };
 
 //---------------------------------------------------------------------------//

@@ -205,7 +205,7 @@ class AoSoATraits
   \code
   using DataType = MemberDataTypes<double[3][3],double[3],int>;
   \endcode
-  would define an AoSoA where each element had a 3x3 matrix of doubles, a
+  would define an AoSoA where each particle had a 3x3 matrix of doubles, a
   3-vector of doubles, and an integer. The AoSoA is then templated on this
   sequence of types. In general, put larger datatypes first in the
   MemberDataType parameter pack (i.e. matrices and vectors) and group members
@@ -345,9 +345,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     {}
 
     /*!
-      \brief Allocate a container with n elements.
+      \brief Allocate a container with n particles.
 
-      \param n The number of elements in the container.
+      \param n The number of particles in the container.
     */
     explicit AoSoA( const int n )
         : _size( n )
@@ -360,9 +360,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     }
 
     /*!
-      \brief Returns the number of elements in the container.
+      \brief Returns the number of particles in the container.
 
-      \return The number of elements in the container.
+      \return The number of particles in the container.
 
       This is the number of actual objects held in the container, which is not
       necessarily equal to its storage capacity.
@@ -372,7 +372,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
     /*!
       \brief Returns the size of the storage space currently allocated for the
-      container, expressed in terms of elements.
+      container, expressed in terms of particles.
 
       \return The capacity of the container.
 
@@ -391,19 +391,19 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     int capacity() const { return _capacity; }
 
     /*!
-      \brief Resizes the container so that it contains n elements.
+      \brief Resizes the container so that it contains n particles.
 
       If n is smaller than the current container size, the content is reduced
-      to its first n elements.
+      to its first n particles.
 
       If n is greater than the current container size, the content is expanded
-      by inserting at the end as many elements as needed to reach a size of n.
+      by inserting at the end as many particles as needed to reach a size of n.
 
       If n is also greater than the current container capacity, an automatic
       reallocation of the allocated storage space takes place.
 
       Notice that this function changes the actual content of the container by
-      inserting or erasing elements from it.
+      inserting or erasing particles from it.
     */
     void resize( const int n )
     {
@@ -415,7 +415,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
     /*!
       \brief Requests that the container capacity be at least enough to contain n
-      elements.
+      particles.
 
       If n is greater than the current container capacity, the function causes
       the container to reallocate its storage increasing its capacity to n (or
@@ -425,7 +425,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
       the container capacity is not affected.
 
       This function has no effect on the container size and cannot alter its
-      elements.
+      particles.
     */
     void reserve( const int n )
     {
@@ -577,9 +577,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
       \return An un-typed raw-pointer to the entire data block.
     */
     void* ptr() const
-    {
-        return _managed_data.get();
-    }
+    { return _managed_data.get(); }
 
   private:
 
@@ -809,10 +807,10 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
   private:
 
-    // Total number of elements in all arrays in all structs.
+    // Total number of particles in the container.
     int _size;
 
-    // Allocated number of elements in all arrays in all structs.
+    // Allocated number of particles in all arrays in all structs.
     int _capacity;
 
     // Number of structs-of-arrays in the array.
