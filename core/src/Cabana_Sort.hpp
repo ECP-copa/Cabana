@@ -243,7 +243,7 @@ kokkosBinSort(
             Kokkos::RangePolicy<typename KeyViewType::execution_space>(begin,end),
             copy_back );
         Kokkos::fence();
-    }a
+    }
 
     return BinningData<typename KeyViewType::memory_space>(
         bin_sort.get_bin_count(),
@@ -300,14 +300,14 @@ kokkosBinSort1d(
 //---------------------------------------------------------------------------//
 // Copy the a 1D slice into a Kokkos view.
 template<class SliceType>
-Kokkos::View<typename SliceType::data_type, typename SliceType::memory_space>
+Kokkos::View<typename SliceType::value_type*, typename SliceType::memory_space>
 copySliceToKeys( SliceType slice )
 {
-    using KeyViewType = Kokkos::View<typename SliceType::data_type,
+    using KeyViewType = Kokkos::View<typename SliceType::value_type*,
                                      typename SliceType::memory_space>;
-    KeyViewType keys( "slice_keys", slice.extent(0) );
+    KeyViewType keys( "slice_keys", slice.numParticle() );
     Kokkos::RangePolicy<typename SliceType::execution_space>
-        exec_policy( 0, slice.extent(0) );
+        exec_policy( 0, slice.numParticle() );
     auto copy_op = KOKKOS_LAMBDA( const int i ) { keys(i) = slice(i); };
     Kokkos::parallel_for( "Cabana::copySliceToKeys::copy_op",
                           exec_policy,
@@ -848,11 +848,12 @@ binByCartesianGrid3d(
     // Copy the positions into a Kokkos view. For now we need to do this
     // because of internal copy constructors being called within
     // Kokkos::BinSort.
-    using KeyViewType = Kokkos::View<typename PositionSlice::data_type,
+    using KeyViewType = Kokkos::View<typename PositionSlice::value_type**,
                                      typename PositionSlice::memory_space>;
-    KeyViewType keys( "position_bin_keys", position.extent(0) );
+    KeyViewType keys(
+        "position_bin_keys", position.numParticle(), position.extent(2) );
     Kokkos::RangePolicy<typename PositionSlice::execution_space>
-        exec_policy( 0, position.extent(0) );
+        exec_policy( 0, position.numParticle() );
     auto copy_op = KOKKOS_LAMBDA( const int i )
                    { for ( int d = 0; d < 3; ++d ) keys(i,d) = position(i,d); };
     Kokkos::parallel_for( "Cabana::binByCartesianGrid3d::copy_op",
