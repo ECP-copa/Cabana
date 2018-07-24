@@ -26,7 +26,7 @@ struct DefaultAccessMemory
                                                        Kokkos::Restrict >;
 };
 
-//! Random access memory. Read-only and const.
+//! Random access memory. Read-only and const with limited spatial locality.
 struct RandomAccessMemory
 {
     using memory_access_type = RandomAccessMemory;
@@ -53,167 +53,159 @@ namespace Impl
 // data layout parameters. The particle index effectively introduces 2 new
 // dimensions to the problem on top of the field dimensions - one for the
 // struct index and one for the vector index.
-template<typename T, typename DataLayout, std::size_t Rank>
+template<typename T, typename DataLayout, std::size_t Rank, int VectorLength>
 struct KokkosDataTypeImpl;
 
 // Rank-0
-template<typename T, typename DataLayout>
-struct KokkosDataTypeImpl<T,DataLayout,0>
+template<typename T, typename DataLayout, int VectorLength>
+struct KokkosDataTypeImpl<T,DataLayout,0,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
-    using data_type = value_type**;
-    using const_data_type = const value_type**;
+    using data_type = value_type*[VectorLength];
+    using const_data_type = const value_type*[VectorLength];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, 1 );
+                                     VectorLength, 1 );
     }
 };
 
 // Rank-1
-template<typename T>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,1>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,1,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
-    using data_type = value_type***;
-    using const_data_type = const value_type***;
+    using data_type = value_type*[VectorLength][D0];
+    using const_data_type = const value_type*[VectorLength][D0];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, D0,
+                                     VectorLength, D0,
                                      D0, 1 );
     }
 };
 
-template<typename T>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,1>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,1,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
-    using data_type = value_type***;
-    using const_data_type = const value_type***;
+    using data_type = value_type*[VectorLength][D0];
+    using const_data_type = const value_type*[VectorLength][D0];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, 1,
-                                     D0, vector_length );
+                                     VectorLength, 1,
+                                     D0, VectorLength );
     }
 };
 
 // Rank-2
-template<typename T>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,2>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,2,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
-    using data_type = value_type****;
-    using const_data_type = const value_type****;
+    using data_type = value_type*[VectorLength][D0][D1];
+    using const_data_type = const value_type*[VectorLength][D0][D1];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, D0*D1,
+                                     VectorLength, D0*D1,
                                      D0, D1,
                                      D1, 1 );
     }
 };
 
-template<typename T>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,2>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,2,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
-    using data_type = value_type****;
-    using const_data_type = const value_type****;
+    using data_type = value_type*[VectorLength][D0][D1];
+    using const_data_type = const value_type*[VectorLength][D0][D1];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, 1,
-                                     D0, vector_length,
-                                     D1, D0*vector_length );
+                                     VectorLength, 1,
+                                     D0, VectorLength,
+                                     D1, D0*VectorLength );
     }
 };
 
 // Rank-3
-template<typename T>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,3>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,3,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     static constexpr std::size_t D2 = std::extent<T,2>::value;
-    using data_type = value_type*****;
-    using const_data_type = const value_type*****;
+    using data_type = value_type*[VectorLength][D0][D1][D2];
+    using const_data_type = const value_type*[VectorLength][D0][D1][D2];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, D0*D1*D2,
+                                     VectorLength, D0*D1*D2,
                                      D0, D1*D2,
                                      D1, D2,
                                      D2, 1 );
     }
 };
 
-template<typename T>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,3>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,3,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     static constexpr std::size_t D2 = std::extent<T,2>::value;
-    using data_type = value_type*****;
-    using const_data_type = const value_type*****;
+    using data_type = value_type*[VectorLength][D0][D1][D2];
+    using const_data_type = const value_type*[VectorLength][D0][D1][D2];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, 1,
-                                     D0, vector_length,
-                                     D1, D0*vector_length,
-                                     D2, D1*D0*vector_length );
+                                     VectorLength, 1,
+                                     D0, VectorLength,
+                                     D1, D0*VectorLength,
+                                     D2, D1*D0*VectorLength );
     }
 };
 
 // Rank-4
-template<typename T>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,4>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,4,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     static constexpr std::size_t D2 = std::extent<T,2>::value;
     static constexpr std::size_t D3 = std::extent<T,3>::value;
-    using data_type = value_type******;
-    using const_data_type = const value_type******;
+    using data_type = value_type*[VectorLength][D0][D1][D2][D3];
+    using const_data_type = const value_type*[VectorLength][D0][D1][D2][D3];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, D0*D1*D2*D3,
+                                     VectorLength, D0*D1*D2*D3,
                                      D0, D1*D2*D3,
                                      D1, D2*D3,
                                      D2, D3,
@@ -221,47 +213,42 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,4>
     }
 };
 
-template<typename T>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,4>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,4,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     static constexpr std::size_t D2 = std::extent<T,2>::value;
     static constexpr std::size_t D3 = std::extent<T,3>::value;
-    using data_type = value_type******;
-    using const_data_type = const value_type******;
+    using data_type = value_type*[VectorLength][D0][D1][D2][D3];
+    using const_data_type = const value_type*[VectorLength][D0][D1][D2][D3];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, 1,
-                                     D0, vector_length,
-                                     D1, D0*vector_length,
-                                     D2, D1*D0*vector_length,
-                                     D3, D2*D1*D0*vector_length );
+                                     VectorLength, 1,
+                                     D0, VectorLength,
+                                     D1, D0*VectorLength,
+                                     D2, D1*D0*VectorLength,
+                                     D3, D2*D1*D0*VectorLength );
     }
 };
 
 // Data type specialization.
-template<typename T,typename DataLayout>
+template<typename T,typename DataLayout, int VectorLength>
 struct KokkosDataType
 {
-    using data_type =
-        typename KokkosDataTypeImpl<T,DataLayout,std::rank<T>::value>::data_type;
-    using const_data_type =
-        typename KokkosDataTypeImpl<
-        T,DataLayout,std::rank<T>::value>::const_data_type;
+    using kokkos_data_type =
+        KokkosDataTypeImpl<T,DataLayout,std::rank<T>::value,VectorLength>;
+    using data_type = typename kokkos_data_type::data_type;
+    using const_data_type = typename kokkos_data_type::const_data_type;
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
+                                                     const int stride )
     {
-        return
-            KokkosDataTypeImpl<T,DataLayout,std::rank<T>::value>::createLayout(
-                num_soa, stride, vector_length );
+        return kokkos_data_type::createLayout( num_soa, stride );
     }
 };
 
@@ -274,15 +261,16 @@ template<typename T,
              Impl::IsVectorLengthValid<VectorLength>::value,int>::type = 0>
 struct KokkosViewWrapper
 {
-    using data_type = typename KokkosDataType<T,DataLayout>::data_type;
+    using data_type =
+        typename KokkosDataType<T,DataLayout,VectorLength>::data_type;
     using const_data_type =
-        typename KokkosDataType<T,DataLayout>::const_data_type;
+        typename KokkosDataType<T,DataLayout,VectorLength>::const_data_type;
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
     {
-        return KokkosDataType<T,DataLayout>::createLayout(
-            num_soa, stride, VectorLength );
+        return KokkosDataType<T,DataLayout,VectorLength>::createLayout(
+            num_soa, stride );
     }
 };
 

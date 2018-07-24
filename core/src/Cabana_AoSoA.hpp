@@ -32,12 +32,8 @@ namespace Cabana
 
   - AoSoA< DataTypes >
   - AoSoA< DataTypes , Space >
-  - AoSoA< DataTypes , Space , MemoryTraits >
   - AoSoA< DataTypes , StaticInnerArrayLayout >
   - AoSoA< DataTypes , StaticInnerArrayLayout , Space >
-  - AoSoA< DataTypes , StaticInnerArrayLayout , MemoryTraits >
-  - AoSoA< DataTypes , StaticInnerArrayLayout , Space , MemoryTraits >
-  - AoSoA< DataTypes , MemoryTraits >
 
   Note that this is effectively a reimplementation of Kokkos::ViewTraits for
   the AoSoA with ArrayLayout replaced by InnerStaticInnerArrayLayout.
@@ -52,9 +48,7 @@ class AoSoATraits<void>
   public:
     using execution_space = void;
     using memory_space = void;
-    using host_mirror_space = void;
     using inner_array_layout = void;
-    using memory_traits = void;
 };
 
 // Extract the array layout.
@@ -66,9 +60,7 @@ class AoSoATraits<
   public:
     using execution_space = typename AoSoATraits<void,Properties...>::execution_space;
     using memory_space = typename AoSoATraits<void,Properties...>::memory_space;
-    using host_mirror_space = typename AoSoATraits<void,Properties...>::host_mirror_space;
     using inner_array_layout = StaticInnerArrayLayout;
-    using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
 };
 
 // Extract the space - either a Kokkos memory space or execution space. Can be
@@ -82,36 +74,12 @@ class AoSoATraits<
     static_assert(
         std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
         std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::host_mirror_space,void>::value &&
         std::is_same<typename AoSoATraits<void,Properties...>::inner_array_layout,void>::value
         , "Only one AoSoA Execution or Memory Space template argument" );
 
     using execution_space = typename Space::execution_space;
     using memory_space = typename Space::memory_space;
-    using host_mirror_space = typename Kokkos::Impl::HostMirror<Space>::Space;
     using inner_array_layout = typename Impl::PerformanceTraits<execution_space>::inner_array_layout;
-    using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
-};
-
-// Extract the memory traits - this must be the last template parameter in the pack.
-template<class MemoryTraits, class ... Properties>
-class AoSoATraits<
-    typename std::enable_if<Kokkos::Impl::is_memory_traits<MemoryTraits>::value>::type,
-    MemoryTraits, Properties...>
-{
-  public:
-    static_assert(
-        std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::inner_array_layout,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::memory_traits,void>::value
-        , "MemoryTrait is the final optional template argument for a AoSoA" );
-
-    using execution_space = void;
-    using memory_space = void;
-    using host_mirror_space = void;
-    using inner_array_layout = void;
-    using memory_traits = MemoryTraits;
 };
 
 // Set the traits for a given set of properties.
@@ -144,28 +112,12 @@ class AoSoATraits
         typename Impl::PerformanceTraits<ExecutionSpace>::inner_array_layout
         >::type;
 
-    using HostMirrorSpace =
-        typename std::conditional<
-        !std::is_same<typename properties::host_mirror_space,void>::value,
-        typename properties::host_mirror_space,
-        typename Kokkos::Impl::HostMirror<ExecutionSpace>::Space
-        >::type;
-
-    using MemoryTraits =
-        typename std::conditional<
-        !std::is_same<typename properties::memory_traits,void>::value,
-        typename properties::memory_traits,
-        typename Kokkos::MemoryManaged
-        >::type;
-
   public:
 
     using data_types = DataTypes;
     using execution_space = ExecutionSpace;
     using memory_space = MemorySpace;
     using device_type = Kokkos::Device<ExecutionSpace,MemorySpace>;
-    using memory_traits = MemoryTraits;
-    using host_mirror_space = HostMirrorSpace;
     using size_type = typename memory_space::size_type;
     using inner_array_layout = StaticInnerArrayLayout;
 
@@ -195,10 +147,7 @@ class AoSoATraits
   - AoSoA< DataType >
   - AoSoA< DataType , StaticInnerArrayLayout >
   - AoSoA< DataType , StaticInnerArrayLayout , Space >
-  - AoSoA< DataType , StaticInnerArrayLayout , Space , MemoryTraits >
   - AoSoA< DataType , Space >
-  - AoSoA< DataType , Space , MemoryTraits >
-  - AoSoA< DataType , MemoryTraits >
 
   \tparam DataType (required) Specifically this must be an instance of
   \c MemberDataTypes with the data layout of the structs. For example:
@@ -217,22 +166,6 @@ class AoSoATraits
   \tparam StaticInnerArrayLayout (optional) The layout of the inner array in
   the AoSoA. If not specified, this defaults to the preferred layout for the
   <tt>Space</tt>.
-
-  \tparam MemoryTraits (optional) Assertion of the user's intended access
-  behavior. For example, RandomAccess indicates read-only access with limited
-  spatial locality, and Unmanaged lets users wrap externally allocated memory
-  in an AoSoA without automatic deallocation.
-
-  Some \c MemoryTraits options may have different interpretations for
-  different \c Space types.  For example, with the Cuda device,
-  \c RandomAccess tells Kokkos to fetch the data through the texture
-  cache, whereas the non-GPU devices have no such hardware construct.
-
-  Users should defer applying the optional \c MemoryTraits parameter
-  until the point at which they actually plan to rely on it in a
-  computational kernel.  This minimizes the number of template
-  parameters exposed in their code, which reduces the cost of
-  compilation
  */
 template<typename DataTypes, typename ... Properties>
 class AoSoA;
@@ -285,11 +218,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
     // Particle type.
     using particle_type = Particle<member_types>;
-
-    // Host mirror.
-    using HostMirror = AoSoA<member_types,
-                             typename traits::inner_array_layout,
-                             typename traits::host_mirror_space>;
 
     // Struct member type.
     template<std::size_t Field>
