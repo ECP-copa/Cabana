@@ -332,9 +332,10 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // Struct member slice type.
     template<std::size_t Field>
     using member_slice_type = MemberSlice<member_data_type<Field>,
-                                          inner_array_layout,
+                                          typename inner_array_layout::layout,
                                           typename traits::memory_space,
-                                          typename traits::memory_traits>;
+                                          DefaultAccessMemory,
+                                          array_size>;
 
   public:
 

@@ -19,10 +19,11 @@ namespace Impl
   \brief Class for converting between integral particle indices and AoSoA
   indices.
 
-  \tparam N The inner array size of the AoSoA. Must be a power of 2.
+  \tparam N The inner array size of the AoSoA.
 */
 template<int N,
-         typename std::enable_if<(Impl::IsPowerOfTwo<N>::value),int>::type = 0>
+         typename std::enable_if<(Impl::IsVectorLengthValid<N>::value),
+                                 int>::type = 0>
 class Index
 {
   public:

@@ -34,6 +34,14 @@ struct LogBase2<1>
 };
 
 //---------------------------------------------------------------------------//
+// Check that the provided vector length is valid.
+template<int N>
+struct IsVectorLengthValid
+{
+    static constexpr bool value = (IsPowerOfTwo<N>::value && N > 0);
+};
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Impl
 } // end namespace Cabana

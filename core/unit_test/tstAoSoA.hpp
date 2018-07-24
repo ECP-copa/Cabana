@@ -92,7 +92,7 @@ void testAoSoA()
     auto view_3 = aosoa.template view<3>();
     auto view_4 = aosoa.template view<4>();
 
-    // Check sizes.99
+    // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
     EXPECT_EQ( aosoa.capacity(), int(0) );
     EXPECT_EQ( aosoa.numSoA(), int(0) );

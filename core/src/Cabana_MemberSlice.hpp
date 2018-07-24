@@ -54,11 +54,11 @@ namespace Impl
 // dimensions to the problem on top of the field dimensions - one for the
 // struct index and one for the vector index.
 template<typename T, typename DataLayout, std::size_t Rank>
-struct KokkosDataLayoutImpl;
+struct KokkosDataTypeImpl;
 
 // Rank-0
 template<typename T, typename DataLayout>
-struct KokkosDataLayoutImpl<T,DataLayout,0>
+struct KokkosDataTypeImpl<T,DataLayout,0>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     using data_type = value_type**;
@@ -74,7 +74,7 @@ struct KokkosDataLayoutImpl<T,DataLayout,0>
 
 // Rank-1
 template<typename T>
-struct KokkosDataLayoutImpl<T,Kokkos::LayoutRight,1>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,1>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -85,13 +85,13 @@ struct KokkosDataLayoutImpl<T,Kokkos::LayoutRight,1>
                                                      const int vector_length )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, 1,
+                                     vector_length, D0,
                                      D0, 1 );
     }
 };
 
 template<typename T>
-struct KokkosDataLayoutImpl<T,Kokkos::LayoutLeft,1>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,1>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -102,53 +102,53 @@ struct KokkosDataLayoutImpl<T,Kokkos::LayoutLeft,1>
                                                      const int vector_length )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     D0, 1,
-                                     vector_length, 1 );
+                                     vector_length, 1,
+                                     D0, vector_length );
     }
 };
 
 // Rank-2
 template<typename T>
-struct KokkosDataLayoutImpl<T,Kokkos::LayoutRight,2>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,2>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
-    using data_type = value_type***;
+    using data_type = value_type****;
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride,
                                                      const int vector_length )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, 1,
-                                     D0, 1,
+                                     vector_length, D0*D1,
+                                     D0, D1,
                                      D1, 1 );
     }
 };
 
 template<typename T>
-struct KokkosDataLayoutImpl<T,Kokkos::LayoutLeft,2>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,2>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
-    using data_type = value_type***;
+    using data_type = value_type****;
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride,
                                                      const int vector_length )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     D1, 1,
-                                     D0, 1,
-                                     vector_length, 1 );
+                                     vector_length, 1,
+                                     D0, vector_length,
+                                     D1, D0*vector_length );
     }
 };
 
 // Rank-3
 template<typename T>
-struct KokkosDataLayoutImpl<T,Kokkos::LayoutRight,3>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,3>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -161,15 +161,15 @@ struct KokkosDataLayoutImpl<T,Kokkos::LayoutRight,3>
                                                      const int vector_length )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     vector_length, 1,
-                                     D0, 1,
-                                     D1, 1,
+                                     vector_length, D0*D1*D2,
+                                     D0, D1*D2,
+                                     D1, D2,
                                      D2, 1 );
     }
 };
 
 template<typename T>
-struct KokkosDataLayoutImpl<T,Kokkos::LayoutLeft,3>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,3>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -182,16 +182,39 @@ struct KokkosDataLayoutImpl<T,Kokkos::LayoutLeft,3>
                                                      const int vector_length )
     {
         return Kokkos::LayoutStride( num_soa, stride,
-                                     D2, 1,
-                                     D1, 1,
-                                     D0, 1,
-                                     vector_length, 1 );
+                                     vector_length, 1,
+                                     D0, vector_length,
+                                     D1, D0*vector_length,
+                                     D2, D1*D0*vector_length );
     }
 };
 
 // Rank-4
 template<typename T>
-struct KokkosDataLayoutImpl<T,Kokkos::LayoutRight,4>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,4>
+{
+    using value_type = typename std::remove_all_extents<T>::type;
+    static constexpr std::size_t D0 = std::extent<T,0>::value;
+    static constexpr std::size_t D1 = std::extent<T,1>::value;
+    static constexpr std::size_t D2 = std::extent<T,2>::value;
+    static constexpr std::size_t D3 = std::extent<T,3>::value;
+    using data_type = value_type******;
+
+    inline static Kokkos::LayoutStride createLayout( const int num_soa,
+                                                     const int stride,
+                                                     const int vector_length )
+    {
+        return Kokkos::LayoutStride( num_soa, stride,
+                                     vector_length, D0*D1*D2*D3,
+                                     D0, D1*D2*D3,
+                                     D1, D2*D3,
+                                     D2, D3,
+                                     D3, 1 );
+    }
+};
+
+template<typename T>
+struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,4>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -206,33 +229,10 @@ struct KokkosDataLayoutImpl<T,Kokkos::LayoutRight,4>
     {
         return Kokkos::LayoutStride( num_soa, stride,
                                      vector_length, 1,
-                                     D0, 1,
-                                     D1, 1,
-                                     D2, 1,
-                                     D3, 1 );
-    }
-};
-
-template<typename T>
-struct KokkosDataLayoutImpl<T,Kokkos::LayoutLeft,4>
-{
-    using value_type = typename std::remove_all_extents<T>::type;
-    static constexpr std::size_t D0 = std::extent<T,0>::value;
-    static constexpr std::size_t D1 = std::extent<T,1>::value;
-    static constexpr std::size_t D2 = std::extent<T,2>::value;
-    static constexpr std::size_t D3 = std::extent<T,3>::value;
-    using data_type = value_type******;
-
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride,
-                                                     const int vector_length )
-    {
-        return Kokkos::LayoutStride( num_soa, stride,
-                                     D3, 1,
-                                     D2, 1,
-                                     D1, 1,
-                                     D0, 1,
-                                     vector_length, 1 );
+                                     D0, vector_length,
+                                     D1, D0*vector_length,
+                                     D2, D1*D0*vector_length,
+                                     D3, D2*D1*D0*vector_length );
     }
 };
 
@@ -257,10 +257,9 @@ struct KokkosDataType
 // Kokkos view wrapper for particle fields
 template<typename T,
          typename DataLayout,
-         typename MemoryAccessType,
          int VectorLength,
          typename std::enable_if<
-             (IsPowerOfTwo<N>::value && N > 0),int>::type = 0>
+             Impl::IsVectorLengthValid<VectorLength>::value,int>::type = 0>
 struct KokkosViewWrapper
 {
     using data_type = typename KokkosDataType<T,DataLayout>::data_type;
@@ -268,21 +267,21 @@ struct KokkosViewWrapper
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
     {
-        KokkosDataType<vector_type,array_layout>::createLayout(
+        return KokkosDataType<T,DataLayout>::createLayout(
             num_soa, stride, VectorLength );
     }
 };
 
 //---------------------------------------------------------------------------//
 // Kokkos View data type selector.
-template<ViewWrapper,MemoryAccessType>
+template<typename ViewWrapper,typename MemoryAccessType>
 struct KokkosTypeSelector
 {
     using type = typename ViewWrapper::data_type;
 };
 
 // Random access memory specialization.
-template<ViewWrapper>
+template<typename ViewWrapper>
 struct KokkosTypeSelector<ViewWrapper,RandomAccessMemory>
 {
     using type = typename std::add_const<typename ViewWrapper::data_type>::type;
@@ -335,7 +334,7 @@ class MemberSlice
 
     // Kokkos view data type.
     using kokkos_data_type =
-        typename KokkosTypeSelector<view_wrapper,MemoryAccessType>::type;
+        typename Impl::KokkosTypeSelector<view_wrapper,MemoryAccessType>::type;
 
     // Kokkos view type.
     using kokkos_view =
@@ -349,10 +348,8 @@ class MemberSlice
     using value_type = typename kokkos_view::value_type;
     using pointer_type = typename kokkos_view::pointer_type;
     using memory_space = typename kokkos_view::memory_space;
-    using device_type = typename kokkos_view::device_type;
     using execution_space = typename kokkos_view::execution_space;
-    using data_type = typename kokkos_view::data_type;
-    using const_data_type = typename kokkos_view::const_data_type;
+    using device_type = typename kokkos_view::device_type;
 
   public:
 
@@ -360,68 +357,57 @@ class MemberSlice
       \brief Constructor.
     */
     MemberSlice( const pointer_type data,
-                 const int size,
-                 const int stride,
+                 const int num_particle,
+                 const int soa_stride,
                  const int num_soa )
-        : _view( data, view_wrapper::createLayout(num_soa,stride) )
-        , _size( size )
-        , _num_soa( num_soa )
+        : _view( data, view_wrapper::createLayout(num_soa,soa_stride) )
+        , _num_particle( num_particle )
     {}
+
+    //------------------------------
+    // Field sizes.
 
     /*!
       \brief Returns the total number particles in the field.
-
       \return The number of particles in the field.
     */
-    KOKKOS_FUNCTION
-    int size() const
-    {
-        return _size;
-    }
+    KOKKOS_INLINE_FUNCTION
+    int numParticle() const
+    { return _num_particle; }
 
     /*!
       \brief Get the number of structs-of-arrays in the container.
-
       \return The number of structs-of-arrays in the container.
     */
-    KOKKOS_FUNCTION
-    int numSoA() const { return _num_soa; }
+    KOKKOS_INLINE_FUNCTION
+    int numSoA() const { return _view.extent(0); }
 
     /*!
       \brief Get the size of the data array at a given struct member index.
-
       \param s The struct index to get the array size for.
-
       \return The size of the array at the given struct index.
     */
-    KOKKOS_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     int arraySize( const int s ) const
     {
-        return
-            ( s < _num_soa - 1 ) ? vector_length : ( _size % vector_length );
+        return ( s < (int) _view.extent(0) - 1 )
+            ? vector_length : ( _num_particle % vector_length );
     }
 
-    // -------------------------------
-    // Member data type properties.
+    /*!
+      \brief Get the rank of the particle field.
+      \return The field rank.
+    */
+    int fieldRank()
+    { return _view.Rank - 2; }
 
     /*!
-      \brief Get the rank of the particle data for this field.
-      \return The rank of the data for this field.
+      \brief Get the extent of the given particle field dimension.
+      \param d The field dimension for which to get the extent.
+      \return The field extent.
     */
-    KOKKOS_INLINE_FUNCTION
-    constexpr int rank() const
-    { return std::rank<DataType>::value; }
-
-    /*!
-      \brief Get the extent of a given particle field dimension.
-
-      \param D The member data dimension to get the extent for.
-
-      \return The extent of the given member data dimension.
-    */
-    KOKKOS_INLINE_FUNCTION
-    int extent( const std::size_t D ) const
-    { return _view.extent(D+2); }
+    int fieldExtent( const int d )
+    { return _view.extent(d+2); }
 
     // -------------------------------
     // Access the data value at a given struct and array index.
@@ -429,108 +415,47 @@ class MemberSlice
     // Rank 0
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<U>::value),
-                            reference_type>::type
+    typename std::enable_if<(0==std::rank<U>::value),reference_type>::type
     access( const int s, const int i ) const
-    {
-        return _view( s, i );
-    }
+    { return _view( s, i ); }
 
     // Rank 1
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<((1==std::rank<U>::value) && is_layout_right),
-                            reference_type>::type
+    typename std::enable_if<(1==std::rank<U>::value),reference_type>::type
     access( const int s, const int i,
             const int d0 ) const
-    {
-        return _view( s, i, d0 );
-    }
-
-    template<typename U = DataType>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<((1==std::rank<U>::value) && is_layout_left),
-                            reference_type>::type
-    access( const int s, const int i,
-            const int d0 ) const
-    {
-        return _view( s, d0, i);
-    }
+    { return _view( s, i, d0 ); }
 
     // Rank 2
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<((2==std::rank<U>::value) && is_layout_right),
-                            reference_type>::type
+    typename std::enable_if<(2==std::rank<U>::value),reference_type>::type
     access( const int s, const int i,
             const int d0,
             const int d1 ) const
-    {
-        return _view( s, i, d0, d1);
-    }
-
-    template<typename U = DataType>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<((2==std::rank<U>::value) && is_layout_left),
-                            reference_type>::type
-    access( const int s, const int i,
-            const int d0,
-            const int d1 ) const
-    {
-        return _view( s, d1, d0, i);
-    }
+    { return _view( s, i, d0, d1); }
 
     // Rank 3
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<((3==std::rank<U>::value) && is_layout_right),
-                            reference_type>::type
+    typename std::enable_if<(3==std::rank<U>::value),reference_type>::type
     access( const int s, const int i,
             const int d0,
             const int d1,
             const int d2 ) const
-    {
-        return _view( s, i, d0, d1, d2);
-    }
-
-    template<typename U = DataType>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<((3==std::rank<U>::value) && is_layout_left),
-                            reference_type>::type
-    access( const int s, const int i,
-            const int d0,
-            const int d1,
-            const int d2 ) const
-    {
-        return _view( s, d2, d1, d0, i);
-    }
+    { return _view( s, i, d0, d1, d2); }
 
     // Rank 4
     template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<((4==std::rank<U>::value) && is_layout_right),
-                            reference_type>::type
+    typename std::enable_if<(4==std::rank<U>::value),reference_type>::type
     access( const int s, const int i,
             const int d0,
             const int d1,
             const int d2,
             const int d3 ) const
-    {
-        return _view( s, i, d0, d1, d2, d3);
-    }
-
-    template<typename U = DataType>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<((4==std::rank<U>::value) && is_layout_left),
-                            reference_type>::type
-    access( const int s, const int i,
-            const int d0,
-            const int d1,
-            const int d2,
-            const int d3 ) const
-    {
-        return _view( s, d3, d2, d1, d0, i);
-    }
+    { return _view( s, i, d0, d1, d2, d3); }
 
     // -------------------------------
     // Access the data value at a given particle index.
@@ -540,9 +465,7 @@ class MemberSlice
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<U>::value),reference_type>::type
     operator()( const int p ) const
-    {
-        return access( index_type::s(p), index_type::i(p) );
-    }
+    { return access( index_type::s(p), index_type::i(p) ); }
 
     // Rank 1
     template<typename U = DataType>
@@ -550,9 +473,7 @@ class MemberSlice
     typename std::enable_if<(1==std::rank<U>::value),reference_type>::type
     operator()( const int p,
                 const int d0 ) const
-    {
-        return access( index_type::s(p), index_type::i(p), d0 );
-    }
+    { return access( index_type::s(p), index_type::i(p), d0 ); }
 
     // Rank 2
     template<typename U = DataType>
@@ -561,9 +482,7 @@ class MemberSlice
     operator()( const int p,
                 const int d0,
                 const int d1 ) const
-    {
-        return access( index_type::s(p), index_type::i(p), d0, d1 );
-    }
+    { return access( index_type::s(p), index_type::i(p), d0, d1 ); }
 
     // Rank 3
     template<typename U = DataType>
@@ -573,9 +492,7 @@ class MemberSlice
                 const int d0,
                 const int d1,
                 const int d2 ) const
-    {
-        return access( index_type::s(p), index_type::i(p), d0, d1, d2 );
-    }
+    { return access( index_type::s(p), index_type::i(p), d0, d1, d2 ); }
 
     // Rank 4
     template<typename U = DataType>
@@ -586,49 +503,58 @@ class MemberSlice
                 const int d1,
                 const int d2,
                 const int d3 ) const
-    {
-        return access( index_type::s(p), index_type::i(p), d0, d1, d2, d3 );
-    }
+    { return access( index_type::s(p), index_type::i(p), d0, d1, d2, d3 ); }
 
     // -------------------------------
     // Raw data access.
 
     /*!
-      \brief Get the stride between SoA data for this member.
-
-      \return The stride at the given member index.
-
-      Note that these strides are computed in the context of the *value_type*
-      for each member.
-    */
-    KOKKOS_INLINE_FUNCTION
-    int stride() const
-    {
-        return _view.stride(0);
-    }
-
-    /*!
       \brief Get a raw pointer to the data for this member
-
-      \return A raw pointer to the member data at the given index.
+      \return A raw pointer to the data for this field.
     */
     KOKKOS_INLINE_FUNCTION
     pointer_type data() const
-    {
-        return _view.data();
-    }
+    { return _view.data(); }
+
+    /*!
+      \brief Get the rank of the raw data for this field. This includes
+      the struct dimension, array dimension, and all particle field
+      dimensions.
+      \return The rank of the data for this field.
+    */
+    KOKKOS_INLINE_FUNCTION
+    constexpr int rank() const
+    { return _view.Rank; }
+
+    /*!
+      \brief Get the extent of a given raw field data dimension. This includes
+      the struct dimension, array dimension, and all particle field
+      dimensions.
+      \param d The member data dimension to get the extent for.
+      \return The extent of the given member data dimension.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int extent( const std::size_t d ) const
+    { return _view.extent(d); }
+
+    /*!
+      \brief Get the stride of a given raw field dimension. This includes the
+      struct dimension, array dimension, and all particle field dimensions.
+      \param d The member data dimension to get the stride for.
+      \return The stride of the given member data dimension.
+    */
+    KOKKOS_INLINE_FUNCTION
+    int stride( const std::size_t d ) const
+    { return _view.stride(d); }
 
   private:
 
-    // The data view. This view is unmanaged an has access traits specified by
-    // the template parameters of this class.
+    // The data view. This view is unmanaged and has access traits specified
+    // by the template parameters of this class.
     kokkos_view _view;
 
-    // Total number of elements.
-    int _size;
-
-    // Total number of tiles.
-    int _num_soa;
+    // Number of particles in the view.
+    int _num_particle;
 };
 
 //---------------------------------------------------------------------------//
@@ -638,11 +564,29 @@ struct is_member_slice : public std::false_type {};
 
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
-template<typename ... Params>
-struct is_member_slice<MemberSlice<Params...> > : public std::true_type {};
+template<typename DataType,
+         typename DataLayout,
+         typename MemorySpace,
+         typename MemoryAccessType,
+         int VectorLength>
+struct is_member_slice<MemberSlice<DataType,
+                                   DataLayout,
+                                   MemorySpace,
+                                   MemoryAccessType,
+                                   VectorLength> >
+    : public std::true_type {};
 
-template<typename ... Params>
-struct is_member_slice<const MemberSlice<Params...> > : public std::true_type {};
+template<typename DataType,
+         typename DataLayout,
+         typename MemorySpace,
+         typename MemoryAccessType,
+         int VectorLength>
+struct is_member_slice<const MemberSlice<DataType,
+                                         DataLayout,
+                                         MemorySpace,
+                                         MemoryAccessType,
+                                         VectorLength> >
+    : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 

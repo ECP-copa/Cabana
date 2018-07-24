@@ -243,7 +243,7 @@ kokkosBinSort(
             Kokkos::RangePolicy<typename KeyViewType::execution_space>(begin,end),
             copy_back );
         Kokkos::fence();
-    }
+    }a
 
     return BinningData<typename KeyViewType::memory_space>(
         bin_sort.get_bin_count(),

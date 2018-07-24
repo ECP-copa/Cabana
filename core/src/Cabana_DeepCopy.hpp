@@ -13,167 +13,6 @@
 
 namespace Cabana
 {
-namespace Impl
-{
-//---------------------------------------------------------------------------//
-// Copy data between two elements of a slice.
-template<class DstSliceType, class SrcSliceType>
-class DeepCopySliceElement
-{
-  private:
-
-    DstSliceType _dst;
-    SrcSliceType _src;
-
-  public:
-
-    DeepCopySliceElement( DstSliceType dst, SrcSliceType src )
-        : _dst( dst )
-        , _src( src )
-    {}
-
-    template<typename T = typename DstSliceType::member_data_type>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<T>::value),void>::type
-    operator()( const int particle_index ) const
-    {
-        _dst( particle_index ) = _src( particle_index );
-    }
-
-    template<typename T = typename DstSliceType::member_data_type>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<T>::value),void>::type
-    operator()( const int particle_index ) const
-    {
-        for ( int i0 = 0; i0 < _dst.extent(1); ++i0 )
-            _dst( particle_index, i0 ) = _src( particle_index, i0 );
-    }
-
-    template<typename T = typename DstSliceType::member_data_type>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<T>::value),void>::type
-    operator()( const int particle_index ) const
-    {
-        for ( int i0 = 0; i0 < _dst.extent(1); ++i0 )
-            for ( int i1 = 0; i1 < _dst.extent(2); ++i1 )
-                _dst( particle_index, i0, i1 ) =
-                    _src( particle_index, i0, i1 );
-    }
-
-    template<typename T = typename DstSliceType::member_data_type>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<T>::value),void>::type
-    operator()( const int particle_index ) const
-    {
-        for ( int i0 = 0; i0 < _dst.extent(1); ++i0 )
-            for ( int i1 = 0; i1 < _dst.extent(2); ++i1 )
-                for ( int i2 = 0; i2 < _dst.extent(3); ++i2 )
-                    _dst( particle_index, i0, i1, i2 ) =
-                        _src( particle_index, i0, i1, i2 );
-    }
-
-    template<typename T = typename DstSliceType::member_data_type>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<T>::value),void>::type
-    operator()( const int particle_index ) const
-    {
-        for ( int i0 = 0; i0 < _dst.extent(1); ++i0 )
-            for ( int i1 = 0; i1 < _dst.extent(2); ++i1 )
-                for ( int i2 = 0; i2 < _dst.extent(3); ++i2 )
-                    for ( int i3 = 0; i3 < _dst.extent(4); ++i3 )
-                        _dst( particle_index, i0, i1, i2, i3 ) =
-                            _src( particle_index, i0, i1, i2, i3 );
-    }
-};
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Deep copy a slice. Both slices must live in the same memory space.
-
-  This function does not fence upon completion. If deep_copy is called in the
-  context of an AoSoA the fence will be called after all slice copies have
-  been launched. Each slice has its own memory space so this will allow each
-  slice deep copy to continue in tandem.
-*/
-template<class DstSliceType, class SrcSliceType>
-inline void deepCopySlice(
-    DstSliceType& dst,
-    const SrcSliceType& src,
-    bool fence_upon_completion = true,
-    typename std::enable_if<(is_member_slice<DstSliceType>::value &&
-                             is_member_slice<SrcSliceType>::value)>::type * = 0 )
-{
-    using dst_memory_space = typename DstSliceType::memory_space;
-    using src_memory_space = typename SrcSliceType::memory_space;
-    using dst_execution_space = typename DstSliceType::execution_space;
-    using src_execution_space = typename SrcSliceType::execution_space;
-    using data_type = typename DstSliceType::member_data_type;
-
-    static_assert( std::is_same<typename DstSliceType::member_data_type,
-                   typename SrcSliceType::member_data_type>::value,
-                   "Attempted to copy slices with different value types" );
-    static_assert( std::is_same<dst_memory_space,src_memory_space>::value,
-                   "Attempted to copy slices in different memory spaces" );
-    static_assert( std::is_same<dst_execution_space,src_execution_space>::value,
-                   "Attempted to copy slices in different execution spaces" );
-
-    // Check for the same number of values.
-    if ( dst.size() != src.size() )
-    {
-        throw std::runtime_error(
-            "Attempted to deep copy slices of different sizes" );
-    }
-
-    Kokkos::RangePolicy<dst_execution_space> exec_policy( 0, dst.extent(0) );
-    DeepCopySliceElement<DstSliceType,SrcSliceType> copy_func( dst, src );
-    Kokkos::parallel_for(
-        "deepCopySlice", exec_policy, copy_func );
-
-    if ( fence_upon_completion ) Kokkos::fence();
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Deep copy an AoSoA member-by-member.
-*/
-template<std::size_t M, class DstAoSoA, class SrcAoSoA>
-struct DeepCopyByMember;
-
-template<class DstAoSoA, class SrcAoSoA>
-struct DeepCopyByMember<0,DstAoSoA,SrcAoSoA>
-{
-    static void copy(
-        DstAoSoA& dst,
-        const SrcAoSoA& src,
-        typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
-                                 is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
-    {
-        auto dst_slice = dst.template view<0>();
-        auto src_slice = src.template view<0>();
-        deepCopySlice( dst_slice, src_slice, false );
-    }
-};
-
-template<std::size_t M, class DstAoSoA, class SrcAoSoA>
-struct DeepCopyByMember
-{
-    static void copy(
-        DstAoSoA& dst,
-        const SrcAoSoA& src,
-        typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
-                                 is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
-    {
-        auto dst_slice = dst.template view<M>();
-        auto src_slice = src.template view<M>();
-        deepCopySlice( dst_slice, src_slice, false );
-        DeepCopyByMember<M-1,DstAoSoA,SrcAoSoA>::copy( dst, src );
-    }
-};
-
-//---------------------------------------------------------------------------//
-
-} // end namepsace Impl
-
 //---------------------------------------------------------------------------//
 /*!
   \brief Deep copy data between compatible AoSoA objects.
@@ -274,11 +113,13 @@ inline void deep_copy(
             src_num_soa * sizeof(src_soa_type) );
         Kokkos::fence();
 
-        // Iterate through members and copy the source copy to the destination
-        // in the destination memory space.
-        Impl::DeepCopyByMember<dst_type::number_of_members-1,
-                               DstAoSoA,
-                               src_mirror_type>::copy( dst, src_copy_on_dst );
+        // Copy via particles.
+        auto copy_func =
+            KOKKOS_LAMBDA( const int i )
+            { dst.setParticle( i, src_copy_on_dst.getParticle(i) ); };
+        Kokkos::RangePolicy<typename dst_memory_space::execution_space>
+            exec_policy( 0, dst.size() );
+        Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
         Kokkos::fence();
     }
 }
