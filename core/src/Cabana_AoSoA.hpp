@@ -435,7 +435,12 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     }
 
     /*!
-      \brief Get an unmanaged view of a particle field.
+      \brief Get an unmanaged view of a particle field with the given tag and
+      memory traits.
+      \param The tag identifying which field to get a view of.
+      \param The tag identifying which type of memory access traits the view
+      should have.
+      \return The field view.
     */
     template<std::size_t Field, typename MemoryAccessType>
     MemberSlice<member_data_type<Field>,
@@ -443,7 +448,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
                 typename traits::memory_space,
                 MemoryAccessType,
                 array_size>
-
     view( MemberTag<Field>, MemoryAccessType ) const
     {
         return
@@ -459,6 +463,8 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     /*!
       \brief Get an unmanaged view of a particle field with default memory
       access.
+      \param The tag identifying which field to get a view of.
+      \return The field view.
     */
     template<std::size_t Field>
     MemberSlice<member_data_type<Field>,
