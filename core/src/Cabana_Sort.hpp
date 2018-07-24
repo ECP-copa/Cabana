@@ -198,34 +198,6 @@ class CartesianGrid3dBinningData
 namespace Impl
 {
 //---------------------------------------------------------------------------//
-// Sort members of an AoSoA recursively.
-template<class AoSoA_t, class BinSort>
-void sortMember( AoSoA_t aosoa,
-                 const BinSort& bin_sort,
-                 const int begin,
-                 const int end,
-                 MemberTag<0> )
-{
-    auto member = aosoa.template view<0>();
-    bin_sort.sort( member, begin, end );
-}
-
-template<std::size_t M, class AoSoA_t, class BinSort>
-void sortMember( AoSoA_t aosoa,
-                 const BinSort& bin_sort,
-                 const int begin,
-                 const int end,
-                 MemberTag<M> )
-{
-    static_assert( 0 <= M && M < AoSoA_t::number_of_members,
-                   "Static loop out of bounds!" );
-    auto member = aosoa.template view<M>();
-    bin_sort.sort( member, begin, end );
-    sortMember( aosoa, bin_sort, begin, end,
-                MemberTag<M-1>() );
-}
-
-//---------------------------------------------------------------------------//
 // Sort an AoSoA over a subset of its range using a comparator over the given
 // Kokkos View of keys.
 template<class AoSoA_t, class KeyViewType, class Comparator>
@@ -245,12 +217,31 @@ kokkosBinSort(
     Kokkos::BinSort<KeyViewType,Comparator> bin_sort(
         keys, begin, end, comp, sort_within_bins );
     bin_sort.create_permute_vector();
+    auto permute_vector = bin_sort.get_permute_vector();
 
     if ( !create_data_only )
     {
-        sortMember(
-            aosoa, bin_sort, begin, end,
-            MemberTag<AoSoA_t::number_of_members-1>() );
+        Kokkos::View<typename AoSoA_t::particle_type*,
+                     typename KeyViewType::memory_space>
+            scratch_particles( "scratch_particles", end - begin );
+
+        auto permute_to_scratch = KOKKOS_LAMBDA( const int i )
+                                  {
+                                      scratch_particles( i - begin ) =
+                                      aosoa.getParticle( permute_vector(i) );
+                                  };
+        Kokkos::parallel_for(
+            "Cabana::kokkosBinSort::permute_to_scratch",
+            Kokkos::RangePolicy<typename KeyViewType::execution_space>(begin,end),
+            permute_to_scratch );
+        Kokkos::fence();
+
+        auto copy_back = KOKKOS_LAMBDA( const int i )
+                         { aosoa.setParticle( i, scratch_particles(i-begin) ); };
+        Kokkos::parallel_for(
+            "Cabana::kokkosBinSort::copy_back",
+            Kokkos::RangePolicy<typename KeyViewType::execution_space>(begin,end),
+            copy_back );
         Kokkos::fence();
     }
 
