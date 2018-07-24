@@ -219,43 +219,22 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // Particle type.
     using particle_type = Particle<member_types>;
 
-    // Struct member type.
-    template<std::size_t Field>
-    using struct_member_type =
-        Impl::StructMember<
-        Field,inner_array_layout,
-        typename MemberDataTypeAtIndex<Field,Types...>::type>;
-
     // Member data type at a given index M. Note this is the user-defined
     // member data type - not the potentially transformed type actually stored
     // by the structs (SoAs) to achieve a given layout.
     template<std::size_t Field>
-    using member_data_type = typename MemberDataTypeAtIndex<Field,Types...>::type;
-
-    // Struct member array return type at a given index M.
-    template<std::size_t Field>
-    using struct_member_array_type =
-        typename struct_member_type<Field>::pointer_type;
-
-    // Struct member array data type at a given index M.
-    template<std::size_t Field>
-    using struct_member_data_type =
-        typename std::remove_pointer<struct_member_array_type<Field> >::type;
+    using member_data_type =
+        typename MemberDataTypeAtIndex<Field,Types...>::type;
 
     // Struct member array element value type at a given index M.
     template<std::size_t Field>
-    using struct_member_value_type =
-        typename std::remove_all_extents<struct_member_data_type<Field> >::type;
-
-    // Struct member array element reference type at a given index M.
-    template<std::size_t Field>
-    using struct_member_reference_type =
-        typename std::add_lvalue_reference<struct_member_value_type<Field> >::type;
+    using member_value_type =
+        typename std::remove_all_extents<member_data_type<Field> >::type;
 
     // Struct member array element pointer type at a given index M.
     template<std::size_t Field>
-    using struct_member_pointer_type =
-        typename std::add_pointer<struct_member_value_type<Field> >::type;
+    using member_pointer_type =
+        typename std::add_pointer<member_value_type<Field> >::type;
 
   public:
 
@@ -473,7 +452,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
                         typename traits::memory_space,
                         MemoryAccessType,
                         array_size>(
-                            (struct_member_pointer_type<Field>) _pointers[Field],
+                            (member_pointer_type<Field>) _pointers[Field],
                             _size, _strides[Field], _num_soa );
     }
 
@@ -495,7 +474,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
                         typename traits::memory_space,
                         DefaultAccessMemory,
                         array_size>(
-                            (struct_member_pointer_type<Field>) _pointers[Field],
+                            (member_pointer_type<Field>) _pointers[Field],
                             _size, _strides[Field], _num_soa );
     }
 
@@ -518,9 +497,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         _pointers[N] =
             static_cast<void*>( Impl::getStructMember<N>(_data[0]) );
         static_assert( 0 ==
-                       sizeof(soa_type) % sizeof(struct_member_value_type<N>),
+                       sizeof(soa_type) % sizeof(member_value_type<N>),
                        "Stride cannot be calculated for misaligned memory!" );
-        _strides[N] = sizeof(soa_type) / sizeof(struct_member_value_type<N>);
+        _strides[N] = sizeof(soa_type) / sizeof(member_value_type<N>);
     }
 
     // Static loop through each member element to extract pointers and strides.
@@ -540,7 +519,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (0==std::rank<struct_member_data_type<M> >::value),void>::type
+        (0==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -553,7 +532,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (1==std::rank<struct_member_data_type<M> >::value),void>::type
+        (1==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -568,7 +547,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (2==std::rank<struct_member_data_type<M> >::value),void>::type
+        (2==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -584,7 +563,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (3==std::rank<struct_member_data_type<M> >::value),void>::type
+        (3==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -601,7 +580,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (4==std::rank<struct_member_data_type<M> >::value),void>::type
+        (4==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -641,7 +620,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (0==std::rank<struct_member_data_type<M> >::value),void>::type
+        (0==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
@@ -653,7 +632,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (1==std::rank<struct_member_data_type<M> >::value),void>::type
+        (1==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
@@ -667,7 +646,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (2==std::rank<struct_member_data_type<M> >::value),void>::type
+        (2==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
@@ -682,7 +661,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (3==std::rank<struct_member_data_type<M> >::value),void>::type
+        (3==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index, const
                           particle_type& particle ) const
     {
@@ -698,7 +677,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (4==std::rank<struct_member_data_type<M> >::value),void>::type
+        (4==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {

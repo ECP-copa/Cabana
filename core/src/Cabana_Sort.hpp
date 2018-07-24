@@ -828,11 +828,11 @@ binByCartesianGrid3d(
     const bool create_data_only,
     const int begin,
     const int end,
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_delta[3],
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_min[3],
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_max[3],
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 
@@ -903,11 +903,11 @@ binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
     const bool create_data_only,
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_delta[3],
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_min[3],
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_max[3],
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
