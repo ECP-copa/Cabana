@@ -208,18 +208,18 @@ void run()
     ParticleList x9_( num_particle );
 
     // Get a view of the x position field from each particle list.
-    auto ma = a_.view<PositionX>();
-    auto mc = c_.view<PositionX>();
-    auto m0 = x_.view<PositionX>();
-    auto m1 = x1_.view<PositionX>();
-    auto m2 = x2_.view<PositionX>();
-    auto m3 = x3_.view<PositionX>();
-    auto m4 = x4_.view<PositionX>();
-    auto m5 = x5_.view<PositionX>();
-    auto m6 = x6_.view<PositionX>();
-    auto m7 = x7_.view<PositionX>();
-    auto m8 = x8_.view<PositionX>();
-    auto m9 = x9_.view<PositionX>();
+    auto ma = a_.view( Cabana::MemberTag<PositionX>() );
+    auto mc = c_.view( Cabana::MemberTag<PositionX>() );
+    auto m0 = x_.view( Cabana::MemberTag<PositionX>() );
+    auto m1 = x1_.view( Cabana::MemberTag<PositionX>() );
+    auto m2 = x2_.view( Cabana::MemberTag<PositionX>() );
+    auto m3 = x3_.view( Cabana::MemberTag<PositionX>() );
+    auto m4 = x4_.view( Cabana::MemberTag<PositionX>() );
+    auto m5 = x5_.view( Cabana::MemberTag<PositionX>() );
+    auto m6 = x6_.view( Cabana::MemberTag<PositionX>() );
+    auto m7 = x7_.view( Cabana::MemberTag<PositionX>() );
+    auto m8 = x8_.view( Cabana::MemberTag<PositionX>() );
+    auto m9 = x9_.view( Cabana::MemberTag<PositionX>() );
 
     // Initialize particle data.
     long seed = 76843802738543;

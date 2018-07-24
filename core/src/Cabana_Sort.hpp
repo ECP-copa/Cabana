@@ -682,8 +682,7 @@ sortByMember(
     const int end,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    std::ignore = member_tag;
-    auto keys = Impl::copySliceToKeys( aosoa.template view<Member>() );
+    auto keys = Impl::copySliceToKeys( aosoa.view(member_tag) );
     return sortByKey( aosoa, keys, create_permute_vector_only, begin, end );
 }
 
@@ -754,8 +753,7 @@ binByMember(
     const int end,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    std::ignore = member_tag;
-    auto keys = Impl::copySliceToKeys( aosoa.template view<Member>() );
+    auto keys = Impl::copySliceToKeys( aosoa.view(member_tag) );
     return binByKey( aosoa, keys, nbin, create_data_only, begin, end );
 }
 
@@ -839,10 +837,8 @@ binByCartesianGrid3d(
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 
 {
-    std::ignore = position_member;
-
     // Get the positions.
-    auto position = aosoa.template view<PositionMember>();
+    auto position = aosoa.view( position_member );
     using PositionSlice = decltype(position);
 
     // Copy the positions into a Kokkos view. For now we need to do this

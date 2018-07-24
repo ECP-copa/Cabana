@@ -54,13 +54,13 @@ void perfTest()
     AoSoA_t aosoa( num_data );
 
     // Make some slices.
-    auto m1 = aosoa.view<M1>();
-    auto m2 = aosoa.view<M2>();
-    auto v1 = aosoa.view<V1>();
-    auto v2 = aosoa.view<V2>();
-    auto result = aosoa.view<RESULT>();
-    auto s1 = aosoa.view<S1>();
-    auto s2 = aosoa.view<S2>();
+    auto m1 = aosoa.view( Cabana::MemberTag<M1>() );
+    auto m2 = aosoa.view( Cabana::MemberTag<M2>() );
+    auto v1 = aosoa.view( Cabana::MemberTag<V1>() );
+    auto v2 = aosoa.view( Cabana::MemberTag<V2>() );
+    auto result = aosoa.view( Cabana::MemberTag<RESULT>() );
+    auto s1 = aosoa.view( Cabana::MemberTag<S1>() );
+    auto s2 = aosoa.view( Cabana::MemberTag<S2>() );
 
     // Create an execution policy over the entire AoSoA.
     Cabana::RangePolicy<array_size,ExecutionSpace> range_policy( aosoa );

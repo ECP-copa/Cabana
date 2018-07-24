@@ -8,6 +8,50 @@
 namespace Test
 {
 //---------------------------------------------------------------------------//
+// Initialize data members
+template<class aosoa_type>
+void initializeDataMembers(
+    aosoa_type aosoa,
+    const float fval, const double dval, const int ival,
+    const int dim_1, const int dim_2,
+    const int dim_3, const int dim_4 )
+{
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
+
+    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    {
+        // Member 0.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    view_0( idx, i, j, k ) = fval * (i+j+k);
+
+        // Member 1.
+        view_1( idx ) = ival;
+
+        // Member 2.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    for ( int l = 0; l < dim_4; ++l )
+                        view_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+
+        // Member 3.
+        for ( int i = 0; i < dim_1; ++i )
+            view_3( idx, i ) = dval * i;
+
+        // Member 4.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                view_4( idx, i, j ) = dval * (i+j);
+    }
+}
+
+//---------------------------------------------------------------------------//
 // Check the data given a set of values.
 template<class aosoa_type>
 void checkDataMembers(
@@ -16,11 +60,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.template view<0>();
-    auto view_1 = aosoa.template view<1>();
-    auto view_2 = aosoa.template view<2>();
-    auto view_3 = aosoa.template view<3>();
-    auto view_4 = aosoa.template view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -54,9 +98,9 @@ void checkDataMembers(
 }
 
 //---------------------------------------------------------------------------//
-// Test function
+// API test function
 template<typename DataLayout>
-void runTest()
+void apiTest()
 {
     // Manually set the inner array size with the test layout.
     using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
@@ -82,11 +126,11 @@ void runTest()
     AoSoA_t aosoa( num_data );
 
     // Create some slices.
-    auto slice_0 = aosoa.template view<0>();
-    auto slice_1 = aosoa.template view<1>();
-    auto slice_2 = aosoa.template view<2>();
-    auto slice_3 = aosoa.template view<3>();
-    auto slice_4 = aosoa.template view<4>();
+    auto slice_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto slice_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto slice_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto slice_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto slice_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     // Check that they are slices.
     EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_0)>::value );
@@ -141,33 +185,8 @@ void runTest()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    slice_0( idx, i, j, k ) = fval * (i+j+k);
-
-        // Member 1.
-        slice_1( idx ) = ival;
-
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
-
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            slice_3( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                slice_4( idx, i, j ) = dval * (i+j);
-    }
+    initializeDataMembers(
+        aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
@@ -261,17 +280,160 @@ void runTest()
 }
 
 //---------------------------------------------------------------------------//
-// RUN TESTS
-//---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, slice_layout_right_test )
+// Random access function
+template<typename DataLayout>
+void randomAccessTest()
 {
-    runTest<Kokkos::LayoutRight>();
+    // Manually set the inner array size with the test layout.
+    using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
+
+    // Data dimensions.
+    const int dim_1 = 3;
+    const int dim_2 = 2;
+    const int dim_3 = 4;
+    const int dim_4 = 3;
+
+    // Declare data types.
+    using DataTypes =
+        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
+                                int,
+                                float[dim_1][dim_2][dim_3][dim_4],
+                                double[dim_1],
+                                double[dim_1][dim_2]
+                                >;
+
+    // Create an AoSoA.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    int num_data = 35;
+    AoSoA_t aosoa( num_data );
+
+    // Initialize data.
+    float fval = 3.4;
+    double dval = 1.23;
+    int ival = 1;
+    initializeDataMembers(
+        aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+
+    // Create read-only random access slices.
+    auto ra_view_0 = aosoa.view( Cabana::MemberTag<0>(),
+                                 Cabana::RandomAccessMemory() );
+    auto ra_view_1 = aosoa.view( Cabana::MemberTag<1>(),
+                                 Cabana::RandomAccessMemory() );
+    auto ra_view_2 = aosoa.view( Cabana::MemberTag<2>(),
+                                 Cabana::RandomAccessMemory() );
+    auto ra_view_3 = aosoa.view( Cabana::MemberTag<3>(),
+                                 Cabana::RandomAccessMemory() );
+    auto ra_view_4 = aosoa.view( Cabana::MemberTag<4>(),
+                                 Cabana::RandomAccessMemory() );
+
+    // Create a second aosoa.
+    AoSoA_t aosoa_2( num_data );
+
+    // Get normal views of the data.
+    auto view_0 = aosoa_2.view( Cabana::MemberTag<0>(),
+                                Cabana::DefaultAccessMemory() );
+    auto view_1 = aosoa_2.view( Cabana::MemberTag<1>(),
+                                Cabana::DefaultAccessMemory() );
+    auto view_2 = aosoa_2.view( Cabana::MemberTag<2>(),
+                                Cabana::DefaultAccessMemory() );
+    auto view_3 = aosoa_2.view( Cabana::MemberTag<3>(),
+                                Cabana::DefaultAccessMemory() );
+    auto view_4 = aosoa_2.view( Cabana::MemberTag<4>(),
+                                Cabana::DefaultAccessMemory() );
+
+    // Assign the read-only data to the new aosoa.
+    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    {
+        // Member 0.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    view_0( idx, i, j, k ) = ra_view_0( idx, i, j, k );
+
+        // Member 1.
+        view_1( idx ) = ra_view_1( idx );
+
+        // Member 2.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    for ( int l = 0; l < dim_4; ++l )
+                        view_2( idx, i, j, k, l ) =
+                            ra_view_2( idx, i, j, k, l );
+
+        // Member 3.
+        for ( int i = 0; i < dim_1; ++i )
+            view_3( idx, i ) = ra_view_3( idx, i );
+
+        // Member 4.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                view_4( idx, i, j ) = ra_view_4( idx, i, j );
+    }
+
+    // Check data members for proper assignment.
+    checkDataMembers( aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, slice_layout_left_test )
+// Random access function
+template<typename DataLayout>
+void atomicAccessTest()
 {
-    runTest<Kokkos::LayoutLeft>();
+    // Manually set the inner array size with the test layout.
+    using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
+
+    // Declare data types.
+    using DataTypes = Cabana::MemberDataTypes<int>;
+
+    // Create an AoSoA.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    int num_data = 35;
+    AoSoA_t aosoa( num_data );
+
+    // Get a view of the data.
+    auto view = aosoa.view( Cabana::MemberTag<0>() );
+
+    // Set to 0.
+    for ( int i = 0; i < num_data; ++i ) view( i ) = 0;
+
+    // Get an atomic view of the data.
+    auto atomic_view = aosoa.view( Cabana::MemberTag<0>(),
+                                   Cabana::AtomicAccessMemory() );
+
+    // Have every thread increment all elements of the view.
+    auto increment_op =
+        KOKKOS_LAMBDA( const int i )
+        {
+            for ( int j = 0; j < num_data; ++j ) atomic_view( j ) += 1;
+        };
+    Kokkos::parallel_for( num_data, increment_op );
+
+    // Check the results of the atomic increment.
+    for ( int i = 0; i < num_data; ++i ) EXPECT_EQ( view(i), num_data );
+}
+
+//---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, api_test )
+{
+    apiTest<Kokkos::LayoutRight>();
+    apiTest<Kokkos::LayoutLeft>();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, random_access_test )
+{
+    randomAccessTest<Kokkos::LayoutRight>();
+    randomAccessTest<Kokkos::LayoutLeft>();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, atomic_access_test )
+{
+    atomicAccessTest<Kokkos::LayoutRight>();
+    atomicAccessTest<Kokkos::LayoutLeft>();
 }
 
 //---------------------------------------------------------------------------//

@@ -56,12 +56,12 @@ using ParticleList = Cabana::AoSoA<ParticleDataTypes,ArrayLayout,MemorySpace>;
 // Function to intitialize the particles.
 void initializeParticles( ParticleList particles )
 {
-    auto position_x = particles.view<PositionX>();
-    auto position_y = particles.view<PositionY>();
-    auto position_z = particles.view<PositionZ>();
-    auto velocity = particles.view<Velocity>();
-    auto stress = particles.view<Stress>();
-    auto status = particles.view<Status>();
+    auto position_x = particles.view( Cabana::MemberTag<PositionX>() );
+    auto position_y = particles.view( Cabana::MemberTag<PositionY>() );
+    auto position_z = particles.view( Cabana::MemberTag<PositionZ>() );
+    auto velocity = particles.view( Cabana::MemberTag<Velocity>() );
+    auto stress = particles.view( Cabana::MemberTag<Stress>() );
+    auto status = particles.view( Cabana::MemberTag<Status>() );
 
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
@@ -88,12 +88,12 @@ void initializeParticles( ParticleList particles )
 // Function to print out the data for every particle.
 void printParticles( const ParticleList particles )
 {
-    auto position_x = particles.view<PositionX>();
-    auto position_y = particles.view<PositionY>();
-    auto position_z = particles.view<PositionZ>();
-    auto velocity = particles.view<Velocity>();
-    auto stress = particles.view<Stress>();
-    auto status = particles.view<Status>();
+    auto position_x = particles.view( Cabana::MemberTag<PositionX>() );
+    auto position_y = particles.view( Cabana::MemberTag<PositionY>() );
+    auto position_z = particles.view( Cabana::MemberTag<PositionZ>() );
+    auto velocity = particles.view( Cabana::MemberTag<Velocity>() );
+    auto stress = particles.view( Cabana::MemberTag<Stress>() );
+    auto status = particles.view( Cabana::MemberTag<Status>() );
 
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {

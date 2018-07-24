@@ -329,14 +329,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     using struct_member_pointer_type =
         typename std::add_pointer<struct_member_value_type<Field> >::type;
 
-    // Struct member slice type.
-    template<std::size_t Field>
-    using member_slice_type = MemberSlice<member_data_type<Field>,
-                                          typename inner_array_layout::layout,
-                                          typename traits::memory_space,
-                                          DefaultAccessMemory,
-                                          array_size>;
-
   public:
 
     /*!
@@ -538,12 +530,45 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     /*!
       \brief Get an unmanaged view of a particle field.
     */
-    template<std::size_t Field>
-    member_slice_type<Field> view() const
+    template<std::size_t Field, typename MemoryAccessType>
+    MemberSlice<member_data_type<Field>,
+                typename inner_array_layout::layout,
+                typename traits::memory_space,
+                MemoryAccessType,
+                array_size>
+
+    view( MemberTag<Field>, MemoryAccessType ) const
     {
-        return member_slice_type<Field>(
-            (struct_member_pointer_type<Field>) _pointers[Field],
-            _size, _strides[Field], _num_soa );
+        return
+            MemberSlice<member_data_type<Field>,
+                        typename inner_array_layout::layout,
+                        typename traits::memory_space,
+                        MemoryAccessType,
+                        array_size>(
+                            (struct_member_pointer_type<Field>) _pointers[Field],
+                            _size, _strides[Field], _num_soa );
+    }
+
+    /*!
+      \brief Get an unmanaged view of a particle field with default memory
+      access.
+    */
+    template<std::size_t Field>
+    MemberSlice<member_data_type<Field>,
+                typename inner_array_layout::layout,
+                typename traits::memory_space,
+                DefaultAccessMemory,
+                array_size>
+    view( MemberTag<Field> ) const
+    {
+        return
+            MemberSlice<member_data_type<Field>,
+                        typename inner_array_layout::layout,
+                        typename traits::memory_space,
+                        DefaultAccessMemory,
+                        array_size>(
+                            (struct_member_pointer_type<Field>) _pointers[Field],
+                            _size, _strides[Field], _num_soa );
     }
 
     /*!

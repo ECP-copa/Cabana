@@ -16,11 +16,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.template view<0>();
-    auto view_1 = aosoa.template view<1>();
-    auto view_2 = aosoa.template view<2>();
-    auto view_3 = aosoa.template view<3>();
-    auto view_4 = aosoa.template view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -55,7 +55,12 @@ void checkDataMembers(
 
 //---------------------------------------------------------------------------//
 // Assignment operator.
-template<class AoSoA_t>
+template<class AoSoA_t,
+         class ViewType0,
+         class ViewType1,
+         class ViewType2,
+         class ViewType3,
+         class ViewType4>
 class AssignmentOp
 {
   public:
@@ -64,11 +69,11 @@ class AssignmentOp
                   double dval,
                   int ival )
         : _aosoa( aosoa )
-        , _view_0( aosoa.template view<0>() )
-        , _view_1( aosoa.template view<1>() )
-        , _view_2( aosoa.template view<2>() )
-        , _view_3( aosoa.template view<3>() )
-        , _view_4( aosoa.template view<4>() )
+        , _view_0( aosoa.view(Cabana::MemberTag<0>()) )
+        , _view_1( aosoa.view(Cabana::MemberTag<1>()) )
+        , _view_2( aosoa.view(Cabana::MemberTag<2>()) )
+        , _view_3( aosoa.view(Cabana::MemberTag<3>()) )
+        , _view_4( aosoa.view(Cabana::MemberTag<4>()) )
         , _fval( fval )
         , _dval( dval )
         , _ival( ival )
@@ -109,11 +114,11 @@ class AssignmentOp
   private:
 
     AoSoA_t _aosoa;
-    typename AoSoA_t::template member_slice_type<0> _view_0;
-    typename AoSoA_t::template member_slice_type<1> _view_1;
-    typename AoSoA_t::template member_slice_type<2> _view_2;
-    typename AoSoA_t::template member_slice_type<3> _view_3;
-    typename AoSoA_t::template member_slice_type<4> _view_4;
+    ViewType0 _view_0;
+    ViewType1 _view_1;
+    ViewType2 _view_2;
+    ViewType3 _view_3;
+    ViewType4 _view_4;
     float _fval;
     double _dval;
     int _ival;
@@ -155,10 +160,16 @@ void runTest()
         range_policy( 0, aosoa.size() );
 
     // Create a functor to operate on.
+    using OpType = AssignmentOp<AoSoA_t,
+                                decltype(aosoa.view(Cabana::MemberTag<0>())),
+                                decltype(aosoa.view(Cabana::MemberTag<1>())),
+                                decltype(aosoa.view(Cabana::MemberTag<2>())),
+                                decltype(aosoa.view(Cabana::MemberTag<3>())),
+                                decltype(aosoa.view(Cabana::MemberTag<4>()))>;
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    AssignmentOp<AoSoA_t> func_1( aosoa, fval, dval, ival );
+    OpType func_1( aosoa, fval, dval, ival );
 
     // Loop in parallel using 1D struct parallelism.
     Cabana::parallel_for( range_policy, func_1, Cabana::StructParallelTag() );
@@ -170,7 +181,7 @@ void runTest()
     fval = 93.4;
     dval = 12.1;
     ival = 4;
-    AssignmentOp<AoSoA_t> func_2( aosoa, fval, dval, ival );
+    OpType func_2( aosoa, fval, dval, ival );
 
     // Loop in parallel using 1D array parallelism.
     Cabana::parallel_for( range_policy, func_2, Cabana::ArrayParallelTag() );
@@ -182,7 +193,7 @@ void runTest()
     fval = 7.7;
     dval = 3.2;
     ival = 9;
-    AssignmentOp<AoSoA_t> func_3( aosoa, fval, dval, ival );
+    OpType func_3( aosoa, fval, dval, ival );
 
     // Loop in parallel using 2D struct and array parallelism.
     Cabana::parallel_for(

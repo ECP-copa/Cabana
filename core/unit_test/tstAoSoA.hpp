@@ -16,11 +16,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.template view<0>();
-    auto view_1 = aosoa.template view<1>();
-    auto view_2 = aosoa.template view<2>();
-    auto view_3 = aosoa.template view<3>();
-    auto view_4 = aosoa.template view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -86,11 +86,11 @@ void testAoSoA()
     AoSoA_t aosoa;
 
     // Get field views.
-    auto view_0 = aosoa.template view<0>();
-    auto view_1 = aosoa.template view<1>();
-    auto view_2 = aosoa.template view<2>();
-    auto view_3 = aosoa.template view<3>();
-    auto view_4 = aosoa.template view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
@@ -119,11 +119,11 @@ void testAoSoA()
 
     // Get field views again. We invalidated the pointers by resizing the
     // views.
-    view_0 = aosoa.template view<0>();
-    view_1 = aosoa.template view<1>();
-    view_2 = aosoa.template view<2>();
-    view_3 = aosoa.template view<3>();
-    view_4 = aosoa.template view<4>();
+    view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -226,11 +226,11 @@ void testRawDataLayoutRight()
     AoSoA_t aosoa( num_data );
 
     // Get views of fields.
-    auto view_0 = aosoa.view<0>();
-    auto view_1 = aosoa.view<1>();
-    auto view_2 = aosoa.view<2>();
-    auto view_3 = aosoa.view<3>();
-    auto view_4 = aosoa.view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     // Get raw pointers to the data as one would in a C interface (no templates).
     float* p0 = view_0.data();
@@ -321,11 +321,11 @@ void testRawDataLayoutLeft()
     AoSoA_t aosoa( num_data );
 
     // Get views of fields.
-    auto view_0 = aosoa.view<0>();
-    auto view_1 = aosoa.view<1>();
-    auto view_2 = aosoa.view<2>();
-    auto view_3 = aosoa.view<3>();
-    auto view_4 = aosoa.view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     // Get raw pointers to the data as one would in a C interface (no templates).
     float* p0 = view_0.data();
@@ -421,11 +421,11 @@ void testParticle()
     AoSoA_t aosoa( num_data );
 
     // Initialize aosoa data.
-    auto view_0 = aosoa.view<0>();
-    auto view_1 = aosoa.view<1>();
-    auto view_2 = aosoa.view<2>();
-    auto view_3 = aosoa.view<3>();
-    auto view_4 = aosoa.view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;

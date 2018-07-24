@@ -16,11 +16,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.template view<0>();
-    auto view_1 = aosoa.template view<1>();
-    auto view_2 = aosoa.template view<2>();
-    auto view_3 = aosoa.template view<3>();
-    auto view_4 = aosoa.template view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -87,11 +87,11 @@ void testDeepCopy()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto view_0 = src_aosoa.template view<0>();
-    auto view_1 = src_aosoa.template view<1>();
-    auto view_2 = src_aosoa.template view<2>();
-    auto view_3 = src_aosoa.template view<3>();
-    auto view_4 = src_aosoa.template view<4>();
+    auto view_0 = src_aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = src_aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = src_aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = src_aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = src_aosoa.view( Cabana::MemberTag<4>() );
     for ( auto idx = 0; idx < src_aosoa.size(); ++idx )
     {
         // Member 0.
