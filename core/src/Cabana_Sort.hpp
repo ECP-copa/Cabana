@@ -847,7 +847,7 @@ binByCartesianGrid3d(
     using KeyViewType = Kokkos::View<typename PositionSlice::value_type**,
                                      typename PositionSlice::memory_space>;
     KeyViewType keys(
-        "position_bin_keys", position.size(), position.extent(2) );
+        "position_bin_keys", position.size(), position.fieldExtent(0) );
     Kokkos::RangePolicy<typename PositionSlice::execution_space>
         exec_policy( 0, position.size() );
     auto copy_op = KOKKOS_LAMBDA( const int i )

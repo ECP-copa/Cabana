@@ -486,7 +486,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
     /*!
       \brief Get an un-typed raw pointer to the entire data block.
-
       \return An un-typed raw-pointer to the entire data block.
     */
     void* ptr() const
