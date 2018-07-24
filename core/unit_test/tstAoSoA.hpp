@@ -240,15 +240,15 @@ void testRawDataLayoutRight()
     double* p4 = view_4.data();
 
     // Get the strides between the member arrays.
-    int st0 = view_0.stride();
-    int st1 = view_1.stride();
-    int st2 = view_2.stride();
-    int st3 = view_3.stride();
-    int st4 = view_4.stride();
+    int st0 = view_0.stride(0);
+    int st1 = view_1.stride(0);
+    int st2 = view_2.stride(0);
+    int st3 = view_3.stride(0);
+    int st4 = view_4.stride(0);
 
     // Member 2 is multidimensional so get its extents.
-    int m2e0 = view_2.extent(1);
-    int m2e1 = view_2.extent(2);
+    int m2e0 = view_2.extent(2);
+    int m2e1 = view_2.extent(3);
     EXPECT_EQ( m2e0, dim_1 );
     EXPECT_EQ( m2e1, dim_2 );
 
@@ -335,15 +335,15 @@ void testRawDataLayoutLeft()
     double* p4 = view_4.data();
 
     // Get the strides between the member arrays.
-    int st0 = view_0.stride();
-    int st1 = view_1.stride();
-    int st2 = view_2.stride();
-    int st3 = view_3.stride();
-    int st4 = view_4.stride();
+    int st0 = view_0.stride(0);
+    int st1 = view_1.stride(0);
+    int st2 = view_2.stride(0);
+    int st3 = view_3.stride(0);
+    int st4 = view_4.stride(0);
 
     // Member 2 is multidimensional so get its extents.
-    int m2e0 = view_2.extent(1);
-    int m2e1 = view_2.extent(2);
+    int m2e0 = view_2.extent(2);
+    int m2e1 = view_2.extent(3);
     EXPECT_EQ( m2e0, dim_1 );
     EXPECT_EQ( m2e1, dim_2 );
 
