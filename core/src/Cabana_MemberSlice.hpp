@@ -247,7 +247,7 @@ struct KokkosViewWrapper
   multiple slices from potentially multiple AoSoA containers. Second, it
   eliminates the member index template parameter from the AoSoA get function,
   instead giving an operator() syntax for accessing the member data. Third, it
-  allows for the prescription of data with a given set of access traits.
+  allows for the prescription of a given set of access traits for the data.
 */
 //---------------------------------------------------------------------------//
 template<typename DataType,
