@@ -5,6 +5,7 @@
 #include <Cabana_MemberSlice.hpp>
 #include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Particle.hpp>
+#include <Cabana_Spaces.hpp>
 #include <impl/Cabana_SoA.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
@@ -19,30 +20,6 @@
 
 namespace Cabana
 {
-//---------------------------------------------------------------------------//
-// Memory space tags.
-//---------------------------------------------------------------------------//
-
-//! Host memory space
-struct HostSpace
-{
-    using memory_space_type = HostSpace;
-    using kokkos_memory_space = Kokkos::HostSpace;
-    using kokkos_execution_space =
-        typename kokkos_memory_space::execution_space;
-};
-
-#if defined( KOKKOS_ENABLE_CUDA )
-//! Cuda UVM memory space
-struct CudaUVMSpace
-{
-    using memory_space_type = CudaUVMSpace;
-    using kokkos_memory_space = Kokkos::CudaUVMSpace;
-    using kokkos_execution_space =
-        typename kokkos_memory_space::execution_space;
-};
-#endif
-
 //---------------------------------------------------------------------------//
 /*!
   \class AoSoA
@@ -101,7 +78,7 @@ class AoSoA
     using member_types = DataTypes;
 
     // Memory space.
-    using memory_space = MemorySpace::kokkos_memory_space;
+    using memory_space = MemorySpace;
 
     // Inner array layout.
     using inner_array_layout = DataLayout;

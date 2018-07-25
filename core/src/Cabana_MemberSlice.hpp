@@ -2,6 +2,7 @@
 #define CABANA_MEMBERSLICE_HPP
 
 #include <Cabana_InnerArrayLayout.hpp>
+#include <Cabana_Spaces.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_TypeTraits.hpp>
 
@@ -12,37 +13,6 @@
 
 namespace Cabana
 {
-//---------------------------------------------------------------------------//
-// Memory access tags for particle fields.
-//---------------------------------------------------------------------------//
-
-//! Default memory access. Default memory is restricted to prevent aliasing in
-//! the larger AoSoA memory block to allow for potential vectorization.
-struct DefaultAccessMemory
-{
-    using memory_access_type = DefaultAccessMemory;
-    using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
-                                                       Kokkos::Restrict >;
-};
-
-//! Random access memory. Read-only and const with limited spatial locality.
-struct RandomAccessMemory
-{
-    using memory_access_type = RandomAccessMemory;
-    using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
-                                                       Kokkos::RandomAccess >;
-};
-
-//! Atomic memory access. All reads and writes are atomic.
-struct AtomicAccessMemory
-{
-    using memory_access_type = AtomicAccessMemory;
-    using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
-                                                       Kokkos::Atomic >;
-};
-
-//---------------------------------------------------------------------------//
-
 namespace Impl
 {
 //---------------------------------------------------------------------------//
