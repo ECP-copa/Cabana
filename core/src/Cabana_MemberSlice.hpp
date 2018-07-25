@@ -16,9 +16,8 @@ namespace Cabana
 // Memory access tags for particle fields.
 //---------------------------------------------------------------------------//
 
-//! Default memory access. Default memory (and all memory) is unmanaged in
-//! Kokkos and restricted to prevent aliasing in the larger AoSoA memory
-//! block.
+//! Default memory access. Default memory is restricted to prevent aliasing in
+//! the larger AoSoA memory block for potential vectorization.
 struct DefaultAccessMemory
 {
     using memory_access_type = DefaultAccessMemory;
