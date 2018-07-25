@@ -77,7 +77,7 @@ void testAoSoA()
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
 
     // Make sure that it is actually an AoSoA.
     EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
@@ -219,7 +219,7 @@ void testRawDataLayoutRight()
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;
@@ -314,7 +314,7 @@ void testRawDataLayoutLeft()
                                 double>;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;

@@ -20,109 +20,28 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-/*!
+// Memory space tags.
+//---------------------------------------------------------------------------//
 
-  \class AoSoATraits
-
-  \brief Traits class for accessing attributes of a AoSoA.
-
-  These traits define the template parameter structure of an AoSoA.
-
-  The following are valid template argument options:
-
-  - AoSoA< DataTypes >
-  - AoSoA< DataTypes , Space >
-  - AoSoA< DataTypes , StaticInnerArrayLayout >
-  - AoSoA< DataTypes , StaticInnerArrayLayout , Space >
-
-  Note that this is effectively a reimplementation of Kokkos::ViewTraits for
-  the AoSoA with ArrayLayout replaced by InnerStaticInnerArrayLayout.
-*/
-template<class DataTypes, class ... Properties>
-class AoSoATraits ;
-
-// Void specialization.
-template<>
-class AoSoATraits<void>
+//! Host memory space
+struct HostSpace
 {
-  public:
-    using execution_space = void;
-    using memory_space = void;
-    using inner_array_layout = void;
+    using memory_space_type = HostSpace;
+    using kokkos_memory_space = Kokkos::HostSpace;
+    using kokkos_execution_space =
+        typename kokkos_memory_space::execution_space;
 };
 
-// Extract the array layout.
-template<class StaticInnerArrayLayout, class ... Properties>
-class AoSoATraits<
-    typename std::enable_if<is_inner_array_layout<StaticInnerArrayLayout>::value>::type,
-    StaticInnerArrayLayout, Properties...>
+#if defined( KOKKOS_ENABLE_CUDA )
+//! Cuda UVM memory space
+struct CudaUVMSpace
 {
-  public:
-    using execution_space = typename AoSoATraits<void,Properties...>::execution_space;
-    using memory_space = typename AoSoATraits<void,Properties...>::memory_space;
-    using inner_array_layout = StaticInnerArrayLayout;
+    using memory_space_type = CudaUVMSpace;
+    using kokkos_memory_space = Kokkos::CudaUVMSpace;
+    using kokkos_execution_space =
+        typename kokkos_memory_space::execution_space;
 };
-
-// Extract the space - either a Kokkos memory space or execution space. Can be
-// one or the other but not both.
-template<class Space, class ... Properties>
-class AoSoATraits<
-    typename std::enable_if<Kokkos::Impl::is_space<Space>::value>::type,
-    Space, Properties ...>
-{
-  public:
-    static_assert(
-        std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::inner_array_layout,void>::value
-        , "Only one AoSoA Execution or Memory Space template argument" );
-
-    using execution_space = typename Space::execution_space;
-    using memory_space = typename Space::memory_space;
-    using inner_array_layout = typename Impl::PerformanceTraits<execution_space>::inner_array_layout;
-};
-
-// Set the traits for a given set of properties.
-template<class DataTypes, class ... Properties>
-class AoSoATraits
-{
-  private:
-
-    typedef AoSoATraits<void,Properties...>  properties;
-
-    using ExecutionSpace =
-        typename
-        std::conditional<
-        !std::is_same<typename properties::execution_space,void>::value,
-        typename properties::execution_space,
-        Kokkos::DefaultExecutionSpace
-        >::type;
-
-    using MemorySpace =
-        typename std::conditional<
-        !std::is_same<typename properties::memory_space,void>::value,
-        typename properties::memory_space,
-        typename ExecutionSpace::memory_space
-        >::type;
-
-    using StaticInnerArrayLayout =
-        typename std::conditional<
-        !std::is_same<typename properties::inner_array_layout,void>::value,
-        typename properties::inner_array_layout,
-        typename Impl::PerformanceTraits<ExecutionSpace>::inner_array_layout
-        >::type;
-
-  public:
-
-    using data_types = DataTypes;
-    using execution_space = ExecutionSpace;
-    using memory_space = MemorySpace;
-    using device_type = Kokkos::Device<ExecutionSpace,MemorySpace>;
-    using size_type = typename memory_space::size_type;
-    using inner_array_layout = StaticInnerArrayLayout;
-
-    static constexpr std::size_t array_size = StaticInnerArrayLayout::size;
-};
+#endif
 
 //---------------------------------------------------------------------------//
 /*!
@@ -167,45 +86,31 @@ class AoSoATraits
   the AoSoA. If not specified, this defaults to the preferred layout for the
   <tt>Space</tt>.
  */
-template<typename DataTypes, typename ... Properties>
-class AoSoA;
-
-//---------------------------------------------------------------------------//
-// Static type checker.
-template<class >
-struct is_aosoa : public std::false_type {};
-
-template<class DataTypes, class ... Properties>
-struct is_aosoa<AoSoA<DataTypes,Properties...> >
-    : public std::true_type {};
-
-template<class DataTypes, class ... Properties>
-struct is_aosoa<const AoSoA<DataTypes,Properties...> >
-    : public std::true_type {};
-
-//---------------------------------------------------------------------------//
-template<class ... Types, class ... Properties>
-class AoSoA<MemberDataTypes<Types...>,Properties...>
+template<class DataTypes,
+         class MemorySpace,
+         class DataLayout = typename Impl::PerformanceTraits<
+             typename MemorySpace::execution_space>::inner_array_layout>
+class AoSoA
 {
   public:
 
-    // Traits.
-    using traits = AoSoATraits<MemberDataTypes<Types...>,Properties...>;
-
     // AoSoA type.
-    using aosoa_type = AoSoA<MemberDataTypes<Types...>,Properties...>;
-
-    // Inner array layout.
-    using inner_array_layout = typename traits::inner_array_layout;
-
-    // Inner array size (size of the arrays held by the structs).
-    static constexpr int array_size = traits::array_size;
-
-    // SoA type.
-    using soa_type = Impl::SoA<inner_array_layout,Types...>;
+    using aosoa_type = AoSoA<DataTypes,MemorySpace,DataLayout>;
 
     // Member data types.
-    using member_types = MemberDataTypes<Types...>;
+    using member_types = DataTypes;
+
+    // Memory space.
+    using memory_space = MemorySpace::kokkos_memory_space;
+
+    // Inner array layout.
+    using inner_array_layout = DataLayout;
+
+    // Inner array size (size of the arrays held by the structs).
+    static constexpr int array_size = inner_array_layout::size;
+
+    // SoA type.
+    using soa_type = Impl::SoA<inner_array_layout,member_types>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
@@ -224,7 +129,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // by the structs (SoAs) to achieve a given layout.
     template<std::size_t Field>
     using member_data_type =
-        typename MemberDataTypeAtIndex<Field,Types...>::type;
+        typename MemberDataTypeAtIndex<Field,member_types>::type;
 
     // Struct member array element value type at a given index M.
     template<std::size_t Field>
@@ -346,9 +251,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
         // Allocate a new block of memory.
         std::shared_ptr<soa_type> sp(
-            (soa_type*) Kokkos::kokkos_malloc<typename traits::memory_space>(
+            (soa_type*) Kokkos::kokkos_malloc<memory_space>(
                 num_soa_alloc * sizeof(soa_type)),
-            Kokkos::kokkos_free<typename traits::memory_space> );
+            Kokkos::kokkos_free<memory_space> );
 
         // Fence before continuing to ensure the allocation is completed.
         Kokkos::fence();
@@ -359,9 +264,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         if ( _managed_data != nullptr )
         {
             Kokkos::Impl::DeepCopy<
-                typename traits::memory_space,
-                typename traits::memory_space,
-                typename traits::execution_space>(
+                memory_space,
+                memory_space,
+                typename memory_space::execution_space>(
                     sp.get(), _managed_data.get(), _num_soa * sizeof(soa_type) );
             Kokkos::fence();
         }
@@ -445,7 +350,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t Field, typename MemoryAccessType>
     MemberSlice<member_data_type<Field>,
                 typename inner_array_layout::layout,
-                typename traits::memory_space,
+                memory_space,
                 MemoryAccessType,
                 array_size>
     view( MemberTag<Field>, MemoryAccessType ) const
@@ -453,7 +358,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         return
             MemberSlice<member_data_type<Field>,
                         typename inner_array_layout::layout,
-                        typename traits::memory_space,
+                        memory_space,
                         MemoryAccessType,
                         array_size>(
                             (member_pointer_type<Field>) _pointers[Field],
@@ -469,7 +374,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t Field>
     MemberSlice<member_data_type<Field>,
                 typename inner_array_layout::layout,
-                typename traits::memory_space,
+                memory_space,
                 DefaultAccessMemory,
                 array_size>
     view( MemberTag<Field> ) const
@@ -477,7 +382,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         return
             MemberSlice<member_data_type<Field>,
                         typename inner_array_layout::layout,
-                        typename traits::memory_space,
+                        memory_space,
                         DefaultAccessMemory,
                         array_size>(
                             (member_pointer_type<Field>) _pointers[Field],
@@ -744,6 +649,19 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // context of the *value_type* of each member.
     int _strides[number_of_members];
 };
+
+//---------------------------------------------------------------------------//
+// Static type checker.
+template<class >
+struct is_aosoa : public std::false_type {};
+
+template<class DataTypes, class MemorySpace, class DataLayout>
+struct is_aosoa<AoSoA<DataTypes,MemorySpace,DataLayout> >
+    : public std::true_type {};
+
+template<class DataTypes, class MemorySpace, class DataLayout>
+struct is_aosoa<const AoSoA<DataTypes,MemorySpace,DataLayout> >
+    : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 

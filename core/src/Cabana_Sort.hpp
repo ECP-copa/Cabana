@@ -673,7 +673,7 @@ binByKey(
   \return The permutation vector associated with the sorting.
 */
 template<std::size_t Member, class AoSoA_t>
-typename BinningData<typename AoSoA_t::traits::memory_space>::OffsetView
+typename BinningData<typename AoSoA_t::memory_space>::OffsetView
 sortByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
@@ -704,7 +704,7 @@ sortByMember(
   \return The permutation vector associated with the sorting.
 */
 template<std::size_t Member, class AoSoA_t>
-typename BinningData<typename AoSoA_t::traits::memory_space>::OffsetView
+typename BinningData<typename AoSoA_t::memory_space>::OffsetView
 sortByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
@@ -743,7 +743,7 @@ sortByMember(
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<std::size_t Member, class AoSoA_t>
-BinningData<typename AoSoA_t::traits::memory_space>
+BinningData<typename AoSoA_t::memory_space>
 binByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
@@ -780,7 +780,7 @@ binByMember(
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<std::size_t Member, class AoSoA_t>
-BinningData<typename AoSoA_t::traits::memory_space>
+BinningData<typename AoSoA_t::memory_space>
 binByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
@@ -821,7 +821,7 @@ binByMember(
   \param grid_max Upper grid bound in each cardinal direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
-CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
+CartesianGrid3dBinningData<typename AoSoA_t::memory_space>
 binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
@@ -869,7 +869,7 @@ binByCartesianGrid3d(
         aosoa, keys, comp, create_data_only, false, begin, end );
 
     // Return the bin data.
-    return CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>(
+    return CartesianGrid3dBinningData<typename AoSoA_t::memory_space>(
         bin_data_1d, nbin );
 }
 
@@ -898,7 +898,7 @@ binByCartesianGrid3d(
   \param grid_max Upper grid bound in each cardinal direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
-CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
+CartesianGrid3dBinningData<typename AoSoA_t::memory_space>
 binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,

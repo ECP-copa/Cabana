@@ -121,7 +121,7 @@ void apiTest()
                                 >;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
@@ -303,7 +303,7 @@ void randomAccessTest()
                                 >;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
@@ -387,7 +387,7 @@ void atomicAccessTest()
     using DataTypes = Cabana::MemberDataTypes<int>;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 

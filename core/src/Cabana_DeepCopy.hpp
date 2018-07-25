@@ -33,12 +33,12 @@ inline void deep_copy(
 {
     using dst_type = DstAoSoA;
     using src_type = SrcAoSoA;
-    using dst_memory_space = typename dst_type::traits::memory_space;
-    using src_memory_space = typename src_type::traits::memory_space;
+    using dst_memory_space = typename dst_type::memory_space;
+    using src_memory_space = typename src_type::memory_space;
     using dst_soa_type = typename dst_type::soa_type;
     using src_soa_type = typename src_type::soa_type;
-    using dst_array_layout = typename dst_type::traits::inner_array_layout;
-    using src_array_layout = typename src_type::traits::inner_array_layout;
+    using dst_array_layout = typename dst_type::inner_array_layout;
+    using src_array_layout = typename src_type::inner_array_layout;
 
     // Check that the data types are the same.
     static_assert(
@@ -95,8 +95,8 @@ inline void deep_copy(
         // Define a AoSoA type in the destination space with the same data
         // layout as the source.
         using src_mirror_type = AoSoA<typename src_type::member_types,
-                                      src_array_layout,
-                                      dst_memory_space>;
+                                      dst_memory_space,
+                                      src_array_layout>;
         static_assert(
             std::is_same<src_soa_type,typename src_mirror_type::soa_type>::value,
             "Incompatible source mirror type in destination space" );

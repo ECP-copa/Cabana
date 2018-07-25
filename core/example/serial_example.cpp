@@ -48,7 +48,7 @@ using MemorySpace = Kokkos::HostSpace;
 using ArrayLayout = Cabana::InnerArrayLayout<32,Kokkos::LayoutRight>;
 
 // Set the type for the particle AoSoA.
-using ParticleList = Cabana::AoSoA<ParticleDataTypes,ArrayLayout,MemorySpace>;
+using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,ArrayLayout>;
 
 //---------------------------------------------------------------------------//
 // Helper functions.

@@ -45,7 +45,7 @@ void perfTest()
                    S2 };
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,MemorySpace>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,inner_array_layout>;
 
     // Set the total problem size.
     std::size_t num_data = 1e7;

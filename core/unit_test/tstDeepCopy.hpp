@@ -75,8 +75,8 @@ void testDeepCopy()
                                 >;
 
     // Declare the AoSoA types.
-    using DstAoSoA_t = Cabana::AoSoA<DataTypes,DstInnerArrayLayout,DstMemorySpace>;
-    using SrcAoSoA_t = Cabana::AoSoA<DataTypes,SrcInnerArrayLayout,SrcMemorySpace>;
+    using DstAoSoA_t = Cabana::AoSoA<DataTypes,DstMemorySpace,DstInnerArrayLayout>;
+    using SrcAoSoA_t = Cabana::AoSoA<DataTypes,SrcMemorySpace,SrcInnerArrayLayout>;
 
     // Create AoSoAs.
     int num_data = 357;

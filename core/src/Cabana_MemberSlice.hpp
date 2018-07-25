@@ -17,7 +17,7 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 
 //! Default memory access. Default memory is restricted to prevent aliasing in
-//! the larger AoSoA memory block for potential vectorization.
+//! the larger AoSoA memory block to allow for potential vectorization.
 struct DefaultAccessMemory
 {
     using memory_access_type = DefaultAccessMemory;
