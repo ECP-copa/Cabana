@@ -1,5 +1,5 @@
-#ifndef CABANA_SPACES_HPP
-#define CABANA_SPACES_HPP
+#ifndef CABANA_TYPES_HPP
+#define CABANA_TYPES_HPP
 
 #include <Kokkos_Core.hpp>
 
@@ -80,7 +80,33 @@ template<>
 struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type {};
 
 //---------------------------------------------------------------------------//
+// Data layouts.
+//---------------------------------------------------------------------------//
+template<class >
+struct is_data_layout : public std::false_type {};
+
+//! Layout right. C or row-major ordering of multidimensional data. The
+//! right-most array index is stride-1.
+struct LayoutRight
+{
+    using data_layout_type = LayoutRight;
+};
+
+template<>
+struct is_data_layout<LayoutRight> : public std::true_type {};
+
+//! Layout left. Fortran or column-major ordering of multidimensional
+//! data. The left-most array index is stride-1.
+struct LayoutLeft
+{
+    using data_layout_type = LayoutLeft;
+};
+
+template<>
+struct is_data_layout<LayoutLeft> : public std::true_type {};
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 
-#endif // end CABANA_SPACES_HPP
+#endif // end CABANA_TYPES_HPP

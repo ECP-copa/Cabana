@@ -1,3 +1,4 @@
+#include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberSlice.hpp>
 #include <Cabana_MemberDataTypes.hpp>
@@ -39,11 +40,11 @@ using ParticleDataTypes =
     Cabana::MemberDataTypes<float>;
 
 // Declare the memory space.
-using MemorySpace = Kokkos::HostSpace;
+using MemorySpace = Cabana::HostSpace;
 
 // Declare the inner array layout.
 using inner_array_layout =
-    Cabana::InnerArrayLayout<VECLENTH,Kokkos::LayoutRight>;
+    Cabana::InnerArrayLayout<VECLENTH,Cabana::LayoutRight>;
 
 // Set the type for the particle AoSoA.
 using ParticleList =

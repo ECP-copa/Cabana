@@ -1,6 +1,8 @@
 #ifndef CABANA_TEST_OPENMP_CATEGORY_HPP
 #define CABANA_TEST_OPENMP_CATEGORY_HPP
 
+#include <Cabana_Types.hpp>
+
 #include <Kokkos_OpenMP.hpp>
 
 #include <gtest/gtest.h>
@@ -20,6 +22,6 @@ protected:
 
 #define TEST_CATEGORY openmp
 #define TEST_EXECSPACE Kokkos::OpenMP
-#define TEST_MEMSPACE Kokkos::OpenMP::memory_space
+#define TEST_MEMSPACE Cabana::HostSpace
 
 #endif // end CABANA_TEST_OPENMP_CATEGORY_HPP

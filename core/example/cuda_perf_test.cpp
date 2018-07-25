@@ -1,3 +1,4 @@
+#include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ExecutionPolicy.hpp>
@@ -13,12 +14,12 @@
 void perfTest()
 {
     // Declare the execution and memory spaces.
-    using MemorySpace = Kokkos::CudaUVMSpace;
+    using MemorySpace = Cabana::CudaUVMSpace;
     using ExecutionSpace = Kokkos::Cuda;
 
     // Declare the inner array layout.
     const int array_size = 32;
-    using array_layout = Kokkos::LayoutLeft;
+    using array_layout = Cabana::LayoutLeft;
     using inner_array_layout =
         Cabana::InnerArrayLayout<array_size,array_layout>;
 

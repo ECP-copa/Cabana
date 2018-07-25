@@ -421,22 +421,22 @@ void atomicAccessTest()
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, api_test )
 {
-    apiTest<Kokkos::LayoutRight>();
-    apiTest<Kokkos::LayoutLeft>();
+    apiTest<Cabana::LayoutRight>();
+    apiTest<Cabana::LayoutLeft>();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, random_access_test )
 {
-    randomAccessTest<Kokkos::LayoutRight>();
-    randomAccessTest<Kokkos::LayoutLeft>();
+    randomAccessTest<Cabana::LayoutRight>();
+    randomAccessTest<Cabana::LayoutLeft>();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, atomic_access_test )
 {
-    atomicAccessTest<Kokkos::LayoutRight>();
-    atomicAccessTest<Kokkos::LayoutLeft>();
+    atomicAccessTest<Cabana::LayoutRight>();
+    atomicAccessTest<Cabana::LayoutLeft>();
 }
 
 //---------------------------------------------------------------------------//

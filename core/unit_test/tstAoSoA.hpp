@@ -1,3 +1,4 @@
+#include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
 #include <impl/Cabana_Index.hpp>
 
@@ -203,7 +204,7 @@ void testAoSoA()
 void testRawDataLayoutRight()
 {
     // Manually set the inner array size.
-    using inner_array_layout = Cabana::InnerArrayLayout<32,Kokkos::LayoutRight>;
+    using inner_array_layout = Cabana::InnerArrayLayout<32,Cabana::LayoutRight>;
 
     // Multi dimensional member sizes.
     const int dim_1 = 3;
@@ -299,7 +300,7 @@ void testRawDataLayoutRight()
 void testRawDataLayoutLeft()
 {
     // Manually set the inner array size.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft>;
+    using inner_array_layout = Cabana::InnerArrayLayout<16,Cabana::LayoutLeft>;
 
     // Multi dimensional member sizes.
     const int dim_1 = 3;
@@ -412,13 +413,15 @@ void testParticle()
     // Declare the particle type.
     using Particle_t = Cabana::Particle<DataTypes>;
 
-    // Create a view of particles.
+    // Create an AoSoA.
     int num_data = 453;
-    Kokkos::View<Particle_t*,TEST_MEMSPACE> particles( "particles", num_data );
-
-    // Create a compatible particle AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_data );
+
+    // Create a view of particles with the same data types.
+    Kokkos::View<Particle_t*,
+                 typename AoSoA_t::memory_space::kokkos_memory_space>
+        particles( "particles", num_data );
 
     // Initialize aosoa data.
     auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
@@ -506,13 +509,13 @@ void testParticle()
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, aosoa_layout_right_test )
 {
-    testAoSoA<Kokkos::LayoutRight>();
+    testAoSoA<Cabana::LayoutRight>();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, aosoa_layout_left_test )
 {
-    testAoSoA<Kokkos::LayoutLeft>();
+    testAoSoA<Cabana::LayoutLeft>();
 }
 
 //---------------------------------------------------------------------------//

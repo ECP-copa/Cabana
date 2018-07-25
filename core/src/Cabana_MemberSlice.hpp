@@ -1,8 +1,9 @@
 #ifndef CABANA_MEMBERSLICE_HPP
 #define CABANA_MEMBERSLICE_HPP
 
+#include <Cabana_Types.hpp>
 #include <Cabana_InnerArrayLayout.hpp>
-#include <Cabana_Spaces.hpp>
+#include <Cabana_Types.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_TypeTraits.hpp>
 
@@ -40,7 +41,7 @@ struct KokkosDataTypeImpl<T,DataLayout,0,VectorLength>
 
 // Rank-1
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,1,VectorLength>
+struct KokkosDataTypeImpl<T,LayoutRight,1,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -56,7 +57,7 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,1,VectorLength>
 };
 
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,1,VectorLength>
+struct KokkosDataTypeImpl<T,LayoutLeft,1,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -73,7 +74,7 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,1,VectorLength>
 
 // Rank-2
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,2,VectorLength>
+struct KokkosDataTypeImpl<T,LayoutRight,2,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -91,7 +92,7 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,2,VectorLength>
 };
 
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,2,VectorLength>
+struct KokkosDataTypeImpl<T,LayoutLeft,2,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -110,7 +111,7 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,2,VectorLength>
 
 // Rank-3
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,3,VectorLength>
+struct KokkosDataTypeImpl<T,LayoutRight,3,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -130,7 +131,7 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,3,VectorLength>
 };
 
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,3,VectorLength>
+struct KokkosDataTypeImpl<T,LayoutLeft,3,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -151,7 +152,7 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,3,VectorLength>
 
 // Rank-4
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,4,VectorLength>
+struct KokkosDataTypeImpl<T,LayoutRight,4,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -173,7 +174,7 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,4,VectorLength>
 };
 
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,4,VectorLength>
+struct KokkosDataTypeImpl<T,LayoutLeft,4,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -278,16 +279,16 @@ class MemberSlice
     using kokkos_view =
         Kokkos::View<typename view_wrapper::data_type,
                      Kokkos::LayoutStride,
-                     MemorySpace,
+                     typename MemorySpace::kokkos_memory_space,
                      typename MemoryAccessType::kokkos_memory_traits>;
 
     // View type aliases.
     using reference_type = typename kokkos_view::reference_type;
     using value_type = typename kokkos_view::value_type;
     using pointer_type = typename kokkos_view::pointer_type;
-    using memory_space = typename kokkos_view::memory_space;
-    using execution_space = typename kokkos_view::execution_space;
-    using device_type = typename kokkos_view::device_type;
+    using kokkos_memory_space = typename kokkos_view::memory_space;
+    using kokkos_execution_space = typename kokkos_view::execution_space;
+    using kokkos_device_type = typename kokkos_view::device_type;
 
   public:
 

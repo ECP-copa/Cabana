@@ -26,7 +26,8 @@ void testSortByKey()
     AoSoA_t aosoa( num_data );
 
     // Create a Kokkos view for the keys.
-    using KeyViewType = Kokkos::View<int*,TEST_MEMSPACE>;
+    using KeyViewType =
+        Kokkos::View<int*,typename AoSoA_t::memory_space::kokkos_memory_space>;
     KeyViewType keys( "keys", num_data );
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
@@ -85,14 +86,16 @@ void testBinByKey()
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type = typename AoSoA_t::memory_space::size_type;
+    using size_type =
+        typename AoSoA_t::memory_space::kokkos_memory_space::size_type;
 
     // Create an AoSoA.
     int num_data = 3453;
     AoSoA_t aosoa( num_data );
 
     // Create a Kokkos view for the keys.
-    using KeyViewType = Kokkos::View<int*,TEST_MEMSPACE>;
+    using KeyViewType =
+        Kokkos::View<int*,typename AoSoA_t::memory_space::kokkos_memory_space>;
     KeyViewType keys( "keys", num_data );
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
@@ -276,7 +279,8 @@ void testBinByMember()
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type = typename AoSoA_t::memory_space::size_type;
+    using size_type =
+        typename AoSoA_t::memory_space::kokkos_memory_space::size_type;
 
     // Create an AoSoA.
     int num_data = 3453;
@@ -341,7 +345,8 @@ void testBinByMemberDataOnly()
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type = typename AoSoA_t::memory_space::size_type;
+    using size_type =
+        typename AoSoA_t::memory_space::kokkos_memory_space::size_type;
 
     // Create an AoSoA.
     int num_data = 3453;
@@ -401,7 +406,8 @@ void testGridBin3d()
     enum MyFields { Position = 0, CellId = 1 };
     using DataTypes = Cabana::MemberDataTypes<double[3],int[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type = typename AoSoA_t::memory_space::size_type;
+    using size_type =
+        typename AoSoA_t::memory_space::kokkos_memory_space::size_type;
     int num_p = 1000;
     AoSoA_t aosoa( num_p );
 

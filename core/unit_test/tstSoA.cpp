@@ -1,5 +1,6 @@
 #include <impl/Cabana_SoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_Types.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -36,7 +37,7 @@ struct FooData
 void testLayoutRight()
 {
     // Declare an array layout.
-    using array_layout = Cabana::InnerArrayLayout<4,Kokkos::LayoutRight>;
+    using array_layout = Cabana::InnerArrayLayout<4,Cabana::LayoutRight>;
 
     // Declare an soa type.
     using member_types = Cabana::MemberDataTypes<double,
@@ -77,7 +78,7 @@ void testLayoutRight()
 void testLayoutLeft()
 {
     // Declare an array layout.
-    using array_layout = Cabana::InnerArrayLayout<4,Kokkos::LayoutLeft>;
+    using array_layout = Cabana::InnerArrayLayout<4,Cabana::LayoutLeft>;
 
     // Declare an soa type.
     using member_types = Cabana::MemberDataTypes<double,

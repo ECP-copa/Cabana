@@ -1,6 +1,7 @@
 #ifndef CABANA_SOA_HPP
 #define CABANA_SOA_HPP
 
+#include <Cabana_Types.hpp>
 #include <Cabana_InnerArrayLayout.hpp>
 #include <impl/Cabana_IndexSequence.hpp>
 #include <Cabana_MemberDataTypes.hpp>
@@ -49,7 +50,7 @@ struct StructMember
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<U>::value &&
-         std::is_same<array_layout,Kokkos::LayoutRight>::value),
+         std::is_same<array_layout,LayoutRight>::value),
         reference_type>::type
     access( StructMember& m,
             const int i,
@@ -60,7 +61,7 @@ struct StructMember
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<U>::value &&
-         std::is_same<array_layout,Kokkos::LayoutLeft>::value),
+         std::is_same<array_layout,LayoutLeft>::value),
         reference_type>::type
     access( StructMember& m,
             const int i,
@@ -72,7 +73,7 @@ struct StructMember
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<U>::value &&
-         std::is_same<array_layout,Kokkos::LayoutRight>::value),
+         std::is_same<array_layout,LayoutRight>::value),
         reference_type>::type
     access( StructMember& m,
             const int i,
@@ -84,7 +85,7 @@ struct StructMember
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<U>::value &&
-         std::is_same<array_layout,Kokkos::LayoutLeft>::value),
+         std::is_same<array_layout,LayoutLeft>::value),
         reference_type>::type
     access( StructMember& m,
             const int i,
@@ -97,7 +98,7 @@ struct StructMember
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<U>::value &&
-         std::is_same<array_layout,Kokkos::LayoutRight>::value),
+         std::is_same<array_layout,LayoutRight>::value),
         reference_type>::type
     access( StructMember& m,
             const int i,
@@ -110,7 +111,7 @@ struct StructMember
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<U>::value &&
-         std::is_same<array_layout,Kokkos::LayoutLeft>::value),
+         std::is_same<array_layout,LayoutLeft>::value),
         reference_type>::type
     access( StructMember& m,
             const int i,
@@ -124,7 +125,7 @@ struct StructMember
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<U>::value &&
-         std::is_same<array_layout,Kokkos::LayoutRight>::value),
+         std::is_same<array_layout,LayoutRight>::value),
         reference_type>::type
     access( StructMember& m,
             const int i,
@@ -138,7 +139,7 @@ struct StructMember
     static KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<U>::value &&
-         std::is_same<array_layout,Kokkos::LayoutLeft>::value),
+         std::is_same<array_layout,LayoutLeft>::value),
         reference_type>::type
     access( StructMember& m,
             const int i,

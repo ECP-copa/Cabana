@@ -33,8 +33,10 @@ inline void deep_copy(
 {
     using dst_type = DstAoSoA;
     using src_type = SrcAoSoA;
-    using dst_memory_space = typename dst_type::memory_space;
-    using src_memory_space = typename src_type::memory_space;
+    using dst_memory_space =
+        typename dst_type::memory_space::kokkos_memory_space;
+    using src_memory_space =
+        typename src_type::memory_space::kokkos_memory_space;
     using dst_soa_type = typename dst_type::soa_type;
     using src_soa_type = typename src_type::soa_type;
     using dst_array_layout = typename dst_type::inner_array_layout;
@@ -95,7 +97,7 @@ inline void deep_copy(
         // Define a AoSoA type in the destination space with the same data
         // layout as the source.
         using src_mirror_type = AoSoA<typename src_type::member_types,
-                                      dst_memory_space,
+                                      typename dst_type::memory_space,
                                       src_array_layout>;
         static_assert(
             std::is_same<src_soa_type,typename src_mirror_type::soa_type>::value,

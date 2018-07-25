@@ -72,8 +72,10 @@ void runTest()
     using Particle_t = Cabana::Particle<DataTypes>;
 
     // Create a view of particles.
+    using memory_space = TEST_MEMSPACE;
     std::size_t num_data = 453;
-    Kokkos::View<Particle_t*,TEST_MEMSPACE> particles( "particles", num_data );
+    Kokkos::View<Particle_t*,typename memory_space::kokkos_memory_space>
+        particles( "particles", num_data );
 
     // Initialize data.
     float fval = 3.4;

@@ -5,7 +5,7 @@
 #include <Cabana_MemberSlice.hpp>
 #include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Particle.hpp>
-#include <Cabana_Spaces.hpp>
+#include <Cabana_Types.hpp>
 #include <impl/Cabana_SoA.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
@@ -66,7 +66,7 @@ namespace Cabana
 template<class DataTypes,
          class MemorySpace,
          class DataLayout = typename Impl::PerformanceTraits<
-             typename MemorySpace::execution_space>::inner_array_layout>
+             typename MemorySpace::kokkos_execution_space>::inner_array_layout>
 class AoSoA
 {
   public:
@@ -228,9 +228,10 @@ class AoSoA
 
         // Allocate a new block of memory.
         std::shared_ptr<soa_type> sp(
-            (soa_type*) Kokkos::kokkos_malloc<memory_space>(
+            (soa_type*) Kokkos::kokkos_malloc<
+            typename memory_space::kokkos_memory_space>(
                 num_soa_alloc * sizeof(soa_type)),
-            Kokkos::kokkos_free<memory_space> );
+            Kokkos::kokkos_free<typename memory_space::kokkos_memory_space> );
 
         // Fence before continuing to ensure the allocation is completed.
         Kokkos::fence();
@@ -241,9 +242,9 @@ class AoSoA
         if ( _managed_data != nullptr )
         {
             Kokkos::Impl::DeepCopy<
-                memory_space,
-                memory_space,
-                typename memory_space::execution_space>(
+                typename memory_space::kokkos_memory_space,
+                typename memory_space::kokkos_memory_space,
+                typename memory_space::kokkos_execution_space>(
                     sp.get(), _managed_data.get(), _num_soa * sizeof(soa_type) );
             Kokkos::fence();
         }
