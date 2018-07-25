@@ -408,7 +408,9 @@ void atomicAccessTest()
         {
             for ( int j = 0; j < num_data; ++j ) atomic_view( j ) += 1;
         };
-    Kokkos::parallel_for( num_data, increment_op );
+    Kokkos::RangePolicy<TEST_EXECSPACE> exec_policy( 0, num_data );
+    Kokkos::parallel_for( exec_policy, increment_op );
+    Kokkos::fence();
 
     // Check the results of the atomic increment.
     for ( int i = 0; i < num_data; ++i ) EXPECT_EQ( view(i), num_data );

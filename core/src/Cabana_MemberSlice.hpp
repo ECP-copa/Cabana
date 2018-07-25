@@ -31,7 +31,6 @@ struct RandomAccessMemory
 {
     using memory_access_type = RandomAccessMemory;
     using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
-                                                       Kokkos::Restrict |
                                                        Kokkos::RandomAccess >;
 };
 
@@ -40,7 +39,6 @@ struct AtomicAccessMemory
 {
     using memory_access_type = AtomicAccessMemory;
     using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
-                                                       Kokkos::Restrict |
                                                        Kokkos::Atomic >;
 };
 
@@ -62,7 +60,6 @@ struct KokkosDataTypeImpl<T,DataLayout,0,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     using data_type = value_type*[VectorLength];
-    using const_data_type = const value_type*[VectorLength];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -79,7 +76,6 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,1,VectorLength>
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     using data_type = value_type*[VectorLength][D0];
-    using const_data_type = const value_type*[VectorLength][D0];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -96,7 +92,6 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,1,VectorLength>
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     using data_type = value_type*[VectorLength][D0];
-    using const_data_type = const value_type*[VectorLength][D0];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -115,7 +110,6 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,2,VectorLength>
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     using data_type = value_type*[VectorLength][D0][D1];
-    using const_data_type = const value_type*[VectorLength][D0][D1];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -134,7 +128,6 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,2,VectorLength>
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     using data_type = value_type*[VectorLength][D0][D1];
-    using const_data_type = const value_type*[VectorLength][D0][D1];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -155,7 +148,6 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,3,VectorLength>
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     static constexpr std::size_t D2 = std::extent<T,2>::value;
     using data_type = value_type*[VectorLength][D0][D1][D2];
-    using const_data_type = const value_type*[VectorLength][D0][D1][D2];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -176,7 +168,6 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,3,VectorLength>
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     static constexpr std::size_t D2 = std::extent<T,2>::value;
     using data_type = value_type*[VectorLength][D0][D1][D2];
-    using const_data_type = const value_type*[VectorLength][D0][D1][D2];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -199,7 +190,6 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutRight,4,VectorLength>
     static constexpr std::size_t D2 = std::extent<T,2>::value;
     static constexpr std::size_t D3 = std::extent<T,3>::value;
     using data_type = value_type*[VectorLength][D0][D1][D2][D3];
-    using const_data_type = const value_type*[VectorLength][D0][D1][D2][D3];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -222,7 +212,6 @@ struct KokkosDataTypeImpl<T,Kokkos::LayoutLeft,4,VectorLength>
     static constexpr std::size_t D2 = std::extent<T,2>::value;
     static constexpr std::size_t D3 = std::extent<T,3>::value;
     using data_type = value_type*[VectorLength][D0][D1][D2][D3];
-    using const_data_type = const value_type*[VectorLength][D0][D1][D2][D3];
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -243,7 +232,6 @@ struct KokkosDataType
     using kokkos_data_type =
         KokkosDataTypeImpl<T,DataLayout,std::rank<T>::value,VectorLength>;
     using data_type = typename kokkos_data_type::data_type;
-    using const_data_type = typename kokkos_data_type::const_data_type;
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -263,8 +251,6 @@ struct KokkosViewWrapper
 {
     using data_type =
         typename KokkosDataType<T,DataLayout,VectorLength>::data_type;
-    using const_data_type =
-        typename KokkosDataType<T,DataLayout,VectorLength>::const_data_type;
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
@@ -272,21 +258,6 @@ struct KokkosViewWrapper
         return KokkosDataType<T,DataLayout,VectorLength>::createLayout(
             num_soa, stride );
     }
-};
-
-//---------------------------------------------------------------------------//
-// Kokkos View data type selector.
-template<typename ViewWrapper,typename MemoryAccessType>
-struct KokkosTypeSelector
-{
-    using type = typename ViewWrapper::data_type;
-};
-
-// Random access memory specialization.
-template<typename ViewWrapper>
-struct KokkosTypeSelector<ViewWrapper,RandomAccessMemory>
-{
-    using type = typename ViewWrapper::const_data_type;
 };
 
 //---------------------------------------------------------------------------//
@@ -334,13 +305,9 @@ class MemberSlice
     using view_wrapper =
         Impl::KokkosViewWrapper<DataType,data_layout,vector_length>;
 
-    // Kokkos view data type.
-    using kokkos_data_type =
-        typename Impl::KokkosTypeSelector<view_wrapper,MemoryAccessType>::type;
-
     // Kokkos view type.
     using kokkos_view =
-        Kokkos::View<kokkos_data_type,
+        Kokkos::View<typename view_wrapper::data_type,
                      Kokkos::LayoutStride,
                      MemorySpace,
                      typename MemoryAccessType::kokkos_memory_traits>;
