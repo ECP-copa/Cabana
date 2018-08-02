@@ -56,47 +56,62 @@ using ParticleList = Cabana::AoSoA<ParticleDataTypes,ArrayLayout,MemorySpace>;
 // Function to intitialize the particles.
 void initializeParticles( ParticleList particles )
 {
+    auto position_x = particles.view<PositionX>();
+    auto position_y = particles.view<PositionY>();
+    auto position_z = particles.view<PositionZ>();
+    auto velocity = particles.view<Velocity>();
+    auto stress = particles.view<Stress>();
+    auto status = particles.view<Status>();
+
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
         // Initialize position.
-        particles.get<PositionX>( idx ) = 1.1;
-        particles.get<PositionY>( idx ) = 2.2;
-        particles.get<PositionZ>( idx ) = 3.3;
+        position_x( idx ) = 1.1;
+        position_y( idx ) = 2.2;
+        position_z( idx ) = 3.3;
 
         // Initialize velocity.
         for ( int d = 0; d < space_dim; ++d )
-            particles.get<Velocity>( idx, d ) = 1.1 * d;
+            velocity( idx, d ) = 1.1 * d;
 
         // Initialize stress to the identity matrix.
         for ( int j = 0; j < space_dim; ++j )
             for ( int i = 0; i < space_dim; ++i )
-                particles.get<Stress>( idx, i, j ) =
+                stress( idx, i, j ) =
                     ( i == j ) ? 1.0 : 0.0;
 
         // Initialize all particles to a status of 1.
-        particles.get<Status>( idx ) = 1;
+        status( idx ) = 1;
     }
 }
 
 // Function to print out the data for every particle.
 void printParticles( const ParticleList particles )
 {
+    auto position_x = particles.view<PositionX>();
+    auto position_y = particles.view<PositionY>();
+    auto position_z = particles.view<PositionZ>();
+    auto velocity = particles.view<Velocity>();
+    auto stress = particles.view<Stress>();
+    auto status = particles.view<Status>();
+
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
-        auto aosoa_idx = Cabana::Impl::Index<32>::aosoa( idx );
+        auto aosoa_idx_s = Cabana::Impl::Index<32>::s( idx );
+        auto aosoa_idx_i = Cabana::Impl::Index<32>::i( idx );
 
         std::cout << std::endl;
 
-        std::cout << "Struct id: " << aosoa_idx.first << std::endl;
-        std::cout << "Struct offset: " << aosoa_idx.second << std::endl;
+        std::cout << "Struct id: " << aosoa_idx_s << std::endl;
+        std::cout << "Struct offset: " << aosoa_idx_i << std::endl;
         std::cout << "Position: "
-                  << particles.get<PositionX>( idx ) << " "
-                  << particles.get<PositionY>( idx ) << " "
-                  << particles.get<PositionZ>( idx ) << std::endl;
+                  << position_x( idx ) << " "
+                  << position_y( idx ) << " "
+                  << position_z( idx ) << std::endl;
 
         std::cout << "Velocity ";
         for ( int d = 0; d < space_dim; ++d )
-            std::cout << particles.get<Velocity>( idx, d ) << " ";
+            std::cout << velocity( idx, d ) << " ";
         std::cout << std::endl;
 
         std::cout << "Stress ";
@@ -104,12 +119,12 @@ void printParticles( const ParticleList particles )
         {
             std::cout << "{ ";
             for ( int i = 0; i < space_dim; ++i )
-                std::cout << particles.get<Stress>( idx, i, j ) << " " ;
+                std::cout << stress( idx, i, j ) << " " ;
             std::cout << "}";
         }
         std::cout << std::endl;
 
-        std::cout << "Status " << particles.get<Status>(idx) << std::endl;
+        std::cout << "Status " << status(idx) << std::endl;
     }
 }
 

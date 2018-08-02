@@ -2,7 +2,10 @@
 #include <Cabana_ExecutionPolicy.hpp>
 #include <Cabana_AoSoA.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
+
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
@@ -13,34 +16,40 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
+    auto view_0 = aosoa.template view<0>();
+    auto view_1 = aosoa.template view<1>();
+    auto view_2 = aosoa.template view<2>();
+    auto view_3 = aosoa.template view<3>();
+    auto view_4 = aosoa.template view<4>();
+
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    BOOST_CHECK( aosoa.template get<0>( idx, i, j, k ) ==
-                                fval * (i+j+k) );
+                    EXPECT_EQ( view_0( idx, i, j, k ),
+                               fval * (i+j+k) );
 
         // Member 1.
-        BOOST_CHECK( aosoa.template get<1>( idx ) == ival );
+        EXPECT_EQ( view_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        BOOST_CHECK( aosoa.template get<2>( idx, i, j, k, l ) ==
-                                    fval * (i+j+k+l) );
+                        EXPECT_EQ( view_2( idx, i, j, k, l ),
+                                   fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
+            EXPECT_EQ( view_3( idx, i ), dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
+                EXPECT_EQ( view_4( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -55,13 +64,18 @@ class AssignmentOp
                   double dval,
                   int ival )
         : _aosoa( aosoa )
+        , _view_0( aosoa.template view<0>() )
+        , _view_1( aosoa.template view<1>() )
+        , _view_2( aosoa.template view<2>() )
+        , _view_3( aosoa.template view<3>() )
+        , _view_4( aosoa.template view<4>() )
         , _fval( fval )
         , _dval( dval )
         , _ival( ival )
-        , _dim_1( aosoa.extent(2,0) )
-        , _dim_2( aosoa.extent(2,1) )
-        , _dim_3( aosoa.extent(2,2) )
-        , _dim_4( aosoa.extent(2,3) )
+        , _dim_1( _view_2.extent(1) )
+        , _dim_2( _view_2.extent(2) )
+        , _dim_3( _view_2.extent(3) )
+        , _dim_4( _view_2.extent(4) )
     {}
 
     KOKKOS_INLINE_FUNCTION void operator()( const int idx ) const
@@ -70,31 +84,36 @@ class AssignmentOp
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
                 for ( int k = 0; k < _dim_3; ++k )
-                    _aosoa.template get<0>( idx, i, j, k ) = _fval * (i+j+k);
+                    _view_0( idx, i, j, k ) = _fval * (i+j+k);
 
         // Member 1.
-        _aosoa.template get<1>( idx ) = _ival;
+        _view_1( idx ) = _ival;
 
         // Member 2.
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
                 for ( int k = 0; k < _dim_3; ++k )
                     for ( int l = 0; l < _dim_4; ++l )
-                        _aosoa.template get<2>( idx, i, j, k, l ) = _fval * (i+j+k+l);
+                        _view_2( idx, i, j, k, l ) = _fval * (i+j+k+l);
 
         // Member 3.
         for ( int i = 0; i < _dim_1; ++i )
-            _aosoa.template get<3>( idx, i ) = _dval * i;
+            _view_3( idx, i ) = _dval * i;
 
         // Member 4.
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
-                _aosoa.template get<4>( idx, i, j ) = _dval * (i+j);
+                _view_4( idx, i, j ) = _dval * (i+j);
     }
 
   private:
 
     AoSoA_t _aosoa;
+    typename AoSoA_t::template member_slice_type<0> _view_0;
+    typename AoSoA_t::template member_slice_type<1> _view_1;
+    typename AoSoA_t::template member_slice_type<2> _view_2;
+    typename AoSoA_t::template member_slice_type<3> _view_3;
+    typename AoSoA_t::template member_slice_type<4> _view_4;
     float _fval;
     double _dval;
     int _ival;
@@ -105,9 +124,8 @@ class AssignmentOp
 };
 
 //---------------------------------------------------------------------------//
-// TESTS
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( parallel_for_test )
+// Parallel for test.
+void runTest()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -185,3 +203,15 @@ BOOST_AUTO_TEST_CASE( parallel_for_test )
     ival = 1;
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
+
+//---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, parallel_for_test )
+{
+    runTest();
+}
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Test

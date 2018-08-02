@@ -3,8 +3,10 @@
 
 #include <Kokkos_Core.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
 
+namespace Test
+{
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
 template<class aosoa_type>
@@ -14,41 +16,46 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
+    auto view_0 = aosoa.template view<0>();
+    auto view_1 = aosoa.template view<1>();
+    auto view_2 = aosoa.template view<2>();
+    auto view_3 = aosoa.template view<3>();
+    auto view_4 = aosoa.template view<4>();
+
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    BOOST_CHECK( aosoa.template get<0>( idx, i, j, k ) ==
-                                         fval * (i+j+k) );
+                    EXPECT_EQ( view_0( idx, i, j, k ),
+                               fval * (i+j+k) );
 
         // Member 1.
-        BOOST_CHECK( aosoa.template get<1>( idx ) == ival );
+        EXPECT_EQ( view_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        BOOST_CHECK( aosoa.template get<2>( idx, i, j, k, l ) ==
-                                             fval * (i+j+k+l) );
+                        EXPECT_EQ( view_2( idx, i, j, k, l ),
+                                   fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            BOOST_CHECK( aosoa.template get<3>( idx, i ) == dval * i );
+            EXPECT_EQ( view_3( idx, i ), dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                BOOST_CHECK( aosoa.template get<4>( idx, i, j ) == dval * (i+j) );
+                EXPECT_EQ( view_4( idx, i, j ), dval * (i+j) );
     }
 }
 
 //---------------------------------------------------------------------------//
-// TESTS
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( slice_serial_api_test )
+// Test function
+void runTest()
 {
     // Manually set the inner array size. Select a layout by default.
     using inner_array_layout = Cabana::InnerArrayLayout<16>;
@@ -72,83 +79,91 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
     using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
 
     // Make sure that it is actually an AoSoA.
-    BOOST_CHECK( Cabana::is_aosoa<AoSoA_t>::value );
+    EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
 
     // Create an AoSoA.
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
     // Create some slices.
-    auto slice_0 = Cabana::slice<0>( aosoa );
-    auto slice_1 = Cabana::slice<1>( aosoa );
-    auto slice_2 = Cabana::slice<2>( aosoa );
-    auto slice_3 = Cabana::slice<3>( aosoa );
-    auto slice_4 = Cabana::slice<4>( aosoa );
+    auto slice_0 = aosoa.view<0>();
+    auto slice_1 = aosoa.view<1>();
+    auto slice_2 = aosoa.view<2>();
+    auto slice_3 = aosoa.view<3>();
+    auto slice_4 = aosoa.view<4>();
 
     // Check that they are slices.
-    BOOST_CHECK( Cabana::is_member_slice<decltype(slice_0)>::value );
-    BOOST_CHECK( Cabana::is_member_slice<decltype(slice_1)>::value );
-    BOOST_CHECK( Cabana::is_member_slice<decltype(slice_2)>::value );
-    BOOST_CHECK( Cabana::is_member_slice<decltype(slice_3)>::value );
-    BOOST_CHECK( Cabana::is_member_slice<decltype(slice_4)>::value );
+    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_0)>::value );
+    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_1)>::value );
+    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_2)>::value );
+    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_3)>::value );
+    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_4)>::value );
 
     // Check sizes.
-    BOOST_CHECK( slice_0.size() == int(35) );
-    BOOST_CHECK( slice_0.numSoA() == int(3) );
-
-    BOOST_CHECK( slice_0.arraySize(0) == int(16) );
-    BOOST_CHECK( slice_0.arraySize(1) == int(16) );
-    BOOST_CHECK( slice_0.arraySize(3) == int(3) );
-
-    BOOST_CHECK( slice_0.rank() == int(3) );
+    EXPECT_EQ( slice_0.size(), int(35) * dim_1 * dim_2 * dim_3 );
+    EXPECT_EQ( slice_0.rank(), int(4) );
     int e00 = slice_0.extent(0);
-    BOOST_CHECK( e00 == dim_1 );
+    EXPECT_EQ( e00, int(35) );
     int e01 = slice_0.extent(1);
-    BOOST_CHECK( e01 == dim_2 );
+    EXPECT_EQ( e01, dim_1 );
     int e02 = slice_0.extent(2);
-    BOOST_CHECK( e02 == dim_3 );
+    EXPECT_EQ( e02, dim_2 );
     int e03 = slice_0.extent(3);
-    BOOST_CHECK( e03 == int(0) );
+    EXPECT_EQ( e03, dim_3 );
+    int e04 = slice_0.extent(4);
+    EXPECT_EQ( e04, int(0) );
 
-    BOOST_CHECK( slice_1.rank() == int(0) );
+    EXPECT_EQ( slice_1.size(), int(35) );
+    EXPECT_EQ( slice_1.rank(), int(1) );
     int e10 = slice_1.extent(0);
-    BOOST_CHECK( e10 == int(0) );
+    EXPECT_EQ( e10, int(35) );
     int e11 = slice_1.extent(1);
-    BOOST_CHECK( e11 == int(0) );
+    EXPECT_EQ( e11, int(0) );
     int e12 = slice_1.extent(2);
-    BOOST_CHECK( e12 == int(0) );
+    EXPECT_EQ( e12, int(0) );
     int e13 = slice_1.extent(3);
-    BOOST_CHECK( e13 == int(0) );
+    EXPECT_EQ( e13, int(0) );
+    int e14 = slice_1.extent(4);
+    EXPECT_EQ( e14, int(0) );
 
-    BOOST_CHECK( slice_2.rank() == int(4) );
+    EXPECT_EQ( slice_2.size(), int(35) * dim_1 * dim_2 * dim_3 * dim_4 );
+    EXPECT_EQ( slice_2.rank(), int(5) );
     int e20 = slice_2.extent(0);
-    BOOST_CHECK( e20 == dim_1 );
+    EXPECT_EQ( e20, (35) );
     int e21 = slice_2.extent(1);
-    BOOST_CHECK( e21 == dim_2 );
+    EXPECT_EQ( e21, dim_1 );
     int e22 = slice_2.extent(2);
-    BOOST_CHECK( e22 == dim_3 );
+    EXPECT_EQ( e22, dim_2 );
     int e23 = slice_2.extent(3);
-    BOOST_CHECK( e23 == dim_4 );
+    EXPECT_EQ( e23, dim_3 );
+    int e24 = slice_2.extent(4);
+    EXPECT_EQ( e24, dim_4 );
 
-    BOOST_CHECK( slice_3.rank() == int(1) );
+    EXPECT_EQ( slice_3.size(), int(35) * dim_1 );
+    EXPECT_EQ( slice_3.rank(), int(2) );
     int e30 = slice_3.extent(0);
-    BOOST_CHECK( e30 == dim_1 );
+    EXPECT_EQ( e30, int(35) );
     int e31 = slice_3.extent(1);
-    BOOST_CHECK( e31 == int(0) );
+    EXPECT_EQ( e31, dim_1 );
     int e32 = slice_3.extent(2);
-    BOOST_CHECK( e32 == int(0) );
+    EXPECT_EQ( e32, int(0) );
     int e33 = slice_3.extent(3);
-    BOOST_CHECK( e33 == int(0) );
+    EXPECT_EQ( e33, int(0) );
+    int e34 = slice_3.extent(4);
+    EXPECT_EQ( e34, int(0) );
 
-    BOOST_CHECK( slice_4.rank() == int(2) );
+    EXPECT_EQ( slice_4.size(), int(35) * dim_1 * dim_2 );
+    EXPECT_EQ( slice_4.rank(), int(3) );
     int e40 = slice_4.extent(0);
-    BOOST_CHECK( e40 == dim_1 );
+    EXPECT_EQ( e40, int(35) );
     int e41 = slice_4.extent(1);
-    BOOST_CHECK( e41 == dim_2 );
+    EXPECT_EQ( e41, dim_1 );
     int e42 = slice_4.extent(2);
-    BOOST_CHECK( e42 == int(0) );
+    EXPECT_EQ( e42, dim_2 );
     int e43 = slice_4.extent(3);
-    BOOST_CHECK( e43 == int(0) );
+    EXPECT_EQ( e43, int(0) );
+    int e44 = slice_4.extent(4);
+    EXPECT_EQ( e44, int(0) );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -185,3 +200,15 @@ BOOST_AUTO_TEST_CASE( slice_serial_api_test )
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
+
+//---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, slice_serial_api_test )
+{
+    runTest();
+}
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Test

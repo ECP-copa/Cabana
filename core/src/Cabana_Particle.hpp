@@ -257,7 +257,7 @@ struct Particle<MemberDataTypes<Types...> >
     */
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
-    constexpr std::size_t rank() const
+    constexpr int rank() const
     {
         return std::rank<member_data_type<M> >::value;
     }
@@ -273,7 +273,7 @@ struct Particle<MemberDataTypes<Types...> >
     */
     template<std::size_t M, std::size_t D>
     KOKKOS_INLINE_FUNCTION
-    constexpr std::size_t extent() const
+    constexpr int extent() const
     {
         return std::extent<member_data_type<M>,D>::value;
     }

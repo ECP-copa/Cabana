@@ -3,7 +3,10 @@
 
 #include <Kokkos_Core.hpp>
 
-#include <boost/test/unit_test.hpp>
+#include <gtest/gtest.h>
+
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
@@ -20,35 +23,34 @@ void checkDataMembers(
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
-                    BOOST_CHECK( view(idx).template get<0>( i, j, k ) ==
-                                fval * (i+j+k) );
+                    EXPECT_EQ( view(idx).template get<0>( i, j, k ),
+                               fval * (i+j+k) );
 
         // Member 1.
-        BOOST_CHECK( view(idx).template get<1>() == ival );
+        EXPECT_EQ( view(idx).template get<1>(), ival );
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
                     for ( std::size_t l = 0; l < dim_4; ++l )
-                        BOOST_CHECK( view(idx).template get<2>( i, j, k, l ) ==
-                                    fval * (i+j+k+l) );
+                        EXPECT_EQ( view(idx).template get<2>( i, j, k, l ),
+                                   fval * (i+j+k+l) );
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            BOOST_CHECK( view(idx).template get<3>( i ) == dval * i );
+            EXPECT_EQ( view(idx).template get<3>( i ), dval * i );
 
         // Member 4.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                BOOST_CHECK( view(idx).template get<4>( i, j ) == dval * (i+j) );
+                EXPECT_EQ( view(idx).template get<4>( i, j ), dval * (i+j) );
     }
 }
 
 //---------------------------------------------------------------------------//
-// TESTS
-//---------------------------------------------------------------------------//
-BOOST_AUTO_TEST_CASE( particle_test )
+// Particle test
+void runTest()
 {
     // Data dimensions.
     const std::size_t dim_1 = 3;
@@ -114,3 +116,15 @@ BOOST_AUTO_TEST_CASE( particle_test )
     // Check data members of the for proper initialization.
     checkDataMembers( particles, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
+
+//---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, particle_test )
+{
+    runTest();
+}
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Test

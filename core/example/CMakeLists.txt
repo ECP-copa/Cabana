@@ -36,3 +36,9 @@ IF(PKG_CONFIG_FOUND AND SCAFACOS_FOUND)
   TARGET_COMPILE_OPTIONS(Core_ScafacosExample PRIVATE ${SCAFACOS_CFLAGS_OTHER})
 
 ENDIF()
+  
+  TRIBITS_ADD_EXECUTABLE(
+    PeakFlops
+    SOURCES Cabana_peakflops.cpp
+    COMM serial mpi
+    )

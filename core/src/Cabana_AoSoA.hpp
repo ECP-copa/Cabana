@@ -2,9 +2,10 @@
 #define CABANA_AOSOA_HPP
 
 #include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_SoA.hpp>
+#include <Cabana_MemberSlice.hpp>
 #include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Particle.hpp>
+#include <impl/Cabana_SoA.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
 
@@ -268,7 +269,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     static constexpr int array_size = traits::array_size;
 
     // SoA type.
-    using soa_type = SoA<inner_array_layout,Types...>;
+    using soa_type = Impl::SoA<inner_array_layout,Types...>;
 
     // Member data types.
     using member_types = MemberDataTypes<Types...>;
@@ -279,6 +280,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // The maximum rank supported for member types.
     static constexpr int max_supported_rank = 4;
 
+    // Index type.
+    using index_type = Impl::Index<array_size>;
+
     // Particle type.
     using particle_type = Particle<member_types>;
 
@@ -288,41 +292,49 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
                              typename traits::host_mirror_space>;
 
     // Struct member type.
-    template<std::size_t M>
+    template<std::size_t Field>
     using struct_member_type =
-        StructMember<
-        M,inner_array_layout,typename MemberDataTypeAtIndex<M,Types...>::type>;
+        Impl::StructMember<
+        Field,inner_array_layout,
+        typename MemberDataTypeAtIndex<Field,Types...>::type>;
 
     // Member data type at a given index M. Note this is the user-defined
     // member data type - not the potentially transformed type actually stored
     // by the structs (SoAs) to achieve a given layout.
-    template<std::size_t M>
-    using member_data_type = typename MemberDataTypeAtIndex<M,Types...>::type;
+    template<std::size_t Field>
+    using member_data_type = typename MemberDataTypeAtIndex<Field,Types...>::type;
 
     // Struct member array return type at a given index M.
-    template<std::size_t M>
+    template<std::size_t Field>
     using struct_member_array_type =
-        typename struct_member_type<M>::pointer_type;
+        typename struct_member_type<Field>::pointer_type;
 
     // Struct member array data type at a given index M.
-    template<std::size_t M>
+    template<std::size_t Field>
     using struct_member_data_type =
-        typename std::remove_pointer<struct_member_array_type<M> >::type;
+        typename std::remove_pointer<struct_member_array_type<Field> >::type;
 
     // Struct member array element value type at a given index M.
-    template<std::size_t M>
+    template<std::size_t Field>
     using struct_member_value_type =
-        typename std::remove_all_extents<struct_member_data_type<M> >::type;
+        typename std::remove_all_extents<struct_member_data_type<Field> >::type;
 
     // Struct member array element reference type at a given index M.
-    template<std::size_t M>
+    template<std::size_t Field>
     using struct_member_reference_type =
-        typename std::add_lvalue_reference<struct_member_value_type<M> >::type;
+        typename std::add_lvalue_reference<struct_member_value_type<Field> >::type;
 
     // Struct member array element pointer type at a given index M.
-    template<std::size_t M>
+    template<std::size_t Field>
     using struct_member_pointer_type =
-        typename std::add_pointer<struct_member_value_type<M> >::type;
+        typename std::add_pointer<struct_member_value_type<Field> >::type;
+
+    // Struct member slice type.
+    template<std::size_t Field>
+    using member_slice_type = MemberSlice<member_data_type<Field>,
+                                          inner_array_layout,
+                                          typename traits::memory_space,
+                                          typename traits::memory_traits>;
 
   public:
 
@@ -337,17 +349,14 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         , _num_soa( 0 )
         , _managed_data( nullptr )
         , _data( nullptr )
-    {
-        storeRanksAndExtents(
-            std::integral_constant<std::size_t,number_of_members-1>() );
-    }
+    {}
 
     /*!
       \brief Allocate a container with n elements.
 
       \param n The number of elements in the container.
     */
-    AoSoA( const int n )
+    explicit AoSoA( const int n )
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
@@ -355,8 +364,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         , _data( nullptr )
     {
         resize( _size );
-        storeRanksAndExtents(
-            std::integral_constant<std::size_t,number_of_members-1>() );
     }
 
     /*!
@@ -473,7 +480,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     /*!
       \brief Get the number of structs-of-arrays in the container.
 
-      \return The number of structs in the container.
+      \return The number of structs-of-arrays in the container.
     */
     KOKKOS_FUNCTION
     int numSoA() const { return _num_soa; }
@@ -481,9 +488,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     /*!
       \brief Get the size of the data array at a given struct member index.
 
-      \param s The struct member index to get the array size for.
+      \param s The struct index to get the array size for.
 
-      \return The size of the array at the given struct member index.
+      \return The size of the array at the given struct index.
     */
     KOKKOS_FUNCTION
     int arraySize( const int s ) const
@@ -491,40 +498,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         return
             ( s < _num_soa - 1 ) ? array_size : ( _size % array_size );
     }
-
-    // -------------------------------
-    // Member data type properties.
-
-    /*!
-      \brief Get the rank of the data for a given member at index M.
-
-      \param M The member index to get the rank for.
-
-      \return The rank of the given member index data.
-    */
-    KOKKOS_INLINE_FUNCTION
-    int rank( const std::size_t M ) const
-    {
-        return _ranks[M];
-    }
-
-    /*!
-      \brief Get the extent of a given member data dimension.
-
-      \param M The member index to get the extent for.
-
-      \param D The member data dimension to get the extent for
-
-      \return The extent of the given member data dimension.
-    */
-    KOKKOS_INLINE_FUNCTION
-    int extent( const std::size_t M, const std::size_t D ) const
-    {
-        return _extents[M][D];
-    }
-
-    // -------------------------------
-    // Particle accessors.
 
     /*!
       \brief Get a particle at a given index.
@@ -561,108 +534,15 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
             std::integral_constant<std::size_t,number_of_members-1>() );
     }
 
-    // -------------------------------
-    // Access the data value at a given member index and particle index.
-
-    // Rank 0
-    template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<struct_member_data_type<M> >::value),
-                            struct_member_reference_type<M> >::type
-    get( const int particle_index ) const
-    {
-        auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return accessStructMember<M>( _data[ai.first], ai.second );
-    }
-
-    // Rank 1
-    template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<struct_member_data_type<M> >::value),
-                            struct_member_reference_type<M> >::type
-    get( const int particle_index,
-         const int d0 ) const
-    {
-        auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return accessStructMember<M>( _data[ai.first], ai.second, d0 );
-    }
-
-    // Rank 2
-    template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<struct_member_data_type<M> >::value),
-                            struct_member_reference_type<M> >::type
-    get( const int particle_index,
-         const int d0,
-         const int d1 ) const
-    {
-        auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return accessStructMember<M>( _data[ai.first], ai.second, d0, d1 );
-    }
-
-    // Rank 3
-    template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<struct_member_data_type<M> >::value),
-                            struct_member_reference_type<M> >::type
-    get( const int particle_index,
-         const int d0,
-         const int d1,
-         const int d2 ) const
-    {
-        auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return accessStructMember<M>( _data[ai.first], ai.second, d0, d1, d2 );
-    }
-
-    // Rank 4
-    template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<struct_member_data_type<M> >::value),
-                            struct_member_reference_type<M> >::type
-    get( const int particle_index,
-         const int d0,
-         const int d1,
-         const int d2,
-         const int d3 ) const
-    {
-        auto ai = Impl::Index<array_size>::aosoa( particle_index );
-        return accessStructMember<M>(
-            _data[ai.first], ai.second, d0, d1, d2, d3 );
-    }
-
-    // -------------------------------
-    // Raw data access.
-
     /*!
-      \brief Get the stride between SoA data for a given member.
-
-      \param M The member index to get the stride for.
-
-      \return The stride at the given member index.
-
-      Note that these strides are computed in the context of the *value_type*
-      for each member.
+      \brief Get an unmanaged view of a particle field.
     */
-    KOKKOS_INLINE_FUNCTION
-    int stride( const std::size_t M ) const
+    template<std::size_t Field>
+    member_slice_type<Field> view() const
     {
-        return _strides[M];
-    }
-
-    /*!
-      \brief Get an un-typed raw pointer to the data for a given member
-
-      \param M The member index to get the data for.
-
-      \return An un-typed raw pointer to the member data at the given index.
-
-      Users will need to cast this pointer to the appropriate type for the
-      stride associated with this member to mean anything.
-    */
-    KOKKOS_INLINE_FUNCTION
-    void* data( const std::size_t M ) const
-    {
-        return _pointers[M];
+        return member_slice_type<Field>(
+            (struct_member_pointer_type<Field>) _pointers[Field],
+            _size, _strides[Field], _num_soa );
     }
 
     /*!
@@ -684,7 +564,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         static_assert( 0 <= N && N < number_of_members,
                        "Static loop out of bounds!" );
         _pointers[N] =
-            static_cast<void*>( getStructMember<N>(_data[0]) );
+            static_cast<void*>( Impl::getStructMember<N>(_data[0]) );
         static_assert( 0 ==
                        sizeof(soa_type) % sizeof(struct_member_value_type<N>),
                        "Stride cannot be calculated for misaligned memory!" );
@@ -704,64 +584,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         assignPointersAndStrides<0>();
     }
 
-    // Store the extents of each of the member types.
-    template<std::size_t M, std::size_t N>
-    void assignExtents()
-    {
-        static_assert( 0 <= N && N < max_supported_rank,
-                       "Static loop out of bounds!" );
-        _extents[M][N] = ( N < std::rank<member_data_type<M> >::value )
-                         ? std::extent<member_data_type<M>,N>::value
-                         : 0;
-    }
-
-    // Static loop over extents for each member element.
-    template<std::size_t M, std::size_t N>
-    void storeExtents( std::integral_constant<std::size_t,M>,
-                       std::integral_constant<std::size_t,N> )
-    {
-        assignExtents<M,N>();
-        storeExtents( std::integral_constant<std::size_t,M>(),
-                      std::integral_constant<std::size_t,N-1>() );
-    }
-
-    template<std::size_t M>
-    void storeExtents( std::integral_constant<std::size_t,M>,
-                       std::integral_constant<std::size_t,0> )
-    {
-        assignExtents<M,0>();
-    }
-
-    // Store the rank for each member element type.
-    template<std::size_t N>
-    void assignRanks()
-    {
-        static_assert( std::rank<member_data_type<N> >::value <=
-                       max_supported_rank,
-                       "Member type rank larger than max supported rank" );
-        static_assert( 0 <= N && N < number_of_members, "Static loop out of bounds!" );
-        _ranks[N] = std::rank<member_data_type<N> >::value;
-    }
-
-    // Static loop over ranks and extents for each element.
-    template<std::size_t N>
-    void storeRanksAndExtents( std::integral_constant<std::size_t,N> )
-    {
-        assignRanks<N>();
-        storeExtents(
-            std::integral_constant<std::size_t,N>(),
-            std::integral_constant<std::size_t,max_supported_rank-1>() );
-        storeRanksAndExtents( std::integral_constant<std::size_t,N-1>() );
-    }
-
-    void storeRanksAndExtents( std::integral_constant<std::size_t,0> )
-    {
-        storeExtents(
-            std::integral_constant<std::size_t,0>(),
-            std::integral_constant<std::size_t,max_supported_rank-1>() );
-        assignRanks<0>();
-    }
-
     // Copy a member to a particle.
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
@@ -770,7 +592,10 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
-        particle.template get<M>() = get<M>( particle_index );
+        particle.template get<M>() =
+            Impl::accessStructMember<M>(
+                _data[index_type::s(particle_index)],
+                index_type::i(particle_index) );
     }
 
     template<std::size_t M>
@@ -780,8 +605,12 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
-        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            particle.template get<M>( i0 ) = get<M>( particle_index, i0 );
+        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
+            particle.template get<M>( i0 ) =
+                Impl::accessStructMember<M>(
+                    _data[index_type::s(particle_index)],
+                    index_type::i(particle_index),
+                    i0 );
     }
 
     template<std::size_t M>
@@ -791,10 +620,13 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
-        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
+        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
+            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
                 particle.template get<M>( i0, i1 ) =
-                    get<M>( particle_index, i0, i1 );
+                    Impl::accessStructMember<M>(
+                        _data[index_type::s(particle_index)],
+                        index_type::i(particle_index),
+                        i0, i1 );
     }
 
     template<std::size_t M>
@@ -804,11 +636,14 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
-        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
-                for ( int i2 = 0; i2 < extent(M,2); ++i2 )
+        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
+            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
+                for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
                     particle.template get<M>( i0, i1, i2 ) =
-                        get<M>( particle_index, i0, i1, i2 );
+                        Impl::accessStructMember<M>(
+                            _data[index_type::s(particle_index)],
+                            index_type::i(particle_index),
+                            i0, i1, i2 );
     }
 
     template<std::size_t M>
@@ -818,12 +653,15 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
-        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
-                for ( int i2 = 0; i2 < extent(M,2); ++i2 )
-                    for ( int i3 = 0; i3 < extent(M,3); ++i3 )
+        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
+            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
+                for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
+                    for ( int i3 = 0; i3 < particle.template extent<M,3>(); ++i3 )
                         particle.template get<M>( i0, i1, i2, i3 ) =
-                            get<M>( particle_index, i0, i1, i2, i3 );
+                            Impl::accessStructMember<M>(
+                                _data[index_type::s(particle_index)],
+                                index_type::i(particle_index),
+                                i0, i1, i2, i3 );
     }
 
     // Copy to a particle a given index.
@@ -855,7 +693,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
-        get<M>( particle_index ) = particle.template get<M>();
+        Impl::accessStructMember<M>( _data[index_type::s(particle_index)],
+                                     index_type::i(particle_index) )
+            = particle.template get<M>();
     }
 
     template<std::size_t M>
@@ -865,8 +705,11 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
-        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            get<M>( particle_index, i0 ) = particle.template get<M>( i0 );
+        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
+            Impl::accessStructMember<M>(
+                _data[index_type::s(particle_index)],
+                index_type::i(particle_index), i0 )
+                = particle.template get<M>( i0 );
     }
 
     template<std::size_t M>
@@ -876,10 +719,12 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
-        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
-                get<M>( particle_index, i0, i1 ) =
-                    particle.template get<M>( i0, i1 );
+        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
+            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
+                Impl::accessStructMember<M>(
+                    _data[index_type::s(particle_index)],
+                    index_type::i(particle_index), i0, i1 )
+                    = particle.template get<M>( i0, i1 );
     }
 
     template<std::size_t M>
@@ -889,11 +734,13 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyParticleToMember( const int particle_index, const
                           particle_type& particle ) const
     {
-        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
-                for ( int i2 = 0; i2 < extent(M,2); ++i2 )
-                    get<M>( particle_index, i0, i1, i2 ) =
-                        particle.template get<M>( i0, i1, i2 );
+        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
+            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
+                for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
+                    Impl::accessStructMember<M>(
+                        _data[index_type::s(particle_index)],
+                        index_type::i(particle_index), i0, i1, i2 )
+                        = particle.template get<M>( i0, i1, i2 );
     }
 
     template<std::size_t M>
@@ -903,12 +750,14 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
-        for ( int i0 = 0; i0 < extent(M,0); ++i0 )
-            for ( int i1 = 0; i1 < extent(M,1); ++i1 )
-                for ( int i2 = 0; i2 < extent(M,2); ++i2 )
-                    for ( int i3 = 0; i3 < extent(M,3); ++i3 )
-                        get<M>( particle_index, i0, i1, i2, i3 ) =
-                            particle.template get<M>( i0, i1, i2, i3 );
+        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
+            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
+                for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
+                    for ( int i3 = 0; i3 < particle.template extent<M,3>(); ++i3 )
+                        Impl::accessStructMember<M>(
+                            _data[index_type::s(particle_index)],
+                            index_type::i(particle_index), i0, i1, i2, i3 )
+                            = particle.template get<M>( i0, i1, i2, i3 );
     }
 
     // Copy to a given index from a particle.
@@ -958,12 +807,6 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // Strides for each member. Note that these strides are computed in the
     // context of the *value_type* of each member.
     int _strides[number_of_members];
-
-    // The ranks of each of the data member types.
-    int _ranks[number_of_members];
-
-    // The extents of each of the data member type dimensions.
-    int _extents[number_of_members][max_supported_rank];
 };
 
 //---------------------------------------------------------------------------//
