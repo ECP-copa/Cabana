@@ -1,3 +1,4 @@
+#include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ExecutionPolicy.hpp>
@@ -13,12 +14,12 @@
 void perfTest()
 {
     // Declare the execution and memory spaces.
-    using MemorySpace = Kokkos::CudaUVMSpace;
+    using MemorySpace = Cabana::CudaUVMSpace;
     using ExecutionSpace = Kokkos::Cuda;
 
     // Declare the inner array layout.
     const int array_size = 32;
-    using array_layout = Kokkos::LayoutLeft;
+    using array_layout = Cabana::LayoutLeft;
     using inner_array_layout =
         Cabana::InnerArrayLayout<array_size,array_layout>;
 
@@ -45,7 +46,7 @@ void perfTest()
                    S2 };
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,MemorySpace>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,inner_array_layout>;
 
     // Set the total problem size.
     std::size_t num_data = 1e7;
@@ -54,13 +55,13 @@ void perfTest()
     AoSoA_t aosoa( num_data );
 
     // Make some slices.
-    auto m1 = aosoa.view<M1>();
-    auto m2 = aosoa.view<M2>();
-    auto v1 = aosoa.view<V1>();
-    auto v2 = aosoa.view<V2>();
-    auto result = aosoa.view<RESULT>();
-    auto s1 = aosoa.view<S1>();
-    auto s2 = aosoa.view<S2>();
+    auto m1 = aosoa.view( Cabana::MemberTag<M1>() );
+    auto m2 = aosoa.view( Cabana::MemberTag<M2>() );
+    auto v1 = aosoa.view( Cabana::MemberTag<V1>() );
+    auto v2 = aosoa.view( Cabana::MemberTag<V2>() );
+    auto result = aosoa.view( Cabana::MemberTag<RESULT>() );
+    auto s1 = aosoa.view( Cabana::MemberTag<S1>() );
+    auto s2 = aosoa.view( Cabana::MemberTag<S2>() );
 
     // Create an execution policy over the entire AoSoA.
     Cabana::RangePolicy<array_size,ExecutionSpace> range_policy( aosoa );

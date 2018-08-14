@@ -5,6 +5,7 @@
 #include <Cabana_MemberSlice.hpp>
 #include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Particle.hpp>
+#include <Cabana_Types.hpp>
 #include <impl/Cabana_SoA.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
@@ -19,159 +20,6 @@
 
 namespace Cabana
 {
-//---------------------------------------------------------------------------//
-/*!
-
-  \class AoSoATraits
-
-  \brief Traits class for accessing attributes of a AoSoA.
-
-  These traits define the template parameter structure of an AoSoA.
-
-  The following are valid template argument options:
-
-  - AoSoA< DataTypes >
-  - AoSoA< DataTypes , Space >
-  - AoSoA< DataTypes , Space , MemoryTraits >
-  - AoSoA< DataTypes , StaticInnerArrayLayout >
-  - AoSoA< DataTypes , StaticInnerArrayLayout , Space >
-  - AoSoA< DataTypes , StaticInnerArrayLayout , MemoryTraits >
-  - AoSoA< DataTypes , StaticInnerArrayLayout , Space , MemoryTraits >
-  - AoSoA< DataTypes , MemoryTraits >
-
-  Note that this is effectively a reimplementation of Kokkos::ViewTraits for
-  the AoSoA with ArrayLayout replaced by InnerStaticInnerArrayLayout.
-*/
-template<class DataTypes, class ... Properties>
-class AoSoATraits ;
-
-// Void specialization.
-template<>
-class AoSoATraits<void>
-{
-  public:
-    using execution_space = void;
-    using memory_space = void;
-    using host_mirror_space = void;
-    using inner_array_layout = void;
-    using memory_traits = void;
-};
-
-// Extract the array layout.
-template<class StaticInnerArrayLayout, class ... Properties>
-class AoSoATraits<
-    typename std::enable_if<is_inner_array_layout<StaticInnerArrayLayout>::value>::type,
-    StaticInnerArrayLayout, Properties...>
-{
-  public:
-    using execution_space = typename AoSoATraits<void,Properties...>::execution_space;
-    using memory_space = typename AoSoATraits<void,Properties...>::memory_space;
-    using host_mirror_space = typename AoSoATraits<void,Properties...>::host_mirror_space;
-    using inner_array_layout = StaticInnerArrayLayout;
-    using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
-};
-
-// Extract the space - either a Kokkos memory space or execution space. Can be
-// one or the other but not both.
-template<class Space, class ... Properties>
-class AoSoATraits<
-    typename std::enable_if<Kokkos::Impl::is_space<Space>::value>::type,
-    Space, Properties ...>
-{
-  public:
-    static_assert(
-        std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::host_mirror_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::inner_array_layout,void>::value
-        , "Only one AoSoA Execution or Memory Space template argument" );
-
-    using execution_space = typename Space::execution_space;
-    using memory_space = typename Space::memory_space;
-    using host_mirror_space = typename Kokkos::Impl::HostMirror<Space>::Space;
-    using inner_array_layout = typename Impl::PerformanceTraits<execution_space>::inner_array_layout;
-    using memory_traits = typename AoSoATraits<void,Properties...>::memory_traits;
-};
-
-// Extract the memory traits - this must be the last template parameter in the pack.
-template<class MemoryTraits, class ... Properties>
-class AoSoATraits<
-    typename std::enable_if<Kokkos::Impl::is_memory_traits<MemoryTraits>::value>::type,
-    MemoryTraits, Properties...>
-{
-  public:
-    static_assert(
-        std::is_same<typename AoSoATraits<void,Properties...>::execution_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::memory_space,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::inner_array_layout,void>::value &&
-        std::is_same<typename AoSoATraits<void,Properties...>::memory_traits,void>::value
-        , "MemoryTrait is the final optional template argument for a AoSoA" );
-
-    using execution_space = void;
-    using memory_space = void;
-    using host_mirror_space = void;
-    using inner_array_layout = void;
-    using memory_traits = MemoryTraits;
-};
-
-// Set the traits for a given set of properties.
-template<class DataTypes, class ... Properties>
-class AoSoATraits
-{
-  private:
-
-    typedef AoSoATraits<void,Properties...>  properties;
-
-    using ExecutionSpace =
-        typename
-        std::conditional<
-        !std::is_same<typename properties::execution_space,void>::value,
-        typename properties::execution_space,
-        Kokkos::DefaultExecutionSpace
-        >::type;
-
-    using MemorySpace =
-        typename std::conditional<
-        !std::is_same<typename properties::memory_space,void>::value,
-        typename properties::memory_space,
-        typename ExecutionSpace::memory_space
-        >::type;
-
-    using StaticInnerArrayLayout =
-        typename std::conditional<
-        !std::is_same<typename properties::inner_array_layout,void>::value,
-        typename properties::inner_array_layout,
-        typename Impl::PerformanceTraits<ExecutionSpace>::inner_array_layout
-        >::type;
-
-    using HostMirrorSpace =
-        typename std::conditional<
-        !std::is_same<typename properties::host_mirror_space,void>::value,
-        typename properties::host_mirror_space,
-        typename Kokkos::Impl::HostMirror<ExecutionSpace>::Space
-        >::type;
-
-    using MemoryTraits =
-        typename std::conditional<
-        !std::is_same<typename properties::memory_traits,void>::value,
-        typename properties::memory_traits,
-        typename Kokkos::MemoryManaged
-        >::type;
-
-  public:
-
-    using data_types = DataTypes;
-    using execution_space = ExecutionSpace;
-    using memory_space = MemorySpace;
-    using device_type = Kokkos::Device<ExecutionSpace,MemorySpace>;
-    using memory_traits = MemoryTraits;
-    using host_mirror_space = HostMirrorSpace;
-    using size_type = typename memory_space::size_type;
-    using inner_array_layout = StaticInnerArrayLayout;
-
-    static constexpr std::size_t array_size = StaticInnerArrayLayout::size;
-};
-
 //---------------------------------------------------------------------------//
 /*!
   \class AoSoA
@@ -195,17 +43,14 @@ class AoSoATraits
   - AoSoA< DataType >
   - AoSoA< DataType , StaticInnerArrayLayout >
   - AoSoA< DataType , StaticInnerArrayLayout , Space >
-  - AoSoA< DataType , StaticInnerArrayLayout , Space , MemoryTraits >
   - AoSoA< DataType , Space >
-  - AoSoA< DataType , Space , MemoryTraits >
-  - AoSoA< DataType , MemoryTraits >
 
   \tparam DataType (required) Specifically this must be an instance of
   \c MemberDataTypes with the data layout of the structs. For example:
   \code
   using DataType = MemberDataTypes<double[3][3],double[3],int>;
   \endcode
-  would define an AoSoA where each element had a 3x3 matrix of doubles, a
+  would define an AoSoA where each particle had a 3x3 matrix of doubles, a
   3-vector of doubles, and an integer. The AoSoA is then templated on this
   sequence of types. In general, put larger datatypes first in the
   MemberDataType parameter pack (i.e. matrices and vectors) and group members
@@ -217,62 +62,32 @@ class AoSoATraits
   \tparam StaticInnerArrayLayout (optional) The layout of the inner array in
   the AoSoA. If not specified, this defaults to the preferred layout for the
   <tt>Space</tt>.
-
-  \tparam MemoryTraits (optional) Assertion of the user's intended access
-  behavior. For example, RandomAccess indicates read-only access with limited
-  spatial locality, and Unmanaged lets users wrap externally allocated memory
-  in an AoSoA without automatic deallocation.
-
-  Some \c MemoryTraits options may have different interpretations for
-  different \c Space types.  For example, with the Cuda device,
-  \c RandomAccess tells Kokkos to fetch the data through the texture
-  cache, whereas the non-GPU devices have no such hardware construct.
-
-  Users should defer applying the optional \c MemoryTraits parameter
-  until the point at which they actually plan to rely on it in a
-  computational kernel.  This minimizes the number of template
-  parameters exposed in their code, which reduces the cost of
-  compilation
  */
-template<typename DataTypes, typename ... Properties>
-class AoSoA;
-
-//---------------------------------------------------------------------------//
-// Static type checker.
-template<class >
-struct is_aosoa : public std::false_type {};
-
-template<class DataTypes, class ... Properties>
-struct is_aosoa<AoSoA<DataTypes,Properties...> >
-    : public std::true_type {};
-
-template<class DataTypes, class ... Properties>
-struct is_aosoa<const AoSoA<DataTypes,Properties...> >
-    : public std::true_type {};
-
-//---------------------------------------------------------------------------//
-template<class ... Types, class ... Properties>
-class AoSoA<MemberDataTypes<Types...>,Properties...>
+template<class DataTypes,
+         class MemorySpace,
+         class DataLayout = typename Impl::PerformanceTraits<
+             typename MemorySpace::kokkos_execution_space>::inner_array_layout>
+class AoSoA
 {
   public:
 
-    // Traits.
-    using traits = AoSoATraits<MemberDataTypes<Types...>,Properties...>;
-
     // AoSoA type.
-    using aosoa_type = AoSoA<MemberDataTypes<Types...>,Properties...>;
-
-    // Inner array layout.
-    using inner_array_layout = typename traits::inner_array_layout;
-
-    // Inner array size (size of the arrays held by the structs).
-    static constexpr int array_size = traits::array_size;
-
-    // SoA type.
-    using soa_type = Impl::SoA<inner_array_layout,Types...>;
+    using aosoa_type = AoSoA<DataTypes,MemorySpace,DataLayout>;
 
     // Member data types.
-    using member_types = MemberDataTypes<Types...>;
+    using member_types = DataTypes;
+
+    // Memory space.
+    using memory_space = MemorySpace;
+
+    // Inner array layout.
+    using inner_array_layout = DataLayout;
+
+    // Inner array size (size of the arrays held by the structs).
+    static constexpr int array_size = inner_array_layout::size;
+
+    // SoA type.
+    using soa_type = Impl::SoA<inner_array_layout,member_types>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
@@ -286,55 +101,22 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // Particle type.
     using particle_type = Particle<member_types>;
 
-    // Host mirror.
-    using HostMirror = AoSoA<member_types,
-                             typename traits::inner_array_layout,
-                             typename traits::host_mirror_space>;
-
-    // Struct member type.
-    template<std::size_t Field>
-    using struct_member_type =
-        Impl::StructMember<
-        Field,inner_array_layout,
-        typename MemberDataTypeAtIndex<Field,Types...>::type>;
-
     // Member data type at a given index M. Note this is the user-defined
     // member data type - not the potentially transformed type actually stored
     // by the structs (SoAs) to achieve a given layout.
     template<std::size_t Field>
-    using member_data_type = typename MemberDataTypeAtIndex<Field,Types...>::type;
-
-    // Struct member array return type at a given index M.
-    template<std::size_t Field>
-    using struct_member_array_type =
-        typename struct_member_type<Field>::pointer_type;
-
-    // Struct member array data type at a given index M.
-    template<std::size_t Field>
-    using struct_member_data_type =
-        typename std::remove_pointer<struct_member_array_type<Field> >::type;
+    using member_data_type =
+        typename MemberDataTypeAtIndex<Field,member_types>::type;
 
     // Struct member array element value type at a given index M.
     template<std::size_t Field>
-    using struct_member_value_type =
-        typename std::remove_all_extents<struct_member_data_type<Field> >::type;
-
-    // Struct member array element reference type at a given index M.
-    template<std::size_t Field>
-    using struct_member_reference_type =
-        typename std::add_lvalue_reference<struct_member_value_type<Field> >::type;
+    using member_value_type =
+        typename std::remove_all_extents<member_data_type<Field> >::type;
 
     // Struct member array element pointer type at a given index M.
     template<std::size_t Field>
-    using struct_member_pointer_type =
-        typename std::add_pointer<struct_member_value_type<Field> >::type;
-
-    // Struct member slice type.
-    template<std::size_t Field>
-    using member_slice_type = MemberSlice<member_data_type<Field>,
-                                          inner_array_layout,
-                                          typename traits::memory_space,
-                                          typename traits::memory_traits>;
+    using member_pointer_type =
+        typename std::add_pointer<member_value_type<Field> >::type;
 
   public:
 
@@ -352,9 +134,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     {}
 
     /*!
-      \brief Allocate a container with n elements.
+      \brief Allocate a container with n particles.
 
-      \param n The number of elements in the container.
+      \param n The number of particles in the container.
     */
     explicit AoSoA( const int n )
         : _size( n )
@@ -367,9 +149,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     }
 
     /*!
-      \brief Returns the number of elements in the container.
+      \brief Returns the number of particles in the container.
 
-      \return The number of elements in the container.
+      \return The number of particles in the container.
 
       This is the number of actual objects held in the container, which is not
       necessarily equal to its storage capacity.
@@ -379,7 +161,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
     /*!
       \brief Returns the size of the storage space currently allocated for the
-      container, expressed in terms of elements.
+      container, expressed in terms of particles.
 
       \return The capacity of the container.
 
@@ -398,19 +180,19 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     int capacity() const { return _capacity; }
 
     /*!
-      \brief Resizes the container so that it contains n elements.
+      \brief Resizes the container so that it contains n particles.
 
       If n is smaller than the current container size, the content is reduced
-      to its first n elements.
+      to its first n particles.
 
       If n is greater than the current container size, the content is expanded
-      by inserting at the end as many elements as needed to reach a size of n.
+      by inserting at the end as many particles as needed to reach a size of n.
 
       If n is also greater than the current container capacity, an automatic
       reallocation of the allocated storage space takes place.
 
       Notice that this function changes the actual content of the container by
-      inserting or erasing elements from it.
+      inserting or erasing particles from it.
     */
     void resize( const int n )
     {
@@ -422,7 +204,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
     /*!
       \brief Requests that the container capacity be at least enough to contain n
-      elements.
+      particles.
 
       If n is greater than the current container capacity, the function causes
       the container to reallocate its storage increasing its capacity to n (or
@@ -432,7 +214,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
       the container capacity is not affected.
 
       This function has no effect on the container size and cannot alter its
-      elements.
+      particles.
     */
     void reserve( const int n )
     {
@@ -446,9 +228,10 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
         // Allocate a new block of memory.
         std::shared_ptr<soa_type> sp(
-            (soa_type*) Kokkos::kokkos_malloc<typename traits::memory_space>(
+            (soa_type*) Kokkos::kokkos_malloc<
+            typename memory_space::kokkos_memory_space>(
                 num_soa_alloc * sizeof(soa_type)),
-            Kokkos::kokkos_free<typename traits::memory_space> );
+            Kokkos::kokkos_free<typename memory_space::kokkos_memory_space> );
 
         // Fence before continuing to ensure the allocation is completed.
         Kokkos::fence();
@@ -459,9 +242,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         if ( _managed_data != nullptr )
         {
             Kokkos::Impl::DeepCopy<
-                typename traits::memory_space,
-                typename traits::memory_space,
-                typename traits::execution_space>(
+                typename memory_space::kokkos_memory_space,
+                typename memory_space::kokkos_memory_space,
+                typename memory_space::kokkos_execution_space>(
                     sp.get(), _managed_data.get(), _num_soa * sizeof(soa_type) );
             Kokkos::fence();
         }
@@ -535,25 +318,61 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     }
 
     /*!
-      \brief Get an unmanaged view of a particle field.
+      \brief Get an unmanaged view of a particle field with the given tag and
+      memory traits.
+      \param The tag identifying which field to get a view of.
+      \param The tag identifying which type of memory access traits the view
+      should have.
+      \return The field view.
+    */
+    template<std::size_t Field, typename MemoryAccessType>
+    MemberSlice<member_data_type<Field>,
+                typename inner_array_layout::layout,
+                memory_space,
+                MemoryAccessType,
+                array_size>
+    view( MemberTag<Field>, MemoryAccessType ) const
+    {
+        return
+            MemberSlice<member_data_type<Field>,
+                        typename inner_array_layout::layout,
+                        memory_space,
+                        MemoryAccessType,
+                        array_size>(
+                            (member_pointer_type<Field>) _pointers[Field],
+                            _size, _strides[Field], _num_soa );
+    }
+
+    /*!
+      \brief Get an unmanaged view of a particle field with default memory
+      access.
+      \param The tag identifying which field to get a view of.
+      \return The field view.
     */
     template<std::size_t Field>
-    member_slice_type<Field> view() const
+    MemberSlice<member_data_type<Field>,
+                typename inner_array_layout::layout,
+                memory_space,
+                DefaultAccessMemory,
+                array_size>
+    view( MemberTag<Field> ) const
     {
-        return member_slice_type<Field>(
-            (struct_member_pointer_type<Field>) _pointers[Field],
-            _size, _strides[Field], _num_soa );
+        return
+            MemberSlice<member_data_type<Field>,
+                        typename inner_array_layout::layout,
+                        memory_space,
+                        DefaultAccessMemory,
+                        array_size>(
+                            (member_pointer_type<Field>) _pointers[Field],
+                            _size, _strides[Field], _num_soa );
     }
 
     /*!
       \brief Get an un-typed raw pointer to the entire data block.
-
       \return An un-typed raw-pointer to the entire data block.
     */
     void* ptr() const
-    {
-        return _managed_data.get();
-    }
+    { return _managed_data.get(); }
 
   private:
 
@@ -566,9 +385,9 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
         _pointers[N] =
             static_cast<void*>( Impl::getStructMember<N>(_data[0]) );
         static_assert( 0 ==
-                       sizeof(soa_type) % sizeof(struct_member_value_type<N>),
+                       sizeof(soa_type) % sizeof(member_value_type<N>),
                        "Stride cannot be calculated for misaligned memory!" );
-        _strides[N] = sizeof(soa_type) / sizeof(struct_member_value_type<N>);
+        _strides[N] = sizeof(soa_type) / sizeof(member_value_type<N>);
     }
 
     // Static loop through each member element to extract pointers and strides.
@@ -588,7 +407,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (0==std::rank<struct_member_data_type<M> >::value),void>::type
+        (0==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -601,7 +420,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (1==std::rank<struct_member_data_type<M> >::value),void>::type
+        (1==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -616,7 +435,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (2==std::rank<struct_member_data_type<M> >::value),void>::type
+        (2==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -632,7 +451,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (3==std::rank<struct_member_data_type<M> >::value),void>::type
+        (3==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -649,7 +468,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (4==std::rank<struct_member_data_type<M> >::value),void>::type
+        (4==std::rank<member_data_type<M> >::value),void>::type
     copyMemberToParticle( const int particle_index,
                           particle_type& particle ) const
     {
@@ -689,7 +508,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (0==std::rank<struct_member_data_type<M> >::value),void>::type
+        (0==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
@@ -701,7 +520,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (1==std::rank<struct_member_data_type<M> >::value),void>::type
+        (1==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
@@ -715,7 +534,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (2==std::rank<struct_member_data_type<M> >::value),void>::type
+        (2==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
@@ -730,7 +549,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (3==std::rank<struct_member_data_type<M> >::value),void>::type
+        (3==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index, const
                           particle_type& particle ) const
     {
@@ -746,7 +565,7 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     template<std::size_t M>
     KOKKOS_INLINE_FUNCTION
     typename std::enable_if<
-        (4==std::rank<struct_member_data_type<M> >::value),void>::type
+        (4==std::rank<member_data_type<M> >::value),void>::type
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
@@ -783,10 +602,10 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
 
   private:
 
-    // Total number of elements in all arrays in all structs.
+    // Total number of particles in the container.
     int _size;
 
-    // Allocated number of elements in all arrays in all structs.
+    // Allocated number of particles in all arrays in all structs.
     int _capacity;
 
     // Number of structs-of-arrays in the array.
@@ -808,6 +627,19 @@ class AoSoA<MemberDataTypes<Types...>,Properties...>
     // context of the *value_type* of each member.
     int _strides[number_of_members];
 };
+
+//---------------------------------------------------------------------------//
+// Static type checker.
+template<class >
+struct is_aosoa : public std::false_type {};
+
+template<class DataTypes, class MemorySpace, class DataLayout>
+struct is_aosoa<AoSoA<DataTypes,MemorySpace,DataLayout> >
+    : public std::true_type {};
+
+template<class DataTypes, class MemorySpace, class DataLayout>
+struct is_aosoa<const AoSoA<DataTypes,MemorySpace,DataLayout> >
+    : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 

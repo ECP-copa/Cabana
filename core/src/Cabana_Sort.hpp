@@ -17,15 +17,15 @@ namespace Cabana
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation.
 */
-template<class MemorySpace>
+template<class KokkosMemorySpace>
 class BinningData
 {
   public:
 
-    using memory_space = MemorySpace;
+    using memory_space = KokkosMemorySpace;
     using size_type = typename memory_space::size_type;
-    using CountView = Kokkos::View<const int*,MemorySpace>;
-    using OffsetView = Kokkos::View<size_type*,MemorySpace>;
+    using CountView = Kokkos::View<const int*,KokkosMemorySpace>;
+    using OffsetView = Kokkos::View<size_type*,KokkosMemorySpace>;
 
     BinningData( CountView counts,
                  OffsetView offsets,
@@ -102,15 +102,15 @@ class BinningData
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
 */
-template<class MemorySpace>
+template<class KokkosMemorySpace>
 class CartesianGrid3dBinningData
 {
   public:
 
-    using memory_space = MemorySpace;
+    using memory_space = KokkosMemorySpace;
     using size_type = typename memory_space::size_type;
 
-    CartesianGrid3dBinningData( BinningData<MemorySpace> bin_data_1d,
+    CartesianGrid3dBinningData( BinningData<KokkosMemorySpace> bin_data_1d,
                                 const int nbin[3] )
         : _bin_data( bin_data_1d )
     {
@@ -186,12 +186,12 @@ class CartesianGrid3dBinningData
       \brief Get the 1d bin data.
       \return The 1d bin data.
     */
-    BinningData<MemorySpace> data1d() const
+    BinningData<KokkosMemorySpace> data1d() const
     { return _bin_data; }
 
   private:
 
-    BinningData<MemorySpace> _bin_data;
+    BinningData<KokkosMemorySpace> _bin_data;
     int _nbin[3];
 };
 
@@ -300,14 +300,15 @@ kokkosBinSort1d(
 //---------------------------------------------------------------------------//
 // Copy the a 1D slice into a Kokkos view.
 template<class SliceType>
-Kokkos::View<typename SliceType::data_type, typename SliceType::memory_space>
+Kokkos::View<typename SliceType::value_type*,
+             typename SliceType::kokkos_memory_space>
 copySliceToKeys( SliceType slice )
 {
-    using KeyViewType = Kokkos::View<typename SliceType::data_type,
-                                     typename SliceType::memory_space>;
-    KeyViewType keys( "slice_keys", slice.extent(0) );
-    Kokkos::RangePolicy<typename SliceType::execution_space>
-        exec_policy( 0, slice.extent(0) );
+    using KeyViewType = Kokkos::View<typename SliceType::value_type*,
+                                     typename SliceType::kokkos_memory_space>;
+    KeyViewType keys( "slice_keys", slice.size() );
+    Kokkos::RangePolicy<typename SliceType::kokkos_execution_space>
+        exec_policy( 0, slice.size() );
     auto copy_op = KOKKOS_LAMBDA( const int i ) { keys(i) = slice(i); };
     Kokkos::parallel_for( "Cabana::copySliceToKeys::copy_op",
                           exec_policy,
@@ -563,8 +564,8 @@ sortByKey(
         is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
     int>::type * = 0 )
 {
-    return
-        sortByKey( aosoa, keys, create_permute_vector_only, 0, aosoa.size() );
+    return sortByKey(
+        aosoa, keys, create_permute_vector_only, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -673,7 +674,8 @@ binByKey(
   \return The permutation vector associated with the sorting.
 */
 template<std::size_t Member, class AoSoA_t>
-typename BinningData<typename AoSoA_t::traits::memory_space>::OffsetView
+typename BinningData<
+    typename AoSoA_t::memory_space::kokkos_memory_space>::OffsetView
 sortByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
@@ -682,8 +684,7 @@ sortByMember(
     const int end,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    std::ignore = member_tag;
-    auto keys = Impl::copySliceToKeys( aosoa.template view<Member>() );
+    auto keys = Impl::copySliceToKeys( aosoa.view(member_tag) );
     return sortByKey( aosoa, keys, create_permute_vector_only, begin, end );
 }
 
@@ -705,7 +706,8 @@ sortByMember(
   \return The permutation vector associated with the sorting.
 */
 template<std::size_t Member, class AoSoA_t>
-typename BinningData<typename AoSoA_t::traits::memory_space>::OffsetView
+typename BinningData<
+    typename AoSoA_t::memory_space::kokkos_memory_space>::OffsetView
 sortByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
@@ -744,7 +746,7 @@ sortByMember(
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<std::size_t Member, class AoSoA_t>
-BinningData<typename AoSoA_t::traits::memory_space>
+BinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
 binByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
@@ -754,8 +756,7 @@ binByMember(
     const int end,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    std::ignore = member_tag;
-    auto keys = Impl::copySliceToKeys( aosoa.template view<Member>() );
+    auto keys = Impl::copySliceToKeys( aosoa.view(member_tag) );
     return binByKey( aosoa, keys, nbin, create_data_only, begin, end );
 }
 
@@ -782,7 +783,7 @@ binByMember(
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<std::size_t Member, class AoSoA_t>
-BinningData<typename AoSoA_t::traits::memory_space>
+BinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
 binByMember(
     AoSoA_t aosoa,
     MemberTag<Member> member_tag,
@@ -823,36 +824,36 @@ binByMember(
   \param grid_max Upper grid bound in each cardinal direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
-CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
+CartesianGrid3dBinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
 binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
     const bool create_data_only,
     const int begin,
     const int end,
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_delta[3],
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_min[3],
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_max[3],
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 
 {
-    std::ignore = position_member;
-
     // Get the positions.
-    auto position = aosoa.template view<PositionMember>();
+    auto position = aosoa.view( position_member );
     using PositionSlice = decltype(position);
 
     // Copy the positions into a Kokkos view. For now we need to do this
     // because of internal copy constructors being called within
     // Kokkos::BinSort.
-    using KeyViewType = Kokkos::View<typename PositionSlice::data_type,
-                                     typename PositionSlice::memory_space>;
-    KeyViewType keys( "position_bin_keys", position.extent(0) );
-    Kokkos::RangePolicy<typename PositionSlice::execution_space>
-        exec_policy( 0, position.extent(0) );
+    using KeyViewType =
+        Kokkos::View<typename PositionSlice::value_type**,
+                     typename PositionSlice::kokkos_memory_space>;
+    KeyViewType keys(
+        "position_bin_keys", position.size(), position.fieldExtent(0) );
+    Kokkos::RangePolicy<typename PositionSlice::kokkos_execution_space>
+        exec_policy( 0, position.size() );
     auto copy_op = KOKKOS_LAMBDA( const int i )
                    { for ( int d = 0; d < 3; ++d ) keys(i,d) = position(i,d); };
     Kokkos::parallel_for( "Cabana::binByCartesianGrid3d::copy_op",
@@ -872,8 +873,9 @@ binByCartesianGrid3d(
         aosoa, keys, comp, create_data_only, false, begin, end );
 
     // Return the bin data.
-    return CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>(
-        bin_data_1d, nbin );
+    return CartesianGrid3dBinningData<
+        typename AoSoA_t::memory_space::kokkos_memory_space>(
+            bin_data_1d, nbin );
 }
 
 //---------------------------------------------------------------------------//
@@ -901,16 +903,16 @@ binByCartesianGrid3d(
   \param grid_max Upper grid bound in each cardinal direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
-CartesianGrid3dBinningData<typename AoSoA_t::traits::memory_space>
+CartesianGrid3dBinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
 binByCartesianGrid3d(
     AoSoA_t aosoa,
     MemberTag<PositionMember> position_member,
     const bool create_data_only,
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_delta[3],
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_min[3],
-    const typename AoSoA_t::template struct_member_value_type<PositionMember>
+    const typename AoSoA_t::template member_value_type<PositionMember>
     grid_max[3],
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {

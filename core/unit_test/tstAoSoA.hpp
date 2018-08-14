@@ -1,3 +1,4 @@
+#include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
 #include <impl/Cabana_Index.hpp>
 
@@ -16,11 +17,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.template view<0>();
-    auto view_1 = aosoa.template view<1>();
-    auto view_2 = aosoa.template view<2>();
-    auto view_3 = aosoa.template view<3>();
-    auto view_4 = aosoa.template view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -77,7 +78,7 @@ void testAoSoA()
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
 
     // Make sure that it is actually an AoSoA.
     EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
@@ -86,13 +87,13 @@ void testAoSoA()
     AoSoA_t aosoa;
 
     // Get field views.
-    auto view_0 = aosoa.template view<0>();
-    auto view_1 = aosoa.template view<1>();
-    auto view_2 = aosoa.template view<2>();
-    auto view_3 = aosoa.template view<3>();
-    auto view_4 = aosoa.template view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
-    // Check sizes.99
+    // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
     EXPECT_EQ( aosoa.capacity(), int(0) );
     EXPECT_EQ( aosoa.numSoA(), int(0) );
@@ -119,11 +120,11 @@ void testAoSoA()
 
     // Get field views again. We invalidated the pointers by resizing the
     // views.
-    view_0 = aosoa.template view<0>();
-    view_1 = aosoa.template view<1>();
-    view_2 = aosoa.template view<2>();
-    view_3 = aosoa.template view<3>();
-    view_4 = aosoa.template view<4>();
+    view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -203,7 +204,7 @@ void testAoSoA()
 void testRawDataLayoutRight()
 {
     // Manually set the inner array size.
-    using inner_array_layout = Cabana::InnerArrayLayout<32,Kokkos::LayoutRight>;
+    using inner_array_layout = Cabana::InnerArrayLayout<32,Cabana::LayoutRight>;
 
     // Multi dimensional member sizes.
     const int dim_1 = 3;
@@ -219,18 +220,18 @@ void testRawDataLayoutRight()
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;
     AoSoA_t aosoa( num_data );
 
     // Get views of fields.
-    auto view_0 = aosoa.view<0>();
-    auto view_1 = aosoa.view<1>();
-    auto view_2 = aosoa.view<2>();
-    auto view_3 = aosoa.view<3>();
-    auto view_4 = aosoa.view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     // Get raw pointers to the data as one would in a C interface (no templates).
     float* p0 = view_0.data();
@@ -240,15 +241,15 @@ void testRawDataLayoutRight()
     double* p4 = view_4.data();
 
     // Get the strides between the member arrays.
-    int st0 = view_0.stride();
-    int st1 = view_1.stride();
-    int st2 = view_2.stride();
-    int st3 = view_3.stride();
-    int st4 = view_4.stride();
+    int st0 = view_0.stride(0);
+    int st1 = view_1.stride(0);
+    int st2 = view_2.stride(0);
+    int st3 = view_3.stride(0);
+    int st4 = view_4.stride(0);
 
     // Member 2 is multidimensional so get its extents.
-    int m2e0 = view_2.extent(1);
-    int m2e1 = view_2.extent(2);
+    int m2e0 = view_2.extent(2);
+    int m2e1 = view_2.extent(3);
     EXPECT_EQ( m2e0, dim_1 );
     EXPECT_EQ( m2e1, dim_2 );
 
@@ -299,7 +300,7 @@ void testRawDataLayoutRight()
 void testRawDataLayoutLeft()
 {
     // Manually set the inner array size.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft>;
+    using inner_array_layout = Cabana::InnerArrayLayout<16,Cabana::LayoutLeft>;
 
     // Multi dimensional member sizes.
     const int dim_1 = 3;
@@ -314,18 +315,18 @@ void testRawDataLayoutLeft()
                                 double>;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,inner_array_layout,TEST_MEMSPACE>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;
     AoSoA_t aosoa( num_data );
 
     // Get views of fields.
-    auto view_0 = aosoa.view<0>();
-    auto view_1 = aosoa.view<1>();
-    auto view_2 = aosoa.view<2>();
-    auto view_3 = aosoa.view<3>();
-    auto view_4 = aosoa.view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     // Get raw pointers to the data as one would in a C interface (no templates).
     float* p0 = view_0.data();
@@ -335,15 +336,15 @@ void testRawDataLayoutLeft()
     double* p4 = view_4.data();
 
     // Get the strides between the member arrays.
-    int st0 = view_0.stride();
-    int st1 = view_1.stride();
-    int st2 = view_2.stride();
-    int st3 = view_3.stride();
-    int st4 = view_4.stride();
+    int st0 = view_0.stride(0);
+    int st1 = view_1.stride(0);
+    int st2 = view_2.stride(0);
+    int st3 = view_3.stride(0);
+    int st4 = view_4.stride(0);
 
     // Member 2 is multidimensional so get its extents.
-    int m2e0 = view_2.extent(1);
-    int m2e1 = view_2.extent(2);
+    int m2e0 = view_2.extent(2);
+    int m2e1 = view_2.extent(3);
     EXPECT_EQ( m2e0, dim_1 );
     EXPECT_EQ( m2e1, dim_2 );
 
@@ -412,20 +413,22 @@ void testParticle()
     // Declare the particle type.
     using Particle_t = Cabana::Particle<DataTypes>;
 
-    // Create a view of particles.
+    // Create an AoSoA.
     int num_data = 453;
-    Kokkos::View<Particle_t*,TEST_MEMSPACE> particles( "particles", num_data );
-
-    // Create a compatible particle AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_data );
 
+    // Create a view of particles with the same data types.
+    Kokkos::View<Particle_t*,
+                 typename AoSoA_t::memory_space::kokkos_memory_space>
+        particles( "particles", num_data );
+
     // Initialize aosoa data.
-    auto view_0 = aosoa.view<0>();
-    auto view_1 = aosoa.view<1>();
-    auto view_2 = aosoa.view<2>();
-    auto view_3 = aosoa.view<3>();
-    auto view_4 = aosoa.view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
@@ -506,13 +509,13 @@ void testParticle()
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, aosoa_layout_right_test )
 {
-    testAoSoA<Kokkos::LayoutRight>();
+    testAoSoA<Cabana::LayoutRight>();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, aosoa_layout_left_test )
 {
-    testAoSoA<Kokkos::LayoutLeft>();
+    testAoSoA<Cabana::LayoutLeft>();
 }
 
 //---------------------------------------------------------------------------//

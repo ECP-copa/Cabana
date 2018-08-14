@@ -233,7 +233,8 @@ struct Particle<MemberDataTypes<Types...> >
 
     // Member data type.
     template<std::size_t M>
-    using member_data_type = typename MemberDataTypeAtIndex<M,Types...>::type;
+    using member_data_type =
+        typename MemberDataTypeAtIndex<M,member_types>::type;
 
     // Value type at a given index M.
     template<std::size_t M>

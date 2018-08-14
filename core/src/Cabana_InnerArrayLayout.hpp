@@ -1,6 +1,7 @@
 #ifndef CABANA_INNERARRAYLAYOUT_HPP
 #define CABANA_INNERARRAYLAYOUT_HPP
 
+#include <Cabana_Types.hpp>
 #include <impl/Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -18,7 +19,7 @@ namespace Cabana
   layout right.
 */
 template<std::size_t N,
-         typename ArrayLayout = Kokkos::LayoutRight,
+         typename ArrayLayout = LayoutRight,
          typename std::enable_if<
              (Impl::IsPowerOfTwo<N>::value && N > 0),int>::type = 0>
 struct InnerArrayLayout
@@ -53,14 +54,14 @@ struct InnerArrayTypeImpl;
 // Layout-right specialization. User input for member data types is in
 // C-ordering and therefore we can directly use the input type.
 template<typename T, std::size_t Rank, std::size_t N>
-struct InnerArrayTypeImpl<T,Rank,InnerArrayLayout<N,Kokkos::LayoutRight> >
+struct InnerArrayTypeImpl<T,Rank,InnerArrayLayout<N,LayoutRight> >
 {
     using type = T[N];
 };
 
 // Layout-left rank-0 specialization.
 template<typename T, std::size_t N>
-struct InnerArrayTypeImpl<T,0,InnerArrayLayout<N,Kokkos::LayoutLeft> >
+struct InnerArrayTypeImpl<T,0,InnerArrayLayout<N,LayoutLeft> >
 {
     using value_type = typename std::remove_all_extents<T>::type;
     using type = value_type[N];
@@ -68,7 +69,7 @@ struct InnerArrayTypeImpl<T,0,InnerArrayLayout<N,Kokkos::LayoutLeft> >
 
 // Layout-left rank-1 specialization.
 template<typename T, std::size_t N>
-struct InnerArrayTypeImpl<T,1,InnerArrayLayout<N,Kokkos::LayoutLeft> >
+struct InnerArrayTypeImpl<T,1,InnerArrayLayout<N,LayoutLeft> >
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -77,7 +78,7 @@ struct InnerArrayTypeImpl<T,1,InnerArrayLayout<N,Kokkos::LayoutLeft> >
 
 // Layout-left rank-2 specialization.
 template<typename T, std::size_t N>
-struct InnerArrayTypeImpl<T,2,InnerArrayLayout<N,Kokkos::LayoutLeft> >
+struct InnerArrayTypeImpl<T,2,InnerArrayLayout<N,LayoutLeft> >
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -87,7 +88,7 @@ struct InnerArrayTypeImpl<T,2,InnerArrayLayout<N,Kokkos::LayoutLeft> >
 
 // Layout-left rank-3 specialization.
 template<typename T, std::size_t N>
-struct InnerArrayTypeImpl<T,3,InnerArrayLayout<N,Kokkos::LayoutLeft> >
+struct InnerArrayTypeImpl<T,3,InnerArrayLayout<N,LayoutLeft> >
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -98,7 +99,7 @@ struct InnerArrayTypeImpl<T,3,InnerArrayLayout<N,Kokkos::LayoutLeft> >
 
 // Layout-left rank-4 specialization.
 template<typename T, std::size_t N>
-struct InnerArrayTypeImpl<T,4,InnerArrayLayout<N,Kokkos::LayoutLeft> >
+struct InnerArrayTypeImpl<T,4,InnerArrayLayout<N,LayoutLeft> >
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;

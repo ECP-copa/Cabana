@@ -1,6 +1,7 @@
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberSlice.hpp>
+#include <Cabana_Types.hpp>
 
 #include <gtest/gtest.h>
 
@@ -16,11 +17,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.template view<0>();
-    auto view_1 = aosoa.template view<1>();
-    auto view_2 = aosoa.template view<2>();
-    auto view_3 = aosoa.template view<3>();
-    auto view_4 = aosoa.template view<4>();
+    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
 
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -75,8 +76,8 @@ void testDeepCopy()
                                 >;
 
     // Declare the AoSoA types.
-    using DstAoSoA_t = Cabana::AoSoA<DataTypes,DstInnerArrayLayout,DstMemorySpace>;
-    using SrcAoSoA_t = Cabana::AoSoA<DataTypes,SrcInnerArrayLayout,SrcMemorySpace>;
+    using DstAoSoA_t = Cabana::AoSoA<DataTypes,DstMemorySpace,DstInnerArrayLayout>;
+    using SrcAoSoA_t = Cabana::AoSoA<DataTypes,SrcMemorySpace,SrcInnerArrayLayout>;
 
     // Create AoSoAs.
     int num_data = 357;
@@ -87,11 +88,11 @@ void testDeepCopy()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto view_0 = src_aosoa.template view<0>();
-    auto view_1 = src_aosoa.template view<1>();
-    auto view_2 = src_aosoa.template view<2>();
-    auto view_3 = src_aosoa.template view<3>();
-    auto view_4 = src_aosoa.template view<4>();
+    auto view_0 = src_aosoa.view( Cabana::MemberTag<0>() );
+    auto view_1 = src_aosoa.view( Cabana::MemberTag<1>() );
+    auto view_2 = src_aosoa.view( Cabana::MemberTag<2>() );
+    auto view_3 = src_aosoa.view( Cabana::MemberTag<3>() );
+    auto view_4 = src_aosoa.view( Cabana::MemberTag<4>() );
     for ( auto idx = 0; idx < src_aosoa.size(); ++idx )
     {
         // Member 0.
@@ -132,45 +133,45 @@ void testDeepCopy()
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
 {
-    testDeepCopy<Kokkos::HostSpace,
+    testDeepCopy<Cabana::HostSpace,
                  TEST_MEMSPACE,
-                 Cabana::InnerArrayLayout<16,Kokkos::LayoutRight>,
-                 Cabana::InnerArrayLayout<16,Kokkos::LayoutRight> >();
+                 Cabana::InnerArrayLayout<16,Cabana::LayoutRight>,
+                 Cabana::InnerArrayLayout<16,Cabana::LayoutRight> >();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, deep_copy_from_host_same_layout_test )
 {
     testDeepCopy<TEST_MEMSPACE,
-                 Kokkos::HostSpace,
-                 Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft>,
-                 Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft> >();
+                 Cabana::HostSpace,
+                 Cabana::InnerArrayLayout<16,Cabana::LayoutLeft>,
+                 Cabana::InnerArrayLayout<16,Cabana::LayoutLeft> >();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
 {
-    testDeepCopy<Kokkos::HostSpace,
+    testDeepCopy<Cabana::HostSpace,
                  TEST_MEMSPACE,
-                 Cabana::InnerArrayLayout<16,Kokkos::LayoutLeft>,
-                 Cabana::InnerArrayLayout<32,Kokkos::LayoutRight> >();
-    testDeepCopy<Kokkos::HostSpace,
+                 Cabana::InnerArrayLayout<16,Cabana::LayoutLeft>,
+                 Cabana::InnerArrayLayout<32,Cabana::LayoutRight> >();
+    testDeepCopy<Cabana::HostSpace,
                  TEST_MEMSPACE,
-                 Cabana::InnerArrayLayout<64,Kokkos::LayoutRight>,
-                 Cabana::InnerArrayLayout<8,Kokkos::LayoutLeft> >();
+                 Cabana::InnerArrayLayout<64,Cabana::LayoutRight>,
+                 Cabana::InnerArrayLayout<8,Cabana::LayoutLeft> >();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
 {
     testDeepCopy<TEST_MEMSPACE,
-                 Kokkos::HostSpace,
-                 Cabana::InnerArrayLayout<64,Kokkos::LayoutLeft>,
-                 Cabana::InnerArrayLayout<8,Kokkos::LayoutRight> >();
+                 Cabana::HostSpace,
+                 Cabana::InnerArrayLayout<64,Cabana::LayoutLeft>,
+                 Cabana::InnerArrayLayout<8,Cabana::LayoutRight> >();
     testDeepCopy<TEST_MEMSPACE,
-                 Kokkos::HostSpace,
-                 Cabana::InnerArrayLayout<16,Kokkos::LayoutRight>,
-                 Cabana::InnerArrayLayout<32,Kokkos::LayoutLeft> >();
+                 Cabana::HostSpace,
+                 Cabana::InnerArrayLayout<16,Cabana::LayoutRight>,
+                 Cabana::InnerArrayLayout<32,Cabana::LayoutLeft> >();
 }
 
 //---------------------------------------------------------------------------//
