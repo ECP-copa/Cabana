@@ -46,7 +46,9 @@ using ParticleDataTypes =
 using MemorySpace = Cabana::HostSpace;
 
 // Declare the inner array layout.
-using ArrayLayout = Cabana::InnerArrayLayout<32,Cabana::LayoutRight>;
+const int inner_array_size = 32;
+using ArrayLayout =
+    Cabana::InnerArrayLayout<inner_array_size,Cabana::LayoutRight>;
 
 // Set the type for the particle AoSoA.
 using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,ArrayLayout>;
