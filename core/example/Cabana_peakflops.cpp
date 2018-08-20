@@ -187,7 +187,7 @@ void moveViewsWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
 void run()
 {
     //number of outer loop (e.g. timestepping)
-    long n = static_cast<long>(2e6);
+    long n = static_cast<long>(2e4);
 
     // Declare a number of particles.
     const int array_size = VECLENTH;
@@ -227,7 +227,7 @@ void run()
     unsigned short rg[3] = { static_cast<unsigned short>(seed >> 16),
                              static_cast<unsigned short>(seed >> 8),
                              static_cast<unsigned short>(seed) };
-    for (int idx = 0; idx < array_size; ++idx)
+    for (int idx = 0; idx < num_particle; ++idx)
     {
         ma(idx) = erand48(rg);
         m0(idx) = erand48(rg);
