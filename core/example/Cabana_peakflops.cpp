@@ -95,10 +95,13 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
         }
     }
     asm volatile ("# ax+c loop end");
-    for(j=0; j<VECLENTH; j++)
+    for ( s = 0; s < num_struct; ++s )
     {
-        x0->vec[j] = x0->vec[j]+x1->vec[j]+x2->vec[j]+x3->vec[j]+x4->vec[j]+
-                     x5->vec[j]+x6->vec[j]+x7->vec[j]+x8->vec[j]+x9->vec[j];
+        for(j=0; j<VECLENTH; j++)
+        {
+            x0[s].vec[j] = x0[s].vec[j]+x1[s].vec[j]+x2[s].vec[j]+x3[s].vec[j]+x4[s].vec[j]+
+                           x5[s].vec[j]+x6[s].vec[j]+x7[s].vec[j]+x8[s].vec[j]+x9[s].vec[j];
+        }
     }
 }
 
@@ -135,9 +138,12 @@ void moveViews(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
         }
     }
     asm volatile ("# ax+c loop end");
-    for(j=0; j<VECLENTH; j++)
+    for ( s = 0; s < num_struct; ++s )
     {
-        x0(j) = x0(j)+x1(j)+x2(j)+x3(j)+x4(j)+x5(j)+x6(j)+x7(j)+x8(j)+x9(j);
+        for(j=s*VECLENTH; j<(s+1)*VECLENTH; j++)
+        {
+            x0(j) = x0(j)+x1(j)+x2(j)+x3(j)+x4(j)+x5(j)+x6(j)+x7(j)+x8(j)+x9(j);
+        }
     }
 }
 
@@ -174,11 +180,14 @@ void moveViewsWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
         }
     }
     asm volatile ("# ax+c loop end");
-    for(j=0; j<VECLENTH; j++)
+    for ( s = 0; s < num_struct; ++s )
     {
-        x0.access(s,j) = x0.access(s,j)+x1.access(s,j)+x2.access(s,j)+x3.access(s,j)+
-                         x4.access(s,j)+x5.access(s,j)+x6.access(s,j)+x7.access(s,j)+
-                         x8.access(s,j)+x9.access(s,j);
+        for(j=0; j<VECLENTH; j++)
+        {
+            x0.access(s,j) = x0.access(s,j)+x1.access(s,j)+x2.access(s,j)+x3.access(s,j)+
+                             x4.access(s,j)+x5.access(s,j)+x6.access(s,j)+x7.access(s,j)+
+                             x8.access(s,j)+x9.access(s,j);
+        }
     }
 }
 
