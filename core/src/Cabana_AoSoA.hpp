@@ -13,7 +13,6 @@
 #include <Kokkos_Core.hpp>
 
 #include <type_traits>
-#include <memory>
 #include <cmath>
 #include <cstdlib>
 #include <string>
@@ -89,6 +88,9 @@ class AoSoA
     // SoA type.
     using soa_type = Impl::SoA<inner_array_layout,member_types>;
 
+    // Managed data view.
+    using soa_view = Kokkos::View<soa_type*,typename memory_space::kokkos_memory_space>;
+
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
 
@@ -129,8 +131,6 @@ class AoSoA
         : _size( 0 )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _managed_data( nullptr )
-        , _data( nullptr )
     {}
 
     /*!
@@ -142,8 +142,6 @@ class AoSoA
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _managed_data( nullptr )
-        , _data( nullptr )
     {
         resize( _size );
     }
@@ -227,33 +225,17 @@ class AoSoA
         _capacity = num_soa_alloc * array_size;
 
         // Allocate a new block of memory.
-        std::shared_ptr<soa_type> sp(
-            (soa_type*) Kokkos::kokkos_malloc<
-            typename memory_space::kokkos_memory_space>(
-                num_soa_alloc * sizeof(soa_type)),
-            Kokkos::kokkos_free<typename memory_space::kokkos_memory_space> );
-
-        // Fence before continuing to ensure the allocation is completed.
-        Kokkos::fence();
+        soa_view data_block( "aosoa_data", num_soa_alloc );
 
         // If we have already allocated memory, copy the old memory into the
         // new memory. Fence when we are done to ensure copy is complete
         // before continuing.
-        if ( _managed_data != nullptr )
-        {
-            Kokkos::Impl::DeepCopy<
-                typename memory_space::kokkos_memory_space,
-                typename memory_space::kokkos_memory_space,
-                typename memory_space::kokkos_execution_space>(
-                    sp.get(), _managed_data.get(), _num_soa * sizeof(soa_type) );
-            Kokkos::fence();
-        }
+        if ( _data.size() > 0 )
+            Kokkos::deep_copy( data_block, _data );
 
-        // Swap blocks. The old block will be destroyed when this function exits.
-        std::swap( _managed_data, sp );
-
-        // Assign the raw data pointer.
-        _data = _managed_data.get();
+        // Swap blocks. The old block will be destroyed when this function
+        // exits.
+        _data = data_block;
 
         // Get new pointers and strides for the members.
         storePointersAndStrides(
@@ -372,7 +354,7 @@ class AoSoA
       \return An un-typed raw-pointer to the entire data block.
     */
     void* ptr() const
-    { return _managed_data.get(); }
+    { return _data.data(); }
 
   private:
 
@@ -383,7 +365,7 @@ class AoSoA
         static_assert( 0 <= N && N < number_of_members,
                        "Static loop out of bounds!" );
         _pointers[N] =
-            static_cast<void*>( Impl::getStructMember<N>(_data[0]) );
+            static_cast<void*>( Impl::getStructMember<N>(_data(0)) );
         static_assert( 0 ==
                        sizeof(soa_type) % sizeof(member_value_type<N>),
                        "Stride cannot be calculated for misaligned memory!" );
@@ -413,7 +395,7 @@ class AoSoA
     {
         particle.template get<M>() =
             Impl::accessStructMember<M>(
-                _data[index_type::s(particle_index)],
+                _data(index_type::s(particle_index)),
                 index_type::i(particle_index) );
     }
 
@@ -427,7 +409,7 @@ class AoSoA
         for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
             particle.template get<M>( i0 ) =
                 Impl::accessStructMember<M>(
-                    _data[index_type::s(particle_index)],
+                    _data(index_type::s(particle_index)),
                     index_type::i(particle_index),
                     i0 );
     }
@@ -443,7 +425,7 @@ class AoSoA
             for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
                 particle.template get<M>( i0, i1 ) =
                     Impl::accessStructMember<M>(
-                        _data[index_type::s(particle_index)],
+                        _data(index_type::s(particle_index)),
                         index_type::i(particle_index),
                         i0, i1 );
     }
@@ -460,7 +442,7 @@ class AoSoA
                 for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
                     particle.template get<M>( i0, i1, i2 ) =
                         Impl::accessStructMember<M>(
-                            _data[index_type::s(particle_index)],
+                            _data(index_type::s(particle_index)),
                             index_type::i(particle_index),
                             i0, i1, i2 );
     }
@@ -478,7 +460,7 @@ class AoSoA
                     for ( int i3 = 0; i3 < particle.template extent<M,3>(); ++i3 )
                         particle.template get<M>( i0, i1, i2, i3 ) =
                             Impl::accessStructMember<M>(
-                                _data[index_type::s(particle_index)],
+                                _data(index_type::s(particle_index)),
                                 index_type::i(particle_index),
                                 i0, i1, i2, i3 );
     }
@@ -512,7 +494,7 @@ class AoSoA
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
-        Impl::accessStructMember<M>( _data[index_type::s(particle_index)],
+        Impl::accessStructMember<M>( _data(index_type::s(particle_index)),
                                      index_type::i(particle_index) )
             = particle.template get<M>();
     }
@@ -526,7 +508,7 @@ class AoSoA
     {
         for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
             Impl::accessStructMember<M>(
-                _data[index_type::s(particle_index)],
+                _data(index_type::s(particle_index)),
                 index_type::i(particle_index), i0 )
                 = particle.template get<M>( i0 );
     }
@@ -541,7 +523,7 @@ class AoSoA
         for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
             for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
                 Impl::accessStructMember<M>(
-                    _data[index_type::s(particle_index)],
+                    _data(index_type::s(particle_index)),
                     index_type::i(particle_index), i0, i1 )
                     = particle.template get<M>( i0, i1 );
     }
@@ -557,7 +539,7 @@ class AoSoA
             for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
                 for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
                     Impl::accessStructMember<M>(
-                        _data[index_type::s(particle_index)],
+                        _data(index_type::s(particle_index)),
                         index_type::i(particle_index), i0, i1, i2 )
                         = particle.template get<M>( i0, i1, i2 );
     }
@@ -574,7 +556,7 @@ class AoSoA
                 for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
                     for ( int i3 = 0; i3 < particle.template extent<M,3>(); ++i3 )
                         Impl::accessStructMember<M>(
-                            _data[index_type::s(particle_index)],
+                            _data(index_type::s(particle_index)),
                             index_type::i(particle_index), i0, i1, i2, i3 )
                             = particle.template get<M>( i0, i1, i2, i3 );
     }
@@ -611,14 +593,11 @@ class AoSoA
     // Number of structs-of-arrays in the array.
     int _num_soa;
 
-    // Structs-of-Arrays managed data. This shared pointer manages the block
-    // of memory owned by this class such that the copy constructor and
+    // Structs-of-Arrays managed data. This Kokkos View manages the block of
+    // memory owned by this class such that the copy constructor and
     // assignment operator for this class perform a shallow and reference
     // counted copy of the data.
-    std::shared_ptr<soa_type> _managed_data;
-
-    // Raw pointer to the managed data.
-    soa_type* _data;
+    soa_view _data;
 
     // Pointers to the first element of each member.
     void* _pointers[number_of_members];
