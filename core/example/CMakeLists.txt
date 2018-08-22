@@ -21,6 +21,12 @@ IF(Cabana_ENABLE_Serial)
 
 ENDIF()
 
+  TRIBITS_ADD_EXECUTABLE(
+    PeakFlops
+    SOURCES Cabana_peakflops.cpp
+    COMM serial mpi
+    )
+
 FIND_PACKAGE(PkgConfig)
 FIND_PACKAGE(MPI)
 PKG_CHECK_MODULES(SCAFACOS scafacos)

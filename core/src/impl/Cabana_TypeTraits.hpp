@@ -1,6 +1,8 @@
 #ifndef CABANA_TYPETRAITS_HPP
 #define CABANA_TYPETRAITS_HPP
 
+#include <Kokkos_Core.hpp>
+
 #include <type_traits>
 
 namespace Cabana
@@ -29,6 +31,14 @@ template<>
 struct LogBase2<1>
 {
     static constexpr int value = 0;
+};
+
+//---------------------------------------------------------------------------//
+// Check that the provided vector length is valid.
+template<int N>
+struct IsVectorLengthValid
+{
+    static constexpr bool value = (IsPowerOfTwo<N>::value && N > 0);
 };
 
 //---------------------------------------------------------------------------//
