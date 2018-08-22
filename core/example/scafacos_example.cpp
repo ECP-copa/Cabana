@@ -68,32 +68,32 @@ void initializeParticles( ParticleList particles, int crystal_size )
 {
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
-	// Calculate location of particle in crystal
-	int idx_x = idx % crystal_size;
-	int idx_y = (idx / crystal_size) % crystal_size;
-	int idx_z = idx / (crystal_size * crystal_size);	
+        // Calculate location of particle in crystal
+        int idx_x = idx % crystal_size;
+        int idx_y = (idx / crystal_size) % crystal_size;
+        int idx_z = idx / (crystal_size * crystal_size);	
 	
         // Initialize position.
-        particles.get<PositionX>( idx ) = (double)idx_x * 1.0;
-        particles.get<PositionY>( idx ) = (double)idx_y * 1.0;
-        particles.get<PositionZ>( idx ) = (double)idx_z * 1.0;
+        particles.view(Cabana::MemberTag<PositionX>())( idx ) = (double)idx_x * 1.0;
+        particles.view(Cabana::MemberTag<PositionY>())( idx ) = (double)idx_y * 1.0;
+        particles.view(Cabana::MemberTag<PositionZ>())( idx ) = (double)idx_z * 1.0;
 
         // Initialize velocity.
         for ( int d = 0; d < space_dim; ++d )
-            particles.get<Velocity>( idx, d ) = 0.0;
+            particles.view(Cabana::MemberTag<Velocity>())( idx, d ) = 0.0;
 
         // Initialize field
         for ( int d = 0; d < space_dim; ++d )
-            particles.get<Field>( idx, d ) = 0.0 * d;
+            particles.view(Cabana::MemberTag<Field>())( idx, d ) = 0.0 * d;
 
 	// Create alternating charge
-	particles.get<Charge>(idx) = ((idx_x + idx_y + idx_z)%2)?1.0:-1.0;
+	particles.view(Cabana::MemberTag<Charge>())(idx) = ((idx_x + idx_y + idx_z)%2)?1.0:-1.0;
 
 	// Set potential
-	particles.get<Potential>(idx) = 0.0;
+	particles.view(Cabana::MemberTag<Potential>())(idx) = 0.0;
 
         // Set global particle index
-        particles.get<Index>( idx ) = idx+1;
+        particles.view(Cabana::MemberTag<Index>())( idx ) = idx+1;
     }
 }
 
@@ -109,25 +109,25 @@ void printParticles( const ParticleList particles )
         std::cout << "Struct id: " << aosoa_idx.first << std::endl;
         std::cout << "Struct offset: " << aosoa_idx.second << std::endl;
         std::cout << "Position: "
-                  << particles.get<PositionX>( idx ) << " "
-                  << particles.get<PositionY>( idx ) << " "
-                  << particles.get<PositionZ>( idx ) << std::endl;
+                  << particles.view(Cabana::MemberTag<PositionX>())( idx ) << " "
+                  << particles.view(Cabana::MemberTag<PositionY>())( idx ) << " "
+                  << particles.view(Cabana::MemberTag<PositionZ>())( idx ) << std::endl;
 
         std::cout << "Velocity ";
         for ( int d = 0; d < space_dim; ++d )
-            std::cout << particles.get<Velocity>( idx, d ) << " ";
+            std::cout << particles.view(Cabana::MemberTag<Velocity>())( idx, d ) << " ";
         std::cout << std::endl;
 
-	std::cout << "Charge " << particles.get<Charge>(idx) << std::endl;
+	std::cout << "Charge " << particles.view(Cabana::MemberTag<Charge>())(idx) << std::endl;
 
-	std::cout << "Potential " << particles.get<Potential>(idx) << std::endl;
+	std::cout << "Potential " << particles.view(Cabana::MemberTag<Potential>())(idx) << std::endl;
 
         std::cout << "Field ";
         for ( int d = 0; d < space_dim; ++d )
-            std::cout << particles.get<Field>( idx, d ) << " ";
+            std::cout << particles.view(Cabana::MemberTag<Field>())( idx, d ) << " ";
         std::cout << std::endl;
 
-        std::cout << "Index " << particles.get<Index>(idx) << std::endl;
+        std::cout << "Index " << particles.view(Cabana::MemberTag<Index>())(idx) << std::endl;
     }
 }
 
@@ -176,10 +176,10 @@ void exampleMain(int num_particle, int crystal_size, std::string method, int mpi
     for (int i = 0; i < num_particle; ++i)
     {
 	// ScaFaCoS expects postions in a (x,y,z) AoS format
-	pos.push_back(particles.get<PositionX>(i));
-	pos.push_back(particles.get<PositionY>(i));
-	pos.push_back(particles.get<PositionZ>(i));
-	q.push_back(particles.get<Charge>(i));
+	pos.push_back(particles.view(Cabana::MemberTag<PositionX>())(i));
+	pos.push_back(particles.view(Cabana::MemberTag<PositionY>())(i));
+	pos.push_back(particles.view(Cabana::MemberTag<PositionZ>())(i));
+	q.push_back(particles.view(Cabana::MemberTag<Charge>())(i));
     }
 
     // parameter string to set the periodicity and disable the calculation of near field parts from the calling program
@@ -221,10 +221,10 @@ void exampleMain(int num_particle, int crystal_size, std::string method, int mpi
     // copy results from the call to the particle structures
     for (int i = 0; i < num_particle; ++i)
     {
-	particles.get<Field>(i,0) = f.at(3*i);
-	particles.get<Field>(i,1) = f.at(3*i+1);
-	particles.get<Field>(i,2) = f.at(3*i+2);
-	particles.get<Potential>(i) = pot.at(i);
+	particles.view(Cabana::MemberTag<Field>())(i,0) = f.at(3*i);
+	particles.view(Cabana::MemberTag<Field>())(i,1) = f.at(3*i+1);
+	particles.view(Cabana::MemberTag<Field>())(i,2) = f.at(3*i+2);
+	particles.view(Cabana::MemberTag<Potential>())(i) = pot.at(i);
     }
 
     // Print particles (to check if any calculation took place and check results)
