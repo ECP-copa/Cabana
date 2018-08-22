@@ -40,9 +40,3 @@ IF(PKG_CONFIG_FOUND AND SCAFACOS_FOUND)
   TARGET_INCLUDE_DIRECTORIES(Core_ScafacosExample PRIVATE ${MPI_C_INCLUDE_PATH})
 
 ENDIF()
-  
-  TRIBITS_ADD_EXECUTABLE(
-    PeakFlops
-    SOURCES Cabana_peakflops.cpp
-    COMM serial mpi
-    )
