@@ -21,7 +21,6 @@ IF(Cabana_ENABLE_Serial)
 
 ENDIF()
 
-<<<<<<< HEAD
   TRIBITS_ADD_EXECUTABLE(
     PeakFlops
     SOURCES Cabana_peakflops.cpp
