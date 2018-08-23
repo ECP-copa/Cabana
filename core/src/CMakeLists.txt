@@ -3,6 +3,7 @@ INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
 
 TRIBITS_CONFIGURE_FILE(${PROJECT_NAME}${PACKAGE_NAME}_config.hpp)
 
+SET(CABANA_INCDIR ${CMAKE_INSTALL_PREFIX}/${${PROJECT_NAME}_INSTALL_INCLUDE_DIR})
 #-----------------------------------------------------------------------------
 
 SET(HEADERS_PUBLIC "")
@@ -21,6 +22,8 @@ FILE(GLOB SOURCES_IMPL impl/*.cpp)
 
 LIST(APPEND HEADERS_PRIVATE ${HEADERS_IMPL} )
 LIST(APPEND SOURCES         ${SOURCES_IMPL} )
+
+INSTALL(FILES ${HEADERS_IMPL} DESTINATION ${CABANA_INCDIR}/impl/)
 
 #-----------------------------------------------------------------------------
 
