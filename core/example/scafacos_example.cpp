@@ -1,3 +1,4 @@
+#include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
 
@@ -52,13 +53,13 @@ using ParticleDataTypes =
                             >;
 
 // Declare the memory space.
-using MemorySpace = Kokkos::HostSpace;
+using MemorySpace = Cabana::HostSpace;
 
 // Declare the inner array layout.
-using ArrayLayout = Cabana::InnerArrayLayout<32,Kokkos::LayoutRight>;
+using ArrayLayout = Cabana::InnerArrayLayout<32,Cabana::LayoutRight>;
 
 // Set the type for the particle AoSoA.
-using ParticleList = Cabana::AoSoA<ParticleDataTypes,ArrayLayout,MemorySpace>;
+using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,ArrayLayout>;
 
 //---------------------------------------------------------------------------//
 // Helper functions.
@@ -102,12 +103,13 @@ void printParticles( const ParticleList particles )
 {
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
-        auto aosoa_idx = Cabana::Impl::Index<32>::aosoa( idx );
+        auto aosoa_idx_s = Cabana::Impl::Index<32>::s( idx );
+        auto aosoa_idx_i = Cabana::Impl::Index<32>::i( idx );
 
         std::cout << std::endl;
 
-        std::cout << "Struct id: " << aosoa_idx.first << std::endl;
-        std::cout << "Struct offset: " << aosoa_idx.second << std::endl;
+        std::cout << "Struct id: " << aosoa_idx_s << std::endl;
+        std::cout << "Struct offset: " << aosoa_idx_i << std::endl;
         std::cout << "Position: "
                   << particles.view(Cabana::MemberTag<PositionX>())( idx ) << " "
                   << particles.view(Cabana::MemberTag<PositionY>())( idx ) << " "
@@ -118,9 +120,9 @@ void printParticles( const ParticleList particles )
             std::cout << particles.view(Cabana::MemberTag<Velocity>())( idx, d ) << " ";
         std::cout << std::endl;
 
-	std::cout << "Charge " << particles.view(Cabana::MemberTag<Charge>())(idx) << std::endl;
+	      std::cout << "Charge " << particles.view(Cabana::MemberTag<Charge>())(idx) << std::endl;
 
-	std::cout << "Potential " << particles.view(Cabana::MemberTag<Potential>())(idx) << std::endl;
+       	std::cout << "Potential " << particles.view(Cabana::MemberTag<Potential>())(idx) << std::endl;
 
         std::cout << "Field ";
         for ( int d = 0; d < space_dim; ++d )
@@ -175,11 +177,11 @@ void exampleMain(int num_particle, int crystal_size, std::string method, int mpi
     std::vector<double> pot(num_particle);
     for (int i = 0; i < num_particle; ++i)
     {
-	// ScaFaCoS expects postions in a (x,y,z) AoS format
-	pos.push_back(particles.view(Cabana::MemberTag<PositionX>())(i));
-	pos.push_back(particles.view(Cabana::MemberTag<PositionY>())(i));
-	pos.push_back(particles.view(Cabana::MemberTag<PositionZ>())(i));
-	q.push_back(particles.view(Cabana::MemberTag<Charge>())(i));
+      // ScaFaCoS expects postions in a (x,y,z) AoS format
+      pos.push_back(particles.view(Cabana::MemberTag<PositionX>())(i));
+      pos.push_back(particles.view(Cabana::MemberTag<PositionY>())(i));
+      pos.push_back(particles.view(Cabana::MemberTag<PositionZ>())(i));
+      q.push_back(particles.view(Cabana::MemberTag<Charge>())(i));
     }
 
     // parameter string to set the periodicity and disable the calculation of near field parts from the calling program
@@ -221,10 +223,10 @@ void exampleMain(int num_particle, int crystal_size, std::string method, int mpi
     // copy results from the call to the particle structures
     for (int i = 0; i < num_particle; ++i)
     {
-	particles.view(Cabana::MemberTag<Field>())(i,0) = f.at(3*i);
-	particles.view(Cabana::MemberTag<Field>())(i,1) = f.at(3*i+1);
-	particles.view(Cabana::MemberTag<Field>())(i,2) = f.at(3*i+2);
-	particles.view(Cabana::MemberTag<Potential>())(i) = pot.at(i);
+      particles.view(Cabana::MemberTag<Field>())(i,0) = f.at(3*i);
+      particles.view(Cabana::MemberTag<Field>())(i,1) = f.at(3*i+1);
+      particles.view(Cabana::MemberTag<Field>())(i,2) = f.at(3*i+2);
+      particles.view(Cabana::MemberTag<Potential>())(i) = pot.at(i);
     }
 
     // Print particles (to check if any calculation took place and check results)
@@ -253,27 +255,27 @@ int main( int argc, char* argv[] )
     // Run the test.
     if (argc == 3)
     {
-	// to change the system size at run time, call:
-	// ./scafacos_example <crystal_dimension> <solver_name>
-	// solver name is one of:
-	// direct  	direct solver (does not work for periodic systems, uses 'halo-systems' (expensive!))
-	// ewald  	ewald solver
-	// fmm  	fast multipole methode
-	// p3m  	particle - particle particle - mesh method
-	// p2nfft  	FFT based solver
-	//
-	// crystal dimension should be divisible by two for an un-charged system
-	int c_size = atoi(argv[1]);
-        method = argv[2];
-	exampleMain(c_size * c_size * c_size, c_size, method, comm, rank);
+      // to change the system size at run time, call:
+      // ./scafacos_example <crystal_dimension> <solver_name>
+      // solver name is one of:
+      // direct  	direct solver (does not work for periodic systems, uses 'halo-systems' (expensive!))
+      // ewald  	ewald solver
+      // fmm  	fast multipole methode
+      // p3m  	particle - particle particle - mesh method
+      // p2nfft  	FFT based solver
+      //
+      // crystal dimension should be divisible by two for an un-charged system
+      int c_size = atoi(argv[1]);
+            method = argv[2];
+      exampleMain(c_size * c_size * c_size, c_size, method, comm, rank);
     }
     else
     {
-	exampleMain(	default_crystal_size * default_crystal_size * default_crystal_size,
-		    	default_crystal_size,
-			method,
-			comm,
-     			rank);
+      exampleMain(	default_crystal_size * default_crystal_size * default_crystal_size,
+            default_crystal_size,
+            method,
+            comm,
+            rank);
     }
 
 
