@@ -59,156 +59,6 @@ struct ParticleImpl<IndexSequence<Indices...>,Types...>
 {};
 
 //---------------------------------------------------------------------------//
-/*!
-  \brief Particle member accessor.
-*/
-
-// Rank 0.
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (0==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_reference_type<M> >::type
-getParticleMember( Particle_t& particle )
-{
-    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data;
-}
-
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (0==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_value_type<M> >::type
-getParticleMember( const Particle_t& particle )
-{
-    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data;
-}
-
-// Rank 1.
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (1==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_reference_type<M> >::type
-getParticleMember( Particle_t& particle,
-                   const int d0 )
-{
-    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data[d0];
-}
-
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (1==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_value_type<M> >::type
-getParticleMember( const Particle_t& particle,
-                   const int d0 )
-{
-    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data[d0];
-}
-
-// Rank 2.
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (2==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_reference_type<M> >::type
-getParticleMember( Particle_t& particle,
-                   const int d0,
-                   const int d1 )
-{
-    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data[d0][d1];
-}
-
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (2==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_value_type<M> >::type
-getParticleMember( const Particle_t& particle,
-                   const int d0,
-                   const int d1 )
-{
-    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data[d0][d1];
-}
-
-// Rank 3.
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (3==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_reference_type<M> >::type
-getParticleMember( Particle_t& particle,
-                   const int d0,
-                   const int d1,
-                   const int d2 )
-{
-    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data[d0][d1][d2];
-}
-
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (3==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_value_type<M> >::type
-getParticleMember( const Particle_t& particle,
-                   const int d0,
-                   const int d1,
-                   const int d2 )
-{
-    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data[d0][d1][d2];
-}
-
-// Rank 4.
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (4==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_reference_type<M> >::type
-getParticleMember( Particle_t& particle,
-                   const int d0,
-                   const int d1,
-                   const int d2,
-                   const int d3 )
-{
-    ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data[d0][d1][d2][d3];
-}
-
-template<std::size_t M, class Particle_t>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (4==std::rank<typename Particle_t::template member_data_type<M> >::value),
-    typename Particle_t::template member_value_type<M> >::type
-getParticleMember( const Particle_t& particle,
-                   const int d0,
-                   const int d1,
-                   const int d2,
-                   const int d3 )
-{
-    const ParticleMember<M,typename Particle_t::template member_data_type<M> >&
-        base = particle;
-    return base._data[d0][d1][d2][d3];
-}
-
-//---------------------------------------------------------------------------//
 
 } // end namespace Impl
 
@@ -289,7 +139,8 @@ struct Particle<MemberDataTypes<Types...> >
                             member_reference_type<M> >::type
     get()
     {
-        return Impl::getParticleMember<M>( *this );
+        Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data;
     }
 
     template<std::size_t M>
@@ -298,7 +149,8 @@ struct Particle<MemberDataTypes<Types...> >
                             member_value_type<M> >::type
     get() const
     {
-        return Impl::getParticleMember<M>( *this );
+        const Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data;
     }
 
     // Rank 1
@@ -308,7 +160,8 @@ struct Particle<MemberDataTypes<Types...> >
                             member_reference_type<M> >::type
     get( const int d0 )
     {
-        return Impl::getParticleMember<M>( *this, d0 );
+        Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data[d0];
     }
 
     template<std::size_t M>
@@ -317,7 +170,8 @@ struct Particle<MemberDataTypes<Types...> >
                             member_value_type<M> >::type
     get( const int d0 ) const
     {
-        return Impl::getParticleMember<M>( *this, d0 );
+        const Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data[d0];
     }
 
     // Rank 2
@@ -328,7 +182,8 @@ struct Particle<MemberDataTypes<Types...> >
     get( const int d0,
          const int d1 )
     {
-        return Impl::getParticleMember<M>( *this, d0, d1 );
+        Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data[d0][d1];
     }
 
     template<std::size_t M>
@@ -338,7 +193,8 @@ struct Particle<MemberDataTypes<Types...> >
     get( const int d0,
          const int d1 ) const
     {
-        return Impl::getParticleMember<M>( *this, d0, d1 );
+        const Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data[d0][d1];
     }
 
     // Rank 3
@@ -350,7 +206,8 @@ struct Particle<MemberDataTypes<Types...> >
          const int d1,
          const int d2 )
     {
-        return Impl::getParticleMember<M>( *this, d0, d1, d2 );
+        Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data[d0][d1][d2];
     }
 
     template<std::size_t M>
@@ -361,7 +218,8 @@ struct Particle<MemberDataTypes<Types...> >
          const int d1,
          const int d2 ) const
     {
-        return Impl::getParticleMember<M>( *this, d0, d1, d2 );
+        const Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data[d0][d1][d2];
     }
 
     // Rank 4
@@ -374,7 +232,8 @@ struct Particle<MemberDataTypes<Types...> >
          const int d2,
          const int d3 )
     {
-        return Impl::getParticleMember<M>( *this, d0, d1, d2, d3 );
+        Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data[d0][d1][d2][d3];
     }
 
     template<std::size_t M>
@@ -386,7 +245,8 @@ struct Particle<MemberDataTypes<Types...> >
          const int d2,
          const int d3 ) const
     {
-        return Impl::getParticleMember<M>( *this, d0, d1, d2, d3 );
+        const Impl::ParticleMember<M,member_data_type<M> >& base = *this;
+        return base._data[d0][d1][d2][d3];
     }
 };
 
