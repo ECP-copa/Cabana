@@ -293,7 +293,19 @@ class MemberSlice
   public:
 
     /*!
+      \brief Default constructor.
+    */
+    MemberSlice()
+        : _size( 0 )
+    {}
+
+    /*!
       \brief Constructor.
+      \param data Pointer to the first member of the slice.
+      \param The number of particles in the slice.
+      \param The number of elements in the slice's value type between starting
+      elements of a struct.
+      \param The number of structs in the slice.
     */
     MemberSlice( const pointer_type data,
                  const int size,
