@@ -40,6 +40,16 @@ TRIBITS_ADD_EXECUTABLE_AND_TEST(
   )
 
 TRIBITS_ADD_EXECUTABLE_AND_TEST(
+  CartesianGrid_test
+  SOURCES tstCartesianGrid.cpp unit_test_main.cpp
+  COMM serial mpi
+  NUM_MPI_PROCS 1
+  FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+  TESTONLYLIBS cabana_core_gtest
+  ARGS "--gtest_color=yes"
+  )
+
+TRIBITS_ADD_EXECUTABLE_AND_TEST(
   SoA_test
   SOURCES tstSoA.cpp unit_test_main.cpp
   COMM serial mpi
@@ -85,16 +95,6 @@ IF(Cabana_ENABLE_Serial)
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Parallel_test_Serial
-    SOURCES Serial/tstParallel_Serial.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Particle_test_Serial
     SOURCES Serial/tstParticle_Serial.cpp unit_test_main.cpp
     COMM serial mpi
@@ -107,6 +107,26 @@ IF(Cabana_ENABLE_Serial)
     TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Sort_test_Serial
     SOURCES Serial/tstSort_Serial.cpp unit_test_main.cpp
+    COMM serial mpi
+    NUM_MPI_PROCS 1
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
+    )
+
+    TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    NeighborList_test_Serial
+    SOURCES Serial/tstNeighborList_Serial.cpp unit_test_main.cpp
+    COMM serial mpi
+    NUM_MPI_PROCS 1
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Parallel_test_Serial
+    SOURCES Serial/tstParallel_Serial.cpp unit_test_main.cpp
     COMM serial mpi
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -152,16 +172,6 @@ IF(Cabana_ENABLE_OpenMP)
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Parallel_test_OpenMP
-    SOURCES OpenMP/tstParallel_OpenMP.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Particle_test_OpenMP
     SOURCES OpenMP/tstParticle_OpenMP.cpp unit_test_main.cpp
     COMM serial mpi
@@ -174,6 +184,26 @@ IF(Cabana_ENABLE_OpenMP)
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Sort_test_OpenMP
     SOURCES OpenMP/tstSort_OpenMP.cpp unit_test_main.cpp
+    COMM serial mpi
+    NUM_MPI_PROCS 1
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    NeighborList_test_OpenMP
+    SOURCES OpenMP/tstNeighborList_OpenMP.cpp unit_test_main.cpp
+    COMM serial mpi
+    NUM_MPI_PROCS 1
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Parallel_test_OpenMP
+    SOURCES OpenMP/tstParallel_OpenMP.cpp unit_test_main.cpp
     COMM serial mpi
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -219,16 +249,6 @@ IF(Cabana_ENABLE_Cuda)
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Parallel_test_CudaUVM
-    SOURCES Cuda/tstParallel_CudaUVM.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Particle_test_CudaUVM
     SOURCES Cuda/tstParticle_CudaUVM.cpp unit_test_main.cpp
     COMM serial mpi
@@ -241,6 +261,26 @@ IF(Cabana_ENABLE_Cuda)
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
     Sort_test_CudaUVM
     SOURCES Cuda/tstSort_CudaUVM.cpp unit_test_main.cpp
+    COMM serial mpi
+    NUM_MPI_PROCS 1
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    NeighborList_test_CudaUVM
+    SOURCES Cuda/tstNeighborList_CudaUVM.cpp unit_test_main.cpp
+    COMM serial mpi
+    NUM_MPI_PROCS 1
+    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+    TESTONLYLIBS cabana_core_gtest
+    ARGS "--gtest_color=yes"
+    )
+
+  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+    Parallel_test_CudaUVM
+    SOURCES Cuda/tstParallel_CudaUVM.cpp unit_test_main.cpp
     COMM serial mpi
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"

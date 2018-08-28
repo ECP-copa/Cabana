@@ -1,0 +1,46 @@
+#include <impl/Cabana_CartesianGrid.hpp>
+
+#include <gtest/gtest.h>
+
+//---------------------------------------------------------------------------//
+// TESTS
+//---------------------------------------------------------------------------//
+namespace Test {
+
+class cabana_cartesian_grid : public ::testing::Test {
+protected:
+  static void SetUpTestCase() {
+  }
+
+  static void TearDownTestCase() {
+  }
+};
+
+TEST_F( cabana_cartesian_grid, grid_test )
+{
+    double min[3] = { -1.0, -0.5, -0.6 };
+    double max[3] = {  2.5,  1.5,  1.9 };
+    double delta[3] = { 0.5, 0.125, 0.25 };
+
+    Cabana::Impl::CartesianGrid<double> grid( min, max, delta );
+
+    int nx, ny, nz;
+    grid.numCells( nx, ny, nz );
+    EXPECT_EQ( nx, 7 );
+    EXPECT_EQ( ny, 16 );
+    EXPECT_EQ( nz, 10 );
+
+    double xp = -0.9;
+    double yp = 1.4;
+    double zp = 0.1;
+    int ic, jc, kc;
+    grid.locatePoint( xp, yp, zp, ic, jc, kc );
+    EXPECT_EQ( ic, 0 );
+    EXPECT_EQ( jc, 15 );
+    EXPECT_EQ( kc, 2 );
+
+    double min_dist = grid.minDistanceToPoint( xp, yp, zp, ic, jc, kc );
+    EXPECT_DOUBLE_EQ( min_dist, 0.0 );
+}
+
+} // end namespace Test
