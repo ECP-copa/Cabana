@@ -27,6 +27,10 @@ class BinningData
     using CountView = Kokkos::View<const int*,KokkosMemorySpace>;
     using OffsetView = Kokkos::View<size_type*,KokkosMemorySpace>;
 
+    BinningData()
+        : _nbin(0)
+    {}
+
     BinningData( CountView counts,
                  OffsetView offsets,
                  OffsetView permute_vector )
@@ -110,6 +114,19 @@ class CartesianGrid3dBinningData
     using memory_space = KokkosMemorySpace;
     using size_type = typename memory_space::size_type;
 
+    /*!
+      \brief Default constructor.
+    */
+    CartesianGrid3dBinningData()
+    {
+        _nbin[0] = 0;
+        _nbin[1] = 0;
+        _nbin[2] = 0;
+    }
+
+    /*!
+      \brief Constructor
+    */
     CartesianGrid3dBinningData( BinningData<KokkosMemorySpace> bin_data_1d,
                                 const int nbin[3] )
         : _bin_data( bin_data_1d )
@@ -117,6 +134,30 @@ class CartesianGrid3dBinningData
         _nbin[0] = nbin[0];
         _nbin[1] = nbin[1];
         _nbin[2] = nbin[2];
+    }
+
+    /*!
+      \brief Copy constructor.
+    */
+    CartesianGrid3dBinningData( const CartesianGrid3dBinningData& data )
+    {
+        _bin_data = data._bin_data;
+        _nbin[0] = data._nbin[0];
+        _nbin[1] = data._nbin[1];
+        _nbin[2] = data._nbin[2];
+    }
+
+    /*!
+      \brief Assignment operators.
+    */
+    CartesianGrid3dBinningData&
+    operator=( const CartesianGrid3dBinningData& data )
+    {
+        _bin_data = data._bin_data;
+        _nbin[0] = data._nbin[0];
+        _nbin[1] = data._nbin[1];
+        _nbin[2] = data._nbin[2];
+        return *this;
     }
 
     /*!
@@ -148,7 +189,25 @@ class CartesianGrid3dBinningData
     */
     KOKKOS_INLINE_FUNCTION
     int cardinalBinIndex( const int i, const int j, const int k ) const
-    { return i * _nbin[1] * _nbin[2] + j * _nbin[2] + k; }
+    { return (i * _nbin[1] + j) * _nbin[2] + k; }
+
+    /*!
+      \brief Given the cardinal index of a bin get its ijk indices.
+      \param cardinal The cardinal bin index.
+      \param i The i bin index (x).
+      \param j The j bin index (y).
+      \param k The k bin index (z).
+
+      Note that the Kokkos sort orders the bins such that the i index moves
+      the slowest and the k index mvoes the fastest.
+    */
+    KOKKOS_INLINE_FUNCTION
+    void ijkBinIndex( const int cardinal, int& i, int& j, int& k ) const
+    {
+        i = cardinal / (_nbin[1]*_nbin[2]);
+        j = ( cardinal / _nbin[2] ) % _nbin[1];
+        k = cardinal % _nbin[2];
+    }
 
     /*!
       \brief Given a bin get the number of particles it contains.
@@ -714,8 +773,8 @@ sortByMember(
     const bool create_permute_vector_only,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-   return  sortByMember<Member>( aosoa, member_tag, create_permute_vector_only,
-                                 0, aosoa.size() );
+    return sortByMember( aosoa, member_tag, create_permute_vector_only,
+                         0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -791,13 +850,13 @@ binByMember(
     const bool create_data_only,
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
 {
-    return binByMember<Member>(
+    return binByMember(
         aosoa, member_tag, nbin, create_data_only, 0, aosoa.size() );
 }
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Bin an AoSoA spatially over a subset of its range within a given
+  \brief Bin an AoSoA spatially over a subset of its range within given
   structured Cartesian grid.
 
   \tparam PositionMember The member index for particle positions in the
@@ -817,11 +876,11 @@ binByMember(
 
   \param end The end index of the AoSoA range to sort.
 
-  \param grid_delta Bin sizes in each cardinal direction.
+  \param grid_delta Grid sizes in each cardinal direction.
 
-  \param grid_min Lower grid bound in each cardinal direction.
+  \param grid_min Grid minimum value in each direction.
 
-  \param grid_max Upper grid bound in each cardinal direction.
+  \param grid_max Grid maximum value in each direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
 CartesianGrid3dBinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
@@ -838,11 +897,11 @@ binByCartesianGrid3d(
     const typename AoSoA_t::template member_value_type<PositionMember>
     grid_max[3],
     typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
-
 {
     // Get the positions.
     auto position = aosoa.view( position_member );
     using PositionSlice = decltype(position);
+    using PositionValueType = typename PositionSlice::value_type;
 
     // Copy the positions into a Kokkos view. For now we need to do this
     // because of internal copy constructors being called within
@@ -880,8 +939,8 @@ binByCartesianGrid3d(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Bin an entire AoSoA spatially within a given structured Cartesian
-  grid.
+  \brief Bin an AoSoA spatially over a subset of its range within given
+  structured Cartesian grid.
 
   \tparam PositionMember The member index for particle positions in the
   AoSoA.
@@ -896,11 +955,11 @@ binByCartesianGrid3d(
   sizes, offsets, and permutation vector) but the particles should not
   actually be binned.
 
-  \param grid_delta Bin sizes in each cardinal direction.
+  \param grid_delta Grid sizes in each cardinal direction.
 
-  \param grid_min Lower grid bound in each cardinal direction.
+  \param grid_min Grid minimum value in each direction.
 
-  \param grid_max Upper grid bound in each cardinal direction.
+  \param grid_max Grid maximum value in each direction.
 */
 template<class AoSoA_t, std::size_t PositionMember>
 CartesianGrid3dBinningData<typename AoSoA_t::memory_space::kokkos_memory_space>

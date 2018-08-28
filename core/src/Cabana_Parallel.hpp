@@ -103,7 +103,8 @@ getArrayBounds( const int begin,
 /*!
   \brief Execute \c functor in parallel according to the execution \c policy.
 
-  \tparam ExecutionPolicy The execution over which to execute the functor.
+  \tparam ExecutionPolicy The execution policy type over which to execute the
+  functor.
 
   \tparam FunctorType The functor type to execute.
 
