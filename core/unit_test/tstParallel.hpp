@@ -156,7 +156,7 @@ void runTest()
     AoSoA_t aosoa( num_data );
 
     // Create an execution policy using the begin and end of the AoSoA.
-    Cabana::RangePolicy<AoSoA_t::array_size,TEST_EXECSPACE>
+    Cabana::RangePolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
         range_policy( 0, aosoa.size() );
 
     // Create a functor to operate on.
@@ -205,7 +205,7 @@ void runTest()
     // Do one more loop but this time auto-dispatch. Reuse the first functor
     // but this time create an execution policy that automatically grabs begin
     // and end from the aosoa.
-    Cabana::RangePolicy<AoSoA_t::array_size,TEST_EXECSPACE> aosoa_policy( aosoa );
+    Cabana::RangePolicy<AoSoA_t::vector_length,TEST_EXECSPACE> aosoa_policy( aosoa );
     Cabana::parallel_for( aosoa_policy, func_1 );
 
     // Check data members for proper initialization.

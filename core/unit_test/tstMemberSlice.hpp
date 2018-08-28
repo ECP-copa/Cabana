@@ -99,11 +99,10 @@ void checkDataMembers(
 
 //---------------------------------------------------------------------------//
 // API test function
-template<typename DataLayout>
 void apiTest()
 {
     // Manually set the inner array size with the test layout.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
+    const int vector_length = 16;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -121,7 +120,7 @@ void apiTest()
                                 >;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
@@ -281,11 +280,10 @@ void apiTest()
 
 //---------------------------------------------------------------------------//
 // Random access function
-template<typename DataLayout>
 void randomAccessTest()
 {
     // Manually set the inner array size with the test layout.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
+    const int vector_length = 16;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -303,7 +301,7 @@ void randomAccessTest()
                                 >;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
@@ -377,17 +375,16 @@ void randomAccessTest()
 
 //---------------------------------------------------------------------------//
 // Random access function
-template<typename DataLayout>
 void atomicAccessTest()
 {
     // Manually set the inner array size with the test layout.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
+    const int vector_length = 16;
 
     // Declare data types.
     using DataTypes = Cabana::MemberDataTypes<int>;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
@@ -421,22 +418,19 @@ void atomicAccessTest()
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, api_test )
 {
-    apiTest<Cabana::LayoutRight>();
-    apiTest<Cabana::LayoutLeft>();
+    apiTest();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, random_access_test )
 {
-    randomAccessTest<Cabana::LayoutRight>();
-    randomAccessTest<Cabana::LayoutLeft>();
+    randomAccessTest();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, atomic_access_test )
 {
-    atomicAccessTest<Cabana::LayoutRight>();
-    atomicAccessTest<Cabana::LayoutLeft>();
+    atomicAccessTest();
 }
 
 //---------------------------------------------------------------------------//

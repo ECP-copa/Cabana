@@ -373,7 +373,7 @@ void testNeighborParallelFor()
                            { Kokkos::atomic_add( &serial_result(i), n ); };
     auto team_count_op = KOKKOS_LAMBDA( const int i, const int n )
                          { Kokkos::atomic_add( &team_result(i), n ); };
-    Cabana::RangePolicy<aosoa_t::array_size,TEST_EXECSPACE> policy( aosoa );
+    Cabana::RangePolicy<aosoa_t::vector_length,TEST_EXECSPACE> policy( aosoa );
     Cabana::neighbor_parallel_for(
         policy, serial_count_op, nlist, Cabana::SerialNeighborOpTag() );
     Cabana::neighbor_parallel_for(

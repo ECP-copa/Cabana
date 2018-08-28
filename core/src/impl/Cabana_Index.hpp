@@ -16,27 +16,26 @@ namespace Impl
 /*!
   \class Index
 
-  \brief Class for converting between integral particle indices and AoSoA
-  indices.
+  \brief Class for converting between 1d and 2d aosoa indices.
 
-  \tparam N The inner array size of the AoSoA.
+  \tparam VectorLength The inner array size of the AoSoA.
 */
-template<int N,
-         typename std::enable_if<(Impl::IsVectorLengthValid<N>::value),
+template<int VectorLength,
+         typename std::enable_if<(Impl::IsVectorLengthValid<VectorLength>::value),
                                  int>::type = 0>
 class Index
 {
   public:
 
     // Inner array size.
-    static constexpr int array_size = N;
+    static constexpr int vector_length = VectorLength;
 
     // Array size offset.
-    static constexpr int array_size_offset = (array_size - 1);
+    static constexpr int vector_length_offset = (vector_length - 1);
 
     // Number of binary bits needed to hold the array size.
-    static constexpr int array_size_binary_bits =
-        Impl::LogBase2<array_size>::value;
+    static constexpr int vector_length_binary_bits =
+        Impl::LogBase2<vector_length>::value;
 
     /*!
       \brief Given a particle index get the AoSoA struct index.
@@ -48,7 +47,8 @@ class Index
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr int s( const int particle_index )
     {
-        return (particle_index - (particle_index & array_size_offset)) >> array_size_binary_bits;
+        return (particle_index - (particle_index & vector_length_offset)) >>
+            vector_length_binary_bits;
     }
 
     /*!
@@ -62,7 +62,7 @@ class Index
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr int i( const int particle_index )
     {
-        return particle_index & array_size_offset;
+        return particle_index & vector_length_offset;
     }
 
     /*!
@@ -78,7 +78,7 @@ class Index
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr int p( const int struct_index, const int array_index )
     {
-        return (struct_index << array_size_binary_bits) + array_index;
+        return (struct_index << vector_length_binary_bits) + array_index;
     }
 };
 

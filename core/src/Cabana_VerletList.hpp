@@ -124,12 +124,10 @@ struct VerletListBuilder
         typename AoSoA_t::template member_value_type<PositionMember>;
     using PositionDataType =
         typename AoSoA_t::template member_data_type<PositionMember>;
-    using PositionLayout = typename AoSoA_t::inner_array_layout::layout;
     using PositionSlice = MemberSlice<PositionDataType,
-                                      PositionLayout,
                                       memory_space,
                                       RandomAccessMemory,
-                                      AoSoA_t::array_size>;
+                                      AoSoA_t::vector_length>;
     using kokkos_memory_space = typename memory_space::kokkos_memory_space;
     using kokkos_execution_space = typename PositionSlice::kokkos_execution_space;
 

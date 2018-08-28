@@ -42,13 +42,9 @@ using ParticleDataTypes =
 // Declare the memory space.
 using MemorySpace = Cabana::HostSpace;
 
-// Declare the inner array layout.
-using inner_array_layout =
-    Cabana::InnerArrayLayout<VECLENTH,Cabana::LayoutRight>;
-
 // Set the type for the particle AoSoA.
 using ParticleList =
-    Cabana::AoSoA<ParticleDataTypes,MemorySpace,inner_array_layout>;
+    Cabana::AoSoA<ParticleDataTypes,MemorySpace,VECLENTH>;
 
 // Declare a struct-of-arrays that is identical to the data layout in the
 // Cabana AoSoA.

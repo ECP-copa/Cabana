@@ -18,10 +18,7 @@ void perfTest()
     using ExecutionSpace = Kokkos::Cuda;
 
     // Declare the inner array layout.
-    const int array_size = 32;
-    using array_layout = Cabana::LayoutLeft;
-    using inner_array_layout =
-        Cabana::InnerArrayLayout<array_size,array_layout>;
+    const int vector_length = 32;
 
     // Declare the parallel for algorithm tag.
     using parallel_algorithm_tag = Cabana::StructAndArrayParallelTag;
@@ -46,7 +43,7 @@ void perfTest()
                    S2 };
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,vector_length>;
 
     // Set the total problem size.
     std::size_t num_data = 1e7;
@@ -64,7 +61,7 @@ void perfTest()
     auto s2 = aosoa.view( Cabana::MemberTag<S2>() );
 
     // Create an execution policy over the entire AoSoA.
-    Cabana::RangePolicy<array_size,ExecutionSpace> range_policy( aosoa );
+    Cabana::RangePolicy<vector_length,ExecutionSpace> range_policy( aosoa );
 
     // Initialization functor.
     auto init_func = KOKKOS_LAMBDA( const int idx )

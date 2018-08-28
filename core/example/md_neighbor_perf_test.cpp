@@ -36,10 +36,7 @@ void perfTest( const double cutoff_ratio,
     using kokkos_memory_space = MemorySpace::kokkos_memory_space;
 
     // Declare the inner array layout.
-    const int array_size = 64;
-    using array_layout = Cabana::LayoutLeft;
-    using inner_array_layout =
-        Cabana::InnerArrayLayout<array_size,array_layout>;
+    const int vector_length = 64;
 
     // Declare data types.
     using DataTypes = Cabana::MemberDataTypes<double[3]>; // Position
@@ -48,7 +45,7 @@ void perfTest( const double cutoff_ratio,
     enum MyTypes { Position = 0 };
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,vector_length>;
 
     // Create an Array-of-Structs-of-Arrays.
     AoSoA_t aosoa( num_data );

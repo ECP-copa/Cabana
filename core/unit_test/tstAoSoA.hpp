@@ -55,12 +55,11 @@ void checkDataMembers(
 }
 
 //---------------------------------------------------------------------------//
-// Test an AoSoA with a given layout.
-template<class Layout>
+// Test an AoSoA.
 void testAoSoA()
 {
     // Manually set the inner array size.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,Layout>;
+    const int vector_length = 16;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -78,7 +77,7 @@ void testAoSoA()
                                 >;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
 
     // Make sure that it is actually an AoSoA.
     EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
@@ -200,107 +199,11 @@ void testAoSoA()
 }
 
 //---------------------------------------------------------------------------//
-// Raw data layout right test.
-void testRawDataLayoutRight()
+// Raw data test.
+void testRawData()
 {
     // Manually set the inner array size.
-    using inner_array_layout = Cabana::InnerArrayLayout<32,Cabana::LayoutRight>;
-
-    // Multi dimensional member sizes.
-    const int dim_1 = 3;
-    const int dim_2 = 5;
-
-    // Declare data types. Note that this test only uses rank-0 data.
-    using DataTypes =
-        Cabana::MemberDataTypes<float,
-                                int,
-                                double[dim_1][dim_2],
-                                int,
-                                double
-                                >;
-
-    // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
-
-    // Create an AoSoA using the default constructor.
-    int num_data = 350;
-    AoSoA_t aosoa( num_data );
-
-    // Get views of fields.
-    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
-
-    // Get raw pointers to the data as one would in a C interface (no templates).
-    float* p0 = view_0.data();
-    int* p1 = view_1.data();
-    double* p2 = view_2.data();
-    int* p3 = view_3.data();
-    double* p4 = view_4.data();
-
-    // Get the strides between the member arrays.
-    int st0 = view_0.stride(0);
-    int st1 = view_1.stride(0);
-    int st2 = view_2.stride(0);
-    int st3 = view_3.stride(0);
-    int st4 = view_4.stride(0);
-
-    // Member 2 is multidimensional so get its extents.
-    int m2e0 = view_2.extent(2);
-    int m2e1 = view_2.extent(3);
-    EXPECT_EQ( m2e0, dim_1 );
-    EXPECT_EQ( m2e1, dim_2 );
-
-    // Initialize the data with raw pointer/stride access. Start by looping
-    // over the structs. Each struct has a group of contiguous arrays of size
-    // array_size for each member.
-    int num_soa = view_0.numSoA();
-    for ( int s = 0; s < num_soa; ++s )
-    {
-        // Loop over the array in each struct and set the values.
-        int local_array_size = view_0.arraySize( s );
-        for ( int i = 0; i < local_array_size; ++i )
-        {
-            p0[ s * st0 + i ] = (s + i) * 1.0;
-            p1[ s * st1 + i ] = (s + i) * 2;
-            p3[ s * st3 + i ] = (s + i) * 4;
-            p4[ s * st4 + i ] = (s + i) * 5.0;
-
-            // Member 2 has some extra dimensions so add those to the
-            // indexing. Note this is layout right.
-            for ( int j = 0; j < m2e0; ++j )
-                for ( int k = 0; k < m2e1; ++k )
-                    p2[ s * st2 + i * m2e0 * m2e1 + j * m2e1 + k ] =
-                        (s + i + j + k) * 3.0;
-        }
-    }
-
-    // Check the results.
-    for ( auto idx = 0; idx < aosoa.size(); ++idx )
-    {
-        int s = Cabana::Impl::Index<32>::s( idx );
-        int i = Cabana::Impl::Index<32>::i( idx );
-
-        EXPECT_EQ( view_0(idx), (s+i)*1.0 );
-        EXPECT_EQ( view_1(idx), int((s+i)*2) );
-        EXPECT_EQ( view_3(idx), int((s+i)*4) );
-        EXPECT_EQ( view_4(idx), (s+i)*5.0 );
-
-        // Member 2 has some extra dimensions so check those too.
-        for ( int j = 0; j < dim_1; ++j )
-            for ( int k = 0; k < dim_2; ++k )
-                EXPECT_EQ( view_2(idx,j,k), (s+i+j+k)*3.0 );
-    }
-}
-
-//---------------------------------------------------------------------------//
-// Raw data layout left test.
-void testRawDataLayoutLeft()
-{
-    // Manually set the inner array size.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,Cabana::LayoutLeft>;
+    const int vector_length = 16;
 
     // Multi dimensional member sizes.
     const int dim_1 = 3;
@@ -315,7 +218,7 @@ void testRawDataLayoutLeft()
                                 double>;
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;
@@ -507,27 +410,15 @@ void testParticle()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_layout_right_test )
+TEST_F( TEST_CATEGORY, aosoa_test )
 {
-    testAoSoA<Cabana::LayoutRight>();
+    testAoSoA();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_layout_left_test )
+TEST_F( TEST_CATEGORY, aosoa_raw_data_test )
 {
-    testAoSoA<Cabana::LayoutLeft>();
-}
-
-//---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_raw_data_layout_right_test )
-{
-    testRawDataLayoutRight();
-}
-
-//---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_raw_data_layout_left_test )
-{
-    testRawDataLayoutLeft();
+    testRawData();
 }
 
 //---------------------------------------------------------------------------//

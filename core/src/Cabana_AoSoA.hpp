@@ -3,7 +3,6 @@
 
 #include <Cabana_MemberDataTypes.hpp>
 #include <Cabana_MemberSlice.hpp>
-#include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Particle.hpp>
 #include <Cabana_Types.hpp>
 #include <impl/Cabana_SoA.hpp>
@@ -38,12 +37,6 @@ namespace Cabana
   to the valid categories of template parameters, in whatever order
   they may occur.
 
-  Valid ways in which template arguments may be specified:
-  - AoSoA< DataType >
-  - AoSoA< DataType , StaticInnerArrayLayout >
-  - AoSoA< DataType , StaticInnerArrayLayout , Space >
-  - AoSoA< DataType , Space >
-
   \tparam DataType (required) Specifically this must be an instance of
   \c MemberDataTypes with the data layout of the structs. For example:
   \code
@@ -56,22 +49,22 @@ namespace Cabana
   of the same type together to achieve the smallest possible memory footprint
   based on compiler-generated padding.
 
-  \tparam Space (required) The memory space.
+  \tparam MemorySpace (required) The memory space.
 
-  \tparam StaticInnerArrayLayout (optional) The layout of the inner array in
+  \tparam VectorLength (optional) The vector length within the structs of
   the AoSoA. If not specified, this defaults to the preferred layout for the
-  <tt>Space</tt>.
+  <tt>MemorySpace</tt>.
  */
 template<class DataTypes,
          class MemorySpace,
-         class DataLayout = typename Impl::PerformanceTraits<
-             typename MemorySpace::kokkos_execution_space>::inner_array_layout>
+         int VectorLength = Impl::PerformanceTraits<
+             typename MemorySpace::kokkos_execution_space>::vector_length>
 class AoSoA
 {
   public:
 
     // AoSoA type.
-    using aosoa_type = AoSoA<DataTypes,MemorySpace,DataLayout>;
+    using aosoa_type = AoSoA<DataTypes,MemorySpace,VectorLength>;
 
     // Member data types.
     using member_types = DataTypes;
@@ -79,14 +72,11 @@ class AoSoA
     // Memory space.
     using memory_space = MemorySpace;
 
-    // Inner array layout.
-    using inner_array_layout = DataLayout;
-
-    // Inner array size (size of the arrays held by the structs).
-    static constexpr int array_size = inner_array_layout::size;
+    // Vector length (size of the arrays held by the structs).
+    static constexpr int vector_length = VectorLength;
 
     // SoA type.
-    using soa_type = Impl::SoA<inner_array_layout,member_types>;
+    using soa_type = Impl::SoA<vector_length,member_types>;
 
     // Managed data view.
     using soa_view = Kokkos::View<soa_type*,typename memory_space::kokkos_memory_space>;
@@ -98,7 +88,7 @@ class AoSoA
     static constexpr int max_supported_rank = 4;
 
     // Index type.
-    using index_type = Impl::Index<array_size>;
+    using index_type = Impl::Index<vector_length>;
 
     // Particle type.
     using particle_type = Particle<member_types>;
@@ -196,8 +186,8 @@ class AoSoA
     {
         reserve( n );
         _size = n;
-        _num_soa = std::floor( n / array_size );
-        if ( 0 < n % array_size ) ++_num_soa;
+        _num_soa = std::floor( n / vector_length );
+        if ( 0 < n % vector_length ) ++_num_soa;
     }
 
     /*!
@@ -220,18 +210,17 @@ class AoSoA
         if ( n <= _capacity ) return;
 
         // Figure out the new capacity.
-        int num_soa_alloc = std::floor( n / array_size );
-        if ( 0 < n % array_size ) ++num_soa_alloc;
+        int num_soa_alloc = std::floor( n / vector_length );
+        if ( 0 < n % vector_length ) ++num_soa_alloc;
 
         // If we aren't asking for any more SoA objects then we still have
         // nothing to do.
         if ( num_soa_alloc <= _num_soa ) return;
 
         // Assign the new capacity.
-        _capacity = num_soa_alloc * array_size;
+        _capacity = num_soa_alloc * vector_length;
 
-        // If we need more SoA objects resize and copy the old data into the
-        // new.
+        // If we need more SoA objects then resize.
         Kokkos::resize( _data, num_soa_alloc );
 
         // Get new pointers and strides for the members.
@@ -258,7 +247,7 @@ class AoSoA
     int arraySize( const int s ) const
     {
         return
-            ( s < _num_soa - 1 ) ? array_size : ( _size % array_size );
+            ( s < _num_soa - 1 ) ? vector_length : ( _size % vector_length );
     }
 
     /*!
@@ -306,18 +295,16 @@ class AoSoA
     */
     template<std::size_t Field, typename MemoryAccessType>
     MemberSlice<member_data_type<Field>,
-                typename inner_array_layout::layout,
                 memory_space,
                 MemoryAccessType,
-                array_size>
+                vector_length>
     view( MemberTag<Field>, MemoryAccessType ) const
     {
         return
             MemberSlice<member_data_type<Field>,
-                        typename inner_array_layout::layout,
                         memory_space,
                         MemoryAccessType,
-                        array_size>(
+                        vector_length>(
                             (member_pointer_type<Field>) _pointers[Field],
                             _size, _strides[Field], _num_soa );
     }
@@ -330,18 +317,16 @@ class AoSoA
     */
     template<std::size_t Field>
     MemberSlice<member_data_type<Field>,
-                typename inner_array_layout::layout,
                 memory_space,
                 DefaultAccessMemory,
-                array_size>
+                vector_length>
     view( MemberTag<Field> ) const
     {
         return
             MemberSlice<member_data_type<Field>,
-                        typename inner_array_layout::layout,
                         memory_space,
                         DefaultAccessMemory,
-                        array_size>(
+                        vector_length>(
                             (member_pointer_type<Field>) _pointers[Field],
                             _size, _strides[Field], _num_soa );
     }
@@ -609,12 +594,12 @@ class AoSoA
 template<class >
 struct is_aosoa : public std::false_type {};
 
-template<class DataTypes, class MemorySpace, class DataLayout>
-struct is_aosoa<AoSoA<DataTypes,MemorySpace,DataLayout> >
+template<class DataTypes, class MemorySpace, int VectorLength>
+struct is_aosoa<AoSoA<DataTypes,MemorySpace,VectorLength> >
     : public std::true_type {};
 
-template<class DataTypes, class MemorySpace, class DataLayout>
-struct is_aosoa<const AoSoA<DataTypes,MemorySpace,DataLayout> >
+template<class DataTypes, class MemorySpace, int VectorLength>
+struct is_aosoa<const AoSoA<DataTypes,MemorySpace,VectorLength> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//

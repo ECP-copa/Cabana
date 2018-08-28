@@ -21,12 +21,12 @@ namespace Impl
 // data layout parameters. The particle index effectively introduces 2 new
 // dimensions to the problem on top of the field dimensions - one for the
 // struct index and one for the vector index.
-template<typename T, typename DataLayout, std::size_t Rank, int VectorLength>
+template<typename T, std::size_t Rank, int VectorLength>
 struct KokkosDataTypeImpl;
 
 // Rank-0
-template<typename T, typename DataLayout, int VectorLength>
-struct KokkosDataTypeImpl<T,DataLayout,0,VectorLength>
+template<typename T, int VectorLength>
+struct KokkosDataTypeImpl<T,0,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     using data_type = value_type*[VectorLength];
@@ -41,23 +41,7 @@ struct KokkosDataTypeImpl<T,DataLayout,0,VectorLength>
 
 // Rank-1
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,LayoutRight,1,VectorLength>
-{
-    using value_type = typename std::remove_all_extents<T>::type;
-    static constexpr std::size_t D0 = std::extent<T,0>::value;
-    using data_type = value_type*[VectorLength][D0];
-
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
-    {
-        return Kokkos::LayoutStride( num_soa, stride,
-                                     VectorLength, D0,
-                                     D0, 1 );
-    }
-};
-
-template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,LayoutLeft,1,VectorLength>
+struct KokkosDataTypeImpl<T,1,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -74,25 +58,7 @@ struct KokkosDataTypeImpl<T,LayoutLeft,1,VectorLength>
 
 // Rank-2
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,LayoutRight,2,VectorLength>
-{
-    using value_type = typename std::remove_all_extents<T>::type;
-    static constexpr std::size_t D0 = std::extent<T,0>::value;
-    static constexpr std::size_t D1 = std::extent<T,1>::value;
-    using data_type = value_type*[VectorLength][D0][D1];
-
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
-    {
-        return Kokkos::LayoutStride( num_soa, stride,
-                                     VectorLength, D0*D1,
-                                     D0, D1,
-                                     D1, 1 );
-    }
-};
-
-template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,LayoutLeft,2,VectorLength>
+struct KokkosDataTypeImpl<T,2,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -111,27 +77,7 @@ struct KokkosDataTypeImpl<T,LayoutLeft,2,VectorLength>
 
 // Rank-3
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,LayoutRight,3,VectorLength>
-{
-    using value_type = typename std::remove_all_extents<T>::type;
-    static constexpr std::size_t D0 = std::extent<T,0>::value;
-    static constexpr std::size_t D1 = std::extent<T,1>::value;
-    static constexpr std::size_t D2 = std::extent<T,2>::value;
-    using data_type = value_type*[VectorLength][D0][D1][D2];
-
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
-    {
-        return Kokkos::LayoutStride( num_soa, stride,
-                                     VectorLength, D0*D1*D2,
-                                     D0, D1*D2,
-                                     D1, D2,
-                                     D2, 1 );
-    }
-};
-
-template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,LayoutLeft,3,VectorLength>
+struct KokkosDataTypeImpl<T,3,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -152,29 +98,7 @@ struct KokkosDataTypeImpl<T,LayoutLeft,3,VectorLength>
 
 // Rank-4
 template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,LayoutRight,4,VectorLength>
-{
-    using value_type = typename std::remove_all_extents<T>::type;
-    static constexpr std::size_t D0 = std::extent<T,0>::value;
-    static constexpr std::size_t D1 = std::extent<T,1>::value;
-    static constexpr std::size_t D2 = std::extent<T,2>::value;
-    static constexpr std::size_t D3 = std::extent<T,3>::value;
-    using data_type = value_type*[VectorLength][D0][D1][D2][D3];
-
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
-    {
-        return Kokkos::LayoutStride( num_soa, stride,
-                                     VectorLength, D0*D1*D2*D3,
-                                     D0, D1*D2*D3,
-                                     D1, D2*D3,
-                                     D2, D3,
-                                     D3, 1 );
-    }
-};
-
-template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,LayoutLeft,4,VectorLength>
+struct KokkosDataTypeImpl<T,4,VectorLength>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
@@ -196,11 +120,11 @@ struct KokkosDataTypeImpl<T,LayoutLeft,4,VectorLength>
 };
 
 // Data type specialization.
-template<typename T,typename DataLayout, int VectorLength>
+template<typename T, int VectorLength>
 struct KokkosDataType
 {
     using kokkos_data_type =
-        KokkosDataTypeImpl<T,DataLayout,std::rank<T>::value,VectorLength>;
+        KokkosDataTypeImpl<T,std::rank<T>::value,VectorLength>;
     using data_type = typename kokkos_data_type::data_type;
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
@@ -213,20 +137,18 @@ struct KokkosDataType
 //---------------------------------------------------------------------------//
 // Kokkos view wrapper for particle fields
 template<typename T,
-         typename DataLayout,
          int VectorLength,
          typename std::enable_if<
              Impl::IsVectorLengthValid<VectorLength>::value,int>::type = 0>
 struct KokkosViewWrapper
 {
     using data_type =
-        typename KokkosDataType<T,DataLayout,VectorLength>::data_type;
+        typename KokkosDataType<T,VectorLength>::data_type;
 
     inline static Kokkos::LayoutStride createLayout( const int num_soa,
                                                      const int stride )
     {
-        return KokkosDataType<T,DataLayout,VectorLength>::createLayout(
-            num_soa, stride );
+        return KokkosDataType<T,VectorLength>::createLayout( num_soa, stride );
     }
 };
 
@@ -251,16 +173,12 @@ struct KokkosViewWrapper
 */
 //---------------------------------------------------------------------------//
 template<typename DataType,
-         typename DataLayout,
          typename MemorySpace,
          typename MemoryAccessType,
          int VectorLength>
 class MemberSlice
 {
   public:
-
-    // Data layout.
-    using data_layout = DataLayout;
 
     // Vector length.
     static constexpr int vector_length = VectorLength;
@@ -272,8 +190,7 @@ class MemberSlice
     static constexpr int max_supported_rank = 4;
 
     // Kokkos view wrapper.
-    using view_wrapper =
-        Impl::KokkosViewWrapper<DataType,data_layout,vector_length>;
+    using view_wrapper = Impl::KokkosViewWrapper<DataType,vector_length>;
 
     // Kokkos view type.
     using kokkos_view =
@@ -516,24 +433,20 @@ struct is_member_slice : public std::false_type {};
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
 template<typename DataType,
-         typename DataLayout,
          typename MemorySpace,
          typename MemoryAccessType,
          int VectorLength>
 struct is_member_slice<MemberSlice<DataType,
-                                   DataLayout,
                                    MemorySpace,
                                    MemoryAccessType,
                                    VectorLength> >
     : public std::true_type {};
 
 template<typename DataType,
-         typename DataLayout,
          typename MemorySpace,
          typename MemoryAccessType,
          int VectorLength>
 struct is_member_slice<const MemberSlice<DataType,
-                                         DataLayout,
                                          MemorySpace,
                                          MemoryAccessType,
                                          VectorLength> >
