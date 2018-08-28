@@ -222,20 +222,17 @@ class AoSoA
         // Figure out the new capacity.
         int num_soa_alloc = std::floor( n / array_size );
         if ( 0 < n % array_size ) ++num_soa_alloc;
+
+        // If we aren't asking for any more SoA objects then we still have
+        // nothing to do.
+        if ( num_soa_alloc <= _num_soa ) return;
+
+        // Assign the new capacity.
         _capacity = num_soa_alloc * array_size;
 
-        // Allocate a new block of memory.
-        soa_view data_block( "aosoa_data", num_soa_alloc );
-
-        // If we have already allocated memory, copy the old memory into the
-        // new memory. Fence when we are done to ensure copy is complete
-        // before continuing.
-        if ( _data.size() > 0 )
-            Kokkos::deep_copy( data_block, _data );
-
-        // Swap blocks. The old block will be destroyed when this function
-        // exits.
-        _data = data_block;
+        // If we need more SoA objects resize and copy the old data into the
+        // new.
+        Kokkos::resize( _data, num_soa_alloc );
 
         // Get new pointers and strides for the members.
         storePointersAndStrides(
