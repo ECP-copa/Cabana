@@ -443,9 +443,9 @@ void testGridBin3d()
     double grid_delta[3] = {dx,dx,dx};
     double grid_min[3] = {x_min,x_min,x_min};
     double grid_max[3] = {x_max,x_max,x_max};
-    auto bin_data =
-        Cabana::binByCartesianGrid3d( aosoa, Cabana::MemberTag<Position>(),
-                                      false, grid_delta, grid_min, grid_max );
+    auto bin_data = Cabana::binByCartesianGrid3d(
+        aosoa, Cabana::MemberTag<Position>(), false,
+        grid_delta, grid_min, grid_max );
 
     // Checking the binning. The order should be reversed with the i index
     // moving the slowest.
