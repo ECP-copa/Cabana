@@ -104,7 +104,7 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
 //---------------------------------------------------------------------------//
 // Move function using the single particle index and slice syntax.
 template<typename SliceType>
-void moveViews(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
+void moveSlices(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
                SliceType x3, SliceType x4, SliceType x5, SliceType x6,
                SliceType x7, SliceType x8, SliceType x9, SliceType c,
                long n, int num_struct )
@@ -146,7 +146,7 @@ void moveViews(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
 //---------------------------------------------------------------------------//
 // Move function using struct and array indices and slice syntax.
 template<typename SliceType>
-void moveViewsWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
+void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
                          SliceType x3, SliceType x4, SliceType x5, SliceType x6,
                          SliceType x7, SliceType x8, SliceType x9, SliceType c,
                          long n, int num_struct )
@@ -213,19 +213,19 @@ void run()
     ParticleList x8_( num_particle );
     ParticleList x9_( num_particle );
 
-    // Get a view of the x position field from each particle list.
-    auto ma = a_.view( Cabana::MemberTag<PositionX>() );
-    auto mc = c_.view( Cabana::MemberTag<PositionX>() );
-    auto m0 = x_.view( Cabana::MemberTag<PositionX>() );
-    auto m1 = x1_.view( Cabana::MemberTag<PositionX>() );
-    auto m2 = x2_.view( Cabana::MemberTag<PositionX>() );
-    auto m3 = x3_.view( Cabana::MemberTag<PositionX>() );
-    auto m4 = x4_.view( Cabana::MemberTag<PositionX>() );
-    auto m5 = x5_.view( Cabana::MemberTag<PositionX>() );
-    auto m6 = x6_.view( Cabana::MemberTag<PositionX>() );
-    auto m7 = x7_.view( Cabana::MemberTag<PositionX>() );
-    auto m8 = x8_.view( Cabana::MemberTag<PositionX>() );
-    auto m9 = x9_.view( Cabana::MemberTag<PositionX>() );
+    // Get a slice of the x position field from each particle list.
+    auto ma = a_.slice( Cabana::MemberTag<PositionX>() );
+    auto mc = c_.slice( Cabana::MemberTag<PositionX>() );
+    auto m0 = x_.slice( Cabana::MemberTag<PositionX>() );
+    auto m1 = x1_.slice( Cabana::MemberTag<PositionX>() );
+    auto m2 = x2_.slice( Cabana::MemberTag<PositionX>() );
+    auto m3 = x3_.slice( Cabana::MemberTag<PositionX>() );
+    auto m4 = x4_.slice( Cabana::MemberTag<PositionX>() );
+    auto m5 = x5_.slice( Cabana::MemberTag<PositionX>() );
+    auto m6 = x6_.slice( Cabana::MemberTag<PositionX>() );
+    auto m7 = x7_.slice( Cabana::MemberTag<PositionX>() );
+    auto m8 = x8_.slice( Cabana::MemberTag<PositionX>() );
+    auto m9 = x9_.slice( Cabana::MemberTag<PositionX>() );
 
     // Initialize particle data.
     long seed = 76843802738543;
@@ -274,11 +274,11 @@ void run()
     unsigned long long c2 = rdtscp();
 
     unsigned long long c3 = rdtscp();
-    moveViews(ma,m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,mc,n,num_struct);
+    moveSlices(ma,m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,mc,n,num_struct);
     unsigned long long c4 = rdtscp();
 
     unsigned long long c5 = rdtscp();
-    moveViewsWithAccess(ma,m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,mc,n,num_struct);
+    moveSlicesWithAccess(ma,m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,mc,n,num_struct);
     unsigned long long c6 = rdtscp();
 
     // Calculate times and number of flops.

@@ -17,11 +17,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
+    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
+    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
+    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
+    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
 
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -29,28 +29,28 @@ void checkDataMembers(
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    EXPECT_EQ( view_0( idx, i, j, k ),
+                    EXPECT_EQ( slice_0( idx, i, j, k ),
                                 fval * (i+j+k) );
 
         // Member 1.
-        EXPECT_EQ( view_1( idx ), ival );
+        EXPECT_EQ( slice_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        EXPECT_EQ( view_2( idx, i, j, k, l ),
+                        EXPECT_EQ( slice_2( idx, i, j, k, l ),
                                     fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( view_3( idx, i ), dval * i );
+            EXPECT_EQ( slice_3( idx, i ), dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( view_4( idx, i, j ), dval * (i+j) );
+                EXPECT_EQ( slice_4( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -85,12 +85,12 @@ void testAoSoA()
     // Create an AoSoA.
     AoSoA_t aosoa;
 
-    // Get field views.
-    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
+    // Get field slices.
+    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
+    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
+    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
+    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
+    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
 
     // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
@@ -117,13 +117,13 @@ void testAoSoA()
     EXPECT_EQ( end_s, 2 );
     EXPECT_EQ( end_i, 3 );
 
-    // Get field views again. We invalidated the pointers by resizing the
-    // views.
-    view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    view_4 = aosoa.view( Cabana::MemberTag<4>() );
+    // Get field slices again. We invalidated the pointers by resizing the
+    // slices.
+    slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
+    slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
+    slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
+    slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
+    slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -135,26 +135,26 @@ void testAoSoA()
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    view_0( idx, i, j, k ) = fval * (i+j+k);
+                    slice_0( idx, i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        view_1( idx ) = ival;
+        slice_1( idx ) = ival;
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        view_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            view_3( idx, i ) = dval * i;
+            slice_3( idx, i ) = dval * i;
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                view_4( idx, i, j ) = dval * (i+j);
+                slice_4( idx, i, j ) = dval * (i+j);
     }
 
     // Check data members for proper initialization.
@@ -224,41 +224,41 @@ void testRawData()
     int num_data = 350;
     AoSoA_t aosoa( num_data );
 
-    // Get views of fields.
-    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
+    // Get slices of fields.
+    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
+    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
+    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
+    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
+    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
 
     // Get raw pointers to the data as one would in a C interface (no templates).
-    float* p0 = view_0.data();
-    int* p1 = view_1.data();
-    double* p2 = view_2.data();
-    int* p3 = view_3.data();
-    double* p4 = view_4.data();
+    float* p0 = slice_0.data();
+    int* p1 = slice_1.data();
+    double* p2 = slice_2.data();
+    int* p3 = slice_3.data();
+    double* p4 = slice_4.data();
 
     // Get the strides between the member arrays.
-    int st0 = view_0.stride(0);
-    int st1 = view_1.stride(0);
-    int st2 = view_2.stride(0);
-    int st3 = view_3.stride(0);
-    int st4 = view_4.stride(0);
+    int st0 = slice_0.stride(0);
+    int st1 = slice_1.stride(0);
+    int st2 = slice_2.stride(0);
+    int st3 = slice_3.stride(0);
+    int st4 = slice_4.stride(0);
 
     // Member 2 is multidimensional so get its extents.
-    int m2e0 = view_2.extent(2);
-    int m2e1 = view_2.extent(3);
+    int m2e0 = slice_2.extent(2);
+    int m2e1 = slice_2.extent(3);
     EXPECT_EQ( m2e0, dim_1 );
     EXPECT_EQ( m2e1, dim_2 );
 
     // Initialize the data with raw pointer/stride access. Start by looping
     // over the structs. Each struct has a group of contiguous arrays of size
     // array_size for each member.
-    int num_soa = view_0.numSoA();
+    int num_soa = slice_0.numSoA();
     for ( int s = 0; s < num_soa; ++s )
     {
         // Loop over the array in each struct and set the values.
-        int local_array_size = view_0.arraySize( s );
+        int local_array_size = slice_0.arraySize( s );
         for ( int i = 0; i < local_array_size; ++i )
         {
             p0[ s * st0 + i ] = (s + i) * 1.0;
@@ -281,15 +281,15 @@ void testRawData()
         int s = Cabana::Impl::Index<16>::s( idx );
         int i = Cabana::Impl::Index<16>::i( idx );
 
-        EXPECT_EQ( view_0(idx), (s+i)*1.0 );
-        EXPECT_EQ( view_1(idx), int((s+i)*2) );
-        EXPECT_EQ( view_3(idx), int((s+i)*4) );
-        EXPECT_EQ( view_4(idx), (s+i)*5.0 );
+        EXPECT_EQ( slice_0(idx), (s+i)*1.0 );
+        EXPECT_EQ( slice_1(idx), int((s+i)*2) );
+        EXPECT_EQ( slice_3(idx), int((s+i)*4) );
+        EXPECT_EQ( slice_4(idx), (s+i)*5.0 );
 
         // Member 2 has some extra dimensions so check those too.
         for ( int j = 0; j < dim_1; ++j )
             for ( int k = 0; k < dim_2; ++k )
-                EXPECT_EQ( view_2(idx,j,k), (s+i+j+k)*3.0 );
+                EXPECT_EQ( slice_2(idx,j,k), (s+i+j+k)*3.0 );
     }
 }
 
@@ -321,17 +321,17 @@ void testParticle()
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_data );
 
-    // Create a view of particles with the same data types.
+    // Create a slice of particles with the same data types.
     Kokkos::View<Particle_t*,
                  typename AoSoA_t::memory_space::kokkos_memory_space>
         particles( "particles", num_data );
 
     // Initialize aosoa data.
-    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
+    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
+    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
+    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
+    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
@@ -341,26 +341,26 @@ void testParticle()
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    view_0( idx, i, j, k ) = fval * (i+j+k);
+                    slice_0( idx, i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        view_1( idx ) = ival;
+        slice_1( idx ) = ival;
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        view_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            view_3( idx, i ) = dval * i;
+            slice_3( idx, i ) = dval * i;
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                view_4( idx, i, j ) = dval * (i+j);
+                slice_4( idx, i, j ) = dval * (i+j);
     }
 
     // Assign the AoSoA data to the particles.

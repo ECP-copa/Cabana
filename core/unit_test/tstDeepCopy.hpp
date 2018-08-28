@@ -17,11 +17,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
+    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
+    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
+    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
+    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
 
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -29,28 +29,28 @@ void checkDataMembers(
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    EXPECT_EQ( view_0( idx, i, j, k ),
+                    EXPECT_EQ( slice_0( idx, i, j, k ),
                                  fval * (i+j+k) );
 
         // Member 1.
-        EXPECT_EQ( view_1( idx ), ival );
+        EXPECT_EQ( slice_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        EXPECT_EQ( view_2( idx, i, j, k, l ),
+                        EXPECT_EQ( slice_2( idx, i, j, k, l ),
                                      fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( view_3( idx, i ), dval * i );
+            EXPECT_EQ( slice_3( idx, i ), dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( view_4( idx, i, j ), dval * (i+j) );
+                EXPECT_EQ( slice_4( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -88,37 +88,37 @@ void testDeepCopy()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto view_0 = src_aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = src_aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = src_aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = src_aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = src_aosoa.view( Cabana::MemberTag<4>() );
+    auto slice_0 = src_aosoa.slice( Cabana::MemberTag<0>() );
+    auto slice_1 = src_aosoa.slice( Cabana::MemberTag<1>() );
+    auto slice_2 = src_aosoa.slice( Cabana::MemberTag<2>() );
+    auto slice_3 = src_aosoa.slice( Cabana::MemberTag<3>() );
+    auto slice_4 = src_aosoa.slice( Cabana::MemberTag<4>() );
     for ( auto idx = 0; idx < src_aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    view_0( idx, i, j, k ) = fval * (i+j+k);
+                    slice_0( idx, i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        view_1( idx ) = ival;
+        slice_1( idx ) = ival;
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        view_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            view_3( idx, i ) = dval * i;
+            slice_3( idx, i ) = dval * i;
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                view_4( idx, i, j ) = dval * (i+j);
+                slice_4( idx, i, j ) = dval * (i+j);
     }
 
     // Deep copy

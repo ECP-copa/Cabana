@@ -286,19 +286,19 @@ class AoSoA
     }
 
     /*!
-      \brief Get an unmanaged view of a particle field with the given tag and
+      \brief Get an unmanaged slice of a particle field with the given tag and
       memory traits.
-      \param The tag identifying which field to get a view of.
-      \param The tag identifying which type of memory access traits the view
+      \param The tag identifying which field to get a slice of.
+      \param The tag identifying which type of memory access traits the slice
       should have.
-      \return The field view.
+      \return The field slice.
     */
     template<std::size_t Field, typename MemoryAccessType>
     MemberSlice<member_data_type<Field>,
                 memory_space,
                 MemoryAccessType,
                 vector_length>
-    view( MemberTag<Field>, MemoryAccessType ) const
+    slice( MemberTag<Field>, MemoryAccessType ) const
     {
         return
             MemberSlice<member_data_type<Field>,
@@ -310,17 +310,17 @@ class AoSoA
     }
 
     /*!
-      \brief Get an unmanaged view of a particle field with default memory
+      \brief Get an unmanaged slice of a particle field with default memory
       access.
-      \param The tag identifying which field to get a view of.
-      \return The field view.
+      \param The tag identifying which field to get a slice of.
+      \return The field slice.
     */
     template<std::size_t Field>
     MemberSlice<member_data_type<Field>,
                 memory_space,
                 DefaultAccessMemory,
                 vector_length>
-    view( MemberTag<Field> ) const
+    slice( MemberTag<Field> ) const
     {
         return
             MemberSlice<member_data_type<Field>,

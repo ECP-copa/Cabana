@@ -116,7 +116,7 @@ createParticles( const int num_particle,
     AoSoA_t aosoa( num_particle );
 
     // Create particles within a region sized (10x10x10) neighborhood radii.
-    auto position = aosoa.view( Cabana::MemberTag<0>() );
+    auto position = aosoa.slice( Cabana::MemberTag<0>() );
     using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
     using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
     PoolType pool( 342343901 );
@@ -313,7 +313,7 @@ void testVerletListFull()
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Check the neighbor list.
-    auto position = aosoa.view( Cabana::MemberTag<0>() );
+    auto position = aosoa.slice( Cabana::MemberTag<0>() );
     checkFullNeighborList( nlist, position, test_radius );
 }
 
@@ -337,7 +337,7 @@ void testVerletListHalf()
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Check the neighbor list.
-    auto position = aosoa.view( Cabana::MemberTag<0>() );
+    auto position = aosoa.slice( Cabana::MemberTag<0>() );
     checkHalfNeighborList( nlist, position, test_radius );
 }
 

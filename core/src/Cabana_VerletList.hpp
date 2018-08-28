@@ -168,7 +168,7 @@ struct VerletListBuilder
         , cell_stencil( neighborhood_radius, cell_size_ratio, grid_min, grid_max )
     {
         // Get the positions.
-        position = aosoa.view( position_member, RandomAccessMemory() );
+        position = aosoa.slice( position_member, RandomAccessMemory() );
 
         // Bin the particles in the grid. Don't actually sort them but make a
         // permutation vector. Note that we are binning all particles here and

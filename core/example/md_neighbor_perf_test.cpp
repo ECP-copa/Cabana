@@ -51,7 +51,7 @@ void perfTest( const double cutoff_ratio,
     AoSoA_t aosoa( num_data );
 
     // Get the particle postions.
-    auto x = aosoa.view( Cabana::MemberTag<Position>() );
+    auto x = aosoa.slice( Cabana::MemberTag<Position>() );
 
     // Build particles.
     std::cout << std::endl;
