@@ -21,8 +21,14 @@ IF(Cabana_ENABLE_Serial)
 
 ENDIF()
 
-  TRIBITS_ADD_EXECUTABLE(
-    PeakFlops
-    SOURCES Cabana_peakflops.cpp
-    COMM serial mpi
-    )
+TRIBITS_ADD_EXECUTABLE(
+  PeakFlops
+  SOURCES Cabana_peakflops.cpp
+  COMM serial mpi
+  )
+
+TRIBITS_ADD_EXECUTABLE(
+  NeighborListMDPerfTest
+  SOURCES md_neighbor_perf_test.cpp
+  COMM serial mpi
+  )
