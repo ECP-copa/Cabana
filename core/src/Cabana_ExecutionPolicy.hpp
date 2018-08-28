@@ -25,7 +25,7 @@ class RangePolicy
 
     // Container constructor. The container must have a size() function that
     // returns an int. C++ concepts would be really nice here. Valid
-    // containers include the AoSoA and MemberSlices.
+    // containers include the AoSoA.
     template<class Container>
     RangePolicy( Container container )
         : _begin( 0 )
