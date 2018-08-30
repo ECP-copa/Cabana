@@ -184,7 +184,11 @@ class AoSoA
     */
     void resize( const int n )
     {
+        // Reserve memory if needed.
         reserve( n );
+
+        // Update the sizes of the data. This is potentially different than
+        // the amount of allocated data.
         _size = n;
         _num_soa = std::floor( n / vector_length );
         if ( 0 < n % vector_length ) ++_num_soa;
