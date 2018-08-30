@@ -346,8 +346,7 @@ class AoSoA
     {
         static_assert( 0 <= N && N < number_of_members,
                        "Static loop out of bounds!" );
-        _pointers[N] =
-            static_cast<void*>( Impl::getStructMember<N>(_data(0)) );
+        _pointers[N] = _data(0).template ptr<N>();
         static_assert( 0 ==
                        sizeof(soa_type) % sizeof(member_value_type<N>),
                        "Stride cannot be calculated for misaligned memory!" );
@@ -376,8 +375,7 @@ class AoSoA
                           particle_type& particle ) const
     {
         particle.template get<M>() =
-            Impl::accessStructMember<M>(
-                _data(index_type::s(particle_index)),
+            _data(index_type::s(particle_index)).template get<M>(
                 index_type::i(particle_index) );
     }
 
@@ -390,8 +388,7 @@ class AoSoA
     {
         for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
             particle.template get<M>( i0 ) =
-                Impl::accessStructMember<M>(
-                    _data(index_type::s(particle_index)),
+                _data(index_type::s(particle_index)).template get<M>(
                     index_type::i(particle_index),
                     i0 );
     }
@@ -406,8 +403,7 @@ class AoSoA
         for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
             for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
                 particle.template get<M>( i0, i1 ) =
-                    Impl::accessStructMember<M>(
-                        _data(index_type::s(particle_index)),
+                _data(index_type::s(particle_index)).template get<M>(
                         index_type::i(particle_index),
                         i0, i1 );
     }
@@ -423,8 +419,7 @@ class AoSoA
             for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
                 for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
                     particle.template get<M>( i0, i1, i2 ) =
-                        Impl::accessStructMember<M>(
-                            _data(index_type::s(particle_index)),
+                        _data(index_type::s(particle_index)).template get<M>(
                             index_type::i(particle_index),
                             i0, i1, i2 );
     }
@@ -441,8 +436,7 @@ class AoSoA
                 for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
                     for ( int i3 = 0; i3 < particle.template extent<M,3>(); ++i3 )
                         particle.template get<M>( i0, i1, i2, i3 ) =
-                            Impl::accessStructMember<M>(
-                                _data(index_type::s(particle_index)),
+                        _data(index_type::s(particle_index)).template get<M>(
                                 index_type::i(particle_index),
                                 i0, i1, i2, i3 );
     }
@@ -476,8 +470,8 @@ class AoSoA
     copyParticleToMember( const int particle_index,
                           const particle_type& particle ) const
     {
-        Impl::accessStructMember<M>( _data(index_type::s(particle_index)),
-                                     index_type::i(particle_index) )
+        _data(index_type::s(particle_index)).template get<M>(
+            index_type::i(particle_index) )
             = particle.template get<M>();
     }
 
@@ -489,8 +483,7 @@ class AoSoA
                           const particle_type& particle ) const
     {
         for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            Impl::accessStructMember<M>(
-                _data(index_type::s(particle_index)),
+            _data(index_type::s(particle_index)).template get<M>(
                 index_type::i(particle_index), i0 )
                 = particle.template get<M>( i0 );
     }
@@ -504,8 +497,7 @@ class AoSoA
     {
         for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
             for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
-                Impl::accessStructMember<M>(
-                    _data(index_type::s(particle_index)),
+            _data(index_type::s(particle_index)).template get<M>(
                     index_type::i(particle_index), i0, i1 )
                     = particle.template get<M>( i0, i1 );
     }
@@ -520,8 +512,7 @@ class AoSoA
         for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
             for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
                 for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
-                    Impl::accessStructMember<M>(
-                        _data(index_type::s(particle_index)),
+                    _data(index_type::s(particle_index)).template get<M>(
                         index_type::i(particle_index), i0, i1, i2 )
                         = particle.template get<M>( i0, i1, i2 );
     }
@@ -537,8 +528,7 @@ class AoSoA
             for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
                 for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
                     for ( int i3 = 0; i3 < particle.template extent<M,3>(); ++i3 )
-                        Impl::accessStructMember<M>(
-                            _data(index_type::s(particle_index)),
+                        _data(index_type::s(particle_index)).template get<M>(
                             index_type::i(particle_index), i0, i1, i2, i3 )
                             = particle.template get<M>( i0, i1, i2, i3 );
     }

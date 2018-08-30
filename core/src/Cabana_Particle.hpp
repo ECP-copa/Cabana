@@ -107,7 +107,7 @@ struct Particle<MemberDataTypes<Types...> >
       \return The rank of the given member index data.
     */
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     constexpr int rank() const
     {
         return std::rank<member_data_type<M> >::value;
@@ -123,7 +123,7 @@ struct Particle<MemberDataTypes<Types...> >
       \return The extent of the dimension.
     */
     template<std::size_t M, std::size_t D>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     constexpr int extent() const
     {
         return std::extent<member_data_type<M>,D>::value;
@@ -134,7 +134,7 @@ struct Particle<MemberDataTypes<Types...> >
 
     // Rank 0
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get()
@@ -144,7 +144,7 @@ struct Particle<MemberDataTypes<Types...> >
     }
 
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<member_data_type<M> >::value),
                             member_value_type<M> >::type
     get() const
@@ -155,7 +155,7 @@ struct Particle<MemberDataTypes<Types...> >
 
     // Rank 1
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(1==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get( const int d0 )
@@ -165,7 +165,7 @@ struct Particle<MemberDataTypes<Types...> >
     }
 
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(1==std::rank<member_data_type<M> >::value),
                             member_value_type<M> >::type
     get( const int d0 ) const
@@ -176,7 +176,7 @@ struct Particle<MemberDataTypes<Types...> >
 
     // Rank 2
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(2==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get( const int d0,
@@ -187,7 +187,7 @@ struct Particle<MemberDataTypes<Types...> >
     }
 
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(2==std::rank<member_data_type<M> >::value),
                             member_value_type<M> >::type
     get( const int d0,
@@ -199,7 +199,7 @@ struct Particle<MemberDataTypes<Types...> >
 
     // Rank 3
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(3==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get( const int d0,
@@ -211,7 +211,7 @@ struct Particle<MemberDataTypes<Types...> >
     }
 
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(3==std::rank<member_data_type<M> >::value),
                             member_value_type<M> >::type
     get( const int d0,
@@ -224,7 +224,7 @@ struct Particle<MemberDataTypes<Types...> >
 
     // Rank 4
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(4==std::rank<member_data_type<M> >::value),
                             member_reference_type<M> >::type
     get( const int d0,
@@ -237,7 +237,7 @@ struct Particle<MemberDataTypes<Types...> >
     }
 
     template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(4==std::rank<member_data_type<M> >::value),
                             member_value_type<M> >::type
     get( const int d0,

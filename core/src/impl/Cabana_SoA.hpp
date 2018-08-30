@@ -26,65 +26,8 @@ namespace Impl
 template<std::size_t I, int VectorLength, typename T>
 struct StructMember
 {
-    // type aliases
-    using data_type = T;
-    using array_type = typename Impl::InnerArrayType<T,VectorLength>::type;
-    using value_type = typename std::remove_all_extents<T>::type;
-    using reference_type = typename std::add_lvalue_reference<value_type>::type;
-    using pointer_type = typename std::decay<array_type>::type;
-
-    // data
+    using array_type = typename InnerArrayType<T,VectorLength>::type;
     array_type _data;
-
-    // rank-0
-    template<class U = T>
-    static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<U>::value),reference_type>::type
-    access( StructMember& m,
-            const int i )
-    { return m._data[i]; }
-
-    // rank-1
-    template<class U = T>
-    static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<U>::value),reference_type>::type
-    access( StructMember& m,
-            const int i,
-            const int d0 )
-    { return m._data[d0][i]; }
-
-    // rank-2
-    template<class U = T>
-    static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<U>::value),reference_type>::type
-    access( StructMember& m,
-            const int i,
-            const int d0,
-            const int d1 )
-    { return m._data[d1][d0][i]; }
-
-    // rank-3
-    template<class U = T>
-    static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<U>::value),reference_type>::type
-    access( StructMember& m,
-            const int i,
-            const int d0,
-            const int d1,
-            const int d2 )
-    { return m._data[d2][d1][d0][i]; }
-
-    // rank-4
-    template<class U = T>
-    static KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<U>::value),reference_type>::type
-    access( StructMember& m,
-            const int i,
-            const int d0,
-            const int d1,
-            const int d2,
-            const int d3 )
-    { return m._data[d3][d2][d1][d0][i]; }
 };
 
 //---------------------------------------------------------------------------//
@@ -93,7 +36,7 @@ template<int VectorLength, typename Sequence, typename... Types>
 struct SoAImpl;
 
 template<int VectorLength, std::size_t... Indices, typename... Types>
-struct SoAImpl<VectorLength,Impl::IndexSequence<Indices...>,Types...>
+struct SoAImpl<VectorLength,IndexSequence<Indices...>,Types...>
     : StructMember<Indices,VectorLength,Types>...
 {};
 
@@ -115,102 +58,214 @@ struct SoA;
 template<int VectorLength, typename... Types>
 struct SoA<VectorLength,MemberDataTypes<Types...> >
     : SoAImpl<VectorLength,
-              typename Impl::MakeIndexSequence<sizeof...(Types)>::type,
+              typename MakeIndexSequence<sizeof...(Types)>::type,
               Types...>
-{};
-
-//---------------------------------------------------------------------------//
-// Helper traits.
-template<std::size_t I, int VectorLength, typename... Types>
-struct SMT
 {
-    using type = StructMember<
-        I,VectorLength,typename MemberDataTypeAtIndex<I,MemberDataTypes<Types...> >::type>;
-    using data_type = typename type::data_type;
-    using reference_type = typename type::reference_type;
-    using pointer_type = typename type::pointer_type;
+    // Vector length
+    static constexpr int vector_length = VectorLength;
+
+    // Member data types.
+    using member_types = MemberDataTypes<Types...>;
+
+    // Number of member types.
+    static constexpr std::size_t number_of_members = member_types::size;
+
+    // The maximum rank supported for member types.
+    static constexpr std::size_t max_supported_rank = 4;
+
+    // Member data type.
+    template<std::size_t M>
+    using member_data_type =
+        typename MemberDataTypeAtIndex<M,member_types>::type;
+
+    // Value type at a given index M.
+    template<std::size_t M>
+    using member_value_type =
+        typename std::remove_all_extents<member_data_type<M> >::type;
+
+    // Reference type at a given index M.
+    template<std::size_t M>
+    using member_reference_type =
+        typename std::add_lvalue_reference<member_value_type<M> >::type;
+
+    // Pointer type at a given index M.
+    template<std::size_t M>
+    using member_pointer_type =
+        typename std::add_pointer<member_value_type<M> >::type;
+
+
+    // -------------------------------
+    // Member data type properties.
+
+    /*!
+      \brief Get the rank of the data for a given member at index M.
+
+      \tparam M The member index to get the rank for.
+
+      \return The rank of the given member index data.
+    */
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr int rank() const
+    {
+        return std::rank<member_data_type<M> >::value;
+    }
+
+    /*!
+      \brief Get the extent of a given member data dimension.
+
+      \tparam M The member index to get the extent for.
+
+      \tparam D The member data dimension to get the extent for.
+
+      \return The extent of the dimension.
+    */
+    template<std::size_t M, std::size_t D>
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr int extent() const
+    {
+        return std::extent<member_data_type<M>,D>::value;
+    }
+
+    // -------------------------------
+    // Access the data value at a given member index.
+
+    // Rank 0
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(0==std::rank<member_data_type<M> >::value),
+                            member_reference_type<M> >::type
+    get( const int i )
+    {
+        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[i];
+    }
+
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(0==std::rank<member_data_type<M> >::value),
+                            member_value_type<M> >::type
+    get( const int i ) const
+    {
+        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[i];
+    }
+
+    // Rank 1
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(1==std::rank<member_data_type<M> >::value),
+                            member_reference_type<M> >::type
+    get(  const int i,
+          const int d0 )
+    {
+        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[d0][i];
+    }
+
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(1==std::rank<member_data_type<M> >::value),
+                            member_value_type<M> >::type
+    get(  const int i,
+          const int d0 ) const
+    {
+        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[d0][i];
+    }
+
+    // Rank 2
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(2==std::rank<member_data_type<M> >::value),
+                            member_reference_type<M> >::type
+    get( const int i,
+         const int d0,
+         const int d1 )
+    {
+        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[d1][d0][i];
+    }
+
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(2==std::rank<member_data_type<M> >::value),
+                            member_value_type<M> >::type
+    get( const int i,
+         const int d0,
+         const int d1 ) const
+    {
+        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[d1][d0][i];
+    }
+
+    // Rank 3
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(3==std::rank<member_data_type<M> >::value),
+                            member_reference_type<M> >::type
+    get( const int i,
+         const int d0,
+         const int d1,
+         const int d2 )
+    {
+        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[d2][d1][d0][i];
+    }
+
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(3==std::rank<member_data_type<M> >::value),
+                            member_value_type<M> >::type
+    get( const int i,
+         const int d0,
+         const int d1,
+         const int d2 ) const
+    {
+        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[d2][d1][d0][i];
+    }
+
+    // Rank 4
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(4==std::rank<member_data_type<M> >::value),
+                            member_reference_type<M> >::type
+    get( const int i,
+         const int d0,
+         const int d1,
+         const int d2,
+         const int d3 )
+    {
+        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[d3][d2][d1][d0][i];
+    }
+
+    template<std::size_t M>
+    KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<(4==std::rank<member_data_type<M> >::value),
+                            member_value_type<M> >::type
+    get( const int i,
+         const int d0,
+         const int d1,
+         const int d2,
+         const int d3 ) const
+    {
+        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return base._data[d3][d2][d1][d0][i];
+    }
+
+    // ----------------
+    // Raw data access
+
+    // Get a pointer to a member.
+    template<std::size_t M>
+    void* ptr()
+    {
+        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        return &base;
+    }
 };
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Access an individual element of a member.
-*/
-template<std::size_t I, int VectorLength, typename... Types>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (0==std::rank<typename SMT<I,VectorLength,Types...>::data_type>::value),
-    typename SMT<I,VectorLength,Types...>::reference_type>::type
-accessStructMember( SoA<VectorLength,MemberDataTypes<Types...> >& s,
-                    const int i )
-{
-    return SMT<I,VectorLength,Types...>::type::access( s, i );
-}
-
-template<std::size_t I, int VectorLength, typename... Types>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (1==std::rank<typename SMT<I,VectorLength,Types...>::data_type>::value),
-    typename SMT<I,VectorLength,Types...>::reference_type>::type
-accessStructMember( SoA<VectorLength,MemberDataTypes<Types...> >& s,
-                    const int i,
-                    const int d0 )
-{
-    return SMT<I,VectorLength,Types...>::type::access(s,i,d0);
-}
-
-template<std::size_t I, int VectorLength, typename... Types>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (2==std::rank<typename SMT<I,VectorLength,Types...>::data_type>::value),
-    typename SMT<I,VectorLength,Types...>::reference_type>::type
-accessStructMember( SoA<VectorLength,MemberDataTypes<Types...> >& s,
-                    const int i,
-                    const int d0,
-                    const int d1 )
-{
-    return SMT<I,VectorLength,Types...>::type::access(s,i,d0,d1);
-}
-
-template<std::size_t I, int VectorLength, typename... Types>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (3==std::rank<typename SMT<I,VectorLength,Types...>::data_type>::value),
-    typename SMT<I,VectorLength,Types...>::reference_type>::type
-accessStructMember( SoA<VectorLength,MemberDataTypes<Types...> >& s,
-                    const int i,
-                    const int d0,
-                    const int d1,
-                    const int d2 )
-{
-    return SMT<I,VectorLength,Types...>::type::access(s,i,d0,d1,d2);
-}
-
-template<std::size_t I, int VectorLength, typename... Types>
-KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<
-    (4==std::rank<typename SMT<I,VectorLength,Types...>::data_type>::value),
-    typename SMT<I,VectorLength,Types...>::reference_type>::type
-accessStructMember( SoA<VectorLength,MemberDataTypes<Types...> >& s,
-                    const int i,
-                    const int d0,
-                    const int d1,
-                    const int d2,
-                    const int d3 )
-{
-    return SMT<I,VectorLength,Types...>::type::access(s,i,d0,d1,d2,d3);
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Get a pointer to a member.
-*/
-template<std::size_t I, int VectorLength, typename... Types>
-KOKKOS_INLINE_FUNCTION
-typename SMT<I,VectorLength,Types...>::pointer_type
-getStructMember( SoA<VectorLength,MemberDataTypes<Types...> >& soa )
-{
-    return static_cast<typename SMT<I,VectorLength,Types...>::type&>(soa)._data;
-}
 
 //---------------------------------------------------------------------------//
 

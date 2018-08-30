@@ -61,16 +61,14 @@ void testSoA()
 
     // Set some data with the soa.
     double v1 = 0.3343;
-    auto d0 = Cabana::Impl::getStructMember<0>( soa );
-    d0[3] = v1;
+    soa.get<0>( 3 ) = v1;
 
     double v2 = 0.992;
-    auto d6 = Cabana::Impl::getStructMember<6>( soa );
-    d6[1][1][1][1][2] = v2;
+    soa.get<6>( 2, 1, 1, 1, 1 ) = v2;
 
     // Check the data.
-    EXPECT_EQ( Cabana::Impl::getStructMember<0>( soa )[3], v1 );
-    EXPECT_EQ( Cabana::Impl::getStructMember<6>( soa )[1][1][1][1][2], v2 );
+    EXPECT_EQ( soa.get<0>(3), v1 );
+    EXPECT_EQ( soa.get<6>(2,1,1,1,1), v2 );
 }
 
 //---------------------------------------------------------------------------//
