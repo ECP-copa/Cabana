@@ -2,7 +2,6 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberSlice.hpp>
 #include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_InnerArrayLayout.hpp>
 
 #include <Kokkos_Core.hpp>
 

@@ -2,7 +2,6 @@
 #define CABANA_PERFORMANCETRAITS_HPP
 
 #include <Cabana_Types.hpp>
-#include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>

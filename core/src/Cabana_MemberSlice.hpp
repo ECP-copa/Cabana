@@ -2,7 +2,6 @@
 #define CABANA_MEMBERSLICE_HPP
 
 #include <Cabana_Types.hpp>
-#include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Types.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_TypeTraits.hpp>
