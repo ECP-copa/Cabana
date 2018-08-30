@@ -261,10 +261,10 @@ class AoSoA
     particle_type getParticle( const int particle_index ) const
     {
         particle_type particle;
-        copyToParticle(
-            particle_index,
-            particle,
-            std::integral_constant<std::size_t,number_of_members-1>() );
+        Impl::structCopy( particle,
+                          0,
+                          _data(index_type::s(particle_index)),
+                          index_type::i(particle_index) );
         return particle;
     }
 
@@ -279,10 +279,10 @@ class AoSoA
     void setParticle( const int particle_index,
                       const particle_type& particle ) const
     {
-        copyFromParticle(
-            particle_index,
-            particle,
-            std::integral_constant<std::size_t,number_of_members-1>() );
+        Impl::structCopy( _data(index_type::s(particle_index)),
+                          index_type::i(particle_index),
+                          particle,
+                          0 );
     }
 
     /*!
@@ -364,194 +364,6 @@ class AoSoA
     void storePointersAndStrides( std::integral_constant<std::size_t,0> )
     {
         assignPointersAndStrides<0>();
-    }
-
-    // Copy a member to a particle.
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (0==std::rank<member_data_type<M> >::value),void>::type
-    copyMemberToParticle( const int particle_index,
-                          particle_type& particle ) const
-    {
-        particle.template get<M>() =
-            _data(index_type::s(particle_index)).template get<M>(
-                index_type::i(particle_index) );
-    }
-
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (1==std::rank<member_data_type<M> >::value),void>::type
-    copyMemberToParticle( const int particle_index,
-                          particle_type& particle ) const
-    {
-        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            particle.template get<M>( i0 ) =
-                _data(index_type::s(particle_index)).template get<M>(
-                    index_type::i(particle_index),
-                    i0 );
-    }
-
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (2==std::rank<member_data_type<M> >::value),void>::type
-    copyMemberToParticle( const int particle_index,
-                          particle_type& particle ) const
-    {
-        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
-                particle.template get<M>( i0, i1 ) =
-                _data(index_type::s(particle_index)).template get<M>(
-                        index_type::i(particle_index),
-                        i0, i1 );
-    }
-
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (3==std::rank<member_data_type<M> >::value),void>::type
-    copyMemberToParticle( const int particle_index,
-                          particle_type& particle ) const
-    {
-        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
-                for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
-                    particle.template get<M>( i0, i1, i2 ) =
-                        _data(index_type::s(particle_index)).template get<M>(
-                            index_type::i(particle_index),
-                            i0, i1, i2 );
-    }
-
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (4==std::rank<member_data_type<M> >::value),void>::type
-    copyMemberToParticle( const int particle_index,
-                          particle_type& particle ) const
-    {
-        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
-                for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
-                    for ( int i3 = 0; i3 < particle.template extent<M,3>(); ++i3 )
-                        particle.template get<M>( i0, i1, i2, i3 ) =
-                        _data(index_type::s(particle_index)).template get<M>(
-                                index_type::i(particle_index),
-                                i0, i1, i2, i3 );
-    }
-
-    // Copy to a particle a given index.
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    void copyToParticle( const int particle_index,
-                         particle_type& particle,
-                         std::integral_constant<std::size_t,M> ) const
-    {
-        copyMemberToParticle<M>( particle_index, particle );
-        copyToParticle(
-            particle_index, particle,
-            std::integral_constant<std::size_t,M-1>() );
-    }
-
-    KOKKOS_INLINE_FUNCTION
-    void copyToParticle( const int particle_index,
-                         particle_type& particle,
-                         std::integral_constant<std::size_t,0> ) const
-    {
-        copyMemberToParticle<0>( particle_index, particle );
-    }
-
-    // Copy a particle to a member.
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (0==std::rank<member_data_type<M> >::value),void>::type
-    copyParticleToMember( const int particle_index,
-                          const particle_type& particle ) const
-    {
-        _data(index_type::s(particle_index)).template get<M>(
-            index_type::i(particle_index) )
-            = particle.template get<M>();
-    }
-
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (1==std::rank<member_data_type<M> >::value),void>::type
-    copyParticleToMember( const int particle_index,
-                          const particle_type& particle ) const
-    {
-        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            _data(index_type::s(particle_index)).template get<M>(
-                index_type::i(particle_index), i0 )
-                = particle.template get<M>( i0 );
-    }
-
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (2==std::rank<member_data_type<M> >::value),void>::type
-    copyParticleToMember( const int particle_index,
-                          const particle_type& particle ) const
-    {
-        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
-            _data(index_type::s(particle_index)).template get<M>(
-                    index_type::i(particle_index), i0, i1 )
-                    = particle.template get<M>( i0, i1 );
-    }
-
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (3==std::rank<member_data_type<M> >::value),void>::type
-    copyParticleToMember( const int particle_index, const
-                          particle_type& particle ) const
-    {
-        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
-                for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
-                    _data(index_type::s(particle_index)).template get<M>(
-                        index_type::i(particle_index), i0, i1, i2 )
-                        = particle.template get<M>( i0, i1, i2 );
-    }
-
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<
-        (4==std::rank<member_data_type<M> >::value),void>::type
-    copyParticleToMember( const int particle_index,
-                          const particle_type& particle ) const
-    {
-        for ( int i0 = 0; i0 < particle.template extent<M,0>(); ++i0 )
-            for ( int i1 = 0; i1 < particle.template extent<M,1>(); ++i1 )
-                for ( int i2 = 0; i2 < particle.template extent<M,2>(); ++i2 )
-                    for ( int i3 = 0; i3 < particle.template extent<M,3>(); ++i3 )
-                        _data(index_type::s(particle_index)).template get<M>(
-                            index_type::i(particle_index), i0, i1, i2, i3 )
-                            = particle.template get<M>( i0, i1, i2, i3 );
-    }
-
-    // Copy to a given index from a particle.
-    template<std::size_t M>
-    KOKKOS_INLINE_FUNCTION
-    void copyFromParticle( const int particle_index,
-                           const particle_type& particle,
-                           std::integral_constant<std::size_t,M> ) const
-    {
-        copyParticleToMember<M>( particle_index, particle );
-        copyFromParticle(
-            particle_index, particle,
-            std::integral_constant<std::size_t,M-1>() );
-    }
-
-    KOKKOS_INLINE_FUNCTION
-    void copyFromParticle( const int particle_index,
-                           const particle_type& particle,
-                           std::integral_constant<std::size_t,0> ) const
-    {
-        copyParticleToMember<0>( particle_index, particle );
     }
 
   private:
