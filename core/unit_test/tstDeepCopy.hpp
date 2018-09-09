@@ -1,6 +1,5 @@
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberSlice.hpp>
 #include <Cabana_Types.hpp>
 
 #include <gtest/gtest.h>

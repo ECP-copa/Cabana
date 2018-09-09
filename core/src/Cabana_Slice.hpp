@@ -1,5 +1,5 @@
-#ifndef CABANA_MEMBERSLICE_HPP
-#define CABANA_MEMBERSLICE_HPP
+#ifndef CABANA_SLICE_HPP
+#define CABANA_SLICE_HPP
 
 #include <Cabana_Types.hpp>
 #include <Cabana_Types.hpp>
@@ -157,7 +157,7 @@ struct KokkosViewWrapper
 
 //---------------------------------------------------------------------------//
 /*!
-  \class MemberSlice
+  \class Slice
 
   \brief A slice of an array-of-structs-of-arrays with data access to a single
   member.
@@ -175,7 +175,7 @@ template<typename DataType,
          typename MemorySpace,
          typename MemoryAccessType,
          int VectorLength>
-class MemberSlice
+class Slice
 {
   public:
 
@@ -211,7 +211,7 @@ class MemberSlice
     /*!
       \brief Default constructor.
     */
-    MemberSlice()
+    Slice()
         : _size( 0 )
     {}
 
@@ -223,7 +223,7 @@ class MemberSlice
       elements of a struct.
       \param The number of structs in the slice.
     */
-    MemberSlice( const pointer_type data,
+    Slice( const pointer_type data,
                  const int size,
                  const int soa_stride,
                  const int num_soa )
@@ -420,14 +420,14 @@ class MemberSlice
     // by the template parameters of this class.
     kokkos_view _view;
 
-    // Number of particles in the view.
+    // Number of particles in the slice.
     int _size;
 };
 
 //---------------------------------------------------------------------------//
 // Static type checker.
 template<typename >
-struct is_member_slice : public std::false_type {};
+struct is_slice : public std::false_type {};
 
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
@@ -435,20 +435,20 @@ template<typename DataType,
          typename MemorySpace,
          typename MemoryAccessType,
          int VectorLength>
-struct is_member_slice<MemberSlice<DataType,
-                                   MemorySpace,
-                                   MemoryAccessType,
-                                   VectorLength> >
+struct is_slice<Slice<DataType,
+                      MemorySpace,
+                      MemoryAccessType,
+                      VectorLength> >
     : public std::true_type {};
 
 template<typename DataType,
          typename MemorySpace,
          typename MemoryAccessType,
          int VectorLength>
-struct is_member_slice<const MemberSlice<DataType,
-                                         MemorySpace,
-                                         MemoryAccessType,
-                                         VectorLength> >
+struct is_slice<const Slice<DataType,
+                            MemorySpace,
+                            MemoryAccessType,
+                            VectorLength> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//
@@ -457,4 +457,4 @@ struct is_member_slice<const MemberSlice<DataType,
 
 //---------------------------------------------------------------------------//
 
-#endif // end CABANA_MEMBERSLICE_HPP
+#endif // end CABANA_SLICE_HPP

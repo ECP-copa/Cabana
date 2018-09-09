@@ -1,5 +1,4 @@
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberSlice.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_VerletList.hpp>
 #include <Cabana_Sort.hpp>

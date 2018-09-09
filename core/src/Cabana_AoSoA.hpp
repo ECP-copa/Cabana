@@ -2,7 +2,7 @@
 #define CABANA_AOSOA_HPP
 
 #include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_MemberSlice.hpp>
+#include <Cabana_Slice.hpp>
 #include <Cabana_Particle.hpp>
 #include <Cabana_Types.hpp>
 #include <impl/Cabana_SoA.hpp>
@@ -298,19 +298,19 @@ class AoSoA
       \return The field slice.
     */
     template<std::size_t Field, typename MemoryAccessType>
-    MemberSlice<member_data_type<Field>,
-                memory_space,
-                MemoryAccessType,
-                vector_length>
+    Slice<member_data_type<Field>,
+          memory_space,
+          MemoryAccessType,
+          vector_length>
     slice( MemberTag<Field>, MemoryAccessType ) const
     {
         return
-            MemberSlice<member_data_type<Field>,
-                        memory_space,
-                        MemoryAccessType,
-                        vector_length>(
-                            (member_pointer_type<Field>) _pointers[Field],
-                            _size, _strides[Field], _num_soa );
+            Slice<member_data_type<Field>,
+                  memory_space,
+                  MemoryAccessType,
+                  vector_length>(
+                      (member_pointer_type<Field>) _pointers[Field],
+                      _size, _strides[Field], _num_soa );
     }
 
     /*!
@@ -320,19 +320,19 @@ class AoSoA
       \return The field slice.
     */
     template<std::size_t Field>
-    MemberSlice<member_data_type<Field>,
-                memory_space,
-                DefaultAccessMemory,
-                vector_length>
+    Slice<member_data_type<Field>,
+          memory_space,
+          DefaultAccessMemory,
+          vector_length>
     slice( MemberTag<Field> ) const
     {
         return
-            MemberSlice<member_data_type<Field>,
-                        memory_space,
-                        DefaultAccessMemory,
-                        vector_length>(
-                            (member_pointer_type<Field>) _pointers[Field],
-                            _size, _strides[Field], _num_soa );
+            Slice<member_data_type<Field>,
+                  memory_space,
+                  DefaultAccessMemory,
+                  vector_length>(
+                      (member_pointer_type<Field>) _pointers[Field],
+                      _size, _strides[Field], _num_soa );
     }
 
     /*!

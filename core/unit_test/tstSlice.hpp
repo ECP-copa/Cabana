@@ -1,4 +1,3 @@
-#include <Cabana_MemberSlice.hpp>
 #include <Cabana_AoSoA.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -132,11 +131,11 @@ void apiTest()
     auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
 
     // Check that they are slices.
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_0)>::value );
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_1)>::value );
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_2)>::value );
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_3)>::value );
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_4)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_0)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_1)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_2)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_3)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_4)>::value );
 
     // Check field sizes.
     EXPECT_EQ( slice_0.size(), 35 );
