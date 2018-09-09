@@ -5,7 +5,7 @@
 #include <Cabana_Slice.hpp>
 #include <Cabana_Particle.hpp>
 #include <Cabana_Types.hpp>
-#include <impl/Cabana_SoA.hpp>
+#include <Cabana_SoA.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
 
@@ -76,7 +76,7 @@ class AoSoA
     static constexpr int vector_length = VectorLength;
 
     // SoA type.
-    using soa_type = Impl::SoA<vector_length,member_types>;
+    using soa_type = SoA<vector_length,member_types>;
 
     // Managed data view.
     using soa_view = Kokkos::View<soa_type*,typename memory_space::kokkos_memory_space>;

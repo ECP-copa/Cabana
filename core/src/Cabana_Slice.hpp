@@ -224,9 +224,9 @@ class Slice
       \param The number of structs in the slice.
     */
     Slice( const pointer_type data,
-                 const int size,
-                 const int soa_stride,
-                 const int num_soa )
+           const int size,
+           const int soa_stride,
+           const int num_soa )
         : _view( data, view_wrapper::createLayout(num_soa,soa_stride) )
         , _size( size )
     {}

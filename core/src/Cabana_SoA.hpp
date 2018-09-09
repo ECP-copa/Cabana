@@ -105,6 +105,10 @@ struct SoAImpl<VectorLength,IndexSequence<Indices...>,Types...>
 {};
 
 //---------------------------------------------------------------------------//
+
+} // end namespace Impl
+
+//---------------------------------------------------------------------------//
 /*!
   \brief Struct-of-Arrays
 
@@ -121,9 +125,9 @@ struct SoA;
 
 template<int VectorLength, typename... Types>
 struct SoA<VectorLength,MemberDataTypes<Types...> >
-    : SoAImpl<VectorLength,
-              typename MakeIndexSequence<sizeof...(Types)>::type,
-              Types...>
+    : Impl::SoAImpl<VectorLength,
+                    typename Impl::MakeIndexSequence<sizeof...(Types)>::type,
+                    Types...>
 {
     // Vector length
     static constexpr int vector_length = VectorLength;
@@ -201,7 +205,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
                             member_reference_type<M> >::type
     get( const int i )
     {
-        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[i];
     }
 
@@ -211,7 +215,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
                             member_value_type<M> >::type
     get( const int i ) const
     {
-        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[i];
     }
 
@@ -223,7 +227,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
     get(  const int i,
           const int d0 )
     {
-        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[d0][i];
     }
 
@@ -234,7 +238,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
     get(  const int i,
           const int d0 ) const
     {
-        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[d0][i];
     }
 
@@ -247,7 +251,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
          const int d0,
          const int d1 )
     {
-        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[d1][d0][i];
     }
 
@@ -259,7 +263,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
          const int d0,
          const int d1 ) const
     {
-        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[d1][d0][i];
     }
 
@@ -273,7 +277,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
          const int d1,
          const int d2 )
     {
-        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[d2][d1][d0][i];
     }
 
@@ -286,7 +290,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
          const int d1,
          const int d2 ) const
     {
-        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[d2][d1][d0][i];
     }
 
@@ -301,7 +305,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
          const int d2,
          const int d3 )
     {
-        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[d3][d2][d1][d0][i];
     }
 
@@ -315,7 +319,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
          const int d2,
          const int d3 ) const
     {
-        const StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return base._data[d3][d2][d1][d0][i];
     }
 
@@ -326,7 +330,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
     template<std::size_t M>
     void* ptr()
     {
-        StructMember<M,vector_length,member_data_type<M> >& base = *this;
+        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return &base;
     }
 };
@@ -335,7 +339,12 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
 // Member element copy operators.
 //---------------------------------------------------------------------------//
 
-// Copy a particle to a member.
+namespace Impl
+{
+
+// Copy a single member from one SoA to another.
+
+// Rank 0
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
@@ -348,6 +357,7 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
     dst.template get<M>( dst_idx ) = src.template get<M>( src_idx );
 }
 
+// Rank 1
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
@@ -361,6 +371,7 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
         dst.template get<M>( dst_idx, i0 ) = src.template get<M>( src_idx, i0 );
 }
 
+// Rank 2
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
@@ -376,6 +387,7 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
                     src.template get<M>( src_idx, i0, i1 );
 }
 
+// Rank 3
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
@@ -392,6 +404,7 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
                     src.template get<M>( src_idx, i0, i1, i2 );
 }
 
+// Rank r
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
@@ -409,8 +422,8 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
                         src.template get<M>( src_idx, i0, i1, i2, i3 );
 }
 
-// Copy the values of all members from a source to a destination at the given
-// indices.
+// Copy the values of all members of an SoA from a source to a destination at
+// the given indices.
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 void soaElementCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
@@ -435,7 +448,7 @@ void soaElementCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
     soaElementMemberCopy<0>( dst, dst_idx, src, src_idx );
 }
 
-// Copy the data from one struct at a givecn index to another.
+// Copy the data from one struct at a given index to another.
 template<int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 void structCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,

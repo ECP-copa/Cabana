@@ -1,7 +1,7 @@
 #ifndef CABANA_PARTICLE_HPP
 #define CABANA_PARTICLE_HPP
 
-#include <impl/Cabana_SoA.hpp>
+#include <Cabana_SoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -20,10 +20,10 @@ struct Particle;
 // Particle implementation.
 template<typename... Types>
 struct Particle<MemberDataTypes<Types...> >
-    : Impl::SoA<1,MemberDataTypes<Types...> >
+    : SoA<1,MemberDataTypes<Types...> >
 {
     // Base class.
-    using base = Impl::SoA<1,MemberDataTypes<Types...> >;
+    using base = SoA<1,MemberDataTypes<Types...> >;
 
     // -------------------------------
     // Access the data value at a given member index.

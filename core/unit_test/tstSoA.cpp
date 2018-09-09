@@ -1,4 +1,4 @@
-#include <impl/Cabana_SoA.hpp>
+#include <Cabana_SoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
 #include <Cabana_Types.hpp>
 
@@ -47,7 +47,7 @@ void testSoA()
                                                  unsigned[5],
                                                  float[3][2][2],
                                                  double[4][2][3][2]>;
-    using soa_type = Cabana::Impl::SoA<vector_length,member_types>;
+    using soa_type = Cabana::SoA<vector_length,member_types>;
 
     // Check that the data in the soa is contiguous.
     EXPECT_TRUE( std::is_trivial<soa_type>::value );
