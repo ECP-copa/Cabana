@@ -501,5 +501,11 @@ TEST_F( TEST_CATEGORY, aosoa_particle_test )
 }
 
 //---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, aosoa_access_test )
+{
+    testAccess();
+}
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Test
