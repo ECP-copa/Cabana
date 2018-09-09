@@ -237,7 +237,7 @@ class AoSoA
 
       \return The number of structs-of-arrays in the container.
     */
-    KOKKOS_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     int numSoA() const { return _num_soa; }
 
     /*!
@@ -247,12 +247,23 @@ class AoSoA
 
       \return The size of the array at the given struct index.
     */
-    KOKKOS_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     int arraySize( const int s ) const
     {
         return
             ( s < _num_soa - 1 ) ? vector_length : ( _size % vector_length );
     }
+
+    /*!
+      \brief Get the SoA at a given index.
+
+      \param s The SoA index.
+
+      \return The SoA at the given index.
+    */
+    KOKKOS_FORCEINLINE_FUNCTION
+    soa_type& access( const int s ) const
+    { return _data(s); }
 
     /*!
       \brief Get a particle at a given index.

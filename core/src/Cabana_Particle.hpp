@@ -12,12 +12,9 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-// Particle declaration
 template<typename DataTypes>
 struct Particle;
 
-//---------------------------------------------------------------------------//
-// Particle implementation.
 template<typename... Types>
 struct Particle<MemberDataTypes<Types...> >
     : SoA<1,MemberDataTypes<Types...> >

@@ -408,6 +408,79 @@ void testParticle()
 }
 
 //---------------------------------------------------------------------------//
+// Test an AoSoA using the access operator.
+void testAccess()
+{
+    // Manually set the inner array size.
+    const int vector_length = 16;
+
+    // Data dimensions.
+    const int dim_1 = 3;
+    const int dim_2 = 2;
+    const int dim_3 = 4;
+    const int dim_4 = 3;
+
+    // Declare data types.
+    using DataTypes =
+        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
+                                int,
+                                float[dim_1][dim_2][dim_3][dim_4],
+                                double[dim_1],
+                                double[dim_1][dim_2]
+                                >;
+
+    // Declare the AoSoA type.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
+
+    // Make sure that it is actually an AoSoA.
+    EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
+
+    // Create an AoSoA.
+    int num_data = 453;
+    AoSoA_t aosoa( num_data );
+
+    // Initialize data with the SoA accessor
+    float fval = 3.4;
+    double dval = 1.23;
+    int ival = 1;
+    for ( int s = 0; s < aosoa.numSoA(); ++s )
+    {
+        auto& soa = aosoa.access( s );
+
+        for ( int a = 0; a < aosoa.arraySize(s); ++a )
+        {
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    for ( int k = 0; k < dim_3; ++k )
+                        soa.get<0>( a, i, j, k ) = fval * (i+j+k);
+
+            // Member 1.
+            soa.get<1>( a ) = ival;
+
+            // Member 2.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    for ( int k = 0; k < dim_3; ++k )
+                        for ( int l = 0; l < dim_4; ++l )
+                            soa.get<2>( a, i, j, k, l ) = fval * (i+j+k+l);
+
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+                soa.get<3>( a, i ) = dval * i;
+
+            // Member 4.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    soa.get<4>( a, i, j ) = dval * (i+j);
+        }
+    }
+
+    // Check data members for proper initialization.
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, aosoa_test )
