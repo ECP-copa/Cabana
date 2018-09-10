@@ -311,32 +311,29 @@ void randomAccessTest()
     initializeDataMembers(
         aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
+    // Create slices.
+    auto da_slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
+    auto da_slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
+    auto da_slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
+    auto da_slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
+    auto da_slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+
     // Create read-only random access slices.
-    auto ra_slice_0 = aosoa.slice( Cabana::MemberTag<0>(),
-                                   Cabana::RandomAccessMemory() );
-    auto ra_slice_1 = aosoa.slice( Cabana::MemberTag<1>(),
-                                   Cabana::RandomAccessMemory() );
-    auto ra_slice_2 = aosoa.slice( Cabana::MemberTag<2>(),
-                                   Cabana::RandomAccessMemory() );
-    auto ra_slice_3 = aosoa.slice( Cabana::MemberTag<3>(),
-                                   Cabana::RandomAccessMemory() );
-    auto ra_slice_4 = aosoa.slice( Cabana::MemberTag<4>(),
-                                   Cabana::RandomAccessMemory() );
+    decltype(da_slice_0)::random_access_slice ra_slice_0 = da_slice_0;
+    decltype(da_slice_1)::random_access_slice ra_slice_1 = da_slice_1;
+    decltype(da_slice_2)::random_access_slice ra_slice_2 = da_slice_2;
+    decltype(da_slice_3)::random_access_slice ra_slice_3 = da_slice_3;
+    decltype(da_slice_4)::random_access_slice ra_slice_4 = da_slice_4;
 
     // Create a second aosoa.
     AoSoA_t aosoa_2( num_data );
 
     // Get normal slices of the data.
-    auto slice_0 = aosoa_2.slice( Cabana::MemberTag<0>(),
-                                  Cabana::DefaultAccessMemory() );
-    auto slice_1 = aosoa_2.slice( Cabana::MemberTag<1>(),
-                                  Cabana::DefaultAccessMemory() );
-    auto slice_2 = aosoa_2.slice( Cabana::MemberTag<2>(),
-                                  Cabana::DefaultAccessMemory() );
-    auto slice_3 = aosoa_2.slice( Cabana::MemberTag<3>(),
-                                  Cabana::DefaultAccessMemory() );
-    auto slice_4 = aosoa_2.slice( Cabana::MemberTag<4>(),
-                                  Cabana::DefaultAccessMemory() );
+    auto slice_0 = aosoa_2.slice( Cabana::MemberTag<0>() );
+    auto slice_1 = aosoa_2.slice( Cabana::MemberTag<1>() );
+    auto slice_2 = aosoa_2.slice( Cabana::MemberTag<2>() );
+    auto slice_3 = aosoa_2.slice( Cabana::MemberTag<3>() );
+    auto slice_4 = aosoa_2.slice( Cabana::MemberTag<4>() );
 
     // Assign the read-only data to the new aosoa.
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
@@ -394,8 +391,7 @@ void atomicAccessTest()
     for ( int i = 0; i < num_data; ++i ) slice( i ) = 0;
 
     // Get an atomic slice of the data.
-    auto atomic_slice = aosoa.slice( Cabana::MemberTag<0>(),
-                                     Cabana::AtomicAccessMemory() );
+    decltype(slice)::atomic_access_slice atomic_slice = slice;
 
     // Have every thread increment all elements of the slice. This should
     // create contention in parallel without the atomic.

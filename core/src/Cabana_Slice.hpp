@@ -179,6 +179,10 @@ class Slice
 {
   public:
 
+    // Slice type.
+    using slice_type =
+        Slice<DataType,MemorySpace,MemoryAccessType,VectorLength>;
+
     // Vector length.
     static constexpr int vector_length = VectorLength;
 
@@ -206,6 +210,19 @@ class Slice
     using kokkos_execution_space = typename kokkos_view::execution_space;
     using kokkos_device_type = typename kokkos_view::device_type;
 
+    // Compatible memory access slice types.
+    using default_access_slice =
+        Slice<DataType,MemorySpace,DefaultAccessMemory,VectorLength>;
+    using atomic_access_slice =
+        Slice<DataType,MemorySpace,AtomicAccessMemory,VectorLength>;
+    using random_access_slice =
+        Slice<DataType,MemorySpace,RandomAccessMemory,VectorLength>;
+
+    // Declare slices of different memory access types to be friends.
+    friend class Slice<DataType,MemorySpace,DefaultAccessMemory,VectorLength>;
+    friend class Slice<DataType,MemorySpace,AtomicAccessMemory,VectorLength>;
+    friend class Slice<DataType,MemorySpace,RandomAccessMemory,VectorLength>;
+
   public:
 
     /*!
@@ -230,6 +247,32 @@ class Slice
         : _view( data, view_wrapper::createLayout(num_soa,soa_stride) )
         , _size( size )
     {}
+
+    /*!
+      \brief Shallow copy constructor for different memory spaces for
+      assigning new memory access traits to the view.
+      \param rhs The slice to shallow copy with a potentially different memory
+      space.
+     */
+    template<class MAT>
+    Slice( const Slice<DataType,MemorySpace,MAT,VectorLength>& rhs )
+        : _view( rhs._view )
+        , _size( rhs._size )
+    {}
+
+    /*!
+      \brief Assignement operator for different memory spaces for assigning
+      new memory access traits to the view.
+      \param rhs The slice to shallow copy with a potentially different memory
+      space.
+     */
+    template<class MAT>
+    Slice& operator=( const Slice<DataType,MemorySpace,MAT,VectorLength>& rhs )
+    {
+        _view = rhs._view;
+        _size = rhs._size;
+        return *this;
+    }
 
     //------------------------------
     // Field sizes.
