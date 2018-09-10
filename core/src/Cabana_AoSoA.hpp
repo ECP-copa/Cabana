@@ -301,30 +301,6 @@ class AoSoA
     }
 
     /*!
-      \brief Get an unmanaged slice of a particle field with the given tag and
-      memory traits.
-      \param The tag identifying which field to get a slice of.
-      \param The tag identifying which type of memory access traits the slice
-      should have.
-      \return The field slice.
-    */
-    template<std::size_t Field, typename MemoryAccessType>
-    Slice<member_data_type<Field>,
-          memory_space,
-          MemoryAccessType,
-          vector_length>
-    slice( MemberTag<Field>, MemoryAccessType ) const
-    {
-        return
-            Slice<member_data_type<Field>,
-                  memory_space,
-                  MemoryAccessType,
-                  vector_length>(
-                      (member_pointer_type<Field>) _pointers[Field],
-                      _size, _strides[Field], _num_soa );
-    }
-
-    /*!
       \brief Get an unmanaged slice of a particle field with default memory
       access.
       \param The tag identifying which field to get a slice of.
