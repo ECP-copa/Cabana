@@ -95,8 +95,8 @@ IF(Cabana_ENABLE_Serial)
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Particle_test_Serial
-    SOURCES Serial/tstParticle_Serial.cpp unit_test_main.cpp
+    Tuple_test_Serial
+    SOURCES Serial/tstTuple_Serial.cpp unit_test_main.cpp
     COMM serial mpi
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -172,8 +172,8 @@ IF(Cabana_ENABLE_OpenMP)
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Particle_test_OpenMP
-    SOURCES OpenMP/tstParticle_OpenMP.cpp unit_test_main.cpp
+    Tuple_test_OpenMP
+    SOURCES OpenMP/tstTuple_OpenMP.cpp unit_test_main.cpp
     COMM serial mpi
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
@@ -249,8 +249,8 @@ IF(Cabana_ENABLE_Cuda)
     )
 
   TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Particle_test_CudaUVM
-    SOURCES Cuda/tstParticle_CudaUVM.cpp unit_test_main.cpp
+    Tuple_test_CudaUVM
+    SOURCES Cuda/tstTuple_CudaUVM.cpp unit_test_main.cpp
     COMM serial mpi
     NUM_MPI_PROCS 1
     FAIL_REGULAR_EXPRESSION "${FAIL_RE}"

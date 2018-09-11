@@ -3,7 +3,7 @@
 
 #include <Cabana_MemberDataTypes.hpp>
 #include <Cabana_Slice.hpp>
-#include <Cabana_Particle.hpp>
+#include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
 #include <Cabana_SoA.hpp>
 #include <impl/Cabana_Index.hpp>
@@ -90,8 +90,8 @@ class AoSoA
     // Index type.
     using index_type = Impl::Index<vector_length>;
 
-    // Particle type.
-    using particle_type = Particle<member_types>;
+    // Tuple type.
+    using tuple_type = Tuple<member_types>;
 
     // Member data type at a given index M. Note this is the user-defined
     // member data type - not the potentially transformed type actually stored
@@ -266,38 +266,34 @@ class AoSoA
     { return _data(s); }
 
     /*!
-      \brief Get a particle at a given index.
+      \brief Get a tuple at a given index.
 
-      \param idx The index to get the particle from.
+      \param idx The index to get the tuple from.
 
-      \return A particle containing a copy of the data at the given index.
+      \return A tuple containing a copy of the data at the given index.
     */
     KOKKOS_INLINE_FUNCTION
-    particle_type getParticle( const int particle_index ) const
+    tuple_type getTuple( const int idx ) const
     {
-        particle_type particle;
-        Impl::structCopy( particle,
-                          0,
-                          _data(index_type::s(particle_index)),
-                          index_type::i(particle_index) );
-        return particle;
+        tuple_type tpl;
+        Impl::structCopy(
+            tpl, 0, _data(index_type::s(idx)), index_type::i(idx) );
+        return tpl;
     }
 
     /*!
-      \brief Set a particle at a given index.
+      \brief Set a tuple at a given index.
 
-      \param particle_index The index to set the particle at.
+      \param idx The index to set the tuple at.
 
-      \param particle The particle to get the data from.
+      \param tuple The tuple to get the data from.
     */
     KOKKOS_INLINE_FUNCTION
-    void setParticle( const int particle_index,
-                      const particle_type& particle ) const
+    void setTuple( const int idx,
+                   const tuple_type& tpl ) const
     {
-        Impl::structCopy( _data(index_type::s(particle_index)),
-                          index_type::i(particle_index),
-                          particle,
-                          0 );
+        Impl::structCopy(
+            _data(index_type::s(idx)), index_type::i(idx), tpl, 0 );
     }
 
     /*!

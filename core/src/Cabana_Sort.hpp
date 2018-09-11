@@ -3,6 +3,7 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_DeepCopy.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Sort.hpp>
@@ -280,14 +281,14 @@ kokkosBinSort(
 
     if ( !create_data_only )
     {
-        Kokkos::View<typename AoSoA_t::particle_type*,
+        Kokkos::View<typename AoSoA_t::tuple_type*,
                      typename KeyViewType::memory_space>
-            scratch_particles( "scratch_particles", end - begin );
+            scratch_tuples( "scratch_tuples", end - begin );
 
         auto permute_to_scratch = KOKKOS_LAMBDA( const int i )
                                   {
-                                      scratch_particles( i - begin ) =
-                                      aosoa.getParticle( permute_vector(i) );
+                                      scratch_tuples( i - begin ) =
+                                      aosoa.getTuple( permute_vector(i) );
                                   };
         Kokkos::parallel_for(
             "Cabana::kokkosBinSort::permute_to_scratch",
@@ -296,7 +297,7 @@ kokkosBinSort(
         Kokkos::fence();
 
         auto copy_back = KOKKOS_LAMBDA( const int i )
-                         { aosoa.setParticle( i, scratch_particles(i-begin) ); };
+                         { aosoa.setTuple( i, scratch_tuples(i-begin) ); };
         Kokkos::parallel_for(
             "Cabana::kokkosBinSort::copy_back",
             Kokkos::RangePolicy<typename KeyViewType::execution_space>(begin,end),

@@ -1,5 +1,5 @@
-#ifndef CABANA_PARTICLE_HPP
-#define CABANA_PARTICLE_HPP
+#ifndef CABANA_TUPLE_HPP
+#define CABANA_TUPLE_HPP
 
 #include <Cabana_SoA.hpp>
 #include <Cabana_MemberDataTypes.hpp>
@@ -13,10 +13,10 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 template<typename DataTypes>
-struct Particle;
+struct Tuple;
 
 template<typename... Types>
-struct Particle<MemberDataTypes<Types...> >
+struct Tuple<MemberDataTypes<Types...> >
     : SoA<1,MemberDataTypes<Types...> >
 {
     // Base class.
@@ -157,4 +157,4 @@ struct Particle<MemberDataTypes<Types...> >
 
 } // end namespace Cabana
 
-#endif // end CABANA_PARTICLE_HPP
+#endif // end CABANA_TUPLE_HPP

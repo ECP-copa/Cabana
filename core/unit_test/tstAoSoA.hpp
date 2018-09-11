@@ -294,8 +294,8 @@ void testRawData()
 }
 
 //---------------------------------------------------------------------------//
-// Particle test.
-void testParticle()
+// Tuple test.
+void testTuple()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -313,18 +313,18 @@ void testParticle()
     // Declare data types.
     using DataTypes = Cabana::MemberDataTypes<T0,T1,T2,T3,T4>;
 
-    // Declare the particle type.
-    using Particle_t = Cabana::Particle<DataTypes>;
+    // Declare the tuple type.
+    using Tuple_t = Cabana::Tuple<DataTypes>;
 
     // Create an AoSoA.
     int num_data = 453;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_data );
 
-    // Create a slice of particles with the same data types.
-    Kokkos::View<Particle_t*,
+    // Create a slice of tuples with the same data types.
+    Kokkos::View<Tuple_t*,
                  typename AoSoA_t::memory_space::kokkos_memory_space>
-        particles( "particles", num_data );
+        tuples( "tuples", num_data );
 
     // Initialize aosoa data.
     auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
@@ -363,11 +363,11 @@ void testParticle()
                 slice_4( idx, i, j ) = dval * (i+j);
     }
 
-    // Assign the AoSoA data to the particles.
+    // Assign the AoSoA data to the tuples.
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
-         particles( idx ) = aosoa.getParticle( idx );
+         tuples( idx ) = aosoa.getTuple( idx );
 
-    // Change the particle data.
+    // Change the tuple data.
     fval = 2.1;
     dval = 9.21;
     ival = 3;
@@ -377,31 +377,31 @@ void testParticle()
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    particles( idx ).get<0>( i, j, k ) = fval * (i+j+k);
+                    tuples( idx ).get<0>( i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        particles( idx ).get<1>() = ival;
+        tuples( idx ).get<1>() = ival;
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        particles( idx ).get<2>( i, j, k, l ) = fval * (i+j+k+l);
+                        tuples( idx ).get<2>( i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            particles( idx ).get<3>( i ) = dval * i;
+            tuples( idx ).get<3>( i ) = dval * i;
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                particles( idx ).get<4>( i, j ) = dval * (i+j);
+                tuples( idx ).get<4>( i, j ) = dval * (i+j);
     }
 
-    // Assign the particle data back to the AoSoA.
+    // Assign the tuple data back to the AoSoA.
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
-        aosoa.setParticle( idx, particles(idx) );
+        aosoa.setTuple( idx, tuples(idx) );
 
     // Check the results.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
@@ -495,9 +495,9 @@ TEST_F( TEST_CATEGORY, aosoa_raw_data_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_particle_test )
+TEST_F( TEST_CATEGORY, aosoa_tuple_test )
 {
-    testParticle();
+    testTuple();
 }
 
 //---------------------------------------------------------------------------//
