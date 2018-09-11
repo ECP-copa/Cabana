@@ -451,10 +451,10 @@ void soaElementCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
 // Copy the data from one struct at a given index to another.
 template<int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
-void structCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
-                 const int dst_idx,
-                 const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
-                 const int src_idx )
+void tupleCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+                const int dst_idx,
+                const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                const int src_idx )
 {
     soaElementCopy( dst, dst_idx, src, src_idx,
                     std::integral_constant<std::size_t,sizeof...(Types)-1>() );

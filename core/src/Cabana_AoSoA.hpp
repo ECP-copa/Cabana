@@ -276,7 +276,7 @@ class AoSoA
     tuple_type getTuple( const int idx ) const
     {
         tuple_type tpl;
-        Impl::structCopy(
+        Impl::tupleCopy(
             tpl, 0, _data(index_type::s(idx)), index_type::i(idx) );
         return tpl;
     }
@@ -292,7 +292,7 @@ class AoSoA
     void setTuple( const int idx,
                    const tuple_type& tpl ) const
     {
-        Impl::structCopy(
+        Impl::tupleCopy(
             _data(index_type::s(idx)), index_type::i(idx), tpl, 0 );
     }
 
