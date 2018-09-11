@@ -24,8 +24,7 @@ namespace Cabana
 
   \brief Array-of-Struct-of-Arrays
 
-  A AoSoA represents particles and their data via an
-  array-of-structs-of-arrays.
+  A AoSoA represents tuples and their data via an array-of-structs-of-arrays.
 
   This class has both required and optional template parameters.  The
   \c DataType parameter must always be provided, and must always be
@@ -42,7 +41,7 @@ namespace Cabana
   \code
   using DataType = MemberDataTypes<double[3][3],double[3],int>;
   \endcode
-  would define an AoSoA where each particle had a 3x3 matrix of doubles, a
+  would define an AoSoA where each tuple had a 3x3 matrix of doubles, a
   3-vector of doubles, and an integer. The AoSoA is then templated on this
   sequence of types. In general, put larger datatypes first in the
   MemberDataType parameter pack (i.e. matrices and vectors) and group members
@@ -124,9 +123,9 @@ class AoSoA
     {}
 
     /*!
-      \brief Allocate a container with n particles.
+      \brief Allocate a container with n tuples.
 
-      \param n The number of particles in the container.
+      \param n The number of tuples in the container.
     */
     explicit AoSoA( const int n )
         : _size( n )
@@ -137,9 +136,9 @@ class AoSoA
     }
 
     /*!
-      \brief Returns the number of particles in the container.
+      \brief Returns the number of tuples in the container.
 
-      \return The number of particles in the container.
+      \return The number of tuples in the container.
 
       This is the number of actual objects held in the container, which is not
       necessarily equal to its storage capacity.
@@ -149,7 +148,7 @@ class AoSoA
 
     /*!
       \brief Returns the size of the storage space currently allocated for the
-      container, expressed in terms of particles.
+      container, expressed in terms of tuples.
 
       \return The capacity of the container.
 
@@ -168,19 +167,19 @@ class AoSoA
     int capacity() const { return _capacity; }
 
     /*!
-      \brief Resizes the container so that it contains n particles.
+      \brief Resizes the container so that it contains n tuples.
 
       If n is smaller than the current container size, the content is reduced
-      to its first n particles.
+      to its first n tuples.
 
       If n is greater than the current container size, the content is expanded
-      by inserting at the end as many particles as needed to reach a size of n.
+      by inserting at the end as many tuples as needed to reach a size of n.
 
       If n is also greater than the current container capacity, an automatic
       reallocation of the allocated storage space takes place.
 
       Notice that this function changes the actual content of the container by
-      inserting or erasing particles from it.
+      inserting or erasing tuples from it.
     */
     void resize( const int n )
     {
@@ -196,7 +195,7 @@ class AoSoA
 
     /*!
       \brief Requests that the container capacity be at least enough to contain n
-      particles.
+      tuples.
 
       If n is greater than the current container capacity, the function causes
       the container to reallocate its storage increasing its capacity to n (or
@@ -206,7 +205,7 @@ class AoSoA
       the container capacity is not affected.
 
       This function has no effect on the container size and cannot alter its
-      particles.
+      tuples.
     */
     void reserve( const int n )
     {
@@ -297,25 +296,25 @@ class AoSoA
     }
 
     /*!
-      \brief Get an unmanaged slice of a particle field with default memory
+      \brief Get an unmanaged slice of a tuple member with default memory
       access.
-      \param The tag identifying which field to get a slice of.
-      \return The field slice.
+      \param The tag identifying which member to get a slice of.
+      \return The member slice.
     */
-    template<std::size_t Field>
-    Slice<member_data_type<Field>,
+    template<std::size_t Member>
+    Slice<member_data_type<Member>,
           memory_space,
           DefaultAccessMemory,
           vector_length>
-    slice( MemberTag<Field> ) const
+    slice( MemberTag<Member> ) const
     {
         return
-            Slice<member_data_type<Field>,
+            Slice<member_data_type<Member>,
                   memory_space,
                   DefaultAccessMemory,
                   vector_length>(
-                      (member_pointer_type<Field>) _pointers[Field],
-                      _size, _strides[Field], _num_soa );
+                      (member_pointer_type<Member>) _pointers[Member],
+                      _size, _strides[Member], _num_soa );
     }
 
     /*!
@@ -355,10 +354,10 @@ class AoSoA
 
   private:
 
-    // Total number of particles in the container.
+    // Total number of tuples in the container.
     int _size;
 
-    // Allocated number of particles in all arrays in all structs.
+    // Allocated number of tuples in all arrays in all structs.
     int _capacity;
 
     // Number of structs-of-arrays in the array.

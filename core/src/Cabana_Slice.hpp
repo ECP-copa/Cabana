@@ -16,8 +16,8 @@ namespace Cabana
 namespace Impl
 {
 //---------------------------------------------------------------------------//
-// Given a particle field type T of the given rank get the Kokkos view
-// data layout parameters. The particle index effectively introduces 2 new
+// Given a tuple field type T of the given rank get the Kokkos view
+// data layout parameters. The tuple index effectively introduces 2 new
 // dimensions to the problem on top of the field dimensions - one for the
 // struct index and one for the vector index.
 template<typename T, std::size_t Rank, int VectorLength>
@@ -134,7 +134,7 @@ struct KokkosDataType
 };
 
 //---------------------------------------------------------------------------//
-// Kokkos view wrapper for particle fields
+// Kokkos view wrapper for tuple fields
 template<typename T,
          int VectorLength,
          typename std::enable_if<
@@ -235,7 +235,7 @@ class Slice
     /*!
       \brief Constructor.
       \param data Pointer to the first member of the slice.
-      \param The number of particles in the slice.
+      \param The number of tuples in the slice.
       \param The number of elements in the slice's value type between starting
       elements of a struct.
       \param The number of structs in the slice.
@@ -278,8 +278,8 @@ class Slice
     // Field sizes.
 
     /*!
-      \brief Returns the total number particles in the field.
-      \return The number of particles in the field.
+      \brief Returns the total number tuples in the field.
+      \return The number of tuples in the field.
     */
     KOKKOS_INLINE_FUNCTION
     int size() const
@@ -305,14 +305,14 @@ class Slice
     }
 
     /*!
-      \brief Get the rank of the particle field.
+      \brief Get the rank of the tuple field.
       \return The field rank.
     */
     int fieldRank()
     { return _view.Rank - 2; }
 
     /*!
-      \brief Get the extent of the given particle field dimension.
+      \brief Get the extent of the given tuple field dimension.
       \param d The field dimension for which to get the extent.
       \return The field extent.
     */
@@ -368,7 +368,7 @@ class Slice
     { return _view( s, i, d0, d1, d2, d3); }
 
     // -------------------------------
-    // Access the data value at a given particle index.
+    // Access the data value at a given tuple index.
 
     // Rank 0
     template<typename U = DataType>
@@ -428,7 +428,7 @@ class Slice
 
     /*!
       \brief Get the rank of the raw data for this field. This includes
-      the struct dimension, array dimension, and all particle field
+      the struct dimension, array dimension, and all tuple field
       dimensions.
       \return The rank of the data for this field.
     */
@@ -438,7 +438,7 @@ class Slice
 
     /*!
       \brief Get the extent of a given raw field data dimension. This includes
-      the struct dimension, array dimension, and all particle field
+      the struct dimension, array dimension, and all tuple field
       dimensions.
       \param d The member data dimension to get the extent for.
       \return The extent of the given member data dimension.
@@ -449,7 +449,7 @@ class Slice
 
     /*!
       \brief Get the stride of a given raw field dimension. This includes the
-      struct dimension, array dimension, and all particle field dimensions.
+      struct dimension, array dimension, and all tuple field dimensions.
       \param d The member data dimension to get the stride for.
       \return The stride of the given member data dimension.
     */
@@ -463,7 +463,7 @@ class Slice
     // by the template parameters of this class.
     kokkos_view _view;
 
-    // Number of particles in the slice.
+    // Number of tuples in the slice.
     int _size;
 };
 

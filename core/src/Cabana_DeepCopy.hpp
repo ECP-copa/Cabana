@@ -112,7 +112,7 @@ inline void deep_copy(
             src_num_soa * sizeof(src_soa_type) );
         Kokkos::fence();
 
-        // Copy via particles.
+        // Copy via tuples.
         auto copy_func =
             KOKKOS_LAMBDA( const int i )
             { dst.setTuple( i, src_copy_on_dst.getTuple(i) ); };

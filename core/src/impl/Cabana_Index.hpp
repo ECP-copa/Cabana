@@ -38,42 +38,42 @@ class Index
         Impl::LogBase2<vector_length>::value;
 
     /*!
-      \brief Given a particle index get the AoSoA struct index.
+      \brief Given a tuple index get the AoSoA struct index.
 
-      \param particle_index The particle index.
+      \param tuple_index The tuple index.
 
-      \return The index of the struct in which the particle is located.
+      \return The index of the struct in which the tuple is located.
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr int s( const int particle_index )
+    static constexpr int s( const int tuple_index )
     {
-        return (particle_index - (particle_index & vector_length_offset)) >>
+        return (tuple_index - (tuple_index & vector_length_offset)) >>
             vector_length_binary_bits;
     }
 
     /*!
-      \brief Given a particle index get the AoSoA array index.
+      \brief Given a tuple index get the AoSoA array index.
 
-      \param particle_index The particle index.
+      \param tuple_index The tuple index.
 
-      \return The index of the array index in the struct in which the particle
+      \return The index of the array index in the struct in which the tuple
       is located.
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr int i( const int particle_index )
+    static constexpr int i( const int tuple_index )
     {
-        return particle_index & vector_length_offset;
+        return tuple_index & vector_length_offset;
     }
 
     /*!
-      \brief Given a struct index and array index in an AoSoA get the particle
+      \brief Given a struct index and array index in an AoSoA get the tuple
       index.
 
       \param struct_index The struct index.
 
       \param array_index The array index.
 
-      \return The particle index.
+      \return The tuple index.
     */
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr int p( const int struct_index, const int array_index )
