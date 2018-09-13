@@ -51,6 +51,7 @@ struct DefaultAccessMemory
 {
     using memory_access_type = DefaultAccessMemory;
     using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
+                                                       Kokkos::Aligned |
                                                        Kokkos::Restrict >;
 };
 
@@ -62,6 +63,7 @@ struct RandomAccessMemory
 {
     using memory_access_type = RandomAccessMemory;
     using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
+                                                       Kokkos::Aligned |
                                                        Kokkos::RandomAccess >;
 };
 
@@ -73,6 +75,7 @@ struct AtomicAccessMemory
 {
     using memory_access_type = AtomicAccessMemory;
     using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
+                                                       Kokkos::Aligned |
                                                        Kokkos::Atomic >;
 };
 

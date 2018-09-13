@@ -423,11 +423,11 @@ void testAccess()
     // Declare data types.
     using DataTypes =
         Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
-                                int,
-                                float[dim_1][dim_2][dim_3][dim_4],
-                                double[dim_1],
-                                double[dim_1][dim_2]
-                                >;
+                            int,
+                            float[dim_1][dim_2][dim_3][dim_4],
+                            double[dim_1],
+                            double[dim_1][dim_2]
+                            >;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
