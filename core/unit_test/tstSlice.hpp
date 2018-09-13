@@ -111,12 +111,12 @@ void apiTest()
 
     // Declare data types.
     using DataTypes =
-        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
-                                int,
-                                float[dim_1][dim_2][dim_3][dim_4],
-                                double[dim_1],
-                                double[dim_1][dim_2]
-                                >;
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
+                            int,
+                            float[dim_1][dim_2][dim_3][dim_4],
+                            double[dim_1],
+                            double[dim_1][dim_2]
+                            >;
 
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
@@ -292,7 +292,7 @@ void randomAccessTest()
 
     // Declare data types.
     using DataTypes =
-        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                                 int,
                                 float[dim_1][dim_2][dim_3][dim_4],
                                 double[dim_1],
@@ -377,7 +377,7 @@ void atomicAccessTest()
     const int vector_length = 16;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<int>;
+    using DataTypes = Cabana::MemberTypes<int>;
 
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;

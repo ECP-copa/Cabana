@@ -1,7 +1,7 @@
 #ifndef CABANA_AOSOA_HPP
 #define CABANA_AOSOA_HPP
 
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_MemberTypes.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
@@ -37,14 +37,14 @@ namespace Cabana
   they may occur.
 
   \tparam DataType (required) Specifically this must be an instance of
-  \c MemberDataTypes with the data layout of the structs. For example:
+  \c MemberTypes with the data layout of the structs. For example:
   \code
-  using DataType = MemberDataTypes<double[3][3],double[3],int>;
+  using DataType = MemberTypes<double[3][3],double[3],int>;
   \endcode
   would define an AoSoA where each tuple had a 3x3 matrix of doubles, a
   3-vector of doubles, and an integer. The AoSoA is then templated on this
   sequence of types. In general, put larger datatypes first in the
-  MemberDataType parameter pack (i.e. matrices and vectors) and group members
+  MemberType parameter pack (i.e. matrices and vectors) and group members
   of the same type together to achieve the smallest possible memory footprint
   based on compiler-generated padding.
 
@@ -57,7 +57,9 @@ namespace Cabana
 template<class DataTypes,
          class MemorySpace,
          int VectorLength = Impl::PerformanceTraits<
-             typename MemorySpace::kokkos_execution_space>::vector_length>
+             typename MemorySpace::kokkos_execution_space>::vector_length,
+         typename std::enable_if<
+             (is_member_types<DataTypes>::value),int>::type = 0>
 class AoSoA
 {
   public:
@@ -97,7 +99,7 @@ class AoSoA
     // by the structs (SoAs) to achieve a given layout.
     template<std::size_t Field>
     using member_data_type =
-        typename MemberDataTypeAtIndex<Field,member_types>::type;
+        typename MemberTypeAtIndex<Field,member_types>::type;
 
     // Struct member array element value type at a given index M.
     template<std::size_t Field>

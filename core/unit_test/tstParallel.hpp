@@ -140,12 +140,12 @@ void runTest()
 
     // Declare data types.
     using DataTypes =
-        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
-                                int,
-                                float[dim_1][dim_2][dim_3][dim_4],
-                                double[dim_1],
-                                double[dim_1][dim_2]
-                                >;
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
+                            int,
+                            float[dim_1][dim_2][dim_3][dim_4],
+                            double[dim_1],
+                            double[dim_1][dim_2]
+                            >;
 
     // Declare the AoSoA type. Let the library pick an inner array size based
     // on the execution space.

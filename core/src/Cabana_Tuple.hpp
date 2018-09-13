@@ -2,7 +2,7 @@
 #define CABANA_TUPLE_HPP
 
 #include <Cabana_SoA.hpp>
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_MemberTypes.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -16,11 +16,11 @@ template<typename DataTypes>
 struct Tuple;
 
 template<typename... Types>
-struct Tuple<MemberDataTypes<Types...> >
-    : SoA<1,MemberDataTypes<Types...> >
+struct Tuple<MemberTypes<Types...> >
+    : SoA<1,MemberTypes<Types...> >
 {
     // Base class.
-    using base = SoA<1,MemberDataTypes<Types...> >;
+    using base = SoA<1,MemberTypes<Types...> >;
 
     // -------------------------------
     // Access the data value at a given member index.

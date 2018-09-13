@@ -1,6 +1,6 @@
 #include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_MemberTypes.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -34,8 +34,7 @@ enum UserParticleFields
 };
 
 // Designate the types that the particles will hold.
-using ParticleDataTypes =
-    Cabana::MemberDataTypes<float>;
+using ParticleDataTypes = Cabana::MemberTypes<float>;
 
 // Declare the memory space.
 using MemorySpace = Cabana::HostSpace;

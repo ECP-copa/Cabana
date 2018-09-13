@@ -37,7 +37,7 @@ void perfTest( const double cutoff_ratio,
     const int vector_length = 64;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<double[3]>; // Position
+    using DataTypes = Cabana::MemberTypes<double[3]>; // Position
 
     // Enumerate the types for convenience.
     enum MyTypes { Position = 0 };

@@ -13,7 +13,7 @@ void testSortByKey()
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
                                               int,
                                               double[dim_1][dim_2]>;
 
@@ -80,7 +80,7 @@ void testBinByKey()
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
                                               int,
                                               double[dim_1][dim_2]>;
 
@@ -153,7 +153,7 @@ void testSortByMember()
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
                                               int,
                                               double[dim_1][dim_2]>;
 
@@ -213,7 +213,7 @@ void testSortByMemberDataOnly()
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
                                               int,
                                               double[dim_1][dim_2]>;
 
@@ -273,7 +273,7 @@ void testBinByMember()
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
                                               int,
                                               double[dim_1][dim_2]>;
 
@@ -339,7 +339,7 @@ void testBinByMemberDataOnly()
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
                                               int,
                                               double[dim_1][dim_2]>;
 
@@ -403,7 +403,7 @@ void testGridBin3d()
 {
     // Make an AoSoA with positions and ijk cell ids.
     enum MyFields { Position = 0, CellId = 1 };
-    using DataTypes = Cabana::MemberDataTypes<double[3],int[3]>;
+    using DataTypes = Cabana::MemberTypes<double[3],int[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     using size_type =
         typename AoSoA_t::memory_space::kokkos_memory_space::size_type;

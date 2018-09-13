@@ -66,7 +66,7 @@ void runTest()
     using T4 = double[dim_1][dim_2];
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<T0,T1,T2,T3,T4>;
+    using DataTypes = Cabana::MemberTypes<T0,T1,T2,T3,T4>;
 
     // Declare the tuple type.
     using Tuple_t = Cabana::Tuple<DataTypes>;

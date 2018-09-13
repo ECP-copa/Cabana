@@ -1,5 +1,5 @@
 #include <Cabana_SoA.hpp>
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_MemberTypes.hpp>
 #include <Cabana_Types.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -40,13 +40,13 @@ void testSoA()
     const int vector_length = 4;
 
     // Declare an soa type.
-    using member_types = Cabana::MemberDataTypes<double,
-                                                 int,
-                                                 float,
-                                                 double[2][3],
-                                                 unsigned[5],
-                                                 float[3][2][2],
-                                                 double[4][2][3][2]>;
+    using member_types = Cabana::MemberTypes<double,
+                                             int,
+                                             float,
+                                             double[2][3],
+                                             unsigned[5],
+                                             float[3][2][2],
+                                             double[4][2][3][2]>;
     using soa_type = Cabana::SoA<vector_length,member_types>;
 
     // Check that the data in the soa is contiguous.

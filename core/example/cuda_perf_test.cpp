@@ -22,14 +22,13 @@ void perfTest()
     using parallel_algorithm_tag = Cabana::StructAndArrayParallelTag;
 
     // Declare data types.
-    using DataTypes =
-        Cabana::MemberDataTypes<double[3][3], // M1
-                                double[3][3], // M2
-                                double[3],    // V1
-                                double[3],    // V2
-                                double[3],    // RESULT
-                                double,       // S1
-                                double>;      // S2
+    using DataTypes = Cabana::MemberTypes<double[3][3], // M1
+                                          double[3][3], // M2
+                                          double[3],    // V1
+                                          double[3],    // V2
+                                          double[3],    // RESULT
+                                          double,       // S1
+                                          double>;      // S2
 
     // Enumerate the types for convenience.
     enum MyTypes { M1 = 0,

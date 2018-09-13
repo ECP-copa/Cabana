@@ -3,7 +3,7 @@
 
 #include <Cabana_Types.hpp>
 #include <impl/Cabana_IndexSequence.hpp>
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_MemberTypes.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -124,7 +124,7 @@ template<int VectorLength, typename... Types>
 struct SoA;
 
 template<int VectorLength, typename... Types>
-struct SoA<VectorLength,MemberDataTypes<Types...> >
+struct SoA<VectorLength,MemberTypes<Types...> >
     : Impl::SoAImpl<VectorLength,
                     typename Impl::MakeIndexSequence<sizeof...(Types)>::type,
                     Types...>
@@ -133,7 +133,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
     static constexpr int vector_length = VectorLength;
 
     // Member data types.
-    using member_types = MemberDataTypes<Types...>;
+    using member_types = MemberTypes<Types...>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
@@ -144,7 +144,7 @@ struct SoA<VectorLength,MemberDataTypes<Types...> >
     // Member data type.
     template<std::size_t M>
     using member_data_type =
-        typename MemberDataTypeAtIndex<M,member_types>::type;
+        typename MemberTypeAtIndex<M,member_types>::type;
 
     // Value type at a given index M.
     template<std::size_t M>
@@ -348,10 +348,10 @@ namespace Impl
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
-    (0==std::rank<typename MemberDataTypeAtIndex<M,MemberDataTypes<Types...> >::type>::value),void>::type
-soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+    (0==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
+soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
                       const int dst_idx,
-                      const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                      const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
                       const int src_idx )
 {
     dst.template get<M>( dst_idx ) = src.template get<M>( src_idx );
@@ -361,10 +361,10 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
-    (1==std::rank<typename MemberDataTypeAtIndex<M,MemberDataTypes<Types...> >::type>::value),void>::type
-soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+    (1==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
+soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
                       const int dst_idx,
-                      const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                      const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
                       const int src_idx )
 {
     for ( int i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
@@ -375,10 +375,10 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
-    (2==std::rank<typename MemberDataTypeAtIndex<M,MemberDataTypes<Types...> >::type>::value),void>::type
-soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+    (2==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
+soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
                       const int dst_idx,
-                      const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                      const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
                       const int src_idx )
 {
     for ( int i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
@@ -391,10 +391,10 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
-    (3==std::rank<typename MemberDataTypeAtIndex<M,MemberDataTypes<Types...> >::type>::value),void>::type
-soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+    (3==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
+soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
                       const int dst_idx,
-                      const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                      const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
                       const int src_idx )
 {
     for ( int i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
@@ -408,10 +408,10 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
-    (4==std::rank<typename MemberDataTypeAtIndex<M,MemberDataTypes<Types...> >::type>::value),void>::type
-soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+    (4==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
+soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
                       const int dst_idx,
-                      const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                      const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
                       const int src_idx )
 {
     for ( int i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
@@ -426,9 +426,9 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
 // the given indices.
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
-void soaElementCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+void soaElementCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
                      const int dst_idx,
-                     const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                     const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
                      const int src_idx,
                      std::integral_constant<std::size_t,M> )
 {
@@ -439,9 +439,9 @@ void soaElementCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
 
 template<int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
-void soaElementCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+void soaElementCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
                      const int dst_idx,
-                     const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                     const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
                      const int src_idx,
                      std::integral_constant<std::size_t,0> )
 {
@@ -451,9 +451,9 @@ void soaElementCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
 // Copy the data from one struct at a given index to another.
 template<int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
-void tupleCopy( SoA<DstVectorLength,MemberDataTypes<Types...> >& dst,
+void tupleCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
                 const int dst_idx,
-                const SoA<SrcVectorLength,MemberDataTypes<Types...> >& src,
+                const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
                 const int src_idx )
 {
     soaElementCopy( dst, dst_idx, src, src_idx,

@@ -69,7 +69,7 @@ void testAoSoA()
 
     // Declare data types.
     using DataTypes =
-        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                                 int,
                                 float[dim_1][dim_2][dim_3][dim_4],
                                 double[dim_1],
@@ -211,7 +211,7 @@ void testRawData()
 
     // Declare data types. Note that this test only uses rank-0 data.
     using DataTypes =
-        Cabana::MemberDataTypes<float,
+        Cabana::MemberTypes<float,
                                 int,
                                 double[dim_1][dim_2],
                                 int,
@@ -311,7 +311,7 @@ void testTuple()
     using T4 = double[dim_1][dim_2];
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<T0,T1,T2,T3,T4>;
+    using DataTypes = Cabana::MemberTypes<T0,T1,T2,T3,T4>;
 
     // Declare the tuple type.
     using Tuple_t = Cabana::Tuple<DataTypes>;
@@ -422,7 +422,7 @@ void testAccess()
 
     // Declare data types.
     using DataTypes =
-        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                                 int,
                                 float[dim_1][dim_2][dim_3][dim_4],
                                 double[dim_1],

@@ -103,14 +103,14 @@ struct TestNeighborList
 
 //---------------------------------------------------------------------------//
 // Create particles.
-Cabana::AoSoA<Cabana::MemberDataTypes<double[3]>,TEST_MEMSPACE>
+Cabana::AoSoA<Cabana::MemberTypes<double[3]>,TEST_MEMSPACE>
 createParticles( const int num_particle,
                  const double neighborhood_radius,
                  const double box_min,
                  const double box_max )
 {
     // Create the AoSoA with (100x100x100) particles.
-    using DataTypes = Cabana::MemberDataTypes<double[3]>;
+    using DataTypes = Cabana::MemberTypes<double[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_particle );
 

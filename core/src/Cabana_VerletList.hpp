@@ -3,7 +3,6 @@
 
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Sort.hpp>
-#include <Cabana_MemberDataTypes.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
