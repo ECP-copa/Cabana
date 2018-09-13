@@ -17,11 +17,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.template slice<0>();
+    auto slice_1 = aosoa.template slice<1>();
+    auto slice_2 = aosoa.template slice<2>();
+    auto slice_3 = aosoa.template slice<3>();
+    auto slice_4 = aosoa.template slice<4>();
 
     for ( auto idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -86,11 +86,11 @@ void testAoSoA()
     AoSoA_t aosoa;
 
     // Get field slices.
-    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.slice<0>();
+    auto slice_1 = aosoa.slice<1>();
+    auto slice_2 = aosoa.slice<2>();
+    auto slice_3 = aosoa.slice<3>();
+    auto slice_4 = aosoa.slice<4>();
 
     // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
@@ -119,11 +119,11 @@ void testAoSoA()
 
     // Get field slices again. We invalidated the pointers by resizing the
     // slices.
-    slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    slice_0 = aosoa.slice<0>();
+    slice_1 = aosoa.slice<1>();
+    slice_2 = aosoa.slice<2>();
+    slice_3 = aosoa.slice<3>();
+    slice_4 = aosoa.slice<4>();
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -225,11 +225,11 @@ void testRawData()
     AoSoA_t aosoa( num_data );
 
     // Get slices of fields.
-    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.slice<0>();
+    auto slice_1 = aosoa.slice<1>();
+    auto slice_2 = aosoa.slice<2>();
+    auto slice_3 = aosoa.slice<3>();
+    auto slice_4 = aosoa.slice<4>();
 
     // Get raw pointers to the data as one would in a C interface (no templates).
     float* p0 = slice_0.data();
@@ -327,11 +327,11 @@ void testTuple()
         tuples( "tuples", num_data );
 
     // Initialize aosoa data.
-    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.slice<0>();
+    auto slice_1 = aosoa.slice<1>();
+    auto slice_2 = aosoa.slice<2>();
+    auto slice_3 = aosoa.slice<3>();
+    auto slice_4 = aosoa.slice<4>();
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;

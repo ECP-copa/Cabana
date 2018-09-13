@@ -57,12 +57,12 @@ using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,vector_length>;
 // Function to intitialize the particles.
 void initializeParticles( ParticleList particles )
 {
-    auto position_x = particles.slice( Cabana::MemberTag<PositionX>() );
-    auto position_y = particles.slice( Cabana::MemberTag<PositionY>() );
-    auto position_z = particles.slice( Cabana::MemberTag<PositionZ>() );
-    auto velocity = particles.slice( Cabana::MemberTag<Velocity>() );
-    auto stress = particles.slice( Cabana::MemberTag<Stress>() );
-    auto status = particles.slice( Cabana::MemberTag<Status>() );
+    auto position_x = particles.slice<PositionX>();
+    auto position_y = particles.slice<PositionY>();
+    auto position_z = particles.slice<PositionZ>();
+    auto velocity = particles.slice<Velocity>();
+    auto stress = particles.slice<Stress>();
+    auto status = particles.slice<Status>();
 
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
@@ -89,12 +89,12 @@ void initializeParticles( ParticleList particles )
 // Function to print out the data for every particle.
 void printParticles( const ParticleList particles )
 {
-    auto position_x = particles.slice( Cabana::MemberTag<PositionX>() );
-    auto position_y = particles.slice( Cabana::MemberTag<PositionY>() );
-    auto position_z = particles.slice( Cabana::MemberTag<PositionZ>() );
-    auto velocity = particles.slice( Cabana::MemberTag<Velocity>() );
-    auto stress = particles.slice( Cabana::MemberTag<Stress>() );
-    auto status = particles.slice( Cabana::MemberTag<Status>() );
+    auto position_x = particles.slice<PositionX>();
+    auto position_y = particles.slice<PositionY>();
+    auto position_z = particles.slice<PositionZ>();
+    auto velocity = particles.slice<Velocity>();
+    auto stress = particles.slice<Stress>();
+    auto status = particles.slice<Status>();
 
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {

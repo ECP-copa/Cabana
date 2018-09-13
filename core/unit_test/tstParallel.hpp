@@ -16,11 +16,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.template slice<0>();
+    auto slice_1 = aosoa.template slice<1>();
+    auto slice_2 = aosoa.template slice<2>();
+    auto slice_3 = aosoa.template slice<3>();
+    auto slice_4 = aosoa.template slice<4>();
 
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -69,11 +69,11 @@ class AssignmentOp
                   double dval,
                   int ival )
         : _aosoa( aosoa )
-        , _slice_0( aosoa.slice(Cabana::MemberTag<0>()) )
-        , _slice_1( aosoa.slice(Cabana::MemberTag<1>()) )
-        , _slice_2( aosoa.slice(Cabana::MemberTag<2>()) )
-        , _slice_3( aosoa.slice(Cabana::MemberTag<3>()) )
-        , _slice_4( aosoa.slice(Cabana::MemberTag<4>()) )
+        , _slice_0( aosoa.template slice<0>() )
+        , _slice_1( aosoa.template slice<1>() )
+        , _slice_2( aosoa.template slice<2>() )
+        , _slice_3( aosoa.template slice<3>() )
+        , _slice_4( aosoa.template slice<4>() )
         , _fval( fval )
         , _dval( dval )
         , _ival( ival )
@@ -161,11 +161,11 @@ void runTest()
 
     // Create a functor to operate on.
     using OpType = AssignmentOp<AoSoA_t,
-                                decltype(aosoa.slice(Cabana::MemberTag<0>())),
-                                decltype(aosoa.slice(Cabana::MemberTag<1>())),
-                                decltype(aosoa.slice(Cabana::MemberTag<2>())),
-                                decltype(aosoa.slice(Cabana::MemberTag<3>())),
-                                decltype(aosoa.slice(Cabana::MemberTag<4>()))>;
+                                decltype(aosoa.slice<0>()),
+                                decltype(aosoa.slice<1>()),
+                                decltype(aosoa.slice<2>()),
+                                decltype(aosoa.slice<3>()),
+                                decltype(aosoa.slice<4>())>;
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;

@@ -306,7 +306,7 @@ class AoSoA
           memory_space,
           DefaultAccessMemory,
           vector_length>
-    slice( MemberTag<Member> ) const
+    slice() const
     {
         return
             Slice<member_data_type<Member>,

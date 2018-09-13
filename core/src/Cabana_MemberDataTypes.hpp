@@ -19,14 +19,6 @@ struct MemberDataTypes
 
 //---------------------------------------------------------------------------//
 /*!
-  \class MemberTag
-  \brief Tag for member data type indices.
-*/
-template<std::size_t I>
-struct MemberTag : public std::integral_constant<std::size_t,I> {};
-
-//---------------------------------------------------------------------------//
-/*!
   \class MemberDataTypeAtIndex
   \brief Get the type of the member at a given index.
 */

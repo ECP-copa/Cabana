@@ -2,7 +2,7 @@
 #define CABANA_SORT_HPP
 
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_Slice.hpp>
 #include <Cabana_DeepCopy.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -103,22 +103,23 @@ class BinningData
 
 //---------------------------------------------------------------------------//
 /*!
-  \class CartesianGrid3dBinningData
+  \class LinkedCellList
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
 */
 template<class KokkosMemorySpace>
-class CartesianGrid3dBinningData
+class LinkedCellList
 {
   public:
 
     using memory_space = KokkosMemorySpace;
     using size_type = typename memory_space::size_type;
+    using OffsetView = Kokkos::View<size_type*,KokkosMemorySpace>;
 
     /*!
       \brief Default constructor.
     */
-    CartesianGrid3dBinningData()
+    LinkedCellList()
     {
         _nbin[0] = 0;
         _nbin[1] = 0;
@@ -128,7 +129,7 @@ class CartesianGrid3dBinningData
     /*!
       \brief Constructor
     */
-    CartesianGrid3dBinningData( BinningData<KokkosMemorySpace> bin_data_1d,
+    LinkedCellList( BinningData<KokkosMemorySpace> bin_data_1d,
                                 const int nbin[3] )
         : _bin_data( bin_data_1d )
     {
@@ -140,7 +141,7 @@ class CartesianGrid3dBinningData
     /*!
       \brief Copy constructor.
     */
-    CartesianGrid3dBinningData( const CartesianGrid3dBinningData& data )
+    LinkedCellList( const LinkedCellList& data )
     {
         _bin_data = data._bin_data;
         _nbin[0] = data._nbin[0];
@@ -151,8 +152,8 @@ class CartesianGrid3dBinningData
     /*!
       \brief Assignment operators.
     */
-    CartesianGrid3dBinningData&
-    operator=( const CartesianGrid3dBinningData& data )
+    LinkedCellList&
+    operator=( const LinkedCellList& data )
     {
         _bin_data = data._bin_data;
         _nbin[0] = data._nbin[0];
@@ -243,6 +244,12 @@ class CartesianGrid3dBinningData
     { return _bin_data.permutation(particle_id); }
 
     /*!
+      \brief Get the entire permutation vector.
+    */
+    OffsetView permuteVector() const
+    { return _bin_data.permuteVector(); }
+
+    /*!
       \brief Get the 1d bin data.
       \return The 1d bin data.
     */
@@ -258,53 +265,19 @@ class CartesianGrid3dBinningData
 namespace Impl
 {
 //---------------------------------------------------------------------------//
-// Sort an AoSoA over a subset of its range using a comparator over the given
-// Kokkos View of keys.
-template<class AoSoA_t, class KeyViewType, class Comparator>
+// Create a permutation vector over a range subset using a comparator over the
+// given Kokkos View of keys.
+template<class KeyViewType, class Comparator>
 BinningData<typename KeyViewType::memory_space>
-kokkosBinSort(
-    AoSoA_t aosoa,
-    KeyViewType keys,
-    Comparator comp,
-    const bool create_data_only,
-    const bool sort_within_bins,
-    const int begin,
-    const int end,
-    typename std::enable_if<(
-                  is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+kokkosBinSort( KeyViewType keys,
+               Comparator comp,
+               const bool sort_within_bins,
+               const int begin,
+               const int end )
 {
     Kokkos::BinSort<KeyViewType,Comparator> bin_sort(
         keys, begin, end, comp, sort_within_bins );
     bin_sort.create_permute_vector();
-    auto permute_vector = bin_sort.get_permute_vector();
-
-    if ( !create_data_only )
-    {
-        Kokkos::View<typename AoSoA_t::tuple_type*,
-                     typename KeyViewType::memory_space>
-            scratch_tuples( "scratch_tuples", end - begin );
-
-        auto permute_to_scratch = KOKKOS_LAMBDA( const int i )
-                                  {
-                                      scratch_tuples( i - begin ) =
-                                      aosoa.getTuple( permute_vector(i) );
-                                  };
-        Kokkos::parallel_for(
-            "Cabana::kokkosBinSort::permute_to_scratch",
-            Kokkos::RangePolicy<typename KeyViewType::execution_space>(begin,end),
-            permute_to_scratch );
-        Kokkos::fence();
-
-        auto copy_back = KOKKOS_LAMBDA( const int i )
-                         { aosoa.setTuple( i, scratch_tuples(i-begin) ); };
-        Kokkos::parallel_for(
-            "Cabana::kokkosBinSort::copy_back",
-            Kokkos::RangePolicy<typename KeyViewType::execution_space>(begin,end),
-            copy_back );
-        Kokkos::fence();
-    }
-
     return BinningData<typename KeyViewType::memory_space>(
         bin_sort.get_bin_count(),
         bin_sort.get_bin_offsets(),
@@ -331,19 +304,13 @@ keyMinMax( KeyViewType keys, const int begin, const int end )
 //---------------------------------------------------------------------------//
 // Sort an AoSoA over a subset of its range using the given Kokkos View of
 // keys.
-template<class AoSoA_t, class KeyViewType>
+template<class KeyViewType>
 BinningData<typename KeyViewType::memory_space>
-kokkosBinSort1d(
-    AoSoA_t aosoa,
-    KeyViewType keys,
-    const int nbin,
-    const bool create_data_only,
-    const bool sort_within_bins,
-    const int begin,
-    const int end,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+kokkosBinSort1d( KeyViewType keys,
+                 const int nbin,
+                 const bool sort_within_bins,
+                 const int begin,
+                 const int end )
 {
     // Find the minimum and maximum key values.
     auto key_bounds = Impl::keyMinMax( keys, begin, end );
@@ -353,8 +320,7 @@ kokkosBinSort1d(
         nbin, key_bounds.min_val, key_bounds.max_val );
 
     // BinSort
-    return kokkosBinSort( aosoa, keys, comp, create_data_only,
-                          sort_within_bins, begin, end );
+    return kokkosBinSort( keys, comp, sort_within_bins, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -386,13 +352,9 @@ copySliceToKeys( SliceType slice )
   \brief Sort an AoSoA over a subset of its range using a general comparator
   over the given Kokkos View of keys.
 
-  \tparam AoSoA_t The AoSoA type to sort.
-
   \tparam KeyViewType The Kokkos::View type for keys.
 
   \tparam Comparator Kokkos::BinSort compatible comparator type.
-
-  \param aosoa The AoSoA to sort.
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
@@ -400,31 +362,20 @@ copySliceToKeys( SliceType slice )
   \param comp The comparator to use for sorting. Must be compatible with
   Kokkos::BinSort.
 
-  \param create_permute_vector_only True if the permutation vector should be
-  created but the data shouldn't actually be sorted.
-
   \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
 
   \return The permutation vector associated with the sorting.
 */
-template<class AoSoA_t, class KeyViewType, class Comparator>
+template<class KeyViewType, class Comparator>
 typename BinningData<typename KeyViewType::memory_space>::OffsetView
-sortByKeyWithComparator(
-    AoSoA_t aosoa,
-    KeyViewType keys,
-    Comparator comp,
-    const bool create_permute_vector_only,
-    const int begin,
-    const int end,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+sortByKeyWithComparator( KeyViewType keys,
+                         Comparator comp,
+                         const int begin,
+                         const int end )
 {
-    auto bin_data =
-        Impl::kokkosBinSort( aosoa, keys, comp, create_permute_vector_only,
-                             true, begin, end );
+    auto bin_data = Impl::kokkosBinSort( keys, comp, true, begin, end );
     return bin_data.permuteVector();
 }
 
@@ -433,13 +384,9 @@ sortByKeyWithComparator(
   \brief Sort an entire AoSoA using a general comparator over the given
   Kokkos View of keys.
 
-  \tparam AoSoA_t The AoSoA type to sort.
-
   \tparam KeyViewType The Kokkos::View type for keys.
 
   \tparam Comparator Kokkos::BinSort compatible comparator type.
-
-  \param aosoa The AoSoA to sort.
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
@@ -447,24 +394,13 @@ sortByKeyWithComparator(
   \param comp The comparator to use for sorting. Must be compatible with
   Kokkos::BinSort.
 
-  \param create_permute_vector_only True if the permutation vector should be
-  created but the data shouldn't actually be sorted.
-
   \return The permutation vector associated with the sorting.
 */
-template<class AoSoA_t, class KeyViewType, class Comparator>
+template<class KeyViewType, class Comparator>
 typename BinningData<typename KeyViewType::memory_space>::OffsetView
-sortByKeyWithComparator(
-    AoSoA_t aosoa,
-    KeyViewType keys,
-    Comparator comp,
-    const bool create_permute_vector_only,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+sortByKeyWithComparator( KeyViewType keys, Comparator comp )
 {
-    Impl::kokkosBinSort( aosoa, keys, comp, create_permute_vector_only,
-                         true, 0, aosoa.size() );
+    Impl::kokkosBinSort( keys, comp, true, 0, keys.extent(0) );
 }
 
 //---------------------------------------------------------------------------//
@@ -472,23 +408,15 @@ sortByKeyWithComparator(
   \brief Bin an AoSoA over a subset of its range using a general comparator
   over the given Kokkos View of keys.
 
-  \tparam AoSoA_t The AoSoA type to bin.
-
   \tparam KeyViewType The Kokkos::View type for keys.
 
   \tparam Comparator Kokkos::BinSort compatible comparator type.
-
-  \param aosoa The AoSoA to bin.
 
   \param keys The key values to use for binning. A key value is needed for
   every element of the AoSoA.
 
   \param comp The comparator to use for binning. Must be compatible with
   Kokkos::BinSort.
-
-  \param create_data_only True if the binning data should be created (i.e. bin
-  sizes, offsets, and permutation vector) but the particles should not
-  actually be binned.
 
   \param begin The beginning index of the AoSoA range to bin.
 
@@ -496,21 +424,15 @@ sortByKeyWithComparator(
 
   \return The binning data (e.g. bin sizes and offsets).
 */
-template<class AoSoA_t, class KeyViewType, class Comparator>
+template<class KeyViewType, class Comparator>
 BinningData<typename KeyViewType::memory_space>
 binByKeyWithComparator(
-    AoSoA_t aosoa,
     KeyViewType keys,
     Comparator comp,
-    const bool create_data_only,
     const int begin,
-    const int end,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+    const int end )
 {
-    return Impl::kokkosBinSort(
-        aosoa, keys, comp, create_data_only, false, begin, end );
+    return Impl::kokkosBinSort( keys, comp, false, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -518,13 +440,9 @@ binByKeyWithComparator(
   \brief Bin an entire AoSoA using a general comparator over the given Kokkos
   View of keys.
 
-  \tparam AoSoA_t The AoSoA type to bin.
-
   \tparam KeyViewType The Kokkos::View type for keys.
 
   \tparam Comparator Kokkos::BinSort compatible comparator type.
-
-  \param aosoa The AoSoA to bin.
 
   \param keys The key values to use for binning. A key value is needed for
   every element of the AoSoA.
@@ -532,25 +450,15 @@ binByKeyWithComparator(
   \param comp The comparator to use for binning. Must be compatible with
   Kokkos::BinSort.
 
-  \param create_data_only True if the binning data should be created (i.e. bin
-  sizes, offsets, and permutation vector) but the particles should not
-  actually be binned.
-
   \return The binning data (e.g. bin sizes and offsets).
 */
-template<class AoSoA_t, class KeyViewType, class Comparator>
+template<class KeyViewType, class Comparator>
 BinningData<typename KeyViewType::memory_space>
 binByKeyWithComparator(
-    AoSoA_t aosoa,
     KeyViewType keys,
-    Comparator comp,
-    const bool create_data_only,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+    Comparator comp )
 {
-    return Impl::kokkosBinSort(
-        aosoa, keys, comp, create_data_only, false, 0, aosoa.size() );
+    return Impl::kokkosBinSort( keys, comp, false, 0, keys.extent(0) );
 }
 
 //---------------------------------------------------------------------------//
@@ -558,17 +466,10 @@ binByKeyWithComparator(
   \brief Sort an AoSoA over a subset of its range based on the associated key
   values.
 
-  \tparam AoSoA_t The AoSoA type to sort.
-
   \tparam KeyViewType The Kokkos::View type for keys.
-
-  \param aosoa The AoSoA to sort.
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
-
-  \param create_permute_vector_only True if the permutation vector should be
-  created but the data shouldn't actually be sorted.
 
   \param begin The beginning index of the AoSoA range to sort.
 
@@ -576,22 +477,13 @@ binByKeyWithComparator(
 
   \return The permutation vector associated with the sorting.
 */
-template<class AoSoA_t, class KeyViewType>
+template<class KeyViewType>
 typename BinningData<typename KeyViewType::memory_space>::OffsetView
-sortByKey(
-    AoSoA_t aosoa,
-    KeyViewType keys,
-    const bool create_permute_vector_only,
-    const int begin,
-    const int end,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+sortByKey( KeyViewType keys, const int begin, const int end )
 {
     int nbin = (end - begin) / 2;
     auto bin_data =
-        Impl::kokkosBinSort1d( aosoa, keys, nbin, create_permute_vector_only,
-                               true, begin, end );
+        Impl::kokkosBinSort1d( keys, nbin, true, begin, end );
     return bin_data.permuteVector();
 }
 
@@ -599,33 +491,19 @@ sortByKey(
 /*!
   \brief Sort an entire AoSoA based on the associated key values.
 
-  \tparam AoSoA_t The AoSoA type to sort.
-
   \tparam KeyViewType The Kokkos::View type for keys.
-
-  \param aosoa The AoSoA to sort.
 
   \param keys The key values to use for sorting. A key value is needed for
   every element of the AoSoA.
 
-  \param create_permute_vector_only True if the permutation vector should be
-  created but the data shouldn't actually be sorted.
-
   \return The permutation vector associated with the sorting.
 
 */
-template<class AoSoA_t, class KeyViewType>
+template<class KeyViewType>
 typename BinningData<typename KeyViewType::memory_space>::OffsetView
-sortByKey(
-    AoSoA_t aosoa,
-    KeyViewType keys,
-    const bool create_permute_vector_only,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+sortByKey( KeyViewType keys )
 {
-    return sortByKey(
-        aosoa, keys, create_permute_vector_only, 0, aosoa.size() );
+    return sortByKey( keys, 0, keys.extent(0) );
 }
 
 //---------------------------------------------------------------------------//
@@ -634,11 +512,7 @@ sortByKey(
   values and number of bins. The bins are evenly divided over the range of key
   values.
 
-  \tparam AoSoA_t The AoSoA type to bin.
-
   \tparam KeyViewType The Kokkos::View type for keys.
-
-  \param aosoa The AoSoA to bin.
 
   \param keys The key values to use for binning. A key value is needed for
   every element of the AoSoA.
@@ -646,31 +520,20 @@ sortByKey(
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
 
-  \param create_data_only True if the binning data should be created (i.e. bin
-  sizes, offsets, and permutation vector) but the particles should not
-  actually be binned.
-
   \param begin The beginning index of the AoSoA range to bin.
 
   \param end The end index of the AoSoA range to bin.
 
   \return The binning data (e.g. bin sizes and offsets).
 */
-template<class AoSoA_t, class KeyViewType>
+template<class KeyViewType>
 BinningData<typename KeyViewType::memory_space>
-binByKey(
-    AoSoA_t aosoa,
-    KeyViewType keys,
-    const int nbin,
-    const bool create_data_only,
-    const int begin,
-    const int end,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+binByKey( KeyViewType keys,
+          const int nbin,
+          const int begin,
+          const int end )
 {
-    return Impl::kokkosBinSort1d(
-        aosoa, keys, nbin, create_data_only, false, begin, end );
+    return Impl::kokkosBinSort1d( keys, nbin, false, begin, end );
 }
 
 //---------------------------------------------------------------------------//
@@ -678,11 +541,7 @@ binByKey(
   \brief Bin an entire AoSoA based on the associated key values and number of
   bins. The bins are evenly divided over the range of key values.
 
-  \tparam AoSoA_t The AoSoA type to bin.
-
   \tparam KeyViewType The Kokkos::View type for keys.
-
-  \param aosoa The AoSoA to bin.
 
   \param keys The key values to use for binning. A key value is needed for
   every element of the AoSoA.
@@ -690,25 +549,13 @@ binByKey(
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
 
-  \param create_data_only True if the binning data should be created (i.e. bin
-  sizes, offsets, and permutation vector) but the particles should not
-  actually be binned.
-
   \return The binning data (e.g. bin sizes and offsets).
 */
-template<class AoSoA_t, class KeyViewType>
+template<class KeyViewType>
 BinningData<typename KeyViewType::memory_space>
-binByKey(
-    AoSoA_t aosoa,
-    KeyViewType keys,
-    const int nbin,
-    const bool create_data_only,
-    typename std::enable_if<(
-        is_aosoa<AoSoA_t>::value && Kokkos::is_view<KeyViewType>::value),
-    int>::type * = 0 )
+binByKey( KeyViewType keys, const int nbin )
 {
-    return Impl::kokkosBinSort1d(
-        aosoa, keys, nbin, create_data_only, false, 0, aosoa.size() );
+    return Impl::kokkosBinSort1d( keys, nbin, false, 0, keys.extent(0) );
 }
 
 //---------------------------------------------------------------------------//
@@ -716,16 +563,7 @@ binByKey(
   \brief Sort an AoSoA over a subset of its range based on the associated
   slice values.
 
-  \tparam Member Member index of the key values.
-
-  \tparam AoSoA_t The AoSoA type to sort.
-
-  \param aosoa The AoSoA to sort.
-
-  \param member_tag Tag indicating which member to use as the keys for sorting.
-
-  \param create_permute_vector_only True if the permutation vector should be
-  created but the data shouldn't actually be sorted.
+  \tparam SliceType Slice type for keys.
 
   \param begin The beginning index of the AoSoA range to sort.
 
@@ -733,49 +571,34 @@ binByKey(
 
   \return The permutation vector associated with the sorting.
 */
-template<std::size_t Member, class AoSoA_t>
-typename BinningData<
-    typename AoSoA_t::memory_space::kokkos_memory_space>::OffsetView
-sortByMember(
-    AoSoA_t aosoa,
-    MemberTag<Member> member_tag,
-    const bool create_permute_vector_only,
-    const int begin,
-    const int end,
-    typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
+template<class SliceType>
+typename BinningData<typename SliceType::kokkos_memory_space>::OffsetView
+sortByMember( SliceType slice,
+              const int begin,
+              const int end,
+    typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
-    auto keys = Impl::copySliceToKeys( aosoa.slice(member_tag) );
-    return sortByKey( aosoa, keys, create_permute_vector_only, begin, end );
+    auto keys = Impl::copySliceToKeys( slice );
+    return sortByKey( keys, begin, end );
 }
 
 //---------------------------------------------------------------------------//
 /*!
   \brief Sort an entire AoSoA based on the associated slice values.
 
-  \tparam Member Member index of the key values.
+  \tparam SliceType Slice type for keys.
 
-  \tparam AoSoA_t The AoSoA type to sort.
-
-  \param aosoa The AoSoA to sort.
-
-  \param member_tag Tag indicating which member to use as the keys for sorting.
-
-  \param create_permute_vector_only True if the permutation vector should be
-  created but the data shouldn't actually be sorted.
+  \param slice Slice of keys.
 
   \return The permutation vector associated with the sorting.
 */
-template<std::size_t Member, class AoSoA_t>
-typename BinningData<
-    typename AoSoA_t::memory_space::kokkos_memory_space>::OffsetView
+template<class SliceType>
+typename BinningData<typename SliceType::kokkos_memory_space>::OffsetView
 sortByMember(
-    AoSoA_t aosoa,
-    MemberTag<Member> member_tag,
-    const bool create_permute_vector_only,
-    typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
+    SliceType slice,
+    typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
-    return sortByMember( aosoa, member_tag, create_permute_vector_only,
-                         0, aosoa.size() );
+    return sortByMember( slice, 0, slice.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -783,21 +606,12 @@ sortByMember(
   \brief Bin an AoSoA over a subset of its range based on the associated
   slice values.
 
-  \tparam Member Member index of the key values.
+  \tparam SliceType Slice type for keys
 
-  \tparam AoSoA_t The AoSoA type to bin.
-
-  \param aosoa The AoSoA to bin.
-
-  \param member_tag Tag indicating which member to use as the keys for
-  binning.
+  \param slice Slice of keys.
 
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
-
-  \param create_data_only True if the binning data should be created (i.e. bin
-  sizes, offsets, and permutation vector) but the particles should not
-  actually be binned.
 
   \param begin The beginning index of the AoSoA range to bin.
 
@@ -805,54 +619,40 @@ sortByMember(
 
   \return The binning data (e.g. bin sizes and offsets).
 */
-template<std::size_t Member, class AoSoA_t>
-BinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
+template<class SliceType>
+BinningData<typename SliceType::kokkos_memory_space>
 binByMember(
-    AoSoA_t aosoa,
-    MemberTag<Member> member_tag,
+    SliceType slice,
     const int nbin,
-    const bool create_data_only,
     const int begin,
     const int end,
-    typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
+    typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
-    auto keys = Impl::copySliceToKeys( aosoa.slice(member_tag) );
-    return binByKey( aosoa, keys, nbin, create_data_only, begin, end );
+    auto keys = Impl::copySliceToKeys( slice );
+    return binByKey( keys, nbin, begin, end );
 }
 
 //---------------------------------------------------------------------------//
 /*!
   \brief Bin an entire AoSoA based on the associated slice values.
 
-  \tparam Member Member index of the key values.
+  \tparam SliceType Slice type for keys.
 
-  \tparam AoSoA_t The AoSoA type to bin.
-
-  \param aosoa The AoSoA to bin.
-
-  \param member_tag Tag indicating which member to use as the keys for
-  binning.
+  \param slice Slice of keys.
 
   \param nbin The number of bins to use for binning. The range of key values
   will subdivided equally by the number of bins.
 
-  \param create_data_only True if the binning data should be created (i.e. bin
-  sizes, offsets, and permutation vector) but the particles should not
-  actually be binned.
-
   \return The binning data (e.g. bin sizes and offsets).
 */
-template<std::size_t Member, class AoSoA_t>
-BinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
+template<class SliceType>
+BinningData<typename SliceType::kokkos_memory_space>
 binByMember(
-    AoSoA_t aosoa,
-    MemberTag<Member> member_tag,
+    SliceType slice,
     const int nbin,
-    const bool create_data_only,
-    typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
+    typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
-    return binByMember(
-        aosoa, member_tag, nbin, create_data_only, 0, aosoa.size() );
+    return binByMember( slice, nbin, 0, slice.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -860,18 +660,9 @@ binByMember(
   \brief Bin an AoSoA spatially over a subset of its range within given
   structured Cartesian grid.
 
-  \tparam PositionMember The member index for particle positions in the
-  AoSoA.
+  \tparam SliceType Slice type for positions.
 
-  \tparam AoSoA_t The AoSoA type to sort.
-
-  \param aosoa The AoSoA to sort.
-
-  \param position_member Tag for the AoSoA member containing position.
-
-  \param create_data_only True if the binning data should be created (i.e. bin
-  sizes, offsets, and permutation vector) but the particles should not
-  actually be binned.
+  \param positions Slice of positions.
 
   \param begin The beginning index of the AoSoA range to sort.
 
@@ -883,40 +674,33 @@ binByMember(
 
   \param grid_max Grid maximum value in each direction.
 */
-template<class AoSoA_t, std::size_t PositionMember>
-CartesianGrid3dBinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
-binByCartesianGrid3d(
-    AoSoA_t aosoa,
-    MemberTag<PositionMember> position_member,
-    const bool create_data_only,
+template<class SliceType>
+LinkedCellList<typename SliceType::kokkos_memory_space>
+buildLinkedCellList(
+    SliceType positions,
     const int begin,
     const int end,
-    const typename AoSoA_t::template member_value_type<PositionMember>
-    grid_delta[3],
-    const typename AoSoA_t::template member_value_type<PositionMember>
-    grid_min[3],
-    const typename AoSoA_t::template member_value_type<PositionMember>
-    grid_max[3],
-    typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
+    const typename SliceType::value_type grid_delta[3],
+    const typename SliceType::value_type grid_min[3],
+    const typename SliceType::value_type grid_max[3],
+    typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
     // Get the positions.
-    auto position = aosoa.slice( position_member );
-    using PositionSlice = decltype(position);
-    using PositionValueType = typename PositionSlice::value_type;
+    using PositionValueType = typename SliceType::value_type;
 
     // Copy the positions into a Kokkos view. For now we need to do this
     // because of internal copy constructors being called within
     // Kokkos::BinSort.
     using KeyViewType =
-        Kokkos::View<typename PositionSlice::value_type**,
-                     typename PositionSlice::kokkos_memory_space>;
+        Kokkos::View<typename SliceType::value_type**,
+                     typename SliceType::kokkos_memory_space>;
     KeyViewType keys(
-        "position_bin_keys", position.size(), position.fieldExtent(0) );
-    Kokkos::RangePolicy<typename PositionSlice::kokkos_execution_space>
-        exec_policy( 0, position.size() );
+        "position_bin_keys", positions.size(), positions.fieldExtent(0) );
+    Kokkos::RangePolicy<typename SliceType::kokkos_execution_space>
+        exec_policy( 0, positions.size() );
     auto copy_op = KOKKOS_LAMBDA( const int i )
-                   { for ( int d = 0; d < 3; ++d ) keys(i,d) = position(i,d); };
-    Kokkos::parallel_for( "Cabana::binByCartesianGrid3d::copy_op",
+                   { for ( int d = 0; d < 3; ++d ) keys(i,d) = positions(i,d); };
+    Kokkos::parallel_for( "Cabana::buildLinkedCellList::copy_op",
                           exec_policy,
                           copy_op );
     Kokkos::fence();
@@ -929,13 +713,11 @@ binByCartesianGrid3d(
     Kokkos::BinOp3D<KeyViewType> comp( nbin, grid_min, grid_max );
 
     // Do the binning.
-    auto bin_data_1d = Impl::kokkosBinSort(
-        aosoa, keys, comp, create_data_only, false, begin, end );
+    auto bin_data_1d = Impl::kokkosBinSort( keys, comp, false, begin, end );
 
     // Return the bin data.
-    return CartesianGrid3dBinningData<
-        typename AoSoA_t::memory_space::kokkos_memory_space>(
-            bin_data_1d, nbin );
+    return LinkedCellList<
+        typename SliceType::kokkos_memory_space>( bin_data_1d, nbin );
 }
 
 //---------------------------------------------------------------------------//
@@ -943,18 +725,9 @@ binByCartesianGrid3d(
   \brief Bin an AoSoA spatially over a subset of its range within given
   structured Cartesian grid.
 
-  \tparam PositionMember The member index for particle positions in the
-  AoSoA.
+  \tparam SliceType Slice type for positions.
 
-  \tparam AoSoA_t The AoSoA type to sort.
-
-  \param aosoa The AoSoA to sort.
-
-  \param position_member Tag for the AoSoA member containing position.
-
-  \param create_data_only True if the binning data should be created (i.e. bin
-  sizes, offsets, and permutation vector) but the particles should not
-  actually be binned.
+  \param positions Slice of positions.
 
   \param grid_delta Grid sizes in each cardinal direction.
 
@@ -962,23 +735,83 @@ binByCartesianGrid3d(
 
   \param grid_max Grid maximum value in each direction.
 */
-template<class AoSoA_t, std::size_t PositionMember>
-CartesianGrid3dBinningData<typename AoSoA_t::memory_space::kokkos_memory_space>
-binByCartesianGrid3d(
-    AoSoA_t aosoa,
-    MemberTag<PositionMember> position_member,
-    const bool create_data_only,
-    const typename AoSoA_t::template member_value_type<PositionMember>
-    grid_delta[3],
-    const typename AoSoA_t::template member_value_type<PositionMember>
-    grid_min[3],
-    const typename AoSoA_t::template member_value_type<PositionMember>
-    grid_max[3],
-    typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
+template<class SliceType>
+LinkedCellList<typename SliceType::kokkos_memory_space>
+buildLinkedCellList(
+    SliceType positions,
+    const typename SliceType::value_type grid_delta[3],
+    const typename SliceType::value_type grid_min[3],
+    const typename SliceType::value_type grid_max[3],
+    typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
-    return binByCartesianGrid3d( aosoa, position_member, create_data_only,
-                                 0, aosoa.size(),
-                                 grid_delta, grid_min, grid_max );
+    return buildLinkedCellList( positions,
+                                0, positions.size(),
+                                grid_delta, grid_min, grid_max );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Given a permutation vector permute an AoSoA.
+
+  \tparam ViewType The permutation vector view type.
+
+  \tparm AoSoA_t The AoSoA type.
+
+  \param permute_vector The permutation vector.
+
+  \param begin The first index of the AoSoA to sort.
+
+  \param end The last index of the AoSoA to sort.
+
+  \param aosoa The AoSoA to permute.
+ */
+template<class ViewType, class AoSoA_t>
+void permute( const ViewType& permute_vector,
+              const int begin,
+              const int end,
+              AoSoA_t& aosoa )
+{
+    Kokkos::View<typename AoSoA_t::tuple_type*,
+                 typename ViewType::memory_space>
+        scratch_tuples( "scratch_tuples", end - begin );
+
+    auto permute_to_scratch = KOKKOS_LAMBDA( const int i )
+                              {
+                                  scratch_tuples( i - begin ) =
+                                  aosoa.getTuple( permute_vector(i) );
+                              };
+    Kokkos::parallel_for(
+        "Cabana::kokkosBinSort::permute_to_scratch",
+        Kokkos::RangePolicy<typename ViewType::execution_space>(begin,end),
+        permute_to_scratch );
+    Kokkos::fence();
+
+    auto copy_back = KOKKOS_LAMBDA( const int i )
+                     { aosoa.setTuple( i, scratch_tuples(i-begin) ); };
+    Kokkos::parallel_for(
+        "Cabana::kokkosBinSort::copy_back",
+        Kokkos::RangePolicy<typename ViewType::execution_space>(begin,end),
+        copy_back );
+    Kokkos::fence();
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Given a permutation vector permute an AoSoA.
+
+  \tparam ViewType The permutation vector view type.
+
+  \tparm AoSoA_t The AoSoA type.
+
+  \param permute_vector The permutation vector.
+
+  \param aosoa The AoSoA to permute.
+ */
+template<class ViewType, class AoSoA_t>
+void permute( const ViewType& permute_vector,
+              AoSoA_t& aosoa )
+{
+    permute( permute_vector, 0, aosoa.size(), aosoa );
 }
 
 //---------------------------------------------------------------------------//

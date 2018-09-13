@@ -15,11 +15,11 @@ void initializeDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.template slice<0>();
+    auto slice_1 = aosoa.template slice<1>();
+    auto slice_2 = aosoa.template slice<2>();
+    auto slice_3 = aosoa.template slice<3>();
+    auto slice_4 = aosoa.template slice<4>();
 
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -59,11 +59,11 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.template slice<0>();
+    auto slice_1 = aosoa.template slice<1>();
+    auto slice_2 = aosoa.template slice<2>();
+    auto slice_3 = aosoa.template slice<3>();
+    auto slice_4 = aosoa.template slice<4>();
 
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -124,11 +124,11 @@ void apiTest()
     AoSoA_t aosoa( num_data );
 
     // Create some slices.
-    auto slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.slice<0>();
+    auto slice_1 = aosoa.slice<1>();
+    auto slice_2 = aosoa.slice<2>();
+    auto slice_3 = aosoa.slice<3>();
+    auto slice_4 = aosoa.slice<4>();
 
     // Check that they are slices.
     EXPECT_TRUE( Cabana::is_slice<decltype(slice_0)>::value );
@@ -312,11 +312,11 @@ void randomAccessTest()
         aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
     // Create slices.
-    auto da_slice_0 = aosoa.slice( Cabana::MemberTag<0>() );
-    auto da_slice_1 = aosoa.slice( Cabana::MemberTag<1>() );
-    auto da_slice_2 = aosoa.slice( Cabana::MemberTag<2>() );
-    auto da_slice_3 = aosoa.slice( Cabana::MemberTag<3>() );
-    auto da_slice_4 = aosoa.slice( Cabana::MemberTag<4>() );
+    auto da_slice_0 = aosoa.slice<0>();
+    auto da_slice_1 = aosoa.slice<1>();
+    auto da_slice_2 = aosoa.slice<2>();
+    auto da_slice_3 = aosoa.slice<3>();
+    auto da_slice_4 = aosoa.slice<4>();
 
     // Create read-only random access slices.
     decltype(da_slice_0)::random_access_slice ra_slice_0 = da_slice_0;
@@ -329,11 +329,11 @@ void randomAccessTest()
     AoSoA_t aosoa_2( num_data );
 
     // Get normal slices of the data.
-    auto slice_0 = aosoa_2.slice( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa_2.slice( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa_2.slice( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa_2.slice( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa_2.slice( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa_2.slice<0>();
+    auto slice_1 = aosoa_2.slice<1>();
+    auto slice_2 = aosoa_2.slice<2>();
+    auto slice_3 = aosoa_2.slice<3>();
+    auto slice_4 = aosoa_2.slice<4>();
 
     // Assign the read-only data to the new aosoa.
     for ( auto idx = 0; idx != aosoa.size(); ++idx )
@@ -385,7 +385,7 @@ void atomicAccessTest()
     AoSoA_t aosoa( num_data );
 
     // Get a slice of the data.
-    auto slice = aosoa.slice( Cabana::MemberTag<0>() );
+    auto slice = aosoa.slice<0>();
 
     // Set to 0.
     for ( int i = 0; i < num_data; ++i ) slice( i ) = 0;
