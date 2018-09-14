@@ -25,7 +25,7 @@ template<>
 class PerformanceTraits<Kokkos::Serial>
 {
   public:
-    static constexpr int vector_length = 8;
+    static constexpr int vector_length = 16;
     using parallel_for_tag = StructParallelTag;
 };
 #endif
@@ -37,7 +37,7 @@ template<>
 class PerformanceTraits<Kokkos::OpenMP>
 {
   public:
-    static constexpr int vector_length = 8;
+    static constexpr int vector_length = 16;
     using parallel_for_tag = StructParallelTag;
 };
 #endif
