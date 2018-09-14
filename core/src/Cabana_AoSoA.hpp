@@ -59,7 +59,9 @@ template<class DataTypes,
          int VectorLength = Impl::PerformanceTraits<
              typename MemorySpace::kokkos_execution_space>::vector_length,
          typename std::enable_if<
-             (is_member_types<DataTypes>::value),int>::type = 0>
+             (is_member_types<DataTypes>::value &&
+              is_memory_space<MemorySpace>::value &&
+              Impl::IsVectorLengthValid<VectorLength>::value),int>::type = 0>
 class AoSoA
 {
   public:
