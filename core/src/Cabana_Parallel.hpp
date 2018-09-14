@@ -49,7 +49,7 @@ Kokkos::pair<int,int> getStructBounds( const int begin, const int end )
     // Get the AoSoA Indices for the begin and end.
     auto begin_s = Impl::Index<array_size>::s( begin );
     auto end_s = Impl::Index<array_size>::s( end );
-    auto end_i = Impl::Index<array_size>::i( end );
+    auto end_a = Impl::Index<array_size>::a( end );
 
     // The first struct is the struct index of the beginning.
     struct_bounds.first = begin_s;
@@ -60,7 +60,7 @@ Kokkos::pair<int,int> getStructBounds( const int begin, const int end )
     // 1 to ensure that the loop over structs loops through all structs with
     // data.
     struct_bounds.second =
-        (0 == end_i) ? end_s : end_s + 1;
+        (0 == end_a) ? end_s : end_s + 1;
 
     return struct_bounds;
 }
@@ -79,20 +79,20 @@ getArrayBounds( const int begin,
     Kokkos::pair<int,int> array_bounds;
 
     // Get the AoSoA Indices for the begin and end.
-    auto begin_i = Impl::Index<array_size>::i( begin );
-    auto end_i = Impl::Index<array_size>::i( end );
+    auto begin_a = Impl::Index<array_size>::a( begin );
+    auto end_a = Impl::Index<array_size>::a( end );
 
     // If the given struct index is also the index of the struct index in
     // begin, use the starting array index. If not, that means we have passed
     // the first struct and all subsequent structs start at array index 0.
-    array_bounds.first = (s == struct_bounds.first) ? begin_i : 0;
+    array_bounds.first = (s == struct_bounds.first) ? begin_a : 0;
 
     // If we are in the last struct unfilled struct then use the array index
     // of end. If not, we are looping through the current array all the way to
     // the end so use the array size.
     array_bounds.second =
-        ((s == struct_bounds.second - 1) && (end_i != 0))
-        ? end_i : array_size;
+        ((s == struct_bounds.second - 1) && (end_a != 0))
+        ? end_a : array_size;
 
     return array_bounds;
 }
@@ -185,9 +185,9 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
   Index begin, end;
   parallel_for( s : num_structs )
   {
-  for( i : array_size(s) )
+  for( a : array_size(s) )
   {
-  Index idx( array_size, s, i );
+  Index idx( array_size, s, a );
   functor( idx );
   }
   }
@@ -214,12 +214,12 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
         {
             auto array_bounds = getArrayBounds<ExecutionPolicy::array_size>(
                 begin, end, struct_bounds, s );
-            for ( int i = array_bounds.first;
-                  i < array_bounds.second;
-                  ++i )
+            for ( int a = array_bounds.first;
+                  a < array_bounds.second;
+                  ++a )
             {
                 functor(
-                    Impl::Index<ExecutionPolicy::array_size>::p(s,i) );
+                    Impl::Index<ExecutionPolicy::array_size>::i(s,a) );
             }
         };
 
@@ -248,9 +248,9 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
   Index begin, end;
   for( s : num_structs )
   {
-  parallel_for( i : array_size(s) )
+  parallel_for( a : array_size(s) )
   {
-  Index idx( array_size, s, i );
+  Index idx( array_size, s, a );
   functor( idx );
   }
   }
@@ -284,10 +284,10 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
         // Create a wrapper for the functor. Each struct is given a thread and
         // each thread loops over the inner arrays.
         auto functor_wrapper =
-            KOKKOS_LAMBDA( const int i )
+            KOKKOS_LAMBDA( const int a )
             {
                 functor(
-                    Impl::Index<ExecutionPolicy::array_size>::p(s,i) );
+                    Impl::Index<ExecutionPolicy::array_size>::i(s,a) );
             };
 
         // Create the kokkos execution policy
@@ -313,9 +313,9 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
   Index begin, end;
   parallel_for( s : num_structs )
   {
-  parallel_for( i : array_size(s) )
+  parallel_for( a : array_size(s) )
   {
-  Index idx( array_size, s, i );
+  Index idx( array_size, s, a );
   functor( idx );
   }
   }
@@ -346,14 +346,14 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
 
     // Create a wrapper for the functor.
     auto functor_wrapper =
-        KOKKOS_LAMBDA( const int s, const int i )
+        KOKKOS_LAMBDA( const int s, const int a )
         {
             auto array_bounds =
             getArrayBounds<ExecutionPolicy::array_size>(
                 begin, end, struct_bounds, s );
-            if ( i < array_bounds.second )
+            if ( a < array_bounds.second )
                 functor(
-                    Impl::Index<ExecutionPolicy::array_size>::p(s,i) );
+                    Impl::Index<ExecutionPolicy::array_size>::i(s,a) );
         };
 
     // Execute the functor.

@@ -21,8 +21,9 @@ namespace Impl
   \tparam VectorLength The inner array size of the AoSoA.
 */
 template<int VectorLength,
-         typename std::enable_if<(Impl::IsVectorLengthValid<VectorLength>::value),
-                                 int>::type = 0>
+         typename std::enable_if<
+             (Impl::IsVectorLengthValid<VectorLength>::value),
+             int>::type = 0>
 class Index
 {
   public:
@@ -40,29 +41,35 @@ class Index
     /*!
       \brief Given a tuple index get the AoSoA struct index.
 
-      \param tuple_index The tuple index.
+      \param i The tuple index.
 
       \return The index of the struct in which the tuple is located.
     */
+    template<typename I>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr int s( const int tuple_index )
+    static constexpr
+    typename std::enable_if<std::is_integral<I>::value,I>::type
+    s( const I& i )
     {
-        return (tuple_index - (tuple_index & vector_length_offset)) >>
+        return (i - (i & vector_length_offset)) >>
             vector_length_binary_bits;
     }
 
     /*!
       \brief Given a tuple index get the AoSoA array index.
 
-      \param tuple_index The tuple index.
+      \param i The tuple index.
 
       \return The index of the array index in the struct in which the tuple
       is located.
     */
+    template<typename I>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr int i( const int tuple_index )
+    static constexpr
+    typename std::enable_if<std::is_integral<I>::value,I>::type
+    a( const I& i )
     {
-        return tuple_index & vector_length_offset;
+        return i & vector_length_offset;
     }
 
     /*!
@@ -75,10 +82,14 @@ class Index
 
       \return The tuple index.
     */
+    template<typename S, typename A>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr int p( const int struct_index, const int array_index )
+    static constexpr
+    typename std::enable_if<(std::is_integral<S>::value &&
+                             std::is_integral<A>::value),S>::type
+    i( const S& s, const A& a )
     {
-        return (struct_index << vector_length_binary_bits) + array_index;
+        return (s << vector_length_binary_bits) + a;
     }
 };
 

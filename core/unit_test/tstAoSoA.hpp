@@ -113,9 +113,9 @@ void testAoSoA()
     // Test bounds.
     auto end = aosoa.size();
     int end_s = Cabana::Impl::Index<16>::s(end);
-    int end_i = Cabana::Impl::Index<16>::i(end);
+    int end_a = Cabana::Impl::Index<16>::a(end);
     EXPECT_EQ( end_s, 2 );
-    EXPECT_EQ( end_i, 3 );
+    EXPECT_EQ( end_a, 3 );
 
     // Get field slices again. We invalidated the pointers by resizing the
     // slices.
@@ -279,17 +279,17 @@ void testRawData()
     for ( int idx = 0; idx < aosoa.size(); ++idx )
     {
         int s = Cabana::Impl::Index<16>::s( idx );
-        int i = Cabana::Impl::Index<16>::i( idx );
+        int a = Cabana::Impl::Index<16>::a( idx );
 
-        EXPECT_EQ( slice_0(idx), (s+i)*1.0 );
-        EXPECT_EQ( slice_1(idx), int((s+i)*2) );
-        EXPECT_EQ( slice_3(idx), int((s+i)*4) );
-        EXPECT_EQ( slice_4(idx), (s+i)*5.0 );
+        EXPECT_EQ( slice_0(idx), (s+a)*1.0 );
+        EXPECT_EQ( slice_1(idx), int((s+a)*2) );
+        EXPECT_EQ( slice_3(idx), int((s+a)*4) );
+        EXPECT_EQ( slice_4(idx), (s+a)*5.0 );
 
         // Member 2 has some extra dimensions so check those too.
         for ( int j = 0; j < dim_1; ++j )
             for ( int k = 0; k < dim_2; ++k )
-                EXPECT_EQ( slice_2(idx,j,k), (s+i+j+k)*3.0 );
+                EXPECT_EQ( slice_2(idx,j,k), (s+a+j+k)*3.0 );
     }
 }
 

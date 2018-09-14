@@ -99,12 +99,12 @@ void printParticles( const ParticleList particles )
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
         auto aosoa_idx_s = Cabana::Impl::Index<32>::s( idx );
-        auto aosoa_idx_i = Cabana::Impl::Index<32>::i( idx );
+        auto aosoa_idx_a = Cabana::Impl::Index<32>::a( idx );
 
         std::cout << std::endl;
 
         std::cout << "Struct id: " << aosoa_idx_s << std::endl;
-        std::cout << "Struct offset: " << aosoa_idx_i << std::endl;
+        std::cout << "Struct offset: " << aosoa_idx_a << std::endl;
         std::cout << "Position: "
                   << position_x( idx ) << " "
                   << position_y( idx ) << " "

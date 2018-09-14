@@ -199,128 +199,188 @@ struct SoA<VectorLength,MemberTypes<Types...> >
     // Access the data value at a given member index.
 
     // Rank 0
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(0==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value),
                             member_reference_type<M> >::type
-    get( const int i )
+    get( const A& a )
     {
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[i];
+        return base._data[a];
     }
 
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(0==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value),
                             member_value_type<M> >::type
-    get( const int i ) const
+    get( const A& a ) const
     {
         const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[i];
+        return base._data[a];
     }
 
     // Rank 1
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A,
+             typename D0>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(1==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value),
                             member_reference_type<M> >::type
-    get(  const int i,
-          const int d0 )
+    get(  const A& a,
+          const D0& d0 )
     {
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d0][i];
+        return base._data[d0][a];
     }
 
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A,
+             typename D0>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(1==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value),
                             member_value_type<M> >::type
-    get(  const int i,
-          const int d0 ) const
+    get(  const A& a,
+          const D0& d0 ) const
     {
         const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d0][i];
+        return base._data[d0][a];
     }
 
     // Rank 2
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A,
+             typename D0,
+             typename D1>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(2==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value),
                             member_reference_type<M> >::type
-    get( const int i,
-         const int d0,
-         const int d1 )
+    get( const A& a,
+         const D0& d0,
+         const D1& d1 )
     {
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d1][d0][i];
+        return base._data[d1][d0][a];
     }
 
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A,
+             typename D0,
+             typename D1>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(2==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value),
                             member_value_type<M> >::type
-    get( const int i,
-         const int d0,
-         const int d1 ) const
+    get( const A& a,
+         const D0& d0,
+         const D1& d1 ) const
     {
         const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d1][d0][i];
+        return base._data[d1][d0][a];
     }
 
     // Rank 3
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A,
+             typename D0,
+             typename D1,
+             typename D2>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(3==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_integral<D2>::value),
                             member_reference_type<M> >::type
-    get( const int i,
-         const int d0,
-         const int d1,
-         const int d2 )
+    get( const A& a,
+         const D0& d0,
+         const D1& d1,
+         const D2& d2 )
     {
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d2][d1][d0][i];
+        return base._data[d2][d1][d0][a];
     }
 
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A,
+             typename D0,
+             typename D1,
+             typename D2>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(3==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_integral<D2>::value),
                             member_value_type<M> >::type
-    get( const int i,
-         const int d0,
-         const int d1,
-         const int d2 ) const
+    get( const A& a,
+         const D0& d0,
+         const D1& d1,
+         const D2& d2 ) const
     {
         const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d2][d1][d0][i];
+        return base._data[d2][d1][d0][a];
     }
 
     // Rank 4
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A,
+             typename D0,
+             typename D1,
+             typename D2,
+             typename D3>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(4==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_integral<D2>::value &&
+                             std::is_integral<D3>::value),
                             member_reference_type<M> >::type
-    get( const int i,
-         const int d0,
-         const int d1,
-         const int d2,
-         const int d3 )
+    get( const A& a,
+         const D0& d0,
+         const D1& d1,
+         const D2& d2,
+         const D3& d3 )
     {
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d3][d2][d1][d0][i];
+        return base._data[d3][d2][d1][d0][a];
     }
 
-    template<std::size_t M>
+    template<std::size_t M,
+             typename A,
+             typename D0,
+             typename D1,
+             typename D2,
+             typename D3>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<member_data_type<M> >::value),
+    typename std::enable_if<(4==std::rank<member_data_type<M> >::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_integral<D2>::value &&
+                             std::is_integral<D3>::value),
                             member_value_type<M> >::type
-    get( const int i,
-         const int d0,
-         const int d1,
-         const int d2,
-         const int d3 ) const
+    get( const A& a,
+         const D0& d0,
+         const D1& d1,
+         const D2& d2,
+         const D3& d3 ) const
     {
         const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d3][d2][d1][d0][i];
+        return base._data[d3][d2][d1][d0][a];
     }
 
     // ----------------

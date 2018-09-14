@@ -30,8 +30,8 @@ struct KokkosDataTypeImpl<T,0,VectorLength>
     using value_type = typename std::remove_all_extents<T>::type;
     using data_type = value_type*[VectorLength];
 
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
+    inline static Kokkos::LayoutStride createLayout( const std::size_t num_soa,
+                                                     const std::size_t stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
                                      VectorLength, 1 );
@@ -46,8 +46,8 @@ struct KokkosDataTypeImpl<T,1,VectorLength>
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     using data_type = value_type*[VectorLength][D0];
 
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
+    inline static Kokkos::LayoutStride createLayout( const std::size_t num_soa,
+                                                     const std::size_t stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
                                      VectorLength, 1,
@@ -64,8 +64,8 @@ struct KokkosDataTypeImpl<T,2,VectorLength>
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     using data_type = value_type*[VectorLength][D0][D1];
 
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
+    inline static Kokkos::LayoutStride createLayout( const std::size_t num_soa,
+                                                     const std::size_t stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
                                      VectorLength, 1,
@@ -84,8 +84,8 @@ struct KokkosDataTypeImpl<T,3,VectorLength>
     static constexpr std::size_t D2 = std::extent<T,2>::value;
     using data_type = value_type*[VectorLength][D0][D1][D2];
 
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
+    inline static Kokkos::LayoutStride createLayout( const std::size_t num_soa,
+                                                     const std::size_t stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
                                      VectorLength, 1,
@@ -106,8 +106,8 @@ struct KokkosDataTypeImpl<T,4,VectorLength>
     static constexpr std::size_t D3 = std::extent<T,3>::value;
     using data_type = value_type*[VectorLength][D0][D1][D2][D3];
 
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
+    inline static Kokkos::LayoutStride createLayout( const std::size_t num_soa,
+                                                     const std::size_t stride )
     {
         return Kokkos::LayoutStride( num_soa, stride,
                                      VectorLength, 1,
@@ -126,8 +126,8 @@ struct KokkosDataType
         KokkosDataTypeImpl<T,std::rank<T>::value,VectorLength>;
     using data_type = typename kokkos_data_type::data_type;
 
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
+    inline static Kokkos::LayoutStride createLayout( const std::size_t num_soa,
+                                                     const std::size_t stride )
     {
         return kokkos_data_type::createLayout( num_soa, stride );
     }
@@ -144,8 +144,8 @@ struct KokkosViewWrapper
     using data_type =
         typename KokkosDataType<T,VectorLength>::data_type;
 
-    inline static Kokkos::LayoutStride createLayout( const int num_soa,
-                                                     const int stride )
+    inline static Kokkos::LayoutStride createLayout( const std::size_t num_soa,
+                                                     const std::size_t stride )
     {
         return KokkosDataType<T,VectorLength>::createLayout( num_soa, stride );
     }
@@ -219,6 +219,9 @@ class Slice
     friend class Slice<DataType,MemorySpace,AtomicAccessMemory,VectorLength>;
     friend class Slice<DataType,MemorySpace,RandomAccessMemory,VectorLength>;
 
+    // Data rank.
+    enum { Rank = std::rank<DataType>::value };
+
   public:
 
     /*!
@@ -237,9 +240,9 @@ class Slice
       \param The number of structs in the slice.
     */
     Slice( const pointer_type data,
-           const int size,
-           const int soa_stride,
-           const int num_soa )
+           const std::size_t size,
+           const std::size_t soa_stride,
+           const std::size_t num_soa )
         : _view( data, view_wrapper::createLayout(num_soa,soa_stride) )
         , _size( size )
     {}
@@ -275,7 +278,7 @@ class Slice
       \return The number of tuples in the slice.
     */
     KOKKOS_INLINE_FUNCTION
-    int size() const
+    std::size_t size() const
     { return _size; }
 
     /*!
@@ -283,7 +286,7 @@ class Slice
       \return The number of structs-of-arrays in the container.
     */
     KOKKOS_INLINE_FUNCTION
-    int numSoA() const { return _view.extent(0); }
+    std::size_t numSoA() const { return _view.extent(0); }
 
     /*!
       \brief Get the size of the data array at a given struct member index.
@@ -291,7 +294,7 @@ class Slice
       \return The size of the array at the given struct index.
     */
     KOKKOS_INLINE_FUNCTION
-    int arraySize( const int s ) const
+    std::size_t arraySize( const std::size_t s ) const
     {
         return ( s < (int) _view.extent(0) - 1 )
             ? vector_length : ( _size % vector_length );
@@ -301,97 +304,192 @@ class Slice
     // 2-D accessor
 
     // Rank 0
-    template<typename U = DataType>
+    template<typename S,
+             typename A,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<U>::value),reference_type>::type
-    access( const int s, const int i ) const
-    { return _view( s, i ); }
+    typename std::enable_if<(0==std::rank<U>::value &&
+                             std::is_integral<S>::value &&
+                             std::is_integral<A>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    access( const S& s,
+            const A& a ) const
+    { return _view( s, a ); }
 
     // Rank 1
-    template<typename U = DataType>
+    template<typename S,
+             typename A,
+             typename D0,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<U>::value),reference_type>::type
-    access( const int s, const int i,
-            const int d0 ) const
-    { return _view( s, i, d0 ); }
+    typename std::enable_if<(1==std::rank<U>::value &&
+                             std::is_integral<S>::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    access( const S& s,
+            const A& a,
+            const D0& d0 ) const
+    { return _view( s, a, d0 ); }
 
     // Rank 2
-    template<typename U = DataType>
+    template<typename S,
+             typename A,
+             typename D0,
+             typename D1,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<U>::value),reference_type>::type
-    access( const int s, const int i,
-            const int d0,
-            const int d1 ) const
-    { return _view( s, i, d0, d1); }
+    typename std::enable_if<(2==std::rank<U>::value &&
+                             std::is_integral<S>::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    access( const S& s,
+            const A& a,
+            const D0& d0,
+            const D1& d1 ) const
+    { return _view( s, a, d0, d1); }
 
     // Rank 3
-    template<typename U = DataType>
+    template<typename S,
+             typename A,
+             typename D0,
+             typename D1,
+             typename D2,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<U>::value),reference_type>::type
-    access( const int s, const int i,
-            const int d0,
-            const int d1,
-            const int d2 ) const
-    { return _view( s, i, d0, d1, d2); }
+    typename std::enable_if<(3==std::rank<U>::value &&
+                             std::is_integral<S>::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_integral<D2>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    access( const S& s,
+            const A& a,
+            const D0& d0,
+            const D1& d1,
+            const D2& d2 ) const
+    { return _view( s, a, d0, d1, d2); }
 
     // Rank 4
-    template<typename U = DataType>
+    template<typename S,
+             typename A,
+             typename D0,
+             typename D1,
+             typename D2,
+             typename D3,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<U>::value),reference_type>::type
-    access( const int s, const int i,
-            const int d0,
-            const int d1,
-            const int d2,
-            const int d3 ) const
-    { return _view( s, i, d0, d1, d2, d3); }
+    typename std::enable_if<(4==std::rank<U>::value &&
+                             std::is_integral<S>::value &&
+                             std::is_integral<A>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_integral<D2>::value &&
+                             std::is_integral<D3>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    access( const S& s,
+            const A& a,
+            const D0& d0,
+            const D1& d1,
+            const D2& d2,
+            const D3& d3 ) const
+    { return _view( s, a, d0, d1, d2, d3); }
 
     // ------------
     // 1-D accessor
 
     // Rank 0
-    template<typename U = DataType>
+    template<typename I,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<U>::value),reference_type>::type
-    operator()( const int p ) const
-    { return access( index_type::s(p), index_type::i(p) ); }
+    typename std::enable_if<(0==std::rank<U>::value &&
+                             std::is_integral<I>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    operator()( const I& i ) const
+    { return access( index_type::s(i), index_type::a(i) ); }
 
     // Rank 1
-    template<typename U = DataType>
+    template<typename I,
+             typename D0,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<U>::value),reference_type>::type
-    operator()( const int p,
-                const int d0 ) const
-    { return access( index_type::s(p), index_type::i(p), d0 ); }
+    typename std::enable_if<(1==std::rank<U>::value &&
+                             std::is_integral<I>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    operator()( const I& i,
+                const D0& d0 ) const
+    { return access( index_type::s(i), index_type::a(i), d0 ); }
 
     // Rank 2
-    template<typename U = DataType>
+    template<typename I,
+             typename D0,
+             typename D1,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<U>::value),reference_type>::type
-    operator()( const int p,
-                const int d0,
-                const int d1 ) const
-    { return access( index_type::s(p), index_type::i(p), d0, d1 ); }
+    typename std::enable_if<(2==std::rank<U>::value &&
+                             std::is_integral<I>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    operator()( const I& i,
+                const D0& d0,
+                const D1& d1 ) const
+    { return access( index_type::s(i), index_type::a(i), d0, d1 ); }
 
     // Rank 3
-    template<typename U = DataType>
+    template<typename I,
+             typename D0,
+             typename D1,
+             typename D2,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<U>::value),reference_type>::type
-    operator()( const int p,
-                const int d0,
-                const int d1,
-                const int d2 ) const
-    { return access( index_type::s(p), index_type::i(p), d0, d1, d2 ); }
+    typename std::enable_if<(3==std::rank<U>::value &&
+                             std::is_integral<I>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_integral<D2>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    operator()( const I& i,
+                const D0& d0,
+                const D1& d1,
+                const D2& d2 ) const
+    { return access( index_type::s(i), index_type::a(i), d0, d1, d2 ); }
 
     // Rank 4
-    template<typename U = DataType>
+    template<typename I,
+             typename D0,
+             typename D1,
+             typename D2,
+             typename D3,
+             typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<U>::value),reference_type>::type
-    operator()( const int p,
-                const int d0,
-                const int d1,
-                const int d2,
-                const int d3 ) const
-    { return access( index_type::s(p), index_type::i(p), d0, d1, d2, d3 ); }
+    typename std::enable_if<(4==std::rank<U>::value &&
+                             std::is_integral<I>::value &&
+                             std::is_integral<D0>::value &&
+                             std::is_integral<D1>::value &&
+                             std::is_integral<D2>::value &&
+                             std::is_integral<D3>::value &&
+                             std::is_same<U,DataType>::value),
+                            reference_type>::type
+    operator()( const I& i,
+                const D0& d0,
+                const D1& d1,
+                const D2& d2,
+                const D3& d3 ) const
+    { return access( index_type::s(i), index_type::a(i), d0, d1, d2, d3 ); }
 
     // -------------------------------
     // Raw data access.
@@ -422,7 +520,7 @@ class Slice
       \return The extent of the given member data dimension.
     */
     KOKKOS_INLINE_FUNCTION
-    int extent( const std::size_t d ) const
+    std::size_t extent( const std::size_t d ) const
     { return _view.extent(d); }
 
     /*!
@@ -432,7 +530,7 @@ class Slice
       \return The stride of the given member data dimension.
     */
     KOKKOS_INLINE_FUNCTION
-    int stride( const std::size_t d ) const
+    std::size_t stride( const std::size_t d ) const
     { return _view.stride(d); }
 
   private:
@@ -442,7 +540,7 @@ class Slice
     kokkos_view _view;
 
     // Number of tuples in the slice.
-    int _size;
+    std::size_t _size;
 };
 
 //---------------------------------------------------------------------------//
