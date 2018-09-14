@@ -140,43 +140,18 @@ void apiTest()
     // Check field sizes.
     EXPECT_EQ( slice_0.size(), 35 );
     EXPECT_EQ( slice_0.numSoA(), 3 );
-    EXPECT_EQ( slice_0.fieldRank(), 3 );
-    int e01 = slice_0.fieldExtent(0);
-    EXPECT_EQ( e01, dim_1 );
-    int e02 = slice_0.fieldExtent(1);
-    EXPECT_EQ( e02, dim_2 );
-    int e03 = slice_0.fieldExtent(2);
-    EXPECT_EQ( e03, dim_3 );
 
     EXPECT_EQ( slice_1.size(), 35 );
     EXPECT_EQ( slice_1.numSoA(), 3 );
-    EXPECT_EQ( slice_1.fieldRank(), 0 );
 
     EXPECT_EQ( slice_2.size(), 35 );
     EXPECT_EQ( slice_2.numSoA(), 3 );
-    EXPECT_EQ( slice_2.fieldRank(), 4 );
-    int e21 = slice_2.fieldExtent(0);
-    EXPECT_EQ( e21, dim_1 );
-    int e22 = slice_2.fieldExtent(1);
-    EXPECT_EQ( e22, dim_2 );
-    int e23 = slice_2.fieldExtent(2);
-    EXPECT_EQ( e23, dim_3 );
-    int e24 = slice_2.fieldExtent(3);
-    EXPECT_EQ( e24, dim_4 );
 
     EXPECT_EQ( slice_3.size(), 35 );
     EXPECT_EQ( slice_3.numSoA(), 3 );
-    EXPECT_EQ( slice_3.fieldRank(), 1 );
-    int e31 = slice_3.fieldExtent(0);
-    EXPECT_EQ( e31, dim_1 );
 
     EXPECT_EQ( slice_4.size(), 35 );
     EXPECT_EQ( slice_4.numSoA(), 3 );
-    EXPECT_EQ( slice_4.fieldRank(), 2 );
-    int e41 = slice_4.fieldExtent(0);
-    EXPECT_EQ( e41, dim_1 );
-    int e42 = slice_4.fieldExtent(1);
-    EXPECT_EQ( e42, dim_2 );
 
     // Initialize data with the () operator. The implementation of operator()
     // calls access() and therefore tests that as well.

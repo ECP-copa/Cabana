@@ -97,19 +97,19 @@ class AoSoA
     // Member data type at a given index M. Note this is the user-defined
     // member data type - not the potentially transformed type actually stored
     // by the structs (SoAs) to achieve a given layout.
-    template<std::size_t Field>
+    template<std::size_t Member>
     using member_data_type =
-        typename MemberTypeAtIndex<Field,member_types>::type;
+        typename MemberTypeAtIndex<Member,member_types>::type;
 
     // Struct member array element value type at a given index M.
-    template<std::size_t Field>
+    template<std::size_t Member>
     using member_value_type =
-        typename std::remove_all_extents<member_data_type<Field> >::type;
+        typename std::remove_all_extents<member_data_type<Member> >::type;
 
     // Struct member array element pointer type at a given index M.
-    template<std::size_t Field>
+    template<std::size_t Member>
     using member_pointer_type =
-        typename std::add_pointer<member_value_type<Field> >::type;
+        typename std::add_pointer<member_value_type<Member> >::type;
 
   public:
 

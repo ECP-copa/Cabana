@@ -16,9 +16,9 @@ namespace Cabana
 namespace Impl
 {
 //---------------------------------------------------------------------------//
-// Given a tuple field type T of the given rank get the Kokkos view
+// Given a tuple member type T of the given rank get the Kokkos view
 // data layout parameters. The tuple index effectively introduces 2 new
-// dimensions to the problem on top of the field dimensions - one for the
+// dimensions to the problem on top of the member dimensions - one for the
 // struct index and one for the vector index.
 template<typename T, std::size_t Rank, int VectorLength>
 struct KokkosDataTypeImpl;
@@ -134,7 +134,7 @@ struct KokkosDataType
 };
 
 //---------------------------------------------------------------------------//
-// Kokkos view wrapper for tuple fields
+// Kokkos view wrapper for tuple members
 template<typename T,
          int VectorLength,
          typename std::enable_if<
@@ -274,12 +274,9 @@ class Slice
         return *this;
     }
 
-    //------------------------------
-    // Field sizes.
-
     /*!
-      \brief Returns the total number tuples in the field.
-      \return The number of tuples in the field.
+      \brief Returns the total number tuples in the slice.
+      \return The number of tuples in the slice.
     */
     KOKKOS_INLINE_FUNCTION
     int size() const
@@ -304,23 +301,8 @@ class Slice
             ? vector_length : ( _size % vector_length );
     }
 
-    /*!
-      \brief Get the rank of the tuple field.
-      \return The field rank.
-    */
-    int fieldRank()
-    { return _view.Rank - 2; }
-
-    /*!
-      \brief Get the extent of the given tuple field dimension.
-      \param d The field dimension for which to get the extent.
-      \return The field extent.
-    */
-    int fieldExtent( const int d )
-    { return _view.extent(d+2); }
-
-    // -------------------------------
-    // Access the data value at a given struct and array index.
+    // ------------
+    // 2-D accessor
 
     // Rank 0
     template<typename U = DataType>
@@ -367,8 +349,8 @@ class Slice
             const int d3 ) const
     { return _view( s, i, d0, d1, d2, d3); }
 
-    // -------------------------------
-    // Access the data value at a given tuple index.
+    // ------------
+    // 1-D accessor
 
     // Rank 0
     template<typename U = DataType>
@@ -420,25 +402,25 @@ class Slice
 
     /*!
       \brief Get a raw pointer to the data for this member
-      \return A raw pointer to the data for this field.
+      \return A raw pointer to the data for this slice.
     */
     KOKKOS_INLINE_FUNCTION
     pointer_type data() const
     { return _view.data(); }
 
     /*!
-      \brief Get the rank of the raw data for this field. This includes
-      the struct dimension, array dimension, and all tuple field
+      \brief Get the rank of the raw data for this slice. This includes
+      the struct dimension, array dimension, and all tuple slice
       dimensions.
-      \return The rank of the data for this field.
+      \return The rank of the data for this slice.
     */
     KOKKOS_INLINE_FUNCTION
     constexpr int rank() const
     { return _view.Rank; }
 
     /*!
-      \brief Get the extent of a given raw field data dimension. This includes
-      the struct dimension, array dimension, and all tuple field
+      \brief Get the extent of a given raw slice data dimension. This includes
+      the struct dimension, array dimension, and all tuple slice
       dimensions.
       \param d The member data dimension to get the extent for.
       \return The extent of the given member data dimension.
@@ -448,8 +430,8 @@ class Slice
     { return _view.extent(d); }
 
     /*!
-      \brief Get the stride of a given raw field dimension. This includes the
-      struct dimension, array dimension, and all tuple field dimensions.
+      \brief Get the stride of a given raw slice dimension. This includes the
+      struct dimension, array dimension, and all tuple slice dimensions.
       \param d The member data dimension to get the stride for.
       \return The stride of the given member data dimension.
     */

@@ -695,7 +695,7 @@ buildLinkedCellList(
         Kokkos::View<typename SliceType::value_type**,
                      typename SliceType::kokkos_memory_space>;
     KeyViewType keys(
-        "position_bin_keys", positions.size(), positions.fieldExtent(0) );
+        "position_bin_keys", positions.size(), positions.extent(2) );
     Kokkos::RangePolicy<typename SliceType::kokkos_execution_space>
         exec_policy( 0, positions.size() );
     auto copy_op = KOKKOS_LAMBDA( const int i )
