@@ -114,7 +114,7 @@ inline void deep_copy(
 
         // Copy via tuples.
         auto copy_func =
-            KOKKOS_LAMBDA( const int i )
+            KOKKOS_LAMBDA( const std::size_t i )
             { dst.setTuple( i, src_copy_on_dst.getTuple(i) ); };
         Kokkos::RangePolicy<typename dst_memory_space::execution_space>
             exec_policy( 0, dst.size() );

@@ -48,7 +48,7 @@ class Index
     template<typename I>
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr
-    typename std::enable_if<std::is_integral<I>::value,I>::type
+    typename std::enable_if<std::is_integral<I>::value,std::size_t>::type
     s( const I& i )
     {
         return (i - (i & vector_length_offset)) >>
@@ -66,7 +66,7 @@ class Index
     template<typename I>
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr
-    typename std::enable_if<std::is_integral<I>::value,I>::type
+    typename std::enable_if<std::is_integral<I>::value,int>::type
     a( const I& i )
     {
         return i & vector_length_offset;
@@ -86,7 +86,7 @@ class Index
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr
     typename std::enable_if<(std::is_integral<S>::value &&
-                             std::is_integral<A>::value),S>::type
+                             std::is_integral<A>::value),std::size_t>::type
     i( const S& s, const A& a )
     {
         return (s << vector_length_binary_bits) + a;

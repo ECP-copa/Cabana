@@ -42,7 +42,8 @@ class StructAndArrayParallelTag {};
 // Given a begin and end index get the starting and ending struct indices.
 template<int array_size>
 KOKKOS_INLINE_FUNCTION
-Kokkos::pair<int,int> getStructBounds( const int begin, const int end )
+Kokkos::pair<int,int>
+getStructBounds( const std::size_t begin, const std::size_t end )
 {
     Kokkos::pair<int,int> struct_bounds;
 
@@ -210,7 +211,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     // Create a wrapper for the functor. Each struct is given a thread and
     // each thread loops over the inner arrays.
     auto functor_wrapper =
-        KOKKOS_LAMBDA( const int s )
+        KOKKOS_LAMBDA( const std::size_t s )
         {
             auto array_bounds = getArrayBounds<ExecutionPolicy::array_size>(
                 begin, end, struct_bounds, s );
@@ -272,7 +273,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     auto end = exec_policy.end();
     auto struct_bounds =
         getStructBounds<ExecutionPolicy::array_size>( begin, end );
-    for ( int s = struct_bounds.first;
+    for ( std::size_t s = struct_bounds.first;
           s < struct_bounds.second;
           ++s )
     {
@@ -346,7 +347,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
 
     // Create a wrapper for the functor.
     auto functor_wrapper =
-        KOKKOS_LAMBDA( const int s, const int a )
+        KOKKOS_LAMBDA( const std::size_t s, const int a )
         {
             auto array_bounds =
             getArrayBounds<ExecutionPolicy::array_size>(

@@ -26,9 +26,9 @@ class NeighborDiscriminator<FullNeighborTag>
     // that the particle does not neighbor itself (i.e. the particle index
     // "p" is not the same as the neighbor index "n").
     KOKKOS_INLINE_FUNCTION
-    static bool isValid( const int p,
+    static bool isValid( const std::size_t p,
                          const double xp, const double yp, const double zp,
-                         const int n,
+                         const std::size_t n,
                          const double xn, const double yn, const double zn )
     {
         return ( p != n );
@@ -48,9 +48,9 @@ class NeighborDiscriminator<HalfNeighborTag>
     // then the y direction is checked next and finally the z direction if the
     // y coordinates are the same.
     KOKKOS_INLINE_FUNCTION
-    static bool isValid( const int p,
+    static bool isValid( const std::size_t p,
                          const double xp, const double yp, const double zp,
-                         const int n,
+                         const std::size_t n,
                          const double xn, const double yn, const double zn )
     {
         return ( (p != n) &&
@@ -148,8 +148,8 @@ struct VerletListBuilder
     // Constructor.
     VerletListBuilder(
         PositionSlice slice,
-        const int begin,
-        const int end,
+        const std::size_t begin,
+        const std::size_t end,
         const PositionValueType neighborhood_radius,
         const PositionValueType cell_size_ratio,
         const PositionValueType grid_min[3],
@@ -196,14 +196,14 @@ struct VerletListBuilder
         cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
 
         // Operate on the particles in the bin.
-        int b_offset = bin_data_1d.binOffset(cell);
+        std::size_t b_offset = bin_data_1d.binOffset(cell);
         Kokkos::parallel_for(
             Kokkos::TeamThreadRange(team,0,bin_data_1d.binSize(cell)),
             [&] ( const int bi )
             {
                 // Get the true particle id. The binned particle index is the
                 // league rank of the team.
-                int pid = linked_cell_list.permutation( bi + b_offset );
+                std::size_t pid = linked_cell_list.permutation( bi + b_offset );
 
                 // Cache the particle coordinates.
                 double x_p = position(pid,0);
@@ -224,14 +224,15 @@ struct VerletListBuilder
                                 // Check the particles in this bin to see if they are
                                 // neighbors. If they are add to the count for this bin.
                                 int cell_count = 0;
-                                int a_offset = linked_cell_list.binOffset(i,j,k);
+                                std::size_t a_offset = linked_cell_list.binOffset(i,j,k);
                                 Kokkos::parallel_reduce(
                                     Kokkos::ThreadVectorRange(
                                         team,linked_cell_list.binSize(i,j,k)),
                                     [&] ( const int n, int& local_count ) {
 
                                         //  Get the true id of the candidate neighbor.
-                                        int nid = linked_cell_list.permutation( a_offset + n );
+                                        std::size_t nid =
+                                            linked_cell_list.permutation( a_offset + n );
 
                                         // Cache the candidate neighbor particle
                                         // coordinates.
@@ -323,14 +324,14 @@ struct VerletListBuilder
         cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
 
         // Operate on the particles in the bin.
-        int b_offset = bin_data_1d.binOffset(cell);
+        std::size_t b_offset = bin_data_1d.binOffset(cell);
         Kokkos::parallel_for(
             Kokkos::TeamThreadRange(team,0,bin_data_1d.binSize(cell)),
             [&] ( const int bi )
             {
                 // Get the true particle id. The binned particle index is the
                 // league rank of the team.
-                int pid = linked_cell_list.permutation( bi + b_offset );
+                std::size_t pid = linked_cell_list.permutation( bi + b_offset );
 
                 // Cache the particle coordinates.
                 double x_p = position(pid,0);
@@ -349,14 +350,15 @@ struct VerletListBuilder
                             {
                                 // Check the particles in this bin to see if they are
                                 // neighbors.
-                                int a_offset = linked_cell_list.binOffset(i,j,k);
+                                std::size_t a_offset = linked_cell_list.binOffset(i,j,k);
                                 Kokkos::parallel_for(
                                     Kokkos::ThreadVectorRange(
                                         team,linked_cell_list.binSize(i,j,k)),
                                     [&] ( const int n ) {
 
                                         //  Get the true id of the candidate neighbor.
-                                        int nid = linked_cell_list.permutation( a_offset + n );
+                                        std::size_t nid =
+                                            linked_cell_list.permutation( a_offset + n );
 
                                         // Cache the candidate neighbor particle coordinates.
                                         double x_n = position(nid,0);
@@ -455,8 +457,8 @@ class VerletList
     template<class PositionSlice>
     VerletList(
         PositionSlice x,
-        const int begin,
-        const int end,
+        const std::size_t begin,
+        const std::size_t end,
         const typename PositionSlice::value_type neighborhood_radius,
         const typename PositionSlice::value_type cell_size_ratio,
         const typename PositionSlice::value_type grid_min[3],
@@ -515,7 +517,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
     static int numNeighbor( const list_type& list,
-                            const int particle_index )
+                            const std::size_t particle_index )
     {
         return list._counts( particle_index );
     }
@@ -524,7 +526,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
     static int getNeighbor( const list_type& list,
-                            const int particle_index,
+                            const std::size_t particle_index,
                             const int neighbor_index )
     {
         return list._neighbors(

@@ -410,9 +410,9 @@ KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
     (0==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
 soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                      const int dst_idx,
+                      const std::size_t dst_idx,
                       const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                      const int src_idx )
+                      const std::size_t src_idx )
 {
     dst.template get<M>( dst_idx ) = src.template get<M>( src_idx );
 }
@@ -423,11 +423,11 @@ KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
     (1==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
 soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                      const int dst_idx,
+                      const std::size_t dst_idx,
                       const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                      const int src_idx )
+                      const std::size_t src_idx )
 {
-    for ( int i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
+    for ( std::size_t i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
         dst.template get<M>( dst_idx, i0 ) = src.template get<M>( src_idx, i0 );
 }
 
@@ -437,12 +437,12 @@ KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
     (2==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
 soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                      const int dst_idx,
+                      const std::size_t dst_idx,
                       const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                      const int src_idx )
+                      const std::size_t src_idx )
 {
-    for ( int i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
-        for ( int i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
+    for ( std::size_t i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
+        for ( std::size_t i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
                 dst.template get<M>( dst_idx, i0, i1 ) =
                     src.template get<M>( src_idx, i0, i1 );
 }
@@ -453,13 +453,13 @@ KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
     (3==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
 soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                      const int dst_idx,
+                      const std::size_t dst_idx,
                       const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                      const int src_idx )
+                      const std::size_t src_idx )
 {
-    for ( int i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
-        for ( int i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
-            for ( int i2 = 0; i2 < dst.template extent<M,2>(); ++i2 )
+    for ( std::size_t i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
+        for ( std::size_t i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
+            for ( std::size_t i2 = 0; i2 < dst.template extent<M,2>(); ++i2 )
                 dst.template get<M>( dst_idx, i0, i1, i2 ) =
                     src.template get<M>( src_idx, i0, i1, i2 );
 }
@@ -470,14 +470,14 @@ KOKKOS_INLINE_FUNCTION
 typename std::enable_if<
     (4==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
 soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                      const int dst_idx,
+                      const std::size_t dst_idx,
                       const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                      const int src_idx )
+                      const std::size_t src_idx )
 {
-    for ( int i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
-        for ( int i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
-            for ( int i2 = 0; i2 < dst.template extent<M,2>(); ++i2 )
-                for ( int i3 = 0; i3 < dst.template extent<M,3>(); ++i3 )
+    for ( std::size_t i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
+        for ( std::size_t i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
+            for ( std::size_t i2 = 0; i2 < dst.template extent<M,2>(); ++i2 )
+                for ( std::size_t i3 = 0; i3 < dst.template extent<M,3>(); ++i3 )
                     dst.template get<M>( dst_idx, i0, i1, i2, i3 ) =
                         src.template get<M>( src_idx, i0, i1, i2, i3 );
 }
@@ -487,9 +487,9 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
 template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 void soaElementCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                     const int dst_idx,
+                     const std::size_t dst_idx,
                      const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                     const int src_idx,
+                     const std::size_t src_idx,
                      std::integral_constant<std::size_t,M> )
 {
     soaElementMemberCopy<M>( dst, dst_idx, src, src_idx );
@@ -500,9 +500,9 @@ void soaElementCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
 template<int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 void soaElementCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                     const int dst_idx,
+                     const std::size_t dst_idx,
                      const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                     const int src_idx,
+                     const std::size_t src_idx,
                      std::integral_constant<std::size_t,0> )
 {
     soaElementMemberCopy<0>( dst, dst_idx, src, src_idx );
@@ -512,9 +512,9 @@ void soaElementCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
 template<int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION
 void tupleCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                const int dst_idx,
+                const std::size_t dst_idx,
                 const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                const int src_idx )
+                const std::size_t src_idx )
 {
     soaElementCopy( dst, dst_idx, src, src_idx,
                     std::integral_constant<std::size_t,sizeof...(Types)-1>() );

@@ -55,7 +55,7 @@ class BinningData
       \return The number of particles in the bin.
     */
     KOKKOS_INLINE_FUNCTION
-    int binSize( const int bin_id ) const
+    int binSize( const size_type bin_id ) const
     { return _counts( bin_id ); }
 
     /*!
@@ -64,7 +64,7 @@ class BinningData
       \return The starting particle index of the bin.
     */
     KOKKOS_INLINE_FUNCTION
-    size_type binOffset( const int bin_id ) const
+    size_type binOffset( const size_type bin_id ) const
     { return _offsets( bin_id ); }
 
     /*!
@@ -72,7 +72,7 @@ class BinningData
       particle in the old (unbinned) layout.
     */
     KOKKOS_INLINE_FUNCTION
-    int permutation( const int particle_id ) const
+    size_type permutation( const size_type particle_id ) const
     { return _permute_vector(particle_id); }
 
     /*!
@@ -130,7 +130,7 @@ class LinkedCellList
       \brief Constructor
     */
     LinkedCellList( BinningData<KokkosMemorySpace> bin_data_1d,
-                                const int nbin[3] )
+                    const int nbin[3] )
         : _bin_data( bin_data_1d )
     {
         _nbin[0] = nbin[0];
@@ -190,7 +190,7 @@ class LinkedCellList
       the slowest and the k index mvoes the fastest.
     */
     KOKKOS_INLINE_FUNCTION
-    int cardinalBinIndex( const int i, const int j, const int k ) const
+    size_type cardinalBinIndex( const int i, const int j, const int k ) const
     { return (i * _nbin[1] + j) * _nbin[2] + k; }
 
     /*!
@@ -240,7 +240,7 @@ class LinkedCellList
       \return The particle id in the old (unbinned) layout.
     */
     KOKKOS_INLINE_FUNCTION
-    int permutation( const int particle_id ) const
+    size_type permutation( const int particle_id ) const
     { return _bin_data.permutation(particle_id); }
 
     /*!
@@ -272,8 +272,8 @@ BinningData<typename KeyViewType::memory_space>
 kokkosBinSort( KeyViewType keys,
                Comparator comp,
                const bool sort_within_bins,
-               const int begin,
-               const int end )
+               const std::size_t begin,
+               const std::size_t end )
 {
     Kokkos::BinSort<KeyViewType,Comparator> bin_sort(
         keys, begin, end, comp, sort_within_bins );
@@ -288,7 +288,7 @@ kokkosBinSort( KeyViewType keys,
 // Given a set of keys, find the minimum and maximum over the given range.
 template<class KeyViewType>
 Kokkos::MinMaxScalar<typename KeyViewType::non_const_value_type>
-keyMinMax( KeyViewType keys, const int begin, const int end )
+keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
 {
     Kokkos::MinMaxScalar<typename KeyViewType::non_const_value_type> result;
     Kokkos::MinMax<typename KeyViewType::non_const_value_type> reducer(result);
@@ -309,8 +309,8 @@ BinningData<typename KeyViewType::memory_space>
 kokkosBinSort1d( KeyViewType keys,
                  const int nbin,
                  const bool sort_within_bins,
-                 const int begin,
-                 const int end )
+                 const std::size_t begin,
+                 const std::size_t end )
 {
     // Find the minimum and maximum key values.
     auto key_bounds = Impl::keyMinMax( keys, begin, end );
@@ -335,7 +335,7 @@ copySliceToKeys( SliceType slice )
     KeyViewType keys( "slice_keys", slice.size() );
     Kokkos::RangePolicy<typename SliceType::kokkos_execution_space>
         exec_policy( 0, slice.size() );
-    auto copy_op = KOKKOS_LAMBDA( const int i ) { keys(i) = slice(i); };
+    auto copy_op = KOKKOS_LAMBDA( const std::size_t i ) { keys(i) = slice(i); };
     Kokkos::parallel_for( "Cabana::copySliceToKeys::copy_op",
                           exec_policy,
                           copy_op );
@@ -372,8 +372,8 @@ template<class KeyViewType, class Comparator>
 typename BinningData<typename KeyViewType::memory_space>::OffsetView
 sortByKeyWithComparator( KeyViewType keys,
                          Comparator comp,
-                         const int begin,
-                         const int end )
+                         const std::size_t begin,
+                         const std::size_t end )
 {
     auto bin_data = Impl::kokkosBinSort( keys, comp, true, begin, end );
     return bin_data.permuteVector();
@@ -429,8 +429,8 @@ BinningData<typename KeyViewType::memory_space>
 binByKeyWithComparator(
     KeyViewType keys,
     Comparator comp,
-    const int begin,
-    const int end )
+    const std::size_t begin,
+    const std::size_t end )
 {
     return Impl::kokkosBinSort( keys, comp, false, begin, end );
 }
@@ -479,7 +479,7 @@ binByKeyWithComparator(
 */
 template<class KeyViewType>
 typename BinningData<typename KeyViewType::memory_space>::OffsetView
-sortByKey( KeyViewType keys, const int begin, const int end )
+sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end )
 {
     int nbin = (end - begin) / 2;
     auto bin_data =
@@ -530,8 +530,8 @@ template<class KeyViewType>
 BinningData<typename KeyViewType::memory_space>
 binByKey( KeyViewType keys,
           const int nbin,
-          const int begin,
-          const int end )
+          const std::size_t begin,
+          const std::size_t end )
 {
     return Impl::kokkosBinSort1d( keys, nbin, false, begin, end );
 }
@@ -574,8 +574,8 @@ binByKey( KeyViewType keys, const int nbin )
 template<class SliceType>
 typename BinningData<typename SliceType::kokkos_memory_space>::OffsetView
 sortByMember( SliceType slice,
-              const int begin,
-              const int end,
+              const std::size_t begin,
+              const std::size_t end,
     typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
     auto keys = Impl::copySliceToKeys( slice );
@@ -624,8 +624,8 @@ BinningData<typename SliceType::kokkos_memory_space>
 binByMember(
     SliceType slice,
     const int nbin,
-    const int begin,
-    const int end,
+    const std::size_t begin,
+    const std::size_t end,
     typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
     auto keys = Impl::copySliceToKeys( slice );
@@ -678,8 +678,8 @@ template<class SliceType>
 LinkedCellList<typename SliceType::kokkos_memory_space>
 buildLinkedCellList(
     SliceType positions,
-    const int begin,
-    const int end,
+    const std::size_t begin,
+    const std::size_t end,
     const typename SliceType::value_type grid_delta[3],
     const typename SliceType::value_type grid_min[3],
     const typename SliceType::value_type grid_max[3],
@@ -698,7 +698,7 @@ buildLinkedCellList(
         "position_bin_keys", positions.size(), positions.extent(2) );
     Kokkos::RangePolicy<typename SliceType::kokkos_execution_space>
         exec_policy( 0, positions.size() );
-    auto copy_op = KOKKOS_LAMBDA( const int i )
+    auto copy_op = KOKKOS_LAMBDA( const std::size_t i )
                    { for ( int d = 0; d < 3; ++d ) keys(i,d) = positions(i,d); };
     Kokkos::parallel_for( "Cabana::buildLinkedCellList::copy_op",
                           exec_policy,
@@ -767,15 +767,15 @@ buildLinkedCellList(
  */
 template<class ViewType, class AoSoA_t>
 void permute( const ViewType& permute_vector,
-              const int begin,
-              const int end,
+              const std::size_t begin,
+              const std::size_t end,
               AoSoA_t& aosoa )
 {
     Kokkos::View<typename AoSoA_t::tuple_type*,
                  typename ViewType::memory_space>
         scratch_tuples( "scratch_tuples", end - begin );
 
-    auto permute_to_scratch = KOKKOS_LAMBDA( const int i )
+    auto permute_to_scratch = KOKKOS_LAMBDA( const std::size_t i )
                               {
                                   scratch_tuples( i - begin ) =
                                   aosoa.getTuple( permute_vector(i) );
@@ -786,7 +786,7 @@ void permute( const ViewType& permute_vector,
         permute_to_scratch );
     Kokkos::fence();
 
-    auto copy_back = KOKKOS_LAMBDA( const int i )
+    auto copy_back = KOKKOS_LAMBDA( const std::size_t i )
                      { aosoa.setTuple( i, scratch_tuples(i-begin) ); };
     Kokkos::parallel_for(
         "Cabana::kokkosBinSort::copy_back",

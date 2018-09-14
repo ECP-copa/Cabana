@@ -18,7 +18,7 @@ class RangePolicy
     using execution_space = ExecutionSpace;
 
     // Range constructor.
-    RangePolicy( const int begin, const int end )
+    RangePolicy( const std::size_t begin, const std::size_t end )
         : _begin( begin )
         , _end( end )
     {}
@@ -33,13 +33,13 @@ class RangePolicy
     {}
 
     // Range bounds accessors.
-    KOKKOS_INLINE_FUNCTION int begin() const { return _begin; }
-    KOKKOS_INLINE_FUNCTION int end() const { return _end; }
+    KOKKOS_INLINE_FUNCTION std::size_t begin() const { return _begin; }
+    KOKKOS_INLINE_FUNCTION std::size_t end() const { return _end; }
 
   private:
 
-    int _begin;
-    int _end;
+    std::size_t _begin;
+    std::size_t _end;
 };
 
 //---------------------------------------------------------------------------//
