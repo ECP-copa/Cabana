@@ -160,21 +160,17 @@ struct KokkosViewWrapper
   \class Slice
 
   \brief A slice of an array-of-structs-of-arrays with data access to a single
-  member.
-
-  A slice provides a simple wrapper around a single data member of an
-  AoSoA. This does a few convenient things. First, it decouples access of the
-  member from the AoSoA meaning that functionality can be implemented using
-  multiple slices from potentially multiple AoSoA containers. Second, it
-  eliminates the member index template parameter from the AoSoA get function,
-  instead giving an operator() syntax for accessing the member data. Third, it
-  allows for the prescription of a given set of access traits for the data.
+  multidimensional member.
 */
 //---------------------------------------------------------------------------//
 template<typename DataType,
          typename MemorySpace,
          typename MemoryAccessType,
-         int VectorLength>
+         int VectorLength,
+         typename std::enable_if<
+             (is_memory_space<MemorySpace>::value &&
+              is_memory_access_tag<MemoryAccessType>::value &&
+              Impl::IsVectorLengthValid<VectorLength>::value),int>::type = 0>
 class Slice
 {
   public:
