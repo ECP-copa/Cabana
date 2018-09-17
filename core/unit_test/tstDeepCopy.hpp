@@ -22,7 +22,7 @@ void checkDataMembers(
     auto slice_3 = aosoa.template slice<3>();
     auto slice_4 = aosoa.template slice<4>();
 
-    for ( auto idx = 0; idx < aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
@@ -92,7 +92,7 @@ void testDeepCopy()
     auto slice_2 = src_aosoa.template slice<2>();
     auto slice_3 = src_aosoa.template slice<3>();
     auto slice_4 = src_aosoa.template slice<4>();
-    for ( auto idx = 0; idx < src_aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx < src_aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )

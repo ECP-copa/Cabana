@@ -273,7 +273,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     auto end = exec_policy.end();
     auto struct_bounds =
         getStructBounds<ExecutionPolicy::array_size>( begin, end );
-    for ( std::size_t s = struct_bounds.first;
+    for ( int s = struct_bounds.first;
           s < struct_bounds.second;
           ++s )
     {

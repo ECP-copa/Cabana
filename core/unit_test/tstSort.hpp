@@ -34,7 +34,7 @@ void testSortByKey()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -55,7 +55,7 @@ void testSortByKey()
     Cabana::permute( permute_vector, aosoa );
 
     // Check the result of the sort.
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -103,7 +103,7 @@ void testBinByKey()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -126,7 +126,7 @@ void testBinByKey()
 
     // Check the result of the sort.
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -169,7 +169,7 @@ void testSortByMember()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -188,7 +188,7 @@ void testSortByMember()
     Cabana::permute( permute_vector, aosoa );
 
     // Check the result of the sort.
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -229,7 +229,7 @@ void testSortByMemberDataOnly()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -248,7 +248,7 @@ void testSortByMemberDataOnly()
 
     // Check that the data didn't get sorted and the permutation vector is
     // correct.
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -291,7 +291,7 @@ void testBinByMember()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -312,7 +312,7 @@ void testBinByMember()
 
     // Check the result of the sort.
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -357,7 +357,7 @@ void testBinByMemberDataOnly()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -379,7 +379,7 @@ void testBinByMemberDataOnly()
     // Check the result of the sort. Make sure nothing moved execpt the
     // binning data.
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -420,7 +420,7 @@ void testGridBin3d()
     double x_max = x_min + nx * dx;
     auto pos = aosoa.slice<Position>();
     auto cell_id = aosoa.slice<CellId>();
-    int particle_id = 0;
+    std::size_t particle_id = 0;
     for ( int k = 0; k < nx; ++k )
     {
         for ( int j = 0; j < nx; ++j )

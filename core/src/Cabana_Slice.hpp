@@ -297,10 +297,12 @@ class Slice
       \param s The struct index to get the array size for.
       \return The size of the array at the given struct index.
     */
+    template<typename S>
     KOKKOS_INLINE_FUNCTION
-    std::size_t arraySize( const std::size_t s ) const
+    typename std::enable_if<std::is_integral<S>::value,int>::type
+    arraySize( const S& s ) const
     {
-        return ( s < (int) _view.extent(0) - 1 )
+        return ( (std::size_t) s < _view.extent(0) - 1 )
             ? vector_length : ( _size % vector_length );
     }
 

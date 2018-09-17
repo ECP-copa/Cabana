@@ -254,8 +254,8 @@ class AoSoA
     typename std::enable_if<std::is_integral<S>::value,int>::type
     arraySize( const S& s ) const
     {
-        return
-            ( s < _num_soa - 1 ) ? vector_length : ( _size % vector_length );
+        return ( (std::size_t) s < _num_soa - 1 )
+            ? vector_length : ( _size % vector_length );
     }
 
     /*!

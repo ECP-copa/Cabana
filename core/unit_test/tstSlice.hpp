@@ -21,7 +21,7 @@ void initializeDataMembers(
     auto slice_3 = aosoa.template slice<3>();
     auto slice_4 = aosoa.template slice<4>();
 
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
@@ -65,7 +65,7 @@ void checkDataMembers(
     auto slice_3 = aosoa.template slice<3>();
     auto slice_4 = aosoa.template slice<4>();
 
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
@@ -204,7 +204,7 @@ void apiTest()
     auto p2 = slice_2.data();
     auto p3 = slice_3.data();
     auto p4 = slice_4.data();
-    for ( int s = 0; s < slice_0.numSoA(); ++s )
+    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
         for ( int a = 0; a < slice_0.arraySize(s); ++a )
         {
             // Member 0.
@@ -311,7 +311,7 @@ void randomAccessTest()
     auto slice_4 = aosoa_2.slice<4>();
 
     // Assign the read-only data to the new aosoa.
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )

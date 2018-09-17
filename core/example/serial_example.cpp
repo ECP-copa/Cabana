@@ -64,7 +64,7 @@ void initializeParticles( ParticleList particles )
     auto stress = particles.slice<Stress>();
     auto status = particles.slice<Status>();
 
-    for ( auto idx = 0; idx != particles.size(); ++idx )
+    for ( std::size_t idx = 0; idx != particles.size(); ++idx )
     {
         // Initialize position.
         position_x( idx ) = 1.1;
@@ -96,7 +96,7 @@ void printParticles( const ParticleList particles )
     auto stress = particles.slice<Stress>();
     auto status = particles.slice<Status>();
 
-    for ( auto idx = 0; idx != particles.size(); ++idx )
+    for ( std::size_t idx = 0; idx != particles.size(); ++idx )
     {
         auto aosoa_idx_s = Cabana::Impl::Index<32>::s( idx );
         auto aosoa_idx_a = Cabana::Impl::Index<32>::a( idx );

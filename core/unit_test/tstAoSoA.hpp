@@ -23,7 +23,7 @@ void checkDataMembers(
     auto slice_3 = aosoa.template slice<3>();
     auto slice_4 = aosoa.template slice<4>();
 
-    for ( auto idx = 0; idx < aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
@@ -129,7 +129,7 @@ void testAoSoA()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
@@ -276,7 +276,7 @@ void testRawData()
     }
 
     // Check the results.
-    for ( int idx = 0; idx < aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
         int s = Cabana::Impl::Index<16>::s( idx );
         int a = Cabana::Impl::Index<16>::a( idx );
@@ -335,7 +335,7 @@ void testTuple()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
@@ -364,7 +364,7 @@ void testTuple()
     }
 
     // Assign the AoSoA data to the tuples.
-    for ( auto idx = 0; idx < aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
          tuples( idx ) = aosoa.getTuple( idx );
 
     // Change the tuple data.
@@ -400,7 +400,7 @@ void testTuple()
     }
 
     // Assign the tuple data back to the AoSoA.
-    for ( auto idx = 0; idx < aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
         aosoa.setTuple( idx, tuples(idx) );
 
     // Check the results.
@@ -443,7 +443,7 @@ void testAccess()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( int s = 0; s < aosoa.numSoA(); ++s )
+    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
     {
         auto& soa = aosoa.access( s );
 
