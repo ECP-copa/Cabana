@@ -12,7 +12,7 @@
 #ifndef CABANA_SOA_HPP
 #define CABANA_SOA_HPP
 
-#include <Cabana_Types.hpp>
+#include <Cabana_Macros.hpp>
 #include <impl/Cabana_IndexSequence.hpp>
 #include <Cabana_MemberTypes.hpp>
 
@@ -184,7 +184,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
       \return The rank of the given member index data.
     */
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     constexpr int rank() const
     {
         return std::rank<member_data_type<M> >::value;
@@ -200,7 +200,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
       \return The extent of the dimension.
     */
     template<std::size_t M, std::size_t D>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     constexpr int extent() const
     {
         return std::extent<member_data_type<M>,D>::value;
@@ -212,7 +212,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
     // Rank 0
     template<std::size_t M,
              typename A>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value),
                             member_reference_type<M> >::type
@@ -224,7 +224,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
 
     template<std::size_t M,
              typename A>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value),
                             member_value_type<M> >::type
@@ -238,7 +238,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
     template<std::size_t M,
              typename A,
              typename D0>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(1==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value &&
                              std::is_integral<D0>::value),
@@ -253,7 +253,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
     template<std::size_t M,
              typename A,
              typename D0>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(1==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value &&
                              std::is_integral<D0>::value),
@@ -270,7 +270,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
              typename A,
              typename D0,
              typename D1>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(2==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value &&
                              std::is_integral<D0>::value &&
@@ -288,7 +288,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
              typename A,
              typename D0,
              typename D1>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(2==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value &&
                              std::is_integral<D0>::value &&
@@ -308,7 +308,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
              typename D0,
              typename D1,
              typename D2>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(3==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value &&
                              std::is_integral<D0>::value &&
@@ -329,7 +329,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
              typename D0,
              typename D1,
              typename D2>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(3==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value &&
                              std::is_integral<D0>::value &&
@@ -352,7 +352,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
              typename D1,
              typename D2,
              typename D3>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(4==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value &&
                              std::is_integral<D0>::value &&
@@ -376,7 +376,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
              typename D1,
              typename D2,
              typename D3>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<(4==std::rank<member_data_type<M> >::value &&
                              std::is_integral<A>::value &&
                              std::is_integral<D0>::value &&

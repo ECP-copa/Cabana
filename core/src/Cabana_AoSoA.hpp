@@ -16,6 +16,7 @@
 #include <Cabana_Slice.hpp>
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
+#include <Cabana_Macros.hpp>
 #include <Cabana_SoA.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
@@ -157,7 +158,7 @@ class AoSoA
       This is the number of actual objects held in the container, which is not
       necessarily equal to its storage capacity.
     */
-    KOKKOS_FUNCTION
+    CABANA_FUNCTION
     std::size_t size() const { return _size; }
 
     /*!
@@ -177,7 +178,7 @@ class AoSoA
       The capacity of a container can be explicitly altered by calling member
       reserve.
     */
-    KOKKOS_FUNCTION
+    CABANA_FUNCTION
     std::size_t capacity() const { return _capacity; }
 
     /*!
@@ -250,7 +251,7 @@ class AoSoA
 
       \return The number of structs-of-arrays in the container.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     std::size_t numSoA() const { return _num_soa; }
 
     /*!
@@ -261,7 +262,7 @@ class AoSoA
       \return The size of the array at the given struct index.
     */
     template<typename S>
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     typename std::enable_if<std::is_integral<S>::value,int>::type
     arraySize( const S& s ) const
     {
@@ -277,7 +278,7 @@ class AoSoA
       \return The SoA reference at the given index.
     */
     template<typename S>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<std::is_integral<S>::value,soa_type&>::type
     access( const S& s ) const
     { return _data(s); }
@@ -290,7 +291,7 @@ class AoSoA
       \return A tuple containing a deep copy of the data at the given index.
     */
     template<typename I>
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     typename std::enable_if<std::is_integral<I>::value,tuple_type>::type
     getTuple( const I& i ) const
     {
@@ -307,7 +308,7 @@ class AoSoA
       \param tuple The tuple to get the data from.
     */
     template<typename I>
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     typename std::enable_if<std::is_integral<I>::value,void>::type
     setTuple( const I& i,
               const tuple_type& tpl ) const

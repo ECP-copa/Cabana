@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cabana_AoSoA.hpp>
+#include <Cabana_Core.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_VerletList.hpp>
 #include <Cabana_Sort.hpp>
@@ -228,12 +228,12 @@ int main( int argc, char* argv[] )
     double cell_size_ratio = std::atof( argv[3] );
 
     // Initialize the kokkos runtime.
-    Kokkos::initialize( argc, argv );
+    Cabana::initialize( argc, argv );
 
     // Run the test.
     perfTest( cutoff_ratio, num_data, cell_size_ratio );
 
     // Finalize.
-    Kokkos::finalize();
+    Cabana::finalize();
     return 0;
 }

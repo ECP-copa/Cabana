@@ -14,6 +14,7 @@
 
 #include <Cabana_SoA.hpp>
 #include <Cabana_MemberTypes.hpp>
+#include <Cabana_Macros.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -38,7 +39,7 @@ struct Tuple<MemberTypes<Types...> >
 
     // Rank 0
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (0==std::rank<typename base::template member_data_type<M> >::value),
         typename base::template member_reference_type<M> >::type
@@ -49,7 +50,7 @@ struct Tuple<MemberTypes<Types...> >
     }
 
     template<std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (0==std::rank<typename base::template member_data_type<M> >::value),
         typename base::template member_value_type<M> >::type
@@ -62,7 +63,7 @@ struct Tuple<MemberTypes<Types...> >
     // Rank 1
     template<std::size_t M,
              typename D0>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<typename base::template member_data_type<M> >::value &&
          std::is_integral<D0>::value),
@@ -75,7 +76,7 @@ struct Tuple<MemberTypes<Types...> >
 
     template<std::size_t M,
              typename D0>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (1==std::rank<typename base::template member_data_type<M> >::value &&
          std::is_integral<D0>::value),
@@ -90,7 +91,7 @@ struct Tuple<MemberTypes<Types...> >
     template<std::size_t M,
              typename D0,
              typename D1>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<typename base::template member_data_type<M> >::value &&
          std::is_integral<D0>::value &&
@@ -106,7 +107,7 @@ struct Tuple<MemberTypes<Types...> >
     template<std::size_t M,
              typename D0,
              typename D1>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (2==std::rank<typename base::template member_data_type<M> >::value &&
          std::is_integral<D0>::value &&
@@ -124,7 +125,7 @@ struct Tuple<MemberTypes<Types...> >
              typename D0,
              typename D1,
              typename D2>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<typename base::template member_data_type<M> >::value &&
          std::is_integral<D0>::value &&
@@ -143,7 +144,7 @@ struct Tuple<MemberTypes<Types...> >
              typename D0,
              typename D1,
              typename D2>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (3==std::rank<typename base::template member_data_type<M> >::value &&
          std::is_integral<D0>::value &&
@@ -164,7 +165,7 @@ struct Tuple<MemberTypes<Types...> >
              typename D1,
              typename D2,
              typename D3>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<typename base::template member_data_type<M> >::value &&
          std::is_integral<D0>::value &&
@@ -186,7 +187,7 @@ struct Tuple<MemberTypes<Types...> >
              typename D1,
              typename D2,
              typename D3>
-    KOKKOS_FORCEINLINE_FUNCTION
+    CABANA_FORCEINLINE_FUNCTION
     typename std::enable_if<
         (4==std::rank<typename base::template member_data_type<M> >::value &&
          std::is_integral<D0>::value &&
