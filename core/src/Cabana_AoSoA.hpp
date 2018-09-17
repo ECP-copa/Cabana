@@ -94,7 +94,8 @@ class AoSoA
     using soa_type = SoA<vector_length,member_types>;
 
     // Managed data view.
-    using soa_view = Kokkos::View<soa_type*,typename memory_space::kokkos_memory_space>;
+    using soa_view =
+        Kokkos::View<soa_type*,typename memory_space::kokkos_memory_space>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
