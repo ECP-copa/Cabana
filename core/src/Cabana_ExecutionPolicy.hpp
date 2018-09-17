@@ -12,6 +12,8 @@
 #ifndef CABANA_EXECUTIONPOLICY_HPP
 #define CABANA_EXECUTIONPOLICY_HPP
 
+#include <Cabana_Macros.hpp>
+
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
@@ -44,8 +46,8 @@ class RangePolicy
     {}
 
     // Range bounds accessors.
-    KOKKOS_INLINE_FUNCTION std::size_t begin() const { return _begin; }
-    KOKKOS_INLINE_FUNCTION std::size_t end() const { return _end; }
+    CABANA_INLINE_FUNCTION std::size_t begin() const { return _begin; }
+    CABANA_INLINE_FUNCTION std::size_t end() const { return _end; }
 
   private:
 

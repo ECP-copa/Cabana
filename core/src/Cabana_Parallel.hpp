@@ -30,22 +30,6 @@ namespace Impl
 {
 template<class ExecutionSpace>
 class PerformanceTraits;
-} // end namespace impl
-
-//---------------------------------------------------------------------------//
-// Algorithm tags.
-
-//! 1D parallelism over all indices
-class IndexParallelTag {};
-
-//! 1D parallelism over structs with a thread-local loop over the inner arrays
-class StructParallelTag {};
-
-//! 1D parallelism over inner arrays with an outer serial loop over structs
-class ArrayParallelTag {};
-
-//! 2D parallelism over structs and inner arrays
-class StructAndArrayParallelTag {};
 
 //---------------------------------------------------------------------------//
 // Helper functions
@@ -108,6 +92,23 @@ getArrayBounds( const int begin,
 
     return array_bounds;
 }
+
+} // end namespace impl
+
+//---------------------------------------------------------------------------//
+// Algorithm tags.
+
+//! 1D parallelism over all indices
+class IndexParallelTag {};
+
+//! 1D parallelism over structs with a thread-local loop over the inner arrays
+class StructParallelTag {};
+
+//! 1D parallelism over inner arrays with an outer serial loop over structs
+class ArrayParallelTag {};
+
+//! 2D parallelism over structs and inner arrays
+class StructAndArrayParallelTag {};
 
 //---------------------------------------------------------------------------//
 // Parallel for
@@ -217,14 +218,14 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
     auto struct_bounds =
-        getStructBounds<ExecutionPolicy::array_size>( begin, end );
+        Impl::getStructBounds<ExecutionPolicy::array_size>( begin, end );
 
     // Create a wrapper for the functor. Each struct is given a thread and
     // each thread loops over the inner arrays.
     auto functor_wrapper =
         KOKKOS_LAMBDA( const std::size_t s )
         {
-            auto array_bounds = getArrayBounds<ExecutionPolicy::array_size>(
+            auto array_bounds = Impl::getArrayBounds<ExecutionPolicy::array_size>(
                 begin, end, struct_bounds, s );
             for ( int a = array_bounds.first;
                   a < array_bounds.second;
@@ -283,14 +284,14 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
     auto struct_bounds =
-        getStructBounds<ExecutionPolicy::array_size>( begin, end );
+        Impl::getStructBounds<ExecutionPolicy::array_size>( begin, end );
     for ( int s = struct_bounds.first;
           s < struct_bounds.second;
           ++s )
     {
         // Create a range policy over the array.
         auto array_bounds =
-            getArrayBounds<ExecutionPolicy::array_size>(
+            Impl::getArrayBounds<ExecutionPolicy::array_size>(
                 begin, end, struct_bounds, s );
 
         // Create a wrapper for the functor. Each struct is given a thread and
@@ -351,7 +352,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
     auto begin = exec_policy.begin();
     auto end = exec_policy.end();
     auto struct_bounds =
-        getStructBounds<ExecutionPolicy::array_size>( begin, end );
+        Impl::getStructBounds<ExecutionPolicy::array_size>( begin, end );
     point_type lower = { struct_bounds.first, 0 };
     point_type upper = { struct_bounds.second, ExecutionPolicy::array_size };
     kokkos_policy k_policy( lower, upper );
@@ -361,7 +362,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
         KOKKOS_LAMBDA( const std::size_t s, const int a )
         {
             auto array_bounds =
-            getArrayBounds<ExecutionPolicy::array_size>(
+            Impl::getArrayBounds<ExecutionPolicy::array_size>(
                 begin, end, struct_bounds, s );
             if ( a < array_bounds.second )
                 functor(

@@ -9,8 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cabana_Types.hpp>
-#include <Cabana_AoSoA.hpp>
+#include <Cabana_Core.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ExecutionPolicy.hpp>
 
@@ -148,12 +147,12 @@ void perfTest()
 int main( int argc, char* argv[] )
 {
     // Initialize the kokkos runtime.
-    Kokkos::initialize( argc, argv );
+    Cabana::initialize( argc, argv );
 
     // Run the test.
     perfTest();
 
     // Finalize.
-    Kokkos::finalize();
+    Cabana::finalize();
     return 0;
 }

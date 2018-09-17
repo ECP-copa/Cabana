@@ -15,6 +15,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_DeepCopy.hpp>
+#include <Cabana_Macros.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Sort.hpp>
@@ -56,35 +57,35 @@ class BinningData
       \brief Get the number of bins.
       \return The number of bins.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     int numBin() const
     { return _nbin; }
 
     /*!
-      \brief Given a bin get the number of particles it contains.
+      \brief Given a bin get the number of tuples it contains.
       \param bin_id The bin id.
-      \return The number of particles in the bin.
+      \return The number of tuples in the bin.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     int binSize( const size_type bin_id ) const
     { return _counts( bin_id ); }
 
     /*!
-      \brief Given a bin get the particle index at which it sorts.
+      \brief Given a bin get the tuple index at which it sorts.
       \param bin_id The bin id.
-      \return The starting particle index of the bin.
+      \return The starting tuple index of the bin.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     size_type binOffset( const size_type bin_id ) const
     { return _offsets( bin_id ); }
 
     /*!
-      \brief Given a local particle id in the binned layout, get the id of the
-      particle in the old (unbinned) layout.
+      \brief Given a local tuple id in the binned layout, get the id of the
+      tuple in the old (unbinned) layout.
     */
-    KOKKOS_INLINE_FUNCTION
-    size_type permutation( const size_type particle_id ) const
-    { return _permute_vector(particle_id); }
+    CABANA_INLINE_FUNCTION
+    size_type permutation( const size_type tuple_id ) const
+    { return _permute_vector(tuple_id); }
 
     /*!
       \brief Get the entire bin count view.
@@ -177,7 +178,7 @@ class LinkedCellList
       \brief Get the total number of bins.
       \return the total number of bins.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     int totalBins() const
     { return _nbin[0] * _nbin[1] * _nbin[2]; }
 
@@ -186,7 +187,7 @@ class LinkedCellList
       \param dim The dimension to get the number of bins for.
       \return The number of bins.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     int numBin( const int dim ) const
     { return _nbin[dim]; }
 
@@ -200,7 +201,7 @@ class LinkedCellList
       Note that the Kokkos sort orders the bins such that the i index moves
       the slowest and the k index mvoes the fastest.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     size_type cardinalBinIndex( const int i, const int j, const int k ) const
     { return (i * _nbin[1] + j) * _nbin[2] + k; }
 
@@ -214,7 +215,7 @@ class LinkedCellList
       Note that the Kokkos sort orders the bins such that the i index moves
       the slowest and the k index mvoes the fastest.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     void ijkBinIndex( const int cardinal, int& i, int& j, int& k ) const
     {
         i = cardinal / (_nbin[1]*_nbin[2]);
@@ -229,7 +230,7 @@ class LinkedCellList
       \param k The k bin index (z).
       \return The number of particles in the bin.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     int binSize( const int i, const int j, const int k ) const
     { return _bin_data.binSize(cardinalBinIndex(i,j,k)); }
 
@@ -240,7 +241,7 @@ class LinkedCellList
       \param k The k bin index (z).
       \return The starting particle index of the bin.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     size_type binOffset( const int i, const int j, const int k ) const
     { return _bin_data.binOffset(cardinalBinIndex(i,j,k)); }
 
@@ -250,7 +251,7 @@ class LinkedCellList
       \param particle_id The id of the particle in the binned layout.
       \return The particle id in the old (unbinned) layout.
     */
-    KOKKOS_INLINE_FUNCTION
+    CABANA_INLINE_FUNCTION
     size_type permutation( const int particle_id ) const
     { return _bin_data.permutation(particle_id); }
 

@@ -9,11 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cabana_Types.hpp>
-#include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberTypes.hpp>
-
-#include <Kokkos_Core.hpp>
+#include <Cabana_Core.hpp>
 
 #include <cstdlib>
 #include <iostream>
@@ -324,11 +320,11 @@ void run()
 //---------------------------------------------------------------------------//
 int main( int argc, char **argv )
 {
-    Kokkos::initialize(argc,argv);
+    Cabana::initialize(argc,argv);
 
     run();
 
-    Kokkos::finalize();
+    Cabana::finalize();
     return 0;
 }
 
