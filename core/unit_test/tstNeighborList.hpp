@@ -1,5 +1,4 @@
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberSlice.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_VerletList.hpp>
 
@@ -104,19 +103,19 @@ struct TestNeighborList
 
 //---------------------------------------------------------------------------//
 // Create particles.
-Cabana::AoSoA<Cabana::MemberDataTypes<double[3]>,TEST_MEMSPACE>
+Cabana::AoSoA<Cabana::MemberTypes<double[3]>,TEST_MEMSPACE>
 createParticles( const int num_particle,
                  const double neighborhood_radius,
                  const double box_min,
                  const double box_max )
 {
     // Create the AoSoA with (100x100x100) particles.
-    using DataTypes = Cabana::MemberDataTypes<double[3]>;
+    using DataTypes = Cabana::MemberTypes<double[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_particle );
 
     // Create particles within a region sized (10x10x10) neighborhood radii.
-    auto position = aosoa.view( Cabana::MemberTag<0>() );
+    auto position = aosoa.slice<0>();
     using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
     using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
     PoolType pool( 342343901 );
@@ -309,11 +308,11 @@ void testVerletListFull()
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
     Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag>
-        nlist( aosoa, Cabana::MemberTag<0>(), 0, aosoa.size(),
+        nlist( aosoa.slice<0>(), 0, aosoa.size(),
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Check the neighbor list.
-    auto position = aosoa.view( Cabana::MemberTag<0>() );
+    auto position = aosoa.slice<0>();
     checkFullNeighborList( nlist, position, test_radius );
 }
 
@@ -333,11 +332,11 @@ void testVerletListHalf()
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
     Cabana::VerletList<TEST_MEMSPACE,Cabana::HalfNeighborTag>
-        nlist( aosoa, Cabana::MemberTag<0>(), 0, aosoa.size(),
+        nlist( aosoa.slice<0>(), 0, aosoa.size(),
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Check the neighbor list.
-    auto position = aosoa.view( Cabana::MemberTag<0>() );
+    auto position = aosoa.slice<0>();
     checkHalfNeighborList( nlist, position, test_radius );
 }
 
@@ -358,7 +357,7 @@ void testNeighborParallelFor()
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
     Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag>
-        nlist( aosoa, Cabana::MemberTag<0>(), 0, aosoa.size(),
+        nlist( aosoa.slice<0>(), 0, aosoa.size(),
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Create Kokkos views for the write operation.
@@ -373,7 +372,7 @@ void testNeighborParallelFor()
                            { Kokkos::atomic_add( &serial_result(i), n ); };
     auto team_count_op = KOKKOS_LAMBDA( const int i, const int n )
                          { Kokkos::atomic_add( &team_result(i), n ); };
-    Cabana::RangePolicy<aosoa_t::array_size,TEST_EXECSPACE> policy( aosoa );
+    Cabana::RangePolicy<aosoa_t::vector_length,TEST_EXECSPACE> policy( aosoa );
     Cabana::neighbor_parallel_for(
         policy, serial_count_op, nlist, Cabana::SerialNeighborOpTag() );
     Cabana::neighbor_parallel_for(

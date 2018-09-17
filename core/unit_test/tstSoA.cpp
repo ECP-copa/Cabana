@@ -1,5 +1,5 @@
-#include <impl/Cabana_SoA.hpp>
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_SoA.hpp>
+#include <Cabana_MemberTypes.hpp>
 #include <Cabana_Types.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -33,21 +33,21 @@ struct FooData
 };
 
 //---------------------------------------------------------------------------//
-// Layout right test.
-void testLayoutRight()
+// SoA test
+void testSoA()
 {
     // Declare an array layout.
-    using array_layout = Cabana::InnerArrayLayout<4,Cabana::LayoutRight>;
+    const int vector_length = 4;
 
     // Declare an soa type.
-    using member_types = Cabana::MemberDataTypes<double,
-                                                 int,
-                                                 float,
-                                                 double[2][3],
-                                                 unsigned[5],
-                                                 float[3][2][2],
-                                                 double[4][2][3][2]>;
-    using soa_type = Cabana::Impl::SoA<array_layout,member_types>;
+    using member_types = Cabana::MemberTypes<double,
+                                             int,
+                                             float,
+                                             double[2][3],
+                                             unsigned[5],
+                                             float[3][2][2],
+                                             double[4][2][3][2]>;
+    using soa_type = Cabana::SoA<vector_length,member_types>;
 
     // Check that the data in the soa is contiguous.
     EXPECT_TRUE( std::is_trivial<soa_type>::value );
@@ -61,71 +61,22 @@ void testLayoutRight()
 
     // Set some data with the soa.
     double v1 = 0.3343;
-    auto d0 = Cabana::Impl::getStructMember<0>( soa );
-    d0[3] = v1;
+    soa.get<0>( 3 ) = v1;
 
     double v2 = 0.992;
-    auto d6 = Cabana::Impl::getStructMember<6>( soa );
-    d6[2][1][1][1][1] = v2;
+    soa.get<6>( 2, 1, 1, 1, 1 ) = v2;
 
     // Check the data.
-    EXPECT_EQ( Cabana::Impl::getStructMember<0>( soa )[3], v1 );
-    EXPECT_EQ( Cabana::Impl::getStructMember<6>( soa )[2][1][1][1][1], v2 );
-}
-
-//---------------------------------------------------------------------------//
-// Layout left test.
-void testLayoutLeft()
-{
-    // Declare an array layout.
-    using array_layout = Cabana::InnerArrayLayout<4,Cabana::LayoutLeft>;
-
-    // Declare an soa type.
-    using member_types = Cabana::MemberDataTypes<double,
-                                                 int,
-                                                 float,
-                                                 double[2][3],
-                                                 unsigned[5],
-                                                 float[3][2][2],
-                                                 double[4][2][3][2]>;
-    using soa_type = Cabana::Impl::SoA<array_layout,member_types>;
-
-    // Check that the data in the soa is contiguous.
-    EXPECT_TRUE( std::is_trivial<soa_type>::value );
-
-    // Check that the soa is the same size as the struct (i.e. they are
-    // equivalent).
-    EXPECT_EQ( sizeof(FooData), sizeof(soa_type) );
-
-    // Create an soa.
-    soa_type soa;
-
-    // Set some data with the soa.
-    double v1 = 0.3343;
-    auto d0 = Cabana::Impl::getStructMember<0>( soa );
-    d0[3] = v1;
-
-    double v2 = 0.992;
-    auto d6 = Cabana::Impl::getStructMember<6>( soa );
-    d6[1][1][1][1][2] = v2;
-
-    // Check the data.
-    EXPECT_EQ( Cabana::Impl::getStructMember<0>( soa )[3], v1 );
-    EXPECT_EQ( Cabana::Impl::getStructMember<6>( soa )[1][1][1][1][2], v2 );
+    EXPECT_EQ( soa.get<0>(3), v1 );
+    EXPECT_EQ( soa.get<6>(2,1,1,1,1), v2 );
 }
 
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST_F( cabana_soa, soa_layout_right_test )
+TEST_F( cabana_soa, soa_test )
 {
-    testLayoutRight();
-}
-
-//---------------------------------------------------------------------------//
-TEST_F( cabana_soa, soa_layout_left_test )
-{
-    testLayoutLeft();
+    testSoA();
 }
 
 //---------------------------------------------------------------------------//

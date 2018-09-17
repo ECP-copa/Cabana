@@ -2,8 +2,6 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ExecutionPolicy.hpp>
-#include <Cabana_InnerArrayLayout.hpp>
-#include <Cabana_MemberSlice.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -18,23 +16,19 @@ void perfTest()
     using ExecutionSpace = Kokkos::Cuda;
 
     // Declare the inner array layout.
-    const int array_size = 32;
-    using array_layout = Cabana::LayoutLeft;
-    using inner_array_layout =
-        Cabana::InnerArrayLayout<array_size,array_layout>;
+    const int vector_length = 32;
 
     // Declare the parallel for algorithm tag.
     using parallel_algorithm_tag = Cabana::StructAndArrayParallelTag;
 
     // Declare data types.
-    using DataTypes =
-        Cabana::MemberDataTypes<double[3][3], // M1
-                                double[3][3], // M2
-                                double[3],    // V1
-                                double[3],    // V2
-                                double[3],    // RESULT
-                                double,       // S1
-                                double>;      // S2
+    using DataTypes = Cabana::MemberTypes<double[3][3], // M1
+                                          double[3][3], // M2
+                                          double[3],    // V1
+                                          double[3],    // V2
+                                          double[3],    // RESULT
+                                          double,       // S1
+                                          double>;      // S2
 
     // Enumerate the types for convenience.
     enum MyTypes { M1 = 0,
@@ -46,7 +40,7 @@ void perfTest()
                    S2 };
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,vector_length>;
 
     // Set the total problem size.
     std::size_t num_data = 1e7;
@@ -55,16 +49,16 @@ void perfTest()
     AoSoA_t aosoa( num_data );
 
     // Make some slices.
-    auto m1 = aosoa.view( Cabana::MemberTag<M1>() );
-    auto m2 = aosoa.view( Cabana::MemberTag<M2>() );
-    auto v1 = aosoa.view( Cabana::MemberTag<V1>() );
-    auto v2 = aosoa.view( Cabana::MemberTag<V2>() );
-    auto result = aosoa.view( Cabana::MemberTag<RESULT>() );
-    auto s1 = aosoa.view( Cabana::MemberTag<S1>() );
-    auto s2 = aosoa.view( Cabana::MemberTag<S2>() );
+    auto m1 = aosoa.slice<M1>();
+    auto m2 = aosoa.slice<M2>();
+    auto v1 = aosoa.slice<V1>();
+    auto v2 = aosoa.slice<V2>();
+    auto result = aosoa.slice<RESULT>();
+    auto s1 = aosoa.slice<S1>();
+    auto s2 = aosoa.slice<S2>();
 
     // Create an execution policy over the entire AoSoA.
-    Cabana::RangePolicy<array_size,ExecutionSpace> range_policy( aosoa );
+    Cabana::RangePolicy<vector_length,ExecutionSpace> range_policy( aosoa );
 
     // Initialization functor.
     auto init_func = KOKKOS_LAMBDA( const int idx )

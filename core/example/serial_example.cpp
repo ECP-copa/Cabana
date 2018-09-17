@@ -1,6 +1,6 @@
 #include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberDataTypes.hpp>
+#include <Cabana_MemberTypes.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -34,24 +34,22 @@ enum UserParticleFields
 
 // Designate the types that the particles will hold.
 using ParticleDataTypes =
-    Cabana::MemberDataTypes<float,                        // (0) x-position type
-                            float,                        // (1) y-position type
-                            float,                        // (2) z-position type
-                            double[space_dim],            // (3) velocity type
-                            double[space_dim][space_dim], // (4) stress type
-                            int                           // (5) status type
-                            >;
+    Cabana::MemberTypes<float,                        // (0) x-position type
+                        float,                        // (1) y-position type
+                        float,                        // (2) z-position type
+                        double[space_dim],            // (3) velocity type
+                        double[space_dim][space_dim], // (4) stress type
+                        int                           // (5) status type
+                        >;
 
 // Declare the memory space.
 using MemorySpace = Cabana::HostSpace;
 
 // Declare the inner array layout.
-const int inner_array_size = 32;
-using ArrayLayout =
-    Cabana::InnerArrayLayout<inner_array_size,Cabana::LayoutRight>;
+const int vector_length = 32;
 
 // Set the type for the particle AoSoA.
-using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,ArrayLayout>;
+using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,vector_length>;
 
 //---------------------------------------------------------------------------//
 // Helper functions.
@@ -59,14 +57,14 @@ using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,ArrayLayout>;
 // Function to intitialize the particles.
 void initializeParticles( ParticleList particles )
 {
-    auto position_x = particles.view( Cabana::MemberTag<PositionX>() );
-    auto position_y = particles.view( Cabana::MemberTag<PositionY>() );
-    auto position_z = particles.view( Cabana::MemberTag<PositionZ>() );
-    auto velocity = particles.view( Cabana::MemberTag<Velocity>() );
-    auto stress = particles.view( Cabana::MemberTag<Stress>() );
-    auto status = particles.view( Cabana::MemberTag<Status>() );
+    auto position_x = particles.slice<PositionX>();
+    auto position_y = particles.slice<PositionY>();
+    auto position_z = particles.slice<PositionZ>();
+    auto velocity = particles.slice<Velocity>();
+    auto stress = particles.slice<Stress>();
+    auto status = particles.slice<Status>();
 
-    for ( auto idx = 0; idx != particles.size(); ++idx )
+    for ( std::size_t idx = 0; idx != particles.size(); ++idx )
     {
         // Initialize position.
         position_x( idx ) = 1.1;
@@ -91,22 +89,22 @@ void initializeParticles( ParticleList particles )
 // Function to print out the data for every particle.
 void printParticles( const ParticleList particles )
 {
-    auto position_x = particles.view( Cabana::MemberTag<PositionX>() );
-    auto position_y = particles.view( Cabana::MemberTag<PositionY>() );
-    auto position_z = particles.view( Cabana::MemberTag<PositionZ>() );
-    auto velocity = particles.view( Cabana::MemberTag<Velocity>() );
-    auto stress = particles.view( Cabana::MemberTag<Stress>() );
-    auto status = particles.view( Cabana::MemberTag<Status>() );
+    auto position_x = particles.slice<PositionX>();
+    auto position_y = particles.slice<PositionY>();
+    auto position_z = particles.slice<PositionZ>();
+    auto velocity = particles.slice<Velocity>();
+    auto stress = particles.slice<Stress>();
+    auto status = particles.slice<Status>();
 
-    for ( auto idx = 0; idx != particles.size(); ++idx )
+    for ( std::size_t idx = 0; idx != particles.size(); ++idx )
     {
         auto aosoa_idx_s = Cabana::Impl::Index<32>::s( idx );
-        auto aosoa_idx_i = Cabana::Impl::Index<32>::i( idx );
+        auto aosoa_idx_a = Cabana::Impl::Index<32>::a( idx );
 
         std::cout << std::endl;
 
         std::cout << "Struct id: " << aosoa_idx_s << std::endl;
-        std::cout << "Struct offset: " << aosoa_idx_i << std::endl;
+        std::cout << "Struct offset: " << aosoa_idx_a << std::endl;
         std::cout << "Position: "
                   << position_x( idx ) << " "
                   << position_y( idx ) << " "

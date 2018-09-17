@@ -3,8 +3,6 @@
 
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Sort.hpp>
-#include <Cabana_MemberDataTypes.hpp>
-#include <Cabana_AoSoA.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -28,9 +26,9 @@ class NeighborDiscriminator<FullNeighborTag>
     // that the particle does not neighbor itself (i.e. the particle index
     // "p" is not the same as the neighbor index "n").
     KOKKOS_INLINE_FUNCTION
-    static bool isValid( const int p,
+    static bool isValid( const std::size_t p,
                          const double xp, const double yp, const double zp,
-                         const int n,
+                         const std::size_t n,
                          const double xn, const double yn, const double zn )
     {
         return ( p != n );
@@ -50,9 +48,9 @@ class NeighborDiscriminator<HalfNeighborTag>
     // then the y direction is checked next and finally the z direction if the
     // y coordinates are the same.
     KOKKOS_INLINE_FUNCTION
-    static bool isValid( const int p,
+    static bool isValid( const std::size_t p,
                          const double xp, const double yp, const double zp,
-                         const int n,
+                         const std::size_t n,
                          const double xn, const double yn, const double zn )
     {
         return ( (p != n) &&
@@ -115,22 +113,14 @@ struct LinkedCellStencil
 };
 
 //---------------------------------------------------------------------------//
-template<class AoSoA_t, std::size_t PositionMember, class AlgorithmTag>
+template<class PositionSlice, class AlgorithmTag>
 struct VerletListBuilder
 {
     // Types.
-    using memory_space = typename AoSoA_t::memory_space;
-    using PositionValueType =
-        typename AoSoA_t::template member_value_type<PositionMember>;
-    using PositionDataType =
-        typename AoSoA_t::template member_data_type<PositionMember>;
-    using PositionLayout = typename AoSoA_t::inner_array_layout::layout;
-    using PositionSlice = MemberSlice<PositionDataType,
-                                      PositionLayout,
-                                      memory_space,
-                                      RandomAccessMemory,
-                                      AoSoA_t::array_size>;
-    using kokkos_memory_space = typename memory_space::kokkos_memory_space;
+    using PositionValueType = typename PositionSlice::value_type;
+    using RandomAccessPositionSlice =
+        typename PositionSlice::random_access_slice;
+    using kokkos_memory_space = typename PositionSlice::kokkos_memory_space;
     using kokkos_execution_space = typename PositionSlice::kokkos_execution_space;
 
     // Number of neighbors per particle.
@@ -146,31 +136,30 @@ struct VerletListBuilder
     PositionValueType rsqr;
 
     // Positions.
-    PositionSlice position;
+    RandomAccessPositionSlice position;
 
     // Binning Data.
     BinningData<kokkos_memory_space> bin_data_1d;
-    CartesianGrid3dBinningData<kokkos_memory_space> bin_data_3d;
+    LinkedCellList<kokkos_memory_space> linked_cell_list;
 
     // Cell stencil.
     LinkedCellStencil<PositionValueType> cell_stencil;
 
     // Constructor.
     VerletListBuilder(
-        AoSoA_t aosoa,
-        MemberTag<PositionMember> position_member,
-        const int begin,
-        const int end,
+        PositionSlice slice,
+        const std::size_t begin,
+        const std::size_t end,
         const PositionValueType neighborhood_radius,
         const PositionValueType cell_size_ratio,
         const PositionValueType grid_min[3],
         const PositionValueType grid_max[3])
-        : counts( "num_neighbors", aosoa.size() )
-        , offsets( "neighbor_offsets", aosoa.size() )
+        : counts( "num_neighbors", slice.size() )
+        , offsets( "neighbor_offsets", slice.size() )
         , cell_stencil( neighborhood_radius, cell_size_ratio, grid_min, grid_max )
     {
-        // Get the positions.
-        position = aosoa.view( position_member, RandomAccessMemory() );
+        // Get the positions with random access read-only memory.
+        position = slice;
 
         // Bin the particles in the grid. Don't actually sort them but make a
         // permutation vector. Note that we are binning all particles here and
@@ -178,9 +167,9 @@ struct VerletListBuilder
         // treated as candidates for neighbors.
         double grid_size = cell_size_ratio * neighborhood_radius;
         PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
-        bin_data_3d = binByCartesianGrid3d(
-            aosoa, position_member, true, grid_delta, grid_min, grid_max );
-        bin_data_1d = bin_data_3d.data1d();
+        linked_cell_list = buildLinkedCellList(
+            position, grid_delta, grid_min, grid_max );
+        bin_data_1d = linked_cell_list.data1d();
 
         // We will use the square of the distance for neighbor determination.
         rsqr = neighborhood_radius * neighborhood_radius;
@@ -207,14 +196,14 @@ struct VerletListBuilder
         cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
 
         // Operate on the particles in the bin.
-        int b_offset = bin_data_1d.binOffset(cell);
+        std::size_t b_offset = bin_data_1d.binOffset(cell);
         Kokkos::parallel_for(
             Kokkos::TeamThreadRange(team,0,bin_data_1d.binSize(cell)),
             [&] ( const int bi )
             {
                 // Get the true particle id. The binned particle index is the
                 // league rank of the team.
-                int pid = bin_data_3d.permutation( bi + b_offset );
+                std::size_t pid = linked_cell_list.permutation( bi + b_offset );
 
                 // Cache the particle coordinates.
                 double x_p = position(pid,0);
@@ -235,14 +224,15 @@ struct VerletListBuilder
                                 // Check the particles in this bin to see if they are
                                 // neighbors. If they are add to the count for this bin.
                                 int cell_count = 0;
-                                int a_offset = bin_data_3d.binOffset(i,j,k);
+                                std::size_t a_offset = linked_cell_list.binOffset(i,j,k);
                                 Kokkos::parallel_reduce(
                                     Kokkos::ThreadVectorRange(
-                                        team,bin_data_3d.binSize(i,j,k)),
+                                        team,linked_cell_list.binSize(i,j,k)),
                                     [&] ( const int n, int& local_count ) {
 
                                         //  Get the true id of the candidate neighbor.
-                                        int nid = bin_data_3d.permutation( a_offset + n );
+                                        std::size_t nid =
+                                            linked_cell_list.permutation( a_offset + n );
 
                                         // Cache the candidate neighbor particle
                                         // coordinates.
@@ -334,14 +324,14 @@ struct VerletListBuilder
         cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
 
         // Operate on the particles in the bin.
-        int b_offset = bin_data_1d.binOffset(cell);
+        std::size_t b_offset = bin_data_1d.binOffset(cell);
         Kokkos::parallel_for(
             Kokkos::TeamThreadRange(team,0,bin_data_1d.binSize(cell)),
             [&] ( const int bi )
             {
                 // Get the true particle id. The binned particle index is the
                 // league rank of the team.
-                int pid = bin_data_3d.permutation( bi + b_offset );
+                std::size_t pid = linked_cell_list.permutation( bi + b_offset );
 
                 // Cache the particle coordinates.
                 double x_p = position(pid,0);
@@ -360,14 +350,15 @@ struct VerletListBuilder
                             {
                                 // Check the particles in this bin to see if they are
                                 // neighbors.
-                                int a_offset = bin_data_3d.binOffset(i,j,k);
+                                std::size_t a_offset = linked_cell_list.binOffset(i,j,k);
                                 Kokkos::parallel_for(
                                     Kokkos::ThreadVectorRange(
-                                        team,bin_data_3d.binSize(i,j,k)),
+                                        team,linked_cell_list.binSize(i,j,k)),
                                     [&] ( const int n ) {
 
                                         //  Get the true id of the candidate neighbor.
-                                        int nid = bin_data_3d.permutation( a_offset + n );
+                                        std::size_t nid =
+                                            linked_cell_list.permutation( a_offset + n );
 
                                         // Cache the candidate neighbor particle coordinates.
                                         double x_n = position(nid,0);
@@ -437,13 +428,11 @@ class VerletList
       \brief Given a list of particle positions and a neighborhood radius calculate
       the neighbor list.
 
-      \param aosoa The AoSoA to generate the neighbor list for.
+      \param x The slice containing the particle positions
 
-      \param position_member The AoSoA member containing position,
+      \param begin The beginning particle index to compute neighbors for.
 
-      \param begin The beginning index of the AoSoA to compute neighbors for.
-
-      \param end The end index o fthe AoSoA to compute neighbors for.
+      \param end The end particle index to compute neighbors for.
 
       \param neighborhood_radius The radius of the neighborhood. Particles
       within this radius are considered neighbors. This is effectively the
@@ -465,27 +454,21 @@ class VerletList
       range. All particles are candidates for being a neighbor, regardless of
       whether or not they are in the range.
     */
-    template<class AoSoA_t, std::size_t PositionMember>
+    template<class PositionSlice>
     VerletList(
-        AoSoA_t aosoa,
-        MemberTag<PositionMember> position_member,
-        const int begin,
-        const int end,
-        const typename AoSoA_t::template member_value_type<PositionMember>
-        neighborhood_radius,
-        const typename AoSoA_t::template member_value_type<PositionMember>
-        cell_size_ratio,
-        const typename AoSoA_t::template member_value_type<PositionMember>
-        grid_min[3],
-        const typename AoSoA_t::template member_value_type<PositionMember>
-        grid_max[3],
-        typename std::enable_if<(is_aosoa<AoSoA_t>::value),int>::type * = 0 )
+        PositionSlice x,
+        const std::size_t begin,
+        const std::size_t end,
+        const typename PositionSlice::value_type neighborhood_radius,
+        const typename PositionSlice::value_type cell_size_ratio,
+        const typename PositionSlice::value_type grid_min[3],
+        const typename PositionSlice::value_type grid_max[3],
+        typename std::enable_if<(is_slice<PositionSlice>::value),int>::type * = 0 )
     {
         // Create a builder functor.
-        using builder_type = Impl::VerletListBuilder<AoSoA_t,
-                                                         PositionMember,
-                                                         AlgorithmTag>;
-        builder_type builder( aosoa, position_member, begin, end,
+        using builder_type =
+            Impl::VerletListBuilder<PositionSlice,AlgorithmTag>;
+        builder_type builder( x, begin, end,
                               neighborhood_radius, cell_size_ratio,
                               grid_min, grid_max );
 
@@ -534,7 +517,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
     static int numNeighbor( const list_type& list,
-                            const int particle_index )
+                            const std::size_t particle_index )
     {
         return list._counts( particle_index );
     }
@@ -543,7 +526,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
     static int getNeighbor( const list_type& list,
-                            const int particle_index,
+                            const std::size_t particle_index,
                             const int neighbor_index )
     {
         return list._neighbors(

@@ -1,4 +1,4 @@
-#include <Cabana_Particle.hpp>
+#include <Cabana_Tuple.hpp>
 #include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -49,7 +49,7 @@ void checkDataMembers(
 }
 
 //---------------------------------------------------------------------------//
-// Particle test
+// Tuple test
 void runTest()
 {
     // Data dimensions.
@@ -66,16 +66,16 @@ void runTest()
     using T4 = double[dim_1][dim_2];
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<T0,T1,T2,T3,T4>;
+    using DataTypes = Cabana::MemberTypes<T0,T1,T2,T3,T4>;
 
-    // Declare the particle type.
-    using Particle_t = Cabana::Particle<DataTypes>;
+    // Declare the tuple type.
+    using Tuple_t = Cabana::Tuple<DataTypes>;
 
-    // Create a view of particles.
+    // Create a view of tuples.
     using memory_space = TEST_MEMSPACE;
     std::size_t num_data = 453;
-    Kokkos::View<Particle_t*,typename memory_space::kokkos_memory_space>
-        particles( "particles", num_data );
+    Kokkos::View<Tuple_t*,typename memory_space::kokkos_memory_space>
+        tuples( "tuples", num_data );
 
     // Initialize data.
     float fval = 3.4;
@@ -87,26 +87,26 @@ void runTest()
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
-                    particles( idx ).get<0>( i, j, k ) = fval * (i+j+k);
+                    tuples( idx ).get<0>( i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        particles( idx ).get<1>() = ival;
+        tuples( idx ).get<1>() = ival;
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
                     for ( std::size_t l = 0; l < dim_4; ++l )
-                        particles( idx ).get<2>( i, j, k, l ) = fval * (i+j+k+l);
+                        tuples( idx ).get<2>( i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            particles( idx ).get<3>( i ) = dval * i;
+            tuples( idx ).get<3>( i ) = dval * i;
 
         // Member 4.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                particles( idx ).get<4>( i, j ) = dval * (i+j);
+                tuples( idx ).get<4>( i, j ) = dval * (i+j);
     };
     Kokkos::fence();
 
@@ -116,13 +116,13 @@ void runTest()
     Kokkos::fence();
 
     // Check data members of the for proper initialization.
-    checkDataMembers( particles, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( tuples, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, particle_test )
+TEST_F( TEST_CATEGORY, tuple_test )
 {
     runTest();
 }

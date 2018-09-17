@@ -1,4 +1,3 @@
-#include <Cabana_MemberSlice.hpp>
 #include <Cabana_AoSoA.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -16,38 +15,38 @@ void initializeDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.template slice<0>();
+    auto slice_1 = aosoa.template slice<1>();
+    auto slice_2 = aosoa.template slice<2>();
+    auto slice_3 = aosoa.template slice<3>();
+    auto slice_4 = aosoa.template slice<4>();
 
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    view_0( idx, i, j, k ) = fval * (i+j+k);
+                    slice_0( idx, i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        view_1( idx ) = ival;
+        slice_1( idx ) = ival;
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        view_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            view_3( idx, i ) = dval * i;
+            slice_3( idx, i ) = dval * i;
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                view_4( idx, i, j ) = dval * (i+j);
+                slice_4( idx, i, j ) = dval * (i+j);
     }
 }
 
@@ -60,50 +59,49 @@ void checkDataMembers(
     const int dim_1, const int dim_2,
     const int dim_3, const int dim_4 )
 {
-    auto view_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto view_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto view_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto view_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto view_4 = aosoa.view( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.template slice<0>();
+    auto slice_1 = aosoa.template slice<1>();
+    auto slice_2 = aosoa.template slice<2>();
+    auto slice_3 = aosoa.template slice<3>();
+    auto slice_4 = aosoa.template slice<4>();
 
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    EXPECT_EQ( view_0( idx, i, j, k ),
+                    EXPECT_EQ( slice_0( idx, i, j, k ),
                                fval * (i+j+k) );
 
         // Member 1.
-        EXPECT_EQ( view_1( idx ), ival );
+        EXPECT_EQ( slice_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        EXPECT_EQ( view_2( idx, i, j, k, l ),
+                        EXPECT_EQ( slice_2( idx, i, j, k, l ),
                                    fval * (i+j+k+l) );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( view_3( idx, i ), dval * i );
+            EXPECT_EQ( slice_3( idx, i ), dval * i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( view_4( idx, i, j ), dval * (i+j) );
+                EXPECT_EQ( slice_4( idx, i, j ), dval * (i+j) );
     }
 }
 
 //---------------------------------------------------------------------------//
 // API test function
-template<typename DataLayout>
 void apiTest()
 {
     // Manually set the inner array size with the test layout.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
+    const int vector_length = 16;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -113,72 +111,47 @@ void apiTest()
 
     // Declare data types.
     using DataTypes =
-        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
-                                int,
-                                float[dim_1][dim_2][dim_3][dim_4],
-                                double[dim_1],
-                                double[dim_1][dim_2]
-                                >;
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
+                            int,
+                            float[dim_1][dim_2][dim_3][dim_4],
+                            double[dim_1],
+                            double[dim_1][dim_2]
+                            >;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
     // Create some slices.
-    auto slice_0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto slice_1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto slice_2 = aosoa.view( Cabana::MemberTag<2>() );
-    auto slice_3 = aosoa.view( Cabana::MemberTag<3>() );
-    auto slice_4 = aosoa.view( Cabana::MemberTag<4>() );
+    auto slice_0 = aosoa.slice<0>();
+    auto slice_1 = aosoa.slice<1>();
+    auto slice_2 = aosoa.slice<2>();
+    auto slice_3 = aosoa.slice<3>();
+    auto slice_4 = aosoa.slice<4>();
 
     // Check that they are slices.
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_0)>::value );
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_1)>::value );
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_2)>::value );
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_3)>::value );
-    EXPECT_TRUE( Cabana::is_member_slice<decltype(slice_4)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_0)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_1)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_2)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_3)>::value );
+    EXPECT_TRUE( Cabana::is_slice<decltype(slice_4)>::value );
 
     // Check field sizes.
     EXPECT_EQ( slice_0.size(), 35 );
     EXPECT_EQ( slice_0.numSoA(), 3 );
-    EXPECT_EQ( slice_0.fieldRank(), 3 );
-    int e01 = slice_0.fieldExtent(0);
-    EXPECT_EQ( e01, dim_1 );
-    int e02 = slice_0.fieldExtent(1);
-    EXPECT_EQ( e02, dim_2 );
-    int e03 = slice_0.fieldExtent(2);
-    EXPECT_EQ( e03, dim_3 );
 
     EXPECT_EQ( slice_1.size(), 35 );
     EXPECT_EQ( slice_1.numSoA(), 3 );
-    EXPECT_EQ( slice_1.fieldRank(), 0 );
 
     EXPECT_EQ( slice_2.size(), 35 );
     EXPECT_EQ( slice_2.numSoA(), 3 );
-    EXPECT_EQ( slice_2.fieldRank(), 4 );
-    int e21 = slice_2.fieldExtent(0);
-    EXPECT_EQ( e21, dim_1 );
-    int e22 = slice_2.fieldExtent(1);
-    EXPECT_EQ( e22, dim_2 );
-    int e23 = slice_2.fieldExtent(2);
-    EXPECT_EQ( e23, dim_3 );
-    int e24 = slice_2.fieldExtent(3);
-    EXPECT_EQ( e24, dim_4 );
 
     EXPECT_EQ( slice_3.size(), 35 );
     EXPECT_EQ( slice_3.numSoA(), 3 );
-    EXPECT_EQ( slice_3.fieldRank(), 1 );
-    int e31 = slice_3.fieldExtent(0);
-    EXPECT_EQ( e31, dim_1 );
 
     EXPECT_EQ( slice_4.size(), 35 );
     EXPECT_EQ( slice_4.numSoA(), 3 );
-    EXPECT_EQ( slice_4.fieldRank(), 2 );
-    int e41 = slice_4.fieldExtent(0);
-    EXPECT_EQ( e41, dim_1 );
-    int e42 = slice_4.fieldExtent(1);
-    EXPECT_EQ( e42, dim_2 );
 
     // Initialize data with the () operator. The implementation of operator()
     // calls access() and therefore tests that as well.
@@ -231,7 +204,7 @@ void apiTest()
     auto p2 = slice_2.data();
     auto p3 = slice_3.data();
     auto p4 = slice_4.data();
-    for ( int s = 0; s < slice_0.numSoA(); ++s )
+    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
         for ( int a = 0; a < slice_0.arraySize(s); ++a )
         {
             // Member 0.
@@ -281,11 +254,10 @@ void apiTest()
 
 //---------------------------------------------------------------------------//
 // Random access function
-template<typename DataLayout>
 void randomAccessTest()
 {
     // Manually set the inner array size with the test layout.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
+    const int vector_length = 16;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -295,7 +267,7 @@ void randomAccessTest()
 
     // Declare data types.
     using DataTypes =
-        Cabana::MemberDataTypes<float[dim_1][dim_2][dim_3],
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                                 int,
                                 float[dim_1][dim_2][dim_3][dim_4],
                                 double[dim_1],
@@ -303,7 +275,7 @@ void randomAccessTest()
                                 >;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
@@ -314,61 +286,58 @@ void randomAccessTest()
     initializeDataMembers(
         aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
 
+    // Create slices.
+    auto da_slice_0 = aosoa.slice<0>();
+    auto da_slice_1 = aosoa.slice<1>();
+    auto da_slice_2 = aosoa.slice<2>();
+    auto da_slice_3 = aosoa.slice<3>();
+    auto da_slice_4 = aosoa.slice<4>();
+
     // Create read-only random access slices.
-    auto ra_view_0 = aosoa.view( Cabana::MemberTag<0>(),
-                                 Cabana::RandomAccessMemory() );
-    auto ra_view_1 = aosoa.view( Cabana::MemberTag<1>(),
-                                 Cabana::RandomAccessMemory() );
-    auto ra_view_2 = aosoa.view( Cabana::MemberTag<2>(),
-                                 Cabana::RandomAccessMemory() );
-    auto ra_view_3 = aosoa.view( Cabana::MemberTag<3>(),
-                                 Cabana::RandomAccessMemory() );
-    auto ra_view_4 = aosoa.view( Cabana::MemberTag<4>(),
-                                 Cabana::RandomAccessMemory() );
+    decltype(da_slice_0)::random_access_slice ra_slice_0 = da_slice_0;
+    decltype(da_slice_1)::random_access_slice ra_slice_1 = da_slice_1;
+    decltype(da_slice_2)::random_access_slice ra_slice_2 = da_slice_2;
+    decltype(da_slice_3)::random_access_slice ra_slice_3 = da_slice_3;
+    decltype(da_slice_4)::random_access_slice ra_slice_4 = da_slice_4;
 
     // Create a second aosoa.
     AoSoA_t aosoa_2( num_data );
 
-    // Get normal views of the data.
-    auto view_0 = aosoa_2.view( Cabana::MemberTag<0>(),
-                                Cabana::DefaultAccessMemory() );
-    auto view_1 = aosoa_2.view( Cabana::MemberTag<1>(),
-                                Cabana::DefaultAccessMemory() );
-    auto view_2 = aosoa_2.view( Cabana::MemberTag<2>(),
-                                Cabana::DefaultAccessMemory() );
-    auto view_3 = aosoa_2.view( Cabana::MemberTag<3>(),
-                                Cabana::DefaultAccessMemory() );
-    auto view_4 = aosoa_2.view( Cabana::MemberTag<4>(),
-                                Cabana::DefaultAccessMemory() );
+    // Get normal slices of the data.
+    auto slice_0 = aosoa_2.slice<0>();
+    auto slice_1 = aosoa_2.slice<1>();
+    auto slice_2 = aosoa_2.slice<2>();
+    auto slice_3 = aosoa_2.slice<3>();
+    auto slice_4 = aosoa_2.slice<4>();
 
     // Assign the read-only data to the new aosoa.
-    for ( auto idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    view_0( idx, i, j, k ) = ra_view_0( idx, i, j, k );
+                    slice_0( idx, i, j, k ) = ra_slice_0( idx, i, j, k );
 
         // Member 1.
-        view_1( idx ) = ra_view_1( idx );
+        slice_1( idx ) = ra_slice_1( idx );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
                     for ( int l = 0; l < dim_4; ++l )
-                        view_2( idx, i, j, k, l ) =
-                            ra_view_2( idx, i, j, k, l );
+                        slice_2( idx, i, j, k, l ) =
+                            ra_slice_2( idx, i, j, k, l );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            view_3( idx, i ) = ra_view_3( idx, i );
+            slice_3( idx, i ) = ra_slice_3( idx, i );
 
         // Member 4.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                view_4( idx, i, j ) = ra_view_4( idx, i, j );
+                slice_4( idx, i, j ) = ra_slice_4( idx, i, j );
     }
 
     // Check data members for proper assignment.
@@ -377,43 +346,41 @@ void randomAccessTest()
 
 //---------------------------------------------------------------------------//
 // Random access function
-template<typename DataLayout>
 void atomicAccessTest()
 {
     // Manually set the inner array size with the test layout.
-    using inner_array_layout = Cabana::InnerArrayLayout<16,DataLayout>;
+    const int vector_length = 16;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<int>;
+    using DataTypes = Cabana::MemberTypes<int>;
 
     // Create an AoSoA.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,inner_array_layout>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
     AoSoA_t aosoa( num_data );
 
-    // Get a view of the data.
-    auto view = aosoa.view( Cabana::MemberTag<0>() );
+    // Get a slice of the data.
+    auto slice = aosoa.slice<0>();
 
     // Set to 0.
-    for ( int i = 0; i < num_data; ++i ) view( i ) = 0;
+    for ( int i = 0; i < num_data; ++i ) slice( i ) = 0;
 
-    // Get an atomic view of the data.
-    auto atomic_view = aosoa.view( Cabana::MemberTag<0>(),
-                                   Cabana::AtomicAccessMemory() );
+    // Get an atomic slice of the data.
+    decltype(slice)::atomic_access_slice atomic_slice = slice;
 
-    // Have every thread increment all elements of the view. This should
+    // Have every thread increment all elements of the slice. This should
     // create contention in parallel without the atomic.
     auto increment_op =
         KOKKOS_LAMBDA( const int i )
         {
-            for ( int j = 0; j < num_data; ++j ) atomic_view( j ) += 1;
+            for ( int j = 0; j < num_data; ++j ) atomic_slice( j ) += 1;
         };
     Kokkos::RangePolicy<TEST_EXECSPACE> exec_policy( 0, num_data );
     Kokkos::parallel_for( exec_policy, increment_op );
     Kokkos::fence();
 
     // Check the results of the atomic increment.
-    for ( int i = 0; i < num_data; ++i ) EXPECT_EQ( view(i), num_data );
+    for ( int i = 0; i < num_data; ++i ) EXPECT_EQ( slice(i), num_data );
 }
 
 //---------------------------------------------------------------------------//
@@ -421,22 +388,19 @@ void atomicAccessTest()
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, api_test )
 {
-    apiTest<Cabana::LayoutRight>();
-    apiTest<Cabana::LayoutLeft>();
+    apiTest();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, random_access_test )
 {
-    randomAccessTest<Cabana::LayoutRight>();
-    randomAccessTest<Cabana::LayoutLeft>();
+    randomAccessTest();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, atomic_access_test )
 {
-    atomicAccessTest<Cabana::LayoutRight>();
-    atomicAccessTest<Cabana::LayoutLeft>();
+    atomicAccessTest();
 }
 
 //---------------------------------------------------------------------------//

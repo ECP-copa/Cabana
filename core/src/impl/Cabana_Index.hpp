@@ -16,69 +16,80 @@ namespace Impl
 /*!
   \class Index
 
-  \brief Class for converting between integral particle indices and AoSoA
-  indices.
+  \brief Class for converting between 1d and 2d aosoa indices.
 
-  \tparam N The inner array size of the AoSoA.
+  \tparam VectorLength The inner array size of the AoSoA.
 */
-template<int N,
-         typename std::enable_if<(Impl::IsVectorLengthValid<N>::value),
-                                 int>::type = 0>
+template<int VectorLength,
+         typename std::enable_if<
+             (Impl::IsVectorLengthValid<VectorLength>::value),
+             int>::type = 0>
 class Index
 {
   public:
 
     // Inner array size.
-    static constexpr int array_size = N;
+    static constexpr int vector_length = VectorLength;
 
     // Array size offset.
-    static constexpr int array_size_offset = (array_size - 1);
+    static constexpr int vector_length_offset = (vector_length - 1);
 
     // Number of binary bits needed to hold the array size.
-    static constexpr int array_size_binary_bits =
-        Impl::LogBase2<array_size>::value;
+    static constexpr int vector_length_binary_bits =
+        Impl::LogBase2<vector_length>::value;
 
     /*!
-      \brief Given a particle index get the AoSoA struct index.
+      \brief Given a tuple index get the AoSoA struct index.
 
-      \param particle_index The particle index.
+      \param i The tuple index.
 
-      \return The index of the struct in which the particle is located.
+      \return The index of the struct in which the tuple is located.
     */
+    template<typename I>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr int s( const int particle_index )
+    static constexpr
+    typename std::enable_if<std::is_integral<I>::value,std::size_t>::type
+    s( const I& i )
     {
-        return (particle_index - (particle_index & array_size_offset)) >> array_size_binary_bits;
+        return (i - (i & vector_length_offset)) >>
+            vector_length_binary_bits;
     }
 
     /*!
-      \brief Given a particle index get the AoSoA array index.
+      \brief Given a tuple index get the AoSoA array index.
 
-      \param particle_index The particle index.
+      \param i The tuple index.
 
-      \return The index of the array index in the struct in which the particle
+      \return The index of the array index in the struct in which the tuple
       is located.
     */
+    template<typename I>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr int i( const int particle_index )
+    static constexpr
+    typename std::enable_if<std::is_integral<I>::value,int>::type
+    a( const I& i )
     {
-        return particle_index & array_size_offset;
+        return i & vector_length_offset;
     }
 
     /*!
-      \brief Given a struct index and array index in an AoSoA get the particle
+      \brief Given a struct index and array index in an AoSoA get the tuple
       index.
 
       \param struct_index The struct index.
 
       \param array_index The array index.
 
-      \return The particle index.
+      \return The tuple index.
     */
+    template<typename S, typename A>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr int p( const int struct_index, const int array_index )
+    static constexpr
+    typename std::enable_if<(std::is_integral<S>::value &&
+                             std::is_integral<A>::value),std::size_t>::type
+    i( const S& s, const A& a )
     {
-        return (struct_index << array_size_binary_bits) + array_index;
+        return (s << vector_length_binary_bits) + a;
     }
 };
 

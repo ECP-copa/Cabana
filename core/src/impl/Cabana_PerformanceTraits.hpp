@@ -2,7 +2,6 @@
 #define CABANA_PERFORMANCETRAITS_HPP
 
 #include <Cabana_Types.hpp>
-#include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -26,9 +25,7 @@ template<>
 class PerformanceTraits<Kokkos::Serial>
 {
   public:
-    static constexpr int array_size = 8;
-    using data_layout = LayoutRight;
-    using inner_array_layout = InnerArrayLayout<array_size,data_layout>;
+    static constexpr int vector_length = 16;
     using parallel_for_tag = StructParallelTag;
 };
 #endif
@@ -40,9 +37,7 @@ template<>
 class PerformanceTraits<Kokkos::OpenMP>
 {
   public:
-    static constexpr int array_size = 64;
-    using data_layout = LayoutRight;
-    using inner_array_layout = InnerArrayLayout<array_size,data_layout>;
+    static constexpr int vector_length = 16;
     using parallel_for_tag = StructParallelTag;
 };
 #endif
@@ -54,11 +49,8 @@ template<>
 class PerformanceTraits<Kokkos::Cuda>
 {
   public:
-    static constexpr int array_size = Kokkos::Impl::CudaTraits::WarpSize;
-    using data_layout = LayoutLeft;
-    using inner_array_layout =
-        InnerArrayLayout<array_size,data_layout>;
-    using parallel_for_tag = StructAndArrayParallelTag;
+    static constexpr int vector_length = Kokkos::Impl::CudaTraits::WarpSize;
+    using parallel_for_tag = IndexParallelTag;
 };
 #endif
 

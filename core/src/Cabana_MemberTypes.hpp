@@ -1,5 +1,5 @@
-#ifndef CABANA_MEMBERDATATYPES_HPP
-#define CABANA_MEMBERDATATYPES_HPP
+#ifndef CABANA_MEMBERTYPES_HPP
+#define CABANA_MEMBERTYPES_HPP
 
 #include <cstdlib>
 #include <type_traits>
@@ -8,55 +8,60 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
- \class MemberDataTypes
+ \class MemberTypes
  \brief General sequence of types for SoA and AoSoA member data.
 */
 template<typename... Types>
-struct MemberDataTypes
+struct MemberTypes
 {
     static constexpr std::size_t size = sizeof...(Types);
 };
 
 //---------------------------------------------------------------------------//
-/*!
-  \class MemberTag
-  \brief Tag for member data type indices.
-*/
-template<std::size_t I>
-struct MemberTag : public std::integral_constant<std::size_t,I> {};
+// Static type checker.
+template<class >
+struct is_member_types : public std::false_type {};
+
+template<typename... Types>
+struct is_member_types<MemberTypes<Types...> >
+    : public std::true_type {};
+
+template<typename... Types>
+struct is_member_types<const MemberTypes<Types...> >
+    : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 /*!
-  \class MemberDataTypeAtIndex
+  \class MemberTypeAtIndex
   \brief Get the type of the member at a given index.
 */
 template<std::size_t I, typename T, typename... Types>
-struct MemberDataTypeAtIndexImpl;
+struct MemberTypeAtIndexImpl;
 
 template<typename T, typename... Types>
-struct MemberDataTypeAtIndexImpl<0,T,Types...>
+struct MemberTypeAtIndexImpl<0,T,Types...>
 {
     using type = T;
 };
 
 template<std::size_t I, typename T, typename... Types>
-struct MemberDataTypeAtIndexImpl
+struct MemberTypeAtIndexImpl
 {
-    using type = typename MemberDataTypeAtIndexImpl<I-1,Types...>::type;
+    using type = typename MemberTypeAtIndexImpl<I-1,Types...>::type;
 };
 
 template<std::size_t I, typename... Types>
-struct MemberDataTypeAtIndex;
+struct MemberTypeAtIndex;
 
 template<std::size_t I, typename... Types>
-struct MemberDataTypeAtIndex<I,MemberDataTypes<Types...> >
+struct MemberTypeAtIndex<I,MemberTypes<Types...> >
 {
     using type =
-        typename MemberDataTypeAtIndexImpl<I,Types...>::type;
+        typename MemberTypeAtIndexImpl<I,Types...>::type;
 };
 
 //---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 
-#endif // end CABANA_MEMBERDATATYPES_HPP
+#endif // end CABANA_MEMBERTYPES_HPP

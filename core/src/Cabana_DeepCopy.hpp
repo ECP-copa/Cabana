@@ -2,7 +2,6 @@
 #define CABANA_DEEPCOPY_HPP
 
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberSlice.hpp>
 #include <impl/Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -39,8 +38,6 @@ inline void deep_copy(
         typename src_type::memory_space::kokkos_memory_space;
     using dst_soa_type = typename dst_type::soa_type;
     using src_soa_type = typename src_type::soa_type;
-    using dst_array_layout = typename dst_type::inner_array_layout;
-    using src_array_layout = typename src_type::inner_array_layout;
 
     // Check that the data types are the same.
     static_assert(
@@ -82,7 +79,7 @@ inline void deep_copy(
     // If the inner array size is the same and both AoSoAs have the same number
     // of values then we can do a byte-wise copy directly.
     if ( std::is_same<dst_soa_type,src_soa_type>::value &&
-         std::is_same<dst_array_layout,src_array_layout>::value )
+         ( dst_type::vector_length == src_type::vector_length ) )
     {
         Kokkos::fence();
         Kokkos::Impl::DeepCopy<dst_memory_space,src_memory_space>(
@@ -98,7 +95,7 @@ inline void deep_copy(
         // layout as the source.
         using src_mirror_type = AoSoA<typename src_type::member_types,
                                       typename dst_type::memory_space,
-                                      src_array_layout>;
+                                      src_type::vector_length>;
         static_assert(
             std::is_same<src_soa_type,typename src_mirror_type::soa_type>::value,
             "Incompatible source mirror type in destination space" );
@@ -115,10 +112,10 @@ inline void deep_copy(
             src_num_soa * sizeof(src_soa_type) );
         Kokkos::fence();
 
-        // Copy via particles.
+        // Copy via tuples.
         auto copy_func =
-            KOKKOS_LAMBDA( const int i )
-            { dst.setParticle( i, src_copy_on_dst.getParticle(i) ); };
+            KOKKOS_LAMBDA( const std::size_t i )
+            { dst.setTuple( i, src_copy_on_dst.getTuple(i) ); };
         Kokkos::RangePolicy<typename dst_memory_space::execution_space>
             exec_policy( 0, dst.size() );
         Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
