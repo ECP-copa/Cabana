@@ -99,19 +99,18 @@ class AoSoA
     // Member data type at a given index M. Note this is the user-defined
     // member data type - not the potentially transformed type actually stored
     // by the structs (SoAs) to achieve a given layout.
-    template<std::size_t Member>
-    using member_data_type =
-        typename MemberTypeAtIndex<Member,member_types>::type;
+    template<std::size_t M>
+    using member_data_type = typename MemberTypeAtIndex<M,member_types>::type;
 
     // Struct member array element value type at a given index M.
-    template<std::size_t Member>
+    template<std::size_t M>
     using member_value_type =
-        typename std::remove_all_extents<member_data_type<Member> >::type;
+        typename std::remove_all_extents<member_data_type<M> >::type;
 
     // Struct member array element pointer type at a given index M.
-    template<std::size_t Member>
+    template<std::size_t M>
     using member_pointer_type =
-        typename std::add_pointer<member_value_type<Member> >::type;
+        typename std::add_pointer<member_value_type<M> >::type;
 
   public:
 
@@ -260,11 +259,11 @@ class AoSoA
     }
 
     /*!
-      \brief Get the SoA at a given index.
+      \brief Get a reference to the SoA at a given index.
 
       \param s The SoA index.
 
-      \return The SoA at the given index.
+      \return The SoA reference at the given index.
     */
     template<typename S>
     KOKKOS_FORCEINLINE_FUNCTION
@@ -273,11 +272,11 @@ class AoSoA
     { return _data(s); }
 
     /*!
-      \brief Get a tuple at a given index.
+      \brief Get a tuple at a given index via a deep copy.
 
       \param i The index to get the tuple from.
 
-      \return A tuple containing a copy of the data at the given index.
+      \return A tuple containing a deep copy of the data at the given index.
     */
     template<typename I>
     KOKKOS_INLINE_FUNCTION
@@ -285,13 +284,12 @@ class AoSoA
     getTuple( const I& i ) const
     {
         tuple_type tpl;
-        Impl::tupleCopy(
-            tpl, 0, _data(index_type::s(i)), index_type::a(i) );
+        Impl::tupleCopy( tpl, 0, _data(index_type::s(i)), index_type::a(i) );
         return tpl;
     }
 
     /*!
-      \brief Set a tuple at a given index.
+      \brief Set a tuple at a given index via a deep copy.
 
       \param i The index to set the tuple at.
 
@@ -303,30 +301,27 @@ class AoSoA
     setTuple( const I& i,
               const tuple_type& tpl ) const
     {
-        Impl::tupleCopy(
-            _data(index_type::s(i)), index_type::a(i), tpl, 0 );
+        Impl::tupleCopy( _data(index_type::s(i)), index_type::a(i), tpl, 0 );
     }
 
     /*!
       \brief Get an unmanaged slice of a tuple member with default memory
       access.
+      \tparam M The member index to get a slice of.
       \param The tag identifying which member to get a slice of.
       \return The member slice.
     */
-    template<std::size_t Member>
-    Slice<member_data_type<Member>,
-          memory_space,
-          DefaultAccessMemory,
-          vector_length>
+    template<std::size_t M>
+    Slice<member_data_type<M>,memory_space,DefaultAccessMemory,vector_length>
     slice() const
     {
         return
-            Slice<member_data_type<Member>,
+            Slice<member_data_type<M>,
                   memory_space,
                   DefaultAccessMemory,
                   vector_length>(
-                      (member_pointer_type<Member>) _pointers[Member],
-                      _size, _strides[Member], _num_soa );
+                      (member_pointer_type<M>) _pointers[M],
+                      _size, _strides[M], _num_soa );
     }
 
     /*!

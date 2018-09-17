@@ -234,10 +234,10 @@ class Slice
     /*!
       \brief Constructor.
       \param data Pointer to the first member of the slice.
-      \param The number of tuples in the slice.
-      \param The number of elements in the slice's value type between starting
+      \param size The number of tuples in the slice.
+      \param soa_stride The number of elements in the slice's value type between starting
       elements of a struct.
-      \param The number of structs in the slice.
+      \param num_soa The number of structs in the slice.
     */
     Slice( const pointer_type data,
            const std::size_t size,
@@ -250,6 +250,7 @@ class Slice
     /*!
       \brief Shallow copy constructor for different memory spaces for
       assigning new memory access traits to the view.
+      \tparam MAT Memory access type.
       \param rhs The slice to shallow copy with a potentially different memory
       space.
      */
@@ -262,7 +263,10 @@ class Slice
     /*!
       \brief Assignement operator for different memory spaces for assigning
       new memory access traits to the view.
+      \tparam MAT Memory access type
       \param rhs The slice to shallow copy with a potentially different memory
+      space.
+      \return A reference to a new slice with a potentially different memory
       space.
      */
     template<class MAT>
