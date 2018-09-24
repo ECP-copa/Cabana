@@ -158,51 +158,6 @@ struct Tuple<MemberTypes<Types...> >
         const base& b = *this;
         return b.template get<M>( 0, d0, d1, d2 );
     }
-
-    // Rank 4
-    template<std::size_t M,
-             typename D0,
-             typename D1,
-             typename D2,
-             typename D3>
-    CABANA_FORCEINLINE_FUNCTION
-    typename std::enable_if<
-        (4==std::rank<typename base::template member_data_type<M> >::value &&
-         std::is_integral<D0>::value &&
-         std::is_integral<D1>::value &&
-         std::is_integral<D2>::value &&
-         std::is_integral<D3>::value),
-        typename base::template member_reference_type<M> >::type
-    get( const D0& d0,
-         const D1& d1,
-         const D2& d2,
-         const D3& d3 )
-    {
-        base& b = *this;
-        return b.template get<M>( 0, d0, d1, d2, d3 );
-    }
-
-    template<std::size_t M,
-             typename D0,
-             typename D1,
-             typename D2,
-             typename D3>
-    CABANA_FORCEINLINE_FUNCTION
-    typename std::enable_if<
-        (4==std::rank<typename base::template member_data_type<M> >::value &&
-         std::is_integral<D0>::value &&
-         std::is_integral<D1>::value &&
-         std::is_integral<D2>::value &&
-         std::is_integral<D3>::value),
-        typename base::template member_value_type<M> >::type
-    get( const D0& d0,
-         const D1& d1,
-         const D2& d2,
-         const D3& d3 ) const
-    {
-        const base& b = *this;
-        return b.template get<M>( 0, d0, d1, d2, d3 );
-    }
 };
 
 //---------------------------------------------------------------------------//

@@ -101,7 +101,7 @@ class AoSoA
     static constexpr std::size_t number_of_members = member_types::size;
 
     // The maximum rank supported for member types.
-    static constexpr int max_supported_rank = 4;
+    static constexpr std::size_t max_supported_rank = 3;
 
     // Index type.
     using index_type = Impl::Index<vector_length>;

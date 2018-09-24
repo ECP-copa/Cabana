@@ -40,7 +40,6 @@ struct FooData
     double _d3[4][2][3];
     unsigned _d4[4][5];
     float _d5[4][3][2][2];
-    double _d6[4][4][2][3][2];
 };
 
 //---------------------------------------------------------------------------//
@@ -56,8 +55,7 @@ void testSoA()
                                              float,
                                              double[2][3],
                                              unsigned[5],
-                                             float[3][2][2],
-                                             double[4][2][3][2]>;
+                                             float[3][2][2]>;
     using soa_type = Cabana::SoA<vector_length,member_types>;
 
     // Check that the data in the soa is contiguous.
@@ -74,12 +72,12 @@ void testSoA()
     double v1 = 0.3343;
     soa.get<0>( 3 ) = v1;
 
-    double v2 = 0.992;
-    soa.get<6>( 2, 1, 1, 1, 1 ) = v2;
+    float v2 = 0.992;
+    soa.get<5>( 2, 1, 1, 1 ) = v2;
 
     // Check the data.
     EXPECT_EQ( soa.get<0>(3), v1 );
-    EXPECT_EQ( soa.get<6>(2,1,1,1,1), v2 );
+    EXPECT_EQ( soa.get<5>(2,1,1,1), v2 );
 }
 
 //---------------------------------------------------------------------------//

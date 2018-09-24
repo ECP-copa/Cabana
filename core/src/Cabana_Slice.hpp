@@ -106,29 +106,6 @@ struct KokkosDataTypeImpl<T,3,VectorLength>
     }
 };
 
-// Rank-4
-template<typename T, int VectorLength>
-struct KokkosDataTypeImpl<T,4,VectorLength>
-{
-    using value_type = typename std::remove_all_extents<T>::type;
-    static constexpr std::size_t D0 = std::extent<T,0>::value;
-    static constexpr std::size_t D1 = std::extent<T,1>::value;
-    static constexpr std::size_t D2 = std::extent<T,2>::value;
-    static constexpr std::size_t D3 = std::extent<T,3>::value;
-    using data_type = value_type*[VectorLength][D0][D1][D2][D3];
-
-    inline static Kokkos::LayoutStride createLayout( const std::size_t num_soa,
-                                                     const std::size_t stride )
-    {
-        return Kokkos::LayoutStride( num_soa, stride,
-                                     VectorLength, 1,
-                                     D0, VectorLength,
-                                     D1, D0*VectorLength,
-                                     D2, D1*D0*VectorLength,
-                                     D3, D2*D1*D0*VectorLength );
-    }
-};
-
 // Data type specialization.
 template<typename T, int VectorLength>
 struct KokkosDataType
@@ -197,7 +174,7 @@ class Slice
     using index_type = Impl::Index<vector_length>;
 
     // Maximum supported rank.
-    static constexpr int max_supported_rank = 4;
+    static constexpr int max_supported_rank = 3;
 
     // Kokkos view wrapper.
     using view_wrapper = Impl::KokkosViewWrapper<DataType,vector_length>;
@@ -394,32 +371,6 @@ class Slice
             const D2& d2 ) const
     { return _view( s, a, d0, d1, d2); }
 
-    // Rank 4
-    template<typename S,
-             typename A,
-             typename D0,
-             typename D1,
-             typename D2,
-             typename D3,
-             typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<U>::value &&
-                             std::is_integral<S>::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
-                             std::is_integral<D2>::value &&
-                             std::is_integral<D3>::value &&
-                             std::is_same<U,DataType>::value),
-                            reference_type>::type
-    access( const S& s,
-            const A& a,
-            const D0& d0,
-            const D1& d1,
-            const D2& d2,
-            const D3& d3 ) const
-    { return _view( s, a, d0, d1, d2, d3); }
-
     // ------------
     // 1-D accessor
 
@@ -484,29 +435,6 @@ class Slice
                 const D1& d1,
                 const D2& d2 ) const
     { return access( index_type::s(i), index_type::a(i), d0, d1, d2 ); }
-
-    // Rank 4
-    template<typename I,
-             typename D0,
-             typename D1,
-             typename D2,
-             typename D3,
-             typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<U>::value &&
-                             std::is_integral<I>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
-                             std::is_integral<D2>::value &&
-                             std::is_integral<D3>::value &&
-                             std::is_same<U,DataType>::value),
-                            reference_type>::type
-    operator()( const I& i,
-                const D0& d0,
-                const D1& d1,
-                const D2& d2,
-                const D3& d3 ) const
-    { return access( index_type::s(i), index_type::a(i), d0, d1, d2, d3 ); }
 
     // -------------------------------
     // Raw data access.

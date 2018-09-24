@@ -24,14 +24,12 @@ template<class aosoa_type>
 void checkDataMembers(
     aosoa_type aosoa,
     const float fval, const double dval, const int ival,
-    const int dim_1, const int dim_2,
-    const int dim_3, const int dim_4 )
+    const int dim_1, const int dim_2, const int dim_3 )
 {
     auto slice_0 = aosoa.template slice<0>();
     auto slice_1 = aosoa.template slice<1>();
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
-    auto slice_4 = aosoa.template slice<4>();
 
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -47,20 +45,12 @@ void checkDataMembers(
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        EXPECT_EQ( slice_2( idx, i, j, k, l ),
-                                     fval * (i+j+k+l) );
+            EXPECT_EQ( slice_2( idx, i ), dval * i );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( slice_3( idx, i ), dval * i );
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( slice_4( idx, i, j ), dval * (i+j) );
+                EXPECT_EQ( slice_3( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -74,13 +64,11 @@ void testDeepCopy()
     const int dim_1 = 3;
     const int dim_2 = 2;
     const int dim_3 = 4;
-    const int dim_4 = 3;
 
     // Declare data types.
     using DataTypes =
         Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                             int,
-                            float[dim_1][dim_2][dim_3][dim_4],
                             double[dim_1],
                             double[dim_1][dim_2]
                             >;
@@ -102,7 +90,6 @@ void testDeepCopy()
     auto slice_1 = src_aosoa.template slice<1>();
     auto slice_2 = src_aosoa.template slice<2>();
     auto slice_3 = src_aosoa.template slice<3>();
-    auto slice_4 = src_aosoa.template slice<4>();
     for ( std::size_t idx = 0; idx < src_aosoa.size(); ++idx )
     {
         // Member 0.
@@ -116,26 +103,19 @@ void testDeepCopy()
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+            slice_2( idx, i ) = dval * i;
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            slice_3( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                slice_4( idx, i, j ) = dval * (i+j);
+                slice_3( idx, i, j ) = dval * (i+j);
     }
 
     // Deep copy
     Cabana::deep_copy( dst_aosoa, src_aosoa );
 
     // Check values.
-    checkDataMembers( dst_aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( dst_aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//

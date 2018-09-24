@@ -69,18 +69,6 @@ struct InnerArrayTypeImpl<T,3,VectorLength>
     using type = value_type[D2][D1][D0][VectorLength];
 };
 
-// rank-4 specialization.
-template<typename T, int VectorLength>
-struct InnerArrayTypeImpl<T,4,VectorLength>
-{
-    using value_type = typename std::remove_all_extents<T>::type;
-    static constexpr std::size_t D0 = std::extent<T,0>::value;
-    static constexpr std::size_t D1 = std::extent<T,1>::value;
-    static constexpr std::size_t D2 = std::extent<T,2>::value;
-    static constexpr std::size_t D3 = std::extent<T,3>::value;
-    using type = value_type[D3][D2][D1][D0][VectorLength];
-};
-
 //---------------------------------------------------------------------------//
 // Inner array type.
 template<typename T,int VectorLength>
@@ -150,7 +138,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
     static constexpr std::size_t number_of_members = member_types::size;
 
     // The maximum rank supported for member types.
-    static constexpr std::size_t max_supported_rank = 4;
+    static constexpr std::size_t max_supported_rank = 3;
 
     // Member data type.
     template<std::size_t M>
@@ -345,55 +333,6 @@ struct SoA<VectorLength,MemberTypes<Types...> >
         return base._data[d2][d1][d0][a];
     }
 
-    // Rank 4
-    template<std::size_t M,
-             typename A,
-             typename D0,
-             typename D1,
-             typename D2,
-             typename D3>
-    CABANA_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
-                             std::is_integral<D2>::value &&
-                             std::is_integral<D3>::value),
-                            member_reference_type<M> >::type
-    get( const A& a,
-         const D0& d0,
-         const D1& d1,
-         const D2& d2,
-         const D3& d3 )
-    {
-        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d3][d2][d1][d0][a];
-    }
-
-    template<std::size_t M,
-             typename A,
-             typename D0,
-             typename D1,
-             typename D2,
-             typename D3>
-    CABANA_FORCEINLINE_FUNCTION
-    typename std::enable_if<(4==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
-                             std::is_integral<D2>::value &&
-                             std::is_integral<D3>::value),
-                            member_value_type<M> >::type
-    get( const A& a,
-         const D0& d0,
-         const D1& d1,
-         const D2& d2,
-         const D3& d3 ) const
-    {
-        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d3][d2][d1][d0][a];
-    }
-
     // ----------------
     // Raw data access
 
@@ -473,24 +412,6 @@ soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
             for ( std::size_t i2 = 0; i2 < dst.template extent<M,2>(); ++i2 )
                 dst.template get<M>( dst_idx, i0, i1, i2 ) =
                     src.template get<M>( src_idx, i0, i1, i2 );
-}
-
-// Rank r
-template<std::size_t M, int DstVectorLength, int SrcVectorLength, typename... Types>
-KOKKOS_INLINE_FUNCTION
-typename std::enable_if<
-    (4==std::rank<typename MemberTypeAtIndex<M,MemberTypes<Types...> >::type>::value),void>::type
-soaElementMemberCopy( SoA<DstVectorLength,MemberTypes<Types...> >& dst,
-                      const std::size_t dst_idx,
-                      const SoA<SrcVectorLength,MemberTypes<Types...> >& src,
-                      const std::size_t src_idx )
-{
-    for ( std::size_t i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
-        for ( std::size_t i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
-            for ( std::size_t i2 = 0; i2 < dst.template extent<M,2>(); ++i2 )
-                for ( std::size_t i3 = 0; i3 < dst.template extent<M,3>(); ++i3 )
-                    dst.template get<M>( dst_idx, i0, i1, i2, i3 ) =
-                        src.template get<M>( src_idx, i0, i1, i2, i3 );
 }
 
 // Copy the values of all members of an SoA from a source to a destination at

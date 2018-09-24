@@ -25,8 +25,7 @@ template<class view_type>
 void checkDataMembers(
     view_type view,
     const float fval, const double dval, const int ival,
-    const std::size_t dim_1, const std::size_t dim_2,
-    const std::size_t dim_3, const std::size_t dim_4 )
+    const std::size_t dim_1, const std::size_t dim_2, const std::size_t dim_3 )
 {
     for ( std::size_t idx = 0; idx < view.extent(0); ++idx )
     {
@@ -42,20 +41,12 @@ void checkDataMembers(
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    for ( std::size_t l = 0; l < dim_4; ++l )
-                        EXPECT_EQ( view(idx).template get<2>( i, j, k, l ),
-                                   fval * (i+j+k+l) );
+            EXPECT_EQ( view(idx).template get<2>( i ), dval * i );
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            EXPECT_EQ( view(idx).template get<3>( i ), dval * i );
-
-        // Member 4.
-        for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                EXPECT_EQ( view(idx).template get<4>( i, j ), dval * (i+j) );
+                EXPECT_EQ( view(idx).template get<3>( i, j ), dval * (i+j) );
     }
 }
 
@@ -67,17 +58,15 @@ void runTest()
     const std::size_t dim_1 = 3;
     const std::size_t dim_2 = 2;
     const std::size_t dim_3 = 4;
-    const std::size_t dim_4 = 3;
 
     // Declare member types.
     using T0 = float[dim_1][dim_2][dim_3];
     using T1 = int;
-    using T2 = float[dim_1][dim_2][dim_3][dim_4];
-    using T3 = double[dim_1];
-    using T4 = double[dim_1][dim_2];
+    using T2 = double[dim_1];
+    using T3 = double[dim_1][dim_2];
 
     // Declare data types.
-    using DataTypes = Cabana::MemberTypes<T0,T1,T2,T3,T4>;
+    using DataTypes = Cabana::MemberTypes<T0,T1,T2,T3>;
 
     // Declare the tuple type.
     using Tuple_t = Cabana::Tuple<DataTypes>;
@@ -105,19 +94,12 @@ void runTest()
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            for ( std::size_t j = 0; j < dim_2; ++j )
-                for ( std::size_t k = 0; k < dim_3; ++k )
-                    for ( std::size_t l = 0; l < dim_4; ++l )
-                        tuples( idx ).get<2>( i, j, k, l ) = fval * (i+j+k+l);
+            tuples( idx ).get<2>( i ) = dval * i;
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            tuples( idx ).get<3>( i ) = dval * i;
-
-        // Member 4.
-        for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                tuples( idx ).get<4>( i, j ) = dval * (i+j);
+                tuples( idx ).get<3>( i, j ) = dval * (i+j);
     };
     Kokkos::fence();
 
@@ -127,7 +109,7 @@ void runTest()
     Kokkos::fence();
 
     // Check data members of the for proper initialization.
-    checkDataMembers( tuples, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( tuples, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
