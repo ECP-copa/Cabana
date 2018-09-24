@@ -25,14 +25,12 @@ template<class aosoa_type>
 void checkDataMembers(
     aosoa_type aosoa,
     const float fval, const double dval, const int ival,
-    const int dim_1, const int dim_2,
-    const int dim_3, const int dim_4 )
+    const int dim_1, const int dim_2, const int dim_3 )
 {
     auto slice_0 = aosoa.template slice<0>();
     auto slice_1 = aosoa.template slice<1>();
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
-    auto slice_4 = aosoa.template slice<4>();
 
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -48,20 +46,12 @@ void checkDataMembers(
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        EXPECT_EQ( slice_2( idx, i, j, k, l ),
-                                    fval * (i+j+k+l) );
+            EXPECT_EQ( slice_2( idx, i ), dval * i );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( slice_3( idx, i ), dval * i );
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( slice_4( idx, i, j ), dval * (i+j) );
+                EXPECT_EQ( slice_3( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -76,13 +66,11 @@ void testAoSoA()
     const int dim_1 = 3;
     const int dim_2 = 2;
     const int dim_3 = 4;
-    const int dim_4 = 3;
 
     // Declare data types.
     using DataTypes =
         Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                                 int,
-                                float[dim_1][dim_2][dim_3][dim_4],
                                 double[dim_1],
                                 double[dim_1][dim_2]
                                 >;
@@ -101,7 +89,6 @@ void testAoSoA()
     auto slice_1 = aosoa.slice<1>();
     auto slice_2 = aosoa.slice<2>();
     auto slice_3 = aosoa.slice<3>();
-    auto slice_4 = aosoa.slice<4>();
 
     // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
@@ -134,7 +121,6 @@ void testAoSoA()
     slice_1 = aosoa.slice<1>();
     slice_2 = aosoa.slice<2>();
     slice_3 = aosoa.slice<3>();
-    slice_4 = aosoa.slice<4>();
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -153,23 +139,16 @@ void testAoSoA()
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+            slice_2( idx, i ) = dval * i;
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            slice_3( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                slice_4( idx, i, j ) = dval * (i+j);
+                slice_3( idx, i, j ) = dval * (i+j);
     }
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Now extend the capacity of the container. First make the capacity
     // smaller - this wont actually do anything because we never decrease the
@@ -183,7 +162,7 @@ void testAoSoA()
     EXPECT_EQ( aosoa.arraySize(0), int(16) );
     EXPECT_EQ( aosoa.arraySize(1), int(16) );
     EXPECT_EQ( aosoa.arraySize(2), int(3) );
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Now reserve a bunch of space.
     aosoa.reserve( 1024 );
@@ -195,7 +174,7 @@ void testAoSoA()
     EXPECT_EQ( aosoa.arraySize(0), int(16) );
     EXPECT_EQ( aosoa.arraySize(1), int(16) );
     EXPECT_EQ( aosoa.arraySize(2), int(3) );
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Now decrease the size of the container.
     aosoa.resize( 29 );
@@ -206,7 +185,7 @@ void testAoSoA()
     EXPECT_EQ( aosoa.numSoA(), int(2) );
     EXPECT_EQ( aosoa.arraySize(0), int(16) );
     EXPECT_EQ( aosoa.arraySize(1), int(13) );
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -221,12 +200,11 @@ void testRawData()
     const int dim_2 = 5;
 
     // Declare data types. Note that this test only uses rank-0 data.
-    using DataTypes =
-        Cabana::MemberTypes<float,
-                                int,
-                                double[dim_1][dim_2],
-                                int,
-                                double>;
+    using DataTypes = Cabana::MemberTypes<float,
+                                          int,
+                                          double[dim_1][dim_2],
+                                          int,
+                                          double>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
@@ -312,17 +290,15 @@ void testTuple()
     const int dim_1 = 3;
     const int dim_2 = 2;
     const int dim_3 = 4;
-    const int dim_4 = 3;
 
     // Declare member types.
     using T0 = float[dim_1][dim_2][dim_3];
     using T1 = int;
-    using T2 = float[dim_1][dim_2][dim_3][dim_4];
-    using T3 = double[dim_1];
-    using T4 = double[dim_1][dim_2];
+    using T2 = double[dim_1];
+    using T3 = double[dim_1][dim_2];
 
     // Declare data types.
-    using DataTypes = Cabana::MemberTypes<T0,T1,T2,T3,T4>;
+    using DataTypes = Cabana::MemberTypes<T0,T1,T2,T3>;
 
     // Declare the tuple type.
     using Tuple_t = Cabana::Tuple<DataTypes>;
@@ -342,7 +318,6 @@ void testTuple()
     auto slice_1 = aosoa.slice<1>();
     auto slice_2 = aosoa.slice<2>();
     auto slice_3 = aosoa.slice<3>();
-    auto slice_4 = aosoa.slice<4>();
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
@@ -359,19 +334,12 @@ void testTuple()
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+            slice_2( idx, i ) = dval * i;
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            slice_3( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                slice_4( idx, i, j ) = dval * (i+j);
+                slice_3( idx, i, j ) = dval * (i+j);
     }
 
     // Assign the AoSoA data to the tuples.
@@ -395,19 +363,12 @@ void testTuple()
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        tuples( idx ).get<2>( i, j, k, l ) = fval * (i+j+k+l);
+            tuples( idx ).get<2>( i ) = dval * i;
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            tuples( idx ).get<3>( i ) = dval * i;
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                tuples( idx ).get<4>( i, j ) = dval * (i+j);
+                tuples( idx ).get<3>( i, j ) = dval * (i+j);
     }
 
     // Assign the tuple data back to the AoSoA.
@@ -415,7 +376,7 @@ void testTuple()
         aosoa.setTuple( idx, tuples(idx) );
 
     // Check the results.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -429,13 +390,11 @@ void testAccess()
     const int dim_1 = 3;
     const int dim_2 = 2;
     const int dim_3 = 4;
-    const int dim_4 = 3;
 
     // Declare data types.
     using DataTypes =
         Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                             int,
-                            float[dim_1][dim_2][dim_3][dim_4],
                             double[dim_1],
                             double[dim_1][dim_2]
                             >;
@@ -471,24 +430,17 @@ void testAccess()
 
             // Member 2.
             for ( int i = 0; i < dim_1; ++i )
-                for ( int j = 0; j < dim_2; ++j )
-                    for ( int k = 0; k < dim_3; ++k )
-                        for ( int l = 0; l < dim_4; ++l )
-                            soa.get<2>( a, i, j, k, l ) = fval * (i+j+k+l);
+                soa.get<2>( a, i ) = dval * i;
 
             // Member 3.
             for ( int i = 0; i < dim_1; ++i )
-                soa.get<3>( a, i ) = dval * i;
-
-            // Member 4.
-            for ( int i = 0; i < dim_1; ++i )
                 for ( int j = 0; j < dim_2; ++j )
-                    soa.get<4>( a, i, j ) = dval * (i+j);
+                    soa.get<3>( a, i, j ) = dval * (i+j);
         }
     }
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//

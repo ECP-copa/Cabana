@@ -23,14 +23,12 @@ template<class aosoa_type>
 void initializeDataMembers(
     aosoa_type aosoa,
     const float fval, const double dval, const int ival,
-    const int dim_1, const int dim_2,
-    const int dim_3, const int dim_4 )
+    const int dim_1, const int dim_2, const int dim_3 )
 {
     auto slice_0 = aosoa.template slice<0>();
     auto slice_1 = aosoa.template slice<1>();
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
-    auto slice_4 = aosoa.template slice<4>();
 
     for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -45,19 +43,12 @@ void initializeDataMembers(
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        slice_2( idx, i, j, k, l ) = fval * (i+j+k+l);
+            slice_2( idx, i ) = dval * i;
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            slice_3( idx, i ) = dval * i;
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                slice_4( idx, i, j ) = dval * (i+j);
+                slice_3( idx, i, j ) = dval * (i+j);
     }
 }
 
@@ -67,14 +58,12 @@ template<class aosoa_type>
 void checkDataMembers(
     aosoa_type aosoa,
     const float fval, const double dval, const int ival,
-    const int dim_1, const int dim_2,
-    const int dim_3, const int dim_4 )
+    const int dim_1, const int dim_2, const int dim_3 )
 {
     auto slice_0 = aosoa.template slice<0>();
     auto slice_1 = aosoa.template slice<1>();
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
-    auto slice_4 = aosoa.template slice<4>();
 
     for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -90,20 +79,12 @@ void checkDataMembers(
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        EXPECT_EQ( slice_2( idx, i, j, k, l ),
-                                   fval * (i+j+k+l) );
+            EXPECT_EQ( slice_2( idx, i ), dval * i );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( slice_3( idx, i ), dval * i );
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( slice_4( idx, i, j ), dval * (i+j) );
+                EXPECT_EQ( slice_3( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -118,13 +99,11 @@ void apiTest()
     const int dim_1 = 3;
     const int dim_2 = 2;
     const int dim_3 = 4;
-    const int dim_4 = 3;
 
     // Declare data types.
     using DataTypes =
         Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                             int,
-                            float[dim_1][dim_2][dim_3][dim_4],
                             double[dim_1],
                             double[dim_1][dim_2]
                             >;
@@ -139,14 +118,12 @@ void apiTest()
     auto slice_1 = aosoa.slice<1>();
     auto slice_2 = aosoa.slice<2>();
     auto slice_3 = aosoa.slice<3>();
-    auto slice_4 = aosoa.slice<4>();
 
     // Check that they are slices.
     EXPECT_TRUE( Cabana::is_slice<decltype(slice_0)>::value );
     EXPECT_TRUE( Cabana::is_slice<decltype(slice_1)>::value );
     EXPECT_TRUE( Cabana::is_slice<decltype(slice_2)>::value );
     EXPECT_TRUE( Cabana::is_slice<decltype(slice_3)>::value );
-    EXPECT_TRUE( Cabana::is_slice<decltype(slice_4)>::value );
 
     // Check field sizes.
     EXPECT_EQ( slice_0.size(), 35 );
@@ -161,19 +138,15 @@ void apiTest()
     EXPECT_EQ( slice_3.size(), 35 );
     EXPECT_EQ( slice_3.numSoA(), 3 );
 
-    EXPECT_EQ( slice_4.size(), 35 );
-    EXPECT_EQ( slice_4.numSoA(), 3 );
-
     // Initialize data with the () operator. The implementation of operator()
     // calls access() and therefore tests that as well.
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    initializeDataMembers(
-        aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    initializeDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Check the raw pointer interface sizes.
     EXPECT_EQ( slice_0.rank(), 5 );
@@ -187,24 +160,16 @@ void apiTest()
     EXPECT_EQ( slice_1.extent(0), 3 );
     EXPECT_EQ( slice_1.extent(1), 16 );
 
-    EXPECT_EQ( slice_2.rank(), 6 );
+    EXPECT_EQ( slice_2.rank(), 3 );
     EXPECT_EQ( slice_2.extent(0), 3 );
     EXPECT_EQ( slice_2.extent(1), 16 );
     EXPECT_EQ( slice_2.extent(2), dim_1 );
-    EXPECT_EQ( slice_2.extent(3), dim_2 );
-    EXPECT_EQ( slice_2.extent(4), dim_3 );
-    EXPECT_EQ( slice_2.extent(5), dim_4 );
 
-    EXPECT_EQ( slice_3.rank(), 3 );
+    EXPECT_EQ( slice_3.rank(), 4 );
     EXPECT_EQ( slice_3.extent(0), 3 );
     EXPECT_EQ( slice_3.extent(1), 16 );
     EXPECT_EQ( slice_3.extent(2), dim_1 );
-
-    EXPECT_EQ( slice_4.rank(), 4 );
-    EXPECT_EQ( slice_4.extent(0), 3 );
-    EXPECT_EQ( slice_4.extent(1), 16 );
-    EXPECT_EQ( slice_4.extent(2), dim_1 );
-    EXPECT_EQ( slice_4.extent(3), dim_2 );
+    EXPECT_EQ( slice_3.extent(3), dim_2 );
 
     // Now manipulate the data with the raw pointer interface.
     fval = 9.22;
@@ -214,7 +179,6 @@ void apiTest()
     auto p1 = slice_1.data();
     auto p2 = slice_2.data();
     auto p3 = slice_3.data();
-    auto p4 = slice_4.data();
     for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
         for ( int a = 0; a < slice_0.arraySize(s); ++a )
         {
@@ -234,33 +198,21 @@ void apiTest()
 
             // Member 2.
             for ( int i = 0; i < dim_1; ++i )
-                for ( int j = 0; j < dim_2; ++j )
-                    for ( int k = 0; k < dim_3; ++k )
-                        for ( int l = 0; l < dim_4; ++l )
-                            p2[ s*slice_2.stride(0) +
-                                a*slice_2.stride(1) +
-                                i*slice_2.stride(2) +
-                                j*slice_2.stride(3) +
-                                k*slice_2.stride(4) +
-                                l*slice_2.stride(5) ] = fval * (i+j+k+l);
+                p2[ s*slice_2.stride(0) +
+                    a*slice_2.stride(1) +
+                    i*slice_2.stride(2) ] = dval * i;
 
             // Member 3.
             for ( int i = 0; i < dim_1; ++i )
-                p3[ s*slice_3.stride(0) +
-                    a*slice_3.stride(1) +
-                    i*slice_3.stride(2) ] = dval * i;
-
-            // Member 4.
-            for ( int i = 0; i < dim_1; ++i )
                 for ( int j = 0; j < dim_2; ++j )
-                    p4[ s*slice_4.stride(0) +
-                        a*slice_4.stride(1) +
-                        i*slice_4.stride(2) +
-                        j*slice_4.stride(3) ] = dval * (i+j);
+                    p3[ s*slice_3.stride(0) +
+                        a*slice_3.stride(1) +
+                        i*slice_3.stride(2) +
+                        j*slice_3.stride(3) ] = dval * (i+j);
         }
 
     // Check the result of pointer manipulation
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -274,13 +226,11 @@ void randomAccessTest()
     const int dim_1 = 3;
     const int dim_2 = 2;
     const int dim_3 = 4;
-    const int dim_4 = 3;
 
     // Declare data types.
     using DataTypes =
         Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                                 int,
-                                float[dim_1][dim_2][dim_3][dim_4],
                                 double[dim_1],
                                 double[dim_1][dim_2]
                                 >;
@@ -294,22 +244,19 @@ void randomAccessTest()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    initializeDataMembers(
-        aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    initializeDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Create slices.
     auto da_slice_0 = aosoa.slice<0>();
     auto da_slice_1 = aosoa.slice<1>();
     auto da_slice_2 = aosoa.slice<2>();
     auto da_slice_3 = aosoa.slice<3>();
-    auto da_slice_4 = aosoa.slice<4>();
 
     // Create read-only random access slices.
     decltype(da_slice_0)::random_access_slice ra_slice_0 = da_slice_0;
     decltype(da_slice_1)::random_access_slice ra_slice_1 = da_slice_1;
     decltype(da_slice_2)::random_access_slice ra_slice_2 = da_slice_2;
     decltype(da_slice_3)::random_access_slice ra_slice_3 = da_slice_3;
-    decltype(da_slice_4)::random_access_slice ra_slice_4 = da_slice_4;
 
     // Create a second aosoa.
     AoSoA_t aosoa_2( num_data );
@@ -319,7 +266,6 @@ void randomAccessTest()
     auto slice_1 = aosoa_2.slice<1>();
     auto slice_2 = aosoa_2.slice<2>();
     auto slice_3 = aosoa_2.slice<3>();
-    auto slice_4 = aosoa_2.slice<4>();
 
     // Assign the read-only data to the new aosoa.
     for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
@@ -335,24 +281,16 @@ void randomAccessTest()
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        slice_2( idx, i, j, k, l ) =
-                            ra_slice_2( idx, i, j, k, l );
+            slice_2( idx, i ) = ra_slice_2( idx, i );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            slice_3( idx, i ) = ra_slice_3( idx, i );
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                slice_4( idx, i, j ) = ra_slice_4( idx, i, j );
+                slice_3( idx, i, j ) = ra_slice_3( idx, i, j );
     }
 
     // Check data members for proper assignment.
-    checkDataMembers( aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//

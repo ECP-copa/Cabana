@@ -24,14 +24,12 @@ template<class aosoa_type>
 void checkDataMembers(
     aosoa_type aosoa,
     const float fval, const double dval, const int ival,
-    const int dim_1, const int dim_2,
-    const int dim_3, const int dim_4 )
+    const int dim_1, const int dim_2, const int dim_3 )
 {
     auto slice_0 = aosoa.template slice<0>();
     auto slice_1 = aosoa.template slice<1>();
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
-    auto slice_4 = aosoa.template slice<4>();
 
     for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -47,20 +45,12 @@ void checkDataMembers(
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    for ( int l = 0; l < dim_4; ++l )
-                        EXPECT_EQ( slice_2( idx, i, j, k, l ),
-                                   fval * (i+j+k+l) );
+            EXPECT_EQ( slice_2( idx, i ), dval * i );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( slice_3( idx, i ), dval * i );
-
-        // Member 4.
-        for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( slice_4( idx, i, j ), dval * (i+j) );
+                EXPECT_EQ( slice_3( idx, i, j ), dval * (i+j) );
     }
 }
 
@@ -70,8 +60,7 @@ template<class AoSoA_t,
          class SliceType0,
          class SliceType1,
          class SliceType2,
-         class SliceType3,
-         class SliceType4>
+         class SliceType3>
 class AssignmentOp
 {
   public:
@@ -84,14 +73,12 @@ class AssignmentOp
         , _slice_1( aosoa.template slice<1>() )
         , _slice_2( aosoa.template slice<2>() )
         , _slice_3( aosoa.template slice<3>() )
-        , _slice_4( aosoa.template slice<4>() )
         , _fval( fval )
         , _dval( dval )
         , _ival( ival )
-        , _dim_1( _slice_2.extent(2) )
-        , _dim_2( _slice_2.extent(3) )
-        , _dim_3( _slice_2.extent(4) )
-        , _dim_4( _slice_2.extent(5) )
+        , _dim_1( _slice_0.extent(2) )
+        , _dim_2( _slice_0.extent(3) )
+        , _dim_3( _slice_0.extent(4) )
     {}
 
     KOKKOS_INLINE_FUNCTION void operator()( const int idx ) const
@@ -107,19 +94,12 @@ class AssignmentOp
 
         // Member 2.
         for ( int i = 0; i < _dim_1; ++i )
-            for ( int j = 0; j < _dim_2; ++j )
-                for ( int k = 0; k < _dim_3; ++k )
-                    for ( int l = 0; l < _dim_4; ++l )
-                        _slice_2( idx, i, j, k, l ) = _fval * (i+j+k+l);
+            _slice_2( idx, i ) = _dval * i;
 
         // Member 3.
         for ( int i = 0; i < _dim_1; ++i )
-            _slice_3( idx, i ) = _dval * i;
-
-        // Member 4.
-        for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
-                _slice_4( idx, i, j ) = _dval * (i+j);
+                _slice_3( idx, i, j ) = _dval * (i+j);
     }
 
   private:
@@ -129,14 +109,12 @@ class AssignmentOp
     SliceType1 _slice_1;
     SliceType2 _slice_2;
     SliceType3 _slice_3;
-    SliceType4 _slice_4;
     float _fval;
     double _dval;
     int _ival;
-    int _dim_1 = 3;
-    int _dim_2 = 2;
-    int _dim_3 = 4;
-    int _dim_4 = 3;
+    int _dim_1;
+    int _dim_2;
+    int _dim_3;
 };
 
 //---------------------------------------------------------------------------//
@@ -147,13 +125,11 @@ void runTest()
     const int dim_1 = 3;
     const int dim_2 = 2;
     const int dim_3 = 4;
-    const int dim_4 = 3;
 
     // Declare data types.
     using DataTypes =
         Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
                             int,
-                            float[dim_1][dim_2][dim_3][dim_4],
                             double[dim_1],
                             double[dim_1][dim_2]
                             >;
@@ -175,8 +151,7 @@ void runTest()
                                 decltype(aosoa.slice<0>()),
                                 decltype(aosoa.slice<1>()),
                                 decltype(aosoa.slice<2>()),
-                                decltype(aosoa.slice<3>()),
-                                decltype(aosoa.slice<4>())>;
+                                decltype(aosoa.slice<3>())>;
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
@@ -186,7 +161,7 @@ void runTest()
     Cabana::parallel_for( range_policy, func_1, Cabana::StructParallelTag() );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Change values and write a second functor.
     fval = 93.4;
@@ -198,7 +173,7 @@ void runTest()
     Cabana::parallel_for( range_policy, func_2, Cabana::ArrayParallelTag() );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Change values and write a third functor.
     fval = 7.7;
@@ -211,7 +186,7 @@ void runTest()
         range_policy, func_3, Cabana::StructAndArrayParallelTag() );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Do one more loop but this time auto-dispatch. Reuse the first functor
     // but this time create an execution policy that automatically grabs begin
@@ -223,7 +198,7 @@ void runTest()
     fval = 3.4;
     dval = 1.23;
     ival = 1;
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, dim_4 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
