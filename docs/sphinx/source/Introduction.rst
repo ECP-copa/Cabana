@@ -3,7 +3,7 @@ Cabana Introduction
 
 Cabana is a performance portable library for particle-based simulations. It
 provides particle data structures, algorithms, and utilities to enable
-simulations on a variety of architectures included many-core/multi-core
+simulations on a variety of architectures including many-core/multi-core
 architectures and GPUs.
 
 Cabana is developed as part of the Co-Design Center for Particle Applications
@@ -16,9 +16,9 @@ Key features of Cabana include:
 - General and portable Array-of-Structs-of-Arrays data structure for
   node-level representations of particle data.
 
-- Support for general multidimensional particle data.
+- Support for general multidimensional particle data members.
 
-- Support for mixed precision particle data.
+- Support for mixed precision particle data members.
 
 - Node-level parallel particle operations with Serial, OpenMP, and CUDA
   back-end implementations. (Indicate Pthread support and other Kokkos flavors

@@ -6,16 +6,15 @@ Array-of-Structs-of-Arrays (AoSoA)
 
 Particles in Cabana are not represented individually by a singular data
 structure. Rather, they are always represented in groups within a data
-structure known as an Array-of-Structs-of-Arrays (AoSoA). An AoSoA is a
-generalization of the more commonly known Struct-of-Arrays (SoA) and
-Array-of-Structs (AoS) with both being common choices in practice depending on
-the type of computation and the architecture on which the simulation is
-performed.
+structure known as AoSoA. An AoSoA is a generalization of the more commonly
+known Struct-of-Arrays (SoA) and Array-of-Structs (AoS) with both being common
+choices in practice depending on the type of computation and the architecture
+on which the simulation is performed.
 
 First consider the AoS data layout. In this case we can define a ``Particle``
 data structure (the struct) to hold our particle information. We will define a
-particle with three data members: a single precision position, a double
-precision velocity, and an integer material id:
+particle with three data members: a double precision velocity, a single
+precision position, and an integer material id:
 
 .. highlight:: c++
 
@@ -23,16 +22,16 @@ precision velocity, and an integer material id:
 
    struct Particle
    {
-       float pos_x;
-       float pos_y;
-       float pos_z;
        double vel_x;
        double vel_y;
        double vel_z;
+       float pos_x;
+       float pos_y;
+       float pos_z;
        int matid;
    };
 
-An AoS is then very simply an array of these structs
+An AoS is then very simply a dynamic array of these structs
 (e.g. ``std::vector<Particle>``). From a programming point of view this is
 very convenient as the data for a single particle is encapsulated in one data
 structure. For example, basic operations such as sorting can be performed with
@@ -49,12 +48,12 @@ An SoA is an inversion of the AoS principle. We can very easily re-write our
 
    struct ParticleArray
    {
-       std::vector<float> pos_x;
-       std::vector<float> pos_y;
-       std::vector<float> pos_z;
        std::vector<double> vel_x;
        std::vector<double> vel_y;
        std::vector<double> vel_z;
+       std::vector<float> pos_x;
+       std::vector<float> pos_y;
+       std::vector<float> pos_z;
        std::vector<int> matid;
    };
 
@@ -74,12 +73,12 @@ smaller than the total number of particles:
 
    struct SoA
    {
-       float pos_x[ARRAY_SIZE];
-       float pos_y[ARRAY_SIZE];
-       float pos_z[ARRAY_SIZE];
        double vel_x[ARRAY_SIZE];
        double vel_y[ARRAY_SIZE];
        double vel_z[ARRAY_SIZE];
+       float pos_x[ARRAY_SIZE];
+       float pos_y[ARRAY_SIZE];
+       float pos_z[ARRAY_SIZE];
        int matid[ARRAY_SIZE];
    };
 
@@ -112,15 +111,15 @@ following figure:
    the size of the number of particles. In AoSoA, each component is stored in
    smaller contiguous chunks (perhaps the size of a vectorization unit).*
 
-From a performance and usability point of view, there is a potential benefit
-to all three layouts. In the case of AoS, this allows for a very clean set of
-abstractions on a particle-by-particle basis as including ease of
-programmability. In the case of SoA, the large contiguous chunks of memory for
+From a performance and usability point of view, there is a potential benefit to
+all three layouts. In the case of AoS, this allows for a very clean set of
+abstractions on a particle-by-particle basis, ease of programmability, and
+cache efficiency. In the case of SoA, the large contiguous chunks of memory for
 each variable may have potential benefit both in terms of contiguous memory
-accesses as well as efficient vectorization. AoSoA also supports vectorization
-through smaller contiguous blocks of member data variables as well as
-potential improvements to cache efficiency due to the smaller sizes of those
-blocks.
+accesses as well as efficient vectorization. AoSoA can be configured to support
+vectorization through smaller contiguous blocks of member data variables as
+well as potential improvements to cache efficiency due to the smaller sizes of
+those blocks.
 
 Within Cabana, the AoSoA is represented by the ``Cabana::AoSoA`` class. Next
 we will overview this class and its API.
@@ -223,7 +222,7 @@ Creating an AoSoA
 There are several template parameters associated with the ``Cabana::AoSoA``
 class, however, the most basic definition of the structure only requires the
 member data types of the particles and a memory space in which to allocate the
-particles. For example, allocating ``1e7`` particles using CUDA UVM with a
+particles. For example, allocating :math:`10^7` particles using CUDA UVM with a
 double precision velocity, a single precision position, and an integer
 material id would be achieved by:
 
@@ -235,7 +234,7 @@ material id would be achieved by:
                                              float[3],  // position
                                              int>;      // matid
 
-   int num_particle = 1e7;
+   int num_particle = static_cast<int>(1e7);
    Cabana::AoSoA<DataTypes,Cabana::CudaUVMSpace> aosoa( num_particle );
 
 In this case, the inner array size will be auto-selected based on the CUDA
@@ -253,7 +252,7 @@ execution and to use an inner array size of 128 they would write:
 
    using ArraySize = Cabana::InnerArraySize<128>;
 
-   int num_particle = 1e7;
+   int num_particle = static_cast<int>(1e7);
    Cabana::AoSoA<DataTypes,ArraySize,Cabana::OpenMP> aosoa( num_particle );
 
 In this case, the particles will be allocated in a memory space
@@ -291,7 +290,7 @@ To query the current size of an AoSoA and then to resize it:
 ::
 
    int old_num_particle = aosoa.size();
-   int new_num_particle = 6.5e6;
+   int new_num_particle = static_cast<int>(6.5e6);
    aosoa.resize( new_num_particle );
 
 When resizing the AoSoA to a new size ``n``, it behaves in the following manner:
@@ -311,7 +310,7 @@ To query the current capacity of an AoSoA and the to reserve more memory
 ::
 
    int old_particle_capacity = aosoa.capacity();
-   int new_particle_capacity = 9.4e7;
+   int new_particle_capacity = static_cast<int>(9.4e7);
    aosoa.reserve( new_particle_capacity );
 
 When reserving a new capacity ``n`` the container behaves in the following
