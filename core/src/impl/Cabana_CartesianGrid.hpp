@@ -104,9 +104,9 @@ class CartesianGrid
         Scalar yc = _min_y + (jc+0.5)*_dy;
         Scalar zc = _min_z + (kc+0.5)*_dz;
 
-        Scalar rx = abs(xp-xc) - 0.5*_dx;
-        Scalar ry = abs(yp-yc) - 0.5*_dy;
-        Scalar rz = abs(zp-zc) - 0.5*_dz;
+        Scalar rx = fabs(xp-xc) - 0.5*_dx;
+        Scalar ry = fabs(yp-yc) - 0.5*_dy;
+        Scalar rz = fabs(zp-zc) - 0.5*_dz;
 
         rx = ( rx > 0.0 ) ? rx : 0.0;
         ry = ( ry > 0.0 ) ? ry : 0.0;
