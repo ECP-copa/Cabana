@@ -60,7 +60,7 @@ void testFullLinkedList()
     double grid_delta[3] = {dx,dx,dx};
     double grid_min[3] = {x_min,x_min,x_min};
     double grid_max[3] = {x_max,x_max,x_max};
-    Cabana::LinkedCellList<typename AoSoA_t::memory_space::kokkos_memory_space>
+    Cabana::LinkedCellList<typename AoSoA_t::memory_space>
         bin_data( aosoa.slice<Position>(), grid_delta, grid_min, grid_max );
     Cabana::permute( bin_data.permuteVector(), aosoa );
 

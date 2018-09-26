@@ -27,13 +27,14 @@ namespace Cabana
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
 */
-template<class KokkosMemorySpace>
+template<class MemorySpace>
 class LinkedCellList
 {
   public:
 
-    using memory_space = KokkosMemorySpace;
-    using size_type = typename memory_space::size_type;
+    using memory_space = MemorySpace;
+    using KokkosMemorySpace = typename memory_space::kokkos_memory_space;
+    using size_type = typename KokkosMemorySpace::size_type;
     using OffsetView = Kokkos::View<size_type*,KokkosMemorySpace>;
 
     /*!
@@ -194,12 +195,14 @@ class LinkedCellList
     /*!
       \brief The beginning particle index binned by the linked cell list.
     */
+    CABANA_INLINE_FUNCTION
     std::size_t rangeBegin() const
     { return _begin; }
 
     /*!
       \brief The ending particle index binned by the linked cell list.
     */
+    CABANA_INLINE_FUNCTION
     std::size_t rangeEnd() const
     { return _end; }
 
@@ -207,7 +210,7 @@ class LinkedCellList
       \brief Get the 1d bin data.
       \return The 1d bin data.
     */
-    BinningData<KokkosMemorySpace> data1d() const
+    BinningData<MemorySpace> data1d() const
     { return _bin_data; }
 
   private:
@@ -277,12 +280,12 @@ class LinkedCellList
         Kokkos::fence();
 
         // Create the binning data.
-        _bin_data = BinningData<KokkosMemorySpace>( counts, offsets, permute );
+        _bin_data = BinningData<MemorySpace>( counts, offsets, permute );
     }
 
   private:
 
-    BinningData<KokkosMemorySpace> _bin_data;
+    BinningData<MemorySpace> _bin_data;
     Impl::CartesianGrid _grid;
     std::size_t _begin;
     std::size_t _end;

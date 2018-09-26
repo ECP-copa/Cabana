@@ -132,6 +132,7 @@ struct VerletListBuilder
     using PositionValueType = typename PositionSlice::value_type;
     using RandomAccessPositionSlice =
         typename PositionSlice::random_access_slice;
+    using memory_space = typename PositionSlice::memory_space;
     using kokkos_memory_space = typename PositionSlice::kokkos_memory_space;
     using kokkos_execution_space = typename PositionSlice::kokkos_execution_space;
 
@@ -151,8 +152,8 @@ struct VerletListBuilder
     RandomAccessPositionSlice position;
 
     // Binning Data.
-    BinningData<kokkos_memory_space> bin_data_1d;
-    LinkedCellList<kokkos_memory_space> linked_cell_list;
+    BinningData<memory_space> bin_data_1d;
+    LinkedCellList<memory_space> linked_cell_list;
 
     // Cell stencil.
     LinkedCellStencil<PositionValueType> cell_stencil;
@@ -179,7 +180,7 @@ struct VerletListBuilder
         // treated as candidates for neighbors.
         double grid_size = cell_size_ratio * neighborhood_radius;
         PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
-        linked_cell_list = LinkedCellList<kokkos_memory_space>(
+        linked_cell_list = LinkedCellList<memory_space>(
             position, grid_delta, grid_min, grid_max );
         bin_data_1d = linked_cell_list.data1d();
 

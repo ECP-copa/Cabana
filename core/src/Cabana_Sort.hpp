@@ -30,13 +30,14 @@ namespace Cabana
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation.
 */
-template<class KokkosMemorySpace>
+template<class MemorySpace>
 class BinningData
 {
   public:
 
-    using memory_space = KokkosMemorySpace;
-    using size_type = typename memory_space::size_type;
+    using memory_space = MemorySpace;
+    using KokkosMemorySpace = typename memory_space::kokkos_memory_space;
+    using size_type = typename KokkosMemorySpace::size_type;
     using CountView = Kokkos::View<const int*,KokkosMemorySpace>;
     using OffsetView = Kokkos::View<size_type*,KokkosMemorySpace>;
 
@@ -119,7 +120,8 @@ namespace Impl
 // Create a permutation vector over a range subset using a comparator over the
 // given Kokkos View of keys.
 template<class KeyViewType, class Comparator>
-BinningData<typename KeyViewType::memory_space>
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 kokkosBinSort( KeyViewType keys,
                Comparator comp,
                const bool sort_within_bins,
@@ -129,10 +131,11 @@ kokkosBinSort( KeyViewType keys,
     Kokkos::BinSort<KeyViewType,Comparator> bin_sort(
         keys, begin, end, comp, sort_within_bins );
     bin_sort.create_permute_vector();
-    return BinningData<typename KeyViewType::memory_space>(
-        bin_sort.get_bin_count(),
-        bin_sort.get_bin_offsets(),
-        bin_sort.get_permute_vector() );
+    return BinningData<
+        typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>(
+            bin_sort.get_bin_count(),
+            bin_sort.get_bin_offsets(),
+            bin_sort.get_permute_vector() );
 }
 
 //---------------------------------------------------------------------------//
@@ -156,7 +159,8 @@ keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
 // Sort an AoSoA over a subset of its range using the given Kokkos View of
 // keys.
 template<class KeyViewType>
-BinningData<typename KeyViewType::memory_space>
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 kokkosBinSort1d( KeyViewType keys,
                  const int nbin,
                  const bool sort_within_bins,
@@ -220,7 +224,9 @@ copySliceToKeys( SliceType slice )
   \return The permutation vector associated with the sorting.
 */
 template<class KeyViewType, class Comparator>
-typename BinningData<typename KeyViewType::memory_space>::OffsetView
+typename BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type
+    >::OffsetView
 sortByKeyWithComparator( KeyViewType keys,
                          Comparator comp,
                          const std::size_t begin,
@@ -248,7 +254,9 @@ sortByKeyWithComparator( KeyViewType keys,
   \return The permutation vector associated with the sorting.
 */
 template<class KeyViewType, class Comparator>
-typename BinningData<typename KeyViewType::memory_space>::OffsetView
+typename BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type
+    >::OffsetView
 sortByKeyWithComparator( KeyViewType keys, Comparator comp )
 {
     Impl::kokkosBinSort( keys, comp, true, 0, keys.extent(0) );
@@ -276,7 +284,8 @@ sortByKeyWithComparator( KeyViewType keys, Comparator comp )
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<class KeyViewType, class Comparator>
-BinningData<typename KeyViewType::memory_space>
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 binByKeyWithComparator(
     KeyViewType keys,
     Comparator comp,
@@ -304,7 +313,8 @@ binByKeyWithComparator(
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<class KeyViewType, class Comparator>
-BinningData<typename KeyViewType::memory_space>
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 binByKeyWithComparator(
     KeyViewType keys,
     Comparator comp )
@@ -329,7 +339,9 @@ binByKeyWithComparator(
   \return The permutation vector associated with the sorting.
 */
 template<class KeyViewType>
-typename BinningData<typename KeyViewType::memory_space>::OffsetView
+typename BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type
+    >::OffsetView
 sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end )
 {
     int nbin = (end - begin) / 2;
@@ -351,7 +363,9 @@ sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end )
 
 */
 template<class KeyViewType>
-typename BinningData<typename KeyViewType::memory_space>::OffsetView
+typename BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type
+    >::OffsetView
 sortByKey( KeyViewType keys )
 {
     return sortByKey( keys, 0, keys.extent(0) );
@@ -378,7 +392,8 @@ sortByKey( KeyViewType keys )
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<class KeyViewType>
-BinningData<typename KeyViewType::memory_space>
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 binByKey( KeyViewType keys,
           const int nbin,
           const std::size_t begin,
@@ -403,7 +418,8 @@ binByKey( KeyViewType keys,
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<class KeyViewType>
-BinningData<typename KeyViewType::memory_space>
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 binByKey( KeyViewType keys, const int nbin )
 {
     return Impl::kokkosBinSort1d( keys, nbin, false, 0, keys.extent(0) );
@@ -423,7 +439,7 @@ binByKey( KeyViewType keys, const int nbin )
   \return The permutation vector associated with the sorting.
 */
 template<class SliceType>
-typename BinningData<typename SliceType::kokkos_memory_space>::OffsetView
+typename BinningData<typename SliceType::memory_space>::OffsetView
 sortByMember( SliceType slice,
               const std::size_t begin,
               const std::size_t end,
@@ -444,7 +460,7 @@ sortByMember( SliceType slice,
   \return The permutation vector associated with the sorting.
 */
 template<class SliceType>
-typename BinningData<typename SliceType::kokkos_memory_space>::OffsetView
+typename BinningData<typename SliceType::memory_space>::OffsetView
 sortByMember(
     SliceType slice,
     typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
@@ -471,7 +487,7 @@ sortByMember(
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<class SliceType>
-BinningData<typename SliceType::kokkos_memory_space>
+BinningData<typename SliceType::memory_space>
 binByMember(
     SliceType slice,
     const int nbin,
@@ -497,7 +513,7 @@ binByMember(
   \return The binning data (e.g. bin sizes and offsets).
 */
 template<class SliceType>
-BinningData<typename SliceType::kokkos_memory_space>
+BinningData<typename SliceType::memory_space>
 binByMember(
     SliceType slice,
     const int nbin,

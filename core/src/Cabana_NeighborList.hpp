@@ -158,7 +158,7 @@ inline void neighbor_parallel_for( const ExecutionPolicy& exec_policy,
 
     // Fence.
     Kokkos::fence();
-};
+}
 
 //---------------------------------------------------------------------------//
 /*!
