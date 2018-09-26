@@ -163,9 +163,9 @@ void perfTest( const double cutoff_ratio,
     // locality. Bin them in cells the size of the cutoff distance.
     double sort_delta[3] =
         { interaction_cutoff, interaction_cutoff, interaction_cutoff };
-    auto linked_cell_list =
-        Cabana::buildLinkedCellList( aosoa.slice<Position>(),
-                                     sort_delta, grid_min, grid_max );
+    Cabana::LinkedCellList<kokkos_memory_space>
+        linked_cell_list( aosoa.slice<Position>(),
+                          sort_delta, grid_min, grid_max );
     Cabana::permute( linked_cell_list.permuteVector(), aosoa );
 
     // Create the list once to get some statistics.
