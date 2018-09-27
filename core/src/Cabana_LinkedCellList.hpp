@@ -187,12 +187,6 @@ class LinkedCellList
     { return _bin_data.permutation(particle_id); }
 
     /*!
-      \brief Get the entire permutation vector.
-    */
-    OffsetView permuteVector() const
-    { return _bin_data.permuteVector(); }
-
-    /*!
       \brief The beginning particle index binned by the linked cell list.
     */
     CABANA_INLINE_FUNCTION
@@ -210,7 +204,7 @@ class LinkedCellList
       \brief Get the 1d bin data.
       \return The 1d bin data.
     */
-    BinningData<MemorySpace> data1d() const
+    BinningData<MemorySpace> binningData() const
     { return _bin_data; }
 
   private:
@@ -296,8 +290,6 @@ class LinkedCellList
 template<typename >
 struct is_linked_cell_list : public std::false_type {};
 
-// True only if the type is a member slice *AND* the member slice is templated
-// on an AoSoA type.
 template<typename MemorySpace>
 struct is_linked_cell_list<LinkedCellList<MemorySpace> >
     : public std::true_type {};
@@ -322,10 +314,11 @@ template<class LinkedCellListType, class AoSoA_t>
 void permute(
     const LinkedCellListType& linked_cell_list,
     AoSoA_t& aosoa,
-    typename std::enable_if<(is_linked_cell_list<LinkedCellListType>::value),
+    typename std::enable_if<(is_linked_cell_list<LinkedCellListType>::value &&
+                             is_aosoa<AoSoA_t>::value),
     int>::type * = 0 )
 {
-    permute( linked_cell_list.permuteVector(),
+    permute( linked_cell_list.binningData(),
              linked_cell_list.rangeBegin(),
              linked_cell_list.rangeEnd(),
              aosoa );

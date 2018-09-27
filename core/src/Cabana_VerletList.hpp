@@ -182,7 +182,7 @@ struct VerletListBuilder
         PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
         linked_cell_list = LinkedCellList<memory_space>(
             position, grid_delta, grid_min, grid_max );
-        bin_data_1d = linked_cell_list.data1d();
+        bin_data_1d = linked_cell_list.binningData();
 
         // We will use the square of the distance for neighbor determination.
         rsqr = neighborhood_radius * neighborhood_radius;

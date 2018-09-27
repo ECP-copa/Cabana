@@ -37,6 +37,7 @@ class BinningData
 
     using memory_space = MemorySpace;
     using KokkosMemorySpace = typename memory_space::kokkos_memory_space;
+    using KokkosExecutionSpace = typename memory_space::kokkos_execution_space;
     using size_type = typename KokkosMemorySpace::size_type;
     using CountView = Kokkos::View<const int*,KokkosMemorySpace>;
     using OffsetView = Kokkos::View<size_type*,KokkosMemorySpace>;
@@ -88,24 +89,6 @@ class BinningData
     size_type permutation( const size_type tuple_id ) const
     { return _permute_vector(tuple_id); }
 
-    /*!
-      \brief Get the entire bin count view.
-    */
-    CountView binCountView() const
-    { return _counts; }
-
-    /*!
-      \brief Get the entire bin offset view.
-    */
-    OffsetView binOffsetView() const
-    { return _offsets; }
-
-    /*!
-      \brief Get the entire permutation vector.
-    */
-    OffsetView permuteVector() const
-    { return _permute_vector; }
-
   private:
 
     int _nbin;
@@ -113,6 +96,19 @@ class BinningData
     OffsetView _offsets;
     OffsetView _permute_vector;
 };
+
+//---------------------------------------------------------------------------//
+// Static type checker.
+template<typename >
+struct is_binning_data : public std::false_type {};
+
+template<typename MemorySpace>
+struct is_binning_data<BinningData<MemorySpace> >
+    : public std::true_type {};
+
+template<typename MemorySpace>
+struct is_binning_data<const BinningData<MemorySpace> >
+    : public std::true_type {};
 
 namespace Impl
 {
@@ -224,9 +220,8 @@ copySliceToKeys( SliceType slice )
   \return The permutation vector associated with the sorting.
 */
 template<class KeyViewType, class Comparator>
-typename BinningData<
-    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type
-    >::OffsetView
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 sortByKeyWithComparator( KeyViewType keys,
                          Comparator comp,
                          const std::size_t begin,
@@ -254,9 +249,8 @@ sortByKeyWithComparator( KeyViewType keys,
   \return The permutation vector associated with the sorting.
 */
 template<class KeyViewType, class Comparator>
-typename BinningData<
-    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type
-    >::OffsetView
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 sortByKeyWithComparator( KeyViewType keys, Comparator comp )
 {
     Impl::kokkosBinSort( keys, comp, true, 0, keys.extent(0) );
@@ -339,15 +333,14 @@ binByKeyWithComparator(
   \return The permutation vector associated with the sorting.
 */
 template<class KeyViewType>
-typename BinningData<
-    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type
-    >::OffsetView
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end )
 {
     int nbin = (end - begin) / 2;
     auto bin_data =
         Impl::kokkosBinSort1d( keys, nbin, true, begin, end );
-    return bin_data.permuteVector();
+    return bin_data;
 }
 
 //---------------------------------------------------------------------------//
@@ -363,9 +356,8 @@ sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end )
 
 */
 template<class KeyViewType>
-typename BinningData<
-    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type
-    >::OffsetView
+BinningData<
+    typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
 sortByKey( KeyViewType keys )
 {
     return sortByKey( keys, 0, keys.extent(0) );
@@ -439,7 +431,7 @@ binByKey( KeyViewType keys, const int nbin )
   \return The permutation vector associated with the sorting.
 */
 template<class SliceType>
-typename BinningData<typename SliceType::memory_space>::OffsetView
+BinningData<typename SliceType::memory_space>
 sortByMember( SliceType slice,
               const std::size_t begin,
               const std::size_t end,
@@ -460,7 +452,7 @@ sortByMember( SliceType slice,
   \return The permutation vector associated with the sorting.
 */
 template<class SliceType>
-typename BinningData<typename SliceType::memory_space>::OffsetView
+BinningData<typename SliceType::memory_space>
 sortByMember(
     SliceType slice,
     typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
@@ -524,13 +516,13 @@ binByMember(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given a permutation vector permute an AoSoA.
+  \brief Given binning data permute an AoSoA.
 
-  \tparam ViewType The permutation vector view type.
+  \tparam BinningDataType The binning data type.
 
   \tparm AoSoA_t The AoSoA type.
 
-  \param permute_vector The permutation vector.
+  \param binning_data The binning data.
 
   \param begin The first index of the AoSoA to sort.
 
@@ -538,24 +530,28 @@ binByMember(
 
   \param aosoa The AoSoA to permute.
  */
-template<class ViewType, class AoSoA_t>
-void permute( const ViewType& permute_vector,
+template<class BinningDataType, class AoSoA_t>
+void permute( const BinningDataType& binning_data,
               const std::size_t begin,
               const std::size_t end,
-              AoSoA_t& aosoa )
+              AoSoA_t& aosoa,
+              typename std::enable_if<(is_binning_data<BinningDataType>::value &&
+                                       is_aosoa<AoSoA_t>::value),
+              int>::type * = 0)
 {
     Kokkos::View<typename AoSoA_t::tuple_type*,
-                 typename ViewType::memory_space>
+                 typename BinningDataType::KokkosMemorySpace>
         scratch_tuples( "scratch_tuples", end - begin );
 
-    auto permute_to_scratch = KOKKOS_LAMBDA( const std::size_t i )
-                              {
-                                  scratch_tuples( i - begin ) =
-                                  aosoa.getTuple( permute_vector(i-begin) );
-                              };
+    auto permute_to_scratch =
+        KOKKOS_LAMBDA( const std::size_t i )
+        {
+            scratch_tuples( i - begin ) =
+            aosoa.getTuple( binning_data.permutation(i-begin) );
+        };
     Kokkos::parallel_for(
         "Cabana::kokkosBinSort::permute_to_scratch",
-        Kokkos::RangePolicy<typename ViewType::execution_space>(begin,end),
+        Kokkos::RangePolicy<typename BinningDataType::KokkosExecutionSpace>(begin,end),
         permute_to_scratch );
     Kokkos::fence();
 
@@ -563,28 +559,32 @@ void permute( const ViewType& permute_vector,
                      { aosoa.setTuple( i, scratch_tuples(i-begin) ); };
     Kokkos::parallel_for(
         "Cabana::kokkosBinSort::copy_back",
-        Kokkos::RangePolicy<typename ViewType::execution_space>(begin,end),
+        Kokkos::RangePolicy<typename BinningDataType::KokkosExecutionSpace>(begin,end),
         copy_back );
     Kokkos::fence();
 }
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given a permutation vector permute an AoSoA.
+  \brief Given binning data permute an AoSoA.
 
-  \tparam ViewType The permutation vector view type.
+  \tparam BinningDataType The binning date type
 
   \tparm AoSoA_t The AoSoA type.
 
-  \param permute_vector The permutation vector.
+  \param binning_data The binning data.
 
   \param aosoa The AoSoA to permute.
  */
-template<class ViewType, class AoSoA_t>
-void permute( const ViewType& permute_vector,
-              AoSoA_t& aosoa )
+template<class BinningDataType, class AoSoA_t>
+void permute( const BinningDataType& binning_data,
+              AoSoA_t& aosoa,
+              typename std::enable_if<(is_binning_data<BinningDataType>::value &&
+                                       is_aosoa<AoSoA_t>::value),
+              int>::type * = 0)
+
 {
-    permute( permute_vector, 0, aosoa.size(), aosoa );
+    permute( binning_data, 0, aosoa.size(), aosoa );
 }
 
 //---------------------------------------------------------------------------//

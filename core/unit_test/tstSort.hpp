@@ -62,8 +62,8 @@ void testSortByKey()
     }
 
     // Sort the aosoa by keys.
-    auto permute_vector = Cabana::sortByKey( keys );
-    Cabana::permute( permute_vector, aosoa );
+    auto binning_data = Cabana::sortByKey( keys );
+    Cabana::permute( binning_data, aosoa );
 
     // Check the result of the sort.
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
@@ -79,7 +79,7 @@ void testSortByKey()
             for ( int j = 0; j < dim_2; ++j )
                 EXPECT_EQ( v2( p, i, j ), p + i + j );
 
-        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
     }
 }
 
@@ -133,7 +133,7 @@ void testBinByKey()
     // Bin the aosoa by keys. Use one bin per data point to effectively make
     // this a sort.
     auto bin_data = Cabana::binByKey( keys, num_data-1 );
-    Cabana::permute( bin_data.permuteVector(), aosoa );
+    Cabana::permute( bin_data, aosoa );
 
     // Check the result of the sort.
     EXPECT_EQ( bin_data.numBin(), num_data );
@@ -195,8 +195,8 @@ void testSortByMember()
     }
 
     // Sort the aosoa by the 1D member.
-    auto permute_vector = Cabana::sortByMember( aosoa.slice<1>() );
-    Cabana::permute( permute_vector, aosoa );
+    auto binning_data = Cabana::sortByMember( aosoa.slice<1>() );
+    Cabana::permute( binning_data, aosoa );
 
     // Check the result of the sort.
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
@@ -212,7 +212,7 @@ void testSortByMember()
             for ( int j = 0; j < dim_2; ++j )
                 EXPECT_EQ( v2( p, i, j ), p + i + j );
 
-        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
     }
 }
 
@@ -255,7 +255,7 @@ void testSortByMemberDataOnly()
     }
 
     // Sort the aosoa by the 1D member.
-    auto permute_vector = Cabana::sortByMember( aosoa.slice<1>() );
+    auto binning_data = Cabana::sortByMember( aosoa.slice<1>() );
 
     // Check that the data didn't get sorted and the permutation vector is
     // correct.
@@ -272,7 +272,7 @@ void testSortByMemberDataOnly()
             for ( int j = 0; j < dim_2; ++j )
                 EXPECT_EQ( v2( p, i, j ), reverse_index + i + j );
 
-        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
     }
 }
 
@@ -319,7 +319,7 @@ void testBinByMember()
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort.
     auto bin_data = Cabana::binByMember( aosoa.slice<1>(), num_data-1 );
-    Cabana::permute( bin_data.permuteVector(), aosoa );
+    Cabana::permute( bin_data, aosoa );
 
     // Check the result of the sort.
     EXPECT_EQ( bin_data.numBin(), num_data );

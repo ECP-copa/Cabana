@@ -61,15 +61,15 @@ void testFullLinkedList()
     double grid_min[3] = {x_min,x_min,x_min};
     double grid_max[3] = {x_max,x_max,x_max};
     Cabana::LinkedCellList<typename AoSoA_t::memory_space>
-        bin_data( aosoa.slice<Position>(), grid_delta, grid_min, grid_max );
-    Cabana::permute( bin_data.permuteVector(), aosoa );
+        cell_list( aosoa.slice<Position>(), grid_delta, grid_min, grid_max );
+    Cabana::permute( cell_list, aosoa );
 
     // Checking the binning. The order should be reversed with the i index
     // moving the slowest.
-    EXPECT_EQ( bin_data.totalBins(), nx*nx*nx );
-    EXPECT_EQ( bin_data.numBin(0), nx );
-    EXPECT_EQ( bin_data.numBin(1), nx );
-    EXPECT_EQ( bin_data.numBin(2), nx );
+    EXPECT_EQ( cell_list.totalBins(), nx*nx*nx );
+    EXPECT_EQ( cell_list.numBin(0), nx );
+    EXPECT_EQ( cell_list.numBin(1), nx );
+    EXPECT_EQ( cell_list.numBin(2), nx );
     particle_id = 0;
     for ( int i = 0; i < nx; ++i )
     {
@@ -80,9 +80,9 @@ void testFullLinkedList()
                 EXPECT_EQ( cell_id( particle_id, 0 ), i );
                 EXPECT_EQ( cell_id( particle_id, 1 ), j );
                 EXPECT_EQ( cell_id( particle_id, 2 ), k );
-                EXPECT_EQ( bin_data.cardinalBinIndex(i,j,k), particle_id );
-                EXPECT_EQ( bin_data.binSize(i,j,k), 1 );
-                EXPECT_EQ( bin_data.binOffset(i,j,k),
+                EXPECT_EQ( cell_list.cardinalBinIndex(i,j,k), particle_id );
+                EXPECT_EQ( cell_list.binSize(i,j,k), 1 );
+                EXPECT_EQ( cell_list.binOffset(i,j,k),
                            size_type(particle_id) );
             }
         }

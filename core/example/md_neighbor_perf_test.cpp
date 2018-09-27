@@ -166,7 +166,7 @@ void perfTest( const double cutoff_ratio,
     Cabana::LinkedCellList<MemorySpace>
         linked_cell_list( aosoa.slice<Position>(),
                           sort_delta, grid_min, grid_max );
-    Cabana::permute( linked_cell_list.permuteVector(), aosoa );
+    Cabana::permute( linked_cell_list, aosoa );
 
     // Create the list once to get some statistics.
     Cabana::VerletList<MemorySpace,NeighborListTag>
