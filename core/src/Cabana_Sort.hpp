@@ -225,7 +225,9 @@ BinningData<
 sortByKeyWithComparator( KeyViewType keys,
                          Comparator comp,
                          const std::size_t begin,
-                         const std::size_t end )
+                         const std::size_t end,
+                         typename std::enable_if<
+                         (Kokkos::is_view<KeyViewType>::value),int>::type* = 0 )
 {
     auto bin_data = Impl::kokkosBinSort( keys, comp, true, begin, end );
     return bin_data.permuteVector();
@@ -251,7 +253,10 @@ sortByKeyWithComparator( KeyViewType keys,
 template<class KeyViewType, class Comparator>
 BinningData<
     typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
-sortByKeyWithComparator( KeyViewType keys, Comparator comp )
+sortByKeyWithComparator( KeyViewType keys,
+                         Comparator comp,
+                         typename std::enable_if<
+                         (Kokkos::is_view<KeyViewType>::value),int>::type* = 0 )
 {
     Impl::kokkosBinSort( keys, comp, true, 0, keys.extent(0) );
 }
@@ -280,11 +285,12 @@ sortByKeyWithComparator( KeyViewType keys, Comparator comp )
 template<class KeyViewType, class Comparator>
 BinningData<
     typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
-binByKeyWithComparator(
-    KeyViewType keys,
-    Comparator comp,
-    const std::size_t begin,
-    const std::size_t end )
+binByKeyWithComparator( KeyViewType keys,
+                        Comparator comp,
+                        const std::size_t begin,
+                        const std::size_t end,
+                        typename std::enable_if<
+                        (Kokkos::is_view<KeyViewType>::value),int>::type* = 0 )
 {
     return Impl::kokkosBinSort( keys, comp, false, begin, end );
 }
@@ -309,9 +315,10 @@ binByKeyWithComparator(
 template<class KeyViewType, class Comparator>
 BinningData<
     typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
-binByKeyWithComparator(
-    KeyViewType keys,
-    Comparator comp )
+binByKeyWithComparator( KeyViewType keys,
+                        Comparator comp,
+                        typename std::enable_if<
+                        (Kokkos::is_view<KeyViewType>::value),int>::type* = 0 )
 {
     return Impl::kokkosBinSort( keys, comp, false, 0, keys.extent(0) );
 }
@@ -335,7 +342,11 @@ binByKeyWithComparator(
 template<class KeyViewType>
 BinningData<
     typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
-sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end )
+sortByKey( KeyViewType keys,
+           const std::size_t begin,
+           const std::size_t end,
+           typename std::enable_if<
+           (Kokkos::is_view<KeyViewType>::value),int>::type* = 0 )
 {
     int nbin = (end - begin) / 2;
     auto bin_data =
@@ -358,7 +369,9 @@ sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end )
 template<class KeyViewType>
 BinningData<
     typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
-sortByKey( KeyViewType keys )
+sortByKey( KeyViewType keys,
+           typename std::enable_if<
+           (Kokkos::is_view<KeyViewType>::value),int>::type* = 0 )
 {
     return sortByKey( keys, 0, keys.extent(0) );
 }
@@ -389,7 +402,9 @@ BinningData<
 binByKey( KeyViewType keys,
           const int nbin,
           const std::size_t begin,
-          const std::size_t end )
+          const std::size_t end,
+          typename std::enable_if<
+          (Kokkos::is_view<KeyViewType>::value),int>::type* = 0 )
 {
     return Impl::kokkosBinSort1d( keys, nbin, false, begin, end );
 }
@@ -412,7 +427,10 @@ binByKey( KeyViewType keys,
 template<class KeyViewType>
 BinningData<
     typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>
-binByKey( KeyViewType keys, const int nbin )
+binByKey( KeyViewType keys,
+          const int nbin,
+          typename std::enable_if<
+          (Kokkos::is_view<KeyViewType>::value),int>::type* = 0 )
 {
     return Impl::kokkosBinSort1d( keys, nbin, false, 0, keys.extent(0) );
 }
@@ -432,9 +450,10 @@ binByKey( KeyViewType keys, const int nbin )
 */
 template<class SliceType>
 BinningData<typename SliceType::memory_space>
-sortByMember( SliceType slice,
-              const std::size_t begin,
-              const std::size_t end,
+sortByKey(
+    SliceType slice,
+    const std::size_t begin,
+    const std::size_t end,
     typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
     auto keys = Impl::copySliceToKeys( slice );
@@ -453,11 +472,11 @@ sortByMember( SliceType slice,
 */
 template<class SliceType>
 BinningData<typename SliceType::memory_space>
-sortByMember(
+sortByKey(
     SliceType slice,
     typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
-    return sortByMember( slice, 0, slice.size() );
+    return sortByKey( slice, 0, slice.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -480,7 +499,7 @@ sortByMember(
 */
 template<class SliceType>
 BinningData<typename SliceType::memory_space>
-binByMember(
+binByKey(
     SliceType slice,
     const int nbin,
     const std::size_t begin,
@@ -506,12 +525,12 @@ binByMember(
 */
 template<class SliceType>
 BinningData<typename SliceType::memory_space>
-binByMember(
+binByKey(
     SliceType slice,
     const int nbin,
     typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
 {
-    return binByMember( slice, nbin, 0, slice.size() );
+    return binByKey( slice, nbin, 0, slice.size() );
 }
 
 //---------------------------------------------------------------------------//

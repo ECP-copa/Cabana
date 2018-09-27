@@ -25,8 +25,8 @@ void testSortByKey()
 
     // Declare data types.
     using DataTypes = Cabana::MemberTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -92,8 +92,8 @@ void testBinByKey()
 
     // Declare data types.
     using DataTypes = Cabana::MemberTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -157,7 +157,7 @@ void testBinByKey()
 }
 
 //---------------------------------------------------------------------------//
-void testSortByMember()
+void testSortBySlice()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -165,8 +165,8 @@ void testSortByMember()
 
     // Declare data types.
     using DataTypes = Cabana::MemberTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -195,7 +195,7 @@ void testSortByMember()
     }
 
     // Sort the aosoa by the 1D member.
-    auto binning_data = Cabana::sortByMember( aosoa.slice<1>() );
+    auto binning_data = Cabana::sortByKey( aosoa.slice<1>() );
     Cabana::permute( binning_data, aosoa );
 
     // Check the result of the sort.
@@ -217,7 +217,7 @@ void testSortByMember()
 }
 
 //---------------------------------------------------------------------------//
-void testSortByMemberDataOnly()
+void testSortBySliceDataOnly()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -225,8 +225,8 @@ void testSortByMemberDataOnly()
 
     // Declare data types.
     using DataTypes = Cabana::MemberTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -255,7 +255,7 @@ void testSortByMemberDataOnly()
     }
 
     // Sort the aosoa by the 1D member.
-    auto binning_data = Cabana::sortByMember( aosoa.slice<1>() );
+    auto binning_data = Cabana::sortByKey( aosoa.slice<1>() );
 
     // Check that the data didn't get sorted and the permutation vector is
     // correct.
@@ -277,7 +277,7 @@ void testSortByMemberDataOnly()
 }
 
 //---------------------------------------------------------------------------//
-void testBinByMember()
+void testBinBySlice()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -285,8 +285,8 @@ void testBinByMember()
 
     // Declare data types.
     using DataTypes = Cabana::MemberTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -318,7 +318,7 @@ void testBinByMember()
 
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort.
-    auto bin_data = Cabana::binByMember( aosoa.slice<1>(), num_data-1 );
+    auto bin_data = Cabana::binByKey( aosoa.slice<1>(), num_data-1 );
     Cabana::permute( bin_data, aosoa );
 
     // Check the result of the sort.
@@ -343,7 +343,7 @@ void testBinByMember()
 }
 
 //---------------------------------------------------------------------------//
-void testBinByMemberDataOnly()
+void testBinBySliceDataOnly()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -351,8 +351,8 @@ void testBinByMemberDataOnly()
 
     // Declare data types.
     using DataTypes = Cabana::MemberTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -385,7 +385,7 @@ void testBinByMemberDataOnly()
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort. Don't actually move the particle data
     // though - just create the binning data.
-    auto bin_data = Cabana::binByMember( aosoa.slice<1>(), num_data-1 );
+    auto bin_data = Cabana::binByKey( aosoa.slice<1>(), num_data-1 );
 
     // Check the result of the sort. Make sure nothing moved execpt the
     // binning data.
@@ -426,25 +426,25 @@ TEST_F( TEST_CATEGORY, bin_by_key_test )
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, sort_by_member_test )
 {
-    testSortByMember();
+    testSortBySlice();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, sort_by_member_data_only_test )
 {
-    testSortByMemberDataOnly();
+    testSortBySliceDataOnly();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, bin_by_member_test )
 {
-    testBinByMember();
+    testBinBySlice();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, bin_by_member_data_only_test )
 {
-    testBinByMemberDataOnly();
+    testBinBySliceDataOnly();
 }
 
 //---------------------------------------------------------------------------//
