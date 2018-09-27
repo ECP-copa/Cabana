@@ -438,7 +438,7 @@ binByKey( KeyViewType keys,
 //---------------------------------------------------------------------------//
 /*!
   \brief Sort an AoSoA over a subset of its range based on the associated
-  slice values.
+  slice of keys.
 
   \tparam SliceType Slice type for keys.
 
@@ -462,7 +462,7 @@ sortByKey(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Sort an entire AoSoA based on the associated slice values.
+  \brief Sort an entire AoSoA based on the associated slice of keys.
 
   \tparam SliceType Slice type for keys.
 
@@ -482,7 +482,7 @@ sortByKey(
 //---------------------------------------------------------------------------//
 /*!
   \brief Bin an AoSoA over a subset of its range based on the associated
-  slice values.
+  slice of keys.
 
   \tparam SliceType Slice type for keys
 
@@ -512,7 +512,7 @@ binByKey(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Bin an entire AoSoA based on the associated slice values.
+  \brief Bin an entire AoSoA based on the associated slice of keys.
 
   \tparam SliceType Slice type for keys.
 
