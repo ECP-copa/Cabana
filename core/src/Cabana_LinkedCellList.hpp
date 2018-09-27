@@ -209,8 +209,10 @@ class LinkedCellList
     BinningData<MemorySpace> binningData() const
     { return _bin_data; }
 
-  private:
+  public:
 
+    // This function should be private but we need to expose it as public to
+    // launch CUDA kernels with class data.
     template<class SliceType>
     void build( SliceType positions,
                 const typename SliceType::value_type grid_delta[3],
@@ -224,6 +226,10 @@ class LinkedCellList
         OffsetView offsets( "offsets", ncell );
         OffsetView permute( "permute", _end - _begin );
 
+        // Get a local copy of the grid because it is class data and a lambda
+        // function will not capture it otherwise via CUDA.
+        auto grid = _grid;
+
         // Count.
         Kokkos::RangePolicy<typename OffsetView::execution_space>
             particle_range( _begin, _end );
@@ -232,10 +238,10 @@ class LinkedCellList
             KOKKOS_LAMBDA( const std::size_t p )
             {
                 int i, j, k;
-                _grid.locatePoint(
+                grid.locatePoint(
                     positions(p,0), positions(p,1), positions(p,2), i , j, k );
                 Kokkos::atomic_increment(
-                    &counts(_grid.cardinalCellIndex(i,j,k)) );
+                    &counts(grid.cardinalCellIndex(i,j,k)) );
             };
         Kokkos::parallel_for( "Cabana::LinkedCellList::build::cell_count",
                               particle_range,
@@ -264,9 +270,9 @@ class LinkedCellList
             KOKKOS_LAMBDA( const std::size_t p )
             {
                 int i, j, k;
-                _grid.locatePoint(
+                grid.locatePoint(
                     positions(p,0), positions(p,1), positions(p,2), i , j, k );
-                auto cell_id = _grid.cardinalCellIndex(i,j,k);
+                auto cell_id = grid.cardinalCellIndex(i,j,k);
                 int c = Kokkos::atomic_fetch_add( &counts(cell_id), 1 );
                 permute( offsets(cell_id) + c ) = p;
             };

@@ -64,8 +64,8 @@ void testLinkedList()
     // Bin and permute the particles in the grid. First do this by only
     // operating on a subset of the particles.
     {
-        int begin = 250;
-        int end = 750;
+        std::size_t begin = 250;
+        std::size_t end = 750;
         Cabana::LinkedCellList<typename AoSoA_t::memory_space>
             cell_list( aosoa.slice<Position>(), begin, end,
                        grid_delta, grid_min, grid_max );
@@ -88,7 +88,7 @@ void testLinkedList()
             {
                 for ( int k = 0; k < nx; ++k )
                 {
-                    int original_id = i + j * nx + k * nx * nx;
+                    std::size_t original_id = i + j * nx + k * nx * nx;
                     if ( begin <= original_id && original_id < end )
                     {
                         // Get what should be the local id of the particle in
