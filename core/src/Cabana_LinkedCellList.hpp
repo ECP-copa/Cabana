@@ -100,8 +100,10 @@ class LinkedCellList
         const typename SliceType::value_type grid_min[3],
         const typename SliceType::value_type grid_max[3],
         typename std::enable_if<(is_slice<SliceType>::value),int>::type * = 0 )
-        : _grid( grid_min, grid_max, grid_delta ),
-          _begin( begin )
+        : _grid( grid_min[0], grid_min[1], grid_min[2],
+                 grid_max[0], grid_max[1], grid_max[2],
+                 grid_delta[0], grid_delta[1], grid_delta[2] )
+        , _begin( begin )
         , _end( end )
     {
         build( positions, grid_delta, grid_min, grid_max );
@@ -306,7 +308,7 @@ struct is_linked_cell_list<const LinkedCellList<MemorySpace> >
 
   \tparm AoSoA_t The AoSoA type.
 
-  \param permute_vector The permutation vector.
+  \param linked_cell_list The linked cell list to permute the AoSoA with.
 
   \param aosoa The AoSoA to permute.
  */

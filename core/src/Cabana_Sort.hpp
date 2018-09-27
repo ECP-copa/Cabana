@@ -547,7 +547,7 @@ void permute( const BinningDataType& binning_data,
         KOKKOS_LAMBDA( const std::size_t i )
         {
             scratch_tuples( i - begin ) =
-            aosoa.getTuple( binning_data.permutation(i-begin) );
+                aosoa.getTuple( binning_data.permutation(i-begin) );
         };
     Kokkos::parallel_for(
         "Cabana::kokkosBinSort::permute_to_scratch",
