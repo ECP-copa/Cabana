@@ -20,7 +20,8 @@ find_package(KOKKOS REQUIRED)
 
 find_package(OpenMP)
 if(OpenMP_FOUND)
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
+  set(Cabana_ENABLE_OpenMP ON)
 endif()
 
 option(Cabana_ENABLE_Serial "Build Cabana serial" ON)
