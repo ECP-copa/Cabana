@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.1)
 ##---------------------------------------------------------------------------##
 # Define your project name and set up major project options
 ##---------------------------------------------------------------------------##
-project(Cabana LANGUAGES CXX Fortran VERSION 0.0.0) 
+project(Cabana LANGUAGES CXX Fortran VERSION 0.0.0)
 
 set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -27,7 +27,7 @@ endif()
 option(Cabana_ENABLE_Serial "Build Cabana serial" ON)
 option(Cabana_ENABLE_Cuda "Build Cabana with Cuda" OFF)
 if(Cabana_ENABLE_Cuda)
-  find_package(CUDA REQUIRED)
+  enable_language(CUDA)
 else()
   set(CUDA_LIBRARIES)
 endif()

@@ -54,7 +54,7 @@ endif()
 ##--------------------------------------------------------------------------##
 if(Cabana_ENABLE_Cuda)
   foreach(_test AoSoA Slice DeepCopy Tuple Sort NeighborList Parallel)
-    add_executable(${_test}_test_CudaUVM CudaUVM/tst${_test}_CudaUVM.cpp unit_test_main.cpp)
+    add_executable(${_test}_test_CudaUVM Cuda/tst${_test}_CudaUVM.cpp unit_test_main.cpp)
     target_link_libraries(${_test}_test_CudaUVM cabanacore cabana_core_gtest)
     add_test(NAME ${_test}_test_CudaUVM COMMAND ${_test}_test_CudaUVM --gtest_color=yes)
     set_tests_properties(${_test}_test_CudaUVM PROPERTIES FAIL_REGULAR_EXPRESSION "${FAIL_RE}")
