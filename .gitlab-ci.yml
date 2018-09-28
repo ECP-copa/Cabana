@@ -1,7 +1,5 @@
 test:default:
   image: ubuntu
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
   script:
     - apt-get update
     - apt-get install -y gcovr gfortran cmake g++ git
