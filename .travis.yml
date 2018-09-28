@@ -20,8 +20,8 @@ addons:
 
 script:
   - mkdir build && cd build &&
-    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DCabana_ENABLE_OpenMP=ON -DCabana_ENABLE_TESTS=ON -DCabana_ENABLE_EXAMPLES=ON 
-          -DCabana_EXTRA_LINK_FLAGS="--coverage -ldl" -DCMAKE_CXX_FLAGS="--coverage" .. &&
+    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DENABLE_TESTING=ON -DENABLE_EXAMPLES=ON 
+          -DCabana_EXTRA_LINK_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
     make -j2 VERBOSE=1 &&
     make test
 
