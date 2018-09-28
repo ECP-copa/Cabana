@@ -68,75 +68,75 @@ set_tests_properties(Version_test PROPERTIES FAIL_REGULAR_EXPRESSION "${FAIL_RE}
 ##--------------------------------------------------------------------------##
 IF(Cabana_ENABLE_Serial)
 
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    AoSoA_test_Serial
-    SOURCES Serial/tstAoSoA_Serial.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Slice_test_Serial
-    SOURCES Serial/tstSlice_Serial.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    DeepCopy_test_Serial
-    SOURCES Serial/tstDeepCopy_Serial.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Tuple_test_Serial
-    SOURCES Serial/tstTuple_Serial.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-    TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Sort_test_Serial
-    SOURCES Serial/tstSort_Serial.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-    TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    NeighborList_test_Serial
-    SOURCES Serial/tstNeighborList_Serial.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
-
-  TRIBITS_ADD_EXECUTABLE_AND_TEST(
-    Parallel_test_Serial
-    SOURCES Serial/tstParallel_Serial.cpp unit_test_main.cpp
-    COMM serial mpi
-    NUM_MPI_PROCS 1
-    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
-    TESTONLYLIBS cabana_core_gtest
-    ARGS "--gtest_color=yes"
-    )
+	#  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+	#    AoSoA_test_Serial
+	#    SOURCES Serial/tstAoSoA_Serial.cpp unit_test_main.cpp
+	#    COMM serial mpi
+	#    NUM_MPI_PROCS 1
+	#    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+	#    TESTONLYLIBS cabana_core_gtest
+	#    ARGS "--gtest_color=yes"
+	#    )
+	#
+	#  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+	#    Slice_test_Serial
+	#    SOURCES Serial/tstSlice_Serial.cpp unit_test_main.cpp
+	#    COMM serial mpi
+	#    NUM_MPI_PROCS 1
+	#    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+	#    TESTONLYLIBS cabana_core_gtest
+	#    ARGS "--gtest_color=yes"
+	#    )
+	#
+	#  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+	#    DeepCopy_test_Serial
+	#    SOURCES Serial/tstDeepCopy_Serial.cpp unit_test_main.cpp
+	#    COMM serial mpi
+	#    NUM_MPI_PROCS 1
+	#    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+	#    TESTONLYLIBS cabana_core_gtest
+	#    ARGS "--gtest_color=yes"
+	#    )
+	#
+	#  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+	#    Tuple_test_Serial
+	#    SOURCES Serial/tstTuple_Serial.cpp unit_test_main.cpp
+	#    COMM serial mpi
+	#    NUM_MPI_PROCS 1
+	#    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+	#    TESTONLYLIBS cabana_core_gtest
+	#    ARGS "--gtest_color=yes"
+	#    )
+	#
+	#    TRIBITS_ADD_EXECUTABLE_AND_TEST(
+	#    Sort_test_Serial
+	#    SOURCES Serial/tstSort_Serial.cpp unit_test_main.cpp
+	#    COMM serial mpi
+	#    NUM_MPI_PROCS 1
+	#    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+	#    TESTONLYLIBS cabana_core_gtest
+	#    ARGS "--gtest_color=yes"
+	#    )
+	#
+	#    TRIBITS_ADD_EXECUTABLE_AND_TEST(
+	#    NeighborList_test_Serial
+	#    SOURCES Serial/tstNeighborList_Serial.cpp unit_test_main.cpp
+	#    COMM serial mpi
+	#    NUM_MPI_PROCS 1
+	#    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+	#    TESTONLYLIBS cabana_core_gtest
+	#    ARGS "--gtest_color=yes"
+	#    )
+	#
+	#  TRIBITS_ADD_EXECUTABLE_AND_TEST(
+	#    Parallel_test_Serial
+	#    SOURCES Serial/tstParallel_Serial.cpp unit_test_main.cpp
+	#    COMM serial mpi
+	#    NUM_MPI_PROCS 1
+	#    FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
+	#    TESTONLYLIBS cabana_core_gtest
+	#    ARGS "--gtest_color=yes"
+	#    )
 
 ENDIF()
 
