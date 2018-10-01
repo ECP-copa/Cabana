@@ -1,5 +1,5 @@
 # setup gtest
-if(NOT ENABLE_TESTING)
+if(NOT Cabana_ENABLE_TESTING)
   return()
 endif()
 

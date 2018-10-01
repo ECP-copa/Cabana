@@ -40,8 +40,8 @@ else()
   message(FATAL_ERROR "Unknown Cabana Device; ${Cabana_DEVICE}")
 endif()
 
-option(ENABLE_TESTING "Build tests" OFF)
-if(ENABLE_TESTING)
+option(Cabana_ENABLE_TESTING "Build tests" OFF)
+if(Cabana_ENABLE_TESTING)
   enable_testing()
 endif()
 ##---------------------------------------------------------------------------##
