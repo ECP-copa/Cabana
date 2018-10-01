@@ -8,7 +8,6 @@ cmake_minimum_required(VERSION 3.1)
 ##---------------------------------------------------------------------------##
 project(Cabana LANGUAGES CXX Fortran VERSION 0.0.0)
 
-set(CMAKE_CXX_STANDARD 11)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 
@@ -36,6 +35,10 @@ foreach(_device Serial OpenMP Cuda)
   endif()
 endforeach()
 message(STATUS "Enable Devices: ${ENABLE_DEVICES}")
+
+if( Cabana_ENABLE_Cuda )
+  enable_language( CUDA )
+endif()
 
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
