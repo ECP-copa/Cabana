@@ -18,5 +18,5 @@ INSTALL(FILES ${HEADERS_IMPL} DESTINATION ${CABANA_INCDIR}/impl/)
 #-----------------------------------------------------------------------------
 
 add_library(cabanacore ${SOURCES} ${SOURCES} ${SOURCES_IMPL})
-target_include_directories(cabanacore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR} ${KOKKOS_INCLUDE_DIRS})
-target_link_libraries(cabanacore ${KOKKOS_LIBRARIES} ${CUDA_LIBRARIES} ${CMAKE_DL_LIBS})
+target_include_directories(cabanacore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(cabanacore Kokkos::kokkos ${CUDA_LIBRARIES})
