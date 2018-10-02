@@ -19,14 +19,6 @@ find_package_handle_standard_args(KOKKOS DEFAULT_MSG KOKKOS_SETTINGS_DIR KOKKOS_
 
 mark_as_advanced(KOKKOS_SETTINGS_DIR KOKKOS_INCLUDE_DIR KOKKOS_LIBRARY)
 
-# check for an empty link flags string to fix a trailing whitespace error when
-# the link flags are empty (e.g. the serial only case)
-if ( "" STREQUAL "${KOKKOS_LINK_FLAGS}" )
-  set(KOKKOS_LINK_LIBRARIES "${KOKKOS_EXTRA_LIBS}")
-else()
-  set(KOKKOS_LINK_LIBRARIES "${KOKKOS_LINK_FLAGS} ${KOKKOS_EXTRA_LIBS}")
-endif()
-
 if(KOKKOS_SETTINGS_DIR AND KOKKOS_INCLUDE_DIR AND KOKKOS_LIBRARY)
   include(${KOKKOS_SETTINGS_DIR}/kokkos_generated_settings.cmake)
   add_library(Kokkos::kokkos UNKNOWN IMPORTED)
@@ -34,5 +26,10 @@ if(KOKKOS_SETTINGS_DIR AND KOKKOS_INCLUDE_DIR AND KOKKOS_LIBRARY)
     IMPORTED_LOCATION ${KOKKOS_LIBRARY}
     INTERFACE_INCLUDE_DIRECTORIES ${KOKKOS_INCLUDE_DIR}
     INTERFACE_COMPILE_OPTIONS "${KOKKOS_CXX_FLAGS}"
-    INTERFACE_LINK_LIBRARIES "${KOKKOS_LINK_LIBRARIES}")
+    INTERFACE_LINK_LIBRARIES "${KOKKOS_EXTRA_LIBS}")
+  # check for an empty link flags string to fix a trailing whitespace error when
+  # the link flags are empty (e.g. the serial only case)
+  if(KOKKOS_LINK_FLAGS)
+    set_property(TARGET Kokkos::kokkos APPEND_STRING PROPERTY INTERFACE_LINK_LIBRARIES "${KOKKOS_LINK_FLAGS}")
+  endif()
 endif()
