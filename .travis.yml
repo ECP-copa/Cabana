@@ -32,14 +32,14 @@ after_success:
  - bash <(curl -s https://codecov.io/bash)
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
-     rm -rf html/* &&
-     mv build/html/* html/
-     git add --all html;
-     if [[ ${TRAVIS_BRANCH} = master && ${encrypted_5669a181ba27_key} && ${encrypted_5669a181ba27_iv} && ${TRAVIS_PULL_REQUEST} == false ]]; then
+     rm -rf doxygen &&
+     mv build/html doxygen
+     git add --all doxygen;
+     if [[ ${TRAVIS_BRANCH} = master && ${encrypted_de2ca53a1b69_key} && ${encrypted_de2ca53a1b69_iv} && ${TRAVIS_PULL_REQUEST} == false ]]; then
        git config --global user.name "Automatic Deployment (Travis CI)";
        git config --global user.email "noreply@lanl.gov";
        git commit -m "Documentation Update";
-       openssl aes-256-cbc -K $encrypted_5669a181ba27_key -iv $encrypted_5669a181ba27_iv -in deploy.enc -out ~/.ssh/id_rsa -d;
+       openssl aes-256-cbc -K $encrypted_de2ca53a1b69_key -iv $encrypted_de2ca53a1b69_iv -in deploy.enc -out ~/.ssh/id_rsa -d;
        chmod 600 ~/.ssh/id_rsa;
        git push git@github.com:${TRAVIS_REPO_SLUG} gh-pages:gh-pages;
      else
