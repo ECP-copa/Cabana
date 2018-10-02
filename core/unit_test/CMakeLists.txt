@@ -29,7 +29,7 @@ endforeach()
 ## Serial tests.
 ##--------------------------------------------------------------------------##
 if(Cabana_ENABLE_Serial)
-  foreach(_test AoSoA Slice DeepCopy Tuple Sort NeighborList Parallel)
+  foreach(_test AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
     add_executable(${_test}_test_Serial Serial/tst${_test}_Serial.cpp unit_test_main.cpp)
     target_link_libraries(${_test}_test_Serial cabanacore cabana_core_gtest)
     add_test(NAME ${_test}_test_Serial COMMAND ${_test}_test_Serial --gtest_color=yes)
@@ -41,7 +41,7 @@ endif()
 ## OpenMP tests.
 ##--------------------------------------------------------------------------##
 if(Cabana_ENABLE_OpenMP)
-  foreach(_test AoSoA Slice DeepCopy Tuple Sort NeighborList Parallel)
+  foreach(_test AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
     add_executable(${_test}_test_OpenMP OpenMP/tst${_test}_OpenMP.cpp unit_test_main.cpp)
     target_link_libraries(${_test}_test_OpenMP cabanacore cabana_core_gtest)
     add_test(NAME ${_test}_test_OpenMP COMMAND ${_test}_test_OpenMP --gtest_color=yes)
@@ -53,7 +53,7 @@ endif()
 ## Cuda tests.
 ##--------------------------------------------------------------------------##
 if(Cabana_ENABLE_Cuda)
-  foreach(_test AoSoA Slice DeepCopy Tuple Sort NeighborList Parallel)
+  foreach(_test AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
     add_executable(${_test}_test_CudaUVM Cuda/tst${_test}_CudaUVM.cpp unit_test_main.cpp)
     target_link_libraries(${_test}_test_CudaUVM cabanacore cabana_core_gtest)
     add_test(NAME ${_test}_test_CudaUVM COMMAND ${_test}_test_CudaUVM --gtest_color=yes)
