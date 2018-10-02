@@ -1,34 +1,21 @@
+option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
+if(NOT Cabana_ENABLE_EXAMPLES)
+  return()
+endif()
 ##--------------------------------------------------------------------------##
 ## Cuda examples.
 ##--------------------------------------------------------------------------##
-IF(Cabana_ENABLE_Cuda)
+if(Cabana_ENABLE_Cuda)
+  add_executable(CudaPerformanceTest cuda_perf_test.cpp)
+  target_link_libraries(CudaPerformanceTest cabanacore)
+endif()
 
-  TRIBITS_ADD_EXECUTABLE(
-    CudaPerformanceTest
-    SOURCES cuda_perf_test.cpp
-    COMM serial mpi
-    )
+if(Cabana_ENABLE_Serial)
+  add_executable(SerialExample serial_example.cpp)
+  target_link_libraries(SerialExample cabanacore)
+endif()
 
-ENDIF()
-
-IF(Cabana_ENABLE_Serial)
-
-  TRIBITS_ADD_EXECUTABLE(
-    SerialExample
-    SOURCES serial_example.cpp
-    COMM serial mpi
-    )
-
-ENDIF()
-
-TRIBITS_ADD_EXECUTABLE(
-  PeakFlops
-  SOURCES Cabana_peakflops.cpp
-  COMM serial mpi
-  )
-
-TRIBITS_ADD_EXECUTABLE(
-  NeighborListMDPerfTest
-  SOURCES md_neighbor_perf_test.cpp
-  COMM serial mpi
-  )
+add_executable(PeakFlops Cabana_peakflops.cpp)
+target_link_libraries(PeakFlops cabanacore)
+add_executable(NeighborListMDPerfTest md_neighbor_perf_test.cpp)
+target_link_libraries(NeighborListMDPerfTest cabanacore)

@@ -1,54 +1,55 @@
 ##---------------------------------------------------------------------------##
 ## Cabana/CMakeLists.txt
 ##---------------------------------------------------------------------------##
+cmake_minimum_required(VERSION 3.1)
 
 ##---------------------------------------------------------------------------##
 # Define your project name and set up major project options
 ##---------------------------------------------------------------------------##
+project(Cabana LANGUAGES CXX VERSION 0.0.0)
 
-INCLUDE(${CMAKE_SOURCE_DIR}/ProjectName.cmake)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 
-# CMake requires that you declare the CMake project in the top-level file and
-# not in an include file
-PROJECT(${PROJECT_NAME} NONE)
+option(CMAKE_VERBOSE_MAKEFILE "Generate verbose Makefiles" OFF)
+include(GNUInstallDirs)
 
-# Add support for extra repositories; everything handled by native above
-SET(${PROJECT_NAME}_SUPPORT_EXTRA_REPOS FALSE)
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
+find_package(KOKKOS REQUIRED)
 
-# Disable Tribits generating HTML dependencies webpage and xml files
-SET(${PROJECT_NAME}_DEPS_XML_OUTPUT_FILE OFF CACHE BOOL "" )
+option(Cabana_ENABLE_Serial "Build Cabana with Serial support" ON)
+find_package(OpenMP QUIET)
+option(Cabana_ENABLE_OpenMP "Build Cabana with OpenMP support" ${OpenMP_FOUND})
+option(Cabana_ENABLE_Cuda "Build Cabana with Cuda support" OFF)
+if(NOT (Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Cuda))
+  message(FATAL_ERROR "NO Cabana backend enabled")
+endif()
 
-# Disable Tribits export system to save time configuring
-SET(${PROJECT_NAME}_ENABLE_INSTALL_CMAKE_CONFIG_FILES OFF CACHE BOOL "")
+set(ENABLE_DEVICES)
+foreach(_device Serial OpenMP Cuda)
+  if(Cabana_ENABLE_${_device})
+    if(NOT KOKKOS_GMAKE_DEVICES MATCHES ".*${_device}.*")
+      message(FATAL_ERROR "Kokkos built with devices '${KOKKOS_GMAKE_DEVICES}', but Cabana with ${_device} requested.")
+    endif()
+    list(APPEND ENABLE_DEVICES "${_device}")
+  endif()
+endforeach()
+message(STATUS "Enable Devices: ${ENABLE_DEVICES}")
 
-# Disable Tribits export makefiles system to save time configuring
-SET(${PROJECT_NAME}_ENABLE_EXPORT_MAKEFILES OFF CACHE BOOL "")
+if( Cabana_ENABLE_Cuda )
+  enable_language( CUDA )
+endif()
 
-# Turn on C++11
-SET(${PROJECT_NAME}_ENABLE_CXX11 ON CACHE BOOL "")
-
-# Turn on the core package.
-SET(${PROJECT_NAME}_ENABLE_Core ON CACHE BOOL "")
-
-##---------------------------------------------------------------------------##
-# B) Pull in the TriBITS system and execute
-##---------------------------------------------------------------------------##
-
-# Point to tribits. Tribits is managed via a git submodule.
-SET(${PROJECT_NAME}_TRIBITS_DIR
-  "${CMAKE_CURRENT_SOURCE_DIR}/cmake/tribits/tribits" CACHE PATH "" )
-MESSAGE("${PROJECT_NAME}_TRIBITS_DIR = '${${PROJECT_NAME}_TRIBITS_DIR}'")
-INCLUDE(${${PROJECT_NAME}_TRIBITS_DIR}/TriBITS.cmake)
-
-# CMake requires this be in the top file and not in an include file
-CMAKE_MINIMUM_REQUIRED(VERSION ${TRIBITS_CMAKE_MINIMUM_REQUIRED})
-
+option(Cabana_ENABLE_TESTING "Build tests" OFF)
+if(Cabana_ENABLE_TESTING)
+  enable_testing()
+endif()
 ##---------------------------------------------------------------------------##
 ## Print the revision number to stdout
 ##---------------------------------------------------------------------------##
 
 FIND_PACKAGE(Git)
-IF(GIT_FOUND AND EXISTS ${${PACKAGE_NAME}_SOURCE_DIR}/.git)
+IF(GIT_FOUND AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/.git)
     EXECUTE_PROCESS(
         COMMAND           ${GIT_EXECUTABLE} log --pretty=format:%H -n 1
         WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
@@ -57,15 +58,6 @@ IF(GIT_FOUND AND EXISTS ${${PACKAGE_NAME}_SOURCE_DIR}/.git)
 ELSE()
     SET(Cabana_GIT_COMMIT_HASH "Not a git repository")
 ENDIF()
-MESSAGE("Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
+MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 
-##---------------------------------------------------------------------------##
-## Do standard postprocessing
-##---------------------------------------------------------------------------##
-
-# Do all of the processing for this Tribits project
-TRIBITS_PROJECT()
-
-##---------------------------------------------------------------------------##
-## end of CMakeLists.txt
-##---------------------------------------------------------------------------##
+add_subdirectory(core)

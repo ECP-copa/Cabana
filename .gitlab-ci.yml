@@ -1,7 +1,5 @@
 test:default:
   image: ubuntu
-  variables:
-    GIT_SUBMODULE_STRATEGY: recursive
   script:
     - apt-get update
     - apt-get install -y gcovr gfortran cmake g++ git
@@ -15,7 +13,6 @@ test:default:
       popd &&
       popd
     - mkdir build && cd build &&
-      cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DCabana_ENABLE_OpenMP=ON -DCabana_ENABLE_TESTS=ON -DCabana_ENABLE_EXAMPLES=ON 
-            -DCabana_EXTRA_LINK_FLAGS="-ldl" .. &&
+      cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON .. &&
       make -j2 VERBOSE=1 &&
       make test
