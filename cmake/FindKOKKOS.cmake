@@ -30,6 +30,6 @@ if(KOKKOS_SETTINGS_DIR AND KOKKOS_INCLUDE_DIR AND KOKKOS_LIBRARY)
   # check for an empty link flags string to fix a trailing whitespace error when
   # the link flags are empty (e.g. the serial only case)
   if(KOKKOS_LINK_FLAGS)
-    set_property(TARGET Kokkos::kokkos APPEND_STRING PROPERTY INTERFACE_LINK_LIBRARIES "${KOKKOS_LINK_FLAGS}")
+    set_property(TARGET Kokkos::kokkos APPEND_STRING PROPERTY INTERFACE_LINK_LIBRARIES " ${KOKKOS_LINK_FLAGS}")
   endif()
 endif()
