@@ -29,11 +29,11 @@ script:
     popd 
 
 after_success:
- - bash <(curl -s https://codecov.io/bash)
+ - pushd build && bash <(curl -s https://codecov.io/bash) && popd
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
      rm -rf doxygen &&
-     mv build/html doxygen
+     mv build/html doxygen &&
      git add --all doxygen;
      if [[ ${TRAVIS_BRANCH} = master && ${encrypted_de2ca53a1b69_key} && ${encrypted_de2ca53a1b69_iv} && ${TRAVIS_PULL_REQUEST} == false ]]; then
        git config --global user.name "Automatic Deployment (Travis CI)";
