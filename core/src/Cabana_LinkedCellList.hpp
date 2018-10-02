@@ -288,7 +288,7 @@ class LinkedCellList
   private:
 
     BinningData<MemorySpace> _bin_data;
-    Impl::CartesianGrid _grid;
+    Impl::CartesianGrid<double> _grid;
     std::size_t _begin;
     std::size_t _end;
 };

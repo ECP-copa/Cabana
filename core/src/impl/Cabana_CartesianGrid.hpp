@@ -15,42 +15,48 @@
 #include <Kokkos_Core.hpp>
 
 #include <limits>
+#include <type_traits>
 
 namespace Cabana
 {
 namespace Impl
 {
+template<class Real,
+         typename std::enable_if<
+             std::is_floating_point<Real>::value,int>::type = 0>
 class CartesianGrid
 {
   public:
 
-    double _min_x;
-    double _min_y;
-    double _min_z;
-    double _max_x;
-    double _max_y;
-    double _max_z;
-    double _dx;
-    double _dy;
-    double _dz;
-    double _rdx;
-    double _rdy;
-    double _rdz;
+    using real_type = Real;
+
+    Real _min_x;
+    Real _min_y;
+    Real _min_z;
+    Real _max_x;
+    Real _max_y;
+    Real _max_z;
+    Real _dx;
+    Real _dy;
+    Real _dz;
+    Real _rdx;
+    Real _rdy;
+    Real _rdz;
     int _nx;
     int _ny;
     int _nz;
 
     CartesianGrid() {}
 
-    CartesianGrid( const double min_x,
-                   const double min_y,
-                   const double min_z,
-                   const double max_x,
-                   const double max_y,
-                   const double max_z,
-                   const double delta_x,
-                   const double delta_y,
-                   const double delta_z )
+    CartesianGrid( const Real min_x,
+                   const Real min_y,
+                   const Real min_z,
+                   const Real max_x,
+                   const Real max_y,
+                   const Real max_z,
+                   const Real delta_x,
+                   const Real delta_y,
+                   const Real delta_z )
         : _min_x( min_x )
         , _min_y( min_y )
         , _min_z( min_z )
@@ -101,9 +107,9 @@ class CartesianGrid
 
     // Given a position get the ijk indices of the cell in which
     KOKKOS_INLINE_FUNCTION
-    void locatePoint( const double xp,
-                      const double yp,
-                      const double zp,
+    void locatePoint( const Real xp,
+                      const Real yp,
+                      const Real zp,
                       int& ic,
                       int& jc,
                       int& kc ) const
@@ -117,20 +123,20 @@ class CartesianGrid
     // that point to any point in the cell. If the point is in the cell the
     // returned distance is zero.
     KOKKOS_INLINE_FUNCTION
-    double minDistanceToPoint( const double xp,
-                               const double yp,
-                               const double zp,
+    Real minDistanceToPoint( const Real xp,
+                               const Real yp,
+                               const Real zp,
                                const int ic,
                                const int jc,
                                const int kc ) const
     {
-        double xc = _min_x + (ic+0.5)*_dx;
-        double yc = _min_y + (jc+0.5)*_dy;
-        double zc = _min_z + (kc+0.5)*_dz;
+        Real xc = _min_x + (ic+0.5)*_dx;
+        Real yc = _min_y + (jc+0.5)*_dy;
+        Real zc = _min_z + (kc+0.5)*_dz;
 
-        double rx = fabs(xp-xc) - 0.5*_dx;
-        double ry = fabs(yp-yc) - 0.5*_dy;
-        double rz = fabs(zp-zc) - 0.5*_dz;
+        Real rx = fabs(xp-xc) - 0.5*_dx;
+        Real ry = fabs(yp-yc) - 0.5*_dy;
+        Real rz = fabs(zp-zc) - 0.5*_dz;
 
         rx = ( rx > 0.0 ) ? rx : 0.0;
         ry = ( ry > 0.0 ) ? ry : 0.0;
@@ -154,7 +160,7 @@ class CartesianGrid
 
     // Calculate the number of full cells between 2 points.
     KOKKOS_INLINE_FUNCTION
-    int cellsBetween( const double max, const double min, const double rdelta ) const
+    int cellsBetween( const Real max, const Real min, const Real rdelta ) const
     { return std::floor( (max-min) * rdelta ); }
 };
 

@@ -77,7 +77,7 @@ template<class Scalar>
 struct LinkedCellStencil
 {
     Scalar rsqr;
-    CartesianGrid grid;
+    CartesianGrid<double> grid;
     int max_cells_dir;
     int max_cells;
     int cell_range;
@@ -89,9 +89,9 @@ struct LinkedCellStencil
         : rsqr( neighborhood_radius * neighborhood_radius )
     {
         Scalar dx = neighborhood_radius * cell_size_ratio;
-        grid = CartesianGrid( grid_min[0], grid_min[1], grid_min[2],
-                              grid_max[0], grid_max[1], grid_max[2],
-                              dx, dx, dx );
+        grid = CartesianGrid<double>( grid_min[0], grid_min[1], grid_min[2],
+                                      grid_max[0], grid_max[1], grid_max[2],
+                                      dx, dx, dx );
         cell_range = std::ceil( 1 / cell_size_ratio );
         max_cells_dir = 2 * cell_range + 1;
         max_cells = max_cells_dir * max_cells_dir * max_cells_dir;
