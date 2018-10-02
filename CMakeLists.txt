@@ -6,7 +6,7 @@ cmake_minimum_required(VERSION 3.1)
 ##---------------------------------------------------------------------------##
 # Define your project name and set up major project options
 ##---------------------------------------------------------------------------##
-project(Cabana LANGUAGES CXX Fortran VERSION 0.0.0)
+project(Cabana LANGUAGES CXX VERSION 0.0.0)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
