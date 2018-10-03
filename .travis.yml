@@ -27,7 +27,8 @@ before_script:
 
 script:
   - mkdir build && pushd build &&
-    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos ${CMAKE_OPTS[@]}
+    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
+          -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DEXTRA_LINK_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
     make -j2 VERBOSE=1 &&
