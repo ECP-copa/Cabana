@@ -18,7 +18,7 @@ before_script:
     pushd build &&
     ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
     make -j2 $([[ ${CC} = clang ]] && echo KOKKOS_INTERNAL_GCC_TOOLCHAIN=/usr) &&
-    make install &&
+    make install $([[ ${CC} = clang ]] && echo KOKKOS_INTERNAL_GCC_TOOLCHAIN=/usr) &&
     popd &&
     popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
