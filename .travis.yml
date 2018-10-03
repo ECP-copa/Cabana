@@ -11,11 +11,12 @@ env:
     - BACKENDS="Serial Pthread"
 
 before_script:
+  - for i ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
     pushd build &&
-    ../generate_makefile.bash --prefix=$HOME/kokkos --with-pthread --with-openmp --with-serial &&
+    ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
     make -j2 &&
     make install &&
     popd &&
