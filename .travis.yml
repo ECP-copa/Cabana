@@ -11,7 +11,7 @@ env:
     - BACKENDS="Serial Pthread"
 
 before_script:
-  - for i ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
+  - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
