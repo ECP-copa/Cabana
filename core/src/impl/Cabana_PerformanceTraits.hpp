@@ -42,6 +42,18 @@ class PerformanceTraits<Kokkos::Serial>
 #endif
 
 //---------------------------------------------------------------------------//
+// Threads specialization.
+#if defined( KOKKOS_ENABLE_THREADS )
+template<>
+class PerformanceTraits<Kokkos::Threads>
+{
+  public:
+    static constexpr int vector_length = 16;
+    using parallel_for_tag = StructParallelTag;
+};
+#endif
+
+//---------------------------------------------------------------------------//
 // OpenMP specialization.
 #if defined( KOKKOS_ENABLE_OPENMP )
 template<>
