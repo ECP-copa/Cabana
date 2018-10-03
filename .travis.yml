@@ -11,6 +11,7 @@ env:
     - BACKENDS="Serial Pthread"
 
 before_script:
+  - KOKKOS_OPTS=( --with-hwloc=/usr )
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
     # kokkos uses `which gcc` to set the toolchain path, but gcc is symlink in /usr/lib/ccache
   - if [[ ${CC} = clang ]]; then KOKKOS_MAKE_OPTS="KOKKOS_INTERNAL_GCC_TOOLCHAIN=/usr"; export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi 
@@ -30,6 +31,7 @@ addons:
   apt:
     packages:
       - doxygen
+      - libhwloc-dev
 
 script:
   - mkdir build && pushd build &&
