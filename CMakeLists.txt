@@ -24,8 +24,8 @@ if( Cabana_ENABLE_Pthread )
   find_package(Threads)
 endif()
 
+option(Cabana_ENABLE_OpenMP "Build Cabana with OpenMP support" OFF)
 if( Cabana_ENABLE_OpenMP )
-  option(Cabana_ENABLE_OpenMP "Build Cabana with OpenMP support" OFF)
   find_package(OpenMP)
 endif()
 
