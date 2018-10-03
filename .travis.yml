@@ -12,13 +12,15 @@ env:
 
 before_script:
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
+    # kokkos uses `which gcc` to set the toolchain path, but gcc is symlink in /usr/lib/ccache
+  - if [[ ${CC} = clang ]]; then KOKKOS_MAKE_OPTS="KOKKOS_INTERNAL_GCC_TOOLCHAIN=/usr"; export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi 
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
     pushd build &&
     ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
-    make -j2 &&
-    make install &&
+    make -j2 ${KOKKOS_MAKE_OPTS} &&
+    make install ${KOKKOS_MAKE_OPTS} && 
     popd &&
     popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
@@ -34,9 +36,9 @@ script:
     cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
-          -DEXTRA_LINK_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
+          -DCMAKE_EXE_LINKER_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
     make -j2 VERBOSE=1 &&
-    make test &&
+    make test CTEST_OUTPUT_ON_FAILURE=1 &&
     make doxygen &&
     popd
 
@@ -65,3 +67,4 @@ cache:
 
 compiler:
   - gcc
+  - clang
