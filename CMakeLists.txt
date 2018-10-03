@@ -18,10 +18,23 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(KOKKOS REQUIRED)
 
 option(Cabana_ENABLE_Serial "Build Cabana with Serial support" ON)
-find_package(OpenMP QUIET)
-option(Cabana_ENABLE_OpenMP "Build Cabana with OpenMP support" ${OpenMP_FOUND})
+
+option(Cabana_ENABLE_Pthread "Build Cabana with Pthread support" OFF)
+if( Cabana_ENABLE_Pthread )
+  find_package(Threads)
+endif()
+
+if( Cabana_ENABLE_OpenMP )
+  option(Cabana_ENABLE_OpenMP "Build Cabana with OpenMP support" OFF)
+  find_package(OpenMP)
+endif()
+
 option(Cabana_ENABLE_Cuda "Build Cabana with Cuda support" OFF)
-if(NOT (Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Cuda))
+if( Cabana_ENABLE_Cuda )
+  enable_language( CUDA )
+endif()
+
+if(NOT (Cabana_ENABLE_Serial OR Cabana_ENABLE_Pthread OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Cuda))
   message(FATAL_ERROR "NO Cabana backend enabled")
 endif()
 
@@ -35,10 +48,6 @@ foreach(_device Serial Pthread OpenMP Cuda)
   endif()
 endforeach()
 message(STATUS "Enable Devices: ${ENABLE_DEVICES}")
-
-if( Cabana_ENABLE_Cuda )
-  enable_language( CUDA )
-endif()
 
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
