@@ -17,7 +17,7 @@ before_script:
     mkdir build &&
     pushd build &&
     ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
-    make -j2 &&
+    make -j2 $([[ ${CC} = clang ]] && echo KOKKOS_INTERNAL_GCC_TOOLCHAIN=/usr) &&
     make install &&
     popd &&
     popd
