@@ -20,7 +20,7 @@ before_script:
     make install &&
     popd &&
     popd
-  - for i in ${BACKEND}; do CMAKE_OPTS+= ( -DCabana_ENABLE_${i}=ON ); done
+  - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
   - if [[ ${BACKENDS} = *OpenMP* ]]; then export OMP_NUM_THREADS=4; fi
 
 
