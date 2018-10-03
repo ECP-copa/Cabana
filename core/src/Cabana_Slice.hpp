@@ -167,6 +167,12 @@ class Slice
     using slice_type =
         Slice<DataType,MemorySpace,MemoryAccessType,VectorLength>;
 
+    // Cabana memory space.
+    using memory_space = MemorySpace;
+
+    // Memory access type.
+    using memory_access_type = MemoryAccessType;
+
     // Vector length.
     static constexpr int vector_length = VectorLength;
 

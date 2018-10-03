@@ -15,56 +15,72 @@
 #include <Kokkos_Core.hpp>
 
 #include <limits>
+#include <type_traits>
 
 namespace Cabana
 {
 namespace Impl
 {
-template<typename Scalar>
+template<class Real,
+         typename std::enable_if<
+             std::is_floating_point<Real>::value,int>::type = 0>
 class CartesianGrid
 {
   public:
 
-    Scalar _min_x;
-    Scalar _min_y;
-    Scalar _min_z;
-    Scalar _max_x;
-    Scalar _max_y;
-    Scalar _max_z;
-    Scalar _dx;
-    Scalar _dy;
-    Scalar _dz;
-    Scalar _rdx;
-    Scalar _rdy;
-    Scalar _rdz;
+    using real_type = Real;
+
+    Real _min_x;
+    Real _min_y;
+    Real _min_z;
+    Real _max_x;
+    Real _max_y;
+    Real _max_z;
+    Real _dx;
+    Real _dy;
+    Real _dz;
+    Real _rdx;
+    Real _rdy;
+    Real _rdz;
     int _nx;
     int _ny;
     int _nz;
 
     CartesianGrid() {}
 
-    CartesianGrid( const Scalar min[3],
-                   const Scalar max[3],
-                   const Scalar delta[3] )
-        : _min_x( min[0] )
-        , _min_y( min[1] )
-        , _min_z( min[2] )
-        , _max_x( max[0] )
-        , _max_y( max[1] )
-        , _max_z( max[2] )
+    CartesianGrid( const Real min_x,
+                   const Real min_y,
+                   const Real min_z,
+                   const Real max_x,
+                   const Real max_y,
+                   const Real max_z,
+                   const Real delta_x,
+                   const Real delta_y,
+                   const Real delta_z )
+        : _min_x( min_x )
+        , _min_y( min_y )
+        , _min_z( min_z )
+        , _max_x( max_x )
+        , _max_y( max_y )
+        , _max_z( max_z )
     {
-        _nx = cellsBetween( max[0], min[0], 1.0 / delta[0] );
-        _ny = cellsBetween( max[1], min[1], 1.0 / delta[1] );
-        _nz = cellsBetween( max[2], min[2], 1.0 / delta[2] );
+        _nx = cellsBetween( max_x, min_x, 1.0 / delta_x );
+        _ny = cellsBetween( max_y, min_y, 1.0 / delta_y );
+        _nz = cellsBetween( max_z, min_z, 1.0 / delta_z );
 
-        _dx = (max[0]-min[0]) / _nx;
-        _dy = (max[1]-min[1]) / _ny;
-        _dz = (max[2]-min[2]) / _nz;
+        _dx = (max_x-min_x) / _nx;
+        _dy = (max_y-min_y) / _ny;
+        _dz = (max_z-min_z) / _nz;
 
         _rdx = 1.0 / _dx;
         _rdy = 1.0 / _dy;
         _rdz = 1.0 / _dz;
     }
+
+    // Get the total number of cells.
+    KOKKOS_INLINE_FUNCTION
+    std::size_t totalNumCells() const
+    { return _nx * _ny * _nz; }
 
     // Get the number of cells in each direction.
     KOKKOS_INLINE_FUNCTION
@@ -75,11 +91,25 @@ class CartesianGrid
         num_z = _nz;
     }
 
+    // Get the number of cells in a given direction.
+    KOKKOS_INLINE_FUNCTION
+    int numBin( const int dim ) const
+    {
+        if ( 0 == dim )
+            return _nx;
+        else if ( 1 == dim )
+            return _ny;
+        else if ( 2 == dim )
+            return _nz;
+        else
+            return -1;
+    }
+
     // Given a position get the ijk indices of the cell in which
     KOKKOS_INLINE_FUNCTION
-    void locatePoint( const Scalar xp,
-                      const Scalar yp,
-                      const Scalar zp,
+    void locatePoint( const Real xp,
+                      const Real yp,
+                      const Real zp,
                       int& ic,
                       int& jc,
                       int& kc ) const
@@ -93,20 +123,20 @@ class CartesianGrid
     // that point to any point in the cell. If the point is in the cell the
     // returned distance is zero.
     KOKKOS_INLINE_FUNCTION
-    Scalar minDistanceToPoint( const Scalar xp,
-                               const Scalar yp,
-                               const Scalar zp,
+    Real minDistanceToPoint( const Real xp,
+                               const Real yp,
+                               const Real zp,
                                const int ic,
                                const int jc,
                                const int kc ) const
     {
-        Scalar xc = _min_x + (ic+0.5)*_dx;
-        Scalar yc = _min_y + (jc+0.5)*_dy;
-        Scalar zc = _min_z + (kc+0.5)*_dz;
+        Real xc = _min_x + (ic+0.5)*_dx;
+        Real yc = _min_y + (jc+0.5)*_dy;
+        Real zc = _min_z + (kc+0.5)*_dz;
 
-        Scalar rx = fabs(xp-xc) - 0.5*_dx;
-        Scalar ry = fabs(yp-yc) - 0.5*_dy;
-        Scalar rz = fabs(zp-zc) - 0.5*_dz;
+        Real rx = fabs(xp-xc) - 0.5*_dx;
+        Real ry = fabs(yp-yc) - 0.5*_dy;
+        Real rz = fabs(zp-zc) - 0.5*_dz;
 
         rx = ( rx > 0.0 ) ? rx : 0.0;
         ry = ( ry > 0.0 ) ? ry : 0.0;
@@ -130,7 +160,7 @@ class CartesianGrid
 
     // Calculate the number of full cells between 2 points.
     KOKKOS_INLINE_FUNCTION
-    int cellsBetween( const Scalar max, const Scalar min, const Scalar rdelta ) const
+    int cellsBetween( const Real max, const Real min, const Real rdelta ) const
     { return std::floor( (max-min) * rdelta ); }
 };
 
