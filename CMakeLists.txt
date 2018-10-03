@@ -26,7 +26,7 @@ if(NOT (Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Cuda))
 endif()
 
 set(ENABLE_DEVICES)
-foreach(_device Serial OpenMP Cuda)
+foreach(_device Serial Pthread OpenMP Cuda)
   if(Cabana_ENABLE_${_device})
     if(NOT KOKKOS_GMAKE_DEVICES MATCHES ".*${_device}.*")
       message(FATAL_ERROR "Kokkos built with devices '${KOKKOS_GMAKE_DEVICES}', but Cabana with ${_device} requested.")
