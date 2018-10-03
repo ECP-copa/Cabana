@@ -37,6 +37,7 @@ script:
           -DEXTRA_LINK_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
     make -j2 VERBOSE=1 &&
     make test &&
+    make doxygen &&
     popd
 
 after_success:
