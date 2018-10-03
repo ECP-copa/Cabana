@@ -36,7 +36,7 @@ script:
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DEXTRA_LINK_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
     make -j2 VERBOSE=1 &&
-    make test &&
+    make test CTEST_OUTPUT_ON_FAILURE=1 &&
     make doxygen &&
     popd
 
