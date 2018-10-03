@@ -2,6 +2,14 @@ language: cpp
 
 sudo: false
 
+env:
+  matrix:
+    - BACKENDS="OpenMP"
+    - BACKENDS="Serial"
+    - BACKENDS="Pthread"
+    - BACKENDS="Serial OpenMP"
+    - BACKENDS="Serial Pthread"
+
 before_script:
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
@@ -12,31 +20,21 @@ before_script:
     make install &&
     popd &&
     popd
+  - for i in ${BACKEND}; do CMAKE_OPTS+= ( -DCabana_ENABLE_${i}=ON ); done
+  - if [[ ${BACKENDS} = *OpenMP* ]]; then export OMP_NUM_THREADS=4; fi
 
-addons:
-  apt:
-    packages:
-      - gfortran
 
 script:
-  - export OMP_NUM_THREADS=4 &&
-    mkdir pthread_build && mkdir serial_openmp_build &&
-    cd serial_openmp_build &&
-    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
-          -DCabana_ENABLE_Serial=ON -DCabana_ENABLE_OpenMP=ON
+  - mkdir build && pushd build &&
+    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DEXTRA_LINK_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
     make -j2 VERBOSE=1 &&
     make test &&
-    cd ../pthread_build &&
-    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
-          -DCabana_ENABLE_Pthread=ON -DCabana_ENABLE_Serial=OFF
-          -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON .. &&
-    make -j2 VERBOSE=1 &&
-    make test
+    popd
 
 after_success:
- - bash <(curl -s https://codecov.io/bash)
+ - pushd build && bash <(curl -s https://codecov.io/bash) && popd
 
 cache:
   - ccache
