@@ -53,6 +53,11 @@ option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
   enable_testing()
 endif()
+
+find_package(Doxygen)
+if(Doxygen_FOUND)
+  doxygen_add_docs(doxygen core)
+endif()
 ##---------------------------------------------------------------------------##
 ## Print the revision number to stdout
 ##---------------------------------------------------------------------------##

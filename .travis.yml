@@ -24,6 +24,10 @@ before_script:
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
   - if [[ ${BACKENDS} = *OpenMP* ]]; then export OMP_NUM_THREADS=4; fi
 
+addons:
+  apt:
+    packages:
+      - doxygen
 
 script:
   - mkdir build && pushd build &&
@@ -33,10 +37,28 @@ script:
           -DEXTRA_LINK_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
     make -j2 VERBOSE=1 &&
     make test &&
+    make doxygen &&
     popd
 
 after_success:
  - pushd build && bash <(curl -s https://codecov.io/bash) && popd
+ - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
+     git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
+     rm -rf doxygen &&
+     mv build/html doxygen &&
+     git add --all doxygen;
+     if [[ ${TRAVIS_BRANCH} = master && ${encrypted_de2ca53a1b69_key} && ${encrypted_de2ca53a1b69_iv} && ${TRAVIS_PULL_REQUEST} == false ]]; then
+       git config --global user.name "Automatic Deployment (Travis CI)";
+       git config --global user.email "noreply@lanl.gov";
+       git commit -m "Documentation Update";
+       openssl aes-256-cbc -K $encrypted_de2ca53a1b69_key -iv $encrypted_de2ca53a1b69_iv -in deploy.enc -out ~/.ssh/id_rsa -d;
+       chmod 600 ~/.ssh/id_rsa;
+       git push git@github.com:${TRAVIS_REPO_SLUG} gh-pages:gh-pages;
+     else
+       git status;
+       git diff --cached --no-color | head -n 500;
+     fi;
+   fi
 
 cache:
   - ccache
