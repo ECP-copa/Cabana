@@ -3,11 +3,11 @@ language: cpp
 sudo: false
 
 before_script:
-  - git clone --depth=1 https://github.com/kokkos/kokkos.git && 
+  - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
     pushd build &&
-    ../generate_makefile.bash --prefix=$HOME/kokkos --with-openmp --with-serial &&
+    ../generate_makefile.bash --prefix=$HOME/kokkos --with-pthread --with-openmp --with-serial &&
     make -j2 &&
     make install &&
     popd &&
@@ -19,9 +19,19 @@ addons:
       - gfortran
 
 script:
-  - mkdir build && cd build &&
-    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON 
+  - export OMP_NUM_THREADS=4 &&
+    mkdir pthread_build && mkdir serial_openmp_build &&
+    cd serial_openmp_build &&
+    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
+          -DCabana_ENABLE_Serial=ON -DCabana_ENABLE_OpenMP=ON
+          -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DEXTRA_LINK_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
+    make -j2 VERBOSE=1 &&
+    make test &&
+    cd ../pthread_build &&
+    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
+          -DCabana_ENABLE_Pthread=ON -DCabana_ENABLE_Serial=OFF
+          -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON .. &&
     make -j2 VERBOSE=1 &&
     make test
 
