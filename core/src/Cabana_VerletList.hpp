@@ -13,7 +13,7 @@
 #define CABANA_VERLETLIST_HPP
 
 #include <Cabana_NeighborList.hpp>
-#include <Cabana_Sort.hpp>
+#include <Cabana_LinkedCellList.hpp>
 #include <Cabana_Macros.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
@@ -77,7 +77,7 @@ template<class Scalar>
 struct LinkedCellStencil
 {
     Scalar rsqr;
-    CartesianGrid<Scalar> grid;
+    CartesianGrid<double> grid;
     int max_cells_dir;
     int max_cells;
     int cell_range;
@@ -88,10 +88,10 @@ struct LinkedCellStencil
                        const Scalar grid_max[3] )
         : rsqr( neighborhood_radius * neighborhood_radius )
     {
-        Scalar dx[3] = { neighborhood_radius * cell_size_ratio,
-                         neighborhood_radius * cell_size_ratio,
-                         neighborhood_radius * cell_size_ratio };
-        grid = CartesianGrid<Scalar>( grid_min, grid_max, dx );
+        Scalar dx = neighborhood_radius * cell_size_ratio;
+        grid = CartesianGrid<double>( grid_min[0], grid_min[1], grid_min[2],
+                                      grid_max[0], grid_max[1], grid_max[2],
+                                      dx, dx, dx );
         cell_range = std::ceil( 1 / cell_size_ratio );
         max_cells_dir = 2 * cell_range + 1;
         max_cells = max_cells_dir * max_cells_dir * max_cells_dir;
@@ -132,6 +132,7 @@ struct VerletListBuilder
     using PositionValueType = typename PositionSlice::value_type;
     using RandomAccessPositionSlice =
         typename PositionSlice::random_access_slice;
+    using memory_space = typename PositionSlice::memory_space;
     using kokkos_memory_space = typename PositionSlice::kokkos_memory_space;
     using kokkos_execution_space = typename PositionSlice::kokkos_execution_space;
 
@@ -151,8 +152,8 @@ struct VerletListBuilder
     RandomAccessPositionSlice position;
 
     // Binning Data.
-    BinningData<kokkos_memory_space> bin_data_1d;
-    LinkedCellList<kokkos_memory_space> linked_cell_list;
+    BinningData<memory_space> bin_data_1d;
+    LinkedCellList<memory_space> linked_cell_list;
 
     // Cell stencil.
     LinkedCellStencil<PositionValueType> cell_stencil;
@@ -179,9 +180,9 @@ struct VerletListBuilder
         // treated as candidates for neighbors.
         double grid_size = cell_size_ratio * neighborhood_radius;
         PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
-        linked_cell_list = buildLinkedCellList(
+        linked_cell_list = LinkedCellList<memory_space>(
             position, grid_delta, grid_min, grid_max );
-        bin_data_1d = linked_cell_list.data1d();
+        bin_data_1d = linked_cell_list.binningData();
 
         // We will use the square of the distance for neighbor determination.
         rsqr = neighborhood_radius * neighborhood_radius;

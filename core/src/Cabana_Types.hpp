@@ -94,6 +94,26 @@ template<>
 struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type {};
 
 //---------------------------------------------------------------------------//
+// Kokkos-to-Cabana space translator
+//---------------------------------------------------------------------------//
+template<class KokkosSpace>
+struct KokkosSpaceToCabana;
+
+template<>
+struct KokkosSpaceToCabana<Kokkos::HostSpace>
+{
+    using type = Cabana::HostSpace;
+};
+
+#if defined( KOKKOS_ENABLE_CUDA )
+template<>
+struct KokkosSpaceToCabana<Kokkos::CudaUVMSpace>
+{
+    using type = Cabana::CudaUVMSpace;
+};
+#endif
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 
