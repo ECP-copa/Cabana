@@ -13,7 +13,8 @@ file(GLOB HEADERS_IMPL impl/*.hpp)
 file(GLOB SOURCES_IMPL impl/*.cpp)
 
 install(FILES ${HEADERS_PUBLIC} DESTINATION ${CABANA_INCDIR}) 
-INSTALL(FILES ${HEADERS_IMPL} DESTINATION ${CABANA_INCDIR}/impl/)
+install(FILES ${HEADERS_IMPL} DESTINATION ${CABANA_INCDIR}/impl/)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Core_config.hpp DESTINATION ${CABANA_INCDIR}) 
 
 #-----------------------------------------------------------------------------
 
