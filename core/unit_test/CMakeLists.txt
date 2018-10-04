@@ -56,7 +56,7 @@ if(Cabana_ENABLE_OpenMP)
   foreach(_test AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
     add_executable(${_test}_test_OpenMP OpenMP/tst${_test}_OpenMP.cpp unit_test_main.cpp)
     target_link_libraries(${_test}_test_OpenMP cabanacore cabana_core_gtest)
-    foreach(_thread 1 2 3 4)
+    foreach(_thread 1 2 4)
       add_test(NAME ${_test}_test_OpenMP_${_thread} COMMAND ${_test}_test_OpenMP --gtest_color=yes)
       set_tests_properties(${_test}_test_OpenMP_${_thread} PROPERTIES FAIL_REGULAR_EXPRESSION "${FAIL_RE}"
         ENVIRONMENT OMP_NUM_THREADS=${_thread})
