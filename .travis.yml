@@ -1,6 +1,7 @@
 language: cpp
 
-sudo: false
+# against hwloc error (travis-ci/travis-ci#10019)
+sudo: required
 
 env:
   matrix:
