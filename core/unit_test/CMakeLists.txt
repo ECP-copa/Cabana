@@ -44,8 +44,11 @@ if(Cabana_ENABLE_Pthread)
   foreach(_test AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
     add_executable(${_test}_test_Pthread Pthread/tst${_test}_Pthread.cpp unit_test_main.cpp)
     target_link_libraries(${_test}_test_Pthread cabanacore cabana_core_gtest)
-    add_test(NAME ${_test}_test_Pthread COMMAND ${_test}_test_Pthread --gtest_color=yes)
-    set_tests_properties(${_test}_test_Pthread PROPERTIES FAIL_REGULAR_EXPRESSION "${FAIL_RE}")
+    foreach(_thread 1 2 4)
+      add_test(NAME ${_test}_test_Pthread_${_thread} COMMAND
+        ${_test}_test_Pthread --gtest_color=yes --kokkos-threads=${_thread})
+      set_tests_properties(${_test}_test_Pthread_${_thread} PROPERTIES FAIL_REGULAR_EXPRESSION "${FAIL_RE}")
+    endforeach()
   endforeach()
 endif()
 
