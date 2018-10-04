@@ -24,7 +24,6 @@ before_script:
     popd &&
     popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
-  - if [[ ${BACKENDS} = *OpenMP* ]]; then export OMP_NUM_THREADS=4; fi
 
 addons:
   apt:
