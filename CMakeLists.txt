@@ -75,3 +75,6 @@ ENDIF()
 MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 
 add_subdirectory(core)
+
+configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
