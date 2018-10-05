@@ -37,4 +37,4 @@ Version: @PROJECT_VERSION@
 Requires:
 Libs: -L${libdir} -lcabanacore @KOKKOS_LIBRARY@ @KOKKOS_EXTRA_LIBS@ @KOKKOS_LINK_FLAGS@
 Libs.private: -lm
-Cflags: -I${includedir}/Cabana -I@KOKKOS_INCLUDE_DIR@ @KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES_STRING@ 
+Cflags: -I${includedir} -I@KOKKOS_INCLUDE_DIR@ @KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES_STRING@ 

@@ -1,6 +1,4 @@
-configure_file(${PROJECT_NAME}Core_config.hpp.cmakein ${PROJECT_NAME}Core_config.hpp)
-
-set(CABANA_INCDIR ${CMAKE_INSTALL_INCLUDEDIR}/${PROJECT_NAME})
+configure_file(CabanaCore_config.hpp.cmakein CabanaCore_config.hpp)
 
 #-----------------------------------------------------------------------------
 
@@ -12,9 +10,9 @@ file(GLOB SOURCES *.cpp)
 file(GLOB HEADERS_IMPL impl/*.hpp)
 file(GLOB SOURCES_IMPL impl/*.cpp)
 
-install(FILES ${HEADERS_PUBLIC} DESTINATION ${CABANA_INCDIR}) 
-install(FILES ${HEADERS_IMPL} DESTINATION ${CABANA_INCDIR}/impl/)
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}Core_config.hpp DESTINATION ${CABANA_INCDIR}) 
+install(FILES ${HEADERS_PUBLIC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}) 
+install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}) 
 
 #-----------------------------------------------------------------------------
 
