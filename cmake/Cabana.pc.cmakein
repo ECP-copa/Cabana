@@ -29,7 +29,7 @@
 # CMakeLists.txt:
 # find_package(PkgConfig)
 # pkg_check_modules(CABANA IMPORTED_TARGET Cabana)
-# target_link_libraries(<lib> PkgConfig::Cabana)
+# target_link_libraries(<lib> PkgConfig::CABANA)
 
 libdir=@CMAKE_INSTALL_FULL_LIBDIR@
 includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
