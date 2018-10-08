@@ -12,6 +12,7 @@ env:
     - BACKENDS="Serial Pthread"
 
 before_script:
+  - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
   - KOKKOS_OPTS=( --with-hwloc=/usr )
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
     # kokkos uses `which gcc` to set the toolchain path, but gcc is symlink in /usr/lib/ccache
