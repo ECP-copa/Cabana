@@ -7,6 +7,10 @@ add_subdirectory(01_hello_world)
 add_subdirectory(02_tuple)
 add_subdirectory(03_struct_of_arrays)
 
+if(Cabana_ENABLE_Serial)
+  add_subdirectory(04_aosoa_serial)
+endif()
+
 if(Cabana_ENABLE_Cuda)
   add_executable(CudaPerformanceTest cuda_perf_test.cpp)
   target_link_libraries(CudaPerformanceTest cabanacore)
