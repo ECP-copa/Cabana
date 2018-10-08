@@ -2,17 +2,16 @@ option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
 if(NOT Cabana_ENABLE_EXAMPLES)
   return()
 endif()
-##--------------------------------------------------------------------------##
-## Cuda examples.
-##--------------------------------------------------------------------------##
+
+add_subdirectory(01_hello_world)
+add_subdirectory(02_tuple)
+
 if(Cabana_ENABLE_Cuda)
   add_executable(CudaPerformanceTest cuda_perf_test.cpp)
   target_link_libraries(CudaPerformanceTest cabanacore)
 endif()
 
 if(Cabana_ENABLE_Serial)
-  add_executable(SerialExample serial_example.cpp)
-  target_link_libraries(SerialExample cabanacore)
   add_executable(NeighborListMDPerfTest md_neighbor_perf_test.cpp)
   target_link_libraries(NeighborListMDPerfTest cabanacore)
 endif()
