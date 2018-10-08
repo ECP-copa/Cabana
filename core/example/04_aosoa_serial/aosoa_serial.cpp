@@ -100,7 +100,7 @@ void aosoaExample()
           function `arraySize()` to determine how many tuples are in the
           current SoA. Because the number of tuples in an AoSoA may not be
           evenly divisible by the vector length of the SoAs, the last SoA may
-          not be completely full. Assign values the same way did in the AoSoA
+          not be completely full. Assign values the same way did in the SoA
           example.
         */
         for ( int i = 0; i < 3; ++i )

@@ -16,6 +16,10 @@ if(Cabana_ENABLE_OpenMP)
 endif()
 
 if(Cabana_ENABLE_Cuda)
+  add_subdirectory(04_aosoa_cuda)
+endif()
+
+if(Cabana_ENABLE_Cuda)
   add_executable(CudaPerformanceTest cuda_perf_test.cpp)
   target_link_libraries(CudaPerformanceTest cabanacore)
 endif()
