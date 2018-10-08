@@ -1,0 +1,44 @@
+############################################################################
+# Copyright (c) 2018 by the Cabana authors                                 #
+# All rights reserved.                                                     #
+#                                                                          #
+# This file is part of the Cabana library. Cabana is distributed under a   #
+# BSD 3-clause license. For the licensing terms see the LICENSE file in    #
+# the top-level directory.                                                 #
+#                                                                          #
+# SPDX-License-Identifier: BSD-3-Clause                                    #
+############################################################################
+
+# Add the directory where Cabana.pc got installed to your PKG_CONFIG_PATH
+
+# Use this on commandline with:
+# c++ `pkg-config --cflags --libs Cabana` -o myapp myapp.cpp
+
+# Use this in a Makefile:
+# myapp: myapp.cpp
+# 	$(CC) `pkg-config --cflags --libs Cabana` -o $@ $<
+
+# Use this in autotools:
+# configure.ac:
+# PKG_CHECK_MODULES([CABANA], [Cabana])
+# Makefile.am:
+# myapp_CFLAGS = $(CABANA_CFLAGS)
+# myapp_LDADD = $(CABANA_LIBS)
+
+# Use this in CMake:
+# CMakeLists.txt:
+# find_package(PkgConfig)
+# pkg_check_modules(CABANA IMPORTED_TARGET Cabana)
+# target_link_libraries(<lib> PkgConfig::CABANA)
+
+libdir=@CMAKE_INSTALL_FULL_LIBDIR@
+includedir=@CMAKE_INSTALL_FULL_INCLUDEDIR@
+
+Name: Cabana
+Description: The Exascale Co-Design Center for Particle Applications Toolkit 
+URL: https://github.com/ECP-copa/Cabana
+Version: @PROJECT_VERSION@
+Requires:
+Libs: -L${libdir} -lcabanacore @KOKKOS_LIBRARY@ @KOKKOS_EXTRA_LIBS@ @KOKKOS_LINK_FLAGS@
+Libs.private: -lm
+Cflags: -I${includedir} -I@KOKKOS_INCLUDE_DIR@ @KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES_STRING@ 

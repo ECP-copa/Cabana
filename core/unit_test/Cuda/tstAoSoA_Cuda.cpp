@@ -9,5 +9,5 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cuda/TestCudaUVM_Category.hpp>
+#include <Cuda/TestCuda_Category.hpp>
 #include <tstAoSoA.hpp>
