@@ -18,6 +18,7 @@ endif()
 
 if(Cabana_ENABLE_Cuda)
   add_subdirectory(04_aosoa_cuda)
+  add_subdirectory(05_slice_cuda)
 endif()
 
 if(Cabana_ENABLE_Cuda)

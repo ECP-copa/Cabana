@@ -42,10 +42,10 @@ __global__ void initializeData( AoSoA_t aosoa )
 
     /*
       Only operate on the data associated with this thread if it is
-          valid. Note here that we are using the aosoa function `arraySize()`
-          to determine how many tuples are in the current SoA. Because the
-          number of tuples in an AoSoA may not be evenly divisible by the
-          vector length of the SoAs, the last SoA may not be completely full.
+      valid. Note here that we are using the aosoa function `arraySize()`
+      to determine how many tuples are in the current SoA. Because the
+      number of tuples in an AoSoA may not be evenly divisible by the
+      vector length of the SoAs, the last SoA may not be completely full.
      */
     if ( a < aosoa.arraySize(s) )
     {
@@ -202,7 +202,7 @@ void aosoaExample()
     }
 }
 
-//------------------------------------------------------`---------------------//
+//---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
