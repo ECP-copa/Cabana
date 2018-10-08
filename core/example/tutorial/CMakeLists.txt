@@ -9,6 +9,7 @@ endif()
 
 if(Cabana_ENABLE_OpenMP)
   add_subdirectory(04_aosoa_openmp)
+  add_subdirectory(05_slice_openmp)
 endif()
 
 if(Cabana_ENABLE_Cuda)

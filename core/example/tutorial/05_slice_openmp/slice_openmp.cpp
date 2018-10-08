@@ -14,7 +14,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// Slice example.
+// Slice example using OpenMP.
 //---------------------------------------------------------------------------//
 void sliceExample()
 {
@@ -48,8 +48,9 @@ void sliceExample()
 
     /*
       Finally declare the memory space in which the AoSoA will be
-      allocated. In this example we are writing basic loops that will execute
-      on the CPU. The HostSpace allocates memory in standard CPU RAM.
+      allocated. In this example we are writing parallel OpenMP loops that
+      will execute on the CPU threads. The HostSpace allocates memory in
+      standard CPU RAM.
     */
     using MemorySpace = Cabana::HostSpace;
 
@@ -71,6 +72,19 @@ void sliceExample()
     auto slice_2 = aosoa.slice<2>();
 
     /*
+      There are a variety of ways in which one can access the data within a
+      Slice in stride-1 vector length sized loops over tuple indices which can
+      often have a performance benefit. First we will look at getting
+      individual SoA's which will introduce the important concept of
+      2-dimensional tuple indices.
+
+      Start by looping in parallel over the SoA's. When looping over vector
+      indices (i.e. the `a` index in the loops below) the intention is for
+      these loops to vectorize. When analyzing the loops below consider their
+      hierarchical parellel nature - the outer loop over SoAs is parallelized
+      over threads and the inner loops over the individual SoA elements
+      vectorizes from stride-1 memory accesses.
+
       Let's initialize the data using the 2D indexing scheme. Slice data can
       be accessed in 2D using the `access()` function. Note that both the SoA
       index and the array index are passed to this function.
@@ -79,8 +93,22 @@ void sliceExample()
       accessing the total number of tuples in the data structure and the array
       sizes.
     */
+#pragma omp parallel for
     for ( int s = 0; s < slice_0.numSoA(); ++s )
     {
+        /*
+          Next loop over the values in the vector index of each tuple - this
+          is the second tuple index. Note here that we are using the slice_0
+          function `arraySize()` to determine how many tuples are in the
+          current SoA. Because the number of tuples in an Slice_0 may not be
+          evenly divisible by the vector length of the SoAs, the last SoA may
+          not be completely full. Assign values the same way did in the SoA
+          example.
+
+          Again, the intention is for the loops below over index `a` to be
+          vectorized by the compiler due to stride-1 memory accesses within an
+          SoA.
+        */
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
                 for ( int a = 0; a < slice_0.arraySize(s); ++a )

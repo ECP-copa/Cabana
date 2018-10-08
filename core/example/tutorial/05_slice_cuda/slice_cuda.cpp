@@ -68,9 +68,9 @@ void initializeData( Slice0 slice_0, Slice1 slice_1, Slice2 slice_2 )
 }
 
 //---------------------------------------------------------------------------//
-// AoSoA example cuda.
+// Slice example using cuda.
 //---------------------------------------------------------------------------//
-void aosoaExample()
+void sliceExample()
 {
     /*
       Slices are a mechanism to access a tuple member across all tuples in an
@@ -191,7 +191,7 @@ int main( int argc, char* argv[] )
 {
     Cabana::initialize(argc,argv);
 
-    aosoaExample();
+    sliceExample();
 
     Cabana::finalize();
 
