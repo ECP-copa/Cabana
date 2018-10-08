@@ -12,6 +12,8 @@ env:
     - BACKENDS="Serial Pthread"
 
 before_script:
+  - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
+  - ccache -z
   - KOKKOS_OPTS=( --with-hwloc=/usr )
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
     # gcc-toolchain workaround: https://github.com/kokkos/kokkos/issues/1841
@@ -47,6 +49,7 @@ script:
     popd
 
 after_success:
+ - ccache -s
  - pushd build && bash <(curl -s https://codecov.io/bash) && popd
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
