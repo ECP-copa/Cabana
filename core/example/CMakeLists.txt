@@ -9,6 +9,7 @@ add_subdirectory(03_struct_of_arrays)
 
 if(Cabana_ENABLE_Serial)
   add_subdirectory(04_aosoa_serial)
+  add_subdirectory(05_slice_serial)
 endif()
 
 if(Cabana_ENABLE_OpenMP)
