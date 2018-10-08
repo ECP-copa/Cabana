@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_TEST_CUDAUVM_CATEGORY_HPP
-#define CABANA_TEST_CUDAUVM_CATEGORY_HPP
+#ifndef CABANA_TEST_CUDA_CATEGORY_HPP
+#define CABANA_TEST_CUDA_CATEGORY_HPP
 
 #include <Cabana_Types.hpp>
 
@@ -35,4 +35,4 @@ protected:
 #define TEST_EXECSPACE Kokkos::Cuda
 #define TEST_MEMSPACE Cabana::CudaUVMSpace
 
-#endif // end CABANA_TEST_CUDAUVM_CATEGORY_HPP
+#endif // end CABANA_TEST_CUDA_CATEGORY_HPP
