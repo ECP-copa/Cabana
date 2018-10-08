@@ -14,7 +14,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// AoSoA example.
+// AoSoA example using OpenMP.
 //---------------------------------------------------------------------------//
 void aosoaExample()
 {
@@ -52,8 +52,9 @@ void aosoaExample()
 
     /*
       Finally declare the memory space in which the AoSoA will be
-      allocated. In this example we are writing basic loops that will execute
-      on the CPU. The HostSpace allocates memory in standard CPU RAM.
+      allocated. In this example we are writing parallel OpenMP loops that
+      will execute on the CPU threads. The HostSpace allocates memory in
+      standard CPU RAM.
     */
     using MemorySpace = Cabana::HostSpace;
 
@@ -80,9 +81,18 @@ void aosoaExample()
       AoSoA in stride-1 vector length sized loops over tuple indices which can
       often have a performance benefit. First we will look at getting
       individual SoA's which will introduce the important concept of
-      2-dimensional tuple indices. Start by looping over the SoA's. The SoA
-      index is the first tuple index:
+      2-dimensional tuple indices.
+
+      Start by looping in parallel over the SoA's. When looping over vector
+      indices (i.e. the `a` index in the loops below) the intention is for
+      these loops to vectorize. When analyzing the loops below consider their
+      hierarchical parellel nature - the outer loop over SoAs is parallelized
+      over threads and the inner loops over the individual SoA elements
+      vectorizes from stride-1 memory accesses.
+
+      The SoA index is the first tuple index:
     */
+#pragma omp parallel for
     for ( int s = 0; s < aosoa.numSoA(); ++s )
     {
         /*
@@ -102,6 +112,10 @@ void aosoaExample()
           evenly divisible by the vector length of the SoAs, the last SoA may
           not be completely full. Assign values the same way did in the AoSoA
           example.
+
+          Again, the intention is for the loops below over index `a` to be
+          vectorized by the compiler due to stride-1 memory accesses within an
+          SoA.
         */
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
@@ -125,6 +139,11 @@ void aosoaExample()
        are that we lose the stride-1 vector length loops over the tuple index
        and by extracting an individual tuple, we are making a copy of the data
        rather than getting a reference.
+
+       We can still achieve a thread-level parallelism over each
+       tuple. However, we will lose our ability to vectorize over the SoA data
+       sets as we are no longer exposing this inner loop construct to the
+       compiler.
      */
     for ( int t = 0; t < num_tuple; ++t )
     {

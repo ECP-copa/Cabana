@@ -11,6 +11,10 @@ if(Cabana_ENABLE_Serial)
   add_subdirectory(04_aosoa_serial)
 endif()
 
+if(Cabana_ENABLE_OpenMP)
+  add_subdirectory(04_aosoa_openmp)
+endif()
+
 if(Cabana_ENABLE_Cuda)
   add_executable(CudaPerformanceTest cuda_perf_test.cpp)
   target_link_libraries(CudaPerformanceTest cabanacore)
