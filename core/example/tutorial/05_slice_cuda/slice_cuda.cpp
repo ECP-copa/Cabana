@@ -82,6 +82,15 @@ void sliceExample()
       1-dimensional and 2-dimensional indices with the later exposing
       vectorizable loops over the inner elements of each SoA in the data
       structure.
+
+      A slice does not copy the AoSoA data - rather it simply points to the
+      data as an unmanaged shallow copy. Because there is no reference
+      counting associated with a slice, the user must take care not to delete
+      the AoSoA from which the slice is derived before they are done using the
+      slice. In addition, if the slice memory is changed in any way (i.e. from
+      resizing, changing the capacity, or any other types of changes to the
+      allocation) the slice is no longer valid and must be recreated from the
+      new AoSoA data.
     */
 
     /*

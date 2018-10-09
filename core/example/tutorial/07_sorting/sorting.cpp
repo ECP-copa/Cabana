@@ -85,6 +85,11 @@ void sortingExample()
       more advanced variations on sorting which will only operate on a
       specified range of tuples through a begin and end argument (to be
       covered in a later tutorial).
+
+      We are using auto for the sort_data return value here for convenience
+      but the actual return type is Cabana::BinningData<MemorySpace>. Note
+      that the binning data is templated on a memory space as it creates and
+      stores data in the same memory space as the AoSoA.
      */
     auto keys = aosoa.slice<1>();
     auto sort_data = Cabana::sortByKey( keys );
@@ -137,6 +142,11 @@ void sortingExample()
        Again note that there are variants of binning which can bin values over
        a subset of the entire AoSoA by using begin and end parameters. We are
        going to bin the entire AoSoA in this case.
+
+      We are using auto for the bin_data return value here for convenience
+      but the actual return type is Cabana::BinningData<MemorySpace>. Note
+      that the binning data is templated on a memory space as it creates and
+      stores data in the same memory space as the AoSoA.
     */
     int num_bin = 2;
     auto bin_data = Cabana::binByKey( keys, num_bin );

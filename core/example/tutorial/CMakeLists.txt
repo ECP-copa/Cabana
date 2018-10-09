@@ -23,4 +23,5 @@ endif()
 
 if(Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Pthread)
   add_subdirectory(07_sorting)
+  add_subdirectory(08_linked_cell_list)
 endif()
