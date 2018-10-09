@@ -20,3 +20,7 @@ endif()
 if(Cabana_ENABLE_Cuda AND (Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Pthread))
   add_subdirectory(06_deep_copy)
 endif()
+
+if(Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Pthread)
+  add_subdirectory(07_sorting)
+endif()
