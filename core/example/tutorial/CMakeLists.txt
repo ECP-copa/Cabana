@@ -10,11 +10,13 @@ endif()
 if(Cabana_ENABLE_OpenMP)
   add_subdirectory(04_aosoa_openmp)
   add_subdirectory(05_slice_openmp)
+  add_subdirectory(10_advanced_slice_openmp)
 endif()
 
 if(Cabana_ENABLE_Cuda)
   add_subdirectory(04_aosoa_cuda)
   add_subdirectory(05_slice_cuda)
+  add_subdirectory(10_advanced_slice_cuda)
 endif()
 
 if(Cabana_ENABLE_Cuda AND (Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Pthread))
