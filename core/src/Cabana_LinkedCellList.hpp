@@ -41,8 +41,6 @@ class LinkedCellList
       \brief Default constructor.
     */
     LinkedCellList()
-        : _begin(0)
-        , _end(0)
     {}
 
     /*!
@@ -68,10 +66,8 @@ class LinkedCellList
         : _grid( grid_min[0], grid_min[1], grid_min[2],
                  grid_max[0], grid_max[1], grid_max[2],
                  grid_delta[0], grid_delta[1], grid_delta[2] )
-        , _begin( 0 )
-        , _end( positions.size() )
     {
-        build( positions,  grid_delta, grid_min, grid_max );
+        build( positions, 0, positions.size(), grid_delta, grid_min, grid_max );
     }
 
     /*!
@@ -103,10 +99,8 @@ class LinkedCellList
         : _grid( grid_min[0], grid_min[1], grid_min[2],
                  grid_max[0], grid_max[1], grid_max[2],
                  grid_delta[0], grid_delta[1], grid_delta[2] )
-        , _begin( begin )
-        , _end( end )
     {
-        build( positions, grid_delta, grid_min, grid_max );
+        build( positions, begin, end, grid_delta, grid_min, grid_max );
     }
 
     /*!
@@ -193,14 +187,14 @@ class LinkedCellList
     */
     CABANA_INLINE_FUNCTION
     std::size_t rangeBegin() const
-    { return _begin; }
+    { return _bin_data.rangeBegin(); }
 
     /*!
       \brief The ending particle index binned by the linked cell list.
     */
     CABANA_INLINE_FUNCTION
     std::size_t rangeEnd() const
-    { return _end; }
+    { return _bin_data.rangeEnd(); }
 
     /*!
       \brief Get the 1d bin data.
@@ -215,6 +209,8 @@ class LinkedCellList
     // launch CUDA kernels with class data.
     template<class SliceType>
     void build( SliceType positions,
+                const std::size_t begin,
+                const std::size_t end,
                 const typename SliceType::value_type grid_delta[3],
                 const typename SliceType::value_type grid_min[3],
                 const typename SliceType::value_type grid_max[3] )
@@ -224,7 +220,7 @@ class LinkedCellList
         std::size_t ncell = totalBins();
         Kokkos::View<int*,KokkosMemorySpace> counts( "counts", ncell );
         OffsetView offsets( "offsets", ncell );
-        OffsetView permute( "permute", _end - _begin );
+        OffsetView permute( "permute", end - begin );
 
         // Get a local copy of the grid because it is class data and a lambda
         // function will not capture it otherwise via CUDA.
@@ -232,7 +228,7 @@ class LinkedCellList
 
         // Count.
         Kokkos::RangePolicy<typename OffsetView::execution_space>
-            particle_range( _begin, _end );
+            particle_range( begin, end );
         Kokkos::deep_copy( counts, 0 );
         auto cell_count =
             KOKKOS_LAMBDA( const std::size_t p )
@@ -282,15 +278,14 @@ class LinkedCellList
         Kokkos::fence();
 
         // Create the binning data.
-        _bin_data = BinningData<MemorySpace>( counts, offsets, permute );
+        _bin_data =
+            BinningData<MemorySpace>( begin, end, counts, offsets, permute );
     }
 
   private:
 
     BinningData<MemorySpace> _bin_data;
     Impl::CartesianGrid<double> _grid;
-    std::size_t _begin;
-    std::size_t _end;
 };
 
 //---------------------------------------------------------------------------//
@@ -326,10 +321,7 @@ void permute(
                              is_aosoa<AoSoA_t>::value),
     int>::type * = 0 )
 {
-    permute( linked_cell_list.binningData(),
-             linked_cell_list.rangeBegin(),
-             linked_cell_list.rangeEnd(),
-             aosoa );
+    permute( linked_cell_list.binningData(), aosoa );
 }
 
 //---------------------------------------------------------------------------//
