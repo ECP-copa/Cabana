@@ -80,8 +80,8 @@ struct KokkosDataTypeImpl<T,2,VectorLength>
     {
         return Kokkos::LayoutStride( num_soa, stride,
                                      VectorLength, 1,
-                                     D0, VectorLength,
-                                     D1, D0*VectorLength );
+                                     D0, D1*VectorLength,
+                                     D1, VectorLength );
     }
 };
 
@@ -100,9 +100,9 @@ struct KokkosDataTypeImpl<T,3,VectorLength>
     {
         return Kokkos::LayoutStride( num_soa, stride,
                                      VectorLength, 1,
-                                     D0, VectorLength,
-                                     D1, D0*VectorLength,
-                                     D2, D1*D0*VectorLength );
+                                     D0, D1*D2*VectorLength,
+                                     D1, D2*VectorLength,
+                                     D2, VectorLength );
     }
 };
 

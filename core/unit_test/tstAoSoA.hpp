@@ -259,7 +259,7 @@ void testRawData()
             // indexing. Note this is layout left.
             for ( int j = 0; j < m2e0; ++j )
                 for ( int k = 0; k < m2e1; ++k )
-                    p2[ s * st2 + k * 16 * m2e0 + j * 16 + i ] =
+                    p2[ s * st2 + j * 16 * m2e1 + k * 16 + i ] =
                         (s + i + j + k) * 3.0;
         }
     }
