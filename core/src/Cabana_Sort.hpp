@@ -46,10 +46,14 @@ class BinningData
         : _nbin(0)
     {}
 
-    BinningData( CountView counts,
+    BinningData( const std::size_t begin,
+                 const std::size_t end,
+                 CountView counts,
                  OffsetView offsets,
                  OffsetView permute_vector )
-        : _nbin( counts.extent(0) )
+        : _begin( begin )
+        , _end( end )
+        , _nbin( counts.extent(0) )
         , _counts( counts )
         , _offsets( offsets )
         , _permute_vector( permute_vector )
@@ -89,8 +93,24 @@ class BinningData
     size_type permutation( const size_type tuple_id ) const
     { return _permute_vector(tuple_id); }
 
+    /*!
+      \brief The beginning tuple index in the binning.
+    */
+    CABANA_INLINE_FUNCTION
+    std::size_t rangeBegin() const
+    { return _begin; }
+
+    /*!
+      \brief The ending tuple index in the binning.
+    */
+    CABANA_INLINE_FUNCTION
+    std::size_t rangeEnd() const
+    { return _end; }
+
   private:
 
+    std::size_t _begin;
+    std::size_t _end;
     int _nbin;
     CountView _counts;
     OffsetView _offsets;
@@ -129,6 +149,8 @@ kokkosBinSort( KeyViewType keys,
     bin_sort.create_permute_vector();
     return BinningData<
         typename KokkosSpaceToCabana<typename KeyViewType::memory_space>::type>(
+            begin,
+            end,
             bin_sort.get_bin_count(),
             bin_sort.get_bin_offsets(),
             bin_sort.get_permute_vector() );
@@ -543,21 +565,18 @@ binByKey(
 
   \param binning_data The binning data.
 
-  \param begin The first index of the AoSoA to sort.
-
-  \param end The last index of the AoSoA to sort.
-
   \param aosoa The AoSoA to permute.
  */
 template<class BinningDataType, class AoSoA_t>
 void permute( const BinningDataType& binning_data,
-              const std::size_t begin,
-              const std::size_t end,
               AoSoA_t& aosoa,
               typename std::enable_if<(is_binning_data<BinningDataType>::value &&
                                        is_aosoa<AoSoA_t>::value),
               int>::type * = 0)
 {
+    auto begin = binning_data.rangeBegin();
+    auto end = binning_data.rangeEnd();
+
     Kokkos::View<typename AoSoA_t::tuple_type*,
                  typename BinningDataType::KokkosMemorySpace>
         scratch_tuples( "scratch_tuples", end - begin );
@@ -581,29 +600,6 @@ void permute( const BinningDataType& binning_data,
         Kokkos::RangePolicy<typename BinningDataType::KokkosExecutionSpace>(begin,end),
         copy_back );
     Kokkos::fence();
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Given binning data permute an AoSoA.
-
-  \tparam BinningDataType The binning date type
-
-  \tparm AoSoA_t The AoSoA type.
-
-  \param binning_data The binning data.
-
-  \param aosoa The AoSoA to permute.
- */
-template<class BinningDataType, class AoSoA_t>
-void permute( const BinningDataType& binning_data,
-              AoSoA_t& aosoa,
-              typename std::enable_if<(is_binning_data<BinningDataType>::value &&
-                                       is_aosoa<AoSoA_t>::value),
-              int>::type * = 0)
-
-{
-    permute( binning_data, 0, aosoa.size(), aosoa );
 }
 
 //---------------------------------------------------------------------------//
