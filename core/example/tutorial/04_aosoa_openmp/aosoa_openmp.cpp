@@ -83,12 +83,12 @@ void aosoaExample()
       individual SoA's which will introduce the important concept of
       2-dimensional tuple indices.
 
-      Start by looping in parallel over the SoA's. When looping over vector
-      indices (i.e. the `a` index in the loops below) the intention is for
-      these loops to vectorize. When analyzing the loops below consider their
-      hierarchical parellel nature - the outer loop over SoAs is parallelized
-      over threads and the inner loops over the individual SoA elements
-      vectorizes from stride-1 memory accesses.
+      Start by looping in parallel over the SoA's using OpenMP. When looping
+      over vector indices (i.e. the `a` index in the loops below) the
+      intention is for these loops to vectorize. When analyzing the loops
+      below consider their hierarchical parellel nature - the outer loop over
+      SoAs is parallelized over threads and the inner loops over the
+      individual SoA elements vectorizes from stride-1 memory accesses.
 
       The SoA index is the first tuple index:
     */

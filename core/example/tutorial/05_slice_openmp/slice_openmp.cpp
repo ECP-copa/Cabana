@@ -87,12 +87,12 @@ void sliceExample()
       individual SoA's which will introduce the important concept of
       2-dimensional tuple indices.
 
-      Start by looping in parallel over the SoA's. When looping over vector
-      indices (i.e. the `a` index in the loops below) the intention is for
-      these loops to vectorize. When analyzing the loops below consider their
-      hierarchical parellel nature - the outer loop over SoAs is parallelized
-      over threads and the inner loops over the individual SoA elements
-      vectorizes from stride-1 memory accesses.
+      Start by looping in parallel over the SoA's using OpenMP. When looping
+      over vector indices (i.e. the `a` index in the loops below) the
+      intention is for these loops to vectorize. When analyzing the loops
+      below consider their hierarchical parellel nature - the outer loop over
+      SoAs is parallelized over threads and the inner loops over the
+      individual SoA elements vectorizes from stride-1 memory accesses.
 
       Let's initialize the data using the 2D indexing scheme. Slice data can
       be accessed in 2D using the `access()` function. Note that both the SoA
@@ -116,7 +116,8 @@ void sliceExample()
 
           Again, the intention is for the loops below over index `a` to be
           vectorized by the compiler due to stride-1 memory accesses within an
-          SoA.
+          SoA. We use the `access()` function for 2-dimensional indexing into
+          the AoSoA data structure through the slice.
         */
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )

@@ -52,9 +52,9 @@ void initializeData( Slice0 slice_0, Slice1 slice_1, Slice2 slice_2 )
     {
         /*
           Next loop over the values in the vector index of each tuple - this is
-          the second tuple index. Assign values the same way did in the SoA
-          example. Note that the data via the SoA interface is also accessible on
-          device.
+          the second tuple index. We use the `access()` function for
+          2-dimensional indexing into the AoSoA data structure through the
+          slice.
         */
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
