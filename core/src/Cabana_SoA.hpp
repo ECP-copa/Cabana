@@ -55,7 +55,7 @@ struct InnerArrayTypeImpl<T,2,VectorLength>
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
-    using type = value_type[D1][D0][VectorLength];
+    using type = value_type[D0][D1][VectorLength];
 };
 
 // rank-3 specialization.
@@ -66,7 +66,7 @@ struct InnerArrayTypeImpl<T,3,VectorLength>
     static constexpr std::size_t D0 = std::extent<T,0>::value;
     static constexpr std::size_t D1 = std::extent<T,1>::value;
     static constexpr std::size_t D2 = std::extent<T,2>::value;
-    using type = value_type[D2][D1][D0][VectorLength];
+    using type = value_type[D0][D1][D2][VectorLength];
 };
 
 //---------------------------------------------------------------------------//
@@ -269,7 +269,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
          const D1& d1 )
     {
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d1][d0][a];
+        return base._data[d0][d1][a];
     }
 
     template<std::size_t M,
@@ -287,7 +287,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
          const D1& d1 ) const
     {
         const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d1][d0][a];
+        return base._data[d0][d1][a];
     }
 
     // Rank 3
@@ -309,7 +309,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
          const D2& d2 )
     {
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d2][d1][d0][a];
+        return base._data[d0][d1][d2][a];
     }
 
     template<std::size_t M,
@@ -330,7 +330,7 @@ struct SoA<VectorLength,MemberTypes<Types...> >
          const D2& d2 ) const
     {
         const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d2][d1][d0][a];
+        return base._data[d0][d1][d2][a];
     }
 
     // ----------------
