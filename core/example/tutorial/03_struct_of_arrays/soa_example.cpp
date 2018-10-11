@@ -40,17 +40,12 @@ void soaExample()
 
           struct MyEquivalentSoA
           {
-              double d0[2][3][veclen];
+              double d0[3][2][veclen];
               double d1[4][veclen];
           };
 
       Note: The data in this struct definition with an equivalent memory
       layout is stride-1 in the vector index.
-
-      Note: The higher dimensional indices have their order reversed (see the
-      order of the data of member `d0` in the equivalent struct
-      definition). This is to create a Fortran-equivalent or column-major
-      ordering of the data relative to the vector index.
 
       Note: When defined as a compile-time argument the vector length must be
       a power of 2. Vector lengths that are not a power of 2 will emit a
