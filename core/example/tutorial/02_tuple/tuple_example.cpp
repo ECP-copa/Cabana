@@ -57,12 +57,26 @@ void tupleExample()
     /* Start by declaring the types in our tuple will store. Store a rank-2
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
+
     */
     using DataTypes = Cabana::MemberTypes<double[3][3],
                                           float[4],
                                           int>;
 
-    /* Create the tuple. */
+    /*
+       Create the tuple. This tuple is identical to:
+
+       struct Foo
+       {
+           double d0[3][3];
+           float d1[4];
+           int d2;
+       };
+
+
+       Note that ata members in Cabana tuples are stored in the same order in
+       which they are declared.
+     */
     Cabana::Tuple<DataTypes> tp;
 
     /* Assign data to the tuple values using the multidimensional data

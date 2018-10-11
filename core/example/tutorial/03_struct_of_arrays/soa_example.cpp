@@ -20,16 +20,16 @@ void soaExample()
 {
     /*
       Cabana structs-of-arrays (SoAs) are groups of Tuples with the data
-      specified in an order such that the tuple index is stride-1 in
-      memory. This results in each dimension of each multidimensional tuple
+      specified in an order such that the array (or tuple) index is stride-1
+      in memory. This results in each dimension of each multidimensional tuple
       member being stored in a contiguous memory block the size of the number
       of tuples. The number of tuples in an SoA is defined as the "vector
-      length".
+      length" - this defines the size of the array.
 
       For example, consider declaring the following member type to store two
       arrays of doubles in each tuple:
 
-          using types = Cabana::MemberTypes<double[3][2],double[4]>;
+          using types = Cabana::MemberTypes<double[3][2],double[4],float>;
 
       and vector length:
 
@@ -42,14 +42,18 @@ void soaExample()
           {
               double d0[3][2][veclen];
               double d1[4][veclen];
+              float d2[veclen];
           };
 
       Note: The data in this struct definition with an equivalent memory
-      layout is stride-1 in the vector index.
+      layout is stride-1 in the array index.
 
       Note: When defined as a compile-time argument the vector length must be
       a power of 2. Vector lengths that are not a power of 2 will emit a
       compiler error.
+
+      Note: The members in an SoA-equivalent struct are in the same order as
+      they are declared in Cabana::MemberTypes.
     */
 
     /* Start by declaring the types in our tuples will store. Store a rank-2
