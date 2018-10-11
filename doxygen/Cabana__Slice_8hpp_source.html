@@ -169,8 +169,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    {</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordflow">return</span> Kokkos::LayoutStride( num_soa, stride,</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                                     VectorLength, 1,</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                                     D0, VectorLength,</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                                     D1, D0*VectorLength );</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                                     D0, D1*VectorLength,</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;                                     D1, VectorLength );</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    }</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;};</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;</div>
@@ -189,9 +189,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    {</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordflow">return</span> Kokkos::LayoutStride( num_soa, stride,</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;                                     VectorLength, 1,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                                     D0, VectorLength,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                                     D1, D0*VectorLength,</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                                     D2, D1*D0*VectorLength );</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;                                     D0, D1*D2*VectorLength,</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                                     D1, D2*VectorLength,</div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;                                     D2, VectorLength );</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    }</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;};</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;</div>
@@ -572,7 +572,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Oct 11 2018 15:27:04 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Oct 11 2018 20:03:02 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
