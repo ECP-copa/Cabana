@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_4270bfced15e0e73154b13468c7c9ad9.html">core</a></li><li class="navelem"><a class="el" href="dir_90fd98a0ba30abf7a6068a44995d2d6b.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_69a6e6c1b95ba60b1d1daef4fa8739ba.html">core</a></li><li class="navelem"><a class="el" href="dir_c02831fdfe58997b0993c6fb28b97936.html">src</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -190,11 +190,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;} <span class="comment">// end namespace Impl</span></div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment"></span><span class="keyword">template</span>&lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">typename</span>... Types&gt;</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="comment"></span><span class="keyword">template</span>&lt;<span class="keyword">typename</span> Types,<span class="keywordtype">int</span> VectorLength&gt;</div>
 <div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="structCabana_1_1SoA.html">  123</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1SoA.html">SoA</a>;</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="keyword">template</span>&lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">typename</span>... Types&gt;</div>
-<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4.html">  126</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1SoA.html">SoA</a>&lt;VectorLength,<a class="code" href="structCabana_1_1MemberTypes.html">MemberTypes</a>&lt;Types...&gt; &gt;</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Types, <span class="keywordtype">int</span> VectorLength&gt;</div>
+<div class="line"><a name="l00126"></a><span class="lineno"><a class="line" href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html">  126</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1SoA.html">SoA</a>&lt;<a class="code" href="structCabana_1_1MemberTypes.html">MemberTypes</a>&lt;Types...&gt;,VectorLength&gt;</div>
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    : <a class="code" href="structCabana_1_1Impl_1_1SoAImpl.html">Impl::SoAImpl</a>&lt;VectorLength,</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;                    typename Impl::MakeIndexSequence&lt;sizeof...(Types)&gt;::type,</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;                    Types...&gt;</div>
@@ -237,14 +237,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keyword">template</span>&lt;std::<span class="keywordtype">size_t</span> M&gt;</div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4.html#a11117bbec07890be0af8e55452a8c1d4">  176</a></span>&#160;    constexpr <span class="keywordtype">int</span> <a class="code" href="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4.html#a11117bbec07890be0af8e55452a8c1d4">rank</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno"><a class="line" href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#af75bdae9f054c55528ec958de4dfe2ce">  176</a></span>&#160;    constexpr <span class="keywordtype">int</span> <a class="code" href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#af75bdae9f054c55528ec958de4dfe2ce">rank</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;        <span class="keywordflow">return</span> std::rank&lt;member_data_type&lt;M&gt; &gt;::value;</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    }</div>
 <div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keyword">template</span>&lt;std::<span class="keywordtype">size_t</span> M, std::<span class="keywordtype">size_t</span> D&gt;</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00192"></a><span class="lineno"><a class="line" href="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4.html#abf0eec9ac7d692928044758fb1b76cf1">  192</a></span>&#160;    constexpr <span class="keywordtype">int</span> <a class="code" href="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4.html#abf0eec9ac7d692928044758fb1b76cf1">extent</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00192"></a><span class="lineno"><a class="line" href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#a8f9e64f4bb916a318078e30dde27a2b4">  192</a></span>&#160;    constexpr <span class="keywordtype">int</span> <a class="code" href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#a8f9e64f4bb916a318078e30dde27a2b4">extent</a>()<span class="keyword"> const</span></div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;        <span class="keywordflow">return</span> std::extent&lt;member_data_type&lt;M&gt;,D&gt;::value;</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    }</div>
@@ -414,9 +414,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;KOKKOS_INLINE_FUNCTION</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    (0==std::rank&lt;<span class="keyword">typename</span> MemberTypeAtIndex&lt;M,MemberTypes&lt;Types...&gt; &gt;::type&gt;::value),<span class="keywordtype">void</span>&gt;::type</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;soaElementMemberCopy( SoA&lt;DstVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; dst,</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;soaElementMemberCopy( SoA&lt;MemberTypes&lt;Types...&gt;,DstVectorLength&gt;&amp; dst,</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;                      <span class="keyword">const</span> std::size_t dst_idx,</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                      <span class="keyword">const</span> SoA&lt;SrcVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; src,</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                      <span class="keyword">const</span> SoA&lt;MemberTypes&lt;Types...&gt;,SrcVectorLength&gt;&amp; src,</div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                      <span class="keyword">const</span> std::size_t src_idx )</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;{</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    dst.template get&lt;M&gt;( dst_idx ) = src.template get&lt;M&gt;( src_idx );</div>
@@ -427,9 +427,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;KOKKOS_INLINE_FUNCTION</div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;<span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    (1==std::rank&lt;<span class="keyword">typename</span> MemberTypeAtIndex&lt;M,MemberTypes&lt;Types...&gt; &gt;::type&gt;::value),<span class="keywordtype">void</span>&gt;::type</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;soaElementMemberCopy( SoA&lt;DstVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; dst,</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;soaElementMemberCopy( SoA&lt;MemberTypes&lt;Types...&gt;,DstVectorLength&gt;&amp; dst,</div>
 <div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;                      <span class="keyword">const</span> std::size_t dst_idx,</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;                      <span class="keyword">const</span> SoA&lt;SrcVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; src,</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;                      <span class="keyword">const</span> SoA&lt;MemberTypes&lt;Types...&gt;,SrcVectorLength&gt;&amp; src,</div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;                      <span class="keyword">const</span> std::size_t src_idx )</div>
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;{</div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="keywordflow">for</span> ( std::size_t i0 = 0; i0 &lt; dst.template extent&lt;M,0&gt;(); ++i0 )</div>
@@ -441,9 +441,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;KOKKOS_INLINE_FUNCTION</div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;<span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    (2==std::rank&lt;<span class="keyword">typename</span> MemberTypeAtIndex&lt;M,MemberTypes&lt;Types...&gt; &gt;::type&gt;::value),<span class="keywordtype">void</span>&gt;::type</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;soaElementMemberCopy( SoA&lt;DstVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; dst,</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;soaElementMemberCopy( SoA&lt;MemberTypes&lt;Types...&gt;,DstVectorLength&gt;&amp; dst,</div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;                      <span class="keyword">const</span> std::size_t dst_idx,</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;                      <span class="keyword">const</span> SoA&lt;SrcVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; src,</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;                      <span class="keyword">const</span> SoA&lt;MemberTypes&lt;Types...&gt;,SrcVectorLength&gt;&amp; src,</div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;                      <span class="keyword">const</span> std::size_t src_idx )</div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;{</div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="keywordflow">for</span> ( std::size_t i0 = 0; i0 &lt; dst.template extent&lt;M,0&gt;(); ++i0 )</div>
@@ -457,9 +457,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;KOKKOS_INLINE_FUNCTION</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;<span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    (3==std::rank&lt;<span class="keyword">typename</span> MemberTypeAtIndex&lt;M,MemberTypes&lt;Types...&gt; &gt;::type&gt;::value),<span class="keywordtype">void</span>&gt;::type</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;soaElementMemberCopy( SoA&lt;DstVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; dst,</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;soaElementMemberCopy( SoA&lt;MemberTypes&lt;Types...&gt;,DstVectorLength&gt;&amp; dst,</div>
 <div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;                      <span class="keyword">const</span> std::size_t dst_idx,</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;                      <span class="keyword">const</span> SoA&lt;SrcVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; src,</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;                      <span class="keyword">const</span> SoA&lt;MemberTypes&lt;Types...&gt;,SrcVectorLength&gt;&amp; src,</div>
 <div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;                      <span class="keyword">const</span> std::size_t src_idx )</div>
 <div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;{</div>
 <div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    <span class="keywordflow">for</span> ( std::size_t i0 = 0; i0 &lt; dst.template extent&lt;M,0&gt;(); ++i0 )</div>
@@ -473,9 +473,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="comment">// the given indices.</span></div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;<span class="keyword">template</span>&lt;std::size_t M, <span class="keywordtype">int</span> DstVectorLength, <span class="keywordtype">int</span> SrcVectorLength, <span class="keyword">typename</span>... Types&gt;</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="keywordtype">void</span> soaElementCopy( SoA&lt;DstVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; dst,</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;<span class="keywordtype">void</span> soaElementCopy( SoA&lt;MemberTypes&lt;Types...&gt;,DstVectorLength&gt;&amp; dst,</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;                     <span class="keyword">const</span> std::size_t dst_idx,</div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                     <span class="keyword">const</span> SoA&lt;SrcVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; src,</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                     <span class="keyword">const</span> SoA&lt;MemberTypes&lt;Types...&gt;,SrcVectorLength&gt;&amp; src,</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;                     <span class="keyword">const</span> std::size_t src_idx,</div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;                     std::integral_constant&lt;std::size_t,M&gt; )</div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;{</div>
@@ -486,9 +486,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;</div>
 <div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;<span class="keyword">template</span>&lt;<span class="keywordtype">int</span> DstVectorLength, <span class="keywordtype">int</span> SrcVectorLength, <span class="keyword">typename</span>... Types&gt;</div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="keywordtype">void</span> soaElementCopy( SoA&lt;DstVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; dst,</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;<span class="keywordtype">void</span> soaElementCopy( SoA&lt;MemberTypes&lt;Types...&gt;,DstVectorLength&gt;&amp; dst,</div>
 <div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;                     <span class="keyword">const</span> std::size_t dst_idx,</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                     <span class="keyword">const</span> SoA&lt;SrcVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; src,</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                     <span class="keyword">const</span> SoA&lt;MemberTypes&lt;Types...&gt;,SrcVectorLength&gt;&amp; src,</div>
 <div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;                     <span class="keyword">const</span> std::size_t src_idx,</div>
 <div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                     std::integral_constant&lt;std::size_t,0&gt; )</div>
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;{</div>
@@ -498,9 +498,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;<span class="comment">// Copy the data from one struct at a given index to another.</span></div>
 <div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;<span class="keyword">template</span>&lt;<span class="keywordtype">int</span> DstVectorLength, <span class="keywordtype">int</span> SrcVectorLength, <span class="keyword">typename</span>... Types&gt;</div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="keywordtype">void</span> tupleCopy( SoA&lt;DstVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; dst,</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="keywordtype">void</span> tupleCopy( SoA&lt;MemberTypes&lt;Types...&gt;,DstVectorLength&gt;&amp; dst,</div>
 <div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;                <span class="keyword">const</span> std::size_t dst_idx,</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;                <span class="keyword">const</span> SoA&lt;SrcVectorLength,MemberTypes&lt;Types...&gt; &gt;&amp; src,</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;                <span class="keyword">const</span> SoA&lt;MemberTypes&lt;Types...&gt;,SrcVectorLength&gt;&amp; src,</div>
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;                <span class="keyword">const</span> std::size_t src_idx )</div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;{</div>
 <div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    soaElementCopy( dst, dst_idx, src, src_idx,</div>
@@ -515,18 +515,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="preprocessor">#endif // end CABANA_SOA_HPP</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1IndexSequence_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1IndexSequence.html">Cabana::Impl::IndexSequence</a></div><div class="ttdoc">General sequence of indices. </div><div class="ttdef"><b>Definition:</b> Cabana_IndexSequence.hpp:27</div></div>
-<div class="ttc" id="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4_html_a11117bbec07890be0af8e55452a8c1d4"><div class="ttname"><a href="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4.html#a11117bbec07890be0af8e55452a8c1d4">Cabana::SoA&lt; VectorLength, MemberTypes&lt; Types...&gt; &gt;::rank</a></div><div class="ttdeci">CABANA_FORCEINLINE_FUNCTION constexpr int rank() const </div><div class="ttdoc">Get the rank of the data for a given member at index M. </div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:176</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1StructMember_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1StructMember.html">Cabana::Impl::StructMember</a></div><div class="ttdoc">Struct member. </div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:90</div></div>
+<div class="ttc" id="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4_html_a8f9e64f4bb916a318078e30dde27a2b4"><div class="ttname"><a href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#a8f9e64f4bb916a318078e30dde27a2b4">Cabana::SoA&lt; MemberTypes&lt; Types...&gt;, VectorLength &gt;::extent</a></div><div class="ttdeci">CABANA_FORCEINLINE_FUNCTION constexpr int extent() const </div><div class="ttdoc">Get the extent of a given member data dimension. </div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:192</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1SoAImpl_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1SoAImpl.html">Cabana::Impl::SoAImpl</a></div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:99</div></div>
 <div class="ttc" id="structCabana_1_1MemberTypeAtIndex_html"><div class="ttname"><a href="structCabana_1_1MemberTypeAtIndex.html">Cabana::MemberTypeAtIndex</a></div><div class="ttdoc">Get the type of the member at a given index. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:65</div></div>
-<div class="ttc" id="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4_html_abf0eec9ac7d692928044758fb1b76cf1"><div class="ttname"><a href="structCabana_1_1SoA_3_01VectorLength_00_01MemberTypes_3_01Types_8_8_8_4_01_4.html#abf0eec9ac7d692928044758fb1b76cf1">Cabana::SoA&lt; VectorLength, MemberTypes&lt; Types...&gt; &gt;::extent</a></div><div class="ttdeci">CABANA_FORCEINLINE_FUNCTION constexpr int extent() const </div><div class="ttdoc">Get the extent of a given member data dimension. </div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:192</div></div>
+<div class="ttc" id="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4_html_af75bdae9f054c55528ec958de4dfe2ce"><div class="ttname"><a href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#af75bdae9f054c55528ec958de4dfe2ce">Cabana::SoA&lt; MemberTypes&lt; Types...&gt;, VectorLength &gt;::rank</a></div><div class="ttdeci">CABANA_FORCEINLINE_FUNCTION constexpr int rank() const </div><div class="ttdoc">Get the rank of the data for a given member at index M. </div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:176</div></div>
 <div class="ttc" id="structCabana_1_1SoA_html"><div class="ttname"><a href="structCabana_1_1SoA.html">Cabana::SoA</a></div><div class="ttdoc">Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:123</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1InnerArrayTypeImpl_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1InnerArrayTypeImpl.html">Cabana::Impl::InnerArrayTypeImpl</a></div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:32</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1InnerArrayType_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1InnerArrayType.html">Cabana::Impl::InnerArrayType</a></div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:75</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Oct 12 2018 15:42:33 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Oct 12 2018 15:55:17 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

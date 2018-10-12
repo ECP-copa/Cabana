@@ -79,7 +79,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="dir_4270bfced15e0e73154b13468c7c9ad9.html">core</a></li><li class="navelem"><a class="el" href="dir_90fd98a0ba30abf7a6068a44995d2d6b.html">src</a></li>  </ul>
+<li class="navelem"><a class="el" href="dir_69a6e6c1b95ba60b1d1daef4fa8739ba.html">core</a></li><li class="navelem"><a class="el" href="dir_c02831fdfe58997b0993c6fb28b97936.html">src</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -118,10 +118,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span>... Types&gt;</div>
 <div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="structCabana_1_1Tuple_3_01MemberTypes_3_01Types_8_8_8_4_01_4.html">   31</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1Tuple.html">Tuple</a>&lt;<a class="code" href="structCabana_1_1MemberTypes.html">MemberTypes</a>&lt;Types...&gt; &gt;</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    : <a class="code" href="structCabana_1_1SoA.html">SoA</a>&lt;1,MemberTypes&lt;Types...&gt; &gt;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    : <a class="code" href="structCabana_1_1SoA.html">SoA</a>&lt;MemberTypes&lt;Types...&gt;,1&gt;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="comment">// Base class.</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1SoA.html">base</a> = <a class="code" href="structCabana_1_1SoA.html">SoA</a>&lt;1,<a class="code" href="structCabana_1_1MemberTypes.html">MemberTypes</a>&lt;Types...&gt; &gt;;</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1SoA.html">base</a> = <a class="code" href="structCabana_1_1SoA.html">SoA</a>&lt;<a class="code" href="structCabana_1_1MemberTypes.html">MemberTypes</a>&lt;Types...&gt;,1&gt;;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="comment">// -------------------------------</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    <span class="comment">// Access the data value at a given member index.</span></div>
@@ -260,7 +260,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Oct 12 2018 15:42:33 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Oct 12 2018 15:55:17 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
