@@ -14,7 +14,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// AoSoA example using OpenMP.
+// AoSoA example.
 //---------------------------------------------------------------------------//
 void aosoaExample()
 {
@@ -52,9 +52,15 @@ void aosoaExample()
 
     /*
       Finally declare the memory space in which the AoSoA will be
-      allocated. In this example we are writing parallel OpenMP loops that
-      will execute on the CPU threads. The HostSpace allocates memory in
-      standard CPU RAM.
+      allocated. In this example we are writing basic loops that will execute
+      on the CPU. The HostSpace allocates memory in standard CPU RAM.
+
+      Cabana also supports execution on NVIDIA GPUs. To create an AoSoA
+      allocated with CUDA Unified Virtual Memory (UVM) use
+      `Cabana::CudaUVMSpace` instead of `Cabana::HostSpace`. The CudaUVMSpace
+      allocates memory in managed GPU memory via `cudaMallocManaged`. This
+      memory is automatically paged between host and device depending on the
+      context in which the memory is accessed.
     */
     using MemorySpace = Cabana::HostSpace;
 
@@ -81,18 +87,9 @@ void aosoaExample()
       AoSoA in stride-1 vector length sized loops over tuple indices which can
       often have a performance benefit. First we will look at getting
       individual SoA's which will introduce the important concept of
-      2-dimensional tuple indices.
-
-      Start by looping in parallel over the SoA's using OpenMP. When looping
-      over vector indices (i.e. the `a` index in the loops below) the
-      intention is for these loops to vectorize. When analyzing the loops
-      below consider their hierarchical parellel nature - the outer loop over
-      SoAs is parallelized over threads and the inner loops over the
-      individual SoA elements vectorizes from stride-1 memory accesses.
-
-      The SoA index is the first tuple index:
+      2-dimensional tuple indices. Start by looping over the SoA's. The SoA
+      index is the first tuple index:
     */
-#pragma omp parallel for
     for ( int s = 0; s < aosoa.numSoA(); ++s )
     {
         /*
@@ -112,10 +109,6 @@ void aosoaExample()
           evenly divisible by the vector length of the SoAs, the last SoA may
           not be completely full. Assign values the same way did in the SoA
           example.
-
-          Again, the intention is for the loops below over index `a` to be
-          vectorized by the compiler due to stride-1 memory accesses within an
-          SoA.
         */
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
@@ -139,11 +132,6 @@ void aosoaExample()
        are that we lose the stride-1 vector length loops over the tuple index
        and by extracting an individual tuple, we are making a copy of the data
        rather than getting a reference.
-
-       We can still achieve a thread-level parallelism over each
-       tuple. However, we will lose our ability to vectorize over the SoA data
-       sets as we are no longer exposing this inner loop construct to the
-       compiler.
      */
     for ( int t = 0; t < num_tuple; ++t )
     {
@@ -171,6 +159,41 @@ void aosoaExample()
         std::cout << "Tuple " << t
                   << ", member 2: " << tp.get<2>() << std::endl;
     }
+
+    /*
+      We can set data using a tuple too. Let's assign the tuple at 1D index 3
+      some new data. First create the new tuple:
+    */
+    Cabana::Tuple<DataTypes> foo;
+
+    for ( int i = 0; i < 3; ++i )
+        for ( int j = 0; j < 3; ++j )
+            foo.get<0>(i,j) = 1.1;
+
+    for ( int i = 0; i < 4; ++i )
+        foo.get<1>(i) = 2.2;
+
+    foo.get<2>() = 3;
+
+    /* Now assign it's data by copying it to the AoSoA at 1D index 3. */
+    aosoa.setTuple( 3, foo );
+
+    /*
+      Now print using the 2D indexing to be sure we changed the data with the
+      assignment.
+    */
+    for ( int i = 0; i < 3; ++i )
+        for ( int j = 0; j < 3; ++j )
+            std::cout << "Updated tuple member 0 element ("
+                      << i << "," << j << "): "
+                      << aosoa.access(0).get<0>(3,i,j) << std::endl;
+
+    for ( int i = 0; i < 4; ++i )
+        std::cout << "Update tuple member 1 (" << i << "): "
+                  << aosoa.access(0).get<1>(3,i) << std::endl;
+
+    std::cout << "Updated tuple member 2: "
+              << aosoa.access(0).get<2>(3) << std::endl;
 }
 
 //---------------------------------------------------------------------------//

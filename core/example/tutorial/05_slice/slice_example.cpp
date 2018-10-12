@@ -59,6 +59,13 @@ void sliceExample()
       Finally declare the memory space in which the AoSoA will be
       allocated. In this example we are writing basic loops that will execute
       on the CPU. The HostSpace allocates memory in standard CPU RAM.
+
+      Cabana also supports execution on NVIDIA GPUs. To create an AoSoA
+      allocated with CUDA Unified Virtual Memory (UVM) use
+      `Cabana::CudaUVMSpace` instead of `Cabana::HostSpace`. The CudaUVMSpace
+      allocates memory in managed GPU memory via `cudaMallocManaged`. This
+      memory is automatically paged between host and device depending on the
+      context in which the memory is accessed.
     */
     using MemorySpace = Cabana::HostSpace;
 
@@ -73,7 +80,10 @@ void sliceExample()
 
     /*
       Create a slice over each tuple member in the AoSoA. An integer template
-      parameter is used to indicate which member to slice.
+      parameter is used to indicate which member to slice. A slice object
+      simply wraps the data associated with an AoSoA member in a more
+      conventient accessor structure. A slice therefore as the same memory
+      space as the AoSoA from which it was derived.
      */
     auto slice_0 = aosoa.slice<0>();
     auto slice_1 = aosoa.slice<1>();

@@ -14,7 +14,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// Atomice slice example using OpenMP.
+// Atomic slice example.
 //---------------------------------------------------------------------------//
 void atomicSliceExample()
 {
