@@ -3,7 +3,7 @@ var searchData=
   ['i',['i',['../classCabana_1_1Impl_1_1Index.html#addeeb2189aed18a390811eeef30f2684',1,'Cabana::Impl::Index']]],
   ['ijkbinindex',['ijkBinIndex',['../classCabana_1_1LinkedCellList.html#a76619a25120a6586d163dac2af9dbd5d',1,'Cabana::LinkedCellList']]],
   ['index',['Index',['../classCabana_1_1Impl_1_1Index.html',1,'Cabana::Impl']]],
-  ['indexparalleltag',['IndexParallelTag',['../classCabana_1_1IndexParallelTag.html',1,'Cabana']]],
+  ['indexparalleltag',['IndexParallelTag',['../classCabana_1_1Experimental_1_1IndexParallelTag.html',1,'Cabana::Experimental']]],
   ['indexsequence',['IndexSequence',['../structCabana_1_1Impl_1_1IndexSequence.html',1,'Cabana::Impl']]],
   ['indexsequence_3c_200_20_3e',['IndexSequence&lt; 0 &gt;',['../structCabana_1_1Impl_1_1IndexSequence.html',1,'Cabana::Impl']]],
   ['indexsequence_3c_20indices_2e_2e_2e_2c_20i_20_3e',['IndexSequence&lt; Indices..., I &gt;',['../structCabana_1_1Impl_1_1IndexSequence.html',1,'Cabana::Impl']]],

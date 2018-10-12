@@ -1,7 +1,7 @@
 var searchData=
 [
   ['index',['Index',['../classCabana_1_1Impl_1_1Index.html',1,'Cabana::Impl']]],
-  ['indexparalleltag',['IndexParallelTag',['../classCabana_1_1IndexParallelTag.html',1,'Cabana']]],
+  ['indexparalleltag',['IndexParallelTag',['../classCabana_1_1Experimental_1_1IndexParallelTag.html',1,'Cabana::Experimental']]],
   ['indexsequence',['IndexSequence',['../structCabana_1_1Impl_1_1IndexSequence.html',1,'Cabana::Impl']]],
   ['indexsequence_3c_200_20_3e',['IndexSequence&lt; 0 &gt;',['../structCabana_1_1Impl_1_1IndexSequence.html',1,'Cabana::Impl']]],
   ['indexsequence_3c_20indices_2e_2e_2e_2c_20i_20_3e',['IndexSequence&lt; Indices..., I &gt;',['../structCabana_1_1Impl_1_1IndexSequence.html',1,'Cabana::Impl']]],

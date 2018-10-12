@@ -232,7 +232,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;    AoSoA_t aosoa( num_data );</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    <span class="comment">// Create an execution policy using the begin and end of the AoSoA.</span></div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <a class="code" href="classCabana_1_1RangePolicy.html">Cabana::RangePolicy&lt;AoSoA_t::vector_length,TEST_EXECSPACE&gt;</a></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    <a class="code" href="classCabana_1_1Experimental_1_1RangePolicy.html">Cabana::Experimental::RangePolicy&lt;AoSoA_t::vector_length,TEST_EXECSPACE&gt;</a></div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        range_policy( 0, aosoa.size() );</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="comment">// Create a functor to operate on.</span></div>
@@ -247,71 +247,74 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    OpType func_1( aosoa, fval, dval, ival );</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="comment">// Loop in parallel using 1D struct parallelism.</span></div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    Cabana::parallel_for( range_policy, func_1, <a class="code" href="classCabana_1_1StructParallelTag.html">Cabana::StructParallelTag</a>() );</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;</div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="comment">// Change values and write a second functor.</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    fval = 93.4;</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    dval = 12.1;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    ival = 4;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    OpType func_2( aosoa, fval, dval, ival );</div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="comment">// Loop in parallel using 1D array parallelism.</span></div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    Cabana::parallel_for( range_policy, func_2, <a class="code" href="classCabana_1_1ArrayParallelTag.html">Cabana::ArrayParallelTag</a>() );</div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="comment">// Change values and write a third functor.</span></div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    fval = 7.7;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    dval = 3.2;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    ival = 9;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    OpType func_3( aosoa, fval, dval, ival );</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="comment">// Loop in parallel using 2D struct and array parallelism.</span></div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    Cabana::parallel_for(</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        range_policy, func_3, <a class="code" href="classCabana_1_1StructAndArrayParallelTag.html">Cabana::StructAndArrayParallelTag</a>() );</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="comment">// Do one more loop but this time auto-dispatch. Reuse the first functor</span></div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="comment">// but this time create an execution policy that automatically grabs begin</span></div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="comment">// and end from the aosoa.</span></div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <a class="code" href="classCabana_1_1RangePolicy.html">Cabana::RangePolicy&lt;AoSoA_t::vector_length,TEST_EXECSPACE&gt;</a> aosoa_policy( aosoa );</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    Cabana::parallel_for( aosoa_policy, func_1 );</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    fval = 3.4;</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    dval = 1.23;</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    ival = 1;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;}</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;</div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="comment">// RUN TESTS</span></div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;TEST_F( TEST_CATEGORY, parallel_for_test )</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;{</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    runTest();</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;}</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;</div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;} <span class="comment">// end namespace Test</span></div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    Cabana::Experimental::parallel_for(</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        range_policy, func_1, <a class="code" href="classCabana_1_1Experimental_1_1StructParallelTag.html">Cabana::Experimental::StructParallelTag</a>() );</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="comment">// Change values and write a second functor.</span></div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    fval = 93.4;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    dval = 12.1;</div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    ival = 4;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    OpType func_2( aosoa, fval, dval, ival );</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="comment">// Loop in parallel using 1D array parallelism.</span></div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    Cabana::Experimental::parallel_for(</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;        range_policy, func_2, <a class="code" href="classCabana_1_1Experimental_1_1ArrayParallelTag.html">Cabana::Experimental::ArrayParallelTag</a>() );</div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="comment">// Change values and write a third functor.</span></div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    fval = 7.7;</div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    dval = 3.2;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    ival = 9;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    OpType func_3( aosoa, fval, dval, ival );</div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="comment">// Loop in parallel using 2D struct and array parallelism.</span></div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    Cabana::Experimental::parallel_for(</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;        range_policy, func_3, <a class="code" href="classCabana_1_1Experimental_1_1StructAndArrayParallelTag.html">Cabana::Experimental::StructAndArrayParallelTag</a>() );</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;    <span class="comment">// Do one more loop but this time auto-dispatch. Reuse the first functor</span></div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="comment">// but this time create an execution policy that automatically grabs begin</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="comment">// and end from the aosoa.</span></div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <a class="code" href="classCabana_1_1Experimental_1_1RangePolicy.html">Cabana::Experimental::RangePolicy&lt;AoSoA_t::vector_length,TEST_EXECSPACE&gt;</a></div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        aosoa_policy( aosoa );</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    Cabana::Experimental::parallel_for( aosoa_policy, func_1 );</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    fval = 3.4;</div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    dval = 1.23;</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    ival = 1;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;}</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;<span class="comment">// RUN TESTS</span></div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;TEST_F( TEST_CATEGORY, parallel_for_test )</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;{</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    runTest();</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;}</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;</div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1RangePolicy_html"><div class="ttname"><a href="classCabana_1_1RangePolicy.html">Cabana::RangePolicy</a></div><div class="ttdoc">Execution policy over a range of indices. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:25</div></div>
-<div class="ttc" id="classCabana_1_1ArrayParallelTag_html"><div class="ttname"><a href="classCabana_1_1ArrayParallelTag.html">Cabana::ArrayParallelTag</a></div><div class="ttdoc">1D parallelism over inner arrays with an outer serial loop over structs </div><div class="ttdef"><b>Definition:</b> Cabana_Parallel.hpp:108</div></div>
+<div class="ttc" id="classCabana_1_1Experimental_1_1StructParallelTag_html"><div class="ttname"><a href="classCabana_1_1Experimental_1_1StructParallelTag.html">Cabana::Experimental::StructParallelTag</a></div><div class="ttdoc">1D parallelism over structs with a thread-local loop over the inner arrays </div><div class="ttdef"><b>Definition:</b> Cabana_Parallel.hpp:107</div></div>
+<div class="ttc" id="classCabana_1_1Experimental_1_1ArrayParallelTag_html"><div class="ttname"><a href="classCabana_1_1Experimental_1_1ArrayParallelTag.html">Cabana::Experimental::ArrayParallelTag</a></div><div class="ttdoc">1D parallelism over inner arrays with an outer serial loop over structs </div><div class="ttdef"><b>Definition:</b> Cabana_Parallel.hpp:110</div></div>
 <div class="ttc" id="classTest_1_1AssignmentOp_html"><div class="ttname"><a href="classTest_1_1AssignmentOp.html">Test::AssignmentOp</a></div><div class="ttdef"><b>Definition:</b> tstParallel.hpp:64</div></div>
+<div class="ttc" id="classCabana_1_1Experimental_1_1RangePolicy_html"><div class="ttname"><a href="classCabana_1_1Experimental_1_1RangePolicy.html">Cabana::Experimental::RangePolicy</a></div><div class="ttdoc">Execution policy over a range of indices. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:27</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:77</div></div>
-<div class="ttc" id="classCabana_1_1StructAndArrayParallelTag_html"><div class="ttname"><a href="classCabana_1_1StructAndArrayParallelTag.html">Cabana::StructAndArrayParallelTag</a></div><div class="ttdoc">2D parallelism over structs and inner arrays </div><div class="ttdef"><b>Definition:</b> Cabana_Parallel.hpp:111</div></div>
-<div class="ttc" id="classCabana_1_1StructParallelTag_html"><div class="ttname"><a href="classCabana_1_1StructParallelTag.html">Cabana::StructParallelTag</a></div><div class="ttdoc">1D parallelism over structs with a thread-local loop over the inner arrays </div><div class="ttdef"><b>Definition:</b> Cabana_Parallel.hpp:105</div></div>
+<div class="ttc" id="classCabana_1_1Experimental_1_1StructAndArrayParallelTag_html"><div class="ttname"><a href="classCabana_1_1Experimental_1_1StructAndArrayParallelTag.html">Cabana::Experimental::StructAndArrayParallelTag</a></div><div class="ttdoc">2D parallelism over structs and inner arrays </div><div class="ttdef"><b>Definition:</b> Cabana_Parallel.hpp:113</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Oct 12 2018 20:14:44 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Oct 12 2018 20:28:57 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -472,11 +472,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;                           { Kokkos::atomic_add( &amp;serial_result(i), n ); };</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keyword">auto</span> team_count_op = KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> n )</div>
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;                         { Kokkos::atomic_add( &amp;team_result(i), n ); };</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <a class="code" href="classCabana_1_1RangePolicy.html">Cabana::RangePolicy&lt;aosoa_t::vector_length,TEST_EXECSPACE&gt;</a> policy( aosoa );</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    Cabana::neighbor_parallel_for(</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        policy, serial_count_op, nlist, <a class="code" href="classCabana_1_1SerialNeighborOpTag.html">Cabana::SerialNeighborOpTag</a>() );</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    Cabana::neighbor_parallel_for(</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        policy, team_count_op, nlist, <a class="code" href="classCabana_1_1TeamNeighborOpTag.html">Cabana::TeamNeighborOpTag</a>() );</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <a class="code" href="classCabana_1_1Experimental_1_1RangePolicy.html">Cabana::Experimental::RangePolicy&lt;aosoa_t::vector_length,TEST_EXECSPACE&gt;</a> policy( aosoa );</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    Cabana::Experimental::neighbor_parallel_for(</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;        policy, serial_count_op, nlist, <a class="code" href="classCabana_1_1Experimental_1_1SerialNeighborOpTag.html">Cabana::Experimental::SerialNeighborOpTag</a>() );</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    Cabana::Experimental::neighbor_parallel_for(</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        policy, team_count_op, nlist, <a class="code" href="classCabana_1_1Experimental_1_1TeamNeighborOpTag.html">Cabana::Experimental::TeamNeighborOpTag</a>() );</div>
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;</div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="comment">// Get the expected result in serial</span></div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> p = 0; p &lt; num_particle; ++p )</div>
@@ -521,18 +521,18 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;</div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1RangePolicy_html"><div class="ttname"><a href="classCabana_1_1RangePolicy.html">Cabana::RangePolicy</a></div><div class="ttdoc">Execution policy over a range of indices. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:25</div></div>
 <div class="ttc" id="classCabana_1_1VerletList_html"><div class="ttname"><a href="classCabana_1_1VerletList.html">Cabana::VerletList</a></div><div class="ttdoc">Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...</div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:423</div></div>
-<div class="ttc" id="classCabana_1_1TeamNeighborOpTag_html"><div class="ttname"><a href="classCabana_1_1TeamNeighborOpTag.html">Cabana::TeamNeighborOpTag</a></div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:84</div></div>
+<div class="ttc" id="classCabana_1_1Experimental_1_1TeamNeighborOpTag_html"><div class="ttname"><a href="classCabana_1_1Experimental_1_1TeamNeighborOpTag.html">Cabana::Experimental::TeamNeighborOpTag</a></div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:86</div></div>
+<div class="ttc" id="classCabana_1_1Experimental_1_1RangePolicy_html"><div class="ttname"><a href="classCabana_1_1Experimental_1_1RangePolicy.html">Cabana::Experimental::RangePolicy</a></div><div class="ttdoc">Execution policy over a range of indices. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:27</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:77</div></div>
 <div class="ttc" id="classCabana_1_1NeighborList_html"><div class="ttname"><a href="classCabana_1_1NeighborList.html">Cabana::NeighborList</a></div><div class="ttdoc">Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...</div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:54</div></div>
-<div class="ttc" id="classCabana_1_1SerialNeighborOpTag_html"><div class="ttname"><a href="classCabana_1_1SerialNeighborOpTag.html">Cabana::SerialNeighborOpTag</a></div><div class="ttdoc">Neighbor operations are executed in serial on each particle thread. </div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:80</div></div>
 <div class="ttc" id="structTest_1_1TestNeighborList_html"><div class="ttname"><a href="structTest_1_1TestNeighborList.html">Test::TestNeighborList</a></div><div class="ttdef"><b>Definition:</b> tstNeighborList.hpp:109</div></div>
+<div class="ttc" id="classCabana_1_1Experimental_1_1SerialNeighborOpTag_html"><div class="ttname"><a href="classCabana_1_1Experimental_1_1SerialNeighborOpTag.html">Cabana::Experimental::SerialNeighborOpTag</a></div><div class="ttdoc">Neighbor operations are executed in serial on each particle thread. </div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:82</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1LinkedCellStencil_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1LinkedCellStencil.html">Cabana::Impl::LinkedCellStencil</a></div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:77</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Oct 12 2018 20:14:44 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Oct 12 2018 20:28:57 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
