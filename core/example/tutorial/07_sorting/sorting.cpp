@@ -81,11 +81,6 @@ void sortingExample()
       some algorithms, this data structure may be all that is necessary if the
       data does not have to be physically reordered.
 
-      Also note here that we are going to reorder the entire AoSoA. There are
-      more advanced variations on sorting which will only operate on a
-      specified range of tuples through a begin and end argument (to be
-      covered in a later tutorial).
-
       We are using auto for the sort_data return value here for convenience
       but the actual return type is Cabana::BinningData<MemorySpace>. Note
       that the binning data is templated on a memory space as it creates and
@@ -136,12 +131,8 @@ void sortingExample()
     keys(4) = 100;
 
     /*
-       Now create the binning data. In this case let's create two bins: one
-       for the 100's and one for the 200's.
-
-       Again note that there are variants of binning which can bin values over
-       a subset of the entire AoSoA by using begin and end parameters. We are
-       going to bin the entire AoSoA in this case.
+      Now create the binning data. In this case let's create two bins: one
+      for the 100's and one for the 200's.
 
       We are using auto for the bin_data return value here for convenience
       but the actual return type is Cabana::BinningData<MemorySpace>. Note
@@ -172,6 +163,41 @@ void sortingExample()
                   << ", member 1: " << tp.get<1>() << std::endl;
     }
     std::cout << std::endl;
+
+    /*
+      We can also interrogate the binning data itself - this is useful in many
+      cases where we may want to know how the data is binned and use that in
+      an algorithm but not actually permute the data.
+
+      Using the binning data we just created let's see how many bins there are
+      - we asked for 2 so we should get at least 2. This number may be
+      slightly larger due to integer arithmetic. In this cas it is 3:
+     */
+    std::cout << "bin_data.numBin() = " << bin_data.numBin() << std::endl;
+
+    /*
+      Now let's get the number of tuples that are in each bin - this should
+      correspond to our results above: 3 in the 100's bin and 2 in the 200's
+      bin:
+     */
+    std::cout << "Bin 0 size = " << bin_data.binSize(0) << std::endl;
+    std::cout << "Bin 1 size = " << bin_data.binSize(1) << std::endl;
+    std::cout << "Bin 2 size = " << bin_data.binSize(2) << std::endl;
+
+    /*
+      Finally let's get the local ids of the tuples that are in each
+      bin. The new order of tuple ids stored in the permutation vector is
+      grouped by bin. The offset array in the binning data tells us where each
+      bin's group of ids starts:
+    */
+    for ( int b = 0; b < bin_data.numBin(); ++b )
+    {
+        std::cout << "Bin " << b << " ids: ";
+        int offset = bin_data.binOffset( b );
+        for ( int i = 0; i < bin_data.binSize(b); ++i )
+            std::cout << bin_data.permutation( offset + i ) << " ";
+        std::cout << std::endl;
+    }
 }
 
 //---------------------------------------------------------------------------//

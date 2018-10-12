@@ -84,9 +84,10 @@ void deepCopyExample()
 
     /*
       Deep copy the data from the source to the destination. A deep copy is
-      possible if the AoSoAs have the same member types and they are the same
-      size (i.e. they have the same number of tuples). As is the case here,
-      they are allowed to have different memory spaces and vector lengths.
+      possible if the source and destination AoSoAs have the same member types
+      and they are the same size (i.e. they have the same number of
+      tuples). As is the case here, they are allowed to have different memory
+      spaces and vector lengths.
      */
     Cabana::deep_copy( dst_aosoa, src_aosoa );
 
