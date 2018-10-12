@@ -91,7 +91,7 @@ class AoSoA
     static constexpr int vector_length = VectorLength;
 
     // SoA type.
-    using soa_type = SoA<vector_length,member_types>;
+    using soa_type = SoA<member_types,vector_length>;
 
     // Managed data view.
     using soa_view =

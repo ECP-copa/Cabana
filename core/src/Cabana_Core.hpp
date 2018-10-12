@@ -12,15 +12,19 @@
 #ifndef CABANA_CORE_HPP
 #define CABANA_CORE_HPP
 
-#include <Cabana_Macros.hpp>
-#include <Cabana_Types.hpp>
-#include <Cabana_MemberTypes.hpp>
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_DeepCopy.hpp>
+#include <Cabana_LinkedCellList.hpp>
+#include <Cabana_Macros.hpp>
+#include <Cabana_MemberTypes.hpp>
+#include <Cabana_NeighborList.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_SoA.hpp>
+#include <Cabana_Sort.hpp>
 #include <Cabana_Tuple.hpp>
+#include <Cabana_Types.hpp>
+#include <Cabana_VerletList.hpp>
 #include <Cabana_Version.hpp>
-#include <Cabana_DeepCopy.hpp>
 
 #include <Kokkos_Core.hpp>
 

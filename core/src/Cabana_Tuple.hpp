@@ -29,10 +29,10 @@ struct Tuple;
 
 template<typename... Types>
 struct Tuple<MemberTypes<Types...> >
-    : SoA<1,MemberTypes<Types...> >
+    : SoA<MemberTypes<Types...>,1>
 {
     // Base class.
-    using base = SoA<1,MemberTypes<Types...> >;
+    using base = SoA<MemberTypes<Types...>,1>;
 
     // -------------------------------
     // Access the data value at a given member index.

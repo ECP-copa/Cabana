@@ -56,7 +56,7 @@ void testSoA()
                                              double[2][3],
                                              unsigned[5],
                                              float[3][2][2]>;
-    using soa_type = Cabana::SoA<vector_length,member_types>;
+    using soa_type = Cabana::SoA<member_types,vector_length>;
 
     // Check that the data in the soa is contiguous.
     EXPECT_TRUE( std::is_trivial<soa_type>::value );
