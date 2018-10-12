@@ -143,7 +143,7 @@ void runTest()
     AoSoA_t aosoa( num_data );
 
     // Create an execution policy using the begin and end of the AoSoA.
-    Cabana::RangePolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
+    Cabana::Experimental::RangePolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
         range_policy( 0, aosoa.size() );
 
     // Create a functor to operate on.
@@ -158,7 +158,8 @@ void runTest()
     OpType func_1( aosoa, fval, dval, ival );
 
     // Loop in parallel using 1D struct parallelism.
-    Cabana::parallel_for( range_policy, func_1, Cabana::StructParallelTag() );
+    Cabana::Experimental::parallel_for(
+        range_policy, func_1, Cabana::Experimental::StructParallelTag() );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -170,7 +171,8 @@ void runTest()
     OpType func_2( aosoa, fval, dval, ival );
 
     // Loop in parallel using 1D array parallelism.
-    Cabana::parallel_for( range_policy, func_2, Cabana::ArrayParallelTag() );
+    Cabana::Experimental::parallel_for(
+        range_policy, func_2, Cabana::Experimental::ArrayParallelTag() );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -182,8 +184,8 @@ void runTest()
     OpType func_3( aosoa, fval, dval, ival );
 
     // Loop in parallel using 2D struct and array parallelism.
-    Cabana::parallel_for(
-        range_policy, func_3, Cabana::StructAndArrayParallelTag() );
+    Cabana::Experimental::parallel_for(
+        range_policy, func_3, Cabana::Experimental::StructAndArrayParallelTag() );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -191,8 +193,9 @@ void runTest()
     // Do one more loop but this time auto-dispatch. Reuse the first functor
     // but this time create an execution policy that automatically grabs begin
     // and end from the aosoa.
-    Cabana::RangePolicy<AoSoA_t::vector_length,TEST_EXECSPACE> aosoa_policy( aosoa );
-    Cabana::parallel_for( aosoa_policy, func_1 );
+    Cabana::Experimental::RangePolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
+        aosoa_policy( aosoa );
+    Cabana::Experimental::parallel_for( aosoa_policy, func_1 );
 
     // Check data members for proper initialization.
     fval = 3.4;
