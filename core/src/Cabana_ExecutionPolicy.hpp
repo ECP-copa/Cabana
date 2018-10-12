@@ -16,6 +16,8 @@
 
 namespace Cabana
 {
+namespace Experimental
+{
 //---------------------------------------------------------------------------//
 /*!
   \class RangePolicy
@@ -57,6 +59,7 @@ class RangePolicy
 
 //---------------------------------------------------------------------------//
 
+} // end namespace Experimental
 } // end namespace Cabana
 
 #endif // end CABANA_EXECUTIONPOLICY_HPP

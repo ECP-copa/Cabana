@@ -95,6 +95,8 @@ getArrayBounds( const int begin,
 
 } // end namespace impl
 
+namespace Experimental
+{
 //---------------------------------------------------------------------------//
 // Algorithm tags.
 
@@ -378,6 +380,7 @@ inline void parallel_for( const ExecutionPolicy& exec_policy,
 
 //---------------------------------------------------------------------------//
 
+} // end namespace Experimental
 } // end namespace Cabana
 
 #endif // end CABANA_PARALLEL_HPP

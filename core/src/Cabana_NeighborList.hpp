@@ -71,6 +71,8 @@ class NeighborList
                             const int neighbor_index );
 };
 
+namespace Experimental
+{
 //---------------------------------------------------------------------------//
 // Neighbor Parallel For
 //---------------------------------------------------------------------------//
@@ -243,6 +245,8 @@ inline void neighbor_parallel_for( const ExecutionPolicy& exec_policy,
 }
 
 //---------------------------------------------------------------------------//
+
+} // end namespace Experimental
 
 } // end namespace Cabana
 
