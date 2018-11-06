@@ -41,7 +41,7 @@ script:
     cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
-          -DCMAKE_EXE_LINKER_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
+          -DCMAKE_EXE_LINKER_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="-O3 --coverage" .. &&
     make -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
     make doxygen &&
