@@ -10,6 +10,11 @@ env:
     - BACKENDS="Pthread"
     - BACKENDS="Serial OpenMP"
     - BACKENDS="Serial Pthread"
+    - BACKENDS="OpenMP" COVERAGE=ON
+    - BACKENDS="Serial" COVERAGE=ON
+    - BACKENDS="Pthread" COVERAGE=ON
+    - BACKENDS="Serial OpenMP" COVERAGE=ON
+    - BACKENDS="Serial Pthread" COVERAGE=ON
 
 before_script:
   - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
@@ -41,7 +46,7 @@ script:
     cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
-          -DCabana_ENABLE_COVERAGE_BUILD=ON .. &&
+          ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
     make -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
     make doxygen &&
@@ -50,7 +55,7 @@ script:
 
 after_success:
  - ccache -s
- - pushd build && bash <(curl -s https://codecov.io/bash) && popd
+ - if [[ ${COVERAGE} ]]; then pushd build && bash <(curl -s https://codecov.io/bash) && popd; fi
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
      rm -rf doxygen &&
