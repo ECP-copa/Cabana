@@ -67,32 +67,34 @@ endif()
 #------------------------------------------------------------------------------#
 # Architecture
 #------------------------------------------------------------------------------#
-set(Cabana_BUILD_MARCH "" CACHE STRING "Arch to use with -march= (if empty CMake will try to use 'native')")
-
-# Try -march first. On platforms that don't support it, GCC will issue
-# a hard error, so we'll know not to use it.
-if(Cabana_BUILD_MARCH)
-  set(INTERNAL_Cabana_BUILD_MARCH ${Cabana_BUILD_MARCH})
-else()
-  set(INTERNAL_Cabana_BUILD_MARCH "native")
-endif()
-
-include(CheckCXXCompilerFlag)
-check_cxx_compiler_flag("-march=${INTERNAL_Cabana_BUILD_MARCH}" COMPILER_SUPPORTS_MARCH)
-if(COMPILER_SUPPORTS_MARCH)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=${INTERNAL_Cabana_BUILD_MARCH}")
-elseif(Cabana_BUILD_MARCH)
-  message(FATAL_ERROR "The flag -march=${INTERNAL_Cabana_BUILD_MARCH} is not supported by the compiler")
-else()
-  unset(INTERNAL_Cabana_BUILD_MARCH)
-endif()
-
-option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
-if(Cabana_ENABLE_COVERAGE_BUILD)
-    message(STATUS "Enabling coverage build")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
-    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(Cabana_BUILD_MARCH "" CACHE STRING "Arch to use with -march= (if empty CMake will try to use 'native') in release build and only release build")
+  
+  # Try -march first. On platforms that don't support it, GCC will issue
+  # a hard error, so we'll know not to use it.
+  if(Cabana_BUILD_MARCH)
+    set(INTERNAL_Cabana_BUILD_MARCH ${Cabana_BUILD_MARCH})
+  else()
+    set(INTERNAL_Cabana_BUILD_MARCH "native")
+  endif()
+  
+  include(CheckCXXCompilerFlag)
+  check_cxx_compiler_flag("-march=${INTERNAL_Cabana_BUILD_MARCH}" COMPILER_SUPPORTS_MARCH)
+  if(COMPILER_SUPPORTS_MARCH)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=${INTERNAL_Cabana_BUILD_MARCH}")
+  elseif(Cabana_BUILD_MARCH)
+    message(FATAL_ERROR "The flag -march=${INTERNAL_Cabana_BUILD_MARCH} is not supported by the compiler")
+  else()
+    unset(INTERNAL_Cabana_BUILD_MARCH)
+  endif()
+  
+  option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
+  if(Cabana_ENABLE_COVERAGE_BUILD)
+      message(STATUS "Enabling coverage build")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+  endif()
 endif()
 
 ##---------------------------------------------------------------------------##
