@@ -6,7 +6,12 @@ cmake_minimum_required(VERSION 3.9)
 ##---------------------------------------------------------------------------##
 # Define your project name and set up major project options
 ##---------------------------------------------------------------------------##
-project(Cabana LANGUAGES CXX VERSION 0.0.0)
+project(Cabana LANGUAGES CXX VERSION 0.1.0)
+
+if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
+  #release comes with -O3 by default
+  set(CMAKE_BUILD_TYPE Release CACHE STRING "Choose the type of build, options are: None Debug Release RelWithDebInfo MinSizeRel." FORCE)
+endif(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
 
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
@@ -58,6 +63,40 @@ find_package(Doxygen)
 if(Doxygen_FOUND)
   doxygen_add_docs(doxygen core)
 endif()
+
+#------------------------------------------------------------------------------#
+# Architecture
+#------------------------------------------------------------------------------#
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+  set(Cabana_BUILD_MARCH "" CACHE STRING "Arch to use with -march= (if empty CMake will try to use 'native') in release build and only release build")
+  
+  # Try -march first. On platforms that don't support it, GCC will issue
+  # a hard error, so we'll know not to use it.
+  if(Cabana_BUILD_MARCH)
+    set(INTERNAL_Cabana_BUILD_MARCH ${Cabana_BUILD_MARCH})
+  else()
+    set(INTERNAL_Cabana_BUILD_MARCH "native")
+  endif()
+  
+  include(CheckCXXCompilerFlag)
+  check_cxx_compiler_flag("-march=${INTERNAL_Cabana_BUILD_MARCH}" COMPILER_SUPPORTS_MARCH)
+  if(COMPILER_SUPPORTS_MARCH)
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=${INTERNAL_Cabana_BUILD_MARCH}")
+  elseif(Cabana_BUILD_MARCH)
+    message(FATAL_ERROR "The flag -march=${INTERNAL_Cabana_BUILD_MARCH} is not supported by the compiler")
+  else()
+    unset(INTERNAL_Cabana_BUILD_MARCH)
+  endif()
+  
+  option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
+  if(Cabana_ENABLE_COVERAGE_BUILD)
+      message(STATUS "Enabling coverage build")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+  endif()
+endif()
+
 ##---------------------------------------------------------------------------##
 ## Print the revision number to stdout
 ##---------------------------------------------------------------------------##
