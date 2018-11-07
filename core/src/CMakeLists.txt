@@ -18,5 +18,5 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CM
 
 add_library(cabanacore ${SOURCES} ${SOURCES} ${SOURCES_IMPL})
 target_include_directories(cabanacore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
-target_link_libraries(cabanacore Kokkos::kokkos)
+target_link_libraries(cabanacore PkgConfig::KOKKOS)
 install(TARGETS cabanacore LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
