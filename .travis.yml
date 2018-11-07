@@ -14,18 +14,17 @@ env:
 before_script:
   - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
   - ccache -z
-  - KOKKOS_OPTS=( --with-hwloc=/usr )
+  - KOKKOS_OPTS=( --with-hwloc=/usr --gcc-toolchain=/usr )
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
-    # gcc-toolchain workaround: https://github.com/kokkos/kokkos/issues/1841
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
-  - if [[ ${CC} = clang ]]; then KOKKOS_MAKE_OPTS="KOKKOS_INTERNAL_GCC_TOOLCHAIN=/usr"; export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi 
+  - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi 
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
     pushd build &&
     ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
-    make -j2 ${KOKKOS_MAKE_OPTS} &&
-    make install ${KOKKOS_MAKE_OPTS} && 
+    make -j2 &&
+    make install && 
     popd &&
     popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
