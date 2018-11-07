@@ -108,6 +108,14 @@ if (NOT INTERNAL_BUILD_MARCH)
   endif()
 endif()
 
+option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
+if(Cabana_ENABLE_COVERAGE_BUILD)
+    message(STATUS "Enabling coverage build")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+    set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+endif()
+
 ##---------------------------------------------------------------------------##
 ## Print the revision number to stdout
 ##---------------------------------------------------------------------------##
