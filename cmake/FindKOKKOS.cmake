@@ -7,19 +7,13 @@
 #  KOKKOS_SETTINGS_DIR - path to kokkos_generated_settings.cmake
 #
 
-find_package(PkgConfig)
-if(PkgConfig_FOUND)
-  pkg_check_modules(KOKKOS IMPORTED_TARGET kokkos)
-  if(KOKKOS_FOUND)
-    include(${KOKKOS_PREFIX}/kokkos_generated_settings.cmake)
-    return()
-  endif()
-endif()
+find_package(PkgConfig QUIET)
+pkg_check_modules(PC_KOKKOS kokkos QUIET)
 
-find_path(KOKKOS_SETTINGS_DIR kokkos_generated_settings.cmake)
+find_path(KOKKOS_SETTINGS_DIR kokkos_generated_settings.cmake HINTS ${PC_KOKKOS_PREFIX})
 
-find_path(KOKKOS_INCLUDE_DIR Kokkos_Core.hpp)
-find_library(KOKKOS_LIBRARY NAMES kokkos)
+find_path(KOKKOS_INCLUDE_DIR Kokkos_Core.hpp HINTS ${PC_KOKKOS_INCLUDE_DIRS})
+find_library(KOKKOS_LIBRARY NAMES kokkos HINTS ${PC_KOKKOS_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set KOKKOS_FOUND to TRUE
