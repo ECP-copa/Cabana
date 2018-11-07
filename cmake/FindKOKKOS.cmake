@@ -1,5 +1,5 @@
 # - Find kokkos
-# Creates a PkgConfig::KOKKOS imported target
+# Creates a Kokkos::kokkos imported target
 #
 #  KOKKOS_INCLUDE_DIRS  - where to find kokkos.h, etc.
 #  KOKKOS_LIBRARIES     - List of libraries when using kokkos.
@@ -33,8 +33,8 @@ if(KOKKOS_SETTINGS_DIR AND KOKKOS_INCLUDE_DIR AND KOKKOS_LIBRARY)
       list(APPEND KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES "${_f}")
     endif()
   endforeach()
-  add_library(PkgConfig::KOKKOS UNKNOWN IMPORTED)
-  set_target_properties(PkgConfig::KOKKOS PROPERTIES
+  add_library(Kokkos::kokkos UNKNOWN IMPORTED)
+  set_target_properties(Kokkos::kokkos PROPERTIES
     IMPORTED_LOCATION ${KOKKOS_LIBRARY}
     INTERFACE_INCLUDE_DIRECTORIES ${KOKKOS_INCLUDE_DIR}
     INTERFACE_COMPILE_OPTIONS "${KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES}"
@@ -42,6 +42,6 @@ if(KOKKOS_SETTINGS_DIR AND KOKKOS_INCLUDE_DIR AND KOKKOS_LIBRARY)
   # check for an empty link flags string to fix a trailing whitespace error when
   # the link flags are empty (e.g. the serial only case)
   if(KOKKOS_LINK_FLAGS)
-    set_property(TARGET PkgConfig::KOKKOS APPEND_STRING PROPERTY INTERFACE_LINK_LIBRARIES " ${KOKKOS_LINK_FLAGS}")
+    set_property(TARGET Kokkos::kokkos APPEND_STRING PROPERTY INTERFACE_LINK_LIBRARIES " ${KOKKOS_LINK_FLAGS}")
   endif()
 endif()
