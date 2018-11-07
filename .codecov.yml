@@ -1,0 +1,9 @@
+coverage:
+  precision: 1
+  round: down
+  range: "70...100"
+ignore:
+  - gtest/
+  - core/unit_test/
+  - core/example/benchmark
+  - core/example/tutorial
