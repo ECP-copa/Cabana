@@ -64,12 +64,17 @@ if(Doxygen_FOUND)
   doxygen_add_docs(doxygen core)
 endif()
 
+option(Cabana_ENABLE_MPI "Build Cabana with MPI support" OFF)
+if(Cabana_ENABLE_MPI)
+  find_package(MPI REQUIRED)
+endif()
+
 #------------------------------------------------------------------------------#
 # Architecture
 #------------------------------------------------------------------------------#
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
   set(Cabana_BUILD_MARCH "" CACHE STRING "Arch to use with -march= (if empty CMake will try to use 'native') in release build and only release build")
-  
+
   # Try -march first. On platforms that don't support it, GCC will issue
   # a hard error, so we'll know not to use it.
   if(Cabana_BUILD_MARCH)
@@ -77,7 +82,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
   else()
     set(INTERNAL_Cabana_BUILD_MARCH "native")
   endif()
-  
+
   include(CheckCXXCompilerFlag)
   check_cxx_compiler_flag("-march=${INTERNAL_Cabana_BUILD_MARCH}" COMPILER_SUPPORTS_MARCH)
   if(COMPILER_SUPPORTS_MARCH)
@@ -87,7 +92,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
   else()
     unset(INTERNAL_Cabana_BUILD_MARCH)
   endif()
-  
+
   option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
   if(Cabana_ENABLE_COVERAGE_BUILD)
       message(STATUS "Enabling coverage build")
