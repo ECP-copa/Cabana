@@ -1,3 +1,14 @@
+/****************************************************************************
+ * Copyright (c) 2018 by the Cabana authors                                 *
+ * All rights reserved.                                                     *
+ *                                                                          *
+ * This file is part of the Cabana library. Cabana is distributed under a   *
+ * BSD 3-clause license. For the licensing terms see the LICENSE file in    *
+ * the top-level directory.                                                 *
+ *                                                                          *
+ * SPDX-License-Identifier: BSD-3-Clause                                    *
+ ****************************************************************************/
+
 #ifndef CABANA_TYPES_HPP
 #define CABANA_TYPES_HPP
 
@@ -51,6 +62,7 @@ struct DefaultAccessMemory
 {
     using memory_access_type = DefaultAccessMemory;
     using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
+                                                       Kokkos::Aligned |
                                                        Kokkos::Restrict >;
 };
 
@@ -62,6 +74,7 @@ struct RandomAccessMemory
 {
     using memory_access_type = RandomAccessMemory;
     using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
+                                                       Kokkos::Aligned |
                                                        Kokkos::RandomAccess >;
 };
 
@@ -73,6 +86,7 @@ struct AtomicAccessMemory
 {
     using memory_access_type = AtomicAccessMemory;
     using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
+                                                       Kokkos::Aligned |
                                                        Kokkos::Atomic >;
 };
 
@@ -80,30 +94,24 @@ template<>
 struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type {};
 
 //---------------------------------------------------------------------------//
-// Data layouts.
+// Kokkos-to-Cabana space translator
 //---------------------------------------------------------------------------//
-template<class >
-struct is_data_layout : public std::false_type {};
-
-//! Layout right. C or row-major ordering of multidimensional data. The
-//! right-most array index is stride-1.
-struct LayoutRight
-{
-    using data_layout_type = LayoutRight;
-};
+template<class KokkosSpace>
+struct KokkosSpaceToCabana;
 
 template<>
-struct is_data_layout<LayoutRight> : public std::true_type {};
-
-//! Layout left. Fortran or column-major ordering of multidimensional
-//! data. The left-most array index is stride-1.
-struct LayoutLeft
+struct KokkosSpaceToCabana<Kokkos::HostSpace>
 {
-    using data_layout_type = LayoutLeft;
+    using type = Cabana::HostSpace;
 };
 
+#if defined( KOKKOS_ENABLE_CUDA )
 template<>
-struct is_data_layout<LayoutLeft> : public std::true_type {};
+struct KokkosSpaceToCabana<Kokkos::CudaUVMSpace>
+{
+    using type = Cabana::CudaUVMSpace;
+};
+#endif
 
 //---------------------------------------------------------------------------//
 

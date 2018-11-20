@@ -1,33 +1,22 @@
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-INCLUDE_DIRECTORIES(${CMAKE_CURRENT_SOURCE_DIR})
-
-TRIBITS_CONFIGURE_FILE(${PROJECT_NAME}${PACKAGE_NAME}_config.hpp)
+configure_file(CabanaCore_config.hpp.cmakein CabanaCore_config.hpp)
 
 #-----------------------------------------------------------------------------
 
-SET(HEADERS_PUBLIC "")
-SET(HEADERS_PRIVATE "")
-SET(SOURCES "")
+file(GLOB HEADERS_PUBLIC *.hpp)
+file(GLOB SOURCES *.cpp)
 
 #-----------------------------------------------------------------------------
 
-FILE(GLOB HEADERS_PUBLIC *.hpp)
-FILE(GLOB SOURCES *.cpp)
+file(GLOB HEADERS_IMPL impl/*.hpp)
+file(GLOB SOURCES_IMPL impl/*.cpp)
+
+install(FILES ${HEADERS_PUBLIC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}) 
+install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}) 
 
 #-----------------------------------------------------------------------------
 
-FILE(GLOB HEADERS_IMPL impl/*.hpp)
-FILE(GLOB SOURCES_IMPL impl/*.cpp)
-
-LIST(APPEND HEADERS_PRIVATE ${HEADERS_IMPL} )
-LIST(APPEND SOURCES         ${SOURCES_IMPL} )
-
-#-----------------------------------------------------------------------------
-
-TRIBITS_ADD_LIBRARY(
-  cabanacore
-  HEADERS ${HEADERS_PUBLIC}
-  NOINSTALLHEADERS ${HEADERS_PRIVATE}
-  SOURCES ${SOURCES}
-  DEPLIBS
-  )
+add_library(cabanacore ${SOURCES} ${SOURCES} ${SOURCES_IMPL})
+target_include_directories(cabanacore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_link_libraries(cabanacore Kokkos::kokkos)
+install(TARGETS cabanacore LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})

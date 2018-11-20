@@ -1,31 +1,7 @@
-##--------------------------------------------------------------------------##
-## Cuda examples.
-##--------------------------------------------------------------------------##
-IF(Cabana_ENABLE_Cuda)
-
-  TRIBITS_ADD_EXECUTABLE(
-    CudaPerformanceTest
-    SOURCES cuda_perf_test.cpp
-    COMM serial mpi
-    )
-
-ENDIF()
-
-IF(Cabana_ENABLE_Serial)
-
-  TRIBITS_ADD_EXECUTABLE(
-    SerialExample
-    SOURCES serial_example.cpp
-    COMM serial mpi
-    )
-
-ENDIF()
-
-  TRIBITS_ADD_EXECUTABLE(
-    PeakFlops
-    SOURCES Cabana_peakflops.cpp
-    COMM serial mpi
-    )
+option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
+if(NOT Cabana_ENABLE_EXAMPLES)
+  return()
+endif()
 
 FIND_PACKAGE(PkgConfig)
 FIND_PACKAGE(MPI)
@@ -38,5 +14,7 @@ IF(PKG_CONFIG_FOUND AND SCAFACOS_FOUND)
   )
   TARGET_LINK_LIBRARIES(Core_ScafacosExample PkgConfig::SCAFACOS ${MPI_C_LIBRARIES})
   TARGET_INCLUDE_DIRECTORIES(Core_ScafacosExample PRIVATE ${MPI_C_INCLUDE_PATH})
-
 ENDIF()
+
+add_subdirectory(benchmark)
+add_subdirectory(tutorial)

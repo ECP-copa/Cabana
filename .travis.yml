@@ -1,0 +1,82 @@
+language: cpp
+
+# against hwloc error (travis-ci/travis-ci#10019)
+sudo: required
+
+env:
+  matrix:
+    - BACKENDS="OpenMP"
+    - BACKENDS="Serial"
+    - BACKENDS="Pthread"
+    - BACKENDS="Serial OpenMP"
+    - BACKENDS="Serial Pthread"
+    - BACKENDS="OpenMP" COVERAGE=ON
+    - BACKENDS="Serial" COVERAGE=ON
+    - BACKENDS="Pthread" COVERAGE=ON
+    - BACKENDS="Serial OpenMP" COVERAGE=ON
+    - BACKENDS="Serial Pthread" COVERAGE=ON
+
+before_script:
+  - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
+  - ccache -z
+  - KOKKOS_OPTS=( --with-hwloc=/usr )
+  - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
+    # gcc-toolchain workaround: https://github.com/kokkos/kokkos/issues/1841
+    # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
+  - if [[ ${CC} = clang ]]; then KOKKOS_MAKE_OPTS="KOKKOS_INTERNAL_GCC_TOOLCHAIN=/usr"; export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi 
+  - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
+    pushd kokkos &&
+    mkdir build &&
+    pushd build &&
+    ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
+    make -j2 ${KOKKOS_MAKE_OPTS} &&
+    make install ${KOKKOS_MAKE_OPTS} && 
+    popd &&
+    popd
+  - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
+
+addons:
+  apt:
+    packages:
+      - doxygen
+      - libhwloc-dev
+
+script:
+  - mkdir build && pushd build &&
+    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
+          -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
+          -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
+          ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
+    make -j2 VERBOSE=1 &&
+    make test CTEST_OUTPUT_ON_FAILURE=1 &&
+    make doxygen &&
+    make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr/local && rmdir ${PWD}/install/usr &&
+    popd
+
+after_success:
+ - ccache -s
+ - if [[ ${COVERAGE} ]]; then pushd build && bash <(curl -s https://codecov.io/bash) && popd; fi
+ - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
+     git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
+     rm -rf doxygen &&
+     mv build/html doxygen &&
+     git add --all doxygen;
+     if [[ ${TRAVIS_BRANCH} = master && ${encrypted_de2ca53a1b69_key} && ${encrypted_de2ca53a1b69_iv} && ${TRAVIS_PULL_REQUEST} == false ]]; then
+       git config --global user.name "Automatic Deployment (Travis CI)";
+       git config --global user.email "noreply@lanl.gov";
+       git commit -m "Documentation Update";
+       openssl aes-256-cbc -K $encrypted_de2ca53a1b69_key -iv $encrypted_de2ca53a1b69_iv -in deploy.enc -out ~/.ssh/id_rsa -d;
+       chmod 600 ~/.ssh/id_rsa;
+       git push git@github.com:${TRAVIS_REPO_SLUG} gh-pages:gh-pages;
+     else
+       git status;
+       git diff --cached --no-color | head -n 500;
+     fi;
+   fi
+
+cache:
+  - ccache
+
+compiler:
+  - gcc
+  - clang

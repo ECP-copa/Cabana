@@ -1,8 +1,18 @@
+/****************************************************************************
+ * Copyright (c) 2018 by the Cabana authors                                 *
+ * All rights reserved.                                                     *
+ *                                                                          *
+ * This file is part of the Cabana library. Cabana is distributed under a   *
+ * BSD 3-clause license. For the licensing terms see the LICENSE file in    *
+ * the top-level directory.                                                 *
+ *                                                                          *
+ * SPDX-License-Identifier: BSD-3-Clause                                    *
+ ****************************************************************************/
+
 #ifndef CABANA_PERFORMANCETRAITS_HPP
 #define CABANA_PERFORMANCETRAITS_HPP
 
 #include <Cabana_Types.hpp>
-#include <Cabana_InnerArrayLayout.hpp>
 #include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -26,10 +36,20 @@ template<>
 class PerformanceTraits<Kokkos::Serial>
 {
   public:
-    static constexpr int array_size = 8;
-    using data_layout = LayoutRight;
-    using inner_array_layout = InnerArrayLayout<array_size,data_layout>;
-    using parallel_for_tag = StructParallelTag;
+    static constexpr int vector_length = 16;
+    using parallel_for_tag = Experimental::StructParallelTag;
+};
+#endif
+
+//---------------------------------------------------------------------------//
+// Threads specialization.
+#if defined( KOKKOS_ENABLE_THREADS )
+template<>
+class PerformanceTraits<Kokkos::Threads>
+{
+  public:
+    static constexpr int vector_length = 16;
+    using parallel_for_tag = Experimental::StructParallelTag;
 };
 #endif
 
@@ -40,10 +60,8 @@ template<>
 class PerformanceTraits<Kokkos::OpenMP>
 {
   public:
-    static constexpr int array_size = 64;
-    using data_layout = LayoutRight;
-    using inner_array_layout = InnerArrayLayout<array_size,data_layout>;
-    using parallel_for_tag = StructParallelTag;
+    static constexpr int vector_length = 16;
+    using parallel_for_tag = Experimental::StructParallelTag;
 };
 #endif
 
@@ -54,11 +72,8 @@ template<>
 class PerformanceTraits<Kokkos::Cuda>
 {
   public:
-    static constexpr int array_size = Kokkos::Impl::CudaTraits::WarpSize;
-    using data_layout = LayoutLeft;
-    using inner_array_layout =
-        InnerArrayLayout<array_size,data_layout>;
-    using parallel_for_tag = StructAndArrayParallelTag;
+    static constexpr int vector_length = Kokkos::Impl::CudaTraits::WarpSize;
+    using parallel_for_tag = Experimental::IndexParallelTag;
 };
 #endif
 

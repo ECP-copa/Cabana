@@ -1,0 +1,18 @@
+test:default:
+  image: ubuntu
+  script:
+    - apt-get update
+    - apt-get install -y gcovr gfortran cmake g++ git
+    - git clone --depth=1 https://github.com/kokkos/kokkos.git && 
+      pushd kokkos &&
+      mkdir build &&
+      pushd build &&
+      ../generate_makefile.bash --prefix=$HOME/kokkos --with-openmp --with-serial &&
+      make -j2 &&
+      make install &&
+      popd &&
+      popd
+    - mkdir build && cd build &&
+      cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON .. &&
+      make -j2 VERBOSE=1 &&
+      make test

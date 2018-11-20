@@ -1,5 +1,15 @@
+/****************************************************************************
+ * Copyright (c) 2018 by the Cabana authors                                 *
+ * All rights reserved.                                                     *
+ *                                                                          *
+ * This file is part of the Cabana library. Cabana is distributed under a   *
+ * BSD 3-clause license. For the licensing terms see the LICENSE file in    *
+ * the top-level directory.                                                 *
+ *                                                                          *
+ * SPDX-License-Identifier: BSD-3-Clause                                    *
+ ****************************************************************************/
+
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberSlice.hpp>
 #include <Cabana_Sort.hpp>
 
 #include <gtest/gtest.h>
@@ -14,9 +24,9 @@ void testSortByKey()
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -32,10 +42,10 @@ void testSortByKey()
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
     // can see that it is sorted.
-    auto v0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto v1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto v2 = aosoa.view( Cabana::MemberTag<2>() );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    auto v0 = aosoa.slice<0>();
+    auto v1 = aosoa.slice<1>();
+    auto v2 = aosoa.slice<2>();
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -52,10 +62,11 @@ void testSortByKey()
     }
 
     // Sort the aosoa by keys.
-    auto permute_vector = Cabana::sortByKey( aosoa, keys, false );
+    auto binning_data = Cabana::sortByKey( keys );
+    Cabana::permute( binning_data, aosoa );
 
     // Check the result of the sort.
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -68,7 +79,7 @@ void testSortByKey()
             for ( int j = 0; j < dim_2; ++j )
                 EXPECT_EQ( v2( p, i, j ), p + i + j );
 
-        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
     }
 }
 
@@ -80,9 +91,9 @@ void testBinByKey()
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -100,10 +111,10 @@ void testBinByKey()
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
     // can see that it is sorted.
-    auto v0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto v1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto v2 = aosoa.view( Cabana::MemberTag<2>() );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    auto v0 = aosoa.slice<0>();
+    auto v1 = aosoa.slice<1>();
+    auto v2 = aosoa.slice<2>();
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -121,11 +132,12 @@ void testBinByKey()
 
     // Bin the aosoa by keys. Use one bin per data point to effectively make
     // this a sort.
-    auto bin_data = Cabana::binByKey( aosoa, keys, num_data-1, false );
+    auto bin_data = Cabana::binByKey( keys, num_data-1 );
+    Cabana::permute( bin_data, aosoa );
 
     // Check the result of the sort.
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -145,16 +157,16 @@ void testBinByKey()
 }
 
 //---------------------------------------------------------------------------//
-void testSortByMember()
+void testSortBySlice()
 {
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -165,10 +177,10 @@ void testSortByMember()
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto v1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto v2 = aosoa.view( Cabana::MemberTag<2>() );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    auto v0 = aosoa.slice<0>();
+    auto v1 = aosoa.slice<1>();
+    auto v2 = aosoa.slice<2>();
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -183,11 +195,11 @@ void testSortByMember()
     }
 
     // Sort the aosoa by the 1D member.
-    auto permute_vector =
-        Cabana::sortByMember( aosoa, Cabana::MemberTag<1>(), false );
+    auto binning_data = Cabana::sortByKey( aosoa.slice<1>() );
+    Cabana::permute( binning_data, aosoa );
 
     // Check the result of the sort.
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -200,21 +212,21 @@ void testSortByMember()
             for ( int j = 0; j < dim_2; ++j )
                 EXPECT_EQ( v2( p, i, j ), p + i + j );
 
-        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
     }
 }
 
 //---------------------------------------------------------------------------//
-void testSortByMemberDataOnly()
+void testSortBySliceDataOnly()
 {
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -225,10 +237,10 @@ void testSortByMemberDataOnly()
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto v1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto v2 = aosoa.view( Cabana::MemberTag<2>() );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    auto v0 = aosoa.slice<0>();
+    auto v1 = aosoa.slice<1>();
+    auto v2 = aosoa.slice<2>();
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -243,12 +255,11 @@ void testSortByMemberDataOnly()
     }
 
     // Sort the aosoa by the 1D member.
-    auto permute_vector =
-        Cabana::sortByMember( aosoa, Cabana::MemberTag<1>(), true );
+    auto binning_data = Cabana::sortByKey( aosoa.slice<1>() );
 
     // Check that the data didn't get sorted and the permutation vector is
-    // corrector.
-    for ( int p = 0; p < aosoa.size(); ++p )
+    // correct.
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -261,21 +272,21 @@ void testSortByMemberDataOnly()
             for ( int j = 0; j < dim_2; ++j )
                 EXPECT_EQ( v2( p, i, j ), reverse_index + i + j );
 
-        EXPECT_EQ( permute_vector(p), (unsigned) reverse_index );
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
     }
 }
 
 //---------------------------------------------------------------------------//
-void testBinByMember()
+void testBinBySlice()
 {
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -288,10 +299,10 @@ void testBinByMember()
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto v1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto v2 = aosoa.view( Cabana::MemberTag<2>() );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    auto v0 = aosoa.slice<0>();
+    auto v1 = aosoa.slice<1>();
+    auto v2 = aosoa.slice<2>();
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -307,12 +318,12 @@ void testBinByMember()
 
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort.
-    auto bin_data =
-        Cabana::binByMember( aosoa, Cabana::MemberTag<1>(), num_data-1, false );
+    auto bin_data = Cabana::binByKey( aosoa.slice<1>(), num_data-1 );
+    Cabana::permute( bin_data, aosoa );
 
     // Check the result of the sort.
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -332,16 +343,16 @@ void testBinByMember()
 }
 
 //---------------------------------------------------------------------------//
-void testBinByMemberDataOnly()
+void testBinBySliceDataOnly()
 {
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
 
     // Declare data types.
-    using DataTypes = Cabana::MemberDataTypes<float[dim_1],
-                                              int,
-                                              double[dim_1][dim_2]>;
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
+                                          int,
+                                          double[dim_1][dim_2]>;
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
@@ -354,10 +365,10 @@ void testBinByMemberDataOnly()
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = aosoa.view( Cabana::MemberTag<0>() );
-    auto v1 = aosoa.view( Cabana::MemberTag<1>() );
-    auto v2 = aosoa.view( Cabana::MemberTag<2>() );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    auto v0 = aosoa.slice<0>();
+    auto v1 = aosoa.slice<1>();
+    auto v2 = aosoa.slice<2>();
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -374,13 +385,12 @@ void testBinByMemberDataOnly()
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort. Don't actually move the particle data
     // though - just create the binning data.
-    auto bin_data =
-        Cabana::binByMember( aosoa, Cabana::MemberTag<1>(), num_data-1, true );
+    auto bin_data = Cabana::binByKey( aosoa.slice<1>(), num_data-1 );
 
     // Check the result of the sort. Make sure nothing moved execpt the
     // binning data.
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( int p = 0; p < aosoa.size(); ++p )
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
@@ -396,79 +406,6 @@ void testBinByMemberDataOnly()
         EXPECT_EQ( bin_data.binSize(p), 1 );
         EXPECT_EQ( bin_data.binOffset(p), size_type(p) );
         EXPECT_EQ( bin_data.permutation(p), reverse_index );
-    }
-}
-
-//---------------------------------------------------------------------------//
-void testGridBin3d()
-{
-    // Make an AoSoA with positions and ijk cell ids.
-    enum MyFields { Position = 0, CellId = 1 };
-    using DataTypes = Cabana::MemberDataTypes<double[3],int[3]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type =
-        typename AoSoA_t::memory_space::kokkos_memory_space::size_type;
-    int num_p = 1000;
-    AoSoA_t aosoa( num_p );
-
-    // Set the problem so each particle lives in the center of a cell on a
-    // regular grid of cell size 1 and total size 10x10x10. We are making them
-    // in the reverse order we expect the sort to happen. The sort binary
-    // operator should order by i first and k last.
-    int nx = 10;
-    double dx = 1.0;
-    double x_min = 0.0;
-    double x_max = x_min + nx * dx;
-    auto pos = aosoa.view( Cabana::MemberTag<Position>() );
-    auto cell_id = aosoa.view( Cabana::MemberTag<CellId>() );
-    int particle_id = 0;
-    for ( int k = 0; k < nx; ++k )
-    {
-        for ( int j = 0; j < nx; ++j )
-        {
-            for ( int i = 0; i < nx; ++i, ++particle_id )
-            {
-                cell_id( particle_id, 0 ) = i;
-                cell_id( particle_id, 1 ) = j;
-                cell_id( particle_id, 2 ) = k;
-
-                pos( particle_id, 0 ) = x_min + (i + 0.5) * dx;
-                pos( particle_id, 1 ) = x_min + (j + 0.5) * dx;
-                pos( particle_id, 2 ) = x_min + (k + 0.5) * dx;
-            }
-        }
-    }
-
-    // Bin the particles in the grid.
-    double grid_delta[3] = {dx,dx,dx};
-    double grid_min[3] = {x_min,x_min,x_min};
-    double grid_max[3] = {x_max,x_max,x_max};
-    auto bin_data =
-        Cabana::binByCartesianGrid3d( aosoa, Cabana::MemberTag<Position>(),
-                                      false, grid_delta, grid_min, grid_max );
-
-    // Checking the binning. The order should be reversed with the i index
-    // moving the slowest.
-    EXPECT_EQ( bin_data.totalBins(), nx*nx*nx );
-    EXPECT_EQ( bin_data.numBin(0), nx );
-    EXPECT_EQ( bin_data.numBin(1), nx );
-    EXPECT_EQ( bin_data.numBin(2), nx );
-    particle_id = 0;
-    for ( int i = 0; i < nx; ++i )
-    {
-        for ( int j = 0; j < nx; ++j )
-        {
-            for ( int k = 0; k < nx; ++k, ++particle_id )
-            {
-                EXPECT_EQ( cell_id( particle_id, 0 ), i );
-                EXPECT_EQ( cell_id( particle_id, 1 ), j );
-                EXPECT_EQ( cell_id( particle_id, 2 ), k );
-                EXPECT_EQ( bin_data.cardinalBinIndex(i,j,k), particle_id );
-                EXPECT_EQ( bin_data.binSize(i,j,k), 1 );
-                EXPECT_EQ( bin_data.binOffset(i,j,k),
-                           size_type(particle_id) );
-            }
-        }
     }
 }
 
@@ -489,31 +426,25 @@ TEST_F( TEST_CATEGORY, bin_by_key_test )
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, sort_by_member_test )
 {
-    testSortByMember();
+    testSortBySlice();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, sort_by_member_data_only_test )
 {
-    testSortByMemberDataOnly();
+    testSortBySliceDataOnly();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, bin_by_member_test )
 {
-    testBinByMember();
+    testBinBySlice();
 }
 
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, bin_by_member_data_only_test )
 {
-    testBinByMemberDataOnly();
-}
-
-//---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, grid_bin_3d_test )
-{
-    testGridBin3d();
+    testBinBySliceDataOnly();
 }
 
 //---------------------------------------------------------------------------//
