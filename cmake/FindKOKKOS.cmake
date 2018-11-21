@@ -13,7 +13,7 @@ pkg_check_modules(PC_KOKKOS kokkos QUIET)
 find_path(KOKKOS_SETTINGS_DIR kokkos_generated_settings.cmake HINTS ${PC_KOKKOS_PREFIX})
 
 find_path(KOKKOS_INCLUDE_DIR Kokkos_Core.hpp HINTS ${PC_KOKKOS_INCLUDE_DIRS})
-find_library(KOKKOS_LIBRARY NAMES kokkos HINTS ${PC_KOKKOS_LIBRARY_DIRS})
+find_library(KOKKOS_LIBRARY NAMES kokkos kokkoscore HINTS ${PC_KOKKOS_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
 # handle the QUIETLY and REQUIRED arguments and set KOKKOS_FOUND to TRUE
