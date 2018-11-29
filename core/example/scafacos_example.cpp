@@ -42,15 +42,15 @@ enum UserParticleFields
 
 // Designate the types that the particles will hold.
 using ParticleDataTypes =
-    Cabana::MemberDataTypes<float,                        // (0) x-position type
-                            float,                        // (1) y-position type
-                            float,                        // (2) z-position type
-                            double[space_dim],            // (3) velocity type
-                            double,			  // (4) charge
-			    double,			  // (5) potential
-			    double[space_dim],		  // (6) electric field values
-                            int                           // (7) status type
-                            >;
+    Cabana::MemberTypes<float,                        // (0) x-position type
+                        float,                        // (1) y-position type
+                        float,                        // (2) z-position type
+                        double[space_dim],            // (3) velocity type
+                        double,			  // (4) charge
+		        double,			  // (5) potential
+		        double[space_dim],		  // (6) electric field values
+                        int                           // (7) status type
+                        >;
 
 // Declare the memory space.
 using MemorySpace = Cabana::HostSpace;
