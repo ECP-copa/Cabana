@@ -147,16 +147,16 @@ createParticles( const int num_particle,
 
 //---------------------------------------------------------------------------//
 template<class PositionSlice>
-TestNeighborList<typename PositionSlice::kokkos_memory_space>
+TestNeighborList<typename PositionSlice::memory_space>
 computeFullNeighborList( const PositionSlice& position,
                          const double neighborhood_radius )
 {
     // Build a neighbor list with a brute force n^2 implementation. Count
     // first.
-    TestNeighborList<typename PositionSlice::kokkos_memory_space> list;
+    TestNeighborList<typename PositionSlice::memory_space> list;
     int num_particle = position.size();
     double rsqr = neighborhood_radius * neighborhood_radius;
-    list.counts = Kokkos::View<int*,typename PositionSlice::kokkos_memory_space>(
+    list.counts = Kokkos::View<int*,typename PositionSlice::memory_space>(
         "test_neighbor_count", num_particle );
     Kokkos::deep_copy( list.counts, 0 );
     auto count_op =
@@ -189,7 +189,7 @@ computeFullNeighborList( const PositionSlice& position,
     int max_n;
     Kokkos::parallel_reduce( exec_policy, max_op, Kokkos::Max<int>(max_n) );
     Kokkos::fence();
-    list.neighbors = Kokkos::View<int**,typename PositionSlice::kokkos_memory_space>(
+    list.neighbors = Kokkos::View<int**,typename PositionSlice::memory_space>(
         "test_neighbors", num_particle, max_n );
 
     // Fill.
@@ -372,10 +372,10 @@ void testNeighborParallelFor()
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Create Kokkos views for the write operation.
-    using kokkos_memory_space = typename TEST_MEMSPACE::kokkos_memory_space;
-    Kokkos::View<int*,kokkos_memory_space> test_result( "test_result", num_particle );
-    Kokkos::View<int*,kokkos_memory_space> serial_result( "serial_result", num_particle );
-    Kokkos::View<int*,kokkos_memory_space> team_result( "team_result", num_particle );
+    using memory_space = typename TEST_MEMSPACE::memory_space;
+    Kokkos::View<int*,memory_space> test_result( "test_result", num_particle );
+    Kokkos::View<int*,memory_space> serial_result( "serial_result", num_particle );
+    Kokkos::View<int*,memory_space> team_result( "team_result", num_particle );
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.

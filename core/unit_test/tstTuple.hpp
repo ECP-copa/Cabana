@@ -72,10 +72,8 @@ void runTest()
     using Tuple_t = Cabana::Tuple<DataTypes>;
 
     // Create a view of tuples.
-    using memory_space = TEST_MEMSPACE;
     std::size_t num_data = 453;
-    Kokkos::View<Tuple_t*,typename memory_space::kokkos_memory_space>
-        tuples( "tuples", num_data );
+    Kokkos::View<Tuple_t*,TEST_MEMSPACE> tuples( "tuples", num_data );
 
     // Initialize data.
     float fval = 3.4;

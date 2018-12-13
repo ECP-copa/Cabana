@@ -43,10 +43,8 @@ inline void deep_copy(
 {
     using dst_type = DstAoSoA;
     using src_type = SrcAoSoA;
-    using dst_memory_space =
-        typename dst_type::memory_space::kokkos_memory_space;
-    using src_memory_space =
-        typename src_type::memory_space::kokkos_memory_space;
+    using dst_memory_space = typename dst_type::memory_space;
+    using src_memory_space = typename src_type::memory_space;
     using dst_soa_type = typename dst_type::soa_type;
     using src_soa_type = typename src_type::soa_type;
 

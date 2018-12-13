@@ -33,9 +33,8 @@ class LinkedCellList
   public:
 
     using memory_space = MemorySpace;
-    using KokkosMemorySpace = typename memory_space::kokkos_memory_space;
-    using size_type = typename KokkosMemorySpace::size_type;
-    using OffsetView = Kokkos::View<size_type*,KokkosMemorySpace>;
+    using size_type = typename memory_space::size_type;
+    using OffsetView = Kokkos::View<size_type*,memory_space>;
 
     /*!
       \brief Default constructor.
@@ -218,7 +217,7 @@ class LinkedCellList
         // Allocate the binning data. Note that the permutation vector spans
         // only the length of begin-end;
         std::size_t ncell = totalBins();
-        Kokkos::View<int*,KokkosMemorySpace> counts( "counts", ncell );
+        Kokkos::View<int*,memory_space> counts( "counts", ncell );
         OffsetView offsets( "offsets", ncell );
         OffsetView permute( "permute", end - begin );
 
