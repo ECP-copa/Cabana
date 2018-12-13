@@ -47,7 +47,7 @@ using Cuda = Kokkos::Cuda;
 using HostSpace = Kokkos::HostSpace;
 
 #if defined( KOKKOS_ENABLE_CUDA )
-using CudaUVMSpace = Kokkos::UVMSpace;
+using CudaUVMSpace = Kokkos::CudaUVMSpace;
 #endif
 
 //---------------------------------------------------------------------------//
