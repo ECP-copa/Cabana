@@ -13,6 +13,7 @@
 #define CABANA_NEIGHBORLIST_HPP
 
 #include <Cabana_Macros.hpp>
+#include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -90,8 +91,7 @@ class TeamNeighborOpTag {};
   \brief Execute \c functor in parallel according to the execution \c policy
   with a thread-local serial loop over particle neighbors.
 
-  \tparam ExecutionPolicy The execution policy type over which to execute the
-  functor.
+  \tparam ExecutionSpace The execution space in which to execute the functor.
 
   \tparam FunctorType The functor type to execute.
 
@@ -128,12 +128,13 @@ class TeamNeighborOpTag {};
   <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
   \c for loop.
 */
-template<class ExecutionPolicy, class FunctorType, class NeighborListType>
-inline void neighbor_parallel_for( const ExecutionPolicy& exec_policy,
-                                   const FunctorType& functor,
-                                   const NeighborListType& list,
-                                   const SerialNeighborOpTag& tag,
-                                   const std::string& str = "" )
+template<class ExecutionSpace, class FunctorType, class NeighborListType>
+inline void neighbor_parallel_for(
+    const RangePolicy1d<ExecutionSpace>& exec_policy,
+    const FunctorType& functor,
+    const NeighborListType& list,
+    const SerialNeighborOpTag& tag,
+    const std::string& str = "" )
 {
     std::ignore = tag;
 
@@ -151,9 +152,8 @@ inline void neighbor_parallel_for( const ExecutionPolicy& exec_policy,
         };
 
     // Create the kokkos execution policy
-    using kokkos_policy =
-        Kokkos::RangePolicy<typename ExecutionPolicy::execution_space>;
-    kokkos_policy k_policy( exec_policy.begin(), exec_policy.end() );
+    Kokkos::RangePolicy<ExecutionSpace> k_policy(
+        exec_policy.begin(), exec_policy.end() );
 
     // Execute the functor.
     Kokkos::parallel_for( str, k_policy, functor_wrapper );
@@ -167,8 +167,7 @@ inline void neighbor_parallel_for( const ExecutionPolicy& exec_policy,
   \brief Execute \c functor in parallel according to the execution \c policy
   with team parallelism over particle neighbors.
 
-  \tparam ExecutionPolicy The execution policy type over which to execute the
-  functor.
+  \tparam ExecutionSpace The execution space in which to execute the functor.
 
   \tparam FunctorType The functor type to execute.
 
@@ -205,18 +204,19 @@ inline void neighbor_parallel_for( const ExecutionPolicy& exec_policy,
   <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
   \c for loop.
 */
-template<class ExecutionPolicy, class FunctorType, class NeighborListType>
-inline void neighbor_parallel_for( const ExecutionPolicy& exec_policy,
-                                   const FunctorType& functor,
-                                   const NeighborListType& list,
-                                   const TeamNeighborOpTag& tag,
-                                   const std::string& str = "" )
+template<class ExecutionSpace, class FunctorType, class NeighborListType>
+inline void neighbor_parallel_for(
+    const RangePolicy1d<ExecutionSpace>& exec_policy,
+    const FunctorType& functor,
+    const NeighborListType& list,
+    const TeamNeighborOpTag& tag,
+    const std::string& str = "" )
 {
     std::ignore = tag;
 
     // Create the kokkos execution policy
     using kokkos_policy =
-        Kokkos::TeamPolicy<typename ExecutionPolicy::execution_space,
+        Kokkos::TeamPolicy<ExecutionSpace,
                            Kokkos::IndexType<int>,
                            Kokkos::Schedule<Kokkos::Dynamic> >;
     kokkos_policy k_policy( exec_policy.end() - exec_policy.begin(),
