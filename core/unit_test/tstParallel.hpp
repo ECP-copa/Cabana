@@ -22,7 +22,7 @@ namespace Test
 // Check the data given a set of values.
 template<class aosoa_type>
 void checkDataMembers(
-    aosoa_type aosoa,
+    aosoa_type aosoa, int begin, int end,
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
@@ -31,7 +31,7 @@ void checkDataMembers(
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
 
-    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = begin; idx != end; ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
@@ -164,7 +164,7 @@ void runTest1d()
     AoSoA_t aosoa( num_data );
 
     // Create a linear execution policy using the begin and end of the AoSoA.
-    Cabana::RangePolicy1d<TEST_EXECSPACE> policy_1( 0, aosoa.size() );
+    Cabana::RangePolicy1d<TEST_EXECSPACE> policy_1( 12, 135 );
 
     // Create a functor to operate on.
     using OpType = AssignmentOp<AoSoA_t,
@@ -181,7 +181,7 @@ void runTest1d()
     Cabana::parallel_for( policy_1, func_1, "1d_test_1" );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 12, 135, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Change values and write a second functor.
     fval = 93.4;
@@ -196,7 +196,7 @@ void runTest1d()
     Cabana::parallel_for( policy_2, func_2, "1d_test_2" );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Change values and write a third functor.
     fval = 7.7;
@@ -211,7 +211,7 @@ void runTest1d()
     Cabana::parallel_for( policy_3, func_3, "1d_test_3" );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -242,7 +242,7 @@ void runTest2d()
     // Create a vectorized execution policy using the begin and end of the
     // AoSoA.
     Cabana::RangePolicy2d<TEST_EXECSPACE,AoSoA_t::vector_length>
-        policy_1( 0, aosoa.size() );
+        policy_1( 12, 135 );
 
     // Create a functor to operate on.
     using OpType = AssignmentOp<AoSoA_t,
@@ -259,7 +259,7 @@ void runTest2d()
     Cabana::parallel_for( policy_1, func_1, "2d_test_1" );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 12, 135, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Change values and write a second functor.
     fval = 93.4;
@@ -275,7 +275,7 @@ void runTest2d()
     Cabana::parallel_for( policy_2, func_2, "2d_test_2" );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Change values and write a third functor.
     fval = 7.7;
@@ -291,7 +291,7 @@ void runTest2d()
     Cabana::parallel_for( policy_3, func_3, "2d_test_3" );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//

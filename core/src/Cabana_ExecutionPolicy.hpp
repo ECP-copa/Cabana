@@ -54,8 +54,8 @@ class RangePolicy1d
     /*!
       \brief Container constructor.
 
-      The container must have a size() function that returns an int. C++
-      concepts would be really nice here. Valid containers include the AoSoA.
+      The container must have a size() function that returns an int. Valid
+      containers include the AoSoA, Slice, and Kokkos::View.
 
       \param container The container over which to build the range policy.
     */
@@ -122,8 +122,8 @@ class RangePolicy2d
     /*!
       \brief Container constructor.
 
-      The container must have a size() function that returns an int. C++
-      concepts would be really nice here. Valid containers include the AoSoA.
+      The container must have a size() function that returns an int. Valid
+      containers include the AoSoA, Slice, and Kokkos::View.
 
       \param container The container over which to build the range policy.
     */
