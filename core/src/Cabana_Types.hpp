@@ -21,33 +21,30 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 // Execution Spaces
 //---------------------------------------------------------------------------//
-template<class >
-using Kokkos::is_execution_space;
-
 #if defined( KOKKOS_ENABLE_SERIAL )
 using Kokkos::Serial;
 #endif
 
 #if defined( KOKKOS_ENABLE_THREADS )
-using Threads = Kokkos::Threads;
+using Kokkos::Threads;
 #endif
 
 #if defined( KOKKOS_ENABLE_OPENMP )
-using OpenMP = Kokkos::OpenMP;
+using Kokkos::OpenMP;
 #endif
 
 #if defined( KOKKOS_ENABLE_CUDA )
-using Cuda = Kokkos::Cuda;
+using Kokkos::Cuda;
 #endif
 
 //---------------------------------------------------------------------------//
 // Memory spaces
 //---------------------------------------------------------------------------//
 //! Host memory space
-using HostSpace = Kokkos::HostSpace;
+using Kokkos::HostSpace;
 
 #if defined( KOKKOS_ENABLE_CUDA )
-using CudaUVMSpace = Kokkos::CudaUVMSpace;
+using Kokkos::CudaUVMSpace;
 #endif
 
 //---------------------------------------------------------------------------//

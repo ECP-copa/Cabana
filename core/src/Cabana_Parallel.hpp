@@ -54,14 +54,14 @@ namespace Cabana
   range of indices <tt>idx=[begin,end]</tt>.
 */
 template<class ExecutionSpace, class FunctorType>
-inline void parallel_for( const RangePolicy1d<ExecutionSpace>& exec_policy,
+inline void parallel_for( const RangePolicy<ExecutionSpace>& exec_policy,
                           const FunctorType& functor,
                           const std::string& str = "" )
 {
-    Kokkos::RangePolicy<ExecutionSpace> k_policy(
-        exec_policy.begin(), exec_policy.end() );
+    using kokkos_policy = typename RangePolicy<ExecutionSpace>::base_type;
 
-    Kokkos::parallel_for( str, k_policy, functor );
+    Kokkos::parallel_for(
+        str, dynamic_cast<const kokkos_policy&>(exec_policy), functor );
 
     Kokkos::fence();
 }
@@ -106,20 +106,16 @@ inline void parallel_for( const RangePolicy1d<ExecutionSpace>& exec_policy,
 */
 template<class ExecutionSpace, class FunctorType, int VectorLength>
 inline void parallel_for(
-    const RangePolicy2d<ExecutionSpace,VectorLength>& exec_policy,
+    const SimdPolicy<ExecutionSpace,VectorLength>& exec_policy,
     const FunctorType& functor,
     const std::string& str = "" )
 {
     using kokkos_policy =
-        Kokkos::TeamPolicy<ExecutionSpace,
-                           Kokkos::IndexType<int>,
-                           Kokkos::Schedule<Kokkos::Dynamic> >;
-
-    kokkos_policy team_policy( exec_policy.numStruct(), 1, VectorLength );
+        typename SimdPolicy<ExecutionSpace,VectorLength>::base_type;
 
     Kokkos::parallel_for(
         str,
-        team_policy,
+        dynamic_cast<const kokkos_policy&>(exec_policy),
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
         {
             auto s = team.league_rank() + exec_policy.structBegin();

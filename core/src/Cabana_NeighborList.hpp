@@ -130,7 +130,7 @@ class TeamNeighborOpTag {};
 */
 template<class ExecutionSpace, class FunctorType, class NeighborListType>
 inline void neighbor_parallel_for(
-    const RangePolicy1d<ExecutionSpace>& exec_policy,
+    const RangePolicy<ExecutionSpace>& exec_policy,
     const FunctorType& functor,
     const NeighborListType& list,
     const SerialNeighborOpTag& tag,
@@ -151,12 +151,10 @@ inline void neighbor_parallel_for(
             }
         };
 
-    // Create the kokkos execution policy
-    Kokkos::RangePolicy<ExecutionSpace> k_policy(
-        exec_policy.begin(), exec_policy.end() );
-
     // Execute the functor.
-    Kokkos::parallel_for( str, k_policy, functor_wrapper );
+    Kokkos::parallel_for(
+        dynamic_cast<const Kokkos::RangePolicy<ExecutionSpace>&>(exec_policy),
+        functor_wrapper, str );
 
     // Fence.
     Kokkos::fence();
@@ -206,7 +204,7 @@ inline void neighbor_parallel_for(
 */
 template<class ExecutionSpace, class FunctorType, class NeighborListType>
 inline void neighbor_parallel_for(
-    const RangePolicy1d<ExecutionSpace>& exec_policy,
+    const RangePolicy<ExecutionSpace>& exec_policy,
     const FunctorType& functor,
     const NeighborListType& list,
     const TeamNeighborOpTag& tag,

@@ -15,20 +15,26 @@
 #include <Cabana_Macros.hpp>
 #include <impl/Cabana_Index.hpp>
 
+#include <Kokkos_Core.hpp>
+
+#include <type_traits>
+
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class RangePolicy1d
+  \class RangePolicy
   \brief Execution policy over a range of 1d indices.
 
   Gives a linear range of indices for executing a functor with concurrency
   over all indices.
 */
 template<class ExecutionSpace>
-class RangePolicy1d
+class RangePolicy : public Kokkos::RangePolicy<ExecutionSpace>
 {
   public:
+
+    using base_type = Kokkos::RangePolicy<ExecutionSpace>;
 
     using execution_space = ExecutionSpace;
 
@@ -37,18 +43,16 @@ class RangePolicy1d
       \param begin The begininning of the 1D range.
       \param begin The ending of the 1D range.
     */
-    RangePolicy1d( const std::size_t begin, const std::size_t end )
-        : _begin( begin )
-        , _end( end )
+    RangePolicy( const std::size_t begin, const std::size_t end )
+        : base_type(begin,end)
     {}
 
     /*!
       \brief Size constructor. Loop over n elements starting at 0.
       \param n The number of elements in the range.
     */
-    RangePolicy1d( const std::size_t n )
-        : _begin( 0 )
-        , _end( n )
+    RangePolicy( const std::size_t n )
+        : base_type(0,n)
     {}
 
     /*!
@@ -60,39 +64,81 @@ class RangePolicy1d
       \param container The container over which to build the range policy.
     */
     template<class Container>
-    RangePolicy1d( Container container )
-        : _begin( 0 )
-        , _end( container.size() )
+    RangePolicy( Container container )
+        : base_type(0,container.size())
     {}
-
-    //! First linear index in the range.
-    CABANA_INLINE_FUNCTION std::size_t begin() const { return _begin; }
-
-    //! Second linear index in the range.
-    CABANA_INLINE_FUNCTION std::size_t end() const { return _end; }
-
-  private:
-
-    std::size_t _begin;
-    std::size_t _end;
 };
+//---------------------------------------------------------------------------//
+namespace Impl
+{
+/*!
+  \class
+
+  \brief 2D loop outer index range giving struct index range bounds based on a
+  1D range input.
+
+  \tparam VectorLength The inner array size of the AoSoA.
+*/
+template<int VectorLength>
+class StructRange
+{
+  public:
+
+    template<typename I>
+    KOKKOS_FORCEINLINE_FUNCTION
+    static constexpr
+    typename std::enable_if<std::is_integral<I>::value,std::size_t>::type
+    structBegin( const I& begin )
+    {
+        return Index<VectorLength>::s(begin);
+    }
+
+    template<typename I>
+    KOKKOS_FORCEINLINE_FUNCTION
+    static constexpr
+    typename std::enable_if<std::is_integral<I>::value,std::size_t>::type
+    structEnd( const I& end )
+    {
+        // If the end is also at the front of an array that means the struct
+        // index of end is also the ending struct index. If not, we are not
+        // iterating all the way through the arrays of the last struct. In
+        // this case we add 1 to ensure that the loop over structs loops
+        // through all structs with data.
+        return (0 == Index<VectorLength>::a(end))
+            ? Index<VectorLength>::s(end) : Index<VectorLength>::s(end) + 1;
+    }
+
+    template<typename I0, typename I1>
+    KOKKOS_FORCEINLINE_FUNCTION
+    static constexpr
+    typename std::enable_if<(std::is_integral<I0>::value &&
+                             std::is_integral<I1>::value),std::size_t>::type
+    size( const I0& begin, const I1& end )
+    { return structEnd(end) - structBegin(begin); }
+};
+
+} // end namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class RangePolicy2d
+  \class SimdPolicy
   \brief Execution policy over a range of 2d indices.
 
   Gives 2D range of indices for executing a vectorized functor over the inner
   array index.
 */
 template<class ExecutionSpace, int VectorLength>
-class RangePolicy2d
+class SimdPolicy : public Kokkos::TeamPolicy<ExecutionSpace,
+                                             Kokkos::IndexType<int>,
+                                             Kokkos::Schedule<Kokkos::Dynamic> >
 {
   public:
 
-    using execution_space = ExecutionSpace;
+    using base_type = Kokkos::TeamPolicy<ExecutionSpace,
+                                         Kokkos::IndexType<int>,
+                                         Kokkos::Schedule<Kokkos::Dynamic> >;
 
-    static constexpr int vector_length = VectorLength;
+    using execution_space = ExecutionSpace;
 
     /*!
       \brief Range constructor.
@@ -101,22 +147,26 @@ class RangePolicy2d
       \param begin The ending of the 1D range. This will be decomposed
       into 2D indices.
     */
-    RangePolicy2d( const std::size_t begin, const std::size_t end )
-        : _struct_begin( Impl::Index<vector_length>::s(begin) )
-        , _struct_end( Impl::Index<vector_length>::s(end) )
-        , _array_begin( Impl::Index<vector_length>::a(begin) )
-        , _array_end( Impl::Index<vector_length>::a(end) )
+    SimdPolicy( const std::size_t begin, const std::size_t end )
+        : base_type( Impl::StructRange<VectorLength>::size(begin,end),
+                     1, VectorLength )
+        , _struct_begin( Impl::StructRange<VectorLength>::structBegin(begin) )
+        , _struct_end( Impl::StructRange<VectorLength>::structEnd(end) )
+        , _array_begin( Impl::Index<VectorLength>::a(begin) )
+        , _array_end( Impl::Index<VectorLength>::a(end) )
     {}
 
     /*!
       \brief Size constructor. Loop over n elements starting at 0.
       \param n The number of elements in the range.
     */
-    RangePolicy2d( const std::size_t n )
-        : _struct_begin( 0 )
-        , _struct_end( Impl::Index<vector_length>::s(n) )
+    SimdPolicy( const std::size_t n )
+        : base_type( Impl::StructRange<VectorLength>::size(0,n),
+                     1, VectorLength )
+        , _struct_begin( Impl::StructRange<VectorLength>::structBegin(0) )
+        , _struct_end( Impl::StructRange<VectorLength>::structEnd(n) )
         , _array_begin( 0 )
-        , _array_end( Impl::Index<vector_length>::a(n) )
+        , _array_end( Impl::Index<VectorLength>::a(n) )
     {}
 
     /*!
@@ -128,35 +178,23 @@ class RangePolicy2d
       \param container The container over which to build the range policy.
     */
     template<class Container>
-    RangePolicy2d( Container container )
-        : _struct_begin( 0 )
-        , _struct_end( Impl::Index<vector_length>::s(container.size()) )
+    SimdPolicy( Container container )
+        : base_type( Impl::StructRange<VectorLength>::size(0,container.size()),
+                     1, VectorLength )
+        , _struct_begin( Impl::StructRange<VectorLength>::structBegin(0) )
+        , _struct_end(
+            Impl::StructRange<VectorLength>::structEnd(container.size()) )
         , _array_begin( 0 )
-        , _array_end( Impl::Index<vector_length>::a(container.size()) )
+        , _array_end( Impl::Index<VectorLength>::a(container.size()) )
     {}
 
     //! Get the starting struct index.
     CABANA_INLINE_FUNCTION std::size_t structBegin() const
-    {
-        return _struct_begin;
-    }
+    { return _struct_begin; }
 
     //! Get the ending struct index.
     CABANA_INLINE_FUNCTION std::size_t structEnd() const
-    {
-        // If the end is also at the front of an array that means the struct
-        // index of end is also the ending struct index. If not, we are not
-        // iterating all the way through the arrays of the last struct. In
-        // this case we add 1 to ensure that the loop over structs loops
-        // through all structs with data.
-        return (0 == _array_end) ? _struct_end : _struct_end + 1;
-    }
-
-    //! Get the number of structs.
-    CABANA_INLINE_FUNCTION std::size_t numStruct() const
-    {
-        return structEnd() - structBegin();
-    }
+    { return _struct_end; }
 
     //! Given a struct id get the beginning array index.
     CABANA_INLINE_FUNCTION std::size_t arrayBegin( const std::size_t s ) const
@@ -165,7 +203,7 @@ class RangePolicy2d
         // begin, use the starting array index. If not, that means we have
         // passed the first struct and all subsequent structs start at array
         // index 0.
-        return ( s == structBegin() ) ? _array_begin : 0;
+        return ( s == _struct_begin ) ? _array_begin : 0;
     }
 
     // Given a struct id get the ending array index.
@@ -174,8 +212,8 @@ class RangePolicy2d
         // If we are in the last unfilled struct then use the array
         // index of end. If not, we are looping through the current array all
         // the way to the end so use the vector length.
-        return ( (s == structEnd() - 1) && (_array_end != 0) )
-            ? _array_end : vector_length;
+        return ( (s == _struct_end - 1) && (_array_end != 0) )
+            ? _array_end : VectorLength;
     }
 
   private:

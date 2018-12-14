@@ -164,7 +164,7 @@ void runTest1d()
     AoSoA_t aosoa( num_data );
 
     // Create a linear execution policy using the begin and end of the AoSoA.
-    Cabana::RangePolicy1d<TEST_EXECSPACE> policy_1( 12, 135 );
+    Cabana::RangePolicy<TEST_EXECSPACE> policy_1( 12, 135 );
 
     // Create a functor to operate on.
     using OpType = AssignmentOp<AoSoA_t,
@@ -190,7 +190,7 @@ void runTest1d()
     OpType func_2( aosoa, fval, dval, ival );
 
     // Create another range policy with the size constructor.
-    Cabana::RangePolicy1d<TEST_EXECSPACE> policy_2( aosoa.size() );
+    Cabana::RangePolicy<TEST_EXECSPACE> policy_2( aosoa.size() );
 
     // Loop in parallel using 1D array parallelism.
     Cabana::parallel_for( policy_2, func_2, "1d_test_2" );
@@ -205,7 +205,7 @@ void runTest1d()
     OpType func_3( aosoa, fval, dval, ival );
 
     // Create another range policy with the container constructor.
-    Cabana::RangePolicy1d<TEST_EXECSPACE> policy_3( aosoa );
+    Cabana::RangePolicy<TEST_EXECSPACE> policy_3( aosoa );
 
     // Loop in parallel using 1D array parallelism.
     Cabana::parallel_for( policy_3, func_3, "1d_test_3" );
@@ -241,7 +241,7 @@ void runTest2d()
 
     // Create a vectorized execution policy using the begin and end of the
     // AoSoA.
-    Cabana::RangePolicy2d<TEST_EXECSPACE,AoSoA_t::vector_length>
+    Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
         policy_1( 12, 135 );
 
     // Create a functor to operate on.
@@ -268,7 +268,7 @@ void runTest2d()
     OpType func_2( aosoa, fval, dval, ival );
 
     // Create another range policy with the size constructor.
-    Cabana::RangePolicy2d<TEST_EXECSPACE,AoSoA_t::vector_length>
+    Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
         policy_2( aosoa.size() );
 
     // Loop in parallel using 2D array parallelism.
@@ -284,7 +284,7 @@ void runTest2d()
     OpType func_3( aosoa, fval, dval, ival );
 
     // Create another range policy with the container constructor.
-    Cabana::RangePolicy2d<TEST_EXECSPACE,AoSoA_t::vector_length>
+    Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
         policy_3( aosoa );
 
     // Loop in parallel using 2D array parallelism.
@@ -301,7 +301,7 @@ void runTest2d()
 
     // Add one more where we do sit right on SoA boundaries to check our math
     // in that case.
-    Cabana::RangePolicy2d<TEST_EXECSPACE,AoSoA_t::vector_length>
+    Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
         policy_4( AoSoA_t::vector_length - 1, 2*AoSoA_t::vector_length );
     Cabana::parallel_for( policy_4, func_4, "2d_test_4" );
     checkDataMembers( aosoa,
