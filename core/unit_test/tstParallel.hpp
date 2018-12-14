@@ -292,6 +292,21 @@ void runTest2d()
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
+
+    // Change values and write a fourth functor.
+    fval = 3.3;
+    dval = 12.2;
+    ival = 2;
+    OpType func_4( aosoa, fval, dval, ival );
+
+    // Add one more where we do sit right on SoA boundaries to check our math
+    // in that case.
+    Cabana::RangePolicy2d<TEST_EXECSPACE,AoSoA_t::vector_length>
+        policy_4( AoSoA_t::vector_length - 1, 2*AoSoA_t::vector_length );
+    Cabana::parallel_for( policy_4, func_4, "2d_test_4" );
+    checkDataMembers( aosoa,
+                      AoSoA_t::vector_length - 1, 2*AoSoA_t::vector_length,
+                      fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
