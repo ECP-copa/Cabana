@@ -25,7 +25,7 @@ template<class >
 using Kokkos::is_execution_space;
 
 #if defined( KOKKOS_ENABLE_SERIAL )
-using Serial = Kokkos::Serial;
+using Kokkos::Serial;
 #endif
 
 #if defined( KOKKOS_ENABLE_THREADS )
