@@ -22,7 +22,7 @@ namespace Cabana
 // Execution Spaces
 //---------------------------------------------------------------------------//
 template<class >
-struct is_execution_space : public std::false_type {};
+using Kokkos::is_execution_space;
 
 #if defined( KOKKOS_ENABLE_SERIAL )
 using Serial = Kokkos::Serial;
