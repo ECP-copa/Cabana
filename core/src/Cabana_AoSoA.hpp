@@ -38,16 +38,6 @@ namespace Cabana
 
   A AoSoA represents tuples and their data via an array-of-structs-of-arrays.
 
-  This class has both required and optional template parameters.  The
-  \c DataType parameter must always be provided, and must always be
-  first. The parameters \c Arg1Type, \c Arg2Type, and \c Arg3Type are
-  placeholders for different template parameters.  The default value
-  of the fifth template parameter \c Specialize suffices for most use
-  cases.  When explaining the template parameters, we won't refer to
-  \c Arg1Type, \c Arg2Type, and \c Arg3Type; instead, we will refer
-  to the valid categories of template parameters, in whatever order
-  they may occur.
-
   \tparam DataType (required) Specifically this must be an instance of
   \c MemberTypes with the data layout of the structs. For example:
   \code
