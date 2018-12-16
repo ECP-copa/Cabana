@@ -241,10 +241,6 @@ class AoSoA
 
         // If we need more SoA objects then resize.
         Kokkos::resize( _data, num_soa_alloc );
-
-        // Get new pointers and strides for the members.
-        storePointersAndStrides(
-            std::integral_constant<std::size_t,number_of_members-1>() );
     }
 
     /*!
@@ -328,13 +324,19 @@ class AoSoA
     Slice<member_data_type<M>,memory_space,DefaultAccessMemory,vector_length>
     slice() const
     {
+        static_assert(
+            0 == sizeof(soa_type) % sizeof(member_value_type<M>),
+            "Slice stride cannot be calculated for misaligned memory!" );
+
         return
             Slice<member_data_type<M>,
                   memory_space,
                   DefaultAccessMemory,
-                  vector_length>(
-                      (member_pointer_type<M>) _pointers[M],
-                      _size, _strides[M], _num_soa );
+                  vector_length>
+            ( static_cast<member_pointer_type<M> >(_data(0).template ptr<M>()),
+              _size,
+              sizeof(soa_type) / sizeof(member_value_type<M>),
+              _num_soa );
     }
 
     /*!
@@ -343,34 +345,6 @@ class AoSoA
     */
     void* ptr() const
     { return _data.data(); }
-
-  private:
-
-    // Store the pointers and strides for each member element.
-    template<std::size_t N>
-    void assignPointersAndStrides()
-    {
-        static_assert( 0 <= N && N < number_of_members,
-                       "Static loop out of bounds!" );
-        _pointers[N] = _data(0).template ptr<N>();
-        static_assert( 0 ==
-                       sizeof(soa_type) % sizeof(member_value_type<N>),
-                       "Stride cannot be calculated for misaligned memory!" );
-        _strides[N] = sizeof(soa_type) / sizeof(member_value_type<N>);
-    }
-
-    // Static loop through each member element to extract pointers and strides.
-    template<std::size_t N>
-    void storePointersAndStrides( std::integral_constant<std::size_t,N> )
-    {
-        assignPointersAndStrides<N>();
-        storePointersAndStrides( std::integral_constant<std::size_t,N-1>() );
-    }
-
-    void storePointersAndStrides( std::integral_constant<std::size_t,0> )
-    {
-        assignPointersAndStrides<0>();
-    }
 
   private:
 
@@ -388,13 +362,6 @@ class AoSoA
     // assignment operator for this class perform a shallow and reference
     // counted copy of the data.
     soa_view _data;
-
-    // Pointers to the first element of each member.
-    void* _pointers[number_of_members];
-
-    // Strides for each member. Note that these strides are computed in the
-    // context of the *value_type* of each member.
-    std::size_t _strides[number_of_members];
 };
 
 //---------------------------------------------------------------------------//
