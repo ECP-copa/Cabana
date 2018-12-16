@@ -23,14 +23,14 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class RangePolicy
+  \class LinearPolicy
   \brief Execution policy over a range of 1d indices.
 
   Gives a linear range of indices for executing a functor with concurrency
   over all indices.
 */
 template<class ExecutionSpace>
-class RangePolicy : public Kokkos::RangePolicy<ExecutionSpace>
+class LinearPolicy : public Kokkos::RangePolicy<ExecutionSpace>
 {
   public:
 
@@ -43,7 +43,7 @@ class RangePolicy : public Kokkos::RangePolicy<ExecutionSpace>
       \param begin The begininning of the 1D range.
       \param begin The ending of the 1D range.
     */
-    RangePolicy( const std::size_t begin, const std::size_t end )
+    LinearPolicy( const std::size_t begin, const std::size_t end )
         : base_type(begin,end)
     {}
 
@@ -51,7 +51,7 @@ class RangePolicy : public Kokkos::RangePolicy<ExecutionSpace>
       \brief Size constructor. Loop over n elements starting at 0.
       \param n The number of elements in the range.
     */
-    RangePolicy( const std::size_t n )
+    LinearPolicy( const std::size_t n )
         : base_type(0,n)
     {}
 
@@ -64,7 +64,7 @@ class RangePolicy : public Kokkos::RangePolicy<ExecutionSpace>
       \param container The container over which to build the range policy.
     */
     template<class Container>
-    RangePolicy( Container container )
+    LinearPolicy( Container container )
         : base_type(0,container.size())
     {}
 };
@@ -85,7 +85,7 @@ class StructRange
   public:
 
     template<typename I>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static constexpr
     typename std::enable_if<std::is_integral<I>::value,std::size_t>::type
     structBegin( const I& begin )
@@ -94,7 +94,7 @@ class StructRange
     }
 
     template<typename I>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static constexpr
     typename std::enable_if<std::is_integral<I>::value,std::size_t>::type
     structEnd( const I& end )
@@ -109,7 +109,7 @@ class StructRange
     }
 
     template<typename I0, typename I1>
-    KOKKOS_FORCEINLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static constexpr
     typename std::enable_if<(std::is_integral<I0>::value &&
                              std::is_integral<I1>::value),std::size_t>::type

@@ -54,11 +54,11 @@ namespace Cabana
   range of indices <tt>idx=[begin,end]</tt>.
 */
 template<class ExecutionSpace, class FunctorType>
-inline void parallel_for( const RangePolicy<ExecutionSpace>& exec_policy,
+inline void parallel_for( const LinearPolicy<ExecutionSpace>& exec_policy,
                           const FunctorType& functor,
                           const std::string& str = "" )
 {
-    using kokkos_policy = typename RangePolicy<ExecutionSpace>::base_type;
+    using kokkos_policy = typename LinearPolicy<ExecutionSpace>::base_type;
 
     Kokkos::parallel_for(
         str, dynamic_cast<const kokkos_policy&>(exec_policy), functor );

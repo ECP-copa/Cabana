@@ -130,7 +130,7 @@ class TeamNeighborOpTag {};
 */
 template<class ExecutionSpace, class FunctorType, class NeighborListType>
 inline void neighbor_parallel_for(
-    const RangePolicy<ExecutionSpace>& exec_policy,
+    const LinearPolicy<ExecutionSpace>& exec_policy,
     const FunctorType& functor,
     const NeighborListType& list,
     const SerialNeighborOpTag& tag,
@@ -204,7 +204,7 @@ inline void neighbor_parallel_for(
 */
 template<class ExecutionSpace, class FunctorType, class NeighborListType>
 inline void neighbor_parallel_for(
-    const RangePolicy<ExecutionSpace>& exec_policy,
+    const LinearPolicy<ExecutionSpace>& exec_policy,
     const FunctorType& functor,
     const NeighborListType& list,
     const TeamNeighborOpTag& tag,
