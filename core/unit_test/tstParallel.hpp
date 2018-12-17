@@ -189,6 +189,7 @@ void runTest2d()
 
     // Loop in parallel.
     Cabana::simd_parallel_for( policy_1, func_1, "2d_test_1" );
+    Kokkos::fence();
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, range_begin, range_end, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -205,6 +206,7 @@ void runTest2d()
 
     // Loop in parallel using 2D array parallelism.
     Cabana::simd_parallel_for( policy_2, func_2, "2d_test_2" );
+    Kokkos::fence();
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, 0, aosoa.size(), fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -223,6 +225,7 @@ void runTest2d()
 
     // Loop in parallel using 2D array parallelism.
     Cabana::simd_parallel_for( policy_3, func_3, "2d_test_3" );
+    Kokkos::fence();
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, range_begin, range_end, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -239,6 +242,7 @@ void runTest2d()
 
     // Loop in parallel using 2D array parallelism.
     Cabana::simd_parallel_for( policy_4, func_4, "2d_test_4" );
+    Kokkos::fence();
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, 0, aosoa.size(), fval/2.0, dval/2.0, ival/2.0, dim_1, dim_2, dim_3 );

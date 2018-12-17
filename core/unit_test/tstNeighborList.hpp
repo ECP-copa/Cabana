@@ -389,6 +389,7 @@ void testNeighborParallelFor()
         policy, serial_count_op, nlist, Cabana::SerialNeighborOpTag() );
     Cabana::neighbor_parallel_for(
         policy, team_count_op, nlist, Cabana::TeamNeighborOpTag() );
+    Kokkos::fence();
 
     // Get the expected result in serial
     for ( int p = 0; p < num_particle; ++p )

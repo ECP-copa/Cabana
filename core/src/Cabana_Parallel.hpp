@@ -119,8 +119,6 @@ inline void simd_parallel_for(
                 [&]( const int a )
                 { Impl::functorTagDispatch<work_tag>(functor,s,a);});
         });
-
-    Kokkos::fence();
 }
 
 
@@ -204,8 +202,6 @@ inline void neighbor_parallel_for(
                     NeighborList<NeighborListType>::getNeighbor(list,i,n) );
         },
         str );
-
-    Kokkos::fence();
 }
 
 //---------------------------------------------------------------------------//
@@ -288,8 +284,6 @@ inline void neighbor_parallel_for(
                 });
         },
         str );
-
-    Kokkos::fence();
 }
 
 //---------------------------------------------------------------------------//
