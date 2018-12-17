@@ -31,8 +31,8 @@ template<class WorkTag, class FunctorType>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<std::is_same<WorkTag,void>::value>::type
 functorTagDispatch( const FunctorType& functor,
-                     const std::size_t s,
-                     const int a )
+                    const std::size_t s,
+                    const int a )
 {
     functor(s,a);
 }
@@ -42,8 +42,8 @@ template<class WorkTag, class FunctorType>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<!std::is_same<WorkTag,void>::value>::type
 functorTagDispatch( const FunctorType& functor,
-                     const std::size_t s,
-                     const int a )
+                    const std::size_t s,
+                    const int a )
 {
     const WorkTag t{};
     functor(t,s,a);
