@@ -32,21 +32,21 @@ namespace Impl
 
   \tparam VectorLength The inner array size of the AoSoA.
 */
-template<int VectorLength>
+template<int VectorLength, typename IndexType>
 class StructRange
 {
   public:
 
     KOKKOS_INLINE_FUNCTION
-    static constexpr std::size_t
-    structBegin( const std::size_t& begin )
+    static constexpr IndexType
+    structBegin( const IndexType& begin )
     {
         return Index<VectorLength>::s(begin);
     }
 
     KOKKOS_INLINE_FUNCTION
-    static constexpr std::size_t
-    structEnd( const std::size_t& end )
+    static constexpr IndexType
+    structEnd( const IndexType& end )
     {
         // If the end is also at the front of an array that means the struct
         // index of end is also the ending struct index. If not, we are not
@@ -58,8 +58,8 @@ class StructRange
     }
 
     KOKKOS_INLINE_FUNCTION
-    static constexpr std::size_t
-    size( const std::size_t& begin, const std::size_t end )
+    static constexpr IndexType
+    size( const IndexType& begin, const IndexType end )
     { return structEnd(end) - structBegin(begin); }
 };
 
@@ -73,20 +73,22 @@ class StructRange
   Gives 2D range of indices for executing a vectorized functor over the inner
   array index.
 */
-template<class ExecutionSpace, int VectorLength>
-class SimdPolicy : public Kokkos::TeamPolicy<ExecutionSpace,
-                                             Kokkos::IndexType<int>,
-                                             Kokkos::Schedule<Kokkos::Dynamic> >
+template<int VectorLength, class ... Properties>
+class SimdPolicy : public Kokkos::TeamPolicy<
+    typename Kokkos::Impl::PolicyTraits<Properties ... >::execution_space,
+    Kokkos::Schedule<Kokkos::Dynamic> >
 {
+  private:
+    typedef Kokkos::Impl::PolicyTraits<Properties ... > traits;
+
   public:
 
-    using base_type = Kokkos::TeamPolicy<ExecutionSpace,
-                                         Kokkos::IndexType<int>,
+    using work_tag = typename traits::work_tag;
+    using execution_space = typename traits::execution_space;
+    using base_type = Kokkos::TeamPolicy<execution_space,
                                          Kokkos::Schedule<Kokkos::Dynamic> >;
-
-    using execution_policy = base_type;
-
-    using execution_space = ExecutionSpace;
+    using execution_policy = SimdPolicy<VectorLength,Properties...>;
+    using index_type = typename traits::index_type;
 
     /*!
       \brief Range constructor.
@@ -95,25 +97,25 @@ class SimdPolicy : public Kokkos::TeamPolicy<ExecutionSpace,
       \param begin The ending of the 1D range. This will be decomposed
       into 2D indices.
     */
-    SimdPolicy( const std::size_t begin, const std::size_t end )
-        : base_type( Impl::StructRange<VectorLength>::size(begin,end),
+    SimdPolicy( const index_type begin, const index_type end )
+        : base_type( Impl::StructRange<VectorLength,index_type>::size(begin,end),
                      1, VectorLength )
-        , _struct_begin( Impl::StructRange<VectorLength>::structBegin(begin) )
-        , _struct_end( Impl::StructRange<VectorLength>::structEnd(end) )
+        , _struct_begin( Impl::StructRange<VectorLength,index_type>::structBegin(begin) )
+        , _struct_end( Impl::StructRange<VectorLength,index_type>::structEnd(end) )
         , _array_begin( Impl::Index<VectorLength>::a(begin) )
         , _array_end( Impl::Index<VectorLength>::a(end) )
     {}
 
     //! Get the starting struct index.
-    KOKKOS_INLINE_FUNCTION std::size_t structBegin() const
+    KOKKOS_INLINE_FUNCTION index_type structBegin() const
     { return _struct_begin; }
 
     //! Get the ending struct index.
-    KOKKOS_INLINE_FUNCTION std::size_t structEnd() const
+    KOKKOS_INLINE_FUNCTION index_type structEnd() const
     { return _struct_end; }
 
     //! Given a struct id get the beginning array index.
-    KOKKOS_INLINE_FUNCTION std::size_t arrayBegin( const std::size_t s ) const
+    KOKKOS_INLINE_FUNCTION index_type arrayBegin( const index_type s ) const
     {
         // If the given struct index is also the index of the struct index in
         // begin, use the starting array index. If not, that means we have
@@ -123,7 +125,7 @@ class SimdPolicy : public Kokkos::TeamPolicy<ExecutionSpace,
     }
 
     // Given a struct id get the ending array index.
-    KOKKOS_INLINE_FUNCTION std::size_t arrayEnd( const std::size_t s ) const
+    KOKKOS_INLINE_FUNCTION index_type arrayEnd( const index_type s ) const
     {
         // If we are in the last unfilled struct then use the array
         // index of end. If not, we are looping through the current array all
@@ -134,10 +136,10 @@ class SimdPolicy : public Kokkos::TeamPolicy<ExecutionSpace,
 
   private:
 
-    std::size_t _struct_begin;
-    std::size_t _struct_end;
-    std::size_t _array_begin;
-    std::size_t _array_end;
+    index_type _struct_begin;
+    index_type _struct_end;
+    index_type _array_begin;
+    index_type _array_end;
 };
 
 //---------------------------------------------------------------------------//

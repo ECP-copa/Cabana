@@ -55,6 +55,10 @@ void checkDataMembers(
 }
 
 //---------------------------------------------------------------------------//
+// Functor work tag for only assigning half the value.
+class HalfValueWorkTag {};
+
+//---------------------------------------------------------------------------//
 // Assignment operator.
 template<class AoSoA_t,
          class SliceType0,
@@ -81,25 +85,27 @@ class AssignmentOp
         , _dim_3( _slice_0.extent(4) )
     {}
 
-    KOKKOS_INLINE_FUNCTION void operator()( const int idx ) const
+    // tagged version that assigns only half the value..
+    KOKKOS_INLINE_FUNCTION void operator()(
+        const HalfValueWorkTag&, const int s, const int a ) const
     {
         // Member 0.
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
                 for ( int k = 0; k < _dim_3; ++k )
-                    _slice_0( idx, i, j, k ) = _fval * (i+j+k);
+                    _slice_0.access( s, a, i, j, k ) = _fval * (i+j+k) / 2.0;
 
         // Member 1.
-        _slice_1( idx ) = _ival;
+        _slice_1.access( s, a ) = _ival / 2.0;
 
         // Member 2.
         for ( int i = 0; i < _dim_1; ++i )
-            _slice_2( idx, i ) = _dval * i;
+            _slice_2.access( s, a, i ) = _dval * i / 2.0;
 
         // Member 3.
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
-                _slice_3( idx, i, j ) = _dval * (i+j);
+                _slice_3.access( s, a, i, j ) = _dval * (i+j) / 2.0;
     }
 
     KOKKOS_INLINE_FUNCTION void operator()( const int s, const int a ) const
@@ -167,7 +173,7 @@ void runTest2d()
     // AoSoA.
     int range_begin = 12;
     int range_end = 135;
-    Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
+    Cabana::SimdPolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
         policy_1( range_begin, range_end );
 
     // Create a functor to operate on.
@@ -194,7 +200,7 @@ void runTest2d()
     OpType func_2( aosoa, fval, dval, ival );
 
     // Create another range policy over the entire range.
-    Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
+    Cabana::SimdPolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
         policy_2( 0, aosoa.size() );
 
     // Loop in parallel using 2D array parallelism.
@@ -212,7 +218,7 @@ void runTest2d()
     // Create another range policy over the entire range.
     range_begin = 16;
     range_end = 17;
-    Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
+    Cabana::SimdPolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
         policy_3( range_begin, range_end );
 
     // Loop in parallel using 2D array parallelism.
@@ -220,6 +226,22 @@ void runTest2d()
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, range_begin, range_end, fval, dval, ival, dim_1, dim_2, dim_3 );
+
+    // Now use the tagged version and assign half the value.
+    fval = 93.4;
+    dval = 12.1;
+    ival = 4;
+    OpType func_4( aosoa, fval, dval, ival );
+
+    // Create another range policy over the entire range.
+    Cabana::SimdPolicy<AoSoA_t::vector_length,TEST_EXECSPACE,HalfValueWorkTag>
+        policy_4( 0, aosoa.size() );
+
+    // Loop in parallel using 2D array parallelism.
+    Cabana::simd_parallel_for( policy_4, func_4, "2d_test_4" );
+
+    // Check data members for proper initialization.
+    checkDataMembers( aosoa, 0, aosoa.size(), fval/2.0, dval/2.0, ival/2.0, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
