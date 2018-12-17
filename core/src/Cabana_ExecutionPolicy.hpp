@@ -39,14 +39,14 @@ class StructRange
 
     KOKKOS_INLINE_FUNCTION
     static constexpr IndexType
-    structBegin( const IndexType& begin )
+    structBegin( const IndexType begin )
     {
         return Index<VectorLength>::s(begin);
     }
 
     KOKKOS_INLINE_FUNCTION
     static constexpr IndexType
-    structEnd( const IndexType& end )
+    structEnd( const IndexType end )
     {
         // If the end is also at the front of an array that means the struct
         // index of end is also the ending struct index. If not, we are not
@@ -59,7 +59,7 @@ class StructRange
 
     KOKKOS_INLINE_FUNCTION
     static constexpr IndexType
-    size( const IndexType& begin, const IndexType end )
+    size( const IndexType begin, const IndexType end )
     { return structEnd(end) - structBegin(begin); }
 };
 
