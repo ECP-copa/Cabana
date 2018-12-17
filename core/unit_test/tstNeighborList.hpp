@@ -12,6 +12,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_VerletList.hpp>
+#include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Random.hpp>
@@ -383,11 +384,11 @@ void testNeighborParallelFor()
                            { Kokkos::atomic_add( &serial_result(i), n ); };
     auto team_count_op = KOKKOS_LAMBDA( const int i, const int n )
                          { Kokkos::atomic_add( &team_result(i), n ); };
-    Cabana::LinearPolicy<TEST_EXECSPACE> policy( aosoa );
-    Cabana::Experimental::neighbor_parallel_for(
-        policy, serial_count_op, nlist, Cabana::Experimental::SerialNeighborOpTag() );
-    Cabana::Experimental::neighbor_parallel_for(
-        policy, team_count_op, nlist, Cabana::Experimental::TeamNeighborOpTag() );
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
+    Cabana::neighbor_parallel_for(
+        policy, serial_count_op, nlist, Cabana::SerialNeighborOpTag() );
+    Cabana::neighbor_parallel_for(
+        policy, team_count_op, nlist, Cabana::TeamNeighborOpTag() );
 
     // Get the expected result in serial
     for ( int p = 0; p < num_particle; ++p )

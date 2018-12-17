@@ -13,7 +13,6 @@
 #define CABANA_NEIGHBORLIST_HPP
 
 #include <Cabana_Macros.hpp>
-#include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -72,8 +71,6 @@ class NeighborList
                             const int neighbor_index );
 };
 
-namespace Experimental
-{
 //---------------------------------------------------------------------------//
 // Neighbor Parallel For
 //---------------------------------------------------------------------------//
@@ -91,11 +88,11 @@ class TeamNeighborOpTag {};
   \brief Execute \c functor in parallel according to the execution \c policy
   with a thread-local serial loop over particle neighbors.
 
-  \tparam ExecutionSpace The execution space in which to execute the functor.
-
   \tparam FunctorType The functor type to execute.
 
   \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParams The Kokkos range policy parameters.
 
   \param exec_policy The policy over which to execute the functor.
 
@@ -128,9 +125,9 @@ class TeamNeighborOpTag {};
   <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
   \c for loop.
 */
-template<class ExecutionSpace, class FunctorType, class NeighborListType>
+template<class FunctorType, class NeighborListType, class ... ExecParameters>
 inline void neighbor_parallel_for(
-    const LinearPolicy<ExecutionSpace>& exec_policy,
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor,
     const NeighborListType& list,
     const SerialNeighborOpTag& tag,
@@ -138,25 +135,18 @@ inline void neighbor_parallel_for(
 {
     std::ignore = tag;
 
-    // Serial neighbor operation.
-    auto functor_wrapper =
+    Kokkos::parallel_for(
+        exec_policy,
         KOKKOS_LAMBDA( const int i )
         {
             for ( int n = 0;
                   n < NeighborList<NeighborListType>::numNeighbor(list,i);
                   ++n )
-            {
                 functor(
                     i, NeighborList<NeighborListType>::getNeighbor(list,i,n) );
-            }
-        };
+        },
+        str );
 
-    // Execute the functor.
-    Kokkos::parallel_for(
-        dynamic_cast<const Kokkos::RangePolicy<ExecutionSpace>&>(exec_policy),
-        functor_wrapper, str );
-
-    // Fence.
     Kokkos::fence();
 }
 
@@ -202,9 +192,9 @@ inline void neighbor_parallel_for(
   <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
   \c for loop.
 */
-template<class ExecutionSpace, class FunctorType, class NeighborListType>
+template<class FunctorType, class NeighborListType, class ... ExecParameters>
 inline void neighbor_parallel_for(
-    const LinearPolicy<ExecutionSpace>& exec_policy,
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
     const FunctorType& functor,
     const NeighborListType& list,
     const TeamNeighborOpTag& tag,
@@ -212,16 +202,18 @@ inline void neighbor_parallel_for(
 {
     std::ignore = tag;
 
-    // Create the kokkos execution policy
+    using ExecutionSpace =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
     using kokkos_policy =
         Kokkos::TeamPolicy<ExecutionSpace,
                            Kokkos::IndexType<int>,
                            Kokkos::Schedule<Kokkos::Dynamic> >;
-    kokkos_policy k_policy( exec_policy.end() - exec_policy.begin(),
+    kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
                             Kokkos::AUTO );
 
-    // Create a team operator.
-    auto functor_wrapper =
+    Kokkos::parallel_for(
+        team_policy,
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
         {
             auto i = team.league_rank();
@@ -232,19 +224,13 @@ inline void neighbor_parallel_for(
                     functor(
                         i, NeighborList<NeighborListType>::getNeighbor(list,i,n) );
                 });
+        },
+        str );
 
-        };
-
-    // Execute the functor.
-    Kokkos::parallel_for( str, k_policy, functor_wrapper );
-
-    // Fence.
     Kokkos::fence();
 }
 
 //---------------------------------------------------------------------------//
-
-} // end namespace Experimental
 
 } // end namespace Cabana
 

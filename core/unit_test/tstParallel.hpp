@@ -139,84 +139,6 @@ class AssignmentOp
 };
 
 //---------------------------------------------------------------------------//
-// Parallel for test with linear indexing.
-void runTest1d()
-{
-    // Data dimensions.
-    const int dim_1 = 3;
-    const int dim_2 = 2;
-    const int dim_3 = 4;
-
-    // Declare data types.
-    using DataTypes =
-        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
-                            int,
-                            double[dim_1],
-                            double[dim_1][dim_2]
-                            >;
-
-    // Declare the AoSoA type. Let the library pick an inner array size based
-    // on the execution space.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-
-    // Create an AoSoA.
-    int num_data = 155;
-    AoSoA_t aosoa( num_data );
-
-    // Create a linear execution policy using the begin and end of the AoSoA.
-    int range_begin = 12;
-    int range_end = 135;
-    Cabana::LinearPolicy<TEST_EXECSPACE> policy_1( range_begin, range_end );
-
-    // Create a functor to operate on.
-    using OpType = AssignmentOp<AoSoA_t,
-                                decltype(aosoa.slice<0>()),
-                                decltype(aosoa.slice<1>()),
-                                decltype(aosoa.slice<2>()),
-                                decltype(aosoa.slice<3>())>;
-    float fval = 3.4;
-    double dval = 1.23;
-    int ival = 1;
-    OpType func_1( aosoa, fval, dval, ival );
-
-    // Loop in parallel.
-    Cabana::parallel_for( policy_1, func_1, "1d_test_1" );
-
-    // Check data members for proper initialization.
-    checkDataMembers( aosoa, range_begin, range_end, fval, dval, ival, dim_1, dim_2, dim_3 );
-
-    // Change values and write a second functor.
-    fval = 93.4;
-    dval = 12.1;
-    ival = 4;
-    OpType func_2( aosoa, fval, dval, ival );
-
-    // Create another range policy with the size constructor.
-    Cabana::LinearPolicy<TEST_EXECSPACE> policy_2( aosoa.size() );
-
-    // Loop in parallel using 1D array parallelism.
-    Cabana::parallel_for( policy_2, func_2, "1d_test_2" );
-
-    // Check data members for proper initialization.
-    checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
-
-    // Change values and write a third functor.
-    fval = 7.7;
-    dval = 3.2;
-    ival = 9;
-    OpType func_3( aosoa, fval, dval, ival );
-
-    // Create another range policy with the container constructor.
-    Cabana::LinearPolicy<TEST_EXECSPACE> policy_3( aosoa );
-
-    // Loop in parallel using 1D array parallelism.
-    Cabana::parallel_for( policy_3, func_3, "1d_test_3" );
-
-    // Check data members for proper initialization.
-    checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
-}
-
-//---------------------------------------------------------------------------//
 // Parallel for test with vectorized indexing.
 void runTest2d()
 {
@@ -260,7 +182,7 @@ void runTest2d()
     OpType func_1( aosoa, fval, dval, ival );
 
     // Loop in parallel.
-    Cabana::parallel_for( policy_1, func_1, "2d_test_1" );
+    Cabana::simd_parallel_for( policy_1, func_1, "2d_test_1" );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, range_begin, range_end, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -271,57 +193,39 @@ void runTest2d()
     ival = 4;
     OpType func_2( aosoa, fval, dval, ival );
 
-    // Create another range policy with the size constructor.
+    // Create another range policy over the entire range.
     Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
-        policy_2( aosoa.size() );
+        policy_2( 0, aosoa.size() );
 
     // Loop in parallel using 2D array parallelism.
-    Cabana::parallel_for( policy_2, func_2, "2d_test_2" );
+    Cabana::simd_parallel_for( policy_2, func_2, "2d_test_2" );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 0, aosoa.size(), fval, dval, ival, dim_1, dim_2, dim_3 );
 
-    // Change values and write a third functor.
+    // Change values and write a third functor over a single element.
     fval = 7.7;
     dval = 3.2;
     ival = 9;
     OpType func_3( aosoa, fval, dval, ival );
 
-    // Create another range policy with the container constructor.
+    // Create another range policy over the entire range.
+    range_begin = 16;
+    range_end = 17;
     Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
-        policy_3( aosoa );
+        policy_3( range_begin, range_end );
 
     // Loop in parallel using 2D array parallelism.
-    Cabana::parallel_for( policy_3, func_3, "2d_test_3" );
+    Cabana::simd_parallel_for( policy_3, func_3, "2d_test_3" );
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, 0, num_data, fval, dval, ival, dim_1, dim_2, dim_3 );
-
-    // Change values and write a fourth functor.
-    fval = 3.3;
-    dval = 12.2;
-    ival = 2;
-    OpType func_4( aosoa, fval, dval, ival );
-
-    // Add one more where we do sit right on SoA boundaries to check our math
-    // in that case.
-    Cabana::SimdPolicy<TEST_EXECSPACE,AoSoA_t::vector_length>
-        policy_4( AoSoA_t::vector_length - 1, 2*AoSoA_t::vector_length );
-    Cabana::parallel_for( policy_4, func_4, "2d_test_4" );
-    checkDataMembers( aosoa,
-                      AoSoA_t::vector_length - 1, 2*AoSoA_t::vector_length,
-                      fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, range_begin, range_end, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, parallel_for_test_1d )
-{
-    runTest1d();
-}
-
-TEST_F( TEST_CATEGORY, parallel_for_test_2d )
+TEST_F( TEST_CATEGORY, simd_parallel_for_test )
 {
     runTest2d();
 }

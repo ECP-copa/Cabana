@@ -15,57 +15,11 @@
 #include <Cabana_ExecutionPolicy.hpp>
 
 #include <Kokkos_Core.hpp>
-#include <Kokkos_Parallel.hpp>
 
 #include <cstdlib>
 
 namespace Cabana
 {
-//---------------------------------------------------------------------------//
-/*!
-  \brief Execute a functor in parallel with a 1d execution policy.
-
-  \tparam ExecutionSpace The execution space in which to execute the functor.
-
-  \tparam FunctorType The functor type to execute.
-
-  \param exec_policy The 1D range policy over which to execute the functor.
-
-  \param functor The functor to execute in parallel. Must accept a single index.
-
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
-
-  A "functor" is a callable object containing the function to execute in
-  parallel, data needed for that execution, and an optional \c execution_space
-  typedef.  Here is an example functor for parallel_for:
-
-  \code
-  class FunctorType {
-  public:
-  typedef  ...  execution_space ;
-  void operator() ( const int index ) const ;
-  };
-  \endcode
-
-  In the above example, index is 1D index to a given AoSoA/slice element.  Its
-  <tt>operator()</tt> method defines the operation to parallelize, over the
-  range of indices <tt>idx=[begin,end]</tt>.
-*/
-template<class ExecutionSpace, class FunctorType>
-inline void parallel_for( const LinearPolicy<ExecutionSpace>& exec_policy,
-                          const FunctorType& functor,
-                          const std::string& str = "" )
-{
-    using kokkos_policy = typename LinearPolicy<ExecutionSpace>::base_type;
-
-    Kokkos::parallel_for(
-        str, dynamic_cast<const kokkos_policy&>(exec_policy), functor );
-
-    Kokkos::fence();
-}
-
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute a vectorized functor in parallel with a 2d execution policy.
@@ -105,18 +59,18 @@ inline void parallel_for( const LinearPolicy<ExecutionSpace>& exec_policy,
   functor is intended to vectorize of the array index.
 */
 template<class ExecutionSpace, class FunctorType, int VectorLength>
-inline void parallel_for(
+inline void simd_parallel_for(
     const SimdPolicy<ExecutionSpace,VectorLength>& exec_policy,
     const FunctorType& functor,
     const std::string& str = "" )
 {
-    using kokkos_policy =
+    using team_policy =
         typename SimdPolicy<ExecutionSpace,VectorLength>::base_type;
 
     Kokkos::parallel_for(
         str,
-        dynamic_cast<const kokkos_policy&>(exec_policy),
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
+        dynamic_cast<const team_policy&>(exec_policy),
+        KOKKOS_LAMBDA( const typename team_policy::member_type& team )
         {
             auto s = team.league_rank() + exec_policy.structBegin();
             Kokkos::parallel_for(
