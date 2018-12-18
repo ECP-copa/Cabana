@@ -62,7 +62,9 @@ struct data_t
 // Helper functions.
 //---------------------------------------------------------------------------//
 // Move function using the array-of-struct-of-arrays synatx.
-void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
+
+void //__attribute__ ((noinline))
+movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
             data_t *__restrict__ x1, data_t *__restrict__ x2,
             data_t *__restrict__ x3, data_t *__restrict__ x4,
             data_t *__restrict__ x5, data_t *__restrict__ x6,
@@ -75,24 +77,24 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
     int j;
 
     asm volatile ("# ax+c loop begin");
-    for(i = 0; i<n; i++)
-    {
         for ( s = 0; s < num_struct; ++s )
         {
-            for(j=0; j<VECLENTH; j++)
+            for(i = 0; i<n; i++)
             {
-                x0[s].vec[j] = a[s].vec[j]*x0[s].vec[j]+ c[s].vec[j];
-                x1[s].vec[j] = a[s].vec[j]*x1[s].vec[j]+ c[s].vec[j];
-                x2[s].vec[j] = a[s].vec[j]*x2[s].vec[j]+ c[s].vec[j];
-                x3[s].vec[j] = a[s].vec[j]*x3[s].vec[j]+ c[s].vec[j];
-                x4[s].vec[j] = a[s].vec[j]*x4[s].vec[j]+ c[s].vec[j];
-                x5[s].vec[j] = a[s].vec[j]*x5[s].vec[j]+ c[s].vec[j];
-                x6[s].vec[j] = a[s].vec[j]*x6[s].vec[j]+ c[s].vec[j];
-                x7[s].vec[j] = a[s].vec[j]*x7[s].vec[j]+ c[s].vec[j];
-                x8[s].vec[j] = a[s].vec[j]*x8[s].vec[j]+ c[s].vec[j];
-                x9[s].vec[j] = a[s].vec[j]*x9[s].vec[j]+ c[s].vec[j];
+                for(j=0; j<VECLENTH; j++)
+                {
+                    x0[s].vec[j] = a[s].vec[j]*x0[s].vec[j]+ c[s].vec[j];
+                    x1[s].vec[j] = a[s].vec[j]*x1[s].vec[j]+ c[s].vec[j];
+                    x2[s].vec[j] = a[s].vec[j]*x2[s].vec[j]+ c[s].vec[j];
+                    x3[s].vec[j] = a[s].vec[j]*x3[s].vec[j]+ c[s].vec[j];
+                    x4[s].vec[j] = a[s].vec[j]*x4[s].vec[j]+ c[s].vec[j];
+                    x5[s].vec[j] = a[s].vec[j]*x5[s].vec[j]+ c[s].vec[j];
+                    x6[s].vec[j] = a[s].vec[j]*x6[s].vec[j]+ c[s].vec[j];
+                    x7[s].vec[j] = a[s].vec[j]*x7[s].vec[j]+ c[s].vec[j];
+                    x8[s].vec[j] = a[s].vec[j]*x8[s].vec[j]+ c[s].vec[j];
+                    x9[s].vec[j] = a[s].vec[j]*x9[s].vec[j]+ c[s].vec[j];
+                }
             }
-        }
     }
     asm volatile ("# ax+c loop end");
     for ( s = 0; s < num_struct; ++s )
@@ -105,8 +107,67 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
     }
 }
 
+void //__attribute__ ((noinline))
+move_AoSoA(
+        ParticleList& a,  ParticleList& x0, ParticleList& x1, ParticleList& x2,
+        ParticleList& x3, ParticleList& x4, ParticleList& x5, ParticleList& x6,
+        ParticleList& x7, ParticleList& x8, ParticleList& x9, ParticleList& c,
+        long n, int num_struct )
+{
+    long i;
+    int s;
+    int j;
+
+    asm volatile ("# ax+c loop begin");
+        for ( s = 0; s < num_struct; ++s )
+        {
+            for(i = 0; i<n; i++)
+            {
+#pragma omp simd
+                for(j=0; j<VECLENTH; j++)
+                {
+                    auto _c = c.access(s).get<0>(j);
+                    auto _a = a.access(s).get<0>(j);
+
+                    x0.access(s).get<0>(j) = _a * x0.access(s).get<0>(j) + _c;
+                    x1.access(s).get<0>(j) = _a * x1.access(s).get<0>(j) + _c;
+                    x2.access(s).get<0>(j) = _a * x2.access(s).get<0>(j) + _c;
+                    x3.access(s).get<0>(j) = _a * x3.access(s).get<0>(j) + _c;
+                    x4.access(s).get<0>(j) = _a * x4.access(s).get<0>(j) + _c;
+                    x5.access(s).get<0>(j) = _a * x5.access(s).get<0>(j) + _c;
+                    x6.access(s).get<0>(j) = _a * x6.access(s).get<0>(j) + _c;
+                    x7.access(s).get<0>(j) = _a * x7.access(s).get<0>(j) + _c;
+                    x8.access(s).get<0>(j) = _a * x8.access(s).get<0>(j) + _c;
+                    x9.access(s).get<0>(j) = _a * x9.access(s).get<0>(j) + _c;
+                }
+            }
+    }
+    asm volatile ("# ax+c loop end");
+    /*
+    for ( s = 0; s < num_struct; ++s )
+    {
+        for(j=0; j<VECLENTH; j++)
+        {
+            x0[s].vec[j] = x0[s].vec[j]+x1[s].vec[j]+x2[s].vec[j]+x3[s].vec[j]+x4[s].vec[j]+
+                           x5[s].vec[j]+x6[s].vec[j]+x7[s].vec[j]+x8[s].vec[j]+x9[s].vec[j];
+        }
+    }
+    */
+}
+
+
+
+#pragma omp declare simd simdlen(VECLENTH) uniform(s) linear(i) uniform(a)
+template<typename SliceType>
+//void access_vector_mul(SliceType* x, SliceType* a, SliceType* c, const int s, const int i)
+float access_vector_mul_direct(SliceType& x, SliceType& a, SliceType& c, int s, int i)
+{
+    return a(i) * x(i) + c(i);
+}
+
 //---------------------------------------------------------------------------//
 // Move function using the single particle index and slice syntax.
+/*
 template<typename SliceType>
 void moveSlices(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
                SliceType x3, SliceType x4, SliceType x5, SliceType x6,
@@ -118,13 +179,15 @@ void moveSlices(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
     int j;
 
     asm volatile ("# ax+c loop begin");
-    for(i = 0; i<n; i++)
-    {
         for ( s = 0; s < num_struct; ++s )
         {
+    for(i = 0; i<n; i++)
+    {
+#pragma omp simd
             for(j=s*VECLENTH; j<(s+1)*VECLENTH; j++)
             {
-                x0(j) = a(j)*x0(j)+ c(j);
+                x0(j) = access_vector_mul_direct(x0, a, c, s, j);
+                //x0(j) = a(j)*x0(j)+ c(j);
                 x1(j) = a(j)*x1(j)+ c(j);
                 x2(j) = a(j)*x2(j)+ c(j);
                 x3(j) = a(j)*x3(j)+ c(j);
@@ -146,8 +209,54 @@ void moveSlices(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
         }
     }
 }
+*/
 
-//---------------------------------------------------------------------------//
+/*
+template<typename SliceType>
+void access_vector_mul(SliceType* x, SliceType* a, SliceType* c, const int s, const int i)
+{
+    x->access(s,i) = a->acess(s,i) * x->access(s,i) + c->access(s,i);
+}
+
+__declspec(vector_variant(implements(
+                access_vector_mul(SliceType* x, SliceType* a, SliceType* c, const int s, const int i)
+            ),
+                          uniform(s), linear(i), vectorlength(8)
+            ))
+*/
+
+/* HSW 0.6608 flops/clock 3
+#pragma omp declare simd simdlen(8) uniform(s) linear(i)
+template<typename SliceType>
+//void access_vector_mul(SliceType* x, SliceType* a, SliceType* c, const int s, const int i)
+void access_vector_mul(SliceType& x, SliceType& a, SliceType& c, int s, int i)
+{
+    x.access(s,i) = a.access(s,i) * x.access(s,i) + c.access(s,i);
+}*/
+
+#pragma omp declare simd simdlen(VECLENTH) uniform(s) linear(i) uniform(a) uniform(c) uniform(x)
+template<typename SliceType>
+//void access_vector_mul(SliceType* x, SliceType* a, SliceType* c, const int s, const int i)
+float access_vector_mul(SliceType& x, SliceType& a, SliceType& c, int s, int i)
+{
+    return a.access(s,i) * x.access(s,i) + c.access(s,i);
+}
+/*
+void access_vector_variant() {
+                x0.access(s,j) = a.access(s,j)*x0.access(s,j)+ c.access(s,j);
+                x1.access(s,j) = a.access(s,j)*x1.access(s,j)+ c.access(s,j);
+                x2.access(s,j) = a.access(s,j)*x2.access(s,j)+ c.access(s,j);
+                x3.access(s,j) = a.access(s,j)*x3.access(s,j)+ c.access(s,j);
+                x4.access(s,j) = a.access(s,j)*x4.access(s,j)+ c.access(s,j);
+                x5.access(s,j) = a.access(s,j)*x5.access(s,j)+ c.access(s,j);
+                x6.access(s,j) = a.access(s,j)*x6.access(s,j)+ c.access(s,j);
+                x7.access(s,j) = a.access(s,j)*x7.access(s,j)+ c.access(s,j);
+                x8.access(s,j) = a.access(s,j)*x8.access(s,j)+ c.access(s,j);
+                x9.access(s,j) = a.access(s,j)*x9.access(s,j)+ c.access(s,j);
+}
+*/
+
+//---------------------------------------------------------------------------/
 // Move function using struct and array indices and slice syntax.
 template<typename SliceType>
 void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
@@ -159,13 +268,69 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
     int s;
     int j;
 
+    /*
+    const int x0_stride = x0.stride(0);
+    const int x1_stride = x1.stride(0);
+    const int x2_stride = x2.stride(0);
+    const int x3_stride = x3.stride(0);
+    const int x4_stride = x4.stride(0);
+    const int x5_stride = x5.stride(0);
+    const int x6_stride = x6.stride(0);
+    const int x7_stride = x7.stride(0);
+    const int x8_stride = x8.stride(0);
+    const int x9_stride = x9.stride(0);
+
+    const int a_stride = a.stride(0);
+    const int c_stride = c.stride(0);
+    */
+
     asm volatile ("# ax+c loop begin");
-    for(i = 0; i<n; i++)
+    for ( s = 0; s < num_struct; ++s )
     {
-        for ( s = 0; s < num_struct; ++s )
+        for(i = 0; i<n; i++)
         {
+#pragma omp simd
             for(j=0; j<VECLENTH; j++)
             {
+                //(&x0.access(0,0))[s*x0_stride + j] = (&a.access(0,0))[s*a_stride + j] * (&x0.access(0,0))[s*x0_stride + j] + (&c.access(0,0))[s*c_stride + j]; // Works
+                //(&x0.access(s,0))[j] = (&a.access(s,0))[j] * (&x0.access(s,0))[j] + (&c.access(s,0))[j]; // Works
+                //(&x0.access(s,j))[0] = (&a.access(s,j))[0] * (&x0.access(s,j))[0] + (&c.access(s,j))[0]; // Doesnt work
+
+                //(&x0.block(s))[j] = (&a.block(s))[j] * (&x0.block(s))[j] + (&c.block(s))[j];  // Works?
+                //
+                //auto _c = c.block(s,j);
+                //auto _a = a.block(s,j);
+
+                /*
+                x0.block(s,j) = _a * x0.block(s,j) + _c;
+                x1.block(s,j) = _a * x1.block(s,j) + _c;
+                x2.block(s,j) = _a * x2.block(s,j) + _c;
+                x3.block(s,j) = _a * x3.block(s,j) + _c;
+                x4.block(s,j) = _a * x4.block(s,j) + _c;
+                x5.block(s,j) = _a * x5.block(s,j) + _c;
+                x6.block(s,j) = _a * x6.block(s,j) + _c;
+                x7.block(s,j) = _a * x7.block(s,j) + _c;
+                x8.block(s,j) = _a * x8.block(s,j) + _c;
+                x9.block(s,j) = _a * x9.block(s,j) + _c;
+                */
+
+                //x0.block(s).offset(j) = a.block(s).offset(j) * x0.block(s).offset(j) + c.block(s).offset(j);
+
+                //x0.access(0,0) = access_vector_mul( x0, a, c, s, j);
+
+                /*
+                   x0.access(s,j) = access_vector_mul( x0, a, c, s, j);
+                   x1.access(s,j) = access_vector_mul( x1, a, c, s, j);
+                   x2.access(s,j) = access_vector_mul( x2, a, c, s, j);
+                   x3.access(s,j) = access_vector_mul( x3, a, c, s, j);
+                   x4.access(s,j) = access_vector_mul( x4, a, c, s, j);
+                   x5.access(s,j) = access_vector_mul( x5, a, c, s, j);
+                   x6.access(s,j) = access_vector_mul( x6, a, c, s, j);
+                   x7.access(s,j) = access_vector_mul( x7, a, c, s, j);
+                   x8.access(s,j) = access_vector_mul( x8, a, c, s, j);
+                   x9.access(s,j) = access_vector_mul( x9, a, c, s, j);
+                   */
+
                 x0.access(s,j) = a.access(s,j)*x0.access(s,j)+ c.access(s,j);
                 x1.access(s,j) = a.access(s,j)*x1.access(s,j)+ c.access(s,j);
                 x2.access(s,j) = a.access(s,j)*x2.access(s,j)+ c.access(s,j);
@@ -176,6 +341,8 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
                 x7.access(s,j) = a.access(s,j)*x7.access(s,j)+ c.access(s,j);
                 x8.access(s,j) = a.access(s,j)*x8.access(s,j)+ c.access(s,j);
                 x9.access(s,j) = a.access(s,j)*x9.access(s,j)+ c.access(s,j);
+
+
             }
         }
     }
@@ -278,7 +445,7 @@ void run()
     unsigned long long c2 = rdtscp();
 
     unsigned long long c3 = rdtscp();
-    moveSlices(ma,m0,m1,m2,m3,m4,m5,m6,m7,m8,m9,mc,n,num_struct);
+    move_AoSoA(a_, x_, x1_, x2_, x3_, x4_, x5_, x6_, x7_, x8_, x9_, c_ , n, num_struct);
     unsigned long long c4 = rdtscp();
 
     unsigned long long c5 = rdtscp();
@@ -299,10 +466,12 @@ void run()
     std::cout<<dc1<<" clocks 1"<<std::endl;
     std::cout<<flops/dc1<<" flops/clock 1\n";
     std::cout << std::endl;
-    std::cout << "Slice Single Index" << std::endl;
+
+    std::cout << "AoSoA access " << std::endl;
     std::cout<<dc2<<" clocks 2"<<std::endl;
     std::cout<<flops/dc2<<" flops/clock 2\n";
     std::cout << std::endl;
+
     std::cout << "Slice Struct/Array Index" << std::endl;
     std::cout<<dc3<<" clocks 3"<<std::endl;
     std::cout<<flops/dc3<<" flops/clock 3\n";
