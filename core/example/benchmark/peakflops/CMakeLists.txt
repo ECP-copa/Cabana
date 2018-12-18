@@ -1,0 +1,13 @@
+option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
+if(NOT Cabana_ENABLE_EXAMPLES)
+  return()
+endif()
+
+add_executable(01_cpp_simple 01_cpp_simple.cpp)
+target_link_libraries(01_cpp_simple cabanacore)
+
+add_executable(02_kokkos_simple_view 02_kokkos_simple_view.cpp)
+target_link_libraries(02_kokkos_simple_view cabanacore)
+
+add_executable(03_Cabana_peakflops 03_Cabana_peakflops.cpp)
+target_link_libraries(03_Cabana_peakflops cabanacore)
