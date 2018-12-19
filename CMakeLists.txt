@@ -69,6 +69,7 @@ if(Cabana_ENABLE_TESTING)
   enable_testing()
 endif()
 
+
 find_package(Doxygen)
 if(Doxygen_FOUND)
   set(DOXYGEN_GENERATE_XML YES) 

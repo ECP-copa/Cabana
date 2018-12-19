@@ -1,8 +1,3 @@
-option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
-if(NOT Cabana_ENABLE_EXAMPLES)
-  return()
-endif()
-
 add_executable(01_cpp_simple 01_cpp_simple.cpp)
 target_link_libraries(01_cpp_simple cabanacore)
 
