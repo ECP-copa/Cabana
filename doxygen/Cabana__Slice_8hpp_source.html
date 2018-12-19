@@ -235,344 +235,340 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment"></span><span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> DataType,</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;         <span class="keyword">typename</span> <a class="code" href="structCabana_1_1HostSpace.html">MemorySpace</a>,</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;         <span class="keyword">typename</span> MemorySpace,</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;         <span class="keyword">typename</span> MemoryAccessType,</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;         <span class="keywordtype">int</span> VectorLength,</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;         <span class="keyword">typename</span> std::enable_if&lt;</div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;             (<a class="code" href="structCabana_1_1is__memory__space.html">is_memory_space&lt;MemorySpace&gt;::value</a> &amp;&amp;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;              <a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag&lt;MemoryAccessType&gt;::value</a> &amp;&amp;</div>
-<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;              <a class="code" href="structCabana_1_1Impl_1_1IsVectorLengthValid.html">Impl::IsVectorLengthValid&lt;VectorLength&gt;::value</a>),<span class="keywordtype">int</span>&gt;::type = 0&gt;</div>
-<div class="line"><a name="l00162"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html">  162</a></span>&#160;<span class="keyword">class</span> <a class="code" href="classCabana_1_1Slice.html">Slice</a></div>
-<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;{</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="comment">// Slice type.</span></div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Slice.html">slice_type</a> =</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;        <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,MemoryAccessType,VectorLength&gt;</a>;</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;</div>
-<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="comment">// Cabana memory space.</span></div>
-<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1HostSpace.html">memory_space</a> = <a class="code" href="structCabana_1_1HostSpace.html">MemorySpace</a>;</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;</div>
-<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="comment">// Memory access type.</span></div>
-<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="keyword">using</span> memory_access_type = MemoryAccessType;</div>
-<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;</div>
-<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="comment">// Vector length.</span></div>
-<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> vector_length = VectorLength;</div>
-<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;</div>
-<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="comment">// Index type.</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Impl_1_1Index.html">index_type</a> = <a class="code" href="classCabana_1_1Impl_1_1Index.html">Impl::Index&lt;vector_length&gt;</a>;</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;</div>
-<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="comment">// Maximum supported rank.</span></div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> max_supported_rank = 3;</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;</div>
-<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="comment">// Kokkos view wrapper.</span></div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">view_wrapper</a> = <a class="code" href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">Impl::KokkosViewWrapper&lt;DataType,vector_length&gt;</a>;</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="comment">// Kokkos view type.</span></div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="keyword">using</span> kokkos_view =</div>
-<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        Kokkos::View&lt;<span class="keyword">typename</span> view_wrapper::data_type,</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                     Kokkos::LayoutStride,</div>
-<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                     <span class="keyword">typename</span> MemorySpace::kokkos_memory_space,</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;                     <span class="keyword">typename</span> MemoryAccessType::kokkos_memory_traits&gt;;</div>
-<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;</div>
-<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="comment">// View type aliases.</span></div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keyword">using</span> reference_type = <span class="keyword">typename</span> kokkos_view::reference_type;</div>
-<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keyword">using</span> value_type = <span class="keyword">typename</span> kokkos_view::value_type;</div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keyword">using</span> pointer_type = <span class="keyword">typename</span> kokkos_view::pointer_type;</div>
-<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keyword">using</span> kokkos_memory_space = <span class="keyword">typename</span> kokkos_view::memory_space;</div>
-<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;    <span class="keyword">using</span> kokkos_execution_space = <span class="keyword">typename</span> kokkos_view::execution_space;</div>
-<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="keyword">using</span> kokkos_device_type = <span class="keyword">typename</span> kokkos_view::device_type;</div>
-<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;</div>
-<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    <span class="comment">// Compatible memory access slice types.</span></div>
-<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Slice.html">default_access_slice</a> =</div>
-<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,DefaultAccessMemory,VectorLength&gt;</a>;</div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Slice.html">atomic_access_slice</a> =</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,AtomicAccessMemory,VectorLength&gt;</a>;</div>
-<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Slice.html">random_access_slice</a> =</div>
-<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;        <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,RandomAccessMemory,VectorLength&gt;</a>;</div>
-<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;</div>
-<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="comment">// Declare slices of different memory access types to be friends.</span></div>
-<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,DefaultAccessMemory,VectorLength&gt;</a>;</div>
-<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,AtomicAccessMemory,VectorLength&gt;</a>;</div>
-<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,RandomAccessMemory,VectorLength&gt;</a>;</div>
-<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;</div>
-<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;    <span class="comment">// Data rank.</span></div>
-<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;    <span class="keyword">enum</span> { Rank = std::rank&lt;DataType&gt;::value };</div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;             (<a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag&lt;MemoryAccessType&gt;::value</a> &amp;&amp;</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;              <a class="code" href="structCabana_1_1Impl_1_1IsVectorLengthValid.html">Impl::IsVectorLengthValid&lt;VectorLength&gt;::value</a>),<span class="keywordtype">int</span>&gt;::type = 0&gt;</div>
+<div class="line"><a name="l00161"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html">  161</a></span>&#160;<span class="keyword">class</span> <a class="code" href="classCabana_1_1Slice.html">Slice</a></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;{</div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="comment">// Slice type.</span></div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Slice.html">slice_type</a> =</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,MemoryAccessType,VectorLength&gt;</a>;</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="comment">// Cabana memory space.</span></div>
+<div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keyword">using</span> memory_space = MemorySpace;</div>
+<div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;    <span class="comment">// Memory access type.</span></div>
+<div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;    <span class="keyword">using</span> memory_access_type = MemoryAccessType;</div>
+<div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;</div>
+<div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="comment">// Vector length.</span></div>
+<div class="line"><a name="l00176"></a><span class="lineno">  176</span>&#160;    <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> vector_length = VectorLength;</div>
+<div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;</div>
+<div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;    <span class="comment">// Index type.</span></div>
+<div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Impl_1_1Index.html">index_type</a> = <a class="code" href="classCabana_1_1Impl_1_1Index.html">Impl::Index&lt;vector_length&gt;</a>;</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="comment">// Maximum supported rank.</span></div>
+<div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;    <span class="keyword">static</span> constexpr <span class="keywordtype">int</span> max_supported_rank = 3;</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="comment">// Kokkos view wrapper.</span></div>
+<div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">view_wrapper</a> = <a class="code" href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">Impl::KokkosViewWrapper&lt;DataType,vector_length&gt;</a>;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="comment">// Kokkos view type.</span></div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keyword">using</span> kokkos_view =</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;        Kokkos::View&lt;<span class="keyword">typename</span> view_wrapper::data_type,</div>
+<div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;                     Kokkos::LayoutStride,</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;                     MemorySpace,</div>
+<div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                     <span class="keyword">typename</span> MemoryAccessType::kokkos_memory_traits&gt;;</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;</div>
+<div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="comment">// View type aliases.</span></div>
+<div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keyword">using</span> reference_type = <span class="keyword">typename</span> kokkos_view::reference_type;</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;    <span class="keyword">using</span> value_type = <span class="keyword">typename</span> kokkos_view::value_type;</div>
+<div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="keyword">using</span> pointer_type = <span class="keyword">typename</span> kokkos_view::pointer_type;</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    <span class="keyword">using</span> execution_space = <span class="keyword">typename</span> kokkos_view::execution_space;</div>
+<div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;    <span class="keyword">using</span> device_type = <span class="keyword">typename</span> kokkos_view::device_type;</div>
+<div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;</div>
+<div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;    <span class="comment">// Compatible memory access slice types.</span></div>
+<div class="line"><a name="l00202"></a><span class="lineno">  202</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Slice.html">default_access_slice</a> =</div>
+<div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;        <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,DefaultAccessMemory,VectorLength&gt;</a>;</div>
+<div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Slice.html">atomic_access_slice</a> =</div>
+<div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;        <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,AtomicAccessMemory,VectorLength&gt;</a>;</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1Slice.html">random_access_slice</a> =</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;        <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,RandomAccessMemory,VectorLength&gt;</a>;</div>
+<div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;</div>
+<div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="comment">// Declare slices of different memory access types to be friends.</span></div>
+<div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,DefaultAccessMemory,VectorLength&gt;</a>;</div>
+<div class="line"><a name="l00211"></a><span class="lineno">  211</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,AtomicAccessMemory,VectorLength&gt;</a>;</div>
+<div class="line"><a name="l00212"></a><span class="lineno">  212</span>&#160;    <span class="keyword">friend</span> <span class="keyword">class </span><a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,RandomAccessMemory,VectorLength&gt;</a>;</div>
+<div class="line"><a name="l00213"></a><span class="lineno">  213</span>&#160;</div>
+<div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160;    <span class="comment">// Data rank.</span></div>
+<div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;    <span class="keyword">enum</span> { Rank = std::rank&lt;DataType&gt;::value };</div>
+<div class="line"><a name="l00216"></a><span class="lineno">  216</span>&#160;</div>
+<div class="line"><a name="l00217"></a><span class="lineno">  217</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00218"></a><span class="lineno">  218</span>&#160;</div>
-<div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;</div>
-<div class="line"><a name="l00224"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a470d03e7b4e68707aa94f9494102467b">  224</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#a470d03e7b4e68707aa94f9494102467b">Slice</a>()</div>
-<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;        : _size( 0 )</div>
-<div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    {}</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;</div>
-<div class="line"><a name="l00236"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a093b87799f1a96378cb51dc63ae9f49e">  236</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#a093b87799f1a96378cb51dc63ae9f49e">Slice</a>( <span class="keyword">const</span> pointer_type data,</div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;           <span class="keyword">const</span> std::size_t size,</div>
-<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;           <span class="keyword">const</span> std::size_t soa_stride,</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;           <span class="keyword">const</span> std::size_t num_soa )</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;        : _view( data, <a class="code" href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">view_wrapper</a>::createLayout(num_soa,soa_stride) )</div>
-<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;        , _size( size )</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    {}</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;</div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> MAT&gt;</div>
-<div class="line"><a name="l00252"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a9a0af9f9260e40cf875518c1b70a415a">  252</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#a9a0af9f9260e40cf875518c1b70a415a">Slice</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,MAT,VectorLength&gt;</a>&amp; rhs )</div>
-<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        : _view( rhs._view )</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;        , _size( rhs._size )</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    {}</div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;</div>
-<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> MAT&gt;</div>
-<div class="line"><a name="l00267"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#aa0a89c7d1f2857b62a8e0a44f1fe4558">  267</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html">Slice</a>&amp; <a class="code" href="classCabana_1_1Slice.html#aa0a89c7d1f2857b62a8e0a44f1fe4558">operator=</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,MAT,VectorLength&gt;</a>&amp; rhs )</div>
-<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    {</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        _view = rhs._view;</div>
-<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;        _size = rhs._size;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    }</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00279"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a7d0ae6765bf7d5dab27ee8aca45506cf">  279</a></span>&#160;    std::size_t <a class="code" href="classCabana_1_1Slice.html#a7d0ae6765bf7d5dab27ee8aca45506cf">size</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _size; }</div>
-<div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00287"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a7c27d76c4635c37fe5a0dc188a0128c1">  287</a></span>&#160;    std::size_t <a class="code" href="classCabana_1_1Slice.html#a7c27d76c4635c37fe5a0dc188a0128c1">numSoA</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _view.extent(0); }</div>
-<div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S&gt;</div>
-<div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;std::is_integral&lt;S&gt;::value,<span class="keywordtype">int</span>&gt;::type</div>
-<div class="line"><a name="l00297"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#aa808d5bb8d32d067f3606477273338f8">  297</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#aa808d5bb8d32d067f3606477273338f8">arraySize</a>( <span class="keyword">const</span> S&amp; s )<span class="keyword"> const</span></div>
-<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;        <span class="keywordflow">return</span> ( (std::size_t) s &lt; _view.extent(0) - 1 )</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;            ? vector_length : ( _size % vector_length );</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    }</div>
-<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    <span class="comment">// ------------</span></div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="comment">// 2-D accessor</span></div>
-<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="comment">// Rank 0</span></div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S,</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;             <span class="keyword">typename</span> A,</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(0==std::rank&lt;U&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                             std::is_integral&lt;S&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                             std::is_integral&lt;A&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                            reference_type&gt;::type</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    access( <span class="keyword">const</span> S&amp; s,</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            <span class="keyword">const</span> A&amp; a ) <span class="keyword">const</span></div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    { <span class="keywordflow">return</span> _view( s, a ); }</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="comment">// Rank 1</span></div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S,</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;             <span class="keyword">typename</span> A,</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;             <span class="keyword">typename</span> D0,</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(1==std::rank&lt;U&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                             std::is_integral&lt;S&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                             std::is_integral&lt;A&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;                            reference_type&gt;::type</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    access( <span class="keyword">const</span> S&amp; s,</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;            <span class="keyword">const</span> A&amp; a,</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;            <span class="keyword">const</span> D0&amp; d0 ) <span class="keyword">const</span></div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    { <span class="keywordflow">return</span> _view( s, a, d0 ); }</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="comment">// Rank 2</span></div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S,</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;             <span class="keyword">typename</span> A,</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;             <span class="keyword">typename</span> D0,</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;             <span class="keyword">typename</span> D1,</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(2==std::rank&lt;U&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                             std::is_integral&lt;S&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                             std::is_integral&lt;A&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;                             std::is_integral&lt;D1&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;                            reference_type&gt;::type</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    access( <span class="keyword">const</span> S&amp; s,</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            <span class="keyword">const</span> A&amp; a,</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;            <span class="keyword">const</span> D0&amp; d0,</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;            <span class="keyword">const</span> D1&amp; d1 ) <span class="keyword">const</span></div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    { <span class="keywordflow">return</span> _view( s, a, d0, d1); }</div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    <span class="comment">// Rank 3</span></div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S,</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;             <span class="keyword">typename</span> A,</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;             <span class="keyword">typename</span> D0,</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;             <span class="keyword">typename</span> D1,</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;             <span class="keyword">typename</span> D2,</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(3==std::rank&lt;U&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                             std::is_integral&lt;S&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                             std::is_integral&lt;A&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                             std::is_integral&lt;D1&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                             std::is_integral&lt;D2&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;                            reference_type&gt;::type</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    access( <span class="keyword">const</span> S&amp; s,</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;            <span class="keyword">const</span> A&amp; a,</div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;            <span class="keyword">const</span> D0&amp; d0,</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;            <span class="keyword">const</span> D1&amp; d1,</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;            <span class="keyword">const</span> D2&amp; d2 ) <span class="keyword">const</span></div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    { <span class="keywordflow">return</span> _view( s, a, d0, d1, d2); }</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;    <span class="comment">// ------------</span></div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    <span class="comment">// 1-D accessor</span></div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="comment">// Rank 0</span></div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> I,</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(0==std::rank&lt;U&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;                             std::is_integral&lt;I&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;                            reference_type&gt;::type</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keyword">operator</span>()( <span class="keyword">const</span> I&amp; i ) <span class="keyword">const</span></div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    { <span class="keywordflow">return</span> access( index_type::s(i), index_type::a(i) ); }</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="comment">// Rank 1</span></div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> I,</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;             <span class="keyword">typename</span> D0,</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(1==std::rank&lt;U&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;                             std::is_integral&lt;I&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;                            reference_type&gt;::type</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    <span class="keyword">operator</span>()( <span class="keyword">const</span> I&amp; i,</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;                <span class="keyword">const</span> D0&amp; d0 ) <span class="keyword">const</span></div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    { <span class="keywordflow">return</span> access( index_type::s(i), index_type::a(i), d0 ); }</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    <span class="comment">// Rank 2</span></div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> I,</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;             <span class="keyword">typename</span> D0,</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;             <span class="keyword">typename</span> D1,</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(2==std::rank&lt;U&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;                             std::is_integral&lt;I&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;                             std::is_integral&lt;D1&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;                            reference_type&gt;::type</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    <span class="keyword">operator</span>()( <span class="keyword">const</span> I&amp; i,</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                <span class="keyword">const</span> D0&amp; d0,</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;                <span class="keyword">const</span> D1&amp; d1 ) <span class="keyword">const</span></div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    { <span class="keywordflow">return</span> access( index_type::s(i), index_type::a(i), d0, d1 ); }</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;    <span class="comment">// Rank 3</span></div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> I,</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;             <span class="keyword">typename</span> D0,</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;             <span class="keyword">typename</span> D1,</div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;             <span class="keyword">typename</span> D2,</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(3==std::rank&lt;U&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;                             std::is_integral&lt;I&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;                             std::is_integral&lt;D1&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                             std::is_integral&lt;D2&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                            reference_type&gt;::type</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;    <span class="keyword">operator</span>()( <span class="keyword">const</span> I&amp; i,</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;                <span class="keyword">const</span> D0&amp; d0,</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;                <span class="keyword">const</span> D1&amp; d1,</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;                <span class="keyword">const</span> D2&amp; d2 ) <span class="keyword">const</span></div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    { <span class="keywordflow">return</span> access( index_type::s(i), index_type::a(i), d0, d1, d2 ); }</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;</div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;    <span class="comment">// -------------------------------</span></div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    <span class="comment">// Raw data access.</span></div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00453"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a02e37f898ea20b963740e4209de57252">  453</a></span>&#160;    pointer_type <a class="code" href="classCabana_1_1Slice.html#a02e37f898ea20b963740e4209de57252">data</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _view.data(); }</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00463"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a58a24305f741a12df94483d1b261f64e">  463</a></span>&#160;    constexpr <span class="keywordtype">int</span> <a class="code" href="classCabana_1_1Slice.html#a58a24305f741a12df94483d1b261f64e">rank</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _view.Rank; }</div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;</div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00474"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a5128bd6e5f5750766e3b75c148c43c51">  474</a></span>&#160;    std::size_t <a class="code" href="classCabana_1_1Slice.html#a5128bd6e5f5750766e3b75c148c43c51">extent</a>( <span class="keyword">const</span> std::size_t d )<span class="keyword"> const</span></div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _view.extent(d); }</div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;</div>
-<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00484"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a1fdc0c9e45cd791405c20f3346481483">  484</a></span>&#160;    std::size_t <a class="code" href="classCabana_1_1Slice.html#a1fdc0c9e45cd791405c20f3346481483">stride</a>( <span class="keyword">const</span> std::size_t d )<span class="keyword"> const</span></div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _view.stride(d); }</div>
+<div class="line"><a name="l00222"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a470d03e7b4e68707aa94f9494102467b">  222</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#a470d03e7b4e68707aa94f9494102467b">Slice</a>()</div>
+<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;        : _size( 0 )</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    {}</div>
+<div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;</div>
+<div class="line"><a name="l00234"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a093b87799f1a96378cb51dc63ae9f49e">  234</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#a093b87799f1a96378cb51dc63ae9f49e">Slice</a>( <span class="keyword">const</span> pointer_type data,</div>
+<div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;           <span class="keyword">const</span> std::size_t size,</div>
+<div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;           <span class="keyword">const</span> std::size_t soa_stride,</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;           <span class="keyword">const</span> std::size_t num_soa )</div>
+<div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        : _view( data, <a class="code" href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">view_wrapper</a>::createLayout(num_soa,soa_stride) )</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;        , _size( size )</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;    {}</div>
+<div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> MAT&gt;</div>
+<div class="line"><a name="l00250"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a9a0af9f9260e40cf875518c1b70a415a">  250</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#a9a0af9f9260e40cf875518c1b70a415a">Slice</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,MAT,VectorLength&gt;</a>&amp; rhs )</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        : _view( rhs._view )</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        , _size( rhs._size )</div>
+<div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    {}</div>
+<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> MAT&gt;</div>
+<div class="line"><a name="l00265"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#aa0a89c7d1f2857b62a8e0a44f1fe4558">  265</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html">Slice</a>&amp; <a class="code" href="classCabana_1_1Slice.html#aa0a89c7d1f2857b62a8e0a44f1fe4558">operator=</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType,MemorySpace,MAT,VectorLength&gt;</a>&amp; rhs )</div>
+<div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    {</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;        _view = rhs._view;</div>
+<div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;        _size = rhs._size;</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        <span class="keywordflow">return</span> *<span class="keyword">this</span>;</div>
+<div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    }</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    CABANA_INLINE_FUNCTION</div>
+<div class="line"><a name="l00277"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a7d0ae6765bf7d5dab27ee8aca45506cf">  277</a></span>&#160;    std::size_t <a class="code" href="classCabana_1_1Slice.html#a7d0ae6765bf7d5dab27ee8aca45506cf">size</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _size; }</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;</div>
+<div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;    CABANA_INLINE_FUNCTION</div>
+<div class="line"><a name="l00285"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a7c27d76c4635c37fe5a0dc188a0128c1">  285</a></span>&#160;    std::size_t <a class="code" href="classCabana_1_1Slice.html#a7c27d76c4635c37fe5a0dc188a0128c1">numSoA</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _view.extent(0); }</div>
+<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;</div>
+<div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S&gt;</div>
+<div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;    CABANA_INLINE_FUNCTION</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;std::is_integral&lt;S&gt;::value,<span class="keywordtype">int</span>&gt;::type</div>
+<div class="line"><a name="l00295"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#aa808d5bb8d32d067f3606477273338f8">  295</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#aa808d5bb8d32d067f3606477273338f8">arraySize</a>( <span class="keyword">const</span> S&amp; s )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;        <span class="keywordflow">return</span> ( (std::size_t) s &lt; _view.extent(0) - 1 )</div>
+<div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;            ? vector_length : ( _size % vector_length );</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    }</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="comment">// ------------</span></div>
+<div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="comment">// 2-D accessor</span></div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    <span class="comment">// Rank 0</span></div>
+<div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S,</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;             <span class="keyword">typename</span> A,</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(0==std::rank&lt;U&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                             std::is_integral&lt;S&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                             std::is_integral&lt;A&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                            reference_type&gt;::type</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    access( <span class="keyword">const</span> S&amp; s,</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;            <span class="keyword">const</span> A&amp; a ) <span class="keyword">const</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    { <span class="keywordflow">return</span> _view( s, a ); }</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="comment">// Rank 1</span></div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S,</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;             <span class="keyword">typename</span> A,</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;             <span class="keyword">typename</span> D0,</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(1==std::rank&lt;U&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                             std::is_integral&lt;S&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                             std::is_integral&lt;A&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;                            reference_type&gt;::type</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    access( <span class="keyword">const</span> S&amp; s,</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;            <span class="keyword">const</span> A&amp; a,</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;            <span class="keyword">const</span> D0&amp; d0 ) <span class="keyword">const</span></div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    { <span class="keywordflow">return</span> _view( s, a, d0 ); }</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="comment">// Rank 2</span></div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S,</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;             <span class="keyword">typename</span> A,</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;             <span class="keyword">typename</span> D0,</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;             <span class="keyword">typename</span> D1,</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(2==std::rank&lt;U&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                             std::is_integral&lt;S&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                             std::is_integral&lt;A&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                             std::is_integral&lt;D1&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;                            reference_type&gt;::type</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    access( <span class="keyword">const</span> S&amp; s,</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            <span class="keyword">const</span> A&amp; a,</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;            <span class="keyword">const</span> D0&amp; d0,</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            <span class="keyword">const</span> D1&amp; d1 ) <span class="keyword">const</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    { <span class="keywordflow">return</span> _view( s, a, d0, d1); }</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="comment">// Rank 3</span></div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> S,</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;             <span class="keyword">typename</span> A,</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;             <span class="keyword">typename</span> D0,</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;             <span class="keyword">typename</span> D1,</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;             <span class="keyword">typename</span> D2,</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(3==std::rank&lt;U&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;                             std::is_integral&lt;S&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                             std::is_integral&lt;A&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                             std::is_integral&lt;D1&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                             std::is_integral&lt;D2&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                            reference_type&gt;::type</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    access( <span class="keyword">const</span> S&amp; s,</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;            <span class="keyword">const</span> A&amp; a,</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;            <span class="keyword">const</span> D0&amp; d0,</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;            <span class="keyword">const</span> D1&amp; d1,</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;            <span class="keyword">const</span> D2&amp; d2 ) <span class="keyword">const</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;    { <span class="keywordflow">return</span> _view( s, a, d0, d1, d2); }</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="comment">// ------------</span></div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="comment">// 1-D accessor</span></div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    <span class="comment">// Rank 0</span></div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> I,</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(0==std::rank&lt;U&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;                             std::is_integral&lt;I&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;                            reference_type&gt;::type</div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="keyword">operator</span>()( <span class="keyword">const</span> I&amp; i ) <span class="keyword">const</span></div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    { <span class="keywordflow">return</span> access( index_type::s(i), index_type::a(i) ); }</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="comment">// Rank 1</span></div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> I,</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;             <span class="keyword">typename</span> D0,</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(1==std::rank&lt;U&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;                             std::is_integral&lt;I&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;                            reference_type&gt;::type</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    <span class="keyword">operator</span>()( <span class="keyword">const</span> I&amp; i,</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;                <span class="keyword">const</span> D0&amp; d0 ) <span class="keyword">const</span></div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    { <span class="keywordflow">return</span> access( index_type::s(i), index_type::a(i), d0 ); }</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    <span class="comment">// Rank 2</span></div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> I,</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;             <span class="keyword">typename</span> D0,</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;             <span class="keyword">typename</span> D1,</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(2==std::rank&lt;U&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;                             std::is_integral&lt;I&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;                             std::is_integral&lt;D1&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;                            reference_type&gt;::type</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    <span class="keyword">operator</span>()( <span class="keyword">const</span> I&amp; i,</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;                <span class="keyword">const</span> D0&amp; d0,</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;                <span class="keyword">const</span> D1&amp; d1 ) <span class="keyword">const</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    { <span class="keywordflow">return</span> access( index_type::s(i), index_type::a(i), d0, d1 ); }</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    <span class="comment">// Rank 3</span></div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">typename</span> I,</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;             <span class="keyword">typename</span> D0,</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;             <span class="keyword">typename</span> D1,</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;             <span class="keyword">typename</span> D2,</div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;             <span class="keyword">typename</span> U = DataType&gt;</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    CABANA_FORCEINLINE_FUNCTION</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(3==std::rank&lt;U&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;                             std::is_integral&lt;I&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;                             std::is_integral&lt;D0&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;                             std::is_integral&lt;D1&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;                             std::is_integral&lt;D2&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;                             std::is_same&lt;U,DataType&gt;::value),</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                            reference_type&gt;::type</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;    <span class="keyword">operator</span>()( <span class="keyword">const</span> I&amp; i,</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                <span class="keyword">const</span> D0&amp; d0,</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;                <span class="keyword">const</span> D1&amp; d1,</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;                <span class="keyword">const</span> D2&amp; d2 ) <span class="keyword">const</span></div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    { <span class="keywordflow">return</span> access( index_type::s(i), index_type::a(i), d0, d1, d2 ); }</div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    <span class="comment">// -------------------------------</span></div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;    <span class="comment">// Raw data access.</span></div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    CABANA_INLINE_FUNCTION</div>
+<div class="line"><a name="l00451"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a02e37f898ea20b963740e4209de57252">  451</a></span>&#160;    pointer_type <a class="code" href="classCabana_1_1Slice.html#a02e37f898ea20b963740e4209de57252">data</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _view.data(); }</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    CABANA_INLINE_FUNCTION</div>
+<div class="line"><a name="l00461"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a58a24305f741a12df94483d1b261f64e">  461</a></span>&#160;    constexpr <span class="keywordtype">int</span> <a class="code" href="classCabana_1_1Slice.html#a58a24305f741a12df94483d1b261f64e">rank</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _view.Rank; }</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    CABANA_INLINE_FUNCTION</div>
+<div class="line"><a name="l00472"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a5128bd6e5f5750766e3b75c148c43c51">  472</a></span>&#160;    std::size_t <a class="code" href="classCabana_1_1Slice.html#a5128bd6e5f5750766e3b75c148c43c51">extent</a>( <span class="keyword">const</span> std::size_t d )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _view.extent(d); }</div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;</div>
+<div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;    CABANA_INLINE_FUNCTION</div>
+<div class="line"><a name="l00482"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a1fdc0c9e45cd791405c20f3346481483">  482</a></span>&#160;    std::size_t <a class="code" href="classCabana_1_1Slice.html#a1fdc0c9e45cd791405c20f3346481483">stride</a>( <span class="keyword">const</span> std::size_t d )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00483"></a><span class="lineno">  483</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _view.stride(d); }</div>
+<div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;</div>
+<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;  <span class="keyword">private</span>:</div>
 <div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;</div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;</div>
-<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    <span class="comment">// The data view. This view is unmanaged and has access traits specified</span></div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    <span class="comment">// by the template parameters of this class.</span></div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    kokkos_view _view;</div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;</div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;    <span class="comment">// Number of tuples in the slice.</span></div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    std::size_t _size;</div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;};</div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;</div>
-<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;<span class="comment">// Static type checker.</span></div>
-<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> &gt;</div>
-<div class="line"><a name="l00500"></a><span class="lineno"><a class="line" href="structCabana_1_1is__slice.html">  500</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__slice.html">is_slice</a> : <span class="keyword">public</span> std::false_type {};</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="comment">// True only if the type is a member slice *AND* the member slice is templated</span></div>
-<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;<span class="comment">// on an AoSoA type.</span></div>
-<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> DataType,</div>
-<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;         <span class="keyword">typename</span> <a class="code" href="structCabana_1_1HostSpace.html">MemorySpace</a>,</div>
-<div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;         <span class="keyword">typename</span> MemoryAccessType,</div>
-<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;         <span class="keywordtype">int</span> VectorLength&gt;</div>
-<div class="line"><a name="l00508"></a><span class="lineno"><a class="line" href="structCabana_1_1is__slice_3_01Slice_3_01DataType_00_01MemorySpace_00_01MemoryAccessType_00_01VectorLength_01_4_01_4.html">  508</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__slice.html">is_slice</a>&lt;<a class="code" href="classCabana_1_1Slice.html">Slice</a>&lt;DataType,</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;                      <a class="code" href="structCabana_1_1HostSpace.html">MemorySpace</a>,</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;                      MemoryAccessType,</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;                      VectorLength&gt; &gt;</div>
-<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    : <span class="keyword">public</span> std::true_type {};</div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> DataType,</div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;         <span class="keyword">typename</span> <a class="code" href="structCabana_1_1HostSpace.html">MemorySpace</a>,</div>
-<div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;         <span class="keyword">typename</span> MemoryAccessType,</div>
-<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;         <span class="keywordtype">int</span> VectorLength&gt;</div>
-<div class="line"><a name="l00518"></a><span class="lineno"><a class="line" href="structCabana_1_1is__slice_3_01const_01Slice_3_01DataType_00_01MemorySpace_00_01MemoryAccessType_00_01VectorLength_01_4_01_4.html">  518</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__slice.html">is_slice</a>&lt;const <a class="code" href="classCabana_1_1Slice.html">Slice</a>&lt;DataType,</div>
-<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;                            <a class="code" href="structCabana_1_1HostSpace.html">MemorySpace</a>,</div>
-<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;                            MemoryAccessType,</div>
-<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;                            VectorLength&gt; &gt;</div>
-<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    : <span class="keyword">public</span> std::true_type {};</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    <span class="comment">// The data view. This view is unmanaged and has access traits specified</span></div>
+<div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    <span class="comment">// by the template parameters of this class.</span></div>
+<div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    kokkos_view _view;</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    <span class="comment">// Number of tuples in the slice.</span></div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    std::size_t _size;</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;};</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="comment">// Static type checker.</span></div>
+<div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> &gt;</div>
+<div class="line"><a name="l00498"></a><span class="lineno"><a class="line" href="structCabana_1_1is__slice.html">  498</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__slice.html">is_slice</a> : <span class="keyword">public</span> std::false_type {};</div>
+<div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;</div>
+<div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;<span class="comment">// True only if the type is a member slice *AND* the member slice is templated</span></div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;<span class="comment">// on an AoSoA type.</span></div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> DataType,</div>
+<div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;         <span class="keyword">typename</span> MemorySpace,</div>
+<div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;         <span class="keyword">typename</span> MemoryAccessType,</div>
+<div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;         <span class="keywordtype">int</span> VectorLength&gt;</div>
+<div class="line"><a name="l00506"></a><span class="lineno"><a class="line" href="structCabana_1_1is__slice_3_01Slice_3_01DataType_00_01MemorySpace_00_01MemoryAccessType_00_01VectorLength_01_4_01_4.html">  506</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__slice.html">is_slice</a>&lt;<a class="code" href="classCabana_1_1Slice.html">Slice</a>&lt;DataType,</div>
+<div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;                      MemorySpace,</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;                      MemoryAccessType,</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;                      VectorLength&gt; &gt;</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    : <span class="keyword">public</span> std::true_type {};</div>
+<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;</div>
+<div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">typename</span> DataType,</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;         <span class="keyword">typename</span> MemorySpace,</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;         <span class="keyword">typename</span> MemoryAccessType,</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;         <span class="keywordtype">int</span> VectorLength&gt;</div>
+<div class="line"><a name="l00516"></a><span class="lineno"><a class="line" href="structCabana_1_1is__slice_3_01const_01Slice_3_01DataType_00_01MemorySpace_00_01MemoryAccessType_00_01VectorLength_01_4_01_4.html">  516</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__slice.html">is_slice</a>&lt;const <a class="code" href="classCabana_1_1Slice.html">Slice</a>&lt;DataType,</div>
+<div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;                            MemorySpace,</div>
+<div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;                            MemoryAccessType,</div>
+<div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160;                            VectorLength&gt; &gt;</div>
+<div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;    : <span class="keyword">public</span> std::true_type {};</div>
+<div class="line"><a name="l00521"></a><span class="lineno">  521</span>&#160;</div>
+<div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;</div>
-<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
 <div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;</div>
-<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;</div>
-<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;</div>
-<div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;<span class="preprocessor">#endif // end CABANA_SLICE_HPP</span></div>
+<div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;<span class="preprocessor">#endif // end CABANA_SLICE_HPP</span></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1KokkosDataTypeImpl_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1KokkosDataTypeImpl.html">Cabana::Impl::KokkosDataTypeImpl</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:35</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_aa0a89c7d1f2857b62a8e0a44f1fe4558"><div class="ttname"><a href="classCabana_1_1Slice.html#aa0a89c7d1f2857b62a8e0a44f1fe4558">Cabana::Slice::operator=</a></div><div class="ttdeci">Slice &amp; operator=(const Slice&lt; DataType, MemorySpace, MAT, VectorLength &gt; &amp;rhs)</div><div class="ttdoc">Assignement operator for different memory spaces for assigning new memory access traits to the view...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:267</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_aa0a89c7d1f2857b62a8e0a44f1fe4558"><div class="ttname"><a href="classCabana_1_1Slice.html#aa0a89c7d1f2857b62a8e0a44f1fe4558">Cabana::Slice::operator=</a></div><div class="ttdeci">Slice &amp; operator=(const Slice&lt; DataType, MemorySpace, MAT, VectorLength &gt; &amp;rhs)</div><div class="ttdoc">Assignement operator for different memory spaces for assigning new memory access traits to the view...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:265</div></div>
 <div class="ttc" id="classCabana_1_1Impl_1_1Index_html"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html">Cabana::Impl::Index</a></div><div class="ttdoc">Class for converting between 1d and 2d aosoa indices. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:38</div></div>
-<div class="ttc" id="structCabana_1_1is__memory__space_html"><div class="ttname"><a href="structCabana_1_1is__memory__space.html">Cabana::is_memory_space</a></div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:25</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_aa808d5bb8d32d067f3606477273338f8"><div class="ttname"><a href="classCabana_1_1Slice.html#aa808d5bb8d32d067f3606477273338f8">Cabana::Slice::arraySize</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::enable_if&lt; std::is_integral&lt; S &gt;::value, int &gt;::type arraySize(const S &amp;s) const </div><div class="ttdoc">Get the size of the data array at a given struct member index. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:297</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a7c27d76c4635c37fe5a0dc188a0128c1"><div class="ttname"><a href="classCabana_1_1Slice.html#a7c27d76c4635c37fe5a0dc188a0128c1">Cabana::Slice::numSoA</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::size_t numSoA() const </div><div class="ttdoc">Get the number of structs-of-arrays in the container. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:287</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a58a24305f741a12df94483d1b261f64e"><div class="ttname"><a href="classCabana_1_1Slice.html#a58a24305f741a12df94483d1b261f64e">Cabana::Slice::rank</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION constexpr int rank() const </div><div class="ttdoc">Get the rank of the raw data for this slice. This includes the struct dimension, array dimension...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:463</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_aa808d5bb8d32d067f3606477273338f8"><div class="ttname"><a href="classCabana_1_1Slice.html#aa808d5bb8d32d067f3606477273338f8">Cabana::Slice::arraySize</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::enable_if&lt; std::is_integral&lt; S &gt;::value, int &gt;::type arraySize(const S &amp;s) const </div><div class="ttdoc">Get the size of the data array at a given struct member index. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:295</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a7c27d76c4635c37fe5a0dc188a0128c1"><div class="ttname"><a href="classCabana_1_1Slice.html#a7c27d76c4635c37fe5a0dc188a0128c1">Cabana::Slice::numSoA</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::size_t numSoA() const </div><div class="ttdoc">Get the number of structs-of-arrays in the container. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:285</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a58a24305f741a12df94483d1b261f64e"><div class="ttname"><a href="classCabana_1_1Slice.html#a58a24305f741a12df94483d1b261f64e">Cabana::Slice::rank</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION constexpr int rank() const </div><div class="ttdoc">Get the rank of the raw data for this slice. This includes the struct dimension, array dimension...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:461</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1KokkosDataType_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1KokkosDataType.html">Cabana::Impl::KokkosDataType</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:111</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a7d0ae6765bf7d5dab27ee8aca45506cf"><div class="ttname"><a href="classCabana_1_1Slice.html#a7d0ae6765bf7d5dab27ee8aca45506cf">Cabana::Slice::size</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::size_t size() const </div><div class="ttdoc">Returns the total number tuples in the slice. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:279</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a1fdc0c9e45cd791405c20f3346481483"><div class="ttname"><a href="classCabana_1_1Slice.html#a1fdc0c9e45cd791405c20f3346481483">Cabana::Slice::stride</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::size_t stride(const std::size_t d) const </div><div class="ttdoc">Get the stride of a given raw slice dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:484</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html"><div class="ttname"><a href="classCabana_1_1Slice.html">Cabana::Slice</a></div><div class="ttdoc">A slice of an array-of-structs-of-arrays with data access to a single multidimensional member...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:162</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a470d03e7b4e68707aa94f9494102467b"><div class="ttname"><a href="classCabana_1_1Slice.html#a470d03e7b4e68707aa94f9494102467b">Cabana::Slice::Slice</a></div><div class="ttdeci">Slice()</div><div class="ttdoc">Default constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:224</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a7d0ae6765bf7d5dab27ee8aca45506cf"><div class="ttname"><a href="classCabana_1_1Slice.html#a7d0ae6765bf7d5dab27ee8aca45506cf">Cabana::Slice::size</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::size_t size() const </div><div class="ttdoc">Returns the total number tuples in the slice. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:277</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a1fdc0c9e45cd791405c20f3346481483"><div class="ttname"><a href="classCabana_1_1Slice.html#a1fdc0c9e45cd791405c20f3346481483">Cabana::Slice::stride</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::size_t stride(const std::size_t d) const </div><div class="ttdoc">Get the stride of a given raw slice dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:482</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html"><div class="ttname"><a href="classCabana_1_1Slice.html">Cabana::Slice</a></div><div class="ttdoc">A slice of an array-of-structs-of-arrays with data access to a single multidimensional member...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:161</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a470d03e7b4e68707aa94f9494102467b"><div class="ttname"><a href="classCabana_1_1Slice.html#a470d03e7b4e68707aa94f9494102467b">Cabana::Slice::Slice</a></div><div class="ttdeci">Slice()</div><div class="ttdoc">Default constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:222</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1KokkosViewWrapper_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">Cabana::Impl::KokkosViewWrapper</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:130</div></div>
-<div class="ttc" id="structCabana_1_1HostSpace_html"><div class="ttname"><a href="structCabana_1_1HostSpace.html">Cabana::HostSpace</a></div><div class="ttdoc">Host memory space. </div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:28</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a5128bd6e5f5750766e3b75c148c43c51"><div class="ttname"><a href="classCabana_1_1Slice.html#a5128bd6e5f5750766e3b75c148c43c51">Cabana::Slice::extent</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::size_t extent(const std::size_t d) const </div><div class="ttdoc">Get the extent of a given raw slice data dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:474</div></div>
-<div class="ttc" id="structCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:500</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a5128bd6e5f5750766e3b75c148c43c51"><div class="ttname"><a href="classCabana_1_1Slice.html#a5128bd6e5f5750766e3b75c148c43c51">Cabana::Slice::extent</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::size_t extent(const std::size_t d) const </div><div class="ttdoc">Get the extent of a given raw slice data dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:472</div></div>
+<div class="ttc" id="structCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:498</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1IsVectorLengthValid_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1IsVectorLengthValid.html">Cabana::Impl::IsVectorLengthValid</a></div><div class="ttdef"><b>Definition:</b> Cabana_TypeTraits.hpp:50</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a02e37f898ea20b963740e4209de57252"><div class="ttname"><a href="classCabana_1_1Slice.html#a02e37f898ea20b963740e4209de57252">Cabana::Slice::data</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION pointer_type data() const </div><div class="ttdoc">Get a raw pointer to the data for this member. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:453</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a093b87799f1a96378cb51dc63ae9f49e"><div class="ttname"><a href="classCabana_1_1Slice.html#a093b87799f1a96378cb51dc63ae9f49e">Cabana::Slice::Slice</a></div><div class="ttdeci">Slice(const pointer_type data, const std::size_t size, const std::size_t soa_stride, const std::size_t num_soa)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:236</div></div>
-<div class="ttc" id="structCabana_1_1is__memory__access__tag_html"><div class="ttname"><a href="structCabana_1_1is__memory__access__tag.html">Cabana::is_memory_access_tag</a></div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:57</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html_a9a0af9f9260e40cf875518c1b70a415a"><div class="ttname"><a href="classCabana_1_1Slice.html#a9a0af9f9260e40cf875518c1b70a415a">Cabana::Slice::Slice</a></div><div class="ttdeci">Slice(const Slice&lt; DataType, MemorySpace, MAT, VectorLength &gt; &amp;rhs)</div><div class="ttdoc">Shallow copy constructor for different memory spaces for assigning new memory access traits to the vi...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:252</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a02e37f898ea20b963740e4209de57252"><div class="ttname"><a href="classCabana_1_1Slice.html#a02e37f898ea20b963740e4209de57252">Cabana::Slice::data</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION pointer_type data() const </div><div class="ttdoc">Get a raw pointer to the data for this member. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:451</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a093b87799f1a96378cb51dc63ae9f49e"><div class="ttname"><a href="classCabana_1_1Slice.html#a093b87799f1a96378cb51dc63ae9f49e">Cabana::Slice::Slice</a></div><div class="ttdeci">Slice(const pointer_type data, const std::size_t size, const std::size_t soa_stride, const std::size_t num_soa)</div><div class="ttdoc">Constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:234</div></div>
+<div class="ttc" id="structCabana_1_1is__memory__access__tag_html"><div class="ttname"><a href="structCabana_1_1is__memory__access__tag.html">Cabana::is_memory_access_tag</a></div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:54</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html_a9a0af9f9260e40cf875518c1b70a415a"><div class="ttname"><a href="classCabana_1_1Slice.html#a9a0af9f9260e40cf875518c1b70a415a">Cabana::Slice::Slice</a></div><div class="ttdeci">Slice(const Slice&lt; DataType, MemorySpace, MAT, VectorLength &gt; &amp;rhs)</div><div class="ttdoc">Shallow copy constructor for different memory spaces for assigning new memory access traits to the vi...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:250</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 18 2018 18:48:40 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 19 2018 03:11:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

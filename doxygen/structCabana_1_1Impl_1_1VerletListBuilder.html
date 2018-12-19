@@ -117,18 +117,15 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>RandomAccessPosition
 <tr class="memitem:a428ce27fff68ce1555c2171371da318e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a428ce27fff68ce1555c2171371da318e"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename PositionSlice::memory_space</td></tr>
 <tr class="separator:a428ce27fff68ce1555c2171371da318e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab6c27eb48002c48eed7d53f7fc47fd7d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab6c27eb48002c48eed7d53f7fc47fd7d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_memory_space</b> = typename PositionSlice::kokkos_memory_space</td></tr>
-<tr class="separator:ab6c27eb48002c48eed7d53f7fc47fd7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae9591d008565f21a5d0334bb0909bb92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae9591d008565f21a5d0334bb0909bb92"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_execution_space</b> = typename PositionSlice::kokkos_execution_space</td></tr>
-<tr class="separator:ae9591d008565f21a5d0334bb0909bb92"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab52e1f170144d09f1fc4aeb0722ddceb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab52e1f170144d09f1fc4aeb0722ddceb"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>CountNeighborsPolicy</b> = Kokkos::TeamPolicy&lt; kokkos_execution_space, <a class="el" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html">CountNeighborsTag</a>, Kokkos::IndexType&lt; int &gt;, Kokkos::Schedule&lt; Kokkos::Dynamic &gt; &gt;</td></tr>
-<tr class="separator:ab52e1f170144d09f1fc4aeb0722ddceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:add10aba413b12d05a9d62f0db9232785"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add10aba413b12d05a9d62f0db9232785"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>FillNeighborsPolicy</b> = Kokkos::TeamPolicy&lt; kokkos_execution_space, <a class="el" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1FillNeighborsTag.html">FillNeighborsTag</a>, Kokkos::IndexType&lt; int &gt;, Kokkos::Schedule&lt; Kokkos::Dynamic &gt; &gt;</td></tr>
-<tr class="separator:add10aba413b12d05a9d62f0db9232785"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9e427e8f77f27e92c72f3bd441276cba"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e427e8f77f27e92c72f3bd441276cba"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename PositionSlice::execution_space</td></tr>
+<tr class="separator:a9e427e8f77f27e92c72f3bd441276cba"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aab8159da7eabfe33b8b00a9f990daa2f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aab8159da7eabfe33b8b00a9f990daa2f"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>CountNeighborsPolicy</b> = Kokkos::TeamPolicy&lt; execution_space, <a class="el" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html">CountNeighborsTag</a>, Kokkos::IndexType&lt; int &gt;, Kokkos::Schedule&lt; Kokkos::Dynamic &gt; &gt;</td></tr>
+<tr class="separator:aab8159da7eabfe33b8b00a9f990daa2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7946a59d5c15ca8dd08baf4b70592ee5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7946a59d5c15ca8dd08baf4b70592ee5"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>FillNeighborsPolicy</b> = Kokkos::TeamPolicy&lt; execution_space, <a class="el" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1FillNeighborsTag.html">FillNeighborsTag</a>, Kokkos::IndexType&lt; int &gt;, Kokkos::Schedule&lt; Kokkos::Dynamic &gt; &gt;</td></tr>
+<tr class="separator:a7946a59d5c15ca8dd08baf4b70592ee5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -147,18 +144,15 @@ KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a78b901baf1616c0ab1b7851319e69122"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a78b901baf1616c0ab1b7851319e69122"></a>
-Kokkos::View&lt; int <br class="typebreak"/>
-*, kokkos_memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>counts</b></td></tr>
-<tr class="separator:a78b901baf1616c0ab1b7851319e69122"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aae7eb5de8f11401a920ef4f3a451fb00"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aae7eb5de8f11401a920ef4f3a451fb00"></a>
-Kokkos::View&lt; int <br class="typebreak"/>
-*, kokkos_memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>offsets</b></td></tr>
-<tr class="separator:aae7eb5de8f11401a920ef4f3a451fb00"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34d2cd1481dc58b45ece4f3976a46b43"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a34d2cd1481dc58b45ece4f3976a46b43"></a>
-Kokkos::View&lt; int <br class="typebreak"/>
-*, kokkos_memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>neighbors</b></td></tr>
-<tr class="separator:a34d2cd1481dc58b45ece4f3976a46b43"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4507def1c283f8c1adaf83d9d2322d0f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4507def1c283f8c1adaf83d9d2322d0f"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>counts</b></td></tr>
+<tr class="separator:a4507def1c283f8c1adaf83d9d2322d0f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c456935040c8b2de03fb54bc75e8eeb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8c456935040c8b2de03fb54bc75e8eeb"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>offsets</b></td></tr>
+<tr class="separator:a8c456935040c8b2de03fb54bc75e8eeb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a259621eb579b8cad4b12cb9aac213e50"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a259621eb579b8cad4b12cb9aac213e50"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>neighbors</b></td></tr>
+<tr class="separator:a259621eb579b8cad4b12cb9aac213e50"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a83795c85d69ed6041fe913afabf733c9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83795c85d69ed6041fe913afabf733c9"></a>
 PositionValueType&#160;</td><td class="memItemRight" valign="bottom"><b>rsqr</b></td></tr>
 <tr class="separator:a83795c85d69ed6041fe913afabf733c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -182,7 +176,7 @@ RandomAccessPositionSlice&#160;</td><td class="memItemRight" valign="bottom"><b>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 18 2018 18:48:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 19 2018 03:11:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

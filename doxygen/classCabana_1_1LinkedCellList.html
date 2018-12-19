@@ -103,17 +103,14 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a0c84c14ebe75c211ffcb61bd59fb0e98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c84c14ebe75c211ffcb61bd59fb0e98"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a></td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
 <tr class="separator:a0c84c14ebe75c211ffcb61bd59fb0e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5c820ef38481cfbad0350c11f3c50429"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5c820ef38481cfbad0350c11f3c50429"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>KokkosMemorySpace</b> = typename memory_space::kokkos_memory_space</td></tr>
-<tr class="separator:a5c820ef38481cfbad0350c11f3c50429"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9dcbd904b5a9a76a4532f466fe9b63e4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9dcbd904b5a9a76a4532f466fe9b63e4"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename KokkosMemorySpace::size_type</td></tr>
-<tr class="separator:a9dcbd904b5a9a76a4532f466fe9b63e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af6c6c186d335068d56124dffb3193239"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af6c6c186d335068d56124dffb3193239"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>OffsetView</b> = Kokkos::View&lt; size_type *, KokkosMemorySpace &gt;</td></tr>
-<tr class="separator:af6c6c186d335068d56124dffb3193239"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2277c0c5dc3d6f931953e7194378ade3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2277c0c5dc3d6f931953e7194378ade3"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename memory_space::size_type</td></tr>
+<tr class="separator:a2277c0c5dc3d6f931953e7194378ade3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a04cd2c81d45fc6d993b650da395cad8c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04cd2c81d45fc6d993b650da395cad8c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>OffsetView</b> = Kokkos::View&lt; size_type *, memory_space &gt;</td></tr>
+<tr class="separator:a04cd2c81d45fc6d993b650da395cad8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -158,7 +155,7 @@ CABANA_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bo
 CABANA_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a0d8529a197a5fcbc0b7b7a10b4f1b478">rangeEnd</a> () const </td></tr>
 <tr class="memdesc:a0d8529a197a5fcbc0b7b7a10b4f1b478"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending particle index binned by the linked cell list. <br/></td></tr>
 <tr class="separator:a0d8529a197a5fcbc0b7b7a10b4f1b478"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc56ba3f7cb8473f016d3e91aa2faa08"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#abc56ba3f7cb8473f016d3e91aa2faa08">binningData</a> () const </td></tr>
+<tr class="memitem:abc56ba3f7cb8473f016d3e91aa2faa08"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; MemorySpace &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#abc56ba3f7cb8473f016d3e91aa2faa08">binningData</a> () const </td></tr>
 <tr class="memdesc:abc56ba3f7cb8473f016d3e91aa2faa08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the 1d bin data.  <a href="#abc56ba3f7cb8473f016d3e91aa2faa08">More...</a><br/></td></tr>
 <tr class="separator:abc56ba3f7cb8473f016d3e91aa2faa08"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abed8ec7bc145601080953aa9fe2675a6"><td class="memTemplParams" colspan="2"><a class="anchor" id="abed8ec7bc145601080953aa9fe2675a6"></a>
@@ -184,7 +181,7 @@ template&lt;class SliceType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::<a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::<a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a> </td>
           <td>(</td>
           <td class="paramtype">SliceType&#160;</td>
           <td class="paramname"><em>positions</em>, </td>
@@ -257,7 +254,7 @@ template&lt;class SliceType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::<a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::<a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a> </td>
           <td>(</td>
           <td class="paramtype">SliceType&#160;</td>
           <td class="paramname"><em>positions</em>, </td>
@@ -343,7 +340,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt;<a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>&gt; <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::binningData </td>
+          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt;MemorySpace&gt; <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::binningData </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -371,7 +368,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::binOffset </td>
+          <td class="memname">CABANA_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::binOffset </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>i</em>, </td>
@@ -424,7 +421,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::binSize </td>
+          <td class="memname">CABANA_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::binSize </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>i</em>, </td>
@@ -477,7 +474,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::cardinalBinIndex </td>
+          <td class="memname">CABANA_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::cardinalBinIndex </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>i</em>, </td>
@@ -531,7 +528,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION void <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::ijkBinIndex </td>
+          <td class="memname">CABANA_INLINE_FUNCTION void <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::ijkBinIndex </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>cardinal</em>, </td>
@@ -591,7 +588,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::numBin </td>
+          <td class="memname">CABANA_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::numBin </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>dim</em></td><td>)</td>
@@ -626,7 +623,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::permutation </td>
+          <td class="memname">CABANA_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::permutation </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>particle_id</em></td><td>)</td>
@@ -661,7 +658,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a> &gt;::totalBins </td>
+          <td class="memname">CABANA_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::totalBins </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -685,7 +682,7 @@ template&lt;class MemorySpace&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 18 2018 18:48:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 19 2018 03:11:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

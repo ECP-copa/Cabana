@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt; Class Template Reference</title>
+<title>Cabana: Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -93,7 +93,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#friends">Friends</a> &#124;
 <a href="classCabana_1_1Slice-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt; Class Template Reference</div>  </div>
+<div class="title">Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -108,10 +108,10 @@ Public Types</h2></td></tr>
  }</td></tr>
 <tr class="separator:acadc6d03bd25f41fe83e9d0a02bb7943"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aebf3ffd045f804d963c360d20fb84389"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aebf3ffd045f804d963c360d20fb84389"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>slice_type</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>slice_type</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength &gt;</td></tr>
 <tr class="separator:aebf3ffd045f804d963c360d20fb84389"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af3bd2e43c54e9d8e0510286edf801fde"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af3bd2e43c54e9d8e0510286edf801fde"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a></td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
 <tr class="separator:af3bd2e43c54e9d8e0510286edf801fde"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4a752bbc653894bd55c2b02e3ee5f9df"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4a752bbc653894bd55c2b02e3ee5f9df"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_access_type</b> = MemoryAccessType</td></tr>
@@ -122,9 +122,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>index_type</b> = <a 
 <tr class="memitem:aafce3aab71d6f08f9115f67cb9b7c13c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aafce3aab71d6f08f9115f67cb9b7c13c"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>view_wrapper</b> = <a class="el" href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">Impl::KokkosViewWrapper</a>&lt; DataType, vector_length &gt;</td></tr>
 <tr class="separator:aafce3aab71d6f08f9115f67cb9b7c13c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3fb324960f4515de7239693c0a7925b8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3fb324960f4515de7239693c0a7925b8"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_view</b> = Kokkos::View&lt; typename view_wrapper::data_type, Kokkos::LayoutStride, typename MemorySpace::kokkos_memory_space, typename MemoryAccessType::kokkos_memory_traits &gt;</td></tr>
-<tr class="separator:a3fb324960f4515de7239693c0a7925b8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6f2fb8e7f9229dd3678a738587228251"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6f2fb8e7f9229dd3678a738587228251"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_view</b> = Kokkos::View&lt; typename view_wrapper::data_type, Kokkos::LayoutStride, MemorySpace, typename MemoryAccessType::kokkos_memory_traits &gt;</td></tr>
+<tr class="separator:a6f2fb8e7f9229dd3678a738587228251"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a121b042472762b11aa232678a965a11a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a121b042472762b11aa232678a965a11a"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>reference_type</b> = typename kokkos_view::reference_type</td></tr>
 <tr class="separator:a121b042472762b11aa232678a965a11a"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -134,23 +134,20 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = typ
 <tr class="memitem:aa040b1bfd34125f2ec3c069d4dc37690"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa040b1bfd34125f2ec3c069d4dc37690"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>pointer_type</b> = typename kokkos_view::pointer_type</td></tr>
 <tr class="separator:aa040b1bfd34125f2ec3c069d4dc37690"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4bf3ca7ce954261ff916b04da688933"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af4bf3ca7ce954261ff916b04da688933"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_memory_space</b> = typename kokkos_view::memory_space</td></tr>
-<tr class="separator:af4bf3ca7ce954261ff916b04da688933"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a83e7c3ee16a6593a9ba46308b512d1c0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a83e7c3ee16a6593a9ba46308b512d1c0"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_execution_space</b> = typename kokkos_view::execution_space</td></tr>
-<tr class="separator:a83e7c3ee16a6593a9ba46308b512d1c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a744c3b66574135ca311d93d43e63915c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a744c3b66574135ca311d93d43e63915c"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>kokkos_device_type</b> = typename kokkos_view::device_type</td></tr>
-<tr class="separator:a744c3b66574135ca311d93d43e63915c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6b4a3b34a78fab78ac44b4fa3ab86b2c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6b4a3b34a78fab78ac44b4fa3ab86b2c"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename kokkos_view::execution_space</td></tr>
+<tr class="separator:a6b4a3b34a78fab78ac44b4fa3ab86b2c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f933f9ec417f12ba91d5d1a15bb3aab"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f933f9ec417f12ba91d5d1a15bb3aab"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename kokkos_view::device_type</td></tr>
+<tr class="separator:a2f933f9ec417f12ba91d5d1a15bb3aab"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac54fc367ae3341ee754db989332edfed"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac54fc367ae3341ee754db989332edfed"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>default_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, VectorLength &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>default_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, VectorLength &gt;</td></tr>
 <tr class="separator:ac54fc367ae3341ee754db989332edfed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adf0f0d1d25fa86f9070ae632ed5b8d99"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adf0f0d1d25fa86f9070ae632ed5b8d99"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>atomic_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, <a class="el" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a>, VectorLength &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>atomic_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, <a class="el" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a>, VectorLength &gt;</td></tr>
 <tr class="separator:adf0f0d1d25fa86f9070ae632ed5b8d99"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a12cca4e5acc6592afbafec7f5b1a8833"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a12cca4e5acc6592afbafec7f5b1a8833"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>random_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, <a class="el" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a>, VectorLength &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>random_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, <a class="el" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a>, VectorLength &gt;</td></tr>
 <tr class="separator:a12cca4e5acc6592afbafec7f5b1a8833"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -163,11 +160,11 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a093b87799f1a96378cb51dc63ae9f49e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a093b87799f1a96378cb51dc63ae9f49e">More...</a><br/></td></tr>
 <tr class="separator:a093b87799f1a96378cb51dc63ae9f49e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a0af9f9260e40cf875518c1b70a415a"><td class="memTemplParams" colspan="2">template&lt;class MAT &gt; </td></tr>
-<tr class="memitem:a9a0af9f9260e40cf875518c1b70a415a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a9a0af9f9260e40cf875518c1b70a415a">Slice</a> (const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MAT, VectorLength &gt; &amp;rhs)</td></tr>
+<tr class="memitem:a9a0af9f9260e40cf875518c1b70a415a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a9a0af9f9260e40cf875518c1b70a415a">Slice</a> (const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MAT, VectorLength &gt; &amp;rhs)</td></tr>
 <tr class="memdesc:a9a0af9f9260e40cf875518c1b70a415a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shallow copy constructor for different memory spaces for assigning new memory access traits to the view.  <a href="#a9a0af9f9260e40cf875518c1b70a415a">More...</a><br/></td></tr>
 <tr class="separator:a9a0af9f9260e40cf875518c1b70a415a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa0a89c7d1f2857b62a8e0a44f1fe4558"><td class="memTemplParams" colspan="2">template&lt;class MAT &gt; </td></tr>
-<tr class="memitem:aa0a89c7d1f2857b62a8e0a44f1fe4558"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Slice.html">Slice</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#aa0a89c7d1f2857b62a8e0a44f1fe4558">operator=</a> (const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MAT, VectorLength &gt; &amp;rhs)</td></tr>
+<tr class="memitem:aa0a89c7d1f2857b62a8e0a44f1fe4558"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Slice.html">Slice</a> &amp;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#aa0a89c7d1f2857b62a8e0a44f1fe4558">operator=</a> (const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MAT, VectorLength &gt; &amp;rhs)</td></tr>
 <tr class="memdesc:aa0a89c7d1f2857b62a8e0a44f1fe4558"><td class="mdescLeft">&#160;</td><td class="mdescRight">Assignement operator for different memory spaces for assigning new memory access traits to the view.  <a href="#aa0a89c7d1f2857b62a8e0a44f1fe4558">More...</a><br/></td></tr>
 <tr class="separator:aa0a89c7d1f2857b62a8e0a44f1fe4558"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7d0ae6765bf7d5dab27ee8aca45506cf"><td class="memItemLeft" align="right" valign="top">CABANA_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a7d0ae6765bf7d5dab27ee8aca45506cf">size</a> () const </td></tr>
@@ -315,8 +312,8 @@ class&#160;</td><td class="memItemRight" valign="bottom"><b>Slice&lt; DataType, 
 <tr class="separator:a56695ebe0196af59cf4861f22c9ed8a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt;<br/>
-class Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt;</h3>
+<div class="textblock"><h3>template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt;<br/>
+class Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt;</h3>
 
 <p>A slice of an array-of-structs-of-arrays with data access to a single multidimensional member. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
@@ -324,13 +321,13 @@ class Cabana::Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, s
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::<a class="el" href="classCabana_1_1Slice.html">Slice</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::<a class="el" href="classCabana_1_1Slice.html">Slice</a> </td>
           <td>(</td>
           <td class="paramtype">const pointer_type&#160;</td>
           <td class="paramname"><em>data</em>, </td>
@@ -383,7 +380,7 @@ template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <div class="memtemplate">
 template&lt;class MAT &gt; </div>
 <table class="mlabels">
@@ -391,9 +388,9 @@ template&lt;class MAT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::<a class="el" href="classCabana_1_1Slice.html">Slice</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::<a class="el" href="classCabana_1_1Slice.html">Slice</a> </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MAT, VectorLength &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MAT, VectorLength &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
           <td></td>
         </tr>
@@ -426,7 +423,7 @@ template&lt;class MAT &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <div class="memtemplate">
 template&lt;typename S &gt; </div>
 <table class="mlabels">
@@ -434,7 +431,7 @@ template&lt;typename S &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;S&gt;::value,int&gt;::type <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::arraySize </td>
+          <td class="memname">CABANA_INLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;S&gt;::value,int&gt;::type <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::arraySize </td>
           <td>(</td>
           <td class="paramtype">const S &amp;&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
@@ -463,13 +460,13 @@ template&lt;typename S &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION pointer_type <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::data </td>
+          <td class="memname">CABANA_INLINE_FUNCTION pointer_type <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::data </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -491,13 +488,13 @@ template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::extent </td>
+          <td class="memname">CABANA_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::extent </td>
           <td>(</td>
           <td class="paramtype">const std::size_t&#160;</td>
           <td class="paramname"><em>d</em></td><td>)</td>
@@ -526,13 +523,13 @@ template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::numSoA </td>
+          <td class="memname">CABANA_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::numSoA </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -554,7 +551,7 @@ template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <div class="memtemplate">
 template&lt;class MAT &gt; </div>
 <table class="mlabels">
@@ -562,9 +559,9 @@ template&lt;class MAT &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Slice</a>&amp; <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::operator= </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Slice</a>&amp; <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::operator= </td>
           <td>(</td>
-          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MAT, VectorLength &gt; &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, MAT, VectorLength &gt; &amp;&#160;</td>
           <td class="paramname"><em>rhs</em></td><td>)</td>
           <td></td>
         </tr>
@@ -597,13 +594,13 @@ template&lt;class MAT &gt; </div>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION constexpr int <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::rank </td>
+          <td class="memname">CABANA_INLINE_FUNCTION constexpr int <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::rank </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -625,13 +622,13 @@ template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::size </td>
+          <td class="memname">CABANA_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::size </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -653,13 +650,13 @@ template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_space&lt; MemorySpace &gt;::value &amp;&amp;is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, int VectorLength, typename std::enable_if&lt; (is_memory_access_tag&lt; MemoryAccessType &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, <a class="el" href="structCabana_1_1HostSpace.html">MemorySpace</a>, MemoryAccessType, VectorLength, type &gt;::stride </td>
+          <td class="memname">CABANA_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, type &gt;::stride </td>
           <td>(</td>
           <td class="paramtype">const std::size_t&#160;</td>
           <td class="paramname"><em>d</em></td><td>)</td>
@@ -690,7 +687,7 @@ template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, 
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 18 2018 18:48:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 19 2018 03:11:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

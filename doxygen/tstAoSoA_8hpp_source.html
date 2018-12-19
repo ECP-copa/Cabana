@@ -398,179 +398,178 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    AoSoA_t aosoa( num_data );</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;</div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="comment">// Create a slice of tuples with the same data types.</span></div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    Kokkos::View&lt;Tuple_t*,</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;                 <span class="keyword">typename</span> AoSoA_t::memory_space::kokkos_memory_space&gt;</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;        tuples( <span class="stringliteral">&quot;tuples&quot;</span>, num_data );</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="comment">// Initialize aosoa data.</span></div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keyword">auto</span> slice_0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keyword">auto</span> slice_1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keyword">auto</span> slice_2 = aosoa.slice&lt;2&gt;();</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keyword">auto</span> slice_3 = aosoa.slice&lt;3&gt;();</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordtype">float</span> fval = 3.4;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keywordtype">double</span> dval = 1.23;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordtype">int</span> ival = 1;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="keywordflow">for</span> ( std::size_t idx = 0; idx != aosoa.size(); ++idx )</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    {</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <span class="comment">// Member 0.</span></div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> k = 0; k &lt; dim_3; ++k )</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;                    slice_0( idx, i, j, k ) = fval * (i+j+k);</div>
-<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;</div>
-<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        <span class="comment">// Member 1.</span></div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        slice_1( idx ) = ival;</div>
-<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        <span class="comment">// Member 2.</span></div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;            slice_2( idx, i ) = dval * i;</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <span class="comment">// Member 3.</span></div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                slice_3( idx, i, j ) = dval * (i+j);</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    }</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="comment">// Assign the AoSoA data to the tuples.</span></div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    <span class="keywordflow">for</span> ( std::size_t idx = 0; idx &lt; aosoa.size(); ++idx )</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;         tuples( idx ) = aosoa.getTuple( idx );</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;</div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="comment">// Change the tuple data.</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    fval = 2.1;</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    dval = 9.21;</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    ival = 3;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> idx = 0; idx &lt; num_data; ++idx )</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    {</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        <span class="comment">// Member 0.</span></div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> k = 0; k &lt; dim_3; ++k )</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;                    tuples( idx ).get&lt;0&gt;( i, j, k ) = fval * (i+j+k);</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        <span class="comment">// Member 1.</span></div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        tuples( idx ).get&lt;1&gt;() = ival;</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;</div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        <span class="comment">// Member 2.</span></div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;            tuples( idx ).get&lt;2&gt;( i ) = dval * i;</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        <span class="comment">// Member 3.</span></div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;                tuples( idx ).get&lt;3&gt;( i, j ) = dval * (i+j);</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    }</div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;</div>
-<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    <span class="comment">// Assign the tuple data back to the AoSoA.</span></div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;    <span class="keywordflow">for</span> ( std::size_t idx = 0; idx &lt; aosoa.size(); ++idx )</div>
-<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;        aosoa.setTuple( idx, tuples(idx) );</div>
-<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    <span class="comment">// Check the results.</span></div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
-<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;}</div>
-<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">// Test an AoSoA using the access operator.</span></div>
-<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;<span class="keywordtype">void</span> testAccess()</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;{</div>
-<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="comment">// Manually set the inner array size.</span></div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> vector_length = 16;</div>
-<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;</div>
-<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="comment">// Data dimensions.</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> dim_1 = 3;</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> dim_2 = 2;</div>
-<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> dim_3 = 4;</div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;</div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="comment">// Declare data types.</span></div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    <span class="keyword">using</span> DataTypes =</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;        <a class="code" href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a>&lt;<span class="keywordtype">float</span>[dim_1][dim_2][dim_3],</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                            int,</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;                            <span class="keywordtype">double</span>[dim_1],</div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;                            <span class="keywordtype">double</span>[dim_1][dim_2]</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;                            &gt;;</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    <span class="comment">// Declare the AoSoA type.</span></div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE,vector_length&gt;</a>;</div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    <span class="comment">// Make sure that it is actually an AoSoA.</span></div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    EXPECT_TRUE( <a class="code" href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa&lt;AoSoA_t&gt;::value</a> );</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    <span class="comment">// Create an AoSoA.</span></div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    <span class="keywordtype">int</span> num_data = 453;</div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    AoSoA_t aosoa( num_data );</div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    <span class="comment">// Initialize data with the SoA accessor</span></div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    <span class="keywordtype">float</span> fval = 3.4;</div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    <span class="keywordtype">double</span> dval = 1.23;</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    <span class="keywordtype">int</span> ival = 1;</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="keywordflow">for</span> ( std::size_t s = 0; s &lt; aosoa.numSoA(); ++s )</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    {</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;        <span class="keyword">auto</span>&amp; soa = aosoa.access( s );</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> a = 0; a &lt; aosoa.arraySize(s); ++a )</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;        {</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;            <span class="comment">// Member 0.</span></div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;                    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> k = 0; k &lt; dim_3; ++k )</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;                        soa.get&lt;0&gt;( a, i, j, k ) = fval * (i+j+k);</div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;</div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;            <span class="comment">// Member 1.</span></div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;            soa.get&lt;1&gt;( a ) = ival;</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;            <span class="comment">// Member 2.</span></div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;                soa.get&lt;2&gt;( a, i ) = dval * i;</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;            <span class="comment">// Member 3.</span></div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                    soa.get&lt;3&gt;( a, i, j ) = dval * (i+j);</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        }</div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    }</div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;}</div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="comment">// RUN TESTS</span></div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;TEST_F( TEST_CATEGORY, aosoa_test )</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;{</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    testAoSoA();</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;}</div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;</div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;TEST_F( TEST_CATEGORY, aosoa_raw_data_test )</div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;{</div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    testRawData();</div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;}</div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;TEST_F( TEST_CATEGORY, aosoa_tuple_test )</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;{</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    testTuple();</div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;}</div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;TEST_F( TEST_CATEGORY, aosoa_access_test )</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;{</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    testAccess();</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;}</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;</div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;</div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;} <span class="comment">// end namespace Test</span></div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    Kokkos::View&lt;Tuple_t*,typename AoSoA_t::memory_space&gt;</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;        tuples( <span class="stringliteral">&quot;tuples&quot;</span>, num_data );</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    <span class="comment">// Initialize aosoa data.</span></div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;    <span class="keyword">auto</span> slice_0 = aosoa.slice&lt;0&gt;();</div>
+<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keyword">auto</span> slice_1 = aosoa.slice&lt;1&gt;();</div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keyword">auto</span> slice_2 = aosoa.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="keyword">auto</span> slice_3 = aosoa.slice&lt;3&gt;();</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keywordtype">float</span> fval = 3.4;</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordtype">double</span> dval = 1.23;</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    <span class="keywordtype">int</span> ival = 1;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">for</span> ( std::size_t idx = 0; idx != aosoa.size(); ++idx )</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    {</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;        <span class="comment">// Member 0.</span></div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> k = 0; k &lt; dim_3; ++k )</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;                    slice_0( idx, i, j, k ) = fval * (i+j+k);</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        <span class="comment">// Member 1.</span></div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        slice_1( idx ) = ival;</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;</div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;        <span class="comment">// Member 2.</span></div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;            slice_2( idx, i ) = dval * i;</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        <span class="comment">// Member 3.</span></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                slice_3( idx, i, j ) = dval * (i+j);</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    }</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    <span class="comment">// Assign the AoSoA data to the tuples.</span></div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="keywordflow">for</span> ( std::size_t idx = 0; idx &lt; aosoa.size(); ++idx )</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;         tuples( idx ) = aosoa.getTuple( idx );</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="comment">// Change the tuple data.</span></div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    fval = 2.1;</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    dval = 9.21;</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    ival = 3;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> idx = 0; idx &lt; num_data; ++idx )</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    {</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        <span class="comment">// Member 0.</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> k = 0; k &lt; dim_3; ++k )</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                    tuples( idx ).get&lt;0&gt;( i, j, k ) = fval * (i+j+k);</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;        <span class="comment">// Member 1.</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        tuples( idx ).get&lt;1&gt;() = ival;</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;        <span class="comment">// Member 2.</span></div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;            tuples( idx ).get&lt;2&gt;( i ) = dval * i;</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <span class="comment">// Member 3.</span></div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                tuples( idx ).get&lt;3&gt;( i, j ) = dval * (i+j);</div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    }</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="comment">// Assign the tuple data back to the AoSoA.</span></div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;    <span class="keywordflow">for</span> ( std::size_t idx = 0; idx &lt; aosoa.size(); ++idx )</div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;        aosoa.setTuple( idx, tuples(idx) );</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;</div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;    <span class="comment">// Check the results.</span></div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;}</div>
+<div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;</div>
+<div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment">// Test an AoSoA using the access operator.</span></div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="keywordtype">void</span> testAccess()</div>
+<div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;{</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="comment">// Manually set the inner array size.</span></div>
+<div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> vector_length = 16;</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;</div>
+<div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    <span class="comment">// Data dimensions.</span></div>
+<div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> dim_1 = 3;</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> dim_2 = 2;</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> dim_3 = 4;</div>
+<div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;</div>
+<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="comment">// Declare data types.</span></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="keyword">using</span> DataTypes =</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;        <a class="code" href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a>&lt;<span class="keywordtype">float</span>[dim_1][dim_2][dim_3],</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;                            int,</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                            <span class="keywordtype">double</span>[dim_1],</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;                            <span class="keywordtype">double</span>[dim_1][dim_2]</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;                            &gt;;</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="comment">// Declare the AoSoA type.</span></div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE,vector_length&gt;</a>;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    <span class="comment">// Make sure that it is actually an AoSoA.</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    EXPECT_TRUE( <a class="code" href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa&lt;AoSoA_t&gt;::value</a> );</div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;</div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    <span class="comment">// Create an AoSoA.</span></div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    <span class="keywordtype">int</span> num_data = 453;</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    AoSoA_t aosoa( num_data );</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    <span class="comment">// Initialize data with the SoA accessor</span></div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    <span class="keywordtype">float</span> fval = 3.4;</div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    <span class="keywordtype">double</span> dval = 1.23;</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    <span class="keywordtype">int</span> ival = 1;</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    <span class="keywordflow">for</span> ( std::size_t s = 0; s &lt; aosoa.numSoA(); ++s )</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    {</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        <span class="keyword">auto</span>&amp; soa = aosoa.access( s );</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> a = 0; a &lt; aosoa.arraySize(s); ++a )</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;        {</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;            <span class="comment">// Member 0.</span></div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;                    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> k = 0; k &lt; dim_3; ++k )</div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;                        soa.get&lt;0&gt;( a, i, j, k ) = fval * (i+j+k);</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;            <span class="comment">// Member 1.</span></div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;            soa.get&lt;1&gt;( a ) = ival;</div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;            <span class="comment">// Member 2.</span></div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;                soa.get&lt;2&gt;( a, i ) = dval * i;</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;            <span class="comment">// Member 3.</span></div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> j = 0; j &lt; dim_2; ++j )</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;                    soa.get&lt;3&gt;( a, i, j ) = dval * (i+j);</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;        }</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;    }</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;</div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    <span class="comment">// Check data members for proper initialization.</span></div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;}</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;</div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;<span class="comment">// RUN TESTS</span></div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;TEST_F( TEST_CATEGORY, aosoa_test )</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;{</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    testAoSoA();</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;}</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;TEST_F( TEST_CATEGORY, aosoa_raw_data_test )</div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;{</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    testRawData();</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;}</div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;</div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;TEST_F( TEST_CATEGORY, aosoa_tuple_test )</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;{</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;    testTuple();</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;}</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;TEST_F( TEST_CATEGORY, aosoa_access_test )</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;{</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    testAccess();</div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;}</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;</div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:67</div></div>
-<div class="ttc" id="structCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:360</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:66</div></div>
+<div class="ttc" id="structCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:358</div></div>
 <div class="ttc" id="structCabana_1_1Tuple_html"><div class="ttname"><a href="structCabana_1_1Tuple.html">Cabana::Tuple</a></div><div class="ttdef"><b>Definition:</b> Cabana_Tuple.hpp:28</div></div>
 <div class="ttc" id="classCabana_1_1Impl_1_1Index_html_a756a0f9c34351b93860ce89de8189ee3"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a756a0f9c34351b93860ce89de8189ee3">Cabana::Impl::Index::a</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION constexpr std::enable_if&lt; std::is_integral&lt; I &gt;::value, int &gt;::type a(const I &amp;i)</div><div class="ttdoc">Given a tuple index get the AoSoA array index. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:81</div></div>
 <div class="ttc" id="classCabana_1_1Impl_1_1Index_html_a9393026e0ba727add378b35410bb4025"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025">Cabana::Impl::Index::s</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION constexpr std::enable_if&lt; std::is_integral&lt; I &gt;::value, std::size_t &gt;::type s(const I &amp;i)</div><div class="ttdoc">Given a tuple index get the AoSoA struct index. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:63</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Dec 18 2018 18:48:40 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 19 2018 03:11:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
