@@ -2,11 +2,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <gtest/gtest.h>
+#include "common.h"
 //#include "rdtsc.h"
-
-#ifndef VECLENTH
-#define VECLENTH (8)
-#endif
 
 typedef Kokkos::View<float[VECLENTH],Kokkos::MemoryTraits<Kokkos::Restrict> > view_type;
 
@@ -25,13 +23,6 @@ void __attribute__ ((noinline)) inita(const view_type & __restrict__  a,const vi
 }
 
 */
-
-// TODO: move to shared file
-static inline unsigned long long rdtscp() {
-    unsigned long long u;
-    asm volatile ("rdtscp;shlq $32,%%rdx;orq %%rdx,%%rax;movq %%rax,%0":"=q"(u)::"%rax", "%rdx", "%rcx");
-    return u;
-}
 
 
 struct data{
@@ -88,16 +79,12 @@ axpy_10(
 }
 
 
-int main(int argc, char ** argv) {
-
+TEST(kokkos, simple) {
     long n = static_cast<long>(2e6); //1000000000; //MAXBYTES/sizeof(float);
     /*long seed = (argc > 2 ? atol(argv[2]) : 76843802738543);*/
     long seed = 76843802738543;
 
     const int N = 1;
-    Kokkos::initialize (argc, argv);
-
-    { // Scoped block for Kokkos finalize
 
     view_type a_("a",N);
     view_type x0_("x0",N);
@@ -160,12 +147,27 @@ int main(int argc, char ** argv) {
     printf("Inner loop VECLENTH=%d\n", VECLENTH);
     printf("%f flops\n", flops);
     printf("%llu clocks\n", dc);
-    printf("%f flops/clock\n", flops / dc);
+
+    double flops_clock = flops / dc;
+    printf("%f flops/clock\n", flops_clock);
 
 
     for (i = 0; i < VECLENTH; i++) {
         printf("x0_[%ld] = %f\n", i, x0_(i) );
     }
+
+    bool acceptable_fraction = false;
+    double expected_flops_clock = EXPECTED_FLOPS;
+
+    printf("Expected %f \n", expected_flops_clock);
+    printf("(with margin %f )\n", expected_flops_clock * ERROR_MARGIN);
+
+    if ( flops_clock > expected_flops_clock * ERROR_MARGIN )
+    {
+        acceptable_fraction = true;
+    }
+
+    EXPECT_TRUE(acceptable_fraction);
 
     /*
     delete a_;
@@ -182,9 +184,6 @@ int main(int argc, char ** argv) {
     delete x9_;
     */
 
-    }
-    Kokkos::finalize ();
-    return 0;
 }
 
 

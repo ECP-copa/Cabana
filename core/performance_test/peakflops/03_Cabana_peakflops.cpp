@@ -13,16 +13,9 @@
 
 #include <cstdlib>
 #include <iostream>
+#include <gtest/gtest.h>
+#include "common.h"
 
-#ifndef VECLENTH
-#define VECLENTH 8
-#endif
-//clock counter
-static inline unsigned long long rdtscp() {
-  unsigned long long u;
-  asm volatile ("rdtscp;shlq $32,%%rdx;orq %%rdx,%%rax;movq %%rax,%0":"=q"(u)::"%rax", "%rdx", "%rcx");
-  return u;
-}
 //---------------------------------------------------------------------------//
 // Define particle data.
 //---------------------------------------------------------------------------//
@@ -360,7 +353,7 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
 
 //---------------------------------------------------------------------------//
 // Run the performance test.
-void run()
+TEST(cabana, simple)
 {
     //number of outer loop (e.g. timestepping)
     long n = static_cast<long>(2e4);
@@ -467,6 +460,8 @@ void run()
     std::cout<<flops/dc1<<" flops/clock 1\n";
     std::cout << std::endl;
 
+    double flops_clock = flops / dc1;
+
     std::cout << "AoSoA access " << std::endl;
     std::cout<<dc2<<" clocks 2"<<std::endl;
     std::cout<<flops/dc2<<" flops/clock 2\n";
@@ -481,12 +476,26 @@ void run()
     {
         printf("x_[%d] = %f\n", idx, m0(idx));
     }
+
+    bool acceptable_fraction = false;
+    double expected_flops_clock = EXPECTED_FLOPS;
+
+    printf("Expected %f \n", expected_flops_clock);
+    printf("(with margin %f )\n", expected_flops_clock * ERROR_MARGIN);
+
+    if ( flops_clock > expected_flops_clock * ERROR_MARGIN )
+    {
+        acceptable_fraction = true;
+    }
+
+    EXPECT_TRUE(acceptable_fraction);
 }
 
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
+/*
 int main( int argc, char **argv )
 {
     Kokkos::ScopeGuard scope_guard(argc, argv);
@@ -495,5 +504,6 @@ int main( int argc, char **argv )
 
     return 0;
 }
+*/
 
 //---------------------------------------------------------------------------//

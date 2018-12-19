@@ -1,3 +1,10 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "common.h"
+/*#include "rdtsc.h"*/
+
+#include <gtest/gtest.h>
 /*
 For skylake
 Model name:            Intel(R) Xeon(R) Gold 6152 CPU @ 2.10GHz
@@ -77,25 +84,8 @@ Thus unrolling by 5/0.5 = 10 completely hides FMA latency
 The two FP Load microoperations do not have a dependency on the previous iteration, and can co-issue with 2x FMA, so they don't affect the unroll factor.
 */
 
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-/*#include "rdtsc.h"*/
-
-#ifndef VECLENTH
-#define VECLENTH (8) 
-#endif
-
-static inline unsigned long long rdtscp() {
-  unsigned long long u;
-  asm volatile ("rdtscp;shlq $32,%%rdx;orq %%rdx,%%rax;movq %%rax,%0":"=q"(u)::"%rax", "%rdx", "%rcx");
-  return u;
-}
-
-
 struct data{
-  float vec[VECLENTH]; 
+  float vec[VECLENTH];
 };
 
 //struct data * axpy_10(struct data *restrict a, struct data *restrict x0, struct data *restrict x1, struct data *restrict x2, struct data *restrict x3, struct data *restrict x4, struct data *restrict x5, struct data *restrict x6, struct data *restrict x7, struct data *restrict x8, struct data *restrict x9,struct data *restrict c, long n) {
@@ -128,7 +118,7 @@ struct data{
 }
 
 
-int main(int argc, char ** argv) {
+TEST(cpp, simple) {
   long n = static_cast<long>(2e6); //1000000000; //MAXBYTES/sizeof(float);
   /*long seed = (argc > 2 ? atol(argv[2]) : 76843802738543);*/
   long seed = 76843802738543;
@@ -179,13 +169,15 @@ int main(int argc, char ** argv) {
   printf("Inner loop VECLENTH=%d\n", VECLENTH);
   printf("%f flops\n", flops);
   printf("%llu clocks\n", dc);
-  printf("%f flops/clock\n", flops / dc);
 
-  
+  double flops_clock = flops / dc;
+  printf("%f flops/clock\n", flops_clock);
+
+
   for (i = 0; i < VECLENTH; i++) {
     printf("x_[%ld] = %f\n", i, x_->vec[i]);
   }
-  
+
   delete a_;
   delete x_;
   delete c_;
@@ -198,7 +190,17 @@ int main(int argc, char ** argv) {
   delete x7_;
   delete x8_;
   delete x9_;
-  return 0;
+
+  bool acceptable_fraction = false;
+  double expected_flops_clock = EXPECTED_FLOPS;
+
+  printf("Expected %f \n", expected_flops_clock);
+  printf("(with margin %f )\n", expected_flops_clock * ERROR_MARGIN);
+
+  if ( flops_clock > expected_flops_clock * ERROR_MARGIN )
+  {
+      acceptable_fraction = true;
+  }
+
+  EXPECT_TRUE(acceptable_fraction);
 }
-
-
