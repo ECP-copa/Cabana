@@ -156,8 +156,7 @@ template<typename DataType,
          typename MemoryAccessType,
          int VectorLength,
          typename std::enable_if<
-             (is_memory_space<MemorySpace>::value &&
-              is_memory_access_tag<MemoryAccessType>::value &&
+             (is_memory_access_tag<MemoryAccessType>::value &&
               Impl::IsVectorLengthValid<VectorLength>::value),int>::type = 0>
 class Slice
 {
@@ -189,16 +188,15 @@ class Slice
     using kokkos_view =
         Kokkos::View<typename view_wrapper::data_type,
                      Kokkos::LayoutStride,
-                     typename MemorySpace::kokkos_memory_space,
+                     MemorySpace,
                      typename MemoryAccessType::kokkos_memory_traits>;
 
     // View type aliases.
     using reference_type = typename kokkos_view::reference_type;
     using value_type = typename kokkos_view::value_type;
     using pointer_type = typename kokkos_view::pointer_type;
-    using kokkos_memory_space = typename kokkos_view::memory_space;
-    using kokkos_execution_space = typename kokkos_view::execution_space;
-    using kokkos_device_type = typename kokkos_view::device_type;
+    using execution_space = typename kokkos_view::execution_space;
+    using device_type = typename kokkos_view::device_type;
 
     // Compatible memory access slice types.
     using default_access_slice =

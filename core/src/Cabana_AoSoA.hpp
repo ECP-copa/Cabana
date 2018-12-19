@@ -59,10 +59,9 @@ namespace Cabana
 template<class DataTypes,
          class MemorySpace,
          int VectorLength = Impl::PerformanceTraits<
-             typename MemorySpace::kokkos_execution_space>::vector_length,
+             typename MemorySpace::execution_space>::vector_length,
          typename std::enable_if<
              (is_member_types<DataTypes>::value &&
-              is_memory_space<MemorySpace>::value &&
               Impl::IsVectorLengthValid<VectorLength>::value),int>::type = 0>
 class AoSoA
 {
@@ -84,8 +83,7 @@ class AoSoA
     using soa_type = SoA<member_types,vector_length>;
 
     // Managed data view.
-    using soa_view =
-        Kokkos::View<soa_type*,typename memory_space::kokkos_memory_space>;
+    using soa_view = Kokkos::View<soa_type*,memory_space>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;

@@ -22,7 +22,7 @@ namespace Test
 // Check the data given a set of values.
 template<class aosoa_type>
 void checkDataMembers(
-    aosoa_type aosoa,
+    aosoa_type aosoa, int begin, int end,
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
@@ -31,7 +31,7 @@ void checkDataMembers(
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
 
-    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
+    for ( std::size_t idx = begin; idx != end; ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
@@ -53,6 +53,10 @@ void checkDataMembers(
                 EXPECT_EQ( slice_3( idx, i, j ), dval * (i+j) );
     }
 }
+
+//---------------------------------------------------------------------------//
+// Functor work tag for only assigning half the value.
+class HalfValueWorkTag {};
 
 //---------------------------------------------------------------------------//
 // Assignment operator.
@@ -81,25 +85,48 @@ class AssignmentOp
         , _dim_3( _slice_0.extent(4) )
     {}
 
-    KOKKOS_INLINE_FUNCTION void operator()( const int idx ) const
+    // tagged version that assigns only half the value..
+    KOKKOS_INLINE_FUNCTION void operator()(
+        const HalfValueWorkTag&, const int s, const int a ) const
     {
         // Member 0.
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
                 for ( int k = 0; k < _dim_3; ++k )
-                    _slice_0( idx, i, j, k ) = _fval * (i+j+k);
+                    _slice_0.access( s, a, i, j, k ) = _fval * (i+j+k) / 2.0;
 
         // Member 1.
-        _slice_1( idx ) = _ival;
+        _slice_1.access( s, a ) = _ival / 2.0;
 
         // Member 2.
         for ( int i = 0; i < _dim_1; ++i )
-            _slice_2( idx, i ) = _dval * i;
+            _slice_2.access( s, a, i ) = _dval * i / 2.0;
 
         // Member 3.
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
-                _slice_3( idx, i, j ) = _dval * (i+j);
+                _slice_3.access( s, a, i, j ) = _dval * (i+j) / 2.0;
+    }
+
+    KOKKOS_INLINE_FUNCTION void operator()( const int s, const int a ) const
+    {
+        // Member 0.
+        for ( int i = 0; i < _dim_1; ++i )
+            for ( int j = 0; j < _dim_2; ++j )
+                for ( int k = 0; k < _dim_3; ++k )
+                    _slice_0.access( s, a, i, j, k ) = _fval * (i+j+k);
+
+        // Member 1.
+        _slice_1.access( s, a ) = _ival;
+
+        // Member 2.
+        for ( int i = 0; i < _dim_1; ++i )
+            _slice_2.access( s, a, i ) = _dval * i;
+
+        // Member 3.
+        for ( int i = 0; i < _dim_1; ++i )
+            for ( int j = 0; j < _dim_2; ++j )
+                _slice_3.access( s, a, i, j ) = _dval * (i+j);
     }
 
   private:
@@ -118,8 +145,8 @@ class AssignmentOp
 };
 
 //---------------------------------------------------------------------------//
-// Parallel for test.
-void runTest()
+// Parallel for test with vectorized indexing.
+void runTest2d()
 {
     // Data dimensions.
     const int dim_1 = 3;
@@ -142,9 +169,12 @@ void runTest()
     int num_data = 155;
     AoSoA_t aosoa( num_data );
 
-    // Create an execution policy using the begin and end of the AoSoA.
-    Cabana::Experimental::RangePolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
-        range_policy( 0, aosoa.size() );
+    // Create a vectorized execution policy using the begin and end of the
+    // AoSoA.
+    int range_begin = 12;
+    int range_end = 135;
+    Cabana::SimdPolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
+        policy_1( range_begin, range_end );
 
     // Create a functor to operate on.
     using OpType = AssignmentOp<AoSoA_t,
@@ -157,12 +187,12 @@ void runTest()
     int ival = 1;
     OpType func_1( aosoa, fval, dval, ival );
 
-    // Loop in parallel using 1D struct parallelism.
-    Cabana::Experimental::parallel_for(
-        range_policy, func_1, Cabana::Experimental::StructParallelTag() );
+    // Loop in parallel.
+    Cabana::simd_parallel_for( policy_1, func_1, "2d_test_1" );
+    Kokkos::fence();
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, range_begin, range_end, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Change values and write a second functor.
     fval = 93.4;
@@ -170,46 +200,60 @@ void runTest()
     ival = 4;
     OpType func_2( aosoa, fval, dval, ival );
 
-    // Loop in parallel using 1D array parallelism.
-    Cabana::Experimental::parallel_for(
-        range_policy, func_2, Cabana::Experimental::ArrayParallelTag() );
+    // Create another range policy over the entire range.
+    Cabana::SimdPolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
+        policy_2( 0, aosoa.size() );
+
+    // Loop in parallel using 2D array parallelism.
+    Cabana::simd_parallel_for( policy_2, func_2, "2d_test_2" );
+    Kokkos::fence();
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 0, aosoa.size(), fval, dval, ival, dim_1, dim_2, dim_3 );
 
-    // Change values and write a third functor.
+    // Change values and write a third functor over a single element.
     fval = 7.7;
     dval = 3.2;
     ival = 9;
     OpType func_3( aosoa, fval, dval, ival );
 
-    // Loop in parallel using 2D struct and array parallelism.
-    Cabana::Experimental::parallel_for(
-        range_policy, func_3, Cabana::Experimental::StructAndArrayParallelTag() );
+    // Create another range policy over the entire range.
+    range_begin = 16;
+    range_end = 17;
+    Cabana::SimdPolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
+        policy_3( range_begin, range_end );
+
+    // Loop in parallel using 2D array parallelism.
+    Cabana::simd_parallel_for( policy_3, func_3, "2d_test_3" );
+    Kokkos::fence();
 
     // Check data members for proper initialization.
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, range_begin, range_end, fval, dval, ival, dim_1, dim_2, dim_3 );
 
-    // Do one more loop but this time auto-dispatch. Reuse the first functor
-    // but this time create an execution policy that automatically grabs begin
-    // and end from the aosoa.
-    Cabana::Experimental::RangePolicy<AoSoA_t::vector_length,TEST_EXECSPACE>
-        aosoa_policy( aosoa );
-    Cabana::Experimental::parallel_for( aosoa_policy, func_1 );
+    // Now use the tagged version and assign half the value.
+    fval = 93.4;
+    dval = 12.1;
+    ival = 4;
+    OpType func_4( aosoa, fval, dval, ival );
+
+    // Create another range policy over the entire range.
+    Cabana::SimdPolicy<AoSoA_t::vector_length,TEST_EXECSPACE,HalfValueWorkTag>
+        policy_4( 0, aosoa.size() );
+
+    // Loop in parallel using 2D array parallelism.
+    Cabana::simd_parallel_for( policy_4, func_4, "2d_test_4" );
+    Kokkos::fence();
 
     // Check data members for proper initialization.
-    fval = 3.4;
-    dval = 1.23;
-    ival = 1;
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, 0, aosoa.size(), fval/2.0, dval/2.0, ival/2.0, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, parallel_for_test )
+TEST_F( TEST_CATEGORY, simd_parallel_for_test )
 {
-    runTest();
+    runTest2d();
 }
 
 //---------------------------------------------------------------------------//
