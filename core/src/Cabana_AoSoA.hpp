@@ -309,7 +309,11 @@ class AoSoA
       \return The member slice.
     */
     template<std::size_t M>
-    Slice<member_data_type<M>,memory_space,DefaultAccessMemory,vector_length>
+    Slice<member_data_type<M>,
+          memory_space,
+          DefaultAccessMemory,
+          vector_length,
+          sizeof(soa_type) / sizeof(member_value_type<M>)>
     slice() const
     {
         static_assert(
@@ -320,10 +324,10 @@ class AoSoA
             Slice<member_data_type<M>,
                   memory_space,
                   DefaultAccessMemory,
-                  vector_length>
+                  vector_length,
+                  sizeof(soa_type) / sizeof(member_value_type<M>)>
             ( static_cast<member_pointer_type<M> >(_data(0).template ptr<M>()),
               _size,
-              sizeof(soa_type) / sizeof(member_value_type<M>),
               _num_soa );
     }
 
