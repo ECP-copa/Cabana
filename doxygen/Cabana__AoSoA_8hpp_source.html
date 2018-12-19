@@ -269,64 +269,68 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    }</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;</div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="keyword">template</span>&lt;std::<span class="keywordtype">size_t</span> M&gt;</div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <a class="code" href="classCabana_1_1Slice.html">Slice&lt;member_data_type&lt;M&gt;</a>,memory_space,<a class="code" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>,vector_length&gt;</div>
-<div class="line"><a name="l00313"></a><span class="lineno"><a class="line" href="classCabana_1_1AoSoA.html#a8727d54a8bfe86a3b21c9a4d4cb45f5f">  313</a></span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html#a8727d54a8bfe86a3b21c9a4d4cb45f5f">slice</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        static_assert(</div>
-<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;            0 == <span class="keyword">sizeof</span>(<a class="code" href="structCabana_1_1SoA.html">soa_type</a>) % <span class="keyword">sizeof</span>(member_value_type&lt;M&gt;),</div>
-<div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;            <span class="stringliteral">&quot;Slice stride cannot be calculated for misaligned memory!&quot;</span> );</div>
-<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <span class="keywordflow">return</span></div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            Slice&lt;member_data_type&lt;M&gt;,</div>
-<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                  memory_space,</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;                  DefaultAccessMemory,</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;                  vector_length&gt;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;            ( <span class="keyword">static_cast&lt;</span>member_pointer_type&lt;M&gt; <span class="keyword">&gt;</span>(_data(0).template ptr&lt;M&gt;()),</div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;              _size,</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;              <span class="keyword">sizeof</span>(<a class="code" href="structCabana_1_1SoA.html">soa_type</a>) / <span class="keyword">sizeof</span>(member_value_type&lt;M&gt;),</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;              _num_soa );</div>
-<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    }</div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;</div>
-<div class="line"><a name="l00334"></a><span class="lineno"><a class="line" href="classCabana_1_1AoSoA.html#aaf4daa69248c660aefec75e2ad494d62">  334</a></span>&#160;    <span class="keywordtype">void</span>* <a class="code" href="classCabana_1_1AoSoA.html#aaf4daa69248c660aefec75e2ad494d62">ptr</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _data.data(); }</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    <span class="comment">// Total number of tuples in the container.</span></div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    std::size_t _size;</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    <span class="comment">// Allocated number of tuples in all arrays in all structs.</span></div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    std::size_t _capacity;</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;    <span class="comment">// Number of structs-of-arrays in the array.</span></div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    std::size_t _num_soa;</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="comment">// Structs-of-Arrays managed data. This Kokkos View manages the block of</span></div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="comment">// memory owned by this class such that the copy constructor and</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="comment">// assignment operator for this class perform a shallow and reference</span></div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="comment">// counted copy of the data.</span></div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    soa_view _data;</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;};</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;<span class="comment">// Static type checker.</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> &gt;</div>
-<div class="line"><a name="l00358"></a><span class="lineno"><a class="line" href="structCabana_1_1is__aosoa.html">  358</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa</a> : <span class="keyword">public</span> std::false_type {};</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> DataTypes, <span class="keyword">class</span> MemorySpace, <span class="keywordtype">int</span> VectorLength&gt;</div>
-<div class="line"><a name="l00361"></a><span class="lineno"><a class="line" href="structCabana_1_1is__aosoa_3_01AoSoA_3_01DataTypes_00_01MemorySpace_00_01VectorLength_01_4_01_4.html">  361</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt;<a class="code" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt;DataTypes,MemorySpace,VectorLength&gt; &gt;</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    : <span class="keyword">public</span> std::true_type {};</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <a class="code" href="classCabana_1_1Slice.html">Slice&lt;member_data_type&lt;M&gt;</a>,</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;          memory_space,</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;          <a class="code" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>,</div>
+<div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;          vector_length,</div>
+<div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;          <span class="keyword">sizeof</span>(soa_type) / <span class="keyword">sizeof</span>(member_value_type&lt;M&gt;)&gt;</div>
+<div class="line"><a name="l00317"></a><span class="lineno"><a class="line" href="classCabana_1_1AoSoA.html#a0d6e73978d4472fceb8475d5ea453122">  317</a></span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html#a0d6e73978d4472fceb8475d5ea453122">slice</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        static_assert(</div>
+<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            0 == <span class="keyword">sizeof</span>(<a class="code" href="structCabana_1_1SoA.html">soa_type</a>) % <span class="keyword">sizeof</span>(member_value_type&lt;M&gt;),</div>
+<div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;            <span class="stringliteral">&quot;Slice stride cannot be calculated for misaligned memory!&quot;</span> );</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        <span class="keywordflow">return</span></div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;            Slice&lt;member_data_type&lt;M&gt;,</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                  memory_space,</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                  DefaultAccessMemory,</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                  vector_length,</div>
+<div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                  <span class="keyword">sizeof</span>(<a class="code" href="structCabana_1_1SoA.html">soa_type</a>) / <span class="keyword">sizeof</span>(member_value_type&lt;M&gt;)&gt;</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;            ( <span class="keyword">static_cast&lt;</span>member_pointer_type&lt;M&gt; <span class="keyword">&gt;</span>(_data(0).template ptr&lt;M&gt;()),</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;              _size,</div>
+<div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;              _num_soa );</div>
+<div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    }</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;</div>
+<div class="line"><a name="l00338"></a><span class="lineno"><a class="line" href="classCabana_1_1AoSoA.html#aaf4daa69248c660aefec75e2ad494d62">  338</a></span>&#160;    <span class="keywordtype">void</span>* <a class="code" href="classCabana_1_1AoSoA.html#aaf4daa69248c660aefec75e2ad494d62">ptr</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<span class="keyword">    </span>{ <span class="keywordflow">return</span> _data.data(); }</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;    <span class="comment">// Total number of tuples in the container.</span></div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;    std::size_t _size;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;    <span class="comment">// Allocated number of tuples in all arrays in all structs.</span></div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    std::size_t _capacity;</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="comment">// Number of structs-of-arrays in the array.</span></div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    std::size_t _num_soa;</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;</div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="comment">// Structs-of-Arrays managed data. This Kokkos View manages the block of</span></div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="comment">// memory owned by this class such that the copy constructor and</span></div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="comment">// assignment operator for this class perform a shallow and reference</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="comment">// counted copy of the data.</span></div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    soa_view _data;</div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;};</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="comment">// Static type checker.</span></div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> &gt;</div>
+<div class="line"><a name="l00362"></a><span class="lineno"><a class="line" href="structCabana_1_1is__aosoa.html">  362</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa</a> : <span class="keyword">public</span> std::false_type {};</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> DataTypes, <span class="keyword">class</span> MemorySpace, <span class="keywordtype">int</span> VectorLength&gt;</div>
-<div class="line"><a name="l00365"></a><span class="lineno"><a class="line" href="structCabana_1_1is__aosoa_3_01const_01AoSoA_3_01DataTypes_00_01MemorySpace_00_01VectorLength_01_4_01_4.html">  365</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt;const <a class="code" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt;DataTypes,MemorySpace,VectorLength&gt; &gt;</div>
+<div class="line"><a name="l00365"></a><span class="lineno"><a class="line" href="structCabana_1_1is__aosoa_3_01AoSoA_3_01DataTypes_00_01MemorySpace_00_01VectorLength_01_4_01_4.html">  365</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt;<a class="code" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt;DataTypes,MemorySpace,VectorLength&gt; &gt;</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    : <span class="keyword">public</span> std::true_type {};</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> DataTypes, <span class="keyword">class</span> MemorySpace, <span class="keywordtype">int</span> VectorLength&gt;</div>
+<div class="line"><a name="l00369"></a><span class="lineno"><a class="line" href="structCabana_1_1is__aosoa_3_01const_01AoSoA_3_01DataTypes_00_01MemorySpace_00_01VectorLength_01_4_01_4.html">  369</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa</a>&lt;const <a class="code" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt;DataTypes,MemorySpace,VectorLength&gt; &gt;</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    : <span class="keyword">public</span> std::true_type {};</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="preprocessor">#endif // CABANA_AOSOA_HPP</span></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html_aaf4daa69248c660aefec75e2ad494d62"><div class="ttname"><a href="classCabana_1_1AoSoA.html#aaf4daa69248c660aefec75e2ad494d62">Cabana::AoSoA::ptr</a></div><div class="ttdeci">void * ptr() const </div><div class="ttdoc">Get an un-typed raw pointer to the entire data block. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:334</div></div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;</div>
+<div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;</div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;<span class="preprocessor">#endif // CABANA_AOSOA_HPP</span></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html_aaf4daa69248c660aefec75e2ad494d62"><div class="ttname"><a href="classCabana_1_1AoSoA.html#aaf4daa69248c660aefec75e2ad494d62">Cabana::AoSoA::ptr</a></div><div class="ttdeci">void * ptr() const </div><div class="ttdoc">Get an un-typed raw pointer to the entire data block. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:338</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_afe8403af8e3f14ad140c1a27689a8f98"><div class="ttname"><a href="classCabana_1_1AoSoA.html#afe8403af8e3f14ad140c1a27689a8f98">Cabana::AoSoA::AoSoA</a></div><div class="ttdeci">AoSoA(const int n)</div><div class="ttdoc">Allocate a container with n tuples. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:134</div></div>
 <div class="ttc" id="classCabana_1_1Impl_1_1Index_html"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html">Cabana::Impl::Index</a></div><div class="ttdoc">Class for converting between 1d and 2d aosoa indices. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:38</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_af482e2ec3ad6d123d6e6399ca6ee1938"><div class="ttname"><a href="classCabana_1_1AoSoA.html#af482e2ec3ad6d123d6e6399ca6ee1938">Cabana::AoSoA::capacity</a></div><div class="ttdeci">CABANA_FUNCTION std::size_t capacity() const </div><div class="ttdoc">Returns the size of the storage space currently allocated for the container, expressed in terms of tu...</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:171</div></div>
@@ -335,22 +339,22 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="structCabana_1_1MemberTypeAtIndex_html"><div class="ttname"><a href="structCabana_1_1MemberTypeAtIndex.html">Cabana::MemberTypeAtIndex</a></div><div class="ttdoc">Get the type of the member at a given index. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:65</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:66</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_adf2a8fc5068bc630c1f57110ff252dea"><div class="ttname"><a href="classCabana_1_1AoSoA.html#adf2a8fc5068bc630c1f57110ff252dea">Cabana::AoSoA::getTuple</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::enable_if&lt; std::is_integral&lt; I &gt;::value, tuple_type &gt;::type getTuple(const I &amp;i) const </div><div class="ttdoc">Get a tuple at a given index via a deep copy. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:281</div></div>
-<div class="ttc" id="structCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:358</div></div>
+<div class="ttc" id="structCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:362</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_aaf8315a02aafaa6b7af0b7fe8b5a3080"><div class="ttname"><a href="classCabana_1_1AoSoA.html#aaf8315a02aafaa6b7af0b7fe8b5a3080">Cabana::AoSoA::AoSoA</a></div><div class="ttdeci">AoSoA()</div><div class="ttdoc">Default constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:123</div></div>
 <div class="ttc" id="structCabana_1_1DefaultAccessMemory_html"><div class="ttname"><a href="structCabana_1_1DefaultAccessMemory.html">Cabana::DefaultAccessMemory</a></div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:58</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_a90ca9c95fa26269e84c44ecf0a52794a"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a90ca9c95fa26269e84c44ecf0a52794a">Cabana::AoSoA::resize</a></div><div class="ttdeci">void resize(const std::size_t n)</div><div class="ttdoc">Resizes the container so that it contains n tuples. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:188</div></div>
-<div class="ttc" id="classCabana_1_1Slice_html"><div class="ttname"><a href="classCabana_1_1Slice.html">Cabana::Slice</a></div><div class="ttdoc">A slice of an array-of-structs-of-arrays with data access to a single multidimensional member...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:161</div></div>
+<div class="ttc" id="classCabana_1_1Slice_html"><div class="ttname"><a href="classCabana_1_1Slice.html">Cabana::Slice</a></div><div class="ttdoc">A slice of an array-of-structs-of-arrays with data access to a single multidimensional member...</div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:426</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_a59035815fbcbcd40ab512429f2e92945"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a59035815fbcbcd40ab512429f2e92945">Cabana::AoSoA::size</a></div><div class="ttdeci">CABANA_FUNCTION std::size_t size() const </div><div class="ttdoc">Returns the number of tuples in the container. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:151</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_a82123aff64317235fcd54cba710573fc"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a82123aff64317235fcd54cba710573fc">Cabana::AoSoA::reserve</a></div><div class="ttdeci">void reserve(const std::size_t n)</div><div class="ttdoc">Requests that the container capacity be at least enough to contain n tuples. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:214</div></div>
 <div class="ttc" id="structCabana_1_1SoA_html"><div class="ttname"><a href="structCabana_1_1SoA.html">Cabana::SoA</a></div><div class="ttdoc">Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_SoA.hpp:123</div></div>
 <div class="ttc" id="structCabana_1_1Tuple_html"><div class="ttname"><a href="structCabana_1_1Tuple.html">Cabana::Tuple</a></div><div class="ttdef"><b>Definition:</b> Cabana_Tuple.hpp:28</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_a07a0d6364559a74189ecc9d5b84cd7b9"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a07a0d6364559a74189ecc9d5b84cd7b9">Cabana::AoSoA::arraySize</a></div><div class="ttdeci">CABANA_INLINE_FUNCTION std::enable_if&lt; std::is_integral&lt; S &gt;::value, int &gt;::type arraySize(const S &amp;s) const </div><div class="ttdoc">Get the size of the data array at a given struct member index. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:252</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html_a3ac6ba3cb8e651f72c11ae3188c4bdec"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a3ac6ba3cb8e651f72c11ae3188c4bdec">Cabana::AoSoA::access</a></div><div class="ttdeci">CABANA_FORCEINLINE_FUNCTION std::enable_if&lt; std::is_integral&lt; S &gt;::value, soa_type &amp; &gt;::type access(const S &amp;s) const </div><div class="ttdoc">Get a reference to the SoA at a given index. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:268</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html_a8727d54a8bfe86a3b21c9a4d4cb45f5f"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a8727d54a8bfe86a3b21c9a4d4cb45f5f">Cabana::AoSoA::slice</a></div><div class="ttdeci">Slice&lt; member_data_type&lt; M &gt;, memory_space, DefaultAccessMemory, vector_length &gt; slice() const </div><div class="ttdoc">Get an unmanaged slice of a tuple member with default memory access. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:313</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html_a0d6e73978d4472fceb8475d5ea453122"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a0d6e73978d4472fceb8475d5ea453122">Cabana::AoSoA::slice</a></div><div class="ttdeci">Slice&lt; member_data_type&lt; M &gt;, memory_space, DefaultAccessMemory, vector_length, sizeof(soa_type)/sizeof(member_value_type&lt; M &gt;)&gt; slice() const </div><div class="ttdoc">Get an unmanaged slice of a tuple member with default memory access. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:317</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 19 2018 03:11:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 19 2018 20:28:37 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

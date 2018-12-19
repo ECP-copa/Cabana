@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Cabana::Impl::KokkosDataTypeImpl&lt; T, 1, VectorLength &gt; Struct Template Reference</title>
+<title>Cabana: Cabana::Impl::KokkosDataTypeImpl&lt; T, 1, VectorLength, Stride &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -82,7 +82,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>Cabana</b></li><li class="navelem"><b>Impl</b></li><li class="navelem"><a class="el" href="structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_011_00_01VectorLength_01_4.html">KokkosDataTypeImpl< T, 1, VectorLength ></a></li>  </ul>
+<li class="navelem"><b>Cabana</b></li><li class="navelem"><b>Impl</b></li><li class="navelem"><a class="el" href="structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_011_00_01VectorLength_00_01Stride_01_4.html">KokkosDataTypeImpl< T, 1, VectorLength, Stride ></a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -90,32 +90,35 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
-<a href="structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_011_00_01VectorLength_01_4-members.html">List of all members</a>  </div>
+<a href="structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_011_00_01VectorLength_00_01Stride_01_4-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::Impl::KokkosDataTypeImpl&lt; T, 1, VectorLength &gt; Struct Template Reference</div>  </div>
+<div class="title">Cabana::Impl::KokkosDataTypeImpl&lt; T, 1, VectorLength, Stride &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a5eca2242ed585101c42625e9ce17f216"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5eca2242ed585101c42625e9ce17f216"></a>
+<tr class="memitem:a188d25826f50ee7363d41d6e49b70163"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a188d25826f50ee7363d41d6e49b70163"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = typename std::remove_all_extents&lt; T &gt;::type</td></tr>
-<tr class="separator:a5eca2242ed585101c42625e9ce17f216"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4be0302ecb10953f4abfb601a508503a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4be0302ecb10953f4abfb601a508503a"></a>
+<tr class="separator:a188d25826f50ee7363d41d6e49b70163"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6eb4e383ec213d324d48cac1af0de6f2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6eb4e383ec213d324d48cac1af0de6f2"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>data_type</b> = value_type *[VectorLength][D0]</td></tr>
-<tr class="separator:a4be0302ecb10953f4abfb601a508503a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a6eb4e383ec213d324d48cac1af0de6f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0888fcd3342c7a4ad63dc94bd8b740eb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0888fcd3342c7a4ad63dc94bd8b740eb"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>cabana_layout</b> = <a class="el" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice</a>&lt; Stride, VectorLength, D0 &gt;</td></tr>
+<tr class="separator:a0888fcd3342c7a4ad63dc94bd8b740eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:a36f698dd61abb39f063695205c9c3c48"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a36f698dd61abb39f063695205c9c3c48"></a>
-static Kokkos::LayoutStride&#160;</td><td class="memItemRight" valign="bottom"><b>createLayout</b> (const std::size_t num_soa, const std::size_t stride)</td></tr>
-<tr class="separator:a36f698dd61abb39f063695205c9c3c48"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2f6d87dd8b325ee6a2c9b3ab52ede417"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2f6d87dd8b325ee6a2c9b3ab52ede417"></a>
+static <a class="el" href="structKokkos_1_1LayoutCabanaSlice.html">cabana_layout</a>&#160;</td><td class="memItemRight" valign="bottom"><b>createLayout</b> (const std::size_t num_soa)</td></tr>
+<tr class="separator:a2f6d87dd8b325ee6a2c9b3ab52ede417"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a74dc9ba07b6be4d8b7aa7f69cbdec491"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a74dc9ba07b6be4d8b7aa7f69cbdec491"></a>
+<tr class="memitem:ac4a82df5bac99d7fcfcdbb26c920dd92"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac4a82df5bac99d7fcfcdbb26c920dd92"></a>
 static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>D0</b> = std::extent&lt;T,0&gt;::value</td></tr>
-<tr class="separator:a74dc9ba07b6be4d8b7aa7f69cbdec491"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ac4a82df5bac99d7fcfcdbb26c920dd92"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>core/src/<a class="el" href="Cabana__Slice_8hpp_source.html">Cabana_Slice.hpp</a></li>
@@ -123,7 +126,7 @@ static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom">
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Dec 19 2018 03:11:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Dec 19 2018 20:28:37 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

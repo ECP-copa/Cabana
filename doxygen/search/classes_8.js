@@ -1,5 +1,6 @@
 var searchData=
 [
+  ['layoutcabanaslice',['LayoutCabanaSlice',['../structKokkos_1_1LayoutCabanaSlice.html',1,'Kokkos']]],
   ['linkedcelllist',['LinkedCellList',['../classCabana_1_1LinkedCellList.html',1,'Cabana']]],
   ['linkedcelllist_3c_20memory_5fspace_20_3e',['LinkedCellList&lt; memory_space &gt;',['../classCabana_1_1LinkedCellList.html',1,'Cabana']]],
   ['linkedcellstencil',['LinkedCellStencil',['../structCabana_1_1Impl_1_1LinkedCellStencil.html',1,'Cabana::Impl']]],
