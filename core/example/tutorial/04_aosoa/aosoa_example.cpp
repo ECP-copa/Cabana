@@ -55,14 +55,14 @@ void aosoaExample()
       allocated. In this example we are writing basic loops that will execute
       on the CPU. The HostSpace allocates memory in standard CPU RAM.
 
-      Cabana also supports execution on NVIDIA GPUs. To create an AoSoA
-      allocated with CUDA Unified Virtual Memory (UVM) use
-      `Cabana::CudaUVMSpace` instead of `Cabana::HostSpace`. The CudaUVMSpace
+      Kokkos also supports execution on NVIDIA GPUs. For example, to create an
+      AoSoA allocated with CUDA Unified Virtual Memory (UVM) use
+      `Kokkos::CudaUVMSpace` instead of `Kokkos::HostSpace`. The CudaUVMSpace
       allocates memory in managed GPU memory via `cudaMallocManaged`. This
       memory is automatically paged between host and device depending on the
       context in which the memory is accessed.
     */
-    using MemorySpace = Cabana::HostSpace;
+    using MemorySpace = Kokkos::HostSpace;
 
     /*
        Create the AoSoA. We define how many tuples the aosoa will
