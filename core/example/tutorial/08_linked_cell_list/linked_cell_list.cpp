@@ -45,7 +45,7 @@ void linkedCellListExample()
       and member type configurations are compatible with sorting.
     */
     const int VectorLength = 8;
-    using MemorySpace = Cabana::HostSpace;
+    using MemorySpace = Kokkos::HostSpace;
 
     /*
        Create the AoSoA.
