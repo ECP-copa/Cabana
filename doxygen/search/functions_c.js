@@ -1,11 +1,8 @@
 var searchData=
 [
-  ['s',['s',['../classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025',1,'Cabana::Impl::Index']]],
-  ['settuple',['setTuple',['../classCabana_1_1AoSoA.html#a884e3c1a2b5d199491ca7fa23097b6a5',1,'Cabana::AoSoA']]],
-  ['simdpolicy',['SimdPolicy',['../classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21',1,'Cabana::SimdPolicy']]],
-  ['size',['size',['../classCabana_1_1AoSoA.html#a59035815fbcbcd40ab512429f2e92945',1,'Cabana::AoSoA::size()'],['../classCabana_1_1Slice.html#aba9f2ceaef7a0f91a06df86eb3779482',1,'Cabana::Slice::size()']]],
-  ['slice',['slice',['../classCabana_1_1AoSoA.html#a0d6e73978d4472fceb8475d5ea453122',1,'Cabana::AoSoA::slice()'],['../classCabana_1_1Slice.html#a811c3cdcef2945c0142a5d8341a523ec',1,'Cabana::Slice::Slice()'],['../classCabana_1_1Slice.html#aa0b1ccd60019c44803127448ece15f83',1,'Cabana::Slice::Slice(const pointer_type data, const std::size_t size, const std::size_t num_soa)'],['../classCabana_1_1Slice.html#a4f63e375d4705d06ebd5151c500a9443',1,'Cabana::Slice::Slice(const Slice&lt; DataType, MemorySpace, MAT, VectorLength, Stride &gt; &amp;rhs)']]],
-  ['stride',['stride',['../classCabana_1_1Slice.html#a592a1c275c787754b34b222bfd132569',1,'Cabana::Slice']]],
-  ['structbegin',['structBegin',['../classCabana_1_1SimdPolicy.html#ad790f92bb3fe40b86fbb87ab5cbec374',1,'Cabana::SimdPolicy']]],
-  ['structend',['structEnd',['../classCabana_1_1SimdPolicy.html#a2127fa387d48937757c9c2f20e54219e',1,'Cabana::SimdPolicy']]]
+  ['rangebegin',['rangeBegin',['../classCabana_1_1LinkedCellList.html#a44a750305f79727a4982e729536d6558',1,'Cabana::LinkedCellList::rangeBegin()'],['../classCabana_1_1BinningData.html#aa76bd0a0c9620845968cecad43bbd5f7',1,'Cabana::BinningData::rangeBegin()']]],
+  ['rangeend',['rangeEnd',['../classCabana_1_1LinkedCellList.html#a0d8529a197a5fcbc0b7b7a10b4f1b478',1,'Cabana::LinkedCellList::rangeEnd()'],['../classCabana_1_1BinningData.html#af9e0811165d8a129d70ecde80101ac10',1,'Cabana::BinningData::rangeEnd()']]],
+  ['rank',['rank',['../classCabana_1_1Slice.html#a396d9fe1fa0880a956b20c2c6ee316aa',1,'Cabana::Slice::rank()'],['../structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#af75bdae9f054c55528ec958de4dfe2ce',1,'Cabana::SoA&lt; MemberTypes&lt; Types...&gt;, VectorLength &gt;::rank()']]],
+  ['reserve',['reserve',['../classCabana_1_1AoSoA.html#a82123aff64317235fcd54cba710573fc',1,'Cabana::AoSoA']]],
+  ['resize',['resize',['../classCabana_1_1AoSoA.html#a90ca9c95fa26269e84c44ecf0a52794a',1,'Cabana::AoSoA']]]
 ];

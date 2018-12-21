@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['i',['i',['../classCabana_1_1Impl_1_1Index.html#addeeb2189aed18a390811eeef30f2684',1,'Cabana::Impl::Index']]],
-  ['ijkbinindex',['ijkBinIndex',['../classCabana_1_1LinkedCellList.html#a76619a25120a6586d163dac2af9dbd5d',1,'Cabana::LinkedCellList']]]
+  ['halo',['Halo',['../classCabana_1_1Halo.html#af0b1d3119046ca91ed289eb952ff420a',1,'Cabana::Halo::Halo(MPI_Comm comm, const std::size_t num_local, const IdViewType &amp;element_export_ids, const RankViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks, const int mpi_tag=1221)'],['../classCabana_1_1Halo.html#a8362d63d8600310c761f358029d4b396',1,'Cabana::Halo::Halo(MPI_Comm comm, const std::size_t num_local, const IdViewType &amp;element_export_ids, const RankViewType &amp;element_export_ranks, const int mpi_tag=1221)']]]
 ];
