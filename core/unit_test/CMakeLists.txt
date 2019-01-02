@@ -6,7 +6,7 @@ endif()
 set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
-include_directories(${GTEST_SOURCE_DIR})
+include_directories(SYSTEM ${GTEST_SOURCE_DIR})
 add_library(cabana_core_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
