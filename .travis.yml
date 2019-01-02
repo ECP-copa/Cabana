@@ -4,6 +4,8 @@ language: cpp
 sudo: required
 
 env:
+  global:
+    - CXXFLAGS="-Wall -Wextra -Werror -pedantic"
   matrix:
     - BACKENDS="OpenMP"
     - BACKENDS="Serial"
