@@ -65,7 +65,7 @@ class LinkedCellList
                  grid_max[0], grid_max[1], grid_max[2],
                  grid_delta[0], grid_delta[1], grid_delta[2] )
     {
-        build( positions, 0, positions.size(), grid_delta, grid_min, grid_max );
+        build( positions, 0, positions.size() );
     }
 
     /*!
@@ -98,7 +98,7 @@ class LinkedCellList
                  grid_max[0], grid_max[1], grid_max[2],
                  grid_delta[0], grid_delta[1], grid_delta[2] )
     {
-        build( positions, begin, end, grid_delta, grid_min, grid_max );
+        build( positions, begin, end );
     }
 
     /*!
@@ -208,10 +208,7 @@ class LinkedCellList
     template<class SliceType>
     void build( SliceType positions,
                 const std::size_t begin,
-                const std::size_t end,
-                const typename SliceType::value_type grid_delta[3],
-                const typename SliceType::value_type grid_min[3],
-                const typename SliceType::value_type grid_max[3] )
+                const std::size_t end )
     {
         // Allocate the binning data. Note that the permutation vector spans
         // only the length of begin-end;

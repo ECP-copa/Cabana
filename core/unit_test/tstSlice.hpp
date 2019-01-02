@@ -320,7 +320,7 @@ void atomicAccessTest()
     // Have every thread increment all elements of the slice. This should
     // create contention in parallel without the atomic.
     auto increment_op =
-        KOKKOS_LAMBDA( const int i )
+        KOKKOS_LAMBDA( const int )
         {
             for ( int j = 0; j < num_data; ++j ) atomic_slice( j ) += 1;
         };

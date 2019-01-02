@@ -98,7 +98,7 @@ void sliceExample()
       accessing the total number of tuples in the data structure and the array
       sizes.
     */
-    for ( int s = 0; s < slice_0.numSoA(); ++s )
+    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
     {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )

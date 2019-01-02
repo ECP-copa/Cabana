@@ -38,9 +38,9 @@ class NeighborDiscriminator<FullNeighborTag>
     // "p" is not the same as the neighbor index "n").
     KOKKOS_INLINE_FUNCTION
     static bool isValid( const std::size_t p,
-                         const double xp, const double yp, const double zp,
+                         const double, const double, const double,
                          const std::size_t n,
-                         const double xn, const double yn, const double zn )
+                         const double, const double, const double )
     {
         return ( p != n );
     }

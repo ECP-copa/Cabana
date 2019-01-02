@@ -66,7 +66,7 @@ void linkedCellListExample()
       Create the particle ids.
     */
     auto ids = aosoa.slice<1>();
-    for ( int i = 0; i < aosoa.size(); ++i )
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
         ids(i) = i;
     /*
       Create the particle coordinates. We will put 2 particles in the center
@@ -117,7 +117,7 @@ void linkedCellListExample()
        still valid as long as we haven't resized, changes the capacity, or
        otherwise changed the memory associated with the AoSoA.
      */
-    for ( int i = 0; i < aosoa.size(); ++i )
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
         std::cout << "Particle: id = " << ids(i)
                   << ", coords (" << positions(i,0) << ","
                   << positions(i,1) << "," << positions(i,2) << ")"

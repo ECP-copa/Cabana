@@ -296,7 +296,7 @@ void test4( const bool use_topology )
 
     // self sends - we don't know which order the self sends are in but we
     // know they are the first 2.
-    if ( my_rank == host_steering(0) )
+    if ( my_rank == (int) host_steering(0) )
     {
         EXPECT_EQ( host_steering(0), my_rank );
         EXPECT_EQ( host_steering(1), my_rank + my_size );
@@ -327,7 +327,7 @@ void test4( const bool use_topology )
         }
         else
         {
-            if ( n == host_steering(2*n) )
+            if ( n == (int) host_steering(2*n) )
             {
                 EXPECT_EQ( host_steering(2*n), n );
                 EXPECT_EQ( host_steering(2*n+1), n + my_size );
