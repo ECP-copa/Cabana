@@ -4,8 +4,6 @@ language: cpp
 sudo: required
 
 env:
-  global:
-    - CXXFLAGS="-Wall -Wextra -Werror -pedantic"
   matrix:
     - BACKENDS="OpenMP"
     - BACKENDS="Serial"
@@ -45,6 +43,7 @@ addons:
       - libopenmpi-dev
 
 script:
+  - export CXXFLAGS="-Wall -Wextra -Werror -pedantic"
   - mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
