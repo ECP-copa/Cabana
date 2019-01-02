@@ -65,7 +65,7 @@ void deepCopyExample()
     /*
       Put some data in the source AoSoA.
     */
-    for ( int s = 0; s < src_aosoa.numSoA(); ++s )
+    for ( std::size_t s = 0; s < src_aosoa.numSoA(); ++s )
     {
         auto& soa = src_aosoa.access(s);
 
