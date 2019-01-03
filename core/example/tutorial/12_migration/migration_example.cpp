@@ -62,7 +62,7 @@ void migrationExample()
 
     /*
       Create slices and assign data. The data values are equal to id of this
-      rank.
+      rank so we can track where the data goes.
      */
     auto slice_0 = aosoa.slice<0>();
     auto slice_1 = aosoa.slice<1>();
@@ -101,7 +101,7 @@ void migrationExample()
       we are sending the data to but not who we are receiving data from. In
       the second we know the topology of the communication plan (i.e. who we
       send and receive from). We know that we will only send/receive from this
-      rank and the next rank so do that in this case.
+      rank and the next rank so use that information in this case.
      */
     std::vector<int> neighbors = { comm_rank, next_rank };
     Cabana::Distributor<MemorySpace> distributor(
