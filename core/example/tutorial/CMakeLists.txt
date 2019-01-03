@@ -8,6 +8,7 @@ if(Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Pthread)
   add_subdirectory(07_sorting)
   add_subdirectory(08_linked_cell_list)
   add_subdirectory(09_verlet_list)
+  add_subdirectory(12_migration)
 endif()
 
 if(Cabana_ENABLE_Cuda AND (Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Pthread))

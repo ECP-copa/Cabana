@@ -16,7 +16,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// Atomic slice example.
+// parallel for example.
 //---------------------------------------------------------------------------//
 void parallelForExample()
 {
@@ -62,17 +62,22 @@ void parallelForExample()
     Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
 
     /*
-      Create slice s.
+      Create slices and assign some data.
      */
     auto slice_0 = aosoa.slice<0>();
     auto slice_1 = aosoa.slice<1>();
+    for ( int i = 0; i < num_tuple; ++i )
+    {
+        slice_0(i) = 1.0;
+        slice_1(i) = 1.0;
+    }
 
     /*
       KERNEL 1 - VECTORIZED/COALESCED
 
       Start with a kernel that we know will vectorize/coalesce. In this case
       we want 2D indexing. On a CPU, this 2D indexing can be used to write a
-      vector-length inner loop that will vectorize while on a GPU a thread
+      vector-length inner loop that will vectorize while on a GPU a 2D thread
       layout to promote coalescing will be used.
 
       We write a Kokkos lambda function for the kernel. Note that the kernel
