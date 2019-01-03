@@ -16,6 +16,7 @@ endif()
 
 if(Cabana_ENABLE_OpenMP)
   add_subdirectory(10_advanced_slice_openmp)
+  add_subdirectory(11_parallel_for)
 endif()
 
 if(Cabana_ENABLE_Cuda)
