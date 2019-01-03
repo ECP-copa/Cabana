@@ -108,12 +108,13 @@ void parallelForExample()
       vector length must come first in the template parameters with the
       execution space and work tag to follow.
     */
-    Cabana::SimdPolicy<VectorLength,Kokkos::OpenMP> simd_policy( 0, num_tuple );
+    using ExecutionSpace = Kokkos::OpenMP;
+    Cabana::SimdPolicy<VectorLength,ExecutionSpace> simd_policy( 0, num_tuple );
 
     /*
       Finally, perform the parallel loop. We have added a parallel for concept
       in Cabana for this that is complementary to existing parallel for
-      implementations in Kokkos including a similar interface.
+      implementations in Kokkos.
 
       Note: We fence after the kernel is completed for safety but this may not
       be needed depending on the memory/execution space being used.
@@ -140,7 +141,7 @@ void parallelForExample()
       Because we are using 1D indexing in this case, we can directly use
       existing Kokkos execution policies and the parallel for.
      */
-    Kokkos::RangePolicy<Kokkos::OpenMP> linear_policy( 2, num_tuple - 2 );
+    Kokkos::RangePolicy<ExecutionSpace> linear_policy( 2, num_tuple - 2 );
     Kokkos::parallel_for( linear_policy, stencil_kernel, "stencil_op" );
     Kokkos::fence();
 
@@ -148,7 +149,6 @@ void parallelForExample()
           Note: Other Kokkos parallel concepts such as reductions and scans can be
           used with Cabana slices and 1D indexing.
     */
-
 }
 
 //---------------------------------------------------------------------------//
