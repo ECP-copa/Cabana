@@ -12,6 +12,7 @@
 #include <Cabana_Core.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Random.hpp>
 
 #include <iostream>
 
@@ -130,17 +131,25 @@ void parallelForExample()
     /*
       KERNEL 2 - NO VECTORIZATION/COALESCING
 
-      Next we use a kernel that will not vectorize due to non-sequential
-      memory access. In this case a 2D loop may be OK on the GPU due to the
-      fact that all work elements will still receive a thread. However, on the
-      CPU, the inner vector-length loop will not vectorize and therefore be
-      computed in serial on each thread. Using a 1D loop with 1D indexing
-      means each work element will get a thread on the CPU, thus exposing more
-      parallelism than the 2D loop for code that does not vectorize.
+      Next we use a kernel that will not vectorize due to random memory
+      access. In this case a 2D loop may be OK on the GPU due to the fact that
+      all work elements will still receive a thread. However, on the CPU, the
+      inner vector-length loop will not vectorize and therefore be computed in
+      serial on each thread. Using a 1D loop with 1D indexing means each work
+      element will get a thread on the CPU, thus exposing more parallelism
+      than the 2D loop for code that does not vectorize.
     */
+    using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
+    using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
+    PoolType pool( 342343901 );
     auto stencil_kernel =
         KOKKOS_LAMBDA( const int i )
-        { slice_1(i) = slice_0(i-2) - 4.0 * slice_0(i) + slice_0(i+2); };
+        {
+            auto gen = pool.get_state();
+            auto rand_idx = Kokkos::rand<RandomType,int>::draw(gen,0,num_tuple);
+            slice_1(i) = slice_0( rand_idx );
+            pool.free_state( gen );
+        };
 
     /*
       Because we are using 1D indexing in this case, we can directly use
