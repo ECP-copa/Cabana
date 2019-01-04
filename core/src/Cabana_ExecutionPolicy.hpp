@@ -12,7 +12,6 @@
 #ifndef CABANA_EXECUTIONPOLICY_HPP
 #define CABANA_EXECUTIONPOLICY_HPP
 
-#include <Cabana_Macros.hpp>
 #include <impl/Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>

@@ -12,8 +12,6 @@
 #ifndef CABANA_NEIGHBORLIST_HPP
 #define CABANA_NEIGHBORLIST_HPP
 
-#include <Cabana_Macros.hpp>
-
 #include <Kokkos_Core.hpp>
 
 namespace Cabana
@@ -59,13 +57,13 @@ class NeighborList
     using TypeTag = typename NeighborListType::TypeTag;
 
     // Get the number of neighbors for a given particle index.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static int numNeighbor( const NeighborListType& list,
                             const std::size_t particle_index );
 
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static int getNeighbor( const NeighborListType& list,
                             const std::size_t particle_index,
                             const int neighbor_index );
