@@ -76,6 +76,10 @@ after_success:
      fi;
    fi
 
+branches:
+  only:
+  - master
+
 cache:
   - ccache
 
