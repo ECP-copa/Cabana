@@ -14,5 +14,5 @@ test:default:
       popd
     - mkdir build && cd build &&
       cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON .. &&
-      make -j2 VERBOSE=1 &&
+      make -k -O -j2 VERBOSE=1 &&
       make test
