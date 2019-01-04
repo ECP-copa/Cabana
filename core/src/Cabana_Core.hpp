@@ -12,11 +12,11 @@
 #ifndef CABANA_CORE_HPP
 #define CABANA_CORE_HPP
 
+#include <CabanaCore_config.hpp>
+
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
-#include <Cabana_Distributor.hpp>
 #include <Cabana_LinkedCellList.hpp>
-#include <Cabana_Halo.hpp>
 #include <Cabana_Macros.hpp>
 #include <Cabana_MemberTypes.hpp>
 #include <Cabana_NeighborList.hpp>
@@ -28,6 +28,11 @@
 #include <Cabana_Types.hpp>
 #include <Cabana_VerletList.hpp>
 #include <Cabana_Version.hpp>
+
+#if( Cabana_ENABLE_MPI )
+#include <Cabana_Distributor.hpp>
+#include <Cabana_Halo.hpp>
+#endif
 
 #include <Kokkos_Core.hpp>
 
