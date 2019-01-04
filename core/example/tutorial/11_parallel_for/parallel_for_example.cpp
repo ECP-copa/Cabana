@@ -63,7 +63,9 @@ void parallelForExample()
     Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
 
     /*
-      Create slices and assign some data.
+      Create slices and assign some data. One might consider using a parallel
+      for loop in this case - especially when the code being written is for an
+      arbitrary memory space.
      */
     auto slice_0 = aosoa.slice<0>();
     auto slice_1 = aosoa.slice<1>();
@@ -86,11 +88,9 @@ void parallelForExample()
       of the element on which the computation will be performed. This is
       intended to be used with the `access()` function of the slice.
      */
-    double v1 = 3.55;
-    double v2 = 1.24;
-    auto vector_fma_kernel =
+    auto vector_kernel =
         KOKKOS_LAMBDA( const int s, const int a )
-        { slice_0.access(s,a) = v1 * slice_1.access(s,a) + v2; };
+        { slice_0.access(s,a) = slice_1.access(s,a); };
 
     /*
       Now we define the execution policy for the 2D indexing scheme. A
@@ -123,9 +123,13 @@ void parallelForExample()
       implementations in Kokkos.
 
       Note: We fence after the kernel is completed for safety but this may not
-      be needed depending on the memory/execution space being used.
+      be needed depending on the memory/execution space being used. When the
+      CUDA UVM memory space is used this fence is necessary to ensure
+      completion of the kernel on the device before UVM data is accessed on
+      the host. Not fencing in the case of using CUDA UVM will typically
+      result in a bus error.
     */
-    Cabana::simd_parallel_for( simd_policy, vector_fma_kernel, "vector_fma" );
+    Cabana::simd_parallel_for( simd_policy, vector_kernel, "vector_op" );
     Kokkos::fence();
 
     /*
@@ -142,7 +146,7 @@ void parallelForExample()
     using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
     using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
     PoolType pool( 342343901 );
-    auto stencil_kernel =
+    auto rand_kernel =
         KOKKOS_LAMBDA( const int i )
         {
             auto gen = pool.get_state();
@@ -156,7 +160,7 @@ void parallelForExample()
       existing Kokkos execution policies and the parallel for.
      */
     Kokkos::RangePolicy<ExecutionSpace> linear_policy( 2, num_tuple - 2 );
-    Kokkos::parallel_for( linear_policy, stencil_kernel, "stencil_op" );
+    Kokkos::parallel_for( linear_policy, rand_kernel, "rand_op" );
     Kokkos::fence();
 
     /*

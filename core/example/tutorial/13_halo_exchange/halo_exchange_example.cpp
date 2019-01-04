@@ -93,11 +93,16 @@ void haloExchangeExample()
     }
 
     /*
-      We have two ways to make a halo. In the first case we know where
-      we are sending the data to but not who we are receiving data from. In
-      the second we know the topology of the communication plan (i.e. who we
-      send and receive from). We know that we will only send/receive from this
-      rank and the next rank so use that information in this case.
+      We have two ways to make a halo. In the first case we know what ranks we
+      are sending the data to but not the ranks we are receiving data from. In
+      the second we know the topology of the communication plan (i.e. the
+      ranks we send and receive from).
+
+      We know that we will only send/receive from this rank and the next rank
+      so use that information in this case because this substantially reduces
+      the amount of communication needed to compose the communication plan. If
+      this neighbor data were not supplied, extra global communication would
+      be needed to generate a list of neighbors.
      */
     std::vector<int> neighbors = { comm_rank, next_rank };
     Cabana::Halo<MemorySpace> halo(

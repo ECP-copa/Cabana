@@ -62,7 +62,9 @@ void migrationExample()
 
     /*
       Create slices and assign data. The data values are equal to id of this
-      rank so we can track where the data goes.
+      rank so we can track where the data goes. One might consider using a
+      parallel for loop in this case - especially when the code being written
+      is for an arbitrary memory space.
      */
     auto slice_0 = aosoa.slice<0>();
     auto slice_1 = aosoa.slice<1>();
@@ -97,11 +99,16 @@ void migrationExample()
         export_ranks(i) = comm_rank;
 
     /*
-      We have two ways to make a distributor. In the first case we know where
-      we are sending the data to but not who we are receiving data from. In
-      the second we know the topology of the communication plan (i.e. who we
-      send and receive from). We know that we will only send/receive from this
-      rank and the next rank so use that information in this case.
+      We have two ways to make a distributor. In the first case we know which
+      ranks we are sending the data to but not the ranks we are receiving data
+      from. In the second we know the topology of the communication plan
+      (i.e. the ranks we send and receive from).
+
+      We know that we will only send/receive from this rank and the next rank
+      so use that information in this case because this substantially reduces
+      the amount of communication needed to compose the communication plan. If
+      this neighbor data were not supplied, extra global communication would
+      be needed to generate a list of neighbors.
      */
     std::vector<int> neighbors = { comm_rank, next_rank };
     Cabana::Distributor<MemorySpace> distributor(
