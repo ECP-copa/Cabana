@@ -123,27 +123,27 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad79e7c66bb14000476f343dd227f8884"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad79e7c66bb14000476f343dd227f8884"></a>
 &#160;</td><td class="memItemRight" valign="bottom"><b>BinningData</b> (const std::size_t begin, const std::size_t end, CountView counts, OffsetView offsets, OffsetView permute_vector)</td></tr>
 <tr class="separator:ad79e7c66bb14000476f343dd227f8884"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec0629a613502edfb3b89fae997a6216"><td class="memItemLeft" align="right" valign="top">CABANA_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#aec0629a613502edfb3b89fae997a6216">numBin</a> () const </td></tr>
-<tr class="memdesc:aec0629a613502edfb3b89fae997a6216"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of bins.  <a href="#aec0629a613502edfb3b89fae997a6216">More...</a><br/></td></tr>
-<tr class="separator:aec0629a613502edfb3b89fae997a6216"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5810590864c0d910dd0daa55eea840f5"><td class="memItemLeft" align="right" valign="top">CABANA_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a5810590864c0d910dd0daa55eea840f5">binSize</a> (const size_type bin_id) const </td></tr>
-<tr class="memdesc:a5810590864c0d910dd0daa55eea840f5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the number of tuples it contains.  <a href="#a5810590864c0d910dd0daa55eea840f5">More...</a><br/></td></tr>
-<tr class="separator:a5810590864c0d910dd0daa55eea840f5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a774e63001dfd2c8cb4e319f9ff942f5e"><td class="memItemLeft" align="right" valign="top">CABANA_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a774e63001dfd2c8cb4e319f9ff942f5e">binOffset</a> (const size_type bin_id) const </td></tr>
-<tr class="memdesc:a774e63001dfd2c8cb4e319f9ff942f5e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the tuple index at which it sorts.  <a href="#a774e63001dfd2c8cb4e319f9ff942f5e">More...</a><br/></td></tr>
-<tr class="separator:a774e63001dfd2c8cb4e319f9ff942f5e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ff19efee9d342cf90fdd92a7e7b7bbc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8ff19efee9d342cf90fdd92a7e7b7bbc"></a>
-CABANA_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a8ff19efee9d342cf90fdd92a7e7b7bbc">permutation</a> (const size_type tuple_id) const </td></tr>
-<tr class="memdesc:a8ff19efee9d342cf90fdd92a7e7b7bbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local tuple id in the binned layout, get the id of the tuple in the old (unbinned) layout. <br/></td></tr>
-<tr class="separator:a8ff19efee9d342cf90fdd92a7e7b7bbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa76bd0a0c9620845968cecad43bbd5f7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aa76bd0a0c9620845968cecad43bbd5f7"></a>
-CABANA_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#aa76bd0a0c9620845968cecad43bbd5f7">rangeBegin</a> () const </td></tr>
-<tr class="memdesc:aa76bd0a0c9620845968cecad43bbd5f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">The beginning tuple index in the binning. <br/></td></tr>
-<tr class="separator:aa76bd0a0c9620845968cecad43bbd5f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af9e0811165d8a129d70ecde80101ac10"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9e0811165d8a129d70ecde80101ac10"></a>
-CABANA_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#af9e0811165d8a129d70ecde80101ac10">rangeEnd</a> () const </td></tr>
-<tr class="memdesc:af9e0811165d8a129d70ecde80101ac10"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending tuple index in the binning. <br/></td></tr>
-<tr class="separator:af9e0811165d8a129d70ecde80101ac10"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac4de52f0a4c67846d9e63d0625f5e2ef"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#ac4de52f0a4c67846d9e63d0625f5e2ef">numBin</a> () const </td></tr>
+<tr class="memdesc:ac4de52f0a4c67846d9e63d0625f5e2ef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of bins.  <a href="#ac4de52f0a4c67846d9e63d0625f5e2ef">More...</a><br/></td></tr>
+<tr class="separator:ac4de52f0a4c67846d9e63d0625f5e2ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a18f90d5735374b255fe535d0b58ae62d"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a18f90d5735374b255fe535d0b58ae62d">binSize</a> (const size_type bin_id) const </td></tr>
+<tr class="memdesc:a18f90d5735374b255fe535d0b58ae62d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the number of tuples it contains.  <a href="#a18f90d5735374b255fe535d0b58ae62d">More...</a><br/></td></tr>
+<tr class="separator:a18f90d5735374b255fe535d0b58ae62d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b5c984c94f72b19bcbacb3adf53ee66"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a4b5c984c94f72b19bcbacb3adf53ee66">binOffset</a> (const size_type bin_id) const </td></tr>
+<tr class="memdesc:a4b5c984c94f72b19bcbacb3adf53ee66"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the tuple index at which it sorts.  <a href="#a4b5c984c94f72b19bcbacb3adf53ee66">More...</a><br/></td></tr>
+<tr class="separator:a4b5c984c94f72b19bcbacb3adf53ee66"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a880c2ba297ff84c95ff31abcddd409aa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a880c2ba297ff84c95ff31abcddd409aa"></a>
+KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a880c2ba297ff84c95ff31abcddd409aa">permutation</a> (const size_type tuple_id) const </td></tr>
+<tr class="memdesc:a880c2ba297ff84c95ff31abcddd409aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local tuple id in the binned layout, get the id of the tuple in the old (unbinned) layout. <br/></td></tr>
+<tr class="separator:a880c2ba297ff84c95ff31abcddd409aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a74c7f1e2d3bc9eb2984e8ee5311e34ae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a74c7f1e2d3bc9eb2984e8ee5311e34ae"></a>
+KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a74c7f1e2d3bc9eb2984e8ee5311e34ae">rangeBegin</a> () const </td></tr>
+<tr class="memdesc:a74c7f1e2d3bc9eb2984e8ee5311e34ae"><td class="mdescLeft">&#160;</td><td class="mdescRight">The beginning tuple index in the binning. <br/></td></tr>
+<tr class="separator:a74c7f1e2d3bc9eb2984e8ee5311e34ae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1cb068ae869ea6adcc0c4684a09e0ff"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac1cb068ae869ea6adcc0c4684a09e0ff"></a>
+KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#ac1cb068ae869ea6adcc0c4684a09e0ff">rangeEnd</a> () const </td></tr>
+<tr class="memdesc:ac1cb068ae869ea6adcc0c4684a09e0ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending tuple index in the binning. <br/></td></tr>
+<tr class="separator:ac1cb068ae869ea6adcc0c4684a09e0ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class MemorySpace&gt;<br/>
@@ -151,7 +151,7 @@ class Cabana::BinningData&lt; MemorySpace &gt;</h3>
 
 <p>Data describing the bin sizes and offsets resulting from a binning operation. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a774e63001dfd2c8cb4e319f9ff942f5e"></a>
+<a class="anchor" id="a4b5c984c94f72b19bcbacb3adf53ee66"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -161,7 +161,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; MemorySpace &gt;::binOffset </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; MemorySpace &gt;::binOffset </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>bin_id</em></td><td>)</td>
@@ -186,7 +186,7 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a5810590864c0d910dd0daa55eea840f5"></a>
+<a class="anchor" id="a18f90d5735374b255fe535d0b58ae62d"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -196,7 +196,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION int <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; MemorySpace &gt;::binSize </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; MemorySpace &gt;::binSize </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>bin_id</em></td><td>)</td>
@@ -221,7 +221,7 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="aec0629a613502edfb3b89fae997a6216"></a>
+<a class="anchor" id="ac4de52f0a4c67846d9e63d0625f5e2ef"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -231,7 +231,7 @@ template&lt;class MemorySpace&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_INLINE_FUNCTION int <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; MemorySpace &gt;::numBin </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; MemorySpace &gt;::numBin </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -255,7 +255,7 @@ template&lt;class MemorySpace&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 21 2018 18:05:54 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jan 4 2019 17:26:55 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

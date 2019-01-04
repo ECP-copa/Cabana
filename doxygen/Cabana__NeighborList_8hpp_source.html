@@ -101,54 +101,52 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef CABANA_NEIGHBORLIST_HPP</span></div>
 <div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor"></span><span class="preprocessor">#define CABANA_NEIGHBORLIST_HPP</span></div>
 <div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;Cabana_Macros.hpp&gt;</span></div>
+<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;Kokkos_Core.hpp&gt;</span></div>
 <div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;</div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;Kokkos_Core.hpp&gt;</span></div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;</div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span>Cabana</div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="keyword">namespace </span>Cabana</div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;{</div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="comment">// Neighbor List Interface</span></div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// Neighbor List Interface</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="classCabana_1_1FullNeighborTag.html">   32</a></span>&#160;<span class="comment"></span><span class="keyword">class </span><a class="code" href="classCabana_1_1FullNeighborTag.html">FullNeighborTag</a> {};</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="classCabana_1_1HalfNeighborTag.html">   44</a></span>&#160;<span class="comment"></span><span class="keyword">class </span><a class="code" href="classCabana_1_1HalfNeighborTag.html">HalfNeighborTag</a> {};</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="comment"></span><span class="keyword">template</span>&lt;<span class="keyword">class</span> NeighborListType&gt;</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html">   54</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1NeighborList.html">NeighborList</a></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="comment">// Get the list type tag. Either full or half.</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="keyword">using</span> TypeTag = <span class="keyword">typename</span> NeighborListType::TypeTag;</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="comment">// Get the number of neighbors for a given particle index.</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span> numNeighbor( <span class="keyword">const</span> NeighborListType&amp; list,</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;                            <span class="keyword">const</span> std::size_t particle_index );</div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;</div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    <span class="comment">// Get the id for a neighbor for a given particle index and the index of</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="comment">// the neighbor relative to the particle.</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;    CABANA_INLINE_FUNCTION</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span> getNeighbor( <span class="keyword">const</span> NeighborListType&amp; list,</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;                            <span class="keyword">const</span> std::size_t particle_index,</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;                            <span class="keyword">const</span> <span class="keywordtype">int</span> neighbor_index );</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;};</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="classCabana_1_1FullNeighborTag.html">   30</a></span>&#160;<span class="comment"></span><span class="keyword">class </span><a class="code" href="classCabana_1_1FullNeighborTag.html">FullNeighborTag</a> {};</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00042"></a><span class="lineno"><a class="line" href="classCabana_1_1HalfNeighborTag.html">   42</a></span>&#160;<span class="comment"></span><span class="keyword">class </span><a class="code" href="classCabana_1_1HalfNeighborTag.html">HalfNeighborTag</a> {};</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="comment"></span><span class="keyword">template</span>&lt;<span class="keyword">class</span> NeighborListType&gt;</div>
+<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList.html">   52</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1NeighborList.html">NeighborList</a></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="comment">// Get the list type tag. Either full or half.</span></div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">using</span> TypeTag = <span class="keyword">typename</span> NeighborListType::TypeTag;</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    <span class="comment">// Get the number of neighbors for a given particle index.</span></div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span> numNeighbor( <span class="keyword">const</span> NeighborListType&amp; list,</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;                            <span class="keyword">const</span> std::size_t particle_index );</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    <span class="comment">// Get the id for a neighbor for a given particle index and the index of</span></div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;    <span class="comment">// the neighbor relative to the particle.</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;    <span class="keyword">static</span> <span class="keywordtype">int</span> getNeighbor( <span class="keyword">const</span> NeighborListType&amp; list,</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;                            <span class="keyword">const</span> std::size_t particle_index,</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;                            <span class="keyword">const</span> <span class="keywordtype">int</span> neighbor_index );</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;};</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;</div>
-<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;<span class="preprocessor">#endif // end CABANA_NEIGHBORLIST_HPP</span></div>
-<div class="ttc" id="classCabana_1_1FullNeighborTag_html"><div class="ttname"><a href="classCabana_1_1FullNeighborTag.html">Cabana::FullNeighborTag</a></div><div class="ttdoc">Tag for full neighbor lists. </div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:32</div></div>
-<div class="ttc" id="classCabana_1_1NeighborList_html"><div class="ttname"><a href="classCabana_1_1NeighborList.html">Cabana::NeighborList</a></div><div class="ttdoc">Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...</div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:54</div></div>
-<div class="ttc" id="classCabana_1_1HalfNeighborTag_html"><div class="ttname"><a href="classCabana_1_1HalfNeighborTag.html">Cabana::HalfNeighborTag</a></div><div class="ttdoc">Tag for half neighbor lists. </div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:44</div></div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="preprocessor">#endif // end CABANA_NEIGHBORLIST_HPP</span></div>
+<div class="ttc" id="classCabana_1_1FullNeighborTag_html"><div class="ttname"><a href="classCabana_1_1FullNeighborTag.html">Cabana::FullNeighborTag</a></div><div class="ttdoc">Tag for full neighbor lists. </div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:30</div></div>
+<div class="ttc" id="classCabana_1_1NeighborList_html"><div class="ttname"><a href="classCabana_1_1NeighborList.html">Cabana::NeighborList</a></div><div class="ttdoc">Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...</div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:52</div></div>
+<div class="ttc" id="classCabana_1_1HalfNeighborTag_html"><div class="ttname"><a href="classCabana_1_1HalfNeighborTag.html">Cabana::HalfNeighborTag</a></div><div class="ttdoc">Tag for half neighbor lists. </div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:42</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri Dec 21 2018 18:05:54 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jan 4 2019 17:26:55 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
