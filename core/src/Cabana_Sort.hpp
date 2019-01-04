@@ -15,7 +15,6 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_DeepCopy.hpp>
-#include <Cabana_Macros.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Sort.hpp>
@@ -62,7 +61,7 @@ class BinningData
       \brief Get the number of bins.
       \return The number of bins.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     int numBin() const
     { return _nbin; }
 
@@ -71,7 +70,7 @@ class BinningData
       \param bin_id The bin id.
       \return The number of tuples in the bin.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     int binSize( const size_type bin_id ) const
     { return _counts( bin_id ); }
 
@@ -80,7 +79,7 @@ class BinningData
       \param bin_id The bin id.
       \return The starting tuple index of the bin.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     size_type binOffset( const size_type bin_id ) const
     { return _offsets( bin_id ); }
 
@@ -88,21 +87,21 @@ class BinningData
       \brief Given a local tuple id in the binned layout, get the id of the
       tuple in the old (unbinned) layout.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     size_type permutation( const size_type tuple_id ) const
     { return _permute_vector(tuple_id); }
 
     /*!
       \brief The beginning tuple index in the binning.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t rangeBegin() const
     { return _begin; }
 
     /*!
       \brief The ending tuple index in the binning.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t rangeEnd() const
     { return _end; }
 

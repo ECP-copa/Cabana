@@ -14,7 +14,6 @@
 
 #include <Cabana_Sort.hpp>
 #include <Cabana_Slice.hpp>
-#include <Cabana_Macros.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -106,7 +105,7 @@ class LinkedCellList
       \brief Get the total number of bins.
       \return the total number of bins.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     int totalBins() const
     { return _grid.totalNumCells(); }
 
@@ -115,7 +114,7 @@ class LinkedCellList
       \param dim The dimension to get the number of bins for.
       \return The number of bins.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     int numBin( const int dim ) const
     { return _grid.numBin(dim); }
 
@@ -129,7 +128,7 @@ class LinkedCellList
       Note that the Kokkos sort orders the bins such that the i index moves
       the slowest and the k index mvoes the fastest.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     size_type cardinalBinIndex( const int i, const int j, const int k ) const
     { return _grid.cardinalCellIndex(i,j,k); }
 
@@ -143,7 +142,7 @@ class LinkedCellList
       Note that the Kokkos sort orders the bins such that the i index moves
       the slowest and the k index mvoes the fastest.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     void ijkBinIndex( const int cardinal, int& i, int& j, int& k ) const
     {
         _grid.ijkBinIndex( cardinal, i, j, k );
@@ -156,7 +155,7 @@ class LinkedCellList
       \param k The k bin index (z).
       \return The number of particles in the bin.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     int binSize( const int i, const int j, const int k ) const
     { return _bin_data.binSize(cardinalBinIndex(i,j,k)); }
 
@@ -167,7 +166,7 @@ class LinkedCellList
       \param k The k bin index (z).
       \return The starting particle index of the bin.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     size_type binOffset( const int i, const int j, const int k ) const
     { return _bin_data.binOffset(cardinalBinIndex(i,j,k)); }
 
@@ -177,21 +176,21 @@ class LinkedCellList
       \param particle_id The id of the particle in the binned layout.
       \return The particle id in the old (unbinned) layout.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     size_type permutation( const int particle_id ) const
     { return _bin_data.permutation(particle_id); }
 
     /*!
       \brief The beginning particle index binned by the linked cell list.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t rangeBegin() const
     { return _bin_data.rangeBegin(); }
 
     /*!
       \brief The ending particle index binned by the linked cell list.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t rangeEnd() const
     { return _bin_data.rangeEnd(); }
 

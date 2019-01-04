@@ -14,7 +14,6 @@
 
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_LinkedCellList.hpp>
-#include <Cabana_Macros.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -526,7 +525,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
     using TypeTag = AlgorithmTag;
 
     // Get the number of neighbors for a given particle index.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static int numNeighbor( const list_type& list,
                             const std::size_t particle_index )
     {
@@ -535,7 +534,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
 
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static int getNeighbor( const list_type& list,
                             const std::size_t particle_index,
                             const int neighbor_index )

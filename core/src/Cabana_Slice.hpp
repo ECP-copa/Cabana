@@ -13,7 +13,6 @@
 #define CABANA_SLICE_HPP
 
 #include <Cabana_Types.hpp>
-#include <Cabana_Macros.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_TypeTraits.hpp>
 
@@ -540,7 +539,7 @@ class Slice
       \brief Returns the total number tuples in the slice.
       \return The number of tuples in the slice.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t size() const
     { return _size; }
 
@@ -548,7 +547,7 @@ class Slice
       \brief Get the number of structs-of-arrays in the container.
       \return The number of structs-of-arrays in the container.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t numSoA() const { return _view.extent(0); }
 
     /*!
@@ -557,7 +556,7 @@ class Slice
       \return The size of the array at the given struct index.
     */
     template<typename S>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<std::is_integral<S>::value,int>::type
     arraySize( const S& s ) const
     {
@@ -572,7 +571,7 @@ class Slice
     template<typename S,
              typename A,
              typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<U>::value &&
                              std::is_integral<S>::value &&
                              std::is_integral<A>::value &&
@@ -587,7 +586,7 @@ class Slice
              typename A,
              typename D0,
              typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(1==std::rank<U>::value &&
                              std::is_integral<S>::value &&
                              std::is_integral<A>::value &&
@@ -605,7 +604,7 @@ class Slice
              typename D0,
              typename D1,
              typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(2==std::rank<U>::value &&
                              std::is_integral<S>::value &&
                              std::is_integral<A>::value &&
@@ -626,7 +625,7 @@ class Slice
              typename D1,
              typename D2,
              typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(3==std::rank<U>::value &&
                              std::is_integral<S>::value &&
                              std::is_integral<A>::value &&
@@ -648,7 +647,7 @@ class Slice
     // Rank 0
     template<typename I,
              typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<U>::value &&
                              std::is_integral<I>::value &&
                              std::is_same<U,DataType>::value),
@@ -660,7 +659,7 @@ class Slice
     template<typename I,
              typename D0,
              typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(1==std::rank<U>::value &&
                              std::is_integral<I>::value &&
                              std::is_integral<D0>::value &&
@@ -675,7 +674,7 @@ class Slice
              typename D0,
              typename D1,
              typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(2==std::rank<U>::value &&
                              std::is_integral<I>::value &&
                              std::is_integral<D0>::value &&
@@ -693,7 +692,7 @@ class Slice
              typename D1,
              typename D2,
              typename U = DataType>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(3==std::rank<U>::value &&
                              std::is_integral<I>::value &&
                              std::is_integral<D0>::value &&
@@ -714,7 +713,7 @@ class Slice
       \brief Get a raw pointer to the data for this member
       \return A raw pointer to the data for this slice.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     pointer_type data() const
     { return _view.data(); }
 
@@ -724,7 +723,7 @@ class Slice
       dimensions.
       \return The rank of the data for this slice.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     constexpr int rank() const
     { return _view.Rank; }
 
@@ -735,7 +734,7 @@ class Slice
       \param d The member data dimension to get the extent for.
       \return The extent of the given member data dimension.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t extent( const std::size_t d ) const
     { return _view.extent(d); }
 
@@ -745,7 +744,7 @@ class Slice
       \param d The member data dimension to get the stride for.
       \return The stride of the given member data dimension.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t stride( const std::size_t d ) const
     { return _view.stride(d); }
 
