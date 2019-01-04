@@ -2,7 +2,7 @@ test:default:
   image: ubuntu
   script:
     - apt-get update
-    - apt-get install -y gcovr gfortran cmake g++ git
+    - apt-get install -y gcovr gfortran cmake g++ git bc
     - git clone --depth=1 https://github.com/kokkos/kokkos.git && 
       pushd kokkos &&
       mkdir build &&
