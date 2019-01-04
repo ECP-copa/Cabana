@@ -59,7 +59,7 @@ void parallelForExample()
     /*
        Create the AoSoA.
     */
-    int num_tuple = 100;
+    const int num_tuple = 100;
     Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
 
     /*
