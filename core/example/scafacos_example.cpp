@@ -46,20 +46,20 @@ using ParticleDataTypes =
                         float,                        // (1) y-position type
                         float,                        // (2) z-position type
                         double[space_dim],            // (3) velocity type
-                        double,			  // (4) charge
-		        double,			  // (5) potential
-		        double[space_dim],		  // (6) electric field values
+                        double,			              // (4) charge
+		                double,			              // (5) potential
+		                double[space_dim],		      // (6) electric field values
                         int                           // (7) status type
                         >;
 
 // Declare the memory space.
 using MemorySpace = Cabana::HostSpace;
 
-// Declare the inner array layout.
-using ArrayLayout = Cabana::InnerArrayLayout<32,Cabana::LayoutRight>;
+// Declare the length of the internal vectors
+const int VectorLength = 8;
 
 // Set the type for the particle AoSoA.
-using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,ArrayLayout>;
+using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,VectorLength>;
 
 //---------------------------------------------------------------------------//
 // Helper functions.
@@ -67,6 +67,15 @@ using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,ArrayLayout>;
 // Function to intitialize the particles.
 void initializeParticles( ParticleList particles, int crystal_size )
 {
+    auto p_x = particles.slice<PositionX>();
+    auto p_y = particles.slice<PositionY>();
+    auto p_z = particles.slice<PositionZ>();
+    auto v = particles.slice<Velocity>();
+    auto q = particles.slice<Charge>();
+    auto pot = particles.slice<Potential>();
+    auto field = particles.slice<Field>();
+    auto indx = particles.slice<Index>();
+
     for ( auto idx = 0; idx != particles.size(); ++idx )
     {
         // Calculate location of particle in crystal
@@ -75,61 +84,67 @@ void initializeParticles( ParticleList particles, int crystal_size )
         int idx_z = idx / (crystal_size * crystal_size);	
 	
         // Initialize position.
-        particles.view(Cabana::MemberTag<PositionX>())( idx ) = (double)idx_x * 1.0;
-        particles.view(Cabana::MemberTag<PositionY>())( idx ) = (double)idx_y * 1.0;
-        particles.view(Cabana::MemberTag<PositionZ>())( idx ) = (double)idx_z * 1.0;
+        p_x(idx) = (double)idx_x * 1.0;
+        p_y(idx) = (double)idx_y * 1.0;
+        p_z(idx) = (double)idx_z * 1.0;
 
         // Initialize velocity.
         for ( int d = 0; d < space_dim; ++d )
-            particles.view(Cabana::MemberTag<Velocity>())( idx, d ) = 0.0;
+            v( idx, d ) = 0.0;
 
         // Initialize field
         for ( int d = 0; d < space_dim; ++d )
-            particles.view(Cabana::MemberTag<Field>())( idx, d ) = 0.0 * d;
+            field( idx, d ) = 0.0;
 
-	// Create alternating charge
-	particles.view(Cabana::MemberTag<Charge>())(idx) = ((idx_x + idx_y + idx_z)%2)?1.0:-1.0;
+        // Create alternating charge
+        q(idx) = ((idx_x + idx_y + idx_z)%2)?1.0:-1.0;
 
-	// Set potential
-	particles.view(Cabana::MemberTag<Potential>())(idx) = 0.0;
+        // Set potential
+        pot(idx) = 0.0;
 
         // Set global particle index
-        particles.view(Cabana::MemberTag<Index>())( idx ) = idx+1;
+        indx(idx) = idx+1;
     }
 }
 
 // Function to print out the data for every particle.
 void printParticles( const ParticleList particles )
 {
-    for ( auto idx = 0; idx != particles.size(); ++idx )
+
+    // get slices for the corresponding particle data
+    auto p_x = particles.slice<PositionX>();
+    auto p_y = particles.slice<PositionY>();
+    auto p_z = particles.slice<PositionZ>();
+    auto v = particles.slice<Velocity>();
+    auto q = particles.slice<Charge>();
+    auto pot = particles.slice<Potential>();
+    auto field = particles.slice<Field>();
+    auto indx = particles.slice<Index>();
+
+    for ( auto idx = 0; idx < particles.size(); ++idx )
     {
-        auto aosoa_idx_s = Cabana::Impl::Index<32>::s( idx );
-        auto aosoa_idx_i = Cabana::Impl::Index<32>::i( idx );
-
-        std::cout << std::endl;
-
-        std::cout << "Struct id: " << aosoa_idx_s << std::endl;
-        std::cout << "Struct offset: " << aosoa_idx_i << std::endl;
         std::cout << "Position: "
-                  << particles.view(Cabana::MemberTag<PositionX>())( idx ) << " "
-                  << particles.view(Cabana::MemberTag<PositionY>())( idx ) << " "
-                  << particles.view(Cabana::MemberTag<PositionZ>())( idx ) << std::endl;
+                  << p_x(idx) << " "
+                  << p_y(idx) << " "
+                  << p_z(idx) << std::endl;
 
         std::cout << "Velocity ";
         for ( int d = 0; d < space_dim; ++d )
-            std::cout << particles.view(Cabana::MemberTag<Velocity>())( idx, d ) << " ";
+            std::cout << v(idx, d) << " ";
         std::cout << std::endl;
 
-	      std::cout << "Charge " << particles.view(Cabana::MemberTag<Charge>())(idx) << std::endl;
+        std::cout << "Charge " << q(idx) << std::endl;
 
-       	std::cout << "Potential " << particles.view(Cabana::MemberTag<Potential>())(idx) << std::endl;
+        std::cout << "Potential " << pot(idx) << std::endl;
 
         std::cout << "Field ";
         for ( int d = 0; d < space_dim; ++d )
-            std::cout << particles.view(Cabana::MemberTag<Field>())( idx, d ) << " ";
+            std::cout << field(idx, d) << " ";
         std::cout << std::endl;
 
-        std::cout << "Index " << particles.view(Cabana::MemberTag<Index>())(idx) << std::endl;
+        std::cout << "Index " << indx(idx) << std::endl;
+
+        std::cout << std::endl;
     }
 }
 
@@ -175,13 +190,19 @@ void exampleMain(int num_particle, int crystal_size, std::string method, int mpi
     std::vector<double> q;
     std::vector<double> f(3*num_particle);
     std::vector<double> pot(num_particle);
+
+    auto p_x = particles.slice<PositionX>();
+    auto p_y = particles.slice<PositionY>();
+    auto p_z = particles.slice<PositionZ>();
+    auto qp = particles.slice<Charge>();
+
     for (int i = 0; i < num_particle; ++i)
     {
       // ScaFaCoS expects postions in a (x,y,z) AoS format
-      pos.push_back(particles.view(Cabana::MemberTag<PositionX>())(i));
-      pos.push_back(particles.view(Cabana::MemberTag<PositionY>())(i));
-      pos.push_back(particles.view(Cabana::MemberTag<PositionZ>())(i));
-      q.push_back(particles.view(Cabana::MemberTag<Charge>())(i));
+      pos.push_back(p_x(i));
+      pos.push_back(p_y(i));
+      pos.push_back(p_z(i));
+      q.push_back(qp(i));
     }
 
     // parameter string to set the periodicity and disable the calculation of near field parts from the calling program
@@ -220,13 +241,16 @@ void exampleMain(int num_particle, int crystal_size, std::string method, int mpi
     result = fcs_run(fcs,num_particle,pos.data(),q.data(),f.data(),pot.data());
     if (!check_result(result,rank)) return;
 
+    auto field = particles.slice<Field>();
+    auto poten = particles.slice<Potential>();
+
     // copy results from the call to the particle structures
     for (int i = 0; i < num_particle; ++i)
     {
-      particles.view(Cabana::MemberTag<Field>())(i,0) = f.at(3*i);
-      particles.view(Cabana::MemberTag<Field>())(i,1) = f.at(3*i+1);
-      particles.view(Cabana::MemberTag<Field>())(i,2) = f.at(3*i+2);
-      particles.view(Cabana::MemberTag<Potential>())(i) = pot.at(i);
+      field(i,0) = f.at(3*i);
+      field(i,1) = f.at(3*i+1);
+      field(i,2) = f.at(3*i+2);
+      poten(i) = pot.at(i);
     }
 
     // Print particles (to check if any calculation took place and check results)
@@ -244,7 +268,7 @@ int main( int argc, char* argv[] )
     // Initialize the kokkos runtime.
     Kokkos::initialize( argc, argv );
 
-    std::string method = "fmm";
+    std::string method = "direct";
 
     int comm = MPI_COMM_WORLD;
 
@@ -266,7 +290,7 @@ int main( int argc, char* argv[] )
       //
       // crystal dimension should be divisible by two for an un-charged system
       int c_size = atoi(argv[1]);
-            method = argv[2];
+      method = argv[2];
       exampleMain(c_size * c_size * c_size, c_size, method, comm, rank);
     }
     else
@@ -277,9 +301,6 @@ int main( int argc, char* argv[] )
             comm,
             rank);
     }
-
-
-    std::cout << "rank " << rank << std::endl;
 
     // Finalize.
     Kokkos::finalize();
