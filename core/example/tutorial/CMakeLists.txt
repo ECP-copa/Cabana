@@ -8,6 +8,10 @@ if(Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Pthread)
   add_subdirectory(07_sorting)
   add_subdirectory(08_linked_cell_list)
   add_subdirectory(09_verlet_list)
+  if(Cabana_ENABLE_MPI)
+    add_subdirectory(12_migration)
+    add_subdirectory(13_halo_exchange)
+  endif()
 endif()
 
 if(Cabana_ENABLE_Cuda AND (Cabana_ENABLE_Serial OR Cabana_ENABLE_OpenMP OR Cabana_ENABLE_Pthread))
@@ -16,6 +20,7 @@ endif()
 
 if(Cabana_ENABLE_OpenMP)
   add_subdirectory(10_advanced_slice_openmp)
+  add_subdirectory(11_parallel_for)
 endif()
 
 if(Cabana_ENABLE_Cuda)

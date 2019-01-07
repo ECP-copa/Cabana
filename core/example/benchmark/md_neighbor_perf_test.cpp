@@ -42,7 +42,6 @@ void perfTest( const double cutoff_ratio,
     // Declare the execution and memory spaces.
     using MemorySpace = Cabana::HostSpace;
     using ExecutionSpace = Kokkos::Serial;
-    using kokkos_memory_space = MemorySpace::kokkos_memory_space;
 
     // Declare the inner array layout.
     const int vector_length = 64;
@@ -177,7 +176,7 @@ void perfTest( const double cutoff_ratio,
     Kokkos::parallel_reduce(
         "Cabana::countMinMax",
         Kokkos::RangePolicy<ExecutionSpace>(0,num_data),
-        Kokkos::Impl::min_max_functor<Kokkos::View<int*,kokkos_memory_space> >(
+        Kokkos::Impl::min_max_functor<Kokkos::View<int*,MemorySpace> >(
             stat_list._counts ),
         reducer );
     Kokkos::fence();

@@ -12,6 +12,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_VerletList.hpp>
+#include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Random.hpp>
@@ -147,16 +148,16 @@ createParticles( const int num_particle,
 
 //---------------------------------------------------------------------------//
 template<class PositionSlice>
-TestNeighborList<typename PositionSlice::kokkos_memory_space>
+TestNeighborList<typename PositionSlice::memory_space>
 computeFullNeighborList( const PositionSlice& position,
                          const double neighborhood_radius )
 {
     // Build a neighbor list with a brute force n^2 implementation. Count
     // first.
-    TestNeighborList<typename PositionSlice::kokkos_memory_space> list;
+    TestNeighborList<typename PositionSlice::memory_space> list;
     int num_particle = position.size();
     double rsqr = neighborhood_radius * neighborhood_radius;
-    list.counts = Kokkos::View<int*,typename PositionSlice::kokkos_memory_space>(
+    list.counts = Kokkos::View<int*,typename PositionSlice::memory_space>(
         "test_neighbor_count", num_particle );
     Kokkos::deep_copy( list.counts, 0 );
     auto count_op =
@@ -189,7 +190,7 @@ computeFullNeighborList( const PositionSlice& position,
     int max_n;
     Kokkos::parallel_reduce( exec_policy, max_op, Kokkos::Max<int>(max_n) );
     Kokkos::fence();
-    list.neighbors = Kokkos::View<int**,typename PositionSlice::kokkos_memory_space>(
+    list.neighbors = Kokkos::View<int**,typename PositionSlice::memory_space>(
         "test_neighbors", num_particle, max_n );
 
     // Fill.
@@ -372,10 +373,10 @@ void testNeighborParallelFor()
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Create Kokkos views for the write operation.
-    using kokkos_memory_space = typename TEST_MEMSPACE::kokkos_memory_space;
-    Kokkos::View<int*,kokkos_memory_space> test_result( "test_result", num_particle );
-    Kokkos::View<int*,kokkos_memory_space> serial_result( "serial_result", num_particle );
-    Kokkos::View<int*,kokkos_memory_space> team_result( "team_result", num_particle );
+    using memory_space = typename TEST_MEMSPACE::memory_space;
+    Kokkos::View<int*,memory_space> test_result( "test_result", num_particle );
+    Kokkos::View<int*,memory_space> serial_result( "serial_result", num_particle );
+    Kokkos::View<int*,memory_space> team_result( "team_result", num_particle );
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
@@ -383,11 +384,12 @@ void testNeighborParallelFor()
                            { Kokkos::atomic_add( &serial_result(i), n ); };
     auto team_count_op = KOKKOS_LAMBDA( const int i, const int n )
                          { Kokkos::atomic_add( &team_result(i), n ); };
-    Cabana::Experimental::RangePolicy<aosoa_t::vector_length,TEST_EXECSPACE> policy( aosoa );
-    Cabana::Experimental::neighbor_parallel_for(
-        policy, serial_count_op, nlist, Cabana::Experimental::SerialNeighborOpTag() );
-    Cabana::Experimental::neighbor_parallel_for(
-        policy, team_count_op, nlist, Cabana::Experimental::TeamNeighborOpTag() );
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
+    Cabana::neighbor_parallel_for(
+        policy, serial_count_op, nlist, Cabana::SerialNeighborOpTag() );
+    Cabana::neighbor_parallel_for(
+        policy, team_count_op, nlist, Cabana::TeamNeighborOpTag() );
+    Kokkos::fence();
 
     // Get the expected result in serial
     for ( int p = 0; p < num_particle; ++p )

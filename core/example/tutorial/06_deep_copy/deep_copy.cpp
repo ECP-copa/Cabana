@@ -46,14 +46,14 @@ void deepCopyExample()
       AoSoA.
     */
     const int SrcVectorLength = 8;
-    using SrcMemorySpace = Cabana::HostSpace;
+    using SrcMemorySpace = Kokkos::HostSpace;
 
     /*
       Declare the vector length and memory space parameters of the destination
       AoSoA.
     */
     const int DstVectorLength = 32;
-    using DstMemorySpace = Cabana::CudaUVMSpace;
+    using DstMemorySpace = Kokkos::CudaUVMSpace;
 
     /*
        Create the source and destination AoSoAs.

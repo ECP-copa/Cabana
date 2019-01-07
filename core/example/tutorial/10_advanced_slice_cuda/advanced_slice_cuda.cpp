@@ -47,7 +47,7 @@ void atomicSliceExample()
     */
     using DataTypes = Cabana::MemberTypes<double>;
     const int VectorLength = 32;
-    using MemorySpace = Cabana::CudaUVMSpace;
+    using MemorySpace = Kokkos::CudaUVMSpace;
 
     /*
        Create the AoSoA. Just put a single value to demonstrate the atomic.

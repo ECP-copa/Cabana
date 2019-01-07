@@ -19,35 +19,32 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-// Memory spaces
+// Execution Spaces
 //---------------------------------------------------------------------------//
-template<class >
-struct is_memory_space : public std::false_type {};
+#if defined( KOKKOS_ENABLE_SERIAL )
+using Kokkos::Serial;
+#endif
 
-//! Host memory space
-struct HostSpace
-{
-    using memory_space_type = HostSpace;
-    using kokkos_memory_space = Kokkos::HostSpace;
-    using kokkos_execution_space =
-        typename kokkos_memory_space::execution_space;
-};
+#if defined( KOKKOS_ENABLE_THREADS )
+using Kokkos::Threads;
+#endif
 
-template<>
-struct is_memory_space<HostSpace> : public std::true_type {};
+#if defined( KOKKOS_ENABLE_OPENMP )
+using Kokkos::OpenMP;
+#endif
 
 #if defined( KOKKOS_ENABLE_CUDA )
-//! Cuda UVM memory space
-struct CudaUVMSpace
-{
-    using memory_space_type = CudaUVMSpace;
-    using kokkos_memory_space = Kokkos::CudaUVMSpace;
-    using kokkos_execution_space =
-        typename kokkos_memory_space::execution_space;
-};
+using Kokkos::Cuda;
+#endif
 
-template<>
-struct is_memory_space<CudaUVMSpace> : public std::true_type {};
+//---------------------------------------------------------------------------//
+// Memory spaces
+//---------------------------------------------------------------------------//
+//! Host memory space
+using Kokkos::HostSpace;
+
+#if defined( KOKKOS_ENABLE_CUDA )
+using Kokkos::CudaUVMSpace;
 #endif
 
 //---------------------------------------------------------------------------//
@@ -92,26 +89,6 @@ struct AtomicAccessMemory
 
 template<>
 struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type {};
-
-//---------------------------------------------------------------------------//
-// Kokkos-to-Cabana space translator
-//---------------------------------------------------------------------------//
-template<class KokkosSpace>
-struct KokkosSpaceToCabana;
-
-template<>
-struct KokkosSpaceToCabana<Kokkos::HostSpace>
-{
-    using type = Cabana::HostSpace;
-};
-
-#if defined( KOKKOS_ENABLE_CUDA )
-template<>
-struct KokkosSpaceToCabana<Kokkos::CudaUVMSpace>
-{
-    using type = Cabana::CudaUVMSpace;
-};
-#endif
 
 //---------------------------------------------------------------------------//
 
