@@ -4,6 +4,8 @@ language: cpp
 sudo: required
 
 env:
+  global:
+    - CCACHE_CPP2=yes # for clang
   matrix:
     - BACKENDS="OpenMP" WERROR=ON
     - BACKENDS="Serial" WERROR=ON
