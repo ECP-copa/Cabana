@@ -14,7 +14,6 @@
 
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_LinkedCellList.hpp>
-#include <Cabana_Macros.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -133,17 +132,16 @@ struct VerletListBuilder
     using RandomAccessPositionSlice =
         typename PositionSlice::random_access_slice;
     using memory_space = typename PositionSlice::memory_space;
-    using kokkos_memory_space = typename PositionSlice::kokkos_memory_space;
-    using kokkos_execution_space = typename PositionSlice::kokkos_execution_space;
+    using execution_space = typename PositionSlice::execution_space;
 
     // Number of neighbors per particle.
-    Kokkos::View<int*,kokkos_memory_space> counts;
+    Kokkos::View<int*,memory_space> counts;
 
     // Offsets into the neighbor list.
-    Kokkos::View<int*,kokkos_memory_space> offsets;
+    Kokkos::View<int*,memory_space> offsets;
 
     // Neighbor list.
-    Kokkos::View<int*,kokkos_memory_space> neighbors;
+    Kokkos::View<int*,memory_space> neighbors;
 
     // Neighbor cutoff.
     PositionValueType rsqr;
@@ -191,7 +189,7 @@ struct VerletListBuilder
     // Neighbor count team operator.
     struct CountNeighborsTag {};
     using CountNeighborsPolicy =
-        Kokkos::TeamPolicy<kokkos_execution_space,
+        Kokkos::TeamPolicy<execution_space,
                            CountNeighborsTag,
                            Kokkos::IndexType<int>,
                            Kokkos::Schedule<Kokkos::Dynamic> >;
@@ -297,11 +295,11 @@ struct VerletListBuilder
     void processCounts()
     {
         // Calculate offsets from counts and the total number of counts.
-        OffsetScanOp<kokkos_memory_space> offset_op;
+        OffsetScanOp<memory_space> offset_op;
         offset_op.counts = counts;
         offset_op.offsets = offsets;
         int total_num_neighbor;
-        Kokkos::RangePolicy<kokkos_execution_space> range_policy(
+        Kokkos::RangePolicy<execution_space> range_policy(
             0, counts.extent(0) );
         Kokkos::parallel_scan(
             "Cabana::VerletListBuilder::offset_scan",
@@ -309,7 +307,7 @@ struct VerletListBuilder
         Kokkos::fence();
 
         // Allocate the neighbor list.
-        neighbors = Kokkos::View<int*,kokkos_memory_space>(
+        neighbors = Kokkos::View<int*,memory_space>(
             "neighbors", total_num_neighbor );
 
         // Reset the counts. We count again when we fill.
@@ -319,7 +317,7 @@ struct VerletListBuilder
     // Neighbor count team operator.
     struct FillNeighborsTag {};
     using FillNeighborsPolicy =
-        Kokkos::TeamPolicy<kokkos_execution_space,
+        Kokkos::TeamPolicy<execution_space,
                            FillNeighborsTag,
                            Kokkos::IndexType<int>,
                            Kokkos::Schedule<Kokkos::Dynamic> >;
@@ -426,16 +424,15 @@ class VerletList
 
     // The memory space in which the neighbor list data resides.
     using memory_space = MemorySpace;
-    using kokkos_memory_space = typename memory_space::kokkos_memory_space;
 
     // Number of neighbors per particle.
-    Kokkos::View<int*,kokkos_memory_space> _counts;
+    Kokkos::View<int*,memory_space> _counts;
 
     // Offsets into the neighbor list.
-    Kokkos::View<int*,kokkos_memory_space> _offsets;
+    Kokkos::View<int*,memory_space> _offsets;
 
     // Neighbor list.
-    Kokkos::View<int*,kokkos_memory_space> _neighbors;
+    Kokkos::View<int*,memory_space> _neighbors;
 
     /*!
       \brief Given a list of particle positions and a neighborhood radius calculate
@@ -528,7 +525,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
     using TypeTag = AlgorithmTag;
 
     // Get the number of neighbors for a given particle index.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static int numNeighbor( const list_type& list,
                             const std::size_t particle_index )
     {
@@ -537,7 +534,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
 
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     static int getNeighbor( const list_type& list,
                             const std::size_t particle_index,
                             const int neighbor_index )

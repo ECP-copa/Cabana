@@ -39,7 +39,7 @@ void sortingExample()
       and member type configurations are compatible with sorting.
     */
     const int VectorLength = 4;
-    using MemorySpace = Cabana::HostSpace;
+    using MemorySpace = Kokkos::HostSpace;
 
     /*
        Create the AoSoA.
