@@ -35,7 +35,7 @@ before_script:
   - wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
     tar -xzf scafacos-*.tar.gz &&
     pushd scafacos* &&
-    ./configure --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
+    ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
     make -j2 &&
     make install &&
     popd
