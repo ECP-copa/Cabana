@@ -164,7 +164,7 @@ static bool check_result(FCSResult result, int comm_rank, bool force_abort = fal
 }
 
 // example main
-void exampleMain(int num_particle, int crystal_size, std::string method, int mpi_comm, int rank)
+void exampleMain(int num_particle, int crystal_size, std::string method, MPI_Comm mpi_comm, int rank)
 {
     // Create the particle list.
     ParticleList particles( num_particle );
@@ -270,7 +270,7 @@ int main( int argc, char* argv[] )
 
     std::string method = "direct";
 
-    int comm = MPI_COMM_WORLD;
+    MPI_Comm comm = MPI_COMM_WORLD;
 
     int rank, nranks;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
