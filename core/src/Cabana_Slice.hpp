@@ -269,10 +269,9 @@ struct ViewOffset<Dimension,Kokkos::LayoutCabanaSlice<LayoutDims...>,void>
     template< class DimRHS , class LayoutRHS >
     KOKKOS_INLINE_FUNCTION
     constexpr ViewOffset
-    ( const ViewOffset< DimRHS , LayoutRHS , void > & rhs
+    ( const ViewOffset< DimRHS , LayoutRHS , void > &
       , const SubviewExtents< DimRHS::rank , dimension_type::rank > & sub
         )
-        // range_extent(r) returns 0 when dimension_type::rank <= r
         : m_dim( sub.range_extent(0)
                  , sub.range_extent(1)
                  , sub.range_extent(2)

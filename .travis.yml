@@ -4,12 +4,14 @@ language: cpp
 sudo: required
 
 env:
+  global:
+    - CCACHE_CPP2=yes # for clang
   matrix:
-    - BACKENDS="OpenMP"
-    - BACKENDS="Serial"
-    - BACKENDS="Pthread"
-    - BACKENDS="Serial OpenMP"
-    - BACKENDS="Serial Pthread"
+    - BACKENDS="OpenMP" WERROR=ON
+    - BACKENDS="Serial" WERROR=ON
+    - BACKENDS="Pthread" WERROR=ON
+    - BACKENDS="Serial OpenMP" WERROR=ON
+    - BACKENDS="Serial Pthread" WERROR=ON
     - BACKENDS="OpenMP" COVERAGE=ON
     - BACKENDS="Serial" COVERAGE=ON
     - BACKENDS="Pthread" COVERAGE=ON
@@ -43,6 +45,7 @@ addons:
       - libopenmpi-dev
 
 script:
+  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
