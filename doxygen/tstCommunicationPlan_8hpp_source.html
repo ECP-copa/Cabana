@@ -385,7 +385,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;</div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;    <span class="comment">// self sends - we don&#39;t know which order the self sends are in but we</span></div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// know they are the first 2.</span></div>
-<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordflow">if</span> ( my_rank == host_steering(0) )</div>
+<div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordflow">if</span> ( my_rank == (<span class="keywordtype">int</span>) host_steering(0) )</div>
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    {</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        EXPECT_EQ( host_steering(0), my_rank );</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        EXPECT_EQ( host_steering(1), my_rank + my_size );</div>
@@ -416,7 +416,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;        }</div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;        <span class="keywordflow">else</span></div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;        {</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;            <span class="keywordflow">if</span> ( n == host_steering(2*n) )</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;            <span class="keywordflow">if</span> ( n == (<span class="keywordtype">int</span>) host_steering(2*n) )</div>
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;            {</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;                EXPECT_EQ( host_steering(2*n), n );</div>
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;                EXPECT_EQ( host_steering(2*n+1), n + my_size );</div>
@@ -631,7 +631,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon Jan 7 2019 23:37:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Jan 9 2019 20:12:22 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
