@@ -32,7 +32,7 @@ before_script:
     make install &&
     popd &&
     popd
-  - wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
+  - travis_retry wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
     tar -xzf scafacos-*.tar.gz &&
     pushd scafacos* &&
     ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
