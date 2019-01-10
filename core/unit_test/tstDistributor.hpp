@@ -540,7 +540,7 @@ void test6( const bool use_topology )
     auto steering = distributor->getExportSteering();
     auto host_steering = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), steering );
-    for ( int i = 0; i < distributor->totalNumImport(); ++i )
+    for ( std::size_t i = 0; i < distributor->totalNumImport(); ++i )
     {
         EXPECT_EQ( slice_int_host(i), distributor->neighborRank(i) );
         EXPECT_EQ( slice_dbl_host(i,0), distributor->neighborRank(i) );
