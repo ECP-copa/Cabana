@@ -196,7 +196,8 @@ class CommunicationPlan
 
       \param neighbor_ranks List of ranks this rank will send to and receive
       from. This list can include the calling rank. This is effectively a
-      description of the topology of the point-to-point communication plan.
+      description of the topology of the point-to-point communication
+      plan. The elements in this list must be unique.
 
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
