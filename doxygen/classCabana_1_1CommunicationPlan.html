@@ -359,7 +359,7 @@ template&lt;class ViewType &gt; </div>
   <table class="params">
     <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may be any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan.</td></tr>
     <tr><td class="paramname">mpi_tag</td><td>The MPI tag to use for non-blocking communication in the communication plan generation.</td></tr>
-    <tr><td class="paramname">neighbor_ranks</td><td>List of ranks this rank will send to and receive from. This list can include the calling rank. This is effectively a description of the topology of the point-to-point communication plan.</td></tr>
+    <tr><td class="paramname">neighbor_ranks</td><td>List of ranks this rank will send to and receive from. This list can include the calling rank. This is effectively a description of the topology of the point-to-point communication plan. The elements in this list must be unique.</td></tr>
   </table>
   </dd>
 </dl>
@@ -672,7 +672,7 @@ template&lt;class MemorySpace&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 10 2019 19:28:16 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jan 10 2019 19:42:12 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
