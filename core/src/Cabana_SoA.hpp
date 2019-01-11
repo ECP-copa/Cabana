@@ -159,7 +159,6 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     using member_pointer_type =
         typename std::add_pointer<member_value_type<M> >::type;
 
-
     // -------------------------------
     // Member data type properties.
 
@@ -337,19 +336,30 @@ struct SoA<MemberTypes<Types...>,VectorLength>
 
     // Get a pointer to a member.
     template<std::size_t M>
-    void* ptr()
+    KOKKOS_FUNCTION void* ptr()
     {
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return &base;
     }
-};
 
-//---------------------------------------------------------------------------//
-// Member element copy operators.
-//---------------------------------------------------------------------------//
+    // Get the offset from the first SoA element to the first element of a
+    // given member. The offset is computed in terms of the bytes needed to go
+    // from the beginning of the SoA to the first element of the member.
+    template<std::size_t M>
+    static std::size_t memberByteOffset()
+    {
+        SoA<MemberTypes<Types...>,VectorLength> soa;
+        char* begin = reinterpret_cast<char*>(&soa);
+        char* end = static_cast<char*>(soa.ptr<M>());
+        return std::distance( begin, end );
+    }
+};
 
 namespace Impl
 {
+//---------------------------------------------------------------------------//
+// Member element copy operators.
+//---------------------------------------------------------------------------//
 
 // Copy a single member from one SoA to another.
 
