@@ -9,11 +9,28 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_TEST_CUDA_CATEGORY_HPP
-#define CABANA_TEST_CUDA_CATEGORY_HPP
+#ifndef CABANA_TEST_CUDAUVM_CATEGORY_HPP
+#define CABANA_TEST_CUDAUVM_CATEGORY_HPP
 
-#define TEST_CATEGORY cuda
+#include <Kokkos_Cuda.hpp>
+
+#include <gtest/gtest.h>
+
+namespace Test {
+
+class cuda_uvm : public ::testing::Test {
+protected:
+  static void SetUpTestCase() {
+  }
+
+  static void TearDownTestCase() {
+  }
+};
+
+} // namespace Test
+
+#define TEST_CATEGORY cuda_uvm
 #define TEST_EXECSPACE Kokkos::Cuda
-#define TEST_MEMSPACE Kokkos::CudaSpace
+#define TEST_MEMSPACE Kokkos::CudaUVMSpace
 
-#endif // end CABANA_TEST_CUDA_CATEGORY_HPP
+#endif // end CABANA_TEST_CUDAUVM_CATEGORY_HPP

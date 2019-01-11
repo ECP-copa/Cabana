@@ -9,11 +9,5 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_TEST_CUDA_CATEGORY_HPP
-#define CABANA_TEST_CUDA_CATEGORY_HPP
-
-#define TEST_CATEGORY cuda
-#define TEST_EXECSPACE Kokkos::Cuda
-#define TEST_MEMSPACE Kokkos::CudaSpace
-
-#endif // end CABANA_TEST_CUDA_CATEGORY_HPP
+#include <CudaUVM/TestCudaUVM_Category.hpp>
+#include <tstTuple.hpp>
