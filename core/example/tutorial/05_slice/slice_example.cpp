@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -98,7 +98,7 @@ void sliceExample()
       accessing the total number of tuples in the data structure and the array
       sizes.
     */
-    for ( int s = 0; s < slice_0.numSoA(); ++s )
+    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
     {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )

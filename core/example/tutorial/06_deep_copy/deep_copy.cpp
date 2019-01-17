@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -65,7 +65,7 @@ void deepCopyExample()
     /*
       Put some data in the source AoSoA.
     */
-    for ( int s = 0; s < src_aosoa.numSoA(); ++s )
+    for ( std::size_t s = 0; s < src_aosoa.numSoA(); ++s )
     {
         auto& soa = src_aosoa.access(s);
 

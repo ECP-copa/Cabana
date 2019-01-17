@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -13,7 +13,7 @@
 
 #include <Kokkos_Core.hpp>
 
-#include <iostream>
+#include <algorithm>
 
 #include <mpi.h>
 
@@ -85,6 +85,7 @@ void haloExchangeExample()
     // Last 10 elements (elements 90-99) go to the next rank. Note that this
     // view will most often be filled within a parallel_for but we do so in
     // serial here for demonstration purposes.
+    int previous_rank = ( comm_rank == 0 ) ? comm_size - 1 : comm_rank - 1;
     int next_rank = ( comm_rank == comm_size - 1 ) ? 0 : comm_rank + 1;
     for ( int i = 0; i < local_num_send; ++i )
     {
@@ -98,13 +99,16 @@ void haloExchangeExample()
       the second we know the topology of the communication plan (i.e. the
       ranks we send and receive from).
 
-      We know that we will only send/receive from this rank and the next rank
-      so use that information in this case because this substantially reduces
-      the amount of communication needed to compose the communication plan. If
-      this neighbor data were not supplied, extra global communication would
-      be needed to generate a list of neighbors.
+      We know that we will only send/receive from this rank and the
+      next/previous rank so use that information in this case because this
+      substantially reduces the amount of communication needed to compose the
+      communication plan. If this neighbor data were not supplied, extra
+      global communication would be needed to generate a list of neighbors.
      */
-    std::vector<int> neighbors = { comm_rank, next_rank };
+    std::vector<int> neighbors = { previous_rank, comm_rank, next_rank };
+    std::sort( neighbors.begin(), neighbors.end() );
+    auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
+    neighbors.resize( std::distance(neighbors.begin(), unique_end) );
     Cabana::Halo<MemorySpace> halo(
         MPI_COMM_WORLD, num_tuple, export_ids, export_ranks, neighbors );
 

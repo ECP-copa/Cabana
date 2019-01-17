@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -60,7 +60,7 @@ void verletListExample()
       Create the particle ids.
     */
     auto ids = aosoa.slice<1>();
-    for ( int i = 0; i < aosoa.size(); ++i )
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
         ids(i) = i;
     /*
       Create the particle coordinates. We will put 3 particles in the center
@@ -130,7 +130,7 @@ void verletListExample()
       memory space of the neighbor list. Each particle should have 2
       neighbors.
      */
-    for ( int i = 0; i < aosoa.size(); ++i )
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
     {
         int num_n = Cabana::NeighborList<ListType>::numNeighbor(verlet_list,i);
         std::cout << "Particle " << i << " # neighbor = " << num_n << std::endl;

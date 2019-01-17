@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -117,16 +117,13 @@ struct TestNeighborList
 // Create particles.
 Cabana::AoSoA<Cabana::MemberTypes<double[3]>,TEST_MEMSPACE>
 createParticles( const int num_particle,
-                 const double neighborhood_radius,
                  const double box_min,
                  const double box_max )
 {
-    // Create the AoSoA with (100x100x100) particles.
     using DataTypes = Cabana::MemberTypes<double[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_particle );
 
-    // Create particles within a region sized (10x10x10) neighborhood radii.
     auto position = aosoa.slice<0>();
     using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
     using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
@@ -313,8 +310,7 @@ void testVerletListFull()
     double cell_size_ratio = 0.5;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;
-    auto aosoa =
-        createParticles( num_particle, test_radius, box_min, box_max );
+    auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };
@@ -337,8 +333,7 @@ void testVerletListHalf()
     double cell_size_ratio = 0.5;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;
-    auto aosoa =
-        createParticles( num_particle, test_radius, box_min, box_max );
+    auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };
@@ -361,9 +356,7 @@ void testNeighborParallelFor()
     double cell_size_ratio = 0.5;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;
-    auto aosoa =
-        createParticles( num_particle, test_radius, box_min, box_max );
-    using aosoa_t = decltype(aosoa);
+    auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };

@@ -29,7 +29,7 @@ Cabana is distrubted under an open source 3-clause BSD license
 ```
 BSD 3-Clause License
 
-Copyright 2018 the Cabana authors
+Copyright 2018-2019 the Cabana authors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -54,7 +54,7 @@ void sortingExample()
     */
     int forward_index_counter = 0;
     int reverse_index_counter = 100;
-    for ( int s = 0; s < aosoa.numSoA(); ++s )
+    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
     {
         auto& soa = aosoa.access(s);
 

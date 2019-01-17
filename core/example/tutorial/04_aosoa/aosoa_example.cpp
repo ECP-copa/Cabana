@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -90,7 +90,7 @@ void aosoaExample()
       2-dimensional tuple indices. Start by looping over the SoA's. The SoA
       index is the first tuple index:
     */
-    for ( int s = 0; s < aosoa.numSoA(); ++s )
+    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
     {
         /*
            Get a reference the SoA we are working on. The aosoa access()

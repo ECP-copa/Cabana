@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -85,7 +85,8 @@ class Distributor : public CommunicationPlan<MemorySpace>
 
       \param neighbor_ranks List of ranks this rank will send to and receive
       from. This list can include the calling rank. This is effectively a
-      description of the topology of the point-to-point communication plan.
+      description of the topology of the point-to-point communication
+      plan. The elements in this list must be unique.
 
       \param mpi_tag The MPI tag to use for non-blocking communication in the
       communication plan generation.

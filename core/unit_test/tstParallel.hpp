@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -31,7 +31,7 @@ void checkDataMembers(
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
 
-    for ( std::size_t idx = begin; idx != end; ++idx )
+    for ( int idx = begin; idx != end; ++idx )
     {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )

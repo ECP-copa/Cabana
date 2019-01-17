@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -38,9 +38,9 @@ class NeighborDiscriminator<FullNeighborTag>
     // "p" is not the same as the neighbor index "n").
     KOKKOS_INLINE_FUNCTION
     static bool isValid( const std::size_t p,
-                         const double xp, const double yp, const double zp,
+                         const double, const double, const double,
                          const std::size_t n,
-                         const double xn, const double yn, const double zn )
+                         const double, const double, const double )
     {
         return ( p != n );
     }
@@ -159,8 +159,8 @@ struct VerletListBuilder
     // Constructor.
     VerletListBuilder(
         PositionSlice slice,
-        const std::size_t begin,
-        const std::size_t end,
+        const std::size_t, // begin - FIXME (see GitHub issue #54),
+        const std::size_t, // end - FIXME (see GitHub issue #54),
         const PositionValueType neighborhood_radius,
         const PositionValueType cell_size_ratio,
         const PositionValueType grid_min[3],

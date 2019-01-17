@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -172,7 +172,7 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     */
     template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr int rank() const
+    constexpr unsigned rank() const
     {
         return std::rank<member_data_type<M> >::value;
     }
@@ -188,7 +188,7 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     */
     template<std::size_t M, std::size_t D>
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr int extent() const
+    constexpr std::size_t extent() const
     {
         return std::extent<member_data_type<M>,D>::value;
     }
