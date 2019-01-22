@@ -158,7 +158,7 @@ void printParticles( const ParticleList particles, parallel_info& info )
               << '\n'
               << '\n';
 
-    for ( int idx = 0; idx < particles.size(); ++idx )
+    for ( unsigned int idx = 0; idx < particles.size(); ++idx )
     {
         std::cout << "Position: "
                   << p_x(idx) << " "
