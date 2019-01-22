@@ -108,7 +108,7 @@ void initializeParticles( ParticleList& particles,
     MPI_Exscan(&(info.n_local_particles), &offset, 1, MPI_INT, MPI_SUM, info.comm);
     if (info.rank == 0) offset = 0;
 
-    for ( unsigned int idx = 0; idx < info.n_local_particles; ++idx )
+    for ( int idx = 0; idx < info.n_local_particles; ++idx )
     {
         // Calculate location of particle in crystal
         int idx_x = idx % info.loc_crystal[0] + info.off_crystal[0];
@@ -158,7 +158,7 @@ void printParticles( const ParticleList particles, parallel_info& info )
               << '\n'
               << '\n';
 
-    for ( auto idx = 0; idx < particles.size(); ++idx )
+    for ( int idx = 0; idx < particles.size(); ++idx )
     {
         std::cout << "Position: "
                   << p_x(idx) << " "
