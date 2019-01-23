@@ -44,19 +44,19 @@ enum UserParticleFields
     Index
 };
 
-typedef struct 
+typedef struct
 {
     // MPI rank
     int rank;
-    // number of MPI processes 
+    // number of MPI processes
     int n_proc;
     // number of local particles
     int n_local_particles;
     // number of particles in each cartesian direction
     // within the crystal
-    int loc_crystal[3]; 
+    int loc_crystal[3];
     // offset within the crystal
-    int off_crystal[3]; 
+    int off_crystal[3];
     // cartesian dimensions of communicator
     int dim[3];
     // cartesian location of the local rank
@@ -71,10 +71,10 @@ using ParticleDataTypes =
                         double,                       // (1) y-position type
                         double,                       // (2) z-position type
                         double[space_dim],            // (3) velocity type
-                        double,			              // (4) charge
-		                double,			              // (5) potential
-		                double[space_dim],		      // (6) electric field values
-                        int                           // (7) global index 
+                        double,                       // (4) charge
+                        double,                       // (5) potential
+                        double[space_dim],            // (6) electric field values
+                        int                           // (7) global index
                         >;
 
 // Declare the memory space.
@@ -90,8 +90,8 @@ using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,VectorLength>;
 // Helper functions.
 //---------------------------------------------------------------------------//
 // Function to intitialize the particles.
-void initializeParticles( ParticleList& particles, 
-                          double gap_space, 
+void initializeParticles( ParticleList& particles,
+                          double gap_space,
                           parallel_info& info )
 {
     auto p_x = particles.slice<PositionX>();
@@ -115,8 +115,8 @@ void initializeParticles( ParticleList& particles,
         // Calculate location of particle in crystal
         int idx_x = idx % info.loc_crystal[0] + info.off_crystal[0];
         int idx_y = (idx / info.loc_crystal[0]) % info.loc_crystal[1] + info.off_crystal[1];
-        int idx_z = idx / (info.loc_crystal[0] * info.loc_crystal[1]) + info.off_crystal[2];	
-	
+        int idx_z = idx / (info.loc_crystal[0] * info.loc_crystal[1]) + info.off_crystal[2];
+
         // Initialize position.
         p_x(idx) = idx_x * gap_space;
         p_y(idx) = idx_y * gap_space;
@@ -203,10 +203,10 @@ static bool check_result(FCSResult result, int comm_rank, bool force_abort = fal
 }
 
 // example main
-void exampleMain(int num_particle, 
-                 int crystal_size, 
+void exampleMain(int num_particle,
+                 int crystal_size,
                  const std::string& method,
-                 parallel_info& info, 
+                 parallel_info& info,
                  double gap_space)
 {
 
@@ -215,7 +215,7 @@ void exampleMain(int num_particle,
     ParticleList particles( info.n_local_particles );
 
     // Initialize particles.
-    initializeParticles( particles, 
+    initializeParticles( particles,
                          gap_space,
                          info );
 
@@ -269,10 +269,10 @@ void exampleMain(int num_particle,
 
     result = fcs_set_box_a(fcs, box_a.data());
     if (!check_result(result,info.rank)) return;
-    
+
     result = fcs_set_box_b(fcs, box_b.data());
     if (!check_result(result,info.rank)) return;
-    
+
     result = fcs_set_box_c(fcs, box_c.data());
     if (!check_result(result,info.rank)) return;
 
@@ -306,7 +306,7 @@ void exampleMain(int num_particle,
     for (int i = 0; i < info.n_local_particles; ++i)
     {
       for (int d = 0; d < space_dim; ++d)
-      {    
+      {
         field(i,d) = f.at(3*i+d);
         check[d] += f.at(3*i+d);
       }
@@ -336,7 +336,7 @@ void exampleMain(int num_particle,
                   << total_check[0] << " "
                   << total_check[1] << " "
                   << total_check[2] << '\n';
-    
+
 }
 
 //---------------------------------------------------------------------------//
@@ -357,7 +357,7 @@ int main( int argc, char* argv[] )
     parallel_info info;
     info.comm = MPI_COMM_WORLD;
 
-    // Get MPI rank and number of ranks 
+    // Get MPI rank and number of ranks
     MPI_Comm_rank(info.comm, &info.rank);
     MPI_Comm_size(info.comm, &info.n_proc);
 
@@ -379,11 +379,11 @@ int main( int argc, char* argv[] )
       // to change the system size at run time, call:
       // ./ScafacosExample <crystal_dimension> <gap_space> <solver_name>
       // solver name is one of:
-      // direct  	direct solver (does not work for periodic systems, uses 'halo-systems' (expensive!))
-      // ewald  	ewald solver
-      // fmm  	fast multipole methode
-      // p3m  	particle - particle particle - mesh method
-      // p2nfft  	FFT based solver
+      // direct  direct solver (does not work for periodic systems, uses 'halo-systems' (expensive!))
+      // ewald   ewald solver
+      // fmm     fast multipole methode
+      // p3m     particle - particle particle - mesh method
+      // p2nfft  FFT based solver
       //
       // crystal dimension should be divisible by two for an un-charged system
       int c_size = atoi(argv[1]);
@@ -406,10 +406,10 @@ int main( int argc, char* argv[] )
       }
 
       exampleMain(
-              c_size * c_size * c_size, 
-              c_size, 
-              method, 
-              info, 
+              c_size * c_size * c_size,
+              c_size,
+              method,
+              info,
               g_space);
     }
     else
@@ -429,7 +429,7 @@ int main( int argc, char* argv[] )
                                 + (info.loc[i] - (default_crystal_size % info.dim[i])) * info.loc_crystal[i] );
       }
 
-      exampleMain(	
+      exampleMain(
             default_crystal_size * default_crystal_size * default_crystal_size,
             default_crystal_size,
             method,
