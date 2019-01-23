@@ -4,11 +4,12 @@
 
 #include <Kokkos_Core.hpp>
 
+// ScaFaCoS library
+#include <fcs.h>
+
 #include <cstdlib>
 #include <iostream>
 #include <string>
-
-#include "fcs.h"
 
 //---------------------------------------------------------------------------//
 // Define particle data.
@@ -104,8 +105,9 @@ void initializeParticles( ParticleList& particles,
 
     int offset;
 
-    //compute offset with MPI_Exscan
+    // compute offset with MPI_Exscan
     MPI_Exscan(&(info.n_local_particles), &offset, 1, MPI_INT, MPI_SUM, info.comm);
+    // MPI standard: receive buffer on rank 0 is undefined
     if (info.rank == 0) offset = 0;
 
     for ( int idx = 0; idx < info.n_local_particles; ++idx )
