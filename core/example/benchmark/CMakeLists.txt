@@ -3,7 +3,7 @@ if(Cabana_ENABLE_Serial)
   target_link_libraries(NeighborListMDPerfTest cabanacore)
 endif()
 
-if(CMAKE_SYSTEM_PROCESSOR MATCHES "(x86)|(X86)|(amd64)|(AMD64)")
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "([xX]86|[aA][mM][dD]64)")
   add_executable(PeakFlops Cabana_peakflops.cpp)
   target_link_libraries(PeakFlops cabanacore)
 endif()
