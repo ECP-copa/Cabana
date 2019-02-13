@@ -168,8 +168,8 @@ struct VerletListBuilder
         const PositionValueType grid_max[3])
         : counts( "num_neighbors", slice.size() )
         , offsets( "neighbor_offsets", slice.size() )
-        , cell_stencil( neighborhood_radius, cell_size_ratio, grid_min, grid_max )
         , pid_begin(begin), pid_end(end)
+        , cell_stencil( neighborhood_radius, cell_size_ratio, grid_min, grid_max )
     {
         // Get the positions with random access read-only memory.
         position = slice;
