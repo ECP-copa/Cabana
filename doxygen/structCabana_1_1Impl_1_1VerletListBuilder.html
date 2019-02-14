@@ -129,9 +129,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>FillNeighborsPolicy<
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:adce4503825e4d546cb833cce509a7f04"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adce4503825e4d546cb833cce509a7f04"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>VerletListBuilder</b> (PositionSlice slice, const std::size_t, const std::size_t, const PositionValueType neighborhood_radius, const PositionValueType cell_size_ratio, const PositionValueType grid_min[3], const PositionValueType grid_max[3])</td></tr>
-<tr class="separator:adce4503825e4d546cb833cce509a7f04"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf08a1a183a93f88d72d313974c9cfae"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf08a1a183a93f88d72d313974c9cfae"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>VerletListBuilder</b> (PositionSlice slice, const std::size_t begin, const std::size_t end, const PositionValueType neighborhood_radius, const PositionValueType cell_size_ratio, const PositionValueType grid_min[3], const PositionValueType grid_max[3])</td></tr>
+<tr class="separator:abf08a1a183a93f88d72d313974c9cfae"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed24387aa90594bfb5121db6487a13fd"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aed24387aa90594bfb5121db6487a13fd"></a>
 KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html">CountNeighborsTag</a> &amp;, const typename CountNeighborsPolicy::member_type &amp;team) const </td></tr>
 <tr class="separator:aed24387aa90594bfb5121db6487a13fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -159,6 +159,12 @@ PositionValueType&#160;</td><td class="memItemRight" valign="bottom"><b>rsqr</b>
 <tr class="memitem:a55ef38f40f34203007bbc2a7a48f8b7a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a55ef38f40f34203007bbc2a7a48f8b7a"></a>
 RandomAccessPositionSlice&#160;</td><td class="memItemRight" valign="bottom"><b>position</b></td></tr>
 <tr class="separator:a55ef38f40f34203007bbc2a7a48f8b7a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e3db9ef8012c9637e721eb599636ea3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e3db9ef8012c9637e721eb599636ea3"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pid_begin</b></td></tr>
+<tr class="separator:a5e3db9ef8012c9637e721eb599636ea3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a591982d88714a16fedc50b2e7e72f244"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a591982d88714a16fedc50b2e7e72f244"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pid_end</b></td></tr>
+<tr class="separator:a591982d88714a16fedc50b2e7e72f244"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc79ca5ef01d4b003da83b8792eb02b6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc79ca5ef01d4b003da83b8792eb02b6"></a>
 <a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>bin_data_1d</b></td></tr>
 <tr class="separator:adc79ca5ef01d4b003da83b8792eb02b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -176,7 +182,7 @@ RandomAccessPositionSlice&#160;</td><td class="memItemRight" valign="bottom"><b>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jan 10 2019 19:42:13 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Feb 14 2019 14:22:25 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
