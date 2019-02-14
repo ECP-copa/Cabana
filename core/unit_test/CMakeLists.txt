@@ -57,7 +57,8 @@ if(${Cabana_ENABLE_MPI})
         target_link_libraries(${_test}_test_${_device} cabanacore cabana_core_gtest)
         foreach(_np 1 ${MPIEXEC_MAX_NUMPROCS})
           add_test(NAME ${_test}_test_${_device}_${_np} COMMAND
-            ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${_test}_test_${_device} --gtest_color=yes)
+            ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np}
+            ${CMAKE_CURRENT_BINARY_DIR}/${_test}_test_${_device} --gtest_color=yes)
         endforeach()
       endforeach()
     endif()
