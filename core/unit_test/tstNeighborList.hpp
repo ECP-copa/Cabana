@@ -302,6 +302,53 @@ void checkHalfNeighborList( const ListType& list,
 }
 
 //---------------------------------------------------------------------------//
+template<class ListType, class PositionSlice>
+void checkFullNeighborListPartialRange( const ListType& list,
+                            const PositionSlice& position,
+                            const double neighborhood_radius,
+                            const int num_ignore )
+{
+    auto test_list = computeFullNeighborList( position, neighborhood_radius );
+
+    // Check the results.
+    int num_particle = position.size();
+    for ( int p = 0; p < num_particle; ++p )
+    {
+        if ( p < num_ignore )
+        {
+            // First check that the number of neighbors are the same.
+            EXPECT_EQ(
+                 Cabana::NeighborList<ListType>::numNeighbor(list,p),
+                 test_list.counts(p) );
+
+            // Now extract the neighbors.
+            std::vector<int> computed_neighbors( test_list.counts(p) );
+            std::vector<int> actual_neighbors( test_list.counts(p) );
+            for ( int n = 0; n < test_list.counts(p); ++n )
+            {
+                computed_neighbors[n] =
+                    Cabana::NeighborList<ListType>::getNeighbor(list,p,n);
+                actual_neighbors[n] = test_list.neighbors(p,n);
+            }
+
+            // Sort them because we have no guarantee of the order we will find
+            // them in.
+            std::sort( computed_neighbors.begin(), computed_neighbors.end() );
+            std::sort( actual_neighbors.begin(), actual_neighbors.end() );
+
+            // Now compare directly.
+            for ( int n = 0; n < test_list.counts(p); ++n )
+                EXPECT_EQ( computed_neighbors[n], actual_neighbors[n] );
+        }
+        else
+        {
+            EXPECT_EQ(
+                Cabana::NeighborList<ListType>::numNeighbor(list,p), 0 );
+        }
+    }
+}
+
+//---------------------------------------------------------------------------//
 void testVerletListFull()
 {
     // Create the AoSoA and fill with random particle positions.
@@ -398,6 +445,30 @@ void testNeighborParallelFor()
 }
 
 //---------------------------------------------------------------------------//
+void testVerletListFullPartialRange()
+{
+    // Create the AoSoA and fill with random particle positions.
+    int num_particle = 1e3;
+    int num_ignore = 800;
+    double test_radius = 2.32;
+    double cell_size_ratio = 0.5;
+    double box_min = -5.3 * test_radius;
+    double box_max = 4.7 * test_radius;
+    auto aosoa = createParticles( num_particle, box_min, box_max );
+
+    // Create the neighbor list.
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
+    Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag>
+        nlist( aosoa.slice<0>(), 0, num_ignore,
+               test_radius, cell_size_ratio, grid_min, grid_max );
+
+    // Check the neighbor list.
+    auto position = aosoa.slice<0>();
+    checkFullNeighborListPartialRange( nlist, position, test_radius, num_ignore);
+}
+
+//---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, linked_cell_stencil_test )
@@ -415,6 +486,12 @@ TEST_F( TEST_CATEGORY, linked_cell_list_full_test )
 TEST_F( TEST_CATEGORY, linked_cell_list_half_test )
 {
     testVerletListHalf();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, linked_cell_list_full_range_test )
+{
+    testVerletListFullPartialRange();
 }
 
 //---------------------------------------------------------------------------//
