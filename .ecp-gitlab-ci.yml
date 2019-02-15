@@ -1,0 +1,110 @@
+# see https://docs.gitlab.com/ce/ci/yaml/README.html for all available options
+variables:
+  CI_DEBUG_SERVICES: trace
+  SCHEDULER_PARAMETERS: "-P STF002 -J ginsburgtest -W 0:03 -nnodes 2"
+
+stages:
+  - buildKokkos
+  - build
+#  - test
+
+.BuildKokkos:
+  stage: buildKokkos
+  script:
+    - CI_PROJECT_DIR=${PWD}
+    - module load gcc
+    - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
+    - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
+    - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
+      pushd kokkos &&
+      mkdir build &&
+      pushd build &&
+      ../generate_makefile.bash --prefix=${CI_PROJECT_DIR}/kokkos.install ${KOKKOS_OPTS[@]} &&
+      make -j${j} &&
+      make install &&
+      popd &&
+      popd
+  tags:
+    - nobatch
+    - ascent
+  artifacts:
+    paths:
+      - kokkos.install/
+
+.Build:
+  stage: build
+  script:
+    - CI_PROJECT_DIR=${PWD}
+    - module load cmake
+    - module load gcc
+    - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
+    - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
+    - mkdir build && cd build &&
+      cmake -DCMAKE_PREFIX_PATH=${CI_PROJECT_DIR}/kokkos.install -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_Serial=OFF -DCabana_ENABLE_EXAMPLES=OFF ${CMAKE_OPTS[@]} .. &&
+      make -k -j${j} VERBOSE=1 &&
+      make test CTEST_OUTPUT_ON_FAILURE=1
+  tags:
+    - nobatch
+    - ascent
+  dependencies:
+   - BuildKokkos
+
+BuildKokkos Serial:
+  variables:
+    BACKENDS: "Serial"
+  extends: .BuildKokkos
+
+Build Serial:
+  variables:
+    BACKENDS: "Serial"
+  extends: .Build
+  dependencies:
+   - BuildKokkos Serial
+
+BuildKokkos OpenMP:
+  variables:
+    BACKENDS: "OpenMP"
+  extends: .BuildKokkos
+
+Build OpenMP:
+  variables:
+    BACKENDS: "OpenMP"
+  extends: .Build
+  dependencies:
+   - BuildKokkos OpenMP
+
+BuildKokkos Pthread:
+  variables:
+    BACKENDS: "Pthread"
+  extends: .BuildKokkos
+
+Build Pthread:
+  variables:
+    BACKENDS: "Pthread"
+  extends: .Build
+  dependencies:
+   - BuildKokkos Pthread
+
+BuildKokkos Serial Pthread:
+  variables:
+    BACKENDS: "Serial Pthread"
+  extends: .BuildKokkos
+
+Build Serial Pthread:
+  variables:
+    BACKENDS: "Serial Pthread"
+  extends: .Build
+  dependencies:
+   - BuildKokkos Serial Pthread
+
+BuildKokkos Serial OpenMP:
+  variables:
+    BACKENDS: "Serial OpenMP"
+  extends: .BuildKokkos
+
+Build Serial OpenMP:
+  variables:
+    BACKENDS: "Serial OpenMP"
+  extends: .Build
+  dependencies:
+   - BuildKokkos Serial OpenMP
