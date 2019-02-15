@@ -5,3 +5,4 @@ endif()
 
 add_subdirectory(benchmark)
 add_subdirectory(tutorial)
+add_subdirectory(scafacos)

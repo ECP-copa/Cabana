@@ -34,6 +34,13 @@ before_script:
     make install &&
     popd &&
     popd
+  - travis_retry wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
+    tar -xzf scafacos-*.tar.gz &&
+    pushd scafacos* &&
+    ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
+    make -j2 &&
+    make install &&
+    popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
 
 addons:
@@ -43,11 +50,13 @@ addons:
       - libhwloc-dev
       - openmpi-bin
       - libopenmpi-dev
+      - gfortran
+      - libgsl0-dev
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - mkdir build && pushd build &&
-    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
+    cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/scafacos"
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_MPI=ON
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
