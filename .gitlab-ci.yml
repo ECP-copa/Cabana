@@ -16,3 +16,17 @@ test:default:
       cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON .. &&
       make -k -O -j2 VERBOSE=1 &&
       make test
+
+test:cuda:
+  tags: 
+    - nvidia_docker_ask_dalg24_for_permission_before_using
+  image: docker:stable
+  variables:
+    CONTAINER_IMAGE: dalg24/cabana-base:19.03.1
+    BUILD_SCRIPT: ./scripts/gitlab/build.sh
+  before_script:
+    - docker pull $CONTAINER_IMAGE || true
+  script:
+    - export CONTAINER_ID=$(docker ps -q -f "label=com.gitlab.gitlab-runner.job.id=$CI_JOB_ID" -f "label=com.gitlab.gitlab-runner.type=build")
+    - export MOUNT_NAME=$(docker inspect $CONTAINER_ID -f "{{ range .Mounts }}{{ if eq .Destination \"/builds/${CI_PROJECT_NAMESPACE}\" }}{{ .Source }}{{end}}{{end}}" | cut -d "/" -f 6)
+    - docker run --rm --runtime=nvidia -v $MOUNT_NAME:/builds -w /builds/$CI_PROJECT_NAME $CONTAINER_IMAGE bash -xe $BUILD_SCRIPT
