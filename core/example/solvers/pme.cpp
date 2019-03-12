@@ -223,7 +223,7 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
         p(idx) += Ur_part;
       },
     Ur
-      );
+  );
 
   std::cout << "End of real-space contribution" << std::endl;
   
@@ -232,39 +232,39 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   //First, spread the charges onto the mesh
   std::cout << "spreading particle charge to mesh" << std::endl;
   
-    double spacing = meshr(1,0)-meshr(0,0);//how far apart the mesh points are   
-    double xdist, ydist, zdist; //could make this an array
+  double spacing = meshr(1,0)-meshr(0,0);//how far apart the mesh points are (assumed uniform cubic)   
+  
+  Cabana::Experimental::RangePolicy<INNER_ARRAY_SIZE,ExecutionSpace> range_policy_mesh( mesh );
+  auto spread_q = KOKKOS_LAMBDA( const int idx )
+  {
+     double xdist, ydist, zdist; //could make this an array
+     //Find which particles are within range to add charge
+     for ( size_t pidx = 0; pidx < particles.size(); ++pidx )
+     {
+        //x-distance between mesh point and particle
+        xdist = std::min({std::abs(meshr(idx,0) - r(pidx,0)),
+                          std::abs(meshr(idx,0) - (r(pidx,0) +  1.0)),
+                          std::abs(meshr(idx,0) - (r(pidx,0) -  1.0))} );//account for periodic bndry
+        //y-distance between mesh point and particle
+        ydist = std::min({std::abs(meshr(idx,1) - r(pidx,1)),
+                          std::abs(meshr(idx,1) - (r(pidx,1) +  1.0)),
+                          std::abs(meshr(idx,1) - (r(pidx,1) -  1.0))} );//account for periodic bndry
+        //z-distance between mesh point and particle
+        zdist = std::min({std::abs(meshr(idx,2) - r(pidx,2)),
+                          std::abs(meshr(idx,2) - (r(pidx,2) +  1.0)),
+                          std::abs(meshr(idx,2) - (r(pidx,2) -  1.0))} );//account for periodic bndry
 
-    //Loop through each mesh point (TODO: parallel for - Kokkos)
-    for ( size_t idx = 0; idx < mesh.size(); ++idx )
-    {
-        //Find which particles are within range to add charge
-        for ( size_t pidx = 0; pidx < particles.size(); ++pidx )
+        if ( xdist <= 2.0*spacing and ydist <= 2.0*spacing and zdist <= 2.0*spacing ) //more efficient way to do this? Skip it? May be unnecessary.
         {
-            //x-distance between mesh point and particle
-            xdist = std::min({std::abs(meshr(idx,0) - r(pidx,0)),
-                             std::abs(meshr(idx,0) - (r(pidx,0) +  1.0)),
-                             std::abs(meshr(idx,0) - (r(pidx,0) -  1.0))} );//account for periodic bndry
-            //y-distance between mesh point and particle
-            ydist = std::min({std::abs(meshr(idx,1) - r(pidx,1)),
-                             std::abs(meshr(idx,1) - (r(pidx,1) +  1.0)),
-                             std::abs(meshr(idx,1) - (r(pidx,1) -  1.0))} );//account for periodic bndry
-            //z-distance between mesh point and particle
-            zdist = std::min({std::abs(meshr(idx,2) - r(pidx,2)),
-                             std::abs(meshr(idx,2) - (r(pidx,2) +  1.0)),
-                             std::abs(meshr(idx,2) - (r(pidx,2) -  1.0))} );//account for periodic bndry
-
-            if ( xdist <= 2.0*spacing and ydist <= 2.0*spacing and zdist <= 2.0*spacing ) //more efficient way to do this? Skip it? May be unnecessary.
-            {
-               //add charge to mesh point according to spline
-               meshq(idx) += q(pidx) * TPME::oneDspline(2.0-(xdist/spacing))
-                                     * TPME::oneDspline(2.0-(ydist/spacing)) 
-                                     * TPME::oneDspline(2.0-(zdist/spacing));
-               
-            }
-        }       
- 
-    }
+           //add charge to mesh point according to spline
+           meshq(idx) += q(pidx) * TPME::oneDspline(2.0-(xdist/spacing))
+                                 * TPME::oneDspline(2.0-(ydist/spacing)) 
+                                 * TPME::oneDspline(2.0-(zdist/spacing));
+        }
+     }       
+  };
+  Cabana::Experimental::parallel_for( range_policy_mesh, spread_q ); 
+  
   struct timeval starttime2;
   gettimeofday(&starttime2, NULL);
   
