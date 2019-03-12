@@ -1,0 +1,67 @@
+#ifndef TDS_DEFINITIONS_INCLUDED
+#define TDS_DEFINITIONS_INCLUDED
+
+#include <Cabana_AoSoA.hpp>
+#include <Cabana_MemberTypes.hpp>
+
+#include <Kokkos_Core.hpp>
+
+
+#define PI 3.141592653589793238462643
+#define PI_SQRT 1.772453850905516
+#define PI_SQ 9.869604401089359
+#define PI_DIV_SQ 0.101321183642338
+
+#define COULOMB_PREFACTOR 1.0
+#define COULOMB_PREFACTOR_INV 1.0
+
+#define MADELUNG_NACL -1.747564594633182
+
+//#define COULOMB_PREFACTOR 1.0 / ( 4.0 * PI * 8.854187817e-12)
+//#define COULOMB_PREFACTOR_INV ( 4.0 * PI * 8.854187817e-12)
+
+// User field enumeration. These will be used to index into the data set. Must
+// start at 0 and increment contiguously.
+const int SPACE_DIM = 3;
+
+const int INNER_ARRAY_SIZE = 8;
+
+enum UserParticleFields
+{
+    Position,
+    Velocity,
+    Force,
+    Charge,
+    Potential,
+    Index
+};
+
+// Designate the types that the particles will hold.
+using ParticleDataTypes =
+    Cabana::MemberTypes<double[SPACE_DIM],        // (0) x-position type
+                        double[SPACE_DIM],        // (1) velocity type
+		        double[SPACE_DIM],	  // (2) forces
+                        double,		          // (3) Charge
+                        double,                   // (4) potential
+                        long                      // (5) global index
+                        >;
+
+// Declare the memory space.
+#ifdef TDS_CUDA
+using MemorySpace = Cabana::CudaUVMSpace;
+using ExecutionSpace = Kokkos::Cuda;
+#else
+using MemorySpace = Cabana::HostSpace;
+using ExecutionSpace = Kokkos::OpenMP;
+#endif
+
+// Declare the inner array layout.
+//using ArrayLayout = Cabana::InnerArrayLayout<INNER_ARRAY_SIZE,Cabana::LayoutRight>;
+
+// Set the type for the particle AoSoA.
+using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,INNER_ARRAY_SIZE>;
+
+// Declare the parallel for algorithm tag.
+//using parallel_algorithm_tag = Cabana::StructAndArrayParallelTag;
+
+#endif
