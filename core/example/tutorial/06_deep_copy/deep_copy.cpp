@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -46,14 +46,14 @@ void deepCopyExample()
       AoSoA.
     */
     const int SrcVectorLength = 8;
-    using SrcMemorySpace = Cabana::HostSpace;
+    using SrcMemorySpace = Kokkos::HostSpace;
 
     /*
       Declare the vector length and memory space parameters of the destination
       AoSoA.
     */
     const int DstVectorLength = 32;
-    using DstMemorySpace = Cabana::CudaUVMSpace;
+    using DstMemorySpace = Kokkos::CudaUVMSpace;
 
     /*
        Create the source and destination AoSoAs.
@@ -65,7 +65,7 @@ void deepCopyExample()
     /*
       Put some data in the source AoSoA.
     */
-    for ( int s = 0; s < src_aosoa.numSoA(); ++s )
+    for ( std::size_t s = 0; s < src_aosoa.numSoA(); ++s )
     {
         auto& soa = src_aosoa.access(s);
 

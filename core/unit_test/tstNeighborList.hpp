@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -12,6 +12,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_VerletList.hpp>
+#include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
 #include <Kokkos_Random.hpp>
@@ -116,16 +117,13 @@ struct TestNeighborList
 // Create particles.
 Cabana::AoSoA<Cabana::MemberTypes<double[3]>,TEST_MEMSPACE>
 createParticles( const int num_particle,
-                 const double neighborhood_radius,
                  const double box_min,
                  const double box_max )
 {
-    // Create the AoSoA with (100x100x100) particles.
     using DataTypes = Cabana::MemberTypes<double[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( num_particle );
 
-    // Create particles within a region sized (10x10x10) neighborhood radii.
     auto position = aosoa.slice<0>();
     using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
     using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
@@ -147,16 +145,16 @@ createParticles( const int num_particle,
 
 //---------------------------------------------------------------------------//
 template<class PositionSlice>
-TestNeighborList<typename PositionSlice::kokkos_memory_space>
+TestNeighborList<typename PositionSlice::memory_space>
 computeFullNeighborList( const PositionSlice& position,
                          const double neighborhood_radius )
 {
     // Build a neighbor list with a brute force n^2 implementation. Count
     // first.
-    TestNeighborList<typename PositionSlice::kokkos_memory_space> list;
+    TestNeighborList<typename PositionSlice::memory_space> list;
     int num_particle = position.size();
     double rsqr = neighborhood_radius * neighborhood_radius;
-    list.counts = Kokkos::View<int*,typename PositionSlice::kokkos_memory_space>(
+    list.counts = Kokkos::View<int*,typename PositionSlice::memory_space>(
         "test_neighbor_count", num_particle );
     Kokkos::deep_copy( list.counts, 0 );
     auto count_op =
@@ -189,7 +187,7 @@ computeFullNeighborList( const PositionSlice& position,
     int max_n;
     Kokkos::parallel_reduce( exec_policy, max_op, Kokkos::Max<int>(max_n) );
     Kokkos::fence();
-    list.neighbors = Kokkos::View<int**,typename PositionSlice::kokkos_memory_space>(
+    list.neighbors = Kokkos::View<int**,typename PositionSlice::memory_space>(
         "test_neighbors", num_particle, max_n );
 
     // Fill.
@@ -304,6 +302,53 @@ void checkHalfNeighborList( const ListType& list,
 }
 
 //---------------------------------------------------------------------------//
+template<class ListType, class PositionSlice>
+void checkFullNeighborListPartialRange( const ListType& list,
+                            const PositionSlice& position,
+                            const double neighborhood_radius,
+                            const int num_ignore )
+{
+    auto test_list = computeFullNeighborList( position, neighborhood_radius );
+
+    // Check the results.
+    int num_particle = position.size();
+    for ( int p = 0; p < num_particle; ++p )
+    {
+        if ( p < num_ignore )
+        {
+            // First check that the number of neighbors are the same.
+            EXPECT_EQ(
+                 Cabana::NeighborList<ListType>::numNeighbor(list,p),
+                 test_list.counts(p) );
+
+            // Now extract the neighbors.
+            std::vector<int> computed_neighbors( test_list.counts(p) );
+            std::vector<int> actual_neighbors( test_list.counts(p) );
+            for ( int n = 0; n < test_list.counts(p); ++n )
+            {
+                computed_neighbors[n] =
+                    Cabana::NeighborList<ListType>::getNeighbor(list,p,n);
+                actual_neighbors[n] = test_list.neighbors(p,n);
+            }
+
+            // Sort them because we have no guarantee of the order we will find
+            // them in.
+            std::sort( computed_neighbors.begin(), computed_neighbors.end() );
+            std::sort( actual_neighbors.begin(), actual_neighbors.end() );
+
+            // Now compare directly.
+            for ( int n = 0; n < test_list.counts(p); ++n )
+                EXPECT_EQ( computed_neighbors[n], actual_neighbors[n] );
+        }
+        else
+        {
+            EXPECT_EQ(
+                Cabana::NeighborList<ListType>::numNeighbor(list,p), 0 );
+        }
+    }
+}
+
+//---------------------------------------------------------------------------//
 void testVerletListFull()
 {
     // Create the AoSoA and fill with random particle positions.
@@ -312,8 +357,7 @@ void testVerletListFull()
     double cell_size_ratio = 0.5;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;
-    auto aosoa =
-        createParticles( num_particle, test_radius, box_min, box_max );
+    auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };
@@ -336,8 +380,7 @@ void testVerletListHalf()
     double cell_size_ratio = 0.5;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;
-    auto aosoa =
-        createParticles( num_particle, test_radius, box_min, box_max );
+    auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };
@@ -360,9 +403,7 @@ void testNeighborParallelFor()
     double cell_size_ratio = 0.5;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;
-    auto aosoa =
-        createParticles( num_particle, test_radius, box_min, box_max );
-    using aosoa_t = decltype(aosoa);
+    auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };
@@ -372,10 +413,10 @@ void testNeighborParallelFor()
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Create Kokkos views for the write operation.
-    using kokkos_memory_space = typename TEST_MEMSPACE::kokkos_memory_space;
-    Kokkos::View<int*,kokkos_memory_space> test_result( "test_result", num_particle );
-    Kokkos::View<int*,kokkos_memory_space> serial_result( "serial_result", num_particle );
-    Kokkos::View<int*,kokkos_memory_space> team_result( "team_result", num_particle );
+    using memory_space = typename TEST_MEMSPACE::memory_space;
+    Kokkos::View<int*,memory_space> test_result( "test_result", num_particle );
+    Kokkos::View<int*,memory_space> serial_result( "serial_result", num_particle );
+    Kokkos::View<int*,memory_space> team_result( "team_result", num_particle );
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
@@ -383,11 +424,12 @@ void testNeighborParallelFor()
                            { Kokkos::atomic_add( &serial_result(i), n ); };
     auto team_count_op = KOKKOS_LAMBDA( const int i, const int n )
                          { Kokkos::atomic_add( &team_result(i), n ); };
-    Cabana::Experimental::RangePolicy<aosoa_t::vector_length,TEST_EXECSPACE> policy( aosoa );
-    Cabana::Experimental::neighbor_parallel_for(
-        policy, serial_count_op, nlist, Cabana::Experimental::SerialNeighborOpTag() );
-    Cabana::Experimental::neighbor_parallel_for(
-        policy, team_count_op, nlist, Cabana::Experimental::TeamNeighborOpTag() );
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
+    Cabana::neighbor_parallel_for(
+        policy, serial_count_op, nlist, Cabana::SerialNeighborOpTag() );
+    Cabana::neighbor_parallel_for(
+        policy, team_count_op, nlist, Cabana::TeamNeighborOpTag() );
+    Kokkos::fence();
 
     // Get the expected result in serial
     for ( int p = 0; p < num_particle; ++p )
@@ -400,6 +442,30 @@ void testNeighborParallelFor()
         EXPECT_EQ( test_result(p), serial_result(p) );
         EXPECT_EQ( test_result(p), team_result(p) );
     }
+}
+
+//---------------------------------------------------------------------------//
+void testVerletListFullPartialRange()
+{
+    // Create the AoSoA and fill with random particle positions.
+    int num_particle = 1e3;
+    int num_ignore = 800;
+    double test_radius = 2.32;
+    double cell_size_ratio = 0.5;
+    double box_min = -5.3 * test_radius;
+    double box_max = 4.7 * test_radius;
+    auto aosoa = createParticles( num_particle, box_min, box_max );
+
+    // Create the neighbor list.
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
+    Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag>
+        nlist( aosoa.slice<0>(), 0, num_ignore,
+               test_radius, cell_size_ratio, grid_min, grid_max );
+
+    // Check the neighbor list.
+    auto position = aosoa.slice<0>();
+    checkFullNeighborListPartialRange( nlist, position, test_radius, num_ignore);
 }
 
 //---------------------------------------------------------------------------//
@@ -420,6 +486,12 @@ TEST_F( TEST_CATEGORY, linked_cell_list_full_test )
 TEST_F( TEST_CATEGORY, linked_cell_list_half_test )
 {
     testVerletListHalf();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, linked_cell_list_full_range_test )
+{
+    testVerletListFullPartialRange();
 }
 
 //---------------------------------------------------------------------------//

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -13,7 +13,6 @@
 #define CABANA_PERFORMANCETRAITS_HPP
 
 #include <Cabana_Types.hpp>
-#include <Cabana_Parallel.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -37,7 +36,6 @@ class PerformanceTraits<Kokkos::Serial>
 {
   public:
     static constexpr int vector_length = 16;
-    using parallel_for_tag = Experimental::StructParallelTag;
 };
 #endif
 
@@ -49,7 +47,6 @@ class PerformanceTraits<Kokkos::Threads>
 {
   public:
     static constexpr int vector_length = 16;
-    using parallel_for_tag = Experimental::StructParallelTag;
 };
 #endif
 
@@ -61,7 +58,6 @@ class PerformanceTraits<Kokkos::OpenMP>
 {
   public:
     static constexpr int vector_length = 16;
-    using parallel_for_tag = Experimental::StructParallelTag;
 };
 #endif
 
@@ -73,7 +69,6 @@ class PerformanceTraits<Kokkos::Cuda>
 {
   public:
     static constexpr int vector_length = Kokkos::Impl::CudaTraits::WarpSize;
-    using parallel_for_tag = Experimental::IndexParallelTag;
 };
 #endif
 

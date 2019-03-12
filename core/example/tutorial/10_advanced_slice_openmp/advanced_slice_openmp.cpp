@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -31,7 +31,7 @@ void atomicSliceExample()
     */
     using DataTypes = Cabana::MemberTypes<double>;
     const int VectorLength = 8;
-    using MemorySpace = Cabana::HostSpace;
+    using MemorySpace = Kokkos::HostSpace;
 
     /*
        Create the AoSoA. Just put a single value to demonstrate the atomic.

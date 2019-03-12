@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -16,7 +16,6 @@
 #include <Cabana_Slice.hpp>
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
-#include <Cabana_Macros.hpp>
 #include <Cabana_SoA.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
@@ -37,16 +36,6 @@ namespace Cabana
   \brief Array-of-Struct-of-Arrays
 
   A AoSoA represents tuples and their data via an array-of-structs-of-arrays.
-
-  This class has both required and optional template parameters.  The
-  \c DataType parameter must always be provided, and must always be
-  first. The parameters \c Arg1Type, \c Arg2Type, and \c Arg3Type are
-  placeholders for different template parameters.  The default value
-  of the fifth template parameter \c Specialize suffices for most use
-  cases.  When explaining the template parameters, we won't refer to
-  \c Arg1Type, \c Arg2Type, and \c Arg3Type; instead, we will refer
-  to the valid categories of template parameters, in whatever order
-  they may occur.
 
   \tparam DataType (required) Specifically this must be an instance of
   \c MemberTypes with the data layout of the structs. For example:
@@ -69,10 +58,9 @@ namespace Cabana
 template<class DataTypes,
          class MemorySpace,
          int VectorLength = Impl::PerformanceTraits<
-             typename MemorySpace::kokkos_execution_space>::vector_length,
+             typename MemorySpace::execution_space>::vector_length,
          typename std::enable_if<
              (is_member_types<DataTypes>::value &&
-              is_memory_space<MemorySpace>::value &&
               Impl::IsVectorLengthValid<VectorLength>::value),int>::type = 0>
 class AoSoA
 {
@@ -94,8 +82,7 @@ class AoSoA
     using soa_type = SoA<member_types,vector_length>;
 
     // Managed data view.
-    using soa_view =
-        Kokkos::View<soa_type*,typename memory_space::kokkos_memory_space>;
+    using soa_view = Kokkos::View<soa_type*,memory_space>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
@@ -159,7 +146,7 @@ class AoSoA
       This is the number of actual objects held in the container, which is not
       necessarily equal to its storage capacity.
     */
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t size() const { return _size; }
 
     /*!
@@ -179,7 +166,7 @@ class AoSoA
       The capacity of a container can be explicitly altered by calling member
       reserve.
     */
-    CABANA_FUNCTION
+    KOKKOS_FUNCTION
     std::size_t capacity() const { return _capacity; }
 
     /*!
@@ -241,10 +228,6 @@ class AoSoA
 
         // If we need more SoA objects then resize.
         Kokkos::resize( _data, num_soa_alloc );
-
-        // Get new pointers and strides for the members.
-        storePointersAndStrides(
-            std::integral_constant<std::size_t,number_of_members-1>() );
     }
 
     /*!
@@ -252,7 +235,7 @@ class AoSoA
 
       \return The number of structs-of-arrays in the container.
     */
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     std::size_t numSoA() const { return _num_soa; }
 
     /*!
@@ -263,7 +246,7 @@ class AoSoA
       \return The size of the array at the given struct index.
     */
     template<typename S>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<std::is_integral<S>::value,int>::type
     arraySize( const S& s ) const
     {
@@ -279,7 +262,7 @@ class AoSoA
       \return The SoA reference at the given index.
     */
     template<typename S>
-    CABANA_FORCEINLINE_FUNCTION
+    KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<std::is_integral<S>::value,soa_type&>::type
     access( const S& s ) const
     { return _data(s); }
@@ -292,7 +275,7 @@ class AoSoA
       \return A tuple containing a deep copy of the data at the given index.
     */
     template<typename I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<std::is_integral<I>::value,tuple_type>::type
     getTuple( const I& i ) const
     {
@@ -309,7 +292,7 @@ class AoSoA
       \param tuple The tuple to get the data from.
     */
     template<typename I>
-    CABANA_INLINE_FUNCTION
+    KOKKOS_INLINE_FUNCTION
     typename std::enable_if<std::is_integral<I>::value,void>::type
     setTuple( const I& i,
               const tuple_type& tpl ) const
@@ -325,16 +308,29 @@ class AoSoA
       \return The member slice.
     */
     template<std::size_t M>
-    Slice<member_data_type<M>,memory_space,DefaultAccessMemory,vector_length>
+    Slice<member_data_type<M>,
+          memory_space,
+          DefaultAccessMemory,
+          vector_length,
+          sizeof(soa_type) / sizeof(member_value_type<M>)>
     slice() const
     {
+        static_assert(
+            0 == sizeof(soa_type) % sizeof(member_value_type<M>),
+            "Slice stride cannot be calculated for misaligned memory!" );
+
+        member_pointer_type<M> data_ptr =
+            ( _data.size() > 0 )
+            ? static_cast<member_pointer_type<M> >(_data(0).template ptr<M>())
+            : nullptr;
+
         return
             Slice<member_data_type<M>,
                   memory_space,
                   DefaultAccessMemory,
-                  vector_length>(
-                      (member_pointer_type<M>) _pointers[M],
-                      _size, _strides[M], _num_soa );
+                  vector_length,
+                  sizeof(soa_type) / sizeof(member_value_type<M>)>(
+                      data_ptr, _size, _num_soa );
     }
 
     /*!
@@ -343,34 +339,6 @@ class AoSoA
     */
     void* ptr() const
     { return _data.data(); }
-
-  private:
-
-    // Store the pointers and strides for each member element.
-    template<std::size_t N>
-    void assignPointersAndStrides()
-    {
-        static_assert( 0 <= N && N < number_of_members,
-                       "Static loop out of bounds!" );
-        _pointers[N] = _data(0).template ptr<N>();
-        static_assert( 0 ==
-                       sizeof(soa_type) % sizeof(member_value_type<N>),
-                       "Stride cannot be calculated for misaligned memory!" );
-        _strides[N] = sizeof(soa_type) / sizeof(member_value_type<N>);
-    }
-
-    // Static loop through each member element to extract pointers and strides.
-    template<std::size_t N>
-    void storePointersAndStrides( std::integral_constant<std::size_t,N> )
-    {
-        assignPointersAndStrides<N>();
-        storePointersAndStrides( std::integral_constant<std::size_t,N-1>() );
-    }
-
-    void storePointersAndStrides( std::integral_constant<std::size_t,0> )
-    {
-        assignPointersAndStrides<0>();
-    }
 
   private:
 
@@ -388,13 +356,6 @@ class AoSoA
     // assignment operator for this class perform a shallow and reference
     // counted copy of the data.
     soa_view _data;
-
-    // Pointers to the first element of each member.
-    void* _pointers[number_of_members];
-
-    // Strides for each member. Note that these strides are computed in the
-    // context of the *value_type* of each member.
-    std::size_t _strides[number_of_members];
 };
 
 //---------------------------------------------------------------------------//

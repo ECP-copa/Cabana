@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -43,10 +43,8 @@ inline void deep_copy(
 {
     using dst_type = DstAoSoA;
     using src_type = SrcAoSoA;
-    using dst_memory_space =
-        typename dst_type::memory_space::kokkos_memory_space;
-    using src_memory_space =
-        typename src_type::memory_space::kokkos_memory_space;
+    using dst_memory_space = typename dst_type::memory_space;
+    using src_memory_space = typename src_type::memory_space;
     using dst_soa_type = typename dst_type::soa_type;
     using src_soa_type = typename src_type::soa_type;
 
@@ -70,7 +68,6 @@ inline void deep_copy(
     // Return if both pointers are null.
     if ( dst_data == nullptr && src_data == nullptr )
     {
-        Kokkos::fence();
         return;
     }
 
@@ -83,7 +80,6 @@ inline void deep_copy(
          (dst_num_soa * sizeof(dst_soa_type) ==
           src_num_soa * sizeof(src_soa_type)) )
     {
-        Kokkos::fence();
         return;
     }
 
@@ -92,10 +88,8 @@ inline void deep_copy(
     if ( std::is_same<dst_soa_type,src_soa_type>::value &&
          ( dst_type::vector_length == src_type::vector_length ) )
     {
-        Kokkos::fence();
         Kokkos::Impl::DeepCopy<dst_memory_space,src_memory_space>(
             dst_data, src_data, dst_num_soa * sizeof(dst_soa_type) );
-        Kokkos::fence();
     }
 
     // Otherwise copy the data element-by-element because the data layout is
@@ -116,12 +110,10 @@ inline void deep_copy(
         src_mirror_type src_copy_on_dst( src.size() );
 
         // Copy the source to the destination space.
-        Kokkos::fence();
         Kokkos::Impl::DeepCopy<dst_memory_space,src_memory_space>(
             src_copy_on_dst.ptr(),
             src_data,
             src_num_soa * sizeof(src_soa_type) );
-        Kokkos::fence();
 
         // Copy via tuples.
         auto copy_func =

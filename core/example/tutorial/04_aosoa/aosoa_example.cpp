@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -55,14 +55,14 @@ void aosoaExample()
       allocated. In this example we are writing basic loops that will execute
       on the CPU. The HostSpace allocates memory in standard CPU RAM.
 
-      Cabana also supports execution on NVIDIA GPUs. To create an AoSoA
-      allocated with CUDA Unified Virtual Memory (UVM) use
-      `Cabana::CudaUVMSpace` instead of `Cabana::HostSpace`. The CudaUVMSpace
+      Kokkos also supports execution on NVIDIA GPUs. For example, to create an
+      AoSoA allocated with CUDA Unified Virtual Memory (UVM) use
+      `Kokkos::CudaUVMSpace` instead of `Kokkos::HostSpace`. The CudaUVMSpace
       allocates memory in managed GPU memory via `cudaMallocManaged`. This
       memory is automatically paged between host and device depending on the
       context in which the memory is accessed.
     */
-    using MemorySpace = Cabana::HostSpace;
+    using MemorySpace = Kokkos::HostSpace;
 
     /*
        Create the AoSoA. We define how many tuples the aosoa will
@@ -90,7 +90,7 @@ void aosoaExample()
       2-dimensional tuple indices. Start by looping over the SoA's. The SoA
       index is the first tuple index:
     */
-    for ( int s = 0; s < aosoa.numSoA(); ++s )
+    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
     {
         /*
            Get a reference the SoA we are working on. The aosoa access()

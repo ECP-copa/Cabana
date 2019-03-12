@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -45,7 +45,7 @@ void linkedCellListExample()
       and member type configurations are compatible with sorting.
     */
     const int VectorLength = 8;
-    using MemorySpace = Cabana::HostSpace;
+    using MemorySpace = Kokkos::HostSpace;
 
     /*
        Create the AoSoA.
@@ -66,7 +66,7 @@ void linkedCellListExample()
       Create the particle ids.
     */
     auto ids = aosoa.slice<1>();
-    for ( int i = 0; i < aosoa.size(); ++i )
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
         ids(i) = i;
     /*
       Create the particle coordinates. We will put 2 particles in the center
@@ -117,7 +117,7 @@ void linkedCellListExample()
        still valid as long as we haven't resized, changes the capacity, or
        otherwise changed the memory associated with the AoSoA.
      */
-    for ( int i = 0; i < aosoa.size(); ++i )
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
         std::cout << "Particle: id = " << ids(i)
                   << ", coords (" << positions(i,0) << ","
                   << positions(i,1) << "," << positions(i,2) << ")"

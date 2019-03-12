@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -13,119 +13,146 @@
 #define CABANA_PARALLEL_HPP
 
 #include <Cabana_ExecutionPolicy.hpp>
-#include <impl/Cabana_Index.hpp>
+#include <Cabana_NeighborList.hpp>
 
 #include <Kokkos_Core.hpp>
-#include <Kokkos_Parallel.hpp>
-#include <KokkosExp_MDRangePolicy.hpp>
-#include <Kokkos_Pair.hpp>
 
 #include <cstdlib>
+#include <type_traits>
 
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-// Forward declaration of performance traits.
 namespace Impl
 {
-template<class ExecutionSpace>
-class PerformanceTraits;
 
-//---------------------------------------------------------------------------//
-// Helper functions
-//---------------------------------------------------------------------------//
-// Given a begin and end index get the starting and ending struct indices.
-template<int array_size>
-KOKKOS_INLINE_FUNCTION
-Kokkos::pair<int,int>
-getStructBounds( const std::size_t begin, const std::size_t end )
+// No work tag was provided so call without a tag argument.
+template<class WorkTag, class FunctorType>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<std::is_same<WorkTag,void>::value>::type
+functorTagDispatch( const FunctorType& functor,
+                    const std::size_t s,
+                    const int a )
 {
-    Kokkos::pair<int,int> struct_bounds;
-
-    // Get the AoSoA Indices for the begin and end.
-    auto begin_s = Impl::Index<array_size>::s( begin );
-    auto end_s = Impl::Index<array_size>::s( end );
-    auto end_a = Impl::Index<array_size>::a( end );
-
-    // The first struct is the struct index of the beginning.
-    struct_bounds.first = begin_s;
-
-    // If the end is also at the front of an array that means the struct index
-    // of end is also the ending struct index. If not, we are not iterating
-    // all the way through the arrays of the last struct. In this case we add
-    // 1 to ensure that the loop over structs loops through all structs with
-    // data.
-    struct_bounds.second =
-        (0 == end_a) ? end_s : end_s + 1;
-
-    return struct_bounds;
+    functor(s,a);
 }
 
-//---------------------------------------------------------------------------//
-// Given a begin and end index, struct bounds, and a struct index get the
-// starting and ending array indices.
-template<int array_size>
-KOKKOS_INLINE_FUNCTION
-Kokkos::pair<int,int>
-getArrayBounds( const int begin,
-                const int end,
-                const Kokkos::pair<int,int>& struct_bounds,
-                const int s )
+// The user gave us a tag so call the version using that.
+template<class WorkTag, class FunctorType>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<!std::is_same<WorkTag,void>::value>::type
+functorTagDispatch( const FunctorType& functor,
+                    const std::size_t s,
+                    const int a )
 {
-    Kokkos::pair<int,int> array_bounds;
-
-    // Get the AoSoA Indices for the begin and end.
-    auto begin_a = Impl::Index<array_size>::a( begin );
-    auto end_a = Impl::Index<array_size>::a( end );
-
-    // If the given struct index is also the index of the struct index in
-    // begin, use the starting array index. If not, that means we have passed
-    // the first struct and all subsequent structs start at array index 0.
-    array_bounds.first = (s == struct_bounds.first) ? begin_a : 0;
-
-    // If we are in the last struct unfilled struct then use the array index
-    // of end. If not, we are looping through the current array all the way to
-    // the end so use the array size.
-    array_bounds.second =
-        ((s == struct_bounds.second - 1) && (end_a != 0))
-        ? end_a : array_size;
-
-    return array_bounds;
+    const WorkTag t{};
+    functor(t,s,a);
 }
 
-} // end namespace impl
+} // end namespace Impl
 
-namespace Experimental
+//---------------------------------------------------------------------------//
+// SIMD Parallel For
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute a vectorized functor in parallel with a 2d execution policy.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam VectorLength The length of the vector over which to execute the
+  vectorized code.
+
+  \tparam ExecParameters Execution policy parameters.
+
+  \param exec_policy The 2D range policy over which to execute the functor.
+
+  \param functor The vectorized functor to execute in parallel. Must accept
+  both a struct and array index.
+
+  \param str An optional name for the functor. Will be forwarded to the
+  Kokkos::parallel_for called by this code and can be used for identification
+  and profiling purposes.
+
+  A "functor" is a callable object containing the function to execute in
+  parallel, data needed for that execution, and an optional \c execution_space
+  typedef.  Here is an example functor for parallel_for:
+
+  \code
+  class FunctorType {
+  public:
+  typedef  ...  execution_space ;
+  void operator() ( const int struct, const int array ) const ;
+  };
+  \endcode
+
+  In the above example, \c struct defines an index to a given AoSoA/Slice
+  struct and array defines and index to the given array element in that struct.
+  Its <tt>operator()</tt> method defines the operation to parallelize, over
+  the range of indices <tt>idx=[begin,end]</tt>. The kernel represented by the
+  functor is intended to vectorize of the array index.
+
+  \note The work tag gets applied at the user functor level, not at the level
+  of the functor in this implementation that wraps the user functor.
+*/
+template<class FunctorType, int VectorLength, class ... ExecParameters>
+inline void simd_parallel_for(
+    const SimdPolicy<VectorLength,ExecParameters...>& exec_policy,
+    const FunctorType& functor,
+    const std::string& str = "" )
 {
+    using work_tag =
+        typename SimdPolicy<VectorLength,ExecParameters...>::work_tag;
+
+    using team_policy =
+        typename SimdPolicy<VectorLength,ExecParameters...>::base_type;
+
+   Kokkos::parallel_for(
+        str,
+        dynamic_cast<const team_policy&>(exec_policy),
+        KOKKOS_LAMBDA( const typename team_policy::member_type& team )
+        {
+            auto s = team.league_rank() + exec_policy.structBegin();
+            Kokkos::parallel_for(
+                Kokkos::ThreadVectorRange( team,
+                                           exec_policy.arrayBegin(s),
+                                           exec_policy.arrayEnd(s)),
+                [&]( const int a )
+                { Impl::functorTagDispatch<work_tag>(functor,s,a);});
+        });
+}
+
+
+//---------------------------------------------------------------------------//
+// Neighbor Parallel For
 //---------------------------------------------------------------------------//
 // Algorithm tags.
 
-//! 1D parallelism over all indices
-class IndexParallelTag {};
+//! Neighbor operations are executed in serial on each particle thread.
+class SerialNeighborOpTag {};
 
-//! 1D parallelism over structs with a thread-local loop over the inner arrays
-class StructParallelTag {};
+//! Neighbor operations are executed in parallel in a team on each particle
+//! thread.
+class TeamNeighborOpTag {};
 
-//! 1D parallelism over inner arrays with an outer serial loop over structs
-class ArrayParallelTag {};
-
-//! 2D parallelism over structs and inner arrays
-class StructAndArrayParallelTag {};
-
-//---------------------------------------------------------------------------//
-// Parallel for
 //---------------------------------------------------------------------------//
 /*!
-  \brief Execute \c functor in parallel according to the execution \c policy.
-
-  \tparam ExecutionPolicy The execution policy type over which to execute the
-  functor.
+  \brief Execute \c functor in parallel according to the execution \c policy
+  with a thread-local serial loop over particle neighbors.
 
   \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParams The Kokkos range policy parameters.
 
   \param exec_policy The policy over which to execute the functor.
 
   \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param tag Algorithm tag indicating a serial loop strategy over particle
+  neighbors.
 
   \param str An optional name for the functor. Will be forwarded to the
   Kokkos::parallel_for called by this code and can be used for identification
@@ -133,254 +160,134 @@ class StructAndArrayParallelTag {};
 
   A "functor" is a class containing the function to execute in parallel, data
   needed for that execution, and an optional \c execution_space typedef.  Here
-  is an example functor for parallel_for:
+  is an example functor for neighbor parallel_for:
 
   \code
   class FunctorType {
   public:
   typedef  ...  execution_space ;
-  void operator() ( const int index ) const ;
+  void operator() ( const int particle_index, const int neighbor_index ) const ;
   };
   \endcode
 
-  In the above example, \c Index is a Cabana index to a given AoSoA element.
-  Its <tt>operator()</tt> method defines the operation to parallelize, over
-  the range of indices <tt>idx=[begin,end]</tt>.  This compares to a single
-  iteration \c idx of a \c for loop.
+  In the above example, \c Index is a Cabana index to a given AoSoA element
+  for a particle and its neighbor. Its <tt>operator()</tt> method defines the
+  operation to parallelize, over the range of indices
+  <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
+  \c for loop.
 */
-template<class ExecutionPolicy, class FunctorType>
-inline void parallel_for( const ExecutionPolicy& exec_policy,
-                          const FunctorType& functor,
-                          const std::string& str = "" )
+template<class FunctorType, class NeighborListType, class ... ExecParameters>
+inline void neighbor_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor,
+    const NeighborListType& list,
+    const SerialNeighborOpTag& tag,
+    const std::string& str = "" )
 {
-    using exec_space = typename ExecutionPolicy::execution_space;
-    parallel_for(
+    std::ignore = tag;
+
+    using work_tag =
+        typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    Kokkos::parallel_for(
         exec_policy,
-        functor,
-        typename Impl::PerformanceTraits<exec_space>::parallel_for_tag(),
+        KOKKOS_LAMBDA( const int i )
+        {
+            for ( int n = 0;
+                  n < NeighborList<NeighborListType>::numNeighbor(list,i);
+                  ++n )
+                Impl::functorTagDispatch<work_tag>(
+                    functor,
+                    i,
+                    NeighborList<NeighborListType>::getNeighbor(list,i,n) );
+        },
         str );
 }
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Parallel-for 1D index parallel specialization.
+  \brief Execute \c functor in parallel according to the execution \c policy
+  with team parallelism over particle neighbors.
 
-  Takes an instance of the \c IndexParallelTag to indicate specialization.
+  \tparam ExecutionSpace The execution space in which to execute the functor.
 
-  Creates 1D parallel over all indices that directly executes the functor.
-*/
-template<class ExecutionPolicy, class FunctorType>
-inline void parallel_for( const ExecutionPolicy& exec_policy,
-                          const FunctorType& functor,
-                          const IndexParallelTag&,
-                          const std::string& str = "" )
-{
-    // Create the kokkos execution policy
-    using kokkos_policy =
-        Kokkos::RangePolicy<typename ExecutionPolicy::execution_space>;
-    kokkos_policy k_policy( exec_policy.begin(), exec_policy.end() );
+  \tparam FunctorType The functor type to execute.
 
-    // Execute the functor.
-    Kokkos::parallel_for( str, k_policy, functor );
+  \tparam NeighborListType The neighbor list type.
 
-    // Fence.
-    Kokkos::fence();
-}
+  \param exec_policy The policy over which to execute the functor.
 
-//---------------------------------------------------------------------------//
-/*!
-  \brief Parallel-for 1D struct parallel specialization.
+  \param functor The functor to execute in parallel
 
-  Takes an instance of the \c StructParallelTag to indicate specialization.
+  \param list The neighbor list over which to execute the neighbor operations.
 
-  Creates 1D parallel over structs with internal array loops in serial on each
-  thread:
+  \param tag Algorithm tag indicating a team parallel strategy over particle
+  neighbors.
+
+  \param str An optional name for the functor. Will be forwarded to the
+  Kokkos::parallel_for called by this code and can be used for identification
+  and profiling purposes.
+
+  A "functor" is a class containing the function to execute in parallel, data
+  needed for that execution, and an optional \c execution_space typedef.  Here
+  is an example functor for neighbor parallel_for:
+
   \code
-  AoSoA aosoa;
-  Index begin, end;
-  parallel_for( s : num_structs )
-  {
-  for( a : array_size(s) )
-  {
-  Index idx( array_size, s, a );
-  functor( idx );
-  }
-  }
+  class FunctorType {
+  public:
+  typedef  ...  execution_space ;
+  void operator() ( const int particle_index, const int neighbor_index ) const ;
+  };
   \endcode
-*/
-template<class ExecutionPolicy, class FunctorType>
-inline void parallel_for( const ExecutionPolicy& exec_policy,
-                          const FunctorType& functor,
-                          const StructParallelTag&,
-                          const std::string& str = "" )
-{
-    // Create a range policy over the structs. If the end is not at a struct
-    // boundary we need to add an extra struct so we loop through the last
-    // unfilled struct.
-    auto begin = exec_policy.begin();
-    auto end = exec_policy.end();
-    auto struct_bounds =
-        Impl::getStructBounds<ExecutionPolicy::array_size>( begin, end );
 
-    // Create a wrapper for the functor. Each struct is given a thread and
-    // each thread loops over the inner arrays.
-    auto functor_wrapper =
-        KOKKOS_LAMBDA( const std::size_t s )
+  In the above example, \c Index is a Cabana index to a given AoSoA element
+  for a particle and its neighbor. Its <tt>operator()</tt> method defines the
+  operation to parallelize, over the range of indices
+  <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
+  \c for loop.
+*/
+template<class FunctorType, class NeighborListType, class ... ExecParameters>
+inline void neighbor_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor,
+    const NeighborListType& list,
+    const TeamNeighborOpTag& tag,
+    const std::string& str = "" )
+{
+    std::ignore = tag;
+
+    using work_tag =
+        typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using kokkos_policy =
+        Kokkos::TeamPolicy<execution_space,
+                           Kokkos::Schedule<Kokkos::Dynamic> >;
+    kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
+                               Kokkos::AUTO );
+
+    Kokkos::parallel_for(
+        team_policy,
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
         {
-            auto array_bounds = Impl::getArrayBounds<ExecutionPolicy::array_size>(
-                begin, end, struct_bounds, s );
-            for ( int a = array_bounds.first;
-                  a < array_bounds.second;
-                  ++a )
-            {
-                functor(
-                    Impl::Index<ExecutionPolicy::array_size>::i(s,a) );
-            }
-        };
-
-    // Create the kokkos execution policy
-    using kokkos_policy =
-        Kokkos::RangePolicy<typename ExecutionPolicy::execution_space>;
-    kokkos_policy k_policy( struct_bounds.first, struct_bounds.second );
-
-    // Execute the functor.
-    Kokkos::parallel_for( str, k_policy, functor_wrapper );
-
-    // Fence.
-    Kokkos::fence();
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Parallel-for 1D inner array parallel specialization.
-
-  Takes an instance of the \c ArrayParallelTag to indicate specialization.
-
-  Creates a serial outer loop over structs and 1D parallel loops over inner
-  arrays:
-  \code
-  AoSoA aosoa;
-  Index begin, end;
-  for( s : num_structs )
-  {
-  parallel_for( a : array_size(s) )
-  {
-  Index idx( array_size, s, a );
-  functor( idx );
-  }
-  }
-  \endcode
-*/
-template<class ExecutionPolicy, class FunctorType>
-inline void parallel_for( const ExecutionPolicy& exec_policy,
-                          const FunctorType& functor,
-                          const ArrayParallelTag&,
-                          const std::string& str = "" )
-{
-    // Kokkos execution policy type.
-    using kokkos_policy =
-        Kokkos::RangePolicy<typename ExecutionPolicy::execution_space>;
-
-    // Loop over structs. If the end is not at a struct boundary we need to
-    // add an extra struct so we loop through the last unfilled struct.
-    auto begin = exec_policy.begin();
-    auto end = exec_policy.end();
-    auto struct_bounds =
-        Impl::getStructBounds<ExecutionPolicy::array_size>( begin, end );
-    for ( int s = struct_bounds.first;
-          s < struct_bounds.second;
-          ++s )
-    {
-        // Create a range policy over the array.
-        auto array_bounds =
-            Impl::getArrayBounds<ExecutionPolicy::array_size>(
-                begin, end, struct_bounds, s );
-
-        // Create a wrapper for the functor. Each struct is given a thread and
-        // each thread loops over the inner arrays.
-        auto functor_wrapper =
-            KOKKOS_LAMBDA( const int a )
-            {
-                functor(
-                    Impl::Index<ExecutionPolicy::array_size>::i(s,a) );
-            };
-
-        // Create the kokkos execution policy
-        kokkos_policy k_policy( array_bounds.first, array_bounds.second );
-
-        // Execute the functor.
-        Kokkos::parallel_for( str, k_policy, functor_wrapper );
-    }
-
-    // Fence.
-    Kokkos::fence();
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Parallel-for 2D struct and inner array parallel specialization.
-
-  Takes an instance of the \c StructAndArrayParallelTag to indicate specialization.
-
-  Creates a 2D parallel loop over structs and their inner arrays:
-  \code
-  AoSoA aosoa;
-  Index begin, end;
-  parallel_for( s : num_structs )
-  {
-  parallel_for( a : array_size(s) )
-  {
-  Index idx( array_size, s, a );
-  functor( idx );
-  }
-  }
-  \endcode
-*/
-template<class ExecutionPolicy, class FunctorType>
-inline void parallel_for( const ExecutionPolicy& exec_policy,
-                          const FunctorType& functor,
-                          const StructAndArrayParallelTag&,
-                          const std::string& str = "" )
-{
-    // Type aliases.
-    constexpr auto kokkos_iterate= Kokkos::Iterate::Right;
-    using kokkos_policy =
-        Kokkos::MDRangePolicy<typename ExecutionPolicy::execution_space,
-                              Kokkos::Rank<2,kokkos_iterate,kokkos_iterate>,
-                              Kokkos::IndexType<int> >;
-    using point_type = typename kokkos_policy::point_type;
-
-    // Make a 2D execution policy.
-    auto begin = exec_policy.begin();
-    auto end = exec_policy.end();
-    auto struct_bounds =
-        Impl::getStructBounds<ExecutionPolicy::array_size>( begin, end );
-    point_type lower = { struct_bounds.first, 0 };
-    point_type upper = { struct_bounds.second, ExecutionPolicy::array_size };
-    kokkos_policy k_policy( lower, upper );
-
-    // Create a wrapper for the functor.
-    auto functor_wrapper =
-        KOKKOS_LAMBDA( const std::size_t s, const int a )
-        {
-            auto array_bounds =
-            Impl::getArrayBounds<ExecutionPolicy::array_size>(
-                begin, end, struct_bounds, s );
-            if ( a < array_bounds.second )
-                functor(
-                    Impl::Index<ExecutionPolicy::array_size>::i(s,a) );
-        };
-
-    // Execute the functor.
-    Kokkos::parallel_for( str, k_policy, functor_wrapper );
-
-    // Fence.
-    Kokkos::fence();
+            auto i = team.league_rank() + exec_policy.begin();
+            Kokkos::parallel_for(
+                Kokkos::TeamThreadRange(
+                    team,NeighborList<NeighborListType>::numNeighbor(list,i)),
+                [&]( const int n ) {
+                Impl::functorTagDispatch<work_tag>(
+                    functor,
+                    i,
+                    NeighborList<NeighborListType>::getNeighbor(list,i,n) );
+                });
+        },
+        str );
 }
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Experimental
 } // end namespace Cabana
 
 #endif // end CABANA_PARALLEL_HPP

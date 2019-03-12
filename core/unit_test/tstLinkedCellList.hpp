@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -23,8 +23,7 @@ void testLinkedList()
     enum MyFields { Position = 0, CellId = 1 };
     using DataTypes = Cabana::MemberTypes<double[3],int[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type =
-        typename AoSoA_t::memory_space::kokkos_memory_space::size_type;
+    using size_type = typename AoSoA_t::memory_space::size_type;
     int num_p = 1000;
     AoSoA_t aosoa( num_p );
 

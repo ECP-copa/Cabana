@@ -4,29 +4,42 @@ language: cpp
 sudo: required
 
 env:
+  global:
+    - CCACHE_CPP2=yes # for clang
   matrix:
-    - BACKENDS="OpenMP"
-    - BACKENDS="Serial"
-    - BACKENDS="Pthread"
-    - BACKENDS="Serial OpenMP"
-    - BACKENDS="Serial Pthread"
+    - BACKENDS="OpenMP" WERROR=ON
+    - BACKENDS="Serial" WERROR=ON
+    - BACKENDS="Pthread" WERROR=ON
+    - BACKENDS="Serial OpenMP" WERROR=ON
+    - BACKENDS="Serial Pthread" WERROR=ON
+    - BACKENDS="OpenMP" COVERAGE=ON
+    - BACKENDS="Serial" COVERAGE=ON
+    - BACKENDS="Pthread" COVERAGE=ON
+    - BACKENDS="Serial OpenMP" COVERAGE=ON
+    - BACKENDS="Serial Pthread" COVERAGE=ON
 
 before_script:
   - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
   - ccache -z
-  - KOKKOS_OPTS=( --with-hwloc=/usr )
+  - KOKKOS_OPTS=( --with-hwloc=/usr --gcc-toolchain=/usr )
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
-    # gcc-toolchain workaround: https://github.com/kokkos/kokkos/issues/1841
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
-  - if [[ ${CC} = clang ]]; then KOKKOS_MAKE_OPTS="KOKKOS_INTERNAL_GCC_TOOLCHAIN=/usr"; export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi 
+  - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
     pushd build &&
     ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
-    make -j2 ${KOKKOS_MAKE_OPTS} &&
-    make install ${KOKKOS_MAKE_OPTS} && 
+    make -j2 &&
+    make install &&
     popd &&
+    popd
+  - travis_retry wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
+    tar -xzf scafacos-*.tar.gz &&
+    pushd scafacos* &&
+    ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
+    make -j2 &&
+    make install &&
     popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
 
@@ -35,14 +48,20 @@ addons:
     packages:
       - doxygen
       - libhwloc-dev
+      - openmpi-bin
+      - libopenmpi-dev
+      - gfortran
+      - libgsl0-dev
 
 script:
+  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - mkdir build && pushd build &&
-    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
+    cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/scafacos"
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
+          -DCabana_ENABLE_MPI=ON
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
-          -DCMAKE_EXE_LINKER_FLAGS="--coverage" -DCMAKE_CXX_FLAGS="--coverage" .. &&
-    make -j2 VERBOSE=1 &&
+          ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
+    make -k -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
     make doxygen &&
     make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr/local && rmdir ${PWD}/install/usr &&
@@ -50,7 +69,7 @@ script:
 
 after_success:
  - ccache -s
- - pushd build && bash <(curl -s https://codecov.io/bash) && popd
+ - if [[ ${COVERAGE} ]]; then pushd build && bash <(curl -s https://codecov.io/bash) && popd; fi
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
      rm -rf doxygen &&
@@ -68,6 +87,10 @@ after_success:
        git diff --cached --no-color | head -n 500;
      fi;
    fi
+
+branches:
+  only:
+  - master
 
 cache:
   - ccache

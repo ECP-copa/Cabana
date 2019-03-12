@@ -2,7 +2,7 @@ test:default:
   image: ubuntu
   script:
     - apt-get update
-    - apt-get install -y gcovr gfortran cmake g++ git
+    - apt-get install -y gcovr gfortran cmake g++ git bc
     - git clone --depth=1 https://github.com/kokkos/kokkos.git && 
       pushd kokkos &&
       mkdir build &&
@@ -14,5 +14,5 @@ test:default:
       popd
     - mkdir build && cd build &&
       cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON .. &&
-      make -j2 VERBOSE=1 &&
+      make -k -O -j2 VERBOSE=1 &&
       make test

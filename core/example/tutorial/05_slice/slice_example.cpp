@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -25,7 +25,7 @@ void sliceExample()
       and access it's data.
 
       Slices, like the AoSoA from which they are derived, can be accessed via
-      1-dimensional and 2-dimensional indices with the later exposing
+      1-dimensional and 2-dimensional indices with the latter exposing
       vectorizable loops over the inner elements of each SoA in the data
       structure.
 
@@ -40,7 +40,7 @@ void sliceExample()
     */
 
     /*
-       Start by declaring the types in our tuples will store. Store a rank-2
+       Start by declaring the types our tuples will store. Store a rank-2
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
     */
@@ -60,14 +60,14 @@ void sliceExample()
       allocated. In this example we are writing basic loops that will execute
       on the CPU. The HostSpace allocates memory in standard CPU RAM.
 
-      Cabana also supports execution on NVIDIA GPUs. To create an AoSoA
+      Kokkos also supports execution on NVIDIA GPUs. To create an AoSoA
       allocated with CUDA Unified Virtual Memory (UVM) use
-      `Cabana::CudaUVMSpace` instead of `Cabana::HostSpace`. The CudaUVMSpace
+      `Kokkos::CudaUVMSpace` instead of `Kokkos::HostSpace`. The CudaUVMSpace
       allocates memory in managed GPU memory via `cudaMallocManaged`. This
       memory is automatically paged between host and device depending on the
       context in which the memory is accessed.
     */
-    using MemorySpace = Cabana::HostSpace;
+    using MemorySpace = Kokkos::HostSpace;
 
     /*
        Create the AoSoA. We define how many tuples the aosoa will
@@ -82,7 +82,7 @@ void sliceExample()
       Create a slice over each tuple member in the AoSoA. An integer template
       parameter is used to indicate which member to slice. A slice object
       simply wraps the data associated with an AoSoA member in a more
-      conventient accessor structure. A slice therefore as the same memory
+      conventient accessor structure. A slice therefore has the same memory
       space as the AoSoA from which it was derived.
      */
     auto slice_0 = aosoa.slice<0>();
@@ -98,7 +98,7 @@ void sliceExample()
       accessing the total number of tuples in the data structure and the array
       sizes.
     */
-    for ( int s = 0; s < slice_0.numSoA(); ++s )
+    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
     {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )

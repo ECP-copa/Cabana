@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -309,8 +309,7 @@ void testTuple()
     AoSoA_t aosoa( num_data );
 
     // Create a slice of tuples with the same data types.
-    Kokkos::View<Tuple_t*,
-                 typename AoSoA_t::memory_space::kokkos_memory_space>
+    Kokkos::View<Tuple_t*,typename AoSoA_t::memory_space>
         tuples( "tuples", num_data );
 
     // Initialize aosoa data.
