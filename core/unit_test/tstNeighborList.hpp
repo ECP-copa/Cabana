@@ -405,6 +405,7 @@ void checkFullNeighborListPartialRange( const ListType& list,
 }
 
 //---------------------------------------------------------------------------//
+template<class LayoutTag>
 void testVerletListFull()
 {
     // Create the AoSoA and fill with random particle positions.
@@ -418,7 +419,7 @@ void testVerletListFull()
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
-    Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag>
+    Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag>
         nlist( aosoa.slice<0>(), 0, aosoa.size(),
                test_radius, cell_size_ratio, grid_min, grid_max );
 
@@ -428,6 +429,7 @@ void testVerletListFull()
 }
 
 //---------------------------------------------------------------------------//
+template<class LayoutTag>
 void testVerletListHalf()
 {
     // Create the AoSoA and fill with random particle positions.
@@ -441,7 +443,7 @@ void testVerletListHalf()
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
-    Cabana::VerletList<TEST_MEMSPACE,Cabana::HalfNeighborTag>
+    Cabana::VerletList<TEST_MEMSPACE,Cabana::HalfNeighborTag,LayoutTag>
         nlist( aosoa.slice<0>(), 0, aosoa.size(),
                test_radius, cell_size_ratio, grid_min, grid_max );
 
@@ -451,6 +453,7 @@ void testVerletListHalf()
 }
 
 //---------------------------------------------------------------------------//
+template<class LayoutTag>
 void testNeighborParallelFor()
 {
     // Create the AoSoA and fill with random particle positions.
@@ -462,11 +465,11 @@ void testNeighborParallelFor()
     auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
+    using ListType = Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag>;
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
-    Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag>
-        nlist( aosoa.slice<0>(), 0, aosoa.size(),
-               test_radius, cell_size_ratio, grid_min, grid_max );
+    ListType nlist( aosoa.slice<0>(), 0, aosoa.size(),
+                    test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Create Kokkos views for the write operation.
     using memory_space = typename TEST_MEMSPACE::memory_space;
@@ -492,7 +495,7 @@ void testNeighborParallelFor()
     auto test_list_copy = createTestListHostCopy( test_list );
     for ( int p = 0; p < num_particle; ++p )
         for ( int n = 0; n < test_list_copy.counts(p); ++n )
-            test_result(p) += test_list_copy.neighbors( p, n );
+            test_result(p) += test_list_copy.neighbors(p,n);
 
     // Check the result.
     auto serial_mirror = Kokkos::create_mirror_view_and_copy(
@@ -507,6 +510,7 @@ void testNeighborParallelFor()
 }
 
 //---------------------------------------------------------------------------//
+template<class LayoutTag>
 void testVerletListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
@@ -521,7 +525,7 @@ void testVerletListFullPartialRange()
     // Create the neighbor list.
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
-    Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag>
+    Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag>
         nlist( aosoa.slice<0>(), 0, num_ignore,
                test_radius, cell_size_ratio, grid_min, grid_max );
 
@@ -541,25 +545,29 @@ TEST( TEST_CATEGORY, linked_cell_stencil_test )
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, linked_cell_list_full_test )
 {
-    testVerletListFull();
+    testVerletListFull<Cabana::VerletLayoutCSR>();
+    testVerletListFull<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, linked_cell_list_half_test )
 {
-    testVerletListHalf();
+    testVerletListHalf<Cabana::VerletLayoutCSR>();
+    testVerletListHalf<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, linked_cell_list_full_range_test )
 {
-    testVerletListFullPartialRange();
+    testVerletListFullPartialRange<Cabana::VerletLayoutCSR>();
+    testVerletListFullPartialRange<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, parallel_for_test )
 {
-    testNeighborParallelFor();
+    testNeighborParallelFor<Cabana::VerletLayoutCSR>();
+    testNeighborParallelFor<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
