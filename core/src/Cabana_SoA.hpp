@@ -342,6 +342,13 @@ struct SoA<MemberTypes<Types...>,VectorLength>
         Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
         return &base;
     }
+
+    template<std::size_t M>
+    static void* static_ptr(SoA* p)
+    {
+        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *p;
+        return &base;
+    }
 };
 
 //---------------------------------------------------------------------------//
