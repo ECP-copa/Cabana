@@ -323,13 +323,10 @@ class AoSoA
             0 == sizeof(soa_type) % sizeof(member_value_type<M>),
             "Slice stride cannot be calculated for misaligned memory!" );
 
-        member_pointer_type<M> ptr =
-            ( _data.size() > 0 )
-            ? static_cast<member_pointer_type<M> >(
-                soa_type::template staticPtr<M>(_data.data()) )
-            : nullptr;
-
-        return member_slice_type<M>( data_ptr, _size, _num_soa );
+        return member_slice_type<M>(
+            static_cast<member_pointer_type<M> >(
+                soa_type::template staticPtr<M>(_data.data()) ),
+            _size, _num_soa );
     }
 
     /*!
