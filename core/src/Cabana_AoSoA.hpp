@@ -325,7 +325,7 @@ class AoSoA
                   DefaultAccessMemory,
                   vector_length,
                   sizeof(soa_type) / sizeof(member_value_type<M>)>
-            ( static_cast<member_pointer_type<M> >(_data(0).template ptr<M>()),
+            ( static_cast<member_pointer_type<M> >(soa_type::template static_ptr<M>(_data.data())),
               _size,
               _num_soa );
     }
