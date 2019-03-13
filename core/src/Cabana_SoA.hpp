@@ -342,16 +342,12 @@ struct SoA<MemberTypes<Types...>,VectorLength>
         return &base;
     }
 
-    // Get the offset from the first SoA element to the first element of a
-    // given member. The offset is computed in terms of the bytes needed to go
-    // from the beginning of the SoA to the first element of the member.
+    // Get a pointer to a given SoA.
     template<std::size_t M>
-    static std::size_t memberByteOffset()
+    static void* staticPtr( SoA* p )
     {
-        SoA<MemberTypes<Types...>,VectorLength> soa;
-        char* begin = reinterpret_cast<char*>(&soa);
-        char* end = static_cast<char*>(soa.ptr<M>());
-        return std::distance( begin, end );
+        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *p;
+        return &base;
     }
 };
 
