@@ -623,7 +623,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    <span class="comment">// Check the migration.</span></div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,Cabana::HostSpace&gt;</a></div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;        data_host( distributor-&gt;totalNumImport() );</div>
-<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    <span class="keyword">auto</span> slice_int_host = data_host.<a class="code" href="classCabana_1_1AoSoA.html#a0d6e73978d4472fceb8475d5ea453122">slice</a>&lt;0&gt;();</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    <span class="keyword">auto</span> slice_int_host = data_host.<a class="code" href="classCabana_1_1AoSoA.html#a98d46d130ab595d04e450b5d1c27d504">slice</a>&lt;0&gt;();</div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    <span class="keyword">auto</span> slice_dbl_host = data_host.slice&lt;1&gt;();</div>
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;    Cabana::deep_copy( data_host, data );</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    <span class="keyword">auto</span> steering = distributor-&gt;getExportSteering();</div>
@@ -707,7 +707,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;    <span class="comment">// Check the migration.</span></div>
 <div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,Cabana::HostSpace&gt;</a></div>
 <div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;        data_host( distributor-&gt;totalNumImport() );</div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    <span class="keyword">auto</span> slice_int_host = data_host.<a class="code" href="classCabana_1_1AoSoA.html#a0d6e73978d4472fceb8475d5ea453122">slice</a>&lt;0&gt;();</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    <span class="keyword">auto</span> slice_int_host = data_host.<a class="code" href="classCabana_1_1AoSoA.html#a98d46d130ab595d04e450b5d1c27d504">slice</a>&lt;0&gt;();</div>
 <div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;    <span class="keyword">auto</span> slice_dbl_host = data_host.slice&lt;1&gt;();</div>
 <div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;    Cabana::deep_copy( data_host, data );</div>
 <div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;    EXPECT_EQ( slice_int_host(0), my_rank );</div>
@@ -765,11 +765,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:65</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html_a0d6e73978d4472fceb8475d5ea453122"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a0d6e73978d4472fceb8475d5ea453122">Cabana::AoSoA::slice</a></div><div class="ttdeci">Slice&lt; member_data_type&lt; M &gt;, memory_space, DefaultAccessMemory, vector_length, sizeof(soa_type)/sizeof(member_value_type&lt; M &gt;)&gt; slice() const </div><div class="ttdoc">Get an unmanaged slice of a tuple member with default memory access. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:316</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html_a98d46d130ab595d04e450b5d1c27d504"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a98d46d130ab595d04e450b5d1c27d504">Cabana::AoSoA::slice</a></div><div class="ttdeci">member_slice_type&lt; M &gt; slice() const </div><div class="ttdoc">Get an unmanaged slice of a tuple member with default memory access. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:320</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 12 2019 23:16:07 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 13 2019 18:34:40 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

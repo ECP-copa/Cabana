@@ -136,6 +136,10 @@ template&lt;std::size_t M&gt; </td></tr>
 template&lt;std::size_t M&gt; </td></tr>
 <tr class="memitem:af19bbf8d908e289a35af47494f004553"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_pointer_type</b> = typename std::add_pointer&lt; member_value_type&lt; M &gt; &gt;::type</td></tr>
 <tr class="separator:af19bbf8d908e289a35af47494f004553"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8022bfdd4194374d3a75bff68f6b8d5"><td class="memTemplParams" colspan="2"><a class="anchor" id="ae8022bfdd4194374d3a75bff68f6b8d5"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:ae8022bfdd4194374d3a75bff68f6b8d5"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_slice_type</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; member_data_type&lt; M &gt;, memory_space, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, vector_length, sizeof(<a class="el" href="structCabana_1_1SoA.html">soa_type</a>)/sizeof(member_value_type&lt; M &gt;)&gt;</td></tr>
+<tr class="separator:ae8022bfdd4194374d3a75bff68f6b8d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -188,14 +192,10 @@ std::enable_if<br class="typebreak"/>
 void &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#ad4eda16c8750d7214f947a326ec8b297">setTuple</a> (const I &amp;i, const <a class="el" href="structCabana_1_1Tuple.html">tuple_type</a> &amp;tpl) const </td></tr>
 <tr class="memdesc:ad4eda16c8750d7214f947a326ec8b297"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a tuple at a given index via a deep copy.  <a href="#ad4eda16c8750d7214f947a326ec8b297">More...</a><br/></td></tr>
 <tr class="separator:ad4eda16c8750d7214f947a326ec8b297"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0d6e73978d4472fceb8475d5ea453122"><td class="memTemplParams" colspan="2">template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:a0d6e73978d4472fceb8475d5ea453122"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; member_data_type&lt; M &gt;<br class="typebreak"/>
-, memory_space, <br class="typebreak"/>
-<a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, <br class="typebreak"/>
-vector_length, sizeof(<a class="el" href="structCabana_1_1SoA.html">soa_type</a>)/sizeof(member_value_type<br class="typebreak"/>
-&lt; M &gt;)&gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a0d6e73978d4472fceb8475d5ea453122">slice</a> () const </td></tr>
-<tr class="memdesc:a0d6e73978d4472fceb8475d5ea453122"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an unmanaged slice of a tuple member with default memory access.  <a href="#a0d6e73978d4472fceb8475d5ea453122">More...</a><br/></td></tr>
-<tr class="separator:a0d6e73978d4472fceb8475d5ea453122"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a98d46d130ab595d04e450b5d1c27d504"><td class="memTemplParams" colspan="2">template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a98d46d130ab595d04e450b5d1c27d504"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Slice.html">member_slice_type</a>&lt; M &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a98d46d130ab595d04e450b5d1c27d504">slice</a> () const </td></tr>
+<tr class="memdesc:a98d46d130ab595d04e450b5d1c27d504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an unmanaged slice of a tuple member with default memory access.  <a href="#a98d46d130ab595d04e450b5d1c27d504">More...</a><br/></td></tr>
+<tr class="separator:a98d46d130ab595d04e450b5d1c27d504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf4daa69248c660aefec75e2ad494d62"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#aaf4daa69248c660aefec75e2ad494d62">ptr</a> () const </td></tr>
 <tr class="memdesc:aaf4daa69248c660aefec75e2ad494d62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an un-typed raw pointer to the entire data block.  <a href="#aaf4daa69248c660aefec75e2ad494d62">More...</a><br/></td></tr>
 <tr class="separator:aaf4daa69248c660aefec75e2ad494d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -628,7 +628,7 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<a class="anchor" id="a0d6e73978d4472fceb8475d5ea453122"></a>
+<a class="anchor" id="a98d46d130ab595d04e450b5d1c27d504"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -640,7 +640,7 @@ template&lt;std::size_t M&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt;member_data_type&lt;M&gt;, memory_space, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, vector_length, sizeof(<a class="el" href="structCabana_1_1SoA.html">soa_type</a>) / sizeof(member_value_type&lt;M&gt;)&gt; <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::slice </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">member_slice_type</a>&lt;M&gt; <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::slice </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -676,7 +676,7 @@ template&lt;std::size_t M&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue Mar 12 2019 23:16:07 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Wed Mar 13 2019 18:34:40 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
