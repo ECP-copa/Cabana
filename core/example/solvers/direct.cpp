@@ -18,10 +18,8 @@ TDS::~TDS()
 void TDS::compute(ParticleList& particles, double lx, double ly, double lz)
 {
   total_energy = 0.0;
-
   // Create an execution policy over the entire AoSoA.
-  // No longer implemented in Cabana
-  Cabana::Experimental::RangePolicy<INNER_ARRAY_SIZE,ExecutionSpace> range_policy( particles );
+  //Kokkos::RangePolicy<ExecutionSpace>(0,n_max) range_policy( particles );
 
   // Create slices
   auto r = particles.slice<Position>();
@@ -80,7 +78,7 @@ void TDS::compute(ParticleList& particles, double lx, double ly, double lz)
     p( idx ) *= COULOMB_PREFACTOR * q( idx );
   };
 
-  Cabana::Experimental::parallel_for( range_policy, work_func );
+  Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), work_func );
 
 
   total_energy = 0.0;

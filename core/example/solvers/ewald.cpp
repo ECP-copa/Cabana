@@ -97,9 +97,6 @@ void TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   double Udip_vec[3];
 
 
-  // Create an execution policy over the entire AoSoA.
-  Cabana::Experimental::RangePolicy<INNER_ARRAY_SIZE,ExecutionSpace> range_policy( particles );
-
   auto r = particles.slice<Position>();
   auto q = particles.slice<Charge>();
   auto p = particles.slice<Potential>();
@@ -112,7 +109,7 @@ void TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   {
     p(idx) = 0.0;
   };
-  Cabana::Experimental::parallel_for( range_policy, init_p ); 
+  Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), init_p ); 
 
   double alpha = _alpha;
   double k_max = _k_max;

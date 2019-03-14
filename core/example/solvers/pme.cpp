@@ -141,9 +141,6 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   double Udip_vec[3];
 
 
-  // Create an execution policy over the entire AoSoA.
-  Cabana::Experimental::RangePolicy<INNER_ARRAY_SIZE,ExecutionSpace> range_policy( particles );
-
   auto r = particles.slice<Position>();
   auto q = particles.slice<Charge>();
   auto p = particles.slice<Potential>();
@@ -160,7 +157,7 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   {
     p(idx) = 0.0;
   };
-  Cabana::Experimental::parallel_for( range_policy, init_p ); 
+  Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), init_p ); 
 
   double alpha = _alpha;
   //double k_max = _k_max;
@@ -234,7 +231,7 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   
   double spacing = meshr(1,0)-meshr(0,0);//how far apart the mesh points are (assumed uniform cubic)   
   
-  Cabana::Experimental::RangePolicy<INNER_ARRAY_SIZE,ExecutionSpace> range_policy_mesh( mesh );
+  int n_max_mesh = mesh.size();
   auto spread_q = KOKKOS_LAMBDA( const int idx )
   {
      double xdist, ydist, zdist; //could make this an array
@@ -263,7 +260,7 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
         }
      }       
   };
-  Cabana::Experimental::parallel_for( range_policy_mesh, spread_q ); 
+  Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max_mesh), spread_q ); 
   
   struct timeval starttime2;
   gettimeofday(&starttime2, NULL);
