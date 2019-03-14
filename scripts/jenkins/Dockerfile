@@ -51,3 +51,9 @@ RUN export OPENMPI_VERSION=4.0.0 && \
     ../configure --prefix=/usr --with-cuda && \
     make -j8 install && \
     rm -rf ${OPENMPI_ARCHIVE} ${OPENMPI_SOURCE_DIR}
+
+# Allow running mpiexec as root
+RUN echo '#!/usr/bin/env bash' > /usr/local/bin/mpiexec && \
+    echo '/usr/bin/mpiexec --allow-run-as-root "$@"' >> /usr/local/bin/mpiexec && \
+    chmod +x /usr/local/bin/mpiexec && \
+    mpiexec --version
