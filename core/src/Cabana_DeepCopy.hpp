@@ -140,6 +140,7 @@ namespace Experimental
   same, the original AoSoA (e.g. a view of that AoSoA) is returned.
  */
 template<class Space, class SrcAoSoA>
+inline
 SrcAoSoA
 create_mirror_view_and_copy(
     const Space&,
@@ -163,6 +164,7 @@ create_mirror_view_and_copy(
   same, the original AoSoA (e.g. a view of that AoSoA) is returned.
  */
 template<class Space, class SrcAoSoA>
+inline
 AoSoA<typename SrcAoSoA::member_types,
       typename Space::memory_space,
       SrcAoSoA::vector_length>
