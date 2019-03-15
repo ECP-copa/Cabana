@@ -127,87 +127,21 @@ inline void deep_copy(
 }
 
 //---------------------------------------------------------------------------//
+namespace Experimental
+{
+//---------------------------------------------------------------------------//
 /*!
-  \brief Create a mirror of the given AoSoA in the given memory
+  \brief Create a mirror view of the given AoSoA in the given memory
   space. Same space specialization returns the input AoSoA.
+
+  \note The semantics of using the word view in the name of this function
+  indicate that memory allocation will only occur if the requested mirror
+  memory space is different from that of the input AoSoA. If they are the
+  same, the original AoSoA (e.g. a view of that AoSoA) is returned.
  */
 template<class Space, class SrcAoSoA>
 SrcAoSoA
-create_mirror_aosoa(
-    const Space&,
-    const SrcAoSoA& src,
-    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
-                             std::is_same<typename SrcAoSoA::memory_space,
-                             typename Space::memory_space>::value)>::type* = 0 )
-{
-    return src;
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Create a mirror of the given AoSoA in the given memory
-  space. Different space specialization allocates a new AoSoA.
- */
-template<class Space, class SrcAoSoA>
-AoSoA<typename SrcAoSoA::member_types,
-      typename Space::memory_space,
-      SrcAoSoA::vector_length>
-create_mirror_aosoa(
-    const Space&,
-    const SrcAoSoA& src,
-    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
-                             !std::is_same<typename SrcAoSoA::memory_space,
-                             typename Space::memory_space>::value)>::type* = 0 )
-{
-    return AoSoA<typename SrcAoSoA::member_types,
-                 typename Space::memory_space,
-                 SrcAoSoA::vector_length>( src.size() );
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Create a mirror on the host of the given AoSoA. Same space
-  specialization returns the input AoSoA.
- */
-template<class SrcAoSoA>
-AoSoA<typename SrcAoSoA::member_types,
-      Kokkos::HostSpace,
-      SrcAoSoA::vector_length>
-create_mirror_aosoa(
-    const SrcAoSoA& src,
-    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
-                             std::is_same<typename SrcAoSoA::memory_space,
-                             Kokkos::HostSpace>::value)>::type* = 0 )
-{
-    return src;
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Create a mirror on the host of the given AoSoA. Different space
-  specialization allocates a new AoSoA.
- */
-template<class SrcAoSoA>
-AoSoA<typename SrcAoSoA::member_types,
-      Kokkos::HostSpace,
-      SrcAoSoA::vector_length>
-create_mirror_aosoa(
-    const SrcAoSoA& src,
-    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
-                             !std::is_same<typename SrcAoSoA::memory_space,
-                             Kokkos::HostSpace>::value)>::type* = 0 )
-{
-    return create_mirror_aosoa( Kokkos::HostSpace(), src );
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Create a mirror of the given AoSoA in the given memory
-  space. Same space specialization returns the input AoSoA.
- */
-template<class Space, class SrcAoSoA>
-SrcAoSoA
-create_mirror_aosoa_and_copy(
+create_mirror_view_and_copy(
     const Space&,
     const SrcAoSoA& src,
     typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
@@ -222,22 +156,33 @@ create_mirror_aosoa_and_copy(
   \brief Create a mirror on the host of the given AoSoA in the given memory
   space and deep copy the AoSoA into the mirror. Different space
   specialization allocates a new AoSoA and performs the deep copy.
+
+  \note The semantics of using the word view in the name of this function
+  indicate that memory allocation will only occur if the requested mirror
+  memory space is different from that of the input AoSoA. If they are the
+  same, the original AoSoA (e.g. a view of that AoSoA) is returned.
  */
 template<class Space, class SrcAoSoA>
 AoSoA<typename SrcAoSoA::member_types,
       typename Space::memory_space,
       SrcAoSoA::vector_length>
-create_mirror_aosoa_and_copy(
-    const Space& space,
+create_mirror_view_and_copy(
+    const Space&,
     const SrcAoSoA& src,
     typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
                              !std::is_same<typename SrcAoSoA::memory_space,
                              typename Space::memory_space>::value)>::type* = 0 )
 {
-    auto dst = create_mirror_aosoa( space, src );
+    auto dst = AoSoA<typename SrcAoSoA::member_types,
+                     typename Space::memory_space,
+                     SrcAoSoA::vector_length>( src.size() );
     deep_copy( dst, src );
     return dst;
 }
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Experimental
 
 //---------------------------------------------------------------------------//
 
