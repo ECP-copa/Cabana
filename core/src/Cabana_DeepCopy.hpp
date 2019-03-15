@@ -127,6 +127,119 @@ inline void deep_copy(
 }
 
 //---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror of the given AoSoA in the given memory
+  space. Same space specialization returns the input AoSoA.
+ */
+template<class Space, class SrcAoSoA>
+SrcAoSoA
+create_mirror_aosoa(
+    const Space&,
+    const SrcAoSoA& src,
+    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
+                             std::is_same<typename SrcAoSoA::memory_space,
+                             typename Space::memory_space>::value)>::type* = 0 )
+{
+    return src;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror of the given AoSoA in the given memory
+  space. Different space specialization allocates a new AoSoA.
+ */
+template<class Space, class SrcAoSoA>
+AoSoA<typename SrcAoSoA::member_types,
+      typename Space::memory_space,
+      SrcAoSoA::vector_length>
+create_mirror_aosoa(
+    const Space&,
+    const SrcAoSoA& src,
+    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
+                             !std::is_same<typename SrcAoSoA::memory_space,
+                             typename Space::memory_space>::value)>::type* = 0 )
+{
+    return AoSoA<typename SrcAoSoA::member_types,
+                 typename Space::memory_space,
+                 SrcAoSoA::vector_length>( src.size() );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror on the host of the given AoSoA. Same space
+  specialization returns the input AoSoA.
+ */
+template<class SrcAoSoA>
+AoSoA<typename SrcAoSoA::member_types,
+      Kokkos::HostSpace,
+      SrcAoSoA::vector_length>
+create_mirror_aosoa(
+    const SrcAoSoA& src,
+    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
+                             std::is_same<typename SrcAoSoA::memory_space,
+                             Kokkos::HostSpace>::value)>::type* = 0 )
+{
+    return src;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror on the host of the given AoSoA. Different space
+  specialization allocates a new AoSoA.
+ */
+template<class SrcAoSoA>
+AoSoA<typename SrcAoSoA::member_types,
+      Kokkos::HostSpace,
+      SrcAoSoA::vector_length>
+create_mirror_aosoa(
+    const SrcAoSoA& src,
+    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
+                             !std::is_same<typename SrcAoSoA::memory_space,
+                             Kokkos::HostSpace>::value)>::type* = 0 )
+{
+    return create_mirror_aosoa( Kokkos::HostSpace(), src );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror of the given AoSoA in the given memory
+  space. Same space specialization returns the input AoSoA.
+ */
+template<class Space, class SrcAoSoA>
+SrcAoSoA
+create_mirror_aosoa_and_copy(
+    const Space&,
+    const SrcAoSoA& src,
+    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
+                             std::is_same<typename SrcAoSoA::memory_space,
+                             typename Space::memory_space>::value)>::type* = 0 )
+{
+    return src;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror on the host of the given AoSoA in the given memory
+  space and deep copy the AoSoA into the mirror. Different space
+  specialization allocates a new AoSoA and performs the deep copy.
+ */
+template<class Space, class SrcAoSoA>
+AoSoA<typename SrcAoSoA::member_types,
+      typename Space::memory_space,
+      SrcAoSoA::vector_length>
+create_mirror_aosoa_and_copy(
+    const Space& space,
+    const SrcAoSoA& src,
+    typename std::enable_if<(is_aosoa<SrcAoSoA>::value &&
+                             !std::is_same<typename SrcAoSoA::memory_space,
+                             typename Space::memory_space>::value)>::type* = 0 )
+{
+    auto dst = create_mirror_aosoa( space, src );
+    deep_copy( dst, src );
+    return dst;
+}
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 
