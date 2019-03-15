@@ -230,5 +230,11 @@ TEST_F( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
 }
 
 //---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, mirror_test )
+{
+    testMirror();
+}
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Test
