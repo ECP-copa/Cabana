@@ -7,15 +7,15 @@ env:
   global:
     - CCACHE_CPP2=yes # for clang
   matrix:
-    - BACKENDS="OpenMP" WERROR=ON
-    - BACKENDS="Serial" WERROR=ON
-    - BACKENDS="Pthread" WERROR=ON
-    - BACKENDS="Serial OpenMP" WERROR=ON
-    - BACKENDS="Serial Pthread" WERROR=ON
-    - BACKENDS="OpenMP" COVERAGE=ON
-    - BACKENDS="Serial" COVERAGE=ON
-    - BACKENDS="Pthread" COVERAGE=ON
-    - BACKENDS="Serial OpenMP" COVERAGE=ON
+#    - BACKENDS="OpenMP" WERROR=ON
+#    - BACKENDS="Serial" WERROR=ON
+#    - BACKENDS="Pthread" WERROR=ON
+#    - BACKENDS="Serial OpenMP" WERROR=ON
+#    - BACKENDS="Serial Pthread" WERROR=ON
+#    - BACKENDS="OpenMP" COVERAGE=ON
+#    - BACKENDS="Serial" COVERAGE=ON
+#    - BACKENDS="Pthread" COVERAGE=ON
+#    - BACKENDS="Serial OpenMP" COVERAGE=ON
     - BACKENDS="Serial Pthread" COVERAGE=ON
 
 before_script:
@@ -42,6 +42,10 @@ before_script:
     make install &&
     popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
+  - if [[ ${COVERAGE} ]]; then
+       pip install --user coverxygen &&
+       mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov; 
+     fi
 
 addons:
   apt:
@@ -52,6 +56,7 @@ addons:
       - libopenmpi-dev
       - gfortran
       - libgsl0-dev
+      - python-pip
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
@@ -69,7 +74,11 @@ script:
 
 after_success:
  - ccache -s
- - if [[ ${COVERAGE} ]]; then pushd build && bash <(curl -s https://codecov.io/bash) && popd; fi
+ - if [[ ${COVERAGE} ]]; then 
+      pushd build && codecov -F "${CC}" &&
+      python -m coverxygen --src-dir .. --xml-dir xml/ --output doxygen.coverage.info && codecov -F doxygen -X gcov -f doxygen.coverage.info &&
+      popd; 
+   fi
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
      rm -rf doxygen &&

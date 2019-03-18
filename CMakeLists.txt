@@ -61,6 +61,7 @@ endif()
 
 find_package(Doxygen)
 if(Doxygen_FOUND)
+  set(DOXYGEN_GENERATE_XML YES) 
   doxygen_add_docs(doxygen core)
 endif()
 
