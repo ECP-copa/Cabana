@@ -112,6 +112,32 @@ void deepCopyExample()
         std::cout << "Tuple " << t
                   << ", member 2: " << tp.get<2>() << std::endl;
     }
+
+    /*
+      In applications that utilize multiple memory spaces (e.g. those that use
+      heterogeneous architectures) we can also create an AoSoA that mirrors
+      another AoSoA. A mirror is a data structure that has an identical data
+      layout but may be allocated in another memory space. A good example of a
+      use for this type of capability is easily managing copies between a GPU
+      and a CPU.
+
+      Given that the AoSoA we created above is on the GPU we can easily create
+      another identical AoSoA containing the same contents but that is
+      allocated in a different mnemory space allowing for easy transfer back to
+      the device:
+     */
+    auto dst_aosoa_host = Cabana::Experimental::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), dst_aosoa );
+
+    /*
+       Note that this view is now in the provided host space. If we were to
+       use the same memory space as dst_aosoa in this function call we would
+       have received the same dst_aosoa back - no memory allocations or copies
+       would have occured. This is particularly useful for writing code that
+       will run on both heterogenous and homogenous architectures where the
+       heterogenous case requires an allocation and a copy while the
+       homogenous case does not.
+     */
 }
 
 //---------------------------------------------------------------------------//
