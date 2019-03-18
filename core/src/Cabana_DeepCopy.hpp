@@ -134,10 +134,9 @@ namespace Experimental
   \brief Create a mirror view of the given AoSoA in the given memory
   space. Same space specialization returns the input AoSoA.
 
-  \note The semantics of using the word view in the name of this function
-  indicate that memory allocation will only occur if the requested mirror
-  memory space is different from that of the input AoSoA. If they are the
-  same, the original AoSoA (e.g. a view of that AoSoA) is returned.
+  \note Memory allocation will only occur if the requested mirror memory space
+  is different from that of the input AoSoA. If they are the same, the
+  original AoSoA (e.g. a view of that AoSoA) is returned.
  */
 template<class Space, class SrcAoSoA>
 inline
@@ -158,8 +157,7 @@ create_mirror_view_and_copy(
   space and deep copy the AoSoA into the mirror. Different space
   specialization allocates a new AoSoA and performs the deep copy.
 
-  \note The semantics of using the word view in the name of this function
-  indicate that memory allocation will only occur if the requested mirror
+  \note Memory allocation will only occur if the requested mirror
   memory space is different from that of the input AoSoA. If they are the
   same, the original AoSoA (e.g. a view of that AoSoA) is returned.
  */

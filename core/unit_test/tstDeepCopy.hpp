@@ -181,6 +181,10 @@ void testMirror()
                      decltype(same_space_copy)::member_types>::value;
     EXPECT_TRUE( ssc_same_mt );
 
+    // Check that the same memory space case didn't allocate any memory. They
+    // should have the same pointer.
+    EXPECT_EQ( aosoa.ptr(), same_space_copy.ptr() );
+
     // Check values.
     checkDataMembers( same_space_copy, fval, dval, ival, dim_1, dim_2, dim_3 );
 
