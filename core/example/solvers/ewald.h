@@ -12,12 +12,30 @@
 class TEwald
 {
   public:
-    // constructor with accuracy
+    //TEwald(accuracy_threshold, particles, x_width, y_width, z_width)
+       //accuracy_threshold is a value used in tuning the Ewald parameters (alpha, r_max, and k_max)
+       //particles is a ParticleList of particle information for all in the unit cell
+          //(positions[NDIM],  velocities[NDIM], 1 charge, 1 potential, 1 index)
+       //mesh is also a ParticleList, but for mesh points
+          //same setup as particles
+       //x_width is the length of the NaCl unit cell in the x-direction
+       //y_width is the length of the NaCl unit cell in the y-direction
+       //z_width is the length of the NaCl unit cell in the y-direction
     TEwald(double,ParticleList,double,double,double);
-    // set base values for alpha, r_max, k_max
+    
+    //set base values for alpha, r_max, k_max
+    //TEwald(alpha, r_max, k_max)
     TEwald(double, double, double);
     ~TEwald();
 
+    //compute(particles, x_width, y_width, z_width)
+       //particles is a ParticleList of particle information for all in the unit cell
+          //(positions[NDIM],  velocities[NDIM], 1 charge, 1 potential, 1 index)
+       //mesh is also a ParticleList, but for mesh points
+          //same setup as particles
+       //x_width is the length of the NaCl unit cell in the x-direction
+       //y_width is the length of the NaCl unit cell in the y-direction
+       //z_width is the length of the NaCl unit cell in the y-direction
     void compute(ParticleList&, double,double,double);
 
     // tune alpha, r_max, k_max to adhere to given accuracy
