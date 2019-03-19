@@ -52,6 +52,7 @@ addons:
       - libopenmpi-dev
       - gfortran
       - libgsl0-dev
+      - libfftw3-dev
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
