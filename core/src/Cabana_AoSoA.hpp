@@ -112,6 +112,15 @@ class AoSoA
     using member_pointer_type =
         typename std::add_pointer<member_value_type<M> >::type;
 
+    // Member slice type at a given member index M.
+    template<std::size_t M>
+    using member_slice_type =
+        Slice<member_data_type<M>,
+              memory_space,
+              DefaultAccessMemory,
+              vector_length,
+              sizeof(soa_type) / sizeof(member_value_type<M>)>;
+
   public:
 
     /*!
@@ -308,12 +317,7 @@ class AoSoA
       \return The member slice.
     */
     template<std::size_t M>
-    Slice<member_data_type<M>,
-          memory_space,
-          DefaultAccessMemory,
-          vector_length,
-          sizeof(soa_type) / sizeof(member_value_type<M>)>
-    slice() const
+    member_slice_type<M> slice() const
     {
         static_assert(
             0 == sizeof(soa_type) % sizeof(member_value_type<M>),
@@ -324,13 +328,7 @@ class AoSoA
             ? static_cast<member_pointer_type<M> >(_data(0).template ptr<M>())
             : nullptr;
 
-        return
-            Slice<member_data_type<M>,
-                  memory_space,
-                  DefaultAccessMemory,
-                  vector_length,
-                  sizeof(soa_type) / sizeof(member_value_type<M>)>(
-                      data_ptr, _size, _num_soa );
+        return member_slice_type<M>( data_ptr, _size, _num_soa );
     }
 
     /*!

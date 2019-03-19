@@ -1,0 +1,14 @@
+version: '2.3'
+services:
+  ci:
+    image: dalg24/cabana-base:19.03.2
+    volumes:
+      - jenkins_data:$WORKSPACE/../..:rw
+    command: bash -xe $WORKSPACE/scripts/jenkins/build.sh
+    working_dir: $WORKSPACE
+    runtime: nvidia
+    network_mode: "none"
+volumes:
+  jenkins_data:
+    external:
+      name: $JENKINS_DATA_VOLUME
