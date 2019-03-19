@@ -81,7 +81,15 @@ script:
 after_success:
  - ccache -s
  - test "${TRAVIS_BUILD_STAGE_NAME}" = "Test" || travis_terminate 0
- - if [[ ${COVERAGE} ]]; then pushd build && bash <(curl -s https://codecov.io/bash) && popd; fi
+ - if [[ ${COVERAGE} ]]; then
+     pushd build && wget -O codecov https://codecov.io/bash && chmod +x codecov &&
+     if [[ ${CC} = clang ]]; then
+       ./codecov -x "llvm-cov gcov" -F "${CC}";
+     else
+       ./codecov -F "${CC}";
+     fi &&
+     popd;
+   fi
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
      rm -rf doxygen &&
