@@ -1,7 +1,6 @@
-add_executable(SPME particles.cpp direct.cpp ewald.cpp pme.cpp main.cpp)
 find_package(FFTW3)
 if(FFTW3_FOUND)
   add_executable(SPME particles.cpp direct.cpp ewald.cpp pme.cpp main.cpp)
   target_link_libraries(SPME cabanacore ${FFTW3_LIBRARIES})
+  target_link_libraries(SPME cabanacore ${FFTW3_LIBRARIES})
 endif()
-target_link_libraries(SPME cabanacore ${FFTW3_LIBRARIES})
