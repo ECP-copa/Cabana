@@ -27,8 +27,6 @@ class TPME
        //set base values for alpha, r_max, k_max
     TPME(double, double, double);
 
-    ~TPME();
-    
     //oneDspline(mesh_dist)
        //Computes a cubic cardinal B-spline in one dimension
        //The cubic spline interpolates to find the fraction of the value to spread to
