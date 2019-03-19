@@ -3,6 +3,15 @@ language: cpp
 # against hwloc error (travis-ci/travis-ci#10019)
 sudo: required
 
+stages:
+  - canary
+  - test
+
+jobs:
+    include:
+        - stage: canary
+          env: BACKENDS="OpenMP" WERROR=ON
+
 env:
   global:
     - CCACHE_CPP2=yes # for clang
@@ -69,6 +78,7 @@ script:
 
 after_success:
  - ccache -s
+ - test "${TRAVIS_BUILD_STAGE_NAME}" = "Test" || travis_terminate 0
  - if [[ ${COVERAGE} ]]; then pushd build && bash <(curl -s https://codecov.io/bash) && popd; fi
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
