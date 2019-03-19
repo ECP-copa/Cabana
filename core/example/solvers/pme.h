@@ -25,7 +25,7 @@ class TPME
     void compute(ParticleList&,ParticleList&,double,double,double);
 
     // tune alpha, r_max, k_max to adhere to given accuracy
-    void tune(double,ParticleList,ParticleList,double,double,double);
+    void tune(double,ParticleList,double,double,double);
 
     // setter functions for parameters
     void set_alpha(double);

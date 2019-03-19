@@ -17,10 +17,10 @@ using std::complex;
 using std::vector;
 
 
-TPME::TPME(double accuracy, ParticleList particles, double lx, double ly, double lz)
+TPME::TPME(double accuracy, ParticleList particles,ParticleList mesh, double lx, double ly, double lz)
 {
   _r_max = 0.0;
-  tune(accuracy,particles,mesh,lx, ly, lz);
+  tune(accuracy,particles,lx, ly, lz);
 }
 
 TPME::TPME(double alpha, double r_max, double k_max)
@@ -37,7 +37,7 @@ TPME::~TPME()
 {
 }
 
-void TPME::tune(double accuracy, ParticleList particles, ParticleList mesh, double lx, double ly, double lz)
+void TPME::tune(double accuracy, ParticleList particles, double lx, double ly, double lz)
 {
   typedef Kokkos::MinLoc<double, int> reducer_type;
   typedef reducer_type::value_type value_type;

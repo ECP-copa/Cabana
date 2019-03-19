@@ -113,7 +113,7 @@ int main(int argc, char** argv)
     auto init_time = timer.seconds();
     timer.reset();
     //accuracy *= -n_particles * MADELUNG_NACL;
-    if (argc < 6) solver.tune(accuracy,*particles,*mesh,l[0],l[1],l[2]);
+    if (argc < 6) solver.tune(accuracy,*particles,l[0],l[1],l[2]);
     std::cout << "req. acc: " << accuracy << std::endl; 
     auto tune_time = timer.seconds();
     timer.reset();
