@@ -3,10 +3,19 @@ language: cpp
 # against hwloc error (travis-ci/travis-ci#10019)
 sudo: required
 
+stages:
+  - canary
+  - test
+
+jobs:
+    include:
+        - stage: canary
+          env: BACKENDS="OpenMP" WERROR=ON
+
 env:
   global:
     - CCACHE_CPP2=yes # for clang
-  matrix:
+  matrix: # note this matrix only applies to the "test" stage
     - BACKENDS="OpenMP" WERROR=ON
     - BACKENDS="Serial" WERROR=ON
     - BACKENDS="Pthread" WERROR=ON
@@ -14,7 +23,7 @@ env:
     - BACKENDS="Serial Pthread" WERROR=ON
     - BACKENDS="OpenMP" COVERAGE=ON
     - BACKENDS="Serial" COVERAGE=ON
-    - BACKENDS="Pthread" COVERAGE=ON
+    - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON
     - BACKENDS="Serial OpenMP" COVERAGE=ON
     - BACKENDS="Serial Pthread" COVERAGE=ON
 
@@ -34,13 +43,15 @@ before_script:
     make install &&
     popd &&
     popd
-  - travis_retry wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
-    tar -xzf scafacos-*.tar.gz &&
-    pushd scafacos* &&
-    ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
-    make -j2 &&
-    make install &&
-    popd
+  - if [[ ${SCAFACOS} ]]; then
+      travis_retry wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
+      tar -xzf scafacos-*.tar.gz &&
+      pushd scafacos* &&
+      ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
+      make -j2 &&
+      make install &&
+      popd;
+    fi
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
 
 addons:
@@ -69,7 +80,16 @@ script:
 
 after_success:
  - ccache -s
- - if [[ ${COVERAGE} ]]; then pushd build && bash <(curl -s https://codecov.io/bash) && popd; fi
+ - test "${TRAVIS_BUILD_STAGE_NAME}" = "Test" || travis_terminate 0
+ - if [[ ${COVERAGE} ]]; then
+     pushd build && wget -O codecov https://codecov.io/bash && chmod +x codecov &&
+     if [[ ${CC} = clang ]]; then
+       ./codecov -x "llvm-cov gcov" -F "${CC}";
+     else
+       ./codecov -F "${CC}";
+     fi &&
+     popd;
+   fi
  - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
      rm -rf doxygen &&
