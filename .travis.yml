@@ -15,7 +15,7 @@ jobs:
 env:
   global:
     - CCACHE_CPP2=yes # for clang
-  matrix:
+  matrix: # note this matrix only applies to the "test" stage
     - BACKENDS="OpenMP" WERROR=ON
     - BACKENDS="Serial" WERROR=ON
     - BACKENDS="Pthread" WERROR=ON
