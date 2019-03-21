@@ -12,6 +12,7 @@
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ExecutionPolicy.hpp>
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_DeepCopy.hpp>
 
 #include <gtest/gtest.h>
 
@@ -26,10 +27,14 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto slice_0 = aosoa.template slice<0>();
-    auto slice_1 = aosoa.template slice<1>();
-    auto slice_2 = aosoa.template slice<2>();
-    auto slice_3 = aosoa.template slice<3>();
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+
+    auto slice_0 = mirror.template slice<0>();
+    auto slice_1 = mirror.template slice<1>();
+    auto slice_2 = mirror.template slice<2>();
+    auto slice_3 = mirror.template slice<3>();
 
     for ( int idx = begin; idx != end; ++idx )
     {

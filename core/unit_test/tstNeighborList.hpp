@@ -113,6 +113,44 @@ struct TestNeighborList
     Kokkos::View<int**,KokkosMemorySpace> neighbors;
 };
 
+template<class KokkosMemorySpace>
+TestNeighborList<Kokkos::HostSpace>
+createTestListHostCopy(
+    const TestNeighborList<KokkosMemorySpace>& test_list )
+{
+    TestNeighborList<Kokkos::HostSpace> list_copy;
+    Kokkos::resize( list_copy.counts, test_list.counts.extent(0) );
+    Kokkos::deep_copy( list_copy.counts, test_list.counts );
+    Kokkos::resize( list_copy.neighbors,
+                    test_list.neighbors.extent(0),
+                    test_list.neighbors.extent(1) );
+    Kokkos::deep_copy( list_copy.neighbors, test_list.neighbors );
+    return list_copy;
+};
+
+// Create a host copy of a list that implements the neighbor list interface.
+template<class ListType>
+TestNeighborList<Kokkos::HostSpace>
+copyListToHost( const ListType& list, const int num_particle, const int max_n )
+{
+    TestNeighborList<TEST_MEMSPACE> list_copy;
+    list_copy.counts = Kokkos::View<int*,TEST_MEMSPACE>("counts",num_particle);
+    list_copy.neighbors =
+        Kokkos::View<int**,TEST_MEMSPACE>("neighbors",num_particle,max_n);
+    Kokkos::parallel_for(
+        "copy list",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,num_particle),
+        KOKKOS_LAMBDA( const int p ){
+            list_copy.counts(p) =
+                Cabana::NeighborList<ListType>::numNeighbor(list,p);
+            for ( int n = 0; n < list_copy.counts(p); ++n )
+                list_copy.neighbors(p,n) =
+                    Cabana::NeighborList<ListType>::getNeighbor(list,p,n);
+        });
+    Kokkos::fence();
+    return createTestListHostCopy( list_copy );
+}
+
 //---------------------------------------------------------------------------//
 // Create particles.
 Cabana::AoSoA<Cabana::MemberTypes<double[3]>,TEST_MEMSPACE>
@@ -223,25 +261,31 @@ void checkFullNeighborList( const ListType& list,
                             const PositionSlice& position,
                             const double neighborhood_radius )
 {
+    // Create a test list to check against.
     auto test_list = computeFullNeighborList( position, neighborhood_radius );
+    auto test_list_copy = createTestListHostCopy( test_list );
+
+    // Create another list and copy the contents of the list we are testing
+    // onto the host.
+    auto list_copy = copyListToHost( list,
+                                     test_list.neighbors.extent(0),
+                                     test_list.neighbors.extent(1) );
 
     // Check the results.
     int num_particle = position.size();
     for ( int p = 0; p < num_particle; ++p )
     {
         // First check that the number of neighbors are the same.
-        EXPECT_EQ(
-             Cabana::NeighborList<ListType>::numNeighbor(list,p),
-             test_list.counts(p) );
+        EXPECT_EQ( list_copy.counts(p),
+                   test_list_copy.counts(p) );
 
         // Now extract the neighbors.
-        std::vector<int> computed_neighbors( test_list.counts(p) );
-        std::vector<int> actual_neighbors( test_list.counts(p) );
-        for ( int n = 0; n < test_list.counts(p); ++n )
+        std::vector<int> computed_neighbors( test_list_copy.counts(p) );
+        std::vector<int> actual_neighbors( test_list_copy.counts(p) );
+        for ( int n = 0; n < test_list_copy.counts(p); ++n )
         {
-            computed_neighbors[n] =
-                Cabana::NeighborList<ListType>::getNeighbor(list,p,n);
-            actual_neighbors[n] = test_list.neighbors(p,n);
+            computed_neighbors[n] = list_copy.neighbors(p,n);
+            actual_neighbors[n] = test_list_copy.neighbors(p,n);
         }
 
         // Sort them because we have no guarantee of the order we will find
@@ -250,7 +294,7 @@ void checkFullNeighborList( const ListType& list,
         std::sort( actual_neighbors.begin(), actual_neighbors.end() );
 
         // Now compare directly.
-        for ( int n = 0; n < test_list.counts(p); ++n )
+        for ( int n = 0; n < test_list_copy.counts(p); ++n )
             EXPECT_EQ( computed_neighbors[n], actual_neighbors[n] );
     }
 }
@@ -263,6 +307,13 @@ void checkHalfNeighborList( const ListType& list,
 {
     // First build a full list.
     auto full_list = computeFullNeighborList( position, neighborhood_radius );
+    auto full_list_copy = createTestListHostCopy( full_list );
+
+    // Create another list and copy the contents of the list we are testing
+    // onto the host.
+    auto list_copy = copyListToHost( list,
+                                     full_list.neighbors.extent(0),
+                                     full_list.neighbors.extent(1) );
 
     // Check that the full list is twice the size of the half list.
     int num_particle = position.size();
@@ -270,8 +321,8 @@ void checkHalfNeighborList( const ListType& list,
     int full_size = 0;
     for ( int p = 0; p < num_particle; ++p )
     {
-        half_size += Cabana::NeighborList<ListType>::numNeighbor(list,p);
-        full_size += full_list.counts(p);
+        half_size += list_copy.counts(p);
+        full_size += full_list_copy.counts(p);
     }
     EXPECT_EQ( full_size, 2*half_size );
 
@@ -281,20 +332,19 @@ void checkHalfNeighborList( const ListType& list,
     {
         // Check each neighbor of p
         for ( int n = 0;
-              n < Cabana::NeighborList<ListType>::numNeighbor(list,p);
+              n < list_copy.counts(p);
               ++n )
         {
             // Get the id of the nth neighbor of p.
-            auto p_n = Cabana::NeighborList<ListType>::getNeighbor(list,p,n);
+            auto p_n = list_copy.neighbors(p,n);
 
             // Check that p is not in the neighbor list of the nth neighbor of
             // p.
             for ( int m = 0;
-                  m < Cabana::NeighborList<ListType>::numNeighbor(list,p_n);
+                  m < list_copy.counts(p_n);
                   ++m )
             {
-                auto n_m =
-                    Cabana::NeighborList<ListType>::getNeighbor(list,p_n,m);
+                auto n_m = list_copy.neighbors(p_n,m);
                 EXPECT_NE( n_m, p );
             }
         }
@@ -304,11 +354,19 @@ void checkHalfNeighborList( const ListType& list,
 //---------------------------------------------------------------------------//
 template<class ListType, class PositionSlice>
 void checkFullNeighborListPartialRange( const ListType& list,
-                            const PositionSlice& position,
-                            const double neighborhood_radius,
-                            const int num_ignore )
+                                        const PositionSlice& position,
+                                        const double neighborhood_radius,
+                                        const int num_ignore )
 {
+    // Build a full list to test with
     auto test_list = computeFullNeighborList( position, neighborhood_radius );
+    auto test_list_copy = createTestListHostCopy( test_list );
+
+    // Create another list and copy the contents of the list we are testing
+    // onto the host.
+    auto list_copy = copyListToHost( list,
+                                     test_list.neighbors.extent(0),
+                                     test_list.neighbors.extent(1) );
 
     // Check the results.
     int num_particle = position.size();
@@ -317,18 +375,15 @@ void checkFullNeighborListPartialRange( const ListType& list,
         if ( p < num_ignore )
         {
             // First check that the number of neighbors are the same.
-            EXPECT_EQ(
-                 Cabana::NeighborList<ListType>::numNeighbor(list,p),
-                 test_list.counts(p) );
+            EXPECT_EQ( list_copy.counts(p), test_list_copy.counts(p) );
 
             // Now extract the neighbors.
-            std::vector<int> computed_neighbors( test_list.counts(p) );
-            std::vector<int> actual_neighbors( test_list.counts(p) );
-            for ( int n = 0; n < test_list.counts(p); ++n )
+            std::vector<int> computed_neighbors( test_list_copy.counts(p) );
+            std::vector<int> actual_neighbors( test_list_copy.counts(p) );
+            for ( int n = 0; n < test_list_copy.counts(p); ++n )
             {
-                computed_neighbors[n] =
-                    Cabana::NeighborList<ListType>::getNeighbor(list,p,n);
-                actual_neighbors[n] = test_list.neighbors(p,n);
+                computed_neighbors[n] = list_copy.neighbors(p,n);
+                actual_neighbors[n] = test_list_copy.neighbors(p,n);
             }
 
             // Sort them because we have no guarantee of the order we will find
@@ -337,13 +392,12 @@ void checkFullNeighborListPartialRange( const ListType& list,
             std::sort( actual_neighbors.begin(), actual_neighbors.end() );
 
             // Now compare directly.
-            for ( int n = 0; n < test_list.counts(p); ++n )
+            for ( int n = 0; n < test_list_copy.counts(p); ++n )
                 EXPECT_EQ( computed_neighbors[n], actual_neighbors[n] );
         }
         else
         {
-            EXPECT_EQ(
-                Cabana::NeighborList<ListType>::numNeighbor(list,p), 0 );
+            EXPECT_EQ( list_copy.counts(p), 0 );
         }
     }
 }
@@ -414,7 +468,7 @@ void testNeighborParallelFor()
 
     // Create Kokkos views for the write operation.
     using memory_space = typename TEST_MEMSPACE::memory_space;
-    Kokkos::View<int*,memory_space> test_result( "test_result", num_particle );
+    Kokkos::View<int*,Kokkos::HostSpace> test_result( "test_result", num_particle );
     Kokkos::View<int*,memory_space> serial_result( "serial_result", num_particle );
     Kokkos::View<int*,memory_space> team_result( "team_result", num_particle );
 
@@ -432,15 +486,21 @@ void testNeighborParallelFor()
     Kokkos::fence();
 
     // Get the expected result in serial
+    auto test_list = computeFullNeighborList( aosoa.slice<0>(), test_radius );
+    auto test_list_copy = createTestListHostCopy( test_list );
     for ( int p = 0; p < num_particle; ++p )
-        for ( int n = 0; n < nlist._counts(p); ++n )
-            test_result(p) += nlist._neighbors( nlist._offsets(p) + n );
+        for ( int n = 0; n < test_list_copy.counts(p); ++n )
+            test_result(p) += test_list_copy.neighbors( p, n );
 
     // Check the result.
+    auto serial_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), serial_result );
+    auto team_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), team_result );
     for ( int p = 0; p < num_particle; ++p )
     {
-        EXPECT_EQ( test_result(p), serial_result(p) );
-        EXPECT_EQ( test_result(p), team_result(p) );
+        EXPECT_EQ( test_result(p), serial_mirror(p) );
+        EXPECT_EQ( test_result(p), team_mirror(p) );
     }
 }
 
