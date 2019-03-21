@@ -126,7 +126,7 @@ createTestListHostCopy(
                     test_list.neighbors.extent(1) );
     Kokkos::deep_copy( list_copy.neighbors, test_list.neighbors );
     return list_copy;
-};
+}
 
 // Create a host copy of a list that implements the neighbor list interface.
 template<class ListType>

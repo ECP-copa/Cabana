@@ -251,7 +251,6 @@ void testRawData()
     // Initialize the data with raw pointer/stride access. Start by looping
     // over the structs. Each struct has a group of contiguous arrays of size
     // array_size for each member.
-    int num_soa = slice_0.numSoA();
     Kokkos::parallel_for(
         "raw_data_fill",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,slice_0.numSoA()),
