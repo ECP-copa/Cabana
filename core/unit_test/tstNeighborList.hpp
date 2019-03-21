@@ -106,19 +106,21 @@ void testLinkedCellStencil()
 
 //---------------------------------------------------------------------------//
 // List implementation.
-template<class KokkosMemorySpace>
+template<class ... Params>
 struct TestNeighborList
 {
-    Kokkos::View<int*,KokkosMemorySpace> counts;
-    Kokkos::View<int**,KokkosMemorySpace> neighbors;
+    Kokkos::View<int*,Params...> counts;
+    Kokkos::View<int**,Params...> neighbors;
 };
 
 template<class KokkosMemorySpace>
-TestNeighborList<Kokkos::HostSpace>
+TestNeighborList<typename TEST_EXECSPACE::array_layout,Kokkos::HostSpace>
 createTestListHostCopy(
     const TestNeighborList<KokkosMemorySpace>& test_list )
 {
-    TestNeighborList<Kokkos::HostSpace> list_copy;
+    using data_layout =
+        typename decltype(test_list.counts)::array_layout;
+    TestNeighborList<data_layout,Kokkos::HostSpace> list_copy;
     Kokkos::resize( list_copy.counts, test_list.counts.extent(0) );
     Kokkos::deep_copy( list_copy.counts, test_list.counts );
     Kokkos::resize( list_copy.neighbors,
@@ -130,7 +132,7 @@ createTestListHostCopy(
 
 // Create a host copy of a list that implements the neighbor list interface.
 template<class ListType>
-TestNeighborList<Kokkos::HostSpace>
+TestNeighborList<typename TEST_EXECSPACE::array_layout,Kokkos::HostSpace>
 copyListToHost( const ListType& list, const int num_particle, const int max_n )
 {
     TestNeighborList<TEST_MEMSPACE> list_copy;
@@ -183,16 +185,16 @@ createParticles( const int num_particle,
 
 //---------------------------------------------------------------------------//
 template<class PositionSlice>
-TestNeighborList<typename PositionSlice::memory_space>
+TestNeighborList<TEST_MEMSPACE>
 computeFullNeighborList( const PositionSlice& position,
                          const double neighborhood_radius )
 {
     // Build a neighbor list with a brute force n^2 implementation. Count
     // first.
-    TestNeighborList<typename PositionSlice::memory_space> list;
+    TestNeighborList<TEST_MEMSPACE> list;
     int num_particle = position.size();
     double rsqr = neighborhood_radius * neighborhood_radius;
-    list.counts = Kokkos::View<int*,typename PositionSlice::memory_space>(
+    list.counts = Kokkos::View<int*,TEST_MEMSPACE>(
         "test_neighbor_count", num_particle );
     Kokkos::deep_copy( list.counts, 0 );
     auto count_op =
@@ -225,7 +227,7 @@ computeFullNeighborList( const PositionSlice& position,
     int max_n;
     Kokkos::parallel_reduce( exec_policy, max_op, Kokkos::Max<int>(max_n) );
     Kokkos::fence();
-    list.neighbors = Kokkos::View<int**,typename PositionSlice::memory_space>(
+    list.neighbors = Kokkos::View<int**,TEST_MEMSPACE>(
         "test_neighbors", num_particle, max_n );
 
     // Fill.
