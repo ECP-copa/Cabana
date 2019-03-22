@@ -272,6 +272,7 @@ void testRawData()
                             (s + i + j + k) * 3.0;
             }
         } );
+    Kokkos::fence();
 
     // Check the results.
     auto mirror =
