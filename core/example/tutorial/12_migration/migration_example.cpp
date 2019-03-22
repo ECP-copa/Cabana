@@ -177,11 +177,11 @@ int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
 
-    Cabana::initialize(argc,argv);
+    Kokkos::initialize(argc,argv);
 
     migrationExample();
 
-    Cabana::finalize();
+    Kokkos::finalize();
 
     MPI_Finalize();
 

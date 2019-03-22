@@ -320,11 +320,11 @@ void run()
 //---------------------------------------------------------------------------//
 int main( int argc, char **argv )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::initialize(argc,argv);
 
     run();
 
-    Cabana::finalize();
+    Kokkos::finalize();
     return 0;
 }
 

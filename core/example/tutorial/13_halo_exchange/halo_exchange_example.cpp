@@ -163,11 +163,11 @@ int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
 
-    Cabana::initialize(argc,argv);
+    Kokkos::initialize(argc,argv);
 
     haloExchangeExample();
 
-    Cabana::finalize();
+    Kokkos::finalize();
 
     MPI_Finalize();
 

@@ -145,11 +145,11 @@ void deepCopyExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::initialize(argc,argv);
 
     deepCopyExample();
 
-    Cabana::finalize();
+    Kokkos::finalize();
 
     return 0;
 }

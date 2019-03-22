@@ -80,11 +80,11 @@ void atomicSliceExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::initialize(argc,argv);
 
     atomicSliceExample();
 
-    Cabana::finalize();
+    Kokkos::finalize();
 
     return 0;
 }

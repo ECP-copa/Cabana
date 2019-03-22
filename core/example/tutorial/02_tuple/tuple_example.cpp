@@ -120,11 +120,11 @@ void tupleExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::initialize(argc,argv);
 
     tupleExample();
 
-    Cabana::finalize();
+    Kokkos::finalize();
 
     return 0;
 }

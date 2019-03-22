@@ -147,11 +147,11 @@ void sliceExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::initialize(argc,argv);
 
     sliceExample();
 
-    Cabana::finalize();
+    Kokkos::finalize();
 
     return 0;
 }

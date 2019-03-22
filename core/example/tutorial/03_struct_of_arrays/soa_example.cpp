@@ -129,11 +129,11 @@ void soaExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::initialize(argc,argv);
 
     soaExample();
 
-    Cabana::finalize();
+    Kokkos::finalize();
 
     return 0;
 }
