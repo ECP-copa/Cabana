@@ -12,6 +12,8 @@
 #ifndef CABANA_CORE_HPP
 #define CABANA_CORE_HPP
 
+#define CABANA_DEPRECATED
+
 #include <CabanaCore_config.hpp>
 
 #include <Cabana_AoSoA.hpp>
@@ -56,7 +58,7 @@ bool cabana_initialized_kokkos = false;
 //---------------------------------------------------------------------------//
 // Initialize Kokkos, if it needs initialization.
 template <typename... Args>
-__attribute__ ((deprecated))
+CABANA_DEPRECATED
 void initKokkos( Args &&... args )
 {
     if ( !cabana_initialized_kokkos )
@@ -91,7 +93,7 @@ void initKokkos( Args &&... args )
 
 //---------------------------------------------------------------------------//
 template <typename... Args>
-__attribute__ ((deprecated))
+CABANA_DEPRECATED
 void initialize( Args &&... args )
 {
     if ( !is_cabana_initialized )
@@ -100,11 +102,11 @@ void initialize( Args &&... args )
 }
 
 //---------------------------------------------------------------------------//
-__attribute__ ((deprecated))
+CABANA_DEPRECATED
 bool isInitialized() { return is_cabana_initialized; }
 
 //---------------------------------------------------------------------------//
-__attribute__ ((deprecated))
+CABANA_DEPRECATED
 void finalize()
 {
     if ( !is_cabana_initialized )
