@@ -2,6 +2,7 @@
 #define TDS_DEFINITIONS_INCLUDED
 
 #include <Cabana_AoSoA.hpp>
+#include <Kokkos_Core.hpp>
 
 constexpr double PI(3.141592653589793238462643);
 constexpr double PI_SQRT(1.772453850905516);
