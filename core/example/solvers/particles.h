@@ -2,7 +2,7 @@
 #define TDS_PARTICLES_INCLUDED
 
 #include "definitions.h"
-#include <impl/Cabana_Index.hpp>
+//#include <impl/Cabana_Index.hpp>
 
 //initialize a NaCl crystal in a cubic arrangement with width^3 particles
 void initializeParticles(ParticleList particles, int width);

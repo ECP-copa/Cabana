@@ -1,10 +1,6 @@
 #ifndef TDS_EWALD_INCLUDED
 #define TDS_EWALD_INCLUDED
 
-//#include <Cabana_AoSoA.hpp>
-//#include <Cabana_MemberTypes.hpp>
-//#include <Kokkos_Core.hpp>
-
 #include <iostream>
 #include "definitions.h"
 

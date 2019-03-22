@@ -1,12 +1,6 @@
 #include "definitions.h"
 #include "ewald.h"
-//#include <cmath>
-//#include <gsl/gsl_sf_lambert.h>
-//#include <Cabana_AoSoA.hpp>
-//#include <Cabana_Parallel.hpp>
-//#include <Cabana_ExecutionPolicy.hpp>
-//#include <atomic>
-//#include <Kokkos_Pair.hpp>
+#include <cmath>
 
 TEwald::TEwald(double accuracy, ParticleList particles, double lx, double ly, double lz)
 {
