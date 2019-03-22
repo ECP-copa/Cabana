@@ -7,6 +7,7 @@ cmake \
   -D CMAKE_CXX_COMPILER=$KOKKOS_DIR/bin/nvcc_wrapper \
   -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic" \
   -D CMAKE_PREFIX_PATH=$KOKKOS_DIR \
+  -D MPIEXEC_PREFLAGS="--allow-run-as-root;--mca;btl_smcuda_use_cuda_ipc;0" \
   -D Cabana_ENABLE_MPI=ON \
   -D Cabana_ENABLE_Cuda=ON \
   -D Cabana_ENABLE_Serial=OFF \
