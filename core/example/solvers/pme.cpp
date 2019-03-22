@@ -17,7 +17,7 @@ using std::complex;
 using std::vector;
 
 
-TPME::TPME(double accuracy, ParticleList particles,ParticleList mesh, double lx, double ly, double lz)
+TPME::TPME(double accuracy, ParticleList particles, double lx, double ly, double lz)
 {
   _r_max = 0.0;
   tune(accuracy,particles,lx, ly, lz);

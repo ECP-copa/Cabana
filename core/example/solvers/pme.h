@@ -13,7 +13,7 @@ class TPME
 {
   public:
     //constructor with accuracy
-    TPME(double accuracy_threshold, ParticleList particles, ParticleList mesh, double x_width, double y_width, double z_width);
+    TPME(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width);
     
     //set base values for alpha, r_max, k_max
     TPME(double alpha, double r_max, double k_max);
