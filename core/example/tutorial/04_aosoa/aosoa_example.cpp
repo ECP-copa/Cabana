@@ -205,7 +205,7 @@ int main( int argc, char* argv[] )
 
     aosoaExample();
 
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
 
     return 0;
 }

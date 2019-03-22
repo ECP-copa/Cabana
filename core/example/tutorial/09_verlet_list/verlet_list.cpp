@@ -150,7 +150,7 @@ int main( int argc, char* argv[] )
 
     verletListExample();
 
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
 
     return 0;
 }

@@ -233,6 +233,6 @@ int main( int argc, char* argv[] )
     perfTest( cutoff_ratio, num_data, cell_size_ratio );
 
     // Finalize.
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
     return 0;
 }

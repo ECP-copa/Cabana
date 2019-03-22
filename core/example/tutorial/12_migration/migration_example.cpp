@@ -181,7 +181,7 @@ int main( int argc, char* argv[] )
 
     migrationExample();
 
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
 
     MPI_Finalize();
 

@@ -178,7 +178,7 @@ int main( int argc, char* argv[] )
 
     parallelForExample();
 
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
 
     return 0;
 }

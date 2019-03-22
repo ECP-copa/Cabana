@@ -167,7 +167,7 @@ int main( int argc, char* argv[] )
 
     haloExchangeExample();
 
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
 
     MPI_Finalize();
 

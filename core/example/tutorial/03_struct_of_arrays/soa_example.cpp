@@ -133,7 +133,7 @@ int main( int argc, char* argv[] )
 
     soaExample();
 
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
 
     return 0;
 }

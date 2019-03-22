@@ -151,7 +151,7 @@ int main( int argc, char* argv[] )
 
     sliceExample();
 
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
 
     return 0;
 }

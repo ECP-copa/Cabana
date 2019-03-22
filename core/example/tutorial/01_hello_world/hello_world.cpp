@@ -25,8 +25,11 @@ int main( int argc, char* argv[] )
     // finalize.
     std::cout << "Hello world from Cabana!" << std::endl;
 
-    // The Kokkos runtime must also be finalized.
-    Kokkos::finalize();
+    /* The Kokkos runtime must also be finalized.
+       Kokkos::ScopeGuard ensures that Kokkos::finalize() is called, even
+       if the code returns early.
+     */
+    Kokkos::ScopeGuard();
 
     return 0;
 }

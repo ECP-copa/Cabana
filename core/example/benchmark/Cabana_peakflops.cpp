@@ -324,7 +324,7 @@ int main( int argc, char **argv )
 
     run();
 
-    Kokkos::finalize();
+    Kokkos::ScopeGuard();
     return 0;
 }
 
