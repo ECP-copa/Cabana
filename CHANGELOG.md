@@ -1,6 +1,6 @@
 # Change Log
 
-## [0.2.0]()
+## 0.2.0
 
 **New Features**
 
@@ -19,7 +19,7 @@
 - Construct Verlet lists over the specified range of indices [#70](https://github.com/ECP-copa/Cabana/pull/70)
 - Removed aliases of Kokkos macros and classes [#58](https://github.com/ECP-copa/Cabana/pull/58)
 
-## [0.1.0]()
+## 0.1.0
 
 **New Features**
 
