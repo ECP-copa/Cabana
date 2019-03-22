@@ -93,7 +93,7 @@ after_success:
      else
        codecov -F "${CC}";
      fi &&
-     if [[ $(doxygen --version) < 1.8.16 ]]; then
+     if [[ $(doxygen --version) != 1.8.16 ]]; then
        echo "Patching Doxygen files (see doxygen/doxygen#6892" &&
        sed -e '/enable_if</s/&/\&amp;/g' -e '/enable_if/s/<\([^a-z/]\)/\&lt;\1/g' -e '/enable_if/s/ >/ \&gt;/g' -i xml/*.xml;
      fi &&
