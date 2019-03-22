@@ -101,6 +101,7 @@ void TPME::tune(double accuracy, ParticleList particles, double lx, double ly, d
   std::cout << "Tuned values: " << "r_max: " << _r_max << " alpha: " << _alpha << " k_max: " << _k_max_int[0] << "  " << _k_max_int[1] << " " << _k_max_int[2] << " " << _k_max << std::endl;
 }
 
+KOKKOS_INLINE_FUNCTION
 double TPME::oneDspline(double x)
 {
   if ( x >= 0.0 and x < 1.0 ) {
@@ -116,6 +117,7 @@ double TPME::oneDspline(double x)
   }
 } 
 
+KOKKOS_INLINE_FUNCTION
 double TPME::oneDeuler(int k, int meshwidth)
 { 
   double denomreal = 0.0; 
