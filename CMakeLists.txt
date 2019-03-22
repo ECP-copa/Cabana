@@ -6,7 +6,8 @@ cmake_minimum_required(VERSION 3.9)
 ##---------------------------------------------------------------------------##
 # Define your project name and set up major project options
 ##---------------------------------------------------------------------------##
-project(Cabana LANGUAGES CXX VERSION 0.3.0-dev)
+project(Cabana LANGUAGES CXX)
+set(PROJECT_VERSION "0.3.0-dev")
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
   #release comes with -O3 by default
