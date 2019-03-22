@@ -2,6 +2,7 @@
 #define TDS_DEFINITIONS_INCLUDED
 
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_MemberTypes.hpp>
 #include <Kokkos_Core.hpp>
 
 constexpr double PI(3.141592653589793238462643);
