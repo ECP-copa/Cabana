@@ -44,18 +44,18 @@ using ParticleDataTypes =
                         long                      // (5) global index
                         >;
 
-
 // Declare the memory space.
-#ifdef TDS_CUDA
+#ifdef CUDA_ENABLE
 using MemorySpace = Cabana::CudaUVMSpace;
 using ExecutionSpace = Kokkos::Cuda;
-#elif TDS_OMP
+#elif OMP_ENABLE
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::OpenMP;
-#else
+#elif Serial_ENABLE
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::Serial;
 #endif
+
 
 
 // Declare the inner array layout.
