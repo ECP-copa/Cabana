@@ -77,7 +77,7 @@ if(${Cabana_ENABLE_MPI})
         foreach(_np ${TEST_MPIEXEC_NUMPROCS})
           add_test(NAME ${_target}_${_np} COMMAND
             ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
-            ${_target} --gtest_color=yes)
+            ${_target} ${MPIEXEC_POSTFLAGS} --gtest_color=yes)
         endforeach()
       endforeach()
     endif()
