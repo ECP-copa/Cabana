@@ -87,11 +87,14 @@ after_success:
  - ccache -s
  - test "${TRAVIS_BUILD_STAGE_NAME}" = "Test" || travis_terminate 0
  - if [[ ${COVERAGE} ]]; then
-     pushd build && wget -O codecov https://codecov.io/bash && chmod +x codecov &&
+     pushd build &&
      if [[ ${CC} = clang ]]; then
-       ./codecov -x "llvm-cov gcov" -F "${CC}";
+       codecov -x "llvm-cov gcov" -F "${CC}";
      else
-       ./codecov -F "${CC}";
+       codecov -F "${CC}";
+     fi &&
+     if [[ $(doxygen --version) = 1.8.1[45] ]]; then 
+       sed -e '/enable_if</s/&/\&amp;/g' -e '/enable_if/s/<\([^a-z/]\)/\&lt;\1/g' -e '/enable_if/s/ >/ \&gt;/g' xml/*.xml;
      fi &&
      python -m coverxygen --src-dir .. --xml-dir xml/ --output doxygen.coverage.info && codecov -F doxygen -X gcov -f doxygen.coverage.info &&
      popd;
