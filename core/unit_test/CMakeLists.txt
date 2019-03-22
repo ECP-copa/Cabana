@@ -17,13 +17,15 @@ set_target_properties(cabana_core_gtest PROPERTIES
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 
+set(gtest_args --gtest_color=yes)
+
 ##--------------------------------------------------------------------------##
 ## General tests.
 ##--------------------------------------------------------------------------##
 foreach(_test Version Index CartesianGrid SoA)
   add_executable(${_test}_test tst${_test}.cpp unit_test_main.cpp)
   target_link_libraries(${_test}_test cabanacore cabana_core_gtest)
-  add_test(NAME ${_test}_test COMMAND ${_test}_test --gtest_color=yes)
+  add_test(NAME ${_test}_test COMMAND ${_test}_test ${gtest_args})
 endforeach()
 
 ##--------------------------------------------------------------------------##
@@ -47,7 +49,7 @@ foreach(_device ${CABANA_SUPPORTED_DEVICES})
             ${_target} --gtest_color=yes --kokkos-threads=${_thread})
         endforeach()
       else()
-        add_test(NAME ${_target} COMMAND ${_target} --gtest_color=yes)
+        add_test(NAME ${_target} COMMAND ${_target} ${gtest_args})
       endif()
     endforeach()
   endif()
@@ -76,8 +78,8 @@ if(${Cabana_ENABLE_MPI})
         endif()
         foreach(_np ${TEST_MPIEXEC_NUMPROCS})
           add_test(NAME ${_target}_${_np} COMMAND
-            ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np}
-            ${_target} --gtest_color=yes)
+            ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
+            ${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
         endforeach()
       endforeach()
     endif()
