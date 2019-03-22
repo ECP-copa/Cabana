@@ -12,53 +12,28 @@
 class TPME
 {
   public:
-    //TPME(accuracy_threshold, particles, mesh, x_width, y_width, z_width)
-       //accuracy_threshold is a value used in tuning the Ewald parameters (alpha, r_max, and k_max)
-       //particles is a ParticleList of particle information for all in the unit cell
-          //(positions[NDIM],  velocities[NDIM], 1 charge, 1 potential, 1 index)
-       //mesh is also a ParticleList, but for mesh points
-          //same setup as particles
-       //x_width is the length of the NaCl unit cell in the x-direction
-       //y_width is the length of the NaCl unit cell in the y-direction
-       //z_width is the length of the NaCl unit cell in the z-direction
-    TPME(double,ParticleList,ParticleList,double,double,double);
+    //constructor with accuracy
+    TPME(double accuracy_threshold, ParticleList particles, ParticleList mesh, double x_width, double y_width, double z_width);
+    
+    //set base values for alpha, r_max, k_max
+    TPME(double alpha, double r_max, double k_max);
 
-    //TPME(alpha, r_max, k_max)
-       //set base values for alpha, r_max, k_max
-    TPME(double, double, double);
+    //compute 1D cubic cardinal B-spline value given distance from point in mesh spacings (mesh_dist)
+    double oneDspline(double mesh_dist);
 
-    //oneDspline(mesh_dist)
-       //Computes a cubic cardinal B-spline in one dimension
-       //The cubic spline interpolates to find the fraction of the value to spread to
-       //   mesh points up to 2 mesh spacings away
-       //mesh_dist in this usage is the distance from the charged particle 
-       //   to the mesh point, measure in mesh spacings
-    double oneDspline(double);
+    //computes Euler exponential spline in 1D
+    double oneDeuler(int k, int meshwidth);
 
-    //oneDeuler(k, meshwidth)
-    //Computes the Euler exponential spline in one-dimension 
-    //k is the index of the mesh point position in one dimension, and varies from 0 to meshwidth-1
-    //meshwidth is the *number of mesh points* in each direction (assuming cubic for now)
-    double oneDeuler(int, int);
+    //short and long range energy computation
+    void compute(ParticleList& particles, ParticleList& mesh, double x_width, double y_width, double z_width);
 
-    //compute(particles, mesh, x_width, y_width, z_width)
-       //particles is a ParticleList of particle information for all in the unit cell
-          //(positions[NDIM],  velocities[NDIM], 1 charge, 1 potential, 1 index)
-       //mesh is also a ParticleList, but for mesh points
-          //same setup as particles
-       //x_width is the length of the NaCl unit cell in the x-direction
-       //y_width is the length of the NaCl unit cell in the y-direction
-       //z_width is the length of the NaCl unit cell in the z-direction
-    void compute(ParticleList&,ParticleList&,double,double,double);
-
-    //tune(accuracy_threshold, particles, x_width, y_width, z_width) 
     //tune alpha, r_max, k_max to adhere to given accuracy
-    void tune(double,ParticleList,double,double,double);
+    void tune(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width); 
 
     // setter functions for parameters
-    void set_alpha(double);
-    void set_r_max(double);
-    void set_k_max(double);
+    void set_alpha(double alpha);
+    void set_r_max(double r_max);
+    void set_k_max(double k_max);
 
     // getter functions
     double get_alpha() {return _alpha;}

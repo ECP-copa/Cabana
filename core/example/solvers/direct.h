@@ -15,13 +15,8 @@ class TDS
     TDS(int periodic = 0);
     ~TDS();
 
-    //compute(particles, x_width, y_width, z_width)
-       //particles is a ParticleList of particle information for all in the unit cell
-          //(positions[NDIM],  velocities[NDIM], 1 charge, 1 potential, 1 index)
-       //x_width is the length of the NaCl unit cell in the x-direction
-       //y_width is the length of the NaCl unit cell in the y-direction
-       //z_width is the length of the NaCl unit cell in the z-direction
-    void compute(ParticleList&, double, double, double);
+    //compute direct sum
+    void compute(ParticleList& particles, double x_width, double y_width, double z_width);
 
     double get_energy();
   private:
