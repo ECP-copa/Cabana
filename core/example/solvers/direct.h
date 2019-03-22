@@ -13,7 +13,6 @@ class TDS
 {
   public:
     TDS(int periodic = 0);
-    ~TDS();
 
     //compute direct sum
     void compute(ParticleList& particles, double x_width, double y_width, double z_width);

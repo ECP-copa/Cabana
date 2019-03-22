@@ -11,10 +11,6 @@ TDS::TDS(int periodic)
   _periodic_shells = periodic;
 }
 
-TDS::~TDS()
-{
-}
-
 void TDS::compute(ParticleList& particles, double lx, double ly, double lz)
 {
   total_energy = 0.0;

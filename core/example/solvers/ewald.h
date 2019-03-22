@@ -17,7 +17,6 @@ class TEwald
     
     //set base values for alpha, r_max, k_max
     TEwald(double alpha, double r_max, double k_max);
-    ~TEwald();
 
     //compute Ewald Sum
     void compute(ParticleList& particles, double x_width, double y_width, double z_width);

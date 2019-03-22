@@ -24,10 +24,6 @@ TEwald::TEwald(double alpha, double r_max, double k_max)
   _k_max_int[2] = std::ceil(_k_max);
 }
 
-TEwald::~TEwald()
-{
-}
-
 void TEwald::tune(double accuracy, ParticleList particles, double lx, double ly, double lz)
 {
   typedef Kokkos::MinLoc<double, int> reducer_type;
