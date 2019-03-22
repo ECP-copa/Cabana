@@ -46,7 +46,7 @@ foreach(_device ${CABANA_SUPPORTED_DEVICES})
       if(_device STREQUAL Pthread OR _device STREQUAL OpenMP)
         foreach(_thread 1 2)
           add_test(NAME ${_target}_${_thread} COMMAND
-            ${_target} --gtest_color=yes --kokkos-threads=${_thread})
+            ${_target} ${gtest_args} --kokkos-threads=${_thread})
         endforeach()
       else()
         add_test(NAME ${_target} COMMAND ${_target} ${gtest_args})
