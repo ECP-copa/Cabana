@@ -5,16 +5,26 @@
 #include <time.h>
 #include <sys/time.h>
 
-//using std::complex;
-//using std::vector;
+/* Smooth particle mesh Ewald (SPME) solver
+ * - This method, from Essman et al. (1995) computes long-range Coulombic forces
+ *   with O(nlogN) scaling by using 3D FFT and interpolation to a mesh for the 
+ *   reciprocal space part of the Ewald sum.
+ * - Here the method is used to compute electrostatic energies from an example
+ *   arrangement of charged particles. Currently, we assume periodic boundary conditions
+ *   and a cubic mesh and arrangement of particlesi in 3 dimensions.
+ * - Future versions will allow for assymetric meshes and non-uniform particle
+ *   distributions, as well as 1 or 2 dimensions. 
+ */
 
 
+//constructor given an accuracy
 TPME::TPME(double accuracy, ParticleList particles, double lx, double ly, double lz)
 {
   _r_max = 0.0;
   tune(accuracy,particles,lx, ly, lz);
 }
 
+//set base values for alpha, r_max, k_max
 TPME::TPME(double alpha, double r_max, double k_max)
 {
   _alpha = alpha;
@@ -25,6 +35,7 @@ TPME::TPME(double alpha, double r_max, double k_max)
   _k_max_int[2] = std::ceil(_k_max);
 }
 
+//Tune to a given accuracy
 void TPME::tune(double accuracy, ParticleList particles, double lx, double ly, double lz)
 {
   typedef Kokkos::MinLoc<double, int> reducer_type;
@@ -85,14 +96,18 @@ void TPME::tune(double accuracy, ParticleList particles, double lx, double ly, d
   _alpha = (double)(error_estimate.loc%N_alpha)*0.05+1.0;
   _k_max = (double)(error_estimate.loc/N_alpha)*0.05;
 
-  //_r_max = 0.6;
-  //_alpha = 1.5*0.5*(2.0+(4.0/_r_max)); 
 
   std::cout << "estimated error: " << error_estimate.val << std::endl;
   _k_max_int[0] = _k_max_int[1] = _k_max_int[2] = std::ceil(_k_max);
   std::cout << "Tuned values: " << "r_max: " << _r_max << " alpha: " << _alpha << " k_max: " << _k_max_int[0] << "  " << _k_max_int[1] << " " << _k_max_int[2] << " " << _k_max << std::endl;
 }
 
+
+//Compute a 1D cubic cardinal B-spline value, used in spreading charge to mesh points
+//   Given the distance from the particle (x) in units of mesh spaces, this computes the 
+//   fraction of that charge to place at a mesh point x mesh spaces away
+//   The cubic B-spline used here is shifted so that it is symmetric about zero
+//   All cubic B-splines are smooth functions that go to zero and are defined piecewise
 KOKKOS_INLINE_FUNCTION
 double TPME::oneDspline(double x)
 {
@@ -103,46 +118,59 @@ double TPME::oneDspline(double x)
   {
      return -(1.0/2.0)*x*x*x + 2.0*x*x - 2.0*x + (2.0/3.0);
   } 
+  //Using the symmetry here, only need to define function between 0 and 2
+  //Beware: This means all input to this function should be made positive
   else
   {
-     return 0.0;
+     return 0.0;//Zero if distance is >= 2 mesh spacings
   }
 } 
 
+//Compute a 1-D Euler spline. This function is part of the "lattice structure factor"
+//and is given by:
+//   b(k, meshwidth) = exp(2*PI*i*3*k/meshwidth) / SUM_{l=0,2}(1Dspline(l+1) * exp(2*PI*i*k*l/meshwidth))
+//   when using a non-shifted cubic B-spline in the charge spread, where meshwidth is the number of 
+//   mesh points in that dimension and k is the scaled fractional coordinate
 KOKKOS_INLINE_FUNCTION
 double TPME::oneDeuler(int k, int meshwidth)
 { 
   double denomreal = 0.0; 
   double denomimag = 0.0;
+  //Compute the denominator sum first, splitting the complex exponential into sin and cos
   for(int l = 0; l < 3; l++)
   {
      denomreal += TPME::oneDspline(std::min(4.0-(l+1.0),l+1.0)) * cos( 2.0 * PI * double(k) * l / double(meshwidth));
      denomimag += TPME::oneDspline(std::min(4.0-(l+1.0),l+1.0)) * sin( 2.0 * PI * double(k) * l / double(meshwidth));
   }
+  //Compute the numerator, again splitting the complex exponential
   double numreal = cos(2.0*PI*3.0*double(k)/double(meshwidth));
   double numimag = sin(2.0*PI*3.0*double(k)/double(meshwidth));
+  //Returning the norm of the 1-D Euler spline
   return (numreal*numreal + numimag*numimag) / (denomreal*denomreal + denomimag*denomimag);
 }
 
-
+//Compute the energy
 void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, double ly, double lz)
 {
+  //Initialize energies: real-space, k-space (reciprocal space), self-energy correction, dipole correction
   double Ur = 0.0, Uk = 0.0, Uself = 0.0, Udip = 0.0;
   double Udip_vec[3];
 
-
+  //Particle slices
   auto r = particles.slice<Position>();
   auto q = particles.slice<Charge>();
   auto p = particles.slice<Potential>();
   
+  //Mesh slices
   auto meshr = mesh.slice<Position>();
   auto meshq = mesh.slice<Charge>();
 
-
+  //Number of particles
   int n_max = particles.size();
 
   total_energy = 0.0; 
 
+  //Set the potential of each particle to zero
   auto init_p = KOKKOS_LAMBDA( const int idx )
   {
     p(idx) = 0.0;
@@ -164,6 +192,7 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
 #else
   int* k_max_int = &(_k_max_int[0]);
 #endif
+
   std::cout << "Starting real-space contribution" << std::endl;
   struct timeval starttime;
   gettimeofday(&starttime, NULL);
@@ -221,11 +250,15 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   
   double spacing = meshr(1,0)-meshr(0,0);//how far apart the mesh points are (assumed uniform cubic)   
   
-  int n_max_mesh = mesh.size();
+  int n_max_mesh = mesh.size();//Number of mesh points total
+
+  //Current method: Each mesh point loops over *all* particles, and gathers charge to it 
+  //                 according to spline interpolation. 
+  //Alternatives: Looping over all particles, using atomics to scatter charge to mesh points
+  //Also, would be nice to loop only over neighbors - spline is only 2 mesh points away maximum
   auto spread_q = KOKKOS_LAMBDA( const int idx )
   {
-     double xdist, ydist, zdist; //could make this an array
-     //Find which particles are within range to add charge
+     double xdist, ydist, zdist;
      for ( size_t pidx = 0; pidx < particles.size(); ++pidx )
      {
         //x-distance between mesh point and particle
@@ -256,10 +289,10 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   gettimeofday(&starttime2, NULL);
   
   std::cout << "Creating BC array" << std::endl;
-  //Create "B*C" array (called theta in Eqn 4.7 SPME)
-  //Can be done at start of run
+  //Create "B*C" array (called theta in Eqn 4.7 SPME paper by Essman)
+  //Can be done at start of run and stored
   //"meshwidth" should be number of mesh points along any axis. 
-  int meshwidth = std::round(std::pow(mesh.size(), 1.0/3.0)); 
+  int meshwidth = std::round(std::pow(mesh.size(), 1.0/3.0));//Assuming cubic mesh
   //std::cout << meshwidth << std::endl; 
 
   const int size = 16*16*16;//TODO: how to make this variable... =meshwidth^3?
@@ -267,8 +300,10 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   double B[size];
   double C[size];
 
-  std::cout << "Size of BC array: " << meshwidth << "^3" << std::endl;
-
+  //Calculating the values of the BC array involves first shifting the fractional coords
+  //then compute the B and C arrays as described in the paper
+  //This can be done once at the start of a run if the mesh stays constant
+  //Needs some parallelism regardless
   int kx, ky, kz, mx, my, mz;
   for (kx=0; kx<meshwidth; kx++)
   {
@@ -297,15 +332,17 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
                   }
                   double m2 = (mx*mx + my*my + mz*mz);//Unnecessary extra variable
 
+                  //Calculate B and C separately - seems like a waste. Should just combine.
                   B[idx] = TPME::oneDeuler(kx,meshwidth) * TPME::oneDeuler(ky,meshwidth) * TPME::oneDeuler(kz,meshwidth);
                   C[idx] = exp( -PI*PI*m2 / (alpha*alpha) ) / (PI * lx*ly*lz * m2 );
 
-                  BC[idx][0] = B[idx] * C[idx];
-                  BC[idx][1] = 0.0;
+                  BC[idx][0] = B[idx] * C[idx];//real part
+                  BC[idx][1] = 0.0;//imag part
               }
           }
       }
   }
+  //Note that the origin element is zero in this array
   BC[0][0] = 0.0;
   BC[0][1] = 0.0;
 
@@ -314,14 +351,18 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   struct timeval endtime;
   gettimeofday(&endtime, NULL);
   //Next, solve Poisson's equation taking some FFTs of charges on mesh grid  
- 
+  //The plan here is to perform an inverse FFT on the mesh charge, then multiply
+  //  the norm of that result (in reciprocal space) by the BC array
+
+  //Set up the real-space charge and reciprocal-space charge
   fftw_complex *Qr,*Qktest;
   fftw_plan plantest;
   
   Qr = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * meshwidth*meshwidth*meshwidth);
   Qktest = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * meshwidth*meshwidth*meshwidth);
   
-//Copy charges into real input array
+  //Copy charges into real input array
+  //TODO: parallelize
   std::cout << "Set up FFT" << std::endl;
   for ( size_t idx = 0; idx < mesh.size(); ++idx )
   {
@@ -331,19 +372,19 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
 
   std::cout << "Set up FFT done" << std::endl;
 
+  //Plan out that IFFT on the real-space charge mesh
   plantest = fftw_plan_dft_3d(meshwidth, meshwidth, meshwidth, Qr, Qktest, FFTW_BACKWARD, FFTW_ESTIMATE);
   fftw_execute(plantest);//IFFT on Q
-  for ( size_t idx = 0; idx < mesh.size(); ++idx )
+  for ( size_t idx = 0; idx < mesh.size(); ++idx )//TODO:parallelize
   {
      Uk += BC[idx][0] * ((Qktest[idx][0] * Qktest[idx][0]) + (Qktest[idx][1] * Qktest[idx][1]));
   }
   Uk *= 0.5;
-  //std::cout << Uk << std::endl;
+ 
   fftw_destroy_plan(plantest);
   
   struct timeval endtime2;
   gettimeofday(&endtime2, NULL);
-
 
   double time_us = double(starttime2.tv_usec)-double(starttime.tv_usec) + double(endtime2.tv_usec)-double(endtime.tv_usec);
   double time_s = double(starttime2.tv_sec)-double(starttime.tv_sec) + double(endtime2.tv_sec)-double(endtime.tv_sec);
@@ -360,6 +401,7 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
       );
 
   // TODO: using TeamPolicies?
+  // computation of dipole correction to energy
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Udip_part)
       {
       double V = lx * ly * lz;
