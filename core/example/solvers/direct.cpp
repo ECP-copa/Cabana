@@ -1,9 +1,9 @@
 #include "definitions.h"
 #include "direct.h"
-#include <Cabana_AoSoA.hpp>
-#include <Cabana_Parallel.hpp>
-#include <Cabana_ExecutionPolicy.hpp>
-#include <Cabana_MemberTypes.hpp>
+//#include <Cabana_AoSoA.hpp>
+//#include <Cabana_Parallel.hpp>
+//#include <Cabana_ExecutionPolicy.hpp>
+//#include <Cabana_MemberTypes.hpp>
 
 TDS::TDS(int periodic)
 {

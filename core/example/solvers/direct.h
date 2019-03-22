@@ -1,10 +1,9 @@
 #ifndef TDS_TDS_INCLUDED
 #define TDS_TDS_INCLUDED
 
-#include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberTypes.hpp>
-
-#include <Kokkos_Core.hpp>
+//#include <Cabana_AoSoA.hpp>
+//#include <Cabana_MemberTypes.hpp>
+//#include <Kokkos_Core.hpp>
 
 #include <iostream>
 #include "definitions.h"

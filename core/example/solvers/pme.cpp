@@ -1,20 +1,20 @@
 #include "definitions.h"
 #include "pme.h"
-#include <cmath>
-#include <gsl/gsl_sf_lambert.h>
-#include <Cabana_AoSoA.hpp>
-#include <Cabana_Parallel.hpp>
-#include <Cabana_ExecutionPolicy.hpp>
-#include <atomic>
-#include <Kokkos_Pair.hpp>
+//#include <cmath>
+//#include <gsl/gsl_sf_lambert.h>
+//#include <Cabana_AoSoA.hpp>
+//#include <Cabana_Parallel.hpp>
+//#include <Cabana_ExecutionPolicy.hpp>
+//#include <atomic>
+//#include <Kokkos_Pair.hpp>
 #include <fftw3.h>
-#include <complex>
-#include <vector>
+//#include <complex>
+//#include <vector>
 #include <time.h>
 #include <sys/time.h>
 
-using std::complex;
-using std::vector;
+//using std::complex;
+//using std::vector;
 
 
 TPME::TPME(double accuracy, ParticleList particles, double lx, double ly, double lz)
