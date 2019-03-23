@@ -174,11 +174,9 @@ void parallelForExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Kokkos::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     parallelForExample();
-
-    Kokkos::ScopeGuard();
 
     return 0;
 }

@@ -177,11 +177,9 @@ int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
 
-    Kokkos::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     migrationExample();
-
-    Kokkos::ScopeGuard();
 
     MPI_Finalize();
 

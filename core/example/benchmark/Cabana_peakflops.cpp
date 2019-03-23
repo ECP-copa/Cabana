@@ -320,11 +320,10 @@ void run()
 //---------------------------------------------------------------------------//
 int main( int argc, char **argv )
 {
-    Kokkos::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     run();
 
-    Kokkos::ScopeGuard();
     return 0;
 }
 

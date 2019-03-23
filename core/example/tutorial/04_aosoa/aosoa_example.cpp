@@ -201,11 +201,9 @@ void aosoaExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Kokkos::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     aosoaExample();
-
-    Kokkos::ScopeGuard();
 
     return 0;
 }

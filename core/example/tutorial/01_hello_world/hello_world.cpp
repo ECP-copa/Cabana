@@ -18,18 +18,14 @@
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    // The Kokkos runtime must first be initialized.
-    Kokkos::initialize(argc,argv);
-
-    // Any code using Cabana should be inserted between initialize and
-    // finalize.
-    std::cout << "Hello world from Cabana!" << std::endl;
-
-    /* The Kokkos runtime must also be finalized.
-       Kokkos::ScopeGuard ensures that Kokkos::finalize() is called, even
-       if the code returns early.
+    /* The Kokkos runtime used by Cabana must be initialized and finalized.
+       Kokkos::ScopeGuard inializes Kokkos and guarantees it is finalized,
+       even if the code returns early.
      */
-    Kokkos::ScopeGuard();
+    Kokkos::ScopeGuard scope_guard(argc, argv);
+
+    // Any code using Cabana should be after the ScopeGuard is constructed
+    std::cout << "Hello world from Cabana!" << std::endl;
 
     return 0;
 }

@@ -129,11 +129,9 @@ void linkedCellListExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Kokkos::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     linkedCellListExample();
-
-    Kokkos::ScopeGuard();
 
     return 0;
 }
