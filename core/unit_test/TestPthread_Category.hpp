@@ -12,8 +12,6 @@
 #ifndef CABANA_TEST_PTHREAD_CATEGORY_HPP
 #define CABANA_TEST_PTHREAD_CATEGORY_HPP
 
-#include <Kokkos_Threads.hpp>
-
 #define TEST_CATEGORY pthread
 #define TEST_EXECSPACE Kokkos::Threads
 #define TEST_MEMSPACE Kokkos::HostSpace
