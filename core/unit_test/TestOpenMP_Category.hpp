@@ -16,8 +16,6 @@
 
 #include <Kokkos_OpenMP.hpp>
 
-#include <gtest/gtest.h>
-
 #define TEST_CATEGORY openmp
 #define TEST_EXECSPACE Kokkos::OpenMP
 #define TEST_MEMSPACE Cabana::HostSpace

@@ -16,8 +16,6 @@
 
 #include <Kokkos_Serial.hpp>
 
-#include <gtest/gtest.h>
-
 #define TEST_CATEGORY serial
 #define TEST_EXECSPACE Kokkos::Serial
 #define TEST_MEMSPACE Cabana::HostSpace

@@ -16,8 +16,6 @@
 
 #include <Kokkos_Threads.hpp>
 
-#include <gtest/gtest.h>
-
 #define TEST_CATEGORY pthread
 #define TEST_EXECSPACE Kokkos::Threads
 #define TEST_MEMSPACE Cabana::HostSpace
