@@ -12,8 +12,6 @@
 #ifndef CABANA_TEST_OPENMP_CATEGORY_HPP
 #define CABANA_TEST_OPENMP_CATEGORY_HPP
 
-#include <Cabana_Types.hpp>
-
 #include <Kokkos_OpenMP.hpp>
 
 #define TEST_CATEGORY openmp

@@ -12,8 +12,6 @@
 #ifndef CABANA_TEST_SERIAL_CATEGORY_HPP
 #define CABANA_TEST_SERIAL_CATEGORY_HPP
 
-#include <Cabana_Types.hpp>
-
 #include <Kokkos_Serial.hpp>
 
 #define TEST_CATEGORY serial

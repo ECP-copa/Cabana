@@ -12,8 +12,6 @@
 #ifndef CABANA_TEST_CUDA_CATEGORY_HPP
 #define CABANA_TEST_CUDA_CATEGORY_HPP
 
-#include <Cabana_Types.hpp>
-
 #include <Kokkos_Cuda.hpp>
 
 #define TEST_CATEGORY cuda_uvm
