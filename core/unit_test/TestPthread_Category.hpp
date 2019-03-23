@@ -18,19 +18,6 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
-
-class pthread : public ::testing::Test {
-protected:
-  static void SetUpTestCase() {
-  }
-
-  static void TearDownTestCase() {
-  }
-};
-
-} // namespace Test
-
 #define TEST_CATEGORY pthread
 #define TEST_EXECSPACE Kokkos::Threads
 #define TEST_MEMSPACE Cabana::HostSpace
