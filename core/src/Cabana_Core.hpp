@@ -12,8 +12,6 @@
 #ifndef CABANA_CORE_HPP
 #define CABANA_CORE_HPP
 
-#define CABANA_DEPRECATED
-
 #include <CabanaCore_config.hpp>
 
 #include <Cabana_AoSoA.hpp>
