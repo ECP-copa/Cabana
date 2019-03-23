@@ -51,6 +51,9 @@ using ExecutionSpace = Kokkos::Cuda;
 #elif OMP_ENABLE
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::OpenMP;
+#elif Pthread_ENABLE
+using MemorySpace = Cabana::HostSpace;
+using ExecutionSpace = Kokkos::Threads;
 #elif Serial_ENABLE
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::Serial;
