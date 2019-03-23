@@ -18,6 +18,6 @@
 
 #define TEST_CATEGORY pthread
 #define TEST_EXECSPACE Kokkos::Threads
-#define TEST_MEMSPACE Cabana::HostSpace
+#define TEST_MEMSPACE Kokkos::HostSpace
 
 #endif // end CABANA_TEST_PTHREAD_CATEGORY_HPP

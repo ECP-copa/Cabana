@@ -18,6 +18,6 @@
 
 #define TEST_CATEGORY cuda_uvm
 #define TEST_EXECSPACE Kokkos::Cuda
-#define TEST_MEMSPACE Cabana::CudaUVMSpace
+#define TEST_MEMSPACE Kokkos::CudaUVMSpace
 
 #endif // end CABANA_TEST_CUDA_CATEGORY_HPP
