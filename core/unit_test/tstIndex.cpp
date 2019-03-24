@@ -20,16 +20,7 @@
 //---------------------------------------------------------------------------//
 namespace Test {
 
-class cabana_index : public ::testing::Test {
-protected:
-  static void SetUpTestCase() {
-  }
-
-  static void TearDownTestCase() {
-  }
-};
-
-TEST_F( cabana_index, index_test )
+TEST( cabana_index, index_test )
 {
     auto aosoa_idx_s = Cabana::Impl::Index<16>::s(40);
     auto aosoa_idx_i = Cabana::Impl::Index<16>::a(40);
