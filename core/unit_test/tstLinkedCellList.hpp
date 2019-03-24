@@ -178,7 +178,7 @@ void testLinkedList()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_list_test )
+TEST( TEST_CATEGORY, linked_list_test )
 {
     testLinkedList();
 }

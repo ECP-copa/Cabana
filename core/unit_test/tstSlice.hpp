@@ -335,19 +335,19 @@ void atomicAccessTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, api_test )
+TEST( TEST_CATEGORY, api_test )
 {
     apiTest();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, random_access_test )
+TEST( TEST_CATEGORY, random_access_test )
 {
     randomAccessTest();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, atomic_access_test )
+TEST( TEST_CATEGORY, atomic_access_test )
 {
     atomicAccessTest();
 }

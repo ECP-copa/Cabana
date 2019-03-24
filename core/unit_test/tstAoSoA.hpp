@@ -445,25 +445,25 @@ void testAccess()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_test )
+TEST( TEST_CATEGORY, aosoa_test )
 {
     testAoSoA();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_raw_data_test )
+TEST( TEST_CATEGORY, aosoa_raw_data_test )
 {
     testRawData();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_tuple_test )
+TEST( TEST_CATEGORY, aosoa_tuple_test )
 {
     testTuple();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_access_test )
+TEST( TEST_CATEGORY, aosoa_access_test )
 {
     testAccess();
 }

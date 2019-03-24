@@ -407,16 +407,16 @@ void test2( const bool use_topology )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, halo_test_1 )
+TEST( TEST_CATEGORY, halo_test_1 )
 { test1(true); }
 
-TEST_F( TEST_CATEGORY, halo_test_1_no_topo )
+TEST( TEST_CATEGORY, halo_test_1_no_topo )
 { test1(false); }
 
-TEST_F( TEST_CATEGORY, halo_test_2 )
+TEST( TEST_CATEGORY, halo_test_2 )
 { test2(true); }
 
-TEST_F( TEST_CATEGORY, halo_test_2_no_topo )
+TEST( TEST_CATEGORY, halo_test_2_no_topo )
 { test2(false); }
 
 //---------------------------------------------------------------------------//

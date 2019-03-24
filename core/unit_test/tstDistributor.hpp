@@ -629,46 +629,46 @@ void test7( const bool use_topology )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, distributor_test_1 )
+TEST( TEST_CATEGORY, distributor_test_1 )
 { test1(true); }
 
-TEST_F( TEST_CATEGORY, distributor_test_2 )
+TEST( TEST_CATEGORY, distributor_test_2 )
 { test2(true); }
 
-TEST_F( TEST_CATEGORY, distributor_test_3 )
+TEST( TEST_CATEGORY, distributor_test_3 )
 { test3(true); }
 
-TEST_F( TEST_CATEGORY, distributor_test_4 )
+TEST( TEST_CATEGORY, distributor_test_4 )
 { test4(true); }
 
-TEST_F( TEST_CATEGORY, distributor_test_5 )
+TEST( TEST_CATEGORY, distributor_test_5 )
 { test5(true); }
 
-TEST_F( TEST_CATEGORY, distributor_test_6 )
+TEST( TEST_CATEGORY, distributor_test_6 )
 { test6(true); }
 
-TEST_F( TEST_CATEGORY, distributor_test_7 )
+TEST( TEST_CATEGORY, distributor_test_7 )
 { test7(true); }
 
-TEST_F( TEST_CATEGORY, distributor_test_1_no_topo )
+TEST( TEST_CATEGORY, distributor_test_1_no_topo )
 { test1(false); }
 
-TEST_F( TEST_CATEGORY, distributor_test_2_no_topo )
+TEST( TEST_CATEGORY, distributor_test_2_no_topo )
 { test2(false); }
 
-TEST_F( TEST_CATEGORY, distributor_test_3_no_topo )
+TEST( TEST_CATEGORY, distributor_test_3_no_topo )
 { test3(false); }
 
-TEST_F( TEST_CATEGORY, distributor_test_4_no_topo )
+TEST( TEST_CATEGORY, distributor_test_4_no_topo )
 { test4(false); }
 
-TEST_F( TEST_CATEGORY, distributor_test_5_no_topo )
+TEST( TEST_CATEGORY, distributor_test_5_no_topo )
 { test5(false); }
 
-TEST_F( TEST_CATEGORY, distributor_test_6_no_topo )
+TEST( TEST_CATEGORY, distributor_test_6_no_topo )
 { test6(false); }
 
-TEST_F( TEST_CATEGORY, distributor_test_7_no_topo )
+TEST( TEST_CATEGORY, distributor_test_7_no_topo )
 { test7(false); }
 
 //---------------------------------------------------------------------------//
