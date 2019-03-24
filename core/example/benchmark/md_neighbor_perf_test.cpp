@@ -227,12 +227,10 @@ int main( int argc, char* argv[] )
     double cell_size_ratio = std::atof( argv[3] );
 
     // Initialize the kokkos runtime.
-    Cabana::initialize( argc, argv );
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     // Run the test.
     perfTest( cutoff_ratio, num_data, cell_size_ratio );
 
-    // Finalize.
-    Cabana::finalize();
     return 0;
 }

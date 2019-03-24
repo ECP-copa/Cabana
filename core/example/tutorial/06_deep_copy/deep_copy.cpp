@@ -145,11 +145,9 @@ void deepCopyExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     deepCopyExample();
-
-    Cabana::finalize();
 
     return 0;
 }
