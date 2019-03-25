@@ -81,6 +81,8 @@ if(Cabana_ENABLE_MPI)
   find_package(MPI REQUIRED)
 endif()
 
+option(Cabana_ENABLE_Performance_Testing "Build Performance Tests" OFF)
+
 
 #------------------------------------------------------------------------------#
 # Architecture
