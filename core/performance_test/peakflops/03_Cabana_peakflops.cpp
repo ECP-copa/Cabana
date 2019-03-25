@@ -56,6 +56,9 @@ struct data_t
 //---------------------------------------------------------------------------//
 // Move function using the array-of-struct-of-arrays synatx.
 
+// NOTE: noinline gives better performance for GCC (the inlined version is
+// poorly optimized?)
+// TODO: introduce a macro to select this based on compiler??
 void //__attribute__ ((noinline))
 movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
             data_t *__restrict__ x1, data_t *__restrict__ x2,
@@ -136,7 +139,7 @@ move_AoSoA(
             }
     }
     asm volatile ("# ax+c loop end");
-    /*
+    /* // TODO: do we need to re-enable this?
     for ( s = 0; s < num_struct; ++s )
     {
         for(j=0; j<VECLENTH; j++)
@@ -146,23 +149,6 @@ move_AoSoA(
         }
     }
     */
-}
-
-
-
-#pragma omp declare simd simdlen(VECLENTH) uniform(s) linear(i) uniform(a)
-template<typename SliceType>
-float access_vector_mul_direct(SliceType& x, SliceType& a, SliceType& c, int s, int i)
-{
-    return a(i) * x(i) + c(i);
-}
-
-
-#pragma omp declare simd simdlen(VECLENTH) uniform(s) linear(i) uniform(a) uniform(c) uniform(x)
-template<typename SliceType>
-float access_vector_mul(SliceType& x, SliceType& a, SliceType& c, int s, int i)
-{
-    return a.access(s,i) * x.access(s,i) + c.access(s,i);
 }
 
 //---------------------------------------------------------------------------/

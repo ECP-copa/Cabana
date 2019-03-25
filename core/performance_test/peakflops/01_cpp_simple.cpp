@@ -68,14 +68,15 @@ x_[5] = 6.865434
 x_[6] = 14.501436
 x_[7] = 1.216459
 -------------------
-For Sandy/Ivy Bridge you need to unroll by 3:
+For Sandy/Ivy Bridge you need to unroll by >=3:
 
 Only FP Add has dependency on the previous iteration of the loop
 FP Add can issue every cycle
 FP Add takes three cycles to complete
-Thus unrolling by 3/1 = 3 completely hides the latency
+Thus unrolling by 3/1 = 3 completely hides the latency (theoretically)
 FP Mul and FP Load do not have a dependency on the previous iteration and you can rely on the OoO core to issue them in the near-optimal order. These instructions could affect the unroll factor only if they lowered the throughput of FP Add (not the case here, FP Load + FP Add + FP Mul can issue every cycle).
-For Haswell you need to unroll by 10:
+
+For Haswell you need to unroll by 10 (as we do below, using x0..x9):
 
 Only FMA has dependency on the previous iteration of the loop
 FMA can double-issue every cycle (i.e. on average independent instructions take 0.5 cycles)
@@ -88,15 +89,14 @@ struct data{
   float vec[VECLENTH];
 };
 
-//struct data * axpy_10(struct data *restrict a, struct data *restrict x0, struct data *restrict x1, struct data *restrict x2, struct data *restrict x3, struct data *restrict x4, struct data *restrict x5, struct data *restrict x6, struct data *restrict x7, struct data *restrict x8, struct data *restrict x9,struct data *restrict c, long n) {
-  struct data * axpy_10(struct data *__restrict__ a, struct data *__restrict__ x0, struct data *__restrict__ x1, struct data *__restrict__ x2, struct data *__restrict__ x3, struct data *__restrict__ x4, struct data *__restrict__ x5, struct data *__restrict__ x6, struct data *__restrict__ x7, struct data *__restrict__ x8, struct data *__restrict__ x9,struct data *__restrict__ c, long n) {
+struct data * axpy_10(struct data *__restrict__ a, struct data *__restrict__ x0, struct data *__restrict__ x1, struct data *__restrict__ x2, struct data *__restrict__ x3, struct data *__restrict__ x4, struct data *__restrict__ x5, struct data *__restrict__ x6, struct data *__restrict__ x7, struct data *__restrict__ x8, struct data *__restrict__ x9,struct data *__restrict__ c, long n) {
   long i;
   int j;
 
   asm volatile ("# ax+c loop begin");
-  for(i = 0; i<n; i++){
+  for(i = 0; i<n; i++) {
 #pragma omp simd
-    for(j=0; j<VECLENTH; j++){
+    for(j=0; j<VECLENTH; j++) {
       x0->vec[j] = a->vec[j]*x0->vec[j]+ c->vec[j];
       x1->vec[j] = a->vec[j]*x1->vec[j]+ c->vec[j];
       x2->vec[j] = a->vec[j]*x2->vec[j]+ c->vec[j];
@@ -119,47 +119,44 @@ struct data{
 
 
 TEST(cpp, simple) {
-  long n = static_cast<long>(2e6); //1000000000; //MAXBYTES/sizeof(float);
-  /*long seed = (argc > 2 ? atol(argv[2]) : 76843802738543);*/
+  long n = static_cast<long>(2e6);
   long seed = 76843802738543;
 
+  data* a_ = new data();
+  data* x_ = new data();
+  data* x1_ = new data();
+  data* x2_ = new data();
+  data* x3_ = new data();
+  data* x4_ = new data();
+  data* x5_ = new data();
+  data* x6_ = new data();
+  data* x7_ = new data();
+  data* x8_ = new data();
+  data* x9_ = new data();
+  data* c_ = new data();
 
-  data * a_=new data;
-  data * x_=new data;
-  data * x1_=new data;
-  data * x2_=new data;
-  data * x3_=new data;
-  data * x4_=new data;
-  data * x5_=new data;
-  data * x6_=new data;
-  data * x7_=new data;
-  data * x8_=new data;
-  data * x9_=new data;
-  data * c_=new data;
   long i,j;
   unsigned short rg[3] = { static_cast<unsigned short>(seed >> 16), static_cast<unsigned short>(seed >> 8), static_cast<unsigned short>(seed) };
 
-  for (i = 0; i < VECLENTH; i++) {
-    a_->vec[i]  = erand48(rg);
-    x_->vec[i]  = erand48(rg);
-    c_->vec[i]  = erand48(rg);
-    x1_->vec[i] = erand48(rg);
-    x2_->vec[i] = erand48(rg);
-    x3_->vec[i] = erand48(rg);
-    x4_->vec[i] = erand48(rg);
-    x5_->vec[i] = erand48(rg);
-    x6_->vec[i] = erand48(rg);
-    x7_->vec[i] = erand48(rg);
-    x8_->vec[i] = erand48(rg);
-    x9_->vec[i] = erand48(rg);
+  for (i = 0; i < VECLENTH; i++)
+  {
+      a_->vec[i]  = erand48(rg);
+      x_->vec[i]  = erand48(rg);
+      c_->vec[i]  = erand48(rg);
+      x1_->vec[i] = erand48(rg);
+      x2_->vec[i] = erand48(rg);
+      x3_->vec[i] = erand48(rg);
+      x4_->vec[i] = erand48(rg);
+      x5_->vec[i] = erand48(rg);
+      x6_->vec[i] = erand48(rg);
+      x7_->vec[i] = erand48(rg);
+      x8_->vec[i] = erand48(rg);
+      x9_->vec[i] = erand48(rg);
   }
-  // for (i = 0; i < VECLENTH; i++) {
-  //   printf("x_[%ld] = %f\n", i, x8_->vec[i]);
-  // }
+
   unsigned long long c0 = rdtscp();
 
   x_ = axpy_10(a_,x_,x1_,x2_,x3_,x4_,x5_,x6_,x7_,x8_,x9_,c_,n);
-
 
   unsigned long long c1 = rdtscp();
 
@@ -172,7 +169,6 @@ TEST(cpp, simple) {
 
   double flops_clock = flops / dc;
   printf("%f flops/clock\n", flops_clock);
-
 
   for (i = 0; i < VECLENTH; i++) {
     printf("x_[%ld] = %f\n", i, x_->vec[i]);

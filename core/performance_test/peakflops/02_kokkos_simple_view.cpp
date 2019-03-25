@@ -4,7 +4,6 @@
 #include <string.h>
 #include <gtest/gtest.h>
 #include "common.h"
-//#include "rdtsc.h"
 
 typedef Kokkos::View<float[VECLENTH],Kokkos::MemoryTraits<Kokkos::Restrict> > view_type;
 
