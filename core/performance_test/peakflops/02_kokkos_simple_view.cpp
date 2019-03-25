@@ -8,32 +8,11 @@
 
 typedef Kokkos::View<float[VECLENTH],Kokkos::MemoryTraits<Kokkos::Restrict> > view_type;
 
-/*
-void __attribute__ ((noinline)) inita(const view_type & __restrict__  a,const view_type & __restrict__  x0,const view_type & __restrict__   x1,const view_type & __restrict__   x2,const view_type & __restrict__  c){
-    asm volatile ("# ax+c loop begin");
-    for(int l=1;l<10000;l++){
-#pragma omp simd
-        for(int j=0; j<8; j++){
-            x1(j) =a(j)*x1(j) +c(j);
-            x2(j) =a(j)*x2(j) +c(j);
-            x0(j) =a(j)*x0(j) +c(j);
-        }
-    }
-    asm volatile ("# ax+c loop end");
-}
-
-*/
-
-
 struct data{
     float vec[VECLENTH];
 };
 
-//struct data * axpy_10(struct data *restrict a, struct data *restrict x0, struct data *restrict x1, struct data *restrict x2, struct data *restrict x3, struct data *restrict x4, struct data *restrict x5, struct data *restrict x6, struct data *restrict x7, struct data *restrict x8, struct data *restrict x9,struct data *restrict c, long n) {
-//struct data * axpy_10(struct data *__restrict__ a, struct data *__restrict__ x0, struct data *__restrict__ x1, struct data *__restrict__ x2, struct data *__restrict__ x3, struct data *__restrict__ x4, struct data *__restrict__ x5, struct data *__restrict__ x6, struct data *__restrict__ x7, struct data *__restrict__ x8, struct data *__restrict__ x9,struct data *__restrict__ c, long n) {
-
-view_type //__attribute__ ((noinline))
-axpy_10(
+view_type axpy_10(
         const view_type & __restrict__  a,
         const view_type & __restrict__  x0,
         const view_type & __restrict__  x1,
@@ -80,8 +59,7 @@ axpy_10(
 
 
 TEST(kokkos, simple) {
-    long n = static_cast<long>(2e6); //1000000000; //MAXBYTES/sizeof(float);
-    /*long seed = (argc > 2 ? atol(argv[2]) : 76843802738543);*/
+    long n = static_cast<long>(2e6);
     long seed = 76843802738543;
 
     const int N = 1;
@@ -98,21 +76,6 @@ TEST(kokkos, simple) {
     view_type x8_("x8",N);
     view_type x9_("x9",N);
     view_type c_("c",N);
-
-    /*
-    data * a_=new data;
-    data * x_=new data;
-    data * x1_=new data;
-    data * x2_=new data;
-    data * x3_=new data;
-    data * x4_=new data;
-    data * x5_=new data;
-    data * x6_=new data;
-    data * x7_=new data;
-    data * x8_=new data;
-    data * x9_=new data;
-    data * c_=new data;
-    */
 
     long i,j;
     unsigned short rg[3] = { static_cast<unsigned short>(seed >> 16), static_cast<unsigned short>(seed >> 8), static_cast<unsigned short>(seed) };
@@ -132,9 +95,7 @@ TEST(kokkos, simple) {
         x8_(i) = erand48(rg);
         x9_(i) = erand48(rg);
     }
-    // for (i = 0; i < VECLENTH; i++) {
-    //   printf("x_[%ld] = %f\n", i, x8_->vec[i]);
-    // }
+
     unsigned long long c0 = rdtscp();
 
     x0_ = axpy_10(a_,x0_,x1_,x2_,x3_,x4_,x5_,x6_,x7_,x8_,x9_,c_,n);
@@ -168,22 +129,4 @@ TEST(kokkos, simple) {
     }
 
     EXPECT_TRUE(acceptable_fraction);
-
-    /*
-    delete a_;
-    delete x_;
-    delete c_;
-    delete x1_;
-    delete x2_;
-    delete x3_;
-    delete x4_;
-    delete x5_;
-    delete x6_;
-    delete x7_;
-    delete x8_;
-    delete x9_;
-    */
-
 }
-
-
