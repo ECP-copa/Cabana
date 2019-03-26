@@ -590,6 +590,56 @@ void permute( const BinningDataType& binning_data,
 }
 
 //---------------------------------------------------------------------------//
+/*!
+  \brief Given binning data and range permute part of an AoSoA.
+
+  \tparam BinningDataType The binning data type.
+
+  \tparm AoSoA_t The AoSoA type.
+
+  \param binning_data The binning data.
+
+  \param aosoa The AoSoA to permute.
+
+  \param begin The beginning index of the AoSoA range to sort.
+
+  \param end The end index of the AoSoA range to sort.
+*/
+template<class BinningDataType, class AoSoA_t>
+void permute( const BinningDataType& binning_data,
+              AoSoA_t& aosoa,
+              const std::size_t begin,
+              const std::size_t end,
+              typename std::enable_if<(is_binning_data<BinningDataType>::value &&
+                                       is_aosoa<AoSoA_t>::value),
+              int>::type * = 0)
+{
+    Kokkos::View<typename AoSoA_t::tuple_type*,
+                 typename BinningDataType::memory_space>
+        scratch_tuples( "scratch_tuples", end - begin );
+
+    auto permute_to_scratch =
+        KOKKOS_LAMBDA( const std::size_t i )
+        {
+            scratch_tuples( i - begin ) =
+                aosoa.getTuple( binning_data.permutation(i-begin) );
+        };
+    Kokkos::parallel_for(
+        "Cabana::kokkosBinSort::permute_to_scratch",
+        Kokkos::RangePolicy<typename BinningDataType::execution_space>(begin,end),
+        permute_to_scratch );
+    Kokkos::fence();
+
+    auto copy_back = KOKKOS_LAMBDA( const std::size_t i )
+                     { aosoa.setTuple( i, scratch_tuples(i-begin) ); };
+    Kokkos::parallel_for(
+        "Cabana::kokkosBinSort::copy_back",
+        Kokkos::RangePolicy<typename BinningDataType::execution_space>(begin,end),
+        copy_back );
+    Kokkos::fence();
+}
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 
