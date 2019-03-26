@@ -2,8 +2,8 @@
 #include "pme.h"
 #include <cmath>
 #include <fftw3.h>
-#include <time.h>
 #include <sys/time.h>
+#include <chrono>
 
 /* Smooth particle mesh Ewald (SPME) solver
  * - This method, from Essman et al. (1995) computes long-range Coulombic forces
@@ -194,8 +194,9 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
 #endif
 
   std::cout << "Starting real-space contribution" << std::endl;
-  struct timeval starttime;
-  gettimeofday(&starttime, NULL);
+  std::chrono::time_point<std::chrono::steady_clock> starttime, starttime2, endtime, endtime2;
+  starttime = std::chrono::steady_clock::now();
+  
   // computation real-space contribution
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), KOKKOS_LAMBDA(int idx, double& Ur_part)
       {
@@ -285,9 +286,8 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   };
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max_mesh), spread_q ); 
   
-  struct timeval starttime2;
-  gettimeofday(&starttime2, NULL);
-  
+  starttime2 = std::chrono::steady_clock::now();
+
   std::cout << "Creating BC array" << std::endl;
   //Create "B*C" array (called theta in Eqn 4.7 SPME paper by Essman)
   //Can be done at start of run and stored
@@ -348,8 +348,8 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
 
   std::cout << "Done making BC array" << std::endl;
 
-  struct timeval endtime;
-  gettimeofday(&endtime, NULL);
+  endtime = std::chrono::steady_clock::now();
+
   //Next, solve Poisson's equation taking some FFTs of charges on mesh grid  
   //The plan here is to perform an inverse FFT on the mesh charge, then multiply
   //  the norm of that result (in reciprocal space) by the BC array
@@ -383,13 +383,11 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
  
   fftw_destroy_plan(plantest);
   
-  struct timeval endtime2;
-  gettimeofday(&endtime2, NULL);
+  endtime2 = std::chrono::steady_clock::now();
 
-  double time_us = double(starttime2.tv_usec)-double(starttime.tv_usec) + double(endtime2.tv_usec)-double(endtime.tv_usec);
-  double time_s = double(starttime2.tv_sec)-double(starttime.tv_sec) + double(endtime2.tv_sec)-double(endtime.tv_sec);
+  std::chrono::duration<double> elapsed_time = starttime2 - starttime + endtime2 - endtime;
 
-  std::cout << "Total time in SPME was: " << time_s + time_us/1000000.0  << " seconds." << std::endl;
+  std::cout << "Total time in SPME was: " << elapsed_time.count()  << " seconds." << std::endl;
 
   // computation of self-energy contribution
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Uself_part)
