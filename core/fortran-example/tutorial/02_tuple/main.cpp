@@ -79,56 +79,17 @@
     using TupleType = Cabana::Tuple<DataTypes>;
 
 
-TupleType * particle;
+TupleType * particle = new TupleType;;
 
 extern "C" {
   void tupleExample(TupleType *);
-  //  void allocate_tuple();
   void delete_tuple();
-}
-
-void allocate_tuple(){
-  particle = new TupleType;
 }
 
 
 void delete_tuple(){
   delete particle;
 }
-    /* Assign data to the tuple values using the multidimensional data
-       accessors. Each tuple element is accessed via a `get<>` function who's
-       integer template parameter indicates which member to access. In this
-       case:
-
-       *: get<0> will return the values for the tuple member of type
-          `double[3][3]` (i.e. the zero member)
-
-       *: get<1> will return the values for the tuple member of type
-          `float[4]` (i.e. the first member)
-
-       *: get<2> will return the values for the tuple member of type
-          `int` (i.e. the second member)
-    */
-    // for ( int i = 0; i < 3; ++i )
-    //     for ( int j = 0; j < 3; ++j )
-    //         tp.get<0>(i,j) = 1.0 * (i + j);
-
-    // for ( int i = 0; i < 4; ++i )
-    //     tp.get<1>(i) = 1.0 * i;
-
-    // tp.get<2>() = 1234;
-
-    // /* Read back the tuple data using the same multidimensional accessors */
-    // for ( int i = 0; i < 3; ++i )
-    //     for ( int j = 0; j < 3; ++j )
-    //         std::cout << "Tuple member 0 element (" << i << "," << j << "): "
-    //                   << tp.get<0>(i,j) << std::endl;
-
-    // for ( int i = 0; i < 4; ++i )
-    //     std::cout << "Tuple member 1 element (" << i << "): "
-    //               << tp.get<1>(i) << std::endl;
-
-    // std::cout << "Tuple member 2: " << tp.get<2>() << std::endl;
 
 
 //---------------------------------------------------------------------------//
