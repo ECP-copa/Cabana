@@ -10,18 +10,12 @@ SUBROUTINE tupleExample (particle) BIND(C,name='tupleExample')
   type(ptl_type) :: part
 
   interface     
-!!$     subroutine allocate_tuple() bind(C)
-!!$       use iso_c_binding       
-!!$     end subroutine allocate_tuple
-
      subroutine delete_tuple() bind(C)
        use iso_c_binding       
      end subroutine delete_tuple
-
   end interface
 
-!!$  call allocate_tuple();
-
+!Assign data to the tuple values
   do i = 1,3
      do j = 1,3
         part%d0(i,j) = 1.0 * (i + j)
@@ -34,6 +28,7 @@ SUBROUTINE tupleExample (particle) BIND(C,name='tupleExample')
 
   part%d2 = 1234
 
+! ouput 
   print *
   print *, "Print from a Cabana Fortran kernel:"
   print *
