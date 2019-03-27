@@ -79,7 +79,7 @@
     using TupleType = Cabana::Tuple<DataTypes>;
 
 
-TupleType * particle = new TupleType;;
+TupleType * particle = new TupleType;
 
 extern "C" {
   void tupleExample(TupleType *);
