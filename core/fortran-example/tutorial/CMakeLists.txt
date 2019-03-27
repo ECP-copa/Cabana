@@ -1,2 +1,3 @@
 add_subdirectory(01_hello_world)
 add_subdirectory(02_tuple)
+add_subdirectory(03_struct_of_arrays)
