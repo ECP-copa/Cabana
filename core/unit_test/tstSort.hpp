@@ -407,37 +407,37 @@ void testBinBySliceDataOnly()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, sort_by_key_test )
+TEST( TEST_CATEGORY, sort_by_key_test )
 {
     testSortByKey();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, bin_by_key_test )
+TEST( TEST_CATEGORY, bin_by_key_test )
 {
     testBinByKey();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, sort_by_member_test )
+TEST( TEST_CATEGORY, sort_by_member_test )
 {
     testSortBySlice();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, sort_by_member_data_only_test )
+TEST( TEST_CATEGORY, sort_by_member_data_only_test )
 {
     testSortBySliceDataOnly();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, bin_by_member_test )
+TEST( TEST_CATEGORY, bin_by_member_test )
 {
     testBinBySlice();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, bin_by_member_data_only_test )
+TEST( TEST_CATEGORY, bin_by_member_data_only_test )
 {
     testBinBySliceDataOnly();
 }

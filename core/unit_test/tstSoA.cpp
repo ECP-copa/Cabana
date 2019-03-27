@@ -21,14 +21,6 @@
 
 namespace Test
 {
-class cabana_soa : public ::testing::Test {
-protected:
-  static void SetUpTestCase() {
-  }
-
-  static void TearDownTestCase() {
-  }
-};
 
 //---------------------------------------------------------------------------//
 // Struct for size comparison.
@@ -83,7 +75,7 @@ void testSoA()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST_F( cabana_soa, soa_test )
+TEST( cabana_soa, soa_test )
 {
     testSoA();
 }

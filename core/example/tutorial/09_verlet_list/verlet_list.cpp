@@ -146,11 +146,9 @@ void verletListExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     verletListExample();
-
-    Cabana::finalize();
 
     return 0;
 }

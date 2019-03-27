@@ -320,11 +320,10 @@ void run()
 //---------------------------------------------------------------------------//
 int main( int argc, char **argv )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     run();
 
-    Cabana::finalize();
     return 0;
 }
 

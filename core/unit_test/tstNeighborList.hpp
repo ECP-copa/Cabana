@@ -471,31 +471,31 @@ void testVerletListFullPartialRange()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_cell_stencil_test )
+TEST( TEST_CATEGORY, linked_cell_stencil_test )
 {
     testLinkedCellStencil();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_cell_list_full_test )
+TEST( TEST_CATEGORY, linked_cell_list_full_test )
 {
     testVerletListFull();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_cell_list_half_test )
+TEST( TEST_CATEGORY, linked_cell_list_half_test )
 {
     testVerletListHalf();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_cell_list_full_range_test )
+TEST( TEST_CATEGORY, linked_cell_list_full_range_test )
 {
     testVerletListFullPartialRange();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, parallel_for_test )
+TEST( TEST_CATEGORY, parallel_for_test )
 {
     testNeighborParallelFor();
 }

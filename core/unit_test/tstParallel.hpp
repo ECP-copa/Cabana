@@ -251,7 +251,7 @@ void runTest2d()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, simd_parallel_for_test )
+TEST( TEST_CATEGORY, simd_parallel_for_test )
 {
     runTest2d();
 }
