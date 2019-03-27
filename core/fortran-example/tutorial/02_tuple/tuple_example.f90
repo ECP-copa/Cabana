@@ -1,5 +1,6 @@
-SUBROUTINE tupleExample (particle) BIND(C,name='tupleExample')
+SUBROUTINE tupleExample (part) BIND(C,name='tupleExample')
   USE, INTRINSIC :: ISO_C_BINDING
+  implicit none
   integer i,j
   type, BIND(C) :: ptl_type      
      real (C_DOUBLE) :: d0(3,3) 
