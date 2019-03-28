@@ -12,6 +12,8 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_Sort.hpp>
 
+#include <Kokkos_Core.hpp>
+
 #include <gtest/gtest.h>
 
 namespace Test
@@ -44,41 +46,61 @@ void testSortByKey()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( std::size_t p = 0; p < aosoa.size(); ++p )
-    {
-        int reverse_index = aosoa.size() - p - 1;
+    Kokkos::parallel_for(
+        "fill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            int reverse_index = aosoa.size() - p - 1;
 
-        for ( int i = 0; i < dim_1; ++i )
-            v0( p, i ) = reverse_index + i;
+            for ( int i = 0; i < dim_1; ++i )
+                v0( p, i ) = reverse_index + i;
 
-        v1( p ) = reverse_index;
+            v1( p ) = reverse_index;
 
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                v2( p, i, j ) = reverse_index + i + j;
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    v2( p, i, j ) = reverse_index + i + j;
 
-        keys( p ) = reverse_index;
-    }
+            keys( p ) = reverse_index;
+        });
 
     // Sort the aosoa by keys.
     auto binning_data = Cabana::sortByKey( keys );
     Cabana::permute( binning_data, aosoa );
 
+    // Copy the bin data so we can check it.
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_permute( "bin_permute", aosoa.size() );
+    Kokkos::parallel_for(
+        "copy bin data",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            bin_permute(p) = binning_data.permutation(p); });
+    Kokkos::fence();
+    auto bin_permute_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_permute );
+
     // Check the result of the sort.
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = mirror.slice<0>();
+    auto v1_mirror = mirror.slice<1>();
+    auto v2_mirror = mirror.slice<2>();
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( v0( p, i ), p + i );
+            EXPECT_EQ( v0_mirror( p, i ), p + i );
 
-        EXPECT_EQ( v1( p ), p );
+        EXPECT_EQ( v1_mirror( p ), p );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( v2( p, i, j ), p + i + j );
+                EXPECT_EQ( v2_mirror( p, i, j ), p + i + j );
 
-        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+        EXPECT_EQ( bin_permute_mirror(p), (unsigned) reverse_index );
     }
 }
 
@@ -96,7 +118,6 @@ void testBinByKey()
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type = typename AoSoA_t::memory_space::size_type;
 
     // Create an AoSoA.
     int num_data = 3453;
@@ -111,45 +132,77 @@ void testBinByKey()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( std::size_t p = 0; p < aosoa.size(); ++p )
-    {
-        int reverse_index = aosoa.size() - p - 1;
+    Kokkos::parallel_for(
+        "fill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            int reverse_index = aosoa.size() - p - 1;
 
-        for ( int i = 0; i < dim_1; ++i )
-            v0( p, i ) = reverse_index + i;
+            for ( int i = 0; i < dim_1; ++i )
+                v0( p, i ) = reverse_index + i;
 
-        v1( p ) = reverse_index;
+            v1( p ) = reverse_index;
 
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                v2( p, i, j ) = reverse_index + i + j;
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    v2( p, i, j ) = reverse_index + i + j;
 
-        keys( p ) = reverse_index;
-    }
+            keys( p ) = reverse_index;
+        });
+    Kokkos::fence();
 
     // Bin the aosoa by keys. Use one bin per data point to effectively make
     // this a sort.
     auto bin_data = Cabana::binByKey( keys, num_data-1 );
     Cabana::permute( bin_data, aosoa );
 
+    // Copy the bin data so we can check it.
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_permute( "bin_permute", aosoa.size() );
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_offset( "bin_offset", aosoa.size() );
+    Kokkos::View<int*,TEST_MEMSPACE>
+        bin_size( "bin_size", aosoa.size() );
+    Kokkos::parallel_for(
+        "copy bin data",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            bin_size(p) = bin_data.binSize(p);
+            bin_offset(p) = bin_data.binOffset(p);
+            bin_permute(p) = bin_data.permutation(p);
+        });
+    Kokkos::fence();
+    auto bin_permute_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_permute );
+    auto bin_offset_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_offset );
+    auto bin_size_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_size );
+
     // Check the result of the sort.
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = mirror.slice<0>();
+    auto v1_mirror = mirror.slice<1>();
+    auto v2_mirror = mirror.slice<2>();
     EXPECT_EQ( bin_data.numBin(), num_data );
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( v0( p, i ), p + i );
+            EXPECT_EQ( v0_mirror( p, i ), p + i );
 
-        EXPECT_EQ( v1( p ), p );
+        EXPECT_EQ( v1_mirror( p ), p );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( v2( p, i, j ), p + i + j );
+                EXPECT_EQ( v2_mirror( p, i, j ), p + i + j );
 
-        EXPECT_EQ( bin_data.binSize(p), 1 );
-        EXPECT_EQ( bin_data.binOffset(p), size_type(p) );
-        EXPECT_EQ( bin_data.permutation(p), reverse_index );
+        EXPECT_EQ( bin_size_mirror(p), 1 );
+        EXPECT_EQ( bin_offset_mirror(p), std::size_t(p) );
+        EXPECT_EQ( bin_permute_mirror(p), reverse_index );
     }
 }
 
@@ -177,39 +230,61 @@ void testSortBySlice()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( std::size_t p = 0; p < aosoa.size(); ++p )
-    {
-        int reverse_index = aosoa.size() - p - 1;
+    Kokkos::parallel_for(
+        "fill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            int reverse_index = aosoa.size() - p - 1;
 
-        for ( int i = 0; i < dim_1; ++i )
-            v0( p, i ) = reverse_index + i;
+            for ( int i = 0; i < dim_1; ++i )
+                v0( p, i ) = reverse_index + i;
 
-        v1( p ) = reverse_index;
+            v1( p ) = reverse_index;
 
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                v2( p, i, j ) = reverse_index + i + j;
-    }
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    v2( p, i, j ) = reverse_index + i + j;
+        });
+    Kokkos::fence();
 
     // Sort the aosoa by the 1D member.
     auto binning_data = Cabana::sortByKey( aosoa.slice<1>() );
     Cabana::permute( binning_data, aosoa );
 
+    // Copy the bin data so we can check it.
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_permute( "bin_permute", aosoa.size() );
+    Kokkos::parallel_for(
+        "copy bin data",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            bin_permute(p) = binning_data.permutation(p);
+        });
+    Kokkos::fence();
+    auto bin_permute_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_permute );
+
     // Check the result of the sort.
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = mirror.slice<0>();
+    auto v1_mirror = mirror.slice<1>();
+    auto v2_mirror = mirror.slice<2>();
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( v0( p, i ), p + i );
+            EXPECT_EQ( v0_mirror( p, i ), p + i );
 
-        EXPECT_EQ( v1( p ), p );
+        EXPECT_EQ( v1_mirror( p ), p );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( v2( p, i, j ), p + i + j );
+                EXPECT_EQ( v2_mirror( p, i, j ), p + i + j );
 
-        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+        EXPECT_EQ( bin_permute_mirror(p), (unsigned) reverse_index );
     }
 }
 
@@ -237,39 +312,61 @@ void testSortBySliceDataOnly()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( std::size_t p = 0; p < aosoa.size(); ++p )
-    {
-        int reverse_index = aosoa.size() - p - 1;
+    Kokkos::parallel_for(
+        "fill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            int reverse_index = aosoa.size() - p - 1;
 
-        for ( int i = 0; i < dim_1; ++i )
-            v0( p, i ) = reverse_index + i;
+            for ( int i = 0; i < dim_1; ++i )
+                v0( p, i ) = reverse_index + i;
 
-        v1( p ) = reverse_index;
+            v1( p ) = reverse_index;
 
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                v2( p, i, j ) = reverse_index + i + j;
-    }
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    v2( p, i, j ) = reverse_index + i + j;
+        });
+    Kokkos::fence();
 
     // Sort the aosoa by the 1D member.
     auto binning_data = Cabana::sortByKey( aosoa.slice<1>() );
 
+    // Copy the bin data so we can check it.
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_permute( "bin_permute", aosoa.size() );
+    Kokkos::parallel_for(
+        "copy bin data",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            bin_permute(p) = binning_data.permutation(p);
+        });
+    Kokkos::fence();
+    auto bin_permute_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_permute );
+
     // Check that the data didn't get sorted and the permutation vector is
     // correct.
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = mirror.slice<0>();
+    auto v1_mirror = mirror.slice<1>();
+    auto v2_mirror = mirror.slice<2>();
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( v0( p, i ), reverse_index + i );
+            EXPECT_EQ( v0_mirror( p, i ), reverse_index + i );
 
-        EXPECT_EQ( v1( p ), reverse_index );
+        EXPECT_EQ( v1_mirror( p ), reverse_index );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( v2( p, i, j ), reverse_index + i + j );
+                EXPECT_EQ( v2_mirror( p, i, j ), reverse_index + i + j );
 
-        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+        EXPECT_EQ( bin_permute_mirror(p), (unsigned) reverse_index );
     }
 }
 
@@ -287,7 +384,6 @@ void testBinBySlice()
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type = typename AoSoA_t::memory_space::size_type;
 
     // Create an AoSoA.
     int num_data = 3453;
@@ -298,43 +394,75 @@ void testBinBySlice()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( std::size_t p = 0; p < aosoa.size(); ++p )
-    {
-        int reverse_index = aosoa.size() - p - 1;
+    Kokkos::parallel_for(
+        "fill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            int reverse_index = aosoa.size() - p - 1;
 
-        for ( int i = 0; i < dim_1; ++i )
-            v0( p, i ) = reverse_index + i;
+            for ( int i = 0; i < dim_1; ++i )
+                v0( p, i ) = reverse_index + i;
 
-        v1( p ) = reverse_index;
+            v1( p ) = reverse_index;
 
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                v2( p, i, j ) = reverse_index + i + j;
-    }
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    v2( p, i, j ) = reverse_index + i + j;
+        });
+    Kokkos::fence();
 
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort.
     auto bin_data = Cabana::binByKey( aosoa.slice<1>(), num_data-1 );
     Cabana::permute( bin_data, aosoa );
 
+    // Copy the bin data so we can check it.
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_permute( "bin_permute", aosoa.size() );
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_offset( "bin_offset", aosoa.size() );
+    Kokkos::View<int*,TEST_MEMSPACE>
+        bin_size( "bin_size", aosoa.size() );
+    Kokkos::parallel_for(
+        "copy bin data",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            bin_size(p) = bin_data.binSize(p);
+            bin_offset(p) = bin_data.binOffset(p);
+            bin_permute(p) = bin_data.permutation(p);
+        });
+    Kokkos::fence();
+    auto bin_permute_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_permute );
+    auto bin_offset_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_offset );
+    auto bin_size_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_size );
+
     // Check the result of the sort.
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = mirror.slice<0>();
+    auto v1_mirror = mirror.slice<1>();
+    auto v2_mirror = mirror.slice<2>();
     EXPECT_EQ( bin_data.numBin(), num_data );
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( v0( p, i ), p + i );
+            EXPECT_EQ( v0_mirror( p, i ), p + i );
 
-        EXPECT_EQ( v1( p ), p );
+        EXPECT_EQ( v1_mirror( p ), p );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( v2( p, i, j ), p + i + j );
+                EXPECT_EQ( v2_mirror( p, i, j ), p + i + j );
 
-        EXPECT_EQ( bin_data.binSize(p), 1 );
-        EXPECT_EQ( bin_data.binOffset(p), size_type(p) );
-        EXPECT_EQ( bin_data.permutation(p), reverse_index );
+        EXPECT_EQ( bin_size_mirror(p), 1 );
+        EXPECT_EQ( bin_offset_mirror(p), std::size_t(p) );
+        EXPECT_EQ( bin_permute_mirror(p), reverse_index );
     }
 }
 
@@ -352,7 +480,6 @@ void testBinBySliceDataOnly()
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    using size_type = typename AoSoA_t::memory_space::size_type;
 
     // Create an AoSoA.
     int num_data = 3453;
@@ -363,44 +490,76 @@ void testBinBySliceDataOnly()
     auto v0 = aosoa.slice<0>();
     auto v1 = aosoa.slice<1>();
     auto v2 = aosoa.slice<2>();
-    for ( std::size_t p = 0; p < aosoa.size(); ++p )
-    {
-        int reverse_index = aosoa.size() - p - 1;
+    Kokkos::parallel_for(
+        "fill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            int reverse_index = aosoa.size() - p - 1;
 
-        for ( int i = 0; i < dim_1; ++i )
-            v0( p, i ) = reverse_index + i;
+            for ( int i = 0; i < dim_1; ++i )
+                v0( p, i ) = reverse_index + i;
 
-        v1( p ) = reverse_index;
+            v1( p ) = reverse_index;
 
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                v2( p, i, j ) = reverse_index + i + j;
-    }
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    v2( p, i, j ) = reverse_index + i + j;
+        });
+    Kokkos::fence();
 
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort. Don't actually move the particle data
     // though - just create the binning data.
     auto bin_data = Cabana::binByKey( aosoa.slice<1>(), num_data-1 );
 
+    // Copy the bin data so we can check it.
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_permute( "bin_permute", aosoa.size() );
+    Kokkos::View<std::size_t*,TEST_MEMSPACE>
+        bin_offset( "bin_offset", aosoa.size() );
+    Kokkos::View<int*,TEST_MEMSPACE>
+        bin_size( "bin_size", aosoa.size() );
+    Kokkos::parallel_for(
+        "copy bin data",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int p ){
+            bin_size(p) = bin_data.binSize(p);
+            bin_offset(p) = bin_data.binOffset(p);
+            bin_permute(p) = bin_data.permutation(p);
+        });
+    Kokkos::fence();
+    auto bin_permute_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_permute );
+    auto bin_offset_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_offset );
+    auto bin_size_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), bin_size );
+
     // Check the result of the sort. Make sure nothing moved execpt the
     // binning data.
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = mirror.slice<0>();
+    auto v1_mirror = mirror.slice<1>();
+    auto v2_mirror = mirror.slice<2>();
     EXPECT_EQ( bin_data.numBin(), num_data );
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( v0( p, i ), reverse_index + i );
+            EXPECT_EQ( v0_mirror( p, i ), reverse_index + i );
 
-        EXPECT_EQ( v1( p ), reverse_index );
+        EXPECT_EQ( v1_mirror( p ), reverse_index );
 
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( v2( p, i, j ), reverse_index + i + j );
+                EXPECT_EQ( v2_mirror( p, i, j ), reverse_index + i + j );
 
-        EXPECT_EQ( bin_data.binSize(p), 1 );
-        EXPECT_EQ( bin_data.binOffset(p), size_type(p) );
-        EXPECT_EQ( bin_data.permutation(p), reverse_index );
+        EXPECT_EQ( bin_size_mirror(p), 1 );
+        EXPECT_EQ( bin_offset_mirror(p), std::size_t(p) );
+        EXPECT_EQ( bin_permute_mirror(p), reverse_index );
     }
 }
 
