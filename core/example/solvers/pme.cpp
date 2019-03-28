@@ -146,7 +146,7 @@ double TPME::oneDeuler(int k, int meshwidth)
 }
 
 //Compute the energy
-void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, double ly, double lz)
+void TPME::compute(int meshsize, ParticleList& particles, ParticleList& mesh, double lx, double ly, double lz)
 {
   //Initialize energies: real-space, k-space (reciprocal space), self-energy correction, dipole correction
   double Ur = 0.0, Uk = 0.0, Uself = 0.0, Udip = 0.0;
@@ -247,8 +247,6 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   
   double spacing = meshr(1,0)-meshr(0,0);//how far apart the mesh points are (assumed uniform cubic)   
   
-  int n_max_mesh = mesh.size();//Number of mesh points total
-
   //Current method: Each mesh point loops over *all* particles, and gathers charge to it 
   //                 according to spline interpolation. 
   //Alternatives: Looping over all particles, using atomics to scatter charge to mesh points
@@ -280,7 +278,7 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
         }
      }       
   };
-  Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max_mesh), spread_q ); 
+  Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,meshsize), spread_q ); 
   
   starttime2 = std::chrono::steady_clock::now();
 
@@ -288,13 +286,9 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
   //Create "B*C" array (called theta in Eqn 4.7 SPME paper by Essman)
   //Can be done at start of run and stored
   //"meshwidth" should be number of mesh points along any axis. 
-  int meshwidth = std::round(std::pow(mesh.size(), 1.0/3.0));//Assuming cubic mesh
-  //std::cout << meshwidth << std::endl; 
+  int meshwidth = std::round(std::pow(meshsize, 1.0/3.0));//Assuming cubic mesh
 
-  const int size = 16*16*16;//TODO: how to make this variable... =meshwidth^3?
-  fftw_complex BC[size];
-  double B[size];
-  double C[size];
+  fftw_complex BC[meshsize];
 
   //Calculating the values of the BC array involves first shifting the fractional coords
   //then compute the B and C arrays as described in the paper
@@ -329,10 +323,9 @@ void TPME::compute(ParticleList& particles, ParticleList& mesh, double lx, doubl
                   double m2 = (mx*mx + my*my + mz*mz);//Unnecessary extra variable
 
                   //Calculate B and C separately - seems like a waste. Should just combine.
-                  B[idx] = TPME::oneDeuler(kx,meshwidth) * TPME::oneDeuler(ky,meshwidth) * TPME::oneDeuler(kz,meshwidth);
-                  C[idx] = exp( -PI*PI*m2 / (alpha*alpha) ) / (PI * lx*ly*lz * m2 );
-
-                  BC[idx][0] = B[idx] * C[idx];//real part
+                  BC[idx][0] =  TPME::oneDeuler(kx,meshwidth) * TPME::oneDeuler(ky,meshwidth) 
+                               * TPME::oneDeuler(kz,meshwidth) 
+                               * exp( -PI*PI*m2 / (alpha*alpha) ) / (PI * lx*ly*lz * m2 );
                   BC[idx][1] = 0.0;//imag part
               }
           }

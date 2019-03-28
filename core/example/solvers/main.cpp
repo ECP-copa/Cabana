@@ -42,13 +42,15 @@ int main(int argc, char** argv)
   int flag = (argc >= 5)?atoi(argv[4]):7;
   double l[3];
   l[0] = l[1] = l[2] = 0.5*(double)c_size;
+  //Number of mesh points in each direction for SPME
+  int n_meshpoints = (argc >= 6)?atoi(argv[5]):16;
+  n_meshpoints = n_meshpoints*n_meshpoints*n_meshpoints;//total meshpoints in 3D
   // alpha splitting parameter for Ewald
-  double alpha = (argc >= 6)?atof(argv[5]):2.0;
+  double alpha = (argc >= 7)?atof(argv[6]):2.0;
   // cutoff radius for real-space part of Ewald
-  double r_max = (argc >= 7)?atof(argv[6]):0.499*(double)c_size;
+  double r_max = (argc >= 8)?atof(argv[7]):0.499*(double)c_size;
 
   int n_particles = c_size * c_size * c_size;
-  int n_meshpoints = 16*16*16;//Arbitrary value for now...
  
   ParticleList* particles = new ParticleList( n_particles );
 #ifndef TDS_BENCHMARKING
@@ -147,11 +149,10 @@ int main(int argc, char** argv)
   }
   if (flag & 4)
   {
-    int width = 1.0;//64*c_size;
+    int width = 1;
     ParticleList* mesh = new ParticleList( n_meshpoints );
     initializeParticles( *particles, c_size );
     initializeMesh( *mesh, width );  
-    
     Kokkos::Timer timer;
     //double kmax = (double)periodic_shells;
 
@@ -164,11 +165,11 @@ int main(int argc, char** argv)
     auto init_time = timer.seconds();
     timer.reset();
     //accuracy *= -n_particles * MADELUNG_NACL;
-    if (argc < 6) solver.tune(accuracy,*particles,l[0],l[1],l[2]);
+    if (argc < 7) solver.tune(accuracy,*particles,l[0],l[1],l[2]);
     std::cout << "req. acc: " << accuracy << std::endl; 
     auto tune_time = timer.seconds();
     timer.reset();
-    solver.compute(*particles,*mesh,l[0],l[1],l[2]);
+    solver.compute(n_meshpoints,*particles,*mesh,l[0],l[1],l[2]);
     std::cout << "Done" << std::endl;
     auto exec_time = timer.seconds();
     timer.reset();

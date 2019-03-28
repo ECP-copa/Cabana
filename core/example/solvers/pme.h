@@ -17,7 +17,7 @@ class TPME
     double oneDeuler(int k, int meshwidth);
 
     //short and long range energy computation
-    void compute(ParticleList& particles, ParticleList& mesh, double x_width, double y_width, double z_width);
+    void compute(int meshsize, ParticleList& particles, ParticleList& mesh, double x_width, double y_width, double z_width);
 
     //tune alpha, r_max, k_max to adhere to given accuracy
     void tune(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width); 
