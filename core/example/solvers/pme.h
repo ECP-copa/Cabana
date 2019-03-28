@@ -1,6 +1,3 @@
-#ifndef TDS_EWALD_INCLUDED
-#define TDS_EWALD_INCLUDED
-
 #include <iostream>
 #include "definitions.h"
 
@@ -10,8 +7,8 @@ class TPME
     //constructor with accuracy
     TPME(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width);
     
-    //set base values for alpha, r_max, k_max
-    TPME(double alpha, double r_max, double k_max);
+    //set base values for alpha, r_max
+    TPME(double alpha, double r_max);
 
     //compute 1D cubic cardinal B-spline value given distance from point in mesh spacings (mesh_dist)
     double oneDspline(double mesh_dist);
@@ -49,4 +46,3 @@ class TPME
     //double* Uk_coeffs;
 };
 
-#endif

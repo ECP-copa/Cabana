@@ -1,9 +1,8 @@
 #include "definitions.h"
 #include "particles.h"
-//#include "ewald.h"
-#include "direct.h"
 #include "pme.h"
-//#include "mesh.h"
+#include "ewald.h"
+#include "direct.h"
 
 #include <iomanip>
 #ifdef TDS_BENCHMARKING
@@ -34,8 +33,13 @@ int main(int argc, char** argv)
   // 0 -> none
   // 1 -> direct
   // 2 -> Ewald
-  // 3 -> both
-  int flag = (argc >= 5)?atoi(argv[4]):3;
+  // 3 -> direct and Ewald
+  // 4 -> SPME
+  // 5 -> SPME and direct
+  // 6 -> SPME and Ewald
+  // 7 -> all 3
+
+  int flag = (argc >= 5)?atoi(argv[4]):7;
   double l[3];
   l[0] = l[1] = l[2] = 0.5*(double)c_size;
   // alpha splitting parameter for Ewald
@@ -46,6 +50,7 @@ int main(int argc, char** argv)
   int n_particles = c_size * c_size * c_size;
   int n_meshpoints = 16*16*16;//Arbitrary value for now...
  
+  ParticleList* particles = new ParticleList( n_particles );
 #ifndef TDS_BENCHMARKING
 #else
   directfile.open("direct.res", std::ofstream::out | std::ofstream::app);
@@ -53,21 +58,17 @@ int main(int argc, char** argv)
   pmefile.open("pme.res", std::ofstream::out | std::ofstream::app);
 #endif
 
-  ParticleList* particles = new ParticleList( n_particles ); 
-  //ParticleList particles = *plist;
-
-  ParticleList* mesh = new ParticleList( n_meshpoints );
 
   std::cout << std::setprecision(12);
 
-/*  if (flag & 1)
+  if (flag & 1)
   {
     initializeParticles( *particles, c_size );
 
     Kokkos::Timer timer;
     TDS solver(periodic_shells);
-    //auto init_time = timer.seconds();
-    //timer.reset();
+    auto init_time = timer.seconds();
+    timer.reset();
 #ifndef TDS_BENCHMARKING
     std::cout << "Direct summation solver: " << std::endl;
 #endif
@@ -81,35 +82,34 @@ int main(int argc, char** argv)
     std::cout << "Time for computation in direct summation solver:    " << exec_time << " s." << std::endl;
     std::cout << "Total time spent in direct summation solver:        " << elapsed_time << " s." << std::endl;
     std::cout << "total potential energy: " << solver.get_energy() << std::endl;
-    std::cout << "absolute error (potential): " << MADELUNG_NACL-particles->view(Cabana::MemberTag<Potential>())(0) << std::endl;
-    std::cout << "relative error (potential): " << 1.0 - MADELUNG_NACL/particles->view(Cabana::MemberTag<Potential>())(0) << std::endl;
+    //std::cout << "absolute error (potential): " << MADELUNG_NACL-particles->view(Cabana::MemberTag<Potential>())(0) << std::endl;
+    //std::cout << "relative error (potential): " << 1.0 - MADELUNG_NACL/particles->view(Cabana::MemberTag<Potential>())(0) << std::endl;
     std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-solver.get_energy() << std::endl;
     std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/solver.get_energy() << std::endl;
     std::cout << std::endl;
 #else
     std::cout << "total potential energy (direct): " << solver.get_energy() << std::endl;
-    std::cout << "absolute error (potential): " << MADELUNG_NACL-particles->view(Cabana::MemberTag<Potential>())(0) << std::endl;
-    std::cout << "relative error (potential): " << 1.0 - MADELUNG_NACL/particles->view(Cabana::MemberTag<Potential>())(0) << std::endl;
+    //std::cout << "absolute error (potential): " << MADELUNG_NACL-particles->view(Cabana::MemberTag<Potential>())(0) << std::endl;
+    //std::cout << "relative error (potential): " << 1.0 - MADELUNG_NACL/particles->view(Cabana::MemberTag<Potential>())(0) << std::endl;
     std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-solver.get_energy() << std::endl;
     std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/solver.get_energy() << std::endl;
     directfile << elapsed_time << " ";
 #endif
-  }*/
+  }
   if (flag & 2)
   {
     int width = 1.0;//64*c_size;
     initializeParticles( *particles, c_size );
-    initializeMesh( *mesh, width );  
     
     Kokkos::Timer timer;
     double kmax = (double)periodic_shells;
 
 #ifndef TDS_BENCHMARKING
     std::cout << std::endl;
-    std::cout << "Ewald summation solver:" << std::endl;
+    std::cout << "Ewald Sum solver:" << std::endl;
 #endif
     std::cout << "starting parameters: " << kmax << " " << alpha << " " << r_max << std::endl;
-    TPME solver(alpha,r_max,kmax);
+    TEwald solver(alpha,r_max,kmax);
     auto init_time = timer.seconds();
     timer.reset();
     //accuracy *= -n_particles * MADELUNG_NACL;
@@ -117,7 +117,7 @@ int main(int argc, char** argv)
     std::cout << "req. acc: " << accuracy << std::endl; 
     auto tune_time = timer.seconds();
     timer.reset();
-    solver.compute(*particles,*mesh,l[0],l[1],l[2]);
+    solver.compute(*particles,l[0],l[1],l[2]);
     std::cout << "Done" << std::endl;
     auto exec_time = timer.seconds();
     timer.reset();
@@ -145,13 +145,64 @@ int main(int argc, char** argv)
     ewaldfile << elapsed_time << " ";
 #endif
   }
+  if (flag & 4)
+  {
+    int width = 1.0;//64*c_size;
+    ParticleList* mesh = new ParticleList( n_meshpoints );
+    initializeParticles( *particles, c_size );
+    initializeMesh( *mesh, width );  
+    
+    Kokkos::Timer timer;
+    //double kmax = (double)periodic_shells;
+
+#ifndef TDS_BENCHMARKING
+    std::cout << std::endl;
+    std::cout << "SPME solver:" << std::endl;
+#endif
+    std::cout << "starting parameters: " << alpha << " " << r_max << std::endl;
+    TPME solver(alpha,r_max);
+    auto init_time = timer.seconds();
+    timer.reset();
+    //accuracy *= -n_particles * MADELUNG_NACL;
+    if (argc < 6) solver.tune(accuracy,*particles,l[0],l[1],l[2]);
+    std::cout << "req. acc: " << accuracy << std::endl; 
+    auto tune_time = timer.seconds();
+    timer.reset();
+    solver.compute(*particles,*mesh,l[0],l[1],l[2]);
+    std::cout << "Done" << std::endl;
+    auto exec_time = timer.seconds();
+    timer.reset();
+
+    auto elapsed_time = init_time + tune_time + exec_time;
+#ifndef TDS_BENCHMARKING
+    std::cout << "Time for initialization in SPME solver:     " << (init_time) << " s." << std::endl;
+    std::cout << "Time for tuning parameters  in SPME solver: " << (tune_time) << " s." << std::endl;
+    std::cout << "Time for computation in SPME solver:        " << (exec_time) << " s." << std::endl;
+    std::cout << "Total time spent in SPME solver:            " << (elapsed_time) << " s." << std::endl;
+    std::cout << "total potential energy (code): " << solver.get_energy() << std::endl;
+    std::cout << "Total potential energy (known): " << MADELUNG_NACL*n_particles << std::endl;
+    //std::cout << "absolute error (potential): " << MADELUNG_NACL-particles->slice<Potential>()(0) << std::endl;
+    //std::cout << "relative error (potential): " << 1.0 - MADELUNG_NACL/particles->slice<Potential>()(0) << std::endl;
+    std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-solver.get_energy() << std::endl;
+    std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/solver.get_energy() << std::endl;
+    //printParticles(*particles,0);
+    std::cout << std::endl;
+#else
+    std::cout << "total potential energy (SPME): " << solver.get_energy() << std::endl;
+    //std::cout << "absolute error (potential): " << MADELUNG_NACL-particles->slice<Potential>()(0) << std::endl;
+    //std::cout << "relative error (potential): " << 1.0 - MADELUNG_NACL/particles->slice<Potential>()(0) << std::endl;
+    std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-solver.get_energy() << std::endl;
+    std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/solver.get_energy() << std::endl;
+    pmefile << elapsed_time << " ";
+#endif
+  delete mesh;
+  }
 #ifdef TDS_BENCHMARKING
   directfile.close();
   ewaldfile.close();
   pmefile.close();
 #endif
   delete particles;
-  delete mesh;
   Kokkos::fence();
   Kokkos::finalize();
   return 0;

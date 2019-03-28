@@ -25,14 +25,10 @@ TPME::TPME(double accuracy, ParticleList particles, double lx, double ly, double
 }
 
 //set base values for alpha, r_max, k_max
-TPME::TPME(double alpha, double r_max, double k_max)
+TPME::TPME(double alpha, double r_max)
 {
   _alpha = alpha;
   _r_max = r_max;
-  _k_max = k_max;
-  _k_max_int[0] = std::ceil(_k_max);
-  _k_max_int[1] = std::ceil(_k_max);
-  _k_max_int[2] = std::ceil(_k_max);
 }
 
 //Tune to a given accuracy
