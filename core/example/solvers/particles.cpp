@@ -4,7 +4,7 @@
 // function to initialize particles as a NaCl crystal of length crystal_size
 void initializeParticles(ParticleList particles, int crystal_size)
 {
-  for ( size_t idx = 0; idx < particles.size(); ++idx )
+  auto init_parts = KOKKOS_LAMBDA(const int idx)
   {
     // Calculate location of particle in crystal
     int idx_x = idx % crystal_size;
@@ -32,7 +32,8 @@ void initializeParticles(ParticleList particles, int crystal_size)
 
     // Set global particle index
     particles.slice<Index>()( idx ) = idx+1l;
-  }
+  };
+  Kokkos::parallel_for(Kokkos::RangePolicy<ExecutionSpace>(0,particles.size()),init_parts);
 }
 
 
@@ -40,7 +41,7 @@ void initializeParticles(ParticleList particles, int crystal_size)
 void initializeMesh(ParticleList mesh, int width)
 {
   int ptsx = std::round(std::pow(mesh.size(),1.0/3.0));//number of points in each dimension
-  for ( size_t idx = 0; idx < mesh.size(); ++idx )
+  auto init_mesh = KOKKOS_LAMBDA( const int idx ) 
   {
     // Calculate location of particle in crystal
     int idx_x = idx % ptsx;
@@ -68,6 +69,7 @@ void initializeMesh(ParticleList mesh, int width)
 
     // Set global particle index
     mesh.slice<Index>()( idx ) = idx+1l;
-  }
+  };
+  Kokkos::parallel_for(Kokkos::RangePolicy<ExecutionSpace>(0,mesh.size()),init_mesh);
 }
 
