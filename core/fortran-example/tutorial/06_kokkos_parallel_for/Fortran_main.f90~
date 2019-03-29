@@ -1,0 +1,25 @@
+program Main
+  use iso_c_binding
+  interface
+     subroutine exampleMain() bind(C, name="exampleMain")
+       use iso_c_binding
+     end subroutine exampleMain
+  end interface
+  
+  interface
+     subroutine c_kokkos_finalize() bind(C, name="c_kokkos_finalize")
+       use iso_c_binding
+     end subroutine c_kokkos_finalize
+  end interface
+
+  interface
+     subroutine c_kokkos_initlize() bind(C, name="c_kokkos_initlize")
+       use iso_c_binding
+     end subroutine c_kokkos_initlize
+  end interface
+  
+  call c_kokkos_initlize()
+  call exampleMain()
+  call c_kokkos_finalize()
+
+end program Main
