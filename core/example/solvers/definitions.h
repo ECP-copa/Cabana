@@ -2,8 +2,6 @@
 #define TDS_DEFINITIONS_INCLUDED
 
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_MemberTypes.hpp>
-#include <Kokkos_Core.hpp>
 
 constexpr double PI(3.141592653589793238462643);
 constexpr double PI_SQRT(1.772453850905516);
@@ -59,15 +57,7 @@ using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::Serial;
 #endif
 
-
-
-// Declare the inner array layout.
-//using ArrayLayout = Cabana::InnerArrayLayout<INNER_ARRAY_SIZE,Cabana::LayoutRight>;
-
 // Set the type for the particle AoSoA.
 using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,INNER_ARRAY_SIZE>;
-
-// Declare the parallel for algorithm tag.
-//using parallel_algorithm_tag = Cabana::StructAndArrayParallelTag;
 
 #endif

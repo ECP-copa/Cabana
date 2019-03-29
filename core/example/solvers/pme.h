@@ -17,7 +17,7 @@ class TPME
     double oneDeuler(int k, int meshwidth);
 
     //short and long range energy computation
-    void compute(int meshsize, ParticleList& particles, ParticleList& mesh, double x_width, double y_width, double z_width);
+    void compute(ParticleList& particles, ParticleList& mesh, double x_width, double y_width, double z_width);
 
     //tune alpha, r_max, k_max to adhere to given accuracy
     void tune(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width); 
@@ -37,12 +37,12 @@ class TPME
     double _alpha;
     double _r_max;
     double _k_max;
+
     double total_energy;
     int _k_max_int[3];
+    
 
     // dielectric constant (1.0 = vacuum)
     double _eps_r = 1.0;
-
-    //double* Uk_coeffs;
 };
 
