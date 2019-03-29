@@ -1,0 +1,6 @@
+  add_executable(ForKKParallelFor Fortran_main.f90 Fortran_kernel.f90 hello_world.cpp)
+  set(CMAKE_Fortran_FLAGS "-ta=tesla:cuda9.0 -Minfo=accel -Mcuda=cuda9.0")
+  set(CMAKE_CXX_FLAGS "--relocatable-device-code=true")
+  target_link_libraries(ForKKParallelFor cabanacore)
+  add_test(NAME Fortran_tutorial_06 COMMAND ForKKParallelFor)
+  set_property(TARGET ForKKParallelFor PROPERTY LINKER_LANGUAGE Fortran)
