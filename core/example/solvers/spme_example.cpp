@@ -1,6 +1,5 @@
-#include "definitions.h"
-#include "particles.cpp"
-#include "pme.cpp"
+#include "example_definitions.h"
+#include "solvers.h"
 
 #include <iomanip>
 
@@ -16,7 +15,7 @@ int main(int argc, char** argv)
   //width of unit cell (assume cube)
   const double width = 1.0;
   //Number of mesh points in each direction for SPME
-  static const int n_meshpoints = 4096;//16*16*16;
+  const int n_meshpoints = 4096;//16*16*16;
   //Declare alpha and rmax, but just let the tuner select their values later  
   //double alpha, r_max;
   //Number of particles, 3D

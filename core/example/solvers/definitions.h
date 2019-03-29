@@ -3,6 +3,7 @@
 
 #include <Cabana_AoSoA.hpp>
 
+//Math definitions needed for solvers
 constexpr double PI(3.141592653589793238462643);
 constexpr double PI_SQRT(1.772453850905516);
 constexpr double PI_SQ(PI*PI);// 9.869604401089359
@@ -11,16 +12,12 @@ constexpr double PI_DIV_SQ(1.0/PI_SQ);//0.101321183642338
 constexpr float COULOMB_PREFACTOR(1.0);
 constexpr float COULOMB_PREFACTOR_INV(1.0);
 
-constexpr double MADELUNG_NACL(-1.747564594633182);
 
 //#define COULOMB_PREFACTOR 1.0 / ( 4.0 * PI * 8.854187817e-12)
 //#define COULOMB_PREFACTOR_INV ( 4.0 * PI * 8.854187817e-12)
 
 // User field enumeration. These will be used to index into the data set. Must
 // start at 0 and increment contiguously.
-const int SPACE_DIM = 3;
-
-const int INNER_ARRAY_SIZE = 8;
 
 enum UserParticleFields
 {
@@ -33,6 +30,7 @@ enum UserParticleFields
 };
 
 // Designate the types that the particles will hold.
+// Needs the SPACE_DIM
 using ParticleDataTypes =
     Cabana::MemberTypes<double[SPACE_DIM],        // (0) x-position type
                         double[SPACE_DIM],        // (1) velocity type
