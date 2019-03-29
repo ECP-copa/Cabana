@@ -4,6 +4,7 @@ if(NOT Cabana_ENABLE_FORTRAN_EXAMPLES)
 else()
   enable_language(Fortran)
   add_subdirectory(tutorial)
+  add_subdirectory(advanced)
 endif()
 
 
