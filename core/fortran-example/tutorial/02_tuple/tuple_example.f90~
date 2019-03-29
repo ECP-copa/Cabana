@@ -1,8 +1,0 @@
-SUBROUTINE tupleExample () BIND(C,name='tupleExample')
-  USE, INTRINSIC :: ISO_C_BINDING
-  integer i,j
-
-  call allocate_tuple();
-  
-  call delete_tuple();
-end SUBROUTINE print_hello_world

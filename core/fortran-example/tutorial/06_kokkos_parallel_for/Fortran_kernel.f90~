@@ -1,9 +1,0 @@
-module printHello
-contains
-  attributes(host,device) subroutine abc (i) BIND(C,name='abc')
-    USE, INTRINSIC :: ISO_C_BINDING, only: c_int
-    integer(kind=c_int),value :: i
-    print *,"Hello from (frotran) =",i
-    !      write(*,'(A)',advance='no') c
-  end subroutine abc
-end module printHello
