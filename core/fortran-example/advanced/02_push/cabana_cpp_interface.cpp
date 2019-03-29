@@ -136,11 +136,11 @@ extern "C" void cabana_finalize( void );
 extern "C" void kokkos_fence( void );
 
 void cabana_initialize() {
-  Cabana::initialize();
+  Kokkos::initialize();
 }
 
 void cabana_finalize( void ) {
-  Cabana::finalize();
+  Kokkos::finalize();
 }
 
 void kokkos_fence() {
