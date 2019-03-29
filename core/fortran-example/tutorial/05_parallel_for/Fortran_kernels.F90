@@ -1,6 +1,5 @@
 #include "veclen.h"
-
-SUBROUTINE initialization(part,num_part) BIND(C)
+attributes(host,device) SUBROUTINE initialization(part,num_part) BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
   integer i,j,a,s
@@ -11,7 +10,7 @@ SUBROUTINE initialization(part,num_part) BIND(C)
 
   type(ptl_type) :: part(*)
   INTEGER(C_INT), VALUE :: num_part
-  INTEGER :: n_soa
+  INTEGER :: n_soa 
 
 !Find out the number of soa in the aosoa
   n_soa = (num_part-1)/veclen+1
@@ -26,10 +25,10 @@ do s = 1, n_soa
 end do
 
 end SUBROUTINE initialization
+ 
 
 
-
-SUBROUTINE kernel_1(part,s,a) BIND(C)
+attributes(host,device) SUBROUTINE kernel_1(part,s,a) BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
 
@@ -48,7 +47,8 @@ SUBROUTINE kernel_1(part,s,a) BIND(C)
 
 end SUBROUTINE kernel_1
 
-SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
+
+attributes(host,device) SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
 
@@ -66,3 +66,6 @@ SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
   part(s1)%d1(a1) =  part(s0)%d1(a0) 
 
 end SUBROUTINE kernel_2
+
+
+ 

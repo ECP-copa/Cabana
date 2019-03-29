@@ -16,9 +16,27 @@
 
 #include <iostream>
 
+#include "veclen.h"
+
 //---------------------------------------------------------------------------//
 // parallel for example.
 //---------------------------------------------------------------------------//
+
+//This is the coresponding struct_of_array defined by DataTypes
+struct local_data_struct_t {     
+  double d0[veclen];     
+  double d1[veclen];     
+};
+extern "C" {
+  void c_kokkos_initlize( void );
+  void c_kokkos_finalize( void );
+  void parallelForExample();
+  __host__ __device__ void initialization(local_data_struct_t*,int);      
+  __host__ __device__ void kernel_1(local_data_struct_t*,int,int);      
+  __host__ __device__ void kernel_2(local_data_struct_t*,int,int,int,int);      
+}
+
+
 void parallelForExample()
 {
     /*
@@ -48,32 +66,34 @@ void parallelForExample()
 
       We demonstrate both cases in this example.
     */
-
+ 
     /*
       Declare the AoSoA parameters.
     */
     using DataTypes = Cabana::MemberTypes<double,double>;
-    const int VectorLength = 8;
+
     using MemorySpace = Kokkos::HostSpace;
 
     /*
        Create the AoSoA.
     */
-    const int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    const int num_element = 100;
+    using AosoaTYPE = Cabana::AoSoA<DataTypes,MemorySpace,veclen>;
+
+    AosoaTYPE* aosoa =  new AosoaTYPE( num_element );
 
     /*
       Create slices and assign some data. One might consider using a parallel
       for loop in this case - especially when the code being written is for an
       arbitrary memory space.
      */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    for ( int i = 0; i < num_tuple; ++i )
-    {
-        slice_0(i) = 1.0;
-        slice_1(i) = 1.0;
-    }
+    
+    auto struct_p = (local_data_struct_t*)(aosoa->ptr());
+ 
+    initialization(struct_p,num_element);
+
+    auto slice_0 = aosoa->slice<0>();
+    auto slice_1 = aosoa->slice<1>();
 
     /*
       KERNEL 1 - VECTORIZED/COALESCED
@@ -90,7 +110,11 @@ void parallelForExample()
      */
     auto vector_kernel =
         KOKKOS_LAMBDA( const int s, const int a )
-        { slice_0.access(s,a) = slice_1.access(s,a); };
+      {
+	//slice_0.access(s,a) = slice_1.access(s,a); 
+	kernel_1(struct_p,s,a);
+      };
+      
 
     /*
       Now we define the execution policy for the 2D indexing scheme. A
@@ -115,7 +139,7 @@ void parallelForExample()
       execution space and work tag to follow.
     */
     using ExecutionSpace = Kokkos::OpenMP;
-    Cabana::SimdPolicy<VectorLength,ExecutionSpace> simd_policy( 0, num_tuple );
+    Cabana::SimdPolicy<veclen,ExecutionSpace> simd_policy( 0, num_element );
 
     /*
       Finally, perform the parallel loop. We have added a parallel for concept
@@ -150,8 +174,13 @@ void parallelForExample()
         KOKKOS_LAMBDA( const int i )
         {
             auto gen = pool.get_state();
-            auto rand_idx = Kokkos::rand<RandomType,int>::draw(gen,0,num_tuple);
-            slice_1(i) = slice_0( rand_idx );
+            auto rand_idx = Kokkos::rand<RandomType,int>::draw(gen,0,num_element);
+            //slice_1(i) = slice_0( rand_idx );
+	    int s0 = i/veclen;
+	    int a0 = i-s0*veclen;
+	    int s1 = rand_idx/veclen;
+	    int a1 = rand_idx-s1*veclen;
+	    kernel_2(struct_p,s0,a0,s1,a1);
             pool.free_state( gen );
         };
 
@@ -159,7 +188,7 @@ void parallelForExample()
       Because we are using 1D indexing in this case, we can directly use
       existing Kokkos execution policies and the parallel for.
      */
-    Kokkos::RangePolicy<ExecutionSpace> linear_policy( 2, num_tuple - 2 );
+    Kokkos::RangePolicy<ExecutionSpace> linear_policy( 2, num_element - 2 );
     Kokkos::parallel_for( linear_policy, rand_kernel, "rand_op" );
     Kokkos::fence();
 
@@ -167,18 +196,18 @@ void parallelForExample()
           Note: Other Kokkos parallel concepts such as reductions and scans can be
           used with Cabana slices and 1D indexing.
     */
+    delete aosoa;
 }
 
-//---------------------------------------------------------------------------//
-// Main.
-//---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+void c_kokkos_initlize() {
 
-    parallelForExample();
+  Kokkos::initialize();
 
-    return 0;
 }
 
-//---------------------------------------------------------------------------//
+void c_kokkos_finalize( void ) {
+
+  Kokkos::finalize();
+
+}
+ 
