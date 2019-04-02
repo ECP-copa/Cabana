@@ -20,6 +20,67 @@
 
 namespace Cabana
 {
+//---------------------------------------------------------------------------//
+// Verlet List Memory Layout Tag.
+//---------------------------------------------------------------------------//
+// CSR Layout
+struct VerletLayoutCSR {};
+
+// 2D Layout.
+struct VerletLayout2D {};
+
+//---------------------------------------------------------------------------//
+// Verlet List Data.
+//---------------------------------------------------------------------------//
+template<class MemorySpace, class LayoutTag>
+struct VerletListData;
+
+template<class MemorySpace>
+struct VerletListData<MemorySpace,VerletLayoutCSR>
+{
+    // The memory space in which the neighbor list data resides.
+    using memory_space = MemorySpace;
+
+    // Number of neighbors per particle.
+    Kokkos::View<int*,memory_space> counts;
+
+    // Offsets into the neighbor list.
+    Kokkos::View<int*,memory_space> offsets;
+
+    // Neighbor list.
+    Kokkos::View<int*,memory_space> neighbors;
+
+    // Add a neighbor to the list.
+    KOKKOS_INLINE_FUNCTION
+    void addNeighbor( const int pid, const int nid ) const
+    {
+        neighbors( offsets(pid) + Kokkos::atomic_fetch_add(&counts(pid),1) )
+            = nid;
+    }
+};
+
+template<class MemorySpace>
+struct VerletListData<MemorySpace,VerletLayout2D>
+{
+    // The memory space in which the neighbor list data resides.
+    using memory_space = MemorySpace;
+
+    // Number of neighbors per particle.
+    Kokkos::View<int*,memory_space> counts;
+
+    // Neighbor list.
+    Kokkos::View<int**,memory_space> neighbors;
+
+    // Add a neighbor to the list.
+    KOKKOS_INLINE_FUNCTION
+    void addNeighbor( const int pid, const int nid ) const
+    {
+        neighbors( pid, Kokkos::atomic_fetch_add(&counts(pid),1) ) = nid;
+    }
+};
+
+//---------------------------------------------------------------------------//
+
 namespace Impl
 {
 //---------------------------------------------------------------------------//
@@ -124,7 +185,9 @@ struct LinkedCellStencil
 };
 
 //---------------------------------------------------------------------------//
-template<class PositionSlice, class AlgorithmTag>
+// Verlet List Builder
+//---------------------------------------------------------------------------//
+template<class PositionSlice, class AlgorithmTag, class LayoutTag>
 struct VerletListBuilder
 {
     // Types.
@@ -134,14 +197,8 @@ struct VerletListBuilder
     using memory_space = typename PositionSlice::memory_space;
     using execution_space = typename PositionSlice::execution_space;
 
-    // Number of neighbors per particle.
-    Kokkos::View<int*,memory_space> counts;
-
-    // Offsets into the neighbor list.
-    Kokkos::View<int*,memory_space> offsets;
-
-    // Neighbor list.
-    Kokkos::View<int*,memory_space> neighbors;
+    // List data.
+    VerletListData<memory_space,LayoutTag> _data;
 
     // Neighbor cutoff.
     PositionValueType rsqr;
@@ -166,11 +223,13 @@ struct VerletListBuilder
         const PositionValueType cell_size_ratio,
         const PositionValueType grid_min[3],
         const PositionValueType grid_max[3])
-        : counts( "num_neighbors", slice.size() )
-        , offsets( "neighbor_offsets", slice.size() )
-        , pid_begin(begin), pid_end(end)
+        : pid_begin(begin), pid_end(end)
         , cell_stencil( neighborhood_radius, cell_size_ratio, grid_min, grid_max )
     {
+        // Create the count view.
+        _data.counts =
+            Kokkos::View<int*,memory_space>( "num_neighbors", slice.size() );
+
         // Get the positions with random access read-only memory.
         position = slice;
 
@@ -276,13 +335,13 @@ struct VerletListBuilder
                                 }
                             }
                     Kokkos::single(Kokkos::PerThread(team), [&] () {
-                        counts(pid) = stencil_count;
+                        _data.counts(pid) = stencil_count;
                     });
                 }
             });
     }
 
-    // Process the counts by computing offsets and allocating the neighbor
+    // Process the CSR counts by computing offsets and allocating the neighbor
     // list.
     template<class KokkosMemorySpace>
     struct OffsetScanOp
@@ -297,26 +356,54 @@ struct VerletListBuilder
             update += counts(i);
         }
     };
-    void processCounts()
+    void processCounts( VerletLayoutCSR )
     {
+        // Allocate offsets.
+        _data.offsets =
+            Kokkos::View<int*,memory_space>( "neighbor_offsets", _data.counts.size() );
+
         // Calculate offsets from counts and the total number of counts.
         OffsetScanOp<memory_space> offset_op;
-        offset_op.counts = counts;
-        offset_op.offsets = offsets;
+        offset_op.counts = _data.counts;
+        offset_op.offsets = _data.offsets;
         int total_num_neighbor;
         Kokkos::RangePolicy<execution_space> range_policy(
-            0, counts.extent(0) );
+            0, _data.counts.extent(0) );
         Kokkos::parallel_scan(
             "Cabana::VerletListBuilder::offset_scan",
             range_policy, offset_op, total_num_neighbor );
         Kokkos::fence();
 
         // Allocate the neighbor list.
-        neighbors = Kokkos::View<int*,memory_space>(
+        _data.neighbors = Kokkos::View<int*,memory_space>(
             "neighbors", total_num_neighbor );
 
         // Reset the counts. We count again when we fill.
-        Kokkos::deep_copy( counts, 0 );
+        Kokkos::deep_copy( _data.counts, 0 );
+    }
+
+    // Process 2D counts by computing the maximum number of neighbors and
+    // allocating a 2D data structure.
+    void processCounts( VerletLayout2D )
+    {
+        // Calculate the maximum number of neighbors.
+        auto counts = _data.counts;
+        int max_num_neighbor = 0;
+        Kokkos::Max<int> max_reduce( max_num_neighbor );
+        Kokkos::parallel_reduce(
+            "Cabana::VerletListBuilder::reduce_max",
+            Kokkos::RangePolicy<execution_space>(0,_data.counts.extent(0)),
+            KOKKOS_LAMBDA( const int i, int& value ){
+                if ( counts(i) > value ) value = counts(i); },
+            max_reduce );
+        Kokkos::fence();
+
+        // Allocate the neighbor list.
+        _data.neighbors = Kokkos::View<int**,memory_space>(
+            "neighbors", _data.counts.size(), max_num_neighbor );
+
+        // Reset the counts. We count again when we fill.
+        Kokkos::deep_copy( _data.counts, 0 );
     }
 
     // Neighbor count team operator.
@@ -398,10 +485,7 @@ struct VerletListBuilder
                                                 // count and add as a neighbor at that index.
                                                 if ( dist_sqr <= rsqr )
                                                 {
-                                                    neighbors(
-                                                        offsets(pid) +
-                                                        Kokkos::atomic_fetch_add(&counts(pid),1) )
-                                                        = nid;
+                                                    _data.addNeighbor( pid, nid );
                                                 }
                                             }
                                         });
@@ -422,10 +506,19 @@ struct VerletListBuilder
   \brief Neighbor list implementation based on binning particles on a 3d
   Cartesian grid with cells of the same size as the interaction distance.
 
+  \tparam MemorySpace The memory space in which to build the neighbor list.
+
+  \tparam AlgorithmTag Tag indicating whether to build a full or half neighbor
+  list.
+
+  \tparam LayoutTag Tag indicating whether to use a CSR or 2D data layout.
+
   Neighbor list implementation most appropriate for somewhat regularly
   distributed particles due to the use of a Cartesian grid.
+
+  CSR layout implementation.
 */
-template<class MemorySpace, class AlgorithmTag>
+template<class MemorySpace, class AlgorithmTag, class LayoutTag>
 class VerletList
 {
   public:
@@ -433,14 +526,8 @@ class VerletList
     // The memory space in which the neighbor list data resides.
     using memory_space = MemorySpace;
 
-    // Number of neighbors per particle.
-    Kokkos::View<int*,memory_space> _counts;
-
-    // Offsets into the neighbor list.
-    Kokkos::View<int*,memory_space> _offsets;
-
-    // Neighbor list.
-    Kokkos::View<int*,memory_space> _neighbors;
+    // Verlet list data.
+    VerletListData<MemorySpace,LayoutTag> _data;
 
     /*!
       \brief Given a list of particle positions and a neighborhood radius calculate
@@ -485,7 +572,7 @@ class VerletList
     {
         // Create a builder functor.
         using builder_type =
-            Impl::VerletListBuilder<PositionSlice,AlgorithmTag>;
+            Impl::VerletListBuilder<PositionSlice,AlgorithmTag,LayoutTag>;
         builder_type builder( x, begin, end,
                               neighborhood_radius, cell_size_ratio,
                               grid_min, grid_max );
@@ -503,7 +590,7 @@ class VerletList
 
         // Process the counts by computing offsets and allocating the neighbor
         // list.
-        builder.processCounts();
+        builder.processCounts( LayoutTag() );
 
         // For each particle in the range fill its part of the neighbor list.
         typename builder_type::FillNeighborsPolicy
@@ -514,21 +601,20 @@ class VerletList
         Kokkos::fence();
 
         // Get the data from the builder.
-        _counts = builder.counts;
-        _offsets = builder.offsets;
-        _neighbors = builder.neighbors;
+        _data = builder._data;
     }
 };
 
 //---------------------------------------------------------------------------//
 // Neighbor list interface implementation.
 //---------------------------------------------------------------------------//
+// CSR Data Layout
 template<class MemorySpace, class AlgorithmTag>
-class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
+class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayoutCSR> >
 {
   public:
 
-    using list_type = VerletList<MemorySpace,AlgorithmTag>;
+    using list_type = VerletList<MemorySpace,AlgorithmTag,VerletLayoutCSR>;
 
     using TypeTag = AlgorithmTag;
 
@@ -537,7 +623,7 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
     static int numNeighbor( const list_type& list,
                             const std::size_t particle_index )
     {
-        return list._counts( particle_index );
+        return list._data.counts( particle_index );
     }
 
     // Get the id for a neighbor for a given particle index and the index of
@@ -547,8 +633,38 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag> >
                             const std::size_t particle_index,
                             const int neighbor_index )
     {
-        return list._neighbors(
-            list._offsets(particle_index) + neighbor_index );
+        return list._data.neighbors(
+            list._data.offsets(particle_index) + neighbor_index );
+    }
+};
+
+//---------------------------------------------------------------------------//
+// 2D Data Layout
+template<class MemorySpace, class AlgorithmTag>
+class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayout2D> >
+{
+  public:
+
+    using list_type = VerletList<MemorySpace,AlgorithmTag,VerletLayout2D>;
+
+    using TypeTag = AlgorithmTag;
+
+    // Get the number of neighbors for a given particle index.
+    KOKKOS_INLINE_FUNCTION
+    static int numNeighbor( const list_type& list,
+                            const std::size_t particle_index )
+    {
+        return list._data.counts( particle_index );
+    }
+
+    // Get the id for a neighbor for a given particle index and the index of
+    // the neighbor relative to the particle.
+    KOKKOS_INLINE_FUNCTION
+    static int getNeighbor( const list_type& list,
+                            const std::size_t particle_index,
+                            const int neighbor_index )
+    {
+        return list._data.neighbors( particle_index, neighbor_index );
     }
 };
 

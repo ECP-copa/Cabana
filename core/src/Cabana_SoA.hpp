@@ -159,7 +159,6 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     using member_pointer_type =
         typename std::add_pointer<member_value_type<M> >::type;
 
-
     // -------------------------------
     // Member data type properties.
 
@@ -337,19 +336,26 @@ struct SoA<MemberTypes<Types...>,VectorLength>
 
     // Get a pointer to a member.
     template<std::size_t M>
-    void* ptr()
+    KOKKOS_FUNCTION void* ptr()
     {
-        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return &base;
+        return static_cast<
+            Impl::StructMember<M,vector_length,member_data_type<M>>*>(*this);
+    }
+
+    // Get a pointer to a given SoA.
+    template<std::size_t M>
+    static void* staticPtr( SoA* p )
+    {
+        return static_cast<
+            Impl::StructMember<M,vector_length,member_data_type<M>>*>(p);
     }
 };
 
+namespace Impl
+{
 //---------------------------------------------------------------------------//
 // Member element copy operators.
 //---------------------------------------------------------------------------//
-
-namespace Impl
-{
 
 // Copy a single member from one SoA to another.
 

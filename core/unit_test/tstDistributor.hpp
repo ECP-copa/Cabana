@@ -286,12 +286,6 @@ void test4( const bool use_topology )
     }
     auto export_ranks = Kokkos::create_mirror_view_and_copy(
         TEST_MEMSPACE(), export_ranks_host );
-    for ( int n = 0; n < my_size; ++n )
-    {
-        export_ranks[n] = n;
-        export_ranks[n + my_size] = n;
-        neighbor_ranks[n] = n;
-    }
 
     // Create the plan
     if ( use_topology )
