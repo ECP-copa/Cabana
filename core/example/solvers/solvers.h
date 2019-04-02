@@ -1,3 +1,5 @@
 #include "definitions.h"
 #include "particles.cpp"
-#include "pme.cpp"
+#include "direct.cpp"
+#include "ewald.cpp"
+//#include "pme.cpp"

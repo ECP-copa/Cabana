@@ -1,6 +1,5 @@
-#ifndef TDS_DEFINITIONS_INCLUDED
-#define TDS_DEFINITIONS_INCLUDED
-
+#ifndef DEFS
+#define DEFS
 #include <Cabana_AoSoA.hpp>
 
 //Math definitions needed for solvers
@@ -40,6 +39,7 @@ using ParticleDataTypes =
                         long                      // (5) global index
                         >;
 
+
 // Declare the memory space.
 #ifdef CUDA_ENABLE
 using MemorySpace = Cabana::CudaUVMSpace;
@@ -57,5 +57,4 @@ using ExecutionSpace = Kokkos::Serial;
 
 // Set the type for the particle AoSoA.
 using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,INNER_ARRAY_SIZE>;
-
 #endif

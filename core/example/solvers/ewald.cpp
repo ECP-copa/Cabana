@@ -106,8 +106,8 @@ void TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   double r_max = _r_max;
   double eps_r = _eps_r;
 
-#ifdef TDS_CUDA
-  Kokkos::View<int*, Kokkos::CudaUVMSpace> k_max_int("k_max_int",3);
+#ifdef CUDA_ENABLE
+  Kokkos::View<int*, MemorySpace> k_max_int("k_max_int",3);
   for ( auto i = 0; i < 3; ++i)
   {
     k_max_int[i] = _k_max_int[i];
