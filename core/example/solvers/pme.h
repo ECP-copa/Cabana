@@ -5,10 +5,10 @@ class TPME
 {
   public:
     //constructor with accuracy
-    TPME(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width);
+    TPME(const double accuracy_threshold, ParticleList particles, const double x_width, const double y_width, const double z_width);
     
     //set base values for alpha, r_max
-    TPME(double alpha, double r_max);
+    TPME(const double alpha, const double r_max);
 
     //compute 1D cubic cardinal B-spline value given distance from point in mesh spacings (mesh_dist)
     KOKKOS_INLINE_FUNCTION
@@ -19,10 +19,10 @@ class TPME
     double oneDeuler(int k, int meshwidth);
 
     //short and long range energy computation
-    void compute(ParticleList& particles, ParticleList& mesh, double x_width, double y_width, double z_width);
+    double compute(ParticleList& particles, ParticleList& mesh, const double x_width, const double y_width, const double z_width);
 
     //tune alpha, r_max, k_max to adhere to given accuracy
-    void tune(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width); 
+    void tune(double accuracy_threshold, ParticleList particles, const double x_width, const double y_width, const double z_width); 
 
     // setter functions for parameters
     void set_alpha(double alpha);
@@ -34,15 +34,12 @@ class TPME
     double get_r_max() {return _r_max;}
     double get_k_max() {return _k_max;}
 
-    double get_energy() {return total_energy;}
   private:
     double _alpha;
     double _r_max;
     double _k_max;
 
-    double total_energy;
     int _k_max_int[3];
-    
 
     // dielectric constant (1.0 = vacuum)
     double _eps_r = 1.0;

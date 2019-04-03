@@ -149,7 +149,7 @@ double TPME::oneDeuler(int k, int meshwidth)
 
 
 //Compute the energy
-void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, double ly, double lz)
+double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, double ly, double lz)
 {
   //Initialize energies: real-space, k-space (reciprocal space), self-energy correction, dipole correction
   double Ur = 0.0, Uk = 0.0, Uself = 0.0, Udip = 0.0;
@@ -170,7 +170,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   //Number of mesh points
   const int meshsize = mesh.size();  
 
-  total_energy = 0.0; 
+  double total_energy = 0.0; 
 
   //Set the potential of each particle to zero
   auto init_p = KOKKOS_LAMBDA( const int idx )
@@ -462,6 +462,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   #ifndef Cabana_ENABLE_Cuda
     fftw_cleanup();
   #endif
+  return total_energy;
 }
 
 

@@ -43,7 +43,7 @@ int main(int argc, char** argv)
   auto tune_time = timer.seconds();
   timer.reset();
   //Perform the computation of real and imag space energies
-  solver.compute(*particles,*mesh,width,width,width);
+  double total_energy = solver.compute(*particles,*mesh,width,width,width);
   auto exec_time = timer.seconds();
   timer.reset();
 
@@ -54,9 +54,9 @@ int main(int argc, char** argv)
   std::cout << "Time for computation in SPME solver:        " << (exec_time) << " s." << std::endl;
   std::cout << "Total time spent in SPME solver:            " << (elapsed_time) << " s." << std::endl;
   std::cout << "Total potential energy (known): " << MADELUNG_NACL*n_particles << std::endl;
-  std::cout << "total potential energy (SPME): " << solver.get_energy() << std::endl;
-  std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-solver.get_energy() << std::endl;
-  std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/solver.get_energy() << std::endl;
+  std::cout << "total potential energy (SPME): " << total_energy << std::endl;
+  std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-total_energy << std::endl;
+  std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/total_energy << std::endl;
   
   //Clean up
   delete mesh;
