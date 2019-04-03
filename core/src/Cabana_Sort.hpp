@@ -640,6 +640,145 @@ void permute( const BinningDataType& binning_data,
 }
 
 //---------------------------------------------------------------------------//
+/*!
+  \brief Given binning data permute a slice.
+
+  \tparam BinningDataType The binning data type.
+
+  \tparm SliceType The slice type.
+
+  \param binning_data The binning data.
+
+  \param slice The slice to permute.
+ */
+template<class BinningDataType, class SliceType>
+void permute( const BinningDataType& binning_data,
+              SliceType& slice,
+              typename std::enable_if<(is_binning_data<BinningDataType>::value &&
+                                       is_slice<SliceType>::value),
+              int>::type * = 0)
+{
+    auto begin = binning_data.rangeBegin();
+    auto end = binning_data.rangeEnd();
+
+    // Get the number of components in the slice.
+    int num_comp = 1;
+    for ( int d = 2; d < slice.rank(); ++d )
+        num_comp *= slice.extent(d);
+
+    // Get the raw slice data.
+    auto slice_data = slice.data();
+
+    Kokkos::View<typename SliceType::value_type**,
+                 typename BinningDataType::memory_space>
+            scratch_array( "scratch_array", end - begin, num_comp );
+
+    auto permute_to_scratch =
+        KOKKOS_LAMBDA( const std::size_t i )
+        {
+          auto permute_i = binning_data.permutation(i-begin);
+          auto s = SliceType::index_type::s( permute_i );
+          auto a = SliceType::index_type::a( permute_i );
+          std::size_t slice_offset = s*slice.stride(0) + a;
+          for ( int n = 0; n < num_comp; ++n )
+              scratch_array( i-begin, n ) =
+                  slice_data[ slice_offset + SliceType::vector_length * n ];
+        };
+    Kokkos::parallel_for(
+        "Cabana::kokkosBinSort::permute_to_scratch",
+        Kokkos::RangePolicy<typename BinningDataType::execution_space>(begin,end),
+        permute_to_scratch );
+    Kokkos::fence();
+
+    auto copy_back =
+        KOKKOS_LAMBDA( const std::size_t i )
+        {
+          auto s = SliceType::index_type::s( i );
+          auto a = SliceType::index_type::a( i );
+          std::size_t slice_offset = s*slice.stride(0) + a;
+          for ( int n = 0; n < num_comp; ++n )
+              slice_data[ slice_offset + SliceType::vector_length * n ] =
+                  scratch_array( i-begin, n );
+        };
+    Kokkos::parallel_for(
+        "Cabana::kokkosBinSort::copy_back",
+        Kokkos::RangePolicy<typename BinningDataType::execution_space>(begin,end),
+        copy_back );
+    Kokkos::fence();
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Given binning data and range permute part of a slice.
+
+  \tparam BinningDataType The binning data type.
+
+  \tparm SliceType The slice type.
+
+  \param binning_data The binning data.
+
+  \param slice The slice to permute.
+
+  \param begin The beginning index of the slice range to sort.
+
+  \param end The end index of the slice range to sort.
+*/
+template<class BinningDataType, class SliceType>
+void permute( const BinningDataType& binning_data,
+              SliceType& slice,
+              const std::size_t begin,
+              const std::size_t end,
+              typename std::enable_if<(is_binning_data<BinningDataType>::value &&
+                                       is_slice<SliceType>::value),
+              int>::type * = 0)
+{
+    // Get the number of components in the slice.
+    int num_comp = 1;
+    for ( int d = 2; d < slice.rank(); ++d )
+        num_comp *= slice.extent(d);
+
+    // Get the raw slice data.
+    auto slice_data = slice.data();
+
+    Kokkos::View<typename SliceType::value_type**,
+                 typename BinningDataType::memory_space>
+            scratch_array( "scratch_array", end - begin, num_comp );
+
+    auto permute_to_scratch =
+        KOKKOS_LAMBDA( const std::size_t i )
+        {
+            auto permute_i = binning_data.permutation(i);
+            auto s = SliceType::index_type::s( permute_i );
+            auto a = SliceType::index_type::a( permute_i );
+            std::size_t slice_offset = s*slice.stride(0) + a;
+            for ( int n = 0; n < num_comp; ++n )
+                scratch_array( i-begin, n ) =
+                    slice_data[ slice_offset + SliceType::vector_length * n ];
+        };
+    Kokkos::parallel_for(
+        "Cabana::kokkosBinSort::permute_to_scratch",
+        Kokkos::RangePolicy<typename BinningDataType::execution_space>(begin,end),
+        permute_to_scratch );
+    Kokkos::fence();
+
+    auto copy_back =
+        KOKKOS_LAMBDA( const std::size_t i )
+        {
+             auto s = SliceType::index_type::s( i );
+             auto a = SliceType::index_type::a( i );
+             std::size_t slice_offset = s*slice.stride(0) + a;
+             for ( int n = 0; n < num_comp; ++n )
+                 slice_data[ slice_offset + SliceType::vector_length * n ] =
+                     scratch_array( i-begin, n );
+         };
+    Kokkos::parallel_for(
+        "Cabana::kokkosBinSort::copy_back",
+        Kokkos::RangePolicy<typename BinningDataType::execution_space>(begin,end),
+        copy_back );
+    Kokkos::fence();
+}
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 
