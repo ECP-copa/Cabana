@@ -1,6 +1,6 @@
 if(Cabana_ENABLE_Cuda)
   add_definitions(-DCUDA_ENABLE)
-  find_package(CUDA)
+  find_package(CUDA REQUIRED)
   if(CUDA_FOUND)
     add_executable(SPME spme_example.cpp)
     target_link_libraries(SPME cabanacore ${CUDA_CUFFT_LIBRARIES})
