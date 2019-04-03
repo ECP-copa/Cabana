@@ -190,7 +190,7 @@ Build Serial OpenMP:
 
 Test Serial OpenMP:
   extends: .Test
-  stage: test3
+  stage: test4
   dependencies:
    - Build Serial OpenMP
    - BuildKokkos Serial OpenMP
@@ -209,7 +209,7 @@ Build Serial Cuda:
 
 Test Serial Cuda:
   extends: .Test_Cuda
-  stage: test4
+  stage: test3
   dependencies:
    - Build Serial Cuda
    - BuildKokkos Serial Cuda
