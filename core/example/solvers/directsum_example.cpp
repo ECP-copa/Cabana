@@ -51,6 +51,6 @@ int main(int argc, char** argv)
   
   //delete particles;
   //Kokkos::fence();
-  Kokkos::Cuda::finalize();
+  Kokkos::finalize();
   return 0;
 }
