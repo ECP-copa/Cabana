@@ -1,5 +1,6 @@
 #include "example_definitions.h"
-#include "solvers.h"
+#include "ewald.cpp"
+#include "particles.cpp"
 
 #include <iomanip>
 
@@ -53,9 +54,8 @@ int main(int argc, char** argv)
   //Clean up
   //delete mesh;
   //delete particles;
-  std::cout << "test1" << std::endl;
   //Kokkos::fence();
-  std::cout << "test2" << std::endl;
-  Kokkos::Cuda::finalize();
+  //Kokkos::Cuda::finalize();
+  Kokkos::finalize();
   return 0;
 }

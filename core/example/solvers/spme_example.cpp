@@ -1,6 +1,6 @@
 #include "example_definitions.h"
-#include "solvers.h"
-
+#include "pme.cpp"
+#include "particles.cpp"
 #include <iomanip>
 
 int main(int argc, char** argv)

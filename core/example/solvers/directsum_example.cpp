@@ -1,6 +1,6 @@
 #include "example_definitions.h"
-#include "solvers.h"
-
+#include "particles.cpp"
+#include "direct.cpp"
 #include <iomanip>
 int main(int argc, char** argv)
 {
@@ -61,9 +61,7 @@ int main(int argc, char** argv)
   //Clean up
   //delete mesh;
   //delete particles;
-  std::cout << "test1" << std::endl;
   //Kokkos::fence();
-  std::cout << "test2" << std::endl;
   Kokkos::Cuda::finalize();
   return 0;
 }
