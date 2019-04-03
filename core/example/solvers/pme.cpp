@@ -87,8 +87,6 @@ void TPME::tune(double accuracy, ParticleList particles, double lx, double ly, d
 
       if ( (delta < team_errorest.val) && (delta > 0.8 * accuracy))
       {
-      //  std::cout << alpha << " " << k_max << " " << delta_Ur << " " << delta_Uk << " " << delta << " " << accuracy << std::endl;      
- 
         team_errorest.val = delta;
         team_errorest.loc = idx;
       }
@@ -99,9 +97,7 @@ void TPME::tune(double accuracy, ParticleList particles, double lx, double ly, d
   _k_max = (double)(error_estimate.loc/N_alpha)*0.05;
 
 
-  //std::cout << "estimated error: " << error_estimate.val << std::endl;
   _k_max_int[0] = _k_max_int[1] = _k_max_int[2] = std::ceil(_k_max);
-  //std::cout << "Tuned values: " << "r_max: " << _r_max << " alpha: " << _alpha << " k_max: " << _k_max_int[0] << "  " << _k_max_int[1] << " " << _k_max_int[2] << " " << _k_max << std::endl;
 }
 //
 
@@ -182,6 +178,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
     p(idx) = 0.0;
   };
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), init_p ); 
+  Kokkos::fence();
   
   double alpha = _alpha;
   //double k_max = _k_max;
@@ -199,7 +196,6 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   int* k_max_int = &(_k_max_int[0]);
 #endif
 
-  //std::cout << "Starting real-space contribution" << std::endl;
   //std::chrono::time_point<std::chrono::steady_clock> starttime, starttime2, endtime, endtime2;
   //starttime = std::chrono::steady_clock::now();
   
@@ -248,17 +244,15 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
       },
     Ur
   );
+  Kokkos::fence();
 
-  //std::cout << "End of real-space contribution" << std::endl;
   
   // computation reciprocal-space contribution
  
   //First, spread the charges onto the mesh
-  //std::cout << "spreading particle charge to mesh" << std::endl;
   
   double spacing = meshr(1,0)-meshr(0,0);//how far apart the mesh points are (assumed uniform cubic)   
   
-  Kokkos::fence();
   //Current method: Each mesh point loops over *all* particles, and gathers charge to it 
   //                 according to spline interpolation. 
   //Alternatives: Looping over all particles, using atomics to scatter charge to mesh points
@@ -291,8 +285,8 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
      }       
   };
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,meshsize), spread_q ); 
-  
   Kokkos::fence();
+  
   //starttime2 = std::chrono::steady_clock::now();
 
   //std::cout << "Creating BC array" << std::endl;
@@ -304,10 +298,8 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   //Calculating the values of the BC array involves first shifting the fractional coords
   //then compute the B and C arrays as described in the paper
   //This can be done once at the start of a run if the mesh stays constant
-  //Needs some parallelism regardless
   #ifdef Cabana_ENABLE_Cuda
   cufftDoubleComplex *BC;
-  //BC = (cufftDoubleComplex *)cudaMallocManaged((void**)&BC,sizeof(cufftDoubleComplex) * meshsize);
   cudaMallocManaged((void**)&BC,sizeof(cufftDoubleComplex) * meshsize);
   #else
   fftw_complex* BC;
@@ -316,16 +308,13 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   //TODO: Is this a good place for Kokkos Hierarchical parallelism?
   auto BC_functor = KOKKOS_LAMBDA(const int kx)
   {
-  //int kx, ky, kz, mx, my, mz;
   int ky,kz,mx,my,mz,idx;
-  //for (kx=0; kx<meshwidth; kx++)
-  //{
       for (ky=0; ky<meshwidth; ky++)
       {
           for (kz=0; kz<meshwidth; kz++)
           {
               idx = kx + (ky*meshwidth) + (kz*meshwidth*meshwidth);
-              if (kx + ky + kz > 0)//do nothing if kx=ky=kz=0
+              if (kx + ky + kz > 0)
               {
                   //Shift the C array
                   mx = kx;
@@ -361,11 +350,6 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   };
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,meshwidth),BC_functor );
   Kokkos::fence();
-  //Note that the origin element is zero in this array
-  //BC[0][0] = 0.0;
-  //BC[0][1] = 0.0;
-
-  //std::cout << "Done making BC array" << std::endl;
 
   //endtime = std::chrono::steady_clock::now();
 
@@ -377,8 +361,6 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   #ifdef Cabana_ENABLE_Cuda 
   cufftDoubleComplex *Qr,*Qktest;
   cufftHandle plantest;
-  //Qr = (cufftDoubleComplex *)cudaMalloc((void**)&Qr,sizeof(fftw_complex) * meshsize);
-  //Qktest = (cufftDoubleComplex *)cudaMalloc((void**)&Qktest,sizeof(fftw_complex) * meshsize);
   cudaMallocManaged((void**)&Qr,sizeof(fftw_complex) * meshsize);
   cudaMallocManaged((void**)&Qktest,sizeof(fftw_complex) * meshsize);
   //Copy charges into real input array
@@ -401,13 +383,11 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   };
   Kokkos::parallel_for(Kokkos::RangePolicy<ExecutionSpace>(0,meshsize), copy_charge);
   #endif  
-  
   Kokkos::fence();
-  //std::cout << "Set up FFT done" << std::endl;
-
+  
   //Plan out that IFFT on the real-space charge mesh
   #ifdef Cabana_ENABLE_Cuda
-  plantest = cufftPlan3d(&plantest,meshwidth, meshwidth, meshwidth,CUFFT_Z2Z);
+  cufftPlan3d(&plantest,meshwidth, meshwidth, meshwidth,CUFFT_Z2Z);
   cufftExecZ2Z(plantest,Qr,Qktest,CUFFT_INVERSE);//IFFT on Q
 
   Kokkos::parallel_reduce( meshsize, KOKKOS_LAMBDA(const int idx, double& Uk_part) 
@@ -416,6 +396,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   },
   Uk
   );
+  Kokkos::fence();
   cufftDestroy(plantest);
   #else
   plantest = fftw_plan_dft_3d(meshwidth, meshwidth, meshwidth, Qr, Qktest, FFTW_BACKWARD, FFTW_ESTIMATE);
@@ -426,19 +407,15 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   },
   Uk
   );
+  Kokkos::fence();
   fftw_destroy_plan(plantest);
   #endif 
 
-  Kokkos::fence();
-
   Uk *= 0.5;
  
-  
   //endtime2 = std::chrono::steady_clock::now();
 
   //std::chrono::duration<double> elapsed_time = starttime2 - starttime + endtime2 - endtime;
-
-  //std::cout << "Total time in SPME was: " << elapsed_time.count()  << " seconds." << std::endl;
 
   // computation of self-energy contribution
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Uself_part)
@@ -449,7 +426,6 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
       Uself
       );
 
-  // TODO: using TeamPolicies?
   // computation of dipole correction to energy
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Udip_part)
       {
@@ -482,14 +458,6 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
     Udip_vec[1] * Udip_vec[1] +
     Udip_vec[2] * Udip_vec[2];
 
-/*
-#ifndef TDS_BENCHMARKING
-  std::cout << "real-space contribution: " << Ur << std::endl;
-  std::cout << "k-space contribution: " << Uk << std::endl;
-  std::cout << "self-energy contribution: " << Uself << std::endl;
-  std::cout << "dipole correction: " << Udip << std::endl;
-#endif
-*/
   total_energy = Ur + Uk + Uself + Udip;
   #ifndef Cabana_ENABLE_Cuda
     fftw_cleanup();
