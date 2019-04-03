@@ -7,9 +7,8 @@ TDS::TDS(int periodic)
   _periodic_shells = periodic;
 }
 
-void TDS::compute(ParticleList& particles, double lx, double ly, double lz)
+double TDS::compute(ParticleList& particles, double lx, double ly, double lz)
 {
-  total_energy = 0.0;
   // Create an execution policy over the entire AoSoA.
   //Kokkos::RangePolicy<ExecutionSpace>(0,n_max) range_policy( particles );
 
@@ -73,15 +72,12 @@ void TDS::compute(ParticleList& particles, double lx, double ly, double lz)
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), work_func );
 
 
-  total_energy = 0.0;
+  double total_energy = 0.0;
   Kokkos::parallel_reduce( "Sum", Kokkos::RangePolicy<ExecutionSpace>(0,n_max), KOKKOS_LAMBDA(int idx, double& energy)
     {
       energy += p( idx );
     },
     total_energy);
-}
 
-double TDS::get_energy()
-{
   return total_energy;
 }

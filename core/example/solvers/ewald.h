@@ -8,16 +8,16 @@ class TEwald
 {
   public:
     //constructor with accuracy
-    TEwald(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width);
+    TEwald(const double accuracy_threshold, ParticleList particles, const double x_width, const double y_width, const double z_width);
     
     //set base values for alpha, r_max, k_max
-    TEwald(double alpha, double r_max, double k_max);
+    TEwald(const double alpha, const double r_max, const double k_max);
 
     //compute Ewald Sum
-    void compute(ParticleList& particles, double x_width, double y_width, double z_width);
+    double compute(ParticleList& particles, const double x_width, const double y_width, const double z_width);
 
     // tune alpha, r_max, k_max to adhere to given accuracy
-    void tune(double accuracy_threshold, ParticleList particles, double x_width, double y_width, double z_width);
+    void tune(const double accuracy_threshold, ParticleList particles, const double x_width, const double y_width, const double z_width);
 
     // setter functions for parameters
     void set_alpha(double);
@@ -29,12 +29,10 @@ class TEwald
     double get_r_max() {return _r_max;}
     double get_k_max() {return _k_max;}
 
-    double get_energy() {return total_energy;}
   private:
     double _alpha;
     double _r_max;
     double _k_max;
-    double total_energy;
     int _k_max_int[3];
 
     // dielectric constant (1.0 = vacuum)

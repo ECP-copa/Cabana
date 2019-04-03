@@ -80,7 +80,7 @@ void TEwald::tune(double accuracy, ParticleList particles, double lx, double ly,
   std::cout << "Tuned values: " << "r_max: " << _r_max << " alpha: " << _alpha << " k_max: " << _k_max_int[0] << "  " << _k_max_int[1] << " " << _k_max_int[2] << " " << _k_max << std::endl;
 }
 
-void TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
+double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
 {
 
   double Ur = 0.0, Uk = 0.0, Uself = 0.0, Udip = 0.0;
@@ -93,8 +93,6 @@ void TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
 
   int n_max = particles.size();
 
-  total_energy = 0.0; 
-
   auto init_p = KOKKOS_LAMBDA( const int idx )
   {
     p(idx) = 0.0;
@@ -106,7 +104,7 @@ void TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   double r_max = _r_max;
   double eps_r = _eps_r;
 
-#ifdef CUDA_ENABLE
+#ifdef Cabana_ENABLE_Cuda
   Kokkos::View<int*, MemorySpace> k_max_int("k_max_int",3);
   for ( auto i = 0; i < 3; ++i)
   {
@@ -115,7 +113,6 @@ void TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
 #else
   int* k_max_int = &(_k_max_int[0]);
 #endif
-
   // computation real-space contribution
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), KOKKOS_LAMBDA(int idx, double& Ur_part)
       {
@@ -247,14 +244,7 @@ void TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
     Udip_vec[2] * Udip_vec[2];
 
 
-#ifndef TDS_BENCHMARKING
-  std::cout << "real-space contribution: " << Ur << std::endl;
-  std::cout << "k-space contribution: " << Uk << std::endl;
-  std::cout << "self-energy contribution: " << Uself << std::endl;
-  std::cout << "dipole correction: " << Udip << std::endl;
-#endif
-
-  total_energy = Ur + Uk + Uself + Udip;
+  return Ur + Uk + Uself + Udip;
 }
 
 
