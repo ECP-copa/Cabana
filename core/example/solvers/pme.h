@@ -11,9 +11,11 @@ class TPME
     TPME(double alpha, double r_max);
 
     //compute 1D cubic cardinal B-spline value given distance from point in mesh spacings (mesh_dist)
+    KOKKOS_INLINE_FUNCTION
     double oneDspline(double mesh_dist);
 
     //computes Euler exponential spline in 1D
+    KOKKOS_INLINE_FUNCTION
     double oneDeuler(int k, int meshwidth);
 
     //short and long range energy computation
