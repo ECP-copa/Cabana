@@ -66,8 +66,7 @@ void testLinkedList()
         std::size_t begin = 250;
         std::size_t end = 750;
         Cabana::LinkedCellList<typename AoSoA_t::memory_space>
-            cell_list( aosoa.slice<Position>(), begin, end,
-                       grid_delta, grid_min, grid_max );
+            cell_list( pos, begin, end, grid_delta, grid_min, grid_max );
         Cabana::permute( cell_list, aosoa );
 
         // Checking the binning.
@@ -225,7 +224,7 @@ void testLinkedListRange()
         std::size_t begin = 200;
         std::size_t end = 900;
         Cabana::LinkedCellList<typename AoSoA_t::memory_space>
-            cell_list( aosoa.slice<Position>(), grid_delta, grid_min, grid_max );
+            cell_list( pos, grid_delta, grid_min, grid_max );
         Cabana::permute( cell_list, aosoa, begin, end );
 
         // Checking the binning.
@@ -283,7 +282,323 @@ void testLinkedListRange()
                         EXPECT_EQ( cell_id( particle_id, 0 ), i );
                         EXPECT_EQ( cell_id( particle_id, 1 ), j );
                         EXPECT_EQ( cell_id( particle_id, 2 ), k );
+                        EXPECT_EQ( cell_list.binSize(i,j,k), 1 );
                     }
+                }
+            }
+        }
+    }
+}
+
+//---------------------------------------------------------------------------//
+void testLinkedListSlice()
+{
+    // Make an AoSoA with positions and ijk cell ids.
+    enum MyFields { Position = 0, CellId = 1 };
+    using DataTypes = Cabana::MemberTypes<double[3],int[3]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+    using size_type = typename AoSoA_t::memory_space::size_type;
+    int num_p = 1000;
+    AoSoA_t aosoa( num_p );
+
+    // Set the problem so each particle lives in the center of a cell on a
+    // regular grid of cell size 1 and total size 10x10x10. We are making them
+    // in the reverse order we expect the sort to happen. The sort binary
+    // operator should order by i first and k last.
+    int nx = 10;
+    double dx = 1.0;
+    double x_min = 0.0;
+    double x_max = x_min + nx * dx;
+    auto pos = aosoa.slice<Position>();
+    auto cell_id = aosoa.slice<CellId>();
+    std::size_t particle_id = 0;
+    for ( int k = 0; k < nx; ++k )
+    {
+        for ( int j = 0; j < nx; ++j )
+        {
+            for ( int i = 0; i < nx; ++i, ++particle_id )
+            {
+                cell_id( particle_id, 0 ) = i;
+                cell_id( particle_id, 1 ) = j;
+                cell_id( particle_id, 2 ) = k;
+
+                pos( particle_id, 0 ) = x_min + (i + 0.5) * dx;
+                pos( particle_id, 1 ) = x_min + (j + 0.5) * dx;
+                pos( particle_id, 2 ) = x_min + (k + 0.5) * dx;
+            }
+        }
+    }
+
+    // Create a grid.
+    double grid_delta[3] = {dx,dx,dx};
+    double grid_min[3] = {x_min,x_min,x_min};
+    double grid_max[3] = {x_max,x_max,x_max};
+
+    // Bin the particles in the grid and permute only the position slice.
+    // First do this by only operating on a subset of the particles.
+    {
+        std::size_t begin = 250;
+        std::size_t end = 750;
+        Cabana::LinkedCellList<typename AoSoA_t::memory_space>
+            cell_list( pos, begin, end, grid_delta, grid_min, grid_max );
+        Cabana::permute( cell_list, pos );
+
+        // Checking the binning.
+        EXPECT_EQ( cell_list.totalBins(), nx*nx*nx );
+        EXPECT_EQ( cell_list.numBin(0), nx );
+        EXPECT_EQ( cell_list.numBin(1), nx );
+        EXPECT_EQ( cell_list.numBin(2), nx );
+
+        // The order should be reversed with the i index moving the slowest
+        // for those that are actually in the binning range. Do this pass
+        // first. We do this by looping through in the sorted order and check
+        // those that had original indices in the sorting range.
+        particle_id = 0;
+        for ( int i = 0; i < nx; ++i )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int k = 0; k < nx; ++k )
+                {
+                    std::size_t original_id = i + j * nx + k * nx * nx;
+                    if ( begin <= original_id && original_id < end )
+                    {
+                        int sort_id = begin + particle_id;
+
+                        // Back calculate what we think the ijk indices of
+                        // the particle are based on k-fastest ordering.
+                        int grid_id = i * nx * nx + j * nx + k;
+                        int grid_i = grid_id / (nx*nx);
+                        int grid_j = (grid_id / nx) % nx;
+                        int grid_k = grid_id % nx;
+                        float pos_i = x_min + (grid_i + 0.5) * dx;
+                        float pos_j = x_min + (grid_j + 0.5) * dx;
+                        float pos_k = x_min + (grid_k + 0.5) * dx;
+
+                        // Get the position of the particle in
+                        // the newly sorted decomposition. We are looping
+                        // through this in k-fastest order (the indexing of
+                        // the grid cells) and therefore should get the
+                        // particles in their sorted order.
+                        EXPECT_EQ( pos( sort_id, 0 ), pos_i );
+                        EXPECT_EQ( pos( sort_id, 1 ), pos_j );
+                        EXPECT_EQ( pos( sort_id, 2 ), pos_k );
+
+                        // Check that we binned the particle and got the right
+                        // offset.
+                        EXPECT_EQ( cell_list.binSize(i,j,k), 1 );
+                        EXPECT_EQ( cell_list.binOffset(i,j,k),
+                                   size_type(particle_id) );
+
+                        // Increment the particle id.
+                        ++particle_id;
+                    }
+                }
+            }
+        }
+        // For positions that are outside the binned range pos should be
+        // unchanged and the bins should empty.
+        particle_id = 0;
+        for ( int k = 0; k < nx; ++k )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int i = 0; i < nx; ++i, ++particle_id )
+                {
+                    if ( begin > particle_id || particle_id >= end )
+                    {
+                        float pos_i = x_min + (i + 0.5) * dx;
+                        float pos_j = x_min + (j + 0.5) * dx;
+                        float pos_k = x_min + (k + 0.5) * dx;
+
+                        // Check the positions of the particle
+                        EXPECT_EQ( pos( particle_id, 0 ), pos_i );
+                        EXPECT_EQ( pos( particle_id, 1 ), pos_j );
+                        EXPECT_EQ( pos( particle_id, 2 ), pos_k );
+                        EXPECT_EQ( cell_list.binSize(i,j,k), 0 );
+                    }
+
+                    // All IDs should be unsorted regardless of range
+                    EXPECT_EQ( cell_id( particle_id, 0 ), i );
+                    EXPECT_EQ( cell_id( particle_id, 1 ), j );
+                    EXPECT_EQ( cell_id( particle_id, 2 ), k );
+                }
+            }
+        }
+    }
+    // Now bin and permute all of the particles.
+    {
+        Cabana::LinkedCellList<typename AoSoA_t::memory_space>
+            cell_list( pos, grid_delta, grid_min, grid_max );
+        Cabana::permute( cell_list, pos );
+
+        // Checking the binning. The order should be reversed with the i index
+        // moving the slowest.
+        EXPECT_EQ( cell_list.totalBins(), nx*nx*nx );
+        EXPECT_EQ( cell_list.numBin(0), nx );
+        EXPECT_EQ( cell_list.numBin(1), nx );
+        EXPECT_EQ( cell_list.numBin(2), nx );
+        particle_id = 0;
+        for ( int i = 0; i < nx; ++i )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int k = 0; k < nx; ++k, ++particle_id )
+                {
+                    float pos_i = x_min + (i + 0.5) * dx;
+                    float pos_j = x_min + (j + 0.5) * dx;
+                    float pos_k = x_min + (k + 0.5) * dx;
+
+                    EXPECT_EQ( pos( particle_id, 0 ), pos_i );
+                    EXPECT_EQ( pos( particle_id, 1 ), pos_j );
+                    EXPECT_EQ( pos( particle_id, 2 ), pos_k );
+                    EXPECT_EQ( cell_list.cardinalBinIndex(i,j,k), particle_id );
+                    EXPECT_EQ( cell_list.binSize(i,j,k), 1 );
+                    EXPECT_EQ( cell_list.binOffset(i,j,k),
+                               size_type(particle_id) );
+                }
+            }
+        }
+        particle_id = 0;
+        for ( int k = 0; k < nx; ++k )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int i = 0; i < nx; ++i, ++particle_id )
+                {
+                    // All IDs should be unsorted
+                    EXPECT_EQ( cell_id( particle_id, 0 ), i );
+                    EXPECT_EQ( cell_id( particle_id, 1 ), j );
+                    EXPECT_EQ( cell_id( particle_id, 2 ), k );
+                }
+            }
+        }
+    }
+}
+
+//---------------------------------------------------------------------------//
+void testLinkedListSliceRange()
+{
+    // Make an AoSoA with positions and ijk cell ids.
+    enum MyFields { Position = 0, CellId = 1 };
+    using DataTypes = Cabana::MemberTypes<double[3],int[3]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+    using size_type = typename AoSoA_t::memory_space::size_type;
+    int num_p = 1000;
+    AoSoA_t aosoa( num_p );
+
+    // Set the problem so each particle lives in the center of a cell on a
+    // regular grid of cell size 1 and total size 10x10x10. We are making them
+    // in the reverse order we expect the sort to happen. The sort binary
+    // operator should order by i first and k last.
+    int nx = 10;
+    double dx = 1.0;
+    double x_min = 0.0;
+    double x_max = x_min + nx * dx;
+    auto pos = aosoa.slice<Position>();
+    auto cell_id = aosoa.slice<CellId>();
+    std::size_t particle_id = 0;
+    for ( int k = 0; k < nx; ++k )
+    {
+        for ( int j = 0; j < nx; ++j )
+        {
+            for ( int i = 0; i < nx; ++i, ++particle_id )
+            {
+                cell_id( particle_id, 0 ) = i;
+                cell_id( particle_id, 1 ) = j;
+                cell_id( particle_id, 2 ) = k;
+
+                pos( particle_id, 0 ) = x_min + (i + 0.5) * dx;
+                pos( particle_id, 1 ) = x_min + (j + 0.5) * dx;
+                pos( particle_id, 2 ) = x_min + (k + 0.5) * dx;
+            }
+        }
+    }
+
+    // Create a grid.
+    double grid_delta[3] = {dx,dx,dx};
+    double grid_min[3] = {x_min,x_min,x_min};
+    double grid_max[3] = {x_max,x_max,x_max};
+
+    // Bin all the particles in the grid and permute only a portion
+    // of the position slice (leave IDs unsorted).
+    {
+        std::size_t begin = 200;
+        std::size_t end = 900;
+        Cabana::LinkedCellList<typename AoSoA_t::memory_space>
+            cell_list( pos, grid_delta, grid_min, grid_max );
+        Cabana::permute( cell_list, pos, begin, end );
+
+        // Checking the binning.
+        EXPECT_EQ( cell_list.totalBins(), nx*nx*nx );
+        EXPECT_EQ( cell_list.numBin(0), nx );
+        EXPECT_EQ( cell_list.numBin(1), nx );
+        EXPECT_EQ( cell_list.numBin(2), nx );
+
+        // The order should be reversed with the i index moving the slowest
+        // for those that are actually in the binning range. Do this pass
+        // first. We do this by looping through in the sorted order and check
+        // those that had original indices in the sorting range.
+        particle_id = 0;
+        for ( int i = 0; i < nx; ++i )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int k = 0; k < nx; ++k, ++particle_id )
+                {
+                    if ( begin <= particle_id && particle_id < end )
+                    {
+                        // Back calculate what we think the ijk indices of
+                        // the particle are based on k-fastest ordering.
+                        int grid_id = i * nx * nx + j * nx + k;
+                        int grid_i = grid_id / (nx*nx);
+                        int grid_j = (grid_id / nx) % nx;
+                        int grid_k = grid_id % nx;
+                        float pos_i = x_min + (grid_i + 0.5) * dx;
+                        float pos_j = x_min + (grid_j + 0.5) * dx;
+                        float pos_k = x_min + (grid_k + 0.5) * dx;
+
+                        // Check the positions of the particle
+                        EXPECT_EQ( pos( particle_id, 0 ), pos_i );
+                        EXPECT_EQ( pos( particle_id, 1 ), pos_j );
+                        EXPECT_EQ( pos( particle_id, 2 ), pos_k );
+
+                        // Check that we binned the particle and got the right
+                        // offset.
+                        EXPECT_EQ( cell_list.binSize(i,j,k), 1 );
+                        EXPECT_EQ( cell_list.binOffset(i,j,k),
+                                   size_type(particle_id) );
+                    }
+                }
+            }
+        }
+
+        // For those that are outside the binned range IDs should be
+        // unchanged
+        particle_id = 0;
+        for ( int k = 0; k < nx; ++k )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int i = 0; i < nx; ++i, ++particle_id )
+                {
+                    if ( begin > particle_id || particle_id >= end )
+                    {
+                        float pos_i = x_min + (i + 0.5) * dx;
+                        float pos_j = x_min + (j + 0.5) * dx;
+                        float pos_k = x_min + (k + 0.5) * dx;
+
+                        // Check the positions of the particle
+                        EXPECT_EQ( pos( particle_id, 0 ), pos_i );
+                        EXPECT_EQ( pos( particle_id, 1 ), pos_j );
+                        EXPECT_EQ( pos( particle_id, 2 ), pos_k );
+                        EXPECT_EQ( cell_list.binSize(i,j,k), 1 );
+                    }
+
+                    // All IDs should be unsorted regardless of range
+                    EXPECT_EQ( cell_id( particle_id, 0 ), i );
+                    EXPECT_EQ( cell_id( particle_id, 1 ), j );
+                    EXPECT_EQ( cell_id( particle_id, 2 ), k );
                 }
             }
         }
@@ -302,6 +617,18 @@ TEST_F( TEST_CATEGORY, linked_list_test )
 TEST_F( TEST_CATEGORY, linked_list_range_test )
 {
     testLinkedListRange();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, linked_list_slice_test )
+{
+    testLinkedListSlice();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, linked_list_slice_range_test )
+{
+    testLinkedListSliceRange();
 }
 
 //---------------------------------------------------------------------------//

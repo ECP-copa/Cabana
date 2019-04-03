@@ -490,6 +490,275 @@ void testSortByKeyRange()
 }
 
 //---------------------------------------------------------------------------//
+void testSortByKeySlice()
+{
+    // Data dimensions.
+    const int dim_1 = 3;
+    const int dim_2 = 2;
+
+    // Declare data types.
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
+                                          int,
+                                          double[dim_1][dim_2]>;
+
+    // Declare the AoSoA type.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+
+    // Create an AoSoA.
+    int num_data = 3453;
+    AoSoA_t aosoa( num_data );
+
+    // Create a Kokkos view for the keys.
+    using KeyViewType = Kokkos::View<int*,typename AoSoA_t::memory_space>;
+    KeyViewType keys( "keys", num_data );
+
+    // Create the AoSoA data and keys. Create the data in reverse order so we
+    // can see that it is sorted.
+    auto v0 = aosoa.slice<0>();
+    auto v1 = aosoa.slice<1>();
+    auto v2 = aosoa.slice<2>();
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        for ( int i = 0; i < dim_1; ++i )
+            v0( p, i ) = reverse_index + i;
+
+        v1( p ) = reverse_index;
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                v2( p, i, j ) = reverse_index + i + j;
+
+        keys( p ) = reverse_index;
+    }
+
+    // Sort slice 1 by keys.
+    auto binning_data = Cabana::sortByKey( keys );
+    Cabana::permute( binning_data, v0 );
+
+    // Check the result of the slice 1 sort.
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        // Slice 1 particles should be reversed.
+        for ( int i = 0; i < dim_1; ++i )
+            EXPECT_EQ( v0( p, i ), p + i );
+
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+    }
+    // Other slices should be unchanged.
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        EXPECT_EQ( v1( p ), reverse_index);
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                EXPECT_EQ( v2( p, i, j ), reverse_index + i + j);
+    }
+
+    // Sort slice 2 by keys.
+    Cabana::permute( binning_data, v1 );
+
+    // Check the result of the slice 2 sort (slice 1 already done).
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        // Slice 1 & 2 particles should be reversed.
+        for ( int i = 0; i < dim_1; ++i )
+            EXPECT_EQ( v0( p, i ), p + i );
+
+        EXPECT_EQ( v1( p ), p );
+
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+    }
+    // Other slice should be unchanged.
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                EXPECT_EQ( v2( p, i, j ), reverse_index + i + j);
+    }
+
+    // Sort slice 3 by keys.
+    Cabana::permute( binning_data, v2 );
+
+    // Check the result of the slice 3 sort (slices 1-2 already done).
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        // All slice particles should be reversed.
+        for ( int i = 0; i < dim_1; ++i )
+            EXPECT_EQ( v0( p, i ), p + i );
+
+        EXPECT_EQ( v1( p ), p );
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                EXPECT_EQ( v2( p, i, j ), p + i + j );
+
+        EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+    }
+}
+
+//---------------------------------------------------------------------------//
+void testSortByKeySliceRange()
+{
+    // Data dimensions.
+    const int dim_1 = 3;
+    const int dim_2 = 2;
+
+    // Declare data types.
+    using DataTypes = Cabana::MemberTypes<float[dim_1],
+                                          int,
+                                          double[dim_1][dim_2]>;
+
+    // Declare the AoSoA type.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+
+    // Create an AoSoA.
+    int num_data = 3453;
+    AoSoA_t aosoa( num_data );
+    std::size_t begin = 300;
+    std::size_t end = 3000;
+
+    // Create a Kokkos view for the keys.
+    using KeyViewType = Kokkos::View<int*,typename AoSoA_t::memory_space>;
+    KeyViewType keys( "keys", num_data );
+
+    // Create the AoSoA data and keys. Create the data in reverse order so we
+    // can see that it is sorted.
+    auto v0 = aosoa.slice<0>();
+    auto v1 = aosoa.slice<1>();
+    auto v2 = aosoa.slice<2>();
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        for ( int i = 0; i < dim_1; ++i )
+            v0( p, i ) = reverse_index + i;
+
+        v1( p ) = reverse_index;
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                v2( p, i, j ) = reverse_index + i + j;
+
+        keys( p ) = reverse_index;
+    }
+
+    // Sort slice 1 by keys.
+    auto binning_data = Cabana::sortByKey( keys );
+    Cabana::permute( binning_data, v0, begin, end );
+
+    // Check the result of the slice 1 sort.
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+        if ( begin <= p && p < end )
+        {
+            // Slice 1 particles should be reversed.
+            for ( int i = 0; i < dim_1; ++i )
+                EXPECT_EQ( v0( p, i ), p + i );
+
+            EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+        }
+        else
+        {
+            for ( int i = 0; i < dim_1; ++i )
+                EXPECT_EQ( v0( p, i ), reverse_index + i);
+        }
+    }
+    // Other slices should be unchanged.
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        EXPECT_EQ( v1( p ), reverse_index);
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                EXPECT_EQ( v2( p, i, j ), reverse_index + i + j);
+    }
+
+    // Sort slice 2 by keys.
+    Cabana::permute( binning_data, v1, begin, end );
+
+    // Check the result of the slice 2 sort (slice 1 already done).
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+        if ( begin <= p && p < end )
+        {
+            // Slice 1 & 2 particles should be reversed.
+            for ( int i = 0; i < dim_1; ++i )
+                EXPECT_EQ( v0( p, i ), p + i );
+
+            EXPECT_EQ( v1( p ), p );
+
+            EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+        }
+        else
+        {
+            for ( int i = 0; i < dim_1; ++i )
+                EXPECT_EQ( v0( p, i ), reverse_index + i);
+
+            EXPECT_EQ( v1( p ), reverse_index);
+        }
+    }
+    // Other slice should be unchanged.
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                EXPECT_EQ( v2( p, i, j ), reverse_index + i + j);
+    }
+
+    // Sort slice 3 by keys.
+    Cabana::permute( binning_data, v2, begin, end );
+
+    // Check the result of the slice 3 sort (slices 1-2 already done).
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
+        int reverse_index = aosoa.size() - p - 1;
+        if ( begin <= p && p < end )
+        {
+            // All slice particles should be reversed.
+            for ( int i = 0; i < dim_1; ++i )
+                EXPECT_EQ( v0( p, i ), p + i );
+
+            EXPECT_EQ( v1( p ), p );
+
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    EXPECT_EQ( v2( p, i, j ), p + i + j );
+
+            EXPECT_EQ( binning_data.permutation(p), (unsigned) reverse_index );
+        }
+        else
+        {
+            for ( int i = 0; i < dim_1; ++i )
+                EXPECT_EQ( v0( p, i ), reverse_index + i);
+
+            EXPECT_EQ( v1( p ), reverse_index);
+
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    EXPECT_EQ( v2( p, i, j ), reverse_index + i + j);
+        }
+    }
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST_F( TEST_CATEGORY, sort_by_key_test )
@@ -531,6 +800,18 @@ TEST_F( TEST_CATEGORY, bin_by_member_data_only_test )
 TEST_F( TEST_CATEGORY, sort_by_key_range_test )
 {
     testSortByKeyRange();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, sort_by_key_slice_test )
+{
+    testSortByKeySlice();
+}
+
+//---------------------------------------------------------------------------//
+TEST_F( TEST_CATEGORY, sort_by_key_slice_range_test )
+{
+    testSortByKeySliceRange();
 }
 
 //---------------------------------------------------------------------------//
