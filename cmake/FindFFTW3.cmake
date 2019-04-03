@@ -8,6 +8,15 @@
 #                                                                          #
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
+#
+# - Find fftw3
+# Find the native FFTW3 headers and libraries.
+#
+#  FFTW3_INCLUDE_DIRS - where to find fftw3.h, etc.
+#  FFTW3_LIBRARIES    - List of libraries when using fftw3.
+#  FFTW3_FOUND        - True if fftw3 found.
+#
+############################################################################
 
 find_package(PkgConfig)
 
