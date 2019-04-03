@@ -307,14 +307,12 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   //Needs some parallelism regardless
   #ifdef CUDA_ENABLE
   cufftDoubleComplex *BC;
-  BC = (cufftDoubleComplex *)cudaMalloc((void**)&BC,sizeof(fftw_complex) * meshsize);
+  //BC = (cufftDoubleComplex *)cudaMallocManaged((void**)&BC,sizeof(cufftDoubleComplex) * meshsize);
+  cudaMallocManaged((void**)&BC,sizeof(cufftDoubleComplex) * meshsize);
   #else
   fftw_complex* BC;
   BC = (fftw_complex *)fftw_malloc(sizeof(fftw_complex) * meshsize);
   #endif
-  Kokkos::fence();
-  printf("%f",Ur);
-  printf("\n");
   //TODO: Is this a good place for Kokkos Hierarchical parallelism?
   auto BC_functor = KOKKOS_LAMBDA(const int kx)
   {
@@ -327,13 +325,9 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
           for (kz=0; kz<meshwidth; kz++)
           {
               idx = kx + (ky*meshwidth) + (kz*meshwidth*meshwidth);
-              printf("%i",meshwidth);
-              printf("\n");
               if (kx + ky + kz > 0)//do nothing if kx=ky=kz=0
               {
                   //Shift the C array
-                  printf("%i",meshwidth);
-                  printf("\n");
                   mx = kx;
                   my = ky;
                   mz = kz;
@@ -359,20 +353,14 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
               }
               else
               {
-                  printf("%i",meshwidth);
-                  printf("\n");
                   BC[idx].x = 0.0;
                   BC[idx].y = 0.0;//set origin element to zero
-                  printf("%i",meshwidth);
-                  printf("\n");
               }
           }
       }
   };
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,meshwidth),BC_functor );
   Kokkos::fence();
-  printf("%f",Ur);
-  printf("\n");
   //Note that the origin element is zero in this array
   //BC[0][0] = 0.0;
   //BC[0][1] = 0.0;
@@ -389,8 +377,10 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   #ifdef CUDA_ENABLE 
   cufftDoubleComplex *Qr,*Qktest;
   cufftHandle plantest;
-  Qr = (cufftDoubleComplex *)cudaMalloc((void**)&Qr,sizeof(fftw_complex) * meshsize);
-  Qktest = (cufftDoubleComplex *)cudaMalloc((void**)&Qktest,sizeof(fftw_complex) * meshsize);
+  //Qr = (cufftDoubleComplex *)cudaMalloc((void**)&Qr,sizeof(fftw_complex) * meshsize);
+  //Qktest = (cufftDoubleComplex *)cudaMalloc((void**)&Qktest,sizeof(fftw_complex) * meshsize);
+  cudaMallocManaged((void**)&Qr,sizeof(fftw_complex) * meshsize);
+  cudaMallocManaged((void**)&Qktest,sizeof(fftw_complex) * meshsize);
   //Copy charges into real input array
   auto copy_charge = KOKKOS_LAMBDA( const int idx)
   {
@@ -419,7 +409,6 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   #ifdef CUDA_ENABLE
   plantest = cufftPlan3d(&plantest,meshwidth, meshwidth, meshwidth,CUFFT_Z2Z);
   cufftExecZ2Z(plantest,Qr,Qktest,CUFFT_INVERSE);//IFFT on Q
-  Kokkos::fence();
 
   Kokkos::parallel_reduce( meshsize, KOKKOS_LAMBDA(const int idx, double& Uk_part) 
   {
@@ -427,11 +416,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   },
   Uk
   );
-  printf("%f",Ur);
-  printf("\n");
   cufftDestroy(plantest);
-  printf("%f",Ur);
-  printf("\n");
   #else
   plantest = fftw_plan_dft_3d(meshwidth, meshwidth, meshwidth, Qr, Qktest, FFTW_BACKWARD, FFTW_ESTIMATE);
   fftw_execute(plantest);//IFFT on Q
@@ -444,7 +429,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   fftw_destroy_plan(plantest);
   #endif 
 
-
+  Kokkos::fence();
 
   Uk *= 0.5;
  
