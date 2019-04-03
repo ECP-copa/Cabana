@@ -10,6 +10,8 @@ elseif()
   if(FFTW3_FOUND)
     add_executable(SPME spme_example.cpp)
     target_link_libraries(SPME cabanacore ${FFTW3_LIBRARIES})
+  else()
+    message(WARNING "Neither FFTW nor Cuda found, not building SPME executable")
   endif()
 endif()
 
