@@ -4,7 +4,7 @@
 #include <sys/time.h>
 #include <chrono>
 
-#ifdef CUDA_ENABLE
+#ifdef Cabana_ENABLE_Cuda
 #include <cufft.h>
 #include <cufftw.h>
 //#include 
@@ -189,7 +189,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   double eps_r = _eps_r;
 
 
-#ifdef CUDA_ENABLE
+#ifdef Cabana_ENABLE_Cuda
   Kokkos::View<int*, Kokkos::CudaUVMSpace> k_max_int("k_max_int",3);
   for ( auto i = 0; i < 3; ++i)
   {
@@ -305,7 +305,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   //then compute the B and C arrays as described in the paper
   //This can be done once at the start of a run if the mesh stays constant
   //Needs some parallelism regardless
-  #ifdef CUDA_ENABLE
+  #ifdef Cabana_ENABLE_Cuda
   cufftDoubleComplex *BC;
   //BC = (cufftDoubleComplex *)cudaMallocManaged((void**)&BC,sizeof(cufftDoubleComplex) * meshsize);
   cudaMallocManaged((void**)&BC,sizeof(cufftDoubleComplex) * meshsize);
@@ -374,7 +374,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   //  the norm of that result (in reciprocal space) by the BC array
 
   //Set up the real-space charge and reciprocal-space charge
-  #ifdef CUDA_ENABLE 
+  #ifdef Cabana_ENABLE_Cuda 
   cufftDoubleComplex *Qr,*Qktest;
   cufftHandle plantest;
   //Qr = (cufftDoubleComplex *)cudaMalloc((void**)&Qr,sizeof(fftw_complex) * meshsize);
@@ -406,7 +406,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
   //std::cout << "Set up FFT done" << std::endl;
 
   //Plan out that IFFT on the real-space charge mesh
-  #ifdef CUDA_ENABLE
+  #ifdef Cabana_ENABLE_Cuda
   plantest = cufftPlan3d(&plantest,meshwidth, meshwidth, meshwidth,CUFFT_Z2Z);
   cufftExecZ2Z(plantest,Qr,Qktest,CUFFT_INVERSE);//IFFT on Q
 
@@ -491,7 +491,7 @@ void TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, doub
 #endif
 */
   total_energy = Ur + Uk + Uself + Udip;
-  #ifndef CUDA_ENABLE
+  #ifndef Cabana_ENABLE_Cuda
     fftw_cleanup();
   #endif
 }

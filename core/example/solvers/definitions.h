@@ -41,16 +41,16 @@ using ParticleDataTypes =
 
 
 // Declare the memory space.
-#ifdef CUDA_ENABLE
+#ifdef Cabana_ENABLE_Cuda
 using MemorySpace = Cabana::CudaUVMSpace;
 using ExecutionSpace = Kokkos::Cuda;
-#elif OMP_ENABLE
+#elif Cabana_ENABLE_OpenMP
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::OpenMP;
-#elif Pthread_ENABLE
+#elif Cabana_ENABLE_Pthread
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::Threads;
-#elif Serial_ENABLE
+#elif Cabana_ENABLE_Serial
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::Serial;
 #endif

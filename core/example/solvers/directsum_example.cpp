@@ -9,31 +9,22 @@ int main(int argc, char** argv)
 
   // crystal size
   const int c_size = 2;
-  // accuracy parameter for the tuning of Ewald
-//  const double accuracy = 1e-6;
   //width of unit cell (assume cube)
   const double width = 1.0;
-  //Number of mesh points in each direction for SPME
-//  const int n_meshpoints = 4096;//16*16*16;
   //Number of particles, 3D
   const int n_particles = c_size * c_size * c_size;
-
   //Number of periodic shells
   const int periodic_shells = 3;
   
   //Create an empty list of all the particles
   ParticleList *particles = new ParticleList( n_particles );
-  //Create an empty list of all the mesh points
-//  ParticleList *mesh = new ParticleList( n_meshpoints );
 
   std::cout << std::setprecision(12);
 
-  //Initialize the particles and mesh
+  //Initialize the particles
   //Currently particles are initialized as alternating charges 
   //in uniform cubic grid pattern like NaCl
   initializeParticles( *particles, c_size );
-  //Mesh is by default cubic and uniform
-//  initializeMesh( *mesh, width );  
 
   //Create a Kokkos timer to measure performance
   Kokkos::Timer timer;
@@ -58,8 +49,6 @@ int main(int argc, char** argv)
   std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-solver.get_energy() << std::endl;
   std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/solver.get_energy() << std::endl;
   
-  //Clean up
-  //delete mesh;
   //delete particles;
   //Kokkos::fence();
   Kokkos::Cuda::finalize();

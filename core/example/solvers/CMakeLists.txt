@@ -1,5 +1,5 @@
 if(Cabana_ENABLE_Cuda)
-  add_definitions(-DCUDA_ENABLE)
+  add_compile_definitions(Cabana_ENABLE_Cuda)
   find_package(CUDA REQUIRED)
   if(CUDA_FOUND)
     add_executable(SPME spme_example.cpp)
@@ -16,13 +16,13 @@ elseif()
 endif()
 
 if(Cabana_ENABLE_OpenMP)
-  add_definitions(-DOMP_ENABLE)
+  add_compile_definitions(Cabana_ENABLE_OpenMP)
 endif()
 if(Cabana_ENABLE_Pthread)
-  add_definitions(-DPthread_ENABLE)
+  add_compile_definitions(Cabana_ENABLE_Pthread)
 endif()
 if(Cabana_ENABLE_Serial)
-  add_definitions(-DSerial_ENABLE)
+  add_compile_definitions(Cabana_ENABLE_Serial)
 endif()
 
 
