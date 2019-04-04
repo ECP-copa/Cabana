@@ -10,6 +10,7 @@
  ****************************************************************************/
 
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_DeepCopy.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -30,26 +31,28 @@ void initializeDataMembers(
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
 
-    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    slice_0( idx, i, j, k ) = fval * (i+j+k);
+    Kokkos::parallel_for(
+        "init_members",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int idx ){
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    for ( int k = 0; k < dim_3; ++k )
+                        slice_0( idx, i, j, k ) = fval * (i+j+k);
 
-        // Member 1.
-        slice_1( idx ) = ival;
+            // Member 1.
+            slice_1( idx ) = ival;
 
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            slice_2( idx, i ) = dval * i;
+            // Member 2.
+            for ( int i = 0; i < dim_1; ++i )
+                slice_2( idx, i ) = dval * i;
 
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                slice_3( idx, i, j ) = dval * (i+j);
-    }
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    slice_3( idx, i, j ) = dval * (i+j);
+        });
 }
 
 //---------------------------------------------------------------------------//
@@ -60,10 +63,14 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto slice_0 = aosoa.template slice<0>();
-    auto slice_1 = aosoa.template slice<1>();
-    auto slice_2 = aosoa.template slice<2>();
-    auto slice_3 = aosoa.template slice<3>();
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+
+    auto slice_0 = mirror.template slice<0>();
+    auto slice_1 = mirror.template slice<1>();
+    auto slice_2 = mirror.template slice<2>();
+    auto slice_3 = mirror.template slice<3>();
 
     for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -179,37 +186,41 @@ void apiTest()
     auto p1 = slice_1.data();
     auto p2 = slice_2.data();
     auto p3 = slice_3.data();
-    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
-        for ( int a = 0; a < slice_0.arraySize(s); ++a )
-        {
-            // Member 0.
-            for ( int i = 0; i < dim_1; ++i )
-                for ( int j = 0; j < dim_2; ++j )
-                    for ( int k = 0; k < dim_3; ++k )
-                        p0[ s*slice_0.stride(0) +
-                            a*slice_0.stride(1) +
-                            i*slice_0.stride(2) +
-                            j*slice_0.stride(3) +
-                            k*slice_0.stride(4) ] = fval * (i+j+k);
+    Kokkos::parallel_for(
+        "raw_ptr_update",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,slice_0.numSoA()),
+        KOKKOS_LAMBDA( const int s ){
+            for ( int a = 0; a < slice_0.arraySize(s); ++a )
+            {
+                // Member 0.
+                for ( int i = 0; i < dim_1; ++i )
+                    for ( int j = 0; j < dim_2; ++j )
+                        for ( int k = 0; k < dim_3; ++k )
+                            p0[ s*slice_0.stride(0) +
+                                a*slice_0.stride(1) +
+                                i*slice_0.stride(2) +
+                                j*slice_0.stride(3) +
+                                k*slice_0.stride(4) ] = fval * (i+j+k);
 
-            // Member 1.
-            p1[ s*slice_1.stride(0) +
-                a*slice_1.stride(1) ] = ival;
+                // Member 1.
+                p1[ s*slice_1.stride(0) +
+                    a*slice_1.stride(1) ] = ival;
 
-            // Member 2.
-            for ( int i = 0; i < dim_1; ++i )
-                p2[ s*slice_2.stride(0) +
-                    a*slice_2.stride(1) +
-                    i*slice_2.stride(2) ] = dval * i;
+                // Member 2.
+                for ( int i = 0; i < dim_1; ++i )
+                    p2[ s*slice_2.stride(0) +
+                        a*slice_2.stride(1) +
+                        i*slice_2.stride(2) ] = dval * i;
 
-            // Member 3.
-            for ( int i = 0; i < dim_1; ++i )
-                for ( int j = 0; j < dim_2; ++j )
-                    p3[ s*slice_3.stride(0) +
-                        a*slice_3.stride(1) +
-                        i*slice_3.stride(2) +
-                        j*slice_3.stride(3) ] = dval * (i+j);
-        }
+                // Member 3.
+                for ( int i = 0; i < dim_1; ++i )
+                    for ( int j = 0; j < dim_2; ++j )
+                        p3[ s*slice_3.stride(0) +
+                            a*slice_3.stride(1) +
+                            i*slice_3.stride(2) +
+                            j*slice_3.stride(3) ] = dval * (i+j);
+            }
+        });
 
     // Check the result of pointer manipulation
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -268,26 +279,28 @@ void randomAccessTest()
     auto slice_3 = aosoa_2.slice<3>();
 
     // Assign the read-only data to the new aosoa.
-    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    slice_0( idx, i, j, k ) = ra_slice_0( idx, i, j, k );
+    Kokkos::parallel_for(
+        "assign read only",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int idx ){
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    for ( int k = 0; k < dim_3; ++k )
+                        slice_0( idx, i, j, k ) = ra_slice_0( idx, i, j, k );
 
-        // Member 1.
-        slice_1( idx ) = ra_slice_1( idx );
+            // Member 1.
+            slice_1( idx ) = ra_slice_1( idx );
 
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            slice_2( idx, i ) = ra_slice_2( idx, i );
+            // Member 2.
+            for ( int i = 0; i < dim_1; ++i )
+                slice_2( idx, i ) = ra_slice_2( idx, i );
 
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                slice_3( idx, i, j ) = ra_slice_3( idx, i, j );
-    }
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    slice_3( idx, i, j ) = ra_slice_3( idx, i, j );
+        });
 
     // Check data members for proper assignment.
     checkDataMembers( aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -312,7 +325,10 @@ void atomicAccessTest()
     auto slice = aosoa.slice<0>();
 
     // Set to 0.
-    for ( int i = 0; i < num_data; ++i ) slice( i ) = 0;
+    Kokkos::parallel_for(
+        "assign",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,num_data),
+        KOKKOS_LAMBDA( const int i ){ slice(i) = 0; });
 
     // Get an atomic slice of the data.
     decltype(slice)::atomic_access_slice atomic_slice = slice;
@@ -329,25 +345,30 @@ void atomicAccessTest()
     Kokkos::fence();
 
     // Check the results of the atomic increment.
-    for ( int i = 0; i < num_data; ++i ) EXPECT_EQ( slice(i), num_data );
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto mirror_slice = mirror.template slice<0>();
+
+    for ( int i = 0; i < num_data; ++i ) EXPECT_EQ( mirror_slice(i), num_data );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, api_test )
+TEST( TEST_CATEGORY, api_test )
 {
     apiTest();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, random_access_test )
+TEST( TEST_CATEGORY, random_access_test )
 {
     randomAccessTest();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, atomic_access_test )
+TEST( TEST_CATEGORY, atomic_access_test )
 {
     atomicAccessTest();
 }

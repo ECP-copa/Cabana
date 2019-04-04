@@ -11,6 +11,7 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_LinkedCellList.hpp>
+#include <Cabana_DeepCopy.hpp>
 
 #include <gtest/gtest.h>
 
@@ -37,23 +38,26 @@ void testLinkedList()
     double x_max = x_min + nx * dx;
     auto pos = aosoa.slice<Position>();
     auto cell_id = aosoa.slice<CellId>();
-    std::size_t particle_id = 0;
-    for ( int k = 0; k < nx; ++k )
-    {
-        for ( int j = 0; j < nx; ++j )
-        {
-            for ( int i = 0; i < nx; ++i, ++particle_id )
+    Kokkos::parallel_for(
+        "initialize",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,nx),
+        KOKKOS_LAMBDA( const int k ){
+            for ( int j = 0; j < nx; ++j )
             {
-                cell_id( particle_id, 0 ) = i;
-                cell_id( particle_id, 1 ) = j;
-                cell_id( particle_id, 2 ) = k;
+                for ( int i = 0; i < nx; ++i )
+                {
+                    std::size_t particle_id = i + j * nx + k * nx * nx;
 
-                pos( particle_id, 0 ) = x_min + (i + 0.5) * dx;
-                pos( particle_id, 1 ) = x_min + (j + 0.5) * dx;
-                pos( particle_id, 2 ) = x_min + (k + 0.5) * dx;
+                    cell_id( particle_id, 0 ) = i;
+                    cell_id( particle_id, 1 ) = j;
+                    cell_id( particle_id, 2 ) = k;
+
+                    pos( particle_id, 0 ) = x_min + (i + 0.5) * dx;
+                    pos( particle_id, 1 ) = x_min + (j + 0.5) * dx;
+                    pos( particle_id, 2 ) = x_min + (k + 0.5) * dx;
+                }
             }
-        }
-    }
+        });
 
     // Create a grid.
     double grid_delta[3] = {dx,dx,dx};
@@ -75,11 +79,40 @@ void testLinkedList()
         EXPECT_EQ( cell_list.numBin(1), nx );
         EXPECT_EQ( cell_list.numBin(2), nx );
 
+        // Copy data to the host for testing.
+        Kokkos::View<int*[3],TEST_MEMSPACE> ids( "cell_ids", num_p );
+        Kokkos::View<size_type***,TEST_MEMSPACE> bin_size(
+            "bin_size", nx, nx, nx );
+        Kokkos::View<size_type***,TEST_MEMSPACE> bin_offset(
+            "bin_offset", nx, nx, nx );
+        Kokkos::parallel_for(
+            "copy bin data",
+            Kokkos::RangePolicy<TEST_EXECSPACE>(0,nx),
+            KOKKOS_LAMBDA( const int i ){
+                for ( int j = 0; j < nx; ++j )
+                    for ( int k = 0; k < nx; ++k )
+                    {
+                        std::size_t original_id = i + j * nx + k * nx * nx;
+                        ids(original_id,0) = cell_id(original_id,0);
+                        ids(original_id,1) = cell_id(original_id,1);
+                        ids(original_id,2) = cell_id(original_id,2);
+                        bin_size(i,j,k) = cell_list.binSize(i,j,k);
+                        bin_offset(i,j,k) = cell_list.binOffset(i,j,k);
+                    }
+            });
+        Kokkos::fence();
+        auto ids_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), ids );
+        auto bin_size_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), bin_size );
+        auto bin_offset_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), bin_offset );
+
         // The order should be reversed with the i index moving the slowest
         // for those that are actually in the binning range. Do this pass
         // first. We do this by looping through in the sorted order and check
         // those that had original indices in the sorting range.
-        particle_id = 0;
+        std::size_t particle_id = 0;
         for ( int i = 0; i < nx; ++i )
         {
             for ( int j = 0; j < nx; ++j )
@@ -104,14 +137,14 @@ void testLinkedList()
                         int grid_k = grid_id % nx;
 
                         // Check the indices of the particle
-                        EXPECT_EQ( cell_id( sort_id, 0 ), grid_i );
-                        EXPECT_EQ( cell_id( sort_id, 1 ), grid_j );
-                        EXPECT_EQ( cell_id( sort_id, 2 ), grid_k );
+                        EXPECT_EQ( ids_mirror( sort_id, 0 ), grid_i );
+                        EXPECT_EQ( ids_mirror( sort_id, 1 ), grid_j );
+                        EXPECT_EQ( ids_mirror( sort_id, 2 ), grid_k );
 
                         // Check that we binned the particle and got the right
                         // offset.
-                        EXPECT_EQ( cell_list.binSize(i,j,k), 1 );
-                        EXPECT_EQ( cell_list.binOffset(i,j,k),
+                        EXPECT_EQ( bin_size_mirror(i,j,k), 1 );
+                        EXPECT_EQ( bin_offset_mirror(i,j,k),
                                    size_type(particle_id) );
 
                         // Increment the particle id.
@@ -132,10 +165,10 @@ void testLinkedList()
                 {
                     if ( begin > particle_id || particle_id >= end )
                     {
-                        EXPECT_EQ( cell_id( particle_id, 0 ), i );
-                        EXPECT_EQ( cell_id( particle_id, 1 ), j );
-                        EXPECT_EQ( cell_id( particle_id, 2 ), k );
-                        EXPECT_EQ( cell_list.binSize(i,j,k), 0 );
+                        EXPECT_EQ( ids_mirror( particle_id, 0 ), i );
+                        EXPECT_EQ( ids_mirror( particle_id, 1 ), j );
+                        EXPECT_EQ( ids_mirror( particle_id, 2 ), k );
+                        EXPECT_EQ( bin_size_mirror(i,j,k), 0 );
                     }
                 }
             }
@@ -148,25 +181,54 @@ void testLinkedList()
             cell_list( aosoa.slice<Position>(), grid_delta, grid_min, grid_max );
         Cabana::permute( cell_list, aosoa );
 
+        // Copy data to the host for testing.
+        Kokkos::View<int*[3],TEST_MEMSPACE> ids( "cell_ids", num_p );
+        Kokkos::View<size_type***,TEST_MEMSPACE> bin_size(
+            "bin_size", nx, nx, nx );
+        Kokkos::View<size_type***,TEST_MEMSPACE> bin_offset(
+            "bin_offset", nx, nx, nx );
+        Kokkos::parallel_for(
+            "copy bin data",
+            Kokkos::RangePolicy<TEST_EXECSPACE>(0,nx),
+            KOKKOS_LAMBDA( const int i ){
+                for ( int j = 0; j < nx; ++j )
+                    for ( int k = 0; k < nx; ++k )
+                    {
+                        std::size_t original_id = i + j * nx + k * nx * nx;
+                        ids(original_id,0) = cell_id(original_id,0);
+                        ids(original_id,1) = cell_id(original_id,1);
+                        ids(original_id,2) = cell_id(original_id,2);
+                        bin_size(i,j,k) = cell_list.binSize(i,j,k);
+                        bin_offset(i,j,k) = cell_list.binOffset(i,j,k);
+                    }
+            });
+        Kokkos::fence();
+        auto ids_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), ids );
+        auto bin_size_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), bin_size );
+        auto bin_offset_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), bin_offset );
+
         // Checking the binning. The order should be reversed with the i index
         // moving the slowest.
         EXPECT_EQ( cell_list.totalBins(), nx*nx*nx );
         EXPECT_EQ( cell_list.numBin(0), nx );
         EXPECT_EQ( cell_list.numBin(1), nx );
         EXPECT_EQ( cell_list.numBin(2), nx );
-        particle_id = 0;
+        std::size_t particle_id = 0;
         for ( int i = 0; i < nx; ++i )
         {
             for ( int j = 0; j < nx; ++j )
             {
                 for ( int k = 0; k < nx; ++k, ++particle_id )
                 {
-                    EXPECT_EQ( cell_id( particle_id, 0 ), i );
-                    EXPECT_EQ( cell_id( particle_id, 1 ), j );
-                    EXPECT_EQ( cell_id( particle_id, 2 ), k );
+                    EXPECT_EQ( ids_mirror( particle_id, 0 ), i );
+                    EXPECT_EQ( ids_mirror( particle_id, 1 ), j );
+                    EXPECT_EQ( ids_mirror( particle_id, 2 ), k );
                     EXPECT_EQ( cell_list.cardinalBinIndex(i,j,k), particle_id );
-                    EXPECT_EQ( cell_list.binSize(i,j,k), 1 );
-                    EXPECT_EQ( cell_list.binOffset(i,j,k),
+                    EXPECT_EQ( bin_size_mirror(i,j,k), 1 );
+                    EXPECT_EQ( bin_offset_mirror(i,j,k),
                                size_type(particle_id) );
                 }
             }
@@ -608,7 +670,7 @@ void testLinkedListSliceRange()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_list_test )
+TEST( TEST_CATEGORY, linked_list_test )
 {
     testLinkedList();
 }

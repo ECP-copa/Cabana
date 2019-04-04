@@ -201,11 +201,9 @@ void aosoaExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     aosoaExample();
-
-    Cabana::finalize();
 
     return 0;
 }

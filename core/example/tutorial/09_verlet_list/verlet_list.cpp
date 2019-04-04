@@ -119,7 +119,7 @@ void verletListExample()
     double neighborhood_radius = 0.25;
     double cell_ratio = 1.0;
     using ListAlgorithm = Cabana::FullNeighborTag;
-    using ListType = Cabana::VerletList<MemorySpace,ListAlgorithm>;
+    using ListType = Cabana::VerletList<MemorySpace,ListAlgorithm,Cabana::VerletLayoutCSR>;
     ListType verlet_list( positions, 0, positions.size(),
                           neighborhood_radius, cell_ratio,
                           grid_min, grid_max );
@@ -146,11 +146,9 @@ void verletListExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     verletListExample();
-
-    Cabana::finalize();
 
     return 0;
 }

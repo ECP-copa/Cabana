@@ -20,16 +20,7 @@
 //---------------------------------------------------------------------------//
 namespace Test {
 
-class cabana_version : public ::testing::Test {
-protected:
-  static void SetUpTestCase() {
-  }
-
-  static void TearDownTestCase() {
-  }
-};
-
-TEST_F( cabana_version, version_test )
+TEST( cabana_version, version_test )
 {
     auto const version_id = Cabana::version();
     EXPECT_TRUE( !version_id.empty() );

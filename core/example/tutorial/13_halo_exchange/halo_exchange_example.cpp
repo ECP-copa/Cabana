@@ -163,11 +163,9 @@ int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
 
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     haloExchangeExample();
-
-    Cabana::finalize();
 
     MPI_Finalize();
 

@@ -6,7 +6,8 @@ cmake_minimum_required(VERSION 3.9)
 ##---------------------------------------------------------------------------##
 # Define your project name and set up major project options
 ##---------------------------------------------------------------------------##
-project(Cabana LANGUAGES CXX VERSION 0.1.0)
+project(Cabana LANGUAGES CXX)
+set(PROJECT_VERSION "0.3.0-dev")
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
   #release comes with -O3 by default
@@ -54,6 +55,15 @@ if(NOT ENABLE_DEVICES)
 endif()
 message(STATUS "Enable Devices: ${ENABLE_DEVICES}")
 
+# if we are using Cuda, also add a "CudaUVM" device to use that memory space
+# in the test suite. Also enable a Cabana UVM option so the tests get triggered.
+foreach(_device ${ENABLE_DEVICES})
+  if(_device STREQUAL Cuda)
+    list(APPEND CABANA_SUPPORTED_DEVICES CudaUVM)
+    set(Cabana_ENABLE_CudaUVM ON)
+  endif()
+endforeach()
+
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
   enable_testing()
@@ -61,6 +71,7 @@ endif()
 
 find_package(Doxygen)
 if(Doxygen_FOUND)
+  set(DOXYGEN_GENERATE_XML YES) 
   doxygen_add_docs(doxygen core)
 endif()
 

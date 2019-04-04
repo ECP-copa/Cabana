@@ -174,11 +174,9 @@ void parallelForExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     parallelForExample();
-
-    Cabana::finalize();
 
     return 0;
 }
