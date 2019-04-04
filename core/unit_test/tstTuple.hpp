@@ -27,26 +27,28 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const std::size_t dim_1, const std::size_t dim_2, const std::size_t dim_3 )
 {
-    for ( std::size_t idx = 0; idx < view.extent(0); ++idx )
+    auto mirror_view = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), view );
+    for ( std::size_t idx = 0; idx < mirror_view.extent(0); ++idx )
     {
         // Member 0.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
-                    EXPECT_EQ( view(idx).template get<0>( i, j, k ),
+                    EXPECT_EQ( mirror_view(idx).template get<0>( i, j, k ),
                                fval * (i+j+k) );
 
         // Member 1.
-        EXPECT_EQ( view(idx).template get<1>(), ival );
+        EXPECT_EQ( mirror_view(idx).template get<1>(), ival );
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            EXPECT_EQ( view(idx).template get<2>( i ), dval * i );
+            EXPECT_EQ( mirror_view(idx).template get<2>( i ), dval * i );
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                EXPECT_EQ( view(idx).template get<3>( i, j ), dval * (i+j) );
+                EXPECT_EQ( mirror_view(idx).template get<3>( i, j ), dval * (i+j) );
     }
 }
 
@@ -113,7 +115,7 @@ void runTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, tuple_test )
+TEST( TEST_CATEGORY, tuple_test )
 {
     runTest();
 }

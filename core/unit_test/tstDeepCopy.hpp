@@ -26,10 +26,14 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto slice_0 = aosoa.template slice<0>();
-    auto slice_1 = aosoa.template slice<1>();
-    auto slice_2 = aosoa.template slice<2>();
-    auto slice_3 = aosoa.template slice<3>();
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+
+    auto slice_0 = mirror.template slice<0>();
+    auto slice_1 = mirror.template slice<1>();
+    auto slice_2 = mirror.template slice<2>();
+    auto slice_3 = mirror.template slice<3>();
 
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -90,26 +94,28 @@ void testDeepCopy()
     auto slice_1 = src_aosoa.template slice<1>();
     auto slice_2 = src_aosoa.template slice<2>();
     auto slice_3 = src_aosoa.template slice<3>();
-    for ( std::size_t idx = 0; idx < src_aosoa.size(); ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    slice_0( idx, i, j, k ) = fval * (i+j+k);
+    Kokkos::parallel_for(
+        "initialize",
+        Kokkos::RangePolicy<typename SrcMemorySpace::execution_space>(0,num_data),
+        KOKKOS_LAMBDA( const int idx ){
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    for ( int k = 0; k < dim_3; ++k )
+                        slice_0( idx, i, j, k ) = fval * (i+j+k);
 
-        // Member 1.
-        slice_1( idx ) = ival;
+            // Member 1.
+            slice_1( idx ) = ival;
 
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            slice_2( idx, i ) = dval * i;
+            // Member 2.
+            for ( int i = 0; i < dim_1; ++i )
+                slice_2( idx, i ) = dval * i;
 
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                slice_3( idx, i, j ) = dval * (i+j);
-    }
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    slice_3( idx, i, j ) = dval * (i+j);
+        });
 
     // Deep copy
     Cabana::deep_copy( dst_aosoa, src_aosoa );
@@ -147,26 +153,28 @@ void testMirror()
     auto slice_1 = aosoa.template slice<1>();
     auto slice_2 = aosoa.template slice<2>();
     auto slice_3 = aosoa.template slice<3>();
-    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    slice_0( idx, i, j, k ) = fval * (i+j+k);
+    Kokkos::parallel_for(
+        "initialize",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,num_data),
+        KOKKOS_LAMBDA( const int idx ){
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    for ( int k = 0; k < dim_3; ++k )
+                        slice_0( idx, i, j, k ) = fval * (i+j+k);
 
-        // Member 1.
-        slice_1( idx ) = ival;
+            // Member 1.
+            slice_1( idx ) = ival;
 
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            slice_2( idx, i ) = dval * i;
+            // Member 2.
+            for ( int i = 0; i < dim_1; ++i )
+                slice_2( idx, i ) = dval * i;
 
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                slice_3( idx, i, j ) = dval * (i+j);
-    }
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    slice_3( idx, i, j ) = dval * (i+j);
+        });
 
     // Create a mirror with the same memory space and copy.
     auto same_space_copy = Cabana::Experimental::create_mirror_view_and_copy(
@@ -208,33 +216,33 @@ void testMirror()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
+TEST( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
 {
     testDeepCopy<Cabana::HostSpace,TEST_MEMSPACE,16,16>();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, deep_copy_from_host_same_layout_test )
+TEST( TEST_CATEGORY, deep_copy_from_host_same_layout_test )
 {
     testDeepCopy<TEST_MEMSPACE,Cabana::HostSpace,16,16>();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
+TEST( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
 {
     testDeepCopy<Cabana::HostSpace,TEST_MEMSPACE,16,32>();
     testDeepCopy<Cabana::HostSpace,TEST_MEMSPACE,64,8>();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
+TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
 {
     testDeepCopy<TEST_MEMSPACE,Cabana::HostSpace,64,8>();
     testDeepCopy<TEST_MEMSPACE,Cabana::HostSpace,16,32>();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, mirror_test )
+TEST( TEST_CATEGORY, mirror_test )
 {
     testMirror();
 }

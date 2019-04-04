@@ -168,7 +168,7 @@ void perfTest( const double cutoff_ratio,
     Cabana::permute( linked_cell_list, aosoa );
 
     // Create the list once to get some statistics.
-    Cabana::VerletList<MemorySpace,NeighborListTag>
+    Cabana::VerletList<MemorySpace,NeighborListTag,Cabana::VerletLayoutCSR>
         stat_list( aosoa.slice<Position>(), 0, aosoa.size(),
                    interaction_cutoff, cell_size_ratio, grid_min, grid_max );
     Kokkos::MinMaxScalar<int> result;
@@ -177,13 +177,13 @@ void perfTest( const double cutoff_ratio,
         "Cabana::countMinMax",
         Kokkos::RangePolicy<ExecutionSpace>(0,num_data),
         Kokkos::Impl::min_max_functor<Kokkos::View<int*,MemorySpace> >(
-            stat_list._counts ),
+            stat_list._data.counts ),
         reducer );
     Kokkos::fence();
     std::cout << std::endl;
     std::cout << "List min neighbors: " << result.min_val << std::endl;
     std::cout << "List max neighbors: " << result.max_val << std::endl;
-    double count_average = stat_list._neighbors.extent(0) / num_data;
+    double count_average = stat_list._data.neighbors.extent(0) / num_data;
     std::cout << "List avg neighbors: " << count_average << std::endl;
     std::cout << std::endl;
 
@@ -195,7 +195,7 @@ void perfTest( const double cutoff_ratio,
         std::cout << "Run t: " << t << std::endl;
         auto start_time = std::chrono::high_resolution_clock::now();
 
-        Cabana::VerletList<MemorySpace,NeighborListTag> list(
+        Cabana::VerletList<MemorySpace,NeighborListTag,Cabana::VerletLayoutCSR> list(
             aosoa.slice<Position>(), 0, aosoa.size(),
             interaction_cutoff, cell_size_ratio, grid_min, grid_max );
 
@@ -227,12 +227,10 @@ int main( int argc, char* argv[] )
     double cell_size_ratio = std::atof( argv[3] );
 
     // Initialize the kokkos runtime.
-    Cabana::initialize( argc, argv );
+    Kokkos::ScopeGuard scope_guard(argc, argv);
 
     // Run the test.
     perfTest( cutoff_ratio, num_data, cell_size_ratio );
 
-    // Finalize.
-    Cabana::finalize();
     return 0;
 }

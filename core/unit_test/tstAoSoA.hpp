@@ -11,6 +11,7 @@
 
 #include <Cabana_Types.hpp>
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_DeepCopy.hpp>
 #include <impl/Cabana_Index.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -27,10 +28,14 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto slice_0 = aosoa.template slice<0>();
-    auto slice_1 = aosoa.template slice<1>();
-    auto slice_2 = aosoa.template slice<2>();
-    auto slice_3 = aosoa.template slice<3>();
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+
+    auto slice_0 = mirror.template slice<0>();
+    auto slice_1 = mirror.template slice<1>();
+    auto slice_2 = mirror.template slice<2>();
+    auto slice_3 = mirror.template slice<3>();
 
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -115,12 +120,14 @@ void testAoSoA()
     EXPECT_EQ( end_s, 2 );
     EXPECT_EQ( end_a, 3 );
 
-    // Get field slices again. We invalidated the pointers by resizing the
-    // slices.
-    slice_0 = aosoa.slice<0>();
-    slice_1 = aosoa.slice<1>();
-    slice_2 = aosoa.slice<2>();
-    slice_3 = aosoa.slice<3>();
+    // Create a mirror on the host and fill.
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto mirror_slice_0 = mirror.slice<0>();
+    auto mirror_slice_1 = mirror.slice<1>();
+    auto mirror_slice_2 = mirror.slice<2>();
+    auto mirror_slice_3 = mirror.slice<3>();
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -132,20 +139,21 @@ void testAoSoA()
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    slice_0( idx, i, j, k ) = fval * (i+j+k);
+                    mirror_slice_0( idx, i, j, k ) = fval * (i+j+k);
 
         // Member 1.
-        slice_1( idx ) = ival;
+        mirror_slice_1( idx ) = ival;
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            slice_2( idx, i ) = dval * i;
+            mirror_slice_2( idx, i ) = dval * i;
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                slice_3( idx, i, j ) = dval * (i+j);
+                mirror_slice_3( idx, i, j ) = dval * (i+j);
     }
+    Cabana::deep_copy( aosoa, mirror );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -243,42 +251,52 @@ void testRawData()
     // Initialize the data with raw pointer/stride access. Start by looping
     // over the structs. Each struct has a group of contiguous arrays of size
     // array_size for each member.
-    int num_soa = slice_0.numSoA();
-    for ( int s = 0; s < num_soa; ++s )
-    {
-        // Loop over the array in each struct and set the values.
-        int local_array_size = slice_0.arraySize( s );
-        for ( int i = 0; i < local_array_size; ++i )
-        {
-            p0[ s * st0 + i ] = (s + i) * 1.0;
-            p1[ s * st1 + i ] = (s + i) * 2;
-            p3[ s * st3 + i ] = (s + i) * 4;
-            p4[ s * st4 + i ] = (s + i) * 5.0;
+    Kokkos::parallel_for(
+        "raw_data_fill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,slice_0.numSoA()),
+        KOKKOS_LAMBDA( const int s ){
+            // Loop over the array in each struct and set the values.
+            int local_array_size = slice_0.arraySize( s );
+            for ( int i = 0; i < local_array_size; ++i )
+            {
+                p0[ s * st0 + i ] = (s + i) * 1.0;
+                p1[ s * st1 + i ] = (s + i) * 2;
+                p3[ s * st3 + i ] = (s + i) * 4;
+                p4[ s * st4 + i ] = (s + i) * 5.0;
 
-            // Member 2 has some extra dimensions so add those to the
-            // indexing. Note this is layout left.
-            for ( int j = 0; j < m2e0; ++j )
-                for ( int k = 0; k < m2e1; ++k )
-                    p2[ s * st2 + j * 16 * m2e1 + k * 16 + i ] =
-                        (s + i + j + k) * 3.0;
-        }
-    }
+                // Member 2 has some extra dimensions so add those to the
+                // indexing. Note this is layout left.
+                for ( int j = 0; j < m2e0; ++j )
+                    for ( int k = 0; k < m2e1; ++k )
+                        p2[ s * st2 + j * 16 * m2e1 + k * 16 + i ] =
+                            (s + i + j + k) * 3.0;
+            }
+        } );
+    Kokkos::fence();
 
     // Check the results.
+    auto mirror =
+        Cabana::Experimental::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), aosoa );
+    auto mirror_slice_0 = mirror.slice<0>();
+    auto mirror_slice_1 = mirror.slice<1>();
+    auto mirror_slice_2 = mirror.slice<2>();
+    auto mirror_slice_3 = mirror.slice<3>();
+    auto mirror_slice_4 = mirror.slice<4>();
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
         int s = Cabana::Impl::Index<16>::s( idx );
         int a = Cabana::Impl::Index<16>::a( idx );
 
-        EXPECT_EQ( slice_0(idx), (s+a)*1.0 );
-        EXPECT_EQ( slice_1(idx), int((s+a)*2) );
-        EXPECT_EQ( slice_3(idx), int((s+a)*4) );
-        EXPECT_EQ( slice_4(idx), (s+a)*5.0 );
+        EXPECT_EQ( mirror_slice_0(idx), (s+a)*1.0 );
+        EXPECT_EQ( mirror_slice_1(idx), int((s+a)*2) );
+        EXPECT_EQ( mirror_slice_3(idx), int((s+a)*4) );
+        EXPECT_EQ( mirror_slice_4(idx), (s+a)*5.0 );
 
         // Member 2 has some extra dimensions so check those too.
         for ( int j = 0; j < dim_1; ++j )
             for ( int k = 0; k < dim_2; ++k )
-                EXPECT_EQ( slice_2(idx,j,k), (s+a+j+k)*3.0 );
+                EXPECT_EQ( mirror_slice_2(idx,j,k), (s+a+j+k)*3.0 );
     }
 }
 
@@ -320,59 +338,71 @@ void testTuple()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    slice_0( idx, i, j, k ) = fval * (i+j+k);
+    Kokkos::parallel_for(
+        "TupleFill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int idx ){
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    for ( int k = 0; k < dim_3; ++k )
+                        slice_0( idx, i, j, k ) = fval * (i+j+k);
 
-        // Member 1.
-        slice_1( idx ) = ival;
+            // Member 1.
+            slice_1( idx ) = ival;
 
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            slice_2( idx, i ) = dval * i;
+            // Member 2.
+            for ( int i = 0; i < dim_1; ++i )
+                slice_2( idx, i ) = dval * i;
 
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                slice_3( idx, i, j ) = dval * (i+j);
-    }
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    slice_3( idx, i, j ) = dval * (i+j);
+        });
 
     // Assign the AoSoA data to the tuples.
-    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
-         tuples( idx ) = aosoa.getTuple( idx );
+    Kokkos::parallel_for(
+        "TupleAssign",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int idx ){
+            tuples( idx ) = aosoa.getTuple( idx );
+        });
 
     // Change the tuple data.
     fval = 2.1;
     dval = 9.21;
     ival = 3;
-    for ( int idx = 0; idx < num_data; ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    tuples( idx ).get<0>( i, j, k ) = fval * (i+j+k);
+    Kokkos::parallel_for(
+        "TupleUpdate",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int idx ){
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    for ( int k = 0; k < dim_3; ++k )
+                        tuples( idx ).get<0>( i, j, k ) = fval * (i+j+k);
 
-        // Member 1.
-        tuples( idx ).get<1>() = ival;
+            // Member 1.
+            tuples( idx ).get<1>() = ival;
 
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            tuples( idx ).get<2>( i ) = dval * i;
+            // Member 2.
+            for ( int i = 0; i < dim_1; ++i )
+                tuples( idx ).get<2>( i ) = dval * i;
 
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                tuples( idx ).get<3>( i, j ) = dval * (i+j);
-    }
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+                for ( int j = 0; j < dim_2; ++j )
+                    tuples( idx ).get<3>( i, j ) = dval * (i+j);
+        });
 
     // Assign the tuple data back to the AoSoA.
-    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
-        aosoa.setTuple( idx, tuples(idx) );
+    Kokkos::parallel_for(
+        "TupleReAssign",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
+        KOKKOS_LAMBDA( const int idx ){
+            aosoa.setTuple( idx, tuples(idx) );
+        });
 
     // Check the results.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -412,31 +442,33 @@ void testAccess()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
-    {
-        auto& soa = aosoa.access( s );
+    Kokkos::parallel_for(
+        "data_fill",
+        Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.numSoA()),
+        KOKKOS_LAMBDA( const int s ){
+            auto& soa = aosoa.access( s );
 
-        for ( int a = 0; a < aosoa.arraySize(s); ++a )
-        {
-            // Member 0.
-            for ( int i = 0; i < dim_1; ++i )
-                for ( int j = 0; j < dim_2; ++j )
-                    for ( int k = 0; k < dim_3; ++k )
-                        soa.get<0>( a, i, j, k ) = fval * (i+j+k);
+            for ( int a = 0; a < aosoa.arraySize(s); ++a )
+            {
+                // Member 0.
+                for ( int i = 0; i < dim_1; ++i )
+                    for ( int j = 0; j < dim_2; ++j )
+                        for ( int k = 0; k < dim_3; ++k )
+                            soa.get<0>( a, i, j, k ) = fval * (i+j+k);
 
-            // Member 1.
-            soa.get<1>( a ) = ival;
+                // Member 1.
+                soa.get<1>( a ) = ival;
 
-            // Member 2.
-            for ( int i = 0; i < dim_1; ++i )
-                soa.get<2>( a, i ) = dval * i;
+                // Member 2.
+                for ( int i = 0; i < dim_1; ++i )
+                    soa.get<2>( a, i ) = dval * i;
 
-            // Member 3.
-            for ( int i = 0; i < dim_1; ++i )
-                for ( int j = 0; j < dim_2; ++j )
-                    soa.get<3>( a, i, j ) = dval * (i+j);
-        }
-    }
+                // Member 3.
+                for ( int i = 0; i < dim_1; ++i )
+                    for ( int j = 0; j < dim_2; ++j )
+                        soa.get<3>( a, i, j ) = dval * (i+j);
+            }
+        });
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -445,25 +477,25 @@ void testAccess()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_test )
+TEST( TEST_CATEGORY, aosoa_test )
 {
     testAoSoA();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_raw_data_test )
+TEST( TEST_CATEGORY, aosoa_raw_data_test )
 {
     testRawData();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_tuple_test )
+TEST( TEST_CATEGORY, aosoa_tuple_test )
 {
     testTuple();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, aosoa_access_test )
+TEST( TEST_CATEGORY, aosoa_access_test )
 {
     testAccess();
 }
