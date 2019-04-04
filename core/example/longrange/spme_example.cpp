@@ -1,5 +1,5 @@
 #include "example_definitions.h"
-#include "pme.cpp"
+#include "spme.cpp"
 #include "particles.cpp"
 #include <iomanip>
 
