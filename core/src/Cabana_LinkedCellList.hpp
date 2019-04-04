@@ -321,35 +321,6 @@ void permute(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Given a linked cell list and range permute part of an AoSoA.
-
-  \tparam LinkedCellListType The linked cell list type.
-
-  \tparm AoSoA_t The AoSoA type.
-
-  \param linked_cell_list The linked cell list to permute the AoSoA with.
-
-  \param aosoa The AoSoA to permute.
-
-  \param begin The beginning index of the AoSoA range to sort.
-
-  \param end The end index of the AoSoA range to sort.
-*/
-template<class LinkedCellListType, class AoSoA_t>
-void permute(
-    const LinkedCellListType& linked_cell_list,
-    AoSoA_t& aosoa,
-    const std::size_t begin,
-    const std::size_t end,
-    typename std::enable_if<(is_linked_cell_list<LinkedCellListType>::value &&
-                             is_aosoa<AoSoA_t>::value),
-    int>::type * = 0 )
-{
-    permute( linked_cell_list.binningData(), aosoa, begin, end );
-}
-
-//---------------------------------------------------------------------------//
-/*!
   \brief Given a linked cell list permute a slice.
 
   \tparam LinkedCellListType The linked cell list type.
@@ -369,35 +340,6 @@ void permute(
     int>::type * = 0 )
 {
     permute( linked_cell_list.binningData(), slice );
-}
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Given a linked cell list and range permute part of a slice.
-
-  \tparam LinkedCellListType The linked cell list type.
-
-  \tparm SliceType The slice type.
-
-  \param linked_cell_list The linked cell list to permute the slice with.
-
-  \param slice The slice to permute.
-
-  \param begin The beginning index of the slice range to sort.
-
-  \param end The end index of the slice range to sort.
-*/
-template<class LinkedCellListType, class SliceType>
-void permute(
-    const LinkedCellListType& linked_cell_list,
-    SliceType& slice,
-    const std::size_t begin,
-    const std::size_t end,
-    typename std::enable_if<(is_linked_cell_list<LinkedCellListType>::value &&
-                             is_slice<SliceType>::value),
-    int>::type * = 0 )
-{
-    permute( linked_cell_list.binningData(), slice, begin, end );
 }
 
 //---------------------------------------------------------------------------//
