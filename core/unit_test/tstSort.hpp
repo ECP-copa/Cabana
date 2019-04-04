@@ -956,19 +956,19 @@ TEST( TEST_CATEGORY, bin_by_member_data_only_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, sort_by_key_range_test )
+TEST( TEST_CATEGORY, sort_by_key_range_test )
 {
     testSortByKeyRange();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, sort_by_key_slice_test )
+TEST( TEST_CATEGORY, sort_by_key_slice_test )
 {
     testSortByKeySlice();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, sort_by_key_slice_range_test )
+TEST( TEST_CATEGORY, sort_by_key_slice_range_test )
 {
     testSortByKeySliceRange();
 }

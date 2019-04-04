@@ -676,19 +676,19 @@ TEST( TEST_CATEGORY, linked_list_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_list_range_test )
+TEST( TEST_CATEGORY, linked_list_range_test )
 {
     testLinkedListRange();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_list_slice_test )
+TEST( TEST_CATEGORY, linked_list_slice_test )
 {
     testLinkedListSlice();
 }
 
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, linked_list_slice_range_test )
+TEST( TEST_CATEGORY, linked_list_slice_range_test )
 {
     testLinkedListSliceRange();
 }
