@@ -118,38 +118,48 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
       {
         double d[SPACE_DIM];
         double k; 
-          for (auto i = 0; i < n_max; ++i)
-          {
-            for (auto j = 0; j < 3; ++j)
-              d[j] = r( idx, j ) - r( i, j );
+        //For each particle with charge q, the real space contribution to energy is
+        //Ur_part = 0.5*q*SUM_i(q_i*erfc(alpha*dist)/dist)
+        //The sum is over all other particles in the cell and in neighboring images
+        //up to some real-space cutoff distance "r_max"
+        //
+        //Self-energy terms are included then corrected for later, with one exception:
+        // the self-energy term where kx=ky=kz here is explicitly excluded in the method
+        // as this would cause a division by zero
+        for (auto i = 0; i < n_max; ++i)//For each particle (including self)
+        {
+          //compute distance in x,y,z and charge multiple
+          for (auto j = 0; j < 3; ++j)
+            d[j] = r( idx, j ) - r( i, j );
             double qiqj = q( idx ) * q( i );
             for (auto kx = 0; kx <= k_max_int[0]; ++kx)
             {
+              //check if cell within r_max distance in x
               k = (double)kx * lx;
               if (k - lx > r_max) continue;
               for (auto ky = 0; ky <= k_max_int[1]; ++ky)
               {
+                //check if cell within r_max distance in x+y
                 k = sqrt( (double)kx * (double)kx * lx * lx +
                   (double)ky * (double)ky * ly * ly);
                 if (k - lx  > r_max) continue;
                 for (auto kz = 0; kz <= k_max_int[2]; ++kz)
                 {
+                  //Exclude self-energy term when kx=ky=kz
                   if ( kx == 0 && ky == 0 && kz == 0 && i == idx) continue;
-
+                  //check if cell within r_max distance in x+y+z
                   k = sqrt( (double)kx * (double)kx * lx * lx +
                             (double)ky * (double)ky * ly * ly +
                             (double)kz * (double)kz * lz * lz );
                   if (k - lx > r_max) continue;
-
+                  //check if particle distance is less than r_max
                   double scal = (d[0] + (double)kx * lx) * (d[0] + (double)kx * lx) +
                     (d[1] + (double)ky * ly) * (d[1] + (double)ky * ly) +
                     (d[2] + (double)kz * lz) * (d[2] + (double)kz * lz);
                   scal = sqrt(scal);
                   if (scal > r_max) 
                     continue;
-                  //std::cout << idx << " " <<
-                  //              i << " " << kx << " " << ky << " " << kz << " " <<
-                  //              "dist = " << scal << " " << r_max << " " << qiqj * erfc(alpha * scal)/scal << std::endl;
+                  //Compute real-space energy contribution of interaction
                   Ur_part += qiqj * erfc(alpha * scal)/scal;
                 }
               }
@@ -158,8 +168,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
         Ur_part *= 0.5;
         p(idx) += Ur_part;
       },
-    Ur
-      );
+      Ur);
 
   // computation reciprocal-space contribution
   int k_int = std::ceil(_k_max);
