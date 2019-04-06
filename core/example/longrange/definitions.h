@@ -55,13 +55,13 @@ using ParticleDataTypes =
 #ifdef Cabana_ENABLE_Cuda
 using MemorySpace = Cabana::CudaUVMSpace;
 using ExecutionSpace = Kokkos::Cuda;
-#elif Cabana_ENABLE_OpenMP
+#elif defined(Cabana_ENABLE_OpenMP)
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::OpenMP;
-#elif Cabana_ENABLE_Pthread
+#elif defined(Cabana_ENABLE_Pthread)
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::Threads;
-#elif Cabana_ENABLE_Serial
+#elif defined(Cabana_ENABLE_Serial)
 using MemorySpace = Cabana::HostSpace;
 using ExecutionSpace = Kokkos::Serial;
 #endif
