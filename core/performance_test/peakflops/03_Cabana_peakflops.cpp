@@ -197,6 +197,21 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
     }
 }
 
+bool check_expected_flops(double achieved_flops_clock)
+{
+    bool acceptable_fraction = false;
+    double expected_flops_clock = EXPECTED_FLOPS;
+
+    printf("Achieved %f, Expected %f (+/- %f)\n", achieved_flops_clock, expected_flops_clock, expected_flops_clock-(expected_flops_clock*ERROR_MARGIN));
+
+    if ( achieved_flops_clock > expected_flops_clock * ERROR_MARGIN )
+    {
+        acceptable_fraction = true;
+    }
+
+    return acceptable_fraction;
+}
+
 //---------------------------------------------------------------------------//
 // Run the performance test.
 TEST(cabana, simple)
@@ -301,12 +316,11 @@ TEST(cabana, simple)
     std::cout << std::endl;
     std::cout<<flops<<" flops" << std::endl;;
     std::cout << std::endl;
+
     std::cout << "AoSoA Cast" << std::endl;
     std::cout<<dc1<<" clocks 1"<<std::endl;
     std::cout<<flops/dc1<<" flops/clock 1\n";
     std::cout << std::endl;
-
-    double flops_clock = flops / dc1;
 
     std::cout << "AoSoA access " << std::endl;
     std::cout<<dc2<<" clocks 2"<<std::endl;
@@ -323,19 +337,12 @@ TEST(cabana, simple)
         printf("x_[%d] = %f\n", idx, m0(idx));
     }
 
-    bool acceptable_fraction = false;
-    double expected_flops_clock = EXPECTED_FLOPS;
+    EXPECT_TRUE( check_expected_flops( flops / dc1 ) );
+    EXPECT_TRUE( check_expected_flops( flops / dc2 ) );
+    EXPECT_TRUE( check_expected_flops( flops / dc3 ) );
 
-    printf("Expected %f \n", expected_flops_clock);
-    printf("(with margin %f )\n", expected_flops_clock * ERROR_MARGIN);
-
-    if ( flops_clock > expected_flops_clock * ERROR_MARGIN )
-    {
-        acceptable_fraction = true;
-    }
-
-    EXPECT_TRUE(acceptable_fraction);
 }
+
 
 
 //---------------------------------------------------------------------------//

@@ -3,6 +3,7 @@
 
 #include <gtest/gtest.h>
 
+// NOTE: The user may have to override these for a given platform
 #ifndef ERROR_MARGIN
 #define ERROR_MARGIN 0.9
 #endif
