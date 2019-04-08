@@ -58,9 +58,7 @@ struct data_t
 
 // NOTE: noinline gives better performance for GCC (the inlined version is
 // poorly optimized?)
-// TODO: introduce a macro to select this based on compiler??
-void //__attribute__ ((noinline))
-movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
+void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
             data_t *__restrict__ x1, data_t *__restrict__ x2,
             data_t *__restrict__ x3, data_t *__restrict__ x4,
             data_t *__restrict__ x5, data_t *__restrict__ x6,
@@ -139,16 +137,19 @@ move_AoSoA(
             }
     }
     asm volatile ("# ax+c loop end");
-    /* // TODO: do we need to re-enable this?
+
     for ( s = 0; s < num_struct; ++s )
     {
         for(j=0; j<VECLENTH; j++)
         {
-            x0[s].vec[j] = x0[s].vec[j]+x1[s].vec[j]+x2[s].vec[j]+x3[s].vec[j]+x4[s].vec[j]+
-                           x5[s].vec[j]+x6[s].vec[j]+x7[s].vec[j]+x8[s].vec[j]+x9[s].vec[j];
+            x0.access(s).get<0>(j) =
+                x0.access(s).get<0>(j) + x1.access(s).get<0>(j) +
+                x2.access(s).get<0>(j) + x3.access(s).get<0>(j) +
+                x4.access(s).get<0>(j) + x5.access(s).get<0>(j) +
+                x6.access(s).get<0>(j) + x7.access(s).get<0>(j) +
+                x8.access(s).get<0>(j) + x9.access(s).get<0>(j);
         }
     }
-    */
 }
 
 //---------------------------------------------------------------------------/

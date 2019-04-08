@@ -69,7 +69,6 @@ if(Cabana_ENABLE_TESTING)
   enable_testing()
 endif()
 
-
 find_package(Doxygen)
 if(Doxygen_FOUND)
   set(DOXYGEN_GENERATE_XML YES) 
@@ -82,7 +81,6 @@ if(Cabana_ENABLE_MPI)
 endif()
 
 option(Cabana_ENABLE_Performance_Testing "Build Performance Tests" OFF)
-
 
 #------------------------------------------------------------------------------#
 # Architecture
