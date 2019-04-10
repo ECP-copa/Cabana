@@ -20,9 +20,6 @@ TDS::TDS(int periodic)
 
 double TDS::compute(ParticleList& particles, double lx, double ly, double lz)
 {
-  // Create an execution policy over the entire AoSoA.
-  //Kokkos::RangePolicy<ExecutionSpace>(0,n_max) range_policy( particles );
-
   // Create slices
   auto r = particles.slice<Position>();
   auto f = particles.slice<Force>();

@@ -75,8 +75,6 @@ void TEwald::tune(double accuracy, ParticleList particles, double lx, double ly,
 
       if ( (delta < team_errorest.val) && (delta > 0.8 * accuracy))
       {
-      //  std::cout << alpha << " " << k_max << " " << delta_Ur << " " << delta_Uk << " " << delta << " " << accuracy << std::endl;      
- 
         team_errorest.val = delta;
         team_errorest.loc = idx;
       }
