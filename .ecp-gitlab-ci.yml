@@ -1,25 +1,29 @@
 # see https://docs.gitlab.com/ce/ci/yaml/README.html for all available options
+
 variables:
-  CI_DEBUG_SERVICES: trace
-  SCHEDULER_PARAMETERS: "-P STF002 -J ginsburgtest -W 0:03 -nnodes 2"
+  SCHEDULER_PARAMETERS: "-J Cabana_CI -W 0:05 -nnodes 1 -P GEN007CITEST"
 
 stages:
   - buildKokkos
   - build
-#  - test
+# serialize testing to 2 per stage to working around bug in ci runner on ascent
+  - test
+  - test2
+  - test3
+  - test4
 
 .BuildKokkos:
   stage: buildKokkos
-  script:
-    - CI_PROJECT_DIR=${PWD}
+  before_script:
     - module load gcc
+  script:
     - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
     - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
     - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
       pushd kokkos &&
       mkdir build &&
       pushd build &&
-      ../generate_makefile.bash --prefix=${CI_PROJECT_DIR}/kokkos.install ${KOKKOS_OPTS[@]} &&
+      ../generate_makefile.bash --prefix=${CI_PROJECT_DIR}/kokkos.install ${KOKKOS_OPTS[@]} ${KOKKOS_EXTRA_ARGS} &&
       make -j${j} &&
       make install &&
       popd &&
@@ -32,20 +36,70 @@ stages:
 
 .Build:
   stage: build
-  script:
-    - CI_PROJECT_DIR=${PWD}
-    - module load cmake
+  before_script:
     - module load gcc
+  script:
+    - module load cmake
     - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
     - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
     - mkdir build && cd build &&
-      cmake -DCMAKE_PREFIX_PATH=${CI_PROJECT_DIR}/kokkos.install -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_Serial=OFF -DCabana_ENABLE_EXAMPLES=OFF ${CMAKE_OPTS[@]} .. &&
-      make -k -j${j} VERBOSE=1 &&
-      make test CTEST_OUTPUT_ON_FAILURE=1
+      cmake -DCMAKE_PREFIX_PATH=${CI_PROJECT_DIR}/kokkos.install -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_Serial=OFF -DCabana_ENABLE_EXAMPLES=ON ${CMAKE_OPTS[@]} ${CMAKE_EXTRA_ARGS} .. &&
+      make -k -j${j} VERBOSE=1
   tags:
     - nobatch
+  artifacts:
+    paths:
+      - build/
+
+.Test:
+  stage: test
+  before_script:
+    - module load gcc
+  script:
+    - cd build
+    - make test CTEST_OUTPUT_ON_FAILURE=1
+  tags:
+    - batch
+
+.BuildKokkos_Cuda:
+  extends: .BuildKokkos
+  variables:
+    KOKKOS_EXTRA_ARGS: "--arch=Volta70,Power9 --with-cuda-options=enable_lambda"
+  before_script:
+    - module load gcc/6.4.0
+    - module load cuda
+
+.Build_Cuda:
+  extends: .Build
+  variables:
+    CMAKE_EXTRA_ARGS: "-DCMAKE_CXX_COMPILER=${CI_PROJECT_DIR}/kokkos.install/bin/nvcc_wrapper"
+  before_script:
+    - module load gcc/6.4.0
+    - module load cuda
+
+.Test_Cuda:
+  extends: .Test
+  before_script:
+    - module load gcc/6.4.0
+    - module load cuda
+
+BuildKokkos Cuda:
+  variables:
+    BACKENDS: "Cuda"
+  extends: .BuildKokkos_Cuda
+
+Build Cuda:
+  variables:
+    BACKENDS: "Cuda"
+  extends: .Build_Cuda
   dependencies:
-   - BuildKokkos
+   - BuildKokkos Cuda
+
+Test Cuda:
+  extends: .Test_Cuda
+  dependencies:
+   - Build Cuda
+   - BuildKokkos Cuda
 
 BuildKokkos Serial:
   variables:
@@ -57,6 +111,12 @@ Build Serial:
     BACKENDS: "Serial"
   extends: .Build
   dependencies:
+   - BuildKokkos Serial
+
+Test Serial:
+  extends: .Test
+  dependencies:
+   - Build Serial
    - BuildKokkos Serial
 
 BuildKokkos OpenMP:
@@ -71,6 +131,13 @@ Build OpenMP:
   dependencies:
    - BuildKokkos OpenMP
 
+Test OpenMP:
+  extends: .Test
+  stage: test2
+  dependencies:
+   - Build OpenMP
+   - BuildKokkos OpenMP
+
 BuildKokkos Pthread:
   variables:
     BACKENDS: "Pthread"
@@ -81,6 +148,13 @@ Build Pthread:
     BACKENDS: "Pthread"
   extends: .Build
   dependencies:
+   - BuildKokkos Pthread
+
+Test Pthread:
+  extends: .Test
+  stage: test2
+  dependencies:
+   - Build Pthread
    - BuildKokkos Pthread
 
 BuildKokkos Serial Pthread:
@@ -95,6 +169,13 @@ Build Serial Pthread:
   dependencies:
    - BuildKokkos Serial Pthread
 
+Test Serial Pthread:
+  extends: .Test
+  stage: test3
+  dependencies:
+   - Build Serial Pthread
+   - BuildKokkos Serial Pthread
+
 BuildKokkos Serial OpenMP:
   variables:
     BACKENDS: "Serial OpenMP"
@@ -106,3 +187,49 @@ Build Serial OpenMP:
   extends: .Build
   dependencies:
    - BuildKokkos Serial OpenMP
+
+Test Serial OpenMP:
+  extends: .Test
+  stage: test4
+  dependencies:
+   - Build Serial OpenMP
+   - BuildKokkos Serial OpenMP
+
+BuildKokkos Serial Cuda:
+  variables:
+    BACKENDS: "Serial Cuda"
+  extends: .BuildKokkos_Cuda
+
+Build Serial Cuda:
+  variables:
+    BACKENDS: "Serial Cuda"
+  extends: .Build_Cuda
+  dependencies:
+   - BuildKokkos Serial Cuda
+
+Test Serial Cuda:
+  extends: .Test_Cuda
+  stage: test3
+  dependencies:
+   - Build Serial Cuda
+   - BuildKokkos Serial Cuda
+
+BuildKokkos Serial Cuda OpenMP:
+  variables:
+    BACKENDS: "Serial Cuda OpenMP"
+  extends: .BuildKokkos_Cuda
+
+Build Serial Cuda OpenMP:
+  variables:
+    BACKENDS: "Serial Cuda OpenMP"
+  extends: .Build_Cuda
+  dependencies:
+   - BuildKokkos Serial Cuda OpenMP
+
+Test Serial Cuda OpenMP:
+  extends: .Test_Cuda
+  stage: test4
+  dependencies:
+   - Build Serial Cuda OpenMP
+   - BuildKokkos Serial Cuda OpenMP
+
