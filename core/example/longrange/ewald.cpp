@@ -181,6 +181,9 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
 
   // computation reciprocal-space contribution
   int k_int = std::ceil(_k_max);
+  //The reciprocal space energy contribution of the Ewald Sum
+  //iterates over all vectors k (reciprocal lattice vector) within the bounds k^2 < kmax^2
+  //Indexing in 3D gives (k_int+1)^3 vectors to sum over
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0,8*k_int*k_int*k_int+12*k_int*k_int+6*k_int+1), KOKKOS_LAMBDA(int idx, double& Uk_part)
       {
       double kk;
@@ -188,37 +191,42 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
       double coeff;
       double sum_re = 0.0;
       double sum_im = 0.0;
+      //Math to go from indexing to kx,ky,kz
       int kx = idx % (2 * k_int + 1) - k_int;
       int ky = idx % (4 * k_int * k_int + 4 * k_int + 1) / (2 * k_int + 1) - k_int;
       int kz = idx / (4 * k_int * k_int + 4 * k_int + 1) - k_int;
 
-      if (kx == 0 && ky == 0 && kz == 0) return;
+      if (kx == 0 && ky == 0 && kz == 0) return;//The kx=ky=kz term is excluded from the sum
       kk = kx*kx + ky*ky + kz*kz;
-      if (kk > k_max*k_max) return;
+      if (kk > k_max*k_max) return;//Check to ensure within kmax bounds
+      //This sum involves calculating a coefficient given by:
+      // coeff(k) = (2/L^2) * exp(-(PI*k/(alpha*L))^2)/(k^2) 
       coeff = 2.0 / (lx * lx) * exp( - PI_SQ / (alpha * alpha * lx * lx) * kk) / kk;
+      //The sum's terms for each k-vector are then
+      // sum(k) = coeff(k) * |S(k)|^2
+      // where S(k) is a sum over all particles in the unit cell S(k) = SUM_i[ q_i * exp(I* k.r) ]
+      // Now compute S(k), summing over all particles and computing this influence function
+      // S(k) with real and imag parts for the complex exponential
       for (auto j = 0; j < n_max; ++j)
       {
-      kr = 2.0 * PI * (kx*r(j,0) + ky*r(j,1) + kz*r(j,2)) / lx;
-      sum_re += q(j)*cos(kr);
-      sum_im += q(j)*sin(kr);
+      kr = 2.0 * PI * (kx*r(j,0) + ky*r(j,1) + kz*r(j,2)) / lx;//2*PI*(dotproduct of k and r)/L
+      sum_re += q(j)*cos(kr);//real part
+      sum_im += q(j)*sin(kr);//imag part
       }
       for (auto j = 0; j < n_max; ++j)
       {
+        //Compute the norm of the influence function for each particle and k combo
         kr = 2.0 * PI * (kx*r(j,0) + ky*r(j,1) + kz*r(j,2)) / lx;
-        double re = sum_re * cos(kr);
-        double im = sum_im * sin(kr);
+        double re = sum_re * cos(kr);//realpart * realpart = real
+        double im = sum_im * sin(kr);//imagpart * imagpart = real
 
+        //For a given k, each particle's reciprocal-space contribution to the energy is given by
+        //p_k = (L/(4*PI)) * q * coeff * |S(k)|^2
         Kokkos::atomic_add(&p(j),q(j)*coeff*(re + im) * lx / (4.0*PI));
-
+        //add all particle's contributions to recip energy for this k-vector
         Uk_part += q(j)*coeff*(re + im) * lx/(4.0*PI);
       }
       }, Uk);
-
-  Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), KOKKOS_LAMBDA(int idx, double& Uk_part)
-      {
-      Uk_part += p(idx);
-      },
-      Uk);
 
   // computation of self-energy contribution
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Uself_part)
