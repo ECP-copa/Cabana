@@ -21,6 +21,7 @@ env:
     - BACKENDS="Pthread" WERROR=ON
     - BACKENDS="Serial OpenMP" WERROR=ON
     - BACKENDS="Serial Pthread" WERROR=ON
+    - BACKENDS="Serial" AMPI=ON
     - BACKENDS="OpenMP" COVERAGE=ON
     - BACKENDS="Serial" COVERAGE=ON
     - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON
@@ -50,6 +51,13 @@ before_script:
       ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
       make -j2 &&
       make install &&
+      popd;
+    fi
+  - if [[ ${AMPI} ]]; then
+      git clone --depth=1 https://github.com/UIUC-PPL/charm && pushd charm &&
+      ./build AMPI netlrts-linux-x86_64 ${CC} -j2 && export CXX=$PWD/bin/ampicxx && 
+      CMAKE_OPTS+=( -DMPIEXEC="$PWD/bin/ampirun" -DMPIEXEC_POSTFLAGS="+vp4" ) && 
+      CMAKE_OPTS+=( -DMPI_CXX_COMPILER="$PWD/bin/ampicxx" ) && 
       popd;
     fi
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
