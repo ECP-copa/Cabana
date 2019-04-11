@@ -29,7 +29,7 @@
 #include <Cabana_VerletList.hpp>
 #include <Cabana_Version.hpp>
 
-#if( Cabana_ENABLE_MPI )
+#ifdef Cabana_ENABLE_MPI
 #include <Cabana_Distributor.hpp>
 #include <Cabana_Halo.hpp>
 #endif
