@@ -184,7 +184,8 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   //The reciprocal space energy contribution of the Ewald Sum
   //iterates over all vectors k (reciprocal lattice vector) within the bounds k^2 < kmax^2
   //Indexing in 3D gives (k_int+1)^3 vectors to sum over
-  Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0,8*k_int*k_int*k_int+12*k_int*k_int+6*k_int+1), KOKKOS_LAMBDA(int idx, double& Uk_part)
+  const int max_idx = 8*k_int*k_int*k_int + 12*k_int*k_int + 6*k_int + 1;
+  Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0,max_idx), KOKKOS_LAMBDA(int idx, double& Uk_part)
       {
       double kk;
       double kr;
