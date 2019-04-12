@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Test::cabana_cartesian_grid Class Reference</title>
+<title>Cabana: Cabana::NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayout2D &gt; &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Cabana
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.0-dev</span>
    </div>
   </td>
  </tr>
@@ -82,42 +82,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>Test</b></li><li class="navelem"><a class="el" href="classTest_1_1cabana__cartesian__grid.html">cabana_cartesian_grid</a></li>  </ul>
+<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_01_4_01_4.html">NeighborList< VerletList< MemorySpace, AlgorithmTag, VerletLayout2D > ></a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
-<a href="classTest_1_1cabana__cartesian__grid-members.html">List of all members</a>  </div>
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_01_4_01_4-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Test::cabana_cartesian_grid Class Reference</div>  </div>
+<div class="title">Cabana::NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayout2D &gt; &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for Test::cabana_cartesian_grid:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classTest_1_1cabana__cartesian__grid.png" usemap="#Test::cabana_cartesian_grid_map" alt=""/>
-  <map id="Test::cabana_cartesian_grid_map" name="Test::cabana_cartesian_grid_map">
-</map>
- </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
-Static Protected Member Functions</h2></td></tr>
-<tr class="memitem:ad6d9521df99fb2f4373f45a859c4dc81"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad6d9521df99fb2f4373f45a859c4dc81"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUpTestCase</b> ()</td></tr>
-<tr class="separator:ad6d9521df99fb2f4373f45a859c4dc81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac494134ac0367c1822e7275394b7371b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac494134ac0367c1822e7275394b7371b"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>TearDownTestCase</b> ()</td></tr>
-<tr class="separator:ac494134ac0367c1822e7275394b7371b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:abf854441988a5f58a8ad096353a32daf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abf854441988a5f58a8ad096353a32daf"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>list_type</b> = <a class="el" href="classCabana_1_1VerletList.html">VerletList</a>&lt; MemorySpace, AlgorithmTag, <a class="el" href="structCabana_1_1VerletLayout2D.html">VerletLayout2D</a> &gt;</td></tr>
+<tr class="separator:abf854441988a5f58a8ad096353a32daf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada36715b58a44d102262928008956a42"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ada36715b58a44d102262928008956a42"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>TypeTag</b> = AlgorithmTag</td></tr>
+<tr class="separator:ada36715b58a44d102262928008956a42"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:ae6c1da07a8822fdff6eeb64721c3c641"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae6c1da07a8822fdff6eeb64721c3c641"></a>
+static KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><b>numNeighbor</b> (const <a class="el" href="classCabana_1_1VerletList.html">list_type</a> &amp;list, const std::size_t particle_index)</td></tr>
+<tr class="separator:ae6c1da07a8822fdff6eeb64721c3c641"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3111daa641a24319481a3f4e2fb4658f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3111daa641a24319481a3f4e2fb4658f"></a>
+static KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><b>getNeighbor</b> (const <a class="el" href="classCabana_1_1VerletList.html">list_type</a> &amp;list, const std::size_t particle_index, const int neighbor_index)</td></tr>
+<tr class="separator:a3111daa641a24319481a3f4e2fb4658f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>core/unit_test/tstCartesianGrid.cpp</li>
+<li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 20 2019 21:57:35 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Apr 12 2019 16:22:30 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

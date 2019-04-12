@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Test::cuda_uvm Class Reference</title>
+<title>Cabana: Cabana::NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayoutCSR &gt; &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Cabana
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.0-dev</span>
    </div>
   </td>
  </tr>
@@ -82,42 +82,44 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>Test</b></li><li class="navelem"><a class="el" href="classTest_1_1cuda__uvm.html">cuda_uvm</a></li>  </ul>
+<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_01_4_01_4.html">NeighborList< VerletList< MemorySpace, AlgorithmTag, VerletLayoutCSR > ></a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
-<a href="classTest_1_1cuda__uvm-members.html">List of all members</a>  </div>
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
+<a href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_01_4_01_4-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Test::cuda_uvm Class Reference</div>  </div>
+<div class="title">Cabana::NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayoutCSR &gt; &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for Test::cuda_uvm:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classTest_1_1cuda__uvm.png" usemap="#Test::cuda_uvm_map" alt=""/>
-  <map id="Test::cuda_uvm_map" name="Test::cuda_uvm_map">
-</map>
- </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
-Static Protected Member Functions</h2></td></tr>
-<tr class="memitem:a3b3d82413c1f996bad6acca25d145404"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3b3d82413c1f996bad6acca25d145404"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUpTestCase</b> ()</td></tr>
-<tr class="separator:a3b3d82413c1f996bad6acca25d145404"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a686b4f5e2f1f2e71ec5bbff4a597385f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a686b4f5e2f1f2e71ec5bbff4a597385f"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>TearDownTestCase</b> ()</td></tr>
-<tr class="separator:a686b4f5e2f1f2e71ec5bbff4a597385f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a3da2b1b11ea884d65b40f434b0d3d3e0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3da2b1b11ea884d65b40f434b0d3d3e0"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>list_type</b> = <a class="el" href="classCabana_1_1VerletList.html">VerletList</a>&lt; MemorySpace, AlgorithmTag, <a class="el" href="structCabana_1_1VerletLayoutCSR.html">VerletLayoutCSR</a> &gt;</td></tr>
+<tr class="separator:a3da2b1b11ea884d65b40f434b0d3d3e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a92bc5166248c0e5988cf1e810973d4a0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a92bc5166248c0e5988cf1e810973d4a0"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>TypeTag</b> = AlgorithmTag</td></tr>
+<tr class="separator:a92bc5166248c0e5988cf1e810973d4a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
+Static Public Member Functions</h2></td></tr>
+<tr class="memitem:a405a49049d821c8eb95c526e16ba61e9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a405a49049d821c8eb95c526e16ba61e9"></a>
+static KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><b>numNeighbor</b> (const <a class="el" href="classCabana_1_1VerletList.html">list_type</a> &amp;list, const std::size_t particle_index)</td></tr>
+<tr class="separator:a405a49049d821c8eb95c526e16ba61e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2b65ad01c8572fbfbc66989c7b41bb0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af2b65ad01c8572fbfbc66989c7b41bb0"></a>
+static KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><b>getNeighbor</b> (const <a class="el" href="classCabana_1_1VerletList.html">list_type</a> &amp;list, const std::size_t particle_index, const int neighbor_index)</td></tr>
+<tr class="separator:af2b65ad01c8572fbfbc66989c7b41bb0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this class was generated from the following file:<ul>
-<li>core/unit_test/Cuda/<a class="el" href="TestCuda__Category_8hpp_source.html">TestCuda_Category.hpp</a></li>
+<li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 20 2019 21:57:35 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Apr 12 2019 16:22:30 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

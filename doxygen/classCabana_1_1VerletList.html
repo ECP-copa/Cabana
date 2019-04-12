@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Cabana::VerletList&lt; MemorySpace, AlgorithmTag &gt; Class Template Reference</title>
+<title>Cabana: Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Cabana
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.0-dev</span>
    </div>
   </td>
  </tr>
@@ -92,7 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classCabana_1_1VerletList-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::VerletList&lt; MemorySpace, AlgorithmTag &gt; Class Template Reference</div>  </div>
+<div class="title">Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -103,41 +103,45 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a49884f18aa810dc0f79d55ccf07f489e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a49884f18aa810dc0f79d55ccf07f489e"></a>
+<tr class="memitem:a73aa0a6ebca49e2affed5f8290f67d9f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a73aa0a6ebca49e2affed5f8290f67d9f"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
-<tr class="separator:a49884f18aa810dc0f79d55ccf07f489e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a73aa0a6ebca49e2affed5f8290f67d9f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aea5188aef4018f81c3d61c00362de58c"><td class="memTemplParams" colspan="2">template&lt;class PositionSlice &gt; </td></tr>
-<tr class="memitem:aea5188aef4018f81c3d61c00362de58c"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#aea5188aef4018f81c3d61c00362de58c">VerletList</a> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionSlice &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:aea5188aef4018f81c3d61c00362de58c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <a href="#aea5188aef4018f81c3d61c00362de58c">More...</a><br/></td></tr>
-<tr class="separator:aea5188aef4018f81c3d61c00362de58c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acd8a008ac9244bd6bb9ad6cea000a7b9"><td class="memTemplParams" colspan="2">template&lt;class PositionSlice &gt; </td></tr>
+<tr class="memitem:acd8a008ac9244bd6bb9ad6cea000a7b9"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9">VerletList</a> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionSlice &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:acd8a008ac9244bd6bb9ad6cea000a7b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <a href="#acd8a008ac9244bd6bb9ad6cea000a7b9">More...</a><br/></td></tr>
+<tr class="separator:acd8a008ac9244bd6bb9ad6cea000a7b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a439c86243899b2d1275a9ebe1a81a1de"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a439c86243899b2d1275a9ebe1a81a1de"></a>
-Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_counts</b></td></tr>
-<tr class="separator:a439c86243899b2d1275a9ebe1a81a1de"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8479f1294577bc8940356c23abc5a440"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8479f1294577bc8940356c23abc5a440"></a>
-Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_offsets</b></td></tr>
-<tr class="separator:a8479f1294577bc8940356c23abc5a440"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1283f83c9206ab76383ee5a44003bc9c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1283f83c9206ab76383ee5a44003bc9c"></a>
-Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_neighbors</b></td></tr>
-<tr class="separator:a1283f83c9206ab76383ee5a44003bc9c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4283eae5b4daf67a77460fedc9790e2d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4283eae5b4daf67a77460fedc9790e2d"></a>
+<a class="el" href="structCabana_1_1VerletListData.html">VerletListData</a>&lt; MemorySpace, <br class="typebreak"/>
+LayoutTag &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_data</b></td></tr>
+<tr class="separator:a4283eae5b4daf67a77460fedc9790e2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class MemorySpace, class AlgorithmTag&gt;<br/>
-class Cabana::VerletList&lt; MemorySpace, AlgorithmTag &gt;</h3>
+<div class="textblock"><h3>template&lt;class MemorySpace, class AlgorithmTag, class LayoutTag&gt;<br/>
+class Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag &gt;</h3>
 
 <p>Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same size as the interaction distance. </p>
-<p>Neighbor list implementation most appropriate for somewhat regularly distributed particles due to the use of a Cartesian grid. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">MemorySpace</td><td>The memory space in which to build the neighbor list.</td></tr>
+    <tr><td class="paramname">AlgorithmTag</td><td>Tag indicating whether to build a full or half neighbor list.</td></tr>
+    <tr><td class="paramname">LayoutTag</td><td>Tag indicating whether to use a CSR or 2D data layout.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Neighbor list implementation most appropriate for somewhat regularly distributed particles due to the use of a Cartesian grid.</p>
+<p>CSR layout implementation. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="aea5188aef4018f81c3d61c00362de58c"></a>
+<a class="anchor" id="acd8a008ac9244bd6bb9ad6cea000a7b9"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace, class AlgorithmTag&gt; </div>
+template&lt;class MemorySpace, class AlgorithmTag, class LayoutTag&gt; </div>
 <div class="memtemplate">
 template&lt;class PositionSlice &gt; </div>
 <table class="mlabels">
@@ -145,7 +149,7 @@ template&lt;class PositionSlice &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1VerletList.html">Cabana::VerletList</a>&lt; MemorySpace, AlgorithmTag &gt;::<a class="el" href="classCabana_1_1VerletList.html">VerletList</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1VerletList.html">Cabana::VerletList</a>&lt; MemorySpace, AlgorithmTag, LayoutTag &gt;::<a class="el" href="classCabana_1_1VerletList.html">VerletList</a> </td>
           <td>(</td>
           <td class="paramtype">PositionSlice&#160;</td>
           <td class="paramname"><em>x</em>, </td>
@@ -228,7 +232,7 @@ template&lt;class PositionSlice &gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 20 2019 21:57:35 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Apr 12 2019 16:22:30 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

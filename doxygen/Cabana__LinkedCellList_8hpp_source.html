@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Cabana
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.0-dev</span>
    </div>
   </td>
  </tr>
@@ -301,17 +301,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;}</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;</div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;<span class="preprocessor">#endif // end CABANA_SORT_HPP</span></div>
+<div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="comment"></span><span class="keyword">template</span>&lt;<span class="keyword">class</span> LinkedCellListType, <span class="keyword">class</span> SliceType&gt;</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;<span class="keywordtype">void</span> permute(</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <span class="keyword">const</span> LinkedCellListType&amp; linked_cell_list,</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    SliceType&amp; slice,</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;(is_linked_cell_list&lt;LinkedCellListType&gt;::value &amp;&amp;</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                             is_slice&lt;SliceType&gt;::value),</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;{</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;    permute( linked_cell_list.binningData(), slice );</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;}</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;</div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;<span class="preprocessor">#endif // end CABANA_SORT_HPP</span></div>
 <div class="ttc" id="classCabana_1_1BinningData_html"><div class="ttname"><a href="classCabana_1_1BinningData.html">Cabana::BinningData</a></div><div class="ttdoc">Data describing the bin sizes and offsets resulting from a binning operation. </div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:33</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_abc56ba3f7cb8473f016d3e91aa2faa08"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#abc56ba3f7cb8473f016d3e91aa2faa08">Cabana::LinkedCellList::binningData</a></div><div class="ttdeci">BinningData&lt; MemorySpace &gt; binningData() const </div><div class="ttdoc">Get the 1d bin data. </div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:201</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_a10a69ae7a175576ac02e6c29c8e4ac45"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#a10a69ae7a175576ac02e6c29c8e4ac45">Cabana::LinkedCellList::LinkedCellList</a></div><div class="ttdeci">LinkedCellList()</div><div class="ttdoc">Default constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:41</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_ac5859a75a58de3fb810058abca969e72"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#ac5859a75a58de3fb810058abca969e72">Cabana::LinkedCellList::binSize</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION int binSize(const int i, const int j, const int k) const </div><div class="ttdoc">Given a bin get the number of particles it contains. </div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:159</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a></div><div class="ttdoc">Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesia...</div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:30</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_aa4e774dd528ba65d719b279c69ece7a5"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#aa4e774dd528ba65d719b279c69ece7a5">Cabana::LinkedCellList::permutation</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION size_type permutation(const int particle_id) const </div><div class="ttdoc">Given a local particle id in the binned layout, get the id of the particle in the old (unbinned) layo...</div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:180</div></div>
-<div class="ttc" id="structCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:362</div></div>
+<div class="ttc" id="structCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:360</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_affa9f00cd568a8ccbedb49ed703c95db"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#affa9f00cd568a8ccbedb49ed703c95db">Cabana::LinkedCellList::rangeBegin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION std::size_t rangeBegin() const </div><div class="ttdoc">The beginning particle index binned by the linked cell list. </div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:187</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_a3d8b9d78f3911eb3831be2c88c9e0ab9"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#a3d8b9d78f3911eb3831be2c88c9e0ab9">Cabana::LinkedCellList::rangeEnd</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION std::size_t rangeEnd() const </div><div class="ttdoc">The ending particle index binned by the linked cell list. </div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:194</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_ad71abd9014f45358bb03406601c3099c"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#ad71abd9014f45358bb03406601c3099c">Cabana::LinkedCellList::LinkedCellList</a></div><div class="ttdeci">LinkedCellList(SliceType positions, const typename SliceType::value_type grid_delta[3], const typename SliceType::value_type grid_min[3], const typename SliceType::value_type grid_max[3], typename std::enable_if&lt;(is_slice&lt; SliceType &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Slice constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:58</div></div>
@@ -326,7 +338,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 20 2019 21:57:34 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Apr 12 2019 16:22:29 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

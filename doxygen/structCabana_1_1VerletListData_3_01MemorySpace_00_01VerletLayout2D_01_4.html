@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Test::openmp Class Reference</title>
+<title>Cabana: Cabana::VerletListData&lt; MemorySpace, VerletLayout2D &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Cabana
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.0-dev</span>
    </div>
   </td>
  </tr>
@@ -82,42 +82,49 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>Test</b></li><li class="navelem"><a class="el" href="classTest_1_1openmp.html">openmp</a></li>  </ul>
+<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4.html">VerletListData< MemorySpace, VerletLayout2D ></a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
-<a href="classTest_1_1openmp-members.html">List of all members</a>  </div>
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayout2D_01_4-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Test::openmp Class Reference</div>  </div>
+<div class="title">Cabana::VerletListData&lt; MemorySpace, VerletLayout2D &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for Test::openmp:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classTest_1_1openmp.png" usemap="#Test::openmp_map" alt=""/>
-  <map id="Test::openmp_map" name="Test::openmp_map">
-</map>
- </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
-Static Protected Member Functions</h2></td></tr>
-<tr class="memitem:a8019be54831d6161923c8cef68efc380"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8019be54831d6161923c8cef68efc380"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUpTestCase</b> ()</td></tr>
-<tr class="separator:a8019be54831d6161923c8cef68efc380"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7895794ba1c502669db02b74fb15055d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7895794ba1c502669db02b74fb15055d"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>TearDownTestCase</b> ()</td></tr>
-<tr class="separator:a7895794ba1c502669db02b74fb15055d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a5ff0b8c7bc3de752325aa7d86849ffac"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5ff0b8c7bc3de752325aa7d86849ffac"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+<tr class="separator:a5ff0b8c7bc3de752325aa7d86849ffac"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a7a538424e51274a70e65373206ceea45"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a7a538424e51274a70e65373206ceea45"></a>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>addNeighbor</b> (const int pid, const int nid) const </td></tr>
+<tr class="separator:a7a538424e51274a70e65373206ceea45"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:a209371f52fb69b8fb671a6880862e353"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a209371f52fb69b8fb671a6880862e353"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>counts</b></td></tr>
+<tr class="separator:a209371f52fb69b8fb671a6880862e353"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a35e154dff68b4ede7a8c2e8bc6b8de47"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a35e154dff68b4ede7a8c2e8bc6b8de47"></a>
+Kokkos::View&lt; int <br class="typebreak"/>
+**, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>neighbors</b></td></tr>
+<tr class="separator:a35e154dff68b4ede7a8c2e8bc6b8de47"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>core/unit_test/OpenMP/<a class="el" href="TestOpenMP__Category_8hpp_source.html">TestOpenMP_Category.hpp</a></li>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 20 2019 21:57:35 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Apr 12 2019 16:22:30 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

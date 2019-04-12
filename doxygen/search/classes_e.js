@@ -1,6 +1,5 @@
 var searchData=
 [
-  ['serial',['serial',['../classTest_1_1serial.html',1,'Test']]],
   ['serialneighboroptag',['SerialNeighborOpTag',['../classCabana_1_1SerialNeighborOpTag.html',1,'Cabana']]],
   ['simdpolicy',['SimdPolicy',['../classCabana_1_1SimdPolicy.html',1,'Cabana']]],
   ['slice',['Slice',['../classCabana_1_1Slice.html',1,'Cabana']]],

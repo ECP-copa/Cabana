@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Test::pthread Class Reference</title>
+<title>Cabana: Cabana::VerletListData&lt; MemorySpace, VerletLayoutCSR &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -23,7 +23,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Cabana
-   &#160;<span id="projectnumber">0.1.0</span>
+   &#160;<span id="projectnumber">0.3.0-dev</span>
    </div>
   </td>
  </tr>
@@ -82,42 +82,51 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>Test</b></li><li class="navelem"><a class="el" href="classTest_1_1pthread.html">pthread</a></li>  </ul>
+<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html">VerletListData< MemorySpace, VerletLayoutCSR ></a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
-<a href="#pro-static-methods">Static Protected Member Functions</a> &#124;
-<a href="classTest_1_1pthread-members.html">List of all members</a>  </div>
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Test::pthread Class Reference</div>  </div>
+<div class="title">Cabana::VerletListData&lt; MemorySpace, VerletLayoutCSR &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for Test::pthread:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="classTest_1_1pthread.png" usemap="#Test::pthread_map" alt=""/>
-  <map id="Test::pthread_map" name="Test::pthread_map">
-</map>
- </div></div>
 <table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-static-methods"></a>
-Static Protected Member Functions</h2></td></tr>
-<tr class="memitem:a01c333d27cde6b933ebb1461d61823e8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a01c333d27cde6b933ebb1461d61823e8"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>SetUpTestCase</b> ()</td></tr>
-<tr class="separator:a01c333d27cde6b933ebb1461d61823e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a706c49372cc76a0a8d12d2d1db8ad411"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a706c49372cc76a0a8d12d2d1db8ad411"></a>
-static void&#160;</td><td class="memItemRight" valign="bottom"><b>TearDownTestCase</b> ()</td></tr>
-<tr class="separator:a706c49372cc76a0a8d12d2d1db8ad411"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:a38444407a5946a7b1a81ba44e98159cf"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38444407a5946a7b1a81ba44e98159cf"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+<tr class="separator:a38444407a5946a7b1a81ba44e98159cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a207307ee02ab1bc45029761e23c50901"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a207307ee02ab1bc45029761e23c50901"></a>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>addNeighbor</b> (const int pid, const int nid) const </td></tr>
+<tr class="separator:a207307ee02ab1bc45029761e23c50901"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:ad60675f8243afcad971853b47a2853fa"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad60675f8243afcad971853b47a2853fa"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>counts</b></td></tr>
+<tr class="separator:ad60675f8243afcad971853b47a2853fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3bd318b62cda39913813e640aa26ad40"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3bd318b62cda39913813e640aa26ad40"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>offsets</b></td></tr>
+<tr class="separator:a3bd318b62cda39913813e640aa26ad40"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50b4678ffb3d4493d001c09eead5bf28"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a50b4678ffb3d4493d001c09eead5bf28"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>neighbors</b></td></tr>
+<tr class="separator:a50b4678ffb3d4493d001c09eead5bf28"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this class was generated from the following file:<ul>
-<li>core/unit_test/Pthread/<a class="el" href="TestPthread__Category_8hpp_source.html">TestPthread_Category.hpp</a></li>
+<hr/>The documentation for this struct was generated from the following file:<ul>
+<li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed Mar 20 2019 21:57:35 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Apr 12 2019 16:22:30 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
