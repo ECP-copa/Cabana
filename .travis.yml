@@ -109,7 +109,7 @@ after_success:
      python -m coverxygen --src-dir .. --xml-dir xml/ --output doxygen.coverage.info && codecov -F doxygen -X gcov -f doxygen.coverage.info &&
      popd;
    fi
- - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
+ - if [[ ${TRAVIS_JOB_NUMBER} = *.2 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
      rm -rf doxygen &&
      mv build/html doxygen &&
