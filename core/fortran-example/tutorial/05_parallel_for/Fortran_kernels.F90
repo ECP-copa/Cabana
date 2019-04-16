@@ -76,8 +76,8 @@ SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
   implicit none
 
   type, BIND(C) :: ptl_type      
-     real (C_DOUBLE) :: d0(0:veclen-1) !Here index range is the C convention
-     real (C_FLOAT ) :: d1(0:veclen-1) 
+     real (C_DOUBLE) :: d0(veclen) 
+     real (C_FLOAT ) :: d1(veclen) 
   end type ptl_type
 
   type(ptl_type) :: part(*)
@@ -85,8 +85,8 @@ SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
 
   
 !Assign data to the aosoa values
-!note: index is not shifted by 1 as in kernel_1
-  part(s1)%d1(a1) =  part(s0)%d1(a0) 
+!note: index is shifted by 1 for the fortran convention
+  part(s1+1)%d1(a1+1) =  part(s0+1)%d1(a0+1) 
 
 end SUBROUTINE kernel_2
 
