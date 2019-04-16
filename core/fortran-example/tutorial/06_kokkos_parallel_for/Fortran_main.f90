@@ -1,5 +1,7 @@
 program example
   use iso_c_binding
+
+  !An interface is necessary for calling a function defined in C++    
   interface
      subroutine c_kokkos_parallel_for() bind(C, name="c_kokkos_parallel_for")
        use iso_c_binding
@@ -17,9 +19,14 @@ program example
        use iso_c_binding
      end subroutine c_kokkos_initlize
   end interface
-  
+
+  ! initialize Kokkos  
   call c_kokkos_initlize()
+
+  ! the c_kokkos_parallel_for is in C++, which calls a Fortran kernel.  
   call c_kokkos_parallel_for()
+
+  ! finalize Kokkos  
   call c_kokkos_finalize()
 
 end program example

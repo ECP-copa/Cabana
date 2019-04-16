@@ -13,12 +13,13 @@
 
 #include <iostream>
 
+/* Define the inner vector length of SOA */
 #include "veclen.h"
 
 //---------------------------------------------------------------------------//
 // SoA example.
 //---------------------------------------------------------------------------//
-    /*
+/*
       Cabana structs-of-arrays (SoAs) are groups of Tuples with the data
       specified in an order such that the array (or tuple) index is stride-1
       in memory. This results in each dimension of each multidimensional tuple
@@ -54,31 +55,35 @@
 
       Note: The members in an SoA-equivalent struct are in the same order as
       they are declared in Cabana::MemberTypes.
-    */
+*/
 
-    /* Start by declaring the types in our tuples will store. Store a rank-2
+/* Start by declaring the types in our tuples will store. Store a rank-2
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
-    */
-    using DataTypes = Cabana::MemberTypes<double[3][3],
+*/
+using DataTypes = Cabana::MemberTypes<double[3][3],
                                           float[4],
                                           int>;
 
-    /*
+/*
       Next declare the vector length of our SoA. This is how many tuples the
       SoA will contain. A reasonable number for performance should be some
       multiple of the vector length on the machine you are using.
-    */
-    const int VectorLength = veclen;
+*/
+const int VectorLength = veclen;
 
-    /* Create the SoA. */
-    using SoaTYPE = Cabana::SoA<DataTypes,VectorLength>;
+/* Create the SoA. */
+using SoaTYPE = Cabana::SoA<DataTypes,VectorLength>;
 
+
+/* Create a pointer of SoaType, which will be used in Fortran */
 SoaTYPE * particle = new SoaTYPE;
 
+
+/*  Declare functions that will be mixed with Fortran */
 extern "C" {
-  void soaExample(SoaTYPE *);
-  void delete_soa();
+  void soaExample(SoaTYPE *); //written in Fortan; called by C++
+  void delete_soa();          //written in C++; called by Fortan
 }
 
 void delete_soa(){
@@ -93,6 +98,7 @@ int main( int argc, char* argv[] )
 {
     Kokkos::ScopeGuard scope_guard(argc, argv);
 
+    /* Call the Fortran subroutine */    
     soaExample(particle);
 
     return 0;

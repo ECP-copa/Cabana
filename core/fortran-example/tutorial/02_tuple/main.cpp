@@ -17,7 +17,7 @@
 // Tuple example.
 //---------------------------------------------------------------------------//
 
-    /*
+/*
       Cabana tuples are similar to C++11 tuples in that they are ordered lists
       of elements of different types specified at compile time. Some aspects
       of Cabana::Tuple that are different from std::tuple:
@@ -51,18 +51,18 @@
       *: Cabana tuples are designed to store and access multidimensional array
          data with accessors provided to obtain references to individual array
          values within the tuple.
-    */
+*/
 
-    /* Start by declaring the types in our tuple will store. Store a rank-2
+/* Start by declaring the types in our tuple will store. Store a rank-2
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
 
-    */
-    using DataTypes = Cabana::MemberTypes<double[3][3],
+*/
+using DataTypes = Cabana::MemberTypes<double[3][3],
                                           float[4],
                                           int>;
 
-    /*
+/*
     Create the tuple. This tuple is identical to:
 
      struct local_particle_struct_t
@@ -75,15 +75,20 @@
 
        Note that ata members in Cabana tuples are stored in the same order in
        which they are declared.
-     */
-    using TupleType = Cabana::Tuple<DataTypes>;
+*/
+using TupleType = Cabana::Tuple<DataTypes>;
 
-
+/*
+  Create a pointer of TupleType, which will be used in Fortran
+ */
 TupleType * particle = new TupleType;
 
+/*
+  Declare functions that will be mixed with Fortran
+ */
 extern "C" {
-  void tupleExample(TupleType *);
-  void delete_tuple();
+  void tupleExample(TupleType *); //written in Fortan; called by C++
+  void delete_tuple();            //written in C++; called by Fortan
 }
 
 
@@ -99,7 +104,8 @@ int main( int argc, char* argv[] )
 {
     Kokkos::ScopeGuard scope_guard(argc, argv);
 
-    tupleExample(particle);
+    /* Call the Fortran subroutine */
+    tupleExample(particle); 
 
     return 0;
 }

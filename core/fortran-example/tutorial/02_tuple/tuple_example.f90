@@ -2,6 +2,14 @@ SUBROUTINE tupleExample (part) BIND(C,name='tupleExample')
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
   integer i,j
+  
+  !The Fortran derived type has the same memory layout as the C struct defined by
+  ! struct local_data_struct_t {     
+  !   double d0[3][3];     
+  !   double d1[4];     
+  !   int    d2; 
+  ! };
+  
   type, BIND(C) :: ptl_type      
      real (C_DOUBLE) :: d0(3,3) 
      real (C_FLOAT ) :: d1(4) 
@@ -10,6 +18,7 @@ SUBROUTINE tupleExample (part) BIND(C,name='tupleExample')
 
   type(ptl_type) :: part
 
+  !An interface is necessary for calling the function defined in C++
   interface     
      subroutine delete_tuple() bind(C)
        use iso_c_binding       

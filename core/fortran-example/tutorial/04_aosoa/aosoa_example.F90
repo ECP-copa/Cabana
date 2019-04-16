@@ -1,17 +1,29 @@
+! Define the inner vector length of SOA 
 #include "veclen.h"
 
 SUBROUTINE aosoaExample (part,num_part) BIND(C,name='aosoaExample')
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
   integer i,j,a,s
+
+  !The Fortran derived type has the same memory layout as the C struct defined by
+  ! struct local_data_struct_t {     
+  !   double d0[3][3][veclen];     
+  !   double d1[4][veclen];     
+  !   int    d2[veclen]; 
+  ! };
+
   type, BIND(C) :: ptl_type      
      real (C_DOUBLE) :: d0(veclen,3,3) 
      real (C_FLOAT ) :: d1(veclen,4) 
      integer (C_INT) :: d2(veclen)
   end type ptl_type
 
+  !Declared as AoSoA
   type(ptl_type) :: part(*)
+  !The number of particles
   INTEGER(C_INT), VALUE :: num_part
+  !The number of SOA
   INTEGER :: n_soa
 
 !Find out the number of soa in the aosoa

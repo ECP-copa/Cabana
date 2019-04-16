@@ -13,6 +13,7 @@
 
 #include <iostream>
 
+/* Define the inner vector length of SOA */
 #include "veclen.h"
 
 //---------------------------------------------------------------------------//
@@ -43,7 +44,7 @@ using DataTypes = Cabana::MemberTypes<double[3][3],
 				      float[4],
 				      int>;
 
-//This is the coresponding struct_of_array defined by DataTypes
+//This is the coresponding struct_of_array defined by SOA (using DataTypes)
 struct local_data_struct_t {     
   double d0[3][3][veclen];     
   double d1[4][veclen];     
@@ -81,9 +82,9 @@ using MemorySpace = Kokkos::HostSpace;
 using AosoaTYPE = Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>;
 
 
-
+/* Declare functions that will be mixed with Fortran */
 extern "C" {
-  void aosoaExample(local_data_struct_t*,int);
+  void aosoaExample(local_data_struct_t*,int); //written in Fortran; called by C++
 }
 
 
@@ -102,13 +103,17 @@ int main( int argc, char* argv[] )
   */
 
   int num_element = 5;
+
+
+  /* Create a pointer of AosoaType */
   AosoaTYPE* aosoa=new AosoaTYPE(num_element);
 
   std::cout << "aosoa.size() = " << aosoa->size() << std::endl;
   std::cout << "aosoa.capacity() = " << aosoa->capacity() << std::endl;
   std::cout << "aosoa.numSoA() = " << aosoa->numSoA() << std::endl;
 
-  //We cast aosoa to conventional struct, and pass it to Fortran 
+  /* In calling the Fortran subroutine, we cast aosoa to conventional struct, 
+     and pass it to Fortran */
   aosoaExample((local_data_struct_t*)(aosoa->ptr()),num_element);
 
   delete aosoa;

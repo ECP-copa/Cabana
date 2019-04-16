@@ -1,9 +1,16 @@
+!define the inner vector length of SOA
 #include "veclen.h"
 
 SUBROUTINE soaExample (part) BIND(C,name='soaExample')
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
   integer i,j,a
+  !The Fortran derived type has the same memory layout as the C struct defined by
+  ! struct local_data_struct_t {     
+  !   double d0[3][3][veclen];     
+  !   double d1[4][veclen];     
+  !   int    d2[veclen]; 
+  ! };  
   type, BIND(C) :: ptl_type      
      real (C_DOUBLE) :: d0(veclen,3,3) 
      real (C_FLOAT ) :: d1(veclen,4) 
@@ -12,6 +19,7 @@ SUBROUTINE soaExample (part) BIND(C,name='soaExample')
 
   type(ptl_type) :: part
 
+  !An interface is necessary for calling the function defined in C++
   interface     
      subroutine delete_soa() bind(C)
        use iso_c_binding       

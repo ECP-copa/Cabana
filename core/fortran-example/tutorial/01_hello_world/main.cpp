@@ -13,6 +13,9 @@
 
 #include <iostream>
 
+/*
+  Declare functions that will be mixed with Fortran
+ */
 extern "C" void print_hello_world();
 
 //---------------------------------------------------------------------------//
@@ -20,16 +23,18 @@ extern "C" void print_hello_world();
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
-    /* The Kokkos runtime used by Cabana must be initialized and finalized.
+  /* The Kokkos runtime used by Cabana must be initialized and finalized.
        Kokkos::ScopeGuard inializes Kokkos and guarantees it is finalized,
        even if the code returns early.
-     */
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+  */
+  Kokkos::ScopeGuard scope_guard(argc, argv);
 
-    // Any code using Cabana should be after the ScopeGuard is constructed
-    print_hello_world();
+  // Any code using Cabana should be after the ScopeGuard is constructed
 
-    return 0;
+  // Call the Fortran subroutine
+  print_hello_world();
+
+  return 0;
 }
 
 //---------------------------------------------------------------------------//
