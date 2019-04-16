@@ -9,17 +9,27 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-/*Adopted from kokkos' hello world example. */
+/*
+  This example is adopted from kokkos' hello world example. 
+  Here we print the message from a Fortran kernel.
+*/
 
 #include <Kokkos_Core.hpp>
 #include <cstdio>
 #include <typeinfo>
 
+/* Declare functions that will be mixed with Fortran */
 extern "C" {
+  /* written in C++; called by Fortran */  
   void c_kokkos_initlize( void );
   void c_kokkos_finalize( void );
   void c_kokkos_parallel_for( void );
-  __host__ __device__ void print_hello(const int);
+  
+  /* written in C++; called by Fortran */  
+#if USE_GPU == 1  
+   __device__
+#endif
+  void print_hello(const int);
 }
 
 // "Hello world" parallel_for example:

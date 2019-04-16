@@ -1,15 +1,34 @@
+! Define the inner vector length of SOA 
 #include "veclen.h"
-attributes(host,device) SUBROUTINE initialization(part,num_part) BIND(C)
+
+#ifndef USE_GPU
+#define USE_GPU 0
+#endif
+  
+#if USE_GPU == 1
+  attributes(device) &
+#endif
+  SUBROUTINE initialization(part,num_part) BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
   integer i,j,a,s
+
+  !The Fortran derived type has the same memory layout as the C struct defined by
+  ! struct local_data_struct_t {     
+  !   double d0[veclen];     
+  !   double d1[veclen];     
+  ! };
+
   type, BIND(C) :: ptl_type      
      real (C_DOUBLE) :: d0(veclen) 
      real (C_FLOAT ) :: d1(veclen) 
   end type ptl_type
 
+  !Declared as AoSoA
   type(ptl_type) :: part(*)
+  !The number of particles  
   INTEGER(C_INT), VALUE :: num_part
+  !The number of SOA  
   INTEGER :: n_soa 
 
 !Find out the number of soa in the aosoa
@@ -27,8 +46,10 @@ end do
 end SUBROUTINE initialization
  
 
-
-attributes(host,device) SUBROUTINE kernel_1(part,s,a) BIND(C)
+#if USE_GPU == 1
+  attributes(device) &
+#endif     
+SUBROUTINE kernel_1(part,s,a) BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
 
@@ -46,9 +67,11 @@ attributes(host,device) SUBROUTINE kernel_1(part,s,a) BIND(C)
   part(s+1)%d0(a+1) =  part(s+1)%d1(a+1) 
 
 end SUBROUTINE kernel_1
-
-
-attributes(host,device) SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
+ 
+#if USE_GPU == 1
+  attributes(device) &
+#endif     
+SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
 

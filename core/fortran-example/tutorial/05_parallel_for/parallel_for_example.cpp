@@ -16,24 +16,39 @@
 
 #include <iostream>
 
+/* Define the inner vector length of SOA */
 #include "veclen.h"
 
 //---------------------------------------------------------------------------//
 // parallel for example.
 //---------------------------------------------------------------------------//
 
-//This is the coresponding struct_of_array defined by DataTypes
+/* This is the coresponding struct_of_array defined by DataTypes (see below) */
 struct local_data_struct_t {     
   double d0[veclen];     
   double d1[veclen];     
 };
+
+/* Declare functions that will be mixed with Fortran */
 extern "C" {
-  void c_kokkos_initlize( void );
-  void c_kokkos_finalize( void );
+  /* written in C++; called by Fortran */
+  void c_kokkos_initlize( void ); 
+  void c_kokkos_finalize( void ); 
   void parallelForExample();
-  __host__ __device__ void initialization(local_data_struct_t*,int);      
-  __host__ __device__ void kernel_1(local_data_struct_t*,int,int);      
-  __host__ __device__ void kernel_2(local_data_struct_t*,int,int,int,int);      
+  
+  /* wirtten in Fortran; called by C++ */
+#if USE_GPU == 1  
+   __device__
+#endif
+   void initialization(local_data_struct_t*,int); 
+#if USE_GPU == 1 
+   __device__
+#endif
+   void kernel_1(local_data_struct_t*,int,int);
+#if USE_GPU == 1 
+   __device__
+#endif
+   void kernel_2(local_data_struct_t*,int,int,int,int);      
 }
 
 
@@ -86,14 +101,20 @@ void parallelForExample()
       Create slices and assign some data. One might consider using a parallel
       for loop in this case - especially when the code being written is for an
       arbitrary memory space.
+
+      In C++, one would do
+      auto slice_0 = aosoa->slice<0>();
+      auto slice_1 = aosoa->slice<1>();
+
+      For aosoa to be usable in Fortran, we cast it to local_data_struct_t,
+      which is a C struct with exactly the same memory layout as the data in 
+      aosoa->ptr().
      */
     
     auto struct_p = (local_data_struct_t*)(aosoa->ptr());
- 
-    initialization(struct_p,num_element);
 
-    auto slice_0 = aosoa->slice<0>();
-    auto slice_1 = aosoa->slice<1>();
+    /* Call the Fortran subroutine */
+    initialization(struct_p,num_element);
 
     /*
       KERNEL 1 - VECTORIZED/COALESCED
@@ -111,8 +132,11 @@ void parallelForExample()
     auto vector_kernel =
         KOKKOS_LAMBDA( const int s, const int a )
       {
-	//slice_0.access(s,a) = slice_1.access(s,a); 
-	kernel_1(struct_p,s,a);
+       /*
+	 What is written in a Fortran kernel is the floowing C++ operations:
+	 slice_0.access(s,a) = slice_1.access(s,a); 
+       */
+       kernel_1(struct_p,s,a);
       };
       
 
@@ -175,7 +199,14 @@ void parallelForExample()
         {
             auto gen = pool.get_state();
             auto rand_idx = Kokkos::rand<RandomType,int>::draw(gen,0,num_element);
-            //slice_1(i) = slice_0( rand_idx );
+	    /*
+	      Here we need to explicitly provide the two indexes (s,a), where s is 
+	      the outer array index, and a is the inner array index.
+
+	      What is written in a Fortran kernel is the floowing C++ operations:
+	      slice_1(i) = slice_0( rand_idx );
+
+	    */	    
 	    int s0 = i/veclen;
 	    int a0 = i-s0*veclen;
 	    int s1 = rand_idx/veclen;
