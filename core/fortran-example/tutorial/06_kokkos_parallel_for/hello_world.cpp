@@ -26,10 +26,7 @@ extern "C" {
   void c_kokkos_parallel_for( void );
   
   /* written in C++; called by Fortran */  
-#if USE_GPU == 1  
-   __device__
-#endif
-  void print_hello(const int);
+KOKKOS_FUNCTION  void print_hello(const int);
 }
 
 // "Hello world" parallel_for example:

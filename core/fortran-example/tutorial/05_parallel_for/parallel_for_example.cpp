@@ -37,17 +37,8 @@ extern "C" {
   void parallelForExample();
   
   /* wirtten in Fortran; called by C++ */
-#if USE_GPU == 1  
-   __device__
-#endif
    void initialization(local_data_struct_t*,int); 
-#if USE_GPU == 1 
-   __device__
-#endif
    void kernel_1(local_data_struct_t*,int,int);
-#if USE_GPU == 1 
-   __device__
-#endif
    void kernel_2(local_data_struct_t*,int,int,int,int);      
 }
 
