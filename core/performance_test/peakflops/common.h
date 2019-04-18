@@ -4,16 +4,16 @@
 #include <gtest/gtest.h>
 
 // NOTE: The user may have to override these for a given platform
-#ifndef ERROR_MARGIN
-#define ERROR_MARGIN 0.9
+#ifndef CABANA_PERFORMANCE_ERROR_MARGIN
+#define CABANA_PERFORMANCE_ERROR_MARGIN 0.9
 #endif
 
-#ifndef EXPECTED_FLOPS
-#define EXPECTED_FLOPS 32
+#ifndef CABANA_PERFORMANCE_EXPECTED_FLOPS
+#define CABANA_PERFORMANCE_EXPECTED_FLOPS 32
 #endif
 
-#ifndef VECLENTH
-#define VECLENTH (8)
+#ifndef CABANA_PERFORMANCE_VECLENTH
+#define CABANA_PERFORMANCE_VECLENTH (8)
 #endif
 
 static inline unsigned long long rdtscp() {
