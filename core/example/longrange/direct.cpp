@@ -88,7 +88,8 @@ double TDS::compute(ParticleList& particles, double lx, double ly, double lz)
   };
 
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), work_func );
-
+  Kokkos::fence();
+  
   //Compute total energy of particles
   double total_energy = 0.0;
   Kokkos::parallel_reduce( "Sum", Kokkos::RangePolicy<ExecutionSpace>(0,n_max), KOKKOS_LAMBDA(int idx, double& energy)
@@ -96,6 +97,7 @@ double TDS::compute(ParticleList& particles, double lx, double ly, double lz)
       energy += p( idx );
     },
     total_energy);
-
+  Kokkos::fence();
+  
   return total_energy;
 }

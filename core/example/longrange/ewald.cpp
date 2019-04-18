@@ -50,6 +50,8 @@ void TEwald::tune(double accuracy, ParticleList particles, double lx, double ly,
       },
       q_sum
       );
+  Kokkos::fence();
+  //Not sure, but think fence required since default memory or exec space could be CudaUVM
 
   double r_max = _r_max = std::min(0.49*lx,0.1*lx + 1.0);
   Kokkos::parallel_reduce( "MinLocReduce", N_alpha*N_k,
@@ -80,13 +82,13 @@ void TEwald::tune(double accuracy, ParticleList particles, double lx, double ly,
       }
     }, reducer_type(error_estimate)
   );
+  Kokkos::fence();
+  //Not sure, but think fence required since default memory or exec space could be CudaUVM
 
   _alpha = (double)(error_estimate.loc%N_alpha)*0.05+1.0;
   _k_max = (double)(error_estimate.loc/N_alpha)*0.05;
 
-  std::cout << "estimated error: " << error_estimate.val << std::endl;
   _k_max_int[0] = _k_max_int[1] = _k_max_int[2] = std::ceil(_k_max);
-  std::cout << "Tuned values: " << "r_max: " << _r_max << " alpha: " << _alpha << " k_max: " << _k_max_int[0] << "  " << _k_max_int[1] << " " << _k_max_int[2] << " " << _k_max << std::endl;
 }
 
 double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
@@ -107,6 +109,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
     p(idx) = 0.0;
   };
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), init_p ); 
+  Kokkos::fence();
 
   double alpha = _alpha;
   double k_max = _k_max;
@@ -118,7 +121,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   for ( auto i = 0; i < 3; ++i)
   {
     k_max_int[i] = _k_max_int[i];
-  }
+  }//TODO: enhancement - use Views instead. No need for macros.
 #else
   int* k_max_int = &(_k_max_int[0]);
 #endif
@@ -178,6 +181,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
         p(idx) += Ur_part;
       },
       Ur);
+  Kokkos::fence();
 
   // computation reciprocal-space contribution
   int k_int = std::ceil(_k_max);
@@ -228,6 +232,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
         Uk_part += q(j)*coeff*(re + im) * lx/(4.0*PI);
       }
       }, Uk);
+  Kokkos::fence();
 
   // computation of self-energy contribution
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Uself_part)
@@ -237,8 +242,9 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
       },
       Uself
       );
+  Kokkos::fence();
 
-  // TODO: using TeamPolicies?
+  // TODO: enhancement - combine these 3 reductions
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Udip_part)
       {
       double V = lx * ly * lz;
@@ -247,6 +253,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
       },
       Udip_vec[0]
       );
+  Kokkos::fence();
 
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Udip_part)
       {
@@ -256,6 +263,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
       },
       Udip_vec[1]
       );
+  Kokkos::fence();
 
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Udip_part)
       {
@@ -265,6 +273,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
       },
       Udip_vec[2]
       );
+  Kokkos::fence();
 
   Udip = Udip_vec[0] * Udip_vec[0] +
     Udip_vec[1] * Udip_vec[1] +

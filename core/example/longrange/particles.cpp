@@ -52,6 +52,7 @@ void initializeParticles(ParticleList particles, int crystal_size)
     i(idx) = idx+1l;
   };
   Kokkos::parallel_for(Kokkos::RangePolicy<ExecutionSpace>(0,particles.size()),init_parts);
+  Kokkos::fence();
 }
 
 // function to initialize uniform cubic mesh
@@ -94,5 +95,6 @@ void initializeMesh(ParticleList mesh, int width)
     i(idx) = idx+1l;
   };
   Kokkos::parallel_for(Kokkos::RangePolicy<ExecutionSpace>(0,mesh.size()),init_mesh);
+  Kokkos::fence();
 }
 

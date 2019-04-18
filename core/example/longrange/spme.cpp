@@ -69,6 +69,7 @@ void TPME::tune(double accuracy, ParticleList particles, double lx, double ly, d
       },
       q_sum
       );
+  Kokkos::fence();
 
   double r_max = _r_max = std::min(0.49*lx,0.1*lx + 1.0);//real space cutoff value
   Kokkos::parallel_reduce( "MinLocReduce", N_alpha*N_k,
@@ -102,6 +103,7 @@ void TPME::tune(double accuracy, ParticleList particles, double lx, double ly, d
       }
     }, reducer_type(error_estimate)
   );
+  Kokkos::fence();
 
   _alpha = (double)(error_estimate.loc%N_alpha)*0.05+1.0;
   _k_max = (double)(error_estimate.loc/N_alpha)*0.05;
@@ -211,7 +213,6 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
   
   // computation real-space contribution
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), KOKKOS_LAMBDA(int idx, double& Ur_part)
-     //TODO - comments for the below steps in real-space energy calc
      {
         double d[SPACE_DIM];
         double k; 
@@ -447,6 +448,7 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
       },
       Uself
       );
+  Kokkos::fence();
 
   // computation of dipole correction to energy
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Udip_part)
@@ -457,6 +459,7 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
       },
       Udip_vec[0]
       );
+  Kokkos::fence();
 
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Udip_part)
       {
@@ -466,6 +469,7 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
       },
       Udip_vec[1]
       );
+  Kokkos::fence();
 
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Udip_part)
       {
@@ -475,6 +479,7 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
       },
       Udip_vec[2]
       );
+  Kokkos::fence();
 
   Udip = Udip_vec[0] * Udip_vec[0] +
     Udip_vec[1] * Udip_vec[1] +
