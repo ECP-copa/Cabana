@@ -1,4 +1,5 @@
-if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "PGI")
+message(${CMAKE_Fortran_COMPILER_ID})
+if (("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "PGI") AND ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "PGI"))
   if( Cabana_ENABLE_Cuda )
     add_definitions(-DUSE_GPU=1)
     set(CMAKE_Fortran_FLAGS "-ta=tesla:cuda9.0 -Minfo=accel -Mcuda=cuda9.0")
@@ -13,8 +14,10 @@ if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "PGI")
   
   set(CMAKE_EXE_LINKER_FLAGS "-pgc++libs")
 else()
-  message("Only PGI is supported for compiling fortran cuda code.\n Skip.")
-  return()
+    message("Only PGI is supported for compiling fortran cuda code. Right now
+    we only accept building with PGI for both CXX and Fortran to avoid mixing
+    compiler families.\n Skip.")
+    return()
 endif()
 add_executable(ForParallelFor Fortran_main.f90 Fortran_kernels.F90 parallel_for_example.cpp)
 target_link_libraries(ForParallelFor cabanacore)
