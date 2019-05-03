@@ -1,1 +1,1 @@
-#define veclen 4
+#define VECLEN 4

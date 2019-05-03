@@ -34,16 +34,16 @@
 
       and vector length:
 
-          const int veclen = 8;
+          const int VECLEN = 8;
 
-      Declaring a Cabana SoA as Cabana::SoA<types,veclen> gives the equivalent
+      Declaring a Cabana SoA as Cabana::SoA<types,VECLEN> gives the equivalent
       data layout:
 
           struct MyEquivalentSoA
           {
-              double d0[3][2][veclen];
-              double d1[4][veclen];
-              float d2[veclen];
+              double d0[3][2][VECLEN];
+              double d1[4][VECLEN];
+              float d2[VECLEN];
           };
 
       Note: The data in this struct definition with an equivalent memory
@@ -70,10 +70,9 @@ using DataTypes = Cabana::MemberTypes<double[3][3],
       SoA will contain. A reasonable number for performance should be some
       multiple of the vector length on the machine you are using.
 */
-const int VectorLength = veclen;
 
 /* Create the SoA. */
-using SoaTYPE = Cabana::SoA<DataTypes,VectorLength>;
+using SoaTYPE = Cabana::SoA<DataTypes,VECLEN>;
 
 
 /* Create a pointer of SoaType, which will be used in Fortran */

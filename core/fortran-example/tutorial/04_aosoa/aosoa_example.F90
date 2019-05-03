@@ -19,15 +19,15 @@ SUBROUTINE aosoaExample (part,num_part) BIND(C,name='aosoaExample')
 
   !The Fortran derived type has the same memory layout as the C struct defined by
   ! struct local_data_struct_t {     
-  !   double d0[3][3][veclen];     
-  !   double d1[4][veclen];     
-  !   int    d2[veclen]; 
+  !   double d0[3][3][VECLEN];     
+  !   double d1[4][VECLEN];     
+  !   int    d2[VECLEN]; 
   ! };
 
   type, BIND(C) :: ptl_type      
-     real (C_DOUBLE) :: d0(veclen,3,3) 
-     real (C_FLOAT ) :: d1(veclen,4) 
-     integer (C_INT) :: d2(veclen)
+     real (C_DOUBLE) :: d0(VECLEN,3,3) 
+     real (C_FLOAT ) :: d1(VECLEN,4) 
+     integer (C_INT) :: d2(VECLEN)
   end type ptl_type
 
   !Declared as AoSoA
@@ -38,14 +38,14 @@ SUBROUTINE aosoaExample (part,num_part) BIND(C,name='aosoaExample')
   INTEGER :: n_soa
 
 !Find out the number of soa in the aosoa
-  n_soa = (num_part-1)/veclen+1
+  n_soa = (num_part-1)/VECLEN+1
 
 !Assign data to the aosoa values
-!Note that num_part<n_soa*veclen, we fill the multiple of veclen anyway
+!Note that num_part<n_soa*VECLEN, we fill the multiple of VECLEN anyway
  do s = 1, n_soa
     do i = 1,3
        do j = 1,3
-          do a = 1,veclen
+          do a = 1,VECLEN
              part(s)%d0(a,i,j) = 1.0 * (a + i + j)
           end do
        end do
@@ -54,14 +54,14 @@ SUBROUTINE aosoaExample (part,num_part) BIND(C,name='aosoaExample')
 
 do s = 1, n_soa
    do i = 1,4
-      do a = 1,veclen
+      do a = 1,VECLEN
          part(s)%d1(a,i) = 1.0 * (a + i)
       end do
    end do
 end do
 
 do s = 1, n_soa
-   do a = 1,veclen
+   do a = 1,VECLEN
       part(s)%d2(a) = a + 1234
    end do
 end do
@@ -74,7 +74,7 @@ print *
 do s = 1,n_soa
    do i = 1,3
       do j = 1,3
-         do a = 1,veclen
+         do a = 1,VECLEN
             print *, "Aosoa member 0 element (",s,",",a,"),(",i,",",j,"):",part(s)%d0(a,i,j)
          end do
       end do
@@ -82,14 +82,14 @@ do s = 1,n_soa
 end do
 do s = 1, n_soa
    do i = 1,4
-      do a = 1,veclen
+      do a = 1,VECLEN
          print *, "Aosoa member 1 element (",s,",",a,"),(",i,"):",part(s)%d1(a,i) 
       end do
    end do
 end do
 
 do s = 1, n_soa
-   do a = 1,veclen
+   do a = 1,VECLEN
       print *, "Aosoa member 2 (",a,")",part(s)%d2(a)
    end do
 end do

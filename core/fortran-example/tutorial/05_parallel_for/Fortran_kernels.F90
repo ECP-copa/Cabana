@@ -26,13 +26,13 @@
 
   !The Fortran derived type has the same memory layout as the C struct defined by
   ! struct local_data_struct_t {     
-  !   double d0[veclen];     
-  !   double d1[veclen];     
+  !   double d0[VECLEN];     
+  !   double d1[VECLEN];     
   ! };
 
   type, BIND(C) :: ptl_type      
-     real (C_DOUBLE) :: d0(veclen) 
-     real (C_FLOAT ) :: d1(veclen) 
+     real (C_DOUBLE) :: d0(VECLEN) 
+     real (C_FLOAT ) :: d1(VECLEN) 
   end type ptl_type
 
   !Declared as AoSoA
@@ -43,12 +43,12 @@
   INTEGER :: n_soa 
 
 !Find out the number of soa in the aosoa
-  n_soa = (num_part-1)/veclen+1
+  n_soa = (num_part-1)/VECLEN+1
 
 !Assign data to the aosoa values
-!Note that num_part<n_soa*veclen, we fill the multiple of veclen anyway
+!Note that num_part<n_soa*VECLEN, we fill the multiple of VECLEN anyway
 do s = 1, n_soa
-   do a = 1,veclen
+   do a = 1,VECLEN
       part(s)%d0(a) = 1.0
       part(s)%d1(a) = 2.0
    end do
@@ -65,8 +65,8 @@ SUBROUTINE kernel_1(part,s,a) BIND(C)
   implicit none
 
   type, BIND(C) :: ptl_type      
-     real (C_DOUBLE) :: d0(veclen) 
-     real (C_FLOAT ) :: d1(veclen) 
+     real (C_DOUBLE) :: d0(VECLEN) 
+     real (C_FLOAT ) :: d1(VECLEN) 
   end type ptl_type
 
   type(ptl_type) :: part(*)
@@ -87,8 +87,8 @@ SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
   implicit none
 
   type, BIND(C) :: ptl_type      
-     real (C_DOUBLE) :: d0(veclen) 
-     real (C_FLOAT ) :: d1(veclen) 
+     real (C_DOUBLE) :: d0(VECLEN) 
+     real (C_FLOAT ) :: d1(VECLEN) 
   end type ptl_type
 
   type(ptl_type) :: part(*)

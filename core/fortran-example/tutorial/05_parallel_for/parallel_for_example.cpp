@@ -25,8 +25,8 @@
 
 /* This is the coresponding struct_of_array defined by DataTypes (see below) */
 struct local_data_struct_t {     
-  double d0[veclen];     
-  double d1[veclen];     
+  double d0[VECLEN];     
+  double d1[VECLEN];     
 };
 
 /* Declare functions that will be mixed with Fortran */
@@ -84,7 +84,7 @@ void parallelForExample()
        Create the AoSoA.
     */
     const int num_element = 100;
-    using AosoaTYPE = Cabana::AoSoA<DataTypes,MemorySpace,veclen>;
+    using AosoaTYPE = Cabana::AoSoA<DataTypes,MemorySpace,VECLEN>;
 
     AosoaTYPE* aosoa =  new AosoaTYPE( num_element );
 
@@ -154,7 +154,7 @@ void parallelForExample()
       execution space and work tag to follow.
     */
     using ExecutionSpace = Kokkos::OpenMP;
-    Cabana::SimdPolicy<veclen,ExecutionSpace> simd_policy( 0, num_element );
+    Cabana::SimdPolicy<VECLEN,ExecutionSpace> simd_policy( 0, num_element );
 
     /*
       Finally, perform the parallel loop. We have added a parallel for concept
@@ -198,10 +198,10 @@ void parallelForExample()
 	      slice_1(i) = slice_0( rand_idx );
 
 	    */	    
-	    int s0 = i/veclen;
-	    int a0 = i-s0*veclen;
-	    int s1 = rand_idx/veclen;
-	    int a1 = rand_idx-s1*veclen;
+	    int s0 = i/VECLEN;
+	    int a0 = i-s0*VECLEN;
+	    int s1 = rand_idx/VECLEN;
+	    int a1 = rand_idx-s1*VECLEN;
 	    kernel_2(struct_p,s0,a0,s1,a1);
             pool.free_state( gen );
         };

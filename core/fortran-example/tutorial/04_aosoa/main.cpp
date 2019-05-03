@@ -46,9 +46,9 @@ using DataTypes = Cabana::MemberTypes<double[3][3],
 
 //This is the coresponding struct_of_array defined by SOA (using DataTypes)
 struct local_data_struct_t {     
-  double d0[3][3][veclen];     
-  double d1[4][veclen];     
-  int    d2[veclen]; 
+  double d0[3][3][VECLEN];     
+  double d1[4][VECLEN];     
+  int    d2[VECLEN]; 
 };
 
 /*
@@ -56,7 +56,6 @@ struct local_data_struct_t {
   SoAs will contain. A reasonable number for performance should be some
   multiple of the vector length on the machine you are using.
 */
-const int VectorLength = veclen;
 
 /*
   Finally declare the memory space in which the AoSoA will be
@@ -79,7 +78,7 @@ using MemorySpace = Kokkos::HostSpace;
   full (although its memory will still be allocated).
 */
 
-using AosoaTYPE = Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>;
+using AosoaTYPE = Cabana::AoSoA<DataTypes,MemorySpace,VECLEN>;
 
 
 /* Declare functions that will be mixed with Fortran */

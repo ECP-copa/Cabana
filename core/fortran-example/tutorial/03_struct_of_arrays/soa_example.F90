@@ -18,14 +18,14 @@ SUBROUTINE soaExample (part) BIND(C,name='soaExample')
   integer i,j,a
   !The Fortran derived type has the same memory layout as the C struct defined by
   ! struct local_data_struct_t {     
-  !   double d0[3][3][veclen];     
-  !   double d1[4][veclen];     
-  !   int    d2[veclen]; 
+  !   double d0[3][3][VECLEN];     
+  !   double d1[4][VECLEN];     
+  !   int    d2[VECLEN]; 
   ! };  
   type, BIND(C) :: ptl_type      
-     real (C_DOUBLE) :: d0(veclen,3,3) 
-     real (C_FLOAT ) :: d1(veclen,4) 
-     integer (C_INT) :: d2(veclen)
+     real (C_DOUBLE) :: d0(VECLEN,3,3) 
+     real (C_FLOAT ) :: d1(VECLEN,4) 
+     integer (C_INT) :: d2(VECLEN)
   end type ptl_type
 
   type(ptl_type) :: part
@@ -40,19 +40,19 @@ SUBROUTINE soaExample (part) BIND(C,name='soaExample')
 !Assign data to the soa values
   do i = 1,3
      do j = 1,3
-        do a = 1,veclen
+        do a = 1,VECLEN
            part%d0(a,i,j) = 1.0 * (a + i + j)
      end do
      end do
   end do
 
   do i = 1,4
-     do a = 1,veclen
+     do a = 1,VECLEN
         part%d1(a,i) = 1.0 * (a + i)
      end do
   end do
 
-  do a = 1,veclen
+  do a = 1,VECLEN
      part%d2(a) = a + 1234
   end do
 
@@ -62,19 +62,19 @@ SUBROUTINE soaExample (part) BIND(C,name='soaExample')
   print *
   do i = 1,3
      do j = 1,3
-        do a = 1,veclen
+        do a = 1,VECLEN
         print *, "Soa member 0 element (",a,",",i,",",j,"):",part%d0(a,i,j)
      end do
      end do
   end do
 
   do i = 1,4
-        do a = 1,veclen
+        do a = 1,VECLEN
            print *, "Soa member 1 element (",a,",",i,"):",part%d1(a,i) 
         end do
   end do
 
-  do a = 1,veclen
+  do a = 1,VECLEN
      print *, "Soa member 2: ",part%d2(a)
   end do
   call delete_soa();
