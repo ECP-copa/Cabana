@@ -1,0 +1,3 @@
+add_subdirectory(01_parallel_for)
+add_subdirectory(02_push)
+add_subdirectory(03_scatter)
