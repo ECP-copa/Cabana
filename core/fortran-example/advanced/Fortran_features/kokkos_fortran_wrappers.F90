@@ -1,4 +1,4 @@
-module kokkos
+module kokkos_fortran_wrapper
   interface
      subroutine kokkos_finalize() bind(C, name="kokkos_finalize")
        use iso_c_binding
@@ -16,4 +16,4 @@ module kokkos
        use iso_c_binding
      end subroutine kokkos_fence
   end interface
-end module kokkos
+end module kokkos_fortran_wrapper

@@ -1,5 +1,5 @@
 program Main
-  use kokkos, only : kokkos_initialize, kokkos_finalize
+  use kokkos_fortran_wrapper, only : kokkos_initialize, kokkos_finalize
   use ptl_module, only : N_PTL, N_PTL_MAX, particle_setup
   use grid_module, only : N_CELLS, grid_setup
   use scatter_module, only : scatter

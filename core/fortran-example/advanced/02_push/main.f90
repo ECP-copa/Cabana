@@ -1,5 +1,5 @@
 program main
-  use kokkos, only : kokkos_initialize, kokkos_finalize
+  use kokkos_fortran_wrapper, only : kokkos_initialize, kokkos_finalize
   use ptl_module, only : N_PTL, N_PTL_MAX, particle_setup
   use push_module, only : push, n_subcycles
   implicit none

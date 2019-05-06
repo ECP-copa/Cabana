@@ -1,5 +1,5 @@
 program main
-  use kokkos, only : kokkos_initialize, kokkos_finalize
+  use kokkos_fortran_wrapper, only : kokkos_initialize, kokkos_finalize
   use parallel_for_example_module, only : array_setup, parallel_for_example
   implicit none
   ! MPI-related variables
