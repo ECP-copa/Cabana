@@ -16,13 +16,13 @@
 
 
 add_definitions(${MPI_Fortran_COMPILE_FLAGS})
-include_directories(${MPI_Fortran_INCLUDE_PATH})
-link_directories(${MPI_Fortran_LIBRARIES})
+include_directories(${MPI_Fortran_INCLUDE_PATH} ${CMAKE_CURRENT_BINARY_DIR}/../Fortran_features)
+link_directories(${MPI_Fortran_LIBRARIES} ${CMAKE_CURRENT_BINARY_DIR}/../Fortran_features)
  
-  add_executable(ForParallelFor2 parallel_for_example_module.F90 kokkos_fortran_wrappers.F90 cabana_cpp_interface.cpp main.f90 ptl_module.F90)
-  set_target_properties(ForParallelFor2 PROPERTIES COMPILE_FLAGS "${MPI_Fortran_COMPILE_FLAGS}")
-  set_target_properties(ForParallelFor2 PROPERTIES LINK_FLAGS "${MPI_Fortran_LINK_FLAGS}")
+  add_executable(AdvForParallelFor parallel_for_example_module.F90 cabana_cpp_interface.cpp main.f90 ptl_module.F90)
+  set_target_properties(AdvForParallelFor PROPERTIES COMPILE_FLAGS "${MPI_Fortran_COMPILE_FLAGS}")
+  set_target_properties(AdvForParallelFor PROPERTIES LINK_FLAGS "${MPI_Fortran_LINK_FLAGS}")
 
-  target_link_libraries(ForParallelFor2 cabanacore ${MPI_Fortran_LIBRARIES})
-  add_test(NAME Fortran_tutorial_12 COMMAND ForParallelFor2)
-  set_property(TARGET ForParallelFor2 PROPERTY LINKER_LANGUAGE Fortran)
+  target_link_libraries(AdvForParallelFor cabanacore ${MPI_Fortran_LIBRARIES} kokkos_fortran_wrappers)
+  add_test(NAME Fortran_tutorial_12 COMMAND AdvForParallelFor)
+  set_property(TARGET AdvForParallelFor PROPERTY LINKER_LANGUAGE Fortran)

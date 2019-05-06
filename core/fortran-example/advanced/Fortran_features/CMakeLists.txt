@@ -1,0 +1,1 @@
+add_library(kokkos_fortran_wrappers SHARED kokkos_fortran_wrappers.F90)

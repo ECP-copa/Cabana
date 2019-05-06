@@ -1,4 +1,4 @@
-#include "cabana_fortran_macros.h"
+#include "../Fortran_features/cabana_fortran_macros.h"
 
 module parallel_for_example_module
   use, intrinsic :: ISO_C_BINDING
