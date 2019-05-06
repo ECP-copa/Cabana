@@ -20,6 +20,11 @@ module parallel_for_example_module
 
   end subroutine
 
+  ! Deallocate array
+  subroutine array_deallocation()
+    deallocate(particle_position)
+  end subroutine
+
   !!!!!!!!!!!! KERNEL !!!!!!!!!!!!!!
 
   ! Each parallel_for kernel must be accounted for in two places:

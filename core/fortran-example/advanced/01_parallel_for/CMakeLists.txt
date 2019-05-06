@@ -17,9 +17,9 @@
 
 add_definitions(${MPI_Fortran_COMPILE_FLAGS})
 include_directories(${MPI_Fortran_INCLUDE_PATH} ${CMAKE_CURRENT_BINARY_DIR}/../Fortran_features)
-link_directories(${MPI_Fortran_LIBRARIES} ${CMAKE_CURRENT_BINARY_DIR}/../Fortran_features)
+link_directories(${MPI_Fortran_LIBRARIES})
  
-  add_executable(AdvForParallelFor parallel_for_example_module.F90 cabana_cpp_interface.cpp main.f90 ptl_module.F90)
+  add_executable(AdvForParallelFor parallel_for_example_module.F90 cabana_cpp_interface.cpp main.f90)
   set_target_properties(AdvForParallelFor PROPERTIES COMPILE_FLAGS "${MPI_Fortran_COMPILE_FLAGS}")
   set_target_properties(AdvForParallelFor PROPERTIES LINK_FLAGS "${MPI_Fortran_LINK_FLAGS}")
 

@@ -1,6 +1,6 @@
 program main
   use kokkos_fortran_wrapper, only : kokkos_initialize, kokkos_finalize
-  use parallel_for_example_module, only : array_setup, parallel_for_example
+  use parallel_for_example_module, only : array_setup, parallel_for_example, array_deallocation
   implicit none
   ! MPI-related variables
   integer :: sml_mype, sml_totalpe, sml_comm, sml_comm_null
@@ -22,6 +22,9 @@ program main
   ! Loop over the array performing a Fortran subroutine on each element
   err = parallel_for_example(1,N_PTL)
 
+  ! Free the fortran array
+  call array_deallocation()
+
   ! Finalize kokkos
   call kokkos_finalize
 
@@ -30,7 +33,6 @@ program main
 end program main
 
 subroutine parallel_initialize(sml_mype, sml_totalpe, sml_comm, sml_comm_null)
-  use ptl_module
   implicit none
   include 'mpif.h'
   integer, intent(out) :: sml_mype, sml_totalpe, sml_comm, sml_comm_null
