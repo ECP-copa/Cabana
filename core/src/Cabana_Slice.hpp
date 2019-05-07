@@ -38,7 +38,7 @@ struct LayoutCabanaSlice
 {
     typedef LayoutCabanaSlice array_layout;
 
-    enum { is_extent_constructible = false };
+    enum { is_extent_constructible = true };
 
     static constexpr int Stride = SOASTRIDE;
     static constexpr int VectorLength = VLEN;
@@ -58,8 +58,15 @@ struct LayoutCabanaSlice
 
     KOKKOS_INLINE_FUNCTION
     explicit constexpr
-    LayoutCabanaSlice( size_t num_soa )
-        : dimension { num_soa, VectorLength, D0, D1, D2, D3, D4, D5 }
+    LayoutCabanaSlice( size_t num_soa = 0,
+                       size_t vector_length = VectorLength,
+                       size_t d0 = D0,
+                       size_t d1 = D1,
+                       size_t d2 = D2,
+                       size_t d3 = D3,
+                       size_t d4 = D4,
+                       size_t d5 = D5 )
+        : dimension { num_soa, vector_length, d0, d1, d2, d3, d4, d5 }
     {}
 };
 
@@ -463,6 +470,7 @@ class Slice
     using pointer_type = typename kokkos_view::pointer_type;
     using execution_space = typename kokkos_view::execution_space;
     using device_type = typename kokkos_view::device_type;
+    using view_layout = typename kokkos_view::array_layout;
 
     // Compatible memory access slice types.
     using default_access_slice =
@@ -746,6 +754,13 @@ class Slice
     KOKKOS_INLINE_FUNCTION
     std::size_t stride( const std::size_t d ) const
     { return _view.stride(d); }
+
+    /*!
+      \brief Get the underlying Kokkos View managing the slice data.
+    */
+    KOKKOS_INLINE_FUNCTION
+    kokkos_view view() const
+    { return _view; }
 
   private:
 

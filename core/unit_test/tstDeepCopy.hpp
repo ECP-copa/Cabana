@@ -122,6 +122,20 @@ void testDeepCopy()
 
     // Check values.
     checkDataMembers( dst_aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+
+    // Create a second AoSoA and deep copy by slice.
+    DstAoSoA_t dst_aosoa_2( num_data );
+    auto dst_slice_0 = dst_aosoa_2.template slice<0>();
+    auto dst_slice_1 = dst_aosoa_2.template slice<1>();
+    auto dst_slice_2 = dst_aosoa_2.template slice<2>();
+    auto dst_slice_3 = dst_aosoa_2.template slice<3>();
+    Cabana::deep_copy( dst_slice_0, slice_0 );
+    Cabana::deep_copy( dst_slice_1, slice_1 );
+    Cabana::deep_copy( dst_slice_2, slice_2 );
+    Cabana::deep_copy( dst_slice_3, slice_3 );
+
+    // Check values.
+    checkDataMembers( dst_aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -230,6 +244,57 @@ void testMirror()
 }
 
 //---------------------------------------------------------------------------//
+// Perform an assignment test.
+void testAssign()
+{
+    // Declare data types.
+    using DataTypes = Cabana::MemberTypes<float[2],int>;
+
+    // Create an AoSoA in the test memory space.
+    int num_data = 423;
+    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( num_data );
+
+    // Assign every tuple in the AoSoA to the same value.
+    float fval = 3.2;
+    int ival = 1;
+    Cabana::Tuple<DataTypes> tp;
+    tp.get<0>(0) = fval;
+    tp.get<0>(1) = fval;
+    tp.get<1>() = ival;
+    Cabana::deep_copy( aosoa, tp );
+
+    // Check the assignment
+    auto host_aosoa = Cabana::Experimental::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    auto host_slice_0 = host_aosoa.slice<0>();
+    auto host_slice_1 = host_aosoa.slice<1>();
+    for ( int n = 0; n < num_data; ++n )
+    {
+        EXPECT_EQ( host_slice_0(n,0), fval );
+        EXPECT_EQ( host_slice_0(n,1), fval );
+        EXPECT_EQ( host_slice_1(n), ival );
+    }
+
+    // Assign every element in slices to the same value.
+    auto slice_0 = aosoa.slice<0>();
+    auto slice_1 = aosoa.slice<1>();
+    fval = 5.4;
+    ival = 12;
+    Cabana::deep_copy( slice_0, fval );
+    Cabana::deep_copy( slice_1, ival );
+    host_aosoa = Cabana::Experimental::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    host_slice_0 = host_aosoa.slice<0>();
+    host_slice_1 = host_aosoa.slice<1>();
+    for ( int n = 0; n < num_data; ++n )
+    {
+        EXPECT_EQ( host_slice_0(n,0), fval );
+        EXPECT_EQ( host_slice_0(n,1), fval );
+        EXPECT_EQ( host_slice_1(n), ival );
+    }
+}
+
+//---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
@@ -261,6 +326,12 @@ TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
 TEST( TEST_CATEGORY, mirror_test )
 {
     testMirror();
+}
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, assign_test )
+{
+    testAssign();
 }
 
 //---------------------------------------------------------------------------//
