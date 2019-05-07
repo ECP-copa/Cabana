@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <cabana_fortran_cpp_defs.h>
+#include "../Fortran_features/cabana_fortran_cpp_defs.h"
 
 // Length of loop for vectorization
 #ifndef SIMD_SIZE
