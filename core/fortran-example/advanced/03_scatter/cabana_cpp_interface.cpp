@@ -7,7 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 
-#include <cabana_fortran_cpp_defs.h>
+#include "../Fortran_features/cabana_fortran_cpp_defs.h"
 
 // Length of loop for vectorization
 #ifndef SIMD_SIZE
@@ -135,7 +135,6 @@ int particle_allocation(int num_particle)
 // Wrappers for C++ routines that will need to be called by the Fortran code.
 extern "C" void cabana_initialize( void );
 extern "C" void cabana_finalize( void );
-extern "C" void kokkos_fence( void );
 
 void cabana_initialize() {
   Kokkos::initialize();
@@ -145,6 +144,3 @@ void cabana_finalize( void ) {
   Kokkos::finalize();
 }
 
-void kokkos_fence() {
-  Kokkos::fence();
-}

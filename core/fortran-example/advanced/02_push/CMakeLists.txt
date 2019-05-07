@@ -24,7 +24,3 @@ set_target_properties(AdvForPush PROPERTIES LINK_FLAGS "${MPI_Fortran_LINK_FLAGS
 target_link_libraries(AdvForPush cabanacore ${MPI_Fortran_LIBRARIES} kokkos_fortran_wrappers)
 add_test(NAME Fortran_advanced_example_02 COMMAND AdvForPush)
 set_property(TARGET AdvForPush PROPERTY LINKER_LANGUAGE Fortran)
-
-
-
-

@@ -1,4 +1,26 @@
-  return() #needs work
-  add_executable(ForScatter ptl_module.F90 grid_module.F90 scatter_module.F90 kokkos_fortran_wrappers.F90 cabana_cpp_interface.cpp main.f90)
-  target_link_libraries(ForScatter cabanacore)
-  add_test(NAME Fortran_tutorial_14 COMMAND ForScatter)
+if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "PGI")
+  if( Cabana_ENABLE_Cuda )
+    add_definitions(-DSIMD_SIZE=1  -DVEC_LEN=32 -DUSE_GPU=1)
+    set(MPI_Fortran_COMPILE_FLAGS "-r -ta=tesla:cuda9.0 -Minfo=accel -Mcuda=cuda9.0")
+    set(CMAKE_CXX_FLAGS "--relocatable-device-code=true")
+    set(CMAKE_EXE_LINKER_FLAGS "-pgc++libs -ta=tesla:cuda9.0 -Minfo=accel -Mcuda=cuda9.0")
+  else()
+    add_definitions(-DSIMD_SIZE=32 -DVEC_LEN=32 -DUSE_GPU=0)
+  endif()
+else()
+  message("Only PGI is supported for compiling fortran cuda code.\n Skip.")
+  return()
+endif()
+
+add_definitions(${MPI_Fortran_COMPILE_FLAGS})
+include_directories(${MPI_Fortran_INCLUDE_PATH} ${CMAKE_CURRENT_BINARY_DIR}/../Fortran_features)
+link_directories(${MPI_Fortran_LIBRARIES})
+
+add_executable(AdvForScatter ptl_module.F90 grid_module.F90 scatter_module.F90 cabana_cpp_interface.cpp main.f90) 
+
+set_target_properties(AdvForScatter PROPERTIES COMPILE_FLAGS "${MPI_Fortran_COMPILE_FLAGS}")
+set_target_properties(AdvForScatter PROPERTIES LINK_FLAGS "${MPI_Fortran_LINK_FLAGS}")
+
+target_link_libraries(AdvForScatter cabanacore ${MPI_Fortran_LIBRARIES} kokkos_fortran_wrappers)
+add_test(NAME Fortran_advanced_example_03 COMMAND AdvForScatter)
+set_property(TARGET AdvForScatter PROPERTY LINKER_LANGUAGE Fortran)

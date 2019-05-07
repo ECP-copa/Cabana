@@ -1,4 +1,4 @@
-#include "cabana_fortran_macros.h"
+#include "../Fortran_features/cabana_fortran_macros.h"
 #ifndef USE_GPU
 #define USE_GPU 0
 #endif
