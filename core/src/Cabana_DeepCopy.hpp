@@ -141,6 +141,58 @@ namespace Experimental
 template<class Space, class SrcAoSoA>
 inline
 SrcAoSoA
+create_mirror_view(
+    const Space&,
+    const SrcAoSoA& src,
+    typename std::enable_if<(std::is_same<typename SrcAoSoA::memory_space,
+                             typename Space::memory_space>::value)>::type* = 0 )
+{
+    static_assert( is_aosoa<SrcAoSoA>::value,
+                   "create_mirror_view() requires an AoSoA" );
+    return src;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror on the host of the given AoSoA in the given memory
+  space. Different space specialization allocates a new AoSoA.
+
+  \note Memory allocation will only occur if the requested mirror
+  memory space is different from that of the input AoSoA. If they are the
+  same, the original AoSoA (e.g. a view of that AoSoA) is returned.
+ */
+template<class Space, class SrcAoSoA>
+inline
+AoSoA<typename SrcAoSoA::member_types,
+      typename Space::memory_space,
+      SrcAoSoA::vector_length>
+create_mirror_view(
+    const Space&,
+    const SrcAoSoA& src,
+    typename std::enable_if<(!std::is_same<typename SrcAoSoA::memory_space,
+                             typename Space::memory_space>::value)>::type* = 0 )
+{
+    static_assert( is_aosoa<SrcAoSoA>::value,
+                   "create_mirror_view() requires an AoSoA" );
+    auto dst = AoSoA<typename SrcAoSoA::member_types,
+                     typename Space::memory_space,
+                     SrcAoSoA::vector_length>( src.size() );
+    return dst;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a mirror view of the given AoSoA in the given memory space and
+  copy the contents of the input AoSoA. Same space specialization returns the
+  input AoSoA.
+
+  \note Memory allocation will only occur if the requested mirror memory space
+  is different from that of the input AoSoA. If they are the same, the
+  original AoSoA (e.g. a view of that AoSoA) is returned.
+ */
+template<class Space, class SrcAoSoA>
+inline
+SrcAoSoA
 create_mirror_view_and_copy(
     const Space&,
     const SrcAoSoA& src,

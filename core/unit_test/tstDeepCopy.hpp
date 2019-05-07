@@ -176,41 +176,57 @@ void testMirror()
                     slice_3( idx, i, j ) = dval * (i+j);
         });
 
-    // Create a mirror with the same memory space and copy.
+    // Create a mirror with the same memory space and copy separately.
+    auto same_space_mirror = Cabana::Experimental::create_mirror_view(
+            TEST_MEMSPACE(), aosoa );
+    Cabana::deep_copy( same_space_mirror, aosoa );
+    auto host_space_mirror = Cabana::Experimental::create_mirror_view(
+        Kokkos::HostSpace(), aosoa );
+    Cabana::deep_copy( host_space_mirror, aosoa );
+
+    // Create a mirror with the same memory space and copy at the same time.
     auto same_space_copy = Cabana::Experimental::create_mirror_view_and_copy(
         TEST_MEMSPACE(), aosoa );
-    EXPECT_EQ( same_space_copy.size(), aosoa.size() );
-    bool ssc_same_ms =
-        std::is_same<TEST_MEMSPACE,
-                     decltype(same_space_copy)::memory_space>::value;
-    EXPECT_TRUE( ssc_same_ms );
-    bool ssc_same_mt =
-        std::is_same<DataTypes,
-                     decltype(same_space_copy)::member_types>::value;
-    EXPECT_TRUE( ssc_same_mt );
-
-    // Check that the same memory space case didn't allocate any memory. They
-    // should have the same pointer.
-    EXPECT_EQ( aosoa.ptr(), same_space_copy.ptr() );
-
-    // Check values.
-    checkDataMembers( same_space_copy, fval, dval, ival, dim_1, dim_2, dim_3 );
-
-    // Create a mirror with the host space and copy.
     auto host_space_copy = Cabana::Experimental::create_mirror_view_and_copy(
         Kokkos::HostSpace(), aosoa );
-    EXPECT_EQ( host_space_copy.size(), aosoa.size() );
-    bool hsc_same_ms =
-        std::is_same<Kokkos::HostSpace,
-                     decltype(host_space_copy)::memory_space>::value;
-    EXPECT_TRUE( hsc_same_ms );
-    bool hsc_same_mt =
-        std::is_same<DataTypes,
-                     decltype(host_space_copy)::member_types>::value;
-    EXPECT_TRUE( hsc_same_mt );
 
-    // Check values.
-    checkDataMembers( host_space_copy, fval, dval, ival, dim_1, dim_2, dim_3 );
+    // Check the mirrors/copies.
+    using SameSpaceMirror = decltype(same_space_mirror);
+    using HostSpaceMirror = decltype(host_space_mirror);
+    auto check_mirrors =
+        [&]( SameSpaceMirror same_space_mirror,
+             HostSpaceMirror host_space_mirror ) {
+            static_assert( std::is_same<TEST_MEMSPACE,
+                           decltype(same_space_mirror)::memory_space>::value,
+                           "expected same memory spaces" );
+            static_assert( std::is_same<DataTypes,
+                           decltype(same_space_mirror)::member_types>::value,
+                           "expected same data types" );
+
+            static_assert( std::is_same<Kokkos::HostSpace,
+                           decltype(host_space_mirror)::memory_space>::value,
+                           "expected same memory spaces" );
+            static_assert( std::is_same<DataTypes,
+                           decltype(host_space_mirror)::member_types>::value,
+                           "expected same data types" );
+
+            // Check sizes.
+            EXPECT_EQ( same_space_mirror.size(), aosoa.size() );
+            EXPECT_EQ( host_space_mirror.size(), aosoa.size() );
+
+            // Check that the same memory space case didn't allocate any
+            // memory. They should have the same pointer.
+            EXPECT_EQ( aosoa.ptr(), same_space_mirror.ptr() );
+
+            // Check values.
+            checkDataMembers(
+                same_space_mirror, fval, dval, ival, dim_1, dim_2, dim_3 );
+            checkDataMembers(
+                host_space_mirror, fval, dval, ival, dim_1, dim_2, dim_3 );
+        };
+
+    check_mirrors( same_space_mirror, host_space_mirror );
+    check_mirrors( same_space_copy, host_space_copy );
 }
 
 //---------------------------------------------------------------------------//
