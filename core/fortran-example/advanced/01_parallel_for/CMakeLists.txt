@@ -21,5 +21,5 @@ set_target_properties(AdvForParallelFor PROPERTIES COMPILE_FLAGS "${MPI_Fortran_
 set_target_properties(AdvForParallelFor PROPERTIES LINK_FLAGS "${MPI_Fortran_LINK_FLAGS}")
 
 target_link_libraries(AdvForParallelFor cabanacore ${MPI_Fortran_LIBRARIES} kokkos_fortran_wrappers)
-add_test(NAME Fortran_tutorial_12 COMMAND AdvForParallelFor)
+add_test(NAME Fortran_advanced_example_01 COMMAND AdvForParallelFor)
 set_property(TARGET AdvForParallelFor PROPERTY LINKER_LANGUAGE Fortran)
