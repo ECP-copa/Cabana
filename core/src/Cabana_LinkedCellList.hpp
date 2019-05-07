@@ -17,6 +17,7 @@
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_ScatterView.hpp>
 
 namespace Cabana
 {
@@ -225,19 +226,21 @@ class LinkedCellList
         Kokkos::RangePolicy<typename OffsetView::execution_space>
             particle_range( begin, end );
         Kokkos::deep_copy( counts, 0 );
+        auto counts_sv = Kokkos::Experimental::create_scatter_view( counts );
         auto cell_count =
             KOKKOS_LAMBDA( const std::size_t p )
             {
                 int i, j, k;
                 grid.locatePoint(
                     positions(p,0), positions(p,1), positions(p,2), i , j, k );
-                Kokkos::atomic_increment(
-                    &counts(grid.cardinalCellIndex(i,j,k)) );
+                auto counts_data = counts_sv.access();
+                counts_data(grid.cardinalCellIndex(i,j,k)) += 1;
             };
         Kokkos::parallel_for( "Cabana::LinkedCellList::build::cell_count",
                               particle_range,
                               cell_count );
         Kokkos::fence();
+        Kokkos::Experimental::contribute( counts, counts_sv );
 
         // Compute offsets.
         Kokkos::RangePolicy<typename OffsetView::execution_space>

@@ -13,6 +13,7 @@
 #define CABANA_COMMUNICATIONPLAN_HPP
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_ScatterView.hpp>
 
 #include <mpi.h>
 
@@ -250,12 +251,15 @@ class CommunicationPlan
             num_export_host( _num_export.data(), num_n );
         auto export_counts = Kokkos::create_mirror_view_and_copy(
                 memory_space(), num_export_host );
+        auto export_counts_sv =
+            Kokkos::Experimental::create_scatter_view( export_counts );
         auto count_neighbor_func =
             KOKKOS_LAMBDA( const int i )
             {
+                auto export_counts_data = export_counts_sv.access();
                 for ( int n = 0; n < num_n; ++n )
                     if ( topology(n) == element_export_ranks(i) )
-                        Kokkos::atomic_increment( &export_counts(n) );
+                        export_counts_data(n) += 1;
             };
         Kokkos::RangePolicy<execution_space> count_neighbor_policy(
             0, _num_export_element );
@@ -263,6 +267,7 @@ class CommunicationPlan
                               count_neighbor_policy,
                               count_neighbor_func );
         Kokkos::fence();
+        Kokkos::Experimental::contribute( export_counts, export_counts_sv );
 
         // Copy counts back to the host.
         Kokkos::deep_copy( num_export_host, export_counts );
@@ -357,12 +362,16 @@ class CommunicationPlan
         // Count the number of sends this rank will do to other ranks.
         Kokkos::View<int*,memory_space> neighbor_counts(
             "neighbor_counts", comm_size );
+        auto neighbor_counts_sv =
+            Kokkos::Experimental::create_scatter_view( neighbor_counts );
         auto count_sends_func =
             KOKKOS_LAMBDA( const int i )
             {
                 if ( element_export_ranks(i) >= 0 )
-                    Kokkos::atomic_increment(
-                        &neighbor_counts(element_export_ranks(i)) );
+                {
+                    auto neighbor_counts_data = neighbor_counts_sv.access();
+                    neighbor_counts_data(element_export_ranks(i)) += 1;
+                }
             };
         Kokkos::RangePolicy<execution_space> count_sends_policy(
             0, _num_export_element );
@@ -370,6 +379,7 @@ class CommunicationPlan
                               count_sends_policy,
                               count_sends_func );
         Kokkos::fence();
+        Kokkos::Experimental::contribute( neighbor_counts, neighbor_counts_sv );
 
         // Copy the counts to the host.
         auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
