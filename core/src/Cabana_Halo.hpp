@@ -42,9 +42,9 @@ namespace Cabana
   number of exports is the number of exports in the gather and the number of
   imports is the number of imports in the gather. The reverse *SCATTER*
   operation sends the ghosted data back the the uniquely-owned decomposition
-  and resolves collisions with atomic addition. Based on input for the forward
-  communication plan (where local data will be sent) the local number of
-  ghosts is computed. Some nomenclature:
+  and resolves collisions. Based on input for the forward communication plan
+  (where local data will be sent) the local number of ghosts is computed. Some
+  nomenclature:
 
   Export - the local data we uniquely own that we will send to other ranks for
   those ranks to be used as ghosts. Export is used in the context of the
@@ -550,8 +550,12 @@ void scatter( const Halo_t& halo,
     for ( int d = 2; d < slice.rank(); ++d )
         num_comp *= slice.extent(d);
 
-    // Get the raw slice data.
-    auto slice_data = slice.data();
+    // Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the
+    // components of each slice element.
+    Kokkos::View<typename Slice_t::value_type*,
+                 typename Slice_t::memory_space,
+                 Kokkos::MemoryTraits<Kokkos::Unmanaged> >
+        slice_data( slice.data(), slice.numSoA() * slice.stride(0) );
 
     // Allocate a send buffer. Note this one is layout right so the components
     // are consecutive.
@@ -573,7 +577,7 @@ void scatter( const Halo_t& halo,
             std::size_t slice_offset = s*slice.stride(0) + a;
             for ( int n = 0; n < num_comp; ++n )
                 send_buffer( i, n ) =
-                    slice_data[ slice_offset + Slice_t::vector_length * n ];
+                    slice_data( slice_offset + Slice_t::vector_length * n );
         };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
         extract_send_buffer_policy( 0, halo.totalNumImport() );
@@ -650,7 +654,7 @@ void scatter( const Halo_t& halo,
             std::size_t slice_offset = s*slice.stride(0) + a;
             for ( int n = 0; n < num_comp; ++n )
                 Kokkos::atomic_add(
-                    slice_data + slice_offset + Slice_t::vector_length * n,
+                    &slice_data(slice_offset + Slice_t::vector_length * n),
                     recv_buffer(i,n) );
         };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
