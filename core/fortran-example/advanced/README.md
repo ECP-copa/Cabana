@@ -1,26 +1,12 @@
-This directory contains two examples of Cabana for Fortran that can be readily adopted for users wanting to build a PIC code or incorporate Cabana kernels into an existing Fortran PIC code.
+This directory contains examples of Cabana for Fortran that can be readily adopted for users wanting to build a PIC code or incorporate Cabana kernels into an existing Fortran PIC code.
 
 Example 1: parallel_for (Example1_parallel_for.f90)  
 Example 2: Push (Example2_Push.f90)  
 Example 3: Scatter (Example3_Scatter.f90)
 
-Makefile  
-The paths in the Makefile need to be changed from the example paths. The choice of compilers must also be made. Once that is set up, you can generate the following executables:  
-make EX1-cpu  
-make EX1-gpu  
-make EX2-cpu  
-make EX2-gpu  
-make EX3-cpu  
-make EX3-gpu  
 
 cabana_cpp_interface.cpp  
 This file contains all of the Kokkos/Cabana code, which is in C++. It contains an macro enabling usage of the Kokkos parallel_for both generally and specifically to a particle AoSoA. Users must specify the particle properties here.
-
-particle_ops.h  
-This is a list of particle operations. In these operations, the fortran kernel receives the particle data, number of structures in the SoA, and the parallel_for index as arguments. Users can add their own operations to the list and easily create custom kernels by analogy with existing ones.
-
-misc_ops.h  
-This is a list of parallel_for operations not specific to particles. As such, for these operations, only the parallel_for index is passed to the fortran kernel as an argument. Such operations are needed in sorting, and can also be expanded by users.
 
 cabana_fortran_macros.h  
 This include file contains macros used in the Fortran code:  
@@ -49,6 +35,9 @@ Contains Fortran wrappers for Cabana/Kokkos C++ routines:
 
 ptl_module.F90  
 Users must specify the particle properties here and they must correspond to those in cabana_cpp_interface.cpp. The particle initialization and some utilities are also here.
+
+particle_ops.h  
+This is a list of particle operations. In these operations, the fortran kernel receives the particle data, number of structures in the SoA, and the parallel_for index as arguments. Users can add their own operations to the list and easily create custom kernels by analogy with existing ones.
 
 grid_module.F90  
 An example grid module that a user might have.
