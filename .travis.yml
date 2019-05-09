@@ -82,7 +82,7 @@ script:
   - mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/scafacos"
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
-          -DCabana_ENABLE_MPI=ON
+          -DCabana_ENABLE_MPI=ON -DCabana_ENABLE_FORTRAN_EXAMPLES=ON
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
     make -k -j2 VERBOSE=1 &&
