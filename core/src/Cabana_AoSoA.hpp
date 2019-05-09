@@ -139,7 +139,7 @@ class AoSoA
 
       \param n The number of tuples in the container.
     */
-    explicit AoSoA( const int n )
+    explicit AoSoA( const std::size_t n )
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
