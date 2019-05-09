@@ -140,6 +140,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> 
 <tr class="memitem:a87c1bdb75029bc5ca06bce079576c58d"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87c1bdb75029bc5ca06bce079576c58d"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename kokkos_view::device_type</td></tr>
 <tr class="separator:a87c1bdb75029bc5ca06bce079576c58d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aabb334e75627ea74272defd5253f8185"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aabb334e75627ea74272defd5253f8185"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>view_layout</b> = typename kokkos_view::array_layout</td></tr>
+<tr class="separator:aabb334e75627ea74272defd5253f8185"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aadc4ac57b8ede096871b4b34fad3df7f"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aadc4ac57b8ede096871b4b34fad3df7f"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>default_access_slice</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; DataType, MemorySpace, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, VectorLength, Stride &gt;</td></tr>
 <tr class="separator:aadc4ac57b8ede096871b4b34fad3df7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -289,6 +292,10 @@ constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" h
 <tr class="memitem:ab9bc64cd773bdef1dc095d8fe6e2cd94"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#ab9bc64cd773bdef1dc095d8fe6e2cd94">stride</a> (const std::size_t d) const </td></tr>
 <tr class="memdesc:ab9bc64cd773bdef1dc095d8fe6e2cd94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the stride of a given raw slice dimension. This includes the struct dimension, array dimension, and all tuple slice dimensions.  <a href="#ab9bc64cd773bdef1dc095d8fe6e2cd94">More...</a><br/></td></tr>
 <tr class="separator:ab9bc64cd773bdef1dc095d8fe6e2cd94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa3dd945f4a5f35c1462dfb9c132a6b2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afa3dd945f4a5f35c1462dfb9c132a6b2"></a>
+KOKKOS_INLINE_FUNCTION kokkos_view&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#afa3dd945f4a5f35c1462dfb9c132a6b2">view</a> () const </td></tr>
+<tr class="memdesc:afa3dd945f4a5f35c1462dfb9c132a6b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the underlying Kokkos View managing the slice data. <br/></td></tr>
+<tr class="separator:afa3dd945f4a5f35c1462dfb9c132a6b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -684,7 +691,7 @@ template&lt;typename DataType, typename MemorySpace, typename MemoryAccessType, 
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 8 2019 15:31:42 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 9 2019 15:18:55 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
