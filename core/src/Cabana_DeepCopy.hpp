@@ -30,6 +30,31 @@ namespace Experimental
 {
 //---------------------------------------------------------------------------//
 /*!
+  \brief Allocate a mirror of the given AoSoA in the given memory space.
+ */
+template<class Space, class SrcAoSoA>
+inline
+AoSoA<typename SrcAoSoA::member_types,
+      typename Space::memory_space,
+      SrcAoSoA::vector_length>
+create_mirror(
+    const Space&,
+    const SrcAoSoA& src,
+    typename std::enable_if<(!std::is_same<typename SrcAoSoA::memory_space,
+                             typename Space::memory_space>::value)>::type* = 0 )
+{
+    static_assert( is_aosoa<SrcAoSoA>::value,
+                   "create_mirror_view() requires an AoSoA" );
+    auto dst = AoSoA<typename SrcAoSoA::member_types,
+                     typename Space::memory_space,
+                     SrcAoSoA::vector_length>(
+                         std::string(src.label()).append("_mirror"),
+                         src.size() );
+    return dst;
+}
+
+//---------------------------------------------------------------------------//
+/*!
   \brief Create a mirror view of the given AoSoA in the given memory
   space. Same space specialization returns the input AoSoA.
 
@@ -53,8 +78,8 @@ create_mirror_view(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create a mirror on the host of the given AoSoA in the given memory
-  space. Different space specialization allocates a new AoSoA.
+  \brief Create a mirror view on the host of the given AoSoA in the given
+  memory space. Different space specialization allocates a new AoSoA.
 
   \note Memory allocation will only occur if the requested mirror
   memory space is different from that of the input AoSoA. If they are the
@@ -66,17 +91,14 @@ AoSoA<typename SrcAoSoA::member_types,
       typename Space::memory_space,
       SrcAoSoA::vector_length>
 create_mirror_view(
-    const Space&,
+    const Space& space,
     const SrcAoSoA& src,
     typename std::enable_if<(!std::is_same<typename SrcAoSoA::memory_space,
                              typename Space::memory_space>::value)>::type* = 0 )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror_view() requires an AoSoA" );
-    auto dst = AoSoA<typename SrcAoSoA::member_types,
-                     typename Space::memory_space,
-                     SrcAoSoA::vector_length>( src.size() );
-    return dst;
+    return create_mirror( space, src );
 }
 
 //---------------------------------------------------------------------------//
@@ -119,7 +141,7 @@ AoSoA<typename SrcAoSoA::member_types,
       typename Space::memory_space,
       SrcAoSoA::vector_length>
 create_mirror_view_and_copy(
-    const Space&,
+    const Space& space,
     const SrcAoSoA& src,
     typename std::enable_if<(!std::is_same<typename SrcAoSoA::memory_space,
                              typename Space::memory_space>::value)>::type* = 0 )
@@ -127,9 +149,7 @@ create_mirror_view_and_copy(
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror_view_and_copy() requires an AoSoA" );
 
-    auto dst = AoSoA<typename SrcAoSoA::member_types,
-                     typename Space::memory_space,
-                     SrcAoSoA::vector_length>( src.size() );
+    auto dst = create_mirror( space, src );
 
     Kokkos::Impl::DeepCopy<
         typename Space::memory_space,typename SrcAoSoA::memory_space>(

@@ -17,6 +17,7 @@
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
 #include <Cabana_SoA.hpp>
+#include <Cabana_Macros.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
 
@@ -134,19 +135,27 @@ class AoSoA
     /*!
       \brief Default constructor.
 
+      \param label An optional label for the data structure.
+
       The container size is zero and no memory is allocated.
     */
-    AoSoA()
+    AoSoA( const std::string& label = "" )
         : _size( 0 )
         , _capacity( 0 )
         , _num_soa( 0 )
+        , _data( label )
     {}
 
     /*!
       \brief Allocate a container with n tuples.
 
       \param n The number of tuples in the container.
+
+      Note: this function has been deprecated in favor of the constructor that
+      uses a label as this is more consistent with the construction of a
+      Kokkos View.
     */
+    CABANA_DEPRECATED
     explicit AoSoA( const std::size_t n )
         : _size( n )
         , _capacity( 0 )
@@ -154,6 +163,22 @@ class AoSoA
     {
         static_assert( !memory_traits::Unmanaged,
                        "Construction by allocation cannot use unmanaged memory" );
+        resize( _size );
+    }
+
+    /*!
+      \brief Allocate a container with n tuples.
+
+      \param label A label for the data structure.
+
+      \param n The number of tuples in the container.
+    */
+    AoSoA( const std::string label, const std::size_t n )
+        : _size( n )
+        , _capacity( 0 )
+        , _num_soa( 0 )
+        , _data( label )
+    {
         resize( _size );
     }
 
@@ -177,6 +202,17 @@ class AoSoA
         static_assert( memory_traits::Unmanaged,
                        "Pointer construction requires unmanaged memory" );
     }
+
+    /*!
+      \brief Returns the data structure label.
+
+      \return A string identifying the data structure.
+
+      This label will be assigned to the underlying Kokkos view managing the
+      data of this class and can be used for debugging and profiling purposes.
+    */
+    std::string label() const
+    { return _data.label(); }
 
     /*!
       \brief Returns the number of tuples in the container.
@@ -350,11 +386,11 @@ class AoSoA
       \brief Get an unmanaged slice of a tuple member with default memory
       access.
       \tparam M The member index to get a slice of.
-      \param The tag identifying which member to get a slice of.
+      \param slice_label An optional label to assign to the slice.
       \return The member slice.
     */
     template<std::size_t M>
-    member_slice_type<M> slice() const
+    member_slice_type<M> slice( const std::string& slice_label = "" ) const
     {
         static_assert(
             0 == sizeof(soa_type) % sizeof(member_value_type<M>),
@@ -363,7 +399,7 @@ class AoSoA
         return member_slice_type<M>(
             static_cast<member_pointer_type<M> >(
                 soa_type::template staticPtr<M>(_data.data()) ),
-            _size, _num_soa );
+            _size, _num_soa, slice_label );
     }
 
     /*!

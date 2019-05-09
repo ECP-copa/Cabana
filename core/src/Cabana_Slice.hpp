@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <type_traits>
+#include <string>
 
 //---------------------------------------------------------------------------//
 namespace Kokkos
@@ -504,12 +505,15 @@ class Slice
       \param soa_stride The number of elements in the slice's value type between starting
       elements of a struct.
       \param num_soa The number of structs in the slice.
+      \param label An optional label for the slice.
     */
     Slice( const pointer_type data,
            const std::size_t size,
-           const std::size_t num_soa )
+           const std::size_t num_soa,
+           const std::string& label = "" )
         : _view( data, view_wrapper::createLayout(num_soa) )
         , _size( size )
+        , _label( label )
     {}
 
     /*!
@@ -523,6 +527,7 @@ class Slice
     Slice( const Slice<DataType,MemorySpace,MAT,VectorLength,Stride>& rhs )
         : _view( rhs._view )
         , _size( rhs._size )
+        , _label( rhs._label )
     {}
 
     /*!
@@ -539,8 +544,17 @@ class Slice
     {
         _view = rhs._view;
         _size = rhs._size;
+        _label = rhs._label;
         return *this;
     }
+
+    /*!
+      \brief Returns the data structure label.
+
+      \return A string identifying the data structure.
+    */
+    std::string label() const
+    { return std::string(_label); }
 
     /*!
       \brief Returns the total number tuples in the slice.
@@ -770,6 +784,9 @@ class Slice
 
     // Number of tuples in the slice.
     std::size_t _size;
+
+    // Slice label.
+    std::string _label;
 };
 
 //---------------------------------------------------------------------------//

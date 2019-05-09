@@ -87,13 +87,26 @@ void testAoSoA()
     EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
 
     // Create an AoSoA.
-    AoSoA_t aosoa;
+    std::string label = "test_aosoa";
+    AoSoA_t aosoa( label );
+    EXPECT_EQ( aosoa.label(), label );
 
     // Get field slices.
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    auto slice_2 = aosoa.slice<2>();
-    auto slice_3 = aosoa.slice<3>();
+    std::string s0_label = "slice_0";
+    auto slice_0 = aosoa.slice<0>( s0_label );
+    EXPECT_EQ( slice_0.label(), s0_label );
+
+    std::string s1_label = "slice_1";
+    auto slice_1 = aosoa.slice<1>( s1_label );
+    EXPECT_EQ( slice_1.label(), s1_label );
+
+    std::string s2_label = "slice_2";
+    auto slice_2 = aosoa.slice<2>( s2_label );
+    EXPECT_EQ( slice_2.label(), s2_label );
+
+    std::string s3_label = "slice_3";
+    auto slice_3 = aosoa.slice<3>( s3_label );
+    EXPECT_EQ( slice_3.label(), s3_label );
 
     // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
@@ -219,7 +232,9 @@ void testRawData()
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;
-    AoSoA_t aosoa( num_data );
+    std::string label = "test_aosoa";
+    AoSoA_t aosoa( label, num_data );
+    EXPECT_EQ( aosoa.label(), label );
 
     // Get slices of fields.
     auto slice_0 = aosoa.slice<0>();
