@@ -59,7 +59,7 @@ void perfTest( const double cutoff_ratio,
     AoSoA_t aosoa( "aosoa", num_data );
 
     // Get the particle postions.
-    auto x = aosoa.slice<Position>("position");
+    auto x = Cabana::slice<Position>(aosoa, "position");
 
     // Build particles.
     std::cout << std::endl;
@@ -163,13 +163,13 @@ void perfTest( const double cutoff_ratio,
     double sort_delta[3] =
         { interaction_cutoff, interaction_cutoff, interaction_cutoff };
     Cabana::LinkedCellList<MemorySpace>
-        linked_cell_list( aosoa.slice<Position>("position"),
+        linked_cell_list( Cabana::slice<Position>(aosoa,"position"),
                           sort_delta, grid_min, grid_max );
     Cabana::permute( linked_cell_list, aosoa );
 
     // Create the list once to get some statistics.
     Cabana::VerletList<MemorySpace,NeighborListTag,Cabana::VerletLayoutCSR>
-        stat_list( aosoa.slice<Position>("position"), 0, aosoa.size(),
+        stat_list( Cabana::slice<Position>(aosoa,"position"), 0, aosoa.size(),
                    interaction_cutoff, cell_size_ratio, grid_min, grid_max );
     Kokkos::MinMaxScalar<int> result;
     Kokkos::MinMax<int> reducer(result);
@@ -196,7 +196,7 @@ void perfTest( const double cutoff_ratio,
         auto start_time = std::chrono::high_resolution_clock::now();
 
         Cabana::VerletList<MemorySpace,NeighborListTag,Cabana::VerletLayoutCSR> list(
-            aosoa.slice<Position>("position"), 0, aosoa.size(),
+            Cabana::slice<Position>(aosoa,"position"), 0, aosoa.size(),
             interaction_cutoff, cell_size_ratio, grid_min, grid_max );
 
         auto end_time = std::chrono::high_resolution_clock::now();

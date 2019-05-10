@@ -96,14 +96,14 @@ void soaExample()
     for ( int i = 0; i < 3; ++i )
         for ( int j = 0; j < 3; ++j )
             for ( int a = 0; a < VectorLength; ++a )
-                  soa.get<0>(a,i,j) = 1.0 * (a + i + j);
+                  Cabana::get<0>(soa,a,i,j) = 1.0 * (a + i + j);
 
     for ( int i = 0; i < 4; ++i )
         for ( int a = 0; a < VectorLength; ++a )
-              soa.get<1>(a,i) = 1.0 * (a + i);
+              Cabana::get<1>(soa,a,i) = 1.0 * (a + i);
 
     for ( int a = 0; a < VectorLength; ++a )
-        soa.get<2>(a) = a + 1234;
+        Cabana::get<2>(soa,a) = a + 1234;
 
     /* Read back the tuple data using the same multidimensional accessors */
     for ( int i = 0; i < 3; ++i )
@@ -111,17 +111,17 @@ void soaExample()
             for ( int a = 0; a < VectorLength; ++a )
                 std::cout << "Tuple member 0, tuple index "
                           << a << ", element (" << i << "," << j << "): "
-                          << soa.get<0>(a,i,j) << std::endl;
+                          << Cabana::get<0>(soa,a,i,j) << std::endl;
 
     for ( int i = 0; i < 4; ++i )
         for ( int a = 0; a < VectorLength; ++a )
             std::cout << "Tuple member 1, tuple index " << a
                       << ", element (" << i << "): "
-                      << soa.get<1>(a,i) << std::endl;
+                      << Cabana::get<1>(soa,a,i) << std::endl;
 
     for ( int a = 0; a < VectorLength; ++a )
         std::cout << "Tuple member 2, tuple index " << a
-                  << ": " << soa.get<2>(a) << std::endl;
+                  << ": " << Cabana::get<2>(soa,a) << std::endl;
 }
 
 //---------------------------------------------------------------------------//

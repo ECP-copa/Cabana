@@ -59,7 +59,7 @@ void verletListExample()
     /*
       Create the particle ids.
     */
-    auto ids = aosoa.slice<1>();
+    auto ids = Cabana::slice<1>( aosoa );
     for ( std::size_t i = 0; i < aosoa.size(); ++i )
         ids(i) = i;
 
@@ -68,7 +68,7 @@ void verletListExample()
       of each cell. We will set the Verlet list parameters such that each
       particle should only neighbor the other particle it shares a cell with.
     */
-    auto positions = aosoa.slice<0>();
+    auto positions = Cabana::slice<0>( aosoa );
     int ppc = 3;
     int particle_counter = 0;
     for ( int p = 0; p < ppc; ++p )

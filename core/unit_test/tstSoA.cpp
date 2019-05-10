@@ -62,14 +62,14 @@ void testSoA()
 
     // Set some data with the soa.
     double v1 = 0.3343;
-    soa.get<0>( 3 ) = v1;
+    Cabana::get<0>( soa, 3 ) = v1;
 
     float v2 = 0.992;
-    soa.get<5>( 2, 1, 1, 1 ) = v2;
+    Cabana::get<5>( soa, 2, 1, 1, 1 ) = v2;
 
     // Check the data.
-    EXPECT_EQ( soa.get<0>(3), v1 );
-    EXPECT_EQ( soa.get<5>(2,1,1,1), v2 );
+    EXPECT_EQ( Cabana::get<0>(soa,3), v1 );
+    EXPECT_EQ( Cabana::get<5>(soa,2,1,1,1), v2 );
 }
 
 //---------------------------------------------------------------------------//

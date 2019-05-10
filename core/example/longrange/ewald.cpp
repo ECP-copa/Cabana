@@ -35,8 +35,8 @@ void TEwald::tune(double accuracy, ParticleList particles, double lx, double ly,
   typedef reducer_type::value_type value_type;
   value_type error_estimate;
 
-  auto q = particles.slice<Charge>();
-  double q_sum;  
+  auto q = Cabana::slice<Charge>(particles);
+  double q_sum;
 
   const int N_alpha = 200;
   const int N_k = 2000;
@@ -63,7 +63,7 @@ void TEwald::tune(double accuracy, ParticleList particles, double lx, double ly,
       double alpha = (double)ia * 0.05 + 1.0;
       double k_max = (double)ik * 0.05;
 
-      double delta_Ur = q_sum * 
+      double delta_Ur = q_sum *
       sqrt(0.5 * r_max / (lx * ly * lz )) *
       std::pow(alpha*r_max,-2.0) *
       exp(- alpha * alpha * r_max * r_max);
@@ -98,9 +98,9 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   double Udip_vec[3];
 
 
-  auto r = particles.slice<Position>();
-  auto q = particles.slice<Charge>();
-  auto p = particles.slice<Potential>();
+  auto r = Cabana::slice<Position>(particles);
+  auto q = Cabana::slice<Charge>(particles);
+  auto p = Cabana::slice<Potential>(particles);
 
   int n_max = particles.size();
 
@@ -108,7 +108,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   {
     p(idx) = 0.0;
   };
-  Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), init_p ); 
+  Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), init_p );
   Kokkos::fence();
 
   double alpha = _alpha;
@@ -129,7 +129,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), KOKKOS_LAMBDA(int idx, double& Ur_part)
       {
         double d[SPACE_DIM];
-        double k; 
+        double k;
         //For each particle with charge q, the real space contribution to energy is
         //Ur_part = 0.5*q*SUM_i(q_i*erfc(alpha*dist)/dist)
         //The sum is over all other particles in the cell and in neighboring images
@@ -169,7 +169,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
                     (d[1] + (double)ky * ly) * (d[1] + (double)ky * ly) +
                     (d[2] + (double)kz * lz) * (d[2] + (double)kz * lz);
                   scal = sqrt(scal);
-                  if (scal > r_max) 
+                  if (scal > r_max)
                     continue;
                   //Compute real-space energy contribution of interaction
                   Ur_part += qiqj * erfc(alpha * scal)/scal;
@@ -205,7 +205,7 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
       kk = kx*kx + ky*ky + kz*kz;
       if (kk > k_max*k_max) return;//Check to ensure within kmax bounds
       //This sum involves calculating a coefficient given by:
-      // coeff(k) = (2/L^2) * exp(-(PI*k/(alpha*L))^2)/(k^2) 
+      // coeff(k) = (2/L^2) * exp(-(PI*k/(alpha*L))^2)/(k^2)
       coeff = 2.0 / (lx * lx) * exp( - PI_SQ / (alpha * alpha * lx * lx) * kk) / kk;
       //The sum's terms for each k-vector are then
       // sum(k) = coeff(k) * |S(k)|^2
@@ -282,5 +282,3 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
 
   return Ur + Uk + Uself + Udip;
 }
-
-

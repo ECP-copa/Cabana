@@ -95,24 +95,24 @@ void tupleExample()
     */
     for ( int i = 0; i < 3; ++i )
         for ( int j = 0; j < 3; ++j )
-            tp.get<0>(i,j) = 1.0 * (i + j);
+            Cabana::get<0>(tp,i,j) = 1.0 * (i + j);
 
     for ( int i = 0; i < 4; ++i )
-        tp.get<1>(i) = 1.0 * i;
+        Cabana::get<1>(tp,i) = 1.0 * i;
 
-    tp.get<2>() = 1234;
+    Cabana::get<2>(tp) = 1234;
 
     /* Read back the tuple data using the same multidimensional accessors */
     for ( int i = 0; i < 3; ++i )
         for ( int j = 0; j < 3; ++j )
             std::cout << "Tuple member 0 element (" << i << "," << j << "): "
-                      << tp.get<0>(i,j) << std::endl;
+                      << Cabana::get<0>(tp,i,j) << std::endl;
 
     for ( int i = 0; i < 4; ++i )
         std::cout << "Tuple member 1 element (" << i << "): "
-                  << tp.get<1>(i) << std::endl;
+                  << Cabana::get<1>(tp,i) << std::endl;
 
-    std::cout << "Tuple member 2: " << tp.get<2>() << std::endl;
+    std::cout << "Tuple member 2: " << Cabana::get<2>(tp) << std::endl;
 }
 
 //---------------------------------------------------------------------------//

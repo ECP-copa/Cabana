@@ -74,14 +74,14 @@ void deepCopyExample()
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
                 for ( int a = 0; a < src_aosoa.arraySize(s); ++a )
-                    soa.get<0>(a,i,j) = 1.0 * (a + i + j);
+                    Cabana::get<0>(soa,a,i,j) = 1.0 * (a + i + j);
 
         for ( int i = 0; i < 4; ++i )
             for ( int a = 0; a < src_aosoa.arraySize(s); ++a )
-                soa.get<1>(a,i) = 1.0 * (a + i);
+                Cabana::get<1>(soa,a,i) = 1.0 * (a + i);
 
         for ( int a = 0; a < src_aosoa.arraySize(s); ++a )
-            soa.get<2>(a) = a + 1234;
+            Cabana::get<2>(soa,a) = a + 1234;
     }
 
     /*
@@ -104,15 +104,15 @@ void deepCopyExample()
             for ( int j = 0; j < 3; ++j )
                 std::cout << "Tuple " << t
                           << ", member 0 element (" << i << "," << j << "): "
-                          << tp.get<0>(i,j) << std::endl;
+                          << Cabana::get<0>(tp,i,j) << std::endl;
 
         for ( int i = 0; i < 4; ++i )
             std::cout << "Tuple " << t
                       << ", member 1 element (" << i << "): "
-                      << tp.get<1>(i) << std::endl;
+                      << Cabana::get<1>(tp,i) << std::endl;
 
         std::cout << "Tuple " << t
-                  << ", member 2: " << tp.get<2>() << std::endl;
+                  << ", member 2: " << Cabana::get<2>(tp) << std::endl;
     }
 
     /*
@@ -144,14 +144,14 @@ void deepCopyExample()
     /*
       Deep copy can also be performed on a slice-by-slice basis.
      */
-    auto src_slice_0 = src_aosoa.slice<0>();
-    auto dst_slice_0 = dst_aosoa.slice<0>();
+    auto src_slice_0 = Cabana::slice<0>( src_aosoa );
+    auto dst_slice_0 = Cabana::slice<0>( dst_aosoa );
     Cabana::deep_copy( dst_slice_0, src_slice_0 );
-    auto src_slice_1 = src_aosoa.slice<1>();
-    auto dst_slice_1 = dst_aosoa.slice<1>();
+    auto src_slice_1 = Cabana::slice<1>( src_aosoa );
+    auto dst_slice_1 = Cabana::slice<1>( dst_aosoa );
     Cabana::deep_copy( dst_slice_1, src_slice_1 );
-    auto src_slice_2 = src_aosoa.slice<2>();
-    auto dst_slice_2 = dst_aosoa.slice<2>();
+    auto src_slice_2 = Cabana::slice<2>( src_aosoa );
+    auto dst_slice_2 = Cabana::slice<2>( dst_aosoa );
     Cabana::deep_copy( dst_slice_2, src_slice_2 );
 
     /*
@@ -169,10 +169,10 @@ void deepCopyExample()
     Cabana::Tuple<DataTypes> tp;
     for ( int i = 0; i < 3; ++i )
         for ( int j = 0; j < 3; ++j )
-            tp.get<0>(i,j) = 1.0;
+            Cabana::get<0>(tp,i,j) = 1.0;
     for ( int i = 0; i < 4; ++i )
-        tp.get<1>(i) = 3.23;
-    tp.get<2>() = 39;
+        Cabana::get<1>(tp,i) = 3.23;
+    Cabana::get<2>(tp) = 39;
     Cabana::deep_copy( dst_aosoa, tp );
 }
 

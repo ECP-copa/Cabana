@@ -58,7 +58,7 @@ void atomicSliceExample()
     /*
       Create a slice over the single value and assign it to zero.
      */
-    auto slice = aosoa.slice<0>();
+    auto slice = Cabana::slice<0>( aosoa );
     slice(0) = 0.0;
 
     /*

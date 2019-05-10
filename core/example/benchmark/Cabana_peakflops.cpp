@@ -218,18 +218,18 @@ void run()
     ParticleList x9_( "x9", num_particle );
 
     // Get a slice of the x position field from each particle list.
-    auto ma = a_.slice<PositionX>();
-    auto mc = c_.slice<PositionX>();
-    auto m0 = x_.slice<PositionX>();
-    auto m1 = x1_.slice<PositionX>();
-    auto m2 = x2_.slice<PositionX>();
-    auto m3 = x3_.slice<PositionX>();
-    auto m4 = x4_.slice<PositionX>();
-    auto m5 = x5_.slice<PositionX>();
-    auto m6 = x6_.slice<PositionX>();
-    auto m7 = x7_.slice<PositionX>();
-    auto m8 = x8_.slice<PositionX>();
-    auto m9 = x9_.slice<PositionX>();
+    auto ma = Cabana::slice<PositionX>(a_);
+    auto mc = Cabana::slice<PositionX>(c_);
+    auto m0 = Cabana::slice<PositionX>(x_);
+    auto m1 = Cabana::slice<PositionX>(x1_);
+    auto m2 = Cabana::slice<PositionX>(x2_);
+    auto m3 = Cabana::slice<PositionX>(x3_);
+    auto m4 = Cabana::slice<PositionX>(x4_);
+    auto m5 = Cabana::slice<PositionX>(x5_);
+    auto m6 = Cabana::slice<PositionX>(x6_);
+    auto m7 = Cabana::slice<PositionX>(x7_);
+    auto m8 = Cabana::slice<PositionX>(x8_);
+    auto m9 = Cabana::slice<PositionX>(x9_);
 
     // Initialize particle data.
     long seed = 76843802738543;
