@@ -45,7 +45,8 @@ void sortingExample()
        Create the AoSoA.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+        aosoa( "my_aosoa", num_tuple );
 
     /*
       Fill the AoSoA with data. The integer member of the AoSoA will be

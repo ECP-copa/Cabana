@@ -118,7 +118,7 @@ void apiTest()
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create some slices.
     auto slice_0 = aosoa.slice<0>();
@@ -249,7 +249,7 @@ void randomAccessTest()
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Initialize data.
     float fval = 3.4;
@@ -270,7 +270,7 @@ void randomAccessTest()
     decltype(da_slice_3)::random_access_slice ra_slice_3 = da_slice_3;
 
     // Create a second aosoa.
-    AoSoA_t aosoa_2( num_data );
+    AoSoA_t aosoa_2( "aosoa_2", num_data );
 
     // Get normal slices of the data.
     auto slice_0 = aosoa_2.slice<0>();
@@ -319,7 +319,7 @@ void atomicAccessTest()
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Get a slice of the data.
     auto slice = aosoa.slice<0>();

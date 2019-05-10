@@ -59,8 +59,10 @@ void deepCopyExample()
        Create the source and destination AoSoAs.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,SrcMemorySpace,SrcVectorLength> src_aosoa( num_tuple );
-    Cabana::AoSoA<DataTypes,DstMemorySpace,DstVectorLength> dst_aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,SrcMemorySpace,SrcVectorLength>
+        src_aosoa( "src", num_tuple );
+    Cabana::AoSoA<DataTypes,DstMemorySpace,DstVectorLength>
+        dst_aosoa( "dst", num_tuple );
 
     /*
       Put some data in the source AoSoA.
@@ -138,6 +140,40 @@ void deepCopyExample()
        heterogenous case requires an allocation and a copy while the
        homogenous case does not.
      */
+
+    /*
+      Deep copy can also be performed on a slice-by-slice basis.
+     */
+    auto src_slice_0 = src_aosoa.slice<0>();
+    auto dst_slice_0 = dst_aosoa.slice<0>();
+    Cabana::deep_copy( dst_slice_0, src_slice_0 );
+    auto src_slice_1 = src_aosoa.slice<1>();
+    auto dst_slice_1 = dst_aosoa.slice<1>();
+    Cabana::deep_copy( dst_slice_1, src_slice_1 );
+    auto src_slice_2 = src_aosoa.slice<2>();
+    auto dst_slice_2 = dst_aosoa.slice<2>();
+    Cabana::deep_copy( dst_slice_2, src_slice_2 );
+
+    /*
+      One can also assign scalar values to every element in a slice. The slice
+      can be in any memory space.
+     */
+    Cabana::deep_copy( src_slice_0, 3.4 );
+    Cabana::deep_copy( src_slice_1, 2.22 );
+    Cabana::deep_copy( src_slice_2, 12 );
+
+    /*
+      Or one can initialize each tuple in an AoSoA with the values of a given
+      tuple. The AoSoA can be in any memory space.
+     */
+    Cabana::Tuple<DataTypes> tp;
+    for ( int i = 0; i < 3; ++i )
+        for ( int j = 0; j < 3; ++j )
+            tp.get<0>(i,j) = 1.0;
+    for ( int i = 0; i < 4; ++i )
+        tp.get<1>(i) = 3.23;
+    tp.get<2>() = 39;
+    Cabana::deep_copy( dst_aosoa, tp );
 }
 
 //---------------------------------------------------------------------------//

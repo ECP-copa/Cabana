@@ -68,16 +68,20 @@ void aosoaExample()
        Create the AoSoA. We define how many tuples the aosoa will
        contain. Note that if the number of tuples is not evenly divisible by
        the vector length then the last SoA in the AoSoA will not be entirely
-       full (although its memory will still be allocated).
+       full (although its memory will still be allocated). The AoSoA label
+       allows one to track the managed memory in an AoSoA through the Kokkos
+       allocation tracker.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+        aosoa( "my_aosoa", num_tuple );
 
     /*
-       Print size data. In this case we have created an AoSoA with 5
-       tuples. Because a vector length of 4 is used, a total memory capacity
-       for 8 tuples will be allocated in 2 SoAs.
+       Print the label and size data. In this case we have created an AoSoA
+       with 5 tuples. Because a vector length of 4 is used, a total memory
+       capacity for 8 tuples will be allocated in 2 SoAs.
     */
+    std::cout << "aosoa.label() = " << aosoa.label() << std::endl;
     std::cout << "aosoa.size() = " << aosoa.size() << std::endl;
     std::cout << "aosoa.capacity() = " << aosoa.capacity() << std::endl;
     std::cout << "aosoa.numSoA() = " << aosoa.numSoA() << std::endl;

@@ -75,6 +75,7 @@ addons:
       - libopenmpi-dev
       - gfortran
       - libgsl0-dev
+      - libfftw3-dev
       - python-pip
 
 script:

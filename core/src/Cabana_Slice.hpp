@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <type_traits>
+#include <string>
 
 //---------------------------------------------------------------------------//
 namespace Kokkos
@@ -38,7 +39,7 @@ struct LayoutCabanaSlice
 {
     typedef LayoutCabanaSlice array_layout;
 
-    enum { is_extent_constructible = false };
+    enum { is_extent_constructible = true };
 
     static constexpr int Stride = SOASTRIDE;
     static constexpr int VectorLength = VLEN;
@@ -58,8 +59,15 @@ struct LayoutCabanaSlice
 
     KOKKOS_INLINE_FUNCTION
     explicit constexpr
-    LayoutCabanaSlice( size_t num_soa )
-        : dimension { num_soa, VectorLength, D0, D1, D2, D3, D4, D5 }
+    LayoutCabanaSlice( size_t num_soa = 0,
+                       size_t vector_length = VectorLength,
+                       size_t d0 = D0,
+                       size_t d1 = D1,
+                       size_t d2 = D2,
+                       size_t d3 = D3,
+                       size_t d4 = D4,
+                       size_t d5 = D5 )
+        : dimension { num_soa, vector_length, d0, d1, d2, d3, d4, d5 }
     {}
 };
 
@@ -463,6 +471,7 @@ class Slice
     using pointer_type = typename kokkos_view::pointer_type;
     using execution_space = typename kokkos_view::execution_space;
     using device_type = typename kokkos_view::device_type;
+    using view_layout = typename kokkos_view::array_layout;
 
     // Compatible memory access slice types.
     using default_access_slice =
@@ -496,12 +505,15 @@ class Slice
       \param soa_stride The number of elements in the slice's value type between starting
       elements of a struct.
       \param num_soa The number of structs in the slice.
+      \param label An optional label for the slice.
     */
     Slice( const pointer_type data,
            const std::size_t size,
-           const std::size_t num_soa )
+           const std::size_t num_soa,
+           const std::string& label = "" )
         : _view( data, view_wrapper::createLayout(num_soa) )
         , _size( size )
+        , _label( label )
     {}
 
     /*!
@@ -515,6 +527,7 @@ class Slice
     Slice( const Slice<DataType,MemorySpace,MAT,VectorLength,Stride>& rhs )
         : _view( rhs._view )
         , _size( rhs._size )
+        , _label( rhs._label )
     {}
 
     /*!
@@ -531,8 +544,17 @@ class Slice
     {
         _view = rhs._view;
         _size = rhs._size;
+        _label = rhs._label;
         return *this;
     }
+
+    /*!
+      \brief Returns the data structure label.
+
+      \return A string identifying the data structure.
+    */
+    std::string label() const
+    { return std::string(_label); }
 
     /*!
       \brief Returns the total number tuples in the slice.
@@ -747,6 +769,13 @@ class Slice
     std::size_t stride( const std::size_t d ) const
     { return _view.stride(d); }
 
+    /*!
+      \brief Get the underlying Kokkos View managing the slice data.
+    */
+    KOKKOS_INLINE_FUNCTION
+    kokkos_view view() const
+    { return _view; }
+
   private:
 
     // The data view. This view is unmanaged and has access traits specified
@@ -755,6 +784,9 @@ class Slice
 
     // Number of tuples in the slice.
     std::size_t _size;
+
+    // Slice label.
+    std::string _label;
 };
 
 //---------------------------------------------------------------------------//

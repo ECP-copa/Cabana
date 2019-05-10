@@ -87,13 +87,26 @@ void testAoSoA()
     EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
 
     // Create an AoSoA.
-    AoSoA_t aosoa;
+    std::string label = "test_aosoa";
+    AoSoA_t aosoa( label );
+    EXPECT_EQ( aosoa.label(), label );
 
     // Get field slices.
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    auto slice_2 = aosoa.slice<2>();
-    auto slice_3 = aosoa.slice<3>();
+    std::string s0_label = "slice_0";
+    auto slice_0 = aosoa.slice<0>( s0_label );
+    EXPECT_EQ( slice_0.label(), s0_label );
+
+    std::string s1_label = "slice_1";
+    auto slice_1 = aosoa.slice<1>( s1_label );
+    EXPECT_EQ( slice_1.label(), s1_label );
+
+    std::string s2_label = "slice_2";
+    auto slice_2 = aosoa.slice<2>( s2_label );
+    EXPECT_EQ( slice_2.label(), s2_label );
+
+    std::string s3_label = "slice_3";
+    auto slice_3 = aosoa.slice<3>( s3_label );
+    EXPECT_EQ( slice_3.label(), s3_label );
 
     // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
@@ -219,7 +232,9 @@ void testRawData()
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;
-    AoSoA_t aosoa( num_data );
+    std::string label = "test_aosoa";
+    AoSoA_t aosoa( label, num_data );
+    EXPECT_EQ( aosoa.label(), label );
 
     // Get slices of fields.
     auto slice_0 = aosoa.slice<0>();
@@ -324,7 +339,7 @@ void testTuple()
     // Create an AoSoA.
     int num_data = 453;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "label", num_data );
 
     // Create a slice of tuples with the same data types.
     Kokkos::View<Tuple_t*,typename AoSoA_t::memory_space>
@@ -436,7 +451,7 @@ void testAccess()
 
     // Create an AoSoA.
     int num_data = 453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "label", num_data );
 
     // Initialize data with the SoA accessor
     float fval = 3.4;
@@ -475,6 +490,94 @@ void testAccess()
 }
 
 //---------------------------------------------------------------------------//
+// Manually defined SoA.
+template<int VLEN,int D1, int D2, int D3>
+struct MySoA
+{
+    float m0[D1][D2][D3][VLEN];
+    int m1[VLEN];
+    double m2[D1][VLEN];
+    double m3[D1][D2][VLEN];
+};
+
+// Test an unmanaged AoSoA.
+void testUnmanaged()
+{
+    // Manually set the inner array size.
+    const int vector_length = 16;
+
+    // Data dimensions.
+    const int dim_1 = 3;
+    const int dim_2 = 2;
+    const int dim_3 = 4;
+
+    // Declare data types that are equivalent to the user defined struct.
+    using DataTypes =
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
+                            int,
+                            double[dim_1],
+                            double[dim_1][dim_2]
+                            >;
+
+    // Allocate an AoSoA manually.
+    using soa_type = MySoA<vector_length,dim_1,dim_2,dim_3>;
+    int num_soa = 3;
+    int size = 35;
+    Kokkos::View<soa_type*,TEST_MEMSPACE> user_data( "user_aosoa", 3 );
+
+    // Declare the AoSoA type.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,
+                                  TEST_MEMSPACE,
+                                  vector_length,
+                                  Kokkos::MemoryUnmanaged>;
+
+    // Create an AoSoA.
+    auto user_ptr =
+        reinterpret_cast<typename AoSoA_t::soa_type*>(user_data.data());
+    AoSoA_t aosoa( user_ptr, num_soa, size );
+
+    // Check sizes.
+    EXPECT_EQ( aosoa.size(), size );
+    EXPECT_EQ( aosoa.capacity(), num_soa * vector_length );
+    EXPECT_EQ( aosoa.numSoA(), num_soa );
+
+    // Initialize data in the user structure.
+    auto user_data_mirror =
+        Kokkos::create_mirror_view( Kokkos::HostSpace(), user_data );
+    float fval = 3.4;
+    double dval = 1.23;
+    int ival = 1;
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
+    {
+        // Get aosoa indices.
+        int s = idx / vector_length;
+        int a = idx % vector_length;
+
+        // Member 0.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    user_data_mirror(s).m0[i][j][k][a] = fval * (i+j+k);
+
+        // Member 1.
+        user_data_mirror(s).m1[a] = ival;
+
+        // Member 2.
+        for ( int i = 0; i < dim_1; ++i )
+            user_data_mirror(s).m2[i][a] = dval * i;
+
+        // Member 3.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                user_data_mirror(s).m3[i][j][a] = dval * (i+j);
+    }
+    Kokkos::deep_copy( user_data, user_data_mirror );
+
+    // Check data members for proper initialization.
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, aosoa_test )
@@ -498,6 +601,12 @@ TEST( TEST_CATEGORY, aosoa_tuple_test )
 TEST( TEST_CATEGORY, aosoa_access_test )
 {
     testAccess();
+}
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, aosoa_unmanaged_test )
+{
+    testUnmanaged();
 }
 
 //---------------------------------------------------------------------------//
