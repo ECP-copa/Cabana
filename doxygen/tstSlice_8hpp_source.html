@@ -207,7 +207,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    <span class="comment">// Create an AoSoA.</span></div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE,vector_length&gt;</a>;</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="keywordtype">int</span> num_data = 35;</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    AoSoA_t aosoa( num_data );</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    AoSoA_t aosoa( <span class="stringliteral">&quot;aosoa&quot;</span>, num_data );</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="comment">// Create some slices.</span></div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keyword">auto</span> slice_0 = aosoa.slice&lt;0&gt;();</div>
@@ -338,7 +338,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;    <span class="comment">// Create an AoSoA.</span></div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE,vector_length&gt;</a>;</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="keywordtype">int</span> num_data = 35;</div>
-<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    AoSoA_t aosoa( num_data );</div>
+<div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    AoSoA_t aosoa( <span class="stringliteral">&quot;aosoa&quot;</span>, num_data );</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="comment">// Initialize data.</span></div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <span class="keywordtype">float</span> fval = 3.4;</div>
@@ -359,7 +359,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    decltype(da_slice_3)::random_access_slice ra_slice_3 = da_slice_3;</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="comment">// Create a second aosoa.</span></div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    AoSoA_t aosoa_2( num_data );</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    AoSoA_t aosoa_2( <span class="stringliteral">&quot;aosoa_2&quot;</span>, num_data );</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="comment">// Get normal slices of the data.</span></div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keyword">auto</span> slice_0 = aosoa_2.slice&lt;0&gt;();</div>
@@ -408,7 +408,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;    <span class="comment">// Create an AoSoA.</span></div>
 <div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE,vector_length&gt;</a>;</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordtype">int</span> num_data = 35;</div>
-<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    AoSoA_t aosoa( num_data );</div>
+<div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    AoSoA_t aosoa( <span class="stringliteral">&quot;aosoa&quot;</span>, num_data );</div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="comment">// Get a slice of the data.</span></div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keyword">auto</span> slice = aosoa.slice&lt;0&gt;();</div>
@@ -466,12 +466,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;</div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:66</div></div>
-<div class="ttc" id="structCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:778</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:67</div></div>
+<div class="ttc" id="structCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:795</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 10 2019 12:02:46 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 10 2019 20:33:36 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

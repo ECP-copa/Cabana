@@ -172,8 +172,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="comment">// Create AoSoAs.</span></div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    <span class="keywordtype">int</span> num_data = 357;</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    DstAoSoA_t dst_aosoa( num_data );</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    SrcAoSoA_t src_aosoa( num_data );</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    DstAoSoA_t dst_aosoa( <span class="stringliteral">&quot;dst&quot;</span>, num_data );</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    SrcAoSoA_t src_aosoa( <span class="stringliteral">&quot;src&quot;</span>, num_data );</div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;</div>
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="comment">// Initialize data with the rank accessors.</span></div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordtype">float</span> fval = 3.4;</div>
@@ -246,7 +246,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="comment">// Create an AoSoA in the test memory space.</span></div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keywordtype">int</span> num_data = 423;</div>
-<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a> aosoa( num_data );</div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a> aosoa( <span class="stringliteral">&quot;label&quot;</span>, num_data );</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    <span class="comment">// Initialize data.</span></div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordtype">float</span> fval = 3.4;</div>
@@ -341,7 +341,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;    <span class="comment">// Create an AoSoA in the test memory space.</span></div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="keywordtype">int</span> num_data = 423;</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a> aosoa( num_data );</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a> aosoa( <span class="stringliteral">&quot;label&quot;</span>, num_data );</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="comment">// Assign every tuple in the AoSoA to the same value.</span></div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keywordtype">float</span> fval = 3.2;</div>
@@ -427,12 +427,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;</div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:66</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:67</div></div>
 <div class="ttc" id="structCabana_1_1Tuple_html"><div class="ttname"><a href="structCabana_1_1Tuple.html">Cabana::Tuple</a></div><div class="ttdef"><b>Definition:</b> Cabana_Tuple.hpp:27</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 10 2019 12:02:46 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 10 2019 20:33:36 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

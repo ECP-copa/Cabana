@@ -165,8 +165,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="comment">// Create an AoSoA of local data with space allocated for local data.</span></div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    <span class="keyword">using</span> DataTypes = <a class="code" href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes&lt;int,double[2]&gt;</a>;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a>;</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    AoSoA_t data( halo-&gt;numLocal() + halo-&gt;numGhost() );</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">auto</span> slice_int = data.<a class="code" href="classCabana_1_1AoSoA.html#a2acbd51ce9669ecfc82de52ee49abf2e">slice</a>&lt;0&gt;();</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    AoSoA_t data( <span class="stringliteral">&quot;data&quot;</span>, halo-&gt;numLocal() + halo-&gt;numGhost() );</div>
+<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">auto</span> slice_int = data.<a class="code" href="classCabana_1_1AoSoA.html#a1a8cdae680bf524258ecc442738e96fc">slice</a>&lt;0&gt;();</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="keyword">auto</span> slice_dbl = data.slice&lt;1&gt;();</div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;    <span class="comment">// Fill the local data.</span></div>
@@ -187,8 +187,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    <span class="comment">// Check the results of the gather.</span></div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,Cabana::HostSpace&gt;</a> data_host(</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        halo-&gt;numLocal() + halo-&gt;numGhost() );</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">auto</span> slice_int_host = data_host.<a class="code" href="classCabana_1_1AoSoA.html#a2acbd51ce9669ecfc82de52ee49abf2e">slice</a>&lt;0&gt;();</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="stringliteral">&quot;data_host&quot;</span>, halo-&gt;numLocal() + halo-&gt;numGhost() );</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">auto</span> slice_int_host = data_host.<a class="code" href="classCabana_1_1AoSoA.html#a1a8cdae680bf524258ecc442738e96fc">slice</a>&lt;0&gt;();</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;    <span class="keyword">auto</span> slice_dbl_host = data_host.slice&lt;1&gt;();</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    Cabana::deep_copy( data_host, data );</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;</div>
@@ -364,8 +364,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="comment">// Create an AoSoA of local data with space allocated for local data.</span></div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keyword">using</span> DataTypes = <a class="code" href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes&lt;int,double[2]&gt;</a>;</div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a>;</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    AoSoA_t data( halo-&gt;numLocal() + halo-&gt;numGhost() );</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keyword">auto</span> slice_int = data.<a class="code" href="classCabana_1_1AoSoA.html#a2acbd51ce9669ecfc82de52ee49abf2e">slice</a>&lt;0&gt;();</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    AoSoA_t data( <span class="stringliteral">&quot;data&quot;</span>, halo-&gt;numLocal() + halo-&gt;numGhost() );</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keyword">auto</span> slice_int = data.<a class="code" href="classCabana_1_1AoSoA.html#a1a8cdae680bf524258ecc442738e96fc">slice</a>&lt;0&gt;();</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;    <span class="keyword">auto</span> slice_dbl = data.slice&lt;1&gt;();</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;</div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    <span class="comment">// Fill the local data.</span></div>
@@ -386,8 +386,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;    <span class="comment">// Check the results of the gather.</span></div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,Cabana::HostSpace&gt;</a> data_host(</div>
-<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        halo-&gt;numLocal() + halo-&gt;numGhost() );</div>
-<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keyword">auto</span> slice_int_host = data_host.<a class="code" href="classCabana_1_1AoSoA.html#a2acbd51ce9669ecfc82de52ee49abf2e">slice</a>&lt;0&gt;();</div>
+<div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;        <span class="stringliteral">&quot;data_host&quot;</span>, halo-&gt;numLocal() + halo-&gt;numGhost() );</div>
+<div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keyword">auto</span> slice_int_host = data_host.<a class="code" href="classCabana_1_1AoSoA.html#a1a8cdae680bf524258ecc442738e96fc">slice</a>&lt;0&gt;();</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    <span class="keyword">auto</span> slice_dbl_host = data_host.slice&lt;1&gt;();</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;    Cabana::deep_copy( data_host, data );</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;</div>
@@ -512,12 +512,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html_a2acbd51ce9669ecfc82de52ee49abf2e"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a2acbd51ce9669ecfc82de52ee49abf2e">Cabana::AoSoA::slice</a></div><div class="ttdeci">member_slice_type&lt; M &gt; slice() const </div><div class="ttdoc">Get an unmanaged slice of a tuple member with default memory access. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:357</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:66</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:67</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html_a1a8cdae680bf524258ecc442738e96fc"><div class="ttname"><a href="classCabana_1_1AoSoA.html#a1a8cdae680bf524258ecc442738e96fc">Cabana::AoSoA::slice</a></div><div class="ttdeci">member_slice_type&lt; M &gt; slice(const std::string &amp;slice_label=&quot;&quot;) const </div><div class="ttdoc">Get an unmanaged slice of a tuple member with default memory access. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:393</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Fri May 10 2019 12:02:46 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 10 2019 20:33:36 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
