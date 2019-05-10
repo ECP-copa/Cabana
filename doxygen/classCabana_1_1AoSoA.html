@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Cabana::AoSoA&lt; DataTypes, MemorySpace, VectorLength, std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt; Class Template Reference</title>
+<title>Cabana: Cabana::AoSoA&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -92,7 +92,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
 <a href="classCabana_1_1AoSoA-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::AoSoA&lt; DataTypes, MemorySpace, VectorLength, std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt; Class Template Reference</div>  </div>
+<div class="title">Cabana::AoSoA&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -103,118 +103,124 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:abcef6bab3498b3036feb4a77a554f26b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="abcef6bab3498b3036feb4a77a554f26b"></a>
+<tr class="memitem:a5f06f55a8669c6fcb501e11ab67acbd4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5f06f55a8669c6fcb501e11ab67acbd4"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa_type</b> = <a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength &gt;</td></tr>
-<tr class="separator:abcef6bab3498b3036feb4a77a554f26b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a538eba813f920a415947727ae8496215"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a538eba813f920a415947727ae8496215"></a>
+<tr class="separator:a5f06f55a8669c6fcb501e11ab67acbd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a42762ef5eab475571f679a879dd56580"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a42762ef5eab475571f679a879dd56580"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>member_types</b> = DataTypes</td></tr>
-<tr class="separator:a538eba813f920a415947727ae8496215"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25cfd11564fbf9ae3a01135d917b8f4a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a25cfd11564fbf9ae3a01135d917b8f4a"></a>
+<tr class="separator:a42762ef5eab475571f679a879dd56580"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8648042a8498cd5e4017b65c8d925f3b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8648042a8498cd5e4017b65c8d925f3b"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
-<tr class="separator:a25cfd11564fbf9ae3a01135d917b8f4a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab2c18389f4fece85c78c8f5884763ed7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ab2c18389f4fece85c78c8f5884763ed7"></a>
+<tr class="separator:a8648042a8498cd5e4017b65c8d925f3b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a399c8c3c09a90e7f688d69b6d2c8d5b0"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a399c8c3c09a90e7f688d69b6d2c8d5b0"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_traits</b> = MemoryTraits</td></tr>
+<tr class="separator:a399c8c3c09a90e7f688d69b6d2c8d5b0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad67251434a0ab26d76be7901d7afc2c3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad67251434a0ab26d76be7901d7afc2c3"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_type</b> = <a class="el" href="structCabana_1_1SoA.html">SoA</a>&lt; member_types, vector_length &gt;</td></tr>
-<tr class="separator:ab2c18389f4fece85c78c8f5884763ed7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ddb91451cfbda397660ec5c4b656ba9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0ddb91451cfbda397660ec5c4b656ba9"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_view</b> = Kokkos::View&lt; <a class="el" href="structCabana_1_1SoA.html">soa_type</a> *, memory_space &gt;</td></tr>
-<tr class="separator:a0ddb91451cfbda397660ec5c4b656ba9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a705eade73187bfe164e15f59b20206d7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a705eade73187bfe164e15f59b20206d7"></a>
+<tr class="separator:ad67251434a0ab26d76be7901d7afc2c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8aa51f5a7dc96a303dc4a8c3fec5239"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad8aa51f5a7dc96a303dc4a8c3fec5239"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_view</b> = Kokkos::View&lt; <a class="el" href="structCabana_1_1SoA.html">soa_type</a> *, memory_space, memory_traits &gt;</td></tr>
+<tr class="separator:ad8aa51f5a7dc96a303dc4a8c3fec5239"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0493c317ed10da809dd190d0c381f4b4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0493c317ed10da809dd190d0c381f4b4"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>index_type</b> = <a class="el" href="classCabana_1_1Impl_1_1Index.html">Impl::Index</a>&lt; vector_length &gt;</td></tr>
-<tr class="separator:a705eade73187bfe164e15f59b20206d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a273bcbaed1bb713164cf185738d5017e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a273bcbaed1bb713164cf185738d5017e"></a>
+<tr class="separator:a0493c317ed10da809dd190d0c381f4b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a15ce2a5a691546b64e8e2dcfbd5b077c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a15ce2a5a691546b64e8e2dcfbd5b077c"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>tuple_type</b> = <a class="el" href="structCabana_1_1Tuple.html">Tuple</a>&lt; member_types &gt;</td></tr>
-<tr class="separator:a273bcbaed1bb713164cf185738d5017e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ad611ef827ff18082eb7a465249eeb8"><td class="memTemplParams" colspan="2"><a class="anchor" id="a2ad611ef827ff18082eb7a465249eeb8"></a>
+<tr class="separator:a15ce2a5a691546b64e8e2dcfbd5b077c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab723c6412fc348791ae435073a32270e"><td class="memTemplParams" colspan="2"><a class="anchor" id="ab723c6412fc348791ae435073a32270e"></a>
 template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:a2ad611ef827ff18082eb7a465249eeb8"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_data_type</b> = typename <a class="el" href="structCabana_1_1MemberTypeAtIndex.html">MemberTypeAtIndex</a>&lt; M, member_types &gt;::type</td></tr>
-<tr class="separator:a2ad611ef827ff18082eb7a465249eeb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1c91f12d31e66aaf9340c5b8b9fcd47b"><td class="memTemplParams" colspan="2"><a class="anchor" id="a1c91f12d31e66aaf9340c5b8b9fcd47b"></a>
+<tr class="memitem:ab723c6412fc348791ae435073a32270e"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_data_type</b> = typename <a class="el" href="structCabana_1_1MemberTypeAtIndex.html">MemberTypeAtIndex</a>&lt; M, member_types &gt;::type</td></tr>
+<tr class="separator:ab723c6412fc348791ae435073a32270e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca43b76fe5ca2608a26cf8790509da5b"><td class="memTemplParams" colspan="2"><a class="anchor" id="aca43b76fe5ca2608a26cf8790509da5b"></a>
 template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:a1c91f12d31e66aaf9340c5b8b9fcd47b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_value_type</b> = typename std::remove_all_extents&lt; member_data_type&lt; M &gt; &gt;::type</td></tr>
-<tr class="separator:a1c91f12d31e66aaf9340c5b8b9fcd47b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af19bbf8d908e289a35af47494f004553"><td class="memTemplParams" colspan="2"><a class="anchor" id="af19bbf8d908e289a35af47494f004553"></a>
+<tr class="memitem:aca43b76fe5ca2608a26cf8790509da5b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_value_type</b> = typename std::remove_all_extents&lt; member_data_type&lt; M &gt; &gt;::type</td></tr>
+<tr class="separator:aca43b76fe5ca2608a26cf8790509da5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a16d2fa2ea86180a651e83029ab742c03"><td class="memTemplParams" colspan="2"><a class="anchor" id="a16d2fa2ea86180a651e83029ab742c03"></a>
 template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:af19bbf8d908e289a35af47494f004553"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_pointer_type</b> = typename std::add_pointer&lt; member_value_type&lt; M &gt; &gt;::type</td></tr>
-<tr class="separator:af19bbf8d908e289a35af47494f004553"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae8022bfdd4194374d3a75bff68f6b8d5"><td class="memTemplParams" colspan="2"><a class="anchor" id="ae8022bfdd4194374d3a75bff68f6b8d5"></a>
+<tr class="memitem:a16d2fa2ea86180a651e83029ab742c03"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_pointer_type</b> = typename std::add_pointer&lt; member_value_type&lt; M &gt; &gt;::type</td></tr>
+<tr class="separator:a16d2fa2ea86180a651e83029ab742c03"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0471d5a18712b3f26b0093341d767927"><td class="memTemplParams" colspan="2"><a class="anchor" id="a0471d5a18712b3f26b0093341d767927"></a>
 template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:ae8022bfdd4194374d3a75bff68f6b8d5"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_slice_type</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; member_data_type&lt; M &gt;, memory_space, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, vector_length, sizeof(<a class="el" href="structCabana_1_1SoA.html">soa_type</a>)/sizeof(member_value_type&lt; M &gt;)&gt;</td></tr>
-<tr class="separator:ae8022bfdd4194374d3a75bff68f6b8d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0471d5a18712b3f26b0093341d767927"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_slice_type</b> = <a class="el" href="classCabana_1_1Slice.html">Slice</a>&lt; member_data_type&lt; M &gt;, memory_space, <a class="el" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>, vector_length, sizeof(<a class="el" href="structCabana_1_1SoA.html">soa_type</a>)/sizeof(member_value_type&lt; M &gt;)&gt;</td></tr>
+<tr class="separator:a0471d5a18712b3f26b0093341d767927"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aaf8315a02aafaa6b7af0b7fe8b5a3080"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#aaf8315a02aafaa6b7af0b7fe8b5a3080">AoSoA</a> ()</td></tr>
-<tr class="memdesc:aaf8315a02aafaa6b7af0b7fe8b5a3080"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#aaf8315a02aafaa6b7af0b7fe8b5a3080">More...</a><br/></td></tr>
-<tr class="separator:aaf8315a02aafaa6b7af0b7fe8b5a3080"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0a95dabaaad6014ca53fef9fb4ab00a8"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a0a95dabaaad6014ca53fef9fb4ab00a8">AoSoA</a> (const std::size_t n)</td></tr>
-<tr class="memdesc:a0a95dabaaad6014ca53fef9fb4ab00a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a container with n tuples.  <a href="#a0a95dabaaad6014ca53fef9fb4ab00a8">More...</a><br/></td></tr>
-<tr class="separator:a0a95dabaaad6014ca53fef9fb4ab00a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46fd8dae193f674384424cbde63f72d3"><td class="memItemLeft" align="right" valign="top">KOKKOS_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a46fd8dae193f674384424cbde63f72d3">size</a> () const </td></tr>
-<tr class="memdesc:a46fd8dae193f674384424cbde63f72d3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of tuples in the container.  <a href="#a46fd8dae193f674384424cbde63f72d3">More...</a><br/></td></tr>
-<tr class="separator:a46fd8dae193f674384424cbde63f72d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bf6cad07d0bfac5767a3bafa038500c"><td class="memItemLeft" align="right" valign="top">KOKKOS_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a8bf6cad07d0bfac5767a3bafa038500c">capacity</a> () const </td></tr>
-<tr class="memdesc:a8bf6cad07d0bfac5767a3bafa038500c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size of the storage space currently allocated for the container, expressed in terms of tuples.  <a href="#a8bf6cad07d0bfac5767a3bafa038500c">More...</a><br/></td></tr>
-<tr class="separator:a8bf6cad07d0bfac5767a3bafa038500c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90ca9c95fa26269e84c44ecf0a52794a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a90ca9c95fa26269e84c44ecf0a52794a">resize</a> (const std::size_t n)</td></tr>
-<tr class="memdesc:a90ca9c95fa26269e84c44ecf0a52794a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the container so that it contains n tuples.  <a href="#a90ca9c95fa26269e84c44ecf0a52794a">More...</a><br/></td></tr>
-<tr class="separator:a90ca9c95fa26269e84c44ecf0a52794a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a82123aff64317235fcd54cba710573fc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a82123aff64317235fcd54cba710573fc">reserve</a> (const std::size_t n)</td></tr>
-<tr class="memdesc:a82123aff64317235fcd54cba710573fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests that the container capacity be at least enough to contain n tuples.  <a href="#a82123aff64317235fcd54cba710573fc">More...</a><br/></td></tr>
-<tr class="separator:a82123aff64317235fcd54cba710573fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6a04c267c89ef9bbbbbd211e9897171c"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a6a04c267c89ef9bbbbbd211e9897171c">numSoA</a> () const </td></tr>
-<tr class="memdesc:a6a04c267c89ef9bbbbbd211e9897171c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of structs-of-arrays in the container.  <a href="#a6a04c267c89ef9bbbbbd211e9897171c">More...</a><br/></td></tr>
-<tr class="separator:a6a04c267c89ef9bbbbbd211e9897171c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7603d8a3adfbb46242d9ae4c5e8afc28"><td class="memTemplParams" colspan="2">template&lt;typename S &gt; </td></tr>
-<tr class="memitem:a7603d8a3adfbb46242d9ae4c5e8afc28"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <br class="typebreak"/>
+<tr class="memitem:a26cf11d8b92bda3aa07bf8804db322a2"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a26cf11d8b92bda3aa07bf8804db322a2">AoSoA</a> ()</td></tr>
+<tr class="memdesc:a26cf11d8b92bda3aa07bf8804db322a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor.  <a href="#a26cf11d8b92bda3aa07bf8804db322a2">More...</a><br/></td></tr>
+<tr class="separator:a26cf11d8b92bda3aa07bf8804db322a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a23a7fe06fe7a13c5c701ef3c18ab2dd4"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a23a7fe06fe7a13c5c701ef3c18ab2dd4">AoSoA</a> (const std::size_t n)</td></tr>
+<tr class="memdesc:a23a7fe06fe7a13c5c701ef3c18ab2dd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Allocate a container with n tuples.  <a href="#a23a7fe06fe7a13c5c701ef3c18ab2dd4">More...</a><br/></td></tr>
+<tr class="separator:a23a7fe06fe7a13c5c701ef3c18ab2dd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2bc0437ebc048ba3d54dd155739c272b"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a2bc0437ebc048ba3d54dd155739c272b">AoSoA</a> (<a class="el" href="structCabana_1_1SoA.html">soa_type</a> *<a class="el" href="classCabana_1_1AoSoA.html#ada0d0e56cc48cd5fd4b263ae5a153ddd">ptr</a>, const int num_soa, const int n)</td></tr>
+<tr class="memdesc:a2bc0437ebc048ba3d54dd155739c272b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an unmanaged <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a> with user-provided memory.  <a href="#a2bc0437ebc048ba3d54dd155739c272b">More...</a><br/></td></tr>
+<tr class="separator:a2bc0437ebc048ba3d54dd155739c272b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4135dd3592c010414b6e398aa10c7e5c"><td class="memItemLeft" align="right" valign="top">KOKKOS_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a4135dd3592c010414b6e398aa10c7e5c">size</a> () const </td></tr>
+<tr class="memdesc:a4135dd3592c010414b6e398aa10c7e5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of tuples in the container.  <a href="#a4135dd3592c010414b6e398aa10c7e5c">More...</a><br/></td></tr>
+<tr class="separator:a4135dd3592c010414b6e398aa10c7e5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cac547bf3b9eea29cad7c3d0d0c9a3d"><td class="memItemLeft" align="right" valign="top">KOKKOS_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a3cac547bf3b9eea29cad7c3d0d0c9a3d">capacity</a> () const </td></tr>
+<tr class="memdesc:a3cac547bf3b9eea29cad7c3d0d0c9a3d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size of the storage space currently allocated for the container, expressed in terms of tuples.  <a href="#a3cac547bf3b9eea29cad7c3d0d0c9a3d">More...</a><br/></td></tr>
+<tr class="separator:a3cac547bf3b9eea29cad7c3d0d0c9a3d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af7d4e4e3b6a7ade09a905d4cddd3099a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#af7d4e4e3b6a7ade09a905d4cddd3099a">resize</a> (const std::size_t n)</td></tr>
+<tr class="memdesc:af7d4e4e3b6a7ade09a905d4cddd3099a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Resizes the container so that it contains n tuples.  <a href="#af7d4e4e3b6a7ade09a905d4cddd3099a">More...</a><br/></td></tr>
+<tr class="separator:af7d4e4e3b6a7ade09a905d4cddd3099a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abf30df600442cb56b03446cfcd27a33d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#abf30df600442cb56b03446cfcd27a33d">reserve</a> (const std::size_t n)</td></tr>
+<tr class="memdesc:abf30df600442cb56b03446cfcd27a33d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests that the container capacity be at least enough to contain n tuples.  <a href="#abf30df600442cb56b03446cfcd27a33d">More...</a><br/></td></tr>
+<tr class="separator:abf30df600442cb56b03446cfcd27a33d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a930ffaa49c3747bb65fdde28c06a849a"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a930ffaa49c3747bb65fdde28c06a849a">numSoA</a> () const </td></tr>
+<tr class="memdesc:a930ffaa49c3747bb65fdde28c06a849a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of structs-of-arrays in the container.  <a href="#a930ffaa49c3747bb65fdde28c06a849a">More...</a><br/></td></tr>
+<tr class="separator:a930ffaa49c3747bb65fdde28c06a849a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49ce1fd5892394c3a10c95cfe260551b"><td class="memTemplParams" colspan="2">template&lt;typename S &gt; </td></tr>
+<tr class="memitem:a49ce1fd5892394c3a10c95cfe260551b"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <br class="typebreak"/>
 std::enable_if<br class="typebreak"/>
 &lt; std::is_integral&lt; S &gt;::value, <br class="typebreak"/>
-int &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a7603d8a3adfbb46242d9ae4c5e8afc28">arraySize</a> (const S &amp;s) const </td></tr>
-<tr class="memdesc:a7603d8a3adfbb46242d9ae4c5e8afc28"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the size of the data array at a given struct member index.  <a href="#a7603d8a3adfbb46242d9ae4c5e8afc28">More...</a><br/></td></tr>
-<tr class="separator:a7603d8a3adfbb46242d9ae4c5e8afc28"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a297f230d8764cfb9c4610acc076918a9"><td class="memTemplParams" colspan="2">template&lt;typename S &gt; </td></tr>
-<tr class="memitem:a297f230d8764cfb9c4610acc076918a9"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
+int &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a49ce1fd5892394c3a10c95cfe260551b">arraySize</a> (const S &amp;s) const </td></tr>
+<tr class="memdesc:a49ce1fd5892394c3a10c95cfe260551b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the size of the data array at a given struct member index.  <a href="#a49ce1fd5892394c3a10c95cfe260551b">More...</a><br/></td></tr>
+<tr class="separator:a49ce1fd5892394c3a10c95cfe260551b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ee5f40747c38e58b8e9926ddd9138b2"><td class="memTemplParams" colspan="2">template&lt;typename S &gt; </td></tr>
+<tr class="memitem:a5ee5f40747c38e58b8e9926ddd9138b2"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
 std::enable_if<br class="typebreak"/>
 &lt; std::is_integral&lt; S &gt;::value, <br class="typebreak"/>
-<a class="el" href="structCabana_1_1SoA.html">soa_type</a> &amp; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a297f230d8764cfb9c4610acc076918a9">access</a> (const S &amp;s) const </td></tr>
-<tr class="memdesc:a297f230d8764cfb9c4610acc076918a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a reference to the <a class="el" href="structCabana_1_1SoA.html" title="Struct-of-Arrays. ">SoA</a> at a given index.  <a href="#a297f230d8764cfb9c4610acc076918a9">More...</a><br/></td></tr>
-<tr class="separator:a297f230d8764cfb9c4610acc076918a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a589f247e5afa8f8db0aa9e286f0a2572"><td class="memTemplParams" colspan="2">template&lt;typename I &gt; </td></tr>
-<tr class="memitem:a589f247e5afa8f8db0aa9e286f0a2572"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <br class="typebreak"/>
+<a class="el" href="structCabana_1_1SoA.html">soa_type</a> &amp; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a5ee5f40747c38e58b8e9926ddd9138b2">access</a> (const S &amp;s) const </td></tr>
+<tr class="memdesc:a5ee5f40747c38e58b8e9926ddd9138b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a reference to the <a class="el" href="structCabana_1_1SoA.html" title="Struct-of-Arrays. ">SoA</a> at a given index.  <a href="#a5ee5f40747c38e58b8e9926ddd9138b2">More...</a><br/></td></tr>
+<tr class="separator:a5ee5f40747c38e58b8e9926ddd9138b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cc7c20d9452139c07b8022d43cf9c54"><td class="memTemplParams" colspan="2">template&lt;typename I &gt; </td></tr>
+<tr class="memitem:a3cc7c20d9452139c07b8022d43cf9c54"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <br class="typebreak"/>
 std::enable_if<br class="typebreak"/>
 &lt; std::is_integral&lt; I &gt;::value, <br class="typebreak"/>
-<a class="el" href="structCabana_1_1Tuple.html">tuple_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a589f247e5afa8f8db0aa9e286f0a2572">getTuple</a> (const I &amp;i) const </td></tr>
-<tr class="memdesc:a589f247e5afa8f8db0aa9e286f0a2572"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a tuple at a given index via a deep copy.  <a href="#a589f247e5afa8f8db0aa9e286f0a2572">More...</a><br/></td></tr>
-<tr class="separator:a589f247e5afa8f8db0aa9e286f0a2572"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4eda16c8750d7214f947a326ec8b297"><td class="memTemplParams" colspan="2">template&lt;typename I &gt; </td></tr>
-<tr class="memitem:ad4eda16c8750d7214f947a326ec8b297"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <br class="typebreak"/>
+<a class="el" href="structCabana_1_1Tuple.html">tuple_type</a> &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a3cc7c20d9452139c07b8022d43cf9c54">getTuple</a> (const I &amp;i) const </td></tr>
+<tr class="memdesc:a3cc7c20d9452139c07b8022d43cf9c54"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a tuple at a given index via a deep copy.  <a href="#a3cc7c20d9452139c07b8022d43cf9c54">More...</a><br/></td></tr>
+<tr class="separator:a3cc7c20d9452139c07b8022d43cf9c54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a49caee0a035dc6ab57138a350e19a227"><td class="memTemplParams" colspan="2">template&lt;typename I &gt; </td></tr>
+<tr class="memitem:a49caee0a035dc6ab57138a350e19a227"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <br class="typebreak"/>
 std::enable_if<br class="typebreak"/>
 &lt; std::is_integral&lt; I &gt;::value, <br class="typebreak"/>
-void &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#ad4eda16c8750d7214f947a326ec8b297">setTuple</a> (const I &amp;i, const <a class="el" href="structCabana_1_1Tuple.html">tuple_type</a> &amp;tpl) const </td></tr>
-<tr class="memdesc:ad4eda16c8750d7214f947a326ec8b297"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a tuple at a given index via a deep copy.  <a href="#ad4eda16c8750d7214f947a326ec8b297">More...</a><br/></td></tr>
-<tr class="separator:ad4eda16c8750d7214f947a326ec8b297"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a98d46d130ab595d04e450b5d1c27d504"><td class="memTemplParams" colspan="2">template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:a98d46d130ab595d04e450b5d1c27d504"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Slice.html">member_slice_type</a>&lt; M &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a98d46d130ab595d04e450b5d1c27d504">slice</a> () const </td></tr>
-<tr class="memdesc:a98d46d130ab595d04e450b5d1c27d504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an unmanaged slice of a tuple member with default memory access.  <a href="#a98d46d130ab595d04e450b5d1c27d504">More...</a><br/></td></tr>
-<tr class="separator:a98d46d130ab595d04e450b5d1c27d504"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaf4daa69248c660aefec75e2ad494d62"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#aaf4daa69248c660aefec75e2ad494d62">ptr</a> () const </td></tr>
-<tr class="memdesc:aaf4daa69248c660aefec75e2ad494d62"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an un-typed raw pointer to the entire data block.  <a href="#aaf4daa69248c660aefec75e2ad494d62">More...</a><br/></td></tr>
-<tr class="separator:aaf4daa69248c660aefec75e2ad494d62"><td class="memSeparator" colspan="2">&#160;</td></tr>
+void &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a49caee0a035dc6ab57138a350e19a227">setTuple</a> (const I &amp;i, const <a class="el" href="structCabana_1_1Tuple.html">tuple_type</a> &amp;tpl) const </td></tr>
+<tr class="memdesc:a49caee0a035dc6ab57138a350e19a227"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a tuple at a given index via a deep copy.  <a href="#a49caee0a035dc6ab57138a350e19a227">More...</a><br/></td></tr>
+<tr class="separator:a49caee0a035dc6ab57138a350e19a227"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2acbd51ce9669ecfc82de52ee49abf2e"><td class="memTemplParams" colspan="2">template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a2acbd51ce9669ecfc82de52ee49abf2e"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Slice.html">member_slice_type</a>&lt; M &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a2acbd51ce9669ecfc82de52ee49abf2e">slice</a> () const </td></tr>
+<tr class="memdesc:a2acbd51ce9669ecfc82de52ee49abf2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an unmanaged slice of a tuple member with default memory access.  <a href="#a2acbd51ce9669ecfc82de52ee49abf2e">More...</a><br/></td></tr>
+<tr class="separator:a2acbd51ce9669ecfc82de52ee49abf2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada0d0e56cc48cd5fd4b263ae5a153ddd"><td class="memItemLeft" align="right" valign="top">void *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#ada0d0e56cc48cd5fd4b263ae5a153ddd">ptr</a> () const </td></tr>
+<tr class="memdesc:ada0d0e56cc48cd5fd4b263ae5a153ddd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get an un-typed raw pointer to the entire data block.  <a href="#ada0d0e56cc48cd5fd4b263ae5a153ddd">More...</a><br/></td></tr>
+<tr class="separator:ada0d0e56cc48cd5fd4b263ae5a153ddd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
-<tr class="memitem:a87485b232d388d7864456ea4f3996b3c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a87485b232d388d7864456ea4f3996b3c"></a>
+<tr class="memitem:a38f8b6f55e138b578eaea1d8420bf232"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a38f8b6f55e138b578eaea1d8420bf232"></a>
 static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>vector_length</b> = VectorLength</td></tr>
-<tr class="separator:a87485b232d388d7864456ea4f3996b3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af525b6b8a5b9d2670115a15d26e060a1"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af525b6b8a5b9d2670115a15d26e060a1"></a>
+<tr class="separator:a38f8b6f55e138b578eaea1d8420bf232"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a94e5306942cbd55c01326c70b9a29ce9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a94e5306942cbd55c01326c70b9a29ce9"></a>
 static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>number_of_members</b> = member_types::size</td></tr>
-<tr class="separator:af525b6b8a5b9d2670115a15d26e060a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4dd3331e1c31060a80f5625fab32bc7b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4dd3331e1c31060a80f5625fab32bc7b"></a>
+<tr class="separator:a94e5306942cbd55c01326c70b9a29ce9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac2efe82f8727576e76f256e1c172e511"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac2efe82f8727576e76f256e1c172e511"></a>
 static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>max_supported_rank</b> = 3</td></tr>
-<tr class="separator:a4dd3331e1c31060a80f5625fab32bc7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ac2efe82f8727576e76f256e1c172e511"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt;<br/>
-class Cabana::AoSoA&lt; DataTypes, MemorySpace, VectorLength, std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type &gt;</h3>
+<div class="textblock"><h3>template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt;<br/>
+class Cabana::AoSoA&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;</h3>
 
 <p>Array-of-Struct-of-Arrays. </p>
 <p>A <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a> represents tuples and their data via an array-of-structs-of-arrays.</p>
@@ -223,22 +229,23 @@ class Cabana::AoSoA&lt; DataTypes, MemorySpace, VectorLength, std::enable_if&lt;
     <tr><td class="paramname">DataType</td><td>(required) Specifically this must be an instance of <code><a class="el" href="structCabana_1_1MemberTypes.html" title="General sequence of types for SoA and AoSoA member data. ">MemberTypes</a></code> with the data layout of the structs. For example: <div class="fragment"><div class="line"><span class="keyword">using</span> DataType = MemberTypes&lt;double[3][3],double[3],int&gt;;</div>
 </div><!-- fragment --> would define an <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a> where each tuple had a 3x3 matrix of doubles, a 3-vector of doubles, and an integer. The <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a> is then templated on this sequence of types. In general, put larger datatypes first in the MemberType parameter pack (i.e. matrices and vectors) and group members of the same type together to achieve the smallest possible memory footprint based on compiler-generated padding.</td></tr>
     <tr><td class="paramname">MemorySpace</td><td>(required) The memory space.</td></tr>
-    <tr><td class="paramname">VectorLength</td><td>(optional) The vector length within the structs of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a>. If not specified, this defaults to the preferred layout for the <code>MemorySpace</code>. </td></tr>
+    <tr><td class="paramname">VectorLength</td><td>(optional) The vector length within the structs of the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a>. If not specified, this defaults to the preferred layout for the <code>MemorySpace</code>.</td></tr>
+    <tr><td class="paramname">MemoryTraits</td><td>Memory traits for the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a> data. Can be used to indicate managed memory, unmanaged memory, etc. </td></tr>
   </table>
   </dd>
 </dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="aaf8315a02aafaa6b7af0b7fe8b5a3080"></a>
+<a class="anchor" id="a26cf11d8b92bda3aa07bf8804db322a2"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -256,17 +263,17 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<a class="anchor" id="a0a95dabaaad6014ca53fef9fb4ab00a8"></a>
+<a class="anchor" id="a23a7fe06fe7a13c5c701ef3c18ab2dd4"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
           <td>(</td>
           <td class="paramtype">const std::size_t&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
@@ -290,12 +297,64 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a297f230d8764cfb9c4610acc076918a9"></a>
+<a class="anchor" id="a2bc0437ebc048ba3d54dd155739c272b"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCabana_1_1SoA.html">soa_type</a> *&#160;</td>
+          <td class="paramname"><em>ptr</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>num_soa</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>n</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Create an unmanaged <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a> with user-provided memory. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ptr</td><td>Pointer to user-allocated <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays. ">AoSoA</a> data.</td></tr>
+    <tr><td class="paramname">num_soa</td><td>The number of SoAs the user has allocated.</td></tr>
+    <tr><td class="paramname">n</td><td>The number of tuples in the container. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a class="anchor" id="a5ee5f40747c38e58b8e9926ddd9138b2"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <div class="memtemplate">
 template&lt;typename S &gt; </div>
 <table class="mlabels">
@@ -303,7 +362,7 @@ template&lt;typename S &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;S&gt;::value,<a class="el" href="structCabana_1_1SoA.html">soa_type</a>&amp;&gt;::type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::access </td>
+          <td class="memname">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;S&gt;::value,<a class="el" href="structCabana_1_1SoA.html">soa_type</a>&amp;&gt;::type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::access </td>
           <td>(</td>
           <td class="paramtype">const S &amp;&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
@@ -328,11 +387,11 @@ template&lt;typename S &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a7603d8a3adfbb46242d9ae4c5e8afc28"></a>
+<a class="anchor" id="a49ce1fd5892394c3a10c95cfe260551b"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <div class="memtemplate">
 template&lt;typename S &gt; </div>
 <table class="mlabels">
@@ -340,7 +399,7 @@ template&lt;typename S &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;S&gt;::value,int&gt;::type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::arraySize </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;S&gt;::value,int&gt;::type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::arraySize </td>
           <td>(</td>
           <td class="paramtype">const S &amp;&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
@@ -365,17 +424,17 @@ template&lt;typename S &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a8bf6cad07d0bfac5767a3bafa038500c"></a>
+<a class="anchor" id="a3cac547bf3b9eea29cad7c3d0d0c9a3d"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_FUNCTION std::size_t <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::capacity </td>
+          <td class="memname">KOKKOS_FUNCTION std::size_t <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::capacity </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -396,11 +455,11 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<a class="anchor" id="a589f247e5afa8f8db0aa9e286f0a2572"></a>
+<a class="anchor" id="a3cc7c20d9452139c07b8022d43cf9c54"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <div class="memtemplate">
 template&lt;typename I &gt; </div>
 <table class="mlabels">
@@ -408,7 +467,7 @@ template&lt;typename I &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;I&gt;::value,<a class="el" href="structCabana_1_1Tuple.html">tuple_type</a>&gt;::type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::getTuple </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;I&gt;::value,<a class="el" href="structCabana_1_1Tuple.html">tuple_type</a>&gt;::type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::getTuple </td>
           <td>(</td>
           <td class="paramtype">const I &amp;&#160;</td>
           <td class="paramname"><em>i</em></td><td>)</td>
@@ -433,17 +492,17 @@ template&lt;typename I &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a6a04c267c89ef9bbbbbd211e9897171c"></a>
+<a class="anchor" id="a930ffaa49c3747bb65fdde28c06a849a"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::numSoA </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::numSoA </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -461,17 +520,17 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<a class="anchor" id="aaf4daa69248c660aefec75e2ad494d62"></a>
+<a class="anchor" id="ada0d0e56cc48cd5fd4b263ae5a153ddd"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void* <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::ptr </td>
+          <td class="memname">void* <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::ptr </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -489,17 +548,17 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<a class="anchor" id="a82123aff64317235fcd54cba710573fc"></a>
+<a class="anchor" id="abf30df600442cb56b03446cfcd27a33d"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::reserve </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::reserve </td>
           <td>(</td>
           <td class="paramtype">const std::size_t&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
@@ -520,17 +579,17 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<a class="anchor" id="a90ca9c95fa26269e84c44ecf0a52794a"></a>
+<a class="anchor" id="af7d4e4e3b6a7ade09a905d4cddd3099a"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::resize </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::resize </td>
           <td>(</td>
           <td class="paramtype">const std::size_t&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
@@ -552,11 +611,11 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<a class="anchor" id="ad4eda16c8750d7214f947a326ec8b297"></a>
+<a class="anchor" id="a49caee0a035dc6ab57138a350e19a227"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <div class="memtemplate">
 template&lt;typename I &gt; </div>
 <table class="mlabels">
@@ -564,7 +623,7 @@ template&lt;typename I &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;I&gt;::value,void&gt;::type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::setTuple </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if&lt;std::is_integral&lt;I&gt;::value,void&gt;::type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::setTuple </td>
           <td>(</td>
           <td class="paramtype">const I &amp;&#160;</td>
           <td class="paramname"><em>i</em>, </td>
@@ -599,17 +658,17 @@ template&lt;typename I &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a46fd8dae193f674384424cbde63f72d3"></a>
+<a class="anchor" id="a4135dd3592c010414b6e398aa10c7e5c"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_FUNCTION std::size_t <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::size </td>
+          <td class="memname">KOKKOS_FUNCTION std::size_t <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::size </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -628,11 +687,11 @@ template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::Perform
 
 </div>
 </div>
-<a class="anchor" id="a98d46d130ab595d04e450b5d1c27d504"></a>
+<a class="anchor" id="a2acbd51ce9669ecfc82de52ee49abf2e"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, typename std::enable_if&lt; (is_member_types&lt; DataTypes &gt;::value &amp;&amp;Impl::IsVectorLengthValid&lt; VectorLength &gt;::value), int &gt;::type = 0&gt; </div>
+template&lt;class DataTypes, class MemorySpace, int VectorLength = Impl::PerformanceTraits&lt;             typename MemorySpace::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
 <div class="memtemplate">
 template&lt;std::size_t M&gt; </div>
 <table class="mlabels">
@@ -640,7 +699,7 @@ template&lt;std::size_t M&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">member_slice_type</a>&lt;M&gt; <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, type &gt;::slice </td>
+          <td class="memname"><a class="el" href="classCabana_1_1Slice.html">member_slice_type</a>&lt;M&gt; <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, MemorySpace, VectorLength, MemoryTraits &gt;::slice </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -676,7 +735,7 @@ template&lt;std::size_t M&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 9 2019 20:11:50 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 10 2019 12:02:46 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
