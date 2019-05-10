@@ -76,7 +76,7 @@ void test1( const bool use_topology )
     // Create an AoSoA of local data with space allocated for local data.
     using DataTypes = Cabana::MemberTypes<int,double[2]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    AoSoA_t data( halo->numLocal() + halo->numGhost() );
+    AoSoA_t data( "data", halo->numLocal() + halo->numGhost() );
     auto slice_int = data.slice<0>();
     auto slice_dbl = data.slice<1>();
 
@@ -98,7 +98,7 @@ void test1( const bool use_topology )
 
     // Check the results of the gather.
     Cabana::AoSoA<DataTypes,Cabana::HostSpace> data_host(
-        halo->numLocal() + halo->numGhost() );
+        "data_host", halo->numLocal() + halo->numGhost() );
     auto slice_int_host = data_host.slice<0>();
     auto slice_dbl_host = data_host.slice<1>();
     Cabana::deep_copy( data_host, data );
@@ -275,7 +275,7 @@ void test2( const bool use_topology )
     // Create an AoSoA of local data with space allocated for local data.
     using DataTypes = Cabana::MemberTypes<int,double[2]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    AoSoA_t data( halo->numLocal() + halo->numGhost() );
+    AoSoA_t data( "data", halo->numLocal() + halo->numGhost() );
     auto slice_int = data.slice<0>();
     auto slice_dbl = data.slice<1>();
 
@@ -297,7 +297,7 @@ void test2( const bool use_topology )
 
     // Check the results of the gather.
     Cabana::AoSoA<DataTypes,Cabana::HostSpace> data_host(
-        halo->numLocal() + halo->numGhost() );
+        "data_host", halo->numLocal() + halo->numGhost() );
     auto slice_int_host = data_host.slice<0>();
     auto slice_dbl_host = data_host.slice<1>();
     Cabana::deep_copy( data_host, data );

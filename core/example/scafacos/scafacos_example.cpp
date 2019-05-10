@@ -105,14 +105,14 @@ void initializeParticles( ParticleList& particles,
                           double gap_space,
                           parallel_info& info )
 {
-    auto p_x = particles.slice<PositionX>();
-    auto p_y = particles.slice<PositionY>();
-    auto p_z = particles.slice<PositionZ>();
-    auto v = particles.slice<Velocity>();
-    auto q = particles.slice<Charge>();
-    auto pot = particles.slice<Potential>();
-    auto field = particles.slice<Field>();
-    auto indx = particles.slice<Index>();
+    auto p_x = particles.slice<PositionX>("position_x");
+    auto p_y = particles.slice<PositionY>("position_y");
+    auto p_z = particles.slice<PositionZ>("position_z");
+    auto v = particles.slice<Velocity>("velocity");
+    auto q = particles.slice<Charge>("charge");
+    auto pot = particles.slice<Potential>("potential");
+    auto field = particles.slice<Field>("field");
+    auto indx = particles.slice<Index>("index");
 
     int offset;
 
@@ -157,14 +157,14 @@ void printParticles( const ParticleList particles, parallel_info& info )
 {
 
     // get slices for the corresponding particle data
-    auto p_x = particles.slice<PositionX>();
-    auto p_y = particles.slice<PositionY>();
-    auto p_z = particles.slice<PositionZ>();
-    auto v = particles.slice<Velocity>();
-    auto q = particles.slice<Charge>();
-    auto pot = particles.slice<Potential>();
-    auto field = particles.slice<Field>();
-    auto indx = particles.slice<Index>();
+    auto p_x = particles.slice<PositionX>("position_x");
+    auto p_y = particles.slice<PositionY>("position_y");
+    auto p_z = particles.slice<PositionZ>("position_z");
+    auto v = particles.slice<Velocity>("velocity");
+    auto q = particles.slice<Charge>("charge");
+    auto pot = particles.slice<Potential>("potential");
+    auto field = particles.slice<Field>("field");
+    auto indx = particles.slice<Index>("index");
 
     std::cout << "Rank: "
               << info.rank
@@ -223,7 +223,7 @@ void exampleMain(int num_particle,
 
 
     // Create the particle list.
-    ParticleList particles( info.n_local_particles );
+    ParticleList particles( "particles", info.n_local_particles );
 
     // Initialize particles.
     initializeParticles( particles,
@@ -256,10 +256,10 @@ void exampleMain(int num_particle,
     std::vector<double> f(3*info.n_local_particles);
     std::vector<double> pot(info.n_local_particles);
 
-    auto p_x = particles.slice<PositionX>();
-    auto p_y = particles.slice<PositionY>();
-    auto p_z = particles.slice<PositionZ>();
-    auto qp = particles.slice<Charge>();
+    auto p_x = particles.slice<PositionX>("x_position");
+    auto p_y = particles.slice<PositionY>("y_position");
+    auto p_z = particles.slice<PositionZ>("z_position");
+    auto qp = particles.slice<Charge>("charge");
 
     for (int i = 0; i < info.n_local_particles; ++i)
     {

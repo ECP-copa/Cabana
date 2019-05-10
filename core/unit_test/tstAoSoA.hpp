@@ -339,7 +339,7 @@ void testTuple()
     // Create an AoSoA.
     int num_data = 453;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "label", num_data );
 
     // Create a slice of tuples with the same data types.
     Kokkos::View<Tuple_t*,typename AoSoA_t::memory_space>
@@ -451,7 +451,7 @@ void testAccess()
 
     // Create an AoSoA.
     int num_data = 453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "label", num_data );
 
     // Initialize data with the SoA accessor
     float fval = 3.4;

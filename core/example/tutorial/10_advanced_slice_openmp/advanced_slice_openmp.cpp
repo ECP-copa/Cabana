@@ -37,7 +37,7 @@ void atomicSliceExample()
        Create the AoSoA. Just put a single value to demonstrate the atomic.
     */
     int num_tuple = 1;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( "X", num_tuple );
 
     /*
       Create a slice over the single value and assign it to zero.

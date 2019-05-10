@@ -76,18 +76,22 @@ void sliceExample()
        full (although its memory will still be allocated).
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+        aosoa( "my_aosoa", num_tuple );
 
     /*
       Create a slice over each tuple member in the AoSoA. An integer template
       parameter is used to indicate which member to slice. A slice object
       simply wraps the data associated with an AoSoA member in a more
       conventient accessor structure. A slice therefore has the same memory
-      space as the AoSoA from which it was derived.
-     */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    auto slice_2 = aosoa.slice<2>();
+      space as the AoSoA from which it was derived. Slices may optionally be
+      assigned a label. This label is not included in the memory tracker
+      because slices are unmanaged memory but may still be used for diagnostic
+      purposes.
+    */
+    auto slice_0 = aosoa.slice<0>( "my_slice_0" );
+    auto slice_1 = aosoa.slice<1>( "my_slice_1" );
+    auto slice_2 = aosoa.slice<2>( "my_slice_2" );
 
     /*
       Let's initialize the data using the 2D indexing scheme. Slice data can

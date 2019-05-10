@@ -58,7 +58,7 @@ void migrationExample()
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( "A", num_tuple );
 
     /*
       Create slices and assign data. The data values are equal to id of this

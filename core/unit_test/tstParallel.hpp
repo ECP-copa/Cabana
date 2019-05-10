@@ -172,7 +172,7 @@ void runTest2d()
 
     // Create an AoSoA.
     int num_data = 155;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a vectorized execution policy using the begin and end of the
     // AoSoA.

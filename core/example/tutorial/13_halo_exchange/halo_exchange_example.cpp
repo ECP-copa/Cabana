@@ -62,7 +62,8 @@ void haloExchangeExample()
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+        aosoa( "my_aosoa", num_tuple );
 
     /*
       Create slices and assign data.

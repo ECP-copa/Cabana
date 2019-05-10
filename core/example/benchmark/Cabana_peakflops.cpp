@@ -204,18 +204,18 @@ void run()
     int num_particle = num_struct*array_size;
 
     // Create the particle lists.
-    ParticleList a_( num_particle );
-    ParticleList x_( num_particle );
-    ParticleList c_( num_particle );
-    ParticleList x1_( num_particle );
-    ParticleList x2_( num_particle );
-    ParticleList x3_( num_particle );
-    ParticleList x4_( num_particle );
-    ParticleList x5_( num_particle );
-    ParticleList x6_( num_particle );
-    ParticleList x7_( num_particle );
-    ParticleList x8_( num_particle );
-    ParticleList x9_( num_particle );
+    ParticleList a_( "a", num_particle );
+    ParticleList x_( "x", num_particle );
+    ParticleList c_( "c", num_particle );
+    ParticleList x1_( "x1", num_particle );
+    ParticleList x2_( "x2", num_particle );
+    ParticleList x3_( "x3", num_particle );
+    ParticleList x4_( "x4", num_particle );
+    ParticleList x5_( "x5", num_particle );
+    ParticleList x6_( "x6", num_particle );
+    ParticleList x7_( "x7", num_particle );
+    ParticleList x8_( "x8", num_particle );
+    ParticleList x9_( "x9", num_particle );
 
     // Get a slice of the x position field from each particle list.
     auto ma = a_.slice<PositionX>();

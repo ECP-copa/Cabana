@@ -162,7 +162,7 @@ createParticles( const int num_particle,
 {
     using DataTypes = Cabana::MemberTypes<double[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    AoSoA_t aosoa( num_particle );
+    AoSoA_t aosoa( "aosoa", num_particle );
 
     auto position = aosoa.slice<0>();
     using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
