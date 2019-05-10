@@ -26,14 +26,14 @@ int main(int argc, char** argv)
   const int n_particles = c_size * c_size * c_size;
   //Number of periodic shells
   const int periodic_shells = 3;
-  
+
   //Create an empty list of all the particles
-  ParticleList *particles = new ParticleList( n_particles );
+  ParticleList *particles = new ParticleList( "particles", n_particles );
 
   std::cout << std::setprecision(12);
 
   //Initialize the particles
-  //Currently particles are initialized as alternating charges 
+  //Currently particles are initialized as alternating charges
   //in uniform cubic grid pattern like NaCl
   initializeParticles( *particles, c_size );
 
@@ -50,7 +50,7 @@ int main(int argc, char** argv)
   timer.reset();
 
   auto elapsed_time = tune_time + exec_time;
-  
+
   //Print out the timings and accuracy
   std::cout << "Time for initialization in Direct Sum solver: " << (tune_time) << " s." << std::endl;
   std::cout << "Time for computation in Direct Sum solver:        " << (exec_time) << " s." << std::endl;
@@ -59,7 +59,7 @@ int main(int argc, char** argv)
   std::cout << "total potential energy (Direct Sum): " << total_energy << std::endl;
   std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-total_energy << std::endl;
   std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/total_energy << std::endl;
-  
+
   //delete particles;
   //Kokkos::fence();
   Kokkos::finalize();

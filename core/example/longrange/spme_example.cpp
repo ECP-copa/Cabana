@@ -16,24 +16,24 @@ int main(int argc, char** argv)
   const double width = 1.0;
   //Number of mesh points in each direction for SPME
   const int n_meshpoints = 4096;//16*16*16;
-  //Declare alpha and rmax, but just let the tuner select their values later  
+  //Declare alpha and rmax, but just let the tuner select their values later
   //double alpha, r_max;
   //Number of particles, 3D
   const int n_particles = c_size * c_size * c_size;
- 
+
   //Create an empty list of all the particles
-  ParticleList *particles = new ParticleList( n_particles );
+  ParticleList *particles = new ParticleList( "particles", n_particles );
   //Create an empty list of all the mesh points
-  ParticleList *mesh = new ParticleList( n_meshpoints );
+  ParticleList *mesh = new ParticleList( "mesh", n_meshpoints );
 
   std::cout << std::setprecision(12);
 
   //Initialize the particles and mesh
-  //Currently particles are initialized as alternating charges 
+  //Currently particles are initialized as alternating charges
   //in uniform cubic grid pattern like NaCl
   initializeParticles( *particles, c_size );
   //Mesh is by default cubic and uniform
-  initializeMesh( *mesh, width );  
+  initializeMesh( *mesh, width );
 
   //Create a Kokkos timer to measure performance
   Kokkos::Timer timer;
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
   timer.reset();
 
   auto elapsed_time = tune_time + exec_time;
-  
+
   //Print out the timings and accuracy
   std::cout << "Time for init+tuning parameters in SPME solver: " << (tune_time) << " s." << std::endl;
   std::cout << "Time for computation in SPME solver:        " << (exec_time) << " s." << std::endl;
@@ -57,7 +57,7 @@ int main(int argc, char** argv)
   std::cout << "total potential energy (SPME): " << total_energy << std::endl;
   std::cout << "absolute error (energy): " << (n_particles * MADELUNG_NACL)-total_energy << std::endl;
   std::cout << "relative error (energy): " << 1.0 - (n_particles * MADELUNG_NACL)/total_energy << std::endl;
-  
+
   //Clean up
   delete mesh;
   delete particles;

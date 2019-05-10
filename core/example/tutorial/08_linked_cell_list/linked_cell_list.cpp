@@ -51,7 +51,8 @@ void linkedCellListExample()
        Create the AoSoA.
     */
     int num_tuple = 54;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+        aosoa( "A", num_tuple );
 
     /*
       Define the parameters of the Cartesian grid over which we will build the
@@ -68,6 +69,7 @@ void linkedCellListExample()
     auto ids = aosoa.slice<1>();
     for ( std::size_t i = 0; i < aosoa.size(); ++i )
         ids(i) = i;
+
     /*
       Create the particle coordinates. We will put 2 particles in the center
       of each cell. We are ordering this such that each consecutive particle

@@ -83,8 +83,8 @@ void testDeepCopy()
 
     // Create AoSoAs.
     int num_data = 357;
-    DstAoSoA_t dst_aosoa( num_data );
-    SrcAoSoA_t src_aosoa( num_data );
+    DstAoSoA_t dst_aosoa( "dst", num_data );
+    SrcAoSoA_t src_aosoa( "src", num_data );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -157,7 +157,7 @@ void testMirror()
 
     // Create an AoSoA in the test memory space.
     int num_data = 423;
-    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( num_data );
+    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( "label", num_data );
 
     // Initialize data.
     float fval = 3.4;
@@ -252,7 +252,7 @@ void testAssign()
 
     // Create an AoSoA in the test memory space.
     int num_data = 423;
-    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( num_data );
+    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( "label", num_data );
 
     // Assign every tuple in the AoSoA to the same value.
     float fval = 3.2;

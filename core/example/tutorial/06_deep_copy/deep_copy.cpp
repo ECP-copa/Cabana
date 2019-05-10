@@ -59,8 +59,10 @@ void deepCopyExample()
        Create the source and destination AoSoAs.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,SrcMemorySpace,SrcVectorLength> src_aosoa( num_tuple );
-    Cabana::AoSoA<DataTypes,DstMemorySpace,DstVectorLength> dst_aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,SrcMemorySpace,SrcVectorLength>
+        src_aosoa( "src", num_tuple );
+    Cabana::AoSoA<DataTypes,DstMemorySpace,DstVectorLength>
+        dst_aosoa( "dst", num_tuple );
 
     /*
       Put some data in the source AoSoA.

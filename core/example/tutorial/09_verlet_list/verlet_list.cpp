@@ -45,7 +45,7 @@ void verletListExample()
        Create the AoSoA.
     */
     int num_tuple = 81;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( "A", num_tuple );
 
     /*
       Define the parameters of the Cartesian grid over which we will build the
@@ -62,6 +62,7 @@ void verletListExample()
     auto ids = aosoa.slice<1>();
     for ( std::size_t i = 0; i < aosoa.size(); ++i )
         ids(i) = i;
+
     /*
       Create the particle coordinates. We will put 3 particles in the center
       of each cell. We will set the Verlet list parameters such that each

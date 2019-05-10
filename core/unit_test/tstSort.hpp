@@ -35,7 +35,7 @@ void testSortByKey()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
     using KeyViewType = Kokkos::View<int*,typename AoSoA_t::memory_space>;
@@ -121,7 +121,7 @@ void testBinByKey()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
     using KeyViewType = Kokkos::View<int*,typename AoSoA_t::memory_space>;
@@ -223,7 +223,7 @@ void testSortBySlice()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
@@ -305,7 +305,7 @@ void testSortBySliceDataOnly()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
@@ -387,7 +387,7 @@ void testBinBySlice()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
@@ -483,7 +483,7 @@ void testBinBySliceDataOnly()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
@@ -580,7 +580,7 @@ void testSortByKeySlice()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
     using KeyViewType = Kokkos::View<int*,typename AoSoA_t::memory_space>;

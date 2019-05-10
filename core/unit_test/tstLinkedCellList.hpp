@@ -26,7 +26,7 @@ void testLinkedList()
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     using size_type = typename AoSoA_t::memory_space::size_type;
     int num_p = 1000;
-    AoSoA_t aosoa( num_p );
+    AoSoA_t aosoa( "aosoa", num_p );
 
     // Set the problem so each particle lives in the center of a cell on a
     // regular grid of cell size 1 and total size 10x10x10. We are making them
@@ -245,7 +245,7 @@ void testLinkedListSlice()
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     using size_type = typename AoSoA_t::memory_space::size_type;
     int num_p = 1000;
-    AoSoA_t aosoa( num_p );
+    AoSoA_t aosoa( "aosoa", num_p );
 
     // Set the problem so each particle lives in the center of a cell on a
     // regular grid of cell size 1 and total size 10x10x10. We are making them
