@@ -69,8 +69,7 @@ slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
         "Slice stride cannot be calculated for misaligned memory!" );
 
     return typename AoSoA_t::template member_slice_type<M>(
-        static_cast<typename AoSoA_t::template member_pointer_type<M> >(
-            AoSoA_t::soa_type::template staticPtr<M>(aosoa.data()) ),
+        Impl::soaMemberPtr<M>(aosoa.data()),
         aosoa.size(), aosoa.numSoA(), slice_label );
 }
 
