@@ -253,18 +253,18 @@ void run()
     }
 
     // Cast particle data to an explicit array-of-struct-of-arrays.
-    auto* pa = (data_t*)(a_.ptr());
-    auto* px = (data_t*)(x_.ptr());
-    auto* pc = (data_t*)(c_.ptr());
-    auto* px1 = (data_t*)(x1_.ptr());
-    auto* px2 = (data_t*)(x2_.ptr());
-    auto* px3 = (data_t*)(x3_.ptr());
-    auto* px4 = (data_t*)(x4_.ptr());
-    auto* px5 = (data_t*)(x5_.ptr());
-    auto* px6 = (data_t*)(x6_.ptr());
-    auto* px7 = (data_t*)(x7_.ptr());
-    auto* px8 = (data_t*)(x8_.ptr());
-    auto* px9 = (data_t*)(x9_.ptr());
+    auto* pa = (data_t*)(a_.data());
+    auto* px = (data_t*)(x_.data());
+    auto* pc = (data_t*)(c_.data());
+    auto* px1 = (data_t*)(x1_.data());
+    auto* px2 = (data_t*)(x2_.data());
+    auto* px3 = (data_t*)(x3_.data());
+    auto* px4 = (data_t*)(x4_.data());
+    auto* px5 = (data_t*)(x5_.data());
+    auto* px6 = (data_t*)(x6_.data());
+    auto* px7 = (data_t*)(x7_.data());
+    auto* px8 = (data_t*)(x8_.data());
+    auto* px9 = (data_t*)(x9_.data());
 
     // Print initial conditions.
     for (int idx = 0; idx < array_size; ++idx)

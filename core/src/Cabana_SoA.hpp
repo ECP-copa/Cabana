@@ -461,7 +461,7 @@ struct SoA<MemberTypes<Types...>,VectorLength>
             Impl::StructMember<M,vector_length,member_data_type<M>>*>(*this);
     }
 
-    // Get a pointer to a given SoA.
+    // Get a pointer to the first element of a member in a given SoA.
     template<std::size_t M>
     static void* staticPtr( SoA* p )
     {

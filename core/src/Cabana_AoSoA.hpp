@@ -445,6 +445,7 @@ class AoSoA
       \brief Get an un-typed raw pointer to the entire data block.
       \return An un-typed raw-pointer to the entire data block.
     */
+    CABANA_DEPRECATED
     void* ptr() const
     { return _data.data(); }
 

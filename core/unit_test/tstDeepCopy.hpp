@@ -230,7 +230,7 @@ void testMirror()
 
             // Check that the same memory space case didn't allocate any
             // memory. They should have the same pointer.
-            EXPECT_EQ( aosoa.ptr(), same_space_mirror.ptr() );
+            EXPECT_EQ( aosoa.data(), same_space_mirror.data() );
 
             // Check values.
             checkDataMembers(

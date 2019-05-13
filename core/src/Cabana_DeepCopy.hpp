@@ -153,8 +153,8 @@ create_mirror_view_and_copy(
 
     Kokkos::Impl::DeepCopy<
         typename Space::memory_space,typename SrcAoSoA::memory_space>(
-            dst.ptr(),
-            src.ptr(),
+            dst.data(),
+            src.data(),
             src.numSoA() * sizeof(typename SrcAoSoA::soa_type) );
 
     return dst;
@@ -203,8 +203,8 @@ inline void deep_copy(
     }
 
     // Get the pointers to the beginning of the data blocks.
-    void* dst_data = dst.ptr();
-    const void* src_data = src.ptr();
+    void* dst_data = dst.data();
+    const void* src_data = src.data();
 
     // Return if both pointers are null.
     if ( dst_data == nullptr && src_data == nullptr )
@@ -327,7 +327,7 @@ inline void deep_copy(
 
     // Get the pointers to the beginning of the data blocks.
     auto dst_data = dst.data();
-    auto src_data = src.data();
+    const auto src_data = src.data();
 
     // Return if both pointers are null.
     if ( dst_data == nullptr && src_data == nullptr )
