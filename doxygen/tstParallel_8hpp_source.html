@@ -120,10 +120,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">auto</span> slice_0 = mirror.template slice&lt;0&gt;();</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">auto</span> slice_1 = mirror.template slice&lt;1&gt;();</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">auto</span> slice_2 = mirror.template slice&lt;2&gt;();</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">auto</span> slice_3 = mirror.template slice&lt;3&gt;();</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">auto</span> slice_0 = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">auto</span> slice_1 = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">auto</span> slice_2 = Cabana::slice&lt;2&gt;(mirror);</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    <span class="keyword">auto</span> slice_3 = Cabana::slice&lt;3&gt;(mirror);</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> idx = begin; idx != end; ++idx )</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    {</div>
@@ -167,10 +167,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;                  <span class="keywordtype">double</span> dval,</div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                  <span class="keywordtype">int</span> ival )</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;        : _aosoa( aosoa )</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        , _slice_0( aosoa.template slice&lt;0&gt;() )</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        , _slice_1( aosoa.template slice&lt;1&gt;() )</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        , _slice_2( aosoa.template slice&lt;2&gt;() )</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        , _slice_3( aosoa.template slice&lt;3&gt;() )</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        , _slice_0( Cabana::slice&lt;0&gt;(aosoa) )</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        , _slice_1( Cabana::slice&lt;1&gt;(aosoa) )</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        , _slice_2( Cabana::slice&lt;2&gt;(aosoa) )</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        , _slice_3( Cabana::slice&lt;3&gt;(aosoa) )</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        , _fval( fval )</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        , _dval( dval )</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        , _ival( ival )</div>
@@ -272,10 +272,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="comment">// Create a functor to operate on.</span></div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;    <span class="keyword">using</span> OpType = <a class="code" href="classTest_1_1AssignmentOp.html">AssignmentOp</a>&lt;AoSoA_t,</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                                decltype(aosoa.slice&lt;0&gt;()),</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                                decltype(aosoa.slice&lt;1&gt;()),</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                                decltype(aosoa.slice&lt;2&gt;()),</div>
-<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                                decltype(aosoa.slice&lt;3&gt;())&gt;;</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;                                <span class="keyword">typename</span> AoSoA_t::member_slice_type&lt;0&gt;,</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;                                <span class="keyword">typename</span> AoSoA_t::member_slice_type&lt;1&gt;,</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;                                <span class="keyword">typename</span> AoSoA_t::member_slice_type&lt;2&gt;,</div>
+<div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;                                <span class="keyword">typename</span> AoSoA_t::member_slice_type&lt;3&gt;&gt;;</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordtype">float</span> fval = 3.4;</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    <span class="keywordtype">double</span> dval = 1.23;</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;    <span class="keywordtype">int</span> ival = 1;</div>
@@ -355,13 +355,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
 <div class="ttc" id="classTest_1_1AssignmentOp_html"><div class="ttname"><a href="classTest_1_1AssignmentOp.html">Test::AssignmentOp</a></div><div class="ttdef"><b>Definition:</b> tstParallel.hpp:73</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:67</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:39</div></div>
 <div class="ttc" id="classTest_1_1HalfValueWorkTag_html"><div class="ttname"><a href="classTest_1_1HalfValueWorkTag.html">Test::HalfValueWorkTag</a></div><div class="ttdef"><b>Definition:</b> tstParallel.hpp:64</div></div>
 <div class="ttc" id="classCabana_1_1SimdPolicy_html"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html">Cabana::SimdPolicy</a></div><div class="ttdoc">Execution policy over a range of 2d indices. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:76</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 13 2019 15:03:44 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 13 2019 17:57:14 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

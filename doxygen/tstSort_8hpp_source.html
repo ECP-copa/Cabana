@@ -132,9 +132,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="comment">// Create the AoSoA data and keys. Create the data in reverse order so we</span></div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="comment">// can see that it is sorted.</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">auto</span> v0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">auto</span> v1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">auto</span> v2 = aosoa.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    <span class="keyword">auto</span> v0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">auto</span> v1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">auto</span> v2 = Cabana::slice&lt;2&gt;(aosoa);</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="stringliteral">&quot;fill&quot;</span>,</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        Kokkos::RangePolicy&lt;TEST_EXECSPACE&gt;(0,aosoa.size()),</div>
@@ -173,9 +173,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    <span class="keyword">auto</span> mirror =</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">auto</span> v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">auto</span> v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">auto</span> v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;    <span class="keyword">auto</span> v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;    <span class="keyword">auto</span> v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    <span class="keyword">auto</span> v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
 <div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;    {</div>
 <div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;        <span class="keywordtype">int</span> reverse_index = aosoa.size() - p - 1;</div>
@@ -218,9 +218,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="comment">// Create the AoSoA data and keys. Create the data in reverse order so we</span></div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="comment">// can see that it is sorted.</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keyword">auto</span> v0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">auto</span> v1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">auto</span> v2 = aosoa.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keyword">auto</span> v0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">auto</span> v1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="keyword">auto</span> v2 = Cabana::slice&lt;2&gt;(aosoa);</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="stringliteral">&quot;fill&quot;</span>,</div>
 <div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        Kokkos::RangePolicy&lt;TEST_EXECSPACE&gt;(0,aosoa.size()),</div>
@@ -272,9 +272,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keyword">auto</span> mirror =</div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keyword">auto</span> v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keyword">auto</span> v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keyword">auto</span> v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;    <span class="keyword">auto</span> v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;    <span class="keyword">auto</span> v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;    <span class="keyword">auto</span> v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    EXPECT_EQ( bin_data.numBin(), num_data );</div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    {</div>
@@ -316,9 +316,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;    <span class="comment">// Create the AoSoA data. Create the data in reverse order so we can see</span></div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;    <span class="comment">// that it is sorted.</span></div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keyword">auto</span> v0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keyword">auto</span> v1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keyword">auto</span> v2 = aosoa.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;    <span class="keyword">auto</span> v0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;    <span class="keyword">auto</span> v1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="keyword">auto</span> v2 = Cabana::slice&lt;2&gt;(aosoa);</div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        <span class="stringliteral">&quot;fill&quot;</span>,</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160;        Kokkos::RangePolicy&lt;TEST_EXECSPACE&gt;(0,aosoa.size()),</div>
@@ -337,7 +337,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;    Kokkos::fence();</div>
 <div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;    <span class="comment">// Sort the aosoa by the 1D member.</span></div>
-<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="keyword">auto</span> binning_data = Cabana::sortByKey( aosoa.slice&lt;1&gt;() );</div>
+<div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;    <span class="keyword">auto</span> binning_data = Cabana::sortByKey( Cabana::slice&lt;1&gt;(aosoa) );</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    Cabana::permute( binning_data, aosoa );</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    <span class="comment">// Copy the bin data so we can check it.</span></div>
@@ -357,9 +357,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keyword">auto</span> mirror =</div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keyword">auto</span> v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keyword">auto</span> v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keyword">auto</span> v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keyword">auto</span> v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keyword">auto</span> v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keyword">auto</span> v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    {</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;        <span class="keywordtype">int</span> reverse_index = aosoa.size() - p - 1;</div>
@@ -398,9 +398,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="comment">// Create the AoSoA data. Create the data in reverse order so we can see</span></div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;    <span class="comment">// that it is sorted.</span></div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="keyword">auto</span> v0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    <span class="keyword">auto</span> v1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keyword">auto</span> v2 = aosoa.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    <span class="keyword">auto</span> v0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    <span class="keyword">auto</span> v1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;    <span class="keyword">auto</span> v2 = Cabana::slice&lt;2&gt;(aosoa);</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        <span class="stringliteral">&quot;fill&quot;</span>,</div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        Kokkos::RangePolicy&lt;TEST_EXECSPACE&gt;(0,aosoa.size()),</div>
@@ -419,7 +419,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    Kokkos::fence();</div>
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="comment">// Sort the aosoa by the 1D member.</span></div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    <span class="keyword">auto</span> binning_data = Cabana::sortByKey( aosoa.slice&lt;1&gt;() );</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    <span class="keyword">auto</span> binning_data = Cabana::sortByKey( Cabana::slice&lt;1&gt;(aosoa) );</div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="comment">// Copy the bin data so we can check it.</span></div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    Kokkos::View&lt;std::size_t*,TEST_MEMSPACE&gt;</div>
@@ -439,9 +439,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="keyword">auto</span> mirror =</div>
 <div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keyword">auto</span> v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="keyword">auto</span> v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keyword">auto</span> v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keyword">auto</span> v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="keyword">auto</span> v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keyword">auto</span> v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;    {</div>
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        <span class="keywordtype">int</span> reverse_index = aosoa.size() - p - 1;</div>
@@ -480,9 +480,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;</div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="comment">// Create the AoSoA data. Create the data in reverse order so we can see</span></div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="comment">// that it is sorted.</span></div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="keyword">auto</span> v0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    <span class="keyword">auto</span> v1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <span class="keyword">auto</span> v2 = aosoa.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="keyword">auto</span> v0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;    <span class="keyword">auto</span> v1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;    <span class="keyword">auto</span> v2 = Cabana::slice&lt;2&gt;(aosoa);</div>
 <div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;        <span class="stringliteral">&quot;fill&quot;</span>,</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;        Kokkos::RangePolicy&lt;TEST_EXECSPACE&gt;(0,aosoa.size()),</div>
@@ -502,7 +502,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;</div>
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    <span class="comment">// Bin the aosoa by the 1D member. Use one bin per data point to</span></div>
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    <span class="comment">// effectively make this a sort.</span></div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="keyword">auto</span> bin_data = Cabana::binByKey( aosoa.slice&lt;1&gt;(), num_data-1 );</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="keyword">auto</span> bin_data = Cabana::binByKey( Cabana::slice&lt;1&gt;(aosoa), num_data-1 );</div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    Cabana::permute( bin_data, aosoa );</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    <span class="comment">// Copy the bin data so we can check it.</span></div>
@@ -532,9 +532,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;    <span class="keyword">auto</span> mirror =</div>
 <div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    <span class="keyword">auto</span> v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    <span class="keyword">auto</span> v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    <span class="keyword">auto</span> v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    <span class="keyword">auto</span> v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    <span class="keyword">auto</span> v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    <span class="keyword">auto</span> v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;    EXPECT_EQ( bin_data.numBin(), num_data );</div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
 <div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    {</div>
@@ -576,9 +576,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;</div>
 <div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;    <span class="comment">// Create the AoSoA data. Create the data in reverse order so we can see</span></div>
 <div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    <span class="comment">// that it is sorted.</span></div>
-<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    <span class="keyword">auto</span> v0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    <span class="keyword">auto</span> v1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    <span class="keyword">auto</span> v2 = aosoa.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;    <span class="keyword">auto</span> v0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    <span class="keyword">auto</span> v1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    <span class="keyword">auto</span> v2 = Cabana::slice&lt;2&gt;(aosoa);</div>
 <div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;        <span class="stringliteral">&quot;fill&quot;</span>,</div>
 <div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;        Kokkos::RangePolicy&lt;TEST_EXECSPACE&gt;(0,aosoa.size()),</div>
@@ -599,7 +599,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    <span class="comment">// Bin the aosoa by the 1D member. Use one bin per data point to</span></div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;    <span class="comment">// effectively make this a sort. Don&#39;t actually move the particle data</span></div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    <span class="comment">// though - just create the binning data.</span></div>
-<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keyword">auto</span> bin_data = Cabana::binByKey( aosoa.slice&lt;1&gt;(), num_data-1 );</div>
+<div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keyword">auto</span> bin_data = Cabana::binByKey( Cabana::slice&lt;1&gt;(aosoa), num_data-1 );</div>
 <div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;</div>
 <div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;    <span class="comment">// Copy the bin data so we can check it.</span></div>
 <div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;    Kokkos::View&lt;std::size_t*,TEST_MEMSPACE&gt;</div>
@@ -629,9 +629,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    <span class="keyword">auto</span> mirror =</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;    <span class="keyword">auto</span> v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    <span class="keyword">auto</span> v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;    <span class="keyword">auto</span> v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;    <span class="keyword">auto</span> v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;    <span class="keyword">auto</span> v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;    <span class="keyword">auto</span> v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    EXPECT_EQ( bin_data.numBin(), num_data );</div>
 <div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
 <div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    {</div>
@@ -677,9 +677,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;</div>
 <div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;    <span class="comment">// Create the AoSoA data and keys. Create the data in reverse order so we</span></div>
 <div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;    <span class="comment">// can see that it is sorted.</span></div>
-<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;    <span class="keyword">auto</span> v0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;    <span class="keyword">auto</span> v1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;    <span class="keyword">auto</span> v2 = aosoa.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;    <span class="keyword">auto</span> v0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;    <span class="keyword">auto</span> v1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;    <span class="keyword">auto</span> v2 = Cabana::slice&lt;2&gt;(aosoa);</div>
 <div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        <span class="stringliteral">&quot;fill&quot;</span>,</div>
 <div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;        Kokkos::RangePolicy&lt;TEST_EXECSPACE&gt;(0,aosoa.size()),</div>
@@ -718,9 +718,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;    <span class="keyword">auto</span> mirror =</div>
 <div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;    <span class="keyword">auto</span> v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;    <span class="keyword">auto</span> v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;    <span class="keyword">auto</span> v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;    <span class="keyword">auto</span> v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;    <span class="keyword">auto</span> v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;    <span class="keyword">auto</span> v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;</div>
 <div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;    <span class="comment">// Check the result of the slice 1 sort.</span></div>
 <div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
@@ -762,9 +762,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;    mirror =</div>
 <div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;    v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;    v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;    v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;    v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;    v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;</div>
 <div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;    <span class="comment">// Check the result of the slice 2 sort (slice 1 already done).</span></div>
 <div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
@@ -806,9 +806,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00717"></a><span class="lineno">  717</span>&#160;    mirror =</div>
 <div class="line"><a name="l00718"></a><span class="lineno">  718</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    v0_mirror = mirror.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    v1_mirror = mirror.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    v2_mirror = mirror.slice&lt;2&gt;();</div>
+<div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    v0_mirror = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;    v1_mirror = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;    v2_mirror = Cabana::slice&lt;2&gt;(mirror);</div>
 <div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;</div>
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;    <span class="comment">// Check the result of the slice 3 sort (slices 1-2 already done).</span></div>
 <div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160;    <span class="keywordflow">for</span> ( std::size_t p = 0; p &lt; aosoa.size(); ++p )</div>
@@ -877,11 +877,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00788"></a><span class="lineno">  788</span>&#160;</div>
 <div class="line"><a name="l00789"></a><span class="lineno">  789</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:67</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:39</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 13 2019 15:03:44 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 13 2019 17:57:14 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -253,7 +253,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a>;</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    AoSoA_t aosoa( <span class="stringliteral">&quot;aosoa&quot;</span>, num_particle );</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keyword">auto</span> position = aosoa.slice&lt;0&gt;();</div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keyword">auto</span> position = Cabana::slice&lt;0&gt;(aosoa);</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keyword">using</span> PoolType = Kokkos::Random_XorShift64_Pool&lt;TEST_EXECSPACE&gt;;</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keyword">using</span> RandomType = Kokkos::Random_XorShift64&lt;TEST_EXECSPACE&gt;;</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    PoolType pool( 342343901 );</div>
@@ -509,11 +509,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    <span class="keywordtype">double</span> grid_min[3] = { box_min, box_min, box_min };</div>
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    <span class="keywordtype">double</span> grid_max[3] = { box_max, box_max, box_max };</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;    <a class="code" href="classCabana_1_1VerletList.html">Cabana::VerletList&lt;TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag&gt;</a></div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        nlist( aosoa.slice&lt;0&gt;(), 0, aosoa.size(),</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;        nlist( Cabana::slice&lt;0&gt;(aosoa), 0, aosoa.size(),</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;               test_radius, cell_size_ratio, grid_min, grid_max );</div>
 <div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;</div>
 <div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;    <span class="comment">// Check the neighbor list.</span></div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    <span class="keyword">auto</span> position = aosoa.slice&lt;0&gt;();</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    <span class="keyword">auto</span> position = Cabana::slice&lt;0&gt;(aosoa);</div>
 <div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    checkFullNeighborList( nlist, position, test_radius );</div>
 <div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;}</div>
 <div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;</div>
@@ -533,11 +533,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;    <span class="keywordtype">double</span> grid_min[3] = { box_min, box_min, box_min };</div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;    <span class="keywordtype">double</span> grid_max[3] = { box_max, box_max, box_max };</div>
 <div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    <a class="code" href="classCabana_1_1VerletList.html">Cabana::VerletList&lt;TEST_MEMSPACE,Cabana::HalfNeighborTag,LayoutTag&gt;</a></div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        nlist( aosoa.slice&lt;0&gt;(), 0, aosoa.size(),</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;        nlist( Cabana::slice&lt;0&gt;(aosoa), 0, aosoa.size(),</div>
 <div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;               test_radius, cell_size_ratio, grid_min, grid_max );</div>
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;</div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    <span class="comment">// Check the neighbor list.</span></div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    <span class="keyword">auto</span> position = aosoa.slice&lt;0&gt;();</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;    <span class="keyword">auto</span> position = Cabana::slice&lt;0&gt;(aosoa);</div>
 <div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;    checkHalfNeighborList( nlist, position, test_radius );</div>
 <div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;}</div>
 <div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;</div>
@@ -557,7 +557,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    <span class="keyword">using</span> ListType = <a class="code" href="classCabana_1_1VerletList.html">Cabana::VerletList&lt;TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag&gt;</a>;</div>
 <div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    <span class="keywordtype">double</span> grid_min[3] = { box_min, box_min, box_min };</div>
 <div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    <span class="keywordtype">double</span> grid_max[3] = { box_max, box_max, box_max };</div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    ListType nlist( aosoa.slice&lt;0&gt;(), 0, aosoa.size(),</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    ListType nlist( Cabana::slice&lt;0&gt;(aosoa), 0, aosoa.size(),</div>
 <div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;                    test_radius, cell_size_ratio, grid_min, grid_max );</div>
 <div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;</div>
 <div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;    <span class="comment">// Create Kokkos views for the write operation.</span></div>
@@ -580,7 +580,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;    Kokkos::fence();</div>
 <div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;</div>
 <div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;    <span class="comment">// Get the expected result in serial</span></div>
-<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    <span class="keyword">auto</span> test_list = computeFullNeighborList( aosoa.slice&lt;0&gt;(), test_radius );</div>
+<div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;    <span class="keyword">auto</span> test_list = computeFullNeighborList( Cabana::slice&lt;0&gt;(aosoa), test_radius );</div>
 <div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;    <span class="keyword">auto</span> test_list_copy = createTestListHostCopy( test_list );</div>
 <div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> p = 0; p &lt; num_particle; ++p )</div>
 <div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; test_list_copy.counts(p); ++n )</div>
@@ -615,11 +615,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;    <span class="keywordtype">double</span> grid_min[3] = { box_min, box_min, box_min };</div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;    <span class="keywordtype">double</span> grid_max[3] = { box_max, box_max, box_max };</div>
 <div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;    <a class="code" href="classCabana_1_1VerletList.html">Cabana::VerletList&lt;TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag&gt;</a></div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        nlist( aosoa.slice&lt;0&gt;(), 0, num_ignore,</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        nlist( Cabana::slice&lt;0&gt;(aosoa), 0, num_ignore,</div>
 <div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;               test_radius, cell_size_ratio, grid_min, grid_max );</div>
 <div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;</div>
 <div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;    <span class="comment">// Check the neighbor list.</span></div>
-<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;    <span class="keyword">auto</span> position = aosoa.slice&lt;0&gt;();</div>
+<div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;    <span class="keyword">auto</span> position = Cabana::slice&lt;0&gt;(aosoa);</div>
 <div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    checkFullNeighborListPartialRange( nlist, position, test_radius, num_ignore);</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;}</div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;</div>
@@ -665,7 +665,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
 <div class="ttc" id="classCabana_1_1VerletList_html"><div class="ttname"><a href="classCabana_1_1VerletList.html">Cabana::VerletList</a></div><div class="ttdoc">Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...</div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:522</div></div>
 <div class="ttc" id="classCabana_1_1TeamNeighborOpTag_html"><div class="ttname"><a href="classCabana_1_1TeamNeighborOpTag.html">Cabana::TeamNeighborOpTag</a></div><div class="ttdef"><b>Definition:</b> Cabana_Parallel.hpp:135</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:67</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:39</div></div>
 <div class="ttc" id="classCabana_1_1NeighborList_html"><div class="ttname"><a href="classCabana_1_1NeighborList.html">Cabana::NeighborList</a></div><div class="ttdoc">Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...</div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:52</div></div>
 <div class="ttc" id="classCabana_1_1SerialNeighborOpTag_html"><div class="ttname"><a href="classCabana_1_1SerialNeighborOpTag.html">Cabana::SerialNeighborOpTag</a></div><div class="ttdoc">Neighbor operations are executed in serial on each particle thread. </div><div class="ttdef"><b>Definition:</b> Cabana_Parallel.hpp:131</div></div>
 <div class="ttc" id="structTest_1_1TestNeighborList_html"><div class="ttname"><a href="structTest_1_1TestNeighborList.html">Test::TestNeighborList</a></div><div class="ttdef"><b>Definition:</b> tstNeighborList.hpp:110</div></div>
@@ -673,7 +673,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 13 2019 15:03:44 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 13 2019 17:57:14 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

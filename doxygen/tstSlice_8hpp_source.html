@@ -115,10 +115,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">float</span> fval, <span class="keyword">const</span> <span class="keywordtype">double</span> dval, <span class="keyword">const</span> <span class="keywordtype">int</span> ival,</div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">int</span> dim_1, <span class="keyword">const</span> <span class="keywordtype">int</span> dim_2, <span class="keyword">const</span> <span class="keywordtype">int</span> dim_3 )</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">auto</span> slice_0 = aosoa.template slice&lt;0&gt;();</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">auto</span> slice_1 = aosoa.template slice&lt;1&gt;();</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">auto</span> slice_2 = aosoa.template slice&lt;2&gt;();</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">auto</span> slice_3 = aosoa.template slice&lt;3&gt;();</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;    <span class="keyword">auto</span> slice_0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">auto</span> slice_1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;    <span class="keyword">auto</span> slice_2 = Cabana::slice&lt;2&gt;(aosoa);</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    <span class="keyword">auto</span> slice_3 = Cabana::slice&lt;3&gt;(aosoa);</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;        <span class="stringliteral">&quot;init_members&quot;</span>,</div>
@@ -156,10 +156,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
 <div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keyword">auto</span> slice_0 = mirror.template slice&lt;0&gt;();</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">auto</span> slice_1 = mirror.template slice&lt;1&gt;();</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">auto</span> slice_2 = mirror.template slice&lt;2&gt;();</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">auto</span> slice_3 = mirror.template slice&lt;3&gt;();</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    <span class="keyword">auto</span> slice_0 = Cabana::slice&lt;0&gt;(mirror);</div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">auto</span> slice_1 = Cabana::slice&lt;1&gt;(mirror);</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;    <span class="keyword">auto</span> slice_2 = Cabana::slice&lt;2&gt;(mirror);</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="keyword">auto</span> slice_3 = Cabana::slice&lt;3&gt;(mirror);</div>
 <div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    <span class="keywordflow">for</span> ( std::size_t idx = 0; idx != aosoa.size(); ++idx )</div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    {</div>
@@ -210,10 +210,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    AoSoA_t aosoa( <span class="stringliteral">&quot;aosoa&quot;</span>, num_data );</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    <span class="comment">// Create some slices.</span></div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keyword">auto</span> slice_0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">auto</span> slice_1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keyword">auto</span> slice_2 = aosoa.slice&lt;2&gt;();</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">auto</span> slice_3 = aosoa.slice&lt;3&gt;();</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keyword">auto</span> slice_0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">auto</span> slice_1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    <span class="keyword">auto</span> slice_2 = Cabana::slice&lt;2&gt;(aosoa);</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="keyword">auto</span> slice_3 = Cabana::slice&lt;3&gt;(aosoa);</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="comment">// Check that they are slices.</span></div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    EXPECT_TRUE( <a class="code" href="structCabana_1_1is__slice.html">Cabana::is_slice</a>&lt;decltype(slice_0)&gt;::value );</div>
@@ -347,10 +347,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    initializeDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="comment">// Create slices.</span></div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keyword">auto</span> da_slice_0 = aosoa.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keyword">auto</span> da_slice_1 = aosoa.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keyword">auto</span> da_slice_2 = aosoa.slice&lt;2&gt;();</div>
-<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keyword">auto</span> da_slice_3 = aosoa.slice&lt;3&gt;();</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keyword">auto</span> da_slice_0 = Cabana::slice&lt;0&gt;(aosoa);</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;    <span class="keyword">auto</span> da_slice_1 = Cabana::slice&lt;1&gt;(aosoa);</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;    <span class="keyword">auto</span> da_slice_2 = Cabana::slice&lt;2&gt;(aosoa);</div>
+<div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;    <span class="keyword">auto</span> da_slice_3 = Cabana::slice&lt;3&gt;(aosoa);</div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;    <span class="comment">// Create read-only random access slices.</span></div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    decltype(da_slice_0)::random_access_slice ra_slice_0 = da_slice_0;</div>
@@ -362,10 +362,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    AoSoA_t aosoa_2( <span class="stringliteral">&quot;aosoa_2&quot;</span>, num_data );</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;    <span class="comment">// Get normal slices of the data.</span></div>
-<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keyword">auto</span> slice_0 = aosoa_2.slice&lt;0&gt;();</div>
-<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keyword">auto</span> slice_1 = aosoa_2.slice&lt;1&gt;();</div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="keyword">auto</span> slice_2 = aosoa_2.slice&lt;2&gt;();</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keyword">auto</span> slice_3 = aosoa_2.slice&lt;3&gt;();</div>
+<div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    <span class="keyword">auto</span> slice_0 = Cabana::slice&lt;0&gt;(aosoa_2);</div>
+<div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    <span class="keyword">auto</span> slice_1 = Cabana::slice&lt;1&gt;(aosoa_2);</div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    <span class="keyword">auto</span> slice_2 = Cabana::slice&lt;2&gt;(aosoa_2);</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;    <span class="keyword">auto</span> slice_3 = Cabana::slice&lt;3&gt;(aosoa_2);</div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;    <span class="comment">// Assign the read-only data to the new aosoa.</span></div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;    Kokkos::parallel_for(</div>
@@ -411,7 +411,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    AoSoA_t aosoa( <span class="stringliteral">&quot;aosoa&quot;</span>, num_data );</div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;    <span class="comment">// Get a slice of the data.</span></div>
-<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keyword">auto</span> slice = aosoa.slice&lt;0&gt;();</div>
+<div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;    <span class="keyword">auto</span> slice = Cabana::slice&lt;0&gt;(aosoa);</div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="comment">// Set to 0.</span></div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    Kokkos::parallel_for(</div>
@@ -437,7 +437,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="keyword">auto</span> mirror =</div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;        Cabana::Experimental::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            Kokkos::HostSpace(), aosoa );</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keyword">auto</span> mirror_slice = mirror.template slice&lt;0&gt;();</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keyword">auto</span> mirror_slice = Cabana::slice&lt;0&gt;(mirror);</div>
 <div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;</div>
 <div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; num_data; ++i ) EXPECT_EQ( mirror_slice(i), num_data );</div>
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;}</div>
@@ -466,12 +466,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;</div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:67</div></div>
+<div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:39</div></div>
 <div class="ttc" id="structCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:795</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 13 2019 15:03:44 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 13 2019 17:57:14 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

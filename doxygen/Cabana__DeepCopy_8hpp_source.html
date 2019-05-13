@@ -205,8 +205,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    Kokkos::Impl::DeepCopy&lt;</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        <span class="keyword">typename</span> Space::memory_space,<span class="keyword">typename</span> SrcAoSoA::memory_space&gt;(</div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            dst.ptr(),</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;            src.ptr(),</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;            dst.data(),</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;            src.data(),</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            src.numSoA() * <span class="keyword">sizeof</span>(<span class="keyword">typename</span> SrcAoSoA::soa_type) );</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keywordflow">return</span> dst;</div>
@@ -245,8 +245,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00203"></a><span class="lineno">  203</span>&#160;    }</div>
 <div class="line"><a name="l00204"></a><span class="lineno">  204</span>&#160;</div>
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;    <span class="comment">// Get the pointers to the beginning of the data blocks.</span></div>
-<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordtype">void</span>* dst_data = dst.ptr();</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">void</span>* src_data = src.ptr();</div>
+<div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;    <span class="keywordtype">void</span>* dst_data = dst.data();</div>
+<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">void</span>* src_data = src.data();</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;    <span class="comment">// Return if both pointers are null.</span></div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordflow">if</span> ( dst_data == <span class="keyword">nullptr</span> &amp;&amp; src_data == <span class="keyword">nullptr</span> )</div>
@@ -351,7 +351,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;</div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="comment">// Get the pointers to the beginning of the data blocks.</span></div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keyword">auto</span> dst_data = dst.data();</div>
-<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keyword">auto</span> src_data = src.data();</div>
+<div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keyword">const</span> <span class="keyword">auto</span> src_data = src.data();</div>
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    <span class="comment">// Return if both pointers are null.</span></div>
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    <span class="keywordflow">if</span> ( dst_data == <span class="keyword">nullptr</span> &amp;&amp; src_data == <span class="keyword">nullptr</span> )</div>
@@ -437,7 +437,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Mon May 13 2019 15:03:44 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Mon May 13 2019 17:57:13 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

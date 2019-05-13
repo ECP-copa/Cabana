@@ -36,6 +36,12 @@ var searchData=
   ['is_5fslice',['is_slice',['../structCabana_1_1is__slice.html',1,'Cabana']]],
   ['is_5fslice_3c_20const_20slice_3c_20datatype_2c_20memoryspace_2c_20memoryaccesstype_2c_20vectorlength_2c_20stride_20_3e_20_3e',['is_slice&lt; const Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt; &gt;',['../structCabana_1_1is__slice_3_01const_01Slice_3_01DataType_00_01MemorySpace_00_01MemoryAccessType_0b83e5b1c4713bf8c3ff837be521cda5.html',1,'Cabana']]],
   ['is_5fslice_3c_20slice_3c_20datatype_2c_20memoryspace_2c_20memoryaccesstype_2c_20vectorlength_2c_20stride_20_3e_20_3e',['is_slice&lt; Slice&lt; DataType, MemorySpace, MemoryAccessType, VectorLength, Stride &gt; &gt;',['../structCabana_1_1is__slice_3_01Slice_3_01DataType_00_01MemorySpace_00_01MemoryAccessType_00_01VectorLength_00_01Stride_01_4_01_4.html',1,'Cabana']]],
+  ['is_5fsoa',['is_soa',['../structCabana_1_1is__soa.html',1,'Cabana']]],
+  ['is_5fsoa_3c_20const_20soa_3c_20datatypes_2c_20vectorlength_20_3e_20_3e',['is_soa&lt; const SoA&lt; DataTypes, VectorLength &gt; &gt;',['../structCabana_1_1is__soa_3_01const_01SoA_3_01DataTypes_00_01VectorLength_01_4_01_4.html',1,'Cabana']]],
+  ['is_5fsoa_3c_20soa_3c_20datatypes_2c_20vectorlength_20_3e_20_3e',['is_soa&lt; SoA&lt; DataTypes, VectorLength &gt; &gt;',['../structCabana_1_1is__soa_3_01SoA_3_01DataTypes_00_01VectorLength_01_4_01_4.html',1,'Cabana']]],
+  ['is_5ftuple',['is_tuple',['../structCabana_1_1is__tuple.html',1,'Cabana']]],
+  ['is_5ftuple_3c_20const_20tuple_3c_20datatypes_20_3e_20_3e',['is_tuple&lt; const Tuple&lt; DataTypes &gt; &gt;',['../structCabana_1_1is__tuple_3_01const_01Tuple_3_01DataTypes_01_4_01_4.html',1,'Cabana']]],
+  ['is_5ftuple_3c_20tuple_3c_20datatypes_20_3e_20_3e',['is_tuple&lt; Tuple&lt; DataTypes &gt; &gt;',['../structCabana_1_1is__tuple_3_01Tuple_3_01DataTypes_01_4_01_4.html',1,'Cabana']]],
   ['ispoweroftwo',['IsPowerOfTwo',['../structCabana_1_1Impl_1_1IsPowerOfTwo.html',1,'Cabana::Impl']]],
   ['isvectorlengthvalid',['IsVectorLengthValid',['../structCabana_1_1Impl_1_1IsVectorLengthValid.html',1,'Cabana::Impl']]]
 ];
