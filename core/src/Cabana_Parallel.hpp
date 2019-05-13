@@ -27,23 +27,23 @@ namespace Impl
 {
 
 // No work tag was provided so call without a tag argument.
-template<class WorkTag, class FunctorType>
+template<class WorkTag, class FunctorType, class IndexType>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<std::is_same<WorkTag,void>::value>::type
 functorTagDispatch( const FunctorType& functor,
-                    const std::size_t s,
-                    const int a )
+                    const IndexType s,
+                    const IndexType a )
 {
     functor(s,a);
 }
 
 // The user gave us a tag so call the version using that.
-template<class WorkTag, class FunctorType>
+template<class WorkTag, class FunctorType, class IndexType>
 KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<!std::is_same<WorkTag,void>::value>::type
 functorTagDispatch( const FunctorType& functor,
-                    const std::size_t s,
-                    const int a )
+                    const IndexType s,
+                    const IndexType a )
 {
     const WorkTag t{};
     functor(t,s,a);
@@ -100,23 +100,25 @@ inline void simd_parallel_for(
     const FunctorType& functor,
     const std::string& str = "" )
 {
-    using work_tag =
-        typename SimdPolicy<VectorLength,ExecParameters...>::work_tag;
+    using simd_policy = SimdPolicy<VectorLength,ExecParameters...>;
 
-    using team_policy =
-        typename SimdPolicy<VectorLength,ExecParameters...>::base_type;
+    using work_tag = typename simd_policy::work_tag;
 
-   Kokkos::parallel_for(
+    using team_policy = typename simd_policy::base_type;
+
+    using index_type = typename team_policy::index_type;
+
+    Kokkos::parallel_for(
         str,
         dynamic_cast<const team_policy&>(exec_policy),
         KOKKOS_LAMBDA( const typename team_policy::member_type& team )
         {
-            auto s = team.league_rank() + exec_policy.structBegin();
+            index_type s = team.league_rank() + exec_policy.structBegin();
             Kokkos::parallel_for(
                 Kokkos::ThreadVectorRange( team,
                                            exec_policy.arrayBegin(s),
                                            exec_policy.arrayEnd(s)),
-                [&]( const int a )
+                [&]( const index_type a )
                 { Impl::functorTagDispatch<work_tag>(functor,s,a);});
         });
 }
@@ -189,17 +191,21 @@ inline void neighbor_parallel_for(
     using work_tag =
         typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
+    using index_type =
+        typename Kokkos::RangePolicy<ExecParameters...>::index_type;
+
     Kokkos::parallel_for(
         exec_policy,
-        KOKKOS_LAMBDA( const int i )
+        KOKKOS_LAMBDA( const index_type i )
         {
-            for ( int n = 0;
+            for ( index_type n = 0;
                   n < NeighborList<NeighborListType>::numNeighbor(list,i);
                   ++n )
                 Impl::functorTagDispatch<work_tag>(
                     functor,
                     i,
-                    NeighborList<NeighborListType>::getNeighbor(list,i,n) );
+                    (index_type) NeighborList<NeighborListType>::getNeighbor(
+                        list,i,n) );
         },
         str );
 }
@@ -268,19 +274,22 @@ inline void neighbor_parallel_for(
     kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
                                Kokkos::AUTO );
 
+    using index_type = typename kokkos_policy::index_type;
+
     Kokkos::parallel_for(
         team_policy,
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
         {
-            auto i = team.league_rank() + exec_policy.begin();
+            index_type i = team.league_rank() + exec_policy.begin();
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange(
                     team,NeighborList<NeighborListType>::numNeighbor(list,i)),
-                [&]( const int n ) {
+                [&]( const index_type n ) {
                 Impl::functorTagDispatch<work_tag>(
                     functor,
                     i,
-                    NeighborList<NeighborListType>::getNeighbor(list,i,n) );
+                    (index_type) NeighborList<NeighborListType>::getNeighbor(
+                        list,i,n) );
                 });
         },
         str );

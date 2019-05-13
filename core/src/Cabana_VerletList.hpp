@@ -620,8 +620,8 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayoutCSR> >
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static int numNeighbor( const list_type& list,
-                            const std::size_t particle_index )
+    static std::size_t numNeighbor( const list_type& list,
+                                    const std::size_t particle_index )
     {
         return list._data.counts( particle_index );
     }
@@ -629,9 +629,9 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayoutCSR> >
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static int getNeighbor( const list_type& list,
-                            const std::size_t particle_index,
-                            const int neighbor_index )
+    static std::size_t getNeighbor( const list_type& list,
+                                    const std::size_t particle_index,
+                                    const std::size_t neighbor_index )
     {
         return list._data.neighbors(
             list._data.offsets(particle_index) + neighbor_index );
@@ -651,8 +651,8 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayout2D> >
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static int numNeighbor( const list_type& list,
-                            const std::size_t particle_index )
+    static std::size_t numNeighbor( const list_type& list,
+                                    const std::size_t particle_index )
     {
         return list._data.counts( particle_index );
     }
@@ -660,9 +660,9 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayout2D> >
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static int getNeighbor( const list_type& list,
-                            const std::size_t particle_index,
-                            const int neighbor_index )
+    static std::size_t getNeighbor( const list_type& list,
+                                    const std::size_t particle_index,
+                                    const std::size_t neighbor_index )
     {
         return list._data.neighbors( particle_index, neighbor_index );
     }
