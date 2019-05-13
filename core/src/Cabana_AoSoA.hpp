@@ -31,6 +31,50 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
+// AoSoA forward declaration.
+template<class DataTypes,
+         class MemorySpace,
+         int VectorLength,
+         class MemoryTraits>
+class AoSoA;
+
+//---------------------------------------------------------------------------//
+// Static type checker.
+template<class >
+struct is_aosoa : public std::false_type {};
+
+template<class DataTypes,
+         class MemorySpace,
+         int VectorLength,
+         class MemoryTraits>
+struct is_aosoa<AoSoA<DataTypes,MemorySpace,VectorLength,MemoryTraits> >
+    : public std::true_type {};
+
+template<class DataTypes,
+         class MemorySpace,
+         int VectorLength,
+         class MemoryTraits>
+struct is_aosoa<const AoSoA<DataTypes,MemorySpace,VectorLength,MemoryTraits> >
+    : public std::true_type {};
+
+//---------------------------------------------------------------------------//
+// Slice template helper.
+template<std::size_t M, class AoSoA_t>
+typename AoSoA_t::template member_slice_type<M>
+slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
+{
+    static_assert(
+        0 == sizeof(typename AoSoA_t::soa_type) %
+        sizeof(typename AoSoA_t::template member_value_type<M>),
+        "Slice stride cannot be calculated for misaligned memory!" );
+
+    return typename AoSoA_t::template member_slice_type<M>(
+        static_cast<typename AoSoA_t::template member_pointer_type<M> >(
+            AoSoA_t::soa_type::template staticPtr<M>(aosoa.data()) ),
+        aosoa.size(), aosoa.numSoA(), slice_label );
+}
+
+//---------------------------------------------------------------------------//
 /*!
   \class AoSoA
 
@@ -56,8 +100,8 @@ namespace Cabana
   the AoSoA. If not specified, this defaults to the preferred layout for the
   <tt>MemorySpace</tt>.
 
-  \tparam MemoryTraits Memory traits for the AoSoA data. Can be used to
-  indicate managed memory, unmanaged memory, etc.
+  \tparam MemoryTraits (optional) Memory traits for the AoSoA data. Can be
+  used to indicate managed memory, unmanaged memory, etc.
  */
 template<class DataTypes,
          class MemorySpace,
@@ -161,8 +205,9 @@ class AoSoA
         , _capacity( 0 )
         , _num_soa( 0 )
     {
-        static_assert( !memory_traits::Unmanaged,
-                       "Construction by allocation cannot use unmanaged memory" );
+        static_assert(
+            !memory_traits::Unmanaged,
+            "Construction by allocation cannot use unmanaged memory" );
         resize( _size );
     }
 
@@ -389,24 +434,26 @@ class AoSoA
       \param slice_label An optional label to assign to the slice.
       \return The member slice.
     */
+    CABANA_DEPRECATED
     template<std::size_t M>
     member_slice_type<M> slice( const std::string& slice_label = "" ) const
     {
-        static_assert(
-            0 == sizeof(soa_type) % sizeof(member_value_type<M>),
-            "Slice stride cannot be calculated for misaligned memory!" );
-
-        return member_slice_type<M>(
-            static_cast<member_pointer_type<M> >(
-                soa_type::template staticPtr<M>(_data.data()) ),
-            _size, _num_soa, slice_label );
+        return Cabana::slice<M>( *this, slice_label );
     }
 
     /*!
       \brief Get an un-typed raw pointer to the entire data block.
       \return An un-typed raw-pointer to the entire data block.
     */
+    CABANA_DEPRECATED
     void* ptr() const
+    { return _data.data(); }
+
+    /*!
+      \brief Get a typed raw pointer to the entire data block.
+      \return A typed raw-pointer to the entire data block.
+    */
+    soa_type* data() const
     { return _data.data(); }
 
   private:
@@ -426,25 +473,6 @@ class AoSoA
     // counted copy of the data.
     soa_view _data;
 };
-
-//---------------------------------------------------------------------------//
-// Static type checker.
-template<class >
-struct is_aosoa : public std::false_type {};
-
-template<class DataTypes,
-         class MemorySpace,
-         int VectorLength,
-         class MemoryTraits>
-struct is_aosoa<AoSoA<DataTypes,MemorySpace,VectorLength,MemoryTraits> >
-    : public std::true_type {};
-
-template<class DataTypes,
-         class MemorySpace,
-         int VectorLength,
-         class MemoryTraits>
-struct is_aosoa<const AoSoA<DataTypes,MemorySpace,VectorLength,MemoryTraits> >
-    : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 

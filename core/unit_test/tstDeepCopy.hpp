@@ -30,10 +30,10 @@ void checkDataMembers(
         Cabana::Experimental::create_mirror_view_and_copy(
             Kokkos::HostSpace(), aosoa );
 
-    auto slice_0 = mirror.template slice<0>();
-    auto slice_1 = mirror.template slice<1>();
-    auto slice_2 = mirror.template slice<2>();
-    auto slice_3 = mirror.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(mirror);
+    auto slice_1 = Cabana::slice<1>(mirror);
+    auto slice_2 = Cabana::slice<2>(mirror);
+    auto slice_3 = Cabana::slice<3>(mirror);
 
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -90,10 +90,10 @@ void testDeepCopy()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto slice_0 = src_aosoa.template slice<0>();
-    auto slice_1 = src_aosoa.template slice<1>();
-    auto slice_2 = src_aosoa.template slice<2>();
-    auto slice_3 = src_aosoa.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(src_aosoa);
+    auto slice_1 = Cabana::slice<1>(src_aosoa);
+    auto slice_2 = Cabana::slice<2>(src_aosoa);
+    auto slice_3 = Cabana::slice<3>(src_aosoa);
     Kokkos::parallel_for(
         "initialize",
         Kokkos::RangePolicy<typename SrcMemorySpace::execution_space>(0,num_data),
@@ -125,10 +125,10 @@ void testDeepCopy()
 
     // Create a second AoSoA and deep copy by slice.
     DstAoSoA_t dst_aosoa_2( num_data );
-    auto dst_slice_0 = dst_aosoa_2.template slice<0>();
-    auto dst_slice_1 = dst_aosoa_2.template slice<1>();
-    auto dst_slice_2 = dst_aosoa_2.template slice<2>();
-    auto dst_slice_3 = dst_aosoa_2.template slice<3>();
+    auto dst_slice_0 = Cabana::slice<0>(dst_aosoa_2);
+    auto dst_slice_1 = Cabana::slice<1>(dst_aosoa_2);
+    auto dst_slice_2 = Cabana::slice<2>(dst_aosoa_2);
+    auto dst_slice_3 = Cabana::slice<3>(dst_aosoa_2);
     Cabana::deep_copy( dst_slice_0, slice_0 );
     Cabana::deep_copy( dst_slice_1, slice_1 );
     Cabana::deep_copy( dst_slice_2, slice_2 );
@@ -163,10 +163,10 @@ void testMirror()
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto slice_0 = aosoa.template slice<0>();
-    auto slice_1 = aosoa.template slice<1>();
-    auto slice_2 = aosoa.template slice<2>();
-    auto slice_3 = aosoa.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(aosoa);
+    auto slice_1 = Cabana::slice<1>(aosoa);
+    auto slice_2 = Cabana::slice<2>(aosoa);
+    auto slice_3 = Cabana::slice<3>(aosoa);
     Kokkos::parallel_for(
         "initialize",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,num_data),
@@ -230,7 +230,7 @@ void testMirror()
 
             // Check that the same memory space case didn't allocate any
             // memory. They should have the same pointer.
-            EXPECT_EQ( aosoa.ptr(), same_space_mirror.ptr() );
+            EXPECT_EQ( aosoa.data(), same_space_mirror.data() );
 
             // Check values.
             checkDataMembers(
@@ -258,16 +258,16 @@ void testAssign()
     float fval = 3.2;
     int ival = 1;
     Cabana::Tuple<DataTypes> tp;
-    tp.get<0>(0) = fval;
-    tp.get<0>(1) = fval;
-    tp.get<1>() = ival;
+    Cabana::get<0>(tp,0) = fval;
+    Cabana::get<0>(tp,1) = fval;
+    Cabana::get<1>(tp) = ival;
     Cabana::deep_copy( aosoa, tp );
 
     // Check the assignment
     auto host_aosoa = Cabana::Experimental::create_mirror_view_and_copy(
         Kokkos::HostSpace(), aosoa );
-    auto host_slice_0 = host_aosoa.slice<0>();
-    auto host_slice_1 = host_aosoa.slice<1>();
+    auto host_slice_0 = Cabana::slice<0>(host_aosoa);
+    auto host_slice_1 = Cabana::slice<1>(host_aosoa);
     for ( int n = 0; n < num_data; ++n )
     {
         EXPECT_EQ( host_slice_0(n,0), fval );
@@ -276,16 +276,16 @@ void testAssign()
     }
 
     // Assign every element in slices to the same value.
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
+    auto slice_0 = Cabana::slice<0>(aosoa);
+    auto slice_1 = Cabana::slice<1>(aosoa);
     fval = 5.4;
     ival = 12;
     Cabana::deep_copy( slice_0, fval );
     Cabana::deep_copy( slice_1, ival );
     host_aosoa = Cabana::Experimental::create_mirror_view_and_copy(
         Kokkos::HostSpace(), aosoa );
-    host_slice_0 = host_aosoa.slice<0>();
-    host_slice_1 = host_aosoa.slice<1>();
+    host_slice_0 = Cabana::slice<0>(host_aosoa);
+    host_slice_1 = Cabana::slice<1>(host_aosoa);
     for ( int n = 0; n < num_data; ++n )
     {
         EXPECT_EQ( host_slice_0(n,0), fval );

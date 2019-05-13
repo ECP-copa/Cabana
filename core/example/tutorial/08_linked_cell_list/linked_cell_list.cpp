@@ -66,7 +66,7 @@ void linkedCellListExample()
     /*
       Create the particle ids.
     */
-    auto ids = aosoa.slice<1>();
+    auto ids = Cabana::slice<1>( aosoa );
     for ( std::size_t i = 0; i < aosoa.size(); ++i )
         ids(i) = i;
 
@@ -76,7 +76,7 @@ void linkedCellListExample()
       is in a different cell. When we use cell list to permute the particles
       later in the example, they will be regrouped by cell.
     */
-    auto positions = aosoa.slice<0>();
+    auto positions = Cabana::slice<0>( aosoa );
     int ppc = 2;
     int particle_counter = 0;
     for ( int p = 0; p < ppc; ++p )

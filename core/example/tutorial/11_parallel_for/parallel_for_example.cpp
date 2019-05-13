@@ -68,8 +68,8 @@ void parallelForExample()
       for loop in this case - especially when the code being written is for an
       arbitrary memory space.
      */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
+    auto slice_0 = Cabana::slice<0>( aosoa );
+    auto slice_1 = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
         slice_0(i) = 1.0;

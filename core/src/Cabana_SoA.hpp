@@ -14,6 +14,7 @@
 
 #include <impl/Cabana_IndexSequence.hpp>
 #include <Cabana_MemberTypes.hpp>
+#include <Cabana_Macros.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -107,20 +108,132 @@ struct SoAImpl<VectorLength,IndexSequence<Indices...>,Types...>
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//
+// SoA forward declaration.
+template<typename Types,int VectorLength>
+struct SoA;
+
+//---------------------------------------------------------------------------//
+// Static type checker.
+template<class >
+struct is_soa : public std::false_type {};
+
+template<class DataTypes, int VectorLength>
+struct is_soa<SoA<DataTypes,VectorLength> >
+    : public std::true_type {};
+
+template<class DataTypes, int VectorLength>
+struct is_soa<const SoA<DataTypes,VectorLength> >
+    : public std::true_type {};
+
+//---------------------------------------------------------------------------//
+// Get template helper.
+
+// Rank-0 non-const
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_reference_type<M> >::type
+get( SoA_t& soa, const int a )
+{
+    return static_cast<typename SoA_t::template base<M>&>(
+        soa)._data[a];
+}
+
+// Rank-0 const
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_value_type<M> >::type
+get( const SoA_t& soa, const int a )
+{
+    return static_cast<const typename SoA_t::template base<M>&>(
+        soa)._data[a];
+}
+
+// Rank-1 non-const
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_reference_type<M> >::type
+get( SoA_t& soa, const int a, const int d0 )
+{
+    return static_cast<typename SoA_t::template base<M>&>(
+        soa)._data[d0][a];
+}
+
+// Rank-1 const
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_value_type<M> >::type
+get( const SoA_t& soa, const int a, const int d0 )
+{
+    return static_cast<const typename SoA_t::template base<M>&>(
+        soa)._data[d0][a];
+}
+
+// Rank-2 non-const
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_reference_type<M> >::type
+get( SoA_t& soa, const int a, const int d0, const int d1 )
+{
+    return static_cast<typename SoA_t::template base<M>&>(
+        soa)._data[d0][d1][a];
+}
+
+// Rank-2 const
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_value_type<M> >::type
+get( const SoA_t& soa, const int a, const int d0, const int d1 )
+{
+    return static_cast<const typename SoA_t::template base<M>&>(
+        soa)._data[d0][d1][a];
+}
+
+// Rank-3 non-const
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_reference_type<M> >::type
+get( SoA_t& soa, const int a, const int d0, const int d1, const int d2 )
+{
+    return static_cast<typename SoA_t::template base<M>&>(
+        soa)._data[d0][d1][d2][a];
+}
+
+// Rank-3 const
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_value_type<M> >::type
+get( const SoA_t& soa, const int a, const int d0, const int d1, const int d2 )
+{
+    return static_cast<const typename SoA_t::template base<M>&>(
+        soa)._data[d0][d1][d2][a];
+}
+
+//---------------------------------------------------------------------------//
 /*!
   \brief Struct-of-Arrays
 
   A struct-of-arrays (SoA) is composed of groups of statically sized
   arrays. The array element types, which will be composed as members of the
   struct, are indicated through the Types parameter pack. If the types of the
-  members are contiguous then the struct itself will be contiguous. The layout
-  of the arrays is a function of the layout type. The layout type indicates
-  the size of the arrays and, if they have multidimensional data, if they are
-  row or column major order.
+  members are contiguous then the struct itself will be contiguous. The vector
+  length indicates the static length of each array.
 */
-template<typename Types,int VectorLength>
-struct SoA;
-
 template<typename... Types, int VectorLength>
 struct SoA<MemberTypes<Types...>,VectorLength>
     : Impl::SoAImpl<VectorLength,
@@ -159,6 +272,11 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     using member_pointer_type =
         typename std::add_pointer<member_value_type<M> >::type;
 
+    // Base type.
+    template<std::size_t M>
+    using base =
+        Impl::StructMember<M,vector_length,member_data_type<M> >;
+
     // -------------------------------
     // Member data type properties.
 
@@ -193,9 +311,11 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     }
 
     // -------------------------------
-    // Access the data value at a given member index.
+    // Access the data value at a given member index. These accessors are
+    // deprecated.
 
     // Rank 0
+    CABANA_DEPRECATED
     template<std::size_t M,
              typename A>
     KOKKOS_FORCEINLINE_FUNCTION
@@ -204,10 +324,10 @@ struct SoA<MemberTypes<Types...>,VectorLength>
                             member_reference_type<M> >::type
     get( const A& a )
     {
-        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[a];
+        return Cabana::get<M>( *this, a );
     }
 
+    CABANA_DEPRECATED
     template<std::size_t M,
              typename A>
     KOKKOS_FORCEINLINE_FUNCTION
@@ -216,11 +336,11 @@ struct SoA<MemberTypes<Types...>,VectorLength>
                             member_value_type<M> >::type
     get( const A& a ) const
     {
-        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[a];
+        return Cabana::get<M>( *this, a );
     }
 
     // Rank 1
+    CABANA_DEPRECATED
     template<std::size_t M,
              typename A,
              typename D0>
@@ -232,10 +352,10 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     get(  const A& a,
           const D0& d0 )
     {
-        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d0][a];
+        return Cabana::get<M>( *this, a, d0 );
     }
 
+    CABANA_DEPRECATED
     template<std::size_t M,
              typename A,
              typename D0>
@@ -247,11 +367,11 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     get(  const A& a,
           const D0& d0 ) const
     {
-        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d0][a];
+        return Cabana::get<M>( *this, a, d0 );
     }
 
     // Rank 2
+    CABANA_DEPRECATED
     template<std::size_t M,
              typename A,
              typename D0,
@@ -266,10 +386,10 @@ struct SoA<MemberTypes<Types...>,VectorLength>
          const D0& d0,
          const D1& d1 )
     {
-        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d0][d1][a];
+        return Cabana::get<M>( *this, a, d0, d1 );
     }
 
+    CABANA_DEPRECATED
     template<std::size_t M,
              typename A,
              typename D0,
@@ -284,11 +404,11 @@ struct SoA<MemberTypes<Types...>,VectorLength>
          const D0& d0,
          const D1& d1 ) const
     {
-        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d0][d1][a];
+        return Cabana::get<M>( *this, a, d0, d1 );
     }
 
     // Rank 3
+    CABANA_DEPRECATED
     template<std::size_t M,
              typename A,
              typename D0,
@@ -306,10 +426,10 @@ struct SoA<MemberTypes<Types...>,VectorLength>
          const D1& d1,
          const D2& d2 )
     {
-        Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d0][d1][d2][a];
+        return Cabana::get<M>( *this, a, d0, d1, d2 );
     }
 
+    CABANA_DEPRECATED
     template<std::size_t M,
              typename A,
              typename D0,
@@ -327,8 +447,7 @@ struct SoA<MemberTypes<Types...>,VectorLength>
          const D1& d1,
          const D2& d2 ) const
     {
-        const Impl::StructMember<M,vector_length,member_data_type<M> >& base = *this;
-        return base._data[d0][d1][d2][a];
+        return Cabana::get<M>( *this, a, d0, d1, d2 );
     }
 
     // ----------------
@@ -342,7 +461,7 @@ struct SoA<MemberTypes<Types...>,VectorLength>
             Impl::StructMember<M,vector_length,member_data_type<M>>*>(*this);
     }
 
-    // Get a pointer to a given SoA.
+    // Get a pointer to the first element of a member in a given SoA.
     template<std::size_t M>
     static void* staticPtr( SoA* p )
     {
@@ -350,6 +469,8 @@ struct SoA<MemberTypes<Types...>,VectorLength>
             Impl::StructMember<M,vector_length,member_data_type<M>>*>(p);
     }
 };
+
+//---------------------------------------------------------------------------//
 
 namespace Impl
 {
@@ -369,7 +490,7 @@ soaElementMemberCopy( SoA<MemberTypes<Types...>,DstVectorLength>& dst,
                       const SoA<MemberTypes<Types...>,SrcVectorLength>& src,
                       const std::size_t src_idx )
 {
-    dst.template get<M>( dst_idx ) = src.template get<M>( src_idx );
+    get<M>( dst, dst_idx ) = get<M>( src, src_idx );
 }
 
 // Rank 1
@@ -383,7 +504,7 @@ soaElementMemberCopy( SoA<MemberTypes<Types...>,DstVectorLength>& dst,
                       const std::size_t src_idx )
 {
     for ( std::size_t i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
-        dst.template get<M>( dst_idx, i0 ) = src.template get<M>( src_idx, i0 );
+        get<M>( dst, dst_idx, i0 ) = get<M>( src, src_idx, i0 );
 }
 
 // Rank 2
@@ -398,8 +519,8 @@ soaElementMemberCopy( SoA<MemberTypes<Types...>,DstVectorLength>& dst,
 {
     for ( std::size_t i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
         for ( std::size_t i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
-                dst.template get<M>( dst_idx, i0, i1 ) =
-                    src.template get<M>( src_idx, i0, i1 );
+                get<M>( dst, dst_idx, i0, i1 ) =
+                    get<M>( src, src_idx, i0, i1 );
 }
 
 // Rank 3
@@ -415,8 +536,8 @@ soaElementMemberCopy( SoA<MemberTypes<Types...>,DstVectorLength>& dst,
     for ( std::size_t i0 = 0; i0 < dst.template extent<M,0>(); ++i0 )
         for ( std::size_t i1 = 0; i1 < dst.template extent<M,1>(); ++i1 )
             for ( std::size_t i2 = 0; i2 < dst.template extent<M,2>(); ++i2 )
-                dst.template get<M>( dst_idx, i0, i1, i2 ) =
-                    src.template get<M>( src_idx, i0, i1, i2 );
+                get<M>( dst, dst_idx, i0, i1, i2 ) =
+                    get<M>( src, src_idx, i0, i1, i2 );
 }
 
 // Copy the values of all members of an SoA from a source to a destination at

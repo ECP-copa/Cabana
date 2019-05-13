@@ -68,8 +68,8 @@ void haloExchangeExample()
     /*
       Create slices and assign data.
      */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
+    auto slice_0 = Cabana::slice<0>( aosoa );
+    auto slice_1 = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
         slice_0(i) = 1.0;
@@ -131,8 +131,8 @@ void haloExchangeExample()
     /*
       Get new slices after resizing.
      */
-    slice_0 = aosoa.slice<0>();
-    slice_1 = aosoa.slice<1>();
+    slice_0 = Cabana::slice<0>( aosoa );
+    slice_1 = Cabana::slice<1>( aosoa );
 
     /*
       Gather data for the ghosts on this rank from our neighbors that own

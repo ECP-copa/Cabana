@@ -21,10 +21,10 @@ TDS::TDS(int periodic)
 double TDS::compute(ParticleList& particles, double lx, double ly, double lz)
 {
   // Create slices
-  auto r = particles.slice<Position>();
-  auto f = particles.slice<Force>();
-  auto p = particles.slice<Potential>();
-  auto q = particles.slice<Charge>();
+  auto r = Cabana::slice<Position>(particles);
+  auto f = Cabana::slice<Force>(particles);
+  auto p = Cabana::slice<Potential>(particles);
+  auto q = Cabana::slice<Charge>(particles);
 
   int n_max = particles.size();
   int periodic_shells = _periodic_shells;
@@ -39,15 +39,15 @@ double TDS::compute(ParticleList& particles, double lx, double ly, double lz)
     p( idx ) = 0.0;//set potential to zero
 
     //For each particle, we'll find the potential by summing
-    //the electrostatic interaction between it and every other 
-    //particle in the cell, as well as every particle in the 
+    //the electrostatic interaction between it and every other
+    //particle in the cell, as well as every particle in the
     //surrounding periodic spherical shells
     for (auto i = 0; i < n_max; ++i)
     {
       for (int kx = -periodic_shells; kx <= periodic_shells; ++kx)
       {
         //x-dist shift for particles in periodic cells
-        shift[0] = (double)kx * lx; 
+        shift[0] = (double)kx * lx;
         for (int ky = -periodic_shells; ky <= periodic_shells; ++ky)
         {
           //y-dist shift for particles in periodic cells
@@ -89,7 +89,7 @@ double TDS::compute(ParticleList& particles, double lx, double ly, double lz)
 
   Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max), work_func );
   Kokkos::fence();
-  
+
   //Compute total energy of particles
   double total_energy = 0.0;
   Kokkos::parallel_reduce( "Sum", Kokkos::RangePolicy<ExecutionSpace>(0,n_max), KOKKOS_LAMBDA(int idx, double& energy)
@@ -98,6 +98,6 @@ double TDS::compute(ParticleList& particles, double lx, double ly, double lz)
     },
     total_energy);
   Kokkos::fence();
-  
+
   return total_energy;
 }

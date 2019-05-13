@@ -164,7 +164,7 @@ createParticles( const int num_particle,
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     AoSoA_t aosoa( "aosoa", num_particle );
 
-    auto position = aosoa.slice<0>();
+    auto position = Cabana::slice<0>(aosoa);
     using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
     using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
     PoolType pool( 342343901 );
@@ -420,11 +420,11 @@ void testVerletListFull()
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
     Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag>
-        nlist( aosoa.slice<0>(), 0, aosoa.size(),
+        nlist( Cabana::slice<0>(aosoa), 0, aosoa.size(),
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Check the neighbor list.
-    auto position = aosoa.slice<0>();
+    auto position = Cabana::slice<0>(aosoa);
     checkFullNeighborList( nlist, position, test_radius );
 }
 
@@ -444,11 +444,11 @@ void testVerletListHalf()
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
     Cabana::VerletList<TEST_MEMSPACE,Cabana::HalfNeighborTag,LayoutTag>
-        nlist( aosoa.slice<0>(), 0, aosoa.size(),
+        nlist( Cabana::slice<0>(aosoa), 0, aosoa.size(),
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Check the neighbor list.
-    auto position = aosoa.slice<0>();
+    auto position = Cabana::slice<0>(aosoa);
     checkHalfNeighborList( nlist, position, test_radius );
 }
 
@@ -468,7 +468,7 @@ void testNeighborParallelFor()
     using ListType = Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag>;
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
-    ListType nlist( aosoa.slice<0>(), 0, aosoa.size(),
+    ListType nlist( Cabana::slice<0>(aosoa), 0, aosoa.size(),
                     test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Create Kokkos views for the write operation.
@@ -491,7 +491,7 @@ void testNeighborParallelFor()
     Kokkos::fence();
 
     // Get the expected result in serial
-    auto test_list = computeFullNeighborList( aosoa.slice<0>(), test_radius );
+    auto test_list = computeFullNeighborList( Cabana::slice<0>(aosoa), test_radius );
     auto test_list_copy = createTestListHostCopy( test_list );
     for ( int p = 0; p < num_particle; ++p )
         for ( int n = 0; n < test_list_copy.counts(p); ++n )
@@ -526,11 +526,11 @@ void testVerletListFullPartialRange()
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
     Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag>
-        nlist( aosoa.slice<0>(), 0, num_ignore,
+        nlist( Cabana::slice<0>(aosoa), 0, num_ignore,
                test_radius, cell_size_ratio, grid_min, grid_max );
 
     // Check the neighbor list.
-    auto position = aosoa.slice<0>();
+    auto position = Cabana::slice<0>(aosoa);
     checkFullNeighborListPartialRange( nlist, position, test_radius, num_ignore);
 }
 

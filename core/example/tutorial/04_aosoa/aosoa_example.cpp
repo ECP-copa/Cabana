@@ -117,14 +117,14 @@ void aosoaExample()
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
                 for ( int a = 0; a < aosoa.arraySize(s); ++a )
-                    soa.get<0>(a,i,j) = 1.0 * (a + i + j);
+                    Cabana::get<0>(soa,a,i,j) = 1.0 * (a + i + j);
 
         for ( int i = 0; i < 4; ++i )
             for ( int a = 0; a < aosoa.arraySize(s); ++a )
-                soa.get<1>(a,i) = 1.0 * (a + i);
+                Cabana::get<1>(soa,a,i) = 1.0 * (a + i);
 
         for ( int a = 0; a < aosoa.arraySize(s); ++a )
-            soa.get<2>(a) = a + 1234;
+            Cabana::get<2>(soa,a) = a + 1234;
     }
 
     /*
@@ -153,15 +153,15 @@ void aosoaExample()
             for ( int j = 0; j < 3; ++j )
                 std::cout << "Tuple " << t
                           << ", member 0 element (" << i << "," << j << "): "
-                          << tp.get<0>(i,j) << std::endl;
+                          << Cabana::get<0>(tp,i,j) << std::endl;
 
         for ( int i = 0; i < 4; ++i )
             std::cout << "Tuple " << t
                       << ", member 1 element (" << i << "): "
-                      << tp.get<1>(i) << std::endl;
+                      << Cabana::get<1>(tp,i) << std::endl;
 
         std::cout << "Tuple " << t
-                  << ", member 2: " << tp.get<2>() << std::endl;
+                  << ", member 2: " << Cabana::get<2>(tp) << std::endl;
     }
 
     /*
@@ -172,12 +172,12 @@ void aosoaExample()
 
     for ( int i = 0; i < 3; ++i )
         for ( int j = 0; j < 3; ++j )
-            foo.get<0>(i,j) = 1.1;
+            Cabana::get<0>(foo,i,j) = 1.1;
 
     for ( int i = 0; i < 4; ++i )
-        foo.get<1>(i) = 2.2;
+        Cabana::get<1>(foo,i) = 2.2;
 
-    foo.get<2>() = 3;
+    Cabana::get<2>(foo) = 3;
 
     /* Now assign it's data by copying it to the AoSoA at 1D index 3. */
     aosoa.setTuple( 3, foo );
@@ -190,14 +190,14 @@ void aosoaExample()
         for ( int j = 0; j < 3; ++j )
             std::cout << "Updated tuple member 0 element ("
                       << i << "," << j << "): "
-                      << aosoa.access(0).get<0>(3,i,j) << std::endl;
+                      << Cabana::get<0>(aosoa.access(0),3,i,j) << std::endl;
 
     for ( int i = 0; i < 4; ++i )
         std::cout << "Update tuple member 1 (" << i << "): "
-                  << aosoa.access(0).get<1>(3,i) << std::endl;
+                  << Cabana::get<1>(aosoa.access(0),3,i) << std::endl;
 
     std::cout << "Updated tuple member 2: "
-              << aosoa.access(0).get<2>(3) << std::endl;
+              << Cabana::get<2>(aosoa.access(0),3) << std::endl;
 }
 
 //---------------------------------------------------------------------------//

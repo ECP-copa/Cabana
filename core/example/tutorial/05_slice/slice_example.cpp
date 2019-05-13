@@ -89,9 +89,9 @@ void sliceExample()
       because slices are unmanaged memory but may still be used for diagnostic
       purposes.
     */
-    auto slice_0 = aosoa.slice<0>( "my_slice_0" );
-    auto slice_1 = aosoa.slice<1>( "my_slice_1" );
-    auto slice_2 = aosoa.slice<2>( "my_slice_2" );
+    auto slice_0 = Cabana::slice<0>( aosoa, "my_slice_0" );
+    auto slice_1 = Cabana::slice<1>( aosoa, "my_slice_1" );
+    auto slice_2 = Cabana::slice<2>( aosoa, "my_slice_2" );
 
     /*
       Let's initialize the data using the 2D indexing scheme. Slice data can

@@ -16,18 +16,18 @@
 // function to initialize particles as a NaCl crystal of length crystal_size
 void initializeParticles(ParticleList particles, int crystal_size)
 {
-  auto x = particles.slice<Position>();
-  auto v = particles.slice<Velocity>();
-  auto f = particles.slice<Force>();
-  auto q = particles.slice<Charge>();
-  auto u = particles.slice<Potential>();
-  auto i = particles.slice<Index>();
+  auto x = Cabana::slice<Position>(particles);
+  auto v = Cabana::slice<Velocity>(particles);
+  auto f = Cabana::slice<Force>(particles);
+  auto q = Cabana::slice<Charge>(particles);
+  auto u = Cabana::slice<Potential>(particles);
+  auto i = Cabana::slice<Index>(particles);
   auto init_parts = KOKKOS_LAMBDA(const int idx)
   {
     // Calculate location of particle in crystal
     int idx_x = idx % crystal_size;
     int idx_y = (idx / crystal_size) % crystal_size;
-    int idx_z = idx / (crystal_size * crystal_size);	
+    int idx_z = idx / (crystal_size * crystal_size);
 
     // Initialize position.
     x(idx,0) = ((double)idx_x * 0.5);
@@ -44,7 +44,7 @@ void initializeParticles(ParticleList particles, int crystal_size)
 
     // Create alternating charge
     q(idx) = (((idx_x + idx_y + idx_z)%2)?1.0:-1.0)*COULOMB_PREFACTOR_INV;
-    
+
     // Set potential
     u(idx) = 0.0;
 
@@ -59,18 +59,18 @@ void initializeParticles(ParticleList particles, int crystal_size)
 void initializeMesh(ParticleList mesh, int width)
 {
   int ptsx = std::round(std::pow(mesh.size(),1.0/3.0));//number of points in each dimension
-  auto x = mesh.slice<Position>();
-  auto v = mesh.slice<Velocity>();
-  auto f = mesh.slice<Force>();
-  auto q = mesh.slice<Charge>();
-  auto u = mesh.slice<Potential>();
-  auto i = mesh.slice<Index>();
-  auto init_mesh = KOKKOS_LAMBDA( const int idx ) 
+  auto x = Cabana::slice<Position>(mesh);
+  auto v = Cabana::slice<Velocity>(mesh);
+  auto f = Cabana::slice<Force>(mesh);
+  auto q = Cabana::slice<Charge>(mesh);
+  auto u = Cabana::slice<Potential>(mesh);
+  auto i = Cabana::slice<Index>(mesh);
+  auto init_mesh = KOKKOS_LAMBDA( const int idx )
   {
     // Calculate location of particle in crystal
     int idx_x = idx % ptsx;
     int idx_y = (idx / ptsx) % ptsx;
-    int idx_z = idx / (ptsx * ptsx);	
+    int idx_z = idx / (ptsx * ptsx);
 
     // Initialize position.
     x(idx,0) = ((double)idx_x * width / (ptsx));
@@ -97,4 +97,3 @@ void initializeMesh(ParticleList mesh, int width)
   Kokkos::parallel_for(Kokkos::RangePolicy<ExecutionSpace>(0,mesh.size()),init_mesh);
   Kokkos::fence();
 }
-
