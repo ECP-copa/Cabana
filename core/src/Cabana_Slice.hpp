@@ -585,7 +585,7 @@ class Slice
     KOKKOS_INLINE_FUNCTION
     size_type arraySize( const size_type s ) const
     {
-        return ( (size_type) s < _view.extent(0) - 1 )
+        return ( static_cast<size_type>(s) < _view.extent(0) - 1 )
             ? vector_length : ( _size % vector_length );
     }
 

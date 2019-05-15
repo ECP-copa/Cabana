@@ -204,8 +204,9 @@ inline void neighbor_parallel_for(
                 Impl::functorTagDispatch<work_tag>(
                     functor,
                     i,
-                    (index_type) NeighborList<NeighborListType>::getNeighbor(
-                        list,i,n) );
+                    static_cast<index_type>(
+                        NeighborList<NeighborListType>::getNeighbor(list,i,n))
+                    );
         },
         str );
 }
@@ -288,8 +289,9 @@ inline void neighbor_parallel_for(
                 Impl::functorTagDispatch<work_tag>(
                     functor,
                     i,
-                    (index_type) NeighborList<NeighborListType>::getNeighbor(
-                        list,i,n) );
+                    static_cast<index_type>(
+                        NeighborList<NeighborListType>::getNeighbor(list,i,n) )
+                    );
                 });
         },
         str );
