@@ -23,6 +23,26 @@
 
 namespace Cabana
 {
+//---------------------------------------------------------------------------//
+// SoA forward declaration.
+template<typename Types,int VectorLength>
+struct SoA;
+
+//---------------------------------------------------------------------------//
+// Static type checker.
+template<class >
+struct is_soa : public std::false_type {};
+
+template<class DataTypes, int VectorLength>
+struct is_soa<SoA<DataTypes,VectorLength> >
+    : public std::true_type {};
+
+template<class DataTypes, int VectorLength>
+struct is_soa<const SoA<DataTypes,VectorLength> >
+    : public std::true_type {};
+
+//---------------------------------------------------------------------------//
+
 namespace Impl
 {
 //---------------------------------------------------------------------------//
@@ -104,26 +124,37 @@ struct SoAImpl<VectorLength,IndexSequence<Indices...>,Types...>
 {};
 
 //---------------------------------------------------------------------------//
+// Given an SoA cast it to to one of its member types.
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+const typename SoA_t::template base<M>& soaMemberCast( const SoA_t& soa )
+{
+    static_assert( is_soa<SoA_t>::value, "soaMemberCast only for SoAs");
+    return static_cast<const typename SoA_t::template base<M>&>(soa);
+}
+
+template<std::size_t M, class SoA_t>
+KOKKOS_FORCEINLINE_FUNCTION
+typename SoA_t::template base<M>& soaMemberCast( SoA_t& soa )
+{
+    static_assert( is_soa<SoA_t>::value, "soaMemberCast only for SoAs");
+    return static_cast<typename SoA_t::template base<M>&>(soa);
+}
+
+//---------------------------------------------------------------------------//
+// Get a pointer to the first element of a member in a given SoA.
+template<std::size_t M, class SoA_t>
+typename SoA_t::template member_pointer_type<M> soaMemberPtr( SoA_t* p )
+{
+    static_assert( is_soa<SoA_t>::value, "soaMemberPtr only for SoAs");
+    void* member = static_cast<typename SoA_t::template base<M>*>(p);
+    return static_cast<
+        typename SoA_t::template member_pointer_type<M> >(member);
+}
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Impl
-
-//---------------------------------------------------------------------------//
-// SoA forward declaration.
-template<typename Types,int VectorLength>
-struct SoA;
-
-//---------------------------------------------------------------------------//
-// Static type checker.
-template<class >
-struct is_soa : public std::false_type {};
-
-template<class DataTypes, int VectorLength>
-struct is_soa<SoA<DataTypes,VectorLength> >
-    : public std::true_type {};
-
-template<class DataTypes, int VectorLength>
-struct is_soa<const SoA<DataTypes,VectorLength> >
-    : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 // Get template helper.
@@ -136,8 +167,7 @@ typename std::enable_if<
     typename SoA_t::template member_reference_type<M> >::type
 get( SoA_t& soa, const int a )
 {
-    return static_cast<typename SoA_t::template base<M>&>(
-        soa)._data[a];
+    return Impl::soaMemberCast<M>(soa)._data[a];
 }
 
 // Rank-0 const
@@ -148,8 +178,7 @@ typename std::enable_if<
     typename SoA_t::template member_value_type<M> >::type
 get( const SoA_t& soa, const int a )
 {
-    return static_cast<const typename SoA_t::template base<M>&>(
-        soa)._data[a];
+    return Impl::soaMemberCast<M>(soa)._data[a];
 }
 
 // Rank-1 non-const
@@ -160,8 +189,7 @@ typename std::enable_if<
     typename SoA_t::template member_reference_type<M> >::type
 get( SoA_t& soa, const int a, const int d0 )
 {
-    return static_cast<typename SoA_t::template base<M>&>(
-        soa)._data[d0][a];
+    return Impl::soaMemberCast<M>(soa)._data[d0][a];
 }
 
 // Rank-1 const
@@ -172,8 +200,7 @@ typename std::enable_if<
     typename SoA_t::template member_value_type<M> >::type
 get( const SoA_t& soa, const int a, const int d0 )
 {
-    return static_cast<const typename SoA_t::template base<M>&>(
-        soa)._data[d0][a];
+    return Impl::soaMemberCast<M>(soa)._data[d0][a];
 }
 
 // Rank-2 non-const
@@ -184,8 +211,7 @@ typename std::enable_if<
     typename SoA_t::template member_reference_type<M> >::type
 get( SoA_t& soa, const int a, const int d0, const int d1 )
 {
-    return static_cast<typename SoA_t::template base<M>&>(
-        soa)._data[d0][d1][a];
+    return Impl::soaMemberCast<M>(soa)._data[d0][d1][a];
 }
 
 // Rank-2 const
@@ -196,8 +222,7 @@ typename std::enable_if<
     typename SoA_t::template member_value_type<M> >::type
 get( const SoA_t& soa, const int a, const int d0, const int d1 )
 {
-    return static_cast<const typename SoA_t::template base<M>&>(
-        soa)._data[d0][d1][a];
+    return Impl::soaMemberCast<M>(soa)._data[d0][d1][a];
 }
 
 // Rank-3 non-const
@@ -208,8 +233,7 @@ typename std::enable_if<
     typename SoA_t::template member_reference_type<M> >::type
 get( SoA_t& soa, const int a, const int d0, const int d1, const int d2 )
 {
-    return static_cast<typename SoA_t::template base<M>&>(
-        soa)._data[d0][d1][d2][a];
+    return Impl::soaMemberCast<M>(soa)._data[d0][d1][d2][a];
 }
 
 // Rank-3 const
@@ -220,8 +244,7 @@ typename std::enable_if<
     typename SoA_t::template member_value_type<M> >::type
 get( const SoA_t& soa, const int a, const int d0, const int d1, const int d2 )
 {
-    return static_cast<const typename SoA_t::template base<M>&>(
-        soa)._data[d0][d1][d2][a];
+    return Impl::soaMemberCast<M>(soa)._data[d0][d1][d2][a];
 }
 
 //---------------------------------------------------------------------------//
@@ -454,19 +477,20 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     // Raw data access
 
     // Get a pointer to a member.
+    CABANA_DEPRECATED
     template<std::size_t M>
-    KOKKOS_FUNCTION void* ptr()
+    KOKKOS_FUNCTION
+    void* ptr()
     {
-        return static_cast<
-            Impl::StructMember<M,vector_length,member_data_type<M>>*>(*this);
+        return Impl::soaMemberPtr<M>( this );
     }
 
     // Get a pointer to the first element of a member in a given SoA.
+    CABANA_DEPRECATED
     template<std::size_t M>
     static void* staticPtr( SoA* p )
     {
-        return static_cast<
-            Impl::StructMember<M,vector_length,member_data_type<M>>*>(p);
+        return Impl::soaMemberPtr<M>( p );
     }
 };
 
