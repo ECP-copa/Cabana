@@ -190,7 +190,7 @@ void apiTest()
         "raw_ptr_update",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,slice_0.numSoA()),
         KOKKOS_LAMBDA( const int s ){
-            for ( int a = 0; a < slice_0.arraySize(s); ++a )
+            for ( std::size_t a = 0; a < slice_0.arraySize(s); ++a )
             {
                 // Member 0.
                 for ( int i = 0; i < dim_1; ++i )

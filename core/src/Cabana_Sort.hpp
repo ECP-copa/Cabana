@@ -613,8 +613,8 @@ void permute( const BinningDataType& binning_data,
     auto end = binning_data.rangeEnd();
 
     // Get the number of components in the slice.
-    int num_comp = 1;
-    for ( int d = 2; d < slice.rank(); ++d )
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
         num_comp *= slice.extent(d);
 
     // Get the raw slice data.
@@ -631,7 +631,7 @@ void permute( const BinningDataType& binning_data,
           auto s = SliceType::index_type::s( permute_i );
           auto a = SliceType::index_type::a( permute_i );
           std::size_t slice_offset = s*slice.stride(0) + a;
-          for ( int n = 0; n < num_comp; ++n )
+          for ( std::size_t n = 0; n < num_comp; ++n )
               scratch_array( i-begin, n ) =
                   slice_data[ slice_offset + SliceType::vector_length * n ];
         };
@@ -647,7 +647,7 @@ void permute( const BinningDataType& binning_data,
           auto s = SliceType::index_type::s( i );
           auto a = SliceType::index_type::a( i );
           std::size_t slice_offset = s*slice.stride(0) + a;
-          for ( int n = 0; n < num_comp; ++n )
+          for ( std::size_t n = 0; n < num_comp; ++n )
               slice_data[ slice_offset + SliceType::vector_length * n ] =
                   scratch_array( i-begin, n );
         };

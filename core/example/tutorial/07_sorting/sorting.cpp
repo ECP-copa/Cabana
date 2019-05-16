@@ -60,14 +60,14 @@ void sortingExample()
         auto& soa = aosoa.access(s);
 
         // ASCENDING ORDER!
-        for ( int a = 0; a < aosoa.arraySize(s); ++a )
+        for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
         {
             Cabana::get<0>(soa,a) = forward_index_counter;
             ++forward_index_counter;
         }
 
         // DESCENDING ORDER!
-        for ( int a = 0; a < aosoa.arraySize(s); ++a )
+        for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
         {
             Cabana::get<1>(soa,a) = reverse_index_counter;
             --reverse_index_counter;

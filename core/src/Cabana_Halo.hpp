@@ -387,8 +387,8 @@ void gather( const Halo_t& halo,
         throw std::runtime_error("Slice is the wrong size for scatter!");
 
     // Get the number of components in the slice.
-    int num_comp = 1;
-    for ( int d = 2; d < slice.rank(); ++d )
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
         num_comp *= slice.extent(d);
 
     // Get the raw slice data.
@@ -413,7 +413,7 @@ void gather( const Halo_t& halo,
             auto s = Slice_t::index_type::s( steering(i) );
             auto a = Slice_t::index_type::a( steering(i) );
             std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 send_buffer( i, n ) =
                     slice_data[ slice_offset + n * Slice_t::vector_length ];
         };
@@ -489,7 +489,7 @@ void gather( const Halo_t& halo,
             auto s = Slice_t::index_type::s( ghost_idx );
             auto a = Slice_t::index_type::a( ghost_idx );
             std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 slice_data[ slice_offset + Slice_t::vector_length * n ] =
                     recv_buffer( i, n );
         };
@@ -546,8 +546,8 @@ void scatter( const Halo_t& halo,
         throw std::runtime_error("Slice is the wrong size for scatter!");
 
     // Get the number of components in the slice.
-    int num_comp = 1;
-    for ( int d = 2; d < slice.rank(); ++d )
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
         num_comp *= slice.extent(d);
 
     // Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the
@@ -575,7 +575,7 @@ void scatter( const Halo_t& halo,
             auto s = Slice_t::index_type::s( ghost_idx );
             auto a = Slice_t::index_type::a( ghost_idx );
             std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 send_buffer( i, n ) =
                     slice_data( slice_offset + Slice_t::vector_length * n );
         };
@@ -652,7 +652,7 @@ void scatter( const Halo_t& halo,
             auto s = Slice_t::index_type::s( steering(i) );
             auto a = Slice_t::index_type::a( steering(i) );
             std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 Kokkos::atomic_add(
                     &slice_data(slice_offset + Slice_t::vector_length * n),
                     recv_buffer(i,n) );

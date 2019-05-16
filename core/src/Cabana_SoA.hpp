@@ -106,7 +106,7 @@ struct InnerArrayType
   (including multidimensional arrays) as long as the type of T is trivial. A
   struct-of-arrays will be composed of these members of different types.
 */
-template<std::size_t I, int VectorLength, typename T>
+template<std::size_t M, int VectorLength, typename T>
 struct StructMember
 {
     using array_type = typename InnerArrayType<T,VectorLength>::type;
@@ -165,7 +165,8 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M> >::type
-get( SoA_t& soa, const int a )
+get( SoA_t& soa,
+     const std::size_t a )
 {
     return Impl::soaMemberCast<M>(soa)._data[a];
 }
@@ -176,7 +177,8 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_value_type<M> >::type
-get( const SoA_t& soa, const int a )
+get( const SoA_t& soa,
+     const std::size_t a )
 {
     return Impl::soaMemberCast<M>(soa)._data[a];
 }
@@ -187,7 +189,9 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M> >::type
-get( SoA_t& soa, const int a, const int d0 )
+get( SoA_t& soa,
+     const std::size_t a,
+     const std::size_t d0 )
 {
     return Impl::soaMemberCast<M>(soa)._data[d0][a];
 }
@@ -198,7 +202,9 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_value_type<M> >::type
-get( const SoA_t& soa, const int a, const int d0 )
+get( const SoA_t& soa,
+     const std::size_t a,
+     const std::size_t d0 )
 {
     return Impl::soaMemberCast<M>(soa)._data[d0][a];
 }
@@ -209,7 +215,10 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M> >::type
-get( SoA_t& soa, const int a, const int d0, const int d1 )
+get( SoA_t& soa,
+     const std::size_t a,
+     const std::size_t d0,
+     const std::size_t d1 )
 {
     return Impl::soaMemberCast<M>(soa)._data[d0][d1][a];
 }
@@ -220,7 +229,10 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_value_type<M> >::type
-get( const SoA_t& soa, const int a, const int d0, const int d1 )
+get( const SoA_t& soa,
+     const std::size_t a,
+     const std::size_t d0,
+     const std::size_t d1 )
 {
     return Impl::soaMemberCast<M>(soa)._data[d0][d1][a];
 }
@@ -231,7 +243,11 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M> >::type
-get( SoA_t& soa, const int a, const int d0, const int d1, const int d2 )
+get( SoA_t& soa,
+     const std::size_t a,
+     const std::size_t d0,
+     const std::size_t d1,
+     const std::size_t d2 )
 {
     return Impl::soaMemberCast<M>(soa)._data[d0][d1][d2][a];
 }
@@ -242,7 +258,11 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_value_type<M> >::type
-get( const SoA_t& soa, const int a, const int d0, const int d1, const int d2 )
+get( const SoA_t& soa,
+     const std::size_t a,
+     const std::size_t d0,
+     const std::size_t d1,
+     const std::size_t d2 )
 {
     return Impl::soaMemberCast<M>(soa)._data[d0][d1][d2][a];
 }
@@ -312,7 +332,7 @@ struct SoA<MemberTypes<Types...>,VectorLength>
     */
     template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr unsigned rank() const
+    constexpr std::size_t rank() const
     {
         return std::rank<member_data_type<M> >::value;
     }
@@ -339,136 +359,96 @@ struct SoA<MemberTypes<Types...>,VectorLength>
 
     // Rank 0
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename A>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value),
+    typename std::enable_if<0==std::rank<member_data_type<M> >::value,
                             member_reference_type<M> >::type
-    get( const A& a )
+    get( const std::size_t a )
     {
         return Cabana::get<M>( *this, a );
     }
 
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename A>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(0==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value),
+    typename std::enable_if<0==std::rank<member_data_type<M> >::value,
                             member_value_type<M> >::type
-    get( const A& a ) const
+    get( const std::size_t a ) const
     {
         return Cabana::get<M>( *this, a );
     }
 
     // Rank 1
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename A,
-             typename D0>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value),
+    typename std::enable_if<1==std::rank<member_data_type<M> >::value,
                             member_reference_type<M> >::type
-    get(  const A& a,
-          const D0& d0 )
+    get(  const std::size_t a,
+          const std::size_t d0 )
     {
         return Cabana::get<M>( *this, a, d0 );
     }
 
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename A,
-             typename D0>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(1==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value),
+    typename std::enable_if<1==std::rank<member_data_type<M> >::value,
                             member_value_type<M> >::type
-    get(  const A& a,
-          const D0& d0 ) const
+    get(  const std::size_t a,
+          const std::size_t d0 ) const
     {
         return Cabana::get<M>( *this, a, d0 );
     }
 
     // Rank 2
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename A,
-             typename D0,
-             typename D1>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value),
+    typename std::enable_if<2==std::rank<member_data_type<M> >::value,
                             member_reference_type<M> >::type
-    get( const A& a,
-         const D0& d0,
-         const D1& d1 )
+    get( const std::size_t a,
+         const std::size_t d0,
+         const std::size_t d1 )
     {
         return Cabana::get<M>( *this, a, d0, d1 );
     }
 
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename A,
-             typename D0,
-             typename D1>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(2==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value),
+    typename std::enable_if<2==std::rank<member_data_type<M> >::value,
                             member_value_type<M> >::type
-    get( const A& a,
-         const D0& d0,
-         const D1& d1 ) const
+    get( const std::size_t a,
+         const std::size_t d0,
+         const std::size_t d1 ) const
     {
         return Cabana::get<M>( *this, a, d0, d1 );
     }
 
     // Rank 3
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename A,
-             typename D0,
-             typename D1,
-             typename D2>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
-                             std::is_integral<D2>::value),
+    typename std::enable_if<3==std::rank<member_data_type<M> >::value,
                             member_reference_type<M> >::type
-    get( const A& a,
-         const D0& d0,
-         const D1& d1,
-         const D2& d2 )
+    get( const std::size_t a,
+         const std::size_t d0,
+         const std::size_t d1,
+         const std::size_t d2 )
     {
         return Cabana::get<M>( *this, a, d0, d1, d2 );
     }
 
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename A,
-             typename D0,
-             typename D1,
-             typename D2>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<(3==std::rank<member_data_type<M> >::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
-                             std::is_integral<D2>::value),
+    typename std::enable_if<3==std::rank<member_data_type<M> >::value,
                             member_value_type<M> >::type
-    get( const A& a,
-         const D0& d0,
-         const D1& d1,
-         const D2& d2 ) const
+    get( const std::size_t a,
+         const std::size_t d0,
+         const std::size_t d1,
+         const std::size_t d2 ) const
     {
         return Cabana::get<M>( *this, a, d0, d1, d2 );
     }

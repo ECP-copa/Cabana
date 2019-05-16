@@ -31,13 +31,14 @@ namespace Impl
 
   \tparam VectorLength The inner array size of the AoSoA.
 */
-template<int VectorLength,
-         typename std::enable_if<
-             (Impl::IsVectorLengthValid<VectorLength>::value),
-             int>::type = 0>
+template<int VectorLength>
 class Index
 {
   public:
+
+    // Validate the inner array size.
+    static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
+                   "Invalid vector length" );
 
     // Inner array size.
     static constexpr int vector_length = VectorLength;
@@ -56,11 +57,8 @@ class Index
 
       \return The index of the struct in which the tuple is located.
     */
-    template<typename I>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr
-    typename std::enable_if<std::is_integral<I>::value,std::size_t>::type
-    s( const I& i )
+    static constexpr std::size_t s( const std::size_t i )
     {
         return (i - (i & vector_length_offset)) >>
             vector_length_binary_bits;
@@ -74,11 +72,8 @@ class Index
       \return The index of the array index in the struct in which the tuple
       is located.
     */
-    template<typename I>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr
-    typename std::enable_if<std::is_integral<I>::value,int>::type
-    a( const I& i )
+    static constexpr std::size_t a( const std::size_t i )
     {
         return i & vector_length_offset;
     }
@@ -93,12 +88,8 @@ class Index
 
       \return The tuple index.
     */
-    template<typename S, typename A>
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr
-    typename std::enable_if<(std::is_integral<S>::value &&
-                             std::is_integral<A>::value),std::size_t>::type
-    i( const S& s, const A& a )
+    static constexpr std::size_t i( const std::size_t s, const std::size_t a )
     {
         return (s << vector_length_binary_bits) + a;
     }
