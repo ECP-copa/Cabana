@@ -470,8 +470,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;    <span class="keyword">auto</span> end = binning_data.rangeEnd();</div>
 <div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;</div>
 <div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;    <span class="comment">// Get the number of components in the slice.</span></div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;    <span class="keywordtype">int</span> num_comp = 1;</div>
-<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d = 2; d &lt; slice.rank(); ++d )</div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;    std::size_t num_comp = 1;</div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; slice.rank(); ++d )</div>
 <div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;        num_comp *= slice.extent(d);</div>
 <div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;</div>
 <div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;    <span class="comment">// Get the raw slice data.</span></div>
@@ -488,7 +488,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;          <span class="keyword">auto</span> s = SliceType::index_type::s( permute_i );</div>
 <div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;          <span class="keyword">auto</span> a = SliceType::index_type::a( permute_i );</div>
 <div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;          std::size_t slice_offset = s*slice.stride(0) + a;</div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;          <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;          <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
 <div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;              scratch_array( i-begin, n ) =</div>
 <div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;                  slice_data[ slice_offset + SliceType::vector_length * n ];</div>
 <div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;        };</div>
@@ -504,7 +504,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;          <span class="keyword">auto</span> s = SliceType::index_type::s( i );</div>
 <div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;          <span class="keyword">auto</span> a = SliceType::index_type::a( i );</div>
 <div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;          std::size_t slice_offset = s*slice.stride(0) + a;</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;          <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;          <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
 <div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;              slice_data[ slice_offset + SliceType::vector_length * n ] =</div>
 <div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;                  scratch_array( i-begin, n );</div>
 <div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;        };</div>
@@ -531,7 +531,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 15 2019 22:52:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 16 2019 19:43:10 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

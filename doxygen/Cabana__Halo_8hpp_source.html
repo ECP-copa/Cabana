@@ -302,8 +302,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Slice is the wrong size for scatter!&quot;</span>);</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;    <span class="comment">// Get the number of components in the slice.</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    <span class="keywordtype">int</span> num_comp = 1;</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d = 2; d &lt; slice.rank(); ++d )</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;    std::size_t num_comp = 1;</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; slice.rank(); ++d )</div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        num_comp *= slice.extent(d);</div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;</div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    <span class="comment">// Get the raw slice data.</span></div>
@@ -328,7 +328,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;            <span class="keyword">auto</span> s = Slice_t::index_type::s( steering(i) );</div>
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;            <span class="keyword">auto</span> a = Slice_t::index_type::a( steering(i) );</div>
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;            std::size_t slice_offset = s*slice.stride(0) + a;</div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;            <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;                send_buffer( i, n ) =</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;                    slice_data[ slice_offset + n * Slice_t::vector_length ];</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        };</div>
@@ -404,7 +404,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;            <span class="keyword">auto</span> s = Slice_t::index_type::s( ghost_idx );</div>
 <div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;            <span class="keyword">auto</span> a = Slice_t::index_type::a( ghost_idx );</div>
 <div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;            std::size_t slice_offset = s*slice.stride(0) + a;</div>
-<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;            <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
 <div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;                slice_data[ slice_offset + Slice_t::vector_length * n ] =</div>
 <div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;                    recv_buffer( i, n );</div>
 <div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;        };</div>
@@ -433,8 +433,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error(<span class="stringliteral">&quot;Slice is the wrong size for scatter!&quot;</span>);</div>
 <div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;</div>
 <div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    <span class="comment">// Get the number of components in the slice.</span></div>
-<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    <span class="keywordtype">int</span> num_comp = 1;</div>
-<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d = 2; d &lt; slice.rank(); ++d )</div>
+<div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;    std::size_t num_comp = 1;</div>
+<div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; slice.rank(); ++d )</div>
 <div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;        num_comp *= slice.extent(d);</div>
 <div class="line"><a name="l00552"></a><span class="lineno">  552</span>&#160;</div>
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;    <span class="comment">// Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the</span></div>
@@ -462,7 +462,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;            <span class="keyword">auto</span> s = Slice_t::index_type::s( ghost_idx );</div>
 <div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;            <span class="keyword">auto</span> a = Slice_t::index_type::a( ghost_idx );</div>
 <div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;            std::size_t slice_offset = s*slice.stride(0) + a;</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;            <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
 <div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;                send_buffer( i, n ) =</div>
 <div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;                    slice_data( slice_offset + Slice_t::vector_length * n );</div>
 <div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;        };</div>
@@ -539,7 +539,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;            <span class="keyword">auto</span> s = Slice_t::index_type::s( steering(i) );</div>
 <div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;            <span class="keyword">auto</span> a = Slice_t::index_type::a( steering(i) );</div>
 <div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;            std::size_t slice_offset = s*slice.stride(0) + a;</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;            <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
 <div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;                Kokkos::atomic_add(</div>
 <div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;                    &amp;slice_data(slice_offset + Slice_t::vector_length * n),</div>
 <div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;                    recv_buffer(i,n) );</div>
@@ -576,7 +576,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 15 2019 22:52:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 16 2019 19:43:10 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

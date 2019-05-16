@@ -217,8 +217,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="comment">// Test bounds.</span></div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    <span class="keyword">auto</span> end = aosoa.size();</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordtype">int</span> end_s = <a class="code" href="classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025">Cabana::Impl::Index&lt;16&gt;::s</a>(end);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">int</span> end_a = <a class="code" href="classCabana_1_1Impl_1_1Index.html#a756a0f9c34351b93860ce89de8189ee3">Cabana::Impl::Index&lt;16&gt;::a</a>(end);</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keywordtype">int</span> end_s = <a class="code" href="classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b">Cabana::Impl::Index&lt;16&gt;::s</a>(end);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keywordtype">int</span> end_a = <a class="code" href="classCabana_1_1Impl_1_1Index.html#a3af51f53fd4d3f099e7d30f587dc93d3">Cabana::Impl::Index&lt;16&gt;::a</a>(end);</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    EXPECT_EQ( end_s, 2 );</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    EXPECT_EQ( end_a, 3 );</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;</div>
@@ -389,8 +389,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160;    <span class="keyword">auto</span> mirror_slice_4 = Cabana::slice&lt;4&gt;(mirror);</div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;    <span class="keywordflow">for</span> ( std::size_t idx = 0; idx &lt; aosoa.size(); ++idx )</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;    {</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        <span class="keywordtype">int</span> s = <a class="code" href="classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025">Cabana::Impl::Index&lt;16&gt;::s</a>( idx );</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        <span class="keywordtype">int</span> a = <a class="code" href="classCabana_1_1Impl_1_1Index.html#a756a0f9c34351b93860ce89de8189ee3">Cabana::Impl::Index&lt;16&gt;::a</a>( idx );</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;        <span class="keywordtype">int</span> s = <a class="code" href="classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b">Cabana::Impl::Index&lt;16&gt;::s</a>( idx );</div>
+<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;        <span class="keywordtype">int</span> a = <a class="code" href="classCabana_1_1Impl_1_1Index.html#a3af51f53fd4d3f099e7d30f587dc93d3">Cabana::Impl::Index&lt;16&gt;::a</a>( idx );</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        EXPECT_EQ( mirror_slice_0(idx), (s+a)*1.0 );</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        EXPECT_EQ( mirror_slice_1(idx), <span class="keywordtype">int</span>((s+a)*2) );</div>
@@ -552,7 +552,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> s ){</div>
 <div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;            <span class="keyword">auto</span>&amp; soa = aosoa.access( s );</div>
 <div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> a = 0; a &lt; aosoa.arraySize(s); ++a )</div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;            <span class="keywordflow">for</span> ( std::size_t a = 0; a &lt; aosoa.arraySize(s); ++a )</div>
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;            {</div>
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;                <span class="comment">// Member 0.</span></div>
 <div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
@@ -705,13 +705,13 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="structTest_1_1MySoA_html"><div class="ttname"><a href="structTest_1_1MySoA.html">Test::MySoA</a></div><div class="ttdef"><b>Definition:</b> tstAoSoA.hpp:495</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:39</div></div>
 <div class="ttc" id="structCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:44</div></div>
+<div class="ttc" id="classCabana_1_1Impl_1_1Index_html_a7b7e438320c5d0b28f32c3cc65e8097b"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b">Cabana::Impl::Index::s</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION constexpr std::size_t s(const std::size_t i)</div><div class="ttdoc">Given a tuple index get the AoSoA struct index. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:61</div></div>
+<div class="ttc" id="classCabana_1_1Impl_1_1Index_html_a3af51f53fd4d3f099e7d30f587dc93d3"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a3af51f53fd4d3f099e7d30f587dc93d3">Cabana::Impl::Index::a</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION constexpr std::size_t a(const std::size_t i)</div><div class="ttdoc">Given a tuple index get the AoSoA array index. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:76</div></div>
 <div class="ttc" id="structCabana_1_1Tuple_html"><div class="ttname"><a href="structCabana_1_1Tuple.html">Cabana::Tuple</a></div><div class="ttdef"><b>Definition:</b> Cabana_Tuple.hpp:29</div></div>
-<div class="ttc" id="classCabana_1_1Impl_1_1Index_html_a756a0f9c34351b93860ce89de8189ee3"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a756a0f9c34351b93860ce89de8189ee3">Cabana::Impl::Index::a</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION constexpr std::enable_if&lt; std::is_integral&lt; I &gt;::value, int &gt;::type a(const I &amp;i)</div><div class="ttdoc">Given a tuple index get the AoSoA array index. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:81</div></div>
-<div class="ttc" id="classCabana_1_1Impl_1_1Index_html_a9393026e0ba727add378b35410bb4025"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025">Cabana::Impl::Index::s</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION constexpr std::enable_if&lt; std::is_integral&lt; I &gt;::value, std::size_t &gt;::type s(const I &amp;i)</div><div class="ttdoc">Given a tuple index get the AoSoA struct index. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:63</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 15 2019 22:52:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 16 2019 19:43:10 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -112,7 +112,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span>Impl</div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">template</span>&lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">typename</span> IndexType&gt;</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">template</span>&lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">class</span> IndexType&gt;</div>
 <div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classCabana_1_1Impl_1_1StructRange.html">   35</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1Impl_1_1StructRange.html">StructRange</a></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;{</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">public</span>:</div>
@@ -121,7 +121,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    <span class="keyword">static</span> constexpr IndexType</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    structBegin( <span class="keyword">const</span> IndexType begin )</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    {</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025">Index&lt;VectorLength&gt;::s</a>(begin);</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b">Index&lt;VectorLength&gt;::s</a>(begin);</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    }</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;</div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
@@ -134,7 +134,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment">// this case we add 1 to ensure that the loop over structs loops</span></div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">// through all structs with data.</span></div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="keywordflow">return</span> (0 == <a class="code" href="classCabana_1_1Impl_1_1Index.html">Index&lt;VectorLength&gt;::a</a>(end))</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            ? <a class="code" href="classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025">Index&lt;VectorLength&gt;::s</a>(end) : <a class="code" href="classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025">Index&lt;VectorLength&gt;::s</a>(end) + 1;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;            ? <a class="code" href="classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b">Index&lt;VectorLength&gt;::s</a>(end) : <a class="code" href="classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b">Index&lt;VectorLength&gt;::s</a>(end) + 1;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    }</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
@@ -211,17 +211,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;</div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="preprocessor">#endif // end CABANA_EXECUTIONPOLICY_HPP</span></div>
 <div class="ttc" id="classCabana_1_1Impl_1_1StructRange_html"><div class="ttname"><a href="classCabana_1_1Impl_1_1StructRange.html">Cabana::Impl::StructRange</a></div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:35</div></div>
-<div class="ttc" id="classCabana_1_1Impl_1_1Index_html"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html">Cabana::Impl::Index</a></div><div class="ttdoc">Class for converting between 1d and 2d aosoa indices. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:38</div></div>
+<div class="ttc" id="classCabana_1_1Impl_1_1Index_html"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html">Cabana::Impl::Index</a></div><div class="ttdoc">Class for converting between 1d and 2d aosoa indices. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:35</div></div>
+<div class="ttc" id="classCabana_1_1Impl_1_1Index_html_a7b7e438320c5d0b28f32c3cc65e8097b"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b">Cabana::Impl::Index::s</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION constexpr std::size_t s(const std::size_t i)</div><div class="ttdoc">Given a tuple index get the AoSoA struct index. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:61</div></div>
 <div class="ttc" id="classCabana_1_1SimdPolicy_html_a2127fa387d48937757c9c2f20e54219e"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a2127fa387d48937757c9c2f20e54219e">Cabana::SimdPolicy::structEnd</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type structEnd() const </div><div class="ttdoc">Get the ending struct index. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:113</div></div>
 <div class="ttc" id="classCabana_1_1SimdPolicy_html_a1402abf6d218b5bfeff58ee1ea5acc21"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21">Cabana::SimdPolicy::SimdPolicy</a></div><div class="ttdeci">SimdPolicy(const index_type begin, const index_type end)</div><div class="ttdoc">Range constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:99</div></div>
 <div class="ttc" id="classCabana_1_1SimdPolicy_html_aaf8cc7113adc760fa3543bf9d5c06600"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#aaf8cc7113adc760fa3543bf9d5c06600">Cabana::SimdPolicy::arrayBegin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type arrayBegin(const index_type s) const </div><div class="ttdoc">Given a struct id get the beginning array index. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:117</div></div>
 <div class="ttc" id="classCabana_1_1SimdPolicy_html_ad790f92bb3fe40b86fbb87ab5cbec374"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#ad790f92bb3fe40b86fbb87ab5cbec374">Cabana::SimdPolicy::structBegin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type structBegin() const </div><div class="ttdoc">Get the starting struct index. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:109</div></div>
 <div class="ttc" id="classCabana_1_1SimdPolicy_html"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html">Cabana::SimdPolicy</a></div><div class="ttdoc">Execution policy over a range of 2d indices. </div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:76</div></div>
-<div class="ttc" id="classCabana_1_1Impl_1_1Index_html_a9393026e0ba727add378b35410bb4025"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a9393026e0ba727add378b35410bb4025">Cabana::Impl::Index::s</a></div><div class="ttdeci">static KOKKOS_FORCEINLINE_FUNCTION constexpr std::enable_if&lt; std::is_integral&lt; I &gt;::value, std::size_t &gt;::type s(const I &amp;i)</div><div class="ttdoc">Given a tuple index get the AoSoA struct index. </div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:63</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 15 2019 22:52:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 16 2019 19:43:10 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -279,7 +279,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;        <span class="stringliteral">&quot;raw_ptr_update&quot;</span>,</div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;        Kokkos::RangePolicy&lt;TEST_EXECSPACE&gt;(0,slice_0.numSoA()),</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> s ){</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> a = 0; a &lt; slice_0.arraySize(s); ++a )</div>
+<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;            <span class="keywordflow">for</span> ( std::size_t a = 0; a &lt; slice_0.arraySize(s); ++a )</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;            {</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                <span class="comment">// Member 0.</span></div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; dim_1; ++i )</div>
@@ -467,11 +467,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:39</div></div>
-<div class="ttc" id="structCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:795</div></div>
+<div class="ttc" id="structCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:751</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 15 2019 22:52:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 16 2019 19:43:10 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

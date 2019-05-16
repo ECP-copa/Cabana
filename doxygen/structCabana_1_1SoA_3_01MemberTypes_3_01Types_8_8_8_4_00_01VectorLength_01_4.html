@@ -139,118 +139,92 @@ template&lt;std::size_t M&gt; </td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a052d7494268bf458bbc2a37f1f5a3ab6"><td class="memTemplParams" colspan="2">template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:a052d7494268bf458bbc2a37f1f5a3ab6"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-constexpr unsigned&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#a052d7494268bf458bbc2a37f1f5a3ab6">rank</a> () const </td></tr>
-<tr class="memdesc:a052d7494268bf458bbc2a37f1f5a3ab6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rank of the data for a given member at index M.  <a href="#a052d7494268bf458bbc2a37f1f5a3ab6">More...</a><br/></td></tr>
-<tr class="separator:a052d7494268bf458bbc2a37f1f5a3ab6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a912e03d36bfe157b17cab342777563e9"><td class="memTemplParams" colspan="2">template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a912e03d36bfe157b17cab342777563e9"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
+constexpr std::size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#a912e03d36bfe157b17cab342777563e9">rank</a> () const </td></tr>
+<tr class="memdesc:a912e03d36bfe157b17cab342777563e9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the rank of the data for a given member at index M.  <a href="#a912e03d36bfe157b17cab342777563e9">More...</a><br/></td></tr>
+<tr class="separator:a912e03d36bfe157b17cab342777563e9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a15bcee1ed6cd4f8c94dad3d3f87f33d9"><td class="memTemplParams" colspan="2">template&lt;std::size_t M, std::size_t D&gt; </td></tr>
 <tr class="memitem:a15bcee1ed6cd4f8c94dad3d3f87f33d9"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
 constexpr std::size_t&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_4_00_01VectorLength_01_4.html#a15bcee1ed6cd4f8c94dad3d3f87f33d9">extent</a> () const </td></tr>
 <tr class="memdesc:a15bcee1ed6cd4f8c94dad3d3f87f33d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the extent of a given member data dimension.  <a href="#a15bcee1ed6cd4f8c94dad3d3f87f33d9">More...</a><br/></td></tr>
 <tr class="separator:a15bcee1ed6cd4f8c94dad3d3f87f33d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0f6d5588976ecbf44f989f5fe0feb795"><td class="memTemplParams" colspan="2"><a class="anchor" id="a0f6d5588976ecbf44f989f5fe0feb795"></a>
-template&lt;std::size_t M, typename A &gt; </td></tr>
-<tr class="memitem:a0f6d5588976ecbf44f989f5fe0feb795"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
+<tr class="memitem:aa68f76a4b8a8287df58db47ad85fb1c2"><td class="memTemplParams" colspan="2"><a class="anchor" id="aa68f76a4b8a8287df58db47ad85fb1c2"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:aa68f76a4b8a8287df58db47ad85fb1c2"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
 KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-std::enable_if&lt;(0==std::rank<br class="typebreak"/>
+std::enable_if&lt; 0==std::rank<br class="typebreak"/>
 &lt; member_data_type&lt; M &gt;<br class="typebreak"/>
- &gt;::value &amp;&amp;std::is_integral<br class="typebreak"/>
-&lt; A &gt;::value), <br class="typebreak"/>
+ &gt;::value, <br class="typebreak"/>
 member_reference_type&lt; M &gt;<br class="typebreak"/>
- &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const A &amp;a)</td></tr>
-<tr class="separator:a0f6d5588976ecbf44f989f5fe0feb795"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6c629be1a0a3919025b6db3c7414729b"><td class="memTemplParams" colspan="2"><a class="anchor" id="a6c629be1a0a3919025b6db3c7414729b"></a>
-template&lt;std::size_t M, typename A &gt; </td></tr>
-<tr class="memitem:a6c629be1a0a3919025b6db3c7414729b"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
+ &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::size_t a)</td></tr>
+<tr class="separator:aa68f76a4b8a8287df58db47ad85fb1c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8c1a8b4bd44ea47b3700851da24ed74a"><td class="memTemplParams" colspan="2"><a class="anchor" id="a8c1a8b4bd44ea47b3700851da24ed74a"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a8c1a8b4bd44ea47b3700851da24ed74a"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
 KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-std::enable_if&lt;(0==std::rank<br class="typebreak"/>
+std::enable_if&lt; 0==std::rank<br class="typebreak"/>
 &lt; member_data_type&lt; M &gt;<br class="typebreak"/>
- &gt;::value &amp;&amp;std::is_integral<br class="typebreak"/>
-&lt; A &gt;::value), <br class="typebreak"/>
-member_value_type&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const A &amp;a) const </td></tr>
-<tr class="separator:a6c629be1a0a3919025b6db3c7414729b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a925ee251aa37102fe4f14677113f450c"><td class="memTemplParams" colspan="2"><a class="anchor" id="a925ee251aa37102fe4f14677113f450c"></a>
-template&lt;std::size_t M, typename A , typename D0 &gt; </td></tr>
-<tr class="memitem:a925ee251aa37102fe4f14677113f450c"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
+ &gt;::value, member_value_type<br class="typebreak"/>
+&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::size_t a) const </td></tr>
+<tr class="separator:a8c1a8b4bd44ea47b3700851da24ed74a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb3638a7a9d12046caed828e63871e3f"><td class="memTemplParams" colspan="2"><a class="anchor" id="acb3638a7a9d12046caed828e63871e3f"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:acb3638a7a9d12046caed828e63871e3f"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
 KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-std::enable_if&lt;(1==std::rank<br class="typebreak"/>
+std::enable_if&lt; 1==std::rank<br class="typebreak"/>
 &lt; member_data_type&lt; M &gt;<br class="typebreak"/>
- &gt;::value &amp;&amp;std::is_integral<br class="typebreak"/>
-&lt; A &gt;::value <br class="typebreak"/>
-&amp;&amp;std::is_integral&lt; D0 &gt;<br class="typebreak"/>
-::value), <br class="typebreak"/>
+ &gt;::value, <br class="typebreak"/>
 member_reference_type&lt; M &gt;<br class="typebreak"/>
- &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const A &amp;a, const D0 &amp;d0)</td></tr>
-<tr class="separator:a925ee251aa37102fe4f14677113f450c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a772ce4db0b107730b7355041da1b72e8"><td class="memTemplParams" colspan="2"><a class="anchor" id="a772ce4db0b107730b7355041da1b72e8"></a>
-template&lt;std::size_t M, typename A , typename D0 &gt; </td></tr>
-<tr class="memitem:a772ce4db0b107730b7355041da1b72e8"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
+ &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::size_t a, const std::size_t d0)</td></tr>
+<tr class="separator:acb3638a7a9d12046caed828e63871e3f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a193498d0daf07dfdec9c60bb3cae60e1"><td class="memTemplParams" colspan="2"><a class="anchor" id="a193498d0daf07dfdec9c60bb3cae60e1"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a193498d0daf07dfdec9c60bb3cae60e1"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
 KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-std::enable_if&lt;(1==std::rank<br class="typebreak"/>
+std::enable_if&lt; 1==std::rank<br class="typebreak"/>
 &lt; member_data_type&lt; M &gt;<br class="typebreak"/>
- &gt;::value &amp;&amp;std::is_integral<br class="typebreak"/>
-&lt; A &gt;::value <br class="typebreak"/>
-&amp;&amp;std::is_integral&lt; D0 &gt;<br class="typebreak"/>
-::value), member_value_type&lt; M &gt;<br class="typebreak"/>
- &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const A &amp;a, const D0 &amp;d0) const </td></tr>
-<tr class="separator:a772ce4db0b107730b7355041da1b72e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0c2f94e6af3f8f2e63825d44556d8166"><td class="memTemplParams" colspan="2"><a class="anchor" id="a0c2f94e6af3f8f2e63825d44556d8166"></a>
-template&lt;std::size_t M, typename A , typename D0 , typename D1 &gt; </td></tr>
-<tr class="memitem:a0c2f94e6af3f8f2e63825d44556d8166"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
+ &gt;::value, member_value_type<br class="typebreak"/>
+&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::size_t a, const std::size_t d0) const </td></tr>
+<tr class="separator:a193498d0daf07dfdec9c60bb3cae60e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a443dbd94fdfc71d70e954c9492a446ca"><td class="memTemplParams" colspan="2"><a class="anchor" id="a443dbd94fdfc71d70e954c9492a446ca"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a443dbd94fdfc71d70e954c9492a446ca"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
 KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-std::enable_if&lt;(2==std::rank<br class="typebreak"/>
+std::enable_if&lt; 2==std::rank<br class="typebreak"/>
 &lt; member_data_type&lt; M &gt;<br class="typebreak"/>
- &gt;::value &amp;&amp;std::is_integral<br class="typebreak"/>
-&lt; A &gt;::value <br class="typebreak"/>
-&amp;&amp;std::is_integral&lt; D0 &gt;<br class="typebreak"/>
-::value &amp;&amp;std::is_integral&lt; D1 &gt;<br class="typebreak"/>
-::value), <br class="typebreak"/>
+ &gt;::value, <br class="typebreak"/>
 member_reference_type&lt; M &gt;<br class="typebreak"/>
- &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const A &amp;a, const D0 &amp;d0, const D1 &amp;d1)</td></tr>
-<tr class="separator:a0c2f94e6af3f8f2e63825d44556d8166"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3696f502ce62665e08ddc3867bfbbfd2"><td class="memTemplParams" colspan="2"><a class="anchor" id="a3696f502ce62665e08ddc3867bfbbfd2"></a>
-template&lt;std::size_t M, typename A , typename D0 , typename D1 &gt; </td></tr>
-<tr class="memitem:a3696f502ce62665e08ddc3867bfbbfd2"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
+ &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::size_t a, const std::size_t d0, const std::size_t d1)</td></tr>
+<tr class="separator:a443dbd94fdfc71d70e954c9492a446ca"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ed519c3dd3cb00fe0dd8d4f94a9fef7"><td class="memTemplParams" colspan="2"><a class="anchor" id="a5ed519c3dd3cb00fe0dd8d4f94a9fef7"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a5ed519c3dd3cb00fe0dd8d4f94a9fef7"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
 KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-std::enable_if&lt;(2==std::rank<br class="typebreak"/>
+std::enable_if&lt; 2==std::rank<br class="typebreak"/>
 &lt; member_data_type&lt; M &gt;<br class="typebreak"/>
- &gt;::value &amp;&amp;std::is_integral<br class="typebreak"/>
-&lt; A &gt;::value <br class="typebreak"/>
-&amp;&amp;std::is_integral&lt; D0 &gt;<br class="typebreak"/>
-::value &amp;&amp;std::is_integral&lt; D1 &gt;<br class="typebreak"/>
-::value), member_value_type&lt; M &gt;<br class="typebreak"/>
- &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const A &amp;a, const D0 &amp;d0, const D1 &amp;d1) const </td></tr>
-<tr class="separator:a3696f502ce62665e08ddc3867bfbbfd2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0442b5967c678c059c7de1cc3fd40c02"><td class="memTemplParams" colspan="2"><a class="anchor" id="a0442b5967c678c059c7de1cc3fd40c02"></a>
-template&lt;std::size_t M, typename A , typename D0 , typename D1 , typename D2 &gt; </td></tr>
-<tr class="memitem:a0442b5967c678c059c7de1cc3fd40c02"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
+ &gt;::value, member_value_type<br class="typebreak"/>
+&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::size_t a, const std::size_t d0, const std::size_t d1) const </td></tr>
+<tr class="separator:a5ed519c3dd3cb00fe0dd8d4f94a9fef7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abbc67b807ee9e846c107bcafee3b2140"><td class="memTemplParams" colspan="2"><a class="anchor" id="abbc67b807ee9e846c107bcafee3b2140"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:abbc67b807ee9e846c107bcafee3b2140"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
 KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-std::enable_if&lt;(3==std::rank<br class="typebreak"/>
+std::enable_if&lt; 3==std::rank<br class="typebreak"/>
 &lt; member_data_type&lt; M &gt;<br class="typebreak"/>
- &gt;::value &amp;&amp;std::is_integral<br class="typebreak"/>
-&lt; A &gt;::value <br class="typebreak"/>
-&amp;&amp;std::is_integral&lt; D0 &gt;<br class="typebreak"/>
-::value &amp;&amp;std::is_integral&lt; D1 &gt;<br class="typebreak"/>
-::value &amp;&amp;std::is_integral&lt; D2 &gt;<br class="typebreak"/>
-::value), <br class="typebreak"/>
+ &gt;::value, <br class="typebreak"/>
 member_reference_type&lt; M &gt;<br class="typebreak"/>
- &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const A &amp;a, const D0 &amp;d0, const D1 &amp;d1, const D2 &amp;d2)</td></tr>
-<tr class="separator:a0442b5967c678c059c7de1cc3fd40c02"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15370e0916d2b126dc34ded612913787"><td class="memTemplParams" colspan="2"><a class="anchor" id="a15370e0916d2b126dc34ded612913787"></a>
-template&lt;std::size_t M, typename A , typename D0 , typename D1 , typename D2 &gt; </td></tr>
-<tr class="memitem:a15370e0916d2b126dc34ded612913787"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
+ &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::size_t a, const std::size_t d0, const std::size_t d1, const std::size_t d2)</td></tr>
+<tr class="separator:abbc67b807ee9e846c107bcafee3b2140"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a540cd501e4459db16941f76b5bb265cd"><td class="memTemplParams" colspan="2"><a class="anchor" id="a540cd501e4459db16941f76b5bb265cd"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a540cd501e4459db16941f76b5bb265cd"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
 KOKKOS_FORCEINLINE_FUNCTION <br class="typebreak"/>
-std::enable_if&lt;(3==std::rank<br class="typebreak"/>
+std::enable_if&lt; 3==std::rank<br class="typebreak"/>
 &lt; member_data_type&lt; M &gt;<br class="typebreak"/>
- &gt;::value &amp;&amp;std::is_integral<br class="typebreak"/>
-&lt; A &gt;::value <br class="typebreak"/>
-&amp;&amp;std::is_integral&lt; D0 &gt;<br class="typebreak"/>
-::value &amp;&amp;std::is_integral&lt; D1 &gt;<br class="typebreak"/>
-::value &amp;&amp;std::is_integral&lt; D2 &gt;<br class="typebreak"/>
-::value), member_value_type&lt; M &gt;<br class="typebreak"/>
- &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const A &amp;a, const D0 &amp;d0, const D1 &amp;d1, const D2 &amp;d2) const </td></tr>
-<tr class="separator:a15370e0916d2b126dc34ded612913787"><td class="memSeparator" colspan="2">&#160;</td></tr>
+ &gt;::value, member_value_type<br class="typebreak"/>
+&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><b>get</b> (const std::size_t a, const std::size_t d0, const std::size_t d1, const std::size_t d2) const </td></tr>
+<tr class="separator:a540cd501e4459db16941f76b5bb265cd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5514f666e1b06458f007e2d6e8a6f3b"><td class="memTemplParams" colspan="2"><a class="anchor" id="ab5514f666e1b06458f007e2d6e8a6f3b"></a>
 template&lt;std::size_t M&gt; </td></tr>
 <tr class="memitem:ab5514f666e1b06458f007e2d6e8a6f3b"><td class="memTemplItemLeft" align="right" valign="top">CABANA_DEPRECATED <br class="typebreak"/>
@@ -320,7 +294,7 @@ template&lt;std::size_t M, std::size_t D&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a052d7494268bf458bbc2a37f1f5a3ab6"></a>
+<a class="anchor" id="a912e03d36bfe157b17cab342777563e9"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -332,7 +306,7 @@ template&lt;std::size_t M&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_FORCEINLINE_FUNCTION constexpr unsigned <a class="el" href="structCabana_1_1SoA.html">Cabana::SoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">MemberTypes</a>&lt; Types...&gt;, VectorLength &gt;::rank </td>
+          <td class="memname">KOKKOS_FORCEINLINE_FUNCTION constexpr std::size_t <a class="el" href="structCabana_1_1SoA.html">Cabana::SoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">MemberTypes</a>&lt; Types...&gt;, VectorLength &gt;::rank </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -362,7 +336,7 @@ template&lt;std::size_t M&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 15 2019 22:52:41 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 16 2019 19:43:10 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

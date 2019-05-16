@@ -371,8 +371,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    }</div>
 <div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;</div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="comment">// Get the number of components in each slice element.</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="keywordtype">int</span> num_comp = 1;</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d = 2; d &lt; dst.rank(); ++d )</div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    std::size_t num_comp = 1;</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keywordflow">for</span> ( std::size_t d = 2; d &lt; dst.rank(); ++d )</div>
 <div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;        num_comp *= dst.extent(d);</div>
 <div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;</div>
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="comment">// Gather the slice data in a flat view in the source space and copy it to</span></div>
@@ -389,7 +389,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;                <span class="keyword">auto</span> src_offset =</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                SrcSlice::index_type::s(i) * src.stride(0) +</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                SrcSlice::index_type::a(i);</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                    gather_src( i * num_comp + n ) =</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                        src_data[ src_offset + SrcSlice::vector_length * n ];</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            };</div>
@@ -408,7 +408,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;            <span class="keyword">auto</span> dst_offset =</div>
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;            DstSlice::index_type::s(i) * dst.stride(0) +</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;            DstSlice::index_type::a(i);</div>
-<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_comp; ++n )</div>
+<div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            <span class="keywordflow">for</span> ( std::size_t n = 0; n &lt; num_comp; ++n )</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;                dst_data[ dst_offset + DstSlice::vector_length * n ] =</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;                    gather_dst( i * num_comp + n );</div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        };</div>
@@ -437,7 +437,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Wed May 15 2019 22:52:40 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu May 16 2019 19:43:10 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

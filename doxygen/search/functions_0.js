@@ -1,8 +1,8 @@
 var searchData=
 [
-  ['a',['a',['../classCabana_1_1Impl_1_1Index.html#a756a0f9c34351b93860ce89de8189ee3',1,'Cabana::Impl::Index']]],
-  ['access',['access',['../classCabana_1_1AoSoA.html#a5ee5f40747c38e58b8e9926ddd9138b2',1,'Cabana::AoSoA']]],
-  ['aosoa',['AoSoA',['../classCabana_1_1AoSoA.html#ac952483cd2ef4aa12b637aee1da26303',1,'Cabana::AoSoA::AoSoA(const std::string &amp;label=&quot;&quot;)'],['../classCabana_1_1AoSoA.html#a9206cddc345e68926c38fe66137ec0f9',1,'Cabana::AoSoA::AoSoA(const std::size_t n)'],['../classCabana_1_1AoSoA.html#ac9abb9ed5494fcc0e11fc4c8b98be16c',1,'Cabana::AoSoA::AoSoA(const std::string label, const std::size_t n)'],['../classCabana_1_1AoSoA.html#a2bc0437ebc048ba3d54dd155739c272b',1,'Cabana::AoSoA::AoSoA(soa_type *ptr, const int num_soa, const int n)']]],
+  ['a',['a',['../classCabana_1_1Impl_1_1Index.html#a3af51f53fd4d3f099e7d30f587dc93d3',1,'Cabana::Impl::Index']]],
+  ['access',['access',['../classCabana_1_1AoSoA.html#a4bbb57ca99cc82718a7f8de1693dd470',1,'Cabana::AoSoA']]],
+  ['aosoa',['AoSoA',['../classCabana_1_1AoSoA.html#ac952483cd2ef4aa12b637aee1da26303',1,'Cabana::AoSoA::AoSoA(const std::string &amp;label=&quot;&quot;)'],['../classCabana_1_1AoSoA.html#ac1bca251078be0076d02d8327ff0accf',1,'Cabana::AoSoA::AoSoA(const size_type n)'],['../classCabana_1_1AoSoA.html#acff9e7108442c11222f8c0da671514c1',1,'Cabana::AoSoA::AoSoA(const std::string label, const size_type n)'],['../classCabana_1_1AoSoA.html#a38e42ce7588a9edb3db15e720b9b6735',1,'Cabana::AoSoA::AoSoA(soa_type *ptr, const size_type num_soa, const size_type n)']]],
   ['arraybegin',['arrayBegin',['../classCabana_1_1SimdPolicy.html#aaf8cc7113adc760fa3543bf9d5c06600',1,'Cabana::SimdPolicy']]],
-  ['arraysize',['arraySize',['../classCabana_1_1AoSoA.html#a49ce1fd5892394c3a10c95cfe260551b',1,'Cabana::AoSoA::arraySize()'],['../classCabana_1_1Slice.html#a76e2c3bf749f2f305bd09f2f762162f9',1,'Cabana::Slice::arraySize()']]]
+  ['arraysize',['arraySize',['../classCabana_1_1AoSoA.html#a424ade5e0e1d73c25f04fe09c479f333',1,'Cabana::AoSoA::arraySize()'],['../classCabana_1_1Slice.html#aee8dce441292153b8ce31c0f5778dcfb',1,'Cabana::Slice::arraySize()']]]
 ];
