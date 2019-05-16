@@ -130,6 +130,9 @@ class AoSoA
     // Memory traits type.
     using memory_traits = MemoryTraits;
 
+    // Size type.
+    using size_type = typename memory_space::size_type;
+
     // SoA type.
     using soa_type = SoA<member_types,vector_length>;
 
@@ -199,7 +202,7 @@ class AoSoA
       Kokkos View.
     */
     CABANA_DEPRECATED
-    explicit AoSoA( const std::size_t n )
+    explicit AoSoA( const size_type n )
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
@@ -217,7 +220,7 @@ class AoSoA
 
       \param n The number of tuples in the container.
     */
-    AoSoA( const std::string label, const std::size_t n )
+    AoSoA( const std::string label, const size_type n )
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
@@ -236,8 +239,8 @@ class AoSoA
       \param n The number of tuples in the container.
     */
     AoSoA( soa_type* ptr,
-           const int num_soa,
-           const int n )
+           const size_type num_soa,
+           const size_type n )
         : _size( n )
         , _capacity( num_soa * vector_length )
         , _num_soa( num_soa )
@@ -267,7 +270,7 @@ class AoSoA
       necessarily equal to its storage capacity.
     */
     KOKKOS_FUNCTION
-    std::size_t size() const { return _size; }
+    size_type size() const { return _size; }
 
     /*!
       \brief Returns the size of the storage space currently allocated for the
@@ -287,7 +290,7 @@ class AoSoA
       reserve.
     */
     KOKKOS_FUNCTION
-    std::size_t capacity() const { return _capacity; }
+    size_type capacity() const { return _capacity; }
 
     /*!
       \brief Resizes the container so that it contains n tuples.
@@ -304,7 +307,7 @@ class AoSoA
       Notice that this function changes the actual content of the container by
       inserting or erasing tuples from it.
     */
-    void resize( const std::size_t n )
+    void resize( const size_type n )
     {
         static_assert( !memory_traits::Unmanaged,
                        "Cannot resize unmanaged memory" );
@@ -333,7 +336,7 @@ class AoSoA
       This function has no effect on the container size and cannot alter its
       tuples.
     */
-    void reserve( const std::size_t n )
+    void reserve( const size_type n )
     {
         static_assert( !memory_traits::Unmanaged,
                        "Cannot reserve unmanaged memory" );
@@ -342,7 +345,7 @@ class AoSoA
         if ( n <= _capacity ) return;
 
         // Figure out the new capacity.
-        std::size_t num_soa_alloc = std::floor( n / vector_length );
+        size_type num_soa_alloc = std::floor( n / vector_length );
         if ( 0 < n % vector_length ) ++num_soa_alloc;
 
         // If we aren't asking for any more SoA objects then we still have
@@ -362,7 +365,7 @@ class AoSoA
       \return The number of structs-of-arrays in the container.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t numSoA() const { return _num_soa; }
+    size_type numSoA() const { return _num_soa; }
 
     /*!
       \brief Get the size of the data array at a given struct member index.
@@ -371,12 +374,10 @@ class AoSoA
 
       \return The size of the array at the given struct index.
     */
-    template<typename S>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<std::is_integral<S>::value,int>::type
-    arraySize( const S& s ) const
+    size_type arraySize( const size_type s ) const
     {
-        return ( (std::size_t) s < _num_soa - 1 )
+        return ( (size_type) s < _num_soa - 1 )
             ? vector_length : ( _size % vector_length );
     }
 
@@ -387,10 +388,8 @@ class AoSoA
 
       \return The SoA reference at the given index.
     */
-    template<typename S>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<std::is_integral<S>::value,soa_type&>::type
-    access( const S& s ) const
+    soa_type& access( const size_type s ) const
     { return _data(s); }
 
     /*!
@@ -400,10 +399,8 @@ class AoSoA
 
       \return A tuple containing a deep copy of the data at the given index.
     */
-    template<typename I>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<std::is_integral<I>::value,tuple_type>::type
-    getTuple( const I& i ) const
+    tuple_type getTuple( const size_type i ) const
     {
         tuple_type tpl;
         Impl::tupleCopy( tpl, 0, _data(index_type::s(i)), index_type::a(i) );
@@ -417,11 +414,8 @@ class AoSoA
 
       \param tuple The tuple to get the data from.
     */
-    template<typename I>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<std::is_integral<I>::value,void>::type
-    setTuple( const I& i,
-              const tuple_type& tpl ) const
+    void setTuple( const size_type i, const tuple_type& tpl ) const
     {
         Impl::tupleCopy( _data(index_type::s(i)), index_type::a(i), tpl, 0 );
     }
@@ -458,13 +452,13 @@ class AoSoA
   private:
 
     // Total number of tuples in the container.
-    std::size_t _size;
+    size_type _size;
 
     // Allocated number of tuples in all arrays in all structs.
-    std::size_t _capacity;
+    size_type _capacity;
 
     // Number of structs-of-arrays in the array.
-    std::size_t _num_soa;
+    size_type _num_soa;
 
     // Structs-of-Arrays managed data. This Kokkos View manages the block of
     // memory owned by this class such that the copy constructor and

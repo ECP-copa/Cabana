@@ -106,14 +106,14 @@ void sliceExample()
     {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                for ( int a = 0; a < slice_0.arraySize(s); ++a )
+                for ( std::size_t a = 0; a < slice_0.arraySize(s); ++a )
                     slice_0.access(s,a,i,j) = 1.0 * (a + i + j);
 
         for ( int i = 0; i < 4; ++i )
-            for ( int a = 0; a < slice_0.arraySize(s); ++a )
+            for ( std::size_t a = 0; a < slice_0.arraySize(s); ++a )
                 slice_1.access(s,a,i) = 1.0 * (a + i);
 
-        for ( int a = 0; a < slice_0.arraySize(s); ++a )
+        for ( std::size_t a = 0; a < slice_0.arraySize(s); ++a )
             slice_2.access(s,a) = a + 1234;
     }
 
