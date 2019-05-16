@@ -530,8 +530,14 @@ class VerletList
     VerletListData<MemorySpace,LayoutTag> _data;
 
     /*!
-      \brief Given a list of particle positions and a neighborhood radius calculate
-      the neighbor list.
+      \brief Default constructor.
+    */
+    VerletList()
+    {}
+
+    /*!
+      \brief VerletList constructor. Given a list of particle positions and
+      a neighborhood radius calculate the neighbor list.
 
       \param x The slice containing the particle positions
 
