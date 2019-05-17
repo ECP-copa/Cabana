@@ -601,120 +601,123 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;    <span class="comment">// Verlet list data.</span></div>
 <div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;    <a class="code" href="structCabana_1_1VerletListData.html">VerletListData&lt;MemorySpace,LayoutTag&gt;</a> _data;</div>
 <div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;</div>
-<div class="line"><a name="l00562"></a><span class="lineno">  562</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> PositionSlice&gt;</div>
-<div class="line"><a name="l00563"></a><span class="lineno"><a class="line" href="classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9">  563</a></span>&#160;    <a class="code" href="classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9">VerletList</a>(</div>
-<div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160;        PositionSlice x,</div>
-<div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;        <span class="keyword">const</span> std::size_t begin,</div>
-<div class="line"><a name="l00566"></a><span class="lineno">  566</span>&#160;        <span class="keyword">const</span> std::size_t end,</div>
-<div class="line"><a name="l00567"></a><span class="lineno">  567</span>&#160;        <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type neighborhood_radius,</div>
-<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;        <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type cell_size_ratio,</div>
-<div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;        <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type grid_min[3],</div>
-<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;        <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type grid_max[3],</div>
-<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;(<a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;PositionSlice&gt;::value</a>),<span class="keywordtype">int</span>&gt;::type * = 0 )</div>
-<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;    {</div>
-<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;        <span class="comment">// Create a builder functor.</span></div>
-<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;        <span class="keyword">using</span> builder_type =</div>
-<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;            <a class="code" href="structCabana_1_1Impl_1_1VerletListBuilder.html">Impl::VerletListBuilder&lt;PositionSlice,AlgorithmTag,LayoutTag&gt;</a>;</div>
-<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;        builder_type builder( x, begin, end,</div>
-<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;                              neighborhood_radius, cell_size_ratio,</div>
-<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;                              grid_min, grid_max );</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;</div>
-<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;        <span class="comment">// For each particle in the range check each neighboring bin for</span></div>
-<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;        <span class="comment">// neighbor particles. Bins are at least the size of the neighborhood</span></div>
-<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;        <span class="comment">// radius so the bin in which the particle resides and any surrounding</span></div>
-<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;        <span class="comment">// bins are guaranteed to contain the neighboring particles.</span></div>
-<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;        <span class="keyword">typename</span> builder_type::CountNeighborsPolicy</div>
-<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;            count_policy( builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );</div>
-<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;        Kokkos::parallel_for(</div>
-<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;            <span class="stringliteral">&quot;Cabana::VerletList::count_neighbors&quot;</span>,</div>
-<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;            count_policy, builder );</div>
-<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;        Kokkos::fence();</div>
-<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;</div>
-<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;        <span class="comment">// Process the counts by computing offsets and allocating the neighbor</span></div>
-<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;        <span class="comment">// list.</span></div>
-<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;        builder.processCounts( LayoutTag() );</div>
-<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;</div>
-<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        <span class="comment">// For each particle in the range fill its part of the neighbor list.</span></div>
-<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;        <span class="keyword">typename</span> builder_type::FillNeighborsPolicy</div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;            fill_policy( builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );</div>
-<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;        Kokkos::parallel_for(</div>
-<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;            <span class="stringliteral">&quot;Cabana::VerletList::fill_neighbors&quot;</span>,</div>
-<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;            fill_policy, builder );</div>
-<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;        Kokkos::fence();</div>
-<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;</div>
-<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;        <span class="comment">// Get the data from the builder.</span></div>
-<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;        _data = builder._data;</div>
-<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;    }</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;};</div>
-<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;</div>
-<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;<span class="comment">// Neighbor list interface implementation.</span></div>
-<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;<span class="comment">// CSR Data Layout</span></div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> MemorySpace, <span class="keyword">class</span> AlgorithmTag&gt;</div>
-<div class="line"><a name="l00613"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_01_4_01_4.html">  613</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1NeighborList.html">NeighborList</a>&lt;<a class="code" href="classCabana_1_1VerletList.html">VerletList</a>&lt;MemorySpace,AlgorithmTag,<a class="code" href="structCabana_1_1VerletLayoutCSR.html">VerletLayoutCSR</a>&gt; &gt;</div>
-<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;{</div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;</div>
-<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a> = <a class="code" href="classCabana_1_1VerletList.html">VerletList&lt;MemorySpace,AlgorithmTag,VerletLayoutCSR&gt;</a>;</div>
-<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;</div>
-<div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;    <span class="keyword">using</span> TypeTag = AlgorithmTag;</div>
-<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;</div>
-<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    <span class="comment">// Get the number of neighbors for a given particle index.</span></div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;    <span class="keyword">static</span> std::size_t numNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list,</div>
-<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index )</div>
-<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;    {</div>
-<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;        <span class="keywordflow">return</span> list._data.counts( particle_index );</div>
-<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;    }</div>
-<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;</div>
-<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;    <span class="comment">// Get the id for a neighbor for a given particle index and the index of</span></div>
-<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;    <span class="comment">// the neighbor relative to the particle.</span></div>
-<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;    <span class="keyword">static</span> std::size_t getNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list,</div>
-<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index,</div>
-<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;                                    <span class="keyword">const</span> std::size_t neighbor_index )</div>
-<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;    {</div>
-<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;        <span class="keywordflow">return</span> list._data.neighbors(</div>
-<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;            list._data.offsets(particle_index) + neighbor_index );</div>
-<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;    }</div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;};</div>
-<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;</div>
-<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;<span class="comment">// 2D Data Layout</span></div>
-<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> MemorySpace, <span class="keyword">class</span> AlgorithmTag&gt;</div>
-<div class="line"><a name="l00644"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_01_4_01_4.html">  644</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1NeighborList.html">NeighborList</a>&lt;<a class="code" href="classCabana_1_1VerletList.html">VerletList</a>&lt;MemorySpace,AlgorithmTag,<a class="code" href="structCabana_1_1VerletLayout2D.html">VerletLayout2D</a>&gt; &gt;</div>
-<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;{</div>
-<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;</div>
-<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a> = <a class="code" href="classCabana_1_1VerletList.html">VerletList&lt;MemorySpace,AlgorithmTag,VerletLayout2D&gt;</a>;</div>
-<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;</div>
-<div class="line"><a name="l00650"></a><span class="lineno">  650</span>&#160;    <span class="keyword">using</span> TypeTag = AlgorithmTag;</div>
-<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;</div>
-<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;    <span class="comment">// Get the number of neighbors for a given particle index.</span></div>
-<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;    <span class="keyword">static</span> std::size_t numNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list,</div>
-<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index )</div>
-<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;    {</div>
-<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;        <span class="keywordflow">return</span> list._data.counts( particle_index );</div>
-<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;    }</div>
-<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;</div>
-<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;    <span class="comment">// Get the id for a neighbor for a given particle index and the index of</span></div>
-<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;    <span class="comment">// the neighbor relative to the particle.</span></div>
-<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;    <span class="keyword">static</span> std::size_t getNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list,</div>
-<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index,</div>
-<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;                                    <span class="keyword">const</span> std::size_t neighbor_index )</div>
-<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    {</div>
-<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;        <span class="keywordflow">return</span> list._data.neighbors( particle_index, neighbor_index );</div>
-<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;    }</div>
-<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;};</div>
-<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;</div>
-<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;</div>
-<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;</div>
-<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;<span class="preprocessor">#endif // end  CABANA_VERLETLIST_HPP</span></div>
+<div class="line"><a name="l00535"></a><span class="lineno"><a class="line" href="classCabana_1_1VerletList.html#a9085b3b6c5169fad5b59b6907f8f9acd">  535</a></span>&#160;    <a class="code" href="classCabana_1_1VerletList.html#a9085b3b6c5169fad5b59b6907f8f9acd">VerletList</a>()</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    {}</div>
+<div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;</div>
+<div class="line"><a name="l00568"></a><span class="lineno">  568</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> PositionSlice&gt;</div>
+<div class="line"><a name="l00569"></a><span class="lineno"><a class="line" href="classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9">  569</a></span>&#160;    <a class="code" href="classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9">VerletList</a>(</div>
+<div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160;        PositionSlice x,</div>
+<div class="line"><a name="l00571"></a><span class="lineno">  571</span>&#160;        <span class="keyword">const</span> std::size_t begin,</div>
+<div class="line"><a name="l00572"></a><span class="lineno">  572</span>&#160;        <span class="keyword">const</span> std::size_t end,</div>
+<div class="line"><a name="l00573"></a><span class="lineno">  573</span>&#160;        <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type neighborhood_radius,</div>
+<div class="line"><a name="l00574"></a><span class="lineno">  574</span>&#160;        <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type cell_size_ratio,</div>
+<div class="line"><a name="l00575"></a><span class="lineno">  575</span>&#160;        <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type grid_min[3],</div>
+<div class="line"><a name="l00576"></a><span class="lineno">  576</span>&#160;        <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type grid_max[3],</div>
+<div class="line"><a name="l00577"></a><span class="lineno">  577</span>&#160;        <span class="keyword">typename</span> std::enable_if&lt;(<a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;PositionSlice&gt;::value</a>),<span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00578"></a><span class="lineno">  578</span>&#160;    {</div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;        <span class="comment">// Create a builder functor.</span></div>
+<div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;        <span class="keyword">using</span> builder_type =</div>
+<div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;            <a class="code" href="structCabana_1_1Impl_1_1VerletListBuilder.html">Impl::VerletListBuilder&lt;PositionSlice,AlgorithmTag,LayoutTag&gt;</a>;</div>
+<div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;        builder_type builder( x, begin, end,</div>
+<div class="line"><a name="l00583"></a><span class="lineno">  583</span>&#160;                              neighborhood_radius, cell_size_ratio,</div>
+<div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;                              grid_min, grid_max );</div>
+<div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160;</div>
+<div class="line"><a name="l00586"></a><span class="lineno">  586</span>&#160;        <span class="comment">// For each particle in the range check each neighboring bin for</span></div>
+<div class="line"><a name="l00587"></a><span class="lineno">  587</span>&#160;        <span class="comment">// neighbor particles. Bins are at least the size of the neighborhood</span></div>
+<div class="line"><a name="l00588"></a><span class="lineno">  588</span>&#160;        <span class="comment">// radius so the bin in which the particle resides and any surrounding</span></div>
+<div class="line"><a name="l00589"></a><span class="lineno">  589</span>&#160;        <span class="comment">// bins are guaranteed to contain the neighboring particles.</span></div>
+<div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;        <span class="keyword">typename</span> builder_type::CountNeighborsPolicy</div>
+<div class="line"><a name="l00591"></a><span class="lineno">  591</span>&#160;            count_policy( builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );</div>
+<div class="line"><a name="l00592"></a><span class="lineno">  592</span>&#160;        Kokkos::parallel_for(</div>
+<div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;            <span class="stringliteral">&quot;Cabana::VerletList::count_neighbors&quot;</span>,</div>
+<div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;            count_policy, builder );</div>
+<div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        Kokkos::fence();</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;        <span class="comment">// Process the counts by computing offsets and allocating the neighbor</span></div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;        <span class="comment">// list.</span></div>
+<div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;        builder.processCounts( LayoutTag() );</div>
+<div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;</div>
+<div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;        <span class="comment">// For each particle in the range fill its part of the neighbor list.</span></div>
+<div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;        <span class="keyword">typename</span> builder_type::FillNeighborsPolicy</div>
+<div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;            fill_policy( builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );</div>
+<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;        Kokkos::parallel_for(</div>
+<div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;            <span class="stringliteral">&quot;Cabana::VerletList::fill_neighbors&quot;</span>,</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;            fill_policy, builder );</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;        Kokkos::fence();</div>
+<div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;</div>
+<div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;        <span class="comment">// Get the data from the builder.</span></div>
+<div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;        _data = builder._data;</div>
+<div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    }</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;};</div>
+<div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;</div>
+<div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;<span class="comment">// Neighbor list interface implementation.</span></div>
+<div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;<span class="comment">// CSR Data Layout</span></div>
+<div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> MemorySpace, <span class="keyword">class</span> AlgorithmTag&gt;</div>
+<div class="line"><a name="l00619"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_01_4_01_4.html">  619</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1NeighborList.html">NeighborList</a>&lt;<a class="code" href="classCabana_1_1VerletList.html">VerletList</a>&lt;MemorySpace,AlgorithmTag,<a class="code" href="structCabana_1_1VerletLayoutCSR.html">VerletLayoutCSR</a>&gt; &gt;</div>
+<div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;{</div>
+<div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;</div>
+<div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a> = <a class="code" href="classCabana_1_1VerletList.html">VerletList&lt;MemorySpace,AlgorithmTag,VerletLayoutCSR&gt;</a>;</div>
+<div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;</div>
+<div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;    <span class="keyword">using</span> TypeTag = AlgorithmTag;</div>
+<div class="line"><a name="l00626"></a><span class="lineno">  626</span>&#160;</div>
+<div class="line"><a name="l00627"></a><span class="lineno">  627</span>&#160;    <span class="comment">// Get the number of neighbors for a given particle index.</span></div>
+<div class="line"><a name="l00628"></a><span class="lineno">  628</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00629"></a><span class="lineno">  629</span>&#160;    <span class="keyword">static</span> std::size_t numNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list,</div>
+<div class="line"><a name="l00630"></a><span class="lineno">  630</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index )</div>
+<div class="line"><a name="l00631"></a><span class="lineno">  631</span>&#160;    {</div>
+<div class="line"><a name="l00632"></a><span class="lineno">  632</span>&#160;        <span class="keywordflow">return</span> list._data.counts( particle_index );</div>
+<div class="line"><a name="l00633"></a><span class="lineno">  633</span>&#160;    }</div>
+<div class="line"><a name="l00634"></a><span class="lineno">  634</span>&#160;</div>
+<div class="line"><a name="l00635"></a><span class="lineno">  635</span>&#160;    <span class="comment">// Get the id for a neighbor for a given particle index and the index of</span></div>
+<div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;    <span class="comment">// the neighbor relative to the particle.</span></div>
+<div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;    <span class="keyword">static</span> std::size_t getNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list,</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index,</div>
+<div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                                    <span class="keyword">const</span> std::size_t neighbor_index )</div>
+<div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;    {</div>
+<div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160;        <span class="keywordflow">return</span> list._data.neighbors(</div>
+<div class="line"><a name="l00643"></a><span class="lineno">  643</span>&#160;            list._data.offsets(particle_index) + neighbor_index );</div>
+<div class="line"><a name="l00644"></a><span class="lineno">  644</span>&#160;    }</div>
+<div class="line"><a name="l00645"></a><span class="lineno">  645</span>&#160;};</div>
+<div class="line"><a name="l00646"></a><span class="lineno">  646</span>&#160;</div>
+<div class="line"><a name="l00647"></a><span class="lineno">  647</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00648"></a><span class="lineno">  648</span>&#160;<span class="comment">// 2D Data Layout</span></div>
+<div class="line"><a name="l00649"></a><span class="lineno">  649</span>&#160;<span class="keyword">template</span>&lt;<span class="keyword">class</span> MemorySpace, <span class="keyword">class</span> AlgorithmTag&gt;</div>
+<div class="line"><a name="l00650"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_01_4_01_4.html">  650</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1NeighborList.html">NeighborList</a>&lt;<a class="code" href="classCabana_1_1VerletList.html">VerletList</a>&lt;MemorySpace,AlgorithmTag,<a class="code" href="structCabana_1_1VerletLayout2D.html">VerletLayout2D</a>&gt; &gt;</div>
+<div class="line"><a name="l00651"></a><span class="lineno">  651</span>&#160;{</div>
+<div class="line"><a name="l00652"></a><span class="lineno">  652</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00653"></a><span class="lineno">  653</span>&#160;</div>
+<div class="line"><a name="l00654"></a><span class="lineno">  654</span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a> = <a class="code" href="classCabana_1_1VerletList.html">VerletList&lt;MemorySpace,AlgorithmTag,VerletLayout2D&gt;</a>;</div>
+<div class="line"><a name="l00655"></a><span class="lineno">  655</span>&#160;</div>
+<div class="line"><a name="l00656"></a><span class="lineno">  656</span>&#160;    <span class="keyword">using</span> TypeTag = AlgorithmTag;</div>
+<div class="line"><a name="l00657"></a><span class="lineno">  657</span>&#160;</div>
+<div class="line"><a name="l00658"></a><span class="lineno">  658</span>&#160;    <span class="comment">// Get the number of neighbors for a given particle index.</span></div>
+<div class="line"><a name="l00659"></a><span class="lineno">  659</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00660"></a><span class="lineno">  660</span>&#160;    <span class="keyword">static</span> std::size_t numNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list,</div>
+<div class="line"><a name="l00661"></a><span class="lineno">  661</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index )</div>
+<div class="line"><a name="l00662"></a><span class="lineno">  662</span>&#160;    {</div>
+<div class="line"><a name="l00663"></a><span class="lineno">  663</span>&#160;        <span class="keywordflow">return</span> list._data.counts( particle_index );</div>
+<div class="line"><a name="l00664"></a><span class="lineno">  664</span>&#160;    }</div>
+<div class="line"><a name="l00665"></a><span class="lineno">  665</span>&#160;</div>
+<div class="line"><a name="l00666"></a><span class="lineno">  666</span>&#160;    <span class="comment">// Get the id for a neighbor for a given particle index and the index of</span></div>
+<div class="line"><a name="l00667"></a><span class="lineno">  667</span>&#160;    <span class="comment">// the neighbor relative to the particle.</span></div>
+<div class="line"><a name="l00668"></a><span class="lineno">  668</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00669"></a><span class="lineno">  669</span>&#160;    <span class="keyword">static</span> std::size_t getNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list,</div>
+<div class="line"><a name="l00670"></a><span class="lineno">  670</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index,</div>
+<div class="line"><a name="l00671"></a><span class="lineno">  671</span>&#160;                                    <span class="keyword">const</span> std::size_t neighbor_index )</div>
+<div class="line"><a name="l00672"></a><span class="lineno">  672</span>&#160;    {</div>
+<div class="line"><a name="l00673"></a><span class="lineno">  673</span>&#160;        <span class="keywordflow">return</span> list._data.neighbors( particle_index, neighbor_index );</div>
+<div class="line"><a name="l00674"></a><span class="lineno">  674</span>&#160;    }</div>
+<div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;};</div>
+<div class="line"><a name="l00676"></a><span class="lineno">  676</span>&#160;</div>
+<div class="line"><a name="l00677"></a><span class="lineno">  677</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00678"></a><span class="lineno">  678</span>&#160;</div>
+<div class="line"><a name="l00679"></a><span class="lineno">  679</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00680"></a><span class="lineno">  680</span>&#160;</div>
+<div class="line"><a name="l00681"></a><span class="lineno">  681</span>&#160;<span class="preprocessor">#endif // end  CABANA_VERLETLIST_HPP</span></div>
 <div class="ttc" id="classCabana_1_1BinningData_html"><div class="ttname"><a href="classCabana_1_1BinningData.html">Cabana::BinningData&lt; memory_space &gt;</a></div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_abc56ba3f7cb8473f016d3e91aa2faa08"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#abc56ba3f7cb8473f016d3e91aa2faa08">Cabana::LinkedCellList::binningData</a></div><div class="ttdeci">BinningData&lt; MemorySpace &gt; binningData() const </div><div class="ttdoc">Get the 1d bin data. </div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:202</div></div>
 <div class="ttc" id="classCabana_1_1Impl_1_1CartesianGrid_html"><div class="ttname"><a href="classCabana_1_1Impl_1_1CartesianGrid.html">Cabana::Impl::CartesianGrid&lt; double &gt;</a></div></div>
@@ -733,16 +736,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="ttc" id="structCabana_1_1VerletLayout2D_html"><div class="ttname"><a href="structCabana_1_1VerletLayout2D.html">Cabana::VerletLayout2D</a></div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:30</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html">Cabana::Impl::VerletListBuilder::CountNeighborsTag</a></div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:251</div></div>
 <div class="ttc" id="classCabana_1_1Impl_1_1NeighborDiscriminator_html"><div class="ttname"><a href="classCabana_1_1Impl_1_1NeighborDiscriminator.html">Cabana::Impl::NeighborDiscriminator</a></div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:89</div></div>
-<div class="ttc" id="classCabana_1_1VerletList_html_acd8a008ac9244bd6bb9ad6cea000a7b9"><div class="ttname"><a href="classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9">Cabana::VerletList::VerletList</a></div><div class="ttdeci">VerletList(PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], typename std::enable_if&lt;(is_slice&lt; PositionSlice &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Given a list of particle positions and a neighborhood radius calculate the neighbor list...</div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:563</div></div>
+<div class="ttc" id="classCabana_1_1VerletList_html_acd8a008ac9244bd6bb9ad6cea000a7b9"><div class="ttname"><a href="classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9">Cabana::VerletList::VerletList</a></div><div class="ttdeci">VerletList(PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], typename std::enable_if&lt;(is_slice&lt; PositionSlice &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">VerletList constructor. Given a list of particle positions and a neighborhood radius calculate the ne...</div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:569</div></div>
 <div class="ttc" id="structCabana_1_1VerletListData_html"><div class="ttname"><a href="structCabana_1_1VerletListData.html">Cabana::VerletListData</a></div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:36</div></div>
 <div class="ttc" id="classCabana_1_1LinkedCellList_html_a69e9c28f3d4d661eb3629406db8f18cf"><div class="ttname"><a href="classCabana_1_1LinkedCellList.html#a69e9c28f3d4d661eb3629406db8f18cf">Cabana::LinkedCellList::binOffset</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION size_type binOffset(const int i, const int j, const int k) const </div><div class="ttdoc">Given a bin get the particle index at which it sorts. </div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:171</div></div>
 <div class="ttc" id="structCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:751</div></div>
 <div class="ttc" id="classCabana_1_1HalfNeighborTag_html"><div class="ttname"><a href="classCabana_1_1HalfNeighborTag.html">Cabana::HalfNeighborTag</a></div><div class="ttdoc">Tag for half neighbor lists. </div><div class="ttdef"><b>Definition:</b> Cabana_NeighborList.hpp:42</div></div>
 <div class="ttc" id="structCabana_1_1Impl_1_1LinkedCellStencil_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1LinkedCellStencil.html">Cabana::Impl::LinkedCellStencil</a></div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:137</div></div>
+<div class="ttc" id="classCabana_1_1VerletList_html_a9085b3b6c5169fad5b59b6907f8f9acd"><div class="ttname"><a href="classCabana_1_1VerletList.html#a9085b3b6c5169fad5b59b6907f8f9acd">Cabana::VerletList::VerletList</a></div><div class="ttdeci">VerletList()</div><div class="ttdoc">Default constructor. </div><div class="ttdef"><b>Definition:</b> Cabana_VerletList.hpp:535</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu May 16 2019 19:43:10 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri May 17 2019 18:55:32 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

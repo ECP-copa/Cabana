@@ -2,7 +2,7 @@ var searchData=
 [
   ['verletlayout2d',['VerletLayout2D',['../structCabana_1_1VerletLayout2D.html',1,'Cabana']]],
   ['verletlayoutcsr',['VerletLayoutCSR',['../structCabana_1_1VerletLayoutCSR.html',1,'Cabana']]],
-  ['verletlist',['VerletList',['../classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9',1,'Cabana::VerletList']]],
+  ['verletlist',['VerletList',['../classCabana_1_1VerletList.html#a9085b3b6c5169fad5b59b6907f8f9acd',1,'Cabana::VerletList::VerletList()'],['../classCabana_1_1VerletList.html#acd8a008ac9244bd6bb9ad6cea000a7b9',1,'Cabana::VerletList::VerletList(PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], typename std::enable_if&lt;(is_slice&lt; PositionSlice &gt;::value), int &gt;::type *=0)']]],
   ['verletlist',['VerletList',['../classCabana_1_1VerletList.html',1,'Cabana']]],
   ['verletlistbuilder',['VerletListBuilder',['../structCabana_1_1Impl_1_1VerletListBuilder.html',1,'Cabana::Impl']]],
   ['verletlistdata',['VerletListData',['../structCabana_1_1VerletListData.html',1,'Cabana']]],
