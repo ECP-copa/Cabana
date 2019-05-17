@@ -70,7 +70,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_reference_type<M> >::type
-get( Tuple_t& tp, const int d0 )
+get( Tuple_t& tp, const std::size_t d0 )
 {
     return get<M>(static_cast<typename Tuple_t::base&>(tp),0,d0);
 }
@@ -81,7 +81,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_value_type<M> >::type
-get( const Tuple_t& tp, const int d0 )
+get( const Tuple_t& tp, const std::size_t d0 )
 {
     return get<M>(static_cast<const typename Tuple_t::base&>(tp),0,d0);
 }
@@ -92,7 +92,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_reference_type<M> >::type
-get( Tuple_t& tp, const int d0, const int d1 )
+get( Tuple_t& tp, const std::size_t d0, const std::size_t d1 )
 {
     return get<M>(static_cast<typename Tuple_t::base&>(tp),0,d0,d1);
 }
@@ -103,7 +103,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_value_type<M> >::type
-get( const Tuple_t& tp, const int d0, const int d1 )
+get( const Tuple_t& tp, const std::size_t d0, const std::size_t d1 )
 {
     return get<M>(static_cast<const typename Tuple_t::base&>(tp),0,d0,d1);
 }
@@ -114,7 +114,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_reference_type<M> >::type
-get( Tuple_t& tp, const int d0, const int d1, const int d2 )
+get( Tuple_t& tp, const std::size_t d0, const std::size_t d1, const std::size_t d2 )
 {
     return get<M>(static_cast<typename Tuple_t::base&>(tp),0,d0,d1,d2);
 }
@@ -125,7 +125,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_value_type<M> >::type
-get( const Tuple_t& tp, const int d0, const int d1, const int d2 )
+get( const Tuple_t& tp, const std::size_t d0, const std::size_t d1, const std::size_t d2 )
 {
     return get<M>(static_cast<const typename Tuple_t::base&>(tp),0,d0,d1,d2);
 }
@@ -156,7 +156,7 @@ struct Tuple<MemberTypes<Types...> >
     template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
-        (0==std::rank<typename base::template member_data_type<M> >::value),
+        0==std::rank<typename base::template member_data_type<M> >::value,
         typename base::template member_reference_type<M> >::type
     get()
     {
@@ -167,7 +167,7 @@ struct Tuple<MemberTypes<Types...> >
     template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
-        (0==std::rank<typename base::template member_data_type<M> >::value),
+        0==std::rank<typename base::template member_data_type<M> >::value,
         typename base::template member_value_type<M> >::type
     get() const
     {
@@ -176,99 +176,75 @@ struct Tuple<MemberTypes<Types...> >
 
     // Rank 1
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename D0>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
-        (1==std::rank<typename base::template member_data_type<M> >::value &&
-         std::is_integral<D0>::value),
+        1==std::rank<typename base::template member_data_type<M> >::value,
         typename base::template member_reference_type<M> >::type
-    get( const D0& d0 )
+    get( const std::size_t d0 )
     {
         return Cabana::get<M>( *this, d0 );
     }
 
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename D0>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
-        (1==std::rank<typename base::template member_data_type<M> >::value &&
-         std::is_integral<D0>::value),
+        1==std::rank<typename base::template member_data_type<M> >::value,
         typename base::template member_value_type<M> >::type
-    get( const D0& d0 ) const
+    get( const std::size_t d0 ) const
     {
         return Cabana::get<M>( *this, d0 );
     }
 
     // Rank 2
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename D0,
-             typename D1>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
-        (2==std::rank<typename base::template member_data_type<M> >::value &&
-         std::is_integral<D0>::value &&
-         std::is_integral<D1>::value),
+        2==std::rank<typename base::template member_data_type<M> >::value,
         typename base::template member_reference_type<M> >::type
-    get( const D0& d0,
-         const D1& d1 )
+    get( const std::size_t d0,
+         const std::size_t d1 )
     {
         return Cabana::get<M>( *this, d0, d1 );
     }
 
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename D0,
-             typename D1>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
-        (2==std::rank<typename base::template member_data_type<M> >::value &&
-         std::is_integral<D0>::value &&
-         std::is_integral<D1>::value),
+        2==std::rank<typename base::template member_data_type<M> >::value,
         typename base::template member_value_type<M> >::type
-    get( const D0& d0,
-         const D1& d1 ) const
+    get( const std::size_t d0,
+         const std::size_t d1 ) const
     {
         return Cabana::get<M>( *this, d0, d1 );
     }
 
     // Rank 3
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename D0,
-             typename D1,
-             typename D2>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
-        (3==std::rank<typename base::template member_data_type<M> >::value &&
-         std::is_integral<D0>::value &&
-         std::is_integral<D1>::value &&
-         std::is_integral<D2>::value),
+        3==std::rank<typename base::template member_data_type<M> >::value,
         typename base::template member_reference_type<M> >::type
-    get( const D0& d0,
-         const D1& d1,
-         const D2& d2 )
+    get( const std::size_t d0,
+         const std::size_t d1,
+         const std::size_t d2 )
     {
         return Cabana::get<M>( *this, d0, d1, d2 );
     }
 
     CABANA_DEPRECATED
-    template<std::size_t M,
-             typename D0,
-             typename D1,
-             typename D2>
+    template<std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<
-        (3==std::rank<typename base::template member_data_type<M> >::value &&
-         std::is_integral<D0>::value &&
-         std::is_integral<D1>::value &&
-         std::is_integral<D2>::value),
+        3==std::rank<typename base::template member_data_type<M> >::value,
         typename base::template member_value_type<M> >::type
-    get( const D0& d0,
-         const D1& d1,
-         const D2& d2 ) const
+    get( const std::size_t d0,
+         const std::size_t d1,
+         const std::size_t d2 ) const
     {
         return Cabana::get<M>( *this, d0, d1, d2 );
     }

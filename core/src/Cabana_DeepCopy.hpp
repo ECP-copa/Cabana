@@ -347,8 +347,8 @@ inline void deep_copy(
     }
 
     // Get the number of components in each slice element.
-    int num_comp = 1;
-    for ( int d = 2; d < dst.rank(); ++d )
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < dst.rank(); ++d )
         num_comp *= dst.extent(d);
 
     // Gather the slice data in a flat view in the source space and copy it to
@@ -365,7 +365,7 @@ inline void deep_copy(
                 auto src_offset =
                 SrcSlice::index_type::s(i) * src.stride(0) +
                 SrcSlice::index_type::a(i);
-                for ( int n = 0; n < num_comp; ++n )
+                for ( std::size_t n = 0; n < num_comp; ++n )
                     gather_src( i * num_comp + n ) =
                         src_data[ src_offset + SrcSlice::vector_length * n ];
             };
@@ -384,7 +384,7 @@ inline void deep_copy(
             auto dst_offset =
             DstSlice::index_type::s(i) * dst.stride(0) +
             DstSlice::index_type::a(i);
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 dst_data[ dst_offset + DstSlice::vector_length * n ] =
                     gather_dst( i * num_comp + n );
         };

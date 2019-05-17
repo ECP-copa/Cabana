@@ -116,14 +116,14 @@ void aosoaExample()
         */
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                for ( int a = 0; a < aosoa.arraySize(s); ++a )
+                for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
                     Cabana::get<0>(soa,a,i,j) = 1.0 * (a + i + j);
 
         for ( int i = 0; i < 4; ++i )
-            for ( int a = 0; a < aosoa.arraySize(s); ++a )
+            for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
                 Cabana::get<1>(soa,a,i) = 1.0 * (a + i);
 
-        for ( int a = 0; a < aosoa.arraySize(s); ++a )
+        for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
             Cabana::get<2>(soa,a) = a + 1234;
     }
 

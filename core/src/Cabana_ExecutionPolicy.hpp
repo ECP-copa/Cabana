@@ -31,7 +31,7 @@ namespace Impl
 
   \tparam VectorLength The inner array size of the AoSoA.
 */
-template<int VectorLength, typename IndexType>
+template<int VectorLength, class IndexType>
 class StructRange
 {
   public:

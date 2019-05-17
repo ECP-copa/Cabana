@@ -456,8 +456,8 @@ void migrate( const Distributor_t& distributor,
         throw std::runtime_error("Destination is the wrong size for migration!");
 
     // Get the number of components in the slices.
-    int num_comp = 1;
-    for ( int d = 2; d < src.rank(); ++d )
+    size_t num_comp = 1;
+    for ( size_t d = 2; d < src.rank(); ++d )
         num_comp *= src.extent(d);
 
     // Get the raw slice data.
@@ -510,11 +510,11 @@ void migrate( const Distributor_t& distributor,
             auto a_src = Slice_t::index_type::a( steering(i) );
             std::size_t src_offset = s_src*src.stride(0) + a_src;
             if ( i < num_stay )
-                for ( int n = 0; n < num_comp; ++n )
+                for ( std::size_t n = 0; n < num_comp; ++n )
                     recv_buffer( i, n ) =
                         src_data[ src_offset + n * Slice_t::vector_length ];
             else
-                for ( int n = 0; n < num_comp; ++n )
+                for ( std::size_t n = 0; n < num_comp; ++n )
                     send_buffer( i - num_stay, n ) =
                         src_data[ src_offset + n * Slice_t::vector_length ];
         };
@@ -589,7 +589,7 @@ void migrate( const Distributor_t& distributor,
             auto s = Slice_t::index_type::s( i );
             auto a = Slice_t::index_type::a( i );
             std::size_t dst_offset = s*dst.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 dst_data[ dst_offset + n * Slice_t::vector_length ] =
                     recv_buffer( i, n );
         };
