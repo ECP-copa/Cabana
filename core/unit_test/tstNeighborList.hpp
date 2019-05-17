@@ -420,8 +420,11 @@ void testVerletListFull()
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
     Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag>
-        nlist( Cabana::slice<0>(aosoa), 0, aosoa.size(),
-               test_radius, cell_size_ratio, grid_min, grid_max );
+        nlist_full( Cabana::slice<0>(aosoa), 0, aosoa.size(),
+                    test_radius, cell_size_ratio, grid_min, grid_max );
+
+    Cabana::VerletList<TEST_MEMSPACE,Cabana::FullNeighborTag,LayoutTag>
+        nlist = nlist_full;
 
     // Check the neighbor list.
     auto position = Cabana::slice<0>(aosoa);
