@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Cabana::VerletListData&lt; MemorySpace, LayoutTag &gt; Struct Template Reference</title>
+<title>Cabana: ParallelTimer Class Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -80,18 +80,34 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </iframe>
 </div>
 
-<div id="nav-path" class="navpath">
-  <ul>
-<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="structCabana_1_1VerletListData.html">VerletListData</a></li>  </ul>
-</div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="classParallelTimer-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::VerletListData&lt; MemorySpace, LayoutTag &gt; Struct Template Reference</div>  </div>
+<div class="title">ParallelTimer Class Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<hr/>The documentation for this struct was generated from the following file:<ul>
-<li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:ad04762914ce7e23916ad74dce23bfac5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad04762914ce7e23916ad74dce23bfac5"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>ParallelTimer</b> (MPI_Comm comm, const std::string &amp;name, const int num_data)</td></tr>
+<tr class="separator:ad04762914ce7e23916ad74dce23bfac5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a57ef1dd95440c35e5a0d9669d4189921"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a57ef1dd95440c35e5a0d9669d4189921"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>start</b> (const int data_point)</td></tr>
+<tr class="separator:a57ef1dd95440c35e5a0d9669d4189921"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8f8dfc2e617c98957dce50b40c059958"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8f8dfc2e617c98957dce50b40c059958"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>stop</b> (const int data_point)</td></tr>
+<tr class="separator:a8f8dfc2e617c98957dce50b40c059958"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3699d79e76580c7c845cc563da899142"><td class="memTemplParams" colspan="2"><a class="anchor" id="a3699d79e76580c7c845cc563da899142"></a>
+template&lt;typename Scalar &gt; </td></tr>
+<tr class="memitem:a3699d79e76580c7c845cc563da899142"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>outputResults</b> (std::ostream &amp;stream, const std::string &amp;data_point_name, const std::vector&lt; Scalar &gt; &amp;data_point_vals) const </td></tr>
+<tr class="separator:a3699d79e76580c7c845cc563da899142"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
+<hr/>The documentation for this class was generated from the following file:<ul>
+<li>core/example/benchmark/Cabana_CommPerformance.cpp</li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
