@@ -246,7 +246,7 @@ inline void deep_copy(
         auto copy_func =
             KOKKOS_LAMBDA( const std::size_t i )
             { dst.setTuple( i, src_copy_on_dst.getTuple(i) ); };
-        Kokkos::RangePolicy<typename dst_memory_space::execution_space>
+        Kokkos::RangePolicy<typename dst_type::execution_space>
             exec_policy( 0, dst.size() );
         Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
         Kokkos::fence();
@@ -271,7 +271,7 @@ inline void deep_copy( AoSoA_t& aosoa,
     auto assign_func =
         KOKKOS_LAMBDA( const std::size_t i )
         { aosoa.setTuple( i, tuple ); };
-    Kokkos::RangePolicy<typename AoSoA_t::memory_space::execution_space>
+    Kokkos::RangePolicy<typename AoSoA_t::execution_space>
         exec_policy( 0, aosoa.size() );
     Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, assign_func );
     Kokkos::fence();
@@ -369,7 +369,7 @@ inline void deep_copy(
                     gather_src( i * num_comp + n ) =
                         src_data[ src_offset + SrcSlice::vector_length * n ];
             };
-        Kokkos::RangePolicy<typename src_type::memory_space::execution_space>
+        Kokkos::RangePolicy<typename src_type::execution_space>
             gather_policy( 0, src.size() );
         Kokkos::parallel_for(
             "Cabana::deep_copy::gather", gather_policy, gather_func );
@@ -388,7 +388,7 @@ inline void deep_copy(
                 dst_data[ dst_offset + DstSlice::vector_length * n ] =
                     gather_dst( i * num_comp + n );
         };
-    Kokkos::RangePolicy<typename dst_type::memory_space::execution_space>
+    Kokkos::RangePolicy<typename dst_type::execution_space>
         scatter_policy( 0, dst.size() );
     Kokkos::parallel_for(
         "Cabana::deep_copy::scatter", scatter_policy, scatter_func );

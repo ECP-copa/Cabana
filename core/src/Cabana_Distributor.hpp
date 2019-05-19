@@ -33,8 +33,8 @@ namespace Cabana
   \brief Distributor is a communication plan for migrating data from one
   uniquely-owned decomposition to another uniquely owned decomposition.
 
-  \tparam MemorySpace Memory space in which the data for this class will be
-  allocated.
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel compuations will be executed.
 
   The Distributor allows data to be migrated to an entirely new
   decomposition. Only uniquely-owned decompositions are handled (i.e. each
@@ -56,8 +56,8 @@ namespace Cabana
   user must allocate their own destination data structure.
 
 */
-template<class MemorySpace>
-class Distributor : public CommunicationPlan<MemorySpace>
+template<class DeviceType>
+class Distributor : public CommunicationPlan<DeviceType>
 {
   public:
 
@@ -103,7 +103,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
                  const ViewType& element_export_ranks,
                  const std::vector<int>& neighbor_ranks,
                  const int mpi_tag = 1221 )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<DeviceType>( comm )
     {
         this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks, mpi_tag );
@@ -144,7 +144,7 @@ class Distributor : public CommunicationPlan<MemorySpace>
     Distributor( MPI_Comm comm,
                  const ViewType& element_export_ranks,
                  const int mpi_tag = 1221 )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<DeviceType>( comm )
     {
         this->createFromExportsOnly( element_export_ranks, mpi_tag );
         this->createExportSteering( element_export_ranks );
@@ -156,12 +156,12 @@ class Distributor : public CommunicationPlan<MemorySpace>
 template<typename >
 struct is_distributor : public std::false_type {};
 
-template<typename MemorySpace>
-struct is_distributor<Distributor<MemorySpace> >
+template<typename DeviceType>
+struct is_distributor<Distributor<DeviceType> >
     : public std::true_type {};
 
-template<typename MemorySpace>
-struct is_distributor<const Distributor<MemorySpace> >
+template<typename DeviceType>
+struct is_distributor<const Distributor<DeviceType> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//

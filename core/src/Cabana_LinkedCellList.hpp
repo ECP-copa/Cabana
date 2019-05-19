@@ -27,14 +27,16 @@ namespace Cabana
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
 */
-template<class MemorySpace>
+template<class DeviceType>
 class LinkedCellList
 {
   public:
 
-    using memory_space = MemorySpace;
+    using device_type = DeviceType;
+    using memory_space = typename device_type::memory_space;
+    using execution_space = typename device_type::execution_space;
     using size_type = typename memory_space::size_type;
-    using OffsetView = Kokkos::View<size_type*,memory_space>;
+    using OffsetView = Kokkos::View<size_type*,device_type>;
 
     /*!
       \brief Default constructor.
@@ -199,7 +201,7 @@ class LinkedCellList
       \brief Get the 1d bin data.
       \return The 1d bin data.
     */
-    BinningData<MemorySpace> binningData() const
+    BinningData<DeviceType> binningData() const
     { return _bin_data; }
 
   public:
@@ -223,8 +225,7 @@ class LinkedCellList
         auto grid = _grid;
 
         // Count.
-        Kokkos::RangePolicy<typename OffsetView::execution_space>
-            particle_range( begin, end );
+        Kokkos::RangePolicy<execution_space> particle_range( begin, end );
         Kokkos::deep_copy( counts, 0 );
         auto counts_sv = Kokkos::Experimental::create_scatter_view( counts );
         auto cell_count =
@@ -243,8 +244,7 @@ class LinkedCellList
         Kokkos::Experimental::contribute( counts, counts_sv );
 
         // Compute offsets.
-        Kokkos::RangePolicy<typename OffsetView::execution_space>
-            cell_range( 0, ncell );
+        Kokkos::RangePolicy<execution_space> cell_range( 0, ncell );
         auto offset_scan =
             KOKKOS_LAMBDA( const std::size_t c, int& update, const bool final_pass )
             {
@@ -277,12 +277,12 @@ class LinkedCellList
 
         // Create the binning data.
         _bin_data =
-            BinningData<MemorySpace>( begin, end, counts, offsets, permute );
+            BinningData<DeviceType>( begin, end, counts, offsets, permute );
     }
 
   private:
 
-    BinningData<MemorySpace> _bin_data;
+    BinningData<DeviceType> _bin_data;
     Impl::CartesianGrid<double> _grid;
 };
 
@@ -291,12 +291,12 @@ class LinkedCellList
 template<typename >
 struct is_linked_cell_list : public std::false_type {};
 
-template<typename MemorySpace>
-struct is_linked_cell_list<LinkedCellList<MemorySpace> >
+template<typename DeviceType>
+struct is_linked_cell_list<LinkedCellList<DeviceType> >
     : public std::true_type {};
 
-template<typename MemorySpace>
-struct is_linked_cell_list<const LinkedCellList<MemorySpace> >
+template<typename DeviceType>
+struct is_linked_cell_list<const LinkedCellList<DeviceType> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//
