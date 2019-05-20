@@ -12,8 +12,8 @@
 #define CABANA_PERFORMANCE_EXPECTED_FLOPS 32
 #endif
 
-#ifndef CABANA_PERFORMANCE_VECLENTH
-#define CABANA_PERFORMANCE_VECLENTH (8)
+#ifndef CABANA_PERFORMANCE_VECLENGTH
+#define CABANA_PERFORMANCE_VECLENGTH (8)
 #endif
 
 static inline unsigned long long rdtscp() {

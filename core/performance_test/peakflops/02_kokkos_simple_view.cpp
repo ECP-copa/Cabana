@@ -5,10 +5,10 @@
 #include <gtest/gtest.h>
 #include "common.h"
 
-typedef Kokkos::View<float[VECLENTH],Kokkos::MemoryTraits<Kokkos::Restrict> > view_type;
+typedef Kokkos::View<float[CABANA_PERFORMANCE_VECLENGTH],Kokkos::MemoryTraits<Kokkos::Restrict> > view_type;
 
 struct data{
-    float vec[VECLENTH];
+    float vec[CABANA_PERFORMANCE_VECLENGTH];
 };
 
 view_type axpy_10(
@@ -34,7 +34,7 @@ view_type axpy_10(
     for(i = 0; i<n; i++)
     {
 #pragma omp simd
-        for(j=0; j<VECLENTH; j++)
+        for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++)
         {
             x0(j) = a(j)*x0(j)+ c(j);
             x1(j) = a(j)*x1(j)+ c(j);
@@ -50,7 +50,7 @@ view_type axpy_10(
     }
     asm volatile ("# ax+c loop end");
 
-    for(j=0; j<VECLENTH; j++){
+    for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++){
         x0(j) = x0(j)+x1(j)+x2(j)+x3(j)+x4(j)+x5(j)+x6(j)+x7(j)+x8(j)+x9(j)+(float)n;
     }
     return x0;
@@ -79,7 +79,7 @@ TEST(kokkos, simple) {
     long i,j;
     unsigned short rg[3] = { static_cast<unsigned short>(seed >> 16), static_cast<unsigned short>(seed >> 8), static_cast<unsigned short>(seed) };
 
-    for (i = 0; i < VECLENTH; i++)
+    for (i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++)
     {
         a_(i)  = erand48(rg);
         c_(i)  = erand48(rg);
@@ -102,9 +102,9 @@ TEST(kokkos, simple) {
     unsigned long long c1 = rdtscp();
 
     unsigned long long dc = c1 - c0;
-    double flops = 10*2*VECLENTH*(double)n;
+    double flops = 10*2*CABANA_PERFORMANCE_VECLENGTH*(double)n;
     printf("Outer loop n=%lu\n", n);
-    printf("Inner loop VECLENTH=%d\n", VECLENTH);
+    printf("Inner loop VECLENTH=%d\n", CABANA_PERFORMANCE_VECLENGTH);
     printf("%f flops\n", flops);
     printf("%llu clocks\n", dc);
 
@@ -112,17 +112,17 @@ TEST(kokkos, simple) {
     printf("%f flops/clock\n", flops_clock);
 
 
-    for (i = 0; i < VECLENTH; i++) {
+    for (i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++) {
         printf("x0_[%ld] = %f\n", i, x0_(i) );
     }
 
     bool acceptable_fraction = false;
-    double expected_flops_clock = EXPECTED_FLOPS;
+    double expected_flops_clock = CABANA_PERFORMANCE_EXPECTED_FLOPS;
 
     printf("Expected %f \n", expected_flops_clock);
-    printf("(with margin %f )\n", expected_flops_clock * ERROR_MARGIN);
+    printf("(with margin %f )\n", expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN);
 
-    if ( flops_clock > expected_flops_clock * ERROR_MARGIN )
+    if ( flops_clock > expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN )
     {
         acceptable_fraction = true;
     }

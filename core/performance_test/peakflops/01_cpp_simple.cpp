@@ -85,7 +85,7 @@ The two FP Load microoperations do not have a dependency on the previous iterati
 */
 
 struct data{
-  float vec[VECLENTH];
+  float vec[CABANA_PERFORMANCE_VECLENGTH];
 };
 
 struct data * axpy_10(struct data *__restrict__ a, struct data *__restrict__ x0, struct data *__restrict__ x1, struct data *__restrict__ x2, struct data *__restrict__ x3, struct data *__restrict__ x4, struct data *__restrict__ x5, struct data *__restrict__ x6, struct data *__restrict__ x7, struct data *__restrict__ x8, struct data *__restrict__ x9,struct data *__restrict__ c, long n) {
@@ -95,7 +95,7 @@ struct data * axpy_10(struct data *__restrict__ a, struct data *__restrict__ x0,
   asm volatile ("# ax+c loop begin");
   for(i = 0; i<n; i++) {
 #pragma omp simd
-    for(j=0; j<VECLENTH; j++) {
+    for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++) {
       x0->vec[j] = a->vec[j]*x0->vec[j]+ c->vec[j];
       x1->vec[j] = a->vec[j]*x1->vec[j]+ c->vec[j];
       x2->vec[j] = a->vec[j]*x2->vec[j]+ c->vec[j];
@@ -110,7 +110,7 @@ struct data * axpy_10(struct data *__restrict__ a, struct data *__restrict__ x0,
   }
   asm volatile ("# ax+c loop end");
 
-  for(j=0; j<VECLENTH; j++){
+  for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++){
     x0->vec[j] = x0->vec[j]+x1->vec[j]+x2->vec[j]+x3->vec[j]+x4->vec[j]+x5->vec[j]+x6->vec[j]+x7->vec[j]+x8->vec[j]+x9->vec[j]+(float)n;
   }
   return x0;
@@ -137,7 +137,7 @@ TEST(cpp, simple) {
   long i,j;
   unsigned short rg[3] = { static_cast<unsigned short>(seed >> 16), static_cast<unsigned short>(seed >> 8), static_cast<unsigned short>(seed) };
 
-  for (i = 0; i < VECLENTH; i++)
+  for (i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++)
   {
       a_->vec[i]  = erand48(rg);
       x_->vec[i]  = erand48(rg);
@@ -160,16 +160,16 @@ TEST(cpp, simple) {
   unsigned long long c1 = rdtscp();
 
   unsigned long long dc = c1 - c0;
-  double flops = 10*2*VECLENTH*(double)n;
+  double flops = 10*2*CABANA_PERFORMANCE_VECLENGTH*(double)n;
   printf("Outer loop n=%lu\n", n);
-  printf("Inner loop VECLENTH=%d\n", VECLENTH);
+  printf("Inner loop VECLENTH=%d\n", CABANA_PERFORMANCE_VECLENGTH);
   printf("%f flops\n", flops);
   printf("%llu clocks\n", dc);
 
   double flops_clock = flops / dc;
   printf("%f flops/clock\n", flops_clock);
 
-  for (i = 0; i < VECLENTH; i++) {
+  for (i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++) {
     printf("x_[%ld] = %f\n", i, x_->vec[i]);
   }
 
@@ -187,12 +187,12 @@ TEST(cpp, simple) {
   delete x9_;
 
   bool acceptable_fraction = false;
-  double expected_flops_clock = EXPECTED_FLOPS;
+  double expected_flops_clock = CABANA_PERFORMANCE_EXPECTED_FLOPS;
 
   printf("Expected %f \n", expected_flops_clock);
-  printf("(with margin %f )\n", expected_flops_clock * ERROR_MARGIN);
+  printf("(with margin %f )\n", expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN);
 
-  if ( flops_clock > expected_flops_clock * ERROR_MARGIN )
+  if ( flops_clock > expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN )
   {
       acceptable_fraction = true;
   }

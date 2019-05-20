@@ -41,13 +41,13 @@ using MemorySpace = Cabana::HostSpace;
 
 // Set the type for the particle AoSoA.
 using ParticleList =
-    Cabana::AoSoA<ParticleDataTypes,MemorySpace,VECLENTH>;
+    Cabana::AoSoA<ParticleDataTypes,MemorySpace,CABANA_PERFORMANCE_VECLENGTH>;
 
 // Declare a struct-of-arrays that is identical to the data layout in the
 // Cabana AoSoA.
 struct data_t
 {
-    float vec[VECLENTH];
+    float vec[CABANA_PERFORMANCE_VECLENGTH];
 };
 
 
@@ -75,7 +75,7 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
         {
             for(i = 0; i<n; i++)
             {
-                for(j=0; j<VECLENTH; j++)
+                for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++)
                 {
                     x0[s].vec[j] = a[s].vec[j]*x0[s].vec[j]+ c[s].vec[j];
                     x1[s].vec[j] = a[s].vec[j]*x1[s].vec[j]+ c[s].vec[j];
@@ -93,7 +93,7 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
     asm volatile ("# ax+c loop end");
     for ( s = 0; s < num_struct; ++s )
     {
-        for(j=0; j<VECLENTH; j++)
+        for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++)
         {
             x0[s].vec[j] = x0[s].vec[j]+x1[s].vec[j]+x2[s].vec[j]+x3[s].vec[j]+x4[s].vec[j]+
                            x5[s].vec[j]+x6[s].vec[j]+x7[s].vec[j]+x8[s].vec[j]+x9[s].vec[j];
@@ -118,7 +118,7 @@ move_AoSoA(
             for(i = 0; i<n; i++)
             {
 #pragma omp simd
-                for(j=0; j<VECLENTH; j++)
+                for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++)
                 {
                     auto _c = c.access(s).get<0>(j);
                     auto _a = a.access(s).get<0>(j);
@@ -140,7 +140,7 @@ move_AoSoA(
 
     for ( s = 0; s < num_struct; ++s )
     {
-        for(j=0; j<VECLENTH; j++)
+        for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++)
         {
             x0.access(s).get<0>(j) =
                 x0.access(s).get<0>(j) + x1.access(s).get<0>(j) +
@@ -170,7 +170,7 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
         for(i = 0; i<n; i++)
         {
 #pragma omp simd
-            for(j=0; j<VECLENTH; j++)
+            for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++)
             {
                 x0.access(s,j) = a.access(s,j)*x0.access(s,j)+ c.access(s,j);
                 x1.access(s,j) = a.access(s,j)*x1.access(s,j)+ c.access(s,j);
@@ -188,7 +188,7 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
     asm volatile ("# ax+c loop end");
     for ( s = 0; s < num_struct; ++s )
     {
-        for(j=0; j<VECLENTH; j++)
+        for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++)
         {
             x0.access(s,j) = x0.access(s,j)+x1.access(s,j)+x2.access(s,j)+x3.access(s,j)+
                              x4.access(s,j)+x5.access(s,j)+x6.access(s,j)+x7.access(s,j)+
@@ -200,11 +200,11 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
 bool check_expected_flops(double achieved_flops_clock)
 {
     bool acceptable_fraction = false;
-    double expected_flops_clock = EXPECTED_FLOPS;
+    double expected_flops_clock = CABANA_PERFORMANCE_EXPECTED_FLOPS;
 
-    printf("Achieved %f, Expected %f (+/- %f)\n", achieved_flops_clock, expected_flops_clock, expected_flops_clock-(expected_flops_clock*ERROR_MARGIN));
+    printf("Achieved %f, Expected %f (+/- %f)\n", achieved_flops_clock, expected_flops_clock, expected_flops_clock-(expected_flops_clock*CABANA_PERFORMANCE_ERROR_MARGIN));
 
-    if ( achieved_flops_clock > expected_flops_clock * ERROR_MARGIN )
+    if ( achieved_flops_clock > expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN )
     {
         acceptable_fraction = true;
     }
@@ -220,7 +220,7 @@ TEST(cabana, simple)
     long n = static_cast<long>(2e4);
 
     // Declare a number of particles.
-    const int array_size = VECLENTH;
+    const int array_size = CABANA_PERFORMANCE_VECLENGTH;
     int num_struct = 100;
     int num_particle = num_struct*array_size;
 
@@ -332,7 +332,7 @@ TEST(cabana, simple)
     std::cout<<flops/dc3<<" flops/clock 3\n";
     std::cout << std::endl;
 
-    for (int idx = 0; idx < VECLENTH; idx++)
+    for (int idx = 0; idx < CABANA_PERFORMANCE_VECLENGTH; idx++)
     {
         printf("x_[%d] = %f\n", idx, m0(idx));
     }
