@@ -65,7 +65,7 @@ before_script:
        pip install --user coverxygen &&
        mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov; 
      fi
-   - if [[ ${CC} = gcc ]]; then export CXX=g++-6; done
+  - if [[ ${CC} = gcc ]]; then export CXX=g++-6; done
 
 addons:
   apt:
