@@ -1,6 +1,21 @@
 # Copied from unit test, could be DRYd
+
+# It only makes sense to run this if testing is enabled, as we depend on gtest
 if(NOT Cabana_ENABLE_TESTING)
   return()
+endif()
+
+# we only want to run the below if we have access to "#pragma omp simd"
+include(CheckCSourceCompiles)
+check_cxx_source_compiles(
+      "int main(void) {
+      #pragma omp simd
+      return 0;
+      }" HAVE_OMP_SIMD)
+
+if (NOT HAVE_OMP_SIMD)
+    # No point running these tests without omp simd
+    return()
 endif()
 
 set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
