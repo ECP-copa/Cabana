@@ -65,9 +65,12 @@ before_script:
        pip install --user coverxygen &&
        mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov; 
      fi
+   - if [[ ${CC} = gcc ]]; then export CXX=g++-6; done
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - doxygen
       - libhwloc-dev
@@ -77,6 +80,7 @@ addons:
       - libgsl0-dev
       - libfftw3-dev
       - python-pip
+      - g++-6
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
