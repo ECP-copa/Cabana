@@ -6,7 +6,7 @@ if(NOT Cabana_ENABLE_TESTING)
 endif()
 
 # we only want to run the below if we have access to "#pragma omp simd"
-include(CheckCSourceCompiles)
+include(CheckCXXSourceCompiles)
 check_cxx_source_compiles(
       "int main(void) {
       #pragma omp simd
