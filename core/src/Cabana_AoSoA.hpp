@@ -33,7 +33,7 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 // AoSoA forward declaration.
 template<class DataTypes,
-         class MemorySpace,
+         class DeviceType,
          int VectorLength,
          class MemoryTraits>
 class AoSoA;
@@ -44,17 +44,17 @@ template<class >
 struct is_aosoa : public std::false_type {};
 
 template<class DataTypes,
-         class MemorySpace,
+         class DeviceType,
          int VectorLength,
          class MemoryTraits>
-struct is_aosoa<AoSoA<DataTypes,MemorySpace,VectorLength,MemoryTraits> >
+struct is_aosoa<AoSoA<DataTypes,DeviceType,VectorLength,MemoryTraits> >
     : public std::true_type {};
 
 template<class DataTypes,
-         class MemorySpace,
+         class DeviceType,
          int VectorLength,
          class MemoryTraits>
-struct is_aosoa<const AoSoA<DataTypes,MemorySpace,VectorLength,MemoryTraits> >
+struct is_aosoa<const AoSoA<DataTypes,DeviceType,VectorLength,MemoryTraits> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//
@@ -93,34 +93,40 @@ slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
   of the same type together to achieve the smallest possible memory footprint
   based on compiler-generated padding.
 
-  \tparam MemorySpace (required) The memory space.
+  \tparam DeviceType (required) The device type.
 
   \tparam VectorLength (optional) The vector length within the structs of
   the AoSoA. If not specified, this defaults to the preferred layout for the
-  <tt>MemorySpace</tt>.
+  <tt>DeviceType</tt>.
 
   \tparam MemoryTraits (optional) Memory traits for the AoSoA data. Can be
   used to indicate managed memory, unmanaged memory, etc.
  */
 template<class DataTypes,
-         class MemorySpace,
+         class DeviceType,
          int VectorLength = Impl::PerformanceTraits<
-             typename MemorySpace::execution_space>::vector_length,
+             typename DeviceType::execution_space>::vector_length,
          class MemoryTraits = Kokkos::MemoryManaged>
 class AoSoA
 {
   public:
 
     // AoSoA type.
-    using aosoa_type = AoSoA<DataTypes,MemorySpace,VectorLength>;
+    using aosoa_type = AoSoA<DataTypes,DeviceType,VectorLength,MemoryTraits>;
 
     // Member data types.
     static_assert( is_member_types<DataTypes>::value,
                    "AoSoA data types must be member types" );
     using member_types = DataTypes;
 
+    // Device type.
+    using device_type = DeviceType;
+
     // Memory space.
-    using memory_space = MemorySpace;
+    using memory_space = typename device_type::memory_space;
+
+    // Execution space.
+    using execution_space = typename device_type::execution_space;
 
     // Vector length (size of the arrays held by the structs).
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
@@ -137,7 +143,7 @@ class AoSoA
     using soa_type = SoA<member_types,vector_length>;
 
     // Managed data view.
-    using soa_view = Kokkos::View<soa_type*,memory_space,memory_traits>;
+    using soa_view = Kokkos::View<soa_type*,device_type,memory_traits>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
@@ -171,7 +177,7 @@ class AoSoA
     template<std::size_t M>
     using member_slice_type =
         Slice<member_data_type<M>,
-              memory_space,
+              device_type,
               DefaultAccessMemory,
               vector_length,
               sizeof(soa_type) / sizeof(member_value_type<M>)>;

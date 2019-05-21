@@ -422,7 +422,7 @@ struct KokkosViewWrapper
 */
 //---------------------------------------------------------------------------//
 template<typename DataType,
-         typename MemorySpace,
+         typename DeviceType,
          typename MemoryAccessType,
          int VectorLength,
          int Stride>
@@ -436,10 +436,16 @@ class Slice
 
     // Slice type.
     using slice_type =
-        Slice<DataType,MemorySpace,MemoryAccessType,VectorLength,Stride>;
+        Slice<DataType,DeviceType,MemoryAccessType,VectorLength,Stride>;
 
-    // Cabana memory space.
-    using memory_space = MemorySpace;
+    // Device type
+    using device_type = DeviceType;
+
+    // Memory space.
+    using memory_space = typename device_type::memory_space;
+
+    // Execution space.
+    using execution_space = typename device_type::execution_space;
 
     // Memory access type.
     static_assert( is_memory_access_tag<MemoryAccessType>::value,
@@ -468,29 +474,27 @@ class Slice
     using kokkos_view =
         Kokkos::View<typename view_wrapper::data_type,
                      typename view_wrapper::cabana_layout,
-                     MemorySpace,
+                     DeviceType,
                      typename MemoryAccessType::kokkos_memory_traits>;
 
     // View type aliases.
     using reference_type = typename kokkos_view::reference_type;
     using value_type = typename kokkos_view::value_type;
     using pointer_type = typename kokkos_view::pointer_type;
-    using execution_space = typename kokkos_view::execution_space;
-    using device_type = typename kokkos_view::device_type;
     using view_layout = typename kokkos_view::array_layout;
 
     // Compatible memory access slice types.
     using default_access_slice =
-        Slice<DataType,MemorySpace,DefaultAccessMemory,VectorLength,Stride>;
+        Slice<DataType,DeviceType,DefaultAccessMemory,VectorLength,Stride>;
     using atomic_access_slice =
-        Slice<DataType,MemorySpace,AtomicAccessMemory,VectorLength,Stride>;
+        Slice<DataType,DeviceType,AtomicAccessMemory,VectorLength,Stride>;
     using random_access_slice =
-        Slice<DataType,MemorySpace,RandomAccessMemory,VectorLength,Stride>;
+        Slice<DataType,DeviceType,RandomAccessMemory,VectorLength,Stride>;
 
     // Declare slices of different memory access types to be friends.
-    friend class Slice<DataType,MemorySpace,DefaultAccessMemory,VectorLength,Stride>;
-    friend class Slice<DataType,MemorySpace,AtomicAccessMemory,VectorLength,Stride>;
-    friend class Slice<DataType,MemorySpace,RandomAccessMemory,VectorLength,Stride>;
+    friend class Slice<DataType,DeviceType,DefaultAccessMemory,VectorLength,Stride>;
+    friend class Slice<DataType,DeviceType,AtomicAccessMemory,VectorLength,Stride>;
+    friend class Slice<DataType,DeviceType,RandomAccessMemory,VectorLength,Stride>;
 
     // Data rank.
     enum { Rank = std::rank<DataType>::value };
@@ -530,7 +534,7 @@ class Slice
       space.
     */
     template<class MAT>
-    Slice( const Slice<DataType,MemorySpace,MAT,VectorLength,Stride>& rhs )
+    Slice( const Slice<DataType,DeviceType,MAT,VectorLength,Stride>& rhs )
         : _view( rhs._view )
         , _size( rhs._size )
         , _label( rhs._label )
@@ -546,7 +550,7 @@ class Slice
       space.
      */
     template<class MAT>
-    Slice& operator=( const Slice<DataType,MemorySpace,MAT,VectorLength,Stride>& rhs )
+    Slice& operator=( const Slice<DataType,DeviceType,MAT,VectorLength,Stride>& rhs )
     {
         _view = rhs._view;
         _size = rhs._size;
@@ -753,24 +757,24 @@ struct is_slice : public std::false_type {};
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
 template<typename DataType,
-         typename MemorySpace,
+         typename DeviceType,
          typename MemoryAccessType,
          int VectorLength,
          int Stride>
 struct is_slice<Slice<DataType,
-                      MemorySpace,
+                      DeviceType,
                       MemoryAccessType,
                       VectorLength,
                       Stride> >
     : public std::true_type {};
 
 template<typename DataType,
-         typename MemorySpace,
+         typename DeviceType,
          typename MemoryAccessType,
          int VectorLength,
          int Stride>
 struct is_slice<const Slice<DataType,
-                            MemorySpace,
+                            DeviceType,
                             MemoryAccessType,
                             VectorLength,
                             Stride> >
