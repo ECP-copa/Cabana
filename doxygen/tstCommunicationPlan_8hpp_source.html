@@ -116,8 +116,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="classTest_1_1CommPlanTester.html">CommPlanTester</a>( MPI_Comm <a class="code" href="classCabana_1_1CommunicationPlan.html#a93387ef0f6677ff266b70912d14521c4">comm</a> )</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        : <a class="code" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan&lt;TEST_MEMSPACE&gt;</a>(<a class="code" href="classCabana_1_1CommunicationPlan.html#a93387ef0f6677ff266b70912d14521c4">comm</a>)</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <a class="code" href="classTest_1_1CommPlanTester.html">CommPlanTester</a>( MPI_Comm <a class="code" href="classCabana_1_1CommunicationPlan.html#a604e8cc930192a7df6f1ab7a0f294f75">comm</a> )</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;        : <a class="code" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan&lt;TEST_MEMSPACE&gt;</a>(<a class="code" href="classCabana_1_1CommunicationPlan.html#a604e8cc930192a7df6f1ab7a0f294f75">comm</a>)</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;    {}</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;</div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> ViewType&gt;</div>
@@ -125,20 +125,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        <span class="keyword">const</span> ViewType&amp; element_export_ranks,</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;        <span class="keyword">const</span> std::vector&lt;int&gt;&amp; neighbor_ranks )</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    {</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#af1b0ac4052c15c3156f5e5fbba380ce2">createFromExportsAndTopology</a>(</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a25e06101fcfb2038189f2ab19a0648a9">createFromExportsAndTopology</a>(</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;            element_export_ranks, neighbor_ranks );</div>
 <div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    }</div>
 <div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;</div>
 <div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> ViewType&gt;</div>
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    <span class="keywordtype">void</span> createFromExports( <span class="keyword">const</span> ViewType&amp; element_export_ranks )</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    {</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a5ee2bf7671f29878cbc5b85e3a4c5291">createFromExportsOnly</a>( element_export_ranks );</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a4b8f574436bdb522fe4753f5d0ff416f">createFromExportsOnly</a>( element_export_ranks );</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    }</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;</div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> ViewType&gt;</div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">void</span> createSteering( <span class="keyword">const</span> ViewType&amp; element_export_ranks )</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    {</div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#afc72c3b5025271802c1f5f5a31ceb85a">createExportSteering</a>( element_export_ranks );</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a50f43bb432ab2058450edf2aa5e714a1">createExportSteering</a>( element_export_ranks );</div>
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    }</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;</div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keyword">template</span>&lt;<span class="keyword">class</span> RankViewType, <span class="keyword">class</span> IdViewType&gt;</div>
@@ -146,7 +146,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keyword">const</span> RankViewType&amp; element_export_ranks,</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keyword">const</span> IdViewType&amp; element_export_ids )</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    {</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#afc72c3b5025271802c1f5f5a31ceb85a">createExportSteering</a>(</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a50f43bb432ab2058450edf2aa5e714a1">createExportSteering</a>(</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;            element_export_ranks, element_export_ids );</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;};</div>
@@ -622,16 +622,16 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;} <span class="comment">// end namespace Test</span></div>
-<div class="ttc" id="classCabana_1_1CommunicationPlan_html_a93387ef0f6677ff266b70912d14521c4"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a93387ef0f6677ff266b70912d14521c4">Cabana::CommunicationPlan&lt; TEST_MEMSPACE &gt;::comm</a></div><div class="ttdeci">MPI_Comm comm() const</div><div class="ttdoc">Get the MPI communicator. </div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:82</div></div>
-<div class="ttc" id="classCabana_1_1CommunicationPlan_html_af1b0ac4052c15c3156f5e5fbba380ce2"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#af1b0ac4052c15c3156f5e5fbba380ce2">Cabana::CommunicationPlan&lt; TEST_MEMSPACE &gt;::createFromExportsAndTopology</a></div><div class="ttdeci">void createFromExportsAndTopology(const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks, const int mpi_tag=1221)</div><div class="ttdoc">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i...</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:214</div></div>
+<div class="ttc" id="classCabana_1_1CommunicationPlan_html_a604e8cc930192a7df6f1ab7a0f294f75"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a604e8cc930192a7df6f1ab7a0f294f75">Cabana::CommunicationPlan&lt; TEST_MEMSPACE &gt;::comm</a></div><div class="ttdeci">MPI_Comm comm() const</div><div class="ttdoc">Get the MPI communicator. </div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:85</div></div>
+<div class="ttc" id="classCabana_1_1CommunicationPlan_html_a25e06101fcfb2038189f2ab19a0648a9"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a25e06101fcfb2038189f2ab19a0648a9">Cabana::CommunicationPlan&lt; TEST_MEMSPACE &gt;::createFromExportsAndTopology</a></div><div class="ttdeci">void createFromExportsAndTopology(const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks, const int mpi_tag=1221)</div><div class="ttdoc">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i...</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:217</div></div>
 <div class="ttc" id="classTest_1_1CommPlanTester_html"><div class="ttname"><a href="classTest_1_1CommPlanTester.html">Test::CommPlanTester</a></div><div class="ttdef"><b>Definition:</b> tstCommunicationPlan.hpp:26</div></div>
-<div class="ttc" id="classCabana_1_1CommunicationPlan_html_afc72c3b5025271802c1f5f5a31ceb85a"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#afc72c3b5025271802c1f5f5a31ceb85a">Cabana::CommunicationPlan&lt; TEST_MEMSPACE &gt;::createExportSteering</a></div><div class="ttdeci">void createExportSteering(const ViewType &amp;element_export_ranks)</div><div class="ttdoc">Create the export steering vector. </div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:517</div></div>
 <div class="ttc" id="classCabana_1_1CommunicationPlan_html"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a></div><div class="ttdoc">Communication plan base class. </div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:58</div></div>
-<div class="ttc" id="classCabana_1_1CommunicationPlan_html_a5ee2bf7671f29878cbc5b85e3a4c5291"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a5ee2bf7671f29878cbc5b85e3a4c5291">Cabana::CommunicationPlan&lt; TEST_MEMSPACE &gt;::createFromExportsOnly</a></div><div class="ttdeci">void createFromExportsOnly(const ViewType &amp;element_export_ranks, const int mpi_tag=1221)</div><div class="ttdoc">Export rank creator. Use this when you don&#39;t know who you will receiving from - only who you are send...</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:348</div></div>
+<div class="ttc" id="classCabana_1_1CommunicationPlan_html_a50f43bb432ab2058450edf2aa5e714a1"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a50f43bb432ab2058450edf2aa5e714a1">Cabana::CommunicationPlan&lt; TEST_MEMSPACE &gt;::createExportSteering</a></div><div class="ttdeci">void createExportSteering(const ViewType &amp;element_export_ranks)</div><div class="ttdoc">Create the export steering vector. </div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:520</div></div>
+<div class="ttc" id="classCabana_1_1CommunicationPlan_html_a4b8f574436bdb522fe4753f5d0ff416f"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a4b8f574436bdb522fe4753f5d0ff416f">Cabana::CommunicationPlan&lt; TEST_MEMSPACE &gt;::createFromExportsOnly</a></div><div class="ttdeci">void createFromExportsOnly(const ViewType &amp;element_export_ranks, const int mpi_tag=1221)</div><div class="ttdoc">Export rank creator. Use this when you don&#39;t know who you will receiving from - only who you are send...</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:351</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 18 2019 02:25:20 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 21 2019 19:34:04 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

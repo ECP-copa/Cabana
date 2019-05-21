@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Cabana::LinkedCellList&lt; MemorySpace &gt; Class Template Reference</title>
+<title>Cabana: Cabana::LinkedCellList&lt; DeviceType &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -91,7 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classCabana_1_1LinkedCellList-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::LinkedCellList&lt; MemorySpace &gt; Class Template Reference</div>  </div>
+<div class="title">Cabana::LinkedCellList&lt; DeviceType &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -102,78 +102,84 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a0c84c14ebe75c211ffcb61bd59fb0e98"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0c84c14ebe75c211ffcb61bd59fb0e98"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
-<tr class="separator:a0c84c14ebe75c211ffcb61bd59fb0e98"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2277c0c5dc3d6f931953e7194378ade3"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2277c0c5dc3d6f931953e7194378ade3"></a>
+<tr class="memitem:a002121867119f6a172b263ccd59b62cb"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a002121867119f6a172b263ccd59b62cb"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
+<tr class="separator:a002121867119f6a172b263ccd59b62cb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a05e685fcc33dbd1e10ce31d6dc83c9a9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a05e685fcc33dbd1e10ce31d6dc83c9a9"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename device_type::memory_space</td></tr>
+<tr class="separator:a05e685fcc33dbd1e10ce31d6dc83c9a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5e84de5c33182ea8547d7930f3590d51"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a5e84de5c33182ea8547d7930f3590d51"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename device_type::execution_space</td></tr>
+<tr class="separator:a5e84de5c33182ea8547d7930f3590d51"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6c9f22555488bc65b97ee3510f788178"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a6c9f22555488bc65b97ee3510f788178"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename memory_space::size_type</td></tr>
-<tr class="separator:a2277c0c5dc3d6f931953e7194378ade3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a04cd2c81d45fc6d993b650da395cad8c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a04cd2c81d45fc6d993b650da395cad8c"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>OffsetView</b> = Kokkos::View&lt; size_type *, memory_space &gt;</td></tr>
-<tr class="separator:a04cd2c81d45fc6d993b650da395cad8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a6c9f22555488bc65b97ee3510f788178"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9236a5f2dda9513e79dc40a0e15c011"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9236a5f2dda9513e79dc40a0e15c011"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>OffsetView</b> = Kokkos::View&lt; size_type *, device_type &gt;</td></tr>
+<tr class="separator:af9236a5f2dda9513e79dc40a0e15c011"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a10a69ae7a175576ac02e6c29c8e4ac45"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a10a69ae7a175576ac02e6c29c8e4ac45"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a10a69ae7a175576ac02e6c29c8e4ac45">LinkedCellList</a> ()</td></tr>
-<tr class="memdesc:a10a69ae7a175576ac02e6c29c8e4ac45"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br/></td></tr>
-<tr class="separator:a10a69ae7a175576ac02e6c29c8e4ac45"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad71abd9014f45358bb03406601c3099c"><td class="memTemplParams" colspan="2">template&lt;class SliceType &gt; </td></tr>
-<tr class="memitem:ad71abd9014f45358bb03406601c3099c"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#ad71abd9014f45358bb03406601c3099c">LinkedCellList</a> (SliceType positions, const typename SliceType::value_type grid_delta[3], const typename SliceType::value_type grid_min[3], const typename SliceType::value_type grid_max[3], typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:ad71abd9014f45358bb03406601c3099c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member...">Slice</a> constructor.  <a href="#ad71abd9014f45358bb03406601c3099c">More...</a><br/></td></tr>
-<tr class="separator:ad71abd9014f45358bb03406601c3099c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8c4cc7be428dbb3888abc7dcf2e1a780"><td class="memTemplParams" colspan="2">template&lt;class SliceType &gt; </td></tr>
-<tr class="memitem:a8c4cc7be428dbb3888abc7dcf2e1a780"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a8c4cc7be428dbb3888abc7dcf2e1a780">LinkedCellList</a> (SliceType positions, const std::size_t begin, const std::size_t end, const typename SliceType::value_type grid_delta[3], const typename SliceType::value_type grid_min[3], const typename SliceType::value_type grid_max[3], typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a8c4cc7be428dbb3888abc7dcf2e1a780"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member...">Slice</a> range constructor.  <a href="#a8c4cc7be428dbb3888abc7dcf2e1a780">More...</a><br/></td></tr>
-<tr class="separator:a8c4cc7be428dbb3888abc7dcf2e1a780"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acacb3e4b6d87169310758d6223431495"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#acacb3e4b6d87169310758d6223431495">totalBins</a> () const </td></tr>
-<tr class="memdesc:acacb3e4b6d87169310758d6223431495"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of bins.  <a href="#acacb3e4b6d87169310758d6223431495">More...</a><br/></td></tr>
-<tr class="separator:acacb3e4b6d87169310758d6223431495"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abf4336684fd76b6f87c06c8af31690f4"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#abf4336684fd76b6f87c06c8af31690f4">numBin</a> (const int dim) const </td></tr>
-<tr class="memdesc:abf4336684fd76b6f87c06c8af31690f4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of bins in a given dimension.  <a href="#abf4336684fd76b6f87c06c8af31690f4">More...</a><br/></td></tr>
-<tr class="separator:abf4336684fd76b6f87c06c8af31690f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afbc67b4e88a6ff46b091e38f5eb28383"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#afbc67b4e88a6ff46b091e38f5eb28383">cardinalBinIndex</a> (const int i, const int j, const int k) const </td></tr>
-<tr class="memdesc:afbc67b4e88a6ff46b091e38f5eb28383"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the ijk index of a bin get its cardinal index.  <a href="#afbc67b4e88a6ff46b091e38f5eb28383">More...</a><br/></td></tr>
-<tr class="separator:afbc67b4e88a6ff46b091e38f5eb28383"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5da0e42df80076e9ec37936ed3cfa20a"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a5da0e42df80076e9ec37936ed3cfa20a">ijkBinIndex</a> (const int cardinal, int &amp;i, int &amp;j, int &amp;k) const </td></tr>
-<tr class="memdesc:a5da0e42df80076e9ec37936ed3cfa20a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the cardinal index of a bin get its ijk indices.  <a href="#a5da0e42df80076e9ec37936ed3cfa20a">More...</a><br/></td></tr>
-<tr class="separator:a5da0e42df80076e9ec37936ed3cfa20a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac5859a75a58de3fb810058abca969e72"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#ac5859a75a58de3fb810058abca969e72">binSize</a> (const int i, const int j, const int k) const </td></tr>
-<tr class="memdesc:ac5859a75a58de3fb810058abca969e72"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the number of particles it contains.  <a href="#ac5859a75a58de3fb810058abca969e72">More...</a><br/></td></tr>
-<tr class="separator:ac5859a75a58de3fb810058abca969e72"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a69e9c28f3d4d661eb3629406db8f18cf"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a69e9c28f3d4d661eb3629406db8f18cf">binOffset</a> (const int i, const int j, const int k) const </td></tr>
-<tr class="memdesc:a69e9c28f3d4d661eb3629406db8f18cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the particle index at which it sorts.  <a href="#a69e9c28f3d4d661eb3629406db8f18cf">More...</a><br/></td></tr>
-<tr class="separator:a69e9c28f3d4d661eb3629406db8f18cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa4e774dd528ba65d719b279c69ece7a5"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#aa4e774dd528ba65d719b279c69ece7a5">permutation</a> (const int particle_id) const </td></tr>
-<tr class="memdesc:aa4e774dd528ba65d719b279c69ece7a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local particle id in the binned layout, get the id of the particle in the old (unbinned) layout.  <a href="#aa4e774dd528ba65d719b279c69ece7a5">More...</a><br/></td></tr>
-<tr class="separator:aa4e774dd528ba65d719b279c69ece7a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:affa9f00cd568a8ccbedb49ed703c95db"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="affa9f00cd568a8ccbedb49ed703c95db"></a>
-KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#affa9f00cd568a8ccbedb49ed703c95db">rangeBegin</a> () const </td></tr>
-<tr class="memdesc:affa9f00cd568a8ccbedb49ed703c95db"><td class="mdescLeft">&#160;</td><td class="mdescRight">The beginning particle index binned by the linked cell list. <br/></td></tr>
-<tr class="separator:affa9f00cd568a8ccbedb49ed703c95db"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d8b9d78f3911eb3831be2c88c9e0ab9"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a3d8b9d78f3911eb3831be2c88c9e0ab9"></a>
-KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a3d8b9d78f3911eb3831be2c88c9e0ab9">rangeEnd</a> () const </td></tr>
-<tr class="memdesc:a3d8b9d78f3911eb3831be2c88c9e0ab9"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending particle index binned by the linked cell list. <br/></td></tr>
-<tr class="separator:a3d8b9d78f3911eb3831be2c88c9e0ab9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abc56ba3f7cb8473f016d3e91aa2faa08"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; MemorySpace &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#abc56ba3f7cb8473f016d3e91aa2faa08">binningData</a> () const </td></tr>
-<tr class="memdesc:abc56ba3f7cb8473f016d3e91aa2faa08"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the 1d bin data.  <a href="#abc56ba3f7cb8473f016d3e91aa2faa08">More...</a><br/></td></tr>
-<tr class="separator:abc56ba3f7cb8473f016d3e91aa2faa08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af204fd4e5c9a852ed7d70f54bffeb5a8"><td class="memTemplParams" colspan="2"><a class="anchor" id="af204fd4e5c9a852ed7d70f54bffeb5a8"></a>
+<tr class="memitem:afeed5e939961f4e75597c9d258c9978b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afeed5e939961f4e75597c9d258c9978b"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#afeed5e939961f4e75597c9d258c9978b">LinkedCellList</a> ()</td></tr>
+<tr class="memdesc:afeed5e939961f4e75597c9d258c9978b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br/></td></tr>
+<tr class="separator:afeed5e939961f4e75597c9d258c9978b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aac212aff261f3bfea6f1683b96fc2d1a"><td class="memTemplParams" colspan="2">template&lt;class SliceType &gt; </td></tr>
+<tr class="memitem:aac212aff261f3bfea6f1683b96fc2d1a"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#aac212aff261f3bfea6f1683b96fc2d1a">LinkedCellList</a> (SliceType positions, const typename SliceType::value_type grid_delta[3], const typename SliceType::value_type grid_min[3], const typename SliceType::value_type grid_max[3], typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:aac212aff261f3bfea6f1683b96fc2d1a"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member...">Slice</a> constructor.  <a href="#aac212aff261f3bfea6f1683b96fc2d1a">More...</a><br/></td></tr>
+<tr class="separator:aac212aff261f3bfea6f1683b96fc2d1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a95fb544e9d7429aaf1a2805240fb87a0"><td class="memTemplParams" colspan="2">template&lt;class SliceType &gt; </td></tr>
+<tr class="memitem:a95fb544e9d7429aaf1a2805240fb87a0"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a95fb544e9d7429aaf1a2805240fb87a0">LinkedCellList</a> (SliceType positions, const std::size_t begin, const std::size_t end, const typename SliceType::value_type grid_delta[3], const typename SliceType::value_type grid_min[3], const typename SliceType::value_type grid_max[3], typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; SliceType &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:a95fb544e9d7429aaf1a2805240fb87a0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member...">Slice</a> range constructor.  <a href="#a95fb544e9d7429aaf1a2805240fb87a0">More...</a><br/></td></tr>
+<tr class="separator:a95fb544e9d7429aaf1a2805240fb87a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae843f3af1fa242c0ece8a41b942a2330"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#ae843f3af1fa242c0ece8a41b942a2330">totalBins</a> () const </td></tr>
+<tr class="memdesc:ae843f3af1fa242c0ece8a41b942a2330"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of bins.  <a href="#ae843f3af1fa242c0ece8a41b942a2330">More...</a><br/></td></tr>
+<tr class="separator:ae843f3af1fa242c0ece8a41b942a2330"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4742d5ecac3ac85b83f11af289e07409"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a4742d5ecac3ac85b83f11af289e07409">numBin</a> (const int dim) const </td></tr>
+<tr class="memdesc:a4742d5ecac3ac85b83f11af289e07409"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of bins in a given dimension.  <a href="#a4742d5ecac3ac85b83f11af289e07409">More...</a><br/></td></tr>
+<tr class="separator:a4742d5ecac3ac85b83f11af289e07409"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d743f59d5d5c9c18d5c8f4c2b87eccf"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a5d743f59d5d5c9c18d5c8f4c2b87eccf">cardinalBinIndex</a> (const int i, const int j, const int k) const </td></tr>
+<tr class="memdesc:a5d743f59d5d5c9c18d5c8f4c2b87eccf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the ijk index of a bin get its cardinal index.  <a href="#a5d743f59d5d5c9c18d5c8f4c2b87eccf">More...</a><br/></td></tr>
+<tr class="separator:a5d743f59d5d5c9c18d5c8f4c2b87eccf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0b4003f723fd0c2924a4fe1bd79d046e"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a0b4003f723fd0c2924a4fe1bd79d046e">ijkBinIndex</a> (const int cardinal, int &amp;i, int &amp;j, int &amp;k) const </td></tr>
+<tr class="memdesc:a0b4003f723fd0c2924a4fe1bd79d046e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the cardinal index of a bin get its ijk indices.  <a href="#a0b4003f723fd0c2924a4fe1bd79d046e">More...</a><br/></td></tr>
+<tr class="separator:a0b4003f723fd0c2924a4fe1bd79d046e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a873a64a756b42f4b239322b4faf7a1f6"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a873a64a756b42f4b239322b4faf7a1f6">binSize</a> (const int i, const int j, const int k) const </td></tr>
+<tr class="memdesc:a873a64a756b42f4b239322b4faf7a1f6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the number of particles it contains.  <a href="#a873a64a756b42f4b239322b4faf7a1f6">More...</a><br/></td></tr>
+<tr class="separator:a873a64a756b42f4b239322b4faf7a1f6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb8009c2da079bb091bb6a79931c8a2b"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#acb8009c2da079bb091bb6a79931c8a2b">binOffset</a> (const int i, const int j, const int k) const </td></tr>
+<tr class="memdesc:acb8009c2da079bb091bb6a79931c8a2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the particle index at which it sorts.  <a href="#acb8009c2da079bb091bb6a79931c8a2b">More...</a><br/></td></tr>
+<tr class="separator:acb8009c2da079bb091bb6a79931c8a2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af64240f1d5e026260208f6da8881d265"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#af64240f1d5e026260208f6da8881d265">permutation</a> (const int particle_id) const </td></tr>
+<tr class="memdesc:af64240f1d5e026260208f6da8881d265"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local particle id in the binned layout, get the id of the particle in the old (unbinned) layout.  <a href="#af64240f1d5e026260208f6da8881d265">More...</a><br/></td></tr>
+<tr class="separator:af64240f1d5e026260208f6da8881d265"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1d56c091ed49cf2f7ec61f156510240c"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a1d56c091ed49cf2f7ec61f156510240c"></a>
+KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#a1d56c091ed49cf2f7ec61f156510240c">rangeBegin</a> () const </td></tr>
+<tr class="memdesc:a1d56c091ed49cf2f7ec61f156510240c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The beginning particle index binned by the linked cell list. <br/></td></tr>
+<tr class="separator:a1d56c091ed49cf2f7ec61f156510240c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9686e95ae57b0a78fb5045bc680ae17"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af9686e95ae57b0a78fb5045bc680ae17"></a>
+KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#af9686e95ae57b0a78fb5045bc680ae17">rangeEnd</a> () const </td></tr>
+<tr class="memdesc:af9686e95ae57b0a78fb5045bc680ae17"><td class="mdescLeft">&#160;</td><td class="mdescRight">The ending particle index binned by the linked cell list. <br/></td></tr>
+<tr class="separator:af9686e95ae57b0a78fb5045bc680ae17"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af5cece9698aa797594f8f10baf507df7"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt; DeviceType &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1LinkedCellList.html#af5cece9698aa797594f8f10baf507df7">binningData</a> () const </td></tr>
+<tr class="memdesc:af5cece9698aa797594f8f10baf507df7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the 1d bin data.  <a href="#af5cece9698aa797594f8f10baf507df7">More...</a><br/></td></tr>
+<tr class="separator:af5cece9698aa797594f8f10baf507df7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1144f85f4b1af0d81938b57f1b7bbe2"><td class="memTemplParams" colspan="2"><a class="anchor" id="af1144f85f4b1af0d81938b57f1b7bbe2"></a>
 template&lt;class SliceType &gt; </td></tr>
-<tr class="memitem:af204fd4e5c9a852ed7d70f54bffeb5a8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (SliceType positions, const std::size_t begin, const std::size_t end)</td></tr>
-<tr class="separator:af204fd4e5c9a852ed7d70f54bffeb5a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af1144f85f4b1af0d81938b57f1b7bbe2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>build</b> (SliceType positions, const std::size_t begin, const std::size_t end)</td></tr>
+<tr class="separator:af1144f85f4b1af0d81938b57f1b7bbe2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class MemorySpace&gt;<br/>
-class Cabana::LinkedCellList&lt; MemorySpace &gt;</h3>
+<div class="textblock"><h3>template&lt;class DeviceType&gt;<br/>
+class Cabana::LinkedCellList&lt; DeviceType &gt;</h3>
 
 <p>Data describing the bin sizes and offsets resulting from a binning operation on a 3d regular Cartesian grid. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ad71abd9014f45358bb03406601c3099c"></a>
+<a class="anchor" id="aac212aff261f3bfea6f1683b96fc2d1a"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <div class="memtemplate">
 template&lt;class SliceType &gt; </div>
 <table class="mlabels">
@@ -181,7 +187,7 @@ template&lt;class SliceType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::<a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::<a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a> </td>
           <td>(</td>
           <td class="paramtype">SliceType&#160;</td>
           <td class="paramname"><em>positions</em>, </td>
@@ -242,11 +248,11 @@ template&lt;class SliceType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a8c4cc7be428dbb3888abc7dcf2e1a780"></a>
+<a class="anchor" id="a95fb544e9d7429aaf1a2805240fb87a0"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <div class="memtemplate">
 template&lt;class SliceType &gt; </div>
 <table class="mlabels">
@@ -254,7 +260,7 @@ template&lt;class SliceType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::<a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::<a class="el" href="classCabana_1_1LinkedCellList.html">LinkedCellList</a> </td>
           <td>(</td>
           <td class="paramtype">SliceType&#160;</td>
           <td class="paramname"><em>positions</em>, </td>
@@ -330,17 +336,17 @@ template&lt;class SliceType &gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="abc56ba3f7cb8473f016d3e91aa2faa08"></a>
+<a class="anchor" id="af5cece9698aa797594f8f10baf507df7"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt;MemorySpace&gt; <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::binningData </td>
+          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">BinningData</a>&lt;DeviceType&gt; <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::binningData </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -358,17 +364,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a69e9c28f3d4d661eb3629406db8f18cf"></a>
+<a class="anchor" id="acb8009c2da079bb091bb6a79931c8a2b"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::binOffset </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::binOffset </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>i</em>, </td>
@@ -411,17 +417,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ac5859a75a58de3fb810058abca969e72"></a>
+<a class="anchor" id="a873a64a756b42f4b239322b4faf7a1f6"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::binSize </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::binSize </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>i</em>, </td>
@@ -464,17 +470,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="afbc67b4e88a6ff46b091e38f5eb28383"></a>
+<a class="anchor" id="a5d743f59d5d5c9c18d5c8f4c2b87eccf"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::cardinalBinIndex </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::cardinalBinIndex </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>i</em>, </td>
@@ -518,17 +524,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a5da0e42df80076e9ec37936ed3cfa20a"></a>
+<a class="anchor" id="a0b4003f723fd0c2924a4fe1bd79d046e"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION void <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::ijkBinIndex </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION void <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::ijkBinIndex </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>cardinal</em>, </td>
@@ -578,17 +584,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="abf4336684fd76b6f87c06c8af31690f4"></a>
+<a class="anchor" id="a4742d5ecac3ac85b83f11af289e07409"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::numBin </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::numBin </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>dim</em></td><td>)</td>
@@ -613,17 +619,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="aa4e774dd528ba65d719b279c69ece7a5"></a>
+<a class="anchor" id="af64240f1d5e026260208f6da8881d265"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::permutation </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::permutation </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>particle_id</em></td><td>)</td>
@@ -648,17 +654,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="acacb3e4b6d87169310758d6223431495"></a>
+<a class="anchor" id="ae843f3af1fa242c0ece8a41b942a2330"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; MemorySpace &gt;::totalBins </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1LinkedCellList.html">Cabana::LinkedCellList</a>&lt; DeviceType &gt;::totalBins </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -682,7 +688,7 @@ template&lt;class MemorySpace&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 18 2019 02:25:20 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 21 2019 19:34:04 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

@@ -288,7 +288,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;        <span class="keyword">auto</span> copy_func =</div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> std::size_t i )</div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;            { dst.setTuple( i, src_copy_on_dst.getTuple(i) ); };</div>
-<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        Kokkos::RangePolicy&lt;typename dst_memory_space::execution_space&gt;</div>
+<div class="line"><a name="l00249"></a><span class="lineno">  249</span>&#160;        Kokkos::RangePolicy&lt;typename dst_type::execution_space&gt;</div>
 <div class="line"><a name="l00250"></a><span class="lineno">  250</span>&#160;            exec_policy( 0, dst.size() );</div>
 <div class="line"><a name="l00251"></a><span class="lineno">  251</span>&#160;        Kokkos::parallel_for( <span class="stringliteral">&quot;Cabana::deep_copy&quot;</span>, exec_policy, copy_func );</div>
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;        Kokkos::fence();</div>
@@ -305,7 +305,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keyword">auto</span> assign_func =</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> std::size_t i )</div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;        { aosoa.setTuple( i, tuple ); };</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    Kokkos::RangePolicy&lt;typename AoSoA_t::memory_space::execution_space&gt;</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    Kokkos::RangePolicy&lt;typename AoSoA_t::execution_space&gt;</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;        exec_policy( 0, aosoa.size() );</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    Kokkos::parallel_for( <span class="stringliteral">&quot;Cabana::deep_copy&quot;</span>, exec_policy, assign_func );</div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;    Kokkos::fence();</div>
@@ -393,7 +393,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                    gather_src( i * num_comp + n ) =</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;                        src_data[ src_offset + SrcSlice::vector_length * n ];</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;            };</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        Kokkos::RangePolicy&lt;typename src_type::memory_space::execution_space&gt;</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        Kokkos::RangePolicy&lt;typename src_type::execution_space&gt;</div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;            gather_policy( 0, src.size() );</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160;        Kokkos::parallel_for(</div>
 <div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;            <span class="stringliteral">&quot;Cabana::deep_copy::gather&quot;</span>, gather_policy, gather_func );</div>
@@ -412,7 +412,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;                dst_data[ dst_offset + DstSlice::vector_length * n ] =</div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;                    gather_dst( i * num_comp + n );</div>
 <div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        };</div>
-<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    Kokkos::RangePolicy&lt;typename dst_type::memory_space::execution_space&gt;</div>
+<div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;    Kokkos::RangePolicy&lt;typename dst_type::execution_space&gt;</div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;        scatter_policy( 0, dst.size() );</div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;        <span class="stringliteral">&quot;Cabana::deep_copy::scatter&quot;</span>, scatter_policy, scatter_func );</div>
@@ -437,7 +437,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 18 2019 02:25:20 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 21 2019 19:34:04 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

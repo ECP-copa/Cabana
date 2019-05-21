@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Cabana::CommunicationPlan&lt; MemorySpace &gt; Class Template Reference</title>
+<title>Cabana: Cabana::CommunicationPlan&lt; DeviceType &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -91,7 +91,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="classCabana_1_1CommunicationPlan-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::CommunicationPlan&lt; MemorySpace &gt; Class Template Reference</div>  </div>
+<div class="title">Cabana::CommunicationPlan&lt; DeviceType &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -100,88 +100,91 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <p><code>#include &lt;<a class="el" href="Cabana__CommunicationPlan_8hpp_source.html">Cabana_CommunicationPlan.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Inheritance diagram for Cabana::CommunicationPlan&lt; MemorySpace &gt;:</div>
+Inheritance diagram for Cabana::CommunicationPlan&lt; DeviceType &gt;:</div>
 <div class="dyncontent">
  <div class="center">
-  <img src="classCabana_1_1CommunicationPlan.png" usemap="#Cabana::CommunicationPlan&lt; MemorySpace &gt;_map" alt=""/>
-  <map id="Cabana::CommunicationPlan&lt; MemorySpace &gt;_map" name="Cabana::CommunicationPlan&lt; MemorySpace &gt;_map">
-<area href="classCabana_1_1Distributor.html" title="Distributor is a communication plan for migrating data from one uniquely-owned decomposition to anoth..." alt="Cabana::Distributor&lt; MemorySpace &gt;" shape="rect" coords="0,56,278,80"/>
-<area href="classCabana_1_1Halo.html" title="Halo communication plan for scattering and gathering of ghosted data. " alt="Cabana::Halo&lt; MemorySpace &gt;" shape="rect" coords="288,56,566,80"/>
+  <img src="classCabana_1_1CommunicationPlan.png" usemap="#Cabana::CommunicationPlan&lt; DeviceType &gt;_map" alt=""/>
+  <map id="Cabana::CommunicationPlan&lt; DeviceType &gt;_map" name="Cabana::CommunicationPlan&lt; DeviceType &gt;_map">
+<area href="classCabana_1_1Distributor.html" title="Distributor is a communication plan for migrating data from one uniquely-owned decomposition to anoth..." alt="Cabana::Distributor&lt; DeviceType &gt;" shape="rect" coords="0,56,264,80"/>
+<area href="classCabana_1_1Halo.html" title="Halo communication plan for scattering and gathering of ghosted data. " alt="Cabana::Halo&lt; DeviceType &gt;" shape="rect" coords="274,56,538,80"/>
 </map>
  </div></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a4b57656297b6e95ac7dce53d6967f1df"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4b57656297b6e95ac7dce53d6967f1df"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
-<tr class="separator:a4b57656297b6e95ac7dce53d6967f1df"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae846372aa7018c5da4d017502a0803e2"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ae846372aa7018c5da4d017502a0803e2"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename memory_space::execution_space</td></tr>
-<tr class="separator:ae846372aa7018c5da4d017502a0803e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a166fe8d6270e0d3224d4298bc4b4bb6b"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a166fe8d6270e0d3224d4298bc4b4bb6b"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
+<tr class="separator:a166fe8d6270e0d3224d4298bc4b4bb6b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adb04f782ff2aa705075d56d758c4f678"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adb04f782ff2aa705075d56d758c4f678"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename device_type::memory_space</td></tr>
+<tr class="separator:adb04f782ff2aa705075d56d758c4f678"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0f0dc771fcf7c9015a6f935e9621725a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f0dc771fcf7c9015a6f935e9621725a"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename device_type::execution_space</td></tr>
+<tr class="separator:a0f0dc771fcf7c9015a6f935e9621725a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:ad37cb95149bc904f4da45e193dc59cd3"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ad37cb95149bc904f4da45e193dc59cd3">CommunicationPlan</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlan.html#a93387ef0f6677ff266b70912d14521c4">comm</a>)</td></tr>
-<tr class="memdesc:ad37cb95149bc904f4da45e193dc59cd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#ad37cb95149bc904f4da45e193dc59cd3">More...</a><br/></td></tr>
-<tr class="separator:ad37cb95149bc904f4da45e193dc59cd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93387ef0f6677ff266b70912d14521c4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a93387ef0f6677ff266b70912d14521c4"></a>
-MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a93387ef0f6677ff266b70912d14521c4">comm</a> () const </td></tr>
-<tr class="memdesc:a93387ef0f6677ff266b70912d14521c4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the MPI communicator. <br/></td></tr>
-<tr class="separator:a93387ef0f6677ff266b70912d14521c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4f9d57924dc28464dc6b161b83f3da25"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a4f9d57924dc28464dc6b161b83f3da25">numNeighbor</a> () const </td></tr>
-<tr class="memdesc:a4f9d57924dc28464dc6b161b83f3da25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of neighbor ranks that this rank will communicate with.  <a href="#a4f9d57924dc28464dc6b161b83f3da25">More...</a><br/></td></tr>
-<tr class="separator:a4f9d57924dc28464dc6b161b83f3da25"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adf30089f48e23e1e80e9a3d8ee7c777b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#adf30089f48e23e1e80e9a3d8ee7c777b">neighborRank</a> (const int neighbor) const </td></tr>
-<tr class="memdesc:adf30089f48e23e1e80e9a3d8ee7c777b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local neighbor id get its rank in the MPI communicator.  <a href="#adf30089f48e23e1e80e9a3d8ee7c777b">More...</a><br/></td></tr>
-<tr class="separator:adf30089f48e23e1e80e9a3d8ee7c777b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a90de53972575fcb29c1ad95e84b671c3"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a90de53972575fcb29c1ad95e84b671c3">numExport</a> (const int neighbor) const </td></tr>
-<tr class="memdesc:a90de53972575fcb29c1ad95e84b671c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements this rank will export to a given neighbor.  <a href="#a90de53972575fcb29c1ad95e84b671c3">More...</a><br/></td></tr>
-<tr class="separator:a90de53972575fcb29c1ad95e84b671c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae89675818babd1894afe077c2e0829a3"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ae89675818babd1894afe077c2e0829a3">totalNumExport</a> () const </td></tr>
-<tr class="memdesc:ae89675818babd1894afe077c2e0829a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of exports this rank will do.  <a href="#ae89675818babd1894afe077c2e0829a3">More...</a><br/></td></tr>
-<tr class="separator:ae89675818babd1894afe077c2e0829a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9892a3ada2bbca7db0e5475484bcdffd"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a9892a3ada2bbca7db0e5475484bcdffd">numImport</a> (const int neighbor) const </td></tr>
-<tr class="memdesc:a9892a3ada2bbca7db0e5475484bcdffd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements this rank will import from a given neighbor.  <a href="#a9892a3ada2bbca7db0e5475484bcdffd">More...</a><br/></td></tr>
-<tr class="separator:a9892a3ada2bbca7db0e5475484bcdffd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae820a713910cd333c1fe2a8e21829a0e"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ae820a713910cd333c1fe2a8e21829a0e">totalNumImport</a> () const </td></tr>
-<tr class="memdesc:ae820a713910cd333c1fe2a8e21829a0e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of imports this rank will do.  <a href="#ae820a713910cd333c1fe2a8e21829a0e">More...</a><br/></td></tr>
-<tr class="separator:ae820a713910cd333c1fe2a8e21829a0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad4b4da5d20dbac486b86158c64c5fd88"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ad4b4da5d20dbac486b86158c64c5fd88">exportSize</a> () const </td></tr>
-<tr class="memdesc:ad4b4da5d20dbac486b86158c64c5fd88"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of export elements.  <a href="#ad4b4da5d20dbac486b86158c64c5fd88">More...</a><br/></td></tr>
-<tr class="separator:ad4b4da5d20dbac486b86158c64c5fd88"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a569318a0a34b18f442e8d470e4b2eca6"><td class="memItemLeft" align="right" valign="top">Kokkos::View&lt; std::size_t <br class="typebreak"/>
-*, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a569318a0a34b18f442e8d470e4b2eca6">getExportSteering</a> () const </td></tr>
-<tr class="memdesc:a569318a0a34b18f442e8d470e4b2eca6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the steering vector for the exports.  <a href="#a569318a0a34b18f442e8d470e4b2eca6">More...</a><br/></td></tr>
-<tr class="separator:a569318a0a34b18f442e8d470e4b2eca6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1b0ac4052c15c3156f5e5fbba380ce2"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
-<tr class="memitem:af1b0ac4052c15c3156f5e5fbba380ce2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#af1b0ac4052c15c3156f5e5fbba380ce2">createFromExportsAndTopology</a> (const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks, const int mpi_tag=1221)</td></tr>
-<tr class="memdesc:af1b0ac4052c15c3156f5e5fbba380ce2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <a href="#af1b0ac4052c15c3156f5e5fbba380ce2">More...</a><br/></td></tr>
-<tr class="separator:af1b0ac4052c15c3156f5e5fbba380ce2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ee2bf7671f29878cbc5b85e3a4c5291"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
-<tr class="memitem:a5ee2bf7671f29878cbc5b85e3a4c5291"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a5ee2bf7671f29878cbc5b85e3a4c5291">createFromExportsOnly</a> (const ViewType &amp;element_export_ranks, const int mpi_tag=1221)</td></tr>
-<tr class="memdesc:a5ee2bf7671f29878cbc5b85e3a4c5291"><td class="mdescLeft">&#160;</td><td class="mdescRight">Export rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <a href="#a5ee2bf7671f29878cbc5b85e3a4c5291">More...</a><br/></td></tr>
-<tr class="separator:a5ee2bf7671f29878cbc5b85e3a4c5291"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:afc72c3b5025271802c1f5f5a31ceb85a"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
-<tr class="memitem:afc72c3b5025271802c1f5f5a31ceb85a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#afc72c3b5025271802c1f5f5a31ceb85a">createExportSteering</a> (const ViewType &amp;element_export_ranks)</td></tr>
-<tr class="memdesc:afc72c3b5025271802c1f5f5a31ceb85a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <a href="#afc72c3b5025271802c1f5f5a31ceb85a">More...</a><br/></td></tr>
-<tr class="separator:afc72c3b5025271802c1f5f5a31ceb85a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d3fb5abfe6b5566b26947afd203df01"><td class="memTemplParams" colspan="2">template&lt;class RankViewType , class IdViewType &gt; </td></tr>
-<tr class="memitem:a3d3fb5abfe6b5566b26947afd203df01"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a3d3fb5abfe6b5566b26947afd203df01">createExportSteering</a> (const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
-<tr class="memdesc:a3d3fb5abfe6b5566b26947afd203df01"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <a href="#a3d3fb5abfe6b5566b26947afd203df01">More...</a><br/></td></tr>
-<tr class="separator:a3d3fb5abfe6b5566b26947afd203df01"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62ec664bed34a271177715d0fd2539a3"><td class="memTemplParams" colspan="2"><a class="anchor" id="a62ec664bed34a271177715d0fd2539a3"></a>
+<tr class="memitem:a06e29072acf141f5da2aa73c27443f94"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a06e29072acf141f5da2aa73c27443f94">CommunicationPlan</a> (MPI_Comm <a class="el" href="classCabana_1_1CommunicationPlan.html#a604e8cc930192a7df6f1ab7a0f294f75">comm</a>)</td></tr>
+<tr class="memdesc:a06e29072acf141f5da2aa73c27443f94"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a06e29072acf141f5da2aa73c27443f94">More...</a><br/></td></tr>
+<tr class="separator:a06e29072acf141f5da2aa73c27443f94"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a604e8cc930192a7df6f1ab7a0f294f75"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a604e8cc930192a7df6f1ab7a0f294f75"></a>
+MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a604e8cc930192a7df6f1ab7a0f294f75">comm</a> () const </td></tr>
+<tr class="memdesc:a604e8cc930192a7df6f1ab7a0f294f75"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the MPI communicator. <br/></td></tr>
+<tr class="separator:a604e8cc930192a7df6f1ab7a0f294f75"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab9419563c0f8b9f069417ebc55a6956d"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ab9419563c0f8b9f069417ebc55a6956d">numNeighbor</a> () const </td></tr>
+<tr class="memdesc:ab9419563c0f8b9f069417ebc55a6956d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of neighbor ranks that this rank will communicate with.  <a href="#ab9419563c0f8b9f069417ebc55a6956d">More...</a><br/></td></tr>
+<tr class="separator:ab9419563c0f8b9f069417ebc55a6956d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abda7e706ce1d7f0c0b850aad57397fea"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#abda7e706ce1d7f0c0b850aad57397fea">neighborRank</a> (const int neighbor) const </td></tr>
+<tr class="memdesc:abda7e706ce1d7f0c0b850aad57397fea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local neighbor id get its rank in the MPI communicator.  <a href="#abda7e706ce1d7f0c0b850aad57397fea">More...</a><br/></td></tr>
+<tr class="separator:abda7e706ce1d7f0c0b850aad57397fea"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1ff326912314c587d0836a76ad10c5b3"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a1ff326912314c587d0836a76ad10c5b3">numExport</a> (const int neighbor) const </td></tr>
+<tr class="memdesc:a1ff326912314c587d0836a76ad10c5b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements this rank will export to a given neighbor.  <a href="#a1ff326912314c587d0836a76ad10c5b3">More...</a><br/></td></tr>
+<tr class="separator:a1ff326912314c587d0836a76ad10c5b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4a10a9c6e37a3f66e6d47ea155b5c50a"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a4a10a9c6e37a3f66e6d47ea155b5c50a">totalNumExport</a> () const </td></tr>
+<tr class="memdesc:a4a10a9c6e37a3f66e6d47ea155b5c50a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of exports this rank will do.  <a href="#a4a10a9c6e37a3f66e6d47ea155b5c50a">More...</a><br/></td></tr>
+<tr class="separator:a4a10a9c6e37a3f66e6d47ea155b5c50a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0bb06fd90c18694c52460ef86e8db41b"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a0bb06fd90c18694c52460ef86e8db41b">numImport</a> (const int neighbor) const </td></tr>
+<tr class="memdesc:a0bb06fd90c18694c52460ef86e8db41b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of elements this rank will import from a given neighbor.  <a href="#a0bb06fd90c18694c52460ef86e8db41b">More...</a><br/></td></tr>
+<tr class="separator:a0bb06fd90c18694c52460ef86e8db41b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae0f106268b61895a1ca102ae9e7e3a20"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#ae0f106268b61895a1ca102ae9e7e3a20">totalNumImport</a> () const </td></tr>
+<tr class="memdesc:ae0f106268b61895a1ca102ae9e7e3a20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of imports this rank will do.  <a href="#ae0f106268b61895a1ca102ae9e7e3a20">More...</a><br/></td></tr>
+<tr class="separator:ae0f106268b61895a1ca102ae9e7e3a20"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a99d819547750eb75d4bca726abdf9a38"><td class="memItemLeft" align="right" valign="top">std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a99d819547750eb75d4bca726abdf9a38">exportSize</a> () const </td></tr>
+<tr class="memdesc:a99d819547750eb75d4bca726abdf9a38"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of export elements.  <a href="#a99d819547750eb75d4bca726abdf9a38">More...</a><br/></td></tr>
+<tr class="separator:a99d819547750eb75d4bca726abdf9a38"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a14b93e676802d1d6358a843af9a954a4"><td class="memItemLeft" align="right" valign="top">Kokkos::View&lt; std::size_t <br class="typebreak"/>
+*, device_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a14b93e676802d1d6358a843af9a954a4">getExportSteering</a> () const </td></tr>
+<tr class="memdesc:a14b93e676802d1d6358a843af9a954a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the steering vector for the exports.  <a href="#a14b93e676802d1d6358a843af9a954a4">More...</a><br/></td></tr>
+<tr class="separator:a14b93e676802d1d6358a843af9a954a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a25e06101fcfb2038189f2ab19a0648a9"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
+<tr class="memitem:a25e06101fcfb2038189f2ab19a0648a9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a25e06101fcfb2038189f2ab19a0648a9">createFromExportsAndTopology</a> (const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks, const int mpi_tag=1221)</td></tr>
+<tr class="memdesc:a25e06101fcfb2038189f2ab19a0648a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <a href="#a25e06101fcfb2038189f2ab19a0648a9">More...</a><br/></td></tr>
+<tr class="separator:a25e06101fcfb2038189f2ab19a0648a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b8f574436bdb522fe4753f5d0ff416f"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
+<tr class="memitem:a4b8f574436bdb522fe4753f5d0ff416f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a4b8f574436bdb522fe4753f5d0ff416f">createFromExportsOnly</a> (const ViewType &amp;element_export_ranks, const int mpi_tag=1221)</td></tr>
+<tr class="memdesc:a4b8f574436bdb522fe4753f5d0ff416f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Export rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <a href="#a4b8f574436bdb522fe4753f5d0ff416f">More...</a><br/></td></tr>
+<tr class="separator:a4b8f574436bdb522fe4753f5d0ff416f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a50f43bb432ab2058450edf2aa5e714a1"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
+<tr class="memitem:a50f43bb432ab2058450edf2aa5e714a1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a50f43bb432ab2058450edf2aa5e714a1">createExportSteering</a> (const ViewType &amp;element_export_ranks)</td></tr>
+<tr class="memdesc:a50f43bb432ab2058450edf2aa5e714a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <a href="#a50f43bb432ab2058450edf2aa5e714a1">More...</a><br/></td></tr>
+<tr class="separator:a50f43bb432ab2058450edf2aa5e714a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a09e9c2c22f9f4ddc626d4428e456d2d4"><td class="memTemplParams" colspan="2">template&lt;class RankViewType , class IdViewType &gt; </td></tr>
+<tr class="memitem:a09e9c2c22f9f4ddc626d4428e456d2d4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a09e9c2c22f9f4ddc626d4428e456d2d4">createExportSteering</a> (const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
+<tr class="memdesc:a09e9c2c22f9f4ddc626d4428e456d2d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <a href="#a09e9c2c22f9f4ddc626d4428e456d2d4">More...</a><br/></td></tr>
+<tr class="separator:a09e9c2c22f9f4ddc626d4428e456d2d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f8a7df62f51528c59c4c6859db5bd0e"><td class="memTemplParams" colspan="2"><a class="anchor" id="a3f8a7df62f51528c59c4c6859db5bd0e"></a>
 template&lt;class RankViewType , class IdViewType &gt; </td></tr>
-<tr class="memitem:a62ec664bed34a271177715d0fd2539a3"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>createSteering</b> (const bool use_iota, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
-<tr class="separator:a62ec664bed34a271177715d0fd2539a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3f8a7df62f51528c59c4c6859db5bd0e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>createSteering</b> (const bool use_iota, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
+<tr class="separator:a3f8a7df62f51528c59c4c6859db5bd0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class MemorySpace&gt;<br/>
-class Cabana::CommunicationPlan&lt; MemorySpace &gt;</h3>
+<div class="textblock"><h3>template&lt;class DeviceType&gt;<br/>
+class Cabana::CommunicationPlan&lt; DeviceType &gt;</h3>
 
 <p>Communication plan base class. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">MemorySpace</td><td>Memory space in which the data for this class will be allocated.</td></tr>
+    <tr><td class="paramname">DeviceType</td><td>Device type for which the data for this class will be allocated and where parallel execution will occur.</td></tr>
   </table>
   </dd>
 </dl>
@@ -191,17 +194,17 @@ class Cabana::CommunicationPlan&lt; MemorySpace &gt;</h3>
 <p>Import - elements we are receiving in the forward communication plan.</p>
 <dl class="section note"><dt>Note</dt><dd>If a communication plan does self-sends (i.e. exports and imports data from its own ranks) then this data is first in the data structure. What this means is that neighbor 0 is the local rank and the data for that rank that is being exported will appear first in the steering vector. </dd></dl>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="ad37cb95149bc904f4da45e193dc59cd3"></a>
+<a class="anchor" id="a06e29072acf141f5da2aa73c27443f94"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::<a class="el" href="classCabana_1_1CommunicationPlan.html">CommunicationPlan</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::<a class="el" href="classCabana_1_1CommunicationPlan.html">CommunicationPlan</a> </td>
           <td>(</td>
           <td class="paramtype">MPI_Comm&#160;</td>
           <td class="paramname"><em>comm</em></td><td>)</td>
@@ -227,11 +230,11 @@ template&lt;class MemorySpace&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="afc72c3b5025271802c1f5f5a31ceb85a"></a>
+<a class="anchor" id="a50f43bb432ab2058450edf2aa5e714a1"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <div class="memtemplate">
 template&lt;class ViewType &gt; </div>
 <table class="mlabels">
@@ -239,7 +242,7 @@ template&lt;class ViewType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::createExportSteering </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createExportSteering </td>
           <td>(</td>
           <td class="paramtype">const ViewType &amp;&#160;</td>
           <td class="paramname"><em>element_export_ranks</em></td><td>)</td>
@@ -264,11 +267,11 @@ template&lt;class ViewType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a3d3fb5abfe6b5566b26947afd203df01"></a>
+<a class="anchor" id="a09e9c2c22f9f4ddc626d4428e456d2d4"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <div class="memtemplate">
 template&lt;class RankViewType , class IdViewType &gt; </div>
 <table class="mlabels">
@@ -276,7 +279,7 @@ template&lt;class RankViewType , class IdViewType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::createExportSteering </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createExportSteering </td>
           <td>(</td>
           <td class="paramtype">const RankViewType &amp;&#160;</td>
           <td class="paramname"><em>element_export_ranks</em>, </td>
@@ -312,11 +315,11 @@ template&lt;class RankViewType , class IdViewType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="af1b0ac4052c15c3156f5e5fbba380ce2"></a>
+<a class="anchor" id="a25e06101fcfb2038189f2ab19a0648a9"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <div class="memtemplate">
 template&lt;class ViewType &gt; </div>
 <table class="mlabels">
@@ -324,7 +327,7 @@ template&lt;class ViewType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::createFromExportsAndTopology </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createFromExportsAndTopology </td>
           <td>(</td>
           <td class="paramtype">const ViewType &amp;&#160;</td>
           <td class="paramname"><em>element_export_ranks</em>, </td>
@@ -369,11 +372,11 @@ For elements that you do not wish to export, use an export rank of -1 to signal 
 
 </div>
 </div>
-<a class="anchor" id="a5ee2bf7671f29878cbc5b85e3a4c5291"></a>
+<a class="anchor" id="a4b8f574436bdb522fe4753f5d0ff416f"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <div class="memtemplate">
 template&lt;class ViewType &gt; </div>
 <table class="mlabels">
@@ -381,7 +384,7 @@ template&lt;class ViewType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::createFromExportsOnly </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createFromExportsOnly </td>
           <td>(</td>
           <td class="paramtype">const ViewType &amp;&#160;</td>
           <td class="paramname"><em>element_export_ranks</em>, </td>
@@ -419,17 +422,17 @@ For elements that you do not wish to export, use an export rank of -1 to signal 
 
 </div>
 </div>
-<a class="anchor" id="ad4b4da5d20dbac486b86158c64c5fd88"></a>
+<a class="anchor" id="a99d819547750eb75d4bca726abdf9a38"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::exportSize </td>
+          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::exportSize </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -443,22 +446,22 @@ template&lt;class MemorySpace&gt; </div>
 </div><div class="memdoc">
 
 <p>Get the number of export elements. </p>
-<p>Whenever the communciation plan is applied, this is the total number of elements expected to be input on the sending ranks (in the forward communication plan). This will be different than the number returned by <a class="el" href="classCabana_1_1CommunicationPlan.html#ae89675818babd1894afe077c2e0829a3" title="Get the total number of exports this rank will do. ">totalNumExport()</a> if some of the export ranks used in the construction are -1 and therefore will not particpate in an export operation.</p>
+<p>Whenever the communciation plan is applied, this is the total number of elements expected to be input on the sending ranks (in the forward communication plan). This will be different than the number returned by <a class="el" href="classCabana_1_1CommunicationPlan.html#a4a10a9c6e37a3f66e6d47ea155b5c50a" title="Get the total number of exports this rank will do. ">totalNumExport()</a> if some of the export ranks used in the construction are -1 and therefore will not particpate in an export operation.</p>
 <dl class="section return"><dt>Returns</dt><dd>The number of export elements. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a569318a0a34b18f442e8d470e4b2eca6"></a>
+<a class="anchor" id="a14b93e676802d1d6358a843af9a954a4"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">Kokkos::View&lt;std::size_t*,memory_space&gt; <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::getExportSteering </td>
+          <td class="memname">Kokkos::View&lt;std::size_t*,device_type&gt; <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::getExportSteering </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -477,17 +480,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="adf30089f48e23e1e80e9a3d8ee7c777b"></a>
+<a class="anchor" id="abda7e706ce1d7f0c0b850aad57397fea"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::neighborRank </td>
+          <td class="memname">int <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::neighborRank </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>neighbor</em></td><td>)</td>
@@ -512,17 +515,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a90de53972575fcb29c1ad95e84b671c3"></a>
+<a class="anchor" id="a1ff326912314c587d0836a76ad10c5b3"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::numExport </td>
+          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::numExport </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>neighbor</em></td><td>)</td>
@@ -547,17 +550,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a9892a3ada2bbca7db0e5475484bcdffd"></a>
+<a class="anchor" id="a0bb06fd90c18694c52460ef86e8db41b"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::numImport </td>
+          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::numImport </td>
           <td>(</td>
           <td class="paramtype">const int&#160;</td>
           <td class="paramname"><em>neighbor</em></td><td>)</td>
@@ -582,17 +585,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a4f9d57924dc28464dc6b161b83f3da25"></a>
+<a class="anchor" id="ab9419563c0f8b9f069417ebc55a6956d"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">int <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::numNeighbor </td>
+          <td class="memname">int <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::numNeighbor </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -610,17 +613,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ae89675818babd1894afe077c2e0829a3"></a>
+<a class="anchor" id="a4a10a9c6e37a3f66e6d47ea155b5c50a"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::totalNumExport </td>
+          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::totalNumExport </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -638,17 +641,17 @@ template&lt;class MemorySpace&gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="ae820a713910cd333c1fe2a8e21829a0e"></a>
+<a class="anchor" id="ae0f106268b61895a1ca102ae9e7e3a20"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class MemorySpace&gt; </div>
+template&lt;class DeviceType&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; MemorySpace &gt;::totalNumImport </td>
+          <td class="memname">std::size_t <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::totalNumImport </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -672,7 +675,7 @@ template&lt;class MemorySpace&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 18 2019 02:25:20 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 21 2019 19:34:04 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

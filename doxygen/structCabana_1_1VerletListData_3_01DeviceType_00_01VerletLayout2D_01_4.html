@@ -4,7 +4,7 @@
 <meta http-equiv="Content-Type" content="text/xhtml;charset=UTF-8"/>
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.6"/>
-<title>Cabana: Cabana::is_binning_data&lt; const BinningData&lt; MemorySpace &gt; &gt; Struct Template Reference</title>
+<title>Cabana: Cabana::VerletListData&lt; DeviceType, VerletLayout2D &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -82,29 +82,48 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="structCabana_1_1is__binning__data_3_01const_01BinningData_3_01MemorySpace_01_4_01_4.html">is_binning_data< const BinningData< MemorySpace > ></a></li>  </ul>
+<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayout2D_01_4.html">VerletListData< DeviceType, VerletLayout2D ></a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
+  <div class="summary">
+<a href="#pub-types">Public Types</a> &#124;
+<a href="#pub-methods">Public Member Functions</a> &#124;
+<a href="#pub-attribs">Public Attributes</a> &#124;
+<a href="structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayout2D_01_4-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::is_binning_data&lt; const BinningData&lt; MemorySpace &gt; &gt; Struct Template Reference</div>  </div>
+<div class="title">Cabana::VerletListData&lt; DeviceType, VerletLayout2D &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="dynheader">
-Inheritance diagram for Cabana::is_binning_data&lt; const BinningData&lt; MemorySpace &gt; &gt;:</div>
-<div class="dyncontent">
- <div class="center">
-  <img src="structCabana_1_1is__binning__data_3_01const_01BinningData_3_01MemorySpace_01_4_01_4.png" usemap="#Cabana::is_binning_data&lt; const BinningData&lt; MemorySpace &gt; &gt;_map" alt=""/>
-  <map id="Cabana::is_binning_data&lt; const BinningData&lt; MemorySpace &gt; &gt;_map" name="Cabana::is_binning_data&lt; const BinningData&lt; MemorySpace &gt; &gt;_map">
-</map>
- </div></div>
+<table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
+Public Types</h2></td></tr>
+<tr class="memitem:af2137cdc8f718f86ec76dc7b0624ea99"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af2137cdc8f718f86ec76dc7b0624ea99"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
+<tr class="separator:af2137cdc8f718f86ec76dc7b0624ea99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
+Public Member Functions</h2></td></tr>
+<tr class="memitem:a07aecd87003f36d6d33d55407289a77e"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a07aecd87003f36d6d33d55407289a77e"></a>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>addNeighbor</b> (const int pid, const int nid) const </td></tr>
+<tr class="separator:a07aecd87003f36d6d33d55407289a77e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
+Public Attributes</h2></td></tr>
+<tr class="memitem:ad23e5aeb9e7e8713ae12dac35e810637"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ad23e5aeb9e7e8713ae12dac35e810637"></a>
+Kokkos::View&lt; int *, device_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>counts</b></td></tr>
+<tr class="separator:ad23e5aeb9e7e8713ae12dac35e810637"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a26c1584d92e66310f15478d361d86b95"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a26c1584d92e66310f15478d361d86b95"></a>
+Kokkos::View&lt; int **, device_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>neighbors</b></td></tr>
+<tr class="separator:a26c1584d92e66310f15478d361d86b95"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
-<li>core/src/<a class="el" href="Cabana__Sort_8hpp_source.html">Cabana_Sort.hpp</a></li>
+<li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
 </ul>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 18 2019 02:25:20 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 21 2019 19:34:05 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

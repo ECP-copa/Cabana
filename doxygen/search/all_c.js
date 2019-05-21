@@ -6,12 +6,12 @@ var searchData=
   ['neighborlist',['NeighborList',['../classCabana_1_1NeighborList.html',1,'Cabana']]],
   ['neighborlist_3c_20verletlist_3c_20memoryspace_2c_20algorithmtag_2c_20verletlayout2d_20_3e_20_3e',['NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayout2D &gt; &gt;',['../classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_01_4_01_4.html',1,'Cabana']]],
   ['neighborlist_3c_20verletlist_3c_20memoryspace_2c_20algorithmtag_2c_20verletlayoutcsr_20_3e_20_3e',['NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayoutCSR &gt; &gt;',['../classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_01_4_01_4.html',1,'Cabana']]],
-  ['neighborrank',['neighborRank',['../classCabana_1_1CommunicationPlan.html#adf30089f48e23e1e80e9a3d8ee7c777b',1,'Cabana::CommunicationPlan']]],
-  ['numbin',['numBin',['../classCabana_1_1LinkedCellList.html#abf4336684fd76b6f87c06c8af31690f4',1,'Cabana::LinkedCellList::numBin()'],['../classCabana_1_1BinningData.html#ac4de52f0a4c67846d9e63d0625f5e2ef',1,'Cabana::BinningData::numBin()']]],
-  ['numexport',['numExport',['../classCabana_1_1CommunicationPlan.html#a90de53972575fcb29c1ad95e84b671c3',1,'Cabana::CommunicationPlan']]],
-  ['numghost',['numGhost',['../classCabana_1_1Halo.html#ad20c3fce3793d8cf7d3cc99cead873bc',1,'Cabana::Halo']]],
-  ['numimport',['numImport',['../classCabana_1_1CommunicationPlan.html#a9892a3ada2bbca7db0e5475484bcdffd',1,'Cabana::CommunicationPlan']]],
-  ['numlocal',['numLocal',['../classCabana_1_1Halo.html#aa02c5f0d5df4c482ae0b639af88b8d13',1,'Cabana::Halo']]],
-  ['numneighbor',['numNeighbor',['../classCabana_1_1CommunicationPlan.html#a4f9d57924dc28464dc6b161b83f3da25',1,'Cabana::CommunicationPlan']]],
-  ['numsoa',['numSoA',['../classCabana_1_1AoSoA.html#a3b52c268f99ea10179e57bd1ce12e82c',1,'Cabana::AoSoA::numSoA()'],['../classCabana_1_1Slice.html#a0efd8338d5f911b3e4d0d0d6314be3a8',1,'Cabana::Slice::numSoA()']]]
+  ['neighborrank',['neighborRank',['../classCabana_1_1CommunicationPlan.html#abda7e706ce1d7f0c0b850aad57397fea',1,'Cabana::CommunicationPlan']]],
+  ['numbin',['numBin',['../classCabana_1_1LinkedCellList.html#a4742d5ecac3ac85b83f11af289e07409',1,'Cabana::LinkedCellList::numBin()'],['../classCabana_1_1BinningData.html#ac5d7c7e7b66ed030f71ab5a6111ba8df',1,'Cabana::BinningData::numBin()']]],
+  ['numexport',['numExport',['../classCabana_1_1CommunicationPlan.html#a1ff326912314c587d0836a76ad10c5b3',1,'Cabana::CommunicationPlan']]],
+  ['numghost',['numGhost',['../classCabana_1_1Halo.html#aa3d2a3cdb403b6418a93ff9c998026ce',1,'Cabana::Halo']]],
+  ['numimport',['numImport',['../classCabana_1_1CommunicationPlan.html#a0bb06fd90c18694c52460ef86e8db41b',1,'Cabana::CommunicationPlan']]],
+  ['numlocal',['numLocal',['../classCabana_1_1Halo.html#a1d59cdbadee58d2621267f7b9ff4ad57',1,'Cabana::Halo']]],
+  ['numneighbor',['numNeighbor',['../classCabana_1_1CommunicationPlan.html#ab9419563c0f8b9f069417ebc55a6956d',1,'Cabana::CommunicationPlan']]],
+  ['numsoa',['numSoA',['../classCabana_1_1AoSoA.html#a48fc7416349739ce9e5ec3b017493fbc',1,'Cabana::AoSoA::numSoA()'],['../classCabana_1_1Slice.html#a8dcc622029407e0aee9f615faf9cdb8d',1,'Cabana::Slice::numSoA()']]]
 ];

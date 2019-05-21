@@ -133,8 +133,8 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="keyword">using</span> <a class="code" href="structCabana_1_1MemberTypes.html">ParticleDataTypes</a> =</div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <a class="code" href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a>&lt;<span class="keywordtype">double</span>[SPACE_DIM],        <span class="comment">// (0) x-position type</span></div>
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;                        <span class="keywordtype">double</span>[SPACE_DIM],        <span class="comment">// (1) velocity type</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                <span class="keywordtype">double</span>[SPACE_DIM],    <span class="comment">// (2) forces</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                        double,               <span class="comment">// (3) Charge</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;                        <span class="keywordtype">double</span>[SPACE_DIM],        <span class="comment">// (2) forces</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                        double,                   <span class="comment">// (3) Charge</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                        double,                   <span class="comment">// (4) potential</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                        <span class="keywordtype">long</span>                      <span class="comment">// (5) global index</span></div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;                        &gt;;</div>
@@ -142,28 +142,29 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">// Declare the memory space.</span></div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#ifdef Cabana_ENABLE_Cuda</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> MemorySpace = Cabana::CudaUVMSpace;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> MemorySpace = Kokkos::CudaUVMSpace;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="keyword">using</span> ExecutionSpace = Kokkos::Cuda;</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="preprocessor">#elif defined(Cabana_ENABLE_OpenMP)</span></div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> MemorySpace = Cabana::HostSpace;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> MemorySpace = Kokkos::HostSpace;</div>
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;<span class="keyword">using</span> ExecutionSpace = Kokkos::OpenMP;</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#elif defined(Cabana_ENABLE_Pthread)</span></div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> MemorySpace = Cabana::HostSpace;</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> MemorySpace = Kokkos::HostSpace;</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keyword">using</span> ExecutionSpace = Kokkos::Threads;</div>
 <div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;<span class="preprocessor">#elif defined(Cabana_ENABLE_Serial)</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> MemorySpace = Cabana::HostSpace;</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> MemorySpace = Kokkos::HostSpace;</div>
 <div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;<span class="keyword">using</span> ExecutionSpace = Kokkos::Serial;</div>
 <div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor"></span></div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="comment">// Set the type for the particle AoSoA.</span></div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="keyword">using</span> <a class="code" href="classCabana_1_1AoSoA.html">ParticleList</a> = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;ParticleDataTypes,MemorySpace,INNER_ARRAY_SIZE&gt;</a>;</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor"></span><span class="keyword">using</span> DeviceType = Kokkos::Device&lt;ExecutionSpace,MemorySpace&gt;;</div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;</div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;<span class="comment">// Set the type for the particle AoSoA.</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;<span class="keyword">using</span> <a class="code" href="classCabana_1_1AoSoA.html">ParticleList</a> = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;ParticleDataTypes,DeviceType,INNER_ARRAY_SIZE&gt;</a>;</div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:39</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Sat May 18 2019 02:25:20 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 21 2019 19:34:04 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
