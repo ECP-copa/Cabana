@@ -40,12 +40,14 @@ void verletListExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 81;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( "A", num_tuple );
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "A", num_tuple );
 
     /*
       Define the parameters of the Cartesian grid over which we will build the
@@ -120,7 +122,8 @@ void verletListExample()
     double neighborhood_radius = 0.25;
     double cell_ratio = 1.0;
     using ListAlgorithm = Cabana::FullNeighborTag;
-    using ListType = Cabana::VerletList<MemorySpace,ListAlgorithm,Cabana::VerletLayoutCSR>;
+    using ListType =
+        Cabana::VerletList<DeviceType,ListAlgorithm,Cabana::VerletLayoutCSR>;
     ListType verlet_list( positions, 0, positions.size(),
                           neighborhood_radius, cell_ratio,
                           grid_min, grid_max );

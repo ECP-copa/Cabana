@@ -46,12 +46,14 @@ void linkedCellListExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 54;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
         aosoa( "A", num_tuple );
 
     /*
@@ -102,7 +104,7 @@ void linkedCellListExample()
       Also note here that we are going to reorder the entire AoSoA. One may
       also construct a linked cell list over a subset of the particles.
      */
-    Cabana::LinkedCellList<MemorySpace> cell_list(
+    Cabana::LinkedCellList<DeviceType> cell_list(
         positions, grid_delta, grid_min, grid_max );
 
     /*

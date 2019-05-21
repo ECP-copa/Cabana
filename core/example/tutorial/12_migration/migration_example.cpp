@@ -53,12 +53,14 @@ void migrationExample()
     using DataTypes = Cabana::MemberTypes<int,int>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( "A", num_tuple );
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "A", num_tuple );
 
     /*
       Create slices and assign data. The data values are equal to id of this
@@ -80,7 +82,7 @@ void migrationExample()
       elements are to be discarded, and the last 80 elements stay on this
       rank.
     */
-    Kokkos::View<int*,MemorySpace> export_ranks( "export_ranks", num_tuple );
+    Kokkos::View<int*,DeviceType> export_ranks( "export_ranks", num_tuple );
 
     // First 10 go to the next rank. Note that this view will most often be
     // filled within a parallel_for but we do so in serial here for
@@ -115,7 +117,7 @@ void migrationExample()
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
     neighbors.resize( std::distance(neighbors.begin(), unique_end) );
-    Cabana::Distributor<MemorySpace> distributor(
+    Cabana::Distributor<DeviceType> distributor(
         MPI_COMM_WORLD, export_ranks, neighbors );
 
     /*
@@ -136,7 +138,7 @@ void migrationExample()
     // Also note how this AoSoA is sized. The distrubutor computes how many
     // imported elements each rank will recieve. We discard 10 elements, get
     // 10 from our neighbor, and keep 80 of our own so this number should be 90.
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
         destination( distributor.totalNumImport() );
 
     // Do the migration.

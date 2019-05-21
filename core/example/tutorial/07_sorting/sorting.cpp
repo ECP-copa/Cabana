@@ -40,12 +40,14 @@ void sortingExample()
     */
     const int VectorLength = 4;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
         aosoa( "my_aosoa", num_tuple );
 
     /*

@@ -44,8 +44,8 @@ enum UserParticleFields
 using ParticleDataTypes =
     Cabana::MemberTypes<double[SPACE_DIM],        // (0) x-position type
                         double[SPACE_DIM],        // (1) velocity type
-		        double[SPACE_DIM],	  // (2) forces
-                        double,		          // (3) Charge
+                        double[SPACE_DIM],        // (2) forces
+                        double,                   // (3) Charge
                         double,                   // (4) potential
                         long                      // (5) global index
                         >;
@@ -53,19 +53,20 @@ using ParticleDataTypes =
 
 // Declare the memory space.
 #ifdef Cabana_ENABLE_Cuda
-using MemorySpace = Cabana::CudaUVMSpace;
+using MemorySpace = Kokkos::CudaUVMSpace;
 using ExecutionSpace = Kokkos::Cuda;
 #elif defined(Cabana_ENABLE_OpenMP)
-using MemorySpace = Cabana::HostSpace;
+using MemorySpace = Kokkos::HostSpace;
 using ExecutionSpace = Kokkos::OpenMP;
 #elif defined(Cabana_ENABLE_Pthread)
-using MemorySpace = Cabana::HostSpace;
+using MemorySpace = Kokkos::HostSpace;
 using ExecutionSpace = Kokkos::Threads;
 #elif defined(Cabana_ENABLE_Serial)
-using MemorySpace = Cabana::HostSpace;
+using MemorySpace = Kokkos::HostSpace;
 using ExecutionSpace = Kokkos::Serial;
 #endif
+using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
 // Set the type for the particle AoSoA.
-using ParticleList = Cabana::AoSoA<ParticleDataTypes,MemorySpace,INNER_ARRAY_SIZE>;
+using ParticleList = Cabana::AoSoA<ParticleDataTypes,DeviceType,INNER_ARRAY_SIZE>;
 #endif

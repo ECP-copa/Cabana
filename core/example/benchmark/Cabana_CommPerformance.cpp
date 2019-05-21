@@ -562,21 +562,26 @@ int main( int argc, char* argv[] )
         file << "\n";
     }
 
+    // Device types.
+    using CudaDevice = Kokkos::Device<Kokkos::Cuda,Kokkos::CudaSpace>;
+    using CudaUVMDevice = Kokkos::Device<Kokkos::Cuda,Kokkos::CudaUVMSpace>;
+    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP,Kokkos::HostSpace>;
+
     // Transfer GPU data to CPU, communication on CPU, and transfer back to
     // GPU.
-    performanceTest<Kokkos::CudaSpace,Kokkos::HostSpace>(
+    performanceTest<CudaDevice,OpenMPDevice>(
         file, num_particle, "cuda_host_" );
 
     // Do everything on the CPU.
-    performanceTest<Kokkos::HostSpace,Kokkos::HostSpace>(
+    performanceTest<OpenMPDevice,OpenMPDevice>(
         file, num_particle, "host_host_" );
 
     // Do everything on the GPU with regular GPU memory.
-    performanceTest<Kokkos::CudaSpace,Kokkos::CudaSpace>(
+    performanceTest<CudaDevice,CudaDevice>(
         file, num_particle, "cuda_cuda_" );
 
     // Do everything on the GPU with UVM GPU memory.
-    performanceTest<Kokkos::CudaUVMSpace,Kokkos::CudaUVMSpace>(
+    performanceTest<CudaUVMDevice,CudaUVMDevice>(
         file, num_particle, "cudauvm_cudauvm_" );
 
     // Close the output file on rank 0.

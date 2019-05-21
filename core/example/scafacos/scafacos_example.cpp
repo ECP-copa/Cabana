@@ -89,7 +89,7 @@ using ParticleDataTypes =
                         >;
 
 // Declare the memory space.
-using MemorySpace = Cabana::HostSpace;
+using MemorySpace = Kokkos::HostSpace;
 
 // Declare the length of the internal vectors
 const int VectorLength = 8;
