@@ -47,6 +47,8 @@ void deepCopyExample()
     */
     const int SrcVectorLength = 8;
     using SrcMemorySpace = Kokkos::HostSpace;
+    using SrcExecutionSpace = Kokkos::Serial;
+    using SrcDevice = Kokkos::Device<SrcExecutionSpace,SrcMemorySpace>;
 
     /*
       Declare the vector length and memory space parameters of the destination
@@ -54,14 +56,16 @@ void deepCopyExample()
     */
     const int DstVectorLength = 32;
     using DstMemorySpace = Kokkos::CudaUVMSpace;
+    using DstExecutionSpace = Kokkos::Cuda;
+    using DstDevice = Kokkos::Device<DstExecutionSpace,DstMemorySpace>;
 
     /*
        Create the source and destination AoSoAs.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,SrcMemorySpace,SrcVectorLength>
+    Cabana::AoSoA<DataTypes,SrcDevice,SrcVectorLength>
         src_aosoa( "src", num_tuple );
-    Cabana::AoSoA<DataTypes,DstMemorySpace,DstVectorLength>
+    Cabana::AoSoA<DataTypes,DstDevice,DstVectorLength>
         dst_aosoa( "dst", num_tuple );
 
     /*

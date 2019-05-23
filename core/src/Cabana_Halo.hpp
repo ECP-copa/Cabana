@@ -33,8 +33,8 @@ namespace Cabana
   \brief Halo communication plan for scattering and gathering of ghosted
   data.
 
-  \tparam MemorySpace Memory space in which the data for this class will be
-  allocated.
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel execution occurs.
 
   The halo allows for scatter and gather operations between locally-owned and
   ghosted data. All data in the Halo (e.g. export and import data) is from the
@@ -54,8 +54,8 @@ namespace Cabana
   ghost from is the unique owner of that data. Import is used in the context
   of the forward communication plan (the gather).
 */
-template<class MemorySpace>
-class Halo : public CommunicationPlan<MemorySpace>
+template<class DeviceType>
+class Halo : public CommunicationPlan<DeviceType>
 {
   public:
 
@@ -109,7 +109,7 @@ class Halo : public CommunicationPlan<MemorySpace>
           const RankViewType& element_export_ranks,
           const std::vector<int>& neighbor_ranks,
           const int mpi_tag = 1221 )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
@@ -162,7 +162,7 @@ class Halo : public CommunicationPlan<MemorySpace>
           const IdViewType& element_export_ids,
           const RankViewType& element_export_ranks,
           const int mpi_tag = 1221 )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
@@ -200,12 +200,12 @@ class Halo : public CommunicationPlan<MemorySpace>
 template<typename >
 struct is_halo : public std::false_type {};
 
-template<typename MemorySpace>
-struct is_halo<Halo<MemorySpace> >
+template<typename DeviceType>
+struct is_halo<Halo<DeviceType> >
     : public std::true_type {};
 
-template<typename MemorySpace>
-struct is_halo<const Halo<MemorySpace> >
+template<typename DeviceType>
+struct is_halo<const Halo<DeviceType> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//

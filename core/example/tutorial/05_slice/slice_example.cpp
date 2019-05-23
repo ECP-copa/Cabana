@@ -56,9 +56,10 @@ void sliceExample()
     const int VectorLength = 4;
 
     /*
-      Finally declare the memory space in which the AoSoA will be
-      allocated. In this example we are writing basic loops that will execute
-      on the CPU. The HostSpace allocates memory in standard CPU RAM.
+      Finally declare the memory space in which the AoSoA will be allocated
+      and the execution space in which kernels will execute. In this example
+      we are writing basic loops that will execute on the CPU. The HostSpace
+      allocates memory in standard CPU RAM.
 
       Kokkos also supports execution on NVIDIA GPUs. To create an AoSoA
       allocated with CUDA Unified Virtual Memory (UVM) use
@@ -68,6 +69,8 @@ void sliceExample()
       context in which the memory is accessed.
     */
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA. We define how many tuples the aosoa will
@@ -76,7 +79,7 @@ void sliceExample()
        full (although its memory will still be allocated).
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
         aosoa( "my_aosoa", num_tuple );
 
     /*

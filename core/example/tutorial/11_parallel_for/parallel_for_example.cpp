@@ -55,12 +55,14 @@ void parallelForExample()
     using DataTypes = Cabana::MemberTypes<double,double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::OpenMP;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     const int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
         aosoa( "my_aosoa", num_tuple );
 
     /*
@@ -115,7 +117,6 @@ void parallelForExample()
       vector length must come first in the template parameters with the
       execution space and work tag to follow.
     */
-    using ExecutionSpace = Kokkos::OpenMP;
     Cabana::SimdPolicy<VectorLength,ExecutionSpace> simd_policy( 0, num_tuple );
 
     /*

@@ -32,8 +32,8 @@ namespace Cabana
 
   \brief Communication plan base class.
 
-  \tparam MemorySpace Memory space in which the data for this class will be
-  allocated.
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel execution will occur.
 
   The communication plan computes how to redistribute elements in a parallel
   data structure using MPI. Given a list of data elements on the local MPI
@@ -54,16 +54,19 @@ namespace Cabana
   means is that neighbor 0 is the local rank and the data for that rank that
   is being exported will appear first in the steering vector.
 */
-template<class MemorySpace>
+template<class DeviceType>
 class CommunicationPlan
 {
   public:
 
-    // Cabana memory space.
-    using memory_space = MemorySpace;
+    // Device type.
+    using device_type = DeviceType;
 
-    // Kokkos execution space.
-    using execution_space = typename memory_space::execution_space;
+    // Demory space.
+    using memory_space = typename device_type::memory_space;
+
+    // Execution space.
+    using execution_space = typename device_type::execution_space;
 
     /*!
       \brief Constructor.
@@ -167,7 +170,7 @@ class CommunicationPlan
       (i.e. all elements going to neighbor with local id 0 first, then all
       elements going to neighbor with local id 1, etc.).
     */
-    Kokkos::View<std::size_t*,memory_space> getExportSteering() const
+    Kokkos::View<std::size_t*,device_type> getExportSteering() const
     { return _export_steering; }
 
     // The functions in the public block below would normally be protected but
@@ -360,7 +363,7 @@ class CommunicationPlan
         MPI_Comm_rank( _comm, &my_rank );
 
         // Count the number of sends this rank will do to other ranks.
-        Kokkos::View<int*,memory_space> neighbor_counts(
+        Kokkos::View<int*,device_type> neighbor_counts(
             "neighbor_counts", comm_size );
         auto neighbor_counts_sv =
             Kokkos::Experimental::create_scatter_view( neighbor_counts );
@@ -577,11 +580,11 @@ class CommunicationPlan
         // Create the export steering vector for writing local elements into
         // the send buffer. Note we create a local, shallow copy - this is a
         // CUDA workaround.
-        _export_steering = Kokkos::View<std::size_t*,memory_space>(
+        _export_steering = Kokkos::View<std::size_t*,device_type>(
             Kokkos::ViewAllocateWithoutInitializing("export_steering"),
             _total_num_export );
         auto steer_vec = _export_steering;
-        Kokkos::View<std::size_t*,memory_space> counts( "counts", num_n );
+        Kokkos::View<std::size_t*,device_type> counts( "counts", num_n );
         auto steer_func =
             KOKKOS_LAMBDA( const int i )
             {
@@ -611,7 +614,7 @@ class CommunicationPlan
     std::vector<std::size_t> _num_export;
     std::vector<std::size_t> _num_import;
     std::size_t _num_export_element;
-    Kokkos::View<std::size_t*,memory_space> _export_steering;
+    Kokkos::View<std::size_t*,device_type> _export_steering;
 };
 
 //---------------------------------------------------------------------------//
