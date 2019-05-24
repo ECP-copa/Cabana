@@ -195,6 +195,7 @@ inline void neighbor_parallel_for(
         typename Kokkos::RangePolicy<ExecParameters...>::index_type;
 
     Kokkos::parallel_for(
+        str,
         exec_policy,
         KOKKOS_LAMBDA( const index_type i )
         {
@@ -207,8 +208,7 @@ inline void neighbor_parallel_for(
                     static_cast<index_type>(
                         NeighborList<NeighborListType>::getNeighbor(list,i,n))
                     );
-        },
-        str );
+        } );
 }
 
 //---------------------------------------------------------------------------//
@@ -277,11 +277,14 @@ inline void neighbor_parallel_for(
 
     using index_type = typename kokkos_policy::index_type;
 
+    const auto range_begin = exec_policy.begin();
+
     Kokkos::parallel_for(
+        str,
         team_policy,
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
         {
-            index_type i = team.league_rank() + exec_policy.begin();
+            index_type i = team.league_rank() + range_begin;
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange(
                     team,NeighborList<NeighborListType>::numNeighbor(list,i)),
@@ -293,8 +296,7 @@ inline void neighbor_parallel_for(
                         NeighborList<NeighborListType>::getNeighbor(list,i,n) )
                     );
                 });
-        },
-        str );
+        } );
 }
 
 //---------------------------------------------------------------------------//
