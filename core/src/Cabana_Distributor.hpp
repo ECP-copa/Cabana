@@ -105,9 +105,9 @@ class Distributor : public CommunicationPlan<DeviceType>
                  const int mpi_tag = 1221 )
         : CommunicationPlan<DeviceType>( comm )
     {
-        this->createFromExportsAndTopology(
+        auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks, mpi_tag );
-        this->createExportSteering( element_export_ranks );
+        this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
     /*!
@@ -146,8 +146,9 @@ class Distributor : public CommunicationPlan<DeviceType>
                  const int mpi_tag = 1221 )
         : CommunicationPlan<DeviceType>( comm )
     {
-        this->createFromExportsOnly( element_export_ranks, mpi_tag );
-        this->createExportSteering( element_export_ranks );
+        auto neighbor_ids =
+            this->createFromExportsOnly( element_export_ranks, mpi_tag );
+        this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 };
 

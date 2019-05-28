@@ -23,42 +23,50 @@
 namespace Test
 {
 //---------------------------------------------------------------------------//
-class CommPlanTester : public Cabana::CommunicationPlan<TEST_MEMSPACE>
+class CommPlanTester : public Cabana::CommunicationPlan<
+    Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE> >
 {
   public:
 
+    using device_type = Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE>;
+    using size_type = typename TEST_MEMSPACE::size_type;
+
     CommPlanTester( MPI_Comm comm )
-        : Cabana::CommunicationPlan<TEST_MEMSPACE>(comm)
+        : Cabana::CommunicationPlan<device_type>(comm)
     {}
 
     template<class ViewType>
-    void createFromExportsAndNeighbors(
+    Kokkos::View<size_type*,device_type>
+    createFromExportsAndNeighbors(
         const ViewType& element_export_ranks,
         const std::vector<int>& neighbor_ranks )
     {
-        this->createFromExportsAndTopology(
+        return this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks );
     }
 
     template<class ViewType>
-    void createFromExports( const ViewType& element_export_ranks )
+    Kokkos::View<size_type*,device_type>
+    createFromExports( const ViewType& element_export_ranks )
     {
-        this->createFromExportsOnly( element_export_ranks );
+        return this->createFromExportsOnly( element_export_ranks );
     }
 
     template<class ViewType>
-    void createSteering( const ViewType& element_export_ranks )
+    void createSteering( Kokkos::View<size_type*,device_type> neighbor_ids,
+                         const ViewType& element_export_ranks )
     {
-        this->createExportSteering( element_export_ranks );
+        this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
     template<class RankViewType, class IdViewType>
     void createSteering(
+        Kokkos::View<size_type*,device_type> neighbor_ids,
         const RankViewType& element_export_ranks,
         const IdViewType& element_export_ids )
     {
         this->createExportSteering(
-            element_export_ranks, element_export_ids );
+            neighbor_ids, element_export_ranks, element_export_ids );
     }
 };
 
@@ -80,10 +88,14 @@ void test1( const bool use_topology )
     std::vector<int> neighbor_ranks( 1, my_rank );
 
     // Create the plan.
+    using device_type = Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE>;
+    using size_type = typename TEST_MEMSPACE::size_type;
+    Kokkos::View<size_type*,device_type> neighbor_ids;
     if ( use_topology )
-        comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
+        neighbor_ids =
+            comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
     else
-        comm_plan.createFromExports( export_ranks );
+        neighbor_ids = comm_plan.createFromExports( export_ranks );
 
     // Check the plan.
     EXPECT_EQ( comm_plan.numNeighbor(), 1 );
@@ -94,7 +106,7 @@ void test1( const bool use_topology )
     EXPECT_EQ( comm_plan.totalNumImport(), num_data );
 
     // Create the export steering vector.
-    comm_plan.createSteering( export_ranks );
+    comm_plan.createSteering( neighbor_ids, export_ranks );
 
     // Check the steering vector. We thread the creation of the steering
     // vector so we don't really know what order it is in - only that it is
@@ -133,10 +145,14 @@ void test2( const bool use_topology )
     std::vector<int> neighbor_ranks( 1, my_rank );
 
     // Create the plan
+    using device_type = Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE>;
+    using size_type = typename TEST_MEMSPACE::size_type;
+    Kokkos::View<size_type*,device_type> neighbor_ids;
     if ( use_topology )
-        comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
+        neighbor_ids =
+            comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
     else
-        comm_plan.createFromExports( export_ranks );
+        neighbor_ids = comm_plan.createFromExports( export_ranks );
 
     // Check the plan.
     EXPECT_EQ( comm_plan.numNeighbor(), 1 );
@@ -154,7 +170,7 @@ void test2( const bool use_topology )
                0 );
     auto element_export_ids = Kokkos::create_mirror_view_and_copy(
         TEST_MEMSPACE(), export_ids_host );
-    comm_plan.createSteering( export_ranks, element_export_ids );
+    comm_plan.createSteering( neighbor_ids, export_ranks, element_export_ids );
 
     // Check the steering vector.  We thread the creation of the steering
     // vector so we don't really know what order it is in - only that it is
@@ -196,10 +212,15 @@ void test3( const bool use_topology )
     std::vector<int> neighbor_ranks( 1, inverse_rank );
 
     // Create the plan with both export ranks and the topology.
+    using device_type = Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE>;
+    using size_type = typename TEST_MEMSPACE::size_type;
+    Kokkos::View<size_type*,device_type> neighbor_ids;
     if ( use_topology )
-        comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
+        neighbor_ids =
+            comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
     else
-        comm_plan.createFromExports( export_ranks );
+        neighbor_ids =
+            comm_plan.createFromExports( export_ranks );
 
     // Check the plan.
     EXPECT_EQ( comm_plan.numNeighbor(), 1 );
@@ -210,7 +231,7 @@ void test3( const bool use_topology )
     EXPECT_EQ( comm_plan.totalNumImport(), num_data );
 
     // Create the export steering vector.
-    comm_plan.createSteering( export_ranks );
+    comm_plan.createSteering( neighbor_ids, export_ranks );
 
     // Check the steering vector. We thread the creation of the steering
     // vector so we don't really know what order it is in - only that it is
@@ -255,10 +276,14 @@ void test4( const bool use_topology )
         TEST_MEMSPACE(), export_ranks_host );
 
     // Create the plan
+    using device_type = Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE>;
+    using size_type = typename TEST_MEMSPACE::size_type;
+    Kokkos::View<size_type*,device_type> neighbor_ids;
     if ( use_topology )
-        comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
+        neighbor_ids =
+            comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
     else
-        comm_plan.createFromExports( export_ranks );
+        neighbor_ids = comm_plan.createFromExports( export_ranks );
 
     // Check the plan. Note that if we are sending to ourselves (which we are)
     // that then that data is listed as the first neighbor.
@@ -285,7 +310,7 @@ void test4( const bool use_topology )
     }
 
     // Create the export steering vector.
-    comm_plan.createSteering( export_ranks );
+    comm_plan.createSteering( neighbor_ids, export_ranks );
 
     // Check the steering vector. The algorithm will pack the ids according to
     // send rank and self sends will appear first.
@@ -371,10 +396,14 @@ void test5( const bool use_topology )
         TEST_MEMSPACE(), export_ranks_host );
 
     // Create the plan
+    using device_type = Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE>;
+    using size_type = typename TEST_MEMSPACE::size_type;
+    Kokkos::View<size_type*,device_type> neighbor_ids;
     if ( use_topology )
-        comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
+        neighbor_ids =
+            comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
     else
-        comm_plan.createFromExports( export_ranks );
+        neighbor_ids = comm_plan.createFromExports( export_ranks );
 
     // Check the plan. Note that if we are sending to ourselves (which we are)
     // that then that data is listed as the first neighbor.
@@ -401,7 +430,7 @@ void test5( const bool use_topology )
     }
 
     // Create the export steering vector.
-    comm_plan.createSteering( export_ranks );
+    comm_plan.createSteering( neighbor_ids, export_ranks );
 
     // Check the steering vector. The algorithm will pack the ids according to
     // send rank and self sends will appear first.
@@ -454,10 +483,14 @@ void test6( const bool use_topology )
     }
 
     // Create the plan.
+    using device_type = Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE>;
+    using size_type = typename TEST_MEMSPACE::size_type;
+    Kokkos::View<size_type*,device_type> neighbor_ids;
     if ( use_topology )
-        comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
+        neighbor_ids =
+            comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
     else
-        comm_plan.createFromExports( export_ranks );
+        neighbor_ids = comm_plan.createFromExports( export_ranks );
 
     // Check the plan.
     if ( 0 == my_rank )
@@ -477,7 +510,7 @@ void test6( const bool use_topology )
     EXPECT_EQ( comm_plan.totalNumExport(), num_data );
 
     // Create the export steering vector.
-    comm_plan.createSteering( export_ranks );
+    comm_plan.createSteering( neighbor_ids, export_ranks );
 
     // Check the steering vector. We thread the creation of the steering
     // vector so we don't really know what order it is in - only that it is
