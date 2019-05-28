@@ -38,6 +38,7 @@ before_script:
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
+  - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; fi
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
@@ -68,7 +69,6 @@ before_script:
        pip install --user coverxygen &&
        mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov; 
      fi
-  - if [[ ${CC} = gcc ]]; then export CXX=g++-6; fi
 
 addons:
   apt:
