@@ -467,6 +467,9 @@ class Slice
     // Maximum supported rank.
     static constexpr std::size_t max_supported_rank = 3;
 
+    // Maximum label length.
+    static constexpr std::size_t max_label_length = 128;
+
     // Kokkos view wrapper.
     using view_wrapper = Impl::KokkosViewWrapper<DataType,vector_length,soa_stride>;
 
@@ -523,8 +526,9 @@ class Slice
            const std::string& label = "" )
         : _view( data, view_wrapper::createLayout(num_soa) )
         , _size( size )
-        , _label( label )
-    {}
+    {
+        std::strcpy( _label, label.c_str() );
+    }
 
     /*!
       \brief Shallow copy constructor for different memory spaces for
@@ -537,8 +541,9 @@ class Slice
     Slice( const Slice<DataType,DeviceType,MAT,VectorLength,Stride>& rhs )
         : _view( rhs._view )
         , _size( rhs._size )
-        , _label( rhs._label )
-    {}
+    {
+        std::strcpy( _label, rhs._label );
+    }
 
     /*!
       \brief Assignement operator for different memory spaces for assigning
@@ -554,7 +559,7 @@ class Slice
     {
         _view = rhs._view;
         _size = rhs._size;
-        _label = rhs._label;
+        std::strcpy( _label, rhs._label );
         return *this;
     }
 
@@ -746,7 +751,7 @@ class Slice
     size_type _size;
 
     // Slice label.
-    std::string _label;
+    char _label[max_label_length];
 };
 
 //---------------------------------------------------------------------------//
