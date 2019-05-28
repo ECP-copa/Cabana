@@ -8,11 +8,14 @@ var searchData=
   ['commplantester',['CommPlanTester',['../classTest_1_1CommPlanTester.html',1,'Test']]],
   ['communicationplan',['CommunicationPlan',['../classCabana_1_1CommunicationPlan.html',1,'Cabana']]],
   ['communicationplan',['CommunicationPlan',['../classCabana_1_1CommunicationPlan.html#a06e29072acf141f5da2aa73c27443f94',1,'Cabana::CommunicationPlan']]],
-  ['communicationplan_3c_20test_5fmemspace_20_3e',['CommunicationPlan&lt; TEST_MEMSPACE &gt;',['../classCabana_1_1CommunicationPlan.html',1,'Cabana']]],
+  ['communicationplan_3c_20kokkos_3a_3adevice_3c_20test_5fexecspace_2c_20test_5fmemspace_20_3e_20_3e',['CommunicationPlan&lt; Kokkos::Device&lt; TEST_EXECSPACE, TEST_MEMSPACE &gt; &gt;',['../classCabana_1_1CommunicationPlan.html',1,'Cabana']]],
   ['concatenateindexsequence',['ConcatenateIndexSequence',['../structCabana_1_1Impl_1_1ConcatenateIndexSequence.html',1,'Cabana::Impl']]],
   ['concatenateindexsequence_3c_20i_2c_20indexsequence_3c_20indices_2e_2e_2e_3e_20_3e',['ConcatenateIndexSequence&lt; I, IndexSequence&lt; Indices...&gt; &gt;',['../structCabana_1_1Impl_1_1ConcatenateIndexSequence_3_01I_00_01IndexSequence_3_01Indices_8_8_8_4_01_4.html',1,'Cabana::Impl']]],
   ['countneighborstag',['CountNeighborsTag',['../structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html',1,'Cabana::Impl::VerletListBuilder']]],
-  ['createexportsteering',['createExportSteering',['../classCabana_1_1CommunicationPlan.html#a50f43bb432ab2058450edf2aa5e714a1',1,'Cabana::CommunicationPlan::createExportSteering(const ViewType &amp;element_export_ranks)'],['../classCabana_1_1CommunicationPlan.html#a09e9c2c22f9f4ddc626d4428e456d2d4',1,'Cabana::CommunicationPlan::createExportSteering(const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)']]],
-  ['createfromexportsandtopology',['createFromExportsAndTopology',['../classCabana_1_1CommunicationPlan.html#a25e06101fcfb2038189f2ab19a0648a9',1,'Cabana::CommunicationPlan']]],
-  ['createfromexportsonly',['createFromExportsOnly',['../classCabana_1_1CommunicationPlan.html#a4b8f574436bdb522fe4753f5d0ff416f',1,'Cabana::CommunicationPlan']]]
+  ['countsendsandcreatesteeringalgorithm',['CountSendsAndCreateSteeringAlgorithm',['../structCabana_1_1Impl_1_1CountSendsAndCreateSteeringAlgorithm.html',1,'Cabana::Impl']]],
+  ['countsendsandcreatesteeringatomic',['CountSendsAndCreateSteeringAtomic',['../structCabana_1_1Impl_1_1CountSendsAndCreateSteeringAtomic.html',1,'Cabana::Impl']]],
+  ['countsendsandcreatesteeringduplicated',['CountSendsAndCreateSteeringDuplicated',['../structCabana_1_1Impl_1_1CountSendsAndCreateSteeringDuplicated.html',1,'Cabana::Impl']]],
+  ['createexportsteering',['createExportSteering',['../classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917',1,'Cabana::CommunicationPlan::createExportSteering(const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks)'],['../classCabana_1_1CommunicationPlan.html#aa0809d8f8ef5a6594f00cf7b1ed50fec',1,'Cabana::CommunicationPlan::createExportSteering(const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)']]],
+  ['createfromexportsandtopology',['createFromExportsAndTopology',['../classCabana_1_1CommunicationPlan.html#a4b917c46cf274f309969ae4c05ef8120',1,'Cabana::CommunicationPlan']]],
+  ['createfromexportsonly',['createFromExportsOnly',['../classCabana_1_1CommunicationPlan.html#a370578437d000d1181576fc9e682889b',1,'Cabana::CommunicationPlan']]]
 ];

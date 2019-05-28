@@ -121,6 +121,9 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = t
 <tr class="memitem:a0f0dc771fcf7c9015a6f935e9621725a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a0f0dc771fcf7c9015a6f935e9621725a"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename device_type::execution_space</td></tr>
 <tr class="separator:a0f0dc771fcf7c9015a6f935e9621725a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afeb0f589e39614e6bd75bd834e6cd4ef"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="afeb0f589e39614e6bd75bd834e6cd4ef"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename memory_space::size_type</td></tr>
+<tr class="separator:afeb0f589e39614e6bd75bd834e6cd4ef"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -156,26 +159,28 @@ MPI_Comm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="
 *, device_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a14b93e676802d1d6358a843af9a954a4">getExportSteering</a> () const </td></tr>
 <tr class="memdesc:a14b93e676802d1d6358a843af9a954a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the steering vector for the exports.  <a href="#a14b93e676802d1d6358a843af9a954a4">More...</a><br/></td></tr>
 <tr class="separator:a14b93e676802d1d6358a843af9a954a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a25e06101fcfb2038189f2ab19a0648a9"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
-<tr class="memitem:a25e06101fcfb2038189f2ab19a0648a9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a25e06101fcfb2038189f2ab19a0648a9">createFromExportsAndTopology</a> (const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks, const int mpi_tag=1221)</td></tr>
-<tr class="memdesc:a25e06101fcfb2038189f2ab19a0648a9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <a href="#a25e06101fcfb2038189f2ab19a0648a9">More...</a><br/></td></tr>
-<tr class="separator:a25e06101fcfb2038189f2ab19a0648a9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4b8f574436bdb522fe4753f5d0ff416f"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
-<tr class="memitem:a4b8f574436bdb522fe4753f5d0ff416f"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a4b8f574436bdb522fe4753f5d0ff416f">createFromExportsOnly</a> (const ViewType &amp;element_export_ranks, const int mpi_tag=1221)</td></tr>
-<tr class="memdesc:a4b8f574436bdb522fe4753f5d0ff416f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Export rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <a href="#a4b8f574436bdb522fe4753f5d0ff416f">More...</a><br/></td></tr>
-<tr class="separator:a4b8f574436bdb522fe4753f5d0ff416f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50f43bb432ab2058450edf2aa5e714a1"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
-<tr class="memitem:a50f43bb432ab2058450edf2aa5e714a1"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a50f43bb432ab2058450edf2aa5e714a1">createExportSteering</a> (const ViewType &amp;element_export_ranks)</td></tr>
-<tr class="memdesc:a50f43bb432ab2058450edf2aa5e714a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <a href="#a50f43bb432ab2058450edf2aa5e714a1">More...</a><br/></td></tr>
-<tr class="separator:a50f43bb432ab2058450edf2aa5e714a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a09e9c2c22f9f4ddc626d4428e456d2d4"><td class="memTemplParams" colspan="2">template&lt;class RankViewType , class IdViewType &gt; </td></tr>
-<tr class="memitem:a09e9c2c22f9f4ddc626d4428e456d2d4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a09e9c2c22f9f4ddc626d4428e456d2d4">createExportSteering</a> (const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
-<tr class="memdesc:a09e9c2c22f9f4ddc626d4428e456d2d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <a href="#a09e9c2c22f9f4ddc626d4428e456d2d4">More...</a><br/></td></tr>
-<tr class="separator:a09e9c2c22f9f4ddc626d4428e456d2d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3f8a7df62f51528c59c4c6859db5bd0e"><td class="memTemplParams" colspan="2"><a class="anchor" id="a3f8a7df62f51528c59c4c6859db5bd0e"></a>
-template&lt;class RankViewType , class IdViewType &gt; </td></tr>
-<tr class="memitem:a3f8a7df62f51528c59c4c6859db5bd0e"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>createSteering</b> (const bool use_iota, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
-<tr class="separator:a3f8a7df62f51528c59c4c6859db5bd0e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b917c46cf274f309969ae4c05ef8120"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
+<tr class="memitem:a4b917c46cf274f309969ae4c05ef8120"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; size_type <br class="typebreak"/>
+*, device_type &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a4b917c46cf274f309969ae4c05ef8120">createFromExportsAndTopology</a> (const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks, const int mpi_tag=1221)</td></tr>
+<tr class="memdesc:a4b917c46cf274f309969ae4c05ef8120"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors.  <a href="#a4b917c46cf274f309969ae4c05ef8120">More...</a><br/></td></tr>
+<tr class="separator:a4b917c46cf274f309969ae4c05ef8120"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a370578437d000d1181576fc9e682889b"><td class="memTemplParams" colspan="2">template&lt;class ViewType &gt; </td></tr>
+<tr class="memitem:a370578437d000d1181576fc9e682889b"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::View&lt; size_type <br class="typebreak"/>
+*, device_type &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a370578437d000d1181576fc9e682889b">createFromExportsOnly</a> (const ViewType &amp;element_export_ranks, const int mpi_tag=1221)</td></tr>
+<tr class="memdesc:a370578437d000d1181576fc9e682889b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Export rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first.  <a href="#a370578437d000d1181576fc9e682889b">More...</a><br/></td></tr>
+<tr class="separator:a370578437d000d1181576fc9e682889b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8a8281c28110645e3a8af293a1984917"><td class="memTemplParams" colspan="2">template&lt;class PackViewType , class RankViewType &gt; </td></tr>
+<tr class="memitem:a8a8281c28110645e3a8af293a1984917"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917">createExportSteering</a> (const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks)</td></tr>
+<tr class="memdesc:a8a8281c28110645e3a8af293a1984917"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <a href="#a8a8281c28110645e3a8af293a1984917">More...</a><br/></td></tr>
+<tr class="separator:a8a8281c28110645e3a8af293a1984917"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa0809d8f8ef5a6594f00cf7b1ed50fec"><td class="memTemplParams" colspan="2">template&lt;class PackViewType , class RankViewType , class IdViewType &gt; </td></tr>
+<tr class="memitem:aa0809d8f8ef5a6594f00cf7b1ed50fec"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1CommunicationPlan.html#aa0809d8f8ef5a6594f00cf7b1ed50fec">createExportSteering</a> (const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
+<tr class="memdesc:aa0809d8f8ef5a6594f00cf7b1ed50fec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create the export steering vector.  <a href="#aa0809d8f8ef5a6594f00cf7b1ed50fec">More...</a><br/></td></tr>
+<tr class="separator:aa0809d8f8ef5a6594f00cf7b1ed50fec"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c0568f03db1d1afdd086142a4b01504"><td class="memTemplParams" colspan="2"><a class="anchor" id="a4c0568f03db1d1afdd086142a4b01504"></a>
+template&lt;class PackViewType , class RankViewType , class IdViewType &gt; </td></tr>
+<tr class="memitem:a4c0568f03db1d1afdd086142a4b01504"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>createSteering</b> (const bool use_iota, const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)</td></tr>
+<tr class="separator:a4c0568f03db1d1afdd086142a4b01504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;class DeviceType&gt;<br/>
@@ -230,13 +235,13 @@ template&lt;class DeviceType&gt; </div>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a class="anchor" id="a50f43bb432ab2058450edf2aa5e714a1"></a>
+<a class="anchor" id="a8a8281c28110645e3a8af293a1984917"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class DeviceType&gt; </div>
 <div class="memtemplate">
-template&lt;class ViewType &gt; </div>
+template&lt;class PackViewType , class RankViewType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -244,9 +249,19 @@ template&lt;class ViewType &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createExportSteering </td>
           <td>(</td>
-          <td class="paramtype">const ViewType &amp;&#160;</td>
-          <td class="paramname"><em>element_export_ranks</em></td><td>)</td>
+          <td class="paramtype">const PackViewType &amp;&#160;</td>
+          <td class="paramname"><em>neighbor_ids</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">const RankViewType &amp;&#160;</td>
+          <td class="paramname"><em>element_export_ranks</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -260,6 +275,7 @@ template&lt;class ViewType &gt; </div>
 <p>Creates an array describing which export element ids are moved to which location in the send buffer of the communcation plan. Ordered such that if a rank sends to itself then those values come first.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">neighbor_ids</td><td>The id of each element in the neighbor send buffers.</td></tr>
     <tr><td class="paramname">element_export_ranks</td><td>The ranks to which we are exporting each element. We use this to build the steering vector. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan. </td></tr>
   </table>
   </dd>
@@ -267,13 +283,13 @@ template&lt;class ViewType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a09e9c2c22f9f4ddc626d4428e456d2d4"></a>
+<a class="anchor" id="aa0809d8f8ef5a6594f00cf7b1ed50fec"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class DeviceType&gt; </div>
 <div class="memtemplate">
-template&lt;class RankViewType , class IdViewType &gt; </div>
+template&lt;class PackViewType , class RankViewType , class IdViewType &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -281,6 +297,12 @@ template&lt;class RankViewType , class IdViewType &gt; </div>
         <tr>
           <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createExportSteering </td>
           <td>(</td>
+          <td class="paramtype">const PackViewType &amp;&#160;</td>
+          <td class="paramname"><em>neighbor_ids</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const RankViewType &amp;&#160;</td>
           <td class="paramname"><em>element_export_ranks</em>, </td>
         </tr>
@@ -307,6 +329,7 @@ template&lt;class RankViewType , class IdViewType &gt; </div>
 <p>Creates an array describing which export element ids are moved to which location in the contiguous send buffer of the communcation plan. Ordered such that if a rank sends to itself then those values come first.</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">neighbor_ids</td><td>The id of each element in the neighbor send buffers.</td></tr>
     <tr><td class="paramname">element_export_ranks</td><td>The ranks to which we are exporting each element. We use this to build the steering vector. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan.</td></tr>
     <tr><td class="paramname">element_export_ids</td><td>The local ids of the elements to be exported. This corresponds with the export ranks vector and must be the same length if defined. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan. </td></tr>
   </table>
@@ -315,7 +338,7 @@ template&lt;class RankViewType , class IdViewType &gt; </div>
 
 </div>
 </div>
-<a class="anchor" id="a25e06101fcfb2038189f2ab19a0648a9"></a>
+<a class="anchor" id="a4b917c46cf274f309969ae4c05ef8120"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -327,7 +350,7 @@ template&lt;class ViewType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createFromExportsAndTopology </td>
+          <td class="memname">Kokkos::View&lt;size_type*,device_type&gt; <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createFromExportsAndTopology </td>
           <td>(</td>
           <td class="paramtype">const ViewType &amp;&#160;</td>
           <td class="paramname"><em>element_export_ranks</em>, </td>
@@ -366,13 +389,14 @@ template&lt;class ViewType &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The location of each export element in the send buffer for its given neighbor.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Calling this function completely updates the state of this object and invalidates the previous state.</dd>
 <dd>
 For elements that you do not wish to export, use an export rank of -1 to signal that this element is <em>not</em> to be exported and will be ignored in the data migration. In other words, this element will be completely* removed in the new decomposition. If the data is staying on this rank, just use this rank as the export destination and the data will be efficiently migrated. </dd></dl>
 
 </div>
 </div>
-<a class="anchor" id="a4b8f574436bdb522fe4753f5d0ff416f"></a>
+<a class="anchor" id="a370578437d000d1181576fc9e682889b"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -384,7 +408,7 @@ template&lt;class ViewType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createFromExportsOnly </td>
+          <td class="memname">Kokkos::View&lt;size_type*,device_type&gt; <a class="el" href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a>&lt; DeviceType &gt;::createFromExportsOnly </td>
           <td>(</td>
           <td class="paramtype">const ViewType &amp;&#160;</td>
           <td class="paramname"><em>element_export_ranks</em>, </td>
@@ -416,6 +440,7 @@ template&lt;class ViewType &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd>The location of each export element in the send buffer for its given neighbor.</dd></dl>
 <dl class="section note"><dt>Note</dt><dd>Calling this function completely updates the state of this object and invalidates the previous state.</dd>
 <dd>
 For elements that you do not wish to export, use an export rank of -1 to signal that this element is <em>not</em> to be exported and will be ignored in the data migration. In other words, this element will be completely* removed in the new decomposition. If the data is staying on this rank, just use this rank as the export destination and the data will be efficiently migrated. </dd></dl>
@@ -675,7 +700,7 @@ template&lt;class DeviceType&gt; </div>
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Tue May 28 2019 19:09:08 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Tue May 28 2019 21:50:03 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
