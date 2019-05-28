@@ -40,12 +40,15 @@ void sortingExample()
     */
     const int VectorLength = 4;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
+        aosoa( "my_aosoa", num_tuple );
 
     /*
       Fill the AoSoA with data. The integer member of the AoSoA will be
@@ -59,16 +62,16 @@ void sortingExample()
         auto& soa = aosoa.access(s);
 
         // ASCENDING ORDER!
-        for ( int a = 0; a < aosoa.arraySize(s); ++a )
+        for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
         {
-            soa.get<0>(a) = forward_index_counter;
+            Cabana::get<0>(soa,a) = forward_index_counter;
             ++forward_index_counter;
         }
 
         // DESCENDING ORDER!
-        for ( int a = 0; a < aosoa.arraySize(s); ++a )
+        for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
         {
-            soa.get<1>(a) = reverse_index_counter;
+            Cabana::get<1>(soa,a) = reverse_index_counter;
             --reverse_index_counter;
         }
     }
@@ -86,7 +89,7 @@ void sortingExample()
       that the binning data is templated on a memory space as it creates and
       stores data in the same memory space as the AoSoA.
      */
-    auto keys = aosoa.slice<1>();
+    auto keys = Cabana::slice<1>( aosoa );
     auto sort_data = Cabana::sortByKey( keys );
 
     /*
@@ -106,11 +109,11 @@ void sortingExample()
 
         // Should now be in DESCENDING ORDER!
         std::cout << "Tuple " << t
-                  << ", member 0: " << tp.get<0>() << std::endl;
+                  << ", member 0: " << Cabana::get<0>(tp) << std::endl;
 
         // Should now be in ASCENDING ORDER!
         std::cout << "Tuple " << t
-                  << ", member 1: " << tp.get<1>() << std::endl;
+                  << ", member 1: " << Cabana::get<1>(tp) << std::endl;
     }
     std::cout << std::endl;
 
@@ -157,10 +160,10 @@ void sortingExample()
         auto tp = aosoa.getTuple( t );
 
         std::cout << "Tuple " << t
-                  << ", member 0: " << tp.get<0>() << std::endl;
+                  << ", member 0: " << Cabana::get<0>(tp) << std::endl;
 
         std::cout << "Tuple " << t
-                  << ", member 1: " << tp.get<1>() << std::endl;
+                  << ", member 1: " << Cabana::get<1>(tp) << std::endl;
     }
     std::cout << std::endl;
 

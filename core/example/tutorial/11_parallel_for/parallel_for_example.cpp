@@ -55,20 +55,23 @@ void parallelForExample()
     using DataTypes = Cabana::MemberTypes<double,double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::OpenMP;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     const int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
+        aosoa( "my_aosoa", num_tuple );
 
     /*
       Create slices and assign some data. One might consider using a parallel
       for loop in this case - especially when the code being written is for an
       arbitrary memory space.
      */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
+    auto slice_0 = Cabana::slice<0>( aosoa );
+    auto slice_1 = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
         slice_0(i) = 1.0;
@@ -114,7 +117,6 @@ void parallelForExample()
       vector length must come first in the template parameters with the
       execution space and work tag to follow.
     */
-    using ExecutionSpace = Kokkos::OpenMP;
     Cabana::SimdPolicy<VectorLength,ExecutionSpace> simd_policy( 0, num_tuple );
 
     /*

@@ -32,23 +32,23 @@ struct VerletLayout2D {};
 //---------------------------------------------------------------------------//
 // Verlet List Data.
 //---------------------------------------------------------------------------//
-template<class MemorySpace, class LayoutTag>
+template<class DeviceType, class LayoutTag>
 struct VerletListData;
 
-template<class MemorySpace>
-struct VerletListData<MemorySpace,VerletLayoutCSR>
+template<class DeviceType>
+struct VerletListData<DeviceType,VerletLayoutCSR>
 {
-    // The memory space in which the neighbor list data resides.
-    using memory_space = MemorySpace;
+    // Device type.
+    using device_type = DeviceType;
 
     // Number of neighbors per particle.
-    Kokkos::View<int*,memory_space> counts;
+    Kokkos::View<int*,device_type> counts;
 
     // Offsets into the neighbor list.
-    Kokkos::View<int*,memory_space> offsets;
+    Kokkos::View<int*,device_type> offsets;
 
     // Neighbor list.
-    Kokkos::View<int*,memory_space> neighbors;
+    Kokkos::View<int*,device_type> neighbors;
 
     // Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
@@ -59,17 +59,17 @@ struct VerletListData<MemorySpace,VerletLayoutCSR>
     }
 };
 
-template<class MemorySpace>
-struct VerletListData<MemorySpace,VerletLayout2D>
+template<class DeviceType>
+struct VerletListData<DeviceType,VerletLayout2D>
 {
-    // The memory space in which the neighbor list data resides.
-    using memory_space = MemorySpace;
+    // Device type
+    using device_type = DeviceType;
 
     // Number of neighbors per particle.
-    Kokkos::View<int*,memory_space> counts;
+    Kokkos::View<int*,device_type> counts;
 
     // Neighbor list.
-    Kokkos::View<int**,memory_space> neighbors;
+    Kokkos::View<int**,device_type> neighbors;
 
     // Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
@@ -187,18 +187,22 @@ struct LinkedCellStencil
 //---------------------------------------------------------------------------//
 // Verlet List Builder
 //---------------------------------------------------------------------------//
-template<class PositionSlice, class AlgorithmTag, class LayoutTag>
+template<class DeviceType,
+         class PositionSlice,
+         class AlgorithmTag,
+         class LayoutTag>
 struct VerletListBuilder
 {
     // Types.
+    using device = DeviceType;
     using PositionValueType = typename PositionSlice::value_type;
     using RandomAccessPositionSlice =
         typename PositionSlice::random_access_slice;
-    using memory_space = typename PositionSlice::memory_space;
-    using execution_space = typename PositionSlice::execution_space;
+    using memory_space = typename device::memory_space;
+    using execution_space = typename device::execution_space;
 
     // List data.
-    VerletListData<memory_space,LayoutTag> _data;
+    VerletListData<device,LayoutTag> _data;
 
     // Neighbor cutoff.
     PositionValueType rsqr;
@@ -208,8 +212,8 @@ struct VerletListBuilder
     std::size_t pid_begin, pid_end;
 
     // Binning Data.
-    BinningData<memory_space> bin_data_1d;
-    LinkedCellList<memory_space> linked_cell_list;
+    BinningData<device> bin_data_1d;
+    LinkedCellList<device> linked_cell_list;
 
     // Cell stencil.
     LinkedCellStencil<PositionValueType> cell_stencil;
@@ -239,7 +243,7 @@ struct VerletListBuilder
         // treated as candidates for neighbors.
         double grid_size = cell_size_ratio * neighborhood_radius;
         PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
-        linked_cell_list = LinkedCellList<memory_space>(
+        linked_cell_list = LinkedCellList<device>(
             position, grid_delta, grid_min, grid_max );
         bin_data_1d = linked_cell_list.binningData();
 
@@ -506,7 +510,8 @@ struct VerletListBuilder
   \brief Neighbor list implementation based on binning particles on a 3d
   Cartesian grid with cells of the same size as the interaction distance.
 
-  \tparam MemorySpace The memory space in which to build the neighbor list.
+  \tparam DeviceType The device type to use for building and storing the
+  neighbor list.
 
   \tparam AlgorithmTag Tag indicating whether to build a full or half neighbor
   list.
@@ -518,20 +523,32 @@ struct VerletListBuilder
 
   CSR layout implementation.
 */
-template<class MemorySpace, class AlgorithmTag, class LayoutTag>
+template<class DeviceType, class AlgorithmTag, class LayoutTag>
 class VerletList
 {
   public:
 
+    // Device type.
+    using device_type = DeviceType;
+
     // The memory space in which the neighbor list data resides.
-    using memory_space = MemorySpace;
+    using memory_space = typename device_type::memory_space;
+
+    // Execution space.
+    using execution_space = typename device_type::execution_space;
 
     // Verlet list data.
-    VerletListData<MemorySpace,LayoutTag> _data;
+    VerletListData<device_type,LayoutTag> _data;
 
     /*!
-      \brief Given a list of particle positions and a neighborhood radius calculate
-      the neighbor list.
+      \brief Default constructor.
+    */
+    VerletList()
+    {}
+
+    /*!
+      \brief VerletList constructor. Given a list of particle positions and
+      a neighborhood radius calculate the neighbor list.
 
       \param x The slice containing the particle positions
 
@@ -571,8 +588,8 @@ class VerletList
         typename std::enable_if<(is_slice<PositionSlice>::value),int>::type * = 0 )
     {
         // Create a builder functor.
-        using builder_type =
-            Impl::VerletListBuilder<PositionSlice,AlgorithmTag,LayoutTag>;
+        using builder_type = Impl::VerletListBuilder<
+            DeviceType,PositionSlice,AlgorithmTag,LayoutTag>;
         builder_type builder( x, begin, end,
                               neighborhood_radius, cell_size_ratio,
                               grid_min, grid_max );
@@ -620,8 +637,8 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayoutCSR> >
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static int numNeighbor( const list_type& list,
-                            const std::size_t particle_index )
+    static std::size_t numNeighbor( const list_type& list,
+                                    const std::size_t particle_index )
     {
         return list._data.counts( particle_index );
     }
@@ -629,9 +646,9 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayoutCSR> >
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static int getNeighbor( const list_type& list,
-                            const std::size_t particle_index,
-                            const int neighbor_index )
+    static std::size_t getNeighbor( const list_type& list,
+                                    const std::size_t particle_index,
+                                    const std::size_t neighbor_index )
     {
         return list._data.neighbors(
             list._data.offsets(particle_index) + neighbor_index );
@@ -651,8 +668,8 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayout2D> >
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static int numNeighbor( const list_type& list,
-                            const std::size_t particle_index )
+    static std::size_t numNeighbor( const list_type& list,
+                                    const std::size_t particle_index )
     {
         return list._data.counts( particle_index );
     }
@@ -660,9 +677,9 @@ class NeighborList<VerletList<MemorySpace,AlgorithmTag,VerletLayout2D> >
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static int getNeighbor( const list_type& list,
-                            const std::size_t particle_index,
-                            const int neighbor_index )
+    static std::size_t getNeighbor( const list_type& list,
+                                    const std::size_t particle_index,
+                                    const std::size_t neighbor_index )
     {
         return list._data.neighbors( particle_index, neighbor_index );
     }

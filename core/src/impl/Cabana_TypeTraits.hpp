@@ -22,19 +22,21 @@ namespace Impl
 {
 //---------------------------------------------------------------------------//
 // Checks if an integer is a power of two. N must be greater than 0.
-template<int N, typename std::enable_if<(N > 0),int>::type = 0>
+template<int N>
 struct IsPowerOfTwo
 {
+    static_assert( N > 0, "Vector length must be greather than 0" );
     static constexpr bool value = ( (N & (N - 1)) == 0 );
 };
 
 //---------------------------------------------------------------------------//
 // Calculate the base-2 logarithm of an integer which must be a power of 2 and
 // greater than 0.
-template<int N,
-         typename std::enable_if<(IsPowerOfTwo<N>::value),int>::type = 0>
+template<int N>
 struct LogBase2
 {
+    static_assert( IsPowerOfTwo<N>::value,
+                   "Vector length must be a power of two" );
     static constexpr int value = 1 + LogBase2<(N>>1U)>::value;
 };
 

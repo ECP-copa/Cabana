@@ -20,6 +20,7 @@
 
 #include <cstdlib>
 #include <type_traits>
+#include <string>
 
 //---------------------------------------------------------------------------//
 namespace Kokkos
@@ -38,7 +39,7 @@ struct LayoutCabanaSlice
 {
     typedef LayoutCabanaSlice array_layout;
 
-    enum { is_extent_constructible = false };
+    enum { is_extent_constructible = true };
 
     static constexpr int Stride = SOASTRIDE;
     static constexpr int VectorLength = VLEN;
@@ -58,8 +59,15 @@ struct LayoutCabanaSlice
 
     KOKKOS_INLINE_FUNCTION
     explicit constexpr
-    LayoutCabanaSlice( size_t num_soa )
-        : dimension { num_soa, VectorLength, D0, D1, D2, D3, D4, D5 }
+    LayoutCabanaSlice( size_t num_soa = 0,
+                       size_t vector_length = VectorLength,
+                       size_t d0 = D0,
+                       size_t d1 = D1,
+                       size_t d2 = D2,
+                       size_t d3 = D3,
+                       size_t d4 = D4,
+                       size_t d5 = D5 )
+        : dimension { num_soa, vector_length, d0, d1, d2, d3, d4, d5 }
     {}
 };
 
@@ -414,25 +422,34 @@ struct KokkosViewWrapper
 */
 //---------------------------------------------------------------------------//
 template<typename DataType,
-         typename MemorySpace,
+         typename DeviceType,
          typename MemoryAccessType,
          int VectorLength,
-         int Stride,
-         typename std::enable_if<
-             (is_memory_access_tag<MemoryAccessType>::value &&
-              Impl::IsVectorLengthValid<VectorLength>::value),int>::type = 0>
+         int Stride>
 class Slice
 {
   public:
 
+    // Ensure the vector length is valid.
+    static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
+                   "Vector length must be valid" );
+
     // Slice type.
     using slice_type =
-        Slice<DataType,MemorySpace,MemoryAccessType,VectorLength,Stride>;
+        Slice<DataType,DeviceType,MemoryAccessType,VectorLength,Stride>;
 
-    // Cabana memory space.
-    using memory_space = MemorySpace;
+    // Device type
+    using device_type = DeviceType;
+
+    // Memory space.
+    using memory_space = typename device_type::memory_space;
+
+    // Execution space.
+    using execution_space = typename device_type::execution_space;
 
     // Memory access type.
+    static_assert( is_memory_access_tag<MemoryAccessType>::value,
+                   "Slice memory access type must be a Cabana access type" );
     using memory_access_type = MemoryAccessType;
 
     // Vector length.
@@ -441,11 +458,17 @@ class Slice
     // SoA stride.
     static constexpr int soa_stride = Stride;
 
+    // Size type.
+    using size_type = typename memory_space::size_type;
+
     // Index type.
     using index_type = Impl::Index<vector_length>;
 
     // Maximum supported rank.
-    static constexpr int max_supported_rank = 3;
+    static constexpr std::size_t max_supported_rank = 3;
+
+    // Maximum label length.
+    static constexpr std::size_t max_label_length = 128;
 
     // Kokkos view wrapper.
     using view_wrapper = Impl::KokkosViewWrapper<DataType,vector_length,soa_stride>;
@@ -454,28 +477,27 @@ class Slice
     using kokkos_view =
         Kokkos::View<typename view_wrapper::data_type,
                      typename view_wrapper::cabana_layout,
-                     MemorySpace,
+                     DeviceType,
                      typename MemoryAccessType::kokkos_memory_traits>;
 
     // View type aliases.
     using reference_type = typename kokkos_view::reference_type;
     using value_type = typename kokkos_view::value_type;
     using pointer_type = typename kokkos_view::pointer_type;
-    using execution_space = typename kokkos_view::execution_space;
-    using device_type = typename kokkos_view::device_type;
+    using view_layout = typename kokkos_view::array_layout;
 
     // Compatible memory access slice types.
     using default_access_slice =
-        Slice<DataType,MemorySpace,DefaultAccessMemory,VectorLength,Stride>;
+        Slice<DataType,DeviceType,DefaultAccessMemory,VectorLength,Stride>;
     using atomic_access_slice =
-        Slice<DataType,MemorySpace,AtomicAccessMemory,VectorLength,Stride>;
+        Slice<DataType,DeviceType,AtomicAccessMemory,VectorLength,Stride>;
     using random_access_slice =
-        Slice<DataType,MemorySpace,RandomAccessMemory,VectorLength,Stride>;
+        Slice<DataType,DeviceType,RandomAccessMemory,VectorLength,Stride>;
 
     // Declare slices of different memory access types to be friends.
-    friend class Slice<DataType,MemorySpace,DefaultAccessMemory,VectorLength,Stride>;
-    friend class Slice<DataType,MemorySpace,AtomicAccessMemory,VectorLength,Stride>;
-    friend class Slice<DataType,MemorySpace,RandomAccessMemory,VectorLength,Stride>;
+    friend class Slice<DataType,DeviceType,DefaultAccessMemory,VectorLength,Stride>;
+    friend class Slice<DataType,DeviceType,AtomicAccessMemory,VectorLength,Stride>;
+    friend class Slice<DataType,DeviceType,RandomAccessMemory,VectorLength,Stride>;
 
     // Data rank.
     enum { Rank = std::rank<DataType>::value };
@@ -496,13 +518,17 @@ class Slice
       \param soa_stride The number of elements in the slice's value type between starting
       elements of a struct.
       \param num_soa The number of structs in the slice.
+      \param label An optional label for the slice.
     */
     Slice( const pointer_type data,
-           const std::size_t size,
-           const std::size_t num_soa )
+           const size_type size,
+           const size_type num_soa,
+           const std::string& label = "" )
         : _view( data, view_wrapper::createLayout(num_soa) )
         , _size( size )
-    {}
+    {
+        std::strcpy( _label, label.c_str() );
+    }
 
     /*!
       \brief Shallow copy constructor for different memory spaces for
@@ -512,10 +538,12 @@ class Slice
       space.
     */
     template<class MAT>
-    Slice( const Slice<DataType,MemorySpace,MAT,VectorLength,Stride>& rhs )
+    Slice( const Slice<DataType,DeviceType,MAT,VectorLength,Stride>& rhs )
         : _view( rhs._view )
         , _size( rhs._size )
-    {}
+    {
+        std::strcpy( _label, rhs._label );
+    }
 
     /*!
       \brief Assignement operator for different memory spaces for assigning
@@ -527,19 +555,28 @@ class Slice
       space.
      */
     template<class MAT>
-    Slice& operator=( const Slice<DataType,MemorySpace,MAT,VectorLength,Stride>& rhs )
+    Slice& operator=( const Slice<DataType,DeviceType,MAT,VectorLength,Stride>& rhs )
     {
         _view = rhs._view;
         _size = rhs._size;
+        std::strcpy( _label, rhs._label );
         return *this;
     }
+
+    /*!
+      \brief Returns the data structure label.
+
+      \return A string identifying the data structure.
+    */
+    std::string label() const
+    { return std::string(_label); }
 
     /*!
       \brief Returns the total number tuples in the slice.
       \return The number of tuples in the slice.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t size() const
+    size_type size() const
     { return _size; }
 
     /*!
@@ -547,19 +584,17 @@ class Slice
       \return The number of structs-of-arrays in the container.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t numSoA() const { return _view.extent(0); }
+    size_type numSoA() const { return _view.extent(0); }
 
     /*!
       \brief Get the size of the data array at a given struct member index.
       \param s The struct index to get the array size for.
       \return The size of the array at the given struct index.
     */
-    template<typename S>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<std::is_integral<S>::value,int>::type
-    arraySize( const S& s ) const
+    size_type arraySize( const size_type s ) const
     {
-        return ( (std::size_t) s < _view.extent(0) - 1 )
+        return ( static_cast<size_type>(s) < _view.extent(0) - 1 )
             ? vector_length : ( _size % vector_length );
     }
 
@@ -567,142 +602,94 @@ class Slice
     // 2-D accessor
 
     // Rank 0
-    template<typename S,
-             typename A,
-             typename U = DataType>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<U>::value &&
-                             std::is_integral<S>::value &&
-                             std::is_integral<A>::value &&
                              std::is_same<U,DataType>::value),
                             reference_type>::type
-    access( const S& s,
-            const A& a ) const
+    access( const size_type s,
+            const size_type a ) const
     { return _view( s, a ); }
 
     // Rank 1
-    template<typename S,
-             typename A,
-             typename D0,
-             typename U = DataType>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(1==std::rank<U>::value &&
-                             std::is_integral<S>::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
                              std::is_same<U,DataType>::value),
                             reference_type>::type
-    access( const S& s,
-            const A& a,
-            const D0& d0 ) const
+    access( const size_type s,
+            const size_type a,
+            const size_type d0 ) const
     { return _view( s, a, d0 ); }
 
     // Rank 2
-    template<typename S,
-             typename A,
-             typename D0,
-             typename D1,
-             typename U = DataType>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(2==std::rank<U>::value &&
-                             std::is_integral<S>::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
                              std::is_same<U,DataType>::value),
                             reference_type>::type
-    access( const S& s,
-            const A& a,
-            const D0& d0,
-            const D1& d1 ) const
+    access( const size_type s,
+            const size_type a,
+            const size_type d0,
+            const size_type d1 ) const
     { return _view( s, a, d0, d1); }
 
     // Rank 3
-    template<typename S,
-             typename A,
-             typename D0,
-             typename D1,
-             typename D2,
-             typename U = DataType>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(3==std::rank<U>::value &&
-                             std::is_integral<S>::value &&
-                             std::is_integral<A>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
-                             std::is_integral<D2>::value &&
                              std::is_same<U,DataType>::value),
                             reference_type>::type
-    access( const S& s,
-            const A& a,
-            const D0& d0,
-            const D1& d1,
-            const D2& d2 ) const
+    access( const size_type s,
+            const size_type a,
+            const size_type d0,
+            const size_type d1,
+            const size_type d2 ) const
     { return _view( s, a, d0, d1, d2); }
 
     // ------------
     // 1-D accessor
 
     // Rank 0
-    template<typename I,
-             typename U = DataType>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(0==std::rank<U>::value &&
-                             std::is_integral<I>::value &&
                              std::is_same<U,DataType>::value),
                             reference_type>::type
-    operator()( const I& i ) const
+    operator()( const size_type i ) const
     { return access( index_type::s(i), index_type::a(i) ); }
 
     // Rank 1
-    template<typename I,
-             typename D0,
-             typename U = DataType>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(1==std::rank<U>::value &&
-                             std::is_integral<I>::value &&
-                             std::is_integral<D0>::value &&
                              std::is_same<U,DataType>::value),
                             reference_type>::type
-    operator()( const I& i,
-                const D0& d0 ) const
+    operator()( const size_type i,
+                const size_type d0 ) const
     { return access( index_type::s(i), index_type::a(i), d0 ); }
 
     // Rank 2
-    template<typename I,
-             typename D0,
-             typename D1,
-             typename U = DataType>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(2==std::rank<U>::value &&
-                             std::is_integral<I>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
                              std::is_same<U,DataType>::value),
                             reference_type>::type
-    operator()( const I& i,
-                const D0& d0,
-                const D1& d1 ) const
+    operator()( const size_type i,
+                const size_type d0,
+                const size_type d1 ) const
     { return access( index_type::s(i), index_type::a(i), d0, d1 ); }
 
     // Rank 3
-    template<typename I,
-             typename D0,
-             typename D1,
-             typename D2,
-             typename U = DataType>
+    template<typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<(3==std::rank<U>::value &&
-                             std::is_integral<I>::value &&
-                             std::is_integral<D0>::value &&
-                             std::is_integral<D1>::value &&
-                             std::is_integral<D2>::value &&
                              std::is_same<U,DataType>::value),
                             reference_type>::type
-    operator()( const I& i,
-                const D0& d0,
-                const D1& d1,
-                const D2& d2 ) const
+    operator()( const size_type i,
+                const size_type d0,
+                const size_type d1,
+                const size_type d2 ) const
     { return access( index_type::s(i), index_type::a(i), d0, d1, d2 ); }
 
     // -------------------------------
@@ -723,7 +710,7 @@ class Slice
       \return The rank of the data for this slice.
     */
     KOKKOS_INLINE_FUNCTION
-    constexpr int rank() const
+    constexpr size_type rank() const
     { return _view.Rank; }
 
     /*!
@@ -734,7 +721,7 @@ class Slice
       \return The extent of the given member data dimension.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t extent( const std::size_t d ) const
+    size_type extent( const size_type d ) const
     { return _view.extent(d); }
 
     /*!
@@ -744,8 +731,15 @@ class Slice
       \return The stride of the given member data dimension.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t stride( const std::size_t d ) const
+    size_type stride( const size_type d ) const
     { return _view.stride(d); }
+
+    /*!
+      \brief Get the underlying Kokkos View managing the slice data.
+    */
+    KOKKOS_INLINE_FUNCTION
+    kokkos_view view() const
+    { return _view; }
 
   private:
 
@@ -754,7 +748,10 @@ class Slice
     kokkos_view _view;
 
     // Number of tuples in the slice.
-    std::size_t _size;
+    size_type _size;
+
+    // Slice label.
+    char _label[max_label_length];
 };
 
 //---------------------------------------------------------------------------//
@@ -765,24 +762,24 @@ struct is_slice : public std::false_type {};
 // True only if the type is a member slice *AND* the member slice is templated
 // on an AoSoA type.
 template<typename DataType,
-         typename MemorySpace,
+         typename DeviceType,
          typename MemoryAccessType,
          int VectorLength,
          int Stride>
 struct is_slice<Slice<DataType,
-                      MemorySpace,
+                      DeviceType,
                       MemoryAccessType,
                       VectorLength,
                       Stride> >
     : public std::true_type {};
 
 template<typename DataType,
-         typename MemorySpace,
+         typename DeviceType,
          typename MemoryAccessType,
          int VectorLength,
          int Stride>
 struct is_slice<const Slice<DataType,
-                            MemorySpace,
+                            DeviceType,
                             MemoryAccessType,
                             VectorLength,
                             Stride> >

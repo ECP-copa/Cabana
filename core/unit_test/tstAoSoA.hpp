@@ -32,10 +32,10 @@ void checkDataMembers(
         Cabana::Experimental::create_mirror_view_and_copy(
             Kokkos::HostSpace(), aosoa );
 
-    auto slice_0 = mirror.template slice<0>();
-    auto slice_1 = mirror.template slice<1>();
-    auto slice_2 = mirror.template slice<2>();
-    auto slice_3 = mirror.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(mirror);
+    auto slice_1 = Cabana::slice<1>(mirror);
+    auto slice_2 = Cabana::slice<2>(mirror);
+    auto slice_3 = Cabana::slice<3>(mirror);
 
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -87,13 +87,26 @@ void testAoSoA()
     EXPECT_TRUE( Cabana::is_aosoa<AoSoA_t>::value );
 
     // Create an AoSoA.
-    AoSoA_t aosoa;
+    std::string label = "test_aosoa";
+    AoSoA_t aosoa( label );
+    EXPECT_EQ( aosoa.label(), label );
 
     // Get field slices.
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    auto slice_2 = aosoa.slice<2>();
-    auto slice_3 = aosoa.slice<3>();
+    std::string s0_label = "slice_0";
+    auto slice_0 = Cabana::slice<0>( aosoa, s0_label );
+    EXPECT_EQ( slice_0.label(), s0_label );
+
+    std::string s1_label = "slice_1";
+    auto slice_1 = Cabana::slice<1>( aosoa, s1_label );
+    EXPECT_EQ( slice_1.label(), s1_label );
+
+    std::string s2_label = "slice_2";
+    auto slice_2 = Cabana::slice<2>( aosoa, s2_label );
+    EXPECT_EQ( slice_2.label(), s2_label );
+
+    std::string s3_label = "slice_3";
+    auto slice_3 = Cabana::slice<3>( aosoa, s3_label );
+    EXPECT_EQ( slice_3.label(), s3_label );
 
     // Check sizes.
     EXPECT_EQ( aosoa.size(), int(0) );
@@ -124,10 +137,10 @@ void testAoSoA()
     auto mirror =
         Cabana::Experimental::create_mirror_view_and_copy(
             Kokkos::HostSpace(), aosoa );
-    auto mirror_slice_0 = mirror.slice<0>();
-    auto mirror_slice_1 = mirror.slice<1>();
-    auto mirror_slice_2 = mirror.slice<2>();
-    auto mirror_slice_3 = mirror.slice<3>();
+    auto mirror_slice_0 = Cabana::slice<0>(mirror);
+    auto mirror_slice_1 = Cabana::slice<1>(mirror);
+    auto mirror_slice_2 = Cabana::slice<2>(mirror);
+    auto mirror_slice_3 = Cabana::slice<3>(mirror);
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
@@ -219,14 +232,16 @@ void testRawData()
 
     // Create an AoSoA using the default constructor.
     int num_data = 350;
-    AoSoA_t aosoa( num_data );
+    std::string label = "test_aosoa";
+    AoSoA_t aosoa( label, num_data );
+    EXPECT_EQ( aosoa.label(), label );
 
     // Get slices of fields.
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    auto slice_2 = aosoa.slice<2>();
-    auto slice_3 = aosoa.slice<3>();
-    auto slice_4 = aosoa.slice<4>();
+    auto slice_0 = Cabana::slice<0>(aosoa);
+    auto slice_1 = Cabana::slice<1>(aosoa);
+    auto slice_2 = Cabana::slice<2>(aosoa);
+    auto slice_3 = Cabana::slice<3>(aosoa);
+    auto slice_4 = Cabana::slice<4>(aosoa);
 
     // Get raw pointers to the data as one would in a C interface (no templates).
     float* p0 = slice_0.data();
@@ -278,11 +293,11 @@ void testRawData()
     auto mirror =
         Cabana::Experimental::create_mirror_view_and_copy(
             Kokkos::HostSpace(), aosoa );
-    auto mirror_slice_0 = mirror.slice<0>();
-    auto mirror_slice_1 = mirror.slice<1>();
-    auto mirror_slice_2 = mirror.slice<2>();
-    auto mirror_slice_3 = mirror.slice<3>();
-    auto mirror_slice_4 = mirror.slice<4>();
+    auto mirror_slice_0 = Cabana::slice<0>(mirror);
+    auto mirror_slice_1 = Cabana::slice<1>(mirror);
+    auto mirror_slice_2 = Cabana::slice<2>(mirror);
+    auto mirror_slice_3 = Cabana::slice<3>(mirror);
+    auto mirror_slice_4 = Cabana::slice<4>(mirror);
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
         int s = Cabana::Impl::Index<16>::s( idx );
@@ -324,17 +339,17 @@ void testTuple()
     // Create an AoSoA.
     int num_data = 453;
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "label", num_data );
 
     // Create a slice of tuples with the same data types.
     Kokkos::View<Tuple_t*,typename AoSoA_t::memory_space>
         tuples( "tuples", num_data );
 
     // Initialize aosoa data.
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    auto slice_2 = aosoa.slice<2>();
-    auto slice_3 = aosoa.slice<3>();
+    auto slice_0 = Cabana::slice<0>(aosoa);
+    auto slice_1 = Cabana::slice<1>(aosoa);
+    auto slice_2 = Cabana::slice<2>(aosoa);
+    auto slice_3 = Cabana::slice<3>(aosoa);
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
@@ -381,19 +396,19 @@ void testTuple()
             for ( int i = 0; i < dim_1; ++i )
                 for ( int j = 0; j < dim_2; ++j )
                     for ( int k = 0; k < dim_3; ++k )
-                        tuples( idx ).get<0>( i, j, k ) = fval * (i+j+k);
+                        Cabana::get<0>( tuples(idx), i, j, k ) = fval * (i+j+k);
 
             // Member 1.
-            tuples( idx ).get<1>() = ival;
+            Cabana::get<1>( tuples(idx) ) = ival;
 
             // Member 2.
             for ( int i = 0; i < dim_1; ++i )
-                tuples( idx ).get<2>( i ) = dval * i;
+                Cabana::get<2>( tuples(idx), i ) = dval * i;
 
             // Member 3.
             for ( int i = 0; i < dim_1; ++i )
                 for ( int j = 0; j < dim_2; ++j )
-                    tuples( idx ).get<3>( i, j ) = dval * (i+j);
+                    Cabana::get<3>( tuples(idx), i, j ) = dval * (i+j);
         });
 
     // Assign the tuple data back to the AoSoA.
@@ -436,7 +451,7 @@ void testAccess()
 
     // Create an AoSoA.
     int num_data = 453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "label", num_data );
 
     // Initialize data with the SoA accessor
     float fval = 3.4;
@@ -448,27 +463,115 @@ void testAccess()
         KOKKOS_LAMBDA( const int s ){
             auto& soa = aosoa.access( s );
 
-            for ( int a = 0; a < aosoa.arraySize(s); ++a )
+            for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
             {
                 // Member 0.
                 for ( int i = 0; i < dim_1; ++i )
                     for ( int j = 0; j < dim_2; ++j )
                         for ( int k = 0; k < dim_3; ++k )
-                            soa.get<0>( a, i, j, k ) = fval * (i+j+k);
+                            Cabana::get<0>( soa, a, i, j, k ) = fval * (i+j+k);
 
                 // Member 1.
-                soa.get<1>( a ) = ival;
+                Cabana::get<1>( soa, a ) = ival;
 
                 // Member 2.
                 for ( int i = 0; i < dim_1; ++i )
-                    soa.get<2>( a, i ) = dval * i;
+                    Cabana::get<2>( soa, a, i ) = dval * i;
 
                 // Member 3.
                 for ( int i = 0; i < dim_1; ++i )
                     for ( int j = 0; j < dim_2; ++j )
-                        soa.get<3>( a, i, j ) = dval * (i+j);
+                        Cabana::get<3>( soa, a, i, j ) = dval * (i+j);
             }
         });
+
+    // Check data members for proper initialization.
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+}
+
+//---------------------------------------------------------------------------//
+// Manually defined SoA.
+template<int VLEN,int D1, int D2, int D3>
+struct MySoA
+{
+    float m0[D1][D2][D3][VLEN];
+    int m1[VLEN];
+    double m2[D1][VLEN];
+    double m3[D1][D2][VLEN];
+};
+
+// Test an unmanaged AoSoA.
+void testUnmanaged()
+{
+    // Manually set the inner array size.
+    const int vector_length = 16;
+
+    // Data dimensions.
+    const int dim_1 = 3;
+    const int dim_2 = 2;
+    const int dim_3 = 4;
+
+    // Declare data types that are equivalent to the user defined struct.
+    using DataTypes =
+        Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
+                            int,
+                            double[dim_1],
+                            double[dim_1][dim_2]
+                            >;
+
+    // Allocate an AoSoA manually.
+    using soa_type = MySoA<vector_length,dim_1,dim_2,dim_3>;
+    int num_soa = 3;
+    int size = 35;
+    Kokkos::View<soa_type*,TEST_MEMSPACE> user_data( "user_aosoa", 3 );
+
+    // Declare the AoSoA type.
+    using AoSoA_t = Cabana::AoSoA<DataTypes,
+                                  TEST_MEMSPACE,
+                                  vector_length,
+                                  Kokkos::MemoryUnmanaged>;
+
+    // Create an AoSoA.
+    auto user_ptr =
+        reinterpret_cast<typename AoSoA_t::soa_type*>(user_data.data());
+    AoSoA_t aosoa( user_ptr, num_soa, size );
+
+    // Check sizes.
+    EXPECT_EQ( aosoa.size(), size );
+    EXPECT_EQ( aosoa.capacity(), num_soa * vector_length );
+    EXPECT_EQ( aosoa.numSoA(), num_soa );
+
+    // Initialize data in the user structure.
+    auto user_data_mirror =
+        Kokkos::create_mirror_view( Kokkos::HostSpace(), user_data );
+    float fval = 3.4;
+    double dval = 1.23;
+    int ival = 1;
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
+    {
+        // Get aosoa indices.
+        int s = idx / vector_length;
+        int a = idx % vector_length;
+
+        // Member 0.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    user_data_mirror(s).m0[i][j][k][a] = fval * (i+j+k);
+
+        // Member 1.
+        user_data_mirror(s).m1[a] = ival;
+
+        // Member 2.
+        for ( int i = 0; i < dim_1; ++i )
+            user_data_mirror(s).m2[i][a] = dval * i;
+
+        // Member 3.
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                user_data_mirror(s).m3[i][j][a] = dval * (i+j);
+    }
+    Kokkos::deep_copy( user_data, user_data_mirror );
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -498,6 +601,12 @@ TEST( TEST_CATEGORY, aosoa_tuple_test )
 TEST( TEST_CATEGORY, aosoa_access_test )
 {
     testAccess();
+}
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, aosoa_unmanaged_test )
+{
+    testUnmanaged();
 }
 
 //---------------------------------------------------------------------------//

@@ -89,7 +89,7 @@ using ParticleDataTypes =
                         >;
 
 // Declare the memory space.
-using MemorySpace = Cabana::HostSpace;
+using MemorySpace = Kokkos::HostSpace;
 
 // Declare the length of the internal vectors
 const int VectorLength = 8;
@@ -105,14 +105,14 @@ void initializeParticles( ParticleList& particles,
                           double gap_space,
                           parallel_info& info )
 {
-    auto p_x = particles.slice<PositionX>();
-    auto p_y = particles.slice<PositionY>();
-    auto p_z = particles.slice<PositionZ>();
-    auto v = particles.slice<Velocity>();
-    auto q = particles.slice<Charge>();
-    auto pot = particles.slice<Potential>();
-    auto field = particles.slice<Field>();
-    auto indx = particles.slice<Index>();
+    auto p_x = Cabana::slice<PositionX>(particles,"position_x");
+    auto p_y = Cabana::slice<PositionY>(particles,"position_y");
+    auto p_z = Cabana::slice<PositionZ>(particles,"position_z");
+    auto v = Cabana::slice<Velocity>(particles,"velocity");
+    auto q = Cabana::slice<Charge>(particles,"charge");
+    auto pot = Cabana::slice<Potential>(particles,"potential");
+    auto field = Cabana::slice<Field>(particles,"field");
+    auto indx = Cabana::slice<Index>(particles,"index");
 
     int offset;
 
@@ -157,14 +157,14 @@ void printParticles( const ParticleList particles, parallel_info& info )
 {
 
     // get slices for the corresponding particle data
-    auto p_x = particles.slice<PositionX>();
-    auto p_y = particles.slice<PositionY>();
-    auto p_z = particles.slice<PositionZ>();
-    auto v = particles.slice<Velocity>();
-    auto q = particles.slice<Charge>();
-    auto pot = particles.slice<Potential>();
-    auto field = particles.slice<Field>();
-    auto indx = particles.slice<Index>();
+    auto p_x = Cabana::slice<PositionX>(particles,"position_x");
+    auto p_y = Cabana::slice<PositionY>(particles,"position_y");
+    auto p_z = Cabana::slice<PositionZ>(particles,"position_z");
+    auto v = Cabana::slice<Velocity>(particles,"velocity");
+    auto q = Cabana::slice<Charge>(particles,"charge");
+    auto pot = Cabana::slice<Potential>(particles,"potential");
+    auto field = Cabana::slice<Field>(particles,"field");
+    auto indx = Cabana::slice<Index>(particles,"index");
 
     std::cout << "Rank: "
               << info.rank
@@ -223,7 +223,7 @@ void exampleMain(int num_particle,
 
 
     // Create the particle list.
-    ParticleList particles( info.n_local_particles );
+    ParticleList particles( "particles", info.n_local_particles );
 
     // Initialize particles.
     initializeParticles( particles,
@@ -256,10 +256,10 @@ void exampleMain(int num_particle,
     std::vector<double> f(3*info.n_local_particles);
     std::vector<double> pot(info.n_local_particles);
 
-    auto p_x = particles.slice<PositionX>();
-    auto p_y = particles.slice<PositionY>();
-    auto p_z = particles.slice<PositionZ>();
-    auto qp = particles.slice<Charge>();
+    auto p_x = Cabana::slice<PositionX>(particles,"x_position");
+    auto p_y = Cabana::slice<PositionY>(particles,"y_position");
+    auto p_z = Cabana::slice<PositionZ>(particles,"z_position");
+    auto qp = Cabana::slice<Charge>(particles,"charge");
 
     for (int i = 0; i < info.n_local_particles; ++i)
     {
@@ -306,8 +306,8 @@ void exampleMain(int num_particle,
     result = fcs_run(fcs,info.n_local_particles,pos.data(),q.data(),f.data(),pot.data());
     if (!check_result(result,info.rank)) return;
 
-    auto field = particles.slice<Field>();
-    auto poten = particles.slice<Potential>();
+    auto field = Cabana::slice<Field>(particles,"Field");
+    auto poten = Cabana::slice<Potential>(particles,"Potential");
 
     double check[4];
     for (int i = 0; i < 4; ++i)

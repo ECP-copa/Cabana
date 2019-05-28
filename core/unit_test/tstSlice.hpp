@@ -26,10 +26,10 @@ void initializeDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto slice_0 = aosoa.template slice<0>();
-    auto slice_1 = aosoa.template slice<1>();
-    auto slice_2 = aosoa.template slice<2>();
-    auto slice_3 = aosoa.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(aosoa);
+    auto slice_1 = Cabana::slice<1>(aosoa);
+    auto slice_2 = Cabana::slice<2>(aosoa);
+    auto slice_3 = Cabana::slice<3>(aosoa);
 
     Kokkos::parallel_for(
         "init_members",
@@ -67,10 +67,10 @@ void checkDataMembers(
         Cabana::Experimental::create_mirror_view_and_copy(
             Kokkos::HostSpace(), aosoa );
 
-    auto slice_0 = mirror.template slice<0>();
-    auto slice_1 = mirror.template slice<1>();
-    auto slice_2 = mirror.template slice<2>();
-    auto slice_3 = mirror.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(mirror);
+    auto slice_1 = Cabana::slice<1>(mirror);
+    auto slice_2 = Cabana::slice<2>(mirror);
+    auto slice_3 = Cabana::slice<3>(mirror);
 
     for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
     {
@@ -118,13 +118,13 @@ void apiTest()
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create some slices.
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    auto slice_2 = aosoa.slice<2>();
-    auto slice_3 = aosoa.slice<3>();
+    auto slice_0 = Cabana::slice<0>(aosoa);
+    auto slice_1 = Cabana::slice<1>(aosoa);
+    auto slice_2 = Cabana::slice<2>(aosoa);
+    auto slice_3 = Cabana::slice<3>(aosoa);
 
     // Check that they are slices.
     EXPECT_TRUE( Cabana::is_slice<decltype(slice_0)>::value );
@@ -190,7 +190,7 @@ void apiTest()
         "raw_ptr_update",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,slice_0.numSoA()),
         KOKKOS_LAMBDA( const int s ){
-            for ( int a = 0; a < slice_0.arraySize(s); ++a )
+            for ( std::size_t a = 0; a < slice_0.arraySize(s); ++a )
             {
                 // Member 0.
                 for ( int i = 0; i < dim_1; ++i )
@@ -249,7 +249,7 @@ void randomAccessTest()
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Initialize data.
     float fval = 3.4;
@@ -258,10 +258,10 @@ void randomAccessTest()
     initializeDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Create slices.
-    auto da_slice_0 = aosoa.slice<0>();
-    auto da_slice_1 = aosoa.slice<1>();
-    auto da_slice_2 = aosoa.slice<2>();
-    auto da_slice_3 = aosoa.slice<3>();
+    auto da_slice_0 = Cabana::slice<0>(aosoa);
+    auto da_slice_1 = Cabana::slice<1>(aosoa);
+    auto da_slice_2 = Cabana::slice<2>(aosoa);
+    auto da_slice_3 = Cabana::slice<3>(aosoa);
 
     // Create read-only random access slices.
     decltype(da_slice_0)::random_access_slice ra_slice_0 = da_slice_0;
@@ -270,13 +270,13 @@ void randomAccessTest()
     decltype(da_slice_3)::random_access_slice ra_slice_3 = da_slice_3;
 
     // Create a second aosoa.
-    AoSoA_t aosoa_2( num_data );
+    AoSoA_t aosoa_2( "aosoa_2", num_data );
 
     // Get normal slices of the data.
-    auto slice_0 = aosoa_2.slice<0>();
-    auto slice_1 = aosoa_2.slice<1>();
-    auto slice_2 = aosoa_2.slice<2>();
-    auto slice_3 = aosoa_2.slice<3>();
+    auto slice_0 = Cabana::slice<0>(aosoa_2);
+    auto slice_1 = Cabana::slice<1>(aosoa_2);
+    auto slice_2 = Cabana::slice<2>(aosoa_2);
+    auto slice_3 = Cabana::slice<3>(aosoa_2);
 
     // Assign the read-only data to the new aosoa.
     Kokkos::parallel_for(
@@ -319,10 +319,10 @@ void atomicAccessTest()
     // Create an AoSoA.
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
     int num_data = 35;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Get a slice of the data.
-    auto slice = aosoa.slice<0>();
+    auto slice = Cabana::slice<0>(aosoa);
 
     // Set to 0.
     Kokkos::parallel_for(
@@ -348,7 +348,7 @@ void atomicAccessTest()
     auto mirror =
         Cabana::Experimental::create_mirror_view_and_copy(
             Kokkos::HostSpace(), aosoa );
-    auto mirror_slice = mirror.template slice<0>();
+    auto mirror_slice = Cabana::slice<0>(mirror);
 
     for ( int i = 0; i < num_data; ++i ) EXPECT_EQ( mirror_slice(i), num_data );
 }

@@ -40,12 +40,14 @@ void verletListExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 81;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "A", num_tuple );
 
     /*
       Define the parameters of the Cartesian grid over which we will build the
@@ -59,15 +61,16 @@ void verletListExample()
     /*
       Create the particle ids.
     */
-    auto ids = aosoa.slice<1>();
+    auto ids = Cabana::slice<1>( aosoa );
     for ( std::size_t i = 0; i < aosoa.size(); ++i )
         ids(i) = i;
+
     /*
       Create the particle coordinates. We will put 3 particles in the center
       of each cell. We will set the Verlet list parameters such that each
       particle should only neighbor the other particle it shares a cell with.
     */
-    auto positions = aosoa.slice<0>();
+    auto positions = Cabana::slice<0>( aosoa );
     int ppc = 3;
     int particle_counter = 0;
     for ( int p = 0; p < ppc; ++p )
@@ -119,7 +122,8 @@ void verletListExample()
     double neighborhood_radius = 0.25;
     double cell_ratio = 1.0;
     using ListAlgorithm = Cabana::FullNeighborTag;
-    using ListType = Cabana::VerletList<MemorySpace,ListAlgorithm,Cabana::VerletLayoutCSR>;
+    using ListType =
+        Cabana::VerletList<DeviceType,ListAlgorithm,Cabana::VerletLayoutCSR>;
     ListType verlet_list( positions, 0, positions.size(),
                           neighborhood_radius, cell_ratio,
                           grid_min, grid_max );

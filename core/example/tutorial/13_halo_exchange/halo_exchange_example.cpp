@@ -57,18 +57,21 @@ void haloExchangeExample()
     using DataTypes = Cabana::MemberTypes<double,double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
+        aosoa( "my_aosoa", num_tuple );
 
     /*
       Create slices and assign data.
      */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
+    auto slice_0 = Cabana::slice<0>( aosoa );
+    auto slice_1 = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
         slice_0(i) = 1.0;
@@ -79,8 +82,8 @@ void haloExchangeExample()
       Build a halo where the last 10 elements are sent to the next rank.
     */
     int local_num_send = 10;
-    Kokkos::View<int*,MemorySpace> export_ranks( "export_ranks", local_num_send );
-    Kokkos::View<int*,MemorySpace> export_ids( "export_ids", local_num_send );
+    Kokkos::View<int*,DeviceType> export_ranks( "export_ranks", local_num_send );
+    Kokkos::View<int*,DeviceType> export_ids( "export_ids", local_num_send );
 
     // Last 10 elements (elements 90-99) go to the next rank. Note that this
     // view will most often be filled within a parallel_for but we do so in
@@ -109,7 +112,7 @@ void haloExchangeExample()
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
     neighbors.resize( std::distance(neighbors.begin(), unique_end) );
-    Cabana::Halo<MemorySpace> halo(
+    Cabana::Halo<DeviceType> halo(
         MPI_COMM_WORLD, num_tuple, export_ids, export_ranks, neighbors );
 
     /*
@@ -130,8 +133,8 @@ void haloExchangeExample()
     /*
       Get new slices after resizing.
      */
-    slice_0 = aosoa.slice<0>();
-    slice_1 = aosoa.slice<1>();
+    slice_0 = Cabana::slice<0>( aosoa );
+    slice_1 = Cabana::slice<1>( aosoa );
 
     /*
       Gather data for the ghosts on this rank from our neighbors that own

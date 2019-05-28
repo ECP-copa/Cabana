@@ -53,12 +53,14 @@ void migrationExample()
     using DataTypes = Cabana::MemberTypes<int,int>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "A", num_tuple );
 
     /*
       Create slices and assign data. The data values are equal to id of this
@@ -66,8 +68,8 @@ void migrationExample()
       parallel for loop in this case - especially when the code being written
       is for an arbitrary memory space.
      */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
+    auto slice_0 = Cabana::slice<0>( aosoa );
+    auto slice_1 = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
         slice_0(i) = comm_rank;
@@ -80,7 +82,7 @@ void migrationExample()
       elements are to be discarded, and the last 80 elements stay on this
       rank.
     */
-    Kokkos::View<int*,MemorySpace> export_ranks( "export_ranks", num_tuple );
+    Kokkos::View<int*,DeviceType> export_ranks( "export_ranks", num_tuple );
 
     // First 10 go to the next rank. Note that this view will most often be
     // filled within a parallel_for but we do so in serial here for
@@ -115,7 +117,7 @@ void migrationExample()
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
     neighbors.resize( std::distance(neighbors.begin(), unique_end) );
-    Cabana::Distributor<MemorySpace> distributor(
+    Cabana::Distributor<DeviceType> distributor(
         MPI_COMM_WORLD, export_ranks, neighbors );
 
     /*
@@ -136,7 +138,7 @@ void migrationExample()
     // Also note how this AoSoA is sized. The distrubutor computes how many
     // imported elements each rank will recieve. We discard 10 elements, get
     // 10 from our neighbor, and keep 80 of our own so this number should be 90.
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength>
+    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
         destination( distributor.totalNumImport() );
 
     // Do the migration.
@@ -148,8 +150,8 @@ void migrationExample()
       We can migrate each slice individually as well. This is useful when not
       all data in an AoSoA needs to be moved to a new decomposition.
      */
-    auto slice_0_dst = destination.slice<0>();
-    auto slice_1_dst = destination.slice<1>();
+    auto slice_0_dst = Cabana::slice<0>( destination );
+    auto slice_1_dst = Cabana::slice<1>( destination );
     Cabana::migrate( distributor, slice_0, slice_0_dst );
     Cabana::migrate( distributor, slice_1, slice_1_dst );
 

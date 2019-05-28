@@ -40,8 +40,9 @@ void perfTest( const double cutoff_ratio,
     using NeighborListTag = Cabana::FullNeighborTag;
 
     // Declare the execution and memory spaces.
-    using MemorySpace = Cabana::HostSpace;
+    using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
 
     // Declare the inner array layout.
     const int vector_length = 64;
@@ -53,13 +54,13 @@ void perfTest( const double cutoff_ratio,
     enum MyTypes { Position = 0 };
 
     // Declare the AoSoA type.
-    using AoSoA_t = Cabana::AoSoA<DataTypes,MemorySpace,vector_length>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,DeviceType,vector_length>;
 
     // Create an Array-of-Structs-of-Arrays.
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Get the particle postions.
-    auto x = aosoa.slice<Position>();
+    auto x = Cabana::slice<Position>(aosoa, "position");
 
     // Build particles.
     std::cout << std::endl;
@@ -162,21 +163,21 @@ void perfTest( const double cutoff_ratio,
     // locality. Bin them in cells the size of the cutoff distance.
     double sort_delta[3] =
         { interaction_cutoff, interaction_cutoff, interaction_cutoff };
-    Cabana::LinkedCellList<MemorySpace>
-        linked_cell_list( aosoa.slice<Position>(),
+    Cabana::LinkedCellList<DeviceType>
+        linked_cell_list( Cabana::slice<Position>(aosoa,"position"),
                           sort_delta, grid_min, grid_max );
     Cabana::permute( linked_cell_list, aosoa );
 
     // Create the list once to get some statistics.
-    Cabana::VerletList<MemorySpace,NeighborListTag,Cabana::VerletLayoutCSR>
-        stat_list( aosoa.slice<Position>(), 0, aosoa.size(),
+    Cabana::VerletList<DeviceType,NeighborListTag,Cabana::VerletLayoutCSR>
+        stat_list( Cabana::slice<Position>(aosoa,"position"), 0, aosoa.size(),
                    interaction_cutoff, cell_size_ratio, grid_min, grid_max );
     Kokkos::MinMaxScalar<int> result;
     Kokkos::MinMax<int> reducer(result);
     Kokkos::parallel_reduce(
         "Cabana::countMinMax",
         Kokkos::RangePolicy<ExecutionSpace>(0,num_data),
-        Kokkos::Impl::min_max_functor<Kokkos::View<int*,MemorySpace> >(
+        Kokkos::Impl::min_max_functor<Kokkos::View<int*,DeviceType> >(
             stat_list._data.counts ),
         reducer );
     Kokkos::fence();
@@ -195,8 +196,8 @@ void perfTest( const double cutoff_ratio,
         std::cout << "Run t: " << t << std::endl;
         auto start_time = std::chrono::high_resolution_clock::now();
 
-        Cabana::VerletList<MemorySpace,NeighborListTag,Cabana::VerletLayoutCSR> list(
-            aosoa.slice<Position>(), 0, aosoa.size(),
+        Cabana::VerletList<DeviceType,NeighborListTag,Cabana::VerletLayoutCSR> list(
+            Cabana::slice<Position>(aosoa,"position"), 0, aosoa.size(),
             interaction_cutoff, cell_size_ratio, grid_min, grid_max );
 
         auto end_time = std::chrono::high_resolution_clock::now();
