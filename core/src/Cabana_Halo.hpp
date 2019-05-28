@@ -115,9 +115,10 @@ class Halo : public CommunicationPlan<DeviceType>
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error("Export ids and ranks different sizes!");
 
-        this->createFromExportsAndTopology(
+        auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks, mpi_tag );
-        this->createExportSteering( element_export_ranks, element_export_ids );
+        this->createExportSteering(
+            neighbor_ids, element_export_ranks, element_export_ids );
     }
 
     /*!
@@ -168,8 +169,10 @@ class Halo : public CommunicationPlan<DeviceType>
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error("Export ids and ranks different sizes!");
 
-        this->createFromExportsOnly( element_export_ranks, mpi_tag );
-        this->createExportSteering( element_export_ranks, element_export_ids );
+        auto neighbor_ids =
+            this->createFromExportsOnly( element_export_ranks, mpi_tag );
+        this->createExportSteering(
+            neighbor_ids, element_export_ranks, element_export_ids );
     }
 
     /*!
