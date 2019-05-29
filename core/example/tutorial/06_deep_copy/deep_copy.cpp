@@ -132,7 +132,7 @@ void deepCopyExample()
       allocated in a different mnemory space allowing for easy transfer back to
       the device:
      */
-    auto dst_aosoa_host = Cabana::Experimental::create_mirror_view_and_copy(
+    auto dst_aosoa_host = Cabana::create_mirror_view_and_copy(
         Kokkos::HostSpace(), dst_aosoa );
 
     /*

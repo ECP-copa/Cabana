@@ -28,9 +28,8 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
 
     auto slice_0 = Cabana::slice<0>(mirror);
     auto slice_1 = Cabana::slice<1>(mirror);
@@ -134,9 +133,8 @@ void testAoSoA()
     EXPECT_EQ( end_a, 3 );
 
     // Create a mirror on the host and fill.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto mirror_slice_0 = Cabana::slice<0>(mirror);
     auto mirror_slice_1 = Cabana::slice<1>(mirror);
     auto mirror_slice_2 = Cabana::slice<2>(mirror);
@@ -290,9 +288,8 @@ void testRawData()
     Kokkos::fence();
 
     // Check the results.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto mirror_slice_0 = Cabana::slice<0>(mirror);
     auto mirror_slice_1 = Cabana::slice<1>(mirror);
     auto mirror_slice_2 = Cabana::slice<2>(mirror);
