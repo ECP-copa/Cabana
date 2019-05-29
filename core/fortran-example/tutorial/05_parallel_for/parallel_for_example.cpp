@@ -153,7 +153,7 @@ void parallelForExample()
       vector length must come first in the template parameters with the
       execution space and work tag to follow.
     */
-    using ExecutionSpace = Kokkos::OpenMP;
+    using ExecutionSpace = Kokkos::HostSpace;
     Cabana::SimdPolicy<VECLEN,ExecutionSpace> simd_policy( 0, num_element );
 
     /*
