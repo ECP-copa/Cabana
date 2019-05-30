@@ -59,6 +59,9 @@ void parallelForExample()
     const int num_tuple = 128;
     const int num_soa = 128/8; // Be careful with the int division..
 
+    // We use `new` here to represent an arbitrary pointer, in a typical
+    // example this will be passed in from a users existing code/memory
+    // allocation (possibly from Fortran)
     Data* local_data = new Data[num_tuple];
 
     // This is equivalent to a Cabana AoSoA of:
