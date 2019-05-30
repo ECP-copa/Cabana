@@ -20,13 +20,9 @@ if (NOT HAVE_OMP_SIMD)
 endif()
 
 set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS}")
 
 include_directories(${GTEST_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
-set(gtest_args --gtest_color=yes)
 
 foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
   # TODO: tidy unit_test_main.cpp path
