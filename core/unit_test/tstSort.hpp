@@ -81,8 +81,7 @@ void testSortByKey()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
+    auto mirror = Cabana::create_mirror_view_and_copy(
             Kokkos::HostSpace(), aosoa );
     auto v0_mirror = Cabana::slice<0>(mirror);
     auto v1_mirror = Cabana::slice<1>(mirror);
@@ -180,9 +179,8 @@ void testBinByKey()
         Kokkos::HostSpace(), bin_size );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto v0_mirror = Cabana::slice<0>(mirror);
     auto v1_mirror = Cabana::slice<1>(mirror);
     auto v2_mirror = Cabana::slice<2>(mirror);
@@ -265,9 +263,8 @@ void testSortBySlice()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto v0_mirror = Cabana::slice<0>(mirror);
     auto v1_mirror = Cabana::slice<1>(mirror);
     auto v2_mirror = Cabana::slice<2>(mirror);
@@ -347,9 +344,8 @@ void testSortBySliceDataOnly()
 
     // Check that the data didn't get sorted and the permutation vector is
     // correct.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto v0_mirror = Cabana::slice<0>(mirror);
     auto v1_mirror = Cabana::slice<1>(mirror);
     auto v2_mirror = Cabana::slice<2>(mirror);
@@ -440,9 +436,8 @@ void testBinBySlice()
         Kokkos::HostSpace(), bin_size );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto v0_mirror = Cabana::slice<0>(mirror);
     auto v1_mirror = Cabana::slice<1>(mirror);
     auto v2_mirror = Cabana::slice<2>(mirror);
@@ -537,9 +532,8 @@ void testBinBySliceDataOnly()
 
     // Check the result of the sort. Make sure nothing moved execpt the
     // binning data.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto v0_mirror = Cabana::slice<0>(mirror);
     auto v1_mirror = Cabana::slice<1>(mirror);
     auto v2_mirror = Cabana::slice<2>(mirror);
@@ -626,9 +620,8 @@ void testSortByKeySlice()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto v0_mirror = Cabana::slice<0>(mirror);
     auto v1_mirror = Cabana::slice<1>(mirror);
     auto v2_mirror = Cabana::slice<2>(mirror);
@@ -670,9 +663,8 @@ void testSortByKeySlice()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     v0_mirror = Cabana::slice<0>(mirror);
     v1_mirror = Cabana::slice<1>(mirror);
     v2_mirror = Cabana::slice<2>(mirror);
@@ -714,9 +706,8 @@ void testSortByKeySlice()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     v0_mirror = Cabana::slice<0>(mirror);
     v1_mirror = Cabana::slice<1>(mirror);
     v2_mirror = Cabana::slice<2>(mirror);
