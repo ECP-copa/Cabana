@@ -27,15 +27,16 @@ void parallelForExample()
      * Declare Underlying data type
     */
 
+    const int INNER_SIZE = 2;
     // Regular class form
     class Data {
         public:
-            double a[VectorLength];
+            double a[INNER_SIZE][VectorLength];
             int    b[VectorLength];
     };
 
     // Cabana MemberTypes form:
-    using DataTypes = Cabana::MemberTypes<double, int>;
+    using DataTypes = Cabana::MemberTypes<double[INNER_SIZE], int>;
 
     /*
      * Create the AoSoA.
@@ -57,7 +58,7 @@ void parallelForExample()
     {
         for (int j = 0; j < VectorLength; j++)
         {
-            local_data[i].a[j] = i;
+            local_data[i].a[1][j] = i;
             local_data[i].b[j] = j;
         }
     }
@@ -111,7 +112,7 @@ void parallelForExample()
         }
 
         // We can also set values
-        slice_a(i) = i / 2;
+        slice_a(i, 0) = i / 2;
     }
 
     // Clean up local data
