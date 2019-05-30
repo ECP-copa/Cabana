@@ -778,12 +778,7 @@ class CommunicationPlan
             memory_space(), rank_offsets_host );
 
         // Create the export steering vector for writing local elements into
-        // Impl::CountSends<execution_space,memory_space,ViewType>        //
-        //   count_sends( element_export_ranks, comm_size );        //
-        // Kokkos::parallel_for(        //
-        // "Cabana::CommunicationPlan::count_exports",        //
-        // Kokkos::RangePolicy<execution_space>(0,_num_export_element),
-        // //     count_sends );        // Kokkos::fence();        // count_sends.reduce();// the send buffer. Note we create a local, shallow copy - this is a
+        // the send buffer. Note we create a local, shallow copy - this is a
         // CUDA workaround for handling class private data.
         _export_steering = Kokkos::View<std::size_t*,memory_space>(
             Kokkos::ViewAllocateWithoutInitializing("export_steering"),
