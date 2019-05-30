@@ -12,7 +12,7 @@
 #include <Cabana_Core.hpp>
 #include <Cabana_Sort.hpp>
 
-#include <iostream>
+#include <cstdio>
 
 //---------------------------------------------------------------------------//
 // parallel for using an unmanaged view.
