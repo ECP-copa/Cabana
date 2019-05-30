@@ -23,8 +23,9 @@ void parallelForExample()
      * Summary: An unmanaged AoSoA allows the user to wrap manually allocated
      * data (if compatible) inside of Cabana structures, without paying the
      * cost of duplicating, or reallocating, the underlying data structure.
-     * Once wrapper, the resulting AoSoAs can be treated like regular Cabana
-     * containers, including be invoked in standard algorithms (such as sort).
+     * Once wrapped, the resulting AoSoAs can be treated like regular Cabana
+     * containers, including being invoked in standard algorithms (such as
+     * sort).
      *
      * Care needs to be taken when determining the structure of the underlying
      * data, as it has to conform the expect Cabana layout. For a true AoSoA
