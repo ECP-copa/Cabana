@@ -12,7 +12,7 @@
 #include <Cabana_Core.hpp>
 #include <Cabana_Sort.hpp>
 
-#include <cassert>
+#include <iostream>
 
 //---------------------------------------------------------------------------//
 // parallel for using an unmanaged view.
@@ -21,8 +21,6 @@ void parallelForExample()
 {
     /* Declare general run parameters */
     using MemorySpace = Kokkos::HostSpace;
-    using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
     const int VectorLength = 8;
 
     /*
@@ -33,12 +31,11 @@ void parallelForExample()
     class Data {
         public:
             double a[VectorLength];
-            double b[VectorLength];
+            int    b[VectorLength];
     };
 
     // Cabana MemberTypes form:
-    using DataTypes = Cabana::MemberTypes<double,double>;
-
+    using DataTypes = Cabana::MemberTypes<double, int>;
 
     /*
      * Create the AoSoA.
@@ -48,8 +45,10 @@ void parallelForExample()
 
     Data* local_data = new Data[num_tuple];
 
-    // This is equivalent to a Cabana AoSoA, which looks like:
-    //    Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "my_aosoa", num_tuple );
+    // This is equivalent to a Cabana AoSoA of:
+      // using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
+      // using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+      // Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "my_aosoa", num_tuple );
 
     /*
      * Populate user data.
@@ -88,15 +87,10 @@ void parallelForExample()
     // Look at the data in the AosoA
     for (int i = 0; i < num_tuple; i++)
     {
-        if ( slice_a(i) != i / VectorLength )
+        if ( slice_b(i) != (i % VectorLength) )
         {
             // Unexpected Value
-            printf("%d: Unexpected %e != %e \n", __LINE__, slice_a(i), i / VectorLength);
-        }
-        if ( slice_b(i) != i % VectorLength )
-        {
-            // Unexpected Value
-            printf("%d: Unexpected %e != %e \n", __LINE__, slice_b(i), i % VectorLength);
+            printf("%d: Unexpected %d != %d \n", __LINE__, slice_b(i), i % VectorLength);
         }
     }
 
@@ -110,10 +104,10 @@ void parallelForExample()
     for (int i = 1; i < num_tuple; i++)
     {
         // We expect it to be monotonically increasing
-        if (!(slice_b(i-1) >= slice_b(i)))
+        if (!(slice_b(i-1) <= slice_b(i)))
         {
             // Unexpected value
-            printf("%d: Unexpected %e vs %e \n", __LINE__, slice_b(i-1) , slice_b(i) );
+            printf("%d: Unexpected %d vs %d \n", __LINE__, slice_b(i-1) , slice_b(i) );
         }
     }
 
