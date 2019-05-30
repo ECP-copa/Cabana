@@ -15,6 +15,7 @@ check_cxx_source_compiles(
 
 if (NOT HAVE_OMP_SIMD)
     # No point running these tests without omp simd
+    message(WARNING "Compiler doesn't seem to support `#pragma simd`, skipping performance tests")
     return()
 endif()
 
