@@ -48,7 +48,7 @@ void parallelForExample()
 
     Data* local_data = new Data[num_tuple];
 
-    // This is equivalent to a Cabana AoAoS, which looks like:
+    // This is equivalent to a Cabana AoSoA, which looks like:
     //    Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "my_aosoa", num_tuple );
 
     /*
@@ -82,8 +82,8 @@ void parallelForExample()
     /*
     * Inspect Data In the Unmanaged AoSoA
     */
-    auto slice_a = aosoa.slice<0>(); // a = 0
-    auto slice_b = aosoa.slice<1>(); // b = 1
+    auto slice_a = Cabana::slice<0>(aosoa); // a = 0
+    auto slice_b = Cabana::slice<1>(aosoa); // b = 1
 
     // Look at the data in the AosoA
     for (int i = 0; i < num_tuple; i++)
