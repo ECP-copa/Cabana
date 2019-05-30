@@ -27,9 +27,8 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
 
     auto slice_0 = Cabana::slice<0>(mirror);
     auto slice_1 = Cabana::slice<1>(mirror);
