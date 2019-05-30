@@ -131,7 +131,7 @@ void parallelForExample()
     }
 
     // Clean up local data
-    delete local_data;
+    delete[] local_data;
 
 }
 
