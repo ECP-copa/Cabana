@@ -109,6 +109,9 @@ void parallelForExample()
             // Unexpected value
             printf("%d: Unexpected %d vs %d \n", __LINE__, slice_b(i-1) , slice_b(i) );
         }
+
+        // We can also set values
+        slice_a(i) = i / 2;
     }
 
     // Clean up local data
