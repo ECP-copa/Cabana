@@ -1,5 +1,3 @@
-# Copied from unit test, could be DRYd
-
 # It only makes sense to run this if testing is enabled, as we depend on gtest
 if(NOT Cabana_ENABLE_TESTING)
   return()
