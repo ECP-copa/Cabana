@@ -53,6 +53,7 @@ void initializeDataMembers(
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = dval * (i+j);
         });
+    Kokkos::fence();
 }
 
 //---------------------------------------------------------------------------//
@@ -220,6 +221,7 @@ void apiTest()
                             j*slice_3.stride(3) ] = dval * (i+j);
             }
         });
+    Kokkos::fence();
 
     // Check the result of pointer manipulation
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -300,6 +302,7 @@ void randomAccessTest()
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = ra_slice_3( idx, i, j );
         });
+    Kokkos::fence();
 
     // Check data members for proper assignment.
     checkDataMembers( aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3 );
