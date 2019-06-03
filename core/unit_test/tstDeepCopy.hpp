@@ -115,6 +115,7 @@ void testDeepCopy()
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = dval * (i+j);
         });
+    Kokkos::fence();
 
     // Deep copy
     Cabana::deep_copy( dst_aosoa, src_aosoa );
@@ -188,6 +189,7 @@ void testMirror()
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = dval * (i+j);
         });
+    Kokkos::fence();
 
     // Create a mirror with the same memory space and copy separately.
     auto same_space_mirror = Cabana::create_mirror_view(
