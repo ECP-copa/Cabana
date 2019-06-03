@@ -26,9 +26,8 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
 
     auto slice_0 = Cabana::slice<0>(mirror);
     auto slice_1 = Cabana::slice<1>(mirror);
@@ -191,17 +190,17 @@ void testMirror()
         });
 
     // Create a mirror with the same memory space and copy separately.
-    auto same_space_mirror = Cabana::Experimental::create_mirror_view(
+    auto same_space_mirror = Cabana::create_mirror_view(
             TEST_MEMSPACE(), aosoa );
     Cabana::deep_copy( same_space_mirror, aosoa );
-    auto host_space_mirror = Cabana::Experimental::create_mirror_view(
+    auto host_space_mirror = Cabana::create_mirror_view(
         Kokkos::HostSpace(), aosoa );
     Cabana::deep_copy( host_space_mirror, aosoa );
 
     // Create a mirror with the same memory space and copy at the same time.
-    auto same_space_copy = Cabana::Experimental::create_mirror_view_and_copy(
+    auto same_space_copy = Cabana::create_mirror_view_and_copy(
         TEST_MEMSPACE(), aosoa );
-    auto host_space_copy = Cabana::Experimental::create_mirror_view_and_copy(
+    auto host_space_copy = Cabana::create_mirror_view_and_copy(
         Kokkos::HostSpace(), aosoa );
 
     // Check the mirrors/copies.
@@ -264,7 +263,7 @@ void testAssign()
     Cabana::deep_copy( aosoa, tp );
 
     // Check the assignment
-    auto host_aosoa = Cabana::Experimental::create_mirror_view_and_copy(
+    auto host_aosoa = Cabana::create_mirror_view_and_copy(
         Kokkos::HostSpace(), aosoa );
     auto host_slice_0 = Cabana::slice<0>(host_aosoa);
     auto host_slice_1 = Cabana::slice<1>(host_aosoa);
@@ -282,7 +281,7 @@ void testAssign()
     ival = 12;
     Cabana::deep_copy( slice_0, fval );
     Cabana::deep_copy( slice_1, ival );
-    host_aosoa = Cabana::Experimental::create_mirror_view_and_copy(
+    host_aosoa = Cabana::create_mirror_view_and_copy(
         Kokkos::HostSpace(), aosoa );
     host_slice_0 = Cabana::slice<0>(host_aosoa);
     host_slice_1 = Cabana::slice<1>(host_aosoa);
