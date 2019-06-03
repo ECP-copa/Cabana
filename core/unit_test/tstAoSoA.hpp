@@ -372,6 +372,7 @@ void testTuple()
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = dval * (i+j);
         });
+    Kokkos::fence();
 
     // Assign the AoSoA data to the tuples.
     Kokkos::parallel_for(
@@ -380,6 +381,7 @@ void testTuple()
         KOKKOS_LAMBDA( const int idx ){
             tuples( idx ) = aosoa.getTuple( idx );
         });
+    Kokkos::fence();
 
     // Change the tuple data.
     fval = 2.1;
@@ -407,6 +409,7 @@ void testTuple()
                 for ( int j = 0; j < dim_2; ++j )
                     Cabana::get<3>( tuples(idx), i, j ) = dval * (i+j);
         });
+    Kokkos::fence();
 
     // Assign the tuple data back to the AoSoA.
     Kokkos::parallel_for(
@@ -415,6 +418,7 @@ void testTuple()
         KOKKOS_LAMBDA( const int idx ){
             aosoa.setTuple( idx, tuples(idx) );
         });
+    Kokkos::fence();
 
     // Check the results.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -481,6 +485,7 @@ void testAccess()
                         Cabana::get<3>( soa, a, i, j ) = dval * (i+j);
             }
         });
+    Kokkos::fence();
 
     // Check data members for proper initialization.
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
