@@ -13,7 +13,7 @@ jobs:
         - stage: canary
           env: BACKENDS="OpenMP" WERROR=ON
         - stage: performance
-          env: BACKENDS="Serial" PERFORMANCE_TESTS=ON
+          env: BACKENDS="Serial" PERFORMANCE_TESTS=ON WERROR=ON
 
 env:
   global:
