@@ -5,11 +5,13 @@ endif()
 
 # we only want to run the below if we have access to "#pragma omp simd"
 include(CheckCXXSourceCompiles)
+set(CMAKE_REQUIRED_FLAGS "-fopenmp-simd -Werror")
 check_cxx_source_compiles(
       "int main(void) {
       #pragma omp simd
       return 0;
       }" HAVE_OMP_SIMD)
+set(CMAKE_REQUIRED_FLAGS)
 
 if (NOT HAVE_OMP_SIMD)
     # No point running these tests without omp simd
