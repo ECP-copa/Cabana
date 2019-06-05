@@ -35,7 +35,7 @@ void testSortByKey()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
     using KeyViewType = Kokkos::View<int*,typename AoSoA_t::memory_space>;
@@ -43,9 +43,9 @@ void testSortByKey()
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
     // can see that it is sorted.
-    auto v0 = aosoa.slice<0>();
-    auto v1 = aosoa.slice<1>();
-    auto v2 = aosoa.slice<2>();
+    auto v0 = Cabana::slice<0>(aosoa);
+    auto v1 = Cabana::slice<1>(aosoa);
+    auto v2 = Cabana::slice<2>(aosoa);
     Kokkos::parallel_for(
         "fill",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
@@ -81,12 +81,11 @@ void testSortByKey()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
+    auto mirror = Cabana::create_mirror_view_and_copy(
             Kokkos::HostSpace(), aosoa );
-    auto v0_mirror = mirror.slice<0>();
-    auto v1_mirror = mirror.slice<1>();
-    auto v2_mirror = mirror.slice<2>();
+    auto v0_mirror = Cabana::slice<0>(mirror);
+    auto v1_mirror = Cabana::slice<1>(mirror);
+    auto v2_mirror = Cabana::slice<2>(mirror);
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -121,7 +120,7 @@ void testBinByKey()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
     using KeyViewType = Kokkos::View<int*,typename AoSoA_t::memory_space>;
@@ -129,9 +128,9 @@ void testBinByKey()
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
     // can see that it is sorted.
-    auto v0 = aosoa.slice<0>();
-    auto v1 = aosoa.slice<1>();
-    auto v2 = aosoa.slice<2>();
+    auto v0 = Cabana::slice<0>(aosoa);
+    auto v1 = Cabana::slice<1>(aosoa);
+    auto v2 = Cabana::slice<2>(aosoa);
     Kokkos::parallel_for(
         "fill",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
@@ -180,12 +179,11 @@ void testBinByKey()
         Kokkos::HostSpace(), bin_size );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
-    auto v0_mirror = mirror.slice<0>();
-    auto v1_mirror = mirror.slice<1>();
-    auto v2_mirror = mirror.slice<2>();
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = Cabana::slice<0>(mirror);
+    auto v1_mirror = Cabana::slice<1>(mirror);
+    auto v2_mirror = Cabana::slice<2>(mirror);
     EXPECT_EQ( bin_data.numBin(), num_data );
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
@@ -223,13 +221,13 @@ void testSortBySlice()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = aosoa.slice<0>();
-    auto v1 = aosoa.slice<1>();
-    auto v2 = aosoa.slice<2>();
+    auto v0 = Cabana::slice<0>(aosoa);
+    auto v1 = Cabana::slice<1>(aosoa);
+    auto v2 = Cabana::slice<2>(aosoa);
     Kokkos::parallel_for(
         "fill",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
@@ -248,7 +246,7 @@ void testSortBySlice()
     Kokkos::fence();
 
     // Sort the aosoa by the 1D member.
-    auto binning_data = Cabana::sortByKey( aosoa.slice<1>() );
+    auto binning_data = Cabana::sortByKey( Cabana::slice<1>(aosoa) );
     Cabana::permute( binning_data, aosoa );
 
     // Copy the bin data so we can check it.
@@ -265,12 +263,11 @@ void testSortBySlice()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
-    auto v0_mirror = mirror.slice<0>();
-    auto v1_mirror = mirror.slice<1>();
-    auto v2_mirror = mirror.slice<2>();
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = Cabana::slice<0>(mirror);
+    auto v1_mirror = Cabana::slice<1>(mirror);
+    auto v2_mirror = Cabana::slice<2>(mirror);
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -305,13 +302,13 @@ void testSortBySliceDataOnly()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = aosoa.slice<0>();
-    auto v1 = aosoa.slice<1>();
-    auto v2 = aosoa.slice<2>();
+    auto v0 = Cabana::slice<0>(aosoa);
+    auto v1 = Cabana::slice<1>(aosoa);
+    auto v2 = Cabana::slice<2>(aosoa);
     Kokkos::parallel_for(
         "fill",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
@@ -330,7 +327,7 @@ void testSortBySliceDataOnly()
     Kokkos::fence();
 
     // Sort the aosoa by the 1D member.
-    auto binning_data = Cabana::sortByKey( aosoa.slice<1>() );
+    auto binning_data = Cabana::sortByKey( Cabana::slice<1>(aosoa) );
 
     // Copy the bin data so we can check it.
     Kokkos::View<std::size_t*,TEST_MEMSPACE>
@@ -347,12 +344,11 @@ void testSortBySliceDataOnly()
 
     // Check that the data didn't get sorted and the permutation vector is
     // correct.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
-    auto v0_mirror = mirror.slice<0>();
-    auto v1_mirror = mirror.slice<1>();
-    auto v2_mirror = mirror.slice<2>();
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = Cabana::slice<0>(mirror);
+    auto v1_mirror = Cabana::slice<1>(mirror);
+    auto v2_mirror = Cabana::slice<2>(mirror);
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
         int reverse_index = aosoa.size() - p - 1;
@@ -387,13 +383,13 @@ void testBinBySlice()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = aosoa.slice<0>();
-    auto v1 = aosoa.slice<1>();
-    auto v2 = aosoa.slice<2>();
+    auto v0 = Cabana::slice<0>(aosoa);
+    auto v1 = Cabana::slice<1>(aosoa);
+    auto v2 = Cabana::slice<2>(aosoa);
     Kokkos::parallel_for(
         "fill",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
@@ -413,7 +409,7 @@ void testBinBySlice()
 
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort.
-    auto bin_data = Cabana::binByKey( aosoa.slice<1>(), num_data-1 );
+    auto bin_data = Cabana::binByKey( Cabana::slice<1>(aosoa), num_data-1 );
     Cabana::permute( bin_data, aosoa );
 
     // Copy the bin data so we can check it.
@@ -440,12 +436,11 @@ void testBinBySlice()
         Kokkos::HostSpace(), bin_size );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
-    auto v0_mirror = mirror.slice<0>();
-    auto v1_mirror = mirror.slice<1>();
-    auto v2_mirror = mirror.slice<2>();
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = Cabana::slice<0>(mirror);
+    auto v1_mirror = Cabana::slice<1>(mirror);
+    auto v2_mirror = Cabana::slice<2>(mirror);
     EXPECT_EQ( bin_data.numBin(), num_data );
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
@@ -483,13 +478,13 @@ void testBinBySliceDataOnly()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create the AoSoA data. Create the data in reverse order so we can see
     // that it is sorted.
-    auto v0 = aosoa.slice<0>();
-    auto v1 = aosoa.slice<1>();
-    auto v2 = aosoa.slice<2>();
+    auto v0 = Cabana::slice<0>(aosoa);
+    auto v1 = Cabana::slice<1>(aosoa);
+    auto v2 = Cabana::slice<2>(aosoa);
     Kokkos::parallel_for(
         "fill",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
@@ -510,7 +505,7 @@ void testBinBySliceDataOnly()
     // Bin the aosoa by the 1D member. Use one bin per data point to
     // effectively make this a sort. Don't actually move the particle data
     // though - just create the binning data.
-    auto bin_data = Cabana::binByKey( aosoa.slice<1>(), num_data-1 );
+    auto bin_data = Cabana::binByKey( Cabana::slice<1>(aosoa), num_data-1 );
 
     // Copy the bin data so we can check it.
     Kokkos::View<std::size_t*,TEST_MEMSPACE>
@@ -537,12 +532,11 @@ void testBinBySliceDataOnly()
 
     // Check the result of the sort. Make sure nothing moved execpt the
     // binning data.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
-    auto v0_mirror = mirror.slice<0>();
-    auto v1_mirror = mirror.slice<1>();
-    auto v2_mirror = mirror.slice<2>();
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = Cabana::slice<0>(mirror);
+    auto v1_mirror = Cabana::slice<1>(mirror);
+    auto v2_mirror = Cabana::slice<2>(mirror);
     EXPECT_EQ( bin_data.numBin(), num_data );
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
     {
@@ -580,7 +574,7 @@ void testSortByKeySlice()
 
     // Create an AoSoA.
     int num_data = 3453;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
     using KeyViewType = Kokkos::View<int*,typename AoSoA_t::memory_space>;
@@ -588,9 +582,9 @@ void testSortByKeySlice()
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
     // can see that it is sorted.
-    auto v0 = aosoa.slice<0>();
-    auto v1 = aosoa.slice<1>();
-    auto v2 = aosoa.slice<2>();
+    auto v0 = Cabana::slice<0>(aosoa);
+    auto v1 = Cabana::slice<1>(aosoa);
+    auto v2 = Cabana::slice<2>(aosoa);
     Kokkos::parallel_for(
         "fill",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
@@ -626,12 +620,11 @@ void testSortByKeySlice()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
-    auto v0_mirror = mirror.slice<0>();
-    auto v1_mirror = mirror.slice<1>();
-    auto v2_mirror = mirror.slice<2>();
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    auto v0_mirror = Cabana::slice<0>(mirror);
+    auto v1_mirror = Cabana::slice<1>(mirror);
+    auto v2_mirror = Cabana::slice<2>(mirror);
 
     // Check the result of the slice 1 sort.
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
@@ -670,12 +663,11 @@ void testSortByKeySlice()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
-    v0_mirror = mirror.slice<0>();
-    v1_mirror = mirror.slice<1>();
-    v2_mirror = mirror.slice<2>();
+    mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    v0_mirror = Cabana::slice<0>(mirror);
+    v1_mirror = Cabana::slice<1>(mirror);
+    v2_mirror = Cabana::slice<2>(mirror);
 
     // Check the result of the slice 2 sort (slice 1 already done).
     for ( std::size_t p = 0; p < aosoa.size(); ++p )
@@ -714,12 +706,11 @@ void testSortByKeySlice()
         Kokkos::HostSpace(), bin_permute );
 
     // Check the result of the sort.
-    mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
-    v0_mirror = mirror.slice<0>();
-    v1_mirror = mirror.slice<1>();
-    v2_mirror = mirror.slice<2>();
+    mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    v0_mirror = Cabana::slice<0>(mirror);
+    v1_mirror = Cabana::slice<1>(mirror);
+    v2_mirror = Cabana::slice<2>(mirror);
 
     // Check the result of the slice 3 sort (slices 1-2 already done).
     for ( std::size_t p = 0; p < aosoa.size(); ++p )

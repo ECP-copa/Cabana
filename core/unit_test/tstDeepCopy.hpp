@@ -26,14 +26,13 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
 
-    auto slice_0 = mirror.template slice<0>();
-    auto slice_1 = mirror.template slice<1>();
-    auto slice_2 = mirror.template slice<2>();
-    auto slice_3 = mirror.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(mirror);
+    auto slice_1 = Cabana::slice<1>(mirror);
+    auto slice_2 = Cabana::slice<2>(mirror);
+    auto slice_3 = Cabana::slice<3>(mirror);
 
     for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
     {
@@ -83,17 +82,17 @@ void testDeepCopy()
 
     // Create AoSoAs.
     int num_data = 357;
-    DstAoSoA_t dst_aosoa( num_data );
-    SrcAoSoA_t src_aosoa( num_data );
+    DstAoSoA_t dst_aosoa( "dst", num_data );
+    SrcAoSoA_t src_aosoa( "src", num_data );
 
     // Initialize data with the rank accessors.
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto slice_0 = src_aosoa.template slice<0>();
-    auto slice_1 = src_aosoa.template slice<1>();
-    auto slice_2 = src_aosoa.template slice<2>();
-    auto slice_3 = src_aosoa.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(src_aosoa);
+    auto slice_1 = Cabana::slice<1>(src_aosoa);
+    auto slice_2 = Cabana::slice<2>(src_aosoa);
+    auto slice_3 = Cabana::slice<3>(src_aosoa);
     Kokkos::parallel_for(
         "initialize",
         Kokkos::RangePolicy<typename SrcMemorySpace::execution_space>(0,num_data),
@@ -116,12 +115,27 @@ void testDeepCopy()
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = dval * (i+j);
         });
+    Kokkos::fence();
 
     // Deep copy
     Cabana::deep_copy( dst_aosoa, src_aosoa );
 
     // Check values.
     checkDataMembers( dst_aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+
+    // Create a second AoSoA and deep copy by slice.
+    DstAoSoA_t dst_aosoa_2( num_data );
+    auto dst_slice_0 = Cabana::slice<0>(dst_aosoa_2);
+    auto dst_slice_1 = Cabana::slice<1>(dst_aosoa_2);
+    auto dst_slice_2 = Cabana::slice<2>(dst_aosoa_2);
+    auto dst_slice_3 = Cabana::slice<3>(dst_aosoa_2);
+    Cabana::deep_copy( dst_slice_0, slice_0 );
+    Cabana::deep_copy( dst_slice_1, slice_1 );
+    Cabana::deep_copy( dst_slice_2, slice_2 );
+    Cabana::deep_copy( dst_slice_3, slice_3 );
+
+    // Check values.
+    checkDataMembers( dst_aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3 );
 }
 
 //---------------------------------------------------------------------------//
@@ -143,16 +157,16 @@ void testMirror()
 
     // Create an AoSoA in the test memory space.
     int num_data = 423;
-    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( num_data );
+    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( "label", num_data );
 
     // Initialize data.
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto slice_0 = aosoa.template slice<0>();
-    auto slice_1 = aosoa.template slice<1>();
-    auto slice_2 = aosoa.template slice<2>();
-    auto slice_3 = aosoa.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(aosoa);
+    auto slice_1 = Cabana::slice<1>(aosoa);
+    auto slice_2 = Cabana::slice<2>(aosoa);
+    auto slice_3 = Cabana::slice<3>(aosoa);
     Kokkos::parallel_for(
         "initialize",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,num_data),
@@ -175,42 +189,110 @@ void testMirror()
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = dval * (i+j);
         });
+    Kokkos::fence();
 
-    // Create a mirror with the same memory space and copy.
-    auto same_space_copy = Cabana::Experimental::create_mirror_view_and_copy(
-        TEST_MEMSPACE(), aosoa );
-    EXPECT_EQ( same_space_copy.size(), aosoa.size() );
-    bool ssc_same_ms =
-        std::is_same<TEST_MEMSPACE,
-                     decltype(same_space_copy)::memory_space>::value;
-    EXPECT_TRUE( ssc_same_ms );
-    bool ssc_same_mt =
-        std::is_same<DataTypes,
-                     decltype(same_space_copy)::member_types>::value;
-    EXPECT_TRUE( ssc_same_mt );
-
-    // Check that the same memory space case didn't allocate any memory. They
-    // should have the same pointer.
-    EXPECT_EQ( aosoa.ptr(), same_space_copy.ptr() );
-
-    // Check values.
-    checkDataMembers( same_space_copy, fval, dval, ival, dim_1, dim_2, dim_3 );
-
-    // Create a mirror with the host space and copy.
-    auto host_space_copy = Cabana::Experimental::create_mirror_view_and_copy(
+    // Create a mirror with the same memory space and copy separately.
+    auto same_space_mirror = Cabana::create_mirror_view(
+            TEST_MEMSPACE(), aosoa );
+    Cabana::deep_copy( same_space_mirror, aosoa );
+    auto host_space_mirror = Cabana::create_mirror_view(
         Kokkos::HostSpace(), aosoa );
-    EXPECT_EQ( host_space_copy.size(), aosoa.size() );
-    bool hsc_same_ms =
-        std::is_same<Kokkos::HostSpace,
-                     decltype(host_space_copy)::memory_space>::value;
-    EXPECT_TRUE( hsc_same_ms );
-    bool hsc_same_mt =
-        std::is_same<DataTypes,
-                     decltype(host_space_copy)::member_types>::value;
-    EXPECT_TRUE( hsc_same_mt );
+    Cabana::deep_copy( host_space_mirror, aosoa );
 
-    // Check values.
-    checkDataMembers( host_space_copy, fval, dval, ival, dim_1, dim_2, dim_3 );
+    // Create a mirror with the same memory space and copy at the same time.
+    auto same_space_copy = Cabana::create_mirror_view_and_copy(
+        TEST_MEMSPACE(), aosoa );
+    auto host_space_copy = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+
+    // Check the mirrors/copies.
+    using SameSpaceMirror = decltype(same_space_mirror);
+    using HostSpaceMirror = decltype(host_space_mirror);
+    auto check_mirrors =
+        [&]( SameSpaceMirror same_space_mirror,
+             HostSpaceMirror host_space_mirror ) {
+            static_assert( std::is_same<TEST_MEMSPACE,
+                           decltype(same_space_mirror)::memory_space>::value,
+                           "expected same memory spaces" );
+            static_assert( std::is_same<DataTypes,
+                           decltype(same_space_mirror)::member_types>::value,
+                           "expected same data types" );
+
+            static_assert( std::is_same<Kokkos::HostSpace,
+                           decltype(host_space_mirror)::memory_space>::value,
+                           "expected same memory spaces" );
+            static_assert( std::is_same<DataTypes,
+                           decltype(host_space_mirror)::member_types>::value,
+                           "expected same data types" );
+
+            // Check sizes.
+            EXPECT_EQ( same_space_mirror.size(), aosoa.size() );
+            EXPECT_EQ( host_space_mirror.size(), aosoa.size() );
+
+            // Check that the same memory space case didn't allocate any
+            // memory. They should have the same pointer.
+            EXPECT_EQ( aosoa.data(), same_space_mirror.data() );
+
+            // Check values.
+            checkDataMembers(
+                same_space_mirror, fval, dval, ival, dim_1, dim_2, dim_3 );
+            checkDataMembers(
+                host_space_mirror, fval, dval, ival, dim_1, dim_2, dim_3 );
+        };
+
+    check_mirrors( same_space_mirror, host_space_mirror );
+    check_mirrors( same_space_copy, host_space_copy );
+}
+
+//---------------------------------------------------------------------------//
+// Perform an assignment test.
+void testAssign()
+{
+    // Declare data types.
+    using DataTypes = Cabana::MemberTypes<float[2],int>;
+
+    // Create an AoSoA in the test memory space.
+    int num_data = 423;
+    Cabana::AoSoA<DataTypes,TEST_MEMSPACE> aosoa( "label", num_data );
+
+    // Assign every tuple in the AoSoA to the same value.
+    float fval = 3.2;
+    int ival = 1;
+    Cabana::Tuple<DataTypes> tp;
+    Cabana::get<0>(tp,0) = fval;
+    Cabana::get<0>(tp,1) = fval;
+    Cabana::get<1>(tp) = ival;
+    Cabana::deep_copy( aosoa, tp );
+
+    // Check the assignment
+    auto host_aosoa = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    auto host_slice_0 = Cabana::slice<0>(host_aosoa);
+    auto host_slice_1 = Cabana::slice<1>(host_aosoa);
+    for ( int n = 0; n < num_data; ++n )
+    {
+        EXPECT_EQ( host_slice_0(n,0), fval );
+        EXPECT_EQ( host_slice_0(n,1), fval );
+        EXPECT_EQ( host_slice_1(n), ival );
+    }
+
+    // Assign every element in slices to the same value.
+    auto slice_0 = Cabana::slice<0>(aosoa);
+    auto slice_1 = Cabana::slice<1>(aosoa);
+    fval = 5.4;
+    ival = 12;
+    Cabana::deep_copy( slice_0, fval );
+    Cabana::deep_copy( slice_1, ival );
+    host_aosoa = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
+    host_slice_0 = Cabana::slice<0>(host_aosoa);
+    host_slice_1 = Cabana::slice<1>(host_aosoa);
+    for ( int n = 0; n < num_data; ++n )
+    {
+        EXPECT_EQ( host_slice_0(n,0), fval );
+        EXPECT_EQ( host_slice_0(n,1), fval );
+        EXPECT_EQ( host_slice_1(n), ival );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -245,6 +327,12 @@ TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
 TEST( TEST_CATEGORY, mirror_test )
 {
     testMirror();
+}
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, assign_test )
+{
+    testAssign();
 }
 
 //---------------------------------------------------------------------------//

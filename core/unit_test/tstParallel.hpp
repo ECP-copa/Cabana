@@ -27,14 +27,13 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
 
-    auto slice_0 = mirror.template slice<0>();
-    auto slice_1 = mirror.template slice<1>();
-    auto slice_2 = mirror.template slice<2>();
-    auto slice_3 = mirror.template slice<3>();
+    auto slice_0 = Cabana::slice<0>(mirror);
+    auto slice_1 = Cabana::slice<1>(mirror);
+    auto slice_2 = Cabana::slice<2>(mirror);
+    auto slice_3 = Cabana::slice<3>(mirror);
 
     for ( int idx = begin; idx != end; ++idx )
     {
@@ -78,10 +77,10 @@ class AssignmentOp
                   double dval,
                   int ival )
         : _aosoa( aosoa )
-        , _slice_0( aosoa.template slice<0>() )
-        , _slice_1( aosoa.template slice<1>() )
-        , _slice_2( aosoa.template slice<2>() )
-        , _slice_3( aosoa.template slice<3>() )
+        , _slice_0( Cabana::slice<0>(aosoa) )
+        , _slice_1( Cabana::slice<1>(aosoa) )
+        , _slice_2( Cabana::slice<2>(aosoa) )
+        , _slice_3( Cabana::slice<3>(aosoa) )
         , _fval( fval )
         , _dval( dval )
         , _ival( ival )
@@ -172,7 +171,7 @@ void runTest2d()
 
     // Create an AoSoA.
     int num_data = 155;
-    AoSoA_t aosoa( num_data );
+    AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a vectorized execution policy using the begin and end of the
     // AoSoA.
@@ -183,10 +182,10 @@ void runTest2d()
 
     // Create a functor to operate on.
     using OpType = AssignmentOp<AoSoA_t,
-                                decltype(aosoa.slice<0>()),
-                                decltype(aosoa.slice<1>()),
-                                decltype(aosoa.slice<2>()),
-                                decltype(aosoa.slice<3>())>;
+                                typename AoSoA_t::member_slice_type<0>,
+                                typename AoSoA_t::member_slice_type<1>,
+                                typename AoSoA_t::member_slice_type<2>,
+                                typename AoSoA_t::member_slice_type<3>>;
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;

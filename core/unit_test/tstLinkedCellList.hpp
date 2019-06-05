@@ -26,7 +26,7 @@ void testLinkedList()
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     using size_type = typename AoSoA_t::memory_space::size_type;
     int num_p = 1000;
-    AoSoA_t aosoa( num_p );
+    AoSoA_t aosoa( "aosoa", num_p );
 
     // Set the problem so each particle lives in the center of a cell on a
     // regular grid of cell size 1 and total size 10x10x10. We are making them
@@ -36,8 +36,8 @@ void testLinkedList()
     double dx = 1.0;
     double x_min = 0.0;
     double x_max = x_min + nx * dx;
-    auto pos = aosoa.slice<Position>();
-    auto cell_id = aosoa.slice<CellId>();
+    auto pos = Cabana::slice<Position>( aosoa, "position" );
+    auto cell_id = Cabana::slice<CellId>( aosoa, "cell_id" );
     Kokkos::parallel_for(
         "initialize",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,nx),
@@ -178,7 +178,7 @@ void testLinkedList()
     // Now bin and permute all of the particles.
     {
         Cabana::LinkedCellList<typename AoSoA_t::memory_space>
-            cell_list( aosoa.slice<Position>(), grid_delta, grid_min, grid_max );
+            cell_list( Cabana::slice<Position>(aosoa), grid_delta, grid_min, grid_max );
         Cabana::permute( cell_list, aosoa );
 
         // Copy data to the host for testing.
@@ -245,7 +245,7 @@ void testLinkedListSlice()
     using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
     using size_type = typename AoSoA_t::memory_space::size_type;
     int num_p = 1000;
-    AoSoA_t aosoa( num_p );
+    AoSoA_t aosoa( "aosoa", num_p );
 
     // Set the problem so each particle lives in the center of a cell on a
     // regular grid of cell size 1 and total size 10x10x10. We are making them
@@ -255,8 +255,8 @@ void testLinkedListSlice()
     double dx = 1.0;
     double x_min = 0.0;
     double x_max = x_min + nx * dx;
-    auto pos = aosoa.slice<Position>();
-    auto cell_id = aosoa.slice<CellId>();
+    auto pos = Cabana::slice<Position>(aosoa);
+    auto cell_id = Cabana::slice<CellId>(aosoa);
     Kokkos::parallel_for(
         "initialize",
         Kokkos::RangePolicy<TEST_EXECSPACE>(0,nx),

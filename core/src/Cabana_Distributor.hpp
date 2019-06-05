@@ -33,8 +33,8 @@ namespace Cabana
   \brief Distributor is a communication plan for migrating data from one
   uniquely-owned decomposition to another uniquely owned decomposition.
 
-  \tparam MemorySpace Memory space in which the data for this class will be
-  allocated.
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel compuations will be executed.
 
   The Distributor allows data to be migrated to an entirely new
   decomposition. Only uniquely-owned decompositions are handled (i.e. each
@@ -56,8 +56,8 @@ namespace Cabana
   user must allocate their own destination data structure.
 
 */
-template<class MemorySpace>
-class Distributor : public CommunicationPlan<MemorySpace>
+template<class DeviceType>
+class Distributor : public CommunicationPlan<DeviceType>
 {
   public:
 
@@ -103,11 +103,11 @@ class Distributor : public CommunicationPlan<MemorySpace>
                  const ViewType& element_export_ranks,
                  const std::vector<int>& neighbor_ranks,
                  const int mpi_tag = 1221 )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<DeviceType>( comm )
     {
-        this->createFromExportsAndTopology(
+        auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks, mpi_tag );
-        this->createExportSteering( element_export_ranks );
+        this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
     /*!
@@ -144,10 +144,11 @@ class Distributor : public CommunicationPlan<MemorySpace>
     Distributor( MPI_Comm comm,
                  const ViewType& element_export_ranks,
                  const int mpi_tag = 1221 )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<DeviceType>( comm )
     {
-        this->createFromExportsOnly( element_export_ranks, mpi_tag );
-        this->createExportSteering( element_export_ranks );
+        auto neighbor_ids =
+            this->createFromExportsOnly( element_export_ranks, mpi_tag );
+        this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 };
 
@@ -156,12 +157,12 @@ class Distributor : public CommunicationPlan<MemorySpace>
 template<typename >
 struct is_distributor : public std::false_type {};
 
-template<typename MemorySpace>
-struct is_distributor<Distributor<MemorySpace> >
+template<typename DeviceType>
+struct is_distributor<Distributor<DeviceType> >
     : public std::true_type {};
 
-template<typename MemorySpace>
-struct is_distributor<const Distributor<MemorySpace> >
+template<typename DeviceType>
+struct is_distributor<const Distributor<DeviceType> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//
@@ -456,8 +457,8 @@ void migrate( const Distributor_t& distributor,
         throw std::runtime_error("Destination is the wrong size for migration!");
 
     // Get the number of components in the slices.
-    int num_comp = 1;
-    for ( int d = 2; d < src.rank(); ++d )
+    size_t num_comp = 1;
+    for ( size_t d = 2; d < src.rank(); ++d )
         num_comp *= src.extent(d);
 
     // Get the raw slice data.
@@ -510,11 +511,11 @@ void migrate( const Distributor_t& distributor,
             auto a_src = Slice_t::index_type::a( steering(i) );
             std::size_t src_offset = s_src*src.stride(0) + a_src;
             if ( i < num_stay )
-                for ( int n = 0; n < num_comp; ++n )
+                for ( std::size_t n = 0; n < num_comp; ++n )
                     recv_buffer( i, n ) =
                         src_data[ src_offset + n * Slice_t::vector_length ];
             else
-                for ( int n = 0; n < num_comp; ++n )
+                for ( std::size_t n = 0; n < num_comp; ++n )
                     send_buffer( i - num_stay, n ) =
                         src_data[ src_offset + n * Slice_t::vector_length ];
         };
@@ -589,7 +590,7 @@ void migrate( const Distributor_t& distributor,
             auto s = Slice_t::index_type::s( i );
             auto a = Slice_t::index_type::a( i );
             std::size_t dst_offset = s*dst.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 dst_data[ dst_offset + n * Slice_t::vector_length ] =
                     recv_buffer( i, n );
         };

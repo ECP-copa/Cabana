@@ -33,8 +33,8 @@ namespace Cabana
   \brief Halo communication plan for scattering and gathering of ghosted
   data.
 
-  \tparam MemorySpace Memory space in which the data for this class will be
-  allocated.
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel execution occurs.
 
   The halo allows for scatter and gather operations between locally-owned and
   ghosted data. All data in the Halo (e.g. export and import data) is from the
@@ -42,9 +42,9 @@ namespace Cabana
   number of exports is the number of exports in the gather and the number of
   imports is the number of imports in the gather. The reverse *SCATTER*
   operation sends the ghosted data back the the uniquely-owned decomposition
-  and resolves collisions with atomic addition. Based on input for the forward
-  communication plan (where local data will be sent) the local number of
-  ghosts is computed. Some nomenclature:
+  and resolves collisions. Based on input for the forward communication plan
+  (where local data will be sent) the local number of ghosts is computed. Some
+  nomenclature:
 
   Export - the local data we uniquely own that we will send to other ranks for
   those ranks to be used as ghosts. Export is used in the context of the
@@ -54,8 +54,8 @@ namespace Cabana
   ghost from is the unique owner of that data. Import is used in the context
   of the forward communication plan (the gather).
 */
-template<class MemorySpace>
-class Halo : public CommunicationPlan<MemorySpace>
+template<class DeviceType>
+class Halo : public CommunicationPlan<DeviceType>
 {
   public:
 
@@ -109,15 +109,16 @@ class Halo : public CommunicationPlan<MemorySpace>
           const RankViewType& element_export_ranks,
           const std::vector<int>& neighbor_ranks,
           const int mpi_tag = 1221 )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error("Export ids and ranks different sizes!");
 
-        this->createFromExportsAndTopology(
+        auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks, mpi_tag );
-        this->createExportSteering( element_export_ranks, element_export_ids );
+        this->createExportSteering(
+            neighbor_ids, element_export_ranks, element_export_ids );
     }
 
     /*!
@@ -162,14 +163,16 @@ class Halo : public CommunicationPlan<MemorySpace>
           const IdViewType& element_export_ids,
           const RankViewType& element_export_ranks,
           const int mpi_tag = 1221 )
-        : CommunicationPlan<MemorySpace>( comm )
+        : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error("Export ids and ranks different sizes!");
 
-        this->createFromExportsOnly( element_export_ranks, mpi_tag );
-        this->createExportSteering( element_export_ranks, element_export_ids );
+        auto neighbor_ids =
+            this->createFromExportsOnly( element_export_ranks, mpi_tag );
+        this->createExportSteering(
+            neighbor_ids, element_export_ranks, element_export_ids );
     }
 
     /*!
@@ -200,12 +203,12 @@ class Halo : public CommunicationPlan<MemorySpace>
 template<typename >
 struct is_halo : public std::false_type {};
 
-template<typename MemorySpace>
-struct is_halo<Halo<MemorySpace> >
+template<typename DeviceType>
+struct is_halo<Halo<DeviceType> >
     : public std::true_type {};
 
-template<typename MemorySpace>
-struct is_halo<const Halo<MemorySpace> >
+template<typename DeviceType>
+struct is_halo<const Halo<DeviceType> >
     : public std::true_type {};
 
 //---------------------------------------------------------------------------//
@@ -387,8 +390,8 @@ void gather( const Halo_t& halo,
         throw std::runtime_error("Slice is the wrong size for scatter!");
 
     // Get the number of components in the slice.
-    int num_comp = 1;
-    for ( int d = 2; d < slice.rank(); ++d )
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
         num_comp *= slice.extent(d);
 
     // Get the raw slice data.
@@ -413,7 +416,7 @@ void gather( const Halo_t& halo,
             auto s = Slice_t::index_type::s( steering(i) );
             auto a = Slice_t::index_type::a( steering(i) );
             std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 send_buffer( i, n ) =
                     slice_data[ slice_offset + n * Slice_t::vector_length ];
         };
@@ -489,7 +492,7 @@ void gather( const Halo_t& halo,
             auto s = Slice_t::index_type::s( ghost_idx );
             auto a = Slice_t::index_type::a( ghost_idx );
             std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 slice_data[ slice_offset + Slice_t::vector_length * n ] =
                     recv_buffer( i, n );
         };
@@ -546,12 +549,16 @@ void scatter( const Halo_t& halo,
         throw std::runtime_error("Slice is the wrong size for scatter!");
 
     // Get the number of components in the slice.
-    int num_comp = 1;
-    for ( int d = 2; d < slice.rank(); ++d )
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
         num_comp *= slice.extent(d);
 
-    // Get the raw slice data.
-    auto slice_data = slice.data();
+    // Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the
+    // components of each slice element.
+    Kokkos::View<typename Slice_t::value_type*,
+                 typename Slice_t::memory_space,
+                 Kokkos::MemoryTraits<Kokkos::Unmanaged> >
+        slice_data( slice.data(), slice.numSoA() * slice.stride(0) );
 
     // Allocate a send buffer. Note this one is layout right so the components
     // are consecutive.
@@ -571,9 +578,9 @@ void scatter( const Halo_t& halo,
             auto s = Slice_t::index_type::s( ghost_idx );
             auto a = Slice_t::index_type::a( ghost_idx );
             std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 send_buffer( i, n ) =
-                    slice_data[ slice_offset + Slice_t::vector_length * n ];
+                    slice_data( slice_offset + Slice_t::vector_length * n );
         };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
         extract_send_buffer_policy( 0, halo.totalNumImport() );
@@ -648,9 +655,9 @@ void scatter( const Halo_t& halo,
             auto s = Slice_t::index_type::s( steering(i) );
             auto a = Slice_t::index_type::a( steering(i) );
             std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( int n = 0; n < num_comp; ++n )
+            for ( std::size_t n = 0; n < num_comp; ++n )
                 Kokkos::atomic_add(
-                    slice_data + slice_offset + Slice_t::vector_length * n,
+                    &slice_data(slice_offset + Slice_t::vector_length * n),
                     recv_buffer(i,n) );
         };
     Kokkos::RangePolicy<typename Halo_t::execution_space>

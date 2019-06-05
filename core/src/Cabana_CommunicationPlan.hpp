@@ -12,7 +12,10 @@
 #ifndef CABANA_COMMUNICATIONPLAN_HPP
 #define CABANA_COMMUNICATIONPLAN_HPP
 
+#include <CabanaCore_config.hpp>
+
 #include <Kokkos_Core.hpp>
+#include <Kokkos_ScatterView.hpp>
 
 #include <mpi.h>
 
@@ -25,14 +28,222 @@
 
 namespace Cabana
 {
+namespace Impl
+{
+//---------------------------------------------------------------------------//
+// Count sends and create steering algorithm tags.
+struct CountSendsAndCreateSteeringDuplicated {};
+struct CountSendsAndCreateSteeringAtomic {};
+
+//---------------------------------------------------------------------------//
+// Count sends and create steering algorithm selector.
+template<class ExecutionSpace>
+struct CountSendsAndCreateSteeringAlgorithm;
+
+// CUDA uses atomics.
+#ifdef Cabana_ENABLE_Cuda
+template<>
+struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Cuda>
+{
+    using type = CountSendsAndCreateSteeringAtomic;
+};
+#endif // end Cabana_ENABLE_Cuda
+
+// The default is to use duplication.
+template<class ExecutionSpace>
+struct CountSendsAndCreateSteeringAlgorithm
+{
+    using type = CountSendsAndCreateSteeringDuplicated;
+};
+
+//---------------------------------------------------------------------------//
+// Count sends and generate the steering vector. Atomic version.
+template<class ExportRankView>
+auto countSendsAndCreateSteering(
+    const ExportRankView element_export_ranks,
+    const int comm_size,
+    CountSendsAndCreateSteeringAtomic )
+    -> std::pair<Kokkos::View<int*,
+                              typename ExportRankView::device_type>,
+                 Kokkos::View<typename ExportRankView::size_type*,
+                              typename ExportRankView::device_type> >
+{
+    using device_type = typename ExportRankView::device_type;
+    using execution_space = typename ExportRankView::execution_space;
+    using size_type = typename ExportRankView::size_type;
+
+    // Create views.
+    Kokkos::View<int*,device_type> neighbor_counts(
+        "neighbor_counts", comm_size );
+    Kokkos::View<size_type*,device_type> neighbor_ids(
+        Kokkos::ViewAllocateWithoutInitializing("neighbor_ids"),
+        element_export_ranks.extent(0) );
+
+    // Count the sends and create the steering vector.
+    Kokkos::parallel_for(
+        "Cabana::CommunicationPlan::countSendsAndCreateSteering",
+        Kokkos::RangePolicy<execution_space>(0,element_export_ranks.extent(0)),
+        KOKKOS_LAMBDA( const size_type i ){
+            if ( element_export_ranks(i) >= 0 )
+                neighbor_ids(i) = Kokkos::atomic_fetch_add(
+                    &neighbor_counts(element_export_ranks(i)), 1 );
+        } );
+    Kokkos::fence();
+
+    // Return the counts and ids.
+    return std::make_pair( neighbor_counts, neighbor_ids );
+}
+//---------------------------------------------------------------------------//
+// Count sends and generate the steering vector. Duplicated version.
+template<class ExportRankView>
+auto countSendsAndCreateSteering(
+    const ExportRankView element_export_ranks,
+    const int comm_size,
+    CountSendsAndCreateSteeringDuplicated )
+    -> std::pair<Kokkos::View<int*,
+                              typename ExportRankView::device_type>,
+                 Kokkos::View<typename ExportRankView::size_type*,
+                              typename ExportRankView::device_type> >
+{
+    using device_type = typename ExportRankView::device_type;
+    using execution_space = typename ExportRankView::execution_space;
+    using size_type = typename ExportRankView::size_type;
+
+    // Create a unique thread token.
+    Kokkos::Experimental::UniqueToken<
+        execution_space,Kokkos::Experimental::UniqueTokenScope::Global>
+        unique_token;
+
+    // Create views.
+    Kokkos::View<int*,device_type> neighbor_counts(
+        Kokkos::ViewAllocateWithoutInitializing("neighbor_counts"),
+        comm_size );
+    Kokkos::View<size_type*,device_type> neighbor_ids(
+        Kokkos::ViewAllocateWithoutInitializing("neighbor_ids"),
+        element_export_ranks.extent(0) );
+    Kokkos::View<int**,device_type> neighbor_counts_dup(
+        "neighbor_counts", unique_token.size(), comm_size );
+    Kokkos::View<size_type**,device_type> neighbor_ids_dup(
+        "neighbor_ids", unique_token.size(),
+        element_export_ranks.extent(0) );
+
+    // Compute initial duplicated sends and steering.
+    Kokkos::parallel_for(
+        "Cabana::CommunicationPlan::intialCount",
+        Kokkos::RangePolicy<execution_space>(0,element_export_ranks.extent(0)),
+        KOKKOS_LAMBDA( const size_type i ){
+            if ( element_export_ranks(i) >= 0 )
+            {
+                // Get the thread id.
+                auto thread_id = unique_token.acquire();
+
+                // Do the duplicated fetch-add. If this is a valid element id
+                // increment the send count for this rank. Add the incremented
+                // count as the thread-local neighbor id. This is too big by
+                // one (because we use the prefix increment operator) but we
+                // want a non-zero value so we can later find which thread
+                // this element was located on because we are always
+                // guaranteed a non-zero value. We will subtract this value
+                // later.
+                neighbor_ids_dup(thread_id,i) =
+                    ++neighbor_counts_dup( thread_id, element_export_ranks(i) );
+
+                // Release the thread id.
+                unique_token.release( thread_id );
+            }
+        } );
+    Kokkos::fence();
+
+    // Team policy
+    using team_policy =
+        Kokkos::TeamPolicy<execution_space,Kokkos::Schedule<Kokkos::Dynamic> >;
+    using index_type = typename team_policy::index_type;
+
+    // Compute the send counts for each neighbor rank by reducing across
+    // the thread duplicates.
+    Kokkos::parallel_for(
+        "Cabana::CommunicationPlan::finalCount",
+        team_policy(neighbor_counts.extent(0),Kokkos::AUTO),
+        KOKKOS_LAMBDA( const typename team_policy::member_type& team ){
+            // Get the element id.
+            auto i = team.league_rank();
+
+            // Add the thread results.
+            int thread_counts = 0;
+            Kokkos::parallel_reduce(
+                Kokkos::TeamThreadRange(team,neighbor_counts_dup.extent(0)),
+                [&]( const index_type thread_id, int& result ){
+                    result += neighbor_counts_dup( thread_id, i );
+                },
+                thread_counts );
+            neighbor_counts(i) = thread_counts;
+        });
+    Kokkos::fence();
+
+    // Compute the location of each export element in the send buffer of
+    // its destination rank.
+    Kokkos::parallel_for(
+        "Cabana::CommunicationPlan::createSteering",
+        team_policy(element_export_ranks.extent(0),Kokkos::AUTO),
+        KOKKOS_LAMBDA( const typename team_policy::member_type& team ){
+            // Get the element id.
+            auto i = team.league_rank();
+
+            // Only operate on valid elements
+            if ( element_export_ranks(i) >= 0 )
+            {
+                // Compute the thread id in which we located the element
+                // during the count phase. Only the thread in which we
+                // located the element will contribute to the reduction.
+                index_type dup_thread = 0;
+                Kokkos::parallel_reduce(
+                    Kokkos::TeamThreadRange(team,neighbor_ids_dup.extent(0)),
+                    [&]( const index_type thread_id, index_type& result ){
+                        if ( neighbor_ids_dup(thread_id,i) > 0 )
+                            result += thread_id;
+                    },
+                    dup_thread );
+
+                // Compute the offset of this element in the steering
+                // vector for its destination rank. Loop through the
+                // threads up to the thread that found this element in the
+                // count stage. All thread counts prior to that thread
+                // will contribute to the offset.
+                size_type thread_offset = 0;
+                Kokkos::parallel_reduce(
+                    Kokkos::TeamThreadRange(team,dup_thread),
+                    [&]( const index_type thread_id, size_type& result ){
+                        result +=
+                            neighbor_counts_dup(
+                                thread_id,element_export_ranks(i));
+                    },
+                    thread_offset );
+
+                // Add the thread-local value to the offset where we subtract
+                // the 1 that we added artificially when we were first
+                // counting.
+                neighbor_ids(i) = thread_offset +
+                                  neighbor_ids_dup(dup_thread,i) - 1;
+            }
+        });
+    Kokkos::fence();
+
+    // Return the counts and ids.
+    return std::make_pair( neighbor_counts, neighbor_ids );
+}
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Impl
+
 //---------------------------------------------------------------------------//
 /*!
   \class CommunicationPlan
 
   \brief Communication plan base class.
 
-  \tparam MemorySpace Memory space in which the data for this class will be
-  allocated.
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel execution will occur.
 
   The communication plan computes how to redistribute elements in a parallel
   data structure using MPI. Given a list of data elements on the local MPI
@@ -53,16 +264,22 @@ namespace Cabana
   means is that neighbor 0 is the local rank and the data for that rank that
   is being exported will appear first in the steering vector.
 */
-template<class MemorySpace>
+template<class DeviceType>
 class CommunicationPlan
 {
   public:
 
-    // Cabana memory space.
-    using memory_space = MemorySpace;
+    // Device type.
+    using device_type = DeviceType;
 
-    // Kokkos execution space.
-    using execution_space = typename memory_space::execution_space;
+    // Memory space.
+    using memory_space = typename device_type::memory_space;
+
+    // Execution space.
+    using execution_space = typename device_type::execution_space;
+
+    // Size type.
+    using size_type = typename memory_space::size_type;
 
     /*!
       \brief Constructor.
@@ -166,7 +383,7 @@ class CommunicationPlan
       (i.e. all elements going to neighbor with local id 0 first, then all
       elements going to neighbor with local id 1, etc.).
     */
-    Kokkos::View<std::size_t*,memory_space> getExportSteering() const
+    Kokkos::View<std::size_t*,device_type> getExportSteering() const
     { return _export_steering; }
 
     // The functions in the public block below would normally be protected but
@@ -199,6 +416,9 @@ class CommunicationPlan
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
 
+      \return The location of each export element in the send buffer for its
+      given neighbor.
+
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
 
@@ -210,10 +430,10 @@ class CommunicationPlan
       will be efficiently migrated.
     */
     template<class ViewType>
-    void createFromExportsAndTopology(
-        const ViewType& element_export_ranks,
-        const std::vector<int>& neighbor_ranks,
-        const int mpi_tag = 1221 )
+    Kokkos::View<size_type*,device_type>
+    createFromExportsAndTopology( const ViewType& element_export_ranks,
+                                  const std::vector<int>& neighbor_ranks,
+                                  const int mpi_tag = 1221 )
     {
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
@@ -221,6 +441,10 @@ class CommunicationPlan
         // Store the neighbors.
         _neighbors = neighbor_ranks;
         int num_n = _neighbors.size();
+
+        // Get the size of this communicator.
+        int comm_size = -1;
+        MPI_Comm_size( _comm, &comm_size );
 
         // Get the MPI rank we are currently on.
         int my_rank = -1;
@@ -239,33 +463,21 @@ class CommunicationPlan
         _num_export.assign( num_n, 0 );
         _num_import.assign( num_n, 0 );
 
-        // Copy the topology to the device.
-        Kokkos::View<int*,Kokkos::HostSpace,Kokkos::MemoryUnmanaged>
-            topology_host( _neighbors.data(), num_n );
-        auto topology = Kokkos::create_mirror_view_and_copy(
-            memory_space(), topology_host );
+        // Count the number of sends this rank will do to other ranks. Keep
+        // track of which slot we get in our neighbor's send buffer.
+        auto counts_and_ids =
+            Impl::countSendsAndCreateSteering(
+                element_export_ranks, comm_size,
+                typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                execution_space>::type() );
 
-        // Count the number of sends to each neighbor.
-        Kokkos::View<std::size_t*,Kokkos::HostSpace,Kokkos::MemoryUnmanaged>
-            num_export_host( _num_export.data(), num_n );
-        auto export_counts = Kokkos::create_mirror_view_and_copy(
-                memory_space(), num_export_host );
-        auto count_neighbor_func =
-            KOKKOS_LAMBDA( const int i )
-            {
-                for ( int n = 0; n < num_n; ++n )
-                    if ( topology(n) == element_export_ranks(i) )
-                        Kokkos::atomic_increment( &export_counts(n) );
-            };
-        Kokkos::RangePolicy<execution_space> count_neighbor_policy(
-            0, _num_export_element );
-        Kokkos::parallel_for( "Cabana::CommunicationPlan::count_neighbors",
-                              count_neighbor_policy,
-                              count_neighbor_func );
-        Kokkos::fence();
+        // Copy the counts to the host.
+        auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), counts_and_ids.first );
 
-        // Copy counts back to the host.
-        Kokkos::deep_copy( num_export_host, export_counts );
+        // Get the export counts.
+        for ( int n = 0; n < num_n; ++n )
+            _num_export[n] = neighbor_counts_host( _neighbors[n] );
 
         // Post receives for the number of imports we will get.
         std::vector<MPI_Request> requests;
@@ -309,6 +521,9 @@ class CommunicationPlan
 
         // Barrier before continuing to ensure synchronization.
         MPI_Barrier( _comm );
+
+        // Return the neighbor ids.
+        return counts_and_ids.second;
     }
 
     /*!
@@ -329,6 +544,9 @@ class CommunicationPlan
       \param mpi_tag The MPI tag to use for non-blocking communication in the
       communication plan generation.
 
+      \return The location of each export element in the send buffer for its
+      given neighbor.
+
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
 
@@ -340,8 +558,9 @@ class CommunicationPlan
       will be efficiently migrated.
     */
     template<class ViewType>
-    void createFromExportsOnly( const ViewType& element_export_ranks,
-                                const int mpi_tag = 1221 )
+    Kokkos::View<size_type*,device_type>
+    createFromExportsOnly( const ViewType& element_export_ranks,
+                           const int mpi_tag = 1221 )
     {
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
@@ -354,26 +573,17 @@ class CommunicationPlan
         int my_rank = -1;
         MPI_Comm_rank( _comm, &my_rank );
 
-        // Count the number of sends this rank will do to other ranks.
-        Kokkos::View<int*,memory_space> neighbor_counts(
-            "neighbor_counts", comm_size );
-        auto count_sends_func =
-            KOKKOS_LAMBDA( const int i )
-            {
-                if ( element_export_ranks(i) >= 0 )
-                    Kokkos::atomic_increment(
-                        &neighbor_counts(element_export_ranks(i)) );
-            };
-        Kokkos::RangePolicy<execution_space> count_sends_policy(
-            0, _num_export_element );
-        Kokkos::parallel_for( "Cabana::CommunicationPlan::count_sends",
-                              count_sends_policy,
-                              count_sends_func );
-        Kokkos::fence();
+        // Count the number of sends this rank will do to other ranks. Keep
+        // track of which slot we get in our neighbor's send buffer.
+        auto counts_and_ids =
+            Impl::countSendsAndCreateSteering(
+                element_export_ranks, comm_size,
+                typename Impl::CountSendsAndCreateSteeringAlgorithm<
+                execution_space>::type() );
 
         // Copy the counts to the host.
         auto neighbor_counts_host = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), neighbor_counts );
+            Kokkos::HostSpace(), counts_and_ids.first );
 
         // Extract the export ranks and number of exports and then flag the
         // send ranks.
@@ -407,24 +617,14 @@ class CommunicationPlan
             }
 
         // Determine how many total import ranks each neighbor has.
-        std::vector<int> total_receives( comm_size );
-        int root_rank = 0;
-        MPI_Reduce( neighbor_counts_host.data(),
-                    total_receives.data(),
-                    comm_size,
-                    MPI_INT,
-                    MPI_SUM,
-                    root_rank,
-                    _comm );
         int num_import_rank = -1;
-        MPI_Scatter( total_receives.data(),
-                     1,
-                     MPI_INT,
-                     &num_import_rank,
-                     1,
-                     MPI_INT,
-                     root_rank,
-                     _comm );
+        std::vector<int> recv_counts( comm_size, 1 );
+        MPI_Reduce_scatter( neighbor_counts_host.data(),
+                            &num_import_rank,
+                            recv_counts.data(),
+                            MPI_INT,
+                            MPI_SUM,
+                            _comm );
         if ( self_send ) --num_import_rank;
 
         // Post the expected number of receives and indicate we might get them
@@ -489,6 +689,9 @@ class CommunicationPlan
 
         // Barrier before continuing to ensure synchronization.
         MPI_Barrier( _comm );
+
+        // Return the neighbor ids.
+        return counts_and_ids.second;
     }
 
     /*!
@@ -498,16 +701,20 @@ class CommunicationPlan
       location in the send buffer of the communcation plan. Ordered such that
       if a rank sends to itself then those values come first.
 
+      \param neighbor_ids The id of each element in the neighbor send buffers.
+
       \param element_export_ranks The ranks to which we are exporting each
       element. We use this to build the steering vector. The input is expected
       to be a Kokkos view or Cabana slice in the same memory space as the
       communication plan.
     */
-    template<class ViewType>
-    void createExportSteering( const ViewType& element_export_ranks )
+    template<class PackViewType, class RankViewType>
+    void createExportSteering( const PackViewType& neighbor_ids,
+                               const RankViewType& element_export_ranks )
     {
         // passing in element_export_ranks here as a dummy argument.
-        createSteering( true, element_export_ranks, element_export_ranks );
+        createSteering(
+            true, neighbor_ids, element_export_ranks, element_export_ranks );
     }
 
     /*!
@@ -516,6 +723,8 @@ class CommunicationPlan
       Creates an array describing which export element ids are moved to which
       location in the contiguous send buffer of the communcation plan. Ordered
       such that if a rank sends to itself then those values come first.
+
+      \param neighbor_ids The id of each element in the neighbor send buffers.
 
       \param element_export_ranks The ranks to which we are exporting each
       element. We use this to build the steering vector. The input is expected
@@ -527,18 +736,21 @@ class CommunicationPlan
       same length if defined. The input is expected to be a Kokkos view or
       Cabana slice in the same memory space as the communication plan.
     */
-    template<class RankViewType, class IdViewType>
+    template<class PackViewType, class RankViewType, class IdViewType>
     void createExportSteering(
+        const PackViewType& neighbor_ids,
         const RankViewType& element_export_ranks,
         const IdViewType& element_export_ids )
     {
-        createSteering( false, element_export_ranks, element_export_ids );
+        createSteering(
+            false, neighbor_ids, element_export_ranks, element_export_ids );
     }
 
     // Create the export steering vector.
-    template<class RankViewType,class IdViewType>
+    template<class PackViewType, class RankViewType,class IdViewType>
     void createSteering(
         const bool use_iota,
+        const PackViewType& neighbor_ids,
         const RankViewType& element_export_ranks,
         const IdViewType& element_export_ids )
     {
@@ -546,49 +758,42 @@ class CommunicationPlan
              (element_export_ids.size() != element_export_ranks.size()) )
             throw std::runtime_error("Export ids and ranks different sizes!");
 
+        // Get the size of this communicator.
+        int comm_size = -1;
+        MPI_Comm_size( _comm, &comm_size );
+
         // Calculate the steering offsets via exclusive prefix sum for the
         // exports.
         int num_n = _neighbors.size();
-        Kokkos::View<std::size_t*,Kokkos::HostSpace>
-            offsets_host( "offsets", num_n );
+        std::vector<std::size_t> offsets( num_n, 0.0 );
         for ( int n = 1; n < num_n; ++n )
-            offsets_host(n) = offsets_host(n-1) + _num_export[n-1];
+            offsets[n] = offsets[n-1] + _num_export[n-1];
 
-        // Copy the offsets to the device.
-        auto offsets = Kokkos::create_mirror_view_and_copy(
-            memory_space(), offsets_host );
-
-        // Copy the neighbors to the device.
-        Kokkos::View<int*,Kokkos::HostSpace,Kokkos::MemoryUnmanaged>
-            neighbor_ranks_host( _neighbors.data(), num_n );
-        auto neighbor_ranks = Kokkos::create_mirror_view_and_copy(
-            memory_space(), neighbor_ranks_host );
+        // Map the offsets to the device.
+        Kokkos::View<std::size_t*,Kokkos::HostSpace> rank_offsets_host(
+            Kokkos::ViewAllocateWithoutInitializing("rank_map"), comm_size );
+        for ( int n = 0; n < num_n; ++n )
+            rank_offsets_host( _neighbors[n] ) = offsets[n];
+        auto rank_offsets = Kokkos::create_mirror_view_and_copy(
+            memory_space(), rank_offsets_host );
 
         // Create the export steering vector for writing local elements into
         // the send buffer. Note we create a local, shallow copy - this is a
-        // CUDA workaround.
+        // CUDA workaround for handling class private data.
         _export_steering = Kokkos::View<std::size_t*,memory_space>(
             Kokkos::ViewAllocateWithoutInitializing("export_steering"),
             _total_num_export );
         auto steer_vec = _export_steering;
         Kokkos::View<std::size_t*,memory_space> counts( "counts", num_n );
-        auto steer_func =
-            KOKKOS_LAMBDA( const int i )
-            {
-                for ( int n = 0; n < num_n; ++n )
-                    if ( element_export_ranks(i) == neighbor_ranks(n) )
-                    {
-                        auto c = Kokkos::atomic_fetch_add( &counts(n), 1 );
-                        steer_vec( offsets(n) + c ) =
-                            (use_iota) ? i : element_export_ids(i);
-                        break;
-                    }
-            };
-        Kokkos::RangePolicy<execution_space> steer_policy(
-            0, element_export_ranks.size() );
-        Kokkos::parallel_for( "Cabana::createSteering",
-                              steer_policy,
-                              steer_func );
+        Kokkos::parallel_for(
+            "Cabana::createSteering",
+            Kokkos::RangePolicy<execution_space>(0,_num_export_element),
+            KOKKOS_LAMBDA( const int i ){
+                if ( element_export_ranks(i) >= 0 )
+                    steer_vec( rank_offsets( element_export_ranks(i) ) +
+                               neighbor_ids(i) )  =
+                        (use_iota) ? i : element_export_ids(i);
+            });
         Kokkos::fence();
     }
 
@@ -601,7 +806,7 @@ class CommunicationPlan
     std::vector<std::size_t> _num_export;
     std::vector<std::size_t> _num_import;
     std::size_t _num_export_element;
-    Kokkos::View<std::size_t*,memory_space> _export_steering;
+    Kokkos::View<std::size_t*,device_type> _export_steering;
 };
 
 //---------------------------------------------------------------------------//

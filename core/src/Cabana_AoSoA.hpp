@@ -17,6 +17,7 @@
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
 #include <Cabana_SoA.hpp>
+#include <Cabana_Macros.hpp>
 #include <impl/Cabana_Index.hpp>
 #include <impl/Cabana_PerformanceTraits.hpp>
 
@@ -29,6 +30,49 @@
 
 namespace Cabana
 {
+//---------------------------------------------------------------------------//
+// AoSoA forward declaration.
+template<class DataTypes,
+         class DeviceType,
+         int VectorLength,
+         class MemoryTraits>
+class AoSoA;
+
+//---------------------------------------------------------------------------//
+// Static type checker.
+template<class >
+struct is_aosoa : public std::false_type {};
+
+template<class DataTypes,
+         class DeviceType,
+         int VectorLength,
+         class MemoryTraits>
+struct is_aosoa<AoSoA<DataTypes,DeviceType,VectorLength,MemoryTraits> >
+    : public std::true_type {};
+
+template<class DataTypes,
+         class DeviceType,
+         int VectorLength,
+         class MemoryTraits>
+struct is_aosoa<const AoSoA<DataTypes,DeviceType,VectorLength,MemoryTraits> >
+    : public std::true_type {};
+
+//---------------------------------------------------------------------------//
+// Slice template helper.
+template<std::size_t M, class AoSoA_t>
+typename AoSoA_t::template member_slice_type<M>
+slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
+{
+    static_assert(
+        0 == sizeof(typename AoSoA_t::soa_type) %
+        sizeof(typename AoSoA_t::template member_value_type<M>),
+        "Slice stride cannot be calculated for misaligned memory!" );
+
+    return typename AoSoA_t::template member_slice_type<M>(
+        Impl::soaMemberPtr<M>(aosoa.data()),
+        aosoa.size(), aosoa.numSoA(), slice_label );
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \class AoSoA
@@ -49,40 +93,57 @@ namespace Cabana
   of the same type together to achieve the smallest possible memory footprint
   based on compiler-generated padding.
 
-  \tparam MemorySpace (required) The memory space.
+  \tparam DeviceType (required) The device type.
 
   \tparam VectorLength (optional) The vector length within the structs of
   the AoSoA. If not specified, this defaults to the preferred layout for the
-  <tt>MemorySpace</tt>.
+  <tt>DeviceType</tt>.
+
+  \tparam MemoryTraits (optional) Memory traits for the AoSoA data. Can be
+  used to indicate managed memory, unmanaged memory, etc.
  */
 template<class DataTypes,
-         class MemorySpace,
+         class DeviceType,
          int VectorLength = Impl::PerformanceTraits<
-             typename MemorySpace::execution_space>::vector_length,
-         typename std::enable_if<
-             (is_member_types<DataTypes>::value &&
-              Impl::IsVectorLengthValid<VectorLength>::value),int>::type = 0>
+             typename DeviceType::execution_space>::vector_length,
+         class MemoryTraits = Kokkos::MemoryManaged>
 class AoSoA
 {
   public:
 
     // AoSoA type.
-    using aosoa_type = AoSoA<DataTypes,MemorySpace,VectorLength>;
+    using aosoa_type = AoSoA<DataTypes,DeviceType,VectorLength,MemoryTraits>;
 
     // Member data types.
+    static_assert( is_member_types<DataTypes>::value,
+                   "AoSoA data types must be member types" );
     using member_types = DataTypes;
 
+    // Device type.
+    using device_type = DeviceType;
+
     // Memory space.
-    using memory_space = MemorySpace;
+    using memory_space = typename device_type::memory_space;
+
+    // Execution space.
+    using execution_space = typename device_type::execution_space;
 
     // Vector length (size of the arrays held by the structs).
+    static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
+                   "Vector length must be valid" );
     static constexpr int vector_length = VectorLength;
+
+    // Memory traits type.
+    using memory_traits = MemoryTraits;
+
+    // Size type.
+    using size_type = typename memory_space::size_type;
 
     // SoA type.
     using soa_type = SoA<member_types,vector_length>;
 
     // Managed data view.
-    using soa_view = Kokkos::View<soa_type*,memory_space>;
+    using soa_view = Kokkos::View<soa_type*,device_type,memory_traits>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
@@ -116,7 +177,7 @@ class AoSoA
     template<std::size_t M>
     using member_slice_type =
         Slice<member_data_type<M>,
-              memory_space,
+              device_type,
               DefaultAccessMemory,
               vector_length,
               sizeof(soa_type) / sizeof(member_value_type<M>)>;
@@ -126,26 +187,85 @@ class AoSoA
     /*!
       \brief Default constructor.
 
+      \param label An optional label for the data structure.
+
       The container size is zero and no memory is allocated.
     */
-    AoSoA()
+    AoSoA( const std::string& label = "" )
         : _size( 0 )
         , _capacity( 0 )
         , _num_soa( 0 )
+        , _data( label )
     {}
 
     /*!
       \brief Allocate a container with n tuples.
 
       \param n The number of tuples in the container.
+
+      Note: this function has been deprecated in favor of the constructor that
+      uses a label as this is more consistent with the construction of a
+      Kokkos View.
     */
-    explicit AoSoA( const int n )
+    CABANA_DEPRECATED
+    explicit AoSoA( const size_type n )
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
     {
+        static_assert(
+            !memory_traits::Unmanaged,
+            "Construction by allocation cannot use unmanaged memory" );
         resize( _size );
     }
+
+    /*!
+      \brief Allocate a container with n tuples.
+
+      \param label A label for the data structure.
+
+      \param n The number of tuples in the container.
+    */
+    AoSoA( const std::string label, const size_type n )
+        : _size( n )
+        , _capacity( 0 )
+        , _num_soa( 0 )
+        , _data( label )
+    {
+        resize( _size );
+    }
+
+    /*!
+      \brief Create an unmanaged AoSoA with user-provided memory.
+
+      \param ptr Pointer to user-allocated AoSoA data.
+
+      \param num_soa The number of SoAs the user has allocated.
+
+      \param n The number of tuples in the container.
+    */
+    AoSoA( soa_type* ptr,
+           const size_type num_soa,
+           const size_type n )
+        : _size( n )
+        , _capacity( num_soa * vector_length )
+        , _num_soa( num_soa )
+        , _data( ptr, num_soa )
+    {
+        static_assert( memory_traits::Unmanaged,
+                       "Pointer construction requires unmanaged memory" );
+    }
+
+    /*!
+      \brief Returns the data structure label.
+
+      \return A string identifying the data structure.
+
+      This label will be assigned to the underlying Kokkos view managing the
+      data of this class and can be used for debugging and profiling purposes.
+    */
+    std::string label() const
+    { return _data.label(); }
 
     /*!
       \brief Returns the number of tuples in the container.
@@ -156,7 +276,7 @@ class AoSoA
       necessarily equal to its storage capacity.
     */
     KOKKOS_FUNCTION
-    std::size_t size() const { return _size; }
+    size_type size() const { return _size; }
 
     /*!
       \brief Returns the size of the storage space currently allocated for the
@@ -176,7 +296,7 @@ class AoSoA
       reserve.
     */
     KOKKOS_FUNCTION
-    std::size_t capacity() const { return _capacity; }
+    size_type capacity() const { return _capacity; }
 
     /*!
       \brief Resizes the container so that it contains n tuples.
@@ -193,8 +313,11 @@ class AoSoA
       Notice that this function changes the actual content of the container by
       inserting or erasing tuples from it.
     */
-    void resize( const std::size_t n )
+    void resize( const size_type n )
     {
+        static_assert( !memory_traits::Unmanaged,
+                       "Cannot resize unmanaged memory" );
+
         // Reserve memory if needed.
         reserve( n );
 
@@ -219,13 +342,16 @@ class AoSoA
       This function has no effect on the container size and cannot alter its
       tuples.
     */
-    void reserve( const std::size_t n )
+    void reserve( const size_type n )
     {
+        static_assert( !memory_traits::Unmanaged,
+                       "Cannot reserve unmanaged memory" );
+
         // If we aren't asking for more memory then we have nothing to do.
         if ( n <= _capacity ) return;
 
         // Figure out the new capacity.
-        std::size_t num_soa_alloc = std::floor( n / vector_length );
+        size_type num_soa_alloc = std::floor( n / vector_length );
         if ( 0 < n % vector_length ) ++num_soa_alloc;
 
         // If we aren't asking for any more SoA objects then we still have
@@ -245,7 +371,7 @@ class AoSoA
       \return The number of structs-of-arrays in the container.
     */
     KOKKOS_INLINE_FUNCTION
-    std::size_t numSoA() const { return _num_soa; }
+    size_type numSoA() const { return _num_soa; }
 
     /*!
       \brief Get the size of the data array at a given struct member index.
@@ -254,12 +380,10 @@ class AoSoA
 
       \return The size of the array at the given struct index.
     */
-    template<typename S>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<std::is_integral<S>::value,int>::type
-    arraySize( const S& s ) const
+    size_type arraySize( const size_type s ) const
     {
-        return ( (std::size_t) s < _num_soa - 1 )
+        return ( (size_type) s < _num_soa - 1 )
             ? vector_length : ( _size % vector_length );
     }
 
@@ -270,10 +394,8 @@ class AoSoA
 
       \return The SoA reference at the given index.
     */
-    template<typename S>
     KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<std::is_integral<S>::value,soa_type&>::type
-    access( const S& s ) const
+    soa_type& access( const size_type s ) const
     { return _data(s); }
 
     /*!
@@ -283,10 +405,8 @@ class AoSoA
 
       \return A tuple containing a deep copy of the data at the given index.
     */
-    template<typename I>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<std::is_integral<I>::value,tuple_type>::type
-    getTuple( const I& i ) const
+    tuple_type getTuple( const size_type i ) const
     {
         tuple_type tpl;
         Impl::tupleCopy( tpl, 0, _data(index_type::s(i)), index_type::a(i) );
@@ -300,11 +420,8 @@ class AoSoA
 
       \param tuple The tuple to get the data from.
     */
-    template<typename I>
     KOKKOS_INLINE_FUNCTION
-    typename std::enable_if<std::is_integral<I>::value,void>::type
-    setTuple( const I& i,
-              const tuple_type& tpl ) const
+    void setTuple( const size_type i, const tuple_type& tpl ) const
     {
         Impl::tupleCopy( _data(index_type::s(i)), index_type::a(i), tpl, 0 );
     }
@@ -313,39 +430,41 @@ class AoSoA
       \brief Get an unmanaged slice of a tuple member with default memory
       access.
       \tparam M The member index to get a slice of.
-      \param The tag identifying which member to get a slice of.
+      \param slice_label An optional label to assign to the slice.
       \return The member slice.
     */
+    CABANA_DEPRECATED
     template<std::size_t M>
-    member_slice_type<M> slice() const
+    member_slice_type<M> slice( const std::string& slice_label = "" ) const
     {
-        static_assert(
-            0 == sizeof(soa_type) % sizeof(member_value_type<M>),
-            "Slice stride cannot be calculated for misaligned memory!" );
-
-        return member_slice_type<M>(
-            static_cast<member_pointer_type<M> >(
-                soa_type::template staticPtr<M>(_data.data()) ),
-            _size, _num_soa );
+        return Cabana::slice<M>( *this, slice_label );
     }
 
     /*!
       \brief Get an un-typed raw pointer to the entire data block.
       \return An un-typed raw-pointer to the entire data block.
     */
+    CABANA_DEPRECATED
     void* ptr() const
+    { return _data.data(); }
+
+    /*!
+      \brief Get a typed raw pointer to the entire data block.
+      \return A typed raw-pointer to the entire data block.
+    */
+    soa_type* data() const
     { return _data.data(); }
 
   private:
 
     // Total number of tuples in the container.
-    std::size_t _size;
+    size_type _size;
 
     // Allocated number of tuples in all arrays in all structs.
-    std::size_t _capacity;
+    size_type _capacity;
 
     // Number of structs-of-arrays in the array.
-    std::size_t _num_soa;
+    size_type _num_soa;
 
     // Structs-of-Arrays managed data. This Kokkos View manages the block of
     // memory owned by this class such that the copy constructor and
@@ -353,19 +472,6 @@ class AoSoA
     // counted copy of the data.
     soa_view _data;
 };
-
-//---------------------------------------------------------------------------//
-// Static type checker.
-template<class >
-struct is_aosoa : public std::false_type {};
-
-template<class DataTypes, class MemorySpace, int VectorLength>
-struct is_aosoa<AoSoA<DataTypes,MemorySpace,VectorLength> >
-    : public std::true_type {};
-
-template<class DataTypes, class MemorySpace, int VectorLength>
-struct is_aosoa<const AoSoA<DataTypes,MemorySpace,VectorLength> >
-    : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 
