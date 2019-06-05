@@ -9,6 +9,7 @@ set(CMAKE_REQUIRED_FLAGS "-fopenmp-simd -Werror")
 check_cxx_source_compiles(
       "int main(void) {
       #pragma omp simd
+      for (int i = 0; i < 8;i++);
       return 0;
       }" HAVE_OMP_SIMD)
 set(CMAKE_REQUIRED_FLAGS)
