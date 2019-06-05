@@ -16,17 +16,17 @@ env:
   global:
     - CCACHE_CPP2=yes # for clang
   matrix: # note this matrix only applies to the "test" stage
-    - BACKENDS="OpenMP" WERROR=ON
-    - BACKENDS="Serial" WERROR=ON
-    - BACKENDS="Pthread" WERROR=ON
-    - BACKENDS="Serial OpenMP" WERROR=ON
-    - BACKENDS="Serial Pthread" WERROR=ON
+    - BACKENDS="OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="Serial" AMPI=ON
-    - BACKENDS="OpenMP" COVERAGE=ON
-    - BACKENDS="Serial" COVERAGE=ON
-    - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON
-    - BACKENDS="Serial OpenMP" COVERAGE=ON
-    - BACKENDS="Serial Pthread" COVERAGE=ON
+    - BACKENDS="OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial Pthread" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
 
 before_script:
   - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
@@ -35,6 +35,7 @@ before_script:
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
+  - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; fi
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
@@ -68,6 +69,8 @@ before_script:
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - doxygen
       - libhwloc-dev
@@ -77,6 +80,7 @@ addons:
       - libgsl0-dev
       - libfftw3-dev
       - python-pip
+      - g++-6
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
@@ -85,6 +89,7 @@ script:
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_MPI=ON -DCabana_ENABLE_FORTRAN_EXAMPLES=ON
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
+          ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
     make -k -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
