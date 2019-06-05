@@ -22,7 +22,6 @@
 
 #include <vector>
 #include <exception>
-#include <cassert>
 
 namespace Cabana
 {
@@ -287,7 +286,8 @@ void distributeData(
     std::vector<MPI_Status> status( requests.size() );
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
-    assert( MPI_SUCCESS == ec );
+    if ( MPI_SUCCESS != ec )
+        throw std::logic_error( "Failed MPI Communication" );
 
     // Extract the receive buffer into the destination AoSoA.
     auto extract_recv_buffer_func =
@@ -581,7 +581,8 @@ void migrate( const Distributor_t& distributor,
     std::vector<MPI_Status> status( requests.size() );
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
-    assert( MPI_SUCCESS == ec );
+    if ( MPI_SUCCESS != ec )
+        throw std::logic_error( "Failed MPI Communication" );
 
     // Extract the data from the receive buffer into the destination Slice.
     auto extract_recv_buffer_func =
