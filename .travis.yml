@@ -13,23 +13,23 @@ jobs:
         - stage: canary
           env: BACKENDS="OpenMP" WERROR=ON
         - stage: performance
-          env: BACKENDS="Serial" PERFORMANCE_TESTS=ON WERROR=ON
+          env: BACKENDS="Serial" PERFORMANCE_TESTS=ON WERROR=ON CMAKE_BUILD_TYPE=Release
 
 env:
   global:
     - CCACHE_CPP2=yes # for clang
   matrix: # note this matrix only applies to the "test" stage
-    - BACKENDS="OpenMP" WERROR=ON
-    - BACKENDS="Serial" WERROR=ON
-    - BACKENDS="Pthread" WERROR=ON
-    - BACKENDS="Serial OpenMP" WERROR=ON
-    - BACKENDS="Serial Pthread" WERROR=ON
+    - BACKENDS="OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="Serial" AMPI=ON
-    - BACKENDS="OpenMP" COVERAGE=ON
-    - BACKENDS="Serial" COVERAGE=ON
-    - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON
-    - BACKENDS="Serial OpenMP" COVERAGE=ON
-    - BACKENDS="Serial Pthread" COVERAGE=ON
+    - BACKENDS="OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial Pthread" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
 
 before_script:
   - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
@@ -92,7 +92,8 @@ script:
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_MPI=ON
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
-          ${PERFORMANCE_TESTS:+-DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCMAKE_BUILD_TYPE=Release}
+          ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
+          ${PERFORMANCE_TESTS:+-DCabana_ENABLE_PERFORMANCE_TESTING=ON}
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
     make -k -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&

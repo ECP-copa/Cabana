@@ -22,7 +22,6 @@
 
 #include <vector>
 #include <exception>
-#include <cassert>
 
 namespace Cabana
 {
@@ -327,7 +326,8 @@ void gather( const Halo_t& halo,
     std::vector<MPI_Status> status( num_n );
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
-    assert( MPI_SUCCESS == ec );
+    if ( MPI_SUCCESS != ec )
+        throw std::logic_error( "Failed MPI Communication" );
 
     // Extract the receive buffer into the ghosted elements.
     std::size_t num_local = halo.numLocal();
@@ -481,7 +481,8 @@ void gather( const Halo_t& halo,
     std::vector<MPI_Status> status( num_n );
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
-    assert( MPI_SUCCESS == ec );
+    if ( MPI_SUCCESS != ec )
+        throw std::logic_error( "Failed MPI Communication" );
 
     // Extract the receive buffer into the ghosted elements.
     std::size_t num_local = halo.numLocal();
@@ -643,7 +644,8 @@ void scatter( const Halo_t& halo,
     std::vector<MPI_Status> status( num_n );
     const int ec =
         MPI_Waitall( requests.size(), requests.data(), status.data() );
-    assert( MPI_SUCCESS == ec );
+    if ( MPI_SUCCESS != ec )
+        throw std::logic_error( "Failed MPI Communication" );
 
     // Get the steering vector for the sends.
     auto steering = halo.getExportSteering();
