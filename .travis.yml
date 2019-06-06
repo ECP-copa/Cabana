@@ -57,7 +57,7 @@ before_script:
   - if [[ ${AMPI} ]]; then
       git clone --depth=1 https://github.com/UIUC-PPL/charm && pushd charm &&
       ./build AMPI netlrts-linux-x86_64 ${CC} -j2 && export CXX=$PWD/bin/ampicxx && 
-      CMAKE_OPTS+=( -DMPIEXEC="$PWD/bin/ampirun" -DMPIEXEC_POSTFLAGS="+vp4" ) && 
+      CMAKE_OPTS+=( -DMPIEXEC_EXECUTABLE="$PWD/bin/ampirun" -DMPIEXEC_POSTFLAGS="+vp4" ) &&
       CMAKE_OPTS+=( -DMPI_CXX_COMPILER="$PWD/bin/ampicxx" ) && 
       popd;
     fi
