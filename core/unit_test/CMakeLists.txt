@@ -58,7 +58,7 @@ macro(Cabana_add_tests)
         if(CABANA_UNIT_TEST_MPI)
           foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
             add_test(NAME ${_target}_${_np} COMMAND
-              ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
+              ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
               ${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
           endforeach()
         else()
