@@ -24,7 +24,6 @@
 #include <exception>
 #include <algorithm>
 #include <numeric>
-#include <cassert>
 
 namespace Cabana
 {
@@ -511,7 +510,8 @@ class CommunicationPlan
         std::vector<MPI_Status> status( requests.size() );
         const int ec =
             MPI_Waitall( requests.size(), requests.data(), status.data() );
-        assert( MPI_SUCCESS == ec );
+        if ( MPI_SUCCESS != ec )
+            throw std::logic_error( "Failed MPI Communication" );
 
         // Get the total number of imports/exports.
         _total_num_export =
@@ -654,7 +654,8 @@ class CommunicationPlan
         std::vector<MPI_Status> status( requests.size() );
         const int ec =
             MPI_Waitall( requests.size(), requests.data(), status.data() );
-        assert( MPI_SUCCESS == ec );
+        if ( MPI_SUCCESS != ec )
+            throw std::logic_error( "Failed MPI Communication" );
 
         // Compute the total number of imports.
         _total_num_import = std::accumulate(

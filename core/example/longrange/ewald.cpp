@@ -143,8 +143,8 @@ double TEwald::compute(ParticleList& particles, double lx, double ly, double lz)
           //compute distance in x,y,z and charge multiple
           for (auto j = 0; j < 3; ++j)
             d[j] = r( idx, j ) - r( i, j );
-            double qiqj = q( idx ) * q( i );
-            for (auto kx = 0; kx <= k_max_int[0]; ++kx)
+          double qiqj = q( idx ) * q( i );
+          for (auto kx = 0; kx <= k_max_int[0]; ++kx)
             {
               //check if cell within r_max distance in x
               k = (double)kx * lx;
