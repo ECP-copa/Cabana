@@ -3,6 +3,23 @@ if(NOT Cabana_ENABLE_TESTING)
   return()
 endif()
 
+option(Cabana_PERFORMANCE_EXPECTED_FLOPS "Value for expected flops in performance tests")
+option(Cabana_PERFORMANCE_ERROR_MARGIN "Error margin to use in performance tests")
+option(Cabana_PERFORMANCE_VECLENGTH "Vecotr Length to use when running expected flops")
+
+if(Cabana_PERFORMANCE_EXPECTED_FLOPS)
+    add_definitions("-DCABANA_PERFORMANCE_EXPECTED_FLOPS=${Cabana_PERFORMANCE_EXPECTED_FLOPS}")
+endif(Cabana_PERFORMANCE_EXPECTED_FLOPS)
+
+if(Cabana_PERFORMANCE_ERROR_MARGIN)
+    add_definitions("-DCABANA_PERFORMANCE_ERROR_MARGIN=${Cabana_PERFORMANCE_ERROR_MARGIN}")
+endif(Cabana_PERFORMANCE_ERROR_MARGIN)
+
+if(Cabana_PERFORMANCE_VECLENGTH)
+    add_definitions("-DCABANA_PERFORMANCE_VECLENGTH=${Cabana_PERFORMANCE_VECLENGTH}")
+endif(Cabana_PERFORMANCE_VECLENGTH)
+
+
 # we only want to run the below if we have access to "#pragma omp simd"
 include(CheckCXXSourceCompiles)
 set(CMAKE_REQUIRED_FLAGS "-fopenmp-simd -Werror")
