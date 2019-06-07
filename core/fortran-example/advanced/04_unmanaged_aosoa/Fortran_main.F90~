@@ -9,11 +9,9 @@
 ! * SPDX-License-Identifier: BSD-3-Clause                                    *
 ! ****************************************************************************
 #include "veclen.h"
-#include "../Fortran_features/cabana_fortran_macros.h"
 
 program example
   use, intrinsic :: iso_c_binding
-  implicit none
   integer :: s,i
   integer, parameter :: N_PTL = 1048576
   integer, parameter :: N_SOA = ceiling(N_PTL/VECLEN)
@@ -23,10 +21,10 @@ program example
   end type ptl_type
   !An interface is necessary for calling a function defined in C++  
   interface
-     subroutine parallelForExample(part, num_soa, num_p) bind(C, name="parallelForExample")
+     subroutine parallelForExample(part, num_soa, num_tuple) bind(C, name="parallelForExample")
        import::ptl_type, C_INT
-       type(ptl_type) FCABANA_DEVICE  :: part(N_PTL)
-       integer (C_INT), value :: num_soa, num_p
+       type(ptl_type) :: part(N_PTL)
+       integer (C_INT), value :: num_soa, num_tuple
      end subroutine parallelForExample
   end interface
   
@@ -42,14 +40,21 @@ program example
      end subroutine c_kokkos_initlize
   end interface
 
-  type(ptl_type) FCABANA_DEVICE :: part(N_SOA)
+  type(ptl_type) :: part(N_SOA)
 
+!!$  !Populate user data
+!!$  do s = 1, N_SOA
+!!$     do i = 1, VECLEN
+!!$        part(s)%d0(i) = s;
+!!$        part(s)%d1(i) = i;
+!!$     end do
+!!$  end do
 
   ! initialize Kokkos
   call c_kokkos_initlize()
   
   ! the parallelForExample is in C++, which takes the fortran allocated aosoa, and calls Fortran kernels.
-  call parallelForExample(part,N_SOA,N_PTL);
+  call parallelForExample(part,N_SOA,N_PLE);
 
   ! finalize Kokkos
   call c_kokkos_finalize()
