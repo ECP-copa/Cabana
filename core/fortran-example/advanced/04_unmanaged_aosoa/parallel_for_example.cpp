@@ -137,10 +137,10 @@ void parallelForExample(local_data_struct_t * struct_p, int num_soa, int num_p)
     auto vector_kernel =
       KOKKOS_LAMBDA( const int s, const int a )
       {
+        kernel_1(struct_p,s,a);
         /*
 	  What is written in a Fortran kernel is the floowing C++ operations:	  
-        */
-        kernel_1(struct_p,s,a);
+        */	
         //slice_0.access(s,a) = slice_1.access(s,a); 
        };
     
@@ -213,6 +213,7 @@ void parallelForExample(local_data_struct_t * struct_p, int num_soa, int num_p)
 
      	    */	    
      	    slice_1(i) = slice_0( rand_idx );
+	     //or one can call the fortran kernel
      	    // int s0 = i/VECLEN;
      	    // int a0 = i-s0*VECLEN;
      	    // int s1 = rand_idx/VECLEN;
