@@ -6,14 +6,11 @@ sudo: required
 stages:
   - canary
   - test
-  - performance
 
 jobs:
     include:
         - stage: canary
           env: BACKENDS="OpenMP" WERROR=ON
-        - stage: performance
-          env: BACKENDS="Serial" PERFORMANCE_TESTS=ON WERROR=ON CMAKE_BUILD_TYPE=Release
 
 env:
   global:
@@ -93,7 +90,7 @@ script:
           -DCabana_ENABLE_MPI=ON
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
-          ${PERFORMANCE_TESTS:+-DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCABANA_PERFORMANCE_EXPECTED_FLOPS=0}
+          -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
     make -k -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
