@@ -3,21 +3,21 @@ if(NOT Cabana_ENABLE_TESTING)
   return()
 endif()
 
-option(Cabana_PERFORMANCE_EXPECTED_FLOPS "Value for expected flops in performance tests")
-option(Cabana_PERFORMANCE_ERROR_MARGIN "Error margin to use in performance tests")
-option(Cabana_PERFORMANCE_VECLENGTH "Vecotr Length to use when running expected flops")
+set(Cabana_PERFORMANCE_EXPECTED_FLOPS "" CACHE STRING "Value for expected flops in performance tests")
+set(Cabana_PERFORMANCE_ERROR_MARGIN "" CACHE STRING "Error margin to use in performance tests")
+set(Cabana_PERFORMANCE_VECLENGTH "" CACHE STRING "Vector Length to use when running expected flops")
 
-if(Cabana_PERFORMANCE_EXPECTED_FLOPS)
+if(NOT Cabana_PERFORMANCE_EXPECTED_FLOPS STREQUAL "")
     add_definitions("-DCABANA_PERFORMANCE_EXPECTED_FLOPS=${Cabana_PERFORMANCE_EXPECTED_FLOPS}")
-endif(Cabana_PERFORMANCE_EXPECTED_FLOPS)
+endif()
 
-if(Cabana_PERFORMANCE_ERROR_MARGIN)
+if(NOT Cabana_PERFORMANCE_ERROR_MARGIN STREQUAL "")
     add_definitions("-DCABANA_PERFORMANCE_ERROR_MARGIN=${Cabana_PERFORMANCE_ERROR_MARGIN}")
-endif(Cabana_PERFORMANCE_ERROR_MARGIN)
+endif()
 
-if(Cabana_PERFORMANCE_VECLENGTH)
+if(NOT Cabana_PERFORMANCE_VECLENGTH STREQUAL "")
     add_definitions("-DCABANA_PERFORMANCE_VECLENGTH=${Cabana_PERFORMANCE_VECLENGTH}")
-endif(Cabana_PERFORMANCE_VECLENGTH)
+endif()
 
 
 # we only want to run the below if we have access to "#pragma omp simd"
