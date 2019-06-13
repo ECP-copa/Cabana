@@ -8,14 +8,23 @@ set(Cabana_PERFORMANCE_ERROR_MARGIN "" CACHE STRING "Error margin to use in perf
 set(Cabana_PERFORMANCE_VECLENGTH "" CACHE STRING "Vector Length to use when running expected flops")
 
 if(NOT Cabana_PERFORMANCE_EXPECTED_FLOPS STREQUAL "")
+    if (NOT Cabana_PERFORMANCE_EXPECTED_FLOPS MATCHES "^[0-9]+$")
+      message(FATAL_ERROR "Cabana_PERFORMANCE_EXPECTED_FLOPS needs to be an integer")
+    endif()
     add_definitions("-DCABANA_PERFORMANCE_EXPECTED_FLOPS=${Cabana_PERFORMANCE_EXPECTED_FLOPS}")
 endif()
 
 if(NOT Cabana_PERFORMANCE_ERROR_MARGIN STREQUAL "")
+    if (NOT Cabana_PERFORMANCE_ERROR_MARGIN MATCHES "^[0-9.]+$")
+      message(FATAL_ERROR "Cabana_PERFORMANCE_ERROR_MARGIN needs to be a float")
+    endif()
     add_definitions("-DCABANA_PERFORMANCE_ERROR_MARGIN=${Cabana_PERFORMANCE_ERROR_MARGIN}")
 endif()
 
 if(NOT Cabana_PERFORMANCE_VECLENGTH STREQUAL "")
+    if (NOT Cabana_PERFORMANCE_VECLENGTH MATCHES "^[0-9]+$")
+      message(FATAL_ERROR "Cabana_PERFORMANCE_VECLENGTH needs to be an integer")
+    endif()
     add_definitions("-DCABANA_PERFORMANCE_VECLENGTH=${Cabana_PERFORMANCE_VECLENGTH}")
 endif()
 
