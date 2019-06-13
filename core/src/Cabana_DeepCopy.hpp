@@ -25,18 +25,12 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-
-namespace Experimental
-{
-//---------------------------------------------------------------------------//
 /*!
-  \brief Allocate a mirror of the given AoSoA in the given memory space.
+  \brief Allocate a mirror of the given AoSoA in the given space.
  */
 template<class Space, class SrcAoSoA>
 inline
-AoSoA<typename SrcAoSoA::member_types,
-      typename Space::memory_space,
-      SrcAoSoA::vector_length>
+AoSoA<typename SrcAoSoA::member_types,Space,SrcAoSoA::vector_length>
 create_mirror(
     const Space&,
     const SrcAoSoA& src,
@@ -44,19 +38,18 @@ create_mirror(
                              typename Space::memory_space>::value)>::type* = 0 )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
-                   "create_mirror_view() requires an AoSoA" );
-    auto dst = AoSoA<typename SrcAoSoA::member_types,
-                     typename Space::memory_space,
-                     SrcAoSoA::vector_length>(
-                         std::string(src.label()).append("_mirror"),
-                         src.size() );
-    return dst;
+                   "create_mirror() requires an AoSoA" );
+    return AoSoA<typename SrcAoSoA::member_types,
+                 Space,
+                 SrcAoSoA::vector_length>(
+                     std::string(src.label()).append("_mirror"),
+                     src.size() );
 }
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create a mirror view of the given AoSoA in the given memory
-  space. Same space specialization returns the input AoSoA.
+  \brief Create a mirror view of the given AoSoA in the given space. Same
+  space specialization returns the input AoSoA.
 
   \note Memory allocation will only occur if the requested mirror memory space
   is different from that of the input AoSoA. If they are the same, the
@@ -87,9 +80,7 @@ create_mirror_view(
  */
 template<class Space, class SrcAoSoA>
 inline
-AoSoA<typename SrcAoSoA::member_types,
-      typename Space::memory_space,
-      SrcAoSoA::vector_length>
+AoSoA<typename SrcAoSoA::member_types,Space,SrcAoSoA::vector_length>
 create_mirror_view(
     const Space& space,
     const SrcAoSoA& src,
@@ -137,9 +128,7 @@ create_mirror_view_and_copy(
  */
 template<class Space, class SrcAoSoA>
 inline
-AoSoA<typename SrcAoSoA::member_types,
-      typename Space::memory_space,
-      SrcAoSoA::vector_length>
+AoSoA<typename SrcAoSoA::member_types,Space,SrcAoSoA::vector_length>
 create_mirror_view_and_copy(
     const Space& space,
     const SrcAoSoA& src,
@@ -159,10 +148,6 @@ create_mirror_view_and_copy(
 
     return dst;
 }
-
-//---------------------------------------------------------------------------//
-
-} // end namespace Experimental
 
 //---------------------------------------------------------------------------//
 /*!
@@ -238,9 +223,8 @@ inline void deep_copy(
     {
         // Create an AoSoA in the destination space with the same data layout
         // as the source.
-        auto src_copy_on_dst =
-            Experimental::create_mirror_view_and_copy(
-                typename dst_type::memory_space(), src );
+        auto src_copy_on_dst = create_mirror_view_and_copy(
+            typename dst_type::memory_space(), src );
 
         // Copy via tuples.
         auto copy_func =

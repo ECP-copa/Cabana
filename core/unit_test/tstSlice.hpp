@@ -53,6 +53,7 @@ void initializeDataMembers(
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = dval * (i+j);
         });
+    Kokkos::fence();
 }
 
 //---------------------------------------------------------------------------//
@@ -63,9 +64,8 @@ void checkDataMembers(
     const float fval, const double dval, const int ival,
     const int dim_1, const int dim_2, const int dim_3 )
 {
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
 
     auto slice_0 = Cabana::slice<0>(mirror);
     auto slice_1 = Cabana::slice<1>(mirror);
@@ -221,6 +221,7 @@ void apiTest()
                             j*slice_3.stride(3) ] = dval * (i+j);
             }
         });
+    Kokkos::fence();
 
     // Check the result of pointer manipulation
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -301,6 +302,7 @@ void randomAccessTest()
                 for ( int j = 0; j < dim_2; ++j )
                     slice_3( idx, i, j ) = ra_slice_3( idx, i, j );
         });
+    Kokkos::fence();
 
     // Check data members for proper assignment.
     checkDataMembers( aosoa_2, fval, dval, ival, dim_1, dim_2, dim_3 );
@@ -345,9 +347,8 @@ void atomicAccessTest()
     Kokkos::fence();
 
     // Check the results of the atomic increment.
-    auto mirror =
-        Cabana::Experimental::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), aosoa );
+    auto mirror = Cabana::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), aosoa );
     auto mirror_slice = Cabana::slice<0>(mirror);
 
     for ( int i = 0; i < num_data; ++i ) EXPECT_EQ( mirror_slice(i), num_data );
