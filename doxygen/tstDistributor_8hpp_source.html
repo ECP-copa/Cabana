@@ -216,9 +216,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;    <span class="comment">// Make some data to migrate.</span></div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="keyword">using</span> DataTypes = <a class="code" href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes&lt;int,double[2]&gt;</a>;</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a>;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    AoSoA_t data( <span class="stringliteral">&quot;data&quot;</span>, num_data );</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keyword">auto</span> slice_int = Cabana::slice&lt;0&gt;(data);</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keyword">auto</span> slice_dbl = Cabana::slice&lt;1&gt;(data);</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    AoSoA_t <a class="code" href="structdata.html">data</a>( <span class="stringliteral">&quot;data&quot;</span>, num_data );</div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    <span class="keyword">auto</span> slice_int = Cabana::slice&lt;0&gt;(<a class="code" href="structdata.html">data</a>);</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;    <span class="keyword">auto</span> slice_dbl = Cabana::slice&lt;1&gt;(<a class="code" href="structdata.html">data</a>);</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <span class="comment">// Fill the data.</span></div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    <span class="keyword">auto</span> fill_func =</div>
@@ -234,21 +234,21 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;    Kokkos::fence();</div>
 <div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;</div>
 <div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;    <span class="comment">// Do the migration in-place</span></div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    Cabana::migrate( *distributor, data );</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;    Cabana::migrate( *distributor, <a class="code" href="structdata.html">data</a> );</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="comment">// Get host copies of the migrated data.</span></div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,Cabana::HostSpace&gt;</a></div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;        data_host( <span class="stringliteral">&quot;data_host&quot;</span>, num_data / 2 );</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keyword">auto</span> slice_int_host = Cabana::slice&lt;0&gt;(data_host);</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <span class="keyword">auto</span> slice_dbl_host = Cabana::slice&lt;1&gt;(data_host);</div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    Cabana::deep_copy( data_host, data );</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    Cabana::deep_copy( data_host, <a class="code" href="structdata.html">data</a> );</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;    <span class="comment">// Check the migration. We received less than we sent so this should have</span></div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;    <span class="comment">// resized the aososa.</span></div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keyword">auto</span> steering = distributor-&gt;getExportSteering();</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keyword">auto</span> host_steering = Kokkos::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        Kokkos::HostSpace(), steering );</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    EXPECT_EQ( data.size(), num_data / 2 );</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;    EXPECT_EQ( <a class="code" href="structdata.html">data</a>.size(), num_data / 2 );</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> i = 0; i &lt; num_data / 2; ++i )</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    {</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        EXPECT_EQ( slice_int_host(i), my_rank + host_steering(i) );</div>
@@ -594,9 +594,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160;    <span class="comment">// Make some data to migrate.</span></div>
 <div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160;    <span class="keyword">using</span> DataTypes = <a class="code" href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes&lt;int,double[2]&gt;</a>;</div>
 <div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a>;</div>
-<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    AoSoA_t data( <span class="stringliteral">&quot;data&quot;</span>, num_data );</div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    <span class="keyword">auto</span> slice_int = Cabana::slice&lt;0&gt;(data);</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    <span class="keyword">auto</span> slice_dbl = Cabana::slice&lt;1&gt;(data);</div>
+<div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    AoSoA_t <a class="code" href="structdata.html">data</a>( <span class="stringliteral">&quot;data&quot;</span>, num_data );</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    <span class="keyword">auto</span> slice_int = Cabana::slice&lt;0&gt;(<a class="code" href="structdata.html">data</a>);</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;    <span class="keyword">auto</span> slice_dbl = Cabana::slice&lt;1&gt;(<a class="code" href="structdata.html">data</a>);</div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;</div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    <span class="comment">// Fill the data.</span></div>
 <div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keyword">auto</span> fill_func =</div>
@@ -611,20 +611,20 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00522"></a><span class="lineno">  522</span>&#160;    Kokkos::fence();</div>
 <div class="line"><a name="l00523"></a><span class="lineno">  523</span>&#160;</div>
 <div class="line"><a name="l00524"></a><span class="lineno">  524</span>&#160;    <span class="comment">// Do the migration</span></div>
-<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    Cabana::migrate( *distributor, data );</div>
+<div class="line"><a name="l00525"></a><span class="lineno">  525</span>&#160;    Cabana::migrate( *distributor, <a class="code" href="structdata.html">data</a> );</div>
 <div class="line"><a name="l00526"></a><span class="lineno">  526</span>&#160;</div>
 <div class="line"><a name="l00527"></a><span class="lineno">  527</span>&#160;    <span class="comment">// Check the change in size.</span></div>
 <div class="line"><a name="l00528"></a><span class="lineno">  528</span>&#160;    <span class="keywordflow">if</span> ( 0 == my_rank )</div>
-<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        EXPECT_EQ( data.size(), my_size );</div>
+<div class="line"><a name="l00529"></a><span class="lineno">  529</span>&#160;        EXPECT_EQ( <a class="code" href="structdata.html">data</a>.size(), my_size );</div>
 <div class="line"><a name="l00530"></a><span class="lineno">  530</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;        EXPECT_EQ( data.size(), 0 );</div>
+<div class="line"><a name="l00531"></a><span class="lineno">  531</span>&#160;        EXPECT_EQ( <a class="code" href="structdata.html">data</a>.size(), 0 );</div>
 <div class="line"><a name="l00532"></a><span class="lineno">  532</span>&#160;</div>
 <div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;    <span class="comment">// Check the migration.</span></div>
 <div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,Cabana::HostSpace&gt;</a></div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;        data_host( <span class="stringliteral">&quot;data_host&quot;</span>, distributor-&gt;totalNumImport() );</div>
 <div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    <span class="keyword">auto</span> slice_int_host = Cabana::slice&lt;0&gt;(data_host);</div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    <span class="keyword">auto</span> slice_dbl_host = Cabana::slice&lt;1&gt;(data_host);</div>
-<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    Cabana::deep_copy( data_host, data );</div>
+<div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    Cabana::deep_copy( data_host, <a class="code" href="structdata.html">data</a> );</div>
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;    <span class="keyword">auto</span> steering = distributor-&gt;getExportSteering();</div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    <span class="keyword">auto</span> host_steering = Kokkos::create_mirror_view_and_copy(</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;        Kokkos::HostSpace(), steering );</div>
@@ -682,9 +682,9 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;    <span class="comment">// Make some data to migrate.</span></div>
 <div class="line"><a name="l00594"></a><span class="lineno">  594</span>&#160;    <span class="keyword">using</span> DataTypes = <a class="code" href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes&lt;int,double[2]&gt;</a>;</div>
 <div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;    <span class="keyword">using</span> AoSoA_t = <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,TEST_MEMSPACE&gt;</a>;</div>
-<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;    AoSoA_t data( <span class="stringliteral">&quot;data&quot;</span>, num_data );</div>
-<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;    <span class="keyword">auto</span> slice_int = Cabana::slice&lt;0&gt;(data);</div>
-<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;    <span class="keyword">auto</span> slice_dbl = Cabana::slice&lt;1&gt;(data);</div>
+<div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;    AoSoA_t <a class="code" href="structdata.html">data</a>( <span class="stringliteral">&quot;data&quot;</span>, num_data );</div>
+<div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;    <span class="keyword">auto</span> slice_int = Cabana::slice&lt;0&gt;(<a class="code" href="structdata.html">data</a>);</div>
+<div class="line"><a name="l00598"></a><span class="lineno">  598</span>&#160;    <span class="keyword">auto</span> slice_dbl = Cabana::slice&lt;1&gt;(<a class="code" href="structdata.html">data</a>);</div>
 <div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;</div>
 <div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160;    <span class="comment">// Fill the data.</span></div>
 <div class="line"><a name="l00601"></a><span class="lineno">  601</span>&#160;    <span class="keyword">auto</span> fill_func =</div>
@@ -698,17 +698,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;    Kokkos::fence();</div>
 <div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;</div>
 <div class="line"><a name="l00611"></a><span class="lineno">  611</span>&#160;    <span class="comment">// Do the migration</span></div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    Cabana::migrate( *distributor, data );</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;    Cabana::migrate( *distributor, <a class="code" href="structdata.html">data</a> );</div>
 <div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;</div>
 <div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;    <span class="comment">// Check the change in size.</span></div>
-<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;    EXPECT_EQ( data.size(), 1 );</div>
+<div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;    EXPECT_EQ( <a class="code" href="structdata.html">data</a>.size(), 1 );</div>
 <div class="line"><a name="l00616"></a><span class="lineno">  616</span>&#160;</div>
 <div class="line"><a name="l00617"></a><span class="lineno">  617</span>&#160;    <span class="comment">// Check the migration.</span></div>
 <div class="line"><a name="l00618"></a><span class="lineno">  618</span>&#160;    <a class="code" href="classCabana_1_1AoSoA.html">Cabana::AoSoA&lt;DataTypes,Cabana::HostSpace&gt;</a></div>
 <div class="line"><a name="l00619"></a><span class="lineno">  619</span>&#160;        data_host( <span class="stringliteral">&quot;data_host&quot;</span>, distributor-&gt;totalNumImport() );</div>
 <div class="line"><a name="l00620"></a><span class="lineno">  620</span>&#160;    <span class="keyword">auto</span> slice_int_host = Cabana::slice&lt;0&gt;(data_host);</div>
 <div class="line"><a name="l00621"></a><span class="lineno">  621</span>&#160;    <span class="keyword">auto</span> slice_dbl_host = Cabana::slice&lt;1&gt;(data_host);</div>
-<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;    Cabana::deep_copy( data_host, data );</div>
+<div class="line"><a name="l00622"></a><span class="lineno">  622</span>&#160;    Cabana::deep_copy( data_host, <a class="code" href="structdata.html">data</a> );</div>
 <div class="line"><a name="l00623"></a><span class="lineno">  623</span>&#160;    EXPECT_EQ( slice_int_host(0), my_rank );</div>
 <div class="line"><a name="l00624"></a><span class="lineno">  624</span>&#160;    EXPECT_EQ( slice_dbl_host(0,0), my_rank );</div>
 <div class="line"><a name="l00625"></a><span class="lineno">  625</span>&#160;    EXPECT_EQ( slice_dbl_host(0,1), my_rank + 0.5 );</div>
@@ -764,10 +764,11 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00675"></a><span class="lineno">  675</span>&#160;} <span class="comment">// end namespace Test</span></div>
 <div class="ttc" id="structCabana_1_1MemberTypes_html"><div class="ttname"><a href="structCabana_1_1MemberTypes.html">Cabana::MemberTypes</a></div><div class="ttdoc">General sequence of types for SoA and AoSoA member data. </div><div class="ttdef"><b>Definition:</b> Cabana_MemberTypes.hpp:26</div></div>
 <div class="ttc" id="classCabana_1_1AoSoA_html"><div class="ttname"><a href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a></div><div class="ttdoc">Array-of-Struct-of-Arrays. </div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:39</div></div>
+<div class="ttc" id="structdata_html"><div class="ttname"><a href="structdata.html">data</a></div><div class="ttdef"><b>Definition:</b> 01_cpp_simple.cpp:87</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jun 13 2019 20:40:59 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Thu Jun 13 2019 23:07:23 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>

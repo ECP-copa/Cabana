@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['data',['data',['../classCabana_1_1AoSoA.html#a1e8d51d3c7ec415191c6f3124096ad82',1,'Cabana::AoSoA::data()'],['../classCabana_1_1Slice.html#a27b3bc5012883ba352e4f16e9fdbcb85',1,'Cabana::Slice::data()']]],
+  ['data',['data',['../structdata.html',1,'data'],['../classCabana_1_1AoSoA.html#a1e8d51d3c7ec415191c6f3124096ad82',1,'Cabana::AoSoA::data()'],['../classCabana_1_1Slice.html#a27b3bc5012883ba352e4f16e9fdbcb85',1,'Cabana::Slice::data()']]],
   ['data_5ft',['data_t',['../structdata__t.html',1,'']]],
   ['defaultaccessmemory',['DefaultAccessMemory',['../structCabana_1_1DefaultAccessMemory.html',1,'Cabana']]],
   ['distributor',['Distributor',['../classCabana_1_1Distributor.html',1,'Cabana']]],
