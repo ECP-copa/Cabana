@@ -25,3 +25,5 @@ endif()
 if(Cabana_ENABLE_Cuda)
   add_subdirectory(10_advanced_slice_cuda)
 endif()
+
+add_subdirectory(14_unmanaged_view)
