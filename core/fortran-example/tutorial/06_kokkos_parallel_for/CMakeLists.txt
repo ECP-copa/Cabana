@@ -3,7 +3,7 @@ target_link_libraries(ForKKParallelFor cabanacore)
 add_test(NAME Fortran_tutorial_06 COMMAND ForKKParallelFor)
 set_property(TARGET ForKKParallelFor PROPERTY LINKER_LANGUAGE Fortran)
 
-if("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "PGI")
+if(CMAKE_Fortran_COMPILER_ID STREQUAL "PGI")
   if( Cabana_ENABLE_Cuda )
     target_compile_definitions(ForKKParallelFor PUBLIC -DUSE_GPU=1)
     set(CMAKE_Fortran_FLAGS "-ta=tesla:cuda9.0 -Minfo=accel -Mcuda=cuda9.0")

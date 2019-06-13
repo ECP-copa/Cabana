@@ -3,7 +3,6 @@ target_link_libraries(ForParallelFor cabanacore)
 add_test(NAME Fortran_tutorial_05 COMMAND ForParallelFor)
 set_property(TARGET ForParallelFor PROPERTY LINKER_LANGUAGE Fortran)
 
-message(${CMAKE_Fortran_COMPILER_ID})
 if (("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "PGI") AND ("${CMAKE_CXX_COMPILER_ID}" STREQUAL "PGI"))
   if( Cabana_ENABLE_Cuda )
     target_compile_definitions(ForParallelFor PUBLIC -DUSE_GPU=1)
@@ -17,7 +16,11 @@ if (("${CMAKE_Fortran_COMPILER_ID}" STREQUAL "PGI") AND ("${CMAKE_CXX_COMPILER_I
     set(CMAKE_Fortran_FLAGS "-ta=host")
   endif()
   
-  set(CMAKE_EXE_LINKER_FLAGS "-pgc++libs")
+  if(CMAKE_VERSION VERSION_LESS_EQUAL 3.13)
+    set(CMAKE_EXE_LINKER_FLAGS "-pgc++libs")
+  else()
+    target_link_options(ForParallelFor "-pgc++libs")
+  endif()
 else()
     message("Only PGI is supported for compiling fortran cuda code. Right now
     we only accept building with PGI for both CXX and Fortran to avoid mixing
