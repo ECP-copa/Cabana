@@ -43,7 +43,7 @@ stages:
     - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
     - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
     - mkdir build && cd build &&
-      cmake -DCMAKE_PREFIX_PATH=${CI_PROJECT_DIR}/kokkos.install -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_Serial=OFF -DCabana_ENABLE_EXAMPLES=ON ${CMAKE_OPTS[@]} ${CMAKE_EXTRA_ARGS} -DMPIEXEC="jsrun" -DMPIEXEC_POSTFLAGS="-a1;-c5;-bpacked:5;-g1" .. &&
+      cmake -DCMAKE_PREFIX_PATH=${CI_PROJECT_DIR}/kokkos.install -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_Serial=OFF -DCabana_ENABLE_EXAMPLES=ON ${CMAKE_OPTS[@]} ${CMAKE_EXTRA_ARGS} -DMPIEXEC="jsrun" -DMPIEXEC_POSTFLAGS="-a1;-c5;-bpacked:5;-g1" -DNONMPI_PRECOMMAND="jsrun;-n1;-a1;-c5;-bpacked:5;-g1".. &&
       make -k -j${j} VERBOSE=1
   tags:
     - nobatch
