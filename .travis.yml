@@ -84,7 +84,8 @@ addons:
       - gfortran-6
 
 script:
-  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
+  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
+  - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
   - mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/scafacos"
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
