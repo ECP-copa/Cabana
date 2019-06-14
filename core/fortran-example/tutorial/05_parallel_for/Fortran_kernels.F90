@@ -22,7 +22,7 @@
   SUBROUTINE initialization(part,num_part) BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
-  integer i,j,a,s
+  integer a,s
 
   !The Fortran derived type has the same memory layout as the C struct defined by
   ! struct local_data_struct_t {     
