@@ -7,3 +7,4 @@ ignore:
   - core/unit_test/
   - core/example/benchmark
   - core/example/tutorial
+  - core/performance_test/peakflops

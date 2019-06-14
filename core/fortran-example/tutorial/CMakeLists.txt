@@ -1,0 +1,6 @@
+add_subdirectory(01_hello_world)
+add_subdirectory(02_tuple)
+add_subdirectory(03_struct_of_arrays)
+add_subdirectory(04_aosoa)
+add_subdirectory(05_parallel_for)
+add_subdirectory(06_kokkos_parallel_for)

@@ -35,7 +35,7 @@ before_script:
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
-  - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; export CC=gfortran-6; fi
+  - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; export FC=gfortran-6; fi
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
@@ -84,13 +84,16 @@ addons:
       - gfortran-6
 
 script:
-  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
+  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
+  - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
   - mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/scafacos"
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
-          -DCabana_ENABLE_MPI=ON -DCabana_ENABLE_FORTRAN_EXAMPLES=ON
+          -DCabana_ENABLE_MPI=ON
+          $([[ ${CC} = clang* ]] || echo -DCabana_ENABLE_FORTRAN_EXAMPLES=ON)
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
+          -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
     make -k -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
@@ -106,7 +109,7 @@ after_success:
      if [[ ${CC} = clang ]]; then
        codecov -x "llvm-cov gcov" -F "${CC}";
      else
-       codecov -F "${CC}";
+       codecov -x gcov-6 -F "${CC}";
      fi &&
      if [[ $(doxygen --version) != 1.8.16 ]]; then
        echo "Patching Doxygen files (see doxygen/doxygen#6892)" &&
