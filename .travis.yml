@@ -108,7 +108,7 @@ after_success:
      if [[ ${CC} = clang ]]; then
        codecov -x "llvm-cov gcov" -F "${CC}";
      else
-       codecov -F "${CC}";
+       codecov -x gcov-6 -F "${CC}";
      fi &&
      if [[ $(doxygen --version) != 1.8.16 ]]; then
        echo "Patching Doxygen files (see doxygen/doxygen#6892)" &&
