@@ -16,7 +16,7 @@ program example
   implicit none
   integer :: s,i
   integer, parameter :: N_PTL = 1048576
-  integer, parameter :: N_SOA = ceiling(N_PTL/VECLEN)
+  integer, parameter :: N_SOA = ceiling(real(N_PTL)/VECLEN)
   type, BIND(C) :: ptl_type      
      real (C_DOUBLE) :: d0(VECLEN) 
      real (C_DOUBLE) :: d1(VECLEN) 
@@ -25,7 +25,7 @@ program example
   interface
      subroutine parallelForExample(part, num_soa, num_p) bind(C, name="parallelForExample")
        import::ptl_type, C_INT
-       type(ptl_type) FCABANA_DEVICE  :: part(N_PTL)
+       type(ptl_type) FCABANA_DEVICE  :: part(*)
        integer (C_INT), value :: num_soa, num_p
      end subroutine parallelForExample
   end interface

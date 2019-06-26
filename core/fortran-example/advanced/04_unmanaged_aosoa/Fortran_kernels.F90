@@ -17,8 +17,11 @@
 #define USE_GPU 0
 #endif
 
-  module simpleOps_m
-    USE, INTRINSIC :: ISO_C_BINDING
+#if USE_GPU == 1
+  attributes(global) &
+  SUBROUTINE set(ns,p1)
+  
+  implicit none
   !The Fortran derived type has the same memory layout as the C struct defined by
   ! struct local_data_struct_t {     
   !   double d0[VECLEN];     
@@ -29,13 +32,6 @@
        real (C_DOUBLE) :: d1(VECLEN) 
     end type ptl_type
 
-contains
-#if USE_GPU == 1
-  attributes(global) &
-#endif
-  SUBROUTINE set(ns,p1)
-  
-  implicit none
   type(ptl_type) :: p1(*)
   !real :: p(:,:)
   integer,value :: ns
@@ -47,8 +43,6 @@ contains
      p1(i)%d1(j) = 2.0   
   end if
   END SUBROUTINE set
-
-end module simpleOps_m
  
   SUBROUTINE initialization(part,n_soa, num_part) BIND(C)
   USE cudafor
@@ -72,7 +66,35 @@ end module simpleOps_m
   call set<<<grid,tBlock>>>( n_soa, part)
 
 end SUBROUTINE initialization
- 
+#else
+ SUBROUTINE initialization(part,num_part) BIND(C)
+  USE, INTRINSIC :: ISO_C_BINDING
+  implicit none
+  integer i,j,a,s
+  type, BIND(C) :: ptl_type      
+     real (C_DOUBLE) :: d0(VECLEN) 
+     real (C_DOUBLE) :: d1(VECLEN) 
+  end type ptl_type
+  !Declared as AoSoA
+  type(ptl_type) :: part(*)
+  !The number of particles  
+  INTEGER(C_INT), VALUE :: num_part
+  !The number of SOA 
+  INTEGER :: n_soa 
+
+  !Find out the number of soa in the aosoa
+  n_soa = (num_part-1)/VECLEN+1
+
+!Assign data to the aosoa values
+!Note that num_part<n_soa*VECLEN, we fill the multiple of VECLEN anyway
+  do s = 1, n_soa
+     do a = 1,VECLEN
+        part(s)%d0(a) = 1.0
+        part(s)%d1(a) = 2.0
+     end do
+  end do
+ END SUBROUTINE initialization
+#endif 
 
 #if USE_GPU == 1
   attributes(host,device) &
@@ -93,7 +115,7 @@ SUBROUTINE kernel_1(part,s,a) BIND(C)
 !Assign data to the aosoa values 
 !index is shifted by 1 for the fortran convention
   part(s+1)%d0(a+1) =  part(s+1)%d1(a+1) 
-  if(s<32.and.a<32) print *,"kernel_1:",s,a,part(s+1)%d0(a+1)
+!  if(s<32.and.a<32) print *,"kernel_1:",s,a,part(s+1)%d0(a+1)
 end SUBROUTINE kernel_1
  
 #if USE_GPU == 1
