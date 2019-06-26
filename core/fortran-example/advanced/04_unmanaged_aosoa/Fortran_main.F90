@@ -14,7 +14,6 @@
 program example
   use, intrinsic :: iso_c_binding
   implicit none
-  integer :: s,i
   integer, parameter :: N_PTL = 1048576
   integer, parameter :: N_SOA = ceiling(real(N_PTL)/VECLEN)
   type, BIND(C) :: ptl_type      
