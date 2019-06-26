@@ -48,7 +48,7 @@
   USE cudafor
   use simpleOps_m
   implicit none
-  integer i,j,a,s
+  integer a,s
 
   !Declared as AoSoA
   type(ptl_type) FCABANA_DEVICE :: part(*)
@@ -70,7 +70,7 @@ end SUBROUTINE initialization
  SUBROUTINE initialization(part,num_part) BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   implicit none
-  integer i,j,a,s
+  integer a,s
   type, BIND(C) :: ptl_type      
      real (C_DOUBLE) :: d0(VECLEN) 
      real (C_DOUBLE) :: d1(VECLEN) 
