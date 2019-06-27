@@ -31,13 +31,16 @@ endif()
 
 # we only want to run the below if we have access to "#pragma omp simd"
 include(CheckCXXSourceCompiles)
-set(CMAKE_REQUIRED_FLAGS "-fopenmp-simd -Werror")
+set(CMAKE_REQUIRED_FLAGS "-fopenmp -Werror")
 check_cxx_source_compiles(
       "int main(void) {
+      const int N = 32;
+      int sum[N];
       #pragma omp simd
-      for (int i = 0; i < 8;i++);
+      for (int i = 0; i < N; i++) { sum[i] = i*2; }
       return 0;
-      }" HAVE_OMP_SIMD)
+      }
+      " HAVE_OMP_SIMD)
 set(CMAKE_REQUIRED_FLAGS)
 
 if (NOT HAVE_OMP_SIMD)
