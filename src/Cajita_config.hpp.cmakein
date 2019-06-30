@@ -1,0 +1,8 @@
+#ifndef CAJITA_CONFIG_HPP
+#define CAJITA_CONFIG_HPP
+
+#define Cajita_VERSION_STRING "@PROJECT_VERSION@"
+
+#define Cajita_GIT_COMMIT_HASH "@Cajita_GIT_COMMIT_HASH@"
+
+#endif // CAJITA_CONFIG_HPP
