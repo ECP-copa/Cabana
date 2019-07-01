@@ -1,13 +1,8 @@
-# setup gtest
-if(NOT Cajita_ENABLE_TESTING)
-  return()
-endif()
-
 set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/tpls)
 
 include_directories(${GTEST_SOURCE_DIR})
-add_library(cajita_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
-set_target_properties(cajita_gtest PROPERTIES
+add_library(Cajita_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
+set_target_properties(Cajita_gtest PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
@@ -23,13 +18,15 @@ set(gtest_args --gtest_color=yes)
 ##--------------------------------------------------------------------------##
 foreach(_test CajitaVersion)
   add_executable(${_test}_test tst${_test}.cpp unit_test_main.cpp)
-  target_link_libraries(${_test}_test cajita cajita_gtest)
+  target_link_libraries(${_test}_test Cajita Cajita_gtest)
   add_test(NAME ${_test}_test COMMAND ${_test}_test --gtest_color=yes)
 endforeach()
 
 ##--------------------------------------------------------------------------##
 ## On-node tests with and without MPI.
 ##--------------------------------------------------------------------------##
+set(CAJITA_SUPPORTED_DEVICES Serial OpenMP Cuda)
+
 macro(Cajita_add_tests)
   cmake_parse_arguments(CAJITA_UNIT_TEST "MPI" "" "NAMES" ${ARGN})
   set(CAJITA_UNIT_TEST_MPIEXEC_NUMPROCS 1)
@@ -46,7 +43,7 @@ macro(Cajita_add_tests)
   endforeach()
   set(CAJITA_UNIT_TEST_MAIN unit_test_main.cpp)
   foreach(_device ${CAJITA_SUPPORTED_DEVICES})
-    if(Cajita_ENABLE_${_device})
+    if(Kokkos_DEVICES MATCHES "${_device}")
       set(_dir ${CMAKE_CURRENT_BINARY_DIR}/${_device})
       file(MAKE_DIRECTORY ${_dir})
       foreach(_test ${CAJITA_UNIT_TEST_NAMES})
@@ -56,7 +53,7 @@ macro(Cajita_add_tests)
         set(_target ${_test}_test_${_device})
         add_executable(${_target} ${_file} ${CAJITA_UNIT_TEST_MAIN})
         target_include_directories(${_target} PUBLIC ${_dir})
-        target_link_libraries(${_target} cajita cajita_gtest)
+        target_link_libraries(${_target} Cajita Cajita_gtest)
         if(CAJITA_UNIT_TEST_MPI)
           foreach(_np ${CAJITA_UNIT_TEST_MPIEXEC_NUMPROCS})
             add_test(NAME ${_target}_${_np} COMMAND

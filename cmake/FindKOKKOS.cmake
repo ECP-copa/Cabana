@@ -1,47 +1,111 @@
-# - Find kokkos
-# Creates a Kokkos::kokkos imported target
-#
-#  KOKKOS_INCLUDE_DIRS  - where to find kokkos.h, etc.
-#  KOKKOS_LIBRARIES     - List of libraries when using kokkos.
-#  KOKKOS_FOUND         - True if kokkos found.
-#  KOKKOS_SETTINGS_DIR - path to kokkos_generated_settings.cmake
-#
+#[=======================================================================[.rst:
+FindKokkos
+-------
 
-find_package(PkgConfig QUIET)
-pkg_check_modules(PC_KOKKOS kokkos QUIET)
+Finds the Kokkos library.
 
-find_path(KOKKOS_SETTINGS_DIR kokkos_generated_settings.cmake HINTS ${PC_KOKKOS_PREFIX})
+Imported Targets
+^^^^^^^^^^^^^^^^
 
-find_path(KOKKOS_INCLUDE_DIR Kokkos_Core.hpp HINTS ${PC_KOKKOS_INCLUDE_DIRS})
-find_library(KOKKOS_LIBRARY NAMES kokkos kokkoscore HINTS ${PC_KOKKOS_LIBRARY_DIRS})
+This module provides the following imported targets, if found:
+
+``Kokkos::Kokkos``
+  The Kokkos library
+
+Result Variables
+^^^^^^^^^^^^^^^^
+
+This will define the following variables:
+
+``Kokkos_FOUND``
+  True if the system has the Kokkos library.
+``Kokkos_VERSION``
+  The version of the Kokkos library which was found.
+``Kokkos_INCLUDE_DIRS``
+  Include directories needed to use Kokkos.
+``Kokkos_LIBRARIES``
+  Libraries needed to link to Kokkos.
+``Kokkos_DEVICES``
+  Set of backends enabled.
+``Kokkos_ARCH``
+  Target architectures.
+
+Cache Variables
+^^^^^^^^^^^^^^^
+
+The following cache variables may also be set:
+
+``Kokkos_INCLUDE_DIR``
+  The directory containing ``Kokkos_Core.hpp``.
+``Kokkos_LIBRARY``
+  The path to the Kokkos library.
+
+#]=======================================================================]
+
+find_package(PkgConfig)
+pkg_check_modules(PC_Kokkos QUIET kokkos)
+
+find_path(Kokkos_INCLUDE_DIR
+  NAMES Kokkos_Core.hpp
+  PATHS ${PC_Kokkos_INCLUDE_DIRS}
+)
+find_library(Kokkos_LIBRARY
+  NAMES kokkos
+  PATHS ${PC_Kokkos_LIBRARY_DIRS}
+)
+find_path(_Kokkos_SETTINGS
+  NAMES kokkos_generated_settings.cmake
+  PATHS ${PC_Kokkos_PREFIX}
+        ${PC_Kokkos_LIBRARY_DIRS}/lib/cmake/Kokkos
+)
+
+set(Kokkos_VERSION ${PC_Kokkos_VERSION})
 
 include(FindPackageHandleStandardArgs)
-# handle the QUIETLY and REQUIRED arguments and set KOKKOS_FOUND to TRUE
-# if all listed variables are TRUE
-find_package_handle_standard_args(KOKKOS DEFAULT_MSG KOKKOS_SETTINGS_DIR KOKKOS_INCLUDE_DIR KOKKOS_LIBRARY)
+find_package_handle_standard_args(Kokkos
+  FOUND_VAR Kokkos_FOUND
+  REQUIRED_VARS
+    Kokkos_LIBRARY
+    Kokkos_INCLUDE_DIR
+    _Kokkos_SETTINGS
+  VERSION_VAR Kokkos_VERSION
+)
 
-mark_as_advanced(KOKKOS_SETTINGS_DIR KOKKOS_INCLUDE_DIR KOKKOS_LIBRARY)
+include(${_Kokkos_SETTINGS}/kokkos_generated_settings.cmake)
+unset(_Kokkos_SETTINGS CACHE)
 
-if(KOKKOS_SETTINGS_DIR AND KOKKOS_INCLUDE_DIR AND KOKKOS_LIBRARY)
-  include(${KOKKOS_SETTINGS_DIR}/kokkos_generated_settings.cmake)
-  # https://github.com/kokkos/kokkos/issues/1838
-  set(KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES_STRING)
-  set(KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES)
-  foreach(_f ${KOKKOS_CXX_FLAGS})
-    if(NOT _f MATCHES "-I.*")
-      set(KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES_STRING "${KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES_STRING} ${_f}")
-      list(APPEND KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES "${_f}")
-    endif()
-  endforeach()
-  add_library(Kokkos::kokkos UNKNOWN IMPORTED)
-  set_target_properties(Kokkos::kokkos PROPERTIES
-    IMPORTED_LOCATION ${KOKKOS_LIBRARY}
-    INTERFACE_INCLUDE_DIRECTORIES ${KOKKOS_INCLUDE_DIR}
-    INTERFACE_COMPILE_OPTIONS "${KOKKOS_CXX_FLAGS_WITHOUT_INCLUDES}"
-    INTERFACE_LINK_LIBRARIES "${KOKKOS_EXTRA_LIBS}")
-  # check for an empty link flags string to fix a trailing whitespace error when
-  # the link flags are empty (e.g. the serial only case)
-  if(KOKKOS_LINK_FLAGS)
-    set_property(TARGET Kokkos::kokkos APPEND_STRING PROPERTY INTERFACE_LINK_LIBRARIES " ${KOKKOS_LINK_FLAGS}")
-  endif()
+if(Kokkos_FOUND)
+  set(Kokkos_LIBRARIES ${Kokkos_LIBRARY})
+  set(Kokkos_INCLUDE_DIRS ${Kokkos_INCLUDE_DIR})
+  set(Kokkos_DEFINITIONS ${PC_Kokkos_CFLAGS_OTHER})
+  set(Kokkos_DEVICES ${KOKKOS_GMAKE_DEVICES})
+  set(Kokkos_ARCH ${KOKKOS_GMAKE_ARCH})
 endif()
+
+# Clear the cache from all the mess in kokkos_generated_settings.cmake
+foreach(_var NVCC_WRAPPER KOKKOS_PATH KOKKOS_GMAKE_DEVICES KOKKOS_GMAKE_ARCH KOKKOS_DEBUG_CMAKE KOKKOS_GMAKE_USE_TPLS KOKKOS_CXX_STANDARD KOKKOS_GMAKE_OPTIONS KOKKOS_GMAKE_CUDA_OPTIONS KOKKOS_GMAKE_TPL_INCLUDE_DIRS KOKKOS_GMAKE_TPL_LIBRARY_DIRS KOKKOS_GMAKE_TPL_LIBRARY_NAMES KOKKOS_HEADERS KOKKOS_HEADERS_IMPL KOKKOS_HEADERS_CUDA KOKKOS_HEADERS_OPENMP KOKKOS_HEADERS_HPX KOKKOS_HEADERS_ROCM KOKKOS_HEADERS_THREADS KOKKOS_HEADERS_QTHREADS KOKKOS_OS KOKKOS_CPP_DEPENDS KOKKOS_LINK_DEPENDS KOKKOS_CXXFLAGS KOKKOS_CPPFLAGS KOKKOS_LDFLAGS KOKKOS_CXXLDFLAGS KOKKOS_LIBS KOKKOS_EXTRA_LIBS KOKKOS_LINK_FLAGS KOKKOS_INTERNAL_USE_CUDA KOKKOS_INTERNAL_USE_OPENMP KOKKOS_INTERNAL_USE_HPX KOKKOS_INTERNAL_USE_PTHREADS KOKKOS_INTERNAL_USE_SERIAL KOKKOS_INTERNAL_USE_ROCM KOKKOS_INTERNAL_USE_HPX KOKKOS_INTERNAL_USE_QTHREADS KOKKOS_SRC KOKKOS_CXX_FLAGS KOKKOS_CPP_FLAGS KOKKOS_LD_FLAGS KOKKOS_LIBS_LIST KOKKOS_EXTRA_LIBS_LIST KOKKOS_LINK_FLAGS)
+  unset(${_var} CACHE)
+endforeach()
+
+# For clang we need to add the cudart library explicitly
+# since Kokkos doesn't do that for us.
+if(Kokkos_DEVICES MATCHES "Cuda" AND CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+  find_package(CUDA REQUIRED)
+  get_filename_component(Kokkos_CUDA_LIBRARY_DIR ${CUDA_cudadevrt_LIBRARY} DIRECTORY)
+  set(PC_Kokkos_LDFLAGS "-L${Kokkos_CUDA_LIBRARY_DIR} ${PC_Kokkos_LDFLAGS}")
+endif()
+
+if(Kokkos_FOUND AND NOT TARGET Kokkos::Kokkos)
+  add_library(Kokkos::Kokkos UNKNOWN IMPORTED)
+  set_target_properties(Kokkos::Kokkos PROPERTIES
+    IMPORTED_LOCATION "${Kokkos_LIBRARY}"
+    INTERFACE_COMPILE_OPTIONS "${PC_Kokkos_CFLAGS_OTHER}"
+    INTERFACE_LINK_LIBRARIES "${PC_Kokkos_LDFLAGS}"
+    INTERFACE_INCLUDE_DIRECTORIES "${Kokkos_INCLUDE_DIR}"
+  )
+endif()
+
+mark_as_advanced(
+  Kokkos_INCLUDE_DIR
+  Kokkos_LIBRARY
+)

@@ -1,0 +1,17 @@
+#ifndef CAJITA_VERSION_HPP
+#define CAJITA_VERSION_HPP
+
+#include <Cajita_Config.hpp>
+
+#include <string>
+
+namespace Cajita
+{
+
+inline std::string version() { return "@CAJITA_VERSION_STRING@"; }
+
+inline std::string gitCommitHash() { return "@CAJITA_GIT_COMMIT_HASH@"; }
+
+} // namespace Cajita
+
+#endif
