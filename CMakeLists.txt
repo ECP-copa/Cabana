@@ -26,7 +26,8 @@ add_custom_target(
     -DCAJITA_VERSION_STRING=${CAJITA_VERSION_STRING}
     -P cmake/SetupVersion.cmake
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
-# Also run the command when configuring
+
+# also run the command when configuring
 execute_process(
   COMMAND ${CMAKE_COMMAND}
     -DSOURCE_DIR=${CMAKE_CURRENT_SOURCE_DIR}
@@ -37,7 +38,9 @@ execute_process(
 
 # create the library
 file(GLOB SOURCES src/*cpp)
+
 add_library(Cajita ${SOURCES})
+
 target_link_libraries(Cajita
   Kokkos::Kokkos
   MPI::MPI_CXX
@@ -50,6 +53,7 @@ target_include_directories(Cajita
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
   )
 
+# installation
 install(TARGETS Cajita
   EXPORT CajitaTargets
   ARCHIVE LIBRARY PUBLIC_HEADER
@@ -61,10 +65,12 @@ install(EXPORT CajitaTargets
   )
 
 include(CMakePackageConfigHelpers)
+
 configure_package_config_file(cmake/CajitaConfig.cmake.in
   ${CMAKE_CURRENT_BINARY_DIR}/CajitaConfig.cmake
   INSTALL_DESTINATION lib/cmake/Cajita
   )
+
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/CajitaConfig.cmake
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindKokkos.cmake
@@ -78,8 +84,9 @@ install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/ DESTINATION include
 install(DIRECTORY ${PROJECT_BINARY_DIR}/include/ DESTINATION include
   FILES_MATCHING PATTERN "*.hpp")
 
-# add tests.
+# add tests
 option(Cajita_ENABLE_TESTING "Build tests" OFF)
+
 if(Cajita_ENABLE_TESTING)
   enable_testing()
   add_subdirectory(unit_test)
