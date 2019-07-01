@@ -75,5 +75,24 @@ macro(Cajita_add_tests)
   endforeach()
 endmacro()
 
-Cajita_add_tests(NAMES IndexSpace)
-Cajita_add_tests(MPI NAMES GlobalGrid Block Array Halo StructuredSolver BovWriter)
+set(SERIAL_TESTS
+  IndexSpace
+  )
+
+set(MPI_TESTS
+  GlobalGrid
+  Block
+  Array
+  Halo
+  BovWriter
+  )
+
+if(HYPRE_FOUND)
+  list(APPEND MPI_TESTS
+    StructuredSolver
+    )
+endif()
+
+Cajita_add_tests(NAMES ${SERIAL_TESTS})
+
+Cajita_add_tests(MPI NAMES ${MPI_TESTS})
