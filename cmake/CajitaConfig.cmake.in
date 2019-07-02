@@ -2,7 +2,7 @@
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
 
-find_package(Kokkos REQUIRED)
+find_package(KOKKOS REQUIRED)
 find_package(MPI REQUIRED)
 find_package(HYPRE)
 

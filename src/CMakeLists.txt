@@ -42,3 +42,21 @@ endif()
 
 install(FILES ${HEADERS_PUBLIC}
   DESTINATION include)
+
+target_include_directories(Cajita
+  PUBLIC
+    $<INSTALL_INTERFACE:include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  )
+
+install(TARGETS Cajita
+  EXPORT CajitaTargets
+  ARCHIVE LIBRARY PUBLIC_HEADER
+  ARCHIVE DESTINATION lib
+  )
+
+install(EXPORT CajitaTargets
+  NAMESPACE Cajita::
+  DESTINATION lib/cmake/Cajita
+  )

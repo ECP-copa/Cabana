@@ -1,30 +1,10 @@
-set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/tpls)
-
-include_directories(${GTEST_SOURCE_DIR})
-add_library(Cajita_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
-set_target_properties(Cajita_gtest PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-    )
-
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+include_directories(${CMAKE_PROJECT_BINARY_DIR}/include)
+include_directories(${CMAKE_PROJECT_BINARY_DIR}/googletest-src/googletest/include)
 
 set(gtest_args --gtest_color=yes)
 
-##--------------------------------------------------------------------------##
-## General tests.
-##--------------------------------------------------------------------------##
-foreach(_test CajitaVersion)
-  add_executable(${_test}_test tst${_test}.cpp unit_test_main.cpp)
-  target_link_libraries(${_test}_test Cajita Cajita_gtest)
-  add_test(NAME ${_test}_test COMMAND ${_test}_test --gtest_color=yes)
-endforeach()
-
-##--------------------------------------------------------------------------##
-## On-node tests with and without MPI.
-##--------------------------------------------------------------------------##
 set(CAJITA_SUPPORTED_DEVICES Serial OpenMP Cuda)
 
 macro(Cajita_add_tests)
@@ -52,8 +32,8 @@ macro(Cajita_add_tests)
         file(APPEND ${_file} "#include <tst${_test}.hpp>\n")
         set(_target ${_test}_test_${_device})
         add_executable(${_target} ${_file} ${CAJITA_UNIT_TEST_MAIN})
-        target_include_directories(${_target} PUBLIC ${_dir})
-        target_link_libraries(${_target} Cajita Cajita_gtest)
+        target_include_directories(${_target} PRIVATE ${_dir})
+        target_link_libraries(${_target} PRIVATE Cajita gtest)
         if(CAJITA_UNIT_TEST_MPI)
           foreach(_np ${CAJITA_UNIT_TEST_MPIEXEC_NUMPROCS})
             add_test(NAME ${_target}_${_np} COMMAND
