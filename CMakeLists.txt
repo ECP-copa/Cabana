@@ -5,9 +5,16 @@ project(Cajita LANGUAGES CXX VERSION 0.1.0)
 
 # find dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+
 find_package(MPI REQUIRED)
+
 find_package(KOKKOS REQUIRED)
-find_package(HYPRE REQUIRED)
+
+find_package(HYPRE)
+
+if(HYPRE_FOUND)
+  set(CAJITA_HAVE_HYPRE ON)
+endif()
 
 # set the configure files
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/src/Cajita_Config.hpp.in
@@ -37,15 +44,9 @@ execute_process(
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
 # create the library
-file(GLOB SOURCES src/*cpp)
+add_subdirectory(src)
 
-add_library(Cajita ${SOURCES})
-
-target_link_libraries(Cajita
-  Kokkos::Kokkos
-  MPI::MPI_CXX
-  HYPRE::hypre)
-
+# installation
 target_include_directories(Cajita
   PUBLIC
     $<INSTALL_INTERFACE:include>
@@ -53,7 +54,6 @@ target_include_directories(Cajita
     $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/src>
   )
 
-# installation
 install(TARGETS Cajita
   EXPORT CajitaTargets
   ARCHIVE LIBRARY PUBLIC_HEADER
@@ -74,14 +74,17 @@ configure_package_config_file(cmake/CajitaConfig.cmake.in
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/CajitaConfig.cmake
   ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindKokkos.cmake
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHYPRE.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/CajitaSettings.cmake
   DESTINATION lib/cmake/Cajita )
 
-install(DIRECTORY ${PROJECT_SOURCE_DIR}/src/ DESTINATION include
-  FILES_MATCHING PATTERN "*.hpp")
+if(HYPRE_FOUND)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHYPRE.cmake
+    DESTINATION lib/cmake/Cajita )
+endif()
 
-install(DIRECTORY ${PROJECT_BINARY_DIR}/include/ DESTINATION include
+install(DIRECTORY ${PROJECT_BINARY_DIR}/include/
+  DESTINATION include
   FILES_MATCHING PATTERN "*.hpp")
 
 # add tests
