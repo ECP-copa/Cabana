@@ -384,9 +384,9 @@ class Halo
   buffers may be allocated. This means a halo constructed via this method is
   only compatible with arrays that have the same scalar and device type.
 */
-template<class Scalar, class Device, class ArrayLayout_t>
+template<class Scalar, class Device, class EntityType>
 std::shared_ptr<Halo<Scalar,Device>>
-createHalo( const ArrayLayout_t& layout, const HaloPattern& pattern )
+createHalo( const ArrayLayout<EntityType>& layout, const HaloPattern& pattern )
 {
     return std::make_shared<Halo<Scalar,Device>>( layout, pattern );
 }
@@ -400,14 +400,16 @@ createHalo( const ArrayLayout_t& layout, const HaloPattern& pattern )
   method is only compatible with arrays that have the same scalar and device
   type as the input array.
 */
-template<class Array_t>
-std::shared_ptr<Halo<typename Array_t::value_type,
-                     typename Array_t::device_type>>
-createHalo( const Array_t& array, const HaloPattern& pattern )
+template<class Scalar, class EntityType, class ... Params>
+std::shared_ptr<Halo<typename Array<Scalar,EntityType,Params...>::value_type,
+                     typename Array<Scalar,EntityType,Params...>::device_type>>
+createHalo( const Array<Scalar,EntityType,Params...>& array,
+            const HaloPattern& pattern )
 {
-    return std::make_shared<Halo<typename Array_t::value_type,
-                                 typename Array_t::device_type>>(
-                                     array.layout(), pattern );
+    return std::make_shared<
+        Halo<typename Array<Scalar,EntityType,Params...>::value_type,
+             typename Array<Scalar,EntityType,Params...>::device_type>>(
+                 array.layout(), pattern );
 }
 
 //---------------------------------------------------------------------------//
