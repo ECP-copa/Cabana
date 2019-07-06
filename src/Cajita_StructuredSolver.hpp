@@ -306,6 +306,18 @@ class StructuredSolver
         Kokkos::deep_copy( owned_x, x_values );
     }
 
+    // Get the number of iterations taken on the last solve.
+    int getNumIter()
+    {
+        return this->getNumIterImpl();
+    }
+
+    // Get the relative residual norm achieved on the last solve.
+    double getFinalRelativeResidualNorm()
+    {
+        return this->getFinalRelativeResidualNormImpl();
+    }
+
   protected:
 
     // Set convergence tolerance implementation.
@@ -326,6 +338,12 @@ class StructuredSolver
     virtual void solveImpl( HYPRE_StructMatrix A,
                             HYPRE_StructVector b,
                             HYPRE_StructVector x ) = 0;
+
+    // Get the number of iterations taken on the last solve.
+    virtual int getNumIterImpl() = 0;
+
+    // Get the relative residual norm achieved on the last solve.
+    virtual double getFinalRelativeResidualNormImpl() = 0;
 
     // Check a hypre error.
     void checkHypreError( const int error ) const
@@ -410,6 +428,23 @@ class HypreStructPCG : public StructuredSolver<EntityType,DeviceType>
         this->checkHypreError( error );
     }
 
+    int getNumIterImpl() override
+    {
+        HYPRE_Int num_iter;
+        auto error = HYPRE_StructPCGGetNumIterations( _solver, &num_iter );
+        this->checkHypreError( error );
+        return num_iter;
+    }
+
+    double getFinalRelativeResidualNormImpl() override
+    {
+        HYPRE_Real norm;
+        auto error =
+            HYPRE_StructPCGGetFinalRelativeResidualNorm( _solver, &norm );
+        this->checkHypreError( error );
+        return norm;
+    }
+
   private:
 
     HYPRE_StructSolver _solver;
@@ -471,6 +506,23 @@ class HypreStructGMRES : public StructuredSolver<EntityType,DeviceType>
     {
         auto error = HYPRE_StructGMRESSolve( _solver, A, b, x );
         this->checkHypreError( error );
+    }
+
+    int getNumIterImpl() override
+    {
+        HYPRE_Int num_iter;
+        auto error = HYPRE_StructGMRESGetNumIterations( _solver, &num_iter );
+        this->checkHypreError( error );
+        return num_iter;
+    }
+
+    double getFinalRelativeResidualNormImpl() override
+    {
+        HYPRE_Real norm;
+        auto error =
+            HYPRE_StructGMRESGetFinalRelativeResidualNorm( _solver, &norm );
+        this->checkHypreError( error );
+        return norm;
     }
 
   private:
@@ -536,6 +588,23 @@ class HypreStructPFMG : public StructuredSolver<EntityType,DeviceType>
         this->checkHypreError( error );
     }
 
+    int getNumIterImpl() override
+    {
+        HYPRE_Int num_iter;
+        auto error = HYPRE_StructPFMGGetNumIterations( _solver, &num_iter );
+        this->checkHypreError( error );
+        return num_iter;
+    }
+
+    double getFinalRelativeResidualNormImpl() override
+    {
+        HYPRE_Real norm;
+        auto error =
+            HYPRE_StructPFMGGetFinalRelativeResidualNorm( _solver, &norm );
+        this->checkHypreError( error );
+        return norm;
+    }
+
   private:
 
     HYPRE_StructSolver _solver;
@@ -597,6 +666,23 @@ class HypreStructSMG : public StructuredSolver<EntityType,DeviceType>
     {
         auto error = HYPRE_StructSMGSolve( _solver, A, b, x );
         this->checkHypreError( error );
+    }
+
+    int getNumIterImpl() override
+    {
+        HYPRE_Int num_iter;
+        auto error = HYPRE_StructSMGGetNumIterations( _solver, &num_iter );
+        this->checkHypreError( error );
+        return num_iter;
+    }
+
+    double getFinalRelativeResidualNormImpl() override
+    {
+        HYPRE_Real norm;
+        auto error =
+            HYPRE_StructSMGGetFinalRelativeResidualNorm( _solver, &norm );
+        this->checkHypreError( error );
+        return norm;
     }
 
   private:
