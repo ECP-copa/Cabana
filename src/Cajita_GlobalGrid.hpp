@@ -85,7 +85,7 @@ class GlobalGrid
 // Creation function.
 //---------------------------------------------------------------------------//
 /*!
-  \brief Crate a global grid.
+  \brief Create a global grid.
   \param comm The communicator over which to define the grid.
   \param domain The domain of the grid.
   \param partitioner The grid partitioner.
@@ -99,7 +99,7 @@ createGlobalGrid( MPI_Comm comm,
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Crate a global grid.
+  \brief Create a global grid.
   \param comm The communicator over which to define the grid.
   \param partitioner The grid partitioner.
   \param global_low_corner The low corner of the domain in physical space.
