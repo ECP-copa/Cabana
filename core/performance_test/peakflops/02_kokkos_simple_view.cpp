@@ -7,10 +7,9 @@
 
 typedef Kokkos::View<float[CABANA_PERFORMANCE_VECLENGTH],Kokkos::MemoryTraits<Kokkos::Restrict> > view_type;
 
-struct data{
-    float vec[CABANA_PERFORMANCE_VECLENGTH];
-};
-
+#if defined (__GNUC__)
+__attribute__ ((noinline))
+#endif
 view_type axpy_10(
         const view_type & __restrict__  a,
         const view_type & __restrict__  x0,
@@ -58,7 +57,7 @@ view_type axpy_10(
 
 
 TEST(kokkos, simple) {
-    long n = static_cast<long>(2e6);
+    long n = static_cast<long>(2e8);
     long seed = 76843802738543;
 
     const int N = 1;
