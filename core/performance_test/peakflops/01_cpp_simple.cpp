@@ -118,7 +118,7 @@ struct data * axpy_10(struct data *__restrict__ a, struct data *__restrict__ x0,
 
 
 TEST(cpp, simple) {
-  long n = static_cast<long>(2e8);
+  long n = static_cast<long>(2e6); //use a higher number e.g. 2e8 for skylake 
   long seed = 76843802738543;
 
   data* a_ = new data();
