@@ -225,7 +225,7 @@ bool check_expected_flops(double achieved_flops_clock)
 TEST(cabana, simple)
 {
     //number of outer loop (e.g. timestepping)
-    long n = static_cast<long>(2e6);
+    long n = static_cast<long>(2e4); //use a higher number e.g. 2e6 for skylake 
 
     // Declare a number of particles.
     const int array_size = CABANA_PERFORMANCE_VECLENGTH;
