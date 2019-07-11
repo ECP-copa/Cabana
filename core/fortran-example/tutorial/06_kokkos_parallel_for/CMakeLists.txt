@@ -1,7 +1,7 @@
 add_executable(ForKKParallelFor Fortran_main.f90 Fortran_kernel.F90 hello_world.cpp)  
 target_link_libraries(ForKKParallelFor cabanacore)
 add_test(NAME Fortran_tutorial_06 COMMAND ForKKParallelFor)
-set_property(TARGET ForKKParallelFor PROPERTY LINKER_LANGUAGE Fortran)
+set_property(TARGET ForKKParallelFor PROPERTY LINKER_LANGUAGE CXX)
 
 if(CMAKE_Fortran_COMPILER_ID STREQUAL "PGI")
   if( Cabana_ENABLE_Cuda )
