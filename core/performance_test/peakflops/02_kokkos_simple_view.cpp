@@ -57,7 +57,7 @@ view_type axpy_10(
 
 
 TEST(kokkos, simple) {
-    long n = static_cast<long>(2e8);
+    long n = static_cast<long>(2e6); //use a higher number e.g. 2e8 for skylake 
     long seed = 76843802738543;
 
     const int N = 1;
