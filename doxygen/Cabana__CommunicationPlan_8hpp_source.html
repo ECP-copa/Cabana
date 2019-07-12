@@ -165,12 +165,12 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;        <span class="stringliteral">&quot;neighbor_counts&quot;</span>, comm_size );</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    Kokkos::View&lt;size_type*,device_type&gt; neighbor_ids(</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;        Kokkos::ViewAllocateWithoutInitializing(<span class="stringliteral">&quot;neighbor_ids&quot;</span>),</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        element_export_ranks.extent(0) );</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;        element_export_ranks.size() );</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    <span class="comment">// Count the sends and create the steering vector.</span></div>
 <div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="stringliteral">&quot;Cabana::CommunicationPlan::countSendsAndCreateSteering&quot;</span>,</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        Kokkos::RangePolicy&lt;execution_space&gt;(0,element_export_ranks.extent(0)),</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        Kokkos::RangePolicy&lt;execution_space&gt;(0,element_export_ranks.size()),</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> size_type i ){</div>
 <div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;            <span class="keywordflow">if</span> ( element_export_ranks(i) &gt;= 0 )</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;                neighbor_ids(i) = Kokkos::atomic_fetch_add(</div>
@@ -208,17 +208,17 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;        comm_size );</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    Kokkos::View&lt;size_type*,device_type&gt; neighbor_ids(</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        Kokkos::ViewAllocateWithoutInitializing(<span class="stringliteral">&quot;neighbor_ids&quot;</span>),</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        element_export_ranks.extent(0) );</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;        element_export_ranks.size() );</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    Kokkos::View&lt;int**,device_type&gt; neighbor_counts_dup(</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="stringliteral">&quot;neighbor_counts&quot;</span>, unique_token.size(), comm_size );</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    Kokkos::View&lt;size_type**,device_type&gt; neighbor_ids_dup(</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        <span class="stringliteral">&quot;neighbor_ids&quot;</span>, unique_token.size(),</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        element_export_ranks.extent(0) );</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        element_export_ranks.size() );</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="comment">// Compute initial duplicated sends and steering.</span></div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="stringliteral">&quot;Cabana::CommunicationPlan::intialCount&quot;</span>,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        Kokkos::RangePolicy&lt;execution_space&gt;(0,element_export_ranks.extent(0)),</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        Kokkos::RangePolicy&lt;execution_space&gt;(0,element_export_ranks.size()),</div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> size_type i ){</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;            <span class="keywordflow">if</span> ( element_export_ranks(i) &gt;= 0 )</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;            {</div>
@@ -272,7 +272,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="comment">// its destination rank.</span></div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;        <span class="stringliteral">&quot;Cabana::CommunicationPlan::createSteering&quot;</span>,</div>
-<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        team_policy(element_export_ranks.extent(0),Kokkos::AUTO),</div>
+<div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160;        team_policy(element_export_ranks.size(),Kokkos::AUTO),</div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keyword">typename</span> team_policy::member_type&amp; team ){</div>
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160;            <span class="comment">// Get the element id.</span></div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;            <span class="keyword">auto</span> i = team.league_rank();</div>
@@ -722,7 +722,7 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
-Generated on Thu Jul 11 2019 21:43:06 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
+Generated on Fri Jul 12 2019 00:11:14 for Cabana by &#160;<a href="http://www.doxygen.org/index.html">
 <img class="footer" src="doxygen.png" alt="doxygen"/>
 </a> 1.8.6
 </small></address>
