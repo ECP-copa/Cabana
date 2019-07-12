@@ -31,13 +31,16 @@ endif()
 
 # we only want to run the below if we have access to "#pragma omp simd"
 include(CheckCXXSourceCompiles)
-set(CMAKE_REQUIRED_FLAGS "-fopenmp-simd -Werror")
+set(CMAKE_REQUIRED_FLAGS "-fopenmp -Werror")
 check_cxx_source_compiles(
       "int main(void) {
+      const int N = 32;
+      int sum[N];
       #pragma omp simd
-      for (int i = 0; i < 8;i++);
+      for (int i = 0; i < N; i++) { sum[i] = i*2; }
       return 0;
-      }" HAVE_OMP_SIMD)
+      }
+      " HAVE_OMP_SIMD)
 set(CMAKE_REQUIRED_FLAGS)
 
 if (NOT HAVE_OMP_SIMD)
@@ -56,7 +59,7 @@ foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
   set(test "${_test}_performance_test")
   add_executable(${test} ${_test}.cpp ${CMAKE_SOURCE_DIR}/core/unit_test/unit_test_main.cpp)
   target_link_libraries(${test} cabanacore cabana_core_gtest)
-  target_compile_options(${test} PRIVATE "-fopenmp-simd")
+  target_compile_options(${test} PRIVATE "-fopenmp")
   add_test(NAME ${test} COMMAND ${test})
   set_tests_properties(${test} PROPERTIES LABELS "PERFORMANCE" )
 endforeach()
