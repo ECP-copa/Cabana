@@ -82,7 +82,7 @@ MPI_Datatype createSubarray( const Array_t& array,
                              const std::vector<long>& global_extents )
 {
     using value_type = typename Array_t::value_type;
-    const auto& global_grid = array.layout().block().globalGrid();
+    const auto& global_grid = array.layout()->block()->globalGrid();
 
     int local_start[4] =
         { static_cast<int>(global_grid.globalOffset(Dim::K)),
@@ -131,7 +131,7 @@ void writeTimeStep( const int time_step_index,
     using execution_space = typename device_type::execution_space;
 
     // Get the global grid.
-    const auto& global_grid = array.layout().block().globalGrid();
+    const auto& global_grid = array.layout()->block()->globalGrid();
 
     // If this is a node field, determine periodicity so we can add the last
     // node back to the visualization if needed.
@@ -143,8 +143,8 @@ void writeTimeStep( const int time_step_index,
         else if ( std::is_same<entity_type,Node>::value )
             global_extents[d] = global_grid.globalNumEntity(Cell(),d) + 1;
     }
-    global_extents[3] = array.layout().dofsPerEntity();
-    auto owned_index_space = array.layout().indexSpace(Own(),Local());
+    global_extents[3] = array.layout()->dofsPerEntity();
+    auto owned_index_space = array.layout()->indexSpace(Own(),Local());
     std::vector<long> owned_extents( 4, -1 );
     for ( int d = 0; d < 3; ++d )
     {
@@ -162,7 +162,7 @@ void writeTimeStep( const int time_step_index,
                 owned_extents[d] = owned_index_space.extent(d) + 1;
         }
     }
-    owned_extents[3] = array.layout().dofsPerEntity();
+    owned_extents[3] = array.layout()->dofsPerEntity();
 
     // Create a contiguous array of the owned array values. Note that we
     // reorder to KJI grid ordering to conform to the BOV format.
