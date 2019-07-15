@@ -86,7 +86,7 @@ class Halo
     */
     template<class ArrayLayout_t>
     Halo( const ArrayLayout_t& layout, const HaloPattern& pattern )
-        : _comm( layout.block().globalGrid().comm() )
+        : _comm( layout.block()->globalGrid().comm() )
     {
         // Function to get the local id of the neighbor.
         auto neighbor_id =
@@ -118,8 +118,7 @@ class Halo
             auto k = n[Dim::K];
 
             // Get the rank of the neighbor.
-            int rank =
-                layout.block().neighborRank(i,j,k);
+            int rank = layout.block()->neighborRank(i,j,k);
 
             // If this is a valid rank add it as a neighbor.
             if ( rank >= 0 )
@@ -409,7 +408,7 @@ createHalo( const Array<Scalar,EntityType,Params...>& array,
     return std::make_shared<
         Halo<typename Array<Scalar,EntityType,Params...>::value_type,
              typename Array<Scalar,EntityType,Params...>::device_type>>(
-                 array.layout(), pattern );
+                 *(array.layout()), pattern );
 }
 
 //---------------------------------------------------------------------------//

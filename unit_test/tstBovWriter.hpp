@@ -53,7 +53,7 @@ void writeTest()
     Kokkos::parallel_for(
         "fill_cell_field",
         createExecutionPolicy(
-            cell_layout->block().indexSpace(Own(),Cell(),Local()),
+            cell_layout->block()->indexSpace(Own(),Cell(),Local()),
             TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ){
             cell_data( i, j, k, 0 ) = i + off_i + j + off_j + k + off_k;
@@ -67,7 +67,7 @@ void writeTest()
     Kokkos::parallel_for(
         "fill_node_field",
         createExecutionPolicy(
-            node_layout->block().indexSpace(Own(),Node(),Local()),
+            node_layout->block()->indexSpace(Own(),Node(),Local()),
             TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ){
             node_data( i, j, k, Dim::I ) = i + off_i;

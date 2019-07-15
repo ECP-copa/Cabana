@@ -37,7 +37,7 @@ class StructuredSolver
       \param layout The array layout defining the vector space of the solver.
     */
     StructuredSolver( const ArrayLayout<EntityType>& layout )
-        : _comm( layout.block().globalGrid().comm() )
+        : _comm( layout.block()->globalGrid().comm() )
     {
         // Create the grid.
         auto error = HYPRE_StructGridCreate( _comm, 3, &_grid );
@@ -58,12 +58,12 @@ class StructuredSolver
         checkHypreError( error );
 
         // Get periodicity
-        const auto& domain = layout.block().globalGrid().domain();
+        const auto& domain = layout.block()->globalGrid().domain();
         HYPRE_Int periodic[3];
         for ( int d = 0; d < 3; ++d )
             periodic[d] =
                 domain.isPeriodic(d)
-                ? layout.block().globalGrid().globalNumEntity(EntityType(),d)
+                ? layout.block()->globalGrid().globalNumEntity(EntityType(),d)
                 : 0;
         error = HYPRE_StructGridSetPeriodic( _grid, periodic );
         checkHypreError( error );
@@ -158,7 +158,7 @@ class StructuredSolver
     template<class Scalar>
     void setMatrixValues( const Array<Scalar,EntityType,DeviceType>& values )
     {
-        if ( values.layout().dofsPerEntity() !=
+        if ( values.layout()->dofsPerEntity() !=
              static_cast<int>(_stencil_size) )
             throw std::runtime_error(
                 "Number of matrix values does not match stencil size" );
@@ -168,7 +168,7 @@ class StructuredSolver
         checkHypreError( error );
 
         // Get a view of the matrix values on the host.
-        auto owned_space = values.layout().indexSpace( Own(), Local() );
+        auto owned_space = values.layout()->indexSpace( Own(), Local() );
         auto owned_values = createSubview( values.view(), owned_space );
         auto host_values = Kokkos::create_mirror_view_and_copy(
             Kokkos::HostSpace(), owned_values );
@@ -238,8 +238,8 @@ class StructuredSolver
     void solve( const Array<Scalar,EntityType,DeviceType>& b,
                 Array<Scalar,EntityType,DeviceType>& x )
     {
-        if ( b.layout().dofsPerEntity() != 1 ||
-             x.layout().dofsPerEntity() != 1 )
+        if ( b.layout()->dofsPerEntity() != 1 ||
+             x.layout()->dofsPerEntity() != 1 )
             throw std::runtime_error( "Structured solver only for scalar fields" );
 
         // Initialize the RHS.
@@ -247,7 +247,7 @@ class StructuredSolver
         checkHypreError( error );
 
         // Get a local view of b on the host.
-        auto owned_space = b.layout().indexSpace( Own(), Local() );
+        auto owned_space = b.layout()->indexSpace( Own(), Local() );
         auto owned_b = createSubview( b.view(), owned_space );
         auto b_values = Kokkos::create_mirror_view_and_copy(
             Kokkos::HostSpace(), owned_b );
@@ -383,7 +383,7 @@ class HypreStructPCG : public StructuredSolver<EntityType,DeviceType>
         : Base( layout )
     {
         auto error = HYPRE_StructPCGCreate(
-            layout.block().globalGrid().comm(), &_solver );
+            layout.block()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
     }
 
@@ -463,7 +463,7 @@ class HypreStructGMRES : public StructuredSolver<EntityType,DeviceType>
         : Base( layout )
     {
         auto error = HYPRE_StructGMRESCreate(
-            layout.block().globalGrid().comm(), &_solver );
+            layout.block()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
     }
 
@@ -543,7 +543,7 @@ class HypreStructPFMG : public StructuredSolver<EntityType,DeviceType>
         : Base( layout )
     {
         auto error = HYPRE_StructPFMGCreate(
-            layout.block().globalGrid().comm(), &_solver );
+            layout.block()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
     }
 
@@ -623,7 +623,7 @@ class HypreStructSMG : public StructuredSolver<EntityType,DeviceType>
         : Base( layout )
     {
         auto error = HYPRE_StructSMGCreate(
-            layout.block().globalGrid().comm(), &_solver );
+            layout.block()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
     }
 

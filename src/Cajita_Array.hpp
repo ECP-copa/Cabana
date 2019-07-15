@@ -39,8 +39,8 @@ class ArrayLayout
     {}
 
     // Get the grid block over which this layout is defined.
-    const Block& block() const
-    { return *_block; }
+    const std::shared_ptr<Block> block() const
+    { return _block; }
 
     // Get the number of degrees-of-freedom on each grid entity.
     int dofsPerEntity() const
@@ -156,9 +156,31 @@ class Array
                 label,layout->indexSpace(Ghost(),Local())) )
     {}
 
+    /*!
+      \brief Create an array with the given layout and view. This view should
+      match the array index spaces in size.
+      \param layout The layout of the array.
+      \param view The array data.
+    */
+    Array( const std::shared_ptr<array_layout>& layout,
+           const view_type& view )
+        : _layout( layout )
+        , _data( view )
+    {
+        if ( (long) view.extent(0) !=
+             layout->indexSpace(Ghost(),Local()).extent(0) ||
+             (long) view.extent(1) !=
+             layout->indexSpace(Ghost(),Local()).extent(1) ||
+             (long) view.extent(2) !=
+             layout->indexSpace(Ghost(),Local()).extent(2) ||
+             (long) view.extent(3) !=
+             layout->indexSpace(Ghost(),Local()).extent(3) )
+            throw std::runtime_error("Layout and view dimensions do not match");
+    }
+
     //! Get the layout of the array.
-    const array_layout& layout() const
-    { return *_layout; }
+    std::shared_ptr<array_layout> layout() const
+    { return _layout; }
 
     //! Get a view of the array data.
     view_type view() const
@@ -172,6 +194,14 @@ class Array
 
     std::shared_ptr<array_layout> _layout;
     view_type _data;
+
+  public:
+
+    // Subview types.
+    using subview_type =
+        decltype( createSubview(_data,_layout->indexSpace(Ghost(),Local())) );
+    using subview_layout = typename subview_type::array_layout;
+    using subview_memory_traits = typename subview_type::memory_traits;
 };
 
 //---------------------------------------------------------------------------//
@@ -208,10 +238,60 @@ createArray( const std::string& label,
 }
 
 //---------------------------------------------------------------------------//
+// Subarray creation.
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a subarray of the given array over the given range of degrees
+  of freedom.
+  \param array The array from which to create a subarray
+  \param dof_min The minimum degree-of-freedom index of the subarray.
+  \param dof_max The maximum degree-of-freedom index of the subarray.
+*/
+template<class Scalar, class EntityType, class ... Params>
+std::shared_ptr<
+    Array<Scalar,
+          EntityType,
+          typename Array<Scalar,EntityType,Params...>::subview_layout,
+          typename Array<Scalar,EntityType,Params...>::device_type,
+          typename Array<Scalar,EntityType,Params...>::subview_memory_traits>
+    >
+createSubarray( const Array<Scalar,EntityType,Params...>& array,
+                const int dof_min,
+                const int dof_max )
+{
+    auto space = array.layout()->indexSpace( Ghost(), Local() );
+    IndexSpace<4> sub_space( {space.min(0),space.min(1),space.min(2),dof_min},
+                             {space.max(0),space.max(1),space.max(2),dof_max} );
+    auto sub_view = createSubview( array.view(), sub_space );
+    auto sub_layout = createArrayLayout(
+        array.layout()->block(), dof_max - dof_min, EntityType() );
+    return std::make_shared<
+        Array<Scalar,
+              EntityType,
+              typename Array<Scalar,EntityType,Params...>::subview_layout,
+              typename Array<Scalar,EntityType,Params...>::device_type,
+              typename Array<Scalar,EntityType,Params...>::subview_memory_traits>
+        >(
+        sub_layout, sub_view );
+}
+
+//---------------------------------------------------------------------------//
 // Array operations.
 //---------------------------------------------------------------------------//
 namespace ArrayOp
 {
+//---------------------------------------------------------------------------//
+/*!
+  \brief Clone an array. Do not initialize the clone.
+  \param array The array to clone.
+*/
+template<class Scalar, class ... Params, class EntityType>
+std::shared_ptr<Array<Scalar,EntityType,Params...>>
+clone( const Array<Scalar,EntityType,Params...>& array )
+{
+    return createArray<Scalar,Params...>( array.label(), array.layout() );
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Assign a scalar value to every element of an array.
@@ -227,7 +307,7 @@ void assign( Array_t& array,
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     auto subview =
-        createSubview( array.view(), array.layout().indexSpace(tag,Local()) );
+        createSubview( array.view(), array.layout()->indexSpace(tag,Local()) );
     Kokkos::deep_copy( subview, alpha );
 }
 
@@ -248,7 +328,7 @@ void scale( Array_t& array,
     auto view = array.view();
     Kokkos::parallel_for(
         "ArrayOp::scale",
-        createExecutionPolicy( array.layout().indexSpace(tag,Local()),
+        createExecutionPolicy( array.layout()->indexSpace(tag,Local()),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ){
             view(i,j,k,l) *= alpha;
@@ -270,7 +350,7 @@ void scale( Array_t& array,
             DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
-    if ( alpha.size() != static_cast<unsigned>(array.layout().dofsPerEntity()) )
+    if ( alpha.size() != static_cast<unsigned>(array.layout()->dofsPerEntity()) )
         throw std::runtime_error( "Incorrect vector size" );
 
     Kokkos::View<const typename Array_t::value_type*,
@@ -283,7 +363,7 @@ void scale( Array_t& array,
     auto array_view = array.view();
     Kokkos::parallel_for(
         "ArrayOp::scale",
-        createExecutionPolicy( array.layout().indexSpace(tag,Local()),
+        createExecutionPolicy( array.layout()->indexSpace(tag,Local()),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ){
             array_view(i,j,k,l) *= alpha_view(l);
@@ -304,13 +384,27 @@ void copy( Array_t& a,
            DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
-    auto a_space = a.layout().indexSpace( tag, Local() );
-    auto b_space = b.layout().indexSpace( tag, Local() );
+    auto a_space = a.layout()->indexSpace( tag, Local() );
+    auto b_space = b.layout()->indexSpace( tag, Local() );
     if ( a_space != b_space )
         throw std::logic_error( "Incompatible index spaces" );
     auto subview_a = createSubview( a.view(), a_space );
     auto subview_b = createSubview( b.view(), b_space );
     Kokkos::deep_copy( subview_a, subview_b );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Clone an array and copy its contents into the clone.
+  \param array The array to clone.
+  \param tag The tag for the decomposition over which to perform the copy.
+*/
+template<class Array_t, class DecompositionTag>
+std::shared_ptr<Array_t> cloneCopy( const Array_t& array, DecompositionTag tag )
+{
+    auto cln = clone( array );
+    copy( *cln, array, tag );
+    return cln;
 }
 
 //---------------------------------------------------------------------------//
@@ -335,7 +429,7 @@ void update( Array_t& a,
     auto b_view = b.view();
     Kokkos::parallel_for(
         "ArrayOp::update",
-        createExecutionPolicy( a.layout().indexSpace(tag,Local()),
+        createExecutionPolicy( a.layout()->indexSpace(tag,Local()),
                                typename Array_t::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ){
             a_view(i,j,k,l) = alpha * a_view(i,j,k,l) + beta * b_view(i,j,k,l);
@@ -398,7 +492,7 @@ void dot( const Array_t& a,
           std::vector<typename Array_t::value_type>& products )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
-    if ( products.size() != static_cast<unsigned>(a.layout().dofsPerEntity()) )
+    if ( products.size() != static_cast<unsigned>(a.layout()->dofsPerEntity()) )
         throw std::runtime_error( "Incorrect vector size" );
 
     for ( auto& p : products ) p = 0.0;
@@ -406,7 +500,7 @@ void dot( const Array_t& a,
     DotFunctor<typename Array_t::view_type> functor( a.view(), b.view() );
     Kokkos::parallel_reduce(
         "ArrayOp::dot",
-        createExecutionPolicy( a.layout().indexSpace(Own(),Local()),
+        createExecutionPolicy( a.layout()->indexSpace(Own(),Local()),
                                typename Array_t::execution_space() ),
         functor,
         products.data() );
@@ -416,7 +510,7 @@ void dot( const Array_t& a,
                    products.size(),
                    MpiTraits<typename Array_t::value_type>::type(),
                    MPI_SUM,
-                   a.layout().block().globalGrid().comm() );
+                   a.layout()->block()->globalGrid().comm() );
 }
 
 //---------------------------------------------------------------------------//
@@ -473,7 +567,7 @@ void normInf( const Array_t& array,
               std::vector<typename Array_t::value_type>& norms )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
-    if ( norms.size() != static_cast<unsigned>(array.layout().dofsPerEntity()) )
+    if ( norms.size() != static_cast<unsigned>(array.layout()->dofsPerEntity()) )
         throw std::runtime_error( "Incorrect vector size" );
 
     for ( auto& n : norms ) n = 0.0;
@@ -481,7 +575,7 @@ void normInf( const Array_t& array,
     NormInfFunctor<typename Array_t::view_type> functor( array.view() );
     Kokkos::parallel_reduce(
         "ArrayOp::normInf",
-        createExecutionPolicy( array.layout().indexSpace(Own(),Local()),
+        createExecutionPolicy( array.layout()->indexSpace(Own(),Local()),
                                typename Array_t::execution_space() ),
         functor,
         norms.data() );
@@ -491,7 +585,7 @@ void normInf( const Array_t& array,
                    norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(),
                    MPI_MAX,
-                   array.layout().block().globalGrid().comm() );
+                   array.layout()->block()->globalGrid().comm() );
 }
 
 //---------------------------------------------------------------------------//
@@ -545,7 +639,7 @@ void norm1( const Array_t& array,
             std::vector<typename Array_t::value_type>& norms )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
-    if ( norms.size() != static_cast<unsigned>(array.layout().dofsPerEntity()) )
+    if ( norms.size() != static_cast<unsigned>(array.layout()->dofsPerEntity()) )
         throw std::runtime_error( "Incorrect vector size" );
 
     for ( auto& n : norms ) n = 0.0;
@@ -553,7 +647,7 @@ void norm1( const Array_t& array,
     Norm1Functor<typename Array_t::view_type> functor( array.view() );
     Kokkos::parallel_reduce(
         "ArrayOp::norm1",
-        createExecutionPolicy( array.layout().indexSpace(Own(),Local()),
+        createExecutionPolicy( array.layout()->indexSpace(Own(),Local()),
                                typename Array_t::execution_space() ),
         functor,
         norms.data() );
@@ -563,7 +657,7 @@ void norm1( const Array_t& array,
                    norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(),
                    MPI_SUM,
-                   array.layout().block().globalGrid().comm() );
+                   array.layout()->block()->globalGrid().comm() );
 }
 
 //---------------------------------------------------------------------------//
@@ -617,7 +711,7 @@ void norm2( const Array_t& array,
             std::vector<typename Array_t::value_type>& norms )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
-    if ( norms.size() != static_cast<unsigned>(array.layout().dofsPerEntity()) )
+    if ( norms.size() != static_cast<unsigned>(array.layout()->dofsPerEntity()) )
         throw std::runtime_error( "Incorrect vector size" );
 
     for ( auto& n : norms ) n = 0.0;
@@ -625,7 +719,7 @@ void norm2( const Array_t& array,
     Norm2Functor<typename Array_t::view_type> functor( array.view() );
     Kokkos::parallel_reduce(
         "ArrayOp::norm2",
-        createExecutionPolicy( array.layout().indexSpace(Own(),Local()),
+        createExecutionPolicy( array.layout()->indexSpace(Own(),Local()),
                                typename Array_t::execution_space() ),
         functor,
         norms.data() );
@@ -635,7 +729,7 @@ void norm2( const Array_t& array,
                    norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(),
                    MPI_SUM,
-                   array.layout().block().globalGrid().comm() );
+                   array.layout()->block()->globalGrid().comm() );
 
     for ( auto& n : norms ) n = std::sqrt( n );
 }

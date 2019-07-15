@@ -48,7 +48,7 @@ void layoutTest()
     auto array_node_owned_space =
         node_layout->indexSpace( Own(), Local() );
     auto block_node_owned_space =
-        node_layout->block().indexSpace( Own(), Node(), Local() );
+        node_layout->block()->indexSpace( Own(), Node(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_node_owned_space.min(d),
@@ -63,7 +63,7 @@ void layoutTest()
     auto array_node_ghosted_space =
         node_layout->indexSpace( Ghost(), Local() );
     auto block_node_ghosted_space =
-        node_layout->block().indexSpace( Ghost(), Node(), Local() );
+        node_layout->block()->indexSpace( Ghost(), Node(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_node_ghosted_space.min(d),
@@ -78,7 +78,7 @@ void layoutTest()
     auto array_node_shared_owned_space =
         node_layout->sharedIndexSpace(Own(),-1,0,1);
     auto block_node_shared_owned_space =
-        node_layout->block().sharedIndexSpace( Own(), Node(), -1, 0, 1 );
+        node_layout->block()->sharedIndexSpace( Own(), Node(), -1, 0, 1 );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_node_shared_owned_space.min(d),
@@ -93,7 +93,7 @@ void layoutTest()
     auto array_node_shared_ghosted_space =
         node_layout->sharedIndexSpace(Ghost(),1,-1,0);
     auto block_node_shared_ghosted_space =
-        node_layout->block().sharedIndexSpace( Ghost(), Node(), 1, -1, 0 );
+        node_layout->block()->sharedIndexSpace( Ghost(), Node(), 1, -1, 0 );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_node_shared_ghosted_space.min(d),
@@ -113,7 +113,7 @@ void layoutTest()
     auto array_cell_owned_space =
         cell_layout->indexSpace( Own(), Local() );
     auto block_cell_owned_space =
-        cell_layout->block().indexSpace( Own(), Cell(), Local() );
+        cell_layout->block()->indexSpace( Own(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_cell_owned_space.min(d),
@@ -128,7 +128,7 @@ void layoutTest()
     auto array_cell_ghosted_space =
         cell_layout->indexSpace( Ghost(), Local() );
     auto block_cell_ghosted_space =
-        cell_layout->block().indexSpace( Ghost(), Cell(), Local() );
+        cell_layout->block()->indexSpace( Ghost(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_cell_ghosted_space.min(d),
@@ -143,7 +143,7 @@ void layoutTest()
     auto array_cell_shared_owned_space =
         cell_layout->sharedIndexSpace(Own(),0,1,-1);
     auto block_cell_shared_owned_space =
-        cell_layout->block().sharedIndexSpace( Own(), Cell(), 0, 1, -1 );
+        cell_layout->block()->sharedIndexSpace( Own(), Cell(), 0, 1, -1 );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_cell_shared_owned_space.min(d),
@@ -158,7 +158,7 @@ void layoutTest()
     auto array_cell_shared_ghosted_space =
         cell_layout->sharedIndexSpace(Ghost(),1,1,1);
     auto block_cell_shared_ghosted_space =
-        cell_layout->block().sharedIndexSpace( Ghost(), Cell(), 1, 1, 1 );
+        cell_layout->block()->sharedIndexSpace( Ghost(), Cell(), 1, 1, 1 );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_cell_shared_ghosted_space.min(d),
@@ -248,7 +248,7 @@ void arrayOpTest()
     ArrayOp::assign( *array, 2.0, Ghost() );
     auto host_view = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), array->view() );
-    auto ghosted_space = array->layout().indexSpace( Ghost(), Local() );
+    auto ghosted_space = array->layout()->indexSpace( Ghost(), Local() );
     for ( long i = 0; i < ghosted_space.extent(Dim::I); ++i )
         for ( long j = 0; j < ghosted_space.extent(Dim::J); ++j )
             for ( long k = 0; k < ghosted_space.extent(Dim::K); ++k )
@@ -284,6 +284,22 @@ void arrayOpTest()
             for ( long k = 0; k < ghosted_space.extent(Dim::K); ++k )
                 for ( long l = 0; l < ghosted_space.extent(3); ++l )
                     EXPECT_EQ( host_view(i,j,k,l), 3.0*scales[l]+1.0 );
+
+    // Check the subarray.
+    auto subarray = createSubarray( *array, 2, 4 );
+    auto sub_ghosted_space = subarray->layout()->indexSpace( Ghost(), Local() );
+    EXPECT_EQ( sub_ghosted_space.rank(), 4 );
+    EXPECT_EQ( sub_ghosted_space.extent(Dim::I), ghosted_space.extent(Dim::I) );
+    EXPECT_EQ( sub_ghosted_space.extent(Dim::J), ghosted_space.extent(Dim::J) );
+    EXPECT_EQ( sub_ghosted_space.extent(Dim::K), ghosted_space.extent(Dim::K) );
+    EXPECT_EQ( sub_ghosted_space.extent(3), 2 );
+    auto host_subview = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), subarray->view() );
+    for ( long i = 0; i < sub_ghosted_space.extent(Dim::I); ++i )
+        for ( long j = 0; j < sub_ghosted_space.extent(Dim::J); ++j )
+            for ( long k = 0; k < sub_ghosted_space.extent(Dim::K); ++k )
+                for ( long l = 0; l < sub_ghosted_space.extent(3); ++l )
+                    EXPECT_EQ( host_subview(i,j,k,l), 3.0*scales[l+2]+1.0 );
 
     // Compute the dot product of the two arrays.
     std::vector<double> dots( dofs_per_cell );
@@ -321,16 +337,34 @@ void arrayOpTest()
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( norm_inf[n], fabs(large_vals[n]) );
 
-    // Check to copy.
+    // Check the copy.
     ArrayOp::copy( *array, *array_2, Own() );
     Kokkos::deep_copy( host_view, array->view() );
-    auto owned_space = array->layout().indexSpace( Own(), Local() );
+    auto owned_space = array->layout()->indexSpace( Own(), Local() );
     for ( long i = owned_space.min(Dim::I); i < owned_space.max(Dim::I); ++i )
         for ( long j = owned_space.min(Dim::J); j < owned_space.max(Dim::J); ++j )
             for ( long k = owned_space.min(Dim::K); k < owned_space.max(Dim::K); ++k )
                 for ( long l = 0; l < owned_space.extent(3); ++l )
                     EXPECT_EQ( host_view(i,j,k,l), 0.5 );
 
+    // Now make a clone and copy.
+    auto array_3 = ArrayOp::clone( *array );
+    ArrayOp::copy( *array_3, *array, Own() );
+    Kokkos::deep_copy( host_view, array_3->view() );
+    for ( long i = owned_space.min(Dim::I); i < owned_space.max(Dim::I); ++i )
+        for ( long j = owned_space.min(Dim::J); j < owned_space.max(Dim::J); ++j )
+            for ( long k = owned_space.min(Dim::K); k < owned_space.max(Dim::K); ++k )
+                for ( long l = 0; l < owned_space.extent(3); ++l )
+                    EXPECT_EQ( host_view(i,j,k,l), 0.5 );
+
+    // Test the fused clone copy.
+    auto array_4 = ArrayOp::cloneCopy( *array, Own() );
+    Kokkos::deep_copy( host_view, array_4->view() );
+    for ( long i = owned_space.min(Dim::I); i < owned_space.max(Dim::I); ++i )
+        for ( long j = owned_space.min(Dim::J); j < owned_space.max(Dim::J); ++j )
+            for ( long k = owned_space.min(Dim::K); k < owned_space.max(Dim::K); ++k )
+                for ( long l = 0; l < owned_space.extent(3); ++l )
+                    EXPECT_EQ( host_view(i,j,k,l), 0.5 );
 }
 
 //---------------------------------------------------------------------------//
