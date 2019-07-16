@@ -241,7 +241,7 @@ inline void deep_copy(
 /*!
   \brief Fill an AoSoA with a tuple.
 
-  \param slice The AoSoA to fill.
+  \param aosoa The AoSoA to fill.
 
   \param src The tuple to assign. All AoSoA elements will be assigned this
   value.
