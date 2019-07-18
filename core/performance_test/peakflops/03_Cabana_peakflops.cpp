@@ -224,8 +224,18 @@ bool check_expected_flops(double achieved_flops_clock)
 // Run the performance test.
 TEST(cabana, simple)
 {
+
+#ifndef CABANA_PERFORMANCE_ITERATIONS
+#define CABANA_PERFORMANCE_ITERATIONS 2e6
+#endif
+#ifndef CABANA_PERFORMANCE_SEED
+#define CABANA_PERFORMANCE_SEED 76843802738543
+#endif
+
     //number of outer loop (e.g. timestepping)
-    long n = static_cast<long>(2e4); //use a higher number e.g. 2e6 for skylake 
+    //long n = static_cast<long>(2e4); //use a higher number e.g. 2e6 for skylake 
+    long n = static_cast<long>(CABANA_PERFORMANCE_ITERATIONS); //use a higher number e.g. 2e6 for skylake 
+    long seed = CABANA_PERFORMANCE_SEED;
 
     // Declare a number of particles.
     const int array_size = CABANA_PERFORMANCE_VECLENGTH;
@@ -261,7 +271,6 @@ TEST(cabana, simple)
     auto m9 = Cabana::slice<PositionX>(x9_);
 
     // Initialize particle data.
-    long seed = 76843802738543;
     unsigned short rg[3] = { static_cast<unsigned short>(seed >> 16),
                              static_cast<unsigned short>(seed >> 8),
                              static_cast<unsigned short>(seed) };
