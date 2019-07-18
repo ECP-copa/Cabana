@@ -10,6 +10,8 @@
  ****************************************************************************/
 
 #include <Cabana_CommunicationPlan.hpp>
+#include <Cabana_AoSoA.hpp>
+#include <Cabana_DeepCopy.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -525,6 +527,62 @@ void test6( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
+void test7( const bool use_topology )
+{
+    // Make a communication plan.
+    CommPlanTester comm_plan( MPI_COMM_WORLD );
+
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+
+    // Every rank will communicate with itself and send all of its data. Use a
+    // Cabana slice to make sure that it's syntax usage in the communication
+    // plan is equivalent to a kokkos view.
+    int num_data = 10;
+    using member_types = Cabana::MemberTypes<int>;
+    Cabana::AoSoA<member_types,TEST_MEMSPACE> aosoa( "aosoa", num_data );
+    auto export_ranks = Cabana::slice<0>( aosoa, "export_ranks" );
+    Cabana::deep_copy( export_ranks, my_rank );
+    std::vector<int> neighbor_ranks( 1, my_rank );
+
+    // Create the plan.
+    using device_type = Kokkos::Device<TEST_EXECSPACE,TEST_MEMSPACE>;
+    using size_type = typename TEST_MEMSPACE::size_type;
+    Kokkos::View<size_type*,device_type> neighbor_ids;
+    if ( use_topology )
+        neighbor_ids =
+            comm_plan.createFromExportsAndNeighbors( export_ranks, neighbor_ranks );
+    else
+        neighbor_ids = comm_plan.createFromExports( export_ranks );
+
+    // Check the plan.
+    EXPECT_EQ( comm_plan.numNeighbor(), 1 );
+    EXPECT_EQ( comm_plan.neighborRank(0), my_rank );
+    EXPECT_EQ( comm_plan.numExport(0), num_data );
+    EXPECT_EQ( comm_plan.totalNumExport(), num_data );
+    EXPECT_EQ( comm_plan.numImport(0), num_data );
+    EXPECT_EQ( comm_plan.totalNumImport(), num_data );
+
+    // Create the export steering vector.
+    comm_plan.createSteering( neighbor_ids, export_ranks );
+
+    // Check the steering vector. We thread the creation of the steering
+    // vector so we don't really know what order it is in - only that it is
+    // grouped by the ranks to which we are exporting. In this case just sort
+    // the steering vector and make sure all of the ids are there. We can do
+    // this because we are only sending to one rank.
+    auto steering = comm_plan.getExportSteering();
+    auto host_steering = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), steering );
+    std::sort( host_steering.data(),
+               host_steering.data() + host_steering.size() );
+    EXPECT_EQ( host_steering.size(), num_data );
+    for ( int n = 0; n < num_data; ++n )
+        EXPECT_EQ( n, host_steering(n) );
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, comm_plan_test_1 )
@@ -545,6 +603,9 @@ TEST( TEST_CATEGORY, comm_plan_test_5 )
 TEST( TEST_CATEGORY, comm_plan_test_6 )
 { test6(true); }
 
+TEST( TEST_CATEGORY, comm_plan_test_7 )
+{ test7(true); }
+
 TEST( TEST_CATEGORY, comm_plan_test_1_no_topo )
 { test1(false); }
 
@@ -562,6 +623,9 @@ TEST( TEST_CATEGORY, comm_plan_test_5_no_topo )
 
 TEST( TEST_CATEGORY, comm_plan_test_6_no_topo )
 { test6(false); }
+
+TEST( TEST_CATEGORY, comm_plan_test_7_no_topo )
+{ test7(false); }
 
 //---------------------------------------------------------------------------//
 
