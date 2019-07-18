@@ -76,12 +76,12 @@ auto countSendsAndCreateSteering(
         "neighbor_counts", comm_size );
     Kokkos::View<size_type*,device_type> neighbor_ids(
         Kokkos::ViewAllocateWithoutInitializing("neighbor_ids"),
-        element_export_ranks.extent(0) );
+        element_export_ranks.size() );
 
     // Count the sends and create the steering vector.
     Kokkos::parallel_for(
         "Cabana::CommunicationPlan::countSendsAndCreateSteering",
-        Kokkos::RangePolicy<execution_space>(0,element_export_ranks.extent(0)),
+        Kokkos::RangePolicy<execution_space>(0,element_export_ranks.size()),
         KOKKOS_LAMBDA( const size_type i ){
             if ( element_export_ranks(i) >= 0 )
                 neighbor_ids(i) = Kokkos::atomic_fetch_add(
@@ -119,17 +119,17 @@ auto countSendsAndCreateSteering(
         comm_size );
     Kokkos::View<size_type*,device_type> neighbor_ids(
         Kokkos::ViewAllocateWithoutInitializing("neighbor_ids"),
-        element_export_ranks.extent(0) );
+        element_export_ranks.size() );
     Kokkos::View<int**,device_type> neighbor_counts_dup(
         "neighbor_counts", unique_token.size(), comm_size );
     Kokkos::View<size_type**,device_type> neighbor_ids_dup(
         "neighbor_ids", unique_token.size(),
-        element_export_ranks.extent(0) );
+        element_export_ranks.size() );
 
     // Compute initial duplicated sends and steering.
     Kokkos::parallel_for(
         "Cabana::CommunicationPlan::intialCount",
-        Kokkos::RangePolicy<execution_space>(0,element_export_ranks.extent(0)),
+        Kokkos::RangePolicy<execution_space>(0,element_export_ranks.size()),
         KOKKOS_LAMBDA( const size_type i ){
             if ( element_export_ranks(i) >= 0 )
             {
@@ -183,7 +183,7 @@ auto countSendsAndCreateSteering(
     // its destination rank.
     Kokkos::parallel_for(
         "Cabana::CommunicationPlan::createSteering",
-        team_policy(element_export_ranks.extent(0),Kokkos::AUTO),
+        team_policy(element_export_ranks.size(),Kokkos::AUTO),
         KOKKOS_LAMBDA( const typename team_policy::member_type& team ){
             // Get the element id.
             auto i = team.league_rank();
