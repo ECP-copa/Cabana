@@ -58,6 +58,9 @@ struct data_t
 
 // NOTE: noinline gives better performance for GCC (the inlined version is
 // poorly optimized?)
+#if defined (__GNUC__)
+__attribute__ ((noinline))
+#endif
 void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
             data_t *__restrict__ x1, data_t *__restrict__ x2,
             data_t *__restrict__ x3, data_t *__restrict__ x4,
@@ -96,13 +99,15 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
         for(j=0; j<CABANA_PERFORMANCE_VECLENGTH; j++)
         {
             x0[s].vec[j] = x0[s].vec[j]+x1[s].vec[j]+x2[s].vec[j]+x3[s].vec[j]+x4[s].vec[j]+
-                           x5[s].vec[j]+x6[s].vec[j]+x7[s].vec[j]+x8[s].vec[j]+x9[s].vec[j];
+                           x5[s].vec[j]+x6[s].vec[j]+x7[s].vec[j]+x8[s].vec[j]+x9[s].vec[j]+(float) n;;
         }
     }
 }
 
-void //__attribute__ ((noinline))
-move_AoSoA(
+#if defined (__GNUC__)
+__attribute__ ((noinline))
+#endif
+void move_AoSoA(
         ParticleList& a,  ParticleList& x0, ParticleList& x1, ParticleList& x2,
         ParticleList& x3, ParticleList& x4, ParticleList& x5, ParticleList& x6,
         ParticleList& x7, ParticleList& x8, ParticleList& x9, ParticleList& c,
@@ -147,7 +152,7 @@ move_AoSoA(
                 x2.access(s).get<0>(j) + x3.access(s).get<0>(j) +
                 x4.access(s).get<0>(j) + x5.access(s).get<0>(j) +
                 x6.access(s).get<0>(j) + x7.access(s).get<0>(j) +
-                x8.access(s).get<0>(j) + x9.access(s).get<0>(j);
+                x8.access(s).get<0>(j) + x9.access(s).get<0>(j) +(float) n;
         }
     }
 }
@@ -155,6 +160,9 @@ move_AoSoA(
 //---------------------------------------------------------------------------/
 // Move function using struct and array indices and slice syntax.
 template<typename SliceType>
+#if defined (__GNUC__)
+__attribute__ ((noinline))
+#endif
 void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2,
                          SliceType x3, SliceType x4, SliceType x5, SliceType x6,
                          SliceType x7, SliceType x8, SliceType x9, SliceType c,
@@ -192,7 +200,7 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
         {
             x0.access(s,j) = x0.access(s,j)+x1.access(s,j)+x2.access(s,j)+x3.access(s,j)+
                              x4.access(s,j)+x5.access(s,j)+x6.access(s,j)+x7.access(s,j)+
-                             x8.access(s,j)+x9.access(s,j);
+	                     x8.access(s,j)+x9.access(s,j)+(float) n;
         }
     }
 }
@@ -216,8 +224,17 @@ bool check_expected_flops(double achieved_flops_clock)
 // Run the performance test.
 TEST(cabana, simple)
 {
+
+#ifndef CABANA_PERFORMANCE_ITERATIONS
+#define CABANA_PERFORMANCE_ITERATIONS 2e4 //use a higher number e.g. 2e6 for skylake 
+#endif
+#ifndef CABANA_PERFORMANCE_SEED
+#define CABANA_PERFORMANCE_SEED 76843802738543
+#endif
+
     //number of outer loop (e.g. timestepping)
-    long n = static_cast<long>(2e4);
+    long n = static_cast<long>(CABANA_PERFORMANCE_ITERATIONS);
+    long seed = CABANA_PERFORMANCE_SEED;
 
     // Declare a number of particles.
     const int array_size = CABANA_PERFORMANCE_VECLENGTH;
@@ -253,7 +270,6 @@ TEST(cabana, simple)
     auto m9 = Cabana::slice<PositionX>(x9_);
 
     // Initialize particle data.
-    long seed = 76843802738543;
     unsigned short rg[3] = { static_cast<unsigned short>(seed >> 16),
                              static_cast<unsigned short>(seed >> 8),
                              static_cast<unsigned short>(seed) };
