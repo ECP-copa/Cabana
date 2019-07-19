@@ -17,7 +17,7 @@ class Partitioner
     /*!
       \brief Get the number of MPI ranks in each dimension of the grid.
       \param comm The communicator to use for the partitioning.
-      \param cells_per_dim The number of global cells in each dimension.
+      \param global_cells_per_dim The number of global cells in each dimension.
       \return The number of MPI ranks in each dimension of the grid.
     */
     virtual std::vector<int> ranksPerDimension(
