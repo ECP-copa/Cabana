@@ -358,15 +358,27 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
                   double m2 = (mx*mx + my*my + mz*mz);//Unnecessary extra variable
 
                   //Calculate BC. Why store the imag part at all?
+                  #ifdef Cabana_ENABLE_Cuda
+                  BC[idx].x =  TPME::oneDeuler(kx,meshwidth) * TPME::oneDeuler(ky,meshwidth)
+                               * TPME::oneDeuler(kz,meshwidth)
+                               * exp( -PI*PI*m2 / (alpha*alpha) ) / (PI * lx*ly*lz * m2 );
+                  BC[idx].y = 0.0;//imag part
+                  #else
                   BC[idx][0] =  TPME::oneDeuler(kx,meshwidth) * TPME::oneDeuler(ky,meshwidth)
                                * TPME::oneDeuler(kz,meshwidth)
                                * exp( -PI*PI*m2 / (alpha*alpha) ) / (PI * lx*ly*lz * m2 );
                   BC[idx][1] = 0.0;//imag part
+                  #endif
               }
               else
               {
+                  #ifdef Cabana_ENABLE_Cuda
+                  BC[idx].x = 0.0;
+                  BC[idx].y = 0.0;//set origin element to zero
+                  #else
                   BC[idx][0] = 0.0;
                   BC[idx][1] = 0.0;//set origin element to zero
+                  #endif
               }
           }
       }
