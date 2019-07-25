@@ -11,5 +11,5 @@ var searchData=
   ['verletlistdata_3c_20devicetype_2c_20verletlayout2d_20_3e',['VerletListData&lt; DeviceType, VerletLayout2D &gt;',['../structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayout2D_01_4.html',1,'Cabana']]],
   ['verletlistdata_3c_20devicetype_2c_20verletlayoutcsr_20_3e',['VerletListData&lt; DeviceType, VerletLayoutCSR &gt;',['../structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayoutCSR_01_4.html',1,'Cabana']]],
   ['view',['view',['../classCabana_1_1Slice.html#a47e30f4d4444e42851c20171c6d2f4f6',1,'Cabana::Slice']]],
-  ['viewoffset_3c_20dimension_2c_20kokkos_3a_3alayoutcabanaslice_3c_20layoutdims_2e_2e_2e_3e_2c_20void_20_3e',['ViewOffset&lt; Dimension, Kokkos::LayoutCabanaSlice&lt; LayoutDims...&gt;, void &gt;',['../structKokkos_1_1Impl_1_1ViewOffset_3_01Dimension_00_01Kokkos_1_1LayoutCabanaSlice_3_01LayoutDims_8_8_8_4_00_01void_01_4.html',1,'Kokkos::Impl']]]
+  ['viewoffset_3c_20dimension_2c_20kokkos_3a_3alayoutcabanaslice_3c_20layoutdims_2e_2e_2e_20_3e_2c_20void_20_3e',['ViewOffset&lt; Dimension, Kokkos::LayoutCabanaSlice&lt; LayoutDims... &gt;, void &gt;',['../structKokkos_1_1Impl_1_1ViewOffset_3_01Dimension_00_01Kokkos_1_1LayoutCabanaSlice_3_01LayoutDims_8_8_8_01_4_00_01void_01_4.html',1,'Kokkos::Impl']]]
 ];
