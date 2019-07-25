@@ -149,8 +149,8 @@ double TPME::oneDeuler(int k, int meshwidth)
   //Compute the denominator sum first, splitting the complex exponential into sin and cos
   for(int l = 0; l < 3; l++)
   {
-     denomreal += TPME::oneDspline(min(4.0-(l+1.0),l+1.0)) * cos( 2.0 * PI * double(k) * l / double(meshwidth));
-     denomimag += TPME::oneDspline(min(4.0-(l+1.0),l+1.0)) * sin( 2.0 * PI * double(k) * l / double(meshwidth));
+     denomreal += TPME::oneDspline(std::min(4.0-(l+1.0),l+1.0)) * cos( 2.0 * PI * double(k) * l / double(meshwidth));
+     denomimag += TPME::oneDspline(std::min(4.0-(l+1.0),l+1.0)) * sin( 2.0 * PI * double(k) * l / double(meshwidth));
   }
   //Compute the numerator, again splitting the complex exponential
   double numreal = cos(2.0*PI*3.0*double(k)/double(meshwidth));
@@ -228,45 +228,46 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
         {
           //compute distance in x,y,z and charge multiple
           for (auto j = 0; j < 3; ++j)
+          {
             d[j] = r( idx, j ) - r( i, j );
-            double qiqj = q( idx ) * q( i );
-            for (auto kx = 0; kx <= k_max_int[0]; ++kx)
+          }
+          double qiqj = q( idx ) * q( i );
+          for (auto kx = 0; kx <= k_max_int[0]; ++kx)
+          {
+            //check if cell within r_max distance in x
+            k = (double)kx * lx;
+            if (k - lx > r_max) continue;
+            for (auto ky = 0; ky <= k_max_int[1]; ++ky)
             {
-              //check if cell within r_max distance in x
-              k = (double)kx * lx;
-              if (k - lx > r_max) continue;
-              for (auto ky = 0; ky <= k_max_int[1]; ++ky)
+              //check if cell within r_max distance in x+y
+              k = sqrt( (double)kx * (double)kx * lx * lx +
+                        (double)ky * (double)ky * ly * ly);
+              if (k - lx  > r_max) continue;
+              for (auto kz = 0; kz <= k_max_int[2]; ++kz)
               {
-                //check if cell within r_max distance in x+y
+                //Exclude self-energy term when kx=ky=kz
+                if ( kx == 0 && ky == 0 && kz == 0 && i == idx) continue;
+                //check if cell within r_max distance in x+y+z
                 k = sqrt( (double)kx * (double)kx * lx * lx +
-                  (double)ky * (double)ky * ly * ly);
-                if (k - lx  > r_max) continue;
-                for (auto kz = 0; kz <= k_max_int[2]; ++kz)
-                {
-                  //Exclude self-energy term when kx=ky=kz
-                  if ( kx == 0 && ky == 0 && kz == 0 && i == idx) continue;
-                  //check if cell within r_max distance in x+y+z
-                  k = sqrt( (double)kx * (double)kx * lx * lx +
-                            (double)ky * (double)ky * ly * ly +
-                            (double)kz * (double)kz * lz * lz );
-                  if (k - lx > r_max) continue;
-                  //check if particle distance is less than r_max
-                  double scal = (d[0] + (double)kx * lx) * (d[0] + (double)kx * lx) +
-                    (d[1] + (double)ky * ly) * (d[1] + (double)ky * ly) +
-                    (d[2] + (double)kz * lz) * (d[2] + (double)kz * lz);
-                  scal = sqrt(scal);
-                  if (scal > r_max)
-                    continue;
-                  //Compute real-space energy contribution of interaction
-                  Ur_part += qiqj * erfc(alpha * scal)/scal;
-                }
+                          (double)ky * (double)ky * ly * ly +
+                          (double)kz * (double)kz * lz * lz );
+                if (k - lx > r_max) continue;
+                //check if particle distance is less than r_max
+                double scal = (d[0] + (double)kx * lx) * (d[0] + (double)kx * lx) +
+                              (d[1] + (double)ky * ly) * (d[1] + (double)ky * ly) +
+                              (d[2] + (double)kz * lz) * (d[2] + (double)kz * lz);
+                scal = sqrt(scal);
+                if (scal > r_max) continue;
+                //Compute real-space energy contribution of interaction
+                Ur_part += qiqj * erfc(alpha * scal)/scal;
               }
             }
           }
+        }
         Ur_part *= 0.5;
         p(idx) += Ur_part;
-      },
-    Ur);
+     },
+  Ur);
   Kokkos::fence();
 
 
@@ -286,17 +287,17 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
      for ( size_t pidx = 0; pidx < particles.size(); ++pidx )
      {
         //x-distance between mesh point and particle
-        xdist = min(min(abs(meshr(idx,0) - r(pidx,0)),
-                     abs(meshr(idx,0) - (r(pidx,0) +  1.0))),
-                     abs(meshr(idx,0) - (r(pidx,0) -  1.0)) );//account for periodic bndry
+        xdist = std::min(std::min(std::abs(meshr(idx,0) - r(pidx,0)),
+                     std::abs(meshr(idx,0) - (r(pidx,0) +  1.0))),
+                     std::abs(meshr(idx,0) - (r(pidx,0) -  1.0)) );//account for periodic bndry
         //y-distance between mesh point and particle
-        ydist = min(min(abs(meshr(idx,1) - r(pidx,1)),
-                     abs(meshr(idx,1) - (r(pidx,1) +  1.0))),
-                     abs(meshr(idx,1) - (r(pidx,1) -  1.0)) );//account for periodic bndry
+        ydist = std::min(std::min(std::abs(meshr(idx,1) - r(pidx,1)),
+                     std::abs(meshr(idx,1) - (r(pidx,1) +  1.0))),
+                     std::abs(meshr(idx,1) - (r(pidx,1) -  1.0)) );//account for periodic bndry
         //z-distance between mesh point and particle
-        zdist = min(min(abs(meshr(idx,2) - r(pidx,2)),
-                     abs(meshr(idx,2) - (r(pidx,2) +  1.0))),
-                     abs(meshr(idx,2) - (r(pidx,2) -  1.0)) );//account for periodic bndry
+        zdist = std::min(std::min(std::abs(meshr(idx,2) - r(pidx,2)),
+                     std::abs(meshr(idx,2) - (r(pidx,2) +  1.0))),
+                     std::abs(meshr(idx,2) - (r(pidx,2) -  1.0)) );//account for periodic bndry
 
         if ( xdist <= 2.0*spacing and ydist <= 2.0*spacing and zdist <= 2.0*spacing ) //more efficient way to do this? Skip it? May be unnecessary.
         {
@@ -358,15 +359,27 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
                   double m2 = (mx*mx + my*my + mz*mz);//Unnecessary extra variable
 
                   //Calculate BC. Why store the imag part at all?
+                  #ifdef Cabana_ENABLE_Cuda
                   BC[idx].x =  TPME::oneDeuler(kx,meshwidth) * TPME::oneDeuler(ky,meshwidth)
                                * TPME::oneDeuler(kz,meshwidth)
                                * exp( -PI*PI*m2 / (alpha*alpha) ) / (PI * lx*ly*lz * m2 );
                   BC[idx].y = 0.0;//imag part
+                  #else
+                  BC[idx][0] =  TPME::oneDeuler(kx,meshwidth) * TPME::oneDeuler(ky,meshwidth)
+                               * TPME::oneDeuler(kz,meshwidth)
+                               * exp( -PI*PI*m2 / (alpha*alpha) ) / (PI * lx*ly*lz * m2 );
+                  BC[idx][1] = 0.0;//imag part
+                  #endif
               }
               else
               {
+                  #ifdef Cabana_ENABLE_Cuda
                   BC[idx].x = 0.0;
                   BC[idx].y = 0.0;//set origin element to zero
+                  #else
+                  BC[idx][0] = 0.0;
+                  BC[idx][1] = 0.0;//set origin element to zero
+                  #endif
               }
           }
       }
@@ -435,10 +448,6 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
   #endif
 
   Uk *= 0.5;
-
-  //endtime2 = std::chrono::steady_clock::now();
-
-  //std::chrono::duration<double> elapsed_time = starttime2 - starttime + endtime2 - endtime;
 
   // computation of self-energy contribution
   Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>(0, n_max), KOKKOS_LAMBDA(int idx, double& Uself_part)
