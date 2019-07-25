@@ -228,6 +228,7 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
         {
           //compute distance in x,y,z and charge multiple
           for (auto j = 0; j < 3; ++j)
+          {
             d[j] = r( idx, j ) - r( i, j );
             double qiqj = q( idx ) * q( i );
             for (auto kx = 0; kx <= k_max_int[0]; ++kx)
@@ -252,21 +253,21 @@ double TPME::compute( ParticleList& particles, ParticleList& mesh, double lx, do
                   if (k - lx > r_max) continue;
                   //check if particle distance is less than r_max
                   double scal = (d[0] + (double)kx * lx) * (d[0] + (double)kx * lx) +
-                    (d[1] + (double)ky * ly) * (d[1] + (double)ky * ly) +
-                    (d[2] + (double)kz * lz) * (d[2] + (double)kz * lz);
+                                (d[1] + (double)ky * ly) * (d[1] + (double)ky * ly) +
+                                (d[2] + (double)kz * lz) * (d[2] + (double)kz * lz);
                   scal = sqrt(scal);
-                  if (scal > r_max)
-                    continue;
+                  if (scal > r_max) continue;
                   //Compute real-space energy contribution of interaction
                   Ur_part += qiqj * erfc(alpha * scal)/scal;
                 }
               }
             }
           }
+        }
         Ur_part *= 0.5;
         p(idx) += Ur_part;
-      },
-    Ur);
+     },
+  Ur);
   Kokkos::fence();
 
 
