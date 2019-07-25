@@ -626,6 +626,89 @@ void test7( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
+void test8( const bool use_topology )
+{
+    // Make a communication plan.
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE> > distributor;
+
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+
+    // Get the comm size.
+    int my_size = -1;
+    MPI_Comm_size( MPI_COMM_WORLD, &my_size );
+
+    // 2 items to the ranks before and after it
+    int num_data = 2;
+    Kokkos::View<int*,TEST_MEMSPACE>
+        export_ranks( "export_ranks", num_data );
+    auto fill_ranks =
+        KOKKOS_LAMBDA( const int )
+        {
+            export_ranks(0) = ( my_rank == 0 ) ? 0 : my_rank - 1;
+            export_ranks(1) = ( my_rank == my_size - 1 ) ? 0 : my_rank + 1;
+        };
+    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, 1 );
+    Kokkos::parallel_for( range_policy, fill_ranks );
+    Kokkos::fence();
+    std::vector<int> neighbor_ranks(3);
+    neighbor_ranks[0] = ( my_rank == 0 ) ? my_size-1 : my_rank-1;
+    neighbor_ranks[1] = my_rank;
+    neighbor_ranks[2] = ( my_rank == my_size-1 ) ? 0 : my_rank+1;
+    std::sort( neighbor_ranks.begin(), neighbor_ranks.end() );
+    auto unique_it = std::unique( neighbor_ranks.begin(), neighbor_ranks.end() );
+    neighbor_ranks.resize( std::distance(neighbor_ranks.begin(),unique_it) );
+
+    // Create the plan.
+    if ( use_topology )
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE> >(
+            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+    else
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE> >(
+            MPI_COMM_WORLD, export_ranks );
+
+    // Make some data to migrate.
+    using DataTypes = Cabana::MemberTypes<int,double[2]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE>;
+    AoSoA_t data( "data", num_data );
+    auto slice_int = Cabana::slice<0>(data);
+    auto slice_dbl = Cabana::slice<1>(data);
+
+    // Fill the data.
+    auto fill_func =
+        KOKKOS_LAMBDA( const int )
+        {
+            slice_int(0) = export_ranks(0);
+            slice_int(1) = export_ranks(1);
+
+            slice_dbl(0,0) = export_ranks(0);
+            slice_dbl(1,0) = export_ranks(1);
+
+            slice_dbl(0,1) = export_ranks(0) + 1;
+            slice_dbl(1,1) = export_ranks(1) + 1;
+        };
+    Kokkos::parallel_for( range_policy, fill_func );
+    Kokkos::fence();
+
+    // Do the migration
+    Cabana::migrate( *distributor, data );
+
+    // Check the results.
+    Cabana::AoSoA<DataTypes,Cabana::HostSpace>
+        data_host( "data_host", data.size() );
+    auto slice_int_host = Cabana::slice<0>(data_host);
+    auto slice_dbl_host = Cabana::slice<1>(data_host);
+    Cabana::deep_copy( data_host, data );
+    for ( unsigned i = 0; i < data.size(); ++i )
+    {
+        EXPECT_EQ( slice_int_host(i), my_rank );
+        EXPECT_EQ( slice_dbl_host(i,0), my_rank );
+        EXPECT_EQ( slice_dbl_host(i,1), my_rank + 1);
+    }
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, distributor_test_1 )
@@ -649,6 +732,9 @@ TEST( TEST_CATEGORY, distributor_test_6 )
 TEST( TEST_CATEGORY, distributor_test_7 )
 { test7(true); }
 
+TEST( TEST_CATEGORY, distributor_test_8 )
+{ test8(true); }
+
 TEST( TEST_CATEGORY, distributor_test_1_no_topo )
 { test1(false); }
 
@@ -669,6 +755,9 @@ TEST( TEST_CATEGORY, distributor_test_6_no_topo )
 
 TEST( TEST_CATEGORY, distributor_test_7_no_topo )
 { test7(false); }
+
+TEST( TEST_CATEGORY, distributor_test_8_no_topo )
+{ test8(false); }
 
 //---------------------------------------------------------------------------//
 
