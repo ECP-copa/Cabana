@@ -639,7 +639,12 @@ void test8( const bool use_topology )
     int my_size = -1;
     MPI_Comm_size( MPI_COMM_WORLD, &my_size );
 
-    // 2 items to the ranks before and after it
+    // Each rank sends two items. Rank zero sends 1 item to itself and 1 item
+    // to the rank with the id 1 larger. The rest of the ranks send 1 item to
+    // the rank with id 1 smaller and 1 item to the rank with id 1
+    // larger. For problems with 3 or more MPI ranks this creates a situation
+    // where rank 0 receives from rank with id (my_size-1) but does not send
+    // data to that rank.
     int num_data = 2;
     Kokkos::View<int*,TEST_MEMSPACE>
         export_ranks( "export_ranks", num_data );
