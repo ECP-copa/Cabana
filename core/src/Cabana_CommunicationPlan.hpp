@@ -684,7 +684,7 @@ class CommunicationPlan
             }
 
             // Otherwise if we already sent something to this neighbor that
-            // meqns we already have a neighbor/export entry. Just assign the
+            // means we already have a neighbor/export entry. Just assign the
             // import entry for that neighbor.
             else
             {
