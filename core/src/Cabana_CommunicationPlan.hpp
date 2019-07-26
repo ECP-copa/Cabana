@@ -670,21 +670,26 @@ class CommunicationPlan
             const auto source = status[i].MPI_SOURCE;
 
             // See if the neighbor we received stuff from was someone we also
-            // sent stuff to. If it was, just record what they sent us.
+            // sent stuff to.
             auto found_neighbor =
                 std::find( _neighbors.begin(), _neighbors.end(), source );
 
             // If this is a new neighbor (i.e. someone we didn't send anything
-            // to) record this. Otherwise add it to the one we found.
+            // to) record this.
             if ( found_neighbor == std::end(_neighbors) )
             {
                 _neighbors.push_back( source );
                 _num_import.push_back( import_sizes[i] );
                 _num_export.push_back( 0 );
             }
+
+            // Otherwise if we already sent something to this neighbor that
+            // means we already have a neighbor/export entry. Just assign the
+            // import entry for that neighbor.
             else
             {
-                _num_import[i+self_offset] = import_sizes[i];
+                auto n = std::distance(_neighbors.begin(),found_neighbor);
+                _num_import[n] = import_sizes[i];
             }
         }
 
