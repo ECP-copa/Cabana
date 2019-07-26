@@ -134,7 +134,7 @@ add_subdirectory(core)
 configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
 
-find_package(CLANG_FORMAT 7.0.1)
+find_package(CLANG_FORMAT)
 if(CLANG_FORMAT_FOUND)
   file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp)
   add_custom_target(format
