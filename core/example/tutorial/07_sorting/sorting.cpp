@@ -16,8 +16,7 @@
 //---------------------------------------------------------------------------//
 // Sorting example.
 //---------------------------------------------------------------------------//
-void sortingExample()
-{
+void sortingExample() {
     /*
       In many algorithms we will want to bin or sort AoSoA data to improve
       computational performance. Binning and sorting can be achieved by using
@@ -31,7 +30,7 @@ void sortingExample()
        Start by declaring the types in our tuples will store. We will use the
        integer as the sorting key in this example.
     */
-    using DataTypes = Cabana::MemberTypes<double,int>;
+    using DataTypes = Cabana::MemberTypes<double, int>;
 
     /*
       Next declare the data layout of the AoSoA. We use the host space here
@@ -41,14 +40,14 @@ void sortingExample()
     const int VectorLength = 4;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::Serial;
-    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
-        aosoa( "my_aosoa", num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
+                                                              num_tuple );
 
     /*
       Fill the AoSoA with data. The integer member of the AoSoA will be
@@ -57,21 +56,18 @@ void sortingExample()
     */
     int forward_index_counter = 0;
     int reverse_index_counter = 100;
-    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
-    {
-        auto& soa = aosoa.access(s);
+    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s ) {
+        auto &soa = aosoa.access( s );
 
         // ASCENDING ORDER!
-        for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
-        {
-            Cabana::get<0>(soa,a) = forward_index_counter;
+        for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a ) {
+            Cabana::get<0>( soa, a ) = forward_index_counter;
             ++forward_index_counter;
         }
 
         // DESCENDING ORDER!
-        for ( std::size_t a = 0; a < aosoa.arraySize(s); ++a )
-        {
-            Cabana::get<1>(soa,a) = reverse_index_counter;
+        for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a ) {
+            Cabana::get<1>( soa, a ) = reverse_index_counter;
             --reverse_index_counter;
         }
     }
@@ -103,17 +99,16 @@ void sortingExample()
        completed. The rest of the data will also have been sorted as well -
        all data in each tuple is permuted.
      */
-    for ( int t = 0; t < num_tuple; ++t )
-    {
+    for ( int t = 0; t < num_tuple; ++t ) {
         auto tp = aosoa.getTuple( t );
 
         // Should now be in DESCENDING ORDER!
-        std::cout << "Tuple " << t
-                  << ", member 0: " << Cabana::get<0>(tp) << std::endl;
+        std::cout << "Tuple " << t << ", member 0: " << Cabana::get<0>( tp )
+                  << std::endl;
 
         // Should now be in ASCENDING ORDER!
-        std::cout << "Tuple " << t
-                  << ", member 1: " << Cabana::get<1>(tp) << std::endl;
+        std::cout << "Tuple " << t << ", member 1: " << Cabana::get<1>( tp )
+                  << std::endl;
     }
     std::cout << std::endl;
 
@@ -127,11 +122,11 @@ void sortingExample()
       Start by creating some new keys. We will manually create an alternating
       key pattern to demonstrate the effects of binning:
     */
-    keys(0) = 100;
-    keys(1) = 200;
-    keys(2) = 100;
-    keys(3) = 200;
-    keys(4) = 100;
+    keys( 0 ) = 100;
+    keys( 1 ) = 200;
+    keys( 2 ) = 100;
+    keys( 3 ) = 200;
+    keys( 4 ) = 100;
 
     /*
       Now create the binning data. In this case let's create two bins: one
@@ -155,15 +150,14 @@ void sortingExample()
        Now let's read the data we just sorted. The integer member should
        be ordered in binned groups.
      */
-    for ( int t = 0; t < num_tuple; ++t )
-    {
+    for ( int t = 0; t < num_tuple; ++t ) {
         auto tp = aosoa.getTuple( t );
 
-        std::cout << "Tuple " << t
-                  << ", member 0: " << Cabana::get<0>(tp) << std::endl;
+        std::cout << "Tuple " << t << ", member 0: " << Cabana::get<0>( tp )
+                  << std::endl;
 
-        std::cout << "Tuple " << t
-                  << ", member 1: " << Cabana::get<1>(tp) << std::endl;
+        std::cout << "Tuple " << t << ", member 1: " << Cabana::get<1>( tp )
+                  << std::endl;
     }
     std::cout << std::endl;
 
@@ -183,9 +177,9 @@ void sortingExample()
       correspond to our results above: 3 in the 100's bin and 2 in the 200's
       bin:
      */
-    std::cout << "Bin 0 size = " << bin_data.binSize(0) << std::endl;
-    std::cout << "Bin 1 size = " << bin_data.binSize(1) << std::endl;
-    std::cout << "Bin 2 size = " << bin_data.binSize(2) << std::endl;
+    std::cout << "Bin 0 size = " << bin_data.binSize( 0 ) << std::endl;
+    std::cout << "Bin 1 size = " << bin_data.binSize( 1 ) << std::endl;
+    std::cout << "Bin 2 size = " << bin_data.binSize( 2 ) << std::endl;
 
     /*
       Finally let's get the local ids of the tuples that are in each
@@ -193,11 +187,10 @@ void sortingExample()
       grouped by bin. The offset array in the binning data tells us where each
       bin's group of ids starts:
     */
-    for ( int b = 0; b < bin_data.numBin(); ++b )
-    {
+    for ( int b = 0; b < bin_data.numBin(); ++b ) {
         std::cout << "Bin " << b << " ids: ";
         int offset = bin_data.binOffset( b );
-        for ( int i = 0; i < bin_data.binSize(b); ++i )
+        for ( int i = 0; i < bin_data.binSize( b ); ++i )
             std::cout << bin_data.permutation( offset + i ) << " ";
         std::cout << std::endl;
     }
@@ -206,9 +199,8 @@ void sortingExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+int main( int argc, char *argv[] ) {
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     sortingExample();
 

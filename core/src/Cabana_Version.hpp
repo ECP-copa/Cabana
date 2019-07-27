@@ -16,8 +16,7 @@
 
 #include <string>
 
-namespace Cabana
-{
+namespace Cabana {
 
 std::string version();
 

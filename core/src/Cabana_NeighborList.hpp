@@ -14,8 +14,7 @@
 
 #include <Kokkos_Core.hpp>
 
-namespace Cabana
-{
+namespace Cabana {
 //---------------------------------------------------------------------------//
 // Neighbor List Interface
 //---------------------------------------------------------------------------//
@@ -48,23 +47,21 @@ class HalfNeighborTag {};
   \brief Neighbor list interface. Provides an interface callable at the
   functor level that gives access to neighbor data for particles.
 */
-template<class NeighborListType>
-class NeighborList
-{
+template <class NeighborListType>
+class NeighborList {
   public:
-
     // Get the list type tag. Either full or half.
     using TypeTag = typename NeighborListType::TypeTag;
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t numNeighbor( const NeighborListType& list,
+    static std::size_t numNeighbor( const NeighborListType &list,
                                     const std::size_t particle_index );
 
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t getNeighbor( const NeighborListType& list,
+    static std::size_t getNeighbor( const NeighborListType &list,
                                     const std::size_t particle_index,
                                     const std::size_t neighbor_index );
 };

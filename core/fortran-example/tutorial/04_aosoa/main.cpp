@@ -40,15 +40,13 @@
   array of doubles, a rank-1 array of floats, and a single integer in
   each tuple.
 */
-using DataTypes = Cabana::MemberTypes<double[3][3],
-				      float[4],
-				      int>;
+using DataTypes = Cabana::MemberTypes<double[3][3], float[4], int>;
 
-//This is the coresponding struct_of_array defined by SOA (using DataTypes)
-struct local_data_struct_t {     
-  double d0[3][3][VECLEN];     
-  double d1[4][VECLEN];     
-  int    d2[VECLEN]; 
+// This is the coresponding struct_of_array defined by SOA (using DataTypes)
+struct local_data_struct_t {
+    double d0[3][3][VECLEN];
+    double d1[4][VECLEN];
+    int d2[VECLEN];
 };
 
 /*
@@ -78,46 +76,42 @@ using MemorySpace = Kokkos::HostSpace;
   full (although its memory will still be allocated).
 */
 
-using AosoaTYPE = Cabana::AoSoA<DataTypes,MemorySpace,VECLEN>;
-
+using AosoaTYPE = Cabana::AoSoA<DataTypes, MemorySpace, VECLEN>;
 
 /* Declare functions that will be mixed with Fortran */
 extern "C" {
-  void aosoaExample(local_data_struct_t*,int); //written in Fortran; called by C++
+void aosoaExample( local_data_struct_t *,
+                   int ); // written in Fortran; called by C++
 }
-
-
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-  Kokkos::ScopeGuard scope_guard(argc, argv);
+int main( int argc, char *argv[] ) {
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
-  /*
-    Print size data. In this case we have created an AoSoA with 5
-    tuples. Because a vector length of 4 is used, a total memory capacity
-    for 8 tuples will be allocated in 2 SoAs.
-  */
+    /*
+      Print size data. In this case we have created an AoSoA with 5
+      tuples. Because a vector length of 4 is used, a total memory capacity
+      for 8 tuples will be allocated in 2 SoAs.
+    */
 
-  int num_element = 5;
+    int num_element = 5;
 
+    /* Create a pointer of AosoaType */
+    AosoaTYPE *aosoa = new AosoaTYPE( num_element );
 
-  /* Create a pointer of AosoaType */
-  AosoaTYPE* aosoa=new AosoaTYPE(num_element);
+    std::cout << "aosoa.size() = " << aosoa->size() << std::endl;
+    std::cout << "aosoa.capacity() = " << aosoa->capacity() << std::endl;
+    std::cout << "aosoa.numSoA() = " << aosoa->numSoA() << std::endl;
 
-  std::cout << "aosoa.size() = " << aosoa->size() << std::endl;
-  std::cout << "aosoa.capacity() = " << aosoa->capacity() << std::endl;
-  std::cout << "aosoa.numSoA() = " << aosoa->numSoA() << std::endl;
+    /* In calling the Fortran subroutine, we cast aosoa to conventional struct,
+       and pass it to Fortran */
+    aosoaExample( (local_data_struct_t *)( aosoa->ptr() ), num_element );
 
-  /* In calling the Fortran subroutine, we cast aosoa to conventional struct, 
-     and pass it to Fortran */
-  aosoaExample((local_data_struct_t*)(aosoa->ptr()),num_element);
+    delete aosoa;
 
-  delete aosoa;
-
-  return 0;
+    return 0;
 }
 
 //---------------------------------------------------------------------------//

@@ -16,24 +16,21 @@
 
 #include <Kokkos_Core.hpp>
 
-namespace Cabana
-{
-namespace Impl
-{
+namespace Cabana {
+namespace Impl {
 //---------------------------------------------------------------------------//
 /*!
   \class PerformanceTraits
   \brief Default settings for execution spaces.
 */
-template<class ExecutionSpace>
+template <class ExecutionSpace>
 class PerformanceTraits;
 
 //---------------------------------------------------------------------------//
 // Serial specialization.
 #if defined( KOKKOS_ENABLE_SERIAL )
-template<>
-class PerformanceTraits<Kokkos::Serial>
-{
+template <>
+class PerformanceTraits<Kokkos::Serial> {
   public:
     static constexpr int vector_length = 16;
 };
@@ -42,9 +39,8 @@ class PerformanceTraits<Kokkos::Serial>
 //---------------------------------------------------------------------------//
 // Threads specialization.
 #if defined( KOKKOS_ENABLE_THREADS )
-template<>
-class PerformanceTraits<Kokkos::Threads>
-{
+template <>
+class PerformanceTraits<Kokkos::Threads> {
   public:
     static constexpr int vector_length = 16;
 };
@@ -53,9 +49,8 @@ class PerformanceTraits<Kokkos::Threads>
 //---------------------------------------------------------------------------//
 // OpenMP specialization.
 #if defined( KOKKOS_ENABLE_OPENMP )
-template<>
-class PerformanceTraits<Kokkos::OpenMP>
-{
+template <>
+class PerformanceTraits<Kokkos::OpenMP> {
   public:
     static constexpr int vector_length = 16;
 };
@@ -64,9 +59,8 @@ class PerformanceTraits<Kokkos::OpenMP>
 //---------------------------------------------------------------------------//
 // Cuda specialization. Use the warp traits.
 #if defined( KOKKOS_ENABLE_CUDA )
-template<>
-class PerformanceTraits<Kokkos::Cuda>
-{
+template <>
+class PerformanceTraits<Kokkos::Cuda> {
   public:
     static constexpr int vector_length = Kokkos::Impl::CudaTraits::WarpSize;
 };

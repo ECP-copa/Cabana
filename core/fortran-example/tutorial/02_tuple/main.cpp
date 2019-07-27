@@ -58,9 +58,7 @@
        each tuple.
 
 */
-using DataTypes = Cabana::MemberTypes<double[3][3],
-                                          float[4],
-                                          int>;
+using DataTypes = Cabana::MemberTypes<double[3][3], float[4], int>;
 
 /*
     Create the tuple. This tuple is identical to:
@@ -81,31 +79,26 @@ using TupleType = Cabana::Tuple<DataTypes>;
 /*
   Create a pointer of TupleType, which will be used in Fortran
  */
-TupleType * particle = new TupleType;
+TupleType *particle = new TupleType;
 
 /*
   Declare functions that will be mixed with Fortran
  */
 extern "C" {
-  void tupleExample(TupleType *); //written in Fortan; called by C++
-  void delete_tuple();            //written in C++; called by Fortan
+void tupleExample( TupleType * ); // written in Fortan; called by C++
+void delete_tuple();              // written in C++; called by Fortan
 }
 
-
-void delete_tuple(){
-  delete particle;
-}
-
+void delete_tuple() { delete particle; }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+int main( int argc, char *argv[] ) {
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     /* Call the Fortran subroutine */
-    tupleExample(particle); 
+    tupleExample( particle );
 
     return 0;
 }

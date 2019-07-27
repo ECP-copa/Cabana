@@ -16,42 +16,36 @@
 
 #include <type_traits>
 
-namespace Cabana
-{
-namespace Impl
-{
+namespace Cabana {
+namespace Impl {
 //---------------------------------------------------------------------------//
 // Checks if an integer is a power of two. N must be greater than 0.
-template<int N>
-struct IsPowerOfTwo
-{
+template <int N>
+struct IsPowerOfTwo {
     static_assert( N > 0, "Vector length must be greather than 0" );
-    static constexpr bool value = ( (N & (N - 1)) == 0 );
+    static constexpr bool value = ( ( N & ( N - 1 ) ) == 0 );
 };
 
 //---------------------------------------------------------------------------//
 // Calculate the base-2 logarithm of an integer which must be a power of 2 and
 // greater than 0.
-template<int N>
-struct LogBase2
-{
+template <int N>
+struct LogBase2 {
     static_assert( IsPowerOfTwo<N>::value,
                    "Vector length must be a power of two" );
-    static constexpr int value = 1 + LogBase2<(N>>1U)>::value;
+    static constexpr int value = 1 + LogBase2<( N >> 1U )>::value;
 };
 
-template<>
-struct LogBase2<1>
-{
+template <>
+struct LogBase2<1> {
     static constexpr int value = 0;
 };
 
 //---------------------------------------------------------------------------//
 // Check that the provided vector length is valid.
-template<int N>
-struct IsVectorLengthValid
-{
-    static constexpr bool value = (IsPowerOfTwo<N>::value && N > 0);
+template <int N>
+struct IsVectorLengthValid {
+    static constexpr bool value = ( IsPowerOfTwo<N>::value && N > 0 );
 };
 
 //---------------------------------------------------------------------------//

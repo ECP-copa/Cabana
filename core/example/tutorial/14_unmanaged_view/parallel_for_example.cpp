@@ -17,8 +17,7 @@
 //---------------------------------------------------------------------------//
 // Example of a parallel-for using an unmanaged view.
 //---------------------------------------------------------------------------//
-void parallelForExample()
-{
+void parallelForExample() {
     /*
      * Summary: An unmanaged AoSoA allows the user to wrap manually allocated
      * data (if compatible) inside of Cabana structures, without paying the
@@ -32,7 +31,7 @@ void parallelForExample()
      * (as shown here) this means the user has to 'tile' their data. With
      * correctly set values of `VectorLength`, it is also possible to wrap both
      * SoA and AoS data as found in many applications.
-    */
+     */
 
     /* Declare general run parameters */
     using MemorySpace = Kokkos::HostSpace;
@@ -40,14 +39,14 @@ void parallelForExample()
 
     /*
      * Declare Underlying data type
-    */
+     */
 
     const int INNER_SIZE = 2;
     // Regular class form
     class Data {
-        public:
-            double a[INNER_SIZE][VectorLength];
-            int    b[VectorLength];
+      public:
+        double a[INNER_SIZE][VectorLength];
+        int b[VectorLength];
     };
 
     // Cabana MemberTypes form:
@@ -55,95 +54,86 @@ void parallelForExample()
 
     /*
      * Create the AoSoA.
-    */
+     */
     const int num_tuple = 128;
-    const int num_soa = 128/8; // Be careful with the int division..
+    const int num_soa = 128 / 8; // Be careful with the int division..
 
     // We use `new` here to represent an arbitrary pointer, in a typical
     // example this will be passed in from a users existing code/memory
     // allocation (possibly from Fortran)
-    Data* local_data = new Data[num_tuple];
+    Data *local_data = new Data[num_tuple];
 
     // This is equivalent to a Cabana AoSoA of:
-      // using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
-      // using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
-      // Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "my_aosoa", num_tuple );
+    // using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
+    // using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    // Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "my_aosoa",
+    // num_tuple );
 
     /*
      * Populate user data.
-    */
-    for (int i = 0; i < num_soa; i++)
-    {
-        for (int j = 0; j < VectorLength; j++)
-        {
+     */
+    for ( int i = 0; i < num_soa; i++ ) {
+        for ( int j = 0; j < VectorLength; j++ ) {
             local_data[i].a[1][j] = i;
             local_data[i].b[j] = j;
         }
     }
 
     /*
-    * Convert the user allocated memory into an unmanaged AoSoA
-    */
+     * Convert the user allocated memory into an unmanaged AoSoA
+     */
 
     // Define the underlying AoSoA type to hold the unmanaged data
-    using AoSoA_t = Cabana::AoSoA<
-        DataTypes,
-        MemorySpace,
-        VectorLength,
-        Kokkos::MemoryUnmanaged
-    >;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, MemorySpace, VectorLength,
+                                  Kokkos::MemoryUnmanaged>;
 
     // Do convert
-    auto ptr = reinterpret_cast<typename AoSoA_t::soa_type*>(local_data);
+    auto ptr = reinterpret_cast<typename AoSoA_t::soa_type *>( local_data );
     AoSoA_t aosoa( ptr, num_soa, num_tuple );
 
     /*
-    * Inspect Data In the Unmanaged AoSoA
-    */
-    auto slice_a = Cabana::slice<0>(aosoa); // a = 0
-    auto slice_b = Cabana::slice<1>(aosoa); // b = 1
+     * Inspect Data In the Unmanaged AoSoA
+     */
+    auto slice_a = Cabana::slice<0>( aosoa ); // a = 0
+    auto slice_b = Cabana::slice<1>( aosoa ); // b = 1
 
     // Look at the data in the AosoA
-    for (int i = 0; i < num_tuple; i++)
-    {
-        if ( slice_b(i) != (i % VectorLength) )
-        {
+    for ( int i = 0; i < num_tuple; i++ ) {
+        if ( slice_b( i ) != ( i % VectorLength ) ) {
             // Unexpected Value
-            printf("%d: Unexpected %d != %d \n", __LINE__, slice_b(i), i % VectorLength);
+            printf( "%d: Unexpected %d != %d \n", __LINE__, slice_b( i ),
+                    i % VectorLength );
         }
     }
 
     /*
-    * Use the view in an algorithm, like sort
-    */
+     * Use the view in an algorithm, like sort
+     */
     auto binning_data = Cabana::sortByKey( slice_b );
     Cabana::permute( binning_data, aosoa );
 
     // Check it worked
-    for (int i = 1; i < num_tuple; i++)
-    {
+    for ( int i = 1; i < num_tuple; i++ ) {
         // We expect it to be monotonically increasing
-        if (!(slice_b(i-1) <= slice_b(i)))
-        {
+        if ( !( slice_b( i - 1 ) <= slice_b( i ) ) ) {
             // Unexpected value
-            printf("%d: Unexpected %d vs %d \n", __LINE__, slice_b(i-1) , slice_b(i) );
+            printf( "%d: Unexpected %d vs %d \n", __LINE__, slice_b( i - 1 ),
+                    slice_b( i ) );
         }
 
         // We can also set values
-        slice_a(i, 0) = i / 2;
+        slice_a( i, 0 ) = i / 2;
     }
 
     // Clean up local data
     delete[] local_data;
-
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+int main( int argc, char *argv[] ) {
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     parallelForExample();
 

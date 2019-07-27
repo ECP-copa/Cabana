@@ -16,8 +16,7 @@
 //---------------------------------------------------------------------------//
 // Slice example.
 //---------------------------------------------------------------------------//
-void sliceExample()
-{
+void sliceExample() {
     /*
       Slices are a mechanism to access a tuple member across all tuples in an
       AoSoA as if it were one large multidimensional array. In this basic
@@ -44,9 +43,7 @@ void sliceExample()
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
     */
-    using DataTypes = Cabana::MemberTypes<double[3][3],
-                                          float[4],
-                                          int>;
+    using DataTypes = Cabana::MemberTypes<double[3][3], float[4], int>;
 
     /*
       Next declare the vector length of our SoAs. This is how many tuples the
@@ -70,7 +67,7 @@ void sliceExample()
     */
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::Serial;
-    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA. We define how many tuples the aosoa will
@@ -79,8 +76,8 @@ void sliceExample()
        full (although its memory will still be allocated).
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
-        aosoa( "my_aosoa", num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
+                                                              num_tuple );
 
     /*
       Create a slice over each tuple member in the AoSoA. An integer template
@@ -105,19 +102,18 @@ void sliceExample()
       accessing the total number of tuples in the data structure and the array
       sizes.
     */
-    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
-    {
+    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s ) {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                for ( std::size_t a = 0; a < slice_0.arraySize(s); ++a )
-                    slice_0.access(s,a,i,j) = 1.0 * (a + i + j);
+                for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+                    slice_0.access( s, a, i, j ) = 1.0 * ( a + i + j );
 
         for ( int i = 0; i < 4; ++i )
-            for ( std::size_t a = 0; a < slice_0.arraySize(s); ++a )
-                slice_1.access(s,a,i) = 1.0 * (a + i);
+            for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+                slice_1.access( s, a, i ) = 1.0 * ( a + i );
 
-        for ( std::size_t a = 0; a < slice_0.arraySize(s); ++a )
-            slice_2.access(s,a) = a + 1234;
+        for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+            slice_2.access( s, a ) = a + 1234;
     }
 
     /*
@@ -131,30 +127,26 @@ void sliceExample()
 
        Note that the slice data access syntax in 1D uses `operator()`.
      */
-    for ( int t = 0; t < num_tuple; ++t )
-    {
+    for ( int t = 0; t < num_tuple; ++t ) {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                std::cout << "Tuple " << t
-                          << ", member 0 element (" << i << "," << j << "): "
-                          << slice_0(t,i,j) << std::endl;
+                std::cout << "Tuple " << t << ", member 0 element (" << i << ","
+                          << j << "): " << slice_0( t, i, j ) << std::endl;
 
         for ( int i = 0; i < 4; ++i )
-            std::cout << "Tuple " << t
-                      << ", member 1 element (" << i << "): "
-                      << slice_1(t,i) << std::endl;
+            std::cout << "Tuple " << t << ", member 1 element (" << i
+                      << "): " << slice_1( t, i ) << std::endl;
 
-        std::cout << "Tuple " << t
-                  << ", member 2: " << slice_2(t) << std::endl;
+        std::cout << "Tuple " << t << ", member 2: " << slice_2( t )
+                  << std::endl;
     }
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+int main( int argc, char *argv[] ) {
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     sliceExample();
 

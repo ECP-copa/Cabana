@@ -19,8 +19,7 @@
 //---------------------------------------------------------------------------//
 // parallel for example.
 //---------------------------------------------------------------------------//
-void parallelForExample()
-{
+void parallelForExample() {
     /*
       In previous examples we have demonstrated using the Slice directly with
       programming models such as OpenMP and CUDA. Now we present a more
@@ -52,18 +51,18 @@ void parallelForExample()
     /*
       Declare the AoSoA parameters.
     */
-    using DataTypes = Cabana::MemberTypes<double,double>;
+    using DataTypes = Cabana::MemberTypes<double, double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::OpenMP;
-    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     const int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
-        aosoa( "my_aosoa", num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
+                                                              num_tuple );
 
     /*
       Create slices and assign some data. One might consider using a parallel
@@ -72,10 +71,9 @@ void parallelForExample()
      */
     auto slice_0 = Cabana::slice<0>( aosoa );
     auto slice_1 = Cabana::slice<1>( aosoa );
-    for ( int i = 0; i < num_tuple; ++i )
-    {
-        slice_0(i) = 1.0;
-        slice_1(i) = 1.0;
+    for ( int i = 0; i < num_tuple; ++i ) {
+        slice_0( i ) = 1.0;
+        slice_1( i ) = 1.0;
     }
 
     /*
@@ -91,9 +89,9 @@ void parallelForExample()
       of the element on which the computation will be performed. This is
       intended to be used with the `access()` function of the slice.
      */
-    auto vector_kernel =
-        KOKKOS_LAMBDA( const int s, const int a )
-        { slice_0.access(s,a) = slice_1.access(s,a); };
+    auto vector_kernel = KOKKOS_LAMBDA( const int s, const int a ) {
+        slice_0.access( s, a ) = slice_1.access( s, a );
+    };
 
     /*
       Now we define the execution policy for the 2D indexing scheme. A
@@ -117,7 +115,8 @@ void parallelForExample()
       vector length must come first in the template parameters with the
       execution space and work tag to follow.
     */
-    Cabana::SimdPolicy<VectorLength,ExecutionSpace> simd_policy( 0, num_tuple );
+    Cabana::SimdPolicy<VectorLength, ExecutionSpace> simd_policy( 0,
+                                                                  num_tuple );
 
     /*
       Finally, perform the parallel loop. We have added a parallel for concept
@@ -148,14 +147,13 @@ void parallelForExample()
     using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
     using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
     PoolType pool( 342343901 );
-    auto rand_kernel =
-        KOKKOS_LAMBDA( const int i )
-        {
-            auto gen = pool.get_state();
-            auto rand_idx = Kokkos::rand<RandomType,int>::draw(gen,0,num_tuple);
-            slice_1(i) = slice_0( rand_idx );
-            pool.free_state( gen );
-        };
+    auto rand_kernel = KOKKOS_LAMBDA( const int i ) {
+        auto gen = pool.get_state();
+        auto rand_idx =
+            Kokkos::rand<RandomType, int>::draw( gen, 0, num_tuple );
+        slice_1( i ) = slice_0( rand_idx );
+        pool.free_state( gen );
+    };
 
     /*
       Because we are using 1D indexing in this case, we can directly use
@@ -166,17 +164,16 @@ void parallelForExample()
     Kokkos::fence();
 
     /*
-          Note: Other Kokkos parallel concepts such as reductions and scans can be
-          used with Cabana slices and 1D indexing.
+          Note: Other Kokkos parallel concepts such as reductions and scans can
+       be used with Cabana slices and 1D indexing.
     */
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+int main( int argc, char *argv[] ) {
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     parallelForExample();
 

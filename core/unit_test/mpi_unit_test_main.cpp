@@ -15,8 +15,7 @@
 
 #include <mpi.h>
 
-int main( int argc, char* argv[] )
-{
+int main( int argc, char *argv[] ) {
     MPI_Init( &argc, &argv );
     Kokkos::initialize( argc, argv );
     ::testing::InitGoogleTest( &argc, argv );

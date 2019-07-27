@@ -12,19 +12,18 @@
 #ifndef CABANA_HALO_HPP
 #define CABANA_HALO_HPP
 
-#include <Cabana_CommunicationPlan.hpp>
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_CommunicationPlan.hpp>
 #include <Cabana_Slice.hpp>
 
 #include <Kokkos_Core.hpp>
 
 #include <mpi.h>
 
-#include <vector>
 #include <exception>
+#include <vector>
 
-namespace Cabana
-{
+namespace Cabana {
 //---------------------------------------------------------------------------//
 /*!
   \class Halo
@@ -53,11 +52,9 @@ namespace Cabana
   ghost from is the unique owner of that data. Import is used in the context
   of the forward communication plan (the gather).
 */
-template<class DeviceType>
-class Halo : public CommunicationPlan<DeviceType>
-{
+template <class DeviceType>
+class Halo : public CommunicationPlan<DeviceType> {
   public:
-
     /*!
       \brief Neighbor and export rank constructor. Use this when you already
       know which ranks neighbor each other (i.e. every rank already knows who
@@ -101,23 +98,20 @@ class Halo : public CommunicationPlan<DeviceType>
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
     */
-    template<class IdViewType, class RankViewType>
-    Halo( MPI_Comm comm,
-          const std::size_t num_local,
-          const IdViewType& element_export_ids,
-          const RankViewType& element_export_ranks,
-          const std::vector<int>& neighbor_ranks,
-          const int mpi_tag = 1221 )
+    template <class IdViewType, class RankViewType>
+    Halo( MPI_Comm comm, const std::size_t num_local,
+          const IdViewType &element_export_ids,
+          const RankViewType &element_export_ranks,
+          const std::vector<int> &neighbor_ranks, const int mpi_tag = 1221 )
         : CommunicationPlan<DeviceType>( comm )
-        , _num_local( num_local )
-    {
+        , _num_local( num_local ) {
         if ( element_export_ids.size() != element_export_ranks.size() )
-            throw std::runtime_error("Export ids and ranks different sizes!");
+            throw std::runtime_error( "Export ids and ranks different sizes!" );
 
         auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks, mpi_tag );
-        this->createExportSteering(
-            neighbor_ids, element_export_ranks, element_export_ids );
+        this->createExportSteering( neighbor_ids, element_export_ranks,
+                                    element_export_ids );
     }
 
     /*!
@@ -156,22 +150,19 @@ class Halo : public CommunicationPlan<DeviceType>
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
     */
-    template<class IdViewType, class RankViewType>
-    Halo( MPI_Comm comm,
-          const std::size_t num_local,
-          const IdViewType& element_export_ids,
-          const RankViewType& element_export_ranks,
-          const int mpi_tag = 1221 )
+    template <class IdViewType, class RankViewType>
+    Halo( MPI_Comm comm, const std::size_t num_local,
+          const IdViewType &element_export_ids,
+          const RankViewType &element_export_ranks, const int mpi_tag = 1221 )
         : CommunicationPlan<DeviceType>( comm )
-        , _num_local( num_local )
-    {
+        , _num_local( num_local ) {
         if ( element_export_ids.size() != element_export_ranks.size() )
-            throw std::runtime_error("Export ids and ranks different sizes!");
+            throw std::runtime_error( "Export ids and ranks different sizes!" );
 
         auto neighbor_ids =
             this->createFromExportsOnly( element_export_ranks, mpi_tag );
-        this->createExportSteering(
-            neighbor_ids, element_export_ranks, element_export_ids );
+        this->createExportSteering( neighbor_ids, element_export_ranks,
+                                    element_export_ids );
     }
 
     /*!
@@ -179,8 +170,7 @@ class Halo : public CommunicationPlan<DeviceType>
 
       \return THe number of elements locally owned by this rank.
     */
-    std::size_t numLocal() const
-    { return _num_local; }
+    std::size_t numLocal() const { return _num_local; }
 
     /*!
       \brief Get the number of ghost elements this rank. Use this to resize a
@@ -189,26 +179,22 @@ class Halo : public CommunicationPlan<DeviceType>
 
       \return The number of ghosted elements on this rank.
     */
-    std::size_t numGhost() const
-    { return this->totalNumImport(); }
+    std::size_t numGhost() const { return this->totalNumImport(); }
 
   private:
-
     std::size_t _num_local;
 };
 
 //---------------------------------------------------------------------------//
 // Static type checker.
-template<typename >
+template <typename>
 struct is_halo : public std::false_type {};
 
-template<typename DeviceType>
-struct is_halo<Halo<DeviceType> >
-    : public std::true_type {};
+template <typename DeviceType>
+struct is_halo<Halo<DeviceType>> : public std::true_type {};
 
-template<typename DeviceType>
-struct is_halo<const Halo<DeviceType> >
-    : public std::true_type {};
+template <typename DeviceType>
+struct is_halo<const Halo<DeviceType>> : public std::true_type {};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -239,85 +225,67 @@ struct is_halo<const Halo<DeviceType> >
   called at once then different tags should be used in each function call to
   avoid any communication conflicts.
 */
-template<class Halo_t, class AoSoA_t>
-void gather( const Halo_t& halo,
-             AoSoA_t& aosoa,
-             int mpi_tag = 1002,
-             typename std::enable_if<(is_halo<Halo_t>::value &&
-                                      is_aosoa<AoSoA_t>::value),
-             int>::type * = 0 )
-{
+template <class Halo_t, class AoSoA_t>
+void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
+             typename std::enable_if<( is_halo<Halo_t>::value &&
+                                       is_aosoa<AoSoA_t>::value ),
+                                     int>::type * = 0 ) {
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != halo.numLocal() + halo.numGhost() )
-        throw std::runtime_error("AoSoA is the wrong size for scatter!");
+        throw std::runtime_error( "AoSoA is the wrong size for scatter!" );
 
     // Allocate a send buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type*,
-                 typename Halo_t::memory_space>
+    Kokkos::View<typename AoSoA_t::tuple_type *, typename Halo_t::memory_space>
         send_buffer(
-            Kokkos::ViewAllocateWithoutInitializing("halo_send_buffer"),
+            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
             halo.totalNumExport() );
 
     // Get the steering vector for the sends.
     auto steering = halo.getExportSteering();
 
     // Gather from the local data into a tuple-contiguous send buffer.
-    auto gather_send_buffer_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            send_buffer( i ) = aosoa.getTuple( steering(i) );
-        };
+    auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+        send_buffer( i ) = aosoa.getTuple( steering( i ) );
+    };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
         gather_send_buffer_policy( 0, halo.totalNumExport() );
     Kokkos::parallel_for( "Cabana::gather::gather_send_buffer",
-                          gather_send_buffer_policy,
-                          gather_send_buffer_func );
+                          gather_send_buffer_policy, gather_send_buffer_func );
     Kokkos::fence();
 
     // Allocate a receive buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type*,
-                 typename Halo_t::memory_space>
+    Kokkos::View<typename AoSoA_t::tuple_type *, typename Halo_t::memory_space>
         recv_buffer(
-            Kokkos::ViewAllocateWithoutInitializing("halo_recv_buffer"),
+            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
             halo.totalNumImport() );
 
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t,std::size_t> recv_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        recv_range.second =
-            recv_range.first + halo.numImport(n);
+    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    for ( int n = 0; n < num_n; ++n ) {
+        recv_range.second = recv_range.first + halo.numImport( n );
 
         auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
 
         MPI_Irecv( recv_subview.data(),
-                   recv_subview.size() * sizeof(typename AoSoA_t::tuple_type),
-                   MPI_BYTE,
-                   halo.neighborRank(n),
-                   mpi_tag,
-                   halo.comm(),
-                   &(requests[n]) );
+                   recv_subview.size() * sizeof( typename AoSoA_t::tuple_type ),
+                   MPI_BYTE, halo.neighborRank( n ), mpi_tag, halo.comm(),
+                   &( requests[n] ) );
 
         recv_range.first = recv_range.second;
     }
 
     // Do blocking sends.
-    std::pair<std::size_t,std::size_t> send_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        send_range.second =
-            send_range.first + halo.numExport(n);
+    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    for ( int n = 0; n < num_n; ++n ) {
+        send_range.second = send_range.first + halo.numExport( n );
 
         auto send_subview = Kokkos::subview( send_buffer, send_range );
 
         MPI_Send( send_subview.data(),
-                  send_subview.size() * sizeof(typename AoSoA_t::tuple_type),
-                  MPI_BYTE,
-                  halo.neighborRank(n),
-                  mpi_tag,
-                  halo.comm() );
+                  send_subview.size() * sizeof( typename AoSoA_t::tuple_type ),
+                  MPI_BYTE, halo.neighborRank( n ), mpi_tag, halo.comm() );
 
         send_range.first = send_range.second;
     }
@@ -331,12 +299,10 @@ void gather( const Halo_t& halo,
 
     // Extract the receive buffer into the ghosted elements.
     std::size_t num_local = halo.numLocal();
-    auto extract_recv_buffer_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            std::size_t ghost_idx = i + num_local;
-            aosoa.setTuple( ghost_idx, recv_buffer(i) );
-        };
+    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+        std::size_t ghost_idx = i + num_local;
+        aosoa.setTuple( ghost_idx, recv_buffer( i ) );
+    };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
         extract_recv_buffer_policy( 0, halo.totalNumImport() );
     Kokkos::parallel_for( "Cabana::gather::extract_recv_buffer",
@@ -377,102 +343,86 @@ void gather( const Halo_t& halo,
   called at once then different tags should be used in each function call to
   avoid any communication conflicts.
 */
-template<class Halo_t, class Slice_t>
-void gather( const Halo_t& halo,
-             Slice_t& slice,
-             int mpi_tag = 1002,
-             typename std::enable_if<(is_halo<Halo_t>::value &&
-                                      is_slice<Slice_t>::value),
-             int>::type * = 0 )
-{
+template <class Halo_t, class Slice_t>
+void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
+             typename std::enable_if<( is_halo<Halo_t>::value &&
+                                       is_slice<Slice_t>::value ),
+                                     int>::type * = 0 ) {
     // Check that the Slice is the right size.
     if ( slice.size() != halo.numLocal() + halo.numGhost() )
-        throw std::runtime_error("Slice is the wrong size for scatter!");
+        throw std::runtime_error( "Slice is the wrong size for scatter!" );
 
     // Get the number of components in the slice.
     std::size_t num_comp = 1;
     for ( std::size_t d = 2; d < slice.rank(); ++d )
-        num_comp *= slice.extent(d);
+        num_comp *= slice.extent( d );
 
     // Get the raw slice data.
     auto slice_data = slice.data();
 
     // Allocate a send buffer. Note this one is layout right so the components
     // are consecutive.
-    Kokkos::View<typename Slice_t::value_type**,
-                 Kokkos::LayoutRight,
+    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
                  typename Halo_t::memory_space>
         send_buffer(
-            Kokkos::ViewAllocateWithoutInitializing("halo_send_buffer"),
+            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
             halo.totalNumExport(), num_comp );
 
     // Get the steering vector for the sends.
     auto steering = halo.getExportSteering();
 
     // Gather from the local data into a tuple-contiguous send buffer.
-    auto gather_send_buffer_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            auto s = Slice_t::index_type::s( steering(i) );
-            auto a = Slice_t::index_type::a( steering(i) );
-            std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( std::size_t n = 0; n < num_comp; ++n )
-                send_buffer( i, n ) =
-                    slice_data[ slice_offset + n * Slice_t::vector_length ];
-        };
+    auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+        auto s = Slice_t::index_type::s( steering( i ) );
+        auto a = Slice_t::index_type::a( steering( i ) );
+        std::size_t slice_offset = s * slice.stride( 0 ) + a;
+        for ( std::size_t n = 0; n < num_comp; ++n )
+            send_buffer( i, n ) =
+                slice_data[slice_offset + n * Slice_t::vector_length];
+    };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
         gather_send_buffer_policy( 0, halo.totalNumExport() );
     Kokkos::parallel_for( "Cabana::gather::gather_send_buffer",
-                          gather_send_buffer_policy,
-                          gather_send_buffer_func );
+                          gather_send_buffer_policy, gather_send_buffer_func );
     Kokkos::fence();
 
-    // Allocate a receive buffer. Note this one is layout right so the components
-    // are consecutive.
-    Kokkos::View<typename Slice_t::value_type**,
-                 Kokkos::LayoutRight,
+    // Allocate a receive buffer. Note this one is layout right so the
+    // components are consecutive.
+    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
                  typename Halo_t::memory_space>
         recv_buffer(
-            Kokkos::ViewAllocateWithoutInitializing("halo_recv_buffer"),
+            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
             halo.totalNumImport(), num_comp );
 
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t,std::size_t> recv_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        recv_range.second = recv_range.first + halo.numImport(n);
+    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    for ( int n = 0; n < num_n; ++n ) {
+        recv_range.second = recv_range.first + halo.numImport( n );
 
         auto recv_subview =
             Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
         MPI_Irecv( recv_subview.data(),
-                   recv_subview.size() * sizeof(typename Slice_t::value_type),
-                   MPI_BYTE,
-                   halo.neighborRank(n),
-                   mpi_tag,
-                   halo.comm(),
-                   &(requests[n]) );
+                   recv_subview.size() * sizeof( typename Slice_t::value_type ),
+                   MPI_BYTE, halo.neighborRank( n ), mpi_tag, halo.comm(),
+                   &( requests[n] ) );
 
         recv_range.first = recv_range.second;
     }
 
     // Do blocking sends.
-    std::pair<std::size_t,std::size_t> send_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        send_range.second = send_range.first + halo.numExport(n);
+    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    for ( int n = 0; n < num_n; ++n ) {
+        send_range.second = send_range.first + halo.numExport( n );
 
         auto send_subview =
             Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
 
         MPI_Send( send_subview.data(),
-                  send_subview.size() * sizeof(typename Slice_t::value_type),
-                  MPI_BYTE,
-                  halo.neighborRank(n),
-                  mpi_tag,
-                  halo.comm() );
+                  send_subview.size() * sizeof( typename Slice_t::value_type ),
+                  MPI_BYTE, halo.neighborRank( n ), mpi_tag, halo.comm() );
 
         send_range.first = send_range.second;
     }
@@ -486,17 +436,15 @@ void gather( const Halo_t& halo,
 
     // Extract the receive buffer into the ghosted elements.
     std::size_t num_local = halo.numLocal();
-    auto extract_recv_buffer_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            std::size_t ghost_idx = i + num_local;
-            auto s = Slice_t::index_type::s( ghost_idx );
-            auto a = Slice_t::index_type::a( ghost_idx );
-            std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( std::size_t n = 0; n < num_comp; ++n )
-                slice_data[ slice_offset + Slice_t::vector_length * n ] =
-                    recv_buffer( i, n );
-        };
+    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+        std::size_t ghost_idx = i + num_local;
+        auto s = Slice_t::index_type::s( ghost_idx );
+        auto a = Slice_t::index_type::a( ghost_idx );
+        std::size_t slice_offset = s * slice.stride( 0 ) + a;
+        for ( std::size_t n = 0; n < num_comp; ++n )
+            slice_data[slice_offset + Slice_t::vector_length * n] =
+                recv_buffer( i, n );
+    };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
         extract_recv_buffer_policy( 0, halo.totalNumImport() );
     Kokkos::parallel_for( "Cabana::gather::extract_recv_buffer",
@@ -537,52 +485,45 @@ void gather( const Halo_t& halo,
   called at once then different tags should be used in each function call to
   avoid any communication conflicts.
 */
-template<class Halo_t, class Slice_t>
-void scatter( const Halo_t& halo,
-              Slice_t& slice,
-              int mpi_tag = 1003,
-              typename std::enable_if<(is_halo<Halo_t>::value &&
-                                       is_slice<Slice_t>::value),
-              int>::type * = 0 )
-{
+template <class Halo_t, class Slice_t>
+void scatter( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1003,
+              typename std::enable_if<( is_halo<Halo_t>::value &&
+                                        is_slice<Slice_t>::value ),
+                                      int>::type * = 0 ) {
     // Check that the Slice is the right size.
     if ( slice.size() != halo.numLocal() + halo.numGhost() )
-        throw std::runtime_error("Slice is the wrong size for scatter!");
+        throw std::runtime_error( "Slice is the wrong size for scatter!" );
 
     // Get the number of components in the slice.
     std::size_t num_comp = 1;
     for ( std::size_t d = 2; d < slice.rank(); ++d )
-        num_comp *= slice.extent(d);
+        num_comp *= slice.extent( d );
 
     // Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the
     // components of each slice element.
-    Kokkos::View<typename Slice_t::value_type*,
-                 typename Slice_t::memory_space,
-                 Kokkos::MemoryTraits<Kokkos::Unmanaged> >
-        slice_data( slice.data(), slice.numSoA() * slice.stride(0) );
+    Kokkos::View<typename Slice_t::value_type *, typename Slice_t::memory_space,
+                 Kokkos::MemoryTraits<Kokkos::Unmanaged>>
+        slice_data( slice.data(), slice.numSoA() * slice.stride( 0 ) );
 
     // Allocate a send buffer. Note this one is layout right so the components
     // are consecutive.
-    Kokkos::View<typename Slice_t::value_type**,
-                 Kokkos::LayoutRight,
+    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
                  typename Halo_t::memory_space>
         send_buffer(
-            Kokkos::ViewAllocateWithoutInitializing("halo_send_buffer"),
+            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
             halo.totalNumImport(), num_comp );
 
     // Extract the send buffer from the ghosted elements.
     std::size_t num_local = halo.numLocal();
-    auto extract_send_buffer_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            std::size_t ghost_idx = i + num_local;
-            auto s = Slice_t::index_type::s( ghost_idx );
-            auto a = Slice_t::index_type::a( ghost_idx );
-            std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( std::size_t n = 0; n < num_comp; ++n )
-                send_buffer( i, n ) =
-                    slice_data( slice_offset + Slice_t::vector_length * n );
-        };
+    auto extract_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+        std::size_t ghost_idx = i + num_local;
+        auto s = Slice_t::index_type::s( ghost_idx );
+        auto a = Slice_t::index_type::a( ghost_idx );
+        std::size_t slice_offset = s * slice.stride( 0 ) + a;
+        for ( std::size_t n = 0; n < num_comp; ++n )
+            send_buffer( i, n ) =
+                slice_data( slice_offset + Slice_t::vector_length * n );
+    };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
         extract_send_buffer_policy( 0, halo.totalNumImport() );
     Kokkos::parallel_for( "Cabana::scatter::extract_send_buffer",
@@ -590,52 +531,43 @@ void scatter( const Halo_t& halo,
                           extract_send_buffer_func );
     Kokkos::fence();
 
-    // Allocate a receive buffer. Note this one is layout right so the components
-    // are consecutive.
-    Kokkos::View<typename Slice_t::value_type**,
-                 Kokkos::LayoutRight,
+    // Allocate a receive buffer. Note this one is layout right so the
+    // components are consecutive.
+    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
                  typename Halo_t::memory_space>
         recv_buffer(
-            Kokkos::ViewAllocateWithoutInitializing("halo_recv_buffer"),
+            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
             halo.totalNumExport(), num_comp );
 
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t,std::size_t> recv_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        recv_range.second = recv_range.first + halo.numExport(n);
+    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    for ( int n = 0; n < num_n; ++n ) {
+        recv_range.second = recv_range.first + halo.numExport( n );
 
         auto recv_subview =
             Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
         MPI_Irecv( recv_subview.data(),
-                   recv_subview.size() * sizeof(typename Slice_t::value_type),
-                   MPI_BYTE,
-                   halo.neighborRank(n),
-                   mpi_tag,
-                   halo.comm(),
-                   &(requests[n]) );
+                   recv_subview.size() * sizeof( typename Slice_t::value_type ),
+                   MPI_BYTE, halo.neighborRank( n ), mpi_tag, halo.comm(),
+                   &( requests[n] ) );
 
         recv_range.first = recv_range.second;
     }
 
     // Do blocking sends.
-    std::pair<std::size_t,std::size_t> send_range = { 0, 0 };
-    for ( int n = 0; n < num_n; ++n )
-    {
-        send_range.second = send_range.first + halo.numImport(n);
+    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    for ( int n = 0; n < num_n; ++n ) {
+        send_range.second = send_range.first + halo.numImport( n );
 
         auto send_subview =
             Kokkos::subview( send_buffer, send_range, Kokkos::ALL );
 
         MPI_Send( send_subview.data(),
-                  send_subview.size() * sizeof(typename Slice_t::value_type),
-                  MPI_BYTE,
-                  halo.neighborRank(n),
-                  mpi_tag,
-                  halo.comm() );
+                  send_subview.size() * sizeof( typename Slice_t::value_type ),
+                  MPI_BYTE, halo.neighborRank( n ), mpi_tag, halo.comm() );
 
         send_range.first = send_range.second;
     }
@@ -651,17 +583,15 @@ void scatter( const Halo_t& halo,
     auto steering = halo.getExportSteering();
 
     // Scatter the ghosts in the receive buffer into the local values.
-    auto scatter_recv_buffer_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            auto s = Slice_t::index_type::s( steering(i) );
-            auto a = Slice_t::index_type::a( steering(i) );
-            std::size_t slice_offset = s*slice.stride(0) + a;
-            for ( std::size_t n = 0; n < num_comp; ++n )
-                Kokkos::atomic_add(
-                    &slice_data(slice_offset + Slice_t::vector_length * n),
-                    recv_buffer(i,n) );
-        };
+    auto scatter_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+        auto s = Slice_t::index_type::s( steering( i ) );
+        auto a = Slice_t::index_type::a( steering( i ) );
+        std::size_t slice_offset = s * slice.stride( 0 ) + a;
+        for ( std::size_t n = 0; n < num_comp; ++n )
+            Kokkos::atomic_add(
+                &slice_data( slice_offset + Slice_t::vector_length * n ),
+                recv_buffer( i, n ) );
+    };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
         scatter_recv_buffer_policy( 0, halo.totalNumExport() );
     Kokkos::parallel_for( "Cabana::scatter::scatter_recv_buffer",

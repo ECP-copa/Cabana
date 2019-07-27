@@ -20,8 +20,7 @@
 //---------------------------------------------------------------------------//
 namespace Test {
 
-TEST( cabana_version, version_test )
-{
+TEST( cabana_version, version_test ) {
     auto const version_id = Cabana::version();
     EXPECT_TRUE( !version_id.empty() );
     std::cout << "Cabana version " << version_id << std::endl;

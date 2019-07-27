@@ -38,10 +38,8 @@
 
 #include <exception>
 
-namespace Cabana
-{
-namespace
-{ // anonymous namespace
+namespace Cabana {
+namespace { // anonymous namespace
 
 //---------------------------------------------------------------------------//
 // Whether one of the Cabana::initialize() functions has been called before.
@@ -56,19 +54,15 @@ bool cabana_initialized_kokkos = false;
 //---------------------------------------------------------------------------//
 // Initialize Kokkos, if it needs initialization.
 template <typename... Args>
-CABANA_DEPRECATED
-void initKokkos( Args &&... args )
-{
-    if ( !cabana_initialized_kokkos )
-    {
+CABANA_DEPRECATED void initKokkos( Args &&... args ) {
+    if ( !cabana_initialized_kokkos ) {
         // Kokkos doesn't have a global is_initialized().  However,
         // Kokkos::initialize() always initializes the default execution
         // space, so it suffices to check whether that was initialized.
         const bool kokkosIsInitialized =
             Kokkos::DefaultExecutionSpace::is_initialized();
 
-        if ( !kokkosIsInitialized )
-        {
+        if ( !kokkosIsInitialized ) {
             // Kokkos will remove all arguments Kokkos recognizes which start
             // with '--kokkos' (e.g.,--kokkos-threads)
             Kokkos::initialize( std::forward<Args>( args )... );
@@ -91,9 +85,7 @@ void initKokkos( Args &&... args )
 
 //---------------------------------------------------------------------------//
 template <typename... Args>
-CABANA_DEPRECATED
-void initialize( Args &&... args )
-{
+CABANA_DEPRECATED void initialize( Args &&... args ) {
     if ( !is_cabana_initialized )
         initKokkos( std::forward<Args>( args )... );
     is_cabana_initialized = true;
@@ -105,8 +97,7 @@ bool isInitialized() { return is_cabana_initialized; }
 
 //---------------------------------------------------------------------------//
 CABANA_DEPRECATED
-void finalize()
-{
+void finalize() {
     if ( !is_cabana_initialized )
         return;
 

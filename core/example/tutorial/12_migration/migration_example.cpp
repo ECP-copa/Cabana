@@ -20,8 +20,7 @@
 //---------------------------------------------------------------------------//
 // Migration example.
 //---------------------------------------------------------------------------//
-void migrationExample()
-{
+void migrationExample() {
     /*
       The distributor is a communication plan allowing for the migration of
       data from one uniquely-owned distribution to another uniquely-owned
@@ -50,17 +49,17 @@ void migrationExample()
     /*
       Declare the AoSoA parameters.
     */
-    using DataTypes = Cabana::MemberTypes<int,int>;
+    using DataTypes = Cabana::MemberTypes<int, int>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::Serial;
-    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "A", num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A", num_tuple );
 
     /*
       Create slices and assign data. The data values are equal to id of this
@@ -70,10 +69,9 @@ void migrationExample()
      */
     auto slice_0 = Cabana::slice<0>( aosoa );
     auto slice_1 = Cabana::slice<1>( aosoa );
-    for ( int i = 0; i < num_tuple; ++i )
-    {
-        slice_0(i) = comm_rank;
-        slice_1(i) = comm_rank;
+    for ( int i = 0; i < num_tuple; ++i ) {
+        slice_0( i ) = comm_rank;
+        slice_1( i ) = comm_rank;
     }
 
     /*
@@ -82,7 +80,7 @@ void migrationExample()
       elements are to be discarded, and the last 80 elements stay on this
       rank.
     */
-    Kokkos::View<int*,DeviceType> export_ranks( "export_ranks", num_tuple );
+    Kokkos::View<int *, DeviceType> export_ranks( "export_ranks", num_tuple );
 
     // First 10 go to the next rank. Note that this view will most often be
     // filled within a parallel_for but we do so in serial here for
@@ -90,16 +88,16 @@ void migrationExample()
     int previous_rank = ( comm_rank == 0 ) ? comm_size - 1 : comm_rank - 1;
     int next_rank = ( comm_rank == comm_size - 1 ) ? 0 : comm_rank + 1;
     for ( int i = 0; i < 10; ++i )
-        export_ranks(i) = next_rank;
+        export_ranks( i ) = next_rank;
 
     // Next 10 elements will be discarded. Use an export rank of -1 to
     // indicate this.
     for ( int i = 10; i < 20; ++i )
-        export_ranks(i) = -1;
+        export_ranks( i ) = -1;
 
     // The last 80 elements stay on this process.
     for ( int i = 20; i < num_tuple; ++i )
-        export_ranks(i) = comm_rank;
+        export_ranks( i ) = comm_rank;
 
     /*
       We have two ways to make a distributor. In the first case we know which
@@ -113,12 +111,12 @@ void migrationExample()
       communication plan. If this neighbor data were not supplied, extra
       global communication would be needed to generate a list of neighbors.
      */
-    std::vector<int> neighbors = { previous_rank, comm_rank, next_rank };
+    std::vector<int> neighbors = {previous_rank, comm_rank, next_rank};
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
-    neighbors.resize( std::distance(neighbors.begin(), unique_end) );
-    Cabana::Distributor<DeviceType> distributor(
-        MPI_COMM_WORLD, export_ranks, neighbors );
+    neighbors.resize( std::distance( neighbors.begin(), unique_end ) );
+    Cabana::Distributor<DeviceType> distributor( MPI_COMM_WORLD, export_ranks,
+                                                 neighbors );
 
     /*
       There are three choices for applying the distributor: 1) Migrating the
@@ -138,8 +136,8 @@ void migrationExample()
     // Also note how this AoSoA is sized. The distrubutor computes how many
     // imported elements each rank will recieve. We discard 10 elements, get
     // 10 from our neighbor, and keep 80 of our own so this number should be 90.
-    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
-        destination( distributor.totalNumImport() );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> destination(
+        distributor.totalNumImport() );
 
     // Do the migration.
     Cabana::migrate( distributor, aosoa, destination );
@@ -175,11 +173,10 @@ void migrationExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
+int main( int argc, char *argv[] ) {
     MPI_Init( &argc, &argv );
 
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     migrationExample();
 

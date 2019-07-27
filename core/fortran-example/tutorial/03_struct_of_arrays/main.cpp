@@ -61,9 +61,7 @@
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
 */
-using DataTypes = Cabana::MemberTypes<double[3][3],
-                                          float[4],
-                                          int>;
+using DataTypes = Cabana::MemberTypes<double[3][3], float[4], int>;
 
 /*
       Next declare the vector length of our SoA. This is how many tuples the
@@ -72,33 +70,27 @@ using DataTypes = Cabana::MemberTypes<double[3][3],
 */
 
 /* Create the SoA. */
-using SoaTYPE = Cabana::SoA<DataTypes,VECLEN>;
-
+using SoaTYPE = Cabana::SoA<DataTypes, VECLEN>;
 
 /* Create a pointer of SoaType, which will be used in Fortran */
-SoaTYPE * particle = new SoaTYPE;
-
+SoaTYPE *particle = new SoaTYPE;
 
 /*  Declare functions that will be mixed with Fortran */
 extern "C" {
-  void soaExample(SoaTYPE *); //written in Fortan; called by C++
-  void delete_soa();          //written in C++; called by Fortan
+void soaExample( SoaTYPE * ); // written in Fortan; called by C++
+void delete_soa();            // written in C++; called by Fortan
 }
 
-void delete_soa(){
-  delete particle;
-}
-
+void delete_soa() { delete particle; }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+int main( int argc, char *argv[] ) {
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    /* Call the Fortran subroutine */    
-    soaExample(particle);
+    /* Call the Fortran subroutine */
+    soaExample( particle );
 
     return 0;
 }

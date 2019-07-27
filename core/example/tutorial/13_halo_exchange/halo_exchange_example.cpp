@@ -20,8 +20,7 @@
 //---------------------------------------------------------------------------//
 // Halo exchange example.
 //---------------------------------------------------------------------------//
-void haloExchangeExample()
-{
+void haloExchangeExample() {
     /*
       The halo is a communication plan designed from halo exchange where some
       locally-owned elements on each rank are used as ghost data on other
@@ -54,46 +53,45 @@ void haloExchangeExample()
     /*
       Declare the AoSoA parameters.
     */
-    using DataTypes = Cabana::MemberTypes<double,double>;
+    using DataTypes = Cabana::MemberTypes<double, double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::Serial;
-    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
-        aosoa( "my_aosoa", num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
+                                                              num_tuple );
 
     /*
       Create slices and assign data.
      */
     auto slice_0 = Cabana::slice<0>( aosoa );
     auto slice_1 = Cabana::slice<1>( aosoa );
-    for ( int i = 0; i < num_tuple; ++i )
-    {
-        slice_0(i) = 1.0;
-        slice_1(i) = 1.0;
+    for ( int i = 0; i < num_tuple; ++i ) {
+        slice_0( i ) = 1.0;
+        slice_1( i ) = 1.0;
     }
 
     /*
       Build a halo where the last 10 elements are sent to the next rank.
     */
     int local_num_send = 10;
-    Kokkos::View<int*,DeviceType> export_ranks( "export_ranks", local_num_send );
-    Kokkos::View<int*,DeviceType> export_ids( "export_ids", local_num_send );
+    Kokkos::View<int *, DeviceType> export_ranks( "export_ranks",
+                                                  local_num_send );
+    Kokkos::View<int *, DeviceType> export_ids( "export_ids", local_num_send );
 
     // Last 10 elements (elements 90-99) go to the next rank. Note that this
     // view will most often be filled within a parallel_for but we do so in
     // serial here for demonstration purposes.
     int previous_rank = ( comm_rank == 0 ) ? comm_size - 1 : comm_rank - 1;
     int next_rank = ( comm_rank == comm_size - 1 ) ? 0 : comm_rank + 1;
-    for ( int i = 0; i < local_num_send; ++i )
-    {
-        export_ranks(i) = next_rank;
-        export_ids(i) = i + num_tuple - 10;
+    for ( int i = 0; i < local_num_send; ++i ) {
+        export_ranks( i ) = next_rank;
+        export_ids( i ) = i + num_tuple - 10;
     }
 
     /*
@@ -108,12 +106,12 @@ void haloExchangeExample()
       communication plan. If this neighbor data were not supplied, extra
       global communication would be needed to generate a list of neighbors.
      */
-    std::vector<int> neighbors = { previous_rank, comm_rank, next_rank };
+    std::vector<int> neighbors = {previous_rank, comm_rank, next_rank};
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
-    neighbors.resize( std::distance(neighbors.begin(), unique_end) );
-    Cabana::Halo<DeviceType> halo(
-        MPI_COMM_WORLD, num_tuple, export_ids, export_ranks, neighbors );
+    neighbors.resize( std::distance( neighbors.begin(), unique_end ) );
+    Cabana::Halo<DeviceType> halo( MPI_COMM_WORLD, num_tuple, export_ids,
+                                   export_ranks, neighbors );
 
     /*
       Resize the AoSoA to allow for additional ghost data. We can get the
@@ -162,11 +160,10 @@ void haloExchangeExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
+int main( int argc, char *argv[] ) {
     MPI_Init( &argc, &argv );
 
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     haloExchangeExample();
 

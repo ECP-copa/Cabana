@@ -16,8 +16,7 @@
 //---------------------------------------------------------------------------//
 // Atomic slice example.
 //---------------------------------------------------------------------------//
-void atomicSliceExample()
-{
+void atomicSliceExample() {
     /*
       Slices have optional memory traits which define the type of data access
       used when manipulating the slice. Upon construction via an AoSoA a slice
@@ -33,19 +32,19 @@ void atomicSliceExample()
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::OpenMP;
-    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA. Just put a single value to demonstrate the atomic.
     */
     int num_tuple = 1;
-    Cabana::AoSoA<DataTypes,DeviceType,VectorLength> aosoa( "X", num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "X", num_tuple );
 
     /*
       Create a slice over the single value and assign it to zero.
      */
     auto slice = Cabana::slice<0>( aosoa );
-    slice(0) = 0.0;
+    slice( 0 ) = 0.0;
 
     /*
       Now create a version of the slice with atomic data access traits. We do
@@ -53,7 +52,7 @@ void atomicSliceExample()
       shallow and unmanaged copy. When both 1D and 2D data accesses are used
       reads and writes are atomic.
     */
-    decltype(slice)::atomic_access_slice atomic_slice = slice;
+    decltype( slice )::atomic_access_slice atomic_slice = slice;
 
     /*
       Because the slice is declared to be atomic we can safely sum into it
@@ -63,7 +62,7 @@ void atomicSliceExample()
     int num_loop = 256;
 #pragma omp parallel for
     for ( int s = 0; s < num_loop; ++s )
-        atomic_slice(0) += 1.0;
+        atomic_slice( 0 ) += 1.0;
 
     /*
       Print out the slice result - it should be equal to the number of
@@ -73,16 +72,15 @@ void atomicSliceExample()
      */
     std::cout << "Atomic add results" << std::endl;
     std::cout << "Parallel loop iterations = " << num_loop << std::endl;
-    std::cout << "Slice value =              " << slice(0) << std::endl;
+    std::cout << "Slice value =              " << slice( 0 ) << std::endl;
     std::cout << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
-{
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+int main( int argc, char *argv[] ) {
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     atomicSliceExample();
 
