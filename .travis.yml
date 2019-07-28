@@ -97,7 +97,8 @@ script:
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
     make -k -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
-    make doxygen && test ! -s warnings.log &&
+    make doxygen &&
+    if [[ -f warnings.log ]]; then cat warnings.log; test -s warnings.log && exit 1; fi && 
     make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr/local && rmdir ${PWD}/install/usr &&
     popd
 
