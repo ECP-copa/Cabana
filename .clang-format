@@ -2,7 +2,7 @@ BasedOnStyle:  LLVM
 ---
 Language:        Cpp
 AlwaysBreakTemplateDeclarations: true
-BreakBeforeBraces: true
+BreakBeforeBraces: Allman
 IndentWidth: 4
 SpacesInParentheses: true
 BreakConstructorInitializersBeforeComma: true
