@@ -20,7 +20,8 @@
 //---------------------------------------------------------------------------//
 // Migration example.
 //---------------------------------------------------------------------------//
-void migrationExample() {
+void migrationExample()
+{
     /*
       The distributor is a communication plan allowing for the migration of
       data from one uniquely-owned distribution to another uniquely-owned
@@ -69,7 +70,8 @@ void migrationExample() {
      */
     auto slice_0 = Cabana::slice<0>( aosoa );
     auto slice_1 = Cabana::slice<1>( aosoa );
-    for ( int i = 0; i < num_tuple; ++i ) {
+    for ( int i = 0; i < num_tuple; ++i )
+    {
         slice_0( i ) = comm_rank;
         slice_1( i ) = comm_rank;
     }
@@ -173,7 +175,8 @@ void migrationExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     MPI_Init( &argc, &argv );
 
     Kokkos::ScopeGuard scope_guard( argc, argv );

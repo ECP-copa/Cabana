@@ -24,10 +24,12 @@
 #include <memory>
 #include <vector>
 
-namespace Test {
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
-void test1( const bool use_topology ) {
+void test1( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
 
@@ -57,7 +59,8 @@ void test1( const bool use_topology ) {
     auto slice_dbl_src = Cabana::slice<1>( data_src );
 
     // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int_src( i ) = my_rank + i;
         slice_dbl_src( i, 0 ) = my_rank + i;
         slice_dbl_src( i, 1 ) = my_rank + i + 0.5;
@@ -83,7 +86,8 @@ void test1( const bool use_topology ) {
     auto steering = distributor->getExportSteering();
     auto host_steering =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
-    for ( int i = 0; i < num_data; ++i ) {
+    for ( int i = 0; i < num_data; ++i )
+    {
         EXPECT_EQ( slice_int_dst_host( i ), my_rank + host_steering( i ) );
         EXPECT_EQ( slice_dbl_dst_host( i, 0 ), my_rank + host_steering( i ) );
         EXPECT_EQ( slice_dbl_dst_host( i, 1 ),
@@ -92,7 +96,8 @@ void test1( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test2( const bool use_topology ) {
+void test2( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
 
@@ -127,7 +132,8 @@ void test2( const bool use_topology ) {
     auto slice_dbl = Cabana::slice<1>( data );
 
     // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int( i ) = my_rank + i;
         slice_dbl( i, 0 ) = my_rank + i;
         slice_dbl( i, 1 ) = my_rank + i + 0.5;
@@ -152,7 +158,8 @@ void test2( const bool use_topology ) {
     auto host_steering =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
     EXPECT_EQ( data.size(), num_data / 2 );
-    for ( int i = 0; i < num_data / 2; ++i ) {
+    for ( int i = 0; i < num_data / 2; ++i )
+    {
         EXPECT_EQ( slice_int_host( i ), my_rank + host_steering( i ) );
         EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + host_steering( i ) );
         EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + host_steering( i ) + 0.5 );
@@ -160,7 +167,8 @@ void test2( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test3( const bool use_topology ) {
+void test3( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
 
@@ -197,7 +205,8 @@ void test3( const bool use_topology ) {
     auto slice_dbl_src = Cabana::slice<1>( data_src );
 
     // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int_src( i ) = my_rank + i;
         slice_dbl_src( i, 0 ) = my_rank + i;
         slice_dbl_src( i, 1 ) = my_rank + i + 0.5;
@@ -239,7 +248,8 @@ void test3( const bool use_topology ) {
     Cabana::deep_copy( data_dst_host, data_dst );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
     auto slice_dbl_dst_host = Cabana::slice<1>( data_dst_host );
-    for ( int i = 0; i < num_data; ++i ) {
+    for ( int i = 0; i < num_data; ++i )
+    {
         EXPECT_EQ( slice_int_dst_host( i ), inverse_rank + host_steering( i ) );
         EXPECT_EQ( slice_dbl_dst_host( i, 0 ),
                    inverse_rank + host_steering( i ) );
@@ -249,7 +259,8 @@ void test3( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test4( const bool use_topology ) {
+void test4( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
 
@@ -266,7 +277,8 @@ void test4( const bool use_topology ) {
     Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
                                                               num_data );
     std::vector<int> neighbor_ranks( my_size );
-    for ( int n = 0; n < my_size; ++n ) {
+    for ( int n = 0; n < my_size; ++n )
+    {
         export_ranks_host[n] = n;
         export_ranks_host[n + my_size] = n;
         neighbor_ranks[n] = n;
@@ -290,7 +302,8 @@ void test4( const bool use_topology ) {
     auto slice_dbl_src = Cabana::slice<1>( data_src );
 
     // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int_src( i ) = my_rank;
         slice_dbl_src( i, 0 ) = my_rank;
         slice_dbl_src( i, 1 ) = my_rank + 0.5;
@@ -324,8 +337,10 @@ void test4( const bool use_topology ) {
     EXPECT_EQ( slice_dbl_dst_host( 1, 1 ), my_rank + 0.5 );
 
     // others
-    for ( int i = 1; i < my_size; ++i ) {
-        if ( i == my_rank ) {
+    for ( int i = 1; i < my_size; ++i )
+    {
+        if ( i == my_rank )
+        {
             EXPECT_EQ( slice_int_dst_host( 2 * i ), 0 );
             EXPECT_EQ( slice_dbl_dst_host( 2 * i, 0 ), 0 );
             EXPECT_EQ( slice_dbl_dst_host( 2 * i, 1 ), 0.5 );
@@ -333,7 +348,9 @@ void test4( const bool use_topology ) {
             EXPECT_EQ( slice_int_dst_host( 2 * i + 1 ), 0 );
             EXPECT_EQ( slice_dbl_dst_host( 2 * i + 1, 0 ), 0 );
             EXPECT_EQ( slice_dbl_dst_host( 2 * i + 1, 1 ), 0.5 );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( slice_int_dst_host( 2 * i ), i );
             EXPECT_EQ( slice_dbl_dst_host( 2 * i, 0 ), i );
             EXPECT_EQ( slice_dbl_dst_host( 2 * i, 1 ), i + 0.5 );
@@ -346,7 +363,8 @@ void test4( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test5( const bool use_topology ) {
+void test5( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
 
@@ -364,7 +382,8 @@ void test5( const bool use_topology ) {
     Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
                                                               num_data );
     std::vector<int> neighbor_ranks( my_size );
-    for ( int n = 0; n < my_size; ++n ) {
+    for ( int n = 0; n < my_size; ++n )
+    {
         export_ranks_host[n] = -1;
         export_ranks_host[n + my_size] = n;
         neighbor_ranks[n] = n;
@@ -388,7 +407,8 @@ void test5( const bool use_topology ) {
     auto slice_dbl_src = Cabana::slice<1>( data_src );
 
     // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int_src( i ) = my_rank;
         slice_dbl_src( i, 0 ) = my_rank;
         slice_dbl_src( i, 1 ) = my_rank + 0.5;
@@ -419,12 +439,16 @@ void test5( const bool use_topology ) {
     EXPECT_EQ( slice_dbl_host( 0, 1 ), my_rank + 0.5 );
 
     // others
-    for ( int i = 1; i < my_size; ++i ) {
-        if ( i == my_rank ) {
+    for ( int i = 1; i < my_size; ++i )
+    {
+        if ( i == my_rank )
+        {
             EXPECT_EQ( slice_int_host( i ), 0 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), 0 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), 0.5 );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( slice_int_host( i ), i );
             EXPECT_EQ( slice_dbl_host( i, 0 ), i );
             EXPECT_EQ( slice_dbl_host( i, 1 ), i + 0.5 );
@@ -433,7 +457,8 @@ void test5( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test6( const bool use_topology ) {
+void test6( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
 
@@ -450,10 +475,13 @@ void test6( const bool use_topology ) {
     Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     Kokkos::deep_copy( export_ranks, 0 );
     std::vector<int> neighbor_ranks;
-    if ( 0 == my_rank ) {
+    if ( 0 == my_rank )
+    {
         neighbor_ranks.resize( my_size );
         std::iota( neighbor_ranks.begin(), neighbor_ranks.end(), 0 );
-    } else {
+    }
+    else
+    {
         neighbor_ranks.assign( 1, 0 );
     }
 
@@ -473,7 +501,8 @@ void test6( const bool use_topology ) {
     auto slice_dbl = Cabana::slice<1>( data );
 
     // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int( i ) = my_rank;
         slice_dbl( i, 0 ) = my_rank;
         slice_dbl( i, 1 ) = my_rank + 0.5;
@@ -500,7 +529,8 @@ void test6( const bool use_topology ) {
     auto steering = distributor->getExportSteering();
     auto host_steering =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), steering );
-    for ( std::size_t i = 0; i < distributor->totalNumImport(); ++i ) {
+    for ( std::size_t i = 0; i < distributor->totalNumImport(); ++i )
+    {
         EXPECT_EQ( slice_int_host( i ), distributor->neighborRank( i ) );
         EXPECT_EQ( slice_dbl_host( i, 0 ), distributor->neighborRank( i ) );
         EXPECT_EQ( slice_dbl_host( i, 1 ),
@@ -509,7 +539,8 @@ void test6( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test7( const bool use_topology ) {
+void test7( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
 
@@ -529,10 +560,13 @@ void test7( const bool use_topology ) {
     Kokkos::parallel_for( range_policy, fill_ranks );
     Kokkos::fence();
     std::vector<int> neighbor_ranks;
-    if ( 0 == my_rank ) {
+    if ( 0 == my_rank )
+    {
         neighbor_ranks.resize( my_size );
         std::iota( neighbor_ranks.begin(), neighbor_ranks.end(), 0 );
-    } else {
+    }
+    else
+    {
         neighbor_ranks.assign( 1, 0 );
     }
 
@@ -552,7 +586,8 @@ void test7( const bool use_topology ) {
     auto slice_dbl = Cabana::slice<1>( data );
 
     // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int( i ) = i;
         slice_dbl( i, 0 ) = i;
         slice_dbl( i, 1 ) = i + 0.5;
@@ -578,7 +613,8 @@ void test7( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test8( const bool use_topology ) {
+void test8( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
 
@@ -598,7 +634,8 @@ void test8( const bool use_topology ) {
     // data to that rank.
     int num_data = 2;
     Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
-    auto fill_ranks = KOKKOS_LAMBDA( const int ) {
+    auto fill_ranks = KOKKOS_LAMBDA( const int )
+    {
         export_ranks( 0 ) = ( my_rank == 0 ) ? 0 : my_rank - 1;
         export_ranks( 1 ) = ( my_rank == my_size - 1 ) ? 0 : my_rank + 1;
     };
@@ -630,7 +667,8 @@ void test8( const bool use_topology ) {
     auto slice_dbl = Cabana::slice<1>( data );
 
     // Fill the data.
-    auto fill_func = KOKKOS_LAMBDA( const int ) {
+    auto fill_func = KOKKOS_LAMBDA( const int )
+    {
         slice_int( 0 ) = export_ranks( 0 );
         slice_int( 1 ) = export_ranks( 1 );
 
@@ -652,7 +690,8 @@ void test8( const bool use_topology ) {
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
-    for ( unsigned i = 0; i < data.size(); ++i ) {
+    for ( unsigned i = 0; i < data.size(); ++i )
+    {
         EXPECT_EQ( slice_int_host( i ), my_rank );
         EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank );
         EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1 );

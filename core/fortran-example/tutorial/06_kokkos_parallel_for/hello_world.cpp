@@ -19,14 +19,15 @@
 #include <typeinfo>
 
 /* Declare functions that will be mixed with Fortran */
-extern "C" {
-/* written in C++; called by Fortran */
-void c_kokkos_initlize( void );
-void c_kokkos_finalize( void );
-void c_kokkos_parallel_for( void );
+extern "C"
+{
+    /* written in C++; called by Fortran */
+    void c_kokkos_initlize( void );
+    void c_kokkos_finalize( void );
+    void c_kokkos_parallel_for( void );
 
-/* written in C++; called by Fortran */
-KOKKOS_FUNCTION void print_hello( const int );
+    /* written in C++; called by Fortran */
+    KOKKOS_FUNCTION void print_hello( const int );
 }
 
 // "Hello world" parallel_for example:
@@ -47,7 +48,8 @@ KOKKOS_FUNCTION void print_hello( const int );
 //
 // A "functor" is just a class or struct with a public operator()
 // instance method.
-struct hello_world {
+struct hello_world
+{
     // If a functor has an "execution_space" (or "execution_space", for
     // backwards compatibility) public typedef, parallel_* will only run
     // the functor in that execution space.  That's a good way to mark a
@@ -67,13 +69,15 @@ struct hello_world {
     // (as well as on the host).  If not building with CUDA, the macro
     // is unnecessary but harmless.
     KOKKOS_INLINE_FUNCTION
-    void operator()( const int i ) const {
+    void operator()( const int i ) const
+    {
         // This is a Fortran function call
         print_hello( i );
     }
 };
 
-void c_kokkos_parallel_for() {
+void c_kokkos_parallel_for()
+{
     // You must call initialize() before you may call Kokkos.
     //
     // With no arguments, this initializes the default execution space

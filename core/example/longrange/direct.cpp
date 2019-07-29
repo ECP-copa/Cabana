@@ -12,13 +12,14 @@
 #include "direct.h"
 #include "definitions.h"
 
-TDS::TDS( int periodic ) {
+TDS::TDS( int periodic )
+{
     // number of periodic images (number of shells surrounding systems)
     _periodic_shells = periodic;
 }
 
-double TDS::compute( ParticleList &particles, double lx, double ly,
-                     double lz ) {
+double TDS::compute( ParticleList &particles, double lx, double ly, double lz )
+{
     // Create slices
     auto r = Cabana::slice<Position>( particles );
     auto f = Cabana::slice<Force>( particles );
@@ -29,7 +30,8 @@ double TDS::compute( ParticleList &particles, double lx, double ly,
     int periodic_shells = _periodic_shells;
 
     // functor to calculate potentials
-    auto work_func = KOKKOS_LAMBDA( const int idx ) {
+    auto work_func = KOKKOS_LAMBDA( const int idx )
+    {
         double d[SPACE_DIM]; // 3-D is supported only for now
         double d_;
         double shift[SPACE_DIM];
@@ -40,11 +42,14 @@ double TDS::compute( ParticleList &particles, double lx, double ly,
         // the electrostatic interaction between it and every other
         // particle in the cell, as well as every particle in the
         // surrounding periodic spherical shells
-        for ( auto i = 0; i < n_max; ++i ) {
-            for ( int kx = -periodic_shells; kx <= periodic_shells; ++kx ) {
+        for ( auto i = 0; i < n_max; ++i )
+        {
+            for ( int kx = -periodic_shells; kx <= periodic_shells; ++kx )
+            {
                 // x-dist shift for particles in periodic cells
                 shift[0] = (double)kx * lx;
-                for ( int ky = -periodic_shells; ky <= periodic_shells; ++ky ) {
+                for ( int ky = -periodic_shells; ky <= periodic_shells; ++ky )
+                {
                     // y-dist shift for particles in periodic cells
                     shift[1] = (double)ky * ly;
                     // check if still in bounds of spherical periodic shells
@@ -52,7 +57,8 @@ double TDS::compute( ParticleList &particles, double lx, double ly,
                     if ( shift_l > (double)periodic_shells )
                         continue;
                     for ( int kz = -periodic_shells; kz <= periodic_shells;
-                          ++kz ) {
+                          ++kz )
+                    {
                         // z-dist shift for particles in periodic cells
                         shift[2] = (double)kz * lz;
                         // check if still in bounds of spherical periodic shells
@@ -67,7 +73,8 @@ double TDS::compute( ParticleList &particles, double lx, double ly,
                         // set distance to zero
                         d_ = 0.0;
                         // compute distance
-                        for ( auto j = 0; j < SPACE_DIM; ++j ) {
+                        for ( auto j = 0; j < SPACE_DIM; ++j )
+                        {
                             d[j] = r( idx, j ) - ( r( i, j ) + shift[j] );
                             d_ += d[j] * d[j];
                         }
@@ -75,7 +82,8 @@ double TDS::compute( ParticleList &particles, double lx, double ly,
                         // compute potential
                         p( idx ) += 0.5 * q( i ) / d_;
                         // compute forces
-                        for ( auto j = 0; j < SPACE_DIM; ++j ) {
+                        for ( auto j = 0; j < SPACE_DIM; ++j )
+                        {
                             f( idx, j ) += 0.5 * COULOMB_PREFACTOR * q( idx ) *
                                            q( i ) / ( d_ * d_ ) * d[j];
                         }

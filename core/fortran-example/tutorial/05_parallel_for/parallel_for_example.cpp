@@ -24,25 +24,28 @@
 //---------------------------------------------------------------------------//
 
 /* This is the coresponding struct_of_array defined by DataTypes (see below) */
-struct local_data_struct_t {
+struct local_data_struct_t
+{
     double d0[VECLEN];
     double d1[VECLEN];
 };
 
 /* Declare functions that will be mixed with Fortran */
-extern "C" {
-/* written in C++; called by Fortran */
-void c_kokkos_initlize( void );
-void c_kokkos_finalize( void );
-void parallelForExample();
+extern "C"
+{
+    /* written in C++; called by Fortran */
+    void c_kokkos_initlize( void );
+    void c_kokkos_finalize( void );
+    void parallelForExample();
 
-/* wirtten in Fortran; called by C++ */
-void initialization( local_data_struct_t *, int );
-void kernel_1( local_data_struct_t *, int, int );
-void kernel_2( local_data_struct_t *, int, int, int, int );
+    /* wirtten in Fortran; called by C++ */
+    void initialization( local_data_struct_t *, int );
+    void kernel_1( local_data_struct_t *, int, int );
+    void kernel_2( local_data_struct_t *, int, int, int, int );
 }
 
-void parallelForExample() {
+void parallelForExample()
+{
     /*
       In previous examples we have demonstrated using the Slice directly with
       programming models such as OpenMP and CUDA. Now we present a more
@@ -118,7 +121,8 @@ void parallelForExample() {
       of the element on which the computation will be performed. This is
       intended to be used with the `access()` function of the slice.
      */
-    auto vector_kernel = KOKKOS_LAMBDA( const int s, const int a ) {
+    auto vector_kernel = KOKKOS_LAMBDA( const int s, const int a )
+    {
         /*
           What is written in a Fortran kernel is the floowing C++ operations:
           slice_0.access(s,a) = slice_1.access(s,a);
@@ -180,7 +184,8 @@ void parallelForExample() {
     using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
     using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
     PoolType pool( 342343901 );
-    auto rand_kernel = KOKKOS_LAMBDA( const int i ) {
+    auto rand_kernel = KOKKOS_LAMBDA( const int i )
+    {
         auto gen = pool.get_state();
         auto rand_idx =
             Kokkos::rand<RandomType, int>::draw( gen, 0, num_element );

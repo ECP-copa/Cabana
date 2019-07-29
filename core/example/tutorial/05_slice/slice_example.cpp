@@ -16,7 +16,8 @@
 //---------------------------------------------------------------------------//
 // Slice example.
 //---------------------------------------------------------------------------//
-void sliceExample() {
+void sliceExample()
+{
     /*
       Slices are a mechanism to access a tuple member across all tuples in an
       AoSoA as if it were one large multidimensional array. In this basic
@@ -102,7 +103,8 @@ void sliceExample() {
       accessing the total number of tuples in the data structure and the array
       sizes.
     */
-    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s ) {
+    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
+    {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
                 for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
@@ -127,7 +129,8 @@ void sliceExample() {
 
        Note that the slice data access syntax in 1D uses `operator()`.
      */
-    for ( int t = 0; t < num_tuple; ++t ) {
+    for ( int t = 0; t < num_tuple; ++t )
+    {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
                 std::cout << "Tuple " << t << ", member 0 element (" << i << ","
@@ -145,7 +148,8 @@ void sliceExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     sliceExample();

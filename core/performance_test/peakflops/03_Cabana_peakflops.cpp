@@ -28,7 +28,8 @@
 //
 // NOTE: These enums are also ordered in the same way as the data in the
 // template parameters below.
-enum UserParticleFields {
+enum UserParticleFields
+{
     PositionX = 0,
 };
 
@@ -44,7 +45,8 @@ using ParticleList =
 
 // Declare a struct-of-arrays that is identical to the data layout in the
 // Cabana AoSoA.
-struct data_t {
+struct data_t
+{
     float vec[CABANA_PERFORMANCE_VECLENGTH];
 };
 
@@ -71,9 +73,12 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
     int j;
 
     asm volatile( "# ax+c loop begin" );
-    for ( s = 0; s < num_struct; ++s ) {
-        for ( i = 0; i < n; i++ ) {
-            for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+    for ( s = 0; s < num_struct; ++s )
+    {
+        for ( i = 0; i < n; i++ )
+        {
+            for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+            {
                 x0[s].vec[j] = a[s].vec[j] * x0[s].vec[j] + c[s].vec[j];
                 x1[s].vec[j] = a[s].vec[j] * x1[s].vec[j] + c[s].vec[j];
                 x2[s].vec[j] = a[s].vec[j] * x2[s].vec[j] + c[s].vec[j];
@@ -88,8 +93,10 @@ void movePx(data_t *__restrict__ a,  data_t *__restrict__ x0,
         }
     }
     asm volatile( "# ax+c loop end" );
-    for ( s = 0; s < num_struct; ++s ) {
-        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+    for ( s = 0; s < num_struct; ++s )
+    {
+        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+        {
             x0[s].vec[j] = x0[s].vec[j] + x1[s].vec[j] + x2[s].vec[j] +
                            x3[s].vec[j] + x4[s].vec[j] + x5[s].vec[j] +
                            x6[s].vec[j] + x7[s].vec[j] + x8[s].vec[j] +
@@ -113,10 +120,13 @@ void move_AoSoA(
     int j;
 
     asm volatile( "# ax+c loop begin" );
-    for ( s = 0; s < num_struct; ++s ) {
-        for ( i = 0; i < n; i++ ) {
+    for ( s = 0; s < num_struct; ++s )
+    {
+        for ( i = 0; i < n; i++ )
+        {
 #pragma omp simd
-            for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+            for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+            {
                 auto _c = c.access( s ).get<0>( j );
                 auto _a = a.access( s ).get<0>( j );
 
@@ -145,8 +155,10 @@ void move_AoSoA(
     }
     asm volatile( "# ax+c loop end" );
 
-    for ( s = 0; s < num_struct; ++s ) {
-        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+    for ( s = 0; s < num_struct; ++s )
+    {
+        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+        {
             x0.access( s ).get<0>( j ) =
                 x0.access( s ).get<0>( j ) + x1.access( s ).get<0>( j ) +
                 x2.access( s ).get<0>( j ) + x3.access( s ).get<0>( j ) +
@@ -174,10 +186,13 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
     int j;
 
     asm volatile( "# ax+c loop begin" );
-    for ( s = 0; s < num_struct; ++s ) {
-        for ( i = 0; i < n; i++ ) {
+    for ( s = 0; s < num_struct; ++s )
+    {
+        for ( i = 0; i < n; i++ )
+        {
 #pragma omp simd
-            for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+            for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+            {
                 x0.access( s, j ) =
                     a.access( s, j ) * x0.access( s, j ) + c.access( s, j );
                 x1.access( s, j ) =
@@ -202,8 +217,10 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
         }
     }
     asm volatile( "# ax+c loop end" );
-    for ( s = 0; s < num_struct; ++s ) {
-        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+    for ( s = 0; s < num_struct; ++s )
+    {
+        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+        {
             x0.access( s, j ) =
                 x0.access( s, j ) + x1.access( s, j ) + x2.access( s, j ) +
                 x3.access( s, j ) + x4.access( s, j ) + x5.access( s, j ) +
@@ -213,7 +230,8 @@ void moveSlicesWithAccess(SliceType a,  SliceType x0, SliceType x1, SliceType x2
     }
 }
 
-bool check_expected_flops( double achieved_flops_clock ) {
+bool check_expected_flops( double achieved_flops_clock )
+{
     bool acceptable_fraction = false;
     double expected_flops_clock = CABANA_PERFORMANCE_EXPECTED_FLOPS;
 
@@ -223,7 +241,8 @@ bool check_expected_flops( double achieved_flops_clock ) {
                 ( expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN ) );
 
     if ( achieved_flops_clock >
-         expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN ) {
+         expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN )
+    {
         acceptable_fraction = true;
     }
 
@@ -232,7 +251,8 @@ bool check_expected_flops( double achieved_flops_clock ) {
 
 //---------------------------------------------------------------------------//
 // Run the performance test.
-TEST( cabana, simple ) {
+TEST( cabana, simple )
+{
 
 #ifndef CABANA_PERFORMANCE_ITERATIONS
 #define CABANA_PERFORMANCE_ITERATIONS                                          \
@@ -283,7 +303,8 @@ TEST( cabana, simple ) {
     unsigned short rg[3] = {static_cast<unsigned short>( seed >> 16 ),
                             static_cast<unsigned short>( seed >> 8 ),
                             static_cast<unsigned short>( seed )};
-    for ( int idx = 0; idx < num_particle; ++idx ) {
+    for ( int idx = 0; idx < num_particle; ++idx )
+    {
         ma( idx ) = erand48( rg );
         m0( idx ) = erand48( rg );
         mc( idx ) = erand48( rg );
@@ -313,7 +334,8 @@ TEST( cabana, simple ) {
     auto *px9 = (data_t *)( x9_.data() );
 
     // Print initial conditions.
-    for ( int idx = 0; idx < array_size; ++idx ) {
+    for ( int idx = 0; idx < array_size; ++idx )
+    {
         printf( "x_[%d] = %f,%f\n", idx, m0( idx ), px->vec[idx] );
     }
 
@@ -360,7 +382,8 @@ TEST( cabana, simple ) {
     std::cout << flops / dc3 << " flops/clock 3\n";
     std::cout << std::endl;
 
-    for ( int idx = 0; idx < CABANA_PERFORMANCE_VECLENGTH; idx++ ) {
+    for ( int idx = 0; idx < CABANA_PERFORMANCE_VECLENGTH; idx++ )
+    {
         printf( "x_[%d] = %f\n", idx, m0( idx ) );
     }
 

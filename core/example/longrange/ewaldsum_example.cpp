@@ -15,7 +15,8 @@
 
 #include <iomanip>
 
-int main( int argc, char **argv ) {
+int main( int argc, char **argv )
+{
     // Initialize the kokkos runtime.
     Kokkos::initialize( argc, argv );
 

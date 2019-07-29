@@ -14,14 +14,16 @@
 #include "definitions.h"
 
 // function to initialize particles as a NaCl crystal of length crystal_size
-void initializeParticles( ParticleList particles, int crystal_size ) {
+void initializeParticles( ParticleList particles, int crystal_size )
+{
     auto x = Cabana::slice<Position>( particles );
     auto v = Cabana::slice<Velocity>( particles );
     auto f = Cabana::slice<Force>( particles );
     auto q = Cabana::slice<Charge>( particles );
     auto u = Cabana::slice<Potential>( particles );
     auto i = Cabana::slice<Index>( particles );
-    auto init_parts = KOKKOS_LAMBDA( const int idx ) {
+    auto init_parts = KOKKOS_LAMBDA( const int idx )
+    {
         // Calculate location of particle in crystal
         int idx_x = idx % crystal_size;
         int idx_y = ( idx / crystal_size ) % crystal_size;
@@ -57,7 +59,8 @@ void initializeParticles( ParticleList particles, int crystal_size ) {
 }
 
 // function to initialize uniform cubic mesh
-void initializeMesh( ParticleList mesh, int width ) {
+void initializeMesh( ParticleList mesh, int width )
+{
     int ptsx = std::round( std::pow(
         mesh.size(), 1.0 / 3.0 ) ); // number of points in each dimension
     auto x = Cabana::slice<Position>( mesh );
@@ -66,7 +69,8 @@ void initializeMesh( ParticleList mesh, int width ) {
     auto q = Cabana::slice<Charge>( mesh );
     auto u = Cabana::slice<Potential>( mesh );
     auto i = Cabana::slice<Index>( mesh );
-    auto init_mesh = KOKKOS_LAMBDA( const int idx ) {
+    auto init_mesh = KOKKOS_LAMBDA( const int idx )
+    {
         // Calculate location of particle in crystal
         int idx_x = idx % ptsx;
         int idx_y = ( idx / ptsx ) % ptsx;

@@ -88,7 +88,8 @@ previous iteration, and can co-issue with 2x FMA, so they don't affect the
 unroll factor.
 */
 
-struct data {
+struct data
+{
     float vec[CABANA_PERFORMANCE_VECLENGTH];
 };
 
@@ -98,14 +99,17 @@ axpy_10( struct data *__restrict__ a, struct data *__restrict__ x0,
          struct data *__restrict__ x3, struct data *__restrict__ x4,
          struct data *__restrict__ x5, struct data *__restrict__ x6,
          struct data *__restrict__ x7, struct data *__restrict__ x8,
-         struct data *__restrict__ x9, struct data *__restrict__ c, long n ) {
+         struct data *__restrict__ x9, struct data *__restrict__ c, long n )
+{
     long i;
     int j;
 
     asm volatile( "# ax+c loop begin" );
-    for ( i = 0; i < n; i++ ) {
+    for ( i = 0; i < n; i++ )
+    {
 #pragma omp simd
-        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+        {
             x0->vec[j] = a->vec[j] * x0->vec[j] + c->vec[j];
             x1->vec[j] = a->vec[j] * x1->vec[j] + c->vec[j];
             x2->vec[j] = a->vec[j] * x2->vec[j] + c->vec[j];
@@ -120,7 +124,8 @@ axpy_10( struct data *__restrict__ a, struct data *__restrict__ x0,
     }
     asm volatile( "# ax+c loop end" );
 
-    for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+    for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+    {
         x0->vec[j] = x0->vec[j] + x1->vec[j] + x2->vec[j] + x3->vec[j] +
                      x4->vec[j] + x5->vec[j] + x6->vec[j] + x7->vec[j] +
                      x8->vec[j] + x9->vec[j] + (float)n;
@@ -128,7 +133,8 @@ axpy_10( struct data *__restrict__ a, struct data *__restrict__ x0,
     return x0;
 }
 
-TEST( cpp, simple ) {
+TEST( cpp, simple )
+{
 
 #ifndef CABANA_PERFORMANCE_ITERATIONS
 #define CABANA_PERFORMANCE_ITERATIONS 2e6
@@ -158,7 +164,8 @@ TEST( cpp, simple ) {
                             static_cast<unsigned short>( seed >> 8 ),
                             static_cast<unsigned short>( seed )};
 
-    for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ ) {
+    for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ )
+    {
         a_->vec[i] = erand48( rg );
         x_->vec[i] = erand48( rg );
         c_->vec[i] = erand48( rg );
@@ -189,7 +196,8 @@ TEST( cpp, simple ) {
     double flops_clock = flops / dc;
     printf( "%f flops/clock\n", flops_clock );
 
-    for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ ) {
+    for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ )
+    {
         printf( "x_[%ld] = %f\n", i, x_->vec[i] );
     }
 
@@ -213,8 +221,8 @@ TEST( cpp, simple ) {
     printf( "(with margin %f )\n",
             expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN );
 
-    if ( flops_clock >
-         expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN ) {
+    if ( flops_clock > expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN )
+    {
         acceptable_fraction = true;
     }
 

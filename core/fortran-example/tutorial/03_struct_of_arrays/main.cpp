@@ -76,9 +76,10 @@ using SoaTYPE = Cabana::SoA<DataTypes, VECLEN>;
 SoaTYPE *particle = new SoaTYPE;
 
 /*  Declare functions that will be mixed with Fortran */
-extern "C" {
-void soaExample( SoaTYPE * ); // written in Fortan; called by C++
-void delete_soa();            // written in C++; called by Fortan
+extern "C"
+{
+    void soaExample( SoaTYPE * ); // written in Fortan; called by C++
+    void delete_soa();            // written in C++; called by Fortan
 }
 
 void delete_soa() { delete particle; }
@@ -86,7 +87,8 @@ void delete_soa() { delete particle; }
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     /* Call the Fortran subroutine */

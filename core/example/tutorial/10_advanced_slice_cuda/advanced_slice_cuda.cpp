@@ -22,7 +22,8 @@
 // all threads.
 //---------------------------------------------------------------------------//
 template <class AtomicSlice>
-__global__ void atomicThreadSum( AtomicSlice slice ) {
+__global__ void atomicThreadSum( AtomicSlice slice )
+{
     /* Every thread writes to the slice atomically. */
     slice( 0 ) += 1.0;
 }
@@ -30,7 +31,8 @@ __global__ void atomicThreadSum( AtomicSlice slice ) {
 //---------------------------------------------------------------------------//
 // Atomic slice example using cuda.
 //---------------------------------------------------------------------------//
-void atomicSliceExample() {
+void atomicSliceExample()
+{
     /*
       Slices have optional memory traits which define the type of data access
       used when manipulating the slice. Upon construction via an AoSoA a slice
@@ -97,7 +99,8 @@ void atomicSliceExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     atomicSliceExample();

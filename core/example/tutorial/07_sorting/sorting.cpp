@@ -16,7 +16,8 @@
 //---------------------------------------------------------------------------//
 // Sorting example.
 //---------------------------------------------------------------------------//
-void sortingExample() {
+void sortingExample()
+{
     /*
       In many algorithms we will want to bin or sort AoSoA data to improve
       computational performance. Binning and sorting can be achieved by using
@@ -56,17 +57,20 @@ void sortingExample() {
     */
     int forward_index_counter = 0;
     int reverse_index_counter = 100;
-    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s ) {
+    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
+    {
         auto &soa = aosoa.access( s );
 
         // ASCENDING ORDER!
-        for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a ) {
+        for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a )
+        {
             Cabana::get<0>( soa, a ) = forward_index_counter;
             ++forward_index_counter;
         }
 
         // DESCENDING ORDER!
-        for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a ) {
+        for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a )
+        {
             Cabana::get<1>( soa, a ) = reverse_index_counter;
             --reverse_index_counter;
         }
@@ -99,7 +103,8 @@ void sortingExample() {
        completed. The rest of the data will also have been sorted as well -
        all data in each tuple is permuted.
      */
-    for ( int t = 0; t < num_tuple; ++t ) {
+    for ( int t = 0; t < num_tuple; ++t )
+    {
         auto tp = aosoa.getTuple( t );
 
         // Should now be in DESCENDING ORDER!
@@ -150,7 +155,8 @@ void sortingExample() {
        Now let's read the data we just sorted. The integer member should
        be ordered in binned groups.
      */
-    for ( int t = 0; t < num_tuple; ++t ) {
+    for ( int t = 0; t < num_tuple; ++t )
+    {
         auto tp = aosoa.getTuple( t );
 
         std::cout << "Tuple " << t << ", member 0: " << Cabana::get<0>( tp )
@@ -187,7 +193,8 @@ void sortingExample() {
       grouped by bin. The offset array in the binning data tells us where each
       bin's group of ids starts:
     */
-    for ( int b = 0; b < bin_data.numBin(); ++b ) {
+    for ( int b = 0; b < bin_data.numBin(); ++b )
+    {
         std::cout << "Bin " << b << " ids: ";
         int offset = bin_data.binOffset( b );
         for ( int i = 0; i < bin_data.binSize( b ); ++i )
@@ -199,7 +206,8 @@ void sortingExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     sortingExample();

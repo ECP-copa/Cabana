@@ -16,7 +16,8 @@
 //---------------------------------------------------------------------------//
 // Atomic slice example.
 //---------------------------------------------------------------------------//
-void atomicSliceExample() {
+void atomicSliceExample()
+{
     /*
       Slices have optional memory traits which define the type of data access
       used when manipulating the slice. Upon construction via an AoSoA a slice
@@ -79,7 +80,8 @@ void atomicSliceExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     atomicSliceExample();

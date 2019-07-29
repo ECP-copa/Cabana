@@ -16,7 +16,8 @@
 //---------------------------------------------------------------------------//
 // Deep copy example.
 //---------------------------------------------------------------------------//
-void deepCopyExample() {
+void deepCopyExample()
+{
     /*
       The AoSoA object allocates memory in a given memory space with a layout
       specified by the SoA objects it contains - mainly the data types in the
@@ -68,7 +69,8 @@ void deepCopyExample() {
     /*
       Put some data in the source AoSoA.
     */
-    for ( std::size_t s = 0; s < src_aosoa.numSoA(); ++s ) {
+    for ( std::size_t s = 0; s < src_aosoa.numSoA(); ++s )
+    {
         auto &soa = src_aosoa.access( s );
 
         for ( int i = 0; i < 3; ++i )
@@ -96,7 +98,8 @@ void deepCopyExample() {
     /*
        Now let's read the data from the destination that we just deep copied.
      */
-    for ( int t = 0; t < num_tuple; ++t ) {
+    for ( int t = 0; t < num_tuple; ++t )
+    {
         auto tp = dst_aosoa.getTuple( t );
 
         for ( int i = 0; i < 3; ++i )
@@ -177,7 +180,8 @@ void deepCopyExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     deepCopyExample();

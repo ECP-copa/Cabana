@@ -16,7 +16,8 @@
 //---------------------------------------------------------------------------//
 // AoSoA example.
 //---------------------------------------------------------------------------//
-void aosoaExample() {
+void aosoaExample()
+{
     /*
       Cabana array-of-structs-of-arrays (AoSoAs) is simply a list of Cabana
       SoAs. A Cabana AoSoA provides a convenient interface to create a
@@ -94,7 +95,8 @@ void aosoaExample() {
       2-dimensional tuple indices. Start by looping over the SoA's. The SoA
       index is the first tuple index:
     */
-    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s ) {
+    for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
+    {
         /*
            Get a reference the SoA we are working on. The aosoa access()
            function gives us a direct reference to the underlying SoA data. We
@@ -136,7 +138,8 @@ void aosoaExample() {
        and by extracting an individual tuple, we are making a copy of the data
        rather than getting a reference.
      */
-    for ( int t = 0; t < num_tuple; ++t ) {
+    for ( int t = 0; t < num_tuple; ++t )
+    {
         /*
            Get the tuple. Note that this is a copy of the data, not a
            reference. We use auto here for simplicity but the return type is
@@ -201,7 +204,8 @@ void aosoaExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     aosoaExample();

@@ -21,7 +21,8 @@
 #include <cstdlib>
 #include <type_traits>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 // SoA forward declaration.
 template <typename Types, int VectorLength>
@@ -30,17 +31,24 @@ struct SoA;
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
-struct is_soa : public std::false_type {};
+struct is_soa : public std::false_type
+{
+};
 
 template <class DataTypes, int VectorLength>
-struct is_soa<SoA<DataTypes, VectorLength>> : public std::true_type {};
+struct is_soa<SoA<DataTypes, VectorLength>> : public std::true_type
+{
+};
 
 template <class DataTypes, int VectorLength>
-struct is_soa<const SoA<DataTypes, VectorLength>> : public std::true_type {};
+struct is_soa<const SoA<DataTypes, VectorLength>> : public std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
 
-namespace Impl {
+namespace Impl
+{
 //---------------------------------------------------------------------------//
 // Given an array layout and a potentially multi dimensional type T along with
 // its rank, compose the inner array type.
@@ -49,14 +57,16 @@ struct InnerArrayTypeImpl;
 
 // rank-0 specialization.
 template <typename T, int VectorLength>
-struct InnerArrayTypeImpl<T, 0, VectorLength> {
+struct InnerArrayTypeImpl<T, 0, VectorLength>
+{
     using value_type = typename std::remove_all_extents<T>::type;
     using type = value_type[VectorLength];
 };
 
 // rank-1 specialization.
 template <typename T, int VectorLength>
-struct InnerArrayTypeImpl<T, 1, VectorLength> {
+struct InnerArrayTypeImpl<T, 1, VectorLength>
+{
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
     using type = value_type[D0][VectorLength];
@@ -64,7 +74,8 @@ struct InnerArrayTypeImpl<T, 1, VectorLength> {
 
 // rank-2 specialization.
 template <typename T, int VectorLength>
-struct InnerArrayTypeImpl<T, 2, VectorLength> {
+struct InnerArrayTypeImpl<T, 2, VectorLength>
+{
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
     static constexpr std::size_t D1 = std::extent<T, 1>::value;
@@ -73,7 +84,8 @@ struct InnerArrayTypeImpl<T, 2, VectorLength> {
 
 // rank-3 specialization.
 template <typename T, int VectorLength>
-struct InnerArrayTypeImpl<T, 3, VectorLength> {
+struct InnerArrayTypeImpl<T, 3, VectorLength>
+{
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
     static constexpr std::size_t D1 = std::extent<T, 1>::value;
@@ -84,7 +96,8 @@ struct InnerArrayTypeImpl<T, 3, VectorLength> {
 //---------------------------------------------------------------------------//
 // Inner array type.
 template <typename T, int VectorLength>
-struct InnerArrayType {
+struct InnerArrayType
+{
     using type =
         typename InnerArrayTypeImpl<T, std::rank<T>::value, VectorLength>::type;
 };
@@ -98,7 +111,8 @@ struct InnerArrayType {
   struct-of-arrays will be composed of these members of different types.
 */
 template <std::size_t M, int VectorLength, typename T>
-struct StructMember {
+struct StructMember
+{
     using array_type = typename InnerArrayType<T, VectorLength>::type;
     array_type _data;
 };
@@ -110,20 +124,24 @@ struct SoAImpl;
 
 template <int VectorLength, std::size_t... Indices, typename... Types>
 struct SoAImpl<VectorLength, IndexSequence<Indices...>, Types...>
-    : StructMember<Indices, VectorLength, Types>... {};
+    : StructMember<Indices, VectorLength, Types>...
+{
+};
 
 //---------------------------------------------------------------------------//
 // Given an SoA cast it to to one of its member types.
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION const typename SoA_t::template base<M> &
-soaMemberCast( const SoA_t &soa ) {
+soaMemberCast( const SoA_t &soa )
+{
     static_assert( is_soa<SoA_t>::value, "soaMemberCast only for SoAs" );
     return static_cast<const typename SoA_t::template base<M> &>( soa );
 }
 
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename SoA_t::template base<M> &
-soaMemberCast( SoA_t &soa ) {
+soaMemberCast( SoA_t &soa )
+{
     static_assert( is_soa<SoA_t>::value, "soaMemberCast only for SoAs" );
     return static_cast<typename SoA_t::template base<M> &>( soa );
 }
@@ -131,7 +149,8 @@ soaMemberCast( SoA_t &soa ) {
 //---------------------------------------------------------------------------//
 // Get a pointer to the first element of a member in a given SoA.
 template <std::size_t M, class SoA_t>
-typename SoA_t::template member_pointer_type<M> soaMemberPtr( SoA_t *p ) {
+typename SoA_t::template member_pointer_type<M> soaMemberPtr( SoA_t *p )
+{
     static_assert( is_soa<SoA_t>::value, "soaMemberPtr only for SoAs" );
     void *member = static_cast<typename SoA_t::template base<M> *>( p );
     return static_cast<typename SoA_t::template member_pointer_type<M>>(
@@ -150,7 +169,8 @@ template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M>>::type
-get( SoA_t &soa, const std::size_t a ) {
+get( SoA_t &soa, const std::size_t a )
+{
     return Impl::soaMemberCast<M>( soa )._data[a];
 }
 
@@ -159,7 +179,8 @@ template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<is_soa<SoA_t>::value,
                             typename SoA_t::template member_value_type<M>>::type
-    get( const SoA_t &soa, const std::size_t a ) {
+    get( const SoA_t &soa, const std::size_t a )
+{
     return Impl::soaMemberCast<M>( soa )._data[a];
 }
 
@@ -168,7 +189,8 @@ template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M>>::type
-get( SoA_t &soa, const std::size_t a, const std::size_t d0 ) {
+get( SoA_t &soa, const std::size_t a, const std::size_t d0 )
+{
     return Impl::soaMemberCast<M>( soa )._data[d0][a];
 }
 
@@ -177,7 +199,8 @@ template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<is_soa<SoA_t>::value,
                             typename SoA_t::template member_value_type<M>>::type
-    get( const SoA_t &soa, const std::size_t a, const std::size_t d0 ) {
+    get( const SoA_t &soa, const std::size_t a, const std::size_t d0 )
+{
     return Impl::soaMemberCast<M>( soa )._data[d0][a];
 }
 
@@ -187,7 +210,8 @@ KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M>>::type
 get( SoA_t &soa, const std::size_t a, const std::size_t d0,
-     const std::size_t d1 ) {
+     const std::size_t d1 )
+{
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][a];
 }
 
@@ -197,7 +221,8 @@ KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<is_soa<SoA_t>::value,
                             typename SoA_t::template member_value_type<M>>::type
     get( const SoA_t &soa, const std::size_t a, const std::size_t d0,
-         const std::size_t d1 ) {
+         const std::size_t d1 )
+{
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][a];
 }
 
@@ -207,7 +232,8 @@ KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M>>::type
 get( SoA_t &soa, const std::size_t a, const std::size_t d0,
-     const std::size_t d1, const std::size_t d2 ) {
+     const std::size_t d1, const std::size_t d2 )
+{
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][d2][a];
 }
 
@@ -217,7 +243,8 @@ KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<is_soa<SoA_t>::value,
                             typename SoA_t::template member_value_type<M>>::type
     get( const SoA_t &soa, const std::size_t a, const std::size_t d0,
-         const std::size_t d1, const std::size_t d2 ) {
+         const std::size_t d1, const std::size_t d2 )
+{
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][d2][a];
 }
 
@@ -235,7 +262,8 @@ template <typename... Types, int VectorLength>
 struct SoA<MemberTypes<Types...>, VectorLength>
     : Impl::SoAImpl<VectorLength,
                     typename Impl::MakeIndexSequence<sizeof...( Types )>::type,
-                    Types...> {
+                    Types...>
+{
     // Vector length
     static constexpr int vector_length = VectorLength;
 
@@ -282,7 +310,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
       \return The rank of the given member index data.
     */
     template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION constexpr std::size_t rank() const {
+    KOKKOS_FORCEINLINE_FUNCTION constexpr std::size_t rank() const
+    {
         return std::rank<member_data_type<M>>::value;
     }
 
@@ -296,7 +325,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
       \return The extent of the dimension.
     */
     template <std::size_t M, std::size_t D>
-    KOKKOS_FORCEINLINE_FUNCTION constexpr std::size_t extent() const {
+    KOKKOS_FORCEINLINE_FUNCTION constexpr std::size_t extent() const
+    {
         return std::extent<member_data_type<M>, D>::value;
     }
 
@@ -310,7 +340,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<0 == std::rank<member_data_type<M>>::value,
                                 member_reference_type<M>>::type
-        get( const std::size_t a ) {
+        get( const std::size_t a )
+    {
         return Cabana::get<M>( *this, a );
     }
 
@@ -319,7 +350,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<0 == std::rank<member_data_type<M>>::value,
                                 member_value_type<M>>::type
-        get( const std::size_t a ) const {
+        get( const std::size_t a ) const
+    {
         return Cabana::get<M>( *this, a );
     }
 
@@ -329,7 +361,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<1 == std::rank<member_data_type<M>>::value,
                                 member_reference_type<M>>::type
-        get( const std::size_t a, const std::size_t d0 ) {
+        get( const std::size_t a, const std::size_t d0 )
+    {
         return Cabana::get<M>( *this, a, d0 );
     }
 
@@ -338,7 +371,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<1 == std::rank<member_data_type<M>>::value,
                                 member_value_type<M>>::type
-        get( const std::size_t a, const std::size_t d0 ) const {
+        get( const std::size_t a, const std::size_t d0 ) const
+    {
         return Cabana::get<M>( *this, a, d0 );
     }
 
@@ -348,7 +382,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<2 == std::rank<member_data_type<M>>::value,
                                 member_reference_type<M>>::type
-        get( const std::size_t a, const std::size_t d0, const std::size_t d1 ) {
+        get( const std::size_t a, const std::size_t d0, const std::size_t d1 )
+    {
         return Cabana::get<M>( *this, a, d0, d1 );
     }
 
@@ -358,7 +393,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
         typename std::enable_if<2 == std::rank<member_data_type<M>>::value,
                                 member_value_type<M>>::type
         get( const std::size_t a, const std::size_t d0,
-             const std::size_t d1 ) const {
+             const std::size_t d1 ) const
+    {
         return Cabana::get<M>( *this, a, d0, d1 );
     }
 
@@ -369,7 +405,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
         typename std::enable_if<3 == std::rank<member_data_type<M>>::value,
                                 member_reference_type<M>>::type
         get( const std::size_t a, const std::size_t d0, const std::size_t d1,
-             const std::size_t d2 ) {
+             const std::size_t d2 )
+    {
         return Cabana::get<M>( *this, a, d0, d1, d2 );
     }
 
@@ -379,7 +416,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
         typename std::enable_if<3 == std::rank<member_data_type<M>>::value,
                                 member_value_type<M>>::type
         get( const std::size_t a, const std::size_t d0, const std::size_t d1,
-             const std::size_t d2 ) const {
+             const std::size_t d2 ) const
+    {
         return Cabana::get<M>( *this, a, d0, d1, d2 );
     }
 
@@ -389,21 +427,24 @@ struct SoA<MemberTypes<Types...>, VectorLength>
     // Get a pointer to a member.
     CABANA_DEPRECATED
     template <std::size_t M>
-    KOKKOS_FUNCTION void *ptr() {
+    KOKKOS_FUNCTION void *ptr()
+    {
         return Impl::soaMemberPtr<M>( this );
     }
 
     // Get a pointer to the first element of a member in a given SoA.
     CABANA_DEPRECATED
     template <std::size_t M>
-    static void *staticPtr( SoA *p ) {
+    static void *staticPtr( SoA *p )
+    {
         return Impl::soaMemberPtr<M>( p );
     }
 };
 
 //---------------------------------------------------------------------------//
 
-namespace Impl {
+namespace Impl
+{
 //---------------------------------------------------------------------------//
 // Member element copy operators.
 //---------------------------------------------------------------------------//
@@ -420,7 +461,8 @@ KOKKOS_INLINE_FUNCTION typename std::enable_if<
 soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
                       const std::size_t dst_idx,
                       const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
-                      const std::size_t src_idx ) {
+                      const std::size_t src_idx )
+{
     get<M>( dst, dst_idx ) = get<M>( src, src_idx );
 }
 
@@ -434,7 +476,8 @@ KOKKOS_INLINE_FUNCTION typename std::enable_if<
 soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
                       const std::size_t dst_idx,
                       const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
-                      const std::size_t src_idx ) {
+                      const std::size_t src_idx )
+{
     for ( std::size_t i0 = 0; i0 < dst.template extent<M, 0>(); ++i0 )
         get<M>( dst, dst_idx, i0 ) = get<M>( src, src_idx, i0 );
 }
@@ -449,7 +492,8 @@ KOKKOS_INLINE_FUNCTION typename std::enable_if<
 soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
                       const std::size_t dst_idx,
                       const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
-                      const std::size_t src_idx ) {
+                      const std::size_t src_idx )
+{
     for ( std::size_t i0 = 0; i0 < dst.template extent<M, 0>(); ++i0 )
         for ( std::size_t i1 = 0; i1 < dst.template extent<M, 1>(); ++i1 )
             get<M>( dst, dst_idx, i0, i1 ) = get<M>( src, src_idx, i0, i1 );
@@ -465,7 +509,8 @@ KOKKOS_INLINE_FUNCTION typename std::enable_if<
 soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
                       const std::size_t dst_idx,
                       const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
-                      const std::size_t src_idx ) {
+                      const std::size_t src_idx )
+{
     for ( std::size_t i0 = 0; i0 < dst.template extent<M, 0>(); ++i0 )
         for ( std::size_t i1 = 0; i1 < dst.template extent<M, 1>(); ++i1 )
             for ( std::size_t i2 = 0; i2 < dst.template extent<M, 2>(); ++i2 )
@@ -480,7 +525,8 @@ template <std::size_t M, int DstVectorLength, int SrcVectorLength,
 KOKKOS_INLINE_FUNCTION void soaElementCopy(
     SoA<MemberTypes<Types...>, DstVectorLength> &dst, const std::size_t dst_idx,
     const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
-    const std::size_t src_idx, std::integral_constant<std::size_t, M> ) {
+    const std::size_t src_idx, std::integral_constant<std::size_t, M> )
+{
     soaElementMemberCopy<M>( dst, dst_idx, src, src_idx );
     soaElementCopy( dst, dst_idx, src, src_idx,
                     std::integral_constant<std::size_t, M - 1>() );
@@ -490,7 +536,8 @@ template <int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION void soaElementCopy(
     SoA<MemberTypes<Types...>, DstVectorLength> &dst, const std::size_t dst_idx,
     const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
-    const std::size_t src_idx, std::integral_constant<std::size_t, 0> ) {
+    const std::size_t src_idx, std::integral_constant<std::size_t, 0> )
+{
     soaElementMemberCopy<0>( dst, dst_idx, src, src_idx );
 }
 
@@ -500,7 +547,8 @@ KOKKOS_INLINE_FUNCTION void
 tupleCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
            const std::size_t dst_idx,
            const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
-           const std::size_t src_idx ) {
+           const std::size_t src_idx )
+{
     soaElementCopy(
         dst, dst_idx, src, src_idx,
         std::integral_constant<std::size_t, sizeof...( Types ) - 1>() );

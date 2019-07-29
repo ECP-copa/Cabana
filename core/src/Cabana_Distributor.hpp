@@ -23,7 +23,8 @@
 #include <exception>
 #include <vector>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 /*!
   \class Distributor
@@ -55,7 +56,8 @@ namespace Cabana {
 
 */
 template <class DeviceType>
-class Distributor : public CommunicationPlan<DeviceType> {
+class Distributor : public CommunicationPlan<DeviceType>
+{
   public:
     /*!
       \brief Topology and export rank constructor. Use this when you already
@@ -98,7 +100,8 @@ class Distributor : public CommunicationPlan<DeviceType> {
     Distributor( MPI_Comm comm, const ViewType &element_export_ranks,
                  const std::vector<int> &neighbor_ranks,
                  const int mpi_tag = 1221 )
-        : CommunicationPlan<DeviceType>( comm ) {
+        : CommunicationPlan<DeviceType>( comm )
+    {
         auto neighbor_ids = this->createFromExportsAndTopology(
             element_export_ranks, neighbor_ranks, mpi_tag );
         this->createExportSteering( neighbor_ids, element_export_ranks );
@@ -137,7 +140,8 @@ class Distributor : public CommunicationPlan<DeviceType> {
     template <class ViewType>
     Distributor( MPI_Comm comm, const ViewType &element_export_ranks,
                  const int mpi_tag = 1221 )
-        : CommunicationPlan<DeviceType>( comm ) {
+        : CommunicationPlan<DeviceType>( comm )
+    {
         auto neighbor_ids =
             this->createFromExportsOnly( element_export_ranks, mpi_tag );
         this->createExportSteering( neighbor_ids, element_export_ranks );
@@ -147,16 +151,23 @@ class Distributor : public CommunicationPlan<DeviceType> {
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <typename>
-struct is_distributor : public std::false_type {};
+struct is_distributor : public std::false_type
+{
+};
 
 template <typename DeviceType>
-struct is_distributor<Distributor<DeviceType>> : public std::true_type {};
+struct is_distributor<Distributor<DeviceType>> : public std::true_type
+{
+};
 
 template <typename DeviceType>
-struct is_distributor<const Distributor<DeviceType>> : public std::true_type {};
+struct is_distributor<const Distributor<DeviceType>> : public std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
-namespace Impl {
+namespace Impl
+{
 
 //---------------------------------------------------------------------------//
 // Synchronously move data between a source and destination AoSoA by executing
@@ -167,7 +178,8 @@ void distributeData(
     int mpi_tag,
     typename std::enable_if<( is_distributor<Distributor_t>::value &&
                               is_aosoa<AoSoA_t>::value ),
-                            int>::type * = 0 ) {
+                            int>::type * = 0 )
+{
     // Get the MPI rank we are currently on.
     int my_rank = -1;
     MPI_Comm_rank( distributor.comm(), &my_rank );
@@ -205,7 +217,8 @@ void distributeData(
     // buffer or the receive buffer if the data is staying. We know that the
     // steering vector is ordered such that the data staying on this rank
     // comes first.
-    auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         auto tpl = src.getTuple( steering( i ) );
         if ( i < num_stay )
             recv_buffer( i ) = tpl;
@@ -222,11 +235,13 @@ void distributeData(
     std::vector<MPI_Request> requests;
     requests.reserve( num_n );
     std::pair<std::size_t, std::size_t> recv_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         recv_range.second = recv_range.first + distributor.numImport( n );
 
         if ( ( distributor.numImport( n ) > 0 ) &&
-             ( distributor.neighborRank( n ) != my_rank ) ) {
+             ( distributor.neighborRank( n ) != my_rank ) )
+        {
             auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
 
             requests.push_back( MPI_Request() );
@@ -243,9 +258,11 @@ void distributeData(
 
     // Do blocking sends.
     std::pair<std::size_t, std::size_t> send_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         if ( ( distributor.numExport( n ) > 0 ) &&
-             ( distributor.neighborRank( n ) != my_rank ) ) {
+             ( distributor.neighborRank( n ) != my_rank ) )
+        {
             send_range.second = send_range.first + distributor.numExport( n );
 
             auto send_subview = Kokkos::subview( send_buffer, send_range );
@@ -268,7 +285,8 @@ void distributeData(
         throw std::logic_error( "Failed MPI Communication" );
 
     // Extract the receive buffer into the destination AoSoA.
-    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         dst.setTuple( i, recv_buffer( i ) );
     };
     Kokkos::RangePolicy<typename Distributor_t::execution_space>
@@ -317,7 +335,8 @@ void migrate( const Distributor_t &distributor, const AoSoA_t &src,
               AoSoA_t &dst, int mpi_tag = 1001,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
-                                      int>::type * = 0 ) {
+                                      int>::type * = 0 )
+{
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
         throw std::runtime_error( "Source is the wrong size for migration!" );
@@ -363,7 +382,8 @@ void migrate( const Distributor_t &distributor, AoSoA_t &aosoa,
               int mpi_tag = 1001,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
-                                      int>::type * = 0 ) {
+                                      int>::type * = 0 )
+{
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != distributor.exportSize() )
         throw std::runtime_error( "AoSoA is the wrong size for migration!" );
@@ -420,7 +440,8 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
               Slice_t &dst, int mpi_tag = 1001,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_slice<Slice_t>::value ),
-                                      int>::type * = 0 ) {
+                                      int>::type * = 0 )
+{
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
         throw std::runtime_error( "Source is the wrong size for migration!" );
@@ -475,7 +496,8 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
     // Gather from the source Slice into the contiguous send buffer or,
     // if it is part of the local copy, put it directly in the destination
     // Slice.
-    auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto build_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         auto s_src = Slice_t::index_type::s( steering( i ) );
         auto a_src = Slice_t::index_type::a( steering( i ) );
         std::size_t src_offset = s_src * src.stride( 0 ) + a_src;
@@ -498,11 +520,13 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
     std::vector<MPI_Request> requests;
     requests.reserve( num_n );
     std::pair<std::size_t, std::size_t> recv_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         recv_range.second = recv_range.first + distributor.numImport( n );
 
         if ( ( distributor.numImport( n ) > 0 ) &&
-             ( distributor.neighborRank( n ) != my_rank ) ) {
+             ( distributor.neighborRank( n ) != my_rank ) )
+        {
             auto recv_subview =
                 Kokkos::subview( recv_buffer, recv_range, Kokkos::ALL );
 
@@ -520,9 +544,11 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
 
     // Do blocking sends.
     std::pair<std::size_t, std::size_t> send_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         if ( ( distributor.numExport( n ) > 0 ) &&
-             ( distributor.neighborRank( n ) != my_rank ) ) {
+             ( distributor.neighborRank( n ) != my_rank ) )
+        {
             send_range.second = send_range.first + distributor.numExport( n );
 
             auto send_subview =
@@ -546,7 +572,8 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
         throw std::logic_error( "Failed MPI Communication" );
 
     // Extract the data from the receive buffer into the destination Slice.
-    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         auto s = Slice_t::index_type::s( i );
         auto a = Slice_t::index_type::a( i );
         std::size_t dst_offset = s * dst.stride( 0 ) + a;

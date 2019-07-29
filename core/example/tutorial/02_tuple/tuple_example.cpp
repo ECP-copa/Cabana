@@ -16,7 +16,8 @@
 //---------------------------------------------------------------------------//
 // Tuple example.
 //---------------------------------------------------------------------------//
-void tupleExample() {
+void tupleExample()
+{
     /*
       Cabana tuples are similar to C++11 tuples in that they are ordered lists
       of elements of different types specified at compile time. Some aspects
@@ -115,7 +116,8 @@ void tupleExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     tupleExample();

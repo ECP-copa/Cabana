@@ -16,9 +16,11 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
+namespace Test
+{
 //---------------------------------------------------------------------------//
-void testSortByKey() {
+void testSortByKey()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -82,7 +84,8 @@ void testSortByKey() {
     auto v0_mirror = Cabana::slice<0>( mirror );
     auto v1_mirror = Cabana::slice<1>( mirror );
     auto v2_mirror = Cabana::slice<2>( mirror );
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
@@ -99,7 +102,8 @@ void testSortByKey() {
 }
 
 //---------------------------------------------------------------------------//
-void testBinByKey() {
+void testBinByKey()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -175,7 +179,8 @@ void testBinByKey() {
     auto v1_mirror = Cabana::slice<1>( mirror );
     auto v2_mirror = Cabana::slice<2>( mirror );
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
@@ -194,7 +199,8 @@ void testBinByKey() {
 }
 
 //---------------------------------------------------------------------------//
-void testSortBySlice() {
+void testSortBySlice()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -253,7 +259,8 @@ void testSortBySlice() {
     auto v0_mirror = Cabana::slice<0>( mirror );
     auto v1_mirror = Cabana::slice<1>( mirror );
     auto v2_mirror = Cabana::slice<2>( mirror );
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
@@ -270,7 +277,8 @@ void testSortBySlice() {
 }
 
 //---------------------------------------------------------------------------//
-void testSortBySliceDataOnly() {
+void testSortBySliceDataOnly()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -329,7 +337,8 @@ void testSortBySliceDataOnly() {
     auto v0_mirror = Cabana::slice<0>( mirror );
     auto v1_mirror = Cabana::slice<1>( mirror );
     auto v2_mirror = Cabana::slice<2>( mirror );
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
@@ -346,7 +355,8 @@ void testSortBySliceDataOnly() {
 }
 
 //---------------------------------------------------------------------------//
-void testBinBySlice() {
+void testBinBySlice()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -416,7 +426,8 @@ void testBinBySlice() {
     auto v1_mirror = Cabana::slice<1>( mirror );
     auto v2_mirror = Cabana::slice<2>( mirror );
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
@@ -435,7 +446,8 @@ void testBinBySlice() {
 }
 
 //---------------------------------------------------------------------------//
-void testBinBySliceDataOnly() {
+void testBinBySliceDataOnly()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -506,7 +518,8 @@ void testBinBySliceDataOnly() {
     auto v1_mirror = Cabana::slice<1>( mirror );
     auto v2_mirror = Cabana::slice<2>( mirror );
     EXPECT_EQ( bin_data.numBin(), num_data );
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
@@ -525,7 +538,8 @@ void testBinBySliceDataOnly() {
 }
 
 //---------------------------------------------------------------------------//
-void testSortByKeySlice() {
+void testSortByKeySlice()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -591,7 +605,8 @@ void testSortByKeySlice() {
     auto v2_mirror = Cabana::slice<2>( mirror );
 
     // Check the result of the slice 1 sort.
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         // Slice 1 particles should be reversed.
@@ -601,7 +616,8 @@ void testSortByKeySlice() {
         EXPECT_EQ( bin_permute_mirror( p ), (unsigned)reverse_index );
     }
     // Other slices should be unchanged.
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         EXPECT_EQ( v1_mirror( p ), reverse_index );
@@ -631,7 +647,8 @@ void testSortByKeySlice() {
     v2_mirror = Cabana::slice<2>( mirror );
 
     // Check the result of the slice 2 sort (slice 1 already done).
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         // Slice 1 & 2 particles should be reversed.
@@ -643,7 +660,8 @@ void testSortByKeySlice() {
         EXPECT_EQ( bin_permute_mirror( p ), (unsigned)reverse_index );
     }
     // Other slice should be unchanged.
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         for ( int i = 0; i < dim_1; ++i )
@@ -671,7 +689,8 @@ void testSortByKeySlice() {
     v2_mirror = Cabana::slice<2>( mirror );
 
     // Check the result of the slice 3 sort (slices 1-2 already done).
-    for ( std::size_t p = 0; p < aosoa.size(); ++p ) {
+    for ( std::size_t p = 0; p < aosoa.size(); ++p )
+    {
         int reverse_index = aosoa.size() - p - 1;
 
         // All slice particles should be reversed.
@@ -700,7 +719,8 @@ TEST( TEST_CATEGORY, bin_by_key_test ) { testBinByKey(); }
 TEST( TEST_CATEGORY, sort_by_member_test ) { testSortBySlice(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, sort_by_member_data_only_test ) {
+TEST( TEST_CATEGORY, sort_by_member_data_only_test )
+{
     testSortBySliceDataOnly();
 }
 
@@ -708,7 +728,8 @@ TEST( TEST_CATEGORY, sort_by_member_data_only_test ) {
 TEST( TEST_CATEGORY, bin_by_member_test ) { testBinBySlice(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, bin_by_member_data_only_test ) {
+TEST( TEST_CATEGORY, bin_by_member_data_only_test )
+{
     testBinBySliceDataOnly();
 }
 

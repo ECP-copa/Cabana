@@ -17,11 +17,14 @@
 #include <limits>
 #include <type_traits>
 
-namespace Cabana {
-namespace Impl {
+namespace Cabana
+{
+namespace Impl
+{
 template <class Real, typename std::enable_if<
                           std::is_floating_point<Real>::value, int>::type = 0>
-class CartesianGrid {
+class CartesianGrid
+{
   public:
     using real_type = Real;
 
@@ -51,7 +54,8 @@ class CartesianGrid {
         , _min_z( min_z )
         , _max_x( max_x )
         , _max_y( max_y )
-        , _max_z( max_z ) {
+        , _max_z( max_z )
+    {
         _nx = cellsBetween( max_x, min_x, 1.0 / delta_x );
         _ny = cellsBetween( max_y, min_y, 1.0 / delta_y );
         _nz = cellsBetween( max_z, min_z, 1.0 / delta_z );
@@ -71,7 +75,8 @@ class CartesianGrid {
 
     // Get the number of cells in each direction.
     KOKKOS_INLINE_FUNCTION
-    void numCells( int &num_x, int &num_y, int &num_z ) {
+    void numCells( int &num_x, int &num_y, int &num_z )
+    {
         num_x = _nx;
         num_y = _ny;
         num_z = _nz;
@@ -79,7 +84,8 @@ class CartesianGrid {
 
     // Get the number of cells in a given direction.
     KOKKOS_INLINE_FUNCTION
-    int numBin( const int dim ) const {
+    int numBin( const int dim ) const
+    {
         if ( 0 == dim )
             return _nx;
         else if ( 1 == dim )
@@ -93,7 +99,8 @@ class CartesianGrid {
     // Given a position get the ijk indices of the cell in which
     KOKKOS_INLINE_FUNCTION
     void locatePoint( const Real xp, const Real yp, const Real zp, int &ic,
-                      int &jc, int &kc ) const {
+                      int &jc, int &kc ) const
+    {
         ic = cellsBetween( xp, _min_x, _rdx );
         jc = cellsBetween( yp, _min_y, _rdy );
         kc = cellsBetween( zp, _min_z, _rdz );
@@ -104,7 +111,8 @@ class CartesianGrid {
     // returned distance is zero.
     KOKKOS_INLINE_FUNCTION
     Real minDistanceToPoint( const Real xp, const Real yp, const Real zp,
-                             const int ic, const int jc, const int kc ) const {
+                             const int ic, const int jc, const int kc ) const
+    {
         Real xc = _min_x + ( ic + 0.5 ) * _dx;
         Real yc = _min_y + ( jc + 0.5 ) * _dy;
         Real zc = _min_z + ( kc + 0.5 ) * _dz;
@@ -122,12 +130,14 @@ class CartesianGrid {
 
     // Given the ijk index of a cell get its cardinal index.
     KOKKOS_INLINE_FUNCTION
-    int cardinalCellIndex( const int i, const int j, const int k ) const {
+    int cardinalCellIndex( const int i, const int j, const int k ) const
+    {
         return ( i * _ny + j ) * _nz + k;
     }
 
     KOKKOS_INLINE_FUNCTION
-    void ijkBinIndex( const int cardinal, int &i, int &j, int &k ) const {
+    void ijkBinIndex( const int cardinal, int &i, int &j, int &k ) const
+    {
         i = cardinal / ( _ny * _nz );
         j = ( cardinal / _nz ) % _ny;
         k = cardinal % _nz;
@@ -135,8 +145,8 @@ class CartesianGrid {
 
     // Calculate the number of full cells between 2 points.
     KOKKOS_INLINE_FUNCTION
-    int cellsBetween( const Real max, const Real min,
-                      const Real rdelta ) const {
+    int cellsBetween( const Real max, const Real min, const Real rdelta ) const
+    {
         return std::floor( ( max - min ) * rdelta );
     }
 };

@@ -18,13 +18,15 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
+namespace Test
+{
 //---------------------------------------------------------------------------//
 // Check the data given a set of values in an aosoa.
 template <class aosoa_type>
 void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
                        const int ival, const int dim_1, const int dim_2,
-                       const int dim_3 ) {
+                       const int dim_3 )
+{
     auto mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
 
@@ -33,7 +35,8 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
     auto slice_2 = Cabana::slice<2>( mirror );
     auto slice_3 = Cabana::slice<3>( mirror );
 
-    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx ) {
+    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
+    {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
@@ -56,7 +59,8 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
 
 //---------------------------------------------------------------------------//
 // Test an AoSoA.
-void testAoSoA() {
+void testAoSoA()
+{
     // Manually set the inner array size.
     const int vector_length = 16;
 
@@ -134,7 +138,8 @@ void testAoSoA() {
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx ) {
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
+    {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
@@ -198,7 +203,8 @@ void testAoSoA() {
 
 //---------------------------------------------------------------------------//
 // Raw data test.
-void testRawData() {
+void testRawData()
+{
     // Manually set the inner array size.
     const int vector_length = 16;
 
@@ -256,7 +262,8 @@ void testRawData() {
         KOKKOS_LAMBDA( const int s ) {
             // Loop over the array in each struct and set the values.
             int local_array_size = slice_0.arraySize( s );
-            for ( int i = 0; i < local_array_size; ++i ) {
+            for ( int i = 0; i < local_array_size; ++i )
+            {
                 p0[s * st0 + i] = ( s + i ) * 1.0;
                 p1[s * st1 + i] = ( s + i ) * 2;
                 p3[s * st3 + i] = ( s + i ) * 4;
@@ -280,7 +287,8 @@ void testRawData() {
     auto mirror_slice_2 = Cabana::slice<2>( mirror );
     auto mirror_slice_3 = Cabana::slice<3>( mirror );
     auto mirror_slice_4 = Cabana::slice<4>( mirror );
-    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx ) {
+    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
+    {
         int s = Cabana::Impl::Index<16>::s( idx );
         int a = Cabana::Impl::Index<16>::a( idx );
 
@@ -299,7 +307,8 @@ void testRawData() {
 
 //---------------------------------------------------------------------------//
 // Tuple test.
-void testTuple() {
+void testTuple()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -407,7 +416,8 @@ void testTuple() {
 
 //---------------------------------------------------------------------------//
 // Test an AoSoA using the access operator.
-void testAccess() {
+void testAccess()
+{
     // Manually set the inner array size.
     const int vector_length = 16;
 
@@ -439,7 +449,8 @@ void testAccess() {
         KOKKOS_LAMBDA( const int s ) {
             auto &soa = aosoa.access( s );
 
-            for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a ) {
+            for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a )
+            {
                 // Member 0.
                 for ( int i = 0; i < dim_1; ++i )
                     for ( int j = 0; j < dim_2; ++j )
@@ -469,7 +480,8 @@ void testAccess() {
 //---------------------------------------------------------------------------//
 // Manually defined SoA.
 template <int VLEN, int D1, int D2, int D3>
-struct MySoA {
+struct MySoA
+{
     float m0[D1][D2][D3][VLEN];
     int m1[VLEN];
     double m2[D1][VLEN];
@@ -477,7 +489,8 @@ struct MySoA {
 };
 
 // Test an unmanaged AoSoA.
-void testUnmanaged() {
+void testUnmanaged()
+{
     // Manually set the inner array size.
     const int vector_length = 16;
 
@@ -516,7 +529,8 @@ void testUnmanaged() {
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx ) {
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
+    {
         // Get aosoa indices.
         int s = idx / vector_length;
         int a = idx % vector_length;

@@ -11,7 +11,8 @@
 
 #include <Cabana_Version.hpp>
 
-namespace Cabana {
+namespace Cabana
+{
 
 std::string version() { return Cabana_VERSION_STRING; }
 

@@ -18,8 +18,10 @@
 
 #include <type_traits>
 
-namespace Cabana {
-namespace Impl {
+namespace Cabana
+{
+namespace Impl
+{
 
 //---------------------------------------------------------------------------//
 /*!
@@ -30,7 +32,8 @@ namespace Impl {
   \tparam VectorLength The inner array size of the AoSoA.
 */
 template <int VectorLength>
-class Index {
+class Index
+{
   public:
     // Validate the inner array size.
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
@@ -54,7 +57,8 @@ class Index {
       \return The index of the struct in which the tuple is located.
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr std::size_t s( const std::size_t i ) {
+    static constexpr std::size_t s( const std::size_t i )
+    {
         return ( i - ( i & vector_length_offset ) ) >>
                vector_length_binary_bits;
     }
@@ -68,7 +72,8 @@ class Index {
       is located.
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr std::size_t a( const std::size_t i ) {
+    static constexpr std::size_t a( const std::size_t i )
+    {
         return i & vector_length_offset;
     }
 
@@ -83,7 +88,8 @@ class Index {
       \return The tuple index.
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    static constexpr std::size_t i( const std::size_t s, const std::size_t a ) {
+    static constexpr std::size_t i( const std::size_t s, const std::size_t a )
+    {
         return ( s << vector_length_binary_bits ) + a;
     }
 };

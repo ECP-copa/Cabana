@@ -16,13 +16,15 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
+namespace Test
+{
 //---------------------------------------------------------------------------//
 // Initialize data members
 template <class aosoa_type>
 void initializeDataMembers( aosoa_type aosoa, const float fval,
                             const double dval, const int ival, const int dim_1,
-                            const int dim_2, const int dim_3 ) {
+                            const int dim_2, const int dim_3 )
+{
     auto slice_0 = Cabana::slice<0>( aosoa );
     auto slice_1 = Cabana::slice<1>( aosoa );
     auto slice_2 = Cabana::slice<2>( aosoa );
@@ -57,7 +59,8 @@ void initializeDataMembers( aosoa_type aosoa, const float fval,
 template <class aosoa_type>
 void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
                        const int ival, const int dim_1, const int dim_2,
-                       const int dim_3 ) {
+                       const int dim_3 )
+{
     auto mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
 
@@ -66,7 +69,8 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
     auto slice_2 = Cabana::slice<2>( mirror );
     auto slice_3 = Cabana::slice<3>( mirror );
 
-    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx ) {
+    for ( std::size_t idx = 0; idx != aosoa.size(); ++idx )
+    {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
@@ -89,7 +93,8 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
 
 //---------------------------------------------------------------------------//
 // API test function
-void apiTest() {
+void apiTest()
+{
     // Manually set the inner array size with the test layout.
     const int vector_length = 16;
 
@@ -177,7 +182,8 @@ void apiTest() {
         "raw_ptr_update",
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, slice_0.numSoA() ),
         KOKKOS_LAMBDA( const int s ) {
-            for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a ) {
+            for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+            {
                 // Member 0.
                 for ( int i = 0; i < dim_1; ++i )
                     for ( int j = 0; j < dim_2; ++j )
@@ -212,7 +218,8 @@ void apiTest() {
 
 //---------------------------------------------------------------------------//
 // Random access function
-void randomAccessTest() {
+void randomAccessTest()
+{
     // Manually set the inner array size with the test layout.
     const int vector_length = 16;
 
@@ -288,7 +295,8 @@ void randomAccessTest() {
 
 //---------------------------------------------------------------------------//
 // Random access function
-void atomicAccessTest() {
+void atomicAccessTest()
+{
     // Manually set the inner array size with the test layout.
     const int vector_length = 16;
 
@@ -304,16 +312,17 @@ void atomicAccessTest() {
     auto slice = Cabana::slice<0>( aosoa );
 
     // Set to 0.
-    Kokkos::parallel_for( "assign",
-                          Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_data ),
-                          KOKKOS_LAMBDA( const int i ) { slice( i ) = 0; } );
+    Kokkos::parallel_for(
+        "assign", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_data ),
+        KOKKOS_LAMBDA( const int i ) { slice( i ) = 0; } );
 
     // Get an atomic slice of the data.
     decltype( slice )::atomic_access_slice atomic_slice = slice;
 
     // Have every thread increment all elements of the slice. This should
     // create contention in parallel without the atomic.
-    auto increment_op = KOKKOS_LAMBDA( const int ) {
+    auto increment_op = KOKKOS_LAMBDA( const int )
+    {
         for ( int j = 0; j < num_data; ++j )
             atomic_slice( j ) += 1;
     };

@@ -16,14 +16,16 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
 template <class aosoa_type>
 void checkDataMembers( aosoa_type aosoa, int begin, int end, const float fval,
                        const double dval, const int ival, const int dim_1,
-                       const int dim_2, const int dim_3 ) {
+                       const int dim_2, const int dim_3 )
+{
     auto mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
 
@@ -32,7 +34,8 @@ void checkDataMembers( aosoa_type aosoa, int begin, int end, const float fval,
     auto slice_2 = Cabana::slice<2>( mirror );
     auto slice_3 = Cabana::slice<3>( mirror );
 
-    for ( int idx = begin; idx != end; ++idx ) {
+    for ( int idx = begin; idx != end; ++idx )
+    {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
@@ -55,13 +58,16 @@ void checkDataMembers( aosoa_type aosoa, int begin, int end, const float fval,
 
 //---------------------------------------------------------------------------//
 // Functor work tag for only assigning half the value.
-class HalfValueWorkTag {};
+class HalfValueWorkTag
+{
+};
 
 //---------------------------------------------------------------------------//
 // Assignment operator.
 template <class AoSoA_t, class SliceType0, class SliceType1, class SliceType2,
           class SliceType3>
-class AssignmentOp {
+class AssignmentOp
+{
   public:
     AssignmentOp( AoSoA_t aosoa, float fval, double dval, int ival )
         : _aosoa( aosoa )
@@ -74,11 +80,14 @@ class AssignmentOp {
         , _ival( ival )
         , _dim_1( _slice_0.extent( 2 ) )
         , _dim_2( _slice_0.extent( 3 ) )
-        , _dim_3( _slice_0.extent( 4 ) ) {}
+        , _dim_3( _slice_0.extent( 4 ) )
+    {
+    }
 
     // tagged version that assigns only half the value..
     KOKKOS_INLINE_FUNCTION void operator()( const HalfValueWorkTag &,
-                                            const int s, const int a ) const {
+                                            const int s, const int a ) const
+    {
         // Member 0.
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
@@ -99,7 +108,8 @@ class AssignmentOp {
                 _slice_3.access( s, a, i, j ) = _dval * ( i + j ) / 2.0;
     }
 
-    KOKKOS_INLINE_FUNCTION void operator()( const int s, const int a ) const {
+    KOKKOS_INLINE_FUNCTION void operator()( const int s, const int a ) const
+    {
         // Member 0.
         for ( int i = 0; i < _dim_1; ++i )
             for ( int j = 0; j < _dim_2; ++j )
@@ -135,7 +145,8 @@ class AssignmentOp {
 
 //---------------------------------------------------------------------------//
 // Parallel for test with vectorized indexing.
-void runTest2d() {
+void runTest2d()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;

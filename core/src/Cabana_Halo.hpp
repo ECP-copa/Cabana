@@ -23,7 +23,8 @@
 #include <exception>
 #include <vector>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 /*!
   \class Halo
@@ -53,7 +54,8 @@ namespace Cabana {
   of the forward communication plan (the gather).
 */
 template <class DeviceType>
-class Halo : public CommunicationPlan<DeviceType> {
+class Halo : public CommunicationPlan<DeviceType>
+{
   public:
     /*!
       \brief Neighbor and export rank constructor. Use this when you already
@@ -104,7 +106,8 @@ class Halo : public CommunicationPlan<DeviceType> {
           const RankViewType &element_export_ranks,
           const std::vector<int> &neighbor_ranks, const int mpi_tag = 1221 )
         : CommunicationPlan<DeviceType>( comm )
-        , _num_local( num_local ) {
+        , _num_local( num_local )
+    {
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error( "Export ids and ranks different sizes!" );
 
@@ -155,7 +158,8 @@ class Halo : public CommunicationPlan<DeviceType> {
           const IdViewType &element_export_ids,
           const RankViewType &element_export_ranks, const int mpi_tag = 1221 )
         : CommunicationPlan<DeviceType>( comm )
-        , _num_local( num_local ) {
+        , _num_local( num_local )
+    {
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error( "Export ids and ranks different sizes!" );
 
@@ -188,13 +192,19 @@ class Halo : public CommunicationPlan<DeviceType> {
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <typename>
-struct is_halo : public std::false_type {};
+struct is_halo : public std::false_type
+{
+};
 
 template <typename DeviceType>
-struct is_halo<Halo<DeviceType>> : public std::true_type {};
+struct is_halo<Halo<DeviceType>> : public std::true_type
+{
+};
 
 template <typename DeviceType>
-struct is_halo<const Halo<DeviceType>> : public std::true_type {};
+struct is_halo<const Halo<DeviceType>> : public std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -229,7 +239,8 @@ template <class Halo_t, class AoSoA_t>
 void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
              typename std::enable_if<( is_halo<Halo_t>::value &&
                                        is_aosoa<AoSoA_t>::value ),
-                                     int>::type * = 0 ) {
+                                     int>::type * = 0 )
+{
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != halo.numLocal() + halo.numGhost() )
         throw std::runtime_error( "AoSoA is the wrong size for scatter!" );
@@ -244,7 +255,8 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
     auto steering = halo.getExportSteering();
 
     // Gather from the local data into a tuple-contiguous send buffer.
-    auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         send_buffer( i ) = aosoa.getTuple( steering( i ) );
     };
     Kokkos::RangePolicy<typename Halo_t::execution_space>
@@ -263,7 +275,8 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
     std::pair<std::size_t, std::size_t> recv_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         recv_range.second = recv_range.first + halo.numImport( n );
 
         auto recv_subview = Kokkos::subview( recv_buffer, recv_range );
@@ -278,7 +291,8 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
 
     // Do blocking sends.
     std::pair<std::size_t, std::size_t> send_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         send_range.second = send_range.first + halo.numExport( n );
 
         auto send_subview = Kokkos::subview( send_buffer, send_range );
@@ -299,7 +313,8 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
 
     // Extract the receive buffer into the ghosted elements.
     std::size_t num_local = halo.numLocal();
-    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         std::size_t ghost_idx = i + num_local;
         aosoa.setTuple( ghost_idx, recv_buffer( i ) );
     };
@@ -347,7 +362,8 @@ template <class Halo_t, class Slice_t>
 void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
              typename std::enable_if<( is_halo<Halo_t>::value &&
                                        is_slice<Slice_t>::value ),
-                                     int>::type * = 0 ) {
+                                     int>::type * = 0 )
+{
     // Check that the Slice is the right size.
     if ( slice.size() != halo.numLocal() + halo.numGhost() )
         throw std::runtime_error( "Slice is the wrong size for scatter!" );
@@ -372,7 +388,8 @@ void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
     auto steering = halo.getExportSteering();
 
     // Gather from the local data into a tuple-contiguous send buffer.
-    auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         auto s = Slice_t::index_type::s( steering( i ) );
         auto a = Slice_t::index_type::a( steering( i ) );
         std::size_t slice_offset = s * slice.stride( 0 ) + a;
@@ -398,7 +415,8 @@ void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
     std::pair<std::size_t, std::size_t> recv_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         recv_range.second = recv_range.first + halo.numImport( n );
 
         auto recv_subview =
@@ -414,7 +432,8 @@ void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
 
     // Do blocking sends.
     std::pair<std::size_t, std::size_t> send_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         send_range.second = send_range.first + halo.numExport( n );
 
         auto send_subview =
@@ -436,7 +455,8 @@ void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
 
     // Extract the receive buffer into the ghosted elements.
     std::size_t num_local = halo.numLocal();
-    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto extract_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         std::size_t ghost_idx = i + num_local;
         auto s = Slice_t::index_type::s( ghost_idx );
         auto a = Slice_t::index_type::a( ghost_idx );
@@ -489,7 +509,8 @@ template <class Halo_t, class Slice_t>
 void scatter( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1003,
               typename std::enable_if<( is_halo<Halo_t>::value &&
                                         is_slice<Slice_t>::value ),
-                                      int>::type * = 0 ) {
+                                      int>::type * = 0 )
+{
     // Check that the Slice is the right size.
     if ( slice.size() != halo.numLocal() + halo.numGhost() )
         throw std::runtime_error( "Slice is the wrong size for scatter!" );
@@ -515,7 +536,8 @@ void scatter( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1003,
 
     // Extract the send buffer from the ghosted elements.
     std::size_t num_local = halo.numLocal();
-    auto extract_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto extract_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         std::size_t ghost_idx = i + num_local;
         auto s = Slice_t::index_type::s( ghost_idx );
         auto a = Slice_t::index_type::a( ghost_idx );
@@ -543,7 +565,8 @@ void scatter( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1003,
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
     std::pair<std::size_t, std::size_t> recv_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         recv_range.second = recv_range.first + halo.numExport( n );
 
         auto recv_subview =
@@ -559,7 +582,8 @@ void scatter( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1003,
 
     // Do blocking sends.
     std::pair<std::size_t, std::size_t> send_range = {0, 0};
-    for ( int n = 0; n < num_n; ++n ) {
+    for ( int n = 0; n < num_n; ++n )
+    {
         send_range.second = send_range.first + halo.numImport( n );
 
         auto send_subview =
@@ -583,7 +607,8 @@ void scatter( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1003,
     auto steering = halo.getExportSteering();
 
     // Scatter the ghosts in the receive buffer into the local values.
-    auto scatter_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i ) {
+    auto scatter_recv_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
         auto s = Slice_t::index_type::s( steering( i ) );
         auto a = Slice_t::index_type::a( steering( i ) );
         std::size_t slice_offset = s * slice.stride( 0 ) + a;

@@ -16,9 +16,11 @@
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-namespace Test {
+namespace Test
+{
 
-TEST( cabana_cartesian_grid, grid_test ) {
+TEST( cabana_cartesian_grid, grid_test )
+{
     double min[3] = {-1.0, -0.5, -0.6};
     double max[3] = {2.5, 1.5, 1.9};
     double delta[3] = {0.5, 0.125, 0.25};

@@ -30,7 +30,8 @@
 // timer can do multiple runs over each data point in the parameter sweep. The
 // name of the data point and its values can then be injected into the output
 // table.
-class ParallelTimer {
+class ParallelTimer
+{
   public:
     // Create the timer.
     ParallelTimer( MPI_Comm comm, const std::string &name, const int num_data )
@@ -38,11 +39,14 @@ class ParallelTimer {
         , _name( name )
         , _starts( num_data )
         , _data( num_data )
-        , _is_stopped( num_data, true ) {}
+        , _is_stopped( num_data, true )
+    {
+    }
 
     // Start the timer for the given data point. It is assumed that this
     // function is called collectively across all ranks in the communicator.
-    void start( const int data_point ) {
+    void start( const int data_point )
+    {
         if ( !_is_stopped[data_point] )
             throw std::logic_error( "attempted to start a running timer" );
         auto now = std::chrono::high_resolution_clock::now();
@@ -52,7 +56,8 @@ class ParallelTimer {
 
     // Stop the timer at the given data point. It is assumed that this
     // function is called collectively across all ranks in the communicator.
-    void stop( const int data_point ) {
+    void stop( const int data_point )
+    {
         if ( _is_stopped[data_point] )
             throw std::logic_error( "attempted to stop a stopped timer" );
         auto now = std::chrono::high_resolution_clock::now();
@@ -68,7 +73,8 @@ class ParallelTimer {
     template <typename Scalar>
     void outputResults( std::ostream &stream,
                         const std::string &data_point_name,
-                        const std::vector<Scalar> &data_point_vals ) const {
+                        const std::vector<Scalar> &data_point_vals ) const
+    {
         // Get comm rank;
         int comm_rank;
         MPI_Comm_rank( _comm, &comm_rank );
@@ -78,7 +84,8 @@ class ParallelTimer {
         MPI_Comm_size( _comm, &comm_size );
 
         // Write the data header.
-        if ( 0 == comm_rank ) {
+        if ( 0 == comm_rank )
+        {
             stream << "\n";
             stream << _name << "\n";
             stream << "num_rank " << data_point_name << " min max ave"
@@ -86,7 +93,8 @@ class ParallelTimer {
         }
 
         // Write out each data point
-        for ( std::size_t n = 0; n < _data.size(); ++n ) {
+        for ( std::size_t n = 0; n < _data.size(); ++n )
+        {
             if ( !_is_stopped[n] )
                 throw std::logic_error(
                     "attempted to output from a running timer" );
@@ -114,7 +122,8 @@ class ParallelTimer {
             average /= _data[n].size() * comm_size;
 
             // Output on rank 0.
-            if ( 0 == comm_rank ) {
+            if ( 0 == comm_rank )
+            {
                 stream << comm_size << " " << data_point_vals[n] << " "
                        << global_min << " " << global_max << " " << average
                        << "\n";
@@ -138,7 +147,8 @@ class ParallelTimer {
 // Comm device type is the device we want to use for communication.
 template <class DataDevice, class CommDevice>
 void performanceTest( std::ostream &stream, const std::size_t num_particle,
-                      const std::string &test_prefix ) {
+                      const std::string &test_prefix )
+{
     // PROBLEM SETUP
     // -------------
 
@@ -175,7 +185,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
     for ( int k = -1; k < 2; ++k )
         for ( int j = -1; j < 2; ++j )
             for ( int i = -1; i < 2; ++i )
-                if ( !( i == 0 && j == 0 && k == 0 ) ) {
+                if ( !( i == 0 && j == 0 && k == 0 ) )
+                {
                     std::vector<int> ncr = {cart_rank[0] + i, cart_rank[1] + j,
                                             cart_rank[2] + k};
                     int nr;
@@ -229,7 +240,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         comm, test_prefix + "distributor_slice_migrate", num_fraction );
 
     // Loop over comm fractions.
-    for ( int fraction = 0; fraction < num_fraction; ++fraction ) {
+    for ( int fraction = 0; fraction < num_fraction; ++fraction )
+    {
         // Create the migrate distribution in the data memory space. This is
         // where it would likely be created. Note below that we divide by 26
         // and then multiply by 26 to get a number of sends via integer math
@@ -243,11 +255,14 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         comm_bytes[fraction] = send_per_neighbor * bytes_per_particle;
         Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host(
             "export_ranks", num_particle );
-        for ( int p = 0; p < num_stay; ++p ) {
+        for ( int p = 0; p < num_stay; ++p )
+        {
             export_ranks_host( p ) = neighbor_ranks[0];
         }
-        for ( int n = 0; n < 26; ++n ) {
-            for ( int p = 0; p < send_per_neighbor; ++p ) {
+        for ( int n = 0; n < 26; ++n )
+        {
+            for ( int p = 0; p < send_per_neighbor; ++p )
+            {
                 export_ranks_host( num_stay + n * send_per_neighbor + p ) =
                     neighbor_ranks[n + 1];
             }
@@ -256,7 +271,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
             data_memory_space(), export_ranks_host );
 
         // Run tests and time the ensemble.
-        for ( int t = 0; t < num_run; ++t ) {
+        for ( int t = 0; t < num_run; ++t )
+        {
             // Create source particles.
             aosoa_type src_particles( num_particle );
 
@@ -348,7 +364,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
                                       num_fraction );
 
     // Loop over comm fractions.
-    for ( int fraction = 0; fraction < num_fraction; ++fraction ) {
+    for ( int fraction = 0; fraction < num_fraction; ++fraction )
+    {
         // Create the halo distribution in the data memory space. This is
         // where it would likely be created. Note below that we divide by 26
         // and then multiply by 26 to get a number of sends via integer math
@@ -363,8 +380,10 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
             "export_ranks", num_send );
         Kokkos::View<int *, Kokkos::HostSpace> export_ids_host( "export_ids",
                                                                 num_send );
-        for ( int n = 0; n < 26; ++n ) {
-            for ( int p = 0; p < send_per_neighbor; ++p ) {
+        for ( int n = 0; n < 26; ++n )
+        {
+            for ( int p = 0; p < send_per_neighbor; ++p )
+            {
                 export_ids_host( n * send_per_neighbor + p ) =
                     n * send_per_neighbor + p;
                 export_ranks_host( n * send_per_neighbor + p ) =
@@ -377,7 +396,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
             data_memory_space(), export_ids_host );
 
         // Run tests and time the ensemble.
-        for ( int t = 0; t < num_run; ++t ) {
+        for ( int t = 0; t < num_run; ++t )
+        {
             // Create the particles.
             aosoa_type particles( num_particle );
 
@@ -468,7 +488,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
 
 //---------------------------------------------------------------------------//
 // main
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     // Initialize environment
     MPI_Init( &argc, &argv );
     Kokkos::initialize( argc, argv );
@@ -505,7 +526,8 @@ int main( int argc, char *argv[] ) {
         file.open( filename, std::fstream::out );
 
     // Output problem details.
-    if ( 0 == comm_rank ) {
+    if ( 0 == comm_rank )
+    {
         std::size_t total_num_p = num_particle * comm_size;
         file << "\n";
         file << "Cabana Comm Performance Benchmark"

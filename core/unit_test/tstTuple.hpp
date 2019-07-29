@@ -16,17 +16,20 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
 template <class view_type>
 void checkDataMembers( view_type view, const float fval, const double dval,
                        const int ival, const std::size_t dim_1,
-                       const std::size_t dim_2, const std::size_t dim_3 ) {
+                       const std::size_t dim_2, const std::size_t dim_3 )
+{
     auto mirror_view =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), view );
-    for ( std::size_t idx = 0; idx < mirror_view.extent( 0 ); ++idx ) {
+    for ( std::size_t idx = 0; idx < mirror_view.extent( 0 ); ++idx )
+    {
         // Member 0.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
@@ -51,7 +54,8 @@ void checkDataMembers( view_type view, const float fval, const double dval,
 
 //---------------------------------------------------------------------------//
 // Tuple test
-void runTest() {
+void runTest()
+{
     // Data dimensions.
     const std::size_t dim_1 = 3;
     const std::size_t dim_2 = 2;
@@ -77,7 +81,8 @@ void runTest() {
     float fval = 3.4;
     double dval = 1.23;
     int ival = 1;
-    auto init_func = KOKKOS_LAMBDA( const std::size_t idx ) {
+    auto init_func = KOKKOS_LAMBDA( const std::size_t idx )
+    {
         // Member 0.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )

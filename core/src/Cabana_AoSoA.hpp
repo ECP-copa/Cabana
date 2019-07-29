@@ -28,7 +28,8 @@
 #include <string>
 #include <type_traits>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 // AoSoA forward declaration.
 template <class DataTypes, class DeviceType, int VectorLength,
@@ -38,23 +39,30 @@ class AoSoA;
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
-struct is_aosoa : public std::false_type {};
+struct is_aosoa : public std::false_type
+{
+};
 
 template <class DataTypes, class DeviceType, int VectorLength,
           class MemoryTraits>
 struct is_aosoa<AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
-    : public std::true_type {};
+    : public std::true_type
+{
+};
 
 template <class DataTypes, class DeviceType, int VectorLength,
           class MemoryTraits>
 struct is_aosoa<const AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
-    : public std::true_type {};
+    : public std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
 // Slice template helper.
 template <std::size_t M, class AoSoA_t>
 typename AoSoA_t::template member_slice_type<M>
-slice( const AoSoA_t &aosoa, const std::string &slice_label = "" ) {
+slice( const AoSoA_t &aosoa, const std::string &slice_label = "" )
+{
     static_assert(
         0 == sizeof( typename AoSoA_t::soa_type ) %
                  sizeof( typename AoSoA_t::template member_value_type<M> ),
@@ -98,7 +106,8 @@ template <class DataTypes, class DeviceType,
           int VectorLength = Impl::PerformanceTraits<
               typename DeviceType::execution_space>::vector_length,
           class MemoryTraits = Kokkos::MemoryManaged>
-class AoSoA {
+class AoSoA
+{
   public:
     // AoSoA type.
     using aosoa_type = AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>;
@@ -181,7 +190,9 @@ class AoSoA {
         : _size( 0 )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _data( label ) {}
+        , _data( label )
+    {
+    }
 
     /*!
       \brief Allocate a container with n tuples.
@@ -196,7 +207,8 @@ class AoSoA {
     explicit AoSoA( const size_type n )
         : _size( n )
         , _capacity( 0 )
-        , _num_soa( 0 ) {
+        , _num_soa( 0 )
+    {
         static_assert(
             !memory_traits::Unmanaged,
             "Construction by allocation cannot use unmanaged memory" );
@@ -214,7 +226,8 @@ class AoSoA {
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _data( label ) {
+        , _data( label )
+    {
         resize( _size );
     }
 
@@ -231,7 +244,8 @@ class AoSoA {
         : _size( n )
         , _capacity( num_soa * vector_length )
         , _num_soa( num_soa )
-        , _data( ptr, num_soa ) {
+        , _data( ptr, num_soa )
+    {
         static_assert( memory_traits::Unmanaged,
                        "Pointer construction requires unmanaged memory" );
     }
@@ -292,7 +306,8 @@ class AoSoA {
       Notice that this function changes the actual content of the container by
       inserting or erasing tuples from it.
     */
-    void resize( const size_type n ) {
+    void resize( const size_type n )
+    {
         static_assert( !memory_traits::Unmanaged,
                        "Cannot resize unmanaged memory" );
 
@@ -321,7 +336,8 @@ class AoSoA {
       This function has no effect on the container size and cannot alter its
       tuples.
     */
-    void reserve( const size_type n ) {
+    void reserve( const size_type n )
+    {
         static_assert( !memory_traits::Unmanaged,
                        "Cannot reserve unmanaged memory" );
 
@@ -362,7 +378,8 @@ class AoSoA {
       \return The size of the array at the given struct index.
     */
     KOKKOS_INLINE_FUNCTION
-    size_type arraySize( const size_type s ) const {
+    size_type arraySize( const size_type s ) const
+    {
         return ( (size_type)s < _num_soa - 1 ) ? vector_length
                                                : ( _size % vector_length );
     }
@@ -385,7 +402,8 @@ class AoSoA {
       \return A tuple containing a deep copy of the data at the given index.
     */
     KOKKOS_INLINE_FUNCTION
-    tuple_type getTuple( const size_type i ) const {
+    tuple_type getTuple( const size_type i ) const
+    {
         tuple_type tpl;
         Impl::tupleCopy( tpl, 0, _data( index_type::s( i ) ),
                          index_type::a( i ) );
@@ -400,7 +418,8 @@ class AoSoA {
       \param tuple The tuple to get the data from.
     */
     KOKKOS_INLINE_FUNCTION
-    void setTuple( const size_type i, const tuple_type &tpl ) const {
+    void setTuple( const size_type i, const tuple_type &tpl ) const
+    {
         Impl::tupleCopy( _data( index_type::s( i ) ), index_type::a( i ), tpl,
                          0 );
     }
@@ -414,7 +433,8 @@ class AoSoA {
     */
     CABANA_DEPRECATED
     template <std::size_t M>
-    member_slice_type<M> slice( const std::string &slice_label = "" ) const {
+    member_slice_type<M> slice( const std::string &slice_label = "" ) const
+    {
         return Cabana::slice<M>( *this, slice_label );
     }
 

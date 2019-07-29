@@ -16,7 +16,8 @@
 //---------------------------------------------------------------------------//
 // Linked cell list.
 //---------------------------------------------------------------------------//
-void linkedCellListExample() {
+void linkedCellListExample()
+{
     /*
       A linked cell list is a data structure which bins particles based on the
       Cartesian grid cell in which they are located. An input uniform
@@ -82,7 +83,8 @@ void linkedCellListExample() {
     for ( int p = 0; p < ppc; ++p )
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                for ( int k = 0; k < 3; ++k, ++particle_counter ) {
+                for ( int k = 0; k < 3; ++k, ++particle_counter )
+                {
                     positions( particle_counter, 0 ) =
                         grid_min[0] + grid_delta[0] * ( 0.5 + i );
                     positions( particle_counter, 1 ) =
@@ -127,7 +129,8 @@ void linkedCellListExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     linkedCellListExample();

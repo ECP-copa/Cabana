@@ -19,14 +19,17 @@ axpy_10( const view_type &__restrict__ a, const view_type &__restrict__ x0,
          const view_type &__restrict__ x5, const view_type &__restrict__ x6,
          const view_type &__restrict__ x7, const view_type &__restrict__ x8,
          const view_type &__restrict__ x9, const view_type &__restrict__ c,
-         long n ) {
+         long n )
+{
     long i;
     int j;
 
     asm volatile( "# ax+c loop begin" );
-    for ( i = 0; i < n; i++ ) {
+    for ( i = 0; i < n; i++ )
+    {
 #pragma omp simd
-        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+        for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+        {
             x0( j ) = a( j ) * x0( j ) + c( j );
             x1( j ) = a( j ) * x1( j ) + c( j );
             x2( j ) = a( j ) * x2( j ) + c( j );
@@ -41,14 +44,16 @@ axpy_10( const view_type &__restrict__ a, const view_type &__restrict__ x0,
     }
     asm volatile( "# ax+c loop end" );
 
-    for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ ) {
+    for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
+    {
         x0( j ) = x0( j ) + x1( j ) + x2( j ) + x3( j ) + x4( j ) + x5( j ) +
                   x6( j ) + x7( j ) + x8( j ) + x9( j ) + (float)n;
     }
     return x0;
 }
 
-TEST( kokkos, simple ) {
+TEST( kokkos, simple )
+{
 #ifndef CABANA_PERFORMANCE_ITERATIONS
 #define CABANA_PERFORMANCE_ITERATIONS                                          \
     2e6 // use a higher number e.g. 2e8 for skylake
@@ -80,7 +85,8 @@ TEST( kokkos, simple ) {
                             static_cast<unsigned short>( seed >> 8 ),
                             static_cast<unsigned short>( seed )};
 
-    for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ ) {
+    for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ )
+    {
         a_( i ) = erand48( rg );
         c_( i ) = erand48( rg );
         x0_( i ) = erand48( rg );
@@ -112,7 +118,8 @@ TEST( kokkos, simple ) {
     double flops_clock = flops / dc;
     printf( "%f flops/clock\n", flops_clock );
 
-    for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ ) {
+    for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ )
+    {
         printf( "x0_[%ld] = %f\n", i, x0_( i ) );
     }
 
@@ -123,8 +130,8 @@ TEST( kokkos, simple ) {
     printf( "(with margin %f )\n",
             expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN );
 
-    if ( flops_clock >
-         expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN ) {
+    if ( flops_clock > expected_flops_clock * CABANA_PERFORMANCE_ERROR_MARGIN )
+    {
         acceptable_fraction = true;
     }
 

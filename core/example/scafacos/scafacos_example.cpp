@@ -43,7 +43,8 @@ const double default_gap_space = 1.0;
 //
 // NOTE: These enums are also ordered in the same way as the data in the
 // template parameters below.
-enum UserParticleFields {
+enum UserParticleFields
+{
     PositionX = 0,
     PositionY,
     PositionZ,
@@ -54,7 +55,8 @@ enum UserParticleFields {
     Index
 };
 
-typedef struct {
+typedef struct
+{
     // MPI rank
     int rank;
     // number of MPI processes
@@ -101,7 +103,8 @@ using ParticleList =
 //---------------------------------------------------------------------------//
 // Function to intitialize the particles.
 void initializeParticles( ParticleList &particles, double gap_space,
-                          parallel_info &info ) {
+                          parallel_info &info )
+{
     auto p_x = Cabana::slice<PositionX>( particles, "position_x" );
     auto p_y = Cabana::slice<PositionY>( particles, "position_y" );
     auto p_z = Cabana::slice<PositionZ>( particles, "position_z" );
@@ -120,7 +123,8 @@ void initializeParticles( ParticleList &particles, double gap_space,
     if ( info.rank == 0 )
         offset = 0;
 
-    for ( int idx = 0; idx < info.n_local_particles; ++idx ) {
+    for ( int idx = 0; idx < info.n_local_particles; ++idx )
+    {
         // Calculate location of particle in crystal
         int idx_x = idx % info.loc_crystal[0] + info.off_crystal[0];
         int idx_y = ( idx / info.loc_crystal[0] ) % info.loc_crystal[1] +
@@ -153,7 +157,8 @@ void initializeParticles( ParticleList &particles, double gap_space,
 }
 
 // Function to print out the data for every particle.
-void printParticles( const ParticleList particles, parallel_info &info ) {
+void printParticles( const ParticleList particles, parallel_info &info )
+{
 
     // get slices for the corresponding particle data
     auto p_x = Cabana::slice<PositionX>( particles, "position_x" );
@@ -167,7 +172,8 @@ void printParticles( const ParticleList particles, parallel_info &info ) {
 
     std::cout << "Rank: " << info.rank << '\n' << '\n';
 
-    for ( size_t idx = 0; idx < particles.size(); ++idx ) {
+    for ( size_t idx = 0; idx < particles.size(); ++idx )
+    {
         std::cout << "Position: " << p_x( idx ) << " " << p_y( idx ) << " "
                   << p_z( idx ) << '\n';
 
@@ -193,8 +199,10 @@ void printParticles( const ParticleList particles, parallel_info &info ) {
 
 // check of ScaFaCoS result
 static bool check_result( FCSResult result, int comm_rank,
-                          bool force_abort = false ) {
-    if ( result ) {
+                          bool force_abort = false )
+{
+    if ( result )
+    {
         std::cout << "ERROR: Caught error on task " << comm_rank << "!" << '\n';
         fcs_result_print_result( result );
         fcs_result_destroy( result );
@@ -209,7 +217,8 @@ static bool check_result( FCSResult result, int comm_rank,
 
 // example main
 void exampleMain( int num_particle, int crystal_size, const std::string &method,
-                  parallel_info &info, double gap_space ) {
+                  parallel_info &info, double gap_space )
+{
 
     // Create the particle list.
     ParticleList particles( "particles", info.n_local_particles );
@@ -218,8 +227,10 @@ void exampleMain( int num_particle, int crystal_size, const std::string &method,
     initializeParticles( particles, gap_space, info );
 
     // Print particles.
-    if ( num_particle <= 216 ) {
-        for ( int i = 0; i < info.n_proc; ++i ) {
+    if ( num_particle <= 216 )
+    {
+        for ( int i = 0; i < info.n_proc; ++i )
+        {
             if ( info.rank == i )
                 printParticles( particles, info );
             MPI_Barrier( info.comm );
@@ -249,7 +260,8 @@ void exampleMain( int num_particle, int crystal_size, const std::string &method,
     auto p_z = Cabana::slice<PositionZ>( particles, "z_position" );
     auto qp = Cabana::slice<Charge>( particles, "charge" );
 
-    for ( int i = 0; i < info.n_local_particles; ++i ) {
+    for ( int i = 0; i < info.n_local_particles; ++i )
+    {
         // ScaFaCoS expects postions in a (x,y,z) AoS format
         pos.push_back( p_x( i ) );
         pos.push_back( p_y( i ) );
@@ -313,8 +325,10 @@ void exampleMain( int num_particle, int crystal_size, const std::string &method,
         check[i] = 0.0;
 
     // copy results from the call to the particle structures
-    for ( int i = 0; i < info.n_local_particles; ++i ) {
-        for ( int d = 0; d < space_dim; ++d ) {
+    for ( int i = 0; i < info.n_local_particles; ++i )
+    {
+        for ( int d = 0; d < space_dim; ++d )
+        {
             field( i, d ) = f.at( 3 * i + d );
             check[d] += f.at( 3 * i + d );
         }
@@ -328,8 +342,10 @@ void exampleMain( int num_particle, int crystal_size, const std::string &method,
 
     // Print particles (to check if any calculation took place and check
     // results)
-    if ( num_particle <= 216 ) {
-        for ( int i = 0; i < info.n_proc; ++i ) {
+    if ( num_particle <= 216 )
+    {
+        for ( int i = 0; i < info.n_proc; ++i )
+        {
             if ( info.rank == i )
                 printParticles( particles, info );
             MPI_Barrier( info.comm );
@@ -345,7 +361,8 @@ void exampleMain( int num_particle, int crystal_size, const std::string &method,
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
 
     MPI_Init( &argc, &argv );
 
@@ -376,7 +393,8 @@ int main( int argc, char *argv[] ) {
     info.loc[2] = info.rank / ( info.dim[0] * info.dim[1] );
 
     // Run the test.
-    if ( argc == 4 ) {
+    if ( argc == 4 )
+    {
         // to change the system size at run time, call:
         // ./ScafacosExample <crystal_dimension> <gap_space> <solver_name>
         // solver name is one of:
@@ -394,7 +412,8 @@ int main( int argc, char *argv[] ) {
         // number of particles on local domain and offset of local crystal
         // partition within the crystal
         info.n_local_particles = 1;
-        for ( int i = 0; i < space_dim; ++i ) {
+        for ( int i = 0; i < space_dim; ++i )
+        {
             info.loc_crystal[i] = c_size / info.dim[i];
             info.loc_crystal[i] +=
                 ( info.loc[i] < ( c_size % info.dim[i] ) ) ? 1 : 0;
@@ -408,12 +427,15 @@ int main( int argc, char *argv[] ) {
         }
 
         exampleMain( c_size * c_size * c_size, c_size, method, info, g_space );
-    } else {
+    }
+    else
+    {
         // compute the local partition of the crystal stored on local process,
         // number of particles on local domain and offset of local crystal
         // partition within the crystal
         info.n_local_particles = 1;
-        for ( int i = 0; i < space_dim; ++i ) {
+        for ( int i = 0; i < space_dim; ++i )
+        {
             info.loc_crystal[i] = default_crystal_size / info.dim[i];
             info.loc_crystal[i] +=
                 ( info.loc[i] < ( default_crystal_size % info.dim[i] ) ) ? 1

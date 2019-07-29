@@ -84,9 +84,10 @@ TupleType *particle = new TupleType;
 /*
   Declare functions that will be mixed with Fortran
  */
-extern "C" {
-void tupleExample( TupleType * ); // written in Fortan; called by C++
-void delete_tuple();              // written in C++; called by Fortan
+extern "C"
+{
+    void tupleExample( TupleType * ); // written in Fortan; called by C++
+    void delete_tuple();              // written in C++; called by Fortan
 }
 
 void delete_tuple() { delete particle; }
@@ -94,7 +95,8 @@ void delete_tuple() { delete particle; }
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     /* Call the Fortran subroutine */

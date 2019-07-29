@@ -16,7 +16,8 @@
 
 #include <type_traits>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 // Execution Spaces
 //---------------------------------------------------------------------------//
@@ -50,11 +51,14 @@ using Kokkos::CudaUVMSpace;
 // Memory access tags.
 //---------------------------------------------------------------------------//
 template <class>
-struct is_memory_access_tag : public std::false_type {};
+struct is_memory_access_tag : public std::false_type
+{
+};
 
 //! Default memory access. Default memory is restricted to prevent aliasing in
 //! the larger AoSoA memory block to allow for potential vectorization.
-struct DefaultAccessMemory {
+struct DefaultAccessMemory
+{
     using memory_access_type = DefaultAccessMemory;
     using kokkos_memory_traits =
         Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
@@ -62,10 +66,13 @@ struct DefaultAccessMemory {
 };
 
 template <>
-struct is_memory_access_tag<DefaultAccessMemory> : public std::true_type {};
+struct is_memory_access_tag<DefaultAccessMemory> : public std::true_type
+{
+};
 
 //! Random access memory. Read-only and const with limited spatial locality.
-struct RandomAccessMemory {
+struct RandomAccessMemory
+{
     using memory_access_type = RandomAccessMemory;
     using kokkos_memory_traits =
         Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
@@ -73,10 +80,13 @@ struct RandomAccessMemory {
 };
 
 template <>
-struct is_memory_access_tag<RandomAccessMemory> : public std::true_type {};
+struct is_memory_access_tag<RandomAccessMemory> : public std::true_type
+{
+};
 
 //! Atomic memory access. All reads and writes are atomic.
-struct AtomicAccessMemory {
+struct AtomicAccessMemory
+{
     using memory_access_type = AtomicAccessMemory;
     using kokkos_memory_traits =
         Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
@@ -84,7 +94,9 @@ struct AtomicAccessMemory {
 };
 
 template <>
-struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type {};
+struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
 

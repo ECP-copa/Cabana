@@ -15,14 +15,16 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
 template <class aosoa_type>
 void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
                        const int ival, const int dim_1, const int dim_2,
-                       const int dim_3 ) {
+                       const int dim_3 )
+{
     auto mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
 
@@ -31,7 +33,8 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
     auto slice_2 = Cabana::slice<2>( mirror );
     auto slice_3 = Cabana::slice<3>( mirror );
 
-    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx ) {
+    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
+    {
         // Member 0.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
@@ -56,7 +59,8 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
 // Perform a deep copy test.
 template <class DstMemorySpace, class SrcMemorySpace, int DstVectorLength,
           int SrcVectorLength>
-void testDeepCopy() {
+void testDeepCopy()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -133,7 +137,8 @@ void testDeepCopy() {
 
 //---------------------------------------------------------------------------//
 // Perform a mirror test.
-void testMirror() {
+void testMirror()
+{
     // Data dimensions.
     const int dim_1 = 3;
     const int dim_2 = 2;
@@ -236,7 +241,8 @@ void testMirror() {
 
 //---------------------------------------------------------------------------//
 // Perform an assignment test.
-void testAssign() {
+void testAssign()
+{
     // Declare data types.
     using DataTypes = Cabana::MemberTypes<float[2], int>;
 
@@ -258,7 +264,8 @@ void testAssign() {
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto host_slice_0 = Cabana::slice<0>( host_aosoa );
     auto host_slice_1 = Cabana::slice<1>( host_aosoa );
-    for ( int n = 0; n < num_data; ++n ) {
+    for ( int n = 0; n < num_data; ++n )
+    {
         EXPECT_EQ( host_slice_0( n, 0 ), fval );
         EXPECT_EQ( host_slice_0( n, 1 ), fval );
         EXPECT_EQ( host_slice_1( n ), ival );
@@ -275,7 +282,8 @@ void testAssign() {
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     host_slice_0 = Cabana::slice<0>( host_aosoa );
     host_slice_1 = Cabana::slice<1>( host_aosoa );
-    for ( int n = 0; n < num_data; ++n ) {
+    for ( int n = 0; n < num_data; ++n )
+    {
         EXPECT_EQ( host_slice_0( n, 0 ), fval );
         EXPECT_EQ( host_slice_0( n, 1 ), fval );
         EXPECT_EQ( host_slice_1( n ), ival );
@@ -285,23 +293,27 @@ void testAssign() {
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_to_host_same_layout_test ) {
+TEST( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
+{
     testDeepCopy<Cabana::HostSpace, TEST_MEMSPACE, 16, 16>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_from_host_same_layout_test ) {
+TEST( TEST_CATEGORY, deep_copy_from_host_same_layout_test )
+{
     testDeepCopy<TEST_MEMSPACE, Cabana::HostSpace, 16, 16>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_to_host_different_layout_test ) {
+TEST( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
+{
     testDeepCopy<Cabana::HostSpace, TEST_MEMSPACE, 16, 32>();
     testDeepCopy<Cabana::HostSpace, TEST_MEMSPACE, 64, 8>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test ) {
+TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
+{
     testDeepCopy<TEST_MEMSPACE, Cabana::HostSpace, 64, 8>();
     testDeepCopy<TEST_MEMSPACE, Cabana::HostSpace, 16, 32>();
 }

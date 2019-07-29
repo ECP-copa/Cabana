@@ -17,7 +17,8 @@
 //---------------------------------------------------------------------------//
 // Example of a parallel-for using an unmanaged view.
 //---------------------------------------------------------------------------//
-void parallelForExample() {
+void parallelForExample()
+{
     /*
      * Summary: An unmanaged AoSoA allows the user to wrap manually allocated
      * data (if compatible) inside of Cabana structures, without paying the
@@ -43,7 +44,8 @@ void parallelForExample() {
 
     const int INNER_SIZE = 2;
     // Regular class form
-    class Data {
+    class Data
+    {
       public:
         double a[INNER_SIZE][VectorLength];
         int b[VectorLength];
@@ -72,8 +74,10 @@ void parallelForExample() {
     /*
      * Populate user data.
      */
-    for ( int i = 0; i < num_soa; i++ ) {
-        for ( int j = 0; j < VectorLength; j++ ) {
+    for ( int i = 0; i < num_soa; i++ )
+    {
+        for ( int j = 0; j < VectorLength; j++ )
+        {
             local_data[i].a[1][j] = i;
             local_data[i].b[j] = j;
         }
@@ -98,8 +102,10 @@ void parallelForExample() {
     auto slice_b = Cabana::slice<1>( aosoa ); // b = 1
 
     // Look at the data in the AosoA
-    for ( int i = 0; i < num_tuple; i++ ) {
-        if ( slice_b( i ) != ( i % VectorLength ) ) {
+    for ( int i = 0; i < num_tuple; i++ )
+    {
+        if ( slice_b( i ) != ( i % VectorLength ) )
+        {
             // Unexpected Value
             printf( "%d: Unexpected %d != %d \n", __LINE__, slice_b( i ),
                     i % VectorLength );
@@ -113,9 +119,11 @@ void parallelForExample() {
     Cabana::permute( binning_data, aosoa );
 
     // Check it worked
-    for ( int i = 1; i < num_tuple; i++ ) {
+    for ( int i = 1; i < num_tuple; i++ )
+    {
         // We expect it to be monotonically increasing
-        if ( !( slice_b( i - 1 ) <= slice_b( i ) ) ) {
+        if ( !( slice_b( i - 1 ) <= slice_b( i ) ) )
+        {
             // Unexpected value
             printf( "%d: Unexpected %d vs %d \n", __LINE__, slice_b( i - 1 ),
                     slice_b( i ) );
@@ -132,7 +140,8 @@ void parallelForExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     parallelForExample();

@@ -19,7 +19,8 @@
 //---------------------------------------------------------------------------//
 // parallel for example.
 //---------------------------------------------------------------------------//
-void parallelForExample() {
+void parallelForExample()
+{
     /*
       In previous examples we have demonstrated using the Slice directly with
       programming models such as OpenMP and CUDA. Now we present a more
@@ -71,7 +72,8 @@ void parallelForExample() {
      */
     auto slice_0 = Cabana::slice<0>( aosoa );
     auto slice_1 = Cabana::slice<1>( aosoa );
-    for ( int i = 0; i < num_tuple; ++i ) {
+    for ( int i = 0; i < num_tuple; ++i )
+    {
         slice_0( i ) = 1.0;
         slice_1( i ) = 1.0;
     }
@@ -89,7 +91,8 @@ void parallelForExample() {
       of the element on which the computation will be performed. This is
       intended to be used with the `access()` function of the slice.
      */
-    auto vector_kernel = KOKKOS_LAMBDA( const int s, const int a ) {
+    auto vector_kernel = KOKKOS_LAMBDA( const int s, const int a )
+    {
         slice_0.access( s, a ) = slice_1.access( s, a );
     };
 
@@ -147,7 +150,8 @@ void parallelForExample() {
     using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
     using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
     PoolType pool( 342343901 );
-    auto rand_kernel = KOKKOS_LAMBDA( const int i ) {
+    auto rand_kernel = KOKKOS_LAMBDA( const int i )
+    {
         auto gen = pool.get_state();
         auto rand_idx =
             Kokkos::rand<RandomType, int>::draw( gen, 0, num_tuple );
@@ -172,7 +176,8 @@ void parallelForExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     parallelForExample();

@@ -23,11 +23,13 @@
 #include <memory>
 #include <vector>
 
-namespace Test {
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // test without collisions
-void test1( const bool use_topology ) {
+void test1( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Halo<TEST_MEMSPACE>> halo;
 
@@ -48,7 +50,8 @@ void test1( const bool use_topology ) {
     Kokkos::View<std::size_t *, Kokkos::HostSpace> export_ids_host(
         "export_ids", my_size );
     std::vector<int> neighbors( my_size );
-    for ( int n = 0; n < my_size; ++n ) {
+    for ( int n = 0; n < my_size; ++n )
+    {
         neighbors[n] = n;
         export_ranks_host( n ) = n;
         export_ids_host( n ) = 2 * n + 1;
@@ -78,7 +81,8 @@ void test1( const bool use_topology ) {
     auto slice_dbl = Cabana::slice<1>( data );
 
     // Fill the local data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int( i ) = my_rank + 1;
         slice_dbl( i, 0 ) = my_rank + 1;
         slice_dbl( i, 1 ) = my_rank + 1.5;
@@ -98,7 +102,8 @@ void test1( const bool use_topology ) {
     Cabana::deep_copy( data_host, data );
 
     // check that the local data didn't change.
-    for ( int i = 0; i < my_size; ++i ) {
+    for ( int i = 0; i < my_size; ++i )
+    {
         EXPECT_EQ( slice_int_host( 2 * i ), my_rank + 1 );
         EXPECT_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
         EXPECT_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
@@ -109,18 +114,24 @@ void test1( const bool use_topology ) {
     }
 
     // Check that we got one element from everyone.
-    for ( int i = num_local; i < num_local + my_size; ++i ) {
+    for ( int i = num_local; i < num_local + my_size; ++i )
+    {
         // Self sends are first.
         int send_rank = i - num_local;
-        if ( send_rank == 0 ) {
+        if ( send_rank == 0 )
+        {
             EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
-        } else if ( send_rank == my_rank ) {
+        }
+        else if ( send_rank == my_rank )
+        {
             EXPECT_EQ( slice_int_host( i ), 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), 1.5 );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( slice_int_host( i ), send_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
@@ -135,7 +146,8 @@ void test1( const bool use_topology ) {
     // Check that the local data was updated. Every ghost had a unique
     // destination so the result should be doubled for those elements that
     // were ghosted.
-    for ( int i = 0; i < my_size; ++i ) {
+    for ( int i = 0; i < my_size; ++i )
+    {
         EXPECT_EQ( slice_int_host( 2 * i ), my_rank + 1 );
         EXPECT_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
         EXPECT_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
@@ -146,18 +158,24 @@ void test1( const bool use_topology ) {
     }
 
     // Check that the ghost data didn't change.
-    for ( int i = num_local; i < num_local + my_size; ++i ) {
+    for ( int i = num_local; i < num_local + my_size; ++i )
+    {
         // Self sends are first.
         int send_rank = i - num_local;
-        if ( send_rank == 0 ) {
+        if ( send_rank == 0 )
+        {
             EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
-        } else if ( send_rank == my_rank ) {
+        }
+        else if ( send_rank == my_rank )
+        {
             EXPECT_EQ( slice_int_host( i ), 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), 1.5 );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( slice_int_host( i ), send_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
@@ -170,7 +188,8 @@ void test1( const bool use_topology ) {
     Cabana::deep_copy( data_host, data );
 
     // Check that the local data remained unchanged.
-    for ( int i = 0; i < my_size; ++i ) {
+    for ( int i = 0; i < my_size; ++i )
+    {
         EXPECT_EQ( slice_int_host( 2 * i ), my_rank + 1 );
         EXPECT_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
         EXPECT_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
@@ -181,18 +200,24 @@ void test1( const bool use_topology ) {
     }
 
     // Check that the ghost data was updated.
-    for ( int i = num_local; i < num_local + my_size; ++i ) {
+    for ( int i = num_local; i < num_local + my_size; ++i )
+    {
         // Self sends are first.
         int send_rank = i - num_local;
-        if ( send_rank == 0 ) {
+        if ( send_rank == 0 )
+        {
             EXPECT_EQ( slice_int_host( i ), 2 * ( my_rank + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 0 ), 2 * ( my_rank + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 1 ), 2 * ( my_rank + 1.5 ) );
-        } else if ( send_rank == my_rank ) {
+        }
+        else if ( send_rank == my_rank )
+        {
             EXPECT_EQ( slice_int_host( i ), 2 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), 2 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), 3 );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( slice_int_host( i ), 2 * ( send_rank + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 0 ), 2 * ( send_rank + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 1 ), 2 * ( send_rank + 1.5 ) );
@@ -202,7 +227,8 @@ void test1( const bool use_topology ) {
 
 //---------------------------------------------------------------------------//
 // test with collisions
-void test2( const bool use_topology ) {
+void test2( const bool use_topology )
+{
     // Make a communication plan.
     std::shared_ptr<Cabana::Halo<TEST_MEMSPACE>> halo;
 
@@ -224,7 +250,8 @@ void test2( const bool use_topology ) {
                                                            my_size );
     Kokkos::deep_copy( export_ids, 0 );
     std::vector<int> neighbors( my_size );
-    for ( int n = 0; n < my_size; ++n ) {
+    for ( int n = 0; n < my_size; ++n )
+    {
         neighbors[n] = n;
         export_ranks_host( n ) = n;
     }
@@ -251,7 +278,8 @@ void test2( const bool use_topology ) {
     auto slice_dbl = Cabana::slice<1>( data );
 
     // Fill the local data.
-    auto fill_func = KOKKOS_LAMBDA( const int i ) {
+    auto fill_func = KOKKOS_LAMBDA( const int i )
+    {
         slice_int( i ) = my_rank + 1;
         slice_dbl( i, 0 ) = my_rank + 1;
         slice_dbl( i, 1 ) = my_rank + 1.5;
@@ -276,18 +304,24 @@ void test2( const bool use_topology ) {
     EXPECT_EQ( slice_dbl_host( 0, 1 ), my_rank + 1.5 );
 
     // Check that we got one element from everyone.
-    for ( int i = num_local; i < num_local + my_size; ++i ) {
+    for ( int i = num_local; i < num_local + my_size; ++i )
+    {
         // Self sends are first.
         int send_rank = i - num_local;
-        if ( send_rank == 0 ) {
+        if ( send_rank == 0 )
+        {
             EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
-        } else if ( send_rank == my_rank ) {
+        }
+        else if ( send_rank == my_rank )
+        {
             EXPECT_EQ( slice_int_host( i ), 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), 1.5 );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( slice_int_host( i ), send_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
@@ -306,18 +340,24 @@ void test2( const bool use_topology ) {
     EXPECT_EQ( slice_dbl_host( 0, 1 ), ( my_size + 1 ) * ( my_rank + 1.5 ) );
 
     // Check that the ghost data didn't change.
-    for ( int i = num_local; i < num_local + my_size; ++i ) {
+    for ( int i = num_local; i < num_local + my_size; ++i )
+    {
         // Self sends are first.
         int send_rank = i - num_local;
-        if ( send_rank == 0 ) {
+        if ( send_rank == 0 )
+        {
             EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
-        } else if ( send_rank == my_rank ) {
+        }
+        else if ( send_rank == my_rank )
+        {
             EXPECT_EQ( slice_int_host( i ), 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), 1.5 );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( slice_int_host( i ), send_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
             EXPECT_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
@@ -335,20 +375,26 @@ void test2( const bool use_topology ) {
     EXPECT_EQ( slice_dbl_host( 0, 1 ), ( my_size + 1 ) * ( my_rank + 1.5 ) );
 
     // Check that the ghost data was updated.
-    for ( int i = num_local; i < num_local + my_size; ++i ) {
+    for ( int i = num_local; i < num_local + my_size; ++i )
+    {
         // Self sends are first.
         int send_rank = i - num_local;
-        if ( send_rank == 0 ) {
+        if ( send_rank == 0 )
+        {
             EXPECT_EQ( slice_int_host( i ), ( my_size + 1 ) * ( my_rank + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 0 ),
                        ( my_size + 1 ) * ( my_rank + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 1 ),
                        ( my_size + 1 ) * ( my_rank + 1.5 ) );
-        } else if ( send_rank == my_rank ) {
+        }
+        else if ( send_rank == my_rank )
+        {
             EXPECT_EQ( slice_int_host( i ), ( my_size + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 0 ), ( my_size + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 1 ), ( my_size + 1 ) * 1.5 );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( slice_int_host( i ),
                        ( my_size + 1 ) * ( send_rank + 1 ) );
             EXPECT_EQ( slice_dbl_host( i, 0 ),

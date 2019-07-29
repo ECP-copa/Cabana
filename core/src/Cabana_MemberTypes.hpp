@@ -15,27 +15,35 @@
 #include <cstdlib>
 #include <type_traits>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 /*!
  \class MemberTypes
  \brief General sequence of types for SoA and AoSoA member data.
 */
 template <typename... Types>
-struct MemberTypes {
+struct MemberTypes
+{
     static constexpr std::size_t size = sizeof...( Types );
 };
 
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
-struct is_member_types : public std::false_type {};
+struct is_member_types : public std::false_type
+{
+};
 
 template <typename... Types>
-struct is_member_types<MemberTypes<Types...>> : public std::true_type {};
+struct is_member_types<MemberTypes<Types...>> : public std::true_type
+{
+};
 
 template <typename... Types>
-struct is_member_types<const MemberTypes<Types...>> : public std::true_type {};
+struct is_member_types<const MemberTypes<Types...>> : public std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -46,12 +54,14 @@ template <std::size_t M, typename T, typename... Types>
 struct MemberTypeAtIndexImpl;
 
 template <typename T, typename... Types>
-struct MemberTypeAtIndexImpl<0, T, Types...> {
+struct MemberTypeAtIndexImpl<0, T, Types...>
+{
     using type = T;
 };
 
 template <std::size_t M, typename T, typename... Types>
-struct MemberTypeAtIndexImpl {
+struct MemberTypeAtIndexImpl
+{
     using type = typename MemberTypeAtIndexImpl<M - 1, Types...>::type;
 };
 
@@ -59,7 +69,8 @@ template <std::size_t M, typename... Types>
 struct MemberTypeAtIndex;
 
 template <std::size_t M, typename... Types>
-struct MemberTypeAtIndex<M, MemberTypes<Types...>> {
+struct MemberTypeAtIndex<M, MemberTypes<Types...>>
+{
     using type = typename MemberTypeAtIndexImpl<M, Types...>::type;
 };
 

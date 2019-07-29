@@ -25,12 +25,18 @@
 #include <type_traits>
 #include <vector>
 
-namespace Cabana {
-namespace Impl {
+namespace Cabana
+{
+namespace Impl
+{
 //---------------------------------------------------------------------------//
 // Count sends and create steering algorithm tags.
-struct CountSendsAndCreateSteeringDuplicated {};
-struct CountSendsAndCreateSteeringAtomic {};
+struct CountSendsAndCreateSteeringDuplicated
+{
+};
+struct CountSendsAndCreateSteeringAtomic
+{
+};
 
 //---------------------------------------------------------------------------//
 // Count sends and create steering algorithm selector.
@@ -40,14 +46,16 @@ struct CountSendsAndCreateSteeringAlgorithm;
 // CUDA uses atomics.
 #ifdef Cabana_ENABLE_Cuda
 template <>
-struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Cuda> {
+struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Cuda>
+{
     using type = CountSendsAndCreateSteeringAtomic;
 };
 #endif // end Cabana_ENABLE_Cuda
 
 // The default is to use duplication.
 template <class ExecutionSpace>
-struct CountSendsAndCreateSteeringAlgorithm {
+struct CountSendsAndCreateSteeringAlgorithm
+{
     using type = CountSendsAndCreateSteeringDuplicated;
 };
 
@@ -59,7 +67,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
                                   CountSendsAndCreateSteeringAtomic )
     -> std::pair<Kokkos::View<int *, typename ExportRankView::device_type>,
                  Kokkos::View<typename ExportRankView::size_type *,
-                              typename ExportRankView::device_type>> {
+                              typename ExportRankView::device_type>>
+{
     using device_type = typename ExportRankView::device_type;
     using execution_space = typename ExportRankView::execution_space;
     using size_type = typename ExportRankView::size_type;
@@ -93,7 +102,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
                                   CountSendsAndCreateSteeringDuplicated )
     -> std::pair<Kokkos::View<int *, typename ExportRankView::device_type>,
                  Kokkos::View<typename ExportRankView::size_type *,
-                              typename ExportRankView::device_type>> {
+                              typename ExportRankView::device_type>>
+{
     using device_type = typename ExportRankView::device_type;
     using execution_space = typename ExportRankView::execution_space;
     using size_type = typename ExportRankView::size_type;
@@ -120,7 +130,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
         "Cabana::CommunicationPlan::intialCount",
         Kokkos::RangePolicy<execution_space>( 0, element_export_ranks.size() ),
         KOKKOS_LAMBDA( const size_type i ) {
-            if ( element_export_ranks( i ) >= 0 ) {
+            if ( element_export_ranks( i ) >= 0 )
+            {
                 // Get the thread id.
                 auto thread_id = unique_token.acquire();
 
@@ -178,7 +189,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
             auto i = team.league_rank();
 
             // Only operate on valid elements
-            if ( element_export_ranks( i ) >= 0 ) {
+            if ( element_export_ranks( i ) >= 0 )
+            {
                 // Compute the thread id in which we located the element
                 // during the count phase. Only the thread in which we
                 // located the element will contribute to the reduction.
@@ -252,7 +264,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
   is being exported will appear first in the steering vector.
 */
 template <class DeviceType>
-class CommunicationPlan {
+class CommunicationPlan
+{
   public:
     // Device type.
     using device_type = DeviceType;
@@ -274,7 +287,9 @@ class CommunicationPlan {
       \return The MPI communicator for this plan.
     */
     CommunicationPlan( MPI_Comm comm )
-        : _comm( comm ) {}
+        : _comm( comm )
+    {
+    }
 
     /*!
       \brief Get the MPI communicator.
@@ -296,7 +311,8 @@ class CommunicationPlan {
 
       \return The MPI rank of the neighbor with the given local id.
     */
-    int neighborRank( const int neighbor ) const {
+    int neighborRank( const int neighbor ) const
+    {
         return _neighbors[neighbor];
     }
 
@@ -310,7 +326,8 @@ class CommunicationPlan {
       \return The number of elements this rank will export to the neighbor with
       the given local id.
      */
-    std::size_t numExport( const int neighbor ) const {
+    std::size_t numExport( const int neighbor ) const
+    {
         return _num_export[neighbor];
     }
 
@@ -332,7 +349,8 @@ class CommunicationPlan {
       \return The number of elements this rank will import from the neighbor
       with the given local id.
      */
-    std::size_t numImport( const int neighbor ) const {
+    std::size_t numImport( const int neighbor ) const
+    {
         return _num_import[neighbor];
     }
 
@@ -367,7 +385,8 @@ class CommunicationPlan {
       (i.e. all elements going to neighbor with local id 0 first, then all
       elements going to neighbor with local id 1, etc.).
     */
-    Kokkos::View<std::size_t *, device_type> getExportSteering() const {
+    Kokkos::View<std::size_t *, device_type> getExportSteering() const
+    {
         return _export_steering;
     }
 
@@ -417,7 +436,8 @@ class CommunicationPlan {
     Kokkos::View<size_type *, device_type>
     createFromExportsAndTopology( const ViewType &element_export_ranks,
                                   const std::vector<int> &neighbor_ranks,
-                                  const int mpi_tag = 1221 ) {
+                                  const int mpi_tag = 1221 )
+    {
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
 
@@ -436,7 +456,8 @@ class CommunicationPlan {
         // If we are sending to ourself put that one first in the neighbor
         // list.
         for ( auto &n : _neighbors )
-            if ( n == my_rank ) {
+            if ( n == my_rank )
+            {
                 std::swap( n, _neighbors[0] );
                 break;
             }
@@ -464,11 +485,13 @@ class CommunicationPlan {
         std::vector<MPI_Request> requests;
         requests.reserve( num_n );
         for ( int n = 0; n < num_n; ++n )
-            if ( my_rank != _neighbors[n] ) {
+            if ( my_rank != _neighbors[n] )
+            {
                 requests.push_back( MPI_Request() );
                 MPI_Irecv( &_num_import[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
                            mpi_tag, _comm, &( requests.back() ) );
-            } else
+            }
+            else
                 _num_import[n] = _num_export[n];
 
         // Send the number of exports to each of our neighbors.
@@ -531,7 +554,8 @@ class CommunicationPlan {
     template <class ViewType>
     Kokkos::View<size_type *, device_type>
     createFromExportsOnly( const ViewType &element_export_ranks,
-                           const int mpi_tag = 1221 ) {
+                           const int mpi_tag = 1221 )
+    {
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
 
@@ -560,7 +584,8 @@ class CommunicationPlan {
         _num_export.clear();
         _total_num_export = 0;
         for ( int r = 0; r < comm_size; ++r )
-            if ( neighbor_counts_host( r ) > 0 ) {
+            if ( neighbor_counts_host( r ) > 0 )
+            {
                 _neighbors.push_back( r );
                 _num_export.push_back( neighbor_counts_host( r ) );
                 _total_num_export += neighbor_counts_host( r );
@@ -576,7 +601,8 @@ class CommunicationPlan {
         // list and assign the number of imports to be the number of exports.
         bool self_send = false;
         for ( int n = 0; n < num_export_rank; ++n )
-            if ( _neighbors[n] == my_rank ) {
+            if ( _neighbors[n] == my_rank )
+            {
                 std::swap( _neighbors[n], _neighbors[0] );
                 std::swap( _num_export[n], _num_export[0] );
                 _num_import[0] = _num_export[0];
@@ -620,7 +646,8 @@ class CommunicationPlan {
 
         // Extract the imports. If we did self sends we already know what
         // imports we got from that.
-        for ( int i = 0; i < num_import_rank; ++i ) {
+        for ( int i = 0; i < num_import_rank; ++i )
+        {
             // Get the message source.
             const auto source = status[i].MPI_SOURCE;
 
@@ -631,7 +658,8 @@ class CommunicationPlan {
 
             // If this is a new neighbor (i.e. someone we didn't send anything
             // to) record this.
-            if ( found_neighbor == std::end( _neighbors ) ) {
+            if ( found_neighbor == std::end( _neighbors ) )
+            {
                 _neighbors.push_back( source );
                 _num_import.push_back( import_sizes[i] );
                 _num_export.push_back( 0 );
@@ -640,7 +668,8 @@ class CommunicationPlan {
             // Otherwise if we already sent something to this neighbor that
             // means we already have a neighbor/export entry. Just assign the
             // import entry for that neighbor.
-            else {
+            else
+            {
                 auto n = std::distance( _neighbors.begin(), found_neighbor );
                 _num_import[n] = import_sizes[i];
             }
@@ -669,7 +698,8 @@ class CommunicationPlan {
     */
     template <class PackViewType, class RankViewType>
     void createExportSteering( const PackViewType &neighbor_ids,
-                               const RankViewType &element_export_ranks ) {
+                               const RankViewType &element_export_ranks )
+    {
         // passing in element_export_ranks here as a dummy argument.
         createSteering( true, neighbor_ids, element_export_ranks,
                         element_export_ranks );
@@ -697,7 +727,8 @@ class CommunicationPlan {
     template <class PackViewType, class RankViewType, class IdViewType>
     void createExportSteering( const PackViewType &neighbor_ids,
                                const RankViewType &element_export_ranks,
-                               const IdViewType &element_export_ids ) {
+                               const IdViewType &element_export_ids )
+    {
         createSteering( false, neighbor_ids, element_export_ranks,
                         element_export_ids );
     }
@@ -706,7 +737,8 @@ class CommunicationPlan {
     template <class PackViewType, class RankViewType, class IdViewType>
     void createSteering( const bool use_iota, const PackViewType &neighbor_ids,
                          const RankViewType &element_export_ranks,
-                         const IdViewType &element_export_ids ) {
+                         const IdViewType &element_export_ids )
+    {
         if ( !use_iota &&
              ( element_export_ids.size() != element_export_ranks.size() ) )
             throw std::runtime_error( "Export ids and ranks different sizes!" );

@@ -22,10 +22,12 @@
 #include <algorithm>
 #include <vector>
 
-namespace Test {
+namespace Test
+{
 //---------------------------------------------------------------------------//
 // Linked cell list cell stencil test.
-void testLinkedCellStencil() {
+void testLinkedCellStencil()
+{
     // Point in the middle
     {
         double min[3] = {0.0, 0.0, 0.0};
@@ -105,14 +107,16 @@ void testLinkedCellStencil() {
 //---------------------------------------------------------------------------//
 // List implementation.
 template <class... Params>
-struct TestNeighborList {
+struct TestNeighborList
+{
     Kokkos::View<int *, Params...> counts;
     Kokkos::View<int **, Params...> neighbors;
 };
 
 template <class KokkosMemorySpace>
 TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>
-createTestListHostCopy( const TestNeighborList<KokkosMemorySpace> &test_list ) {
+createTestListHostCopy( const TestNeighborList<KokkosMemorySpace> &test_list )
+{
     using data_layout = typename decltype( test_list.counts )::array_layout;
     TestNeighborList<data_layout, Kokkos::HostSpace> list_copy;
     Kokkos::resize( list_copy.counts, test_list.counts.extent( 0 ) );
@@ -126,8 +130,8 @@ createTestListHostCopy( const TestNeighborList<KokkosMemorySpace> &test_list ) {
 // Create a host copy of a list that implements the neighbor list interface.
 template <class ListType>
 TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>
-copyListToHost( const ListType &list, const int num_particle,
-                const int max_n ) {
+copyListToHost( const ListType &list, const int num_particle, const int max_n )
+{
     TestNeighborList<TEST_MEMSPACE> list_copy;
     list_copy.counts =
         Kokkos::View<int *, TEST_MEMSPACE>( "counts", num_particle );
@@ -150,7 +154,8 @@ copyListToHost( const ListType &list, const int num_particle,
 // Create particles.
 Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE>
 createParticles( const int num_particle, const double box_min,
-                 const double box_max ) {
+                 const double box_max )
+{
     using DataTypes = Cabana::MemberTypes<double[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
     AoSoA_t aosoa( "aosoa", num_particle );
@@ -159,7 +164,8 @@ createParticles( const int num_particle, const double box_min,
     using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
     using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
     PoolType pool( 342343901 );
-    auto random_coord_op = KOKKOS_LAMBDA( const int p ) {
+    auto random_coord_op = KOKKOS_LAMBDA( const int p )
+    {
         auto gen = pool.get_state();
         for ( int d = 0; d < 3; ++d )
             position( p, d ) =
@@ -176,7 +182,8 @@ createParticles( const int num_particle, const double box_min,
 template <class PositionSlice>
 TestNeighborList<TEST_MEMSPACE>
 computeFullNeighborList( const PositionSlice &position,
-                         const double neighborhood_radius ) {
+                         const double neighborhood_radius )
+{
     // Build a neighbor list with a brute force n^2 implementation. Count
     // first.
     TestNeighborList<TEST_MEMSPACE> list;
@@ -185,9 +192,12 @@ computeFullNeighborList( const PositionSlice &position,
     list.counts = Kokkos::View<int *, TEST_MEMSPACE>( "test_neighbor_count",
                                                       num_particle );
     Kokkos::deep_copy( list.counts, 0 );
-    auto count_op = KOKKOS_LAMBDA( const int i ) {
-        for ( int j = 0; j < num_particle; ++j ) {
-            if ( i != j ) {
+    auto count_op = KOKKOS_LAMBDA( const int i )
+    {
+        for ( int j = 0; j < num_particle; ++j )
+        {
+            if ( i != j )
+            {
                 double dsqr = 0.0;
                 for ( int d = 0; d < 3; ++d )
                     dsqr += ( position( i, d ) - position( j, d ) ) *
@@ -202,7 +212,8 @@ computeFullNeighborList( const PositionSlice &position,
     Kokkos::fence();
 
     // Allocate.
-    auto max_op = KOKKOS_LAMBDA( const int i, int &max_val ) {
+    auto max_op = KOKKOS_LAMBDA( const int i, int &max_val )
+    {
         if ( max_val < list.counts( i ) )
             max_val = list.counts( i );
     };
@@ -213,15 +224,19 @@ computeFullNeighborList( const PositionSlice &position,
                                                           num_particle, max_n );
 
     // Fill.
-    auto fill_op = KOKKOS_LAMBDA( const int i ) {
+    auto fill_op = KOKKOS_LAMBDA( const int i )
+    {
         int n_count = 0;
-        for ( int j = 0; j < num_particle; ++j ) {
-            if ( i != j ) {
+        for ( int j = 0; j < num_particle; ++j )
+        {
+            if ( i != j )
+            {
                 double dsqr = 0.0;
                 for ( int d = 0; d < 3; ++d )
                     dsqr += ( position( i, d ) - position( j, d ) ) *
                             ( position( i, d ) - position( j, d ) );
-                if ( dsqr <= rsqr ) {
+                if ( dsqr <= rsqr )
+                {
                     list.neighbors( i, n_count ) = j;
                     ++n_count;
                 }
@@ -237,7 +252,8 @@ computeFullNeighborList( const PositionSlice &position,
 //---------------------------------------------------------------------------//
 template <class ListType, class PositionSlice>
 void checkFullNeighborList( const ListType &list, const PositionSlice &position,
-                            const double neighborhood_radius ) {
+                            const double neighborhood_radius )
+{
     // Create a test list to check against.
     auto test_list = computeFullNeighborList( position, neighborhood_radius );
     auto test_list_copy = createTestListHostCopy( test_list );
@@ -249,14 +265,16 @@ void checkFullNeighborList( const ListType &list, const PositionSlice &position,
 
     // Check the results.
     int num_particle = position.size();
-    for ( int p = 0; p < num_particle; ++p ) {
+    for ( int p = 0; p < num_particle; ++p )
+    {
         // First check that the number of neighbors are the same.
         EXPECT_EQ( list_copy.counts( p ), test_list_copy.counts( p ) );
 
         // Now extract the neighbors.
         std::vector<int> computed_neighbors( test_list_copy.counts( p ) );
         std::vector<int> actual_neighbors( test_list_copy.counts( p ) );
-        for ( int n = 0; n < test_list_copy.counts( p ); ++n ) {
+        for ( int n = 0; n < test_list_copy.counts( p ); ++n )
+        {
             computed_neighbors[n] = list_copy.neighbors( p, n );
             actual_neighbors[n] = test_list_copy.neighbors( p, n );
         }
@@ -275,7 +293,8 @@ void checkFullNeighborList( const ListType &list, const PositionSlice &position,
 //---------------------------------------------------------------------------//
 template <class ListType, class PositionSlice>
 void checkHalfNeighborList( const ListType &list, const PositionSlice &position,
-                            const double neighborhood_radius ) {
+                            const double neighborhood_radius )
+{
     // First build a full list.
     auto full_list = computeFullNeighborList( position, neighborhood_radius );
     auto full_list_copy = createTestListHostCopy( full_list );
@@ -289,7 +308,8 @@ void checkHalfNeighborList( const ListType &list, const PositionSlice &position,
     int num_particle = position.size();
     int half_size = 0;
     int full_size = 0;
-    for ( int p = 0; p < num_particle; ++p ) {
+    for ( int p = 0; p < num_particle; ++p )
+    {
         half_size += list_copy.counts( p );
         full_size += full_list_copy.counts( p );
     }
@@ -297,15 +317,18 @@ void checkHalfNeighborList( const ListType &list, const PositionSlice &position,
 
     // Check the half list by ensuring that a particle does not show up in the
     // neighbor list of its neighbors.
-    for ( int p = 0; p < num_particle; ++p ) {
+    for ( int p = 0; p < num_particle; ++p )
+    {
         // Check each neighbor of p
-        for ( int n = 0; n < list_copy.counts( p ); ++n ) {
+        for ( int n = 0; n < list_copy.counts( p ); ++n )
+        {
             // Get the id of the nth neighbor of p.
             auto p_n = list_copy.neighbors( p, n );
 
             // Check that p is not in the neighbor list of the nth neighbor of
             // p.
-            for ( int m = 0; m < list_copy.counts( p_n ); ++m ) {
+            for ( int m = 0; m < list_copy.counts( p_n ); ++m )
+            {
                 auto n_m = list_copy.neighbors( p_n, m );
                 EXPECT_NE( n_m, p );
             }
@@ -318,7 +341,8 @@ template <class ListType, class PositionSlice>
 void checkFullNeighborListPartialRange( const ListType &list,
                                         const PositionSlice &position,
                                         const double neighborhood_radius,
-                                        const int num_ignore ) {
+                                        const int num_ignore )
+{
     // Build a full list to test with
     auto test_list = computeFullNeighborList( position, neighborhood_radius );
     auto test_list_copy = createTestListHostCopy( test_list );
@@ -330,15 +354,18 @@ void checkFullNeighborListPartialRange( const ListType &list,
 
     // Check the results.
     int num_particle = position.size();
-    for ( int p = 0; p < num_particle; ++p ) {
-        if ( p < num_ignore ) {
+    for ( int p = 0; p < num_particle; ++p )
+    {
+        if ( p < num_ignore )
+        {
             // First check that the number of neighbors are the same.
             EXPECT_EQ( list_copy.counts( p ), test_list_copy.counts( p ) );
 
             // Now extract the neighbors.
             std::vector<int> computed_neighbors( test_list_copy.counts( p ) );
             std::vector<int> actual_neighbors( test_list_copy.counts( p ) );
-            for ( int n = 0; n < test_list_copy.counts( p ); ++n ) {
+            for ( int n = 0; n < test_list_copy.counts( p ); ++n )
+            {
                 computed_neighbors[n] = list_copy.neighbors( p, n );
                 actual_neighbors[n] = test_list_copy.neighbors( p, n );
             }
@@ -351,7 +378,9 @@ void checkFullNeighborListPartialRange( const ListType &list,
             // Now compare directly.
             for ( int n = 0; n < test_list_copy.counts( p ); ++n )
                 EXPECT_EQ( computed_neighbors[n], actual_neighbors[n] );
-        } else {
+        }
+        else
+        {
             EXPECT_EQ( list_copy.counts( p ), 0 );
         }
     }
@@ -359,7 +388,8 @@ void checkFullNeighborListPartialRange( const ListType &list,
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag>
-void testVerletListFull() {
+void testVerletListFull()
+{
     // Create the AoSoA and fill with random particle positions.
     int num_particle = 1e3;
     double test_radius = 2.32;
@@ -385,7 +415,8 @@ void testVerletListFull() {
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag>
-void testVerletListHalf() {
+void testVerletListHalf()
+{
     // Create the AoSoA and fill with random particle positions.
     int num_particle = 1e3;
     double test_radius = 2.32;
@@ -408,7 +439,8 @@ void testVerletListHalf() {
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag>
-void testNeighborParallelFor() {
+void testNeighborParallelFor()
+{
     // Create the AoSoA and fill with random particle positions.
     int num_particle = 1e3;
     double test_radius = 2.32;
@@ -436,10 +468,12 @@ void testNeighborParallelFor() {
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
-    auto serial_count_op = KOKKOS_LAMBDA( const int i, const int n ) {
+    auto serial_count_op = KOKKOS_LAMBDA( const int i, const int n )
+    {
         Kokkos::atomic_add( &serial_result( i ), n );
     };
-    auto team_count_op = KOKKOS_LAMBDA( const int i, const int n ) {
+    auto team_count_op = KOKKOS_LAMBDA( const int i, const int n )
+    {
         Kokkos::atomic_add( &team_result( i ), n );
     };
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
@@ -462,7 +496,8 @@ void testNeighborParallelFor() {
         Kokkos::HostSpace(), serial_result );
     auto team_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), team_result );
-    for ( int p = 0; p < num_particle; ++p ) {
+    for ( int p = 0; p < num_particle; ++p )
+    {
         EXPECT_EQ( test_result( p ), serial_mirror( p ) );
         EXPECT_EQ( test_result( p ), team_mirror( p ) );
     }
@@ -470,7 +505,8 @@ void testNeighborParallelFor() {
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag>
-void testVerletListFullPartialRange() {
+void testVerletListFullPartialRange()
+{
     // Create the AoSoA and fill with random particle positions.
     int num_particle = 1e3;
     int num_ignore = 800;
@@ -499,25 +535,29 @@ void testVerletListFullPartialRange() {
 TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_list_full_test ) {
+TEST( TEST_CATEGORY, linked_cell_list_full_test )
+{
     testVerletListFull<Cabana::VerletLayoutCSR>();
     testVerletListFull<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_list_half_test ) {
+TEST( TEST_CATEGORY, linked_cell_list_half_test )
+{
     testVerletListHalf<Cabana::VerletLayoutCSR>();
     testVerletListHalf<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_list_full_range_test ) {
+TEST( TEST_CATEGORY, linked_cell_list_full_range_test )
+{
     testVerletListFullPartialRange<Cabana::VerletLayoutCSR>();
     testVerletListFullPartialRange<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, parallel_for_test ) {
+TEST( TEST_CATEGORY, parallel_for_test )
+{
     testNeighborParallelFor<Cabana::VerletLayoutCSR>();
     testNeighborParallelFor<Cabana::VerletLayout2D>();
 }

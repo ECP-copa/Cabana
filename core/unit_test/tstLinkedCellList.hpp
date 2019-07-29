@@ -15,11 +15,17 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
+namespace Test
+{
 //---------------------------------------------------------------------------//
-void testLinkedList() {
+void testLinkedList()
+{
     // Make an AoSoA with positions and ijk cell ids.
-    enum MyFields { Position = 0, CellId = 1 };
+    enum MyFields
+    {
+        Position = 0,
+        CellId = 1
+    };
     using DataTypes = Cabana::MemberTypes<double[3], int[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
     using size_type = typename AoSoA_t::memory_space::size_type;
@@ -39,8 +45,10 @@ void testLinkedList() {
     Kokkos::parallel_for(
         "initialize", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
         KOKKOS_LAMBDA( const int k ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int i = 0; i < nx; ++i ) {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int i = 0; i < nx; ++i )
+                {
                     std::size_t particle_id = i + j * nx + k * nx * nx;
 
                     cell_id( particle_id, 0 ) = i;
@@ -84,7 +92,8 @@ void testLinkedList() {
             "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
             KOKKOS_LAMBDA( const int i ) {
                 for ( int j = 0; j < nx; ++j )
-                    for ( int k = 0; k < nx; ++k ) {
+                    for ( int k = 0; k < nx; ++k )
+                    {
                         std::size_t original_id = i + j * nx + k * nx * nx;
                         ids( original_id, 0 ) = cell_id( original_id, 0 );
                         ids( original_id, 1 ) = cell_id( original_id, 1 );
@@ -106,11 +115,15 @@ void testLinkedList() {
         // first. We do this by looping through in the sorted order and check
         // those that had original indices in the sorting range.
         std::size_t particle_id = 0;
-        for ( int i = 0; i < nx; ++i ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int k = 0; k < nx; ++k ) {
+        for ( int i = 0; i < nx; ++i )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int k = 0; k < nx; ++k )
+                {
                     std::size_t original_id = i + j * nx + k * nx * nx;
-                    if ( begin <= original_id && original_id < end ) {
+                    if ( begin <= original_id && original_id < end )
+                    {
                         // Get what should be the local id of the particle in
                         // the newly sorted decomposition. We are looping
                         // through this in k-fastest order (the indexing of
@@ -146,10 +159,14 @@ void testLinkedList() {
         // For those that are outside the binned range IDs should be
         // unchanged and the bins should empty.
         particle_id = 0;
-        for ( int k = 0; k < nx; ++k ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int i = 0; i < nx; ++i, ++particle_id ) {
-                    if ( begin > particle_id || particle_id >= end ) {
+        for ( int k = 0; k < nx; ++k )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int i = 0; i < nx; ++i, ++particle_id )
+                {
+                    if ( begin > particle_id || particle_id >= end )
+                    {
                         EXPECT_EQ( ids_mirror( particle_id, 0 ), i );
                         EXPECT_EQ( ids_mirror( particle_id, 1 ), j );
                         EXPECT_EQ( ids_mirror( particle_id, 2 ), k );
@@ -176,7 +193,8 @@ void testLinkedList() {
             "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
             KOKKOS_LAMBDA( const int i ) {
                 for ( int j = 0; j < nx; ++j )
-                    for ( int k = 0; k < nx; ++k ) {
+                    for ( int k = 0; k < nx; ++k )
+                    {
                         std::size_t original_id = i + j * nx + k * nx * nx;
                         ids( original_id, 0 ) = cell_id( original_id, 0 );
                         ids( original_id, 1 ) = cell_id( original_id, 1 );
@@ -200,9 +218,12 @@ void testLinkedList() {
         EXPECT_EQ( cell_list.numBin( 1 ), nx );
         EXPECT_EQ( cell_list.numBin( 2 ), nx );
         std::size_t particle_id = 0;
-        for ( int i = 0; i < nx; ++i ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int k = 0; k < nx; ++k, ++particle_id ) {
+        for ( int i = 0; i < nx; ++i )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int k = 0; k < nx; ++k, ++particle_id )
+                {
                     EXPECT_EQ( ids_mirror( particle_id, 0 ), i );
                     EXPECT_EQ( ids_mirror( particle_id, 1 ), j );
                     EXPECT_EQ( ids_mirror( particle_id, 2 ), k );
@@ -218,9 +239,14 @@ void testLinkedList() {
 }
 
 //---------------------------------------------------------------------------//
-void testLinkedListSlice() {
+void testLinkedListSlice()
+{
     // Make an AoSoA with positions and ijk cell ids.
-    enum MyFields { Position = 0, CellId = 1 };
+    enum MyFields
+    {
+        Position = 0,
+        CellId = 1
+    };
     using DataTypes = Cabana::MemberTypes<double[3], int[3]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
     using size_type = typename AoSoA_t::memory_space::size_type;
@@ -240,8 +266,10 @@ void testLinkedListSlice() {
     Kokkos::parallel_for(
         "initialize", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
         KOKKOS_LAMBDA( const int k ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int i = 0; i < nx; ++i ) {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int i = 0; i < nx; ++i )
+                {
                     std::size_t particle_id = i + j * nx + k * nx * nx;
 
                     cell_id( particle_id, 0 ) = i;
@@ -287,7 +315,8 @@ void testLinkedListSlice() {
             "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
             KOKKOS_LAMBDA( const int i ) {
                 for ( int j = 0; j < nx; ++j )
-                    for ( int k = 0; k < nx; ++k ) {
+                    for ( int k = 0; k < nx; ++k )
+                    {
                         std::size_t original_id = i + j * nx + k * nx * nx;
                         ids_view( original_id, 0 ) = cell_id( original_id, 0 );
                         ids_view( original_id, 1 ) = cell_id( original_id, 1 );
@@ -314,11 +343,15 @@ void testLinkedListSlice() {
         // first. We do this by looping through in the sorted order and check
         // those that had original indices in the sorting range.
         std::size_t particle_id = 0;
-        for ( int i = 0; i < nx; ++i ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int k = 0; k < nx; ++k ) {
+        for ( int i = 0; i < nx; ++i )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int k = 0; k < nx; ++k )
+                {
                     std::size_t original_id = i + j * nx + k * nx * nx;
-                    if ( begin <= original_id && original_id < end ) {
+                    if ( begin <= original_id && original_id < end )
+                    {
                         int sort_id = begin + particle_id;
 
                         // Back calculate what we think the ijk indices of
@@ -355,10 +388,14 @@ void testLinkedListSlice() {
         // For positions that are outside the binned range pos should be
         // unchanged and the bins should empty.
         particle_id = 0;
-        for ( int k = 0; k < nx; ++k ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int i = 0; i < nx; ++i, ++particle_id ) {
-                    if ( begin > particle_id || particle_id >= end ) {
+        for ( int k = 0; k < nx; ++k )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int i = 0; i < nx; ++i, ++particle_id )
+                {
+                    if ( begin > particle_id || particle_id >= end )
+                    {
                         float pos_i = x_min + ( i + 0.5 ) * dx;
                         float pos_j = x_min + ( j + 0.5 ) * dx;
                         float pos_k = x_min + ( k + 0.5 ) * dx;
@@ -403,7 +440,8 @@ void testLinkedListSlice() {
             "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
             KOKKOS_LAMBDA( const int i ) {
                 for ( int j = 0; j < nx; ++j )
-                    for ( int k = 0; k < nx; ++k ) {
+                    for ( int k = 0; k < nx; ++k )
+                    {
                         std::size_t original_id = i + j * nx + k * nx * nx;
                         ids_view( original_id, 0 ) = cell_id( original_id, 0 );
                         ids_view( original_id, 1 ) = cell_id( original_id, 1 );
@@ -426,9 +464,12 @@ void testLinkedListSlice() {
             Kokkos::HostSpace(), bin_offset );
 
         std::size_t particle_id = 0;
-        for ( int i = 0; i < nx; ++i ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int k = 0; k < nx; ++k, ++particle_id ) {
+        for ( int i = 0; i < nx; ++i )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int k = 0; k < nx; ++k, ++particle_id )
+                {
                     float pos_i = x_min + ( i + 0.5 ) * dx;
                     float pos_j = x_min + ( j + 0.5 ) * dx;
                     float pos_k = x_min + ( k + 0.5 ) * dx;
@@ -445,9 +486,12 @@ void testLinkedListSlice() {
             }
         }
         particle_id = 0;
-        for ( int k = 0; k < nx; ++k ) {
-            for ( int j = 0; j < nx; ++j ) {
-                for ( int i = 0; i < nx; ++i, ++particle_id ) {
+        for ( int k = 0; k < nx; ++k )
+        {
+            for ( int j = 0; j < nx; ++j )
+            {
+                for ( int i = 0; i < nx; ++i, ++particle_id )
+                {
                     // All IDs should be unsorted
                     EXPECT_EQ( ids_mirror( particle_id, 0 ), i );
                     EXPECT_EQ( ids_mirror( particle_id, 1 ), j );

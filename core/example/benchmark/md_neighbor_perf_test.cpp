@@ -25,7 +25,8 @@
 
 // Performance test function.
 void perfTest( const double cutoff_ratio, const std::size_t num_data,
-               const double cell_size_ratio ) {
+               const double cell_size_ratio )
+{
     // Print test data.
     std::cout << std::endl;
     std::cout << "Number of particles: " << num_data << std::endl;
@@ -49,7 +50,10 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
     using DataTypes = Cabana::MemberTypes<double[3]>; // Position
 
     // Enumerate the types for convenience.
-    enum MyTypes { Position = 0 };
+    enum MyTypes
+    {
+        Position = 0
+    };
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes, DeviceType, vector_length>;
@@ -91,7 +95,8 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
 
     // Create particles. Only add particles that are outside a minimum
     // distance from other particles.
-    for ( std::size_t p = 1; p < num_data; ++p ) {
+    for ( std::size_t p = 1; p < num_data; ++p )
+    {
         if ( 0 == ( p - 1 ) % ( num_data / 10 ) )
             std::cout << "Inserting " << p << " / " << num_data << std::endl;
 
@@ -99,7 +104,8 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
 
         // Keep trying new random coordinates until we insert one that is not
         // within the minimum distance of any other particle.
-        while ( found_neighbor ) {
+        while ( found_neighbor )
+        {
             found_neighbor = false;
 
             // Create particle coordinates.
@@ -119,16 +125,21 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
             int k_max = ( nbinx > bin_k ) ? bin_k + 1 : nbinx;
 
             // Search the adjacent bins for neighbors.
-            for ( int i = i_min; i < i_max; ++i ) {
-                for ( int j = j_min; j < j_max; ++j ) {
-                    for ( int k = k_min; k < k_max; ++k ) {
-                        for ( auto &n : bins[bin_id( i, j, k )] ) {
+            for ( int i = i_min; i < i_max; ++i )
+            {
+                for ( int j = j_min; j < j_max; ++j )
+                {
+                    for ( int k = k_min; k < k_max; ++k )
+                    {
+                        for ( auto &n : bins[bin_id( i, j, k )] )
+                        {
                             double dx = x( n, 0 ) - x( p, 0 );
                             double dy = x( n, 1 ) - x( p, 1 );
                             double dz = x( n, 2 ) - x( p, 2 );
                             double dist = dx * dx + dy * dy + dz * dz;
 
-                            if ( dist < min_dist_sqr ) {
+                            if ( dist < min_dist_sqr )
+                            {
                                 found_neighbor = true;
                                 break;
                             }
@@ -186,7 +197,8 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
     // Create the neighbor list.
     int num_create = 10;
     std::vector<double> times( num_create );
-    for ( int t = 0; t < num_create; ++t ) {
+    for ( int t = 0; t < num_create; ++t )
+    {
         std::cout << "Run t: " << t << std::endl;
         auto start_time = std::chrono::high_resolution_clock::now();
 
@@ -211,7 +223,8 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
     std::cout << std::endl;
 }
 
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     // Minimum particle distance to particle interaction cutoff distance ratio.
     double cutoff_ratio = std::atof( argv[1] );
 

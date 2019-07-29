@@ -19,11 +19,13 @@
 
 #include <gtest/gtest.h>
 
-namespace Test {
+namespace Test
+{
 
 //---------------------------------------------------------------------------//
 // Struct for size comparison.
-struct FooData {
+struct FooData
+{
     double _d0[4];
     int _d1[4];
     float _d2[4];
@@ -34,7 +36,8 @@ struct FooData {
 
 //---------------------------------------------------------------------------//
 // SoA test
-void testSoA() {
+void testSoA()
+{
     // Declare an array layout.
     const int vector_length = 4;
 

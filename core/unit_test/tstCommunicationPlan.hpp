@@ -22,48 +22,57 @@
 #include <algorithm>
 #include <vector>
 
-namespace Test {
+namespace Test
+{
 //---------------------------------------------------------------------------//
 class CommPlanTester : public Cabana::CommunicationPlan<
-                           Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>> {
+                           Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>>
+{
   public:
     using device_type = Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>;
     using size_type = typename TEST_MEMSPACE::size_type;
 
     CommPlanTester( MPI_Comm comm )
-        : Cabana::CommunicationPlan<device_type>( comm ) {}
+        : Cabana::CommunicationPlan<device_type>( comm )
+    {
+    }
 
     template <class ViewType>
     Kokkos::View<size_type *, device_type>
     createFromExportsAndNeighbors( const ViewType &element_export_ranks,
-                                   const std::vector<int> &neighbor_ranks ) {
+                                   const std::vector<int> &neighbor_ranks )
+    {
         return this->createFromExportsAndTopology( element_export_ranks,
                                                    neighbor_ranks );
     }
 
     template <class ViewType>
     Kokkos::View<size_type *, device_type>
-    createFromExports( const ViewType &element_export_ranks ) {
+    createFromExports( const ViewType &element_export_ranks )
+    {
         return this->createFromExportsOnly( element_export_ranks );
     }
 
     template <class ViewType>
     void createSteering( Kokkos::View<size_type *, device_type> neighbor_ids,
-                         const ViewType &element_export_ranks ) {
+                         const ViewType &element_export_ranks )
+    {
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
     template <class RankViewType, class IdViewType>
     void createSteering( Kokkos::View<size_type *, device_type> neighbor_ids,
                          const RankViewType &element_export_ranks,
-                         const IdViewType &element_export_ids ) {
+                         const IdViewType &element_export_ids )
+    {
         this->createExportSteering( neighbor_ids, element_export_ranks,
                                     element_export_ids );
     }
 };
 
 //---------------------------------------------------------------------------//
-void test1( const bool use_topology ) {
+void test1( const bool use_topology )
+{
     // Make a communication plan.
     CommPlanTester comm_plan( MPI_COMM_WORLD );
 
@@ -114,7 +123,8 @@ void test1( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test2( const bool use_topology ) {
+void test2( const bool use_topology )
+{
     // Make a communication plan.
     CommPlanTester comm_plan( MPI_COMM_WORLD );
 
@@ -176,7 +186,8 @@ void test2( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test3( const bool use_topology ) {
+void test3( const bool use_topology )
+{
     // Make a communication plan.
     CommPlanTester comm_plan( MPI_COMM_WORLD );
 
@@ -233,7 +244,8 @@ void test3( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test4( const bool use_topology ) {
+void test4( const bool use_topology )
+{
     // Make a communication plan.
     CommPlanTester comm_plan( MPI_COMM_WORLD );
 
@@ -250,7 +262,8 @@ void test4( const bool use_topology ) {
     Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
                                                               num_data );
     std::vector<int> neighbor_ranks( my_size );
-    for ( int n = 0; n < my_size; ++n ) {
+    for ( int n = 0; n < my_size; ++n )
+    {
         export_ranks_host[n] = n;
         export_ranks_host[n + my_size] = n;
         neighbor_ranks[n] = n;
@@ -280,7 +293,8 @@ void test4( const bool use_topology ) {
     EXPECT_EQ( comm_plan.numImport( 0 ), 2 );
 
     // others
-    for ( int n = 1; n < my_size; ++n ) {
+    for ( int n = 1; n < my_size; ++n )
+    {
         // the algorithm will swap this rank and the first one.
         if ( n == my_rank )
             EXPECT_EQ( comm_plan.neighborRank( n ), 0 );
@@ -303,10 +317,13 @@ void test4( const bool use_topology ) {
 
     // self sends - we don't know which order the self sends are in but we
     // know they are the first 2.
-    if ( my_rank == (int)host_steering( 0 ) ) {
+    if ( my_rank == (int)host_steering( 0 ) )
+    {
         EXPECT_EQ( host_steering( 0 ), my_rank );
         EXPECT_EQ( host_steering( 1 ), my_rank + my_size );
-    } else {
+    }
+    else
+    {
         EXPECT_EQ( host_steering( 1 ), my_rank );
         EXPECT_EQ( host_steering( 0 ), my_rank + my_size );
     }
@@ -314,20 +331,30 @@ void test4( const bool use_topology ) {
     // others. again, we don't know which order the vector was made in but we
     // do know they are grouped by the rank to which we are sending and we
     // know how those ranks are ordered.
-    for ( int n = 1; n < my_size; ++n ) {
-        if ( n == my_rank ) {
-            if ( 0 == host_steering( 2 * n ) ) {
+    for ( int n = 1; n < my_size; ++n )
+    {
+        if ( n == my_rank )
+        {
+            if ( 0 == host_steering( 2 * n ) )
+            {
                 EXPECT_EQ( host_steering( 2 * n ), 0 );
                 EXPECT_EQ( host_steering( 2 * n + 1 ), my_size );
-            } else {
+            }
+            else
+            {
                 EXPECT_EQ( host_steering( 2 * n + 1 ), 0 );
                 EXPECT_EQ( host_steering( 2 * n ), my_size );
             }
-        } else {
-            if ( n == (int)host_steering( 2 * n ) ) {
+        }
+        else
+        {
+            if ( n == (int)host_steering( 2 * n ) )
+            {
                 EXPECT_EQ( host_steering( 2 * n ), n );
                 EXPECT_EQ( host_steering( 2 * n + 1 ), n + my_size );
-            } else {
+            }
+            else
+            {
                 EXPECT_EQ( host_steering( 2 * n + 1 ), n );
                 EXPECT_EQ( host_steering( 2 * n ), n + my_size );
             }
@@ -336,7 +363,8 @@ void test4( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test5( const bool use_topology ) {
+void test5( const bool use_topology )
+{
     // Make a communication plan.
     CommPlanTester comm_plan( MPI_COMM_WORLD );
 
@@ -354,7 +382,8 @@ void test5( const bool use_topology ) {
     Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
                                                               num_data );
     std::vector<int> neighbor_ranks( my_size );
-    for ( int n = 0; n < my_size; ++n ) {
+    for ( int n = 0; n < my_size; ++n )
+    {
         export_ranks_host[n] = -1;
         export_ranks_host[n + my_size] = n;
         neighbor_ranks[n] = n;
@@ -384,7 +413,8 @@ void test5( const bool use_topology ) {
     EXPECT_EQ( comm_plan.numImport( 0 ), 1 );
 
     // others
-    for ( int n = 1; n < my_size; ++n ) {
+    for ( int n = 1; n < my_size; ++n )
+    {
         // the algorithm will swap this rank and the first one.
         if ( n == my_rank )
             EXPECT_EQ( comm_plan.neighborRank( n ), 0 );
@@ -409,7 +439,8 @@ void test5( const bool use_topology ) {
     EXPECT_EQ( host_steering( 0 ), my_rank + my_size );
 
     // others
-    for ( int n = 1; n < my_size; ++n ) {
+    for ( int n = 1; n < my_size; ++n )
+    {
         if ( n == my_rank )
             EXPECT_EQ( host_steering( n ), my_size );
         else
@@ -418,7 +449,8 @@ void test5( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test6( const bool use_topology ) {
+void test6( const bool use_topology )
+{
     // Make a communication plan.
     CommPlanTester comm_plan( MPI_COMM_WORLD );
 
@@ -435,10 +467,13 @@ void test6( const bool use_topology ) {
     Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     Kokkos::deep_copy( export_ranks, 0 );
     std::vector<int> neighbor_ranks;
-    if ( 0 == my_rank ) {
+    if ( 0 == my_rank )
+    {
         neighbor_ranks.resize( my_size );
         std::iota( neighbor_ranks.begin(), neighbor_ranks.end(), 0 );
-    } else {
+    }
+    else
+    {
         neighbor_ranks.assign( 1, 0 );
     }
 
@@ -453,11 +488,14 @@ void test6( const bool use_topology ) {
         neighbor_ids = comm_plan.createFromExports( export_ranks );
 
     // Check the plan.
-    if ( 0 == my_rank ) {
+    if ( 0 == my_rank )
+    {
         EXPECT_EQ( comm_plan.numNeighbor(), my_size );
         EXPECT_EQ( comm_plan.numImport( 0 ), 1 );
         EXPECT_EQ( comm_plan.totalNumImport(), my_size );
-    } else {
+    }
+    else
+    {
         EXPECT_EQ( comm_plan.numNeighbor(), 1 );
         EXPECT_EQ( comm_plan.neighborRank( 0 ), 0 );
         EXPECT_EQ( comm_plan.numImport( 0 ), 0 );
@@ -482,7 +520,8 @@ void test6( const bool use_topology ) {
 }
 
 //---------------------------------------------------------------------------//
-void test7( const bool use_topology ) {
+void test7( const bool use_topology )
+{
     // Make a communication plan.
     CommPlanTester comm_plan( MPI_COMM_WORLD );
 

@@ -14,7 +14,8 @@
 
 #include <Kokkos_Core.hpp>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 // Neighbor List Interface
 //---------------------------------------------------------------------------//
@@ -26,7 +27,9 @@ namespace Cabana {
   particle "i" neighbors particle "j" then "j" will be in the neighbor list
   for "i" and "i" will bin the the neighbor list for "j".
 */
-class FullNeighborTag {};
+class FullNeighborTag
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -38,7 +41,9 @@ class FullNeighborTag {};
   will be in the neighbor list for "i" while the fact that "i" is a neighbor
   of "j" is implied.
 */
-class HalfNeighborTag {};
+class HalfNeighborTag
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -48,7 +53,8 @@ class HalfNeighborTag {};
   functor level that gives access to neighbor data for particles.
 */
 template <class NeighborListType>
-class NeighborList {
+class NeighborList
+{
   public:
     // Get the list type tag. Either full or half.
     using TypeTag = typename NeighborListType::TypeTag;

@@ -18,9 +18,11 @@
 
 #include <type_traits>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
-namespace Impl {
+namespace Impl
+{
 /*!
   \class
 
@@ -30,15 +32,18 @@ namespace Impl {
   \tparam VectorLength The inner array size of the AoSoA.
 */
 template <int VectorLength, class IndexType>
-class StructRange {
+class StructRange
+{
   public:
     KOKKOS_INLINE_FUNCTION
-    static constexpr IndexType structBegin( const IndexType begin ) {
+    static constexpr IndexType structBegin( const IndexType begin )
+    {
         return Index<VectorLength>::s( begin );
     }
 
     KOKKOS_INLINE_FUNCTION
-    static constexpr IndexType structEnd( const IndexType end ) {
+    static constexpr IndexType structEnd( const IndexType end )
+    {
         // If the end is also at the front of an array that means the struct
         // index of end is also the ending struct index. If not, we are not
         // iterating all the way through the arrays of the last struct. In
@@ -51,7 +56,8 @@ class StructRange {
 
     KOKKOS_INLINE_FUNCTION
     static constexpr IndexType size( const IndexType begin,
-                                     const IndexType end ) {
+                                     const IndexType end )
+    {
         return structEnd( end ) - structBegin( begin );
     }
 };
@@ -70,7 +76,8 @@ template <int VectorLength, class... Properties>
 class SimdPolicy
     : public Kokkos::TeamPolicy<
           typename Kokkos::Impl::PolicyTraits<Properties...>::execution_space,
-          Kokkos::Schedule<Kokkos::Dynamic>> {
+          Kokkos::Schedule<Kokkos::Dynamic>>
+{
   private:
     typedef Kokkos::Impl::PolicyTraits<Properties...> traits;
 
@@ -99,10 +106,13 @@ class SimdPolicy
         , _struct_end(
               Impl::StructRange<VectorLength, index_type>::structEnd( end ) )
         , _array_begin( Impl::Index<VectorLength>::a( begin ) )
-        , _array_end( Impl::Index<VectorLength>::a( end ) ) {}
+        , _array_end( Impl::Index<VectorLength>::a( end ) )
+    {
+    }
 
     //! Get the starting struct index.
-    KOKKOS_INLINE_FUNCTION index_type structBegin() const {
+    KOKKOS_INLINE_FUNCTION index_type structBegin() const
+    {
         return _struct_begin;
     }
 
@@ -110,7 +120,8 @@ class SimdPolicy
     KOKKOS_INLINE_FUNCTION index_type structEnd() const { return _struct_end; }
 
     //! Given a struct id get the beginning array index.
-    KOKKOS_INLINE_FUNCTION index_type arrayBegin( const index_type s ) const {
+    KOKKOS_INLINE_FUNCTION index_type arrayBegin( const index_type s ) const
+    {
         // If the given struct index is also the index of the struct index in
         // begin, use the starting array index. If not, that means we have
         // passed the first struct and all subsequent structs start at array
@@ -119,7 +130,8 @@ class SimdPolicy
     }
 
     // Given a struct id get the ending array index.
-    KOKKOS_INLINE_FUNCTION index_type arrayEnd( const index_type s ) const {
+    KOKKOS_INLINE_FUNCTION index_type arrayEnd( const index_type s ) const
+    {
         // If we are in the last unfilled struct then use the array
         // index of end. If not, we are looping through the current array all
         // the way to the end so use the vector length.

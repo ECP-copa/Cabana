@@ -14,15 +14,18 @@
 
 #include <cstdlib>
 
-namespace Cabana {
-namespace Impl {
+namespace Cabana
+{
+namespace Impl
+{
 //---------------------------------------------------------------------------//
 /*!
   \class IndexSequence
   \brief General sequence of indices.
  */
 template <std::size_t... Indices>
-struct IndexSequence {
+struct IndexSequence
+{
     static constexpr std::size_t size = sizeof...( Indices );
     using type = IndexSequence<Indices...>;
 };
@@ -36,7 +39,9 @@ struct ConcatenateIndexSequence;
 
 template <std::size_t I, std::size_t... Indices>
 struct ConcatenateIndexSequence<I, IndexSequence<Indices...>>
-    : IndexSequence<Indices..., I> {};
+    : IndexSequence<Indices..., I>
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -45,11 +50,14 @@ struct ConcatenateIndexSequence<I, IndexSequence<Indices...>>
 template <std::size_t N>
 struct MakeIndexSequence
     : ConcatenateIndexSequence<N - 1,
-                               typename MakeIndexSequence<N - 1>::type>::type {
+                               typename MakeIndexSequence<N - 1>::type>::type
+{
 };
 
 template <>
-struct MakeIndexSequence<1> : IndexSequence<0> {};
+struct MakeIndexSequence<1> : IndexSequence<0>
+{
+};
 
 //---------------------------------------------------------------------------//
 

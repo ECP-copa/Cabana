@@ -20,7 +20,8 @@
 //---------------------------------------------------------------------------//
 // Halo exchange example.
 //---------------------------------------------------------------------------//
-void haloExchangeExample() {
+void haloExchangeExample()
+{
     /*
       The halo is a communication plan designed from halo exchange where some
       locally-owned elements on each rank are used as ghost data on other
@@ -71,7 +72,8 @@ void haloExchangeExample() {
      */
     auto slice_0 = Cabana::slice<0>( aosoa );
     auto slice_1 = Cabana::slice<1>( aosoa );
-    for ( int i = 0; i < num_tuple; ++i ) {
+    for ( int i = 0; i < num_tuple; ++i )
+    {
         slice_0( i ) = 1.0;
         slice_1( i ) = 1.0;
     }
@@ -89,7 +91,8 @@ void haloExchangeExample() {
     // serial here for demonstration purposes.
     int previous_rank = ( comm_rank == 0 ) ? comm_size - 1 : comm_rank - 1;
     int next_rank = ( comm_rank == comm_size - 1 ) ? 0 : comm_rank + 1;
-    for ( int i = 0; i < local_num_send; ++i ) {
+    for ( int i = 0; i < local_num_send; ++i )
+    {
         export_ranks( i ) = next_rank;
         export_ids( i ) = i + num_tuple - 10;
     }
@@ -160,7 +163,8 @@ void haloExchangeExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     MPI_Init( &argc, &argv );
 
     Kokkos::ScopeGuard scope_guard( argc, argv );

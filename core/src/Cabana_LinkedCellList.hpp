@@ -19,7 +19,8 @@
 #include <Kokkos_Core.hpp>
 #include <Kokkos_ScatterView.hpp>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 /*!
   \class LinkedCellList
@@ -27,7 +28,8 @@ namespace Cabana {
   operation on a 3d regular Cartesian grid.
 */
 template <class DeviceType>
-class LinkedCellList {
+class LinkedCellList
+{
   public:
     using device_type = DeviceType;
     using memory_space = typename device_type::memory_space;
@@ -62,7 +64,8 @@ class LinkedCellList {
             0 )
         : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
-                 grid_delta[2] ) {
+                 grid_delta[2] )
+    {
         build( positions, 0, positions.size() );
     }
 
@@ -93,7 +96,8 @@ class LinkedCellList {
             0 )
         : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
-                 grid_delta[2] ) {
+                 grid_delta[2] )
+    {
         build( positions, begin, end );
     }
 
@@ -123,7 +127,8 @@ class LinkedCellList {
       the slowest and the k index mvoes the fastest.
     */
     KOKKOS_INLINE_FUNCTION
-    size_type cardinalBinIndex( const int i, const int j, const int k ) const {
+    size_type cardinalBinIndex( const int i, const int j, const int k ) const
+    {
         return _grid.cardinalCellIndex( i, j, k );
     }
 
@@ -138,7 +143,8 @@ class LinkedCellList {
       the slowest and the k index mvoes the fastest.
     */
     KOKKOS_INLINE_FUNCTION
-    void ijkBinIndex( const int cardinal, int &i, int &j, int &k ) const {
+    void ijkBinIndex( const int cardinal, int &i, int &j, int &k ) const
+    {
         _grid.ijkBinIndex( cardinal, i, j, k );
     }
 
@@ -150,7 +156,8 @@ class LinkedCellList {
       \return The number of particles in the bin.
     */
     KOKKOS_INLINE_FUNCTION
-    int binSize( const int i, const int j, const int k ) const {
+    int binSize( const int i, const int j, const int k ) const
+    {
         return _bin_data.binSize( cardinalBinIndex( i, j, k ) );
     }
 
@@ -162,7 +169,8 @@ class LinkedCellList {
       \return The starting particle index of the bin.
     */
     KOKKOS_INLINE_FUNCTION
-    size_type binOffset( const int i, const int j, const int k ) const {
+    size_type binOffset( const int i, const int j, const int k ) const
+    {
         return _bin_data.binOffset( cardinalBinIndex( i, j, k ) );
     }
 
@@ -173,7 +181,8 @@ class LinkedCellList {
       \return The particle id in the old (unbinned) layout.
     */
     KOKKOS_INLINE_FUNCTION
-    size_type permutation( const int particle_id ) const {
+    size_type permutation( const int particle_id ) const
+    {
         return _bin_data.permutation( particle_id );
     }
 
@@ -200,7 +209,8 @@ class LinkedCellList {
     // launch CUDA kernels with class data.
     template <class SliceType>
     void build( SliceType positions, const std::size_t begin,
-                const std::size_t end ) {
+                const std::size_t end )
+    {
         // Allocate the binning data. Note that the permutation vector spans
         // only the length of begin-end;
         std::size_t ncell = totalBins();
@@ -216,7 +226,8 @@ class LinkedCellList {
         Kokkos::RangePolicy<execution_space> particle_range( begin, end );
         Kokkos::deep_copy( counts, 0 );
         auto counts_sv = Kokkos::Experimental::create_scatter_view( counts );
-        auto cell_count = KOKKOS_LAMBDA( const std::size_t p ) {
+        auto cell_count = KOKKOS_LAMBDA( const std::size_t p )
+        {
             int i, j, k;
             grid.locatePoint( positions( p, 0 ), positions( p, 1 ),
                               positions( p, 2 ), i, j, k );
@@ -231,7 +242,8 @@ class LinkedCellList {
         // Compute offsets.
         Kokkos::RangePolicy<execution_space> cell_range( 0, ncell );
         auto offset_scan = KOKKOS_LAMBDA( const std::size_t c, int &update,
-                                          const bool final_pass ) {
+                                          const bool final_pass )
+        {
             if ( final_pass )
                 offsets( c ) = update;
             update += counts( c );
@@ -244,7 +256,8 @@ class LinkedCellList {
         Kokkos::deep_copy( counts, 0 );
 
         // Compute the permutation vector.
-        auto create_permute = KOKKOS_LAMBDA( const std::size_t p ) {
+        auto create_permute = KOKKOS_LAMBDA( const std::size_t p )
+        {
             int i, j, k;
             grid.locatePoint( positions( p, 0 ), positions( p, 1 ),
                               positions( p, 2 ), i, j, k );
@@ -269,15 +282,20 @@ class LinkedCellList {
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <typename>
-struct is_linked_cell_list : public std::false_type {};
+struct is_linked_cell_list : public std::false_type
+{
+};
 
 template <typename DeviceType>
-struct is_linked_cell_list<LinkedCellList<DeviceType>> : public std::true_type {
+struct is_linked_cell_list<LinkedCellList<DeviceType>> : public std::true_type
+{
 };
 
 template <typename DeviceType>
 struct is_linked_cell_list<const LinkedCellList<DeviceType>>
-    : public std::true_type {};
+    : public std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -296,7 +314,8 @@ void permute(
     const LinkedCellListType &linked_cell_list, AoSoA_t &aosoa,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
                               is_aosoa<AoSoA_t>::value ),
-                            int>::type * = 0 ) {
+                            int>::type * = 0 )
+{
     permute( linked_cell_list.binningData(), aosoa );
 }
 
@@ -317,7 +336,8 @@ void permute(
     const LinkedCellListType &linked_cell_list, SliceType &slice,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
                               is_slice<SliceType>::value ),
-                            int>::type * = 0 ) {
+                            int>::type * = 0 )
+{
     permute( linked_cell_list.binningData(), slice );
 }
 

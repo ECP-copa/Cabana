@@ -16,7 +16,8 @@
 //---------------------------------------------------------------------------//
 // Verlet list example
 //---------------------------------------------------------------------------//
-void verletListExample() {
+void verletListExample()
+{
     /*
       Given a list of particle positions, for every particle in the list a
       Verlet list computes the other particles in the list that are within
@@ -75,7 +76,8 @@ void verletListExample() {
     for ( int p = 0; p < ppc; ++p )
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                for ( int k = 0; k < 3; ++k, ++particle_counter ) {
+                for ( int k = 0; k < 3; ++k, ++particle_counter )
+                {
                     positions( particle_counter, 0 ) =
                         grid_min[0] + grid_delta[0] * ( 0.5 + i );
                     positions( particle_counter, 1 ) =
@@ -131,7 +133,8 @@ void verletListExample() {
       memory space of the neighbor list. Each particle should have 2
       neighbors.
      */
-    for ( std::size_t i = 0; i < aosoa.size(); ++i ) {
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
+    {
         int num_n =
             Cabana::NeighborList<ListType>::numNeighbor( verlet_list, i );
         std::cout << "Particle " << i << " # neighbor = " << num_n << std::endl;
@@ -146,7 +149,8 @@ void verletListExample() {
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] ) {
+int main( int argc, char *argv[] )
+{
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
     verletListExample();

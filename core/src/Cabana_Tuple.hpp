@@ -21,7 +21,8 @@
 #include <cstdlib>
 #include <type_traits>
 
-namespace Cabana {
+namespace Cabana
+{
 //---------------------------------------------------------------------------//
 // Forward declaration of tuple.
 template <typename DataTypes>
@@ -30,13 +31,19 @@ struct Tuple;
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
-struct is_tuple : public std::false_type {};
+struct is_tuple : public std::false_type
+{
+};
 
 template <class DataTypes>
-struct is_tuple<Tuple<DataTypes>> : public std::true_type {};
+struct is_tuple<Tuple<DataTypes>> : public std::true_type
+{
+};
 
 template <class DataTypes>
-struct is_tuple<const Tuple<DataTypes>> : public std::true_type {};
+struct is_tuple<const Tuple<DataTypes>> : public std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
 // Get template helper.
@@ -46,14 +53,16 @@ template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_reference_type<M>>::type
-get( Tuple_t &tp ) {
+get( Tuple_t &tp )
+{
     return get<M>( static_cast<typename Tuple_t::base &>( tp ), 0 );
 }
 
 // Rank-0 const
 template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename Tuple_t::template member_value_type<M>
-get( const Tuple_t &tp ) {
+get( const Tuple_t &tp )
+{
     return get<M>( static_cast<const typename Tuple_t::base &>( tp ), 0 );
 }
 
@@ -62,7 +71,8 @@ template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_reference_type<M>>::type
-get( Tuple_t &tp, const std::size_t d0 ) {
+get( Tuple_t &tp, const std::size_t d0 )
+{
     return get<M>( static_cast<typename Tuple_t::base &>( tp ), 0, d0 );
 }
 
@@ -71,7 +81,8 @@ template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_value_type<M>>::type
-get( const Tuple_t &tp, const std::size_t d0 ) {
+get( const Tuple_t &tp, const std::size_t d0 )
+{
     return get<M>( static_cast<const typename Tuple_t::base &>( tp ), 0, d0 );
 }
 
@@ -80,7 +91,8 @@ template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_reference_type<M>>::type
-get( Tuple_t &tp, const std::size_t d0, const std::size_t d1 ) {
+get( Tuple_t &tp, const std::size_t d0, const std::size_t d1 )
+{
     return get<M>( static_cast<typename Tuple_t::base &>( tp ), 0, d0, d1 );
 }
 
@@ -89,7 +101,8 @@ template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_value_type<M>>::type
-get( const Tuple_t &tp, const std::size_t d0, const std::size_t d1 ) {
+get( const Tuple_t &tp, const std::size_t d0, const std::size_t d1 )
+{
     return get<M>( static_cast<const typename Tuple_t::base &>( tp ), 0, d0,
                    d1 );
 }
@@ -100,7 +113,8 @@ KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_reference_type<M>>::type
 get( Tuple_t &tp, const std::size_t d0, const std::size_t d1,
-     const std::size_t d2 ) {
+     const std::size_t d2 )
+{
     return get<M>( static_cast<typename Tuple_t::base &>( tp ), 0, d0, d1, d2 );
 }
 
@@ -110,7 +124,8 @@ KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
     typename Tuple_t::template member_value_type<M>>::type
 get( const Tuple_t &tp, const std::size_t d0, const std::size_t d1,
-     const std::size_t d2 ) {
+     const std::size_t d2 )
+{
     return get<M>( static_cast<const typename Tuple_t::base &>( tp ), 0, d0, d1,
                    d2 );
 }
@@ -126,7 +141,8 @@ get( const Tuple_t &tp, const std::size_t d0, const std::size_t d1,
   then the tuple itself will be contiguous.
 */
 template <typename... Types>
-struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
+struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1>
+{
     // Base class.
     using base = SoA<MemberTypes<Types...>, 1>;
 
@@ -140,7 +156,8 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
     KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
         0 == std::rank<typename base::template member_data_type<M>>::value,
         typename base::template member_reference_type<M>>::type
-    get() {
+    get()
+    {
         return Cabana::get<M>( *this );
     }
 
@@ -149,7 +166,8 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
     KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
         0 == std::rank<typename base::template member_data_type<M>>::value,
         typename base::template member_value_type<M>>::type
-    get() const {
+    get() const
+    {
         return Cabana::get<M>( *this );
     }
 
@@ -159,7 +177,8 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
     KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
         1 == std::rank<typename base::template member_data_type<M>>::value,
         typename base::template member_reference_type<M>>::type
-    get( const std::size_t d0 ) {
+    get( const std::size_t d0 )
+    {
         return Cabana::get<M>( *this, d0 );
     }
 
@@ -168,7 +187,8 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
     KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
         1 == std::rank<typename base::template member_data_type<M>>::value,
         typename base::template member_value_type<M>>::type
-    get( const std::size_t d0 ) const {
+    get( const std::size_t d0 ) const
+    {
         return Cabana::get<M>( *this, d0 );
     }
 
@@ -178,7 +198,8 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
     KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
         2 == std::rank<typename base::template member_data_type<M>>::value,
         typename base::template member_reference_type<M>>::type
-    get( const std::size_t d0, const std::size_t d1 ) {
+    get( const std::size_t d0, const std::size_t d1 )
+    {
         return Cabana::get<M>( *this, d0, d1 );
     }
 
@@ -187,7 +208,8 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
     KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
         2 == std::rank<typename base::template member_data_type<M>>::value,
         typename base::template member_value_type<M>>::type
-    get( const std::size_t d0, const std::size_t d1 ) const {
+    get( const std::size_t d0, const std::size_t d1 ) const
+    {
         return Cabana::get<M>( *this, d0, d1 );
     }
 
@@ -197,7 +219,8 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
     KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
         3 == std::rank<typename base::template member_data_type<M>>::value,
         typename base::template member_reference_type<M>>::type
-    get( const std::size_t d0, const std::size_t d1, const std::size_t d2 ) {
+    get( const std::size_t d0, const std::size_t d1, const std::size_t d2 )
+    {
         return Cabana::get<M>( *this, d0, d1, d2 );
     }
 
@@ -207,7 +230,8 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1> {
         3 == std::rank<typename base::template member_data_type<M>>::value,
         typename base::template member_value_type<M>>::type
     get( const std::size_t d0, const std::size_t d1,
-         const std::size_t d2 ) const {
+         const std::size_t d2 ) const
+    {
         return Cabana::get<M>( *this, d0, d1, d2 );
     }
 };
