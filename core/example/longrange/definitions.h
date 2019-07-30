@@ -12,6 +12,7 @@
 #define DEFS
 #include <Cabana_AoSoA.hpp>
 #include <CabanaCore_config.hpp>
+#include "example_definitions.h"
 
 //Math definitions needed for solvers
 constexpr double PI(3.141592653589793238462643);

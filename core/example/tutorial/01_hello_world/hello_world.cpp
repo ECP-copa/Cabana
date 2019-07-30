@@ -16,13 +16,13 @@
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
     /* The Kokkos runtime used by Cabana must be initialized and finalized.
        Kokkos::ScopeGuard inializes Kokkos and guarantees it is finalized,
        even if the code returns early.
      */
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     // Any code using Cabana should be after the ScopeGuard is constructed
     std::cout << "Hello world from Cabana!" << std::endl;
