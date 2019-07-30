@@ -37,7 +37,7 @@ void linkedCellListExample()
        Start by declaring the types in our tuples will store. The first
        member will be the coordinates, the second an id.
     */
-    using DataTypes = Cabana::MemberTypes<double[3],int>;
+    using DataTypes = Cabana::MemberTypes<double[3], int>;
 
     /*
       Next declare the data layout of the AoSoA. We use the host space here
@@ -47,30 +47,29 @@ void linkedCellListExample()
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::Serial;
-    using DeviceType = Kokkos::Device<ExecutionSpace,MemorySpace>;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 54;
-    Cabana::AoSoA<DataTypes,DeviceType,VectorLength>
-        aosoa( "A", num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A", num_tuple );
 
     /*
       Define the parameters of the Cartesian grid over which we will build the
       cell list. This is a simple 3x3x3 uniform grid on [0,3] in each
       direction. Each grid cell has a size of 1 in each dimension.
      */
-    double grid_min[3] = {0.0,0.0,0.0};
-    double grid_max[3] = {3.0,3.0,3.0};
-    double grid_delta[3] = {1.0,1.0,1.0};
+    double grid_min[3] = {0.0, 0.0, 0.0};
+    double grid_max[3] = {3.0, 3.0, 3.0};
+    double grid_delta[3] = {1.0, 1.0, 1.0};
 
     /*
       Create the particle ids.
     */
     auto ids = Cabana::slice<1>( aosoa );
     for ( std::size_t i = 0; i < aosoa.size(); ++i )
-        ids(i) = i;
+        ids( i ) = i;
 
     /*
       Create the particle coordinates. We will put 2 particles in the center
@@ -104,8 +103,8 @@ void linkedCellListExample()
       Also note here that we are going to reorder the entire AoSoA. One may
       also construct a linked cell list over a subset of the particles.
      */
-    Cabana::LinkedCellList<DeviceType> cell_list(
-        positions, grid_delta, grid_min, grid_max );
+    Cabana::LinkedCellList<DeviceType> cell_list( positions, grid_delta,
+                                                  grid_min, grid_max );
 
     /*
       Now permute the AoSoA (i.e. reorder the data) using the linked cell list.
@@ -122,18 +121,17 @@ void linkedCellListExample()
        otherwise changed the memory associated with the AoSoA.
      */
     for ( std::size_t i = 0; i < aosoa.size(); ++i )
-        std::cout << "Particle: id = " << ids(i)
-                  << ", coords (" << positions(i,0) << ","
-                  << positions(i,1) << "," << positions(i,2) << ")"
-                  << std::endl;
+        std::cout << "Particle: id = " << ids( i ) << ", coords ("
+                  << positions( i, 0 ) << "," << positions( i, 1 ) << ","
+                  << positions( i, 2 ) << ")" << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     linkedCellListExample();
 

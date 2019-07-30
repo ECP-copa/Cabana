@@ -56,8 +56,7 @@ bool cabana_initialized_kokkos = false;
 //---------------------------------------------------------------------------//
 // Initialize Kokkos, if it needs initialization.
 template <typename... Args>
-CABANA_DEPRECATED
-void initKokkos( Args &&... args )
+CABANA_DEPRECATED void initKokkos( Args &&... args )
 {
     if ( !cabana_initialized_kokkos )
     {
@@ -91,8 +90,7 @@ void initKokkos( Args &&... args )
 
 //---------------------------------------------------------------------------//
 template <typename... Args>
-CABANA_DEPRECATED
-void initialize( Args &&... args )
+CABANA_DEPRECATED void initialize( Args &&... args )
 {
     if ( !is_cabana_initialized )
         initKokkos( std::forward<Args>( args )... );

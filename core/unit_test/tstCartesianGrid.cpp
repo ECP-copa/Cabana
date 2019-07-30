@@ -16,17 +16,18 @@
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-namespace Test {
+namespace Test
+{
 
 TEST( cabana_cartesian_grid, grid_test )
 {
-    double min[3] = { -1.0, -0.5, -0.6 };
-    double max[3] = {  2.5,  1.5,  1.9 };
-    double delta[3] = { 0.5, 0.125, 0.25 };
+    double min[3] = {-1.0, -0.5, -0.6};
+    double max[3] = {2.5, 1.5, 1.9};
+    double delta[3] = {0.5, 0.125, 0.25};
 
-    Cabana::Impl::CartesianGrid<double> grid( min[0], min[1], min[2],
-                                              max[0], max[1], max[2],
-                                              delta[0], delta[1], delta[2] );
+    Cabana::Impl::CartesianGrid<double> grid( min[0], min[1], min[2], max[0],
+                                              max[1], max[2], delta[0],
+                                              delta[1], delta[2] );
 
     int nx, ny, nz;
     grid.numCells( nx, ny, nz );

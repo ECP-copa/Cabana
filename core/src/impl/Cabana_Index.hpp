@@ -31,11 +31,10 @@ namespace Impl
 
   \tparam VectorLength The inner array size of the AoSoA.
 */
-template<int VectorLength>
+template <int VectorLength>
 class Index
 {
   public:
-
     // Validate the inner array size.
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
                    "Invalid vector length" );
@@ -44,7 +43,7 @@ class Index
     static constexpr int vector_length = VectorLength;
 
     // Array size offset.
-    static constexpr int vector_length_offset = (vector_length - 1);
+    static constexpr int vector_length_offset = ( vector_length - 1 );
 
     // Number of binary bits needed to hold the array size.
     static constexpr int vector_length_binary_bits =
@@ -60,8 +59,8 @@ class Index
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr std::size_t s( const std::size_t i )
     {
-        return (i - (i & vector_length_offset)) >>
-            vector_length_binary_bits;
+        return ( i - ( i & vector_length_offset ) ) >>
+               vector_length_binary_bits;
     }
 
     /*!
@@ -91,7 +90,7 @@ class Index
     KOKKOS_FORCEINLINE_FUNCTION
     static constexpr std::size_t i( const std::size_t s, const std::size_t a )
     {
-        return (s << vector_length_binary_bits) + a;
+        return ( s << vector_length_binary_bits ) + a;
     }
 };
 
