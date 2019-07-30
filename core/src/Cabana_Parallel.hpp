@@ -27,26 +27,24 @@ namespace Impl
 {
 
 // No work tag was provided so call without a tag argument.
-template<class WorkTag, class FunctorType, class IndexType>
+template <class WorkTag, class FunctorType, class IndexType>
 KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<std::is_same<WorkTag,void>::value>::type
-functorTagDispatch( const FunctorType& functor,
-                    const IndexType s,
-                    const IndexType a )
+    typename std::enable_if<std::is_same<WorkTag, void>::value>::type
+    functorTagDispatch( const FunctorType &functor, const IndexType s,
+                        const IndexType a )
 {
-    functor(s,a);
+    functor( s, a );
 }
 
 // The user gave us a tag so call the version using that.
-template<class WorkTag, class FunctorType, class IndexType>
+template <class WorkTag, class FunctorType, class IndexType>
 KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<!std::is_same<WorkTag,void>::value>::type
-functorTagDispatch( const FunctorType& functor,
-                    const IndexType s,
-                    const IndexType a )
+    typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
+    functorTagDispatch( const FunctorType &functor, const IndexType s,
+                        const IndexType a )
 {
     const WorkTag t{};
-    functor(t,s,a);
+    functor( t, s, a );
 }
 
 } // end namespace Impl
@@ -94,13 +92,12 @@ functorTagDispatch( const FunctorType& functor,
   \note The work tag gets applied at the user functor level, not at the level
   of the functor in this implementation that wraps the user functor.
 */
-template<class FunctorType, int VectorLength, class ... ExecParameters>
+template <class FunctorType, int VectorLength, class... ExecParameters>
 inline void simd_parallel_for(
-    const SimdPolicy<VectorLength,ExecParameters...>& exec_policy,
-    const FunctorType& functor,
-    const std::string& str = "" )
+    const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
+    const FunctorType &functor, const std::string &str = "" )
 {
-    using simd_policy = SimdPolicy<VectorLength,ExecParameters...>;
+    using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
 
     using work_tag = typename simd_policy::work_tag;
 
@@ -109,20 +106,17 @@ inline void simd_parallel_for(
     using index_type = typename team_policy::index_type;
 
     Kokkos::parallel_for(
-        str,
-        dynamic_cast<const team_policy&>(exec_policy),
-        KOKKOS_LAMBDA( const typename team_policy::member_type& team )
-        {
+        str, dynamic_cast<const team_policy &>( exec_policy ),
+        KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
             index_type s = team.league_rank() + exec_policy.structBegin();
             Kokkos::parallel_for(
-                Kokkos::ThreadVectorRange( team,
-                                           exec_policy.arrayBegin(s),
-                                           exec_policy.arrayEnd(s)),
-                [&]( const index_type a )
-                { Impl::functorTagDispatch<work_tag>(functor,s,a);});
-        });
+                Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
+                                           exec_policy.arrayEnd( s ) ),
+                [&]( const index_type a ) {
+                    Impl::functorTagDispatch<work_tag>( functor, s, a );
+                } );
+        } );
 }
-
 
 //---------------------------------------------------------------------------//
 // Neighbor Parallel For
@@ -130,11 +124,15 @@ inline void simd_parallel_for(
 // Algorithm tags.
 
 //! Neighbor operations are executed in serial on each particle thread.
-class SerialNeighborOpTag {};
+class SerialNeighborOpTag
+{
+};
 
 //! Neighbor operations are executed in parallel in a team on each particle
 //! thread.
-class TeamNeighborOpTag {};
+class TeamNeighborOpTag
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -178,36 +176,29 @@ class TeamNeighborOpTag {};
   <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
   \c for loop.
 */
-template<class FunctorType, class NeighborListType, class ... ExecParameters>
+template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
-    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
-    const FunctorType& functor,
-    const NeighborListType& list,
-    const SerialNeighborOpTag& tag,
-    const std::string& str = "" )
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const SerialNeighborOpTag &tag, const std::string &str = "" )
 {
     std::ignore = tag;
 
-    using work_tag =
-        typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
     using index_type =
         typename Kokkos::RangePolicy<ExecParameters...>::index_type;
 
     Kokkos::parallel_for(
-        str,
-        exec_policy,
-        KOKKOS_LAMBDA( const index_type i )
-        {
+        str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
             for ( index_type n = 0;
-                  n < NeighborList<NeighborListType>::numNeighbor(list,i);
+                  n < NeighborList<NeighborListType>::numNeighbor( list, i );
                   ++n )
                 Impl::functorTagDispatch<work_tag>(
-                    functor,
-                    i,
+                    functor, i,
                     static_cast<index_type>(
-                        NeighborList<NeighborListType>::getNeighbor(list,i,n))
-                    );
+                        NeighborList<NeighborListType>::getNeighbor( list, i,
+                                                                     n ) ) );
         } );
 }
 
@@ -253,25 +244,21 @@ inline void neighbor_parallel_for(
   <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
   \c for loop.
 */
-template<class FunctorType, class NeighborListType, class ... ExecParameters>
+template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
-    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
-    const FunctorType& functor,
-    const NeighborListType& list,
-    const TeamNeighborOpTag& tag,
-    const std::string& str = "" )
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const TeamNeighborOpTag &tag, const std::string &str = "" )
 {
     std::ignore = tag;
 
-    using work_tag =
-        typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
     using execution_space =
         typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
 
     using kokkos_policy =
-        Kokkos::TeamPolicy<execution_space,
-                           Kokkos::Schedule<Kokkos::Dynamic> >;
+        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
     kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
                                Kokkos::AUTO );
 
@@ -280,22 +267,20 @@ inline void neighbor_parallel_for(
     const auto range_begin = exec_policy.begin();
 
     Kokkos::parallel_for(
-        str,
-        team_policy,
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
-        {
+        str, team_policy,
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
             index_type i = team.league_rank() + range_begin;
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange(
-                    team,NeighborList<NeighborListType>::numNeighbor(list,i)),
+                    team,
+                    NeighborList<NeighborListType>::numNeighbor( list, i ) ),
                 [&]( const index_type n ) {
-                Impl::functorTagDispatch<work_tag>(
-                    functor,
-                    i,
-                    static_cast<index_type>(
-                        NeighborList<NeighborListType>::getNeighbor(list,i,n) )
-                    );
-                });
+                    Impl::functorTagDispatch<work_tag>(
+                        functor, i,
+                        static_cast<index_type>(
+                            NeighborList<NeighborListType>::getNeighbor(
+                                list, i, n ) ) );
+                } );
         } );
 }
 
