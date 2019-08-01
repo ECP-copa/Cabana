@@ -10,6 +10,8 @@
  ****************************************************************************/
 
 #include "ewald.h"
+#include "Cabana_DeepCopy.hpp"
+#include "Cabana_LinkedCellList.hpp"
 #include "definitions.h"
 #include <cmath>
 
@@ -35,62 +37,32 @@ void TEwald::tune( double accuracy, ParticleList particles, double lx,
 {
     typedef Kokkos::MinLoc<double, int> reducer_type;
     typedef reducer_type::value_type value_type;
-    value_type error_estimate;
 
     auto q = Cabana::slice<Charge>( particles );
-    double q_sum;
 
-    const int N_alpha = 200;
-    const int N_k = 2000;
+    const int N = particles.size();
 
-    const int n_max = particles.size();
+    // Fincham 1994, Optimisation of the Ewald Sum for Large Systems
+    // only valid for cubic systems (needs adjustement for non-cubic systems)
+    constexpr double EXECUTION_TIME_RATIO_K_R = 2.0;
+    double p = -log( accuracy );
+    _alpha = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) *
+             pow( N, 1.0 / 6.0 ) / lx;
+    _k_max = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) *
+             pow( N, 1.0 / 6.0 ) / lx * 2.0 * PI;
+    _r_max = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) /
+             pow( N, 1.0 / 6.0 ) * lx;
+    _alpha = sqrt( p ) / _r_max;
+    _k_max = 2.0 * sqrt( p ) * _alpha;
 
-    // calculate sum of charge squares
-    Kokkos::parallel_reduce( n_max,
-                             KOKKOS_LAMBDA( const int idx, double &q_part ) {
-                                 q_part += q( idx ) * q( idx );
-                             },
-                             q_sum );
-    Kokkos::fence();
-    // Not sure, but think fence required since default memory or exec space
-    // could be CudaUVM
+    _k_max_int[0] = ceil( _k_max );
+    _k_max_int[1] = ceil( _k_max );
+    _k_max_int[2] = ceil( _k_max );
 
-    double r_max = _r_max = std::min( 0.49 * lx, 0.1 * lx + 1.0 );
-    Kokkos::parallel_reduce(
-        "MinLocReduce", N_alpha * N_k,
-        KOKKOS_LAMBDA( const int &idx, value_type &team_errorest ) {
-            int ia = idx % N_alpha;
-            int ik = idx / N_alpha;
-
-            double alpha = (double)ia * 0.05 + 1.0;
-            double k_max = (double)ik * 0.05;
-
-            double delta_Ur = q_sum * sqrt( 0.5 * r_max / ( lx * ly * lz ) ) *
-                              std::pow( alpha * r_max, -2.0 ) *
-                              exp( -alpha * alpha * r_max * r_max );
-
-            double delta_Uk =
-                q_sum * alpha / PI_SQ * std::pow( k_max, -1.5 ) *
-                exp( -std::pow( PI * k_max / ( alpha * lx ), 2 ) );
-
-            double delta = delta_Ur + delta_Uk;
-            Kokkos::pair<double, double> values( alpha, k_max );
-
-            if ( ( delta < team_errorest.val ) && ( delta > 0.8 * accuracy ) )
-            {
-                team_errorest.val = delta;
-                team_errorest.loc = idx;
-            }
-        },
-        reducer_type( error_estimate ) );
-    Kokkos::fence();
-    // Not sure, but think fence required since default memory or exec space
-    // could be CudaUVM
-
-    _alpha = (double)( error_estimate.loc % N_alpha ) * 0.05 + 1.0;
-    _k_max = (double)( error_estimate.loc / N_alpha ) * 0.05;
-
-    _k_max_int[0] = _k_max_int[1] = _k_max_int[2] = std::ceil( _k_max );
+    std::cout << "tuned Ewald values: "
+              << "r_max: " << _r_max << " alpha: " << _alpha
+              << " k_max: " << _k_max_int[0] << "  " << _k_max_int[1] << " "
+              << _k_max_int[2] << " " << _k_max << std::endl;
 }
 
 double TEwald::compute( ParticleList &particles, double lx, double ly,
@@ -103,163 +75,694 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     auto r = Cabana::slice<Position>( particles );
     auto q = Cabana::slice<Charge>( particles );
     auto p = Cabana::slice<Potential>( particles );
+    auto f = Cabana::slice<Force>( particles );
+    auto v = Cabana::slice<Velocity>( particles );
+    auto i = Cabana::slice<Index>( particles );
 
     int n_max = particles.size();
 
-    auto init_p = KOKKOS_LAMBDA( const int idx ) { p( idx ) = 0.0; };
+    auto init_p = KOKKOS_LAMBDA( const int idx )
+    {
+        p( idx ) = 0.0;
+        f( idx, 0 ) = 0.0;
+        f( idx, 1 ) = 0.0;
+        f( idx, 2 ) = 0.0;
+    };
     Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
                           init_p );
     Kokkos::fence();
 
     double alpha = _alpha;
-    double k_max = _k_max;
     double r_max = _r_max;
     double eps_r = _eps_r;
 
-#ifdef Cabana_ENABLE_Cuda
-    Kokkos::View<int *, MemorySpace> k_max_int( "k_max_int", 3 );
-    for ( auto i = 0; i < 3; ++i )
-    {
-        k_max_int[i] = _k_max_int[i];
-    } // TODO: enhancement - use Views instead. No need for macros.
-#else
-    int *k_max_int = &( _k_max_int[0] );
-#endif
-    // computation real-space contribution
-    Kokkos::parallel_reduce(
-        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-        KOKKOS_LAMBDA( int idx, double &Ur_part ) {
-            double d[SPACE_DIM];
-            double k;
-            // For each particle with charge q, the real space contribution to
-            // energy is Ur_part = 0.5*q*SUM_i(q_i*erfc(alpha*dist)/dist) The
-            // sum is over all other particles in the cell and in neighboring
-            // images up to some real-space cutoff distance "r_max"
-            //
-            // Self-energy terms are included then corrected for later, with one
-            // exception:
-            // the self-energy term where kx=ky=kz here is explicitly excluded
-            // in the method as this would cause a division by zero
-            for ( auto i = 0; i < n_max;
-                  ++i ) // For each particle (including self)
-            {
-                // compute distance in x,y,z and charge multiple
-                for ( auto j = 0; j < 3; ++j )
-                    d[j] = r( idx, j ) - r( i, j );
-                double qiqj = q( idx ) * q( i );
-                for ( auto kx = 0; kx <= k_max_int[0]; ++kx )
-                {
-                    // check if cell within r_max distance in x
-                    k = (double)kx * lx;
-                    if ( k - lx > r_max )
-                        continue;
-                    for ( auto ky = 0; ky <= k_max_int[1]; ++ky )
-                    {
-                        // check if cell within r_max distance in x+y
-                        k = sqrt( (double)kx * (double)kx * lx * lx +
-                                  (double)ky * (double)ky * ly * ly );
-                        if ( k - lx > r_max )
-                            continue;
-                        for ( auto kz = 0; kz <= k_max_int[2]; ++kz )
-                        {
-                            // Exclude self-energy term when kx=ky=kz
-                            if ( kx == 0 && ky == 0 && kz == 0 && i == idx )
-                                continue;
-                            // check if cell within r_max distance in x+y+z
-                            k = sqrt( (double)kx * (double)kx * lx * lx +
-                                      (double)ky * (double)ky * ly * ly +
-                                      (double)kz * (double)kz * lz * lz );
-                            if ( k - lx > r_max )
-                                continue;
-                            // check if particle distance is less than r_max
-                            double scal = ( d[0] + (double)kx * lx ) *
-                                              ( d[0] + (double)kx * lx ) +
-                                          ( d[1] + (double)ky * ly ) *
-                                              ( d[1] + (double)ky * ly ) +
-                                          ( d[2] + (double)kz * lz ) *
-                                              ( d[2] + (double)kz * lz );
-                            scal = sqrt( scal );
-                            if ( scal > r_max )
-                                continue;
-                            // Compute real-space energy contribution of
-                            // interaction
-                            Ur_part += qiqj * erfc( alpha * scal ) / scal;
-                        }
-                    }
-                }
-            }
-            Ur_part *= 0.5;
-            p( idx ) += Ur_part;
-        },
-        Ur );
-    Kokkos::fence();
-
-    // computation reciprocal-space contribution
+    auto start_time_kf = std::chrono::high_resolution_clock::now();
+    EwaldUkFunctor ukf( particles, _k_max, _alpha, lx, ly, lz );
+    std::cout << "k-space potentials functor created" << std::endl;
     int k_int = std::ceil( _k_max );
-    // The reciprocal space energy contribution of the Ewald Sum
-    // iterates over all vectors k (reciprocal lattice vector) within the bounds
-    // k^2 < kmax^2 Indexing in 3D gives (k_int+1)^3 vectors to sum over
-    const int max_idx =
-        8 * k_int * k_int * k_int + 12 * k_int * k_int + 6 * k_int + 1;
-    Kokkos::parallel_reduce(
-        Kokkos::RangePolicy<ExecutionSpace>( 0, max_idx ),
-        KOKKOS_LAMBDA( int idx, double &Uk_part ) {
-            double kk;
-            double kr;
-            double coeff;
-            double sum_re = 0.0;
-            double sum_im = 0.0;
-            // Math to go from indexing to kx,ky,kz
-            int kx = idx % ( 2 * k_int + 1 ) - k_int;
-            int ky = idx % ( 4 * k_int * k_int + 4 * k_int + 1 ) /
-                         ( 2 * k_int + 1 ) -
-                     k_int;
-            int kz = idx / ( 4 * k_int * k_int + 4 * k_int + 1 ) - k_int;
-
-            if ( kx == 0 && ky == 0 && kz == 0 )
-                return; // The kx=ky=kz term is excluded from the sum
-            kk = kx * kx + ky * ky + kz * kz;
-            if ( kk > k_max * k_max )
-                return; // Check to ensure within kmax bounds
-            // This sum involves calculating a coefficient given by:
-            // coeff(k) = (2/L^2) * exp(-(PI*k/(alpha*L))^2)/(k^2)
-            coeff = 2.0 / ( lx * lx ) *
-                    exp( -PI_SQ / ( alpha * alpha * lx * lx ) * kk ) / kk;
-            // The sum's terms for each k-vector are then
-            // sum(k) = coeff(k) * |S(k)|^2
-            // where S(k) is a sum over all particles in the unit cell S(k) =
-            // SUM_i[ q_i * exp(I* k.r) ] Now compute S(k), summing over all
-            // particles and computing this influence function S(k) with real
-            // and imag parts for the complex exponential
-            for ( auto j = 0; j < n_max; ++j )
-            {
-                kr = 2.0 * PI *
-                     ( kx * r( j, 0 ) + ky * r( j, 1 ) + kz * r( j, 2 ) ) /
-                     lx;                      // 2*PI*(dotproduct of k and r)/L
-                sum_re += q( j ) * cos( kr ); // real part
-                sum_im += q( j ) * sin( kr ); // imag part
-            }
-            for ( auto j = 0; j < n_max; ++j )
-            {
-                // Compute the norm of the influence function for each particle
-                // and k combo
-                kr = 2.0 * PI *
-                     ( kx * r( j, 0 ) + ky * r( j, 1 ) + kz * r( j, 2 ) ) / lx;
-                double re = sum_re * cos( kr ); // realpart * realpart = real
-                double im = sum_im * sin( kr ); // imagpart * imagpart = real
-
-                // For a given k, each particle's reciprocal-space contribution
-                // to the energy is given by p_k = (L/(4*PI)) * q * coeff *
-                // |S(k)|^2
-                Kokkos::atomic_add( &p( j ), q( j ) * coeff * ( re + im ) * lx /
-                                                 ( 4.0 * PI ) );
-                // add all particle's contributions to recip energy for this
-                // k-vector
-                Uk_part += q( j ) * coeff * ( re + im ) * lx / ( 4.0 * PI );
-            }
-        },
-        Uk );
+    int n_k = 8 * k_int * k_int * k_int + 12 * k_int * k_int + 6 * k_int + 1;
+    Kokkos::parallel_reduce( n_k, ukf, Uk );
+    std::cout << "k-space potentials computed" << std::endl;
     Kokkos::fence();
+    auto end_time_kf = std::chrono::high_resolution_clock::now();
+    auto start_time_kff = std::chrono::high_resolution_clock::now();
+    EwaldUkForcesFunctor<ExecutionSpace> uk_fi( r, q, f, _k_max, _alpha, n_k,
+                                                lx, ly, lz );
+    std::cout << "k-space forces functor created" << std::endl;
+    Kokkos::parallel_for(
+        Kokkos::TeamPolicy<ExecutionSpace>( n_max, Kokkos::AUTO ), uk_fi );
+    Kokkos::fence();
+
+    auto end_time_kff = std::chrono::high_resolution_clock::now();
+    auto elapsed_time_kf = end_time_kf - start_time_kf;
+    auto elapsed_time_kff = end_time_kff - start_time_kff;
+    auto ns_elapsed_kf =
+        std::chrono::duration_cast<std::chrono::nanoseconds>( elapsed_time_kf );
+    auto ns_elapsed_kff = std::chrono::duration_cast<std::chrono::nanoseconds>(
+        elapsed_time_kff );
+
+    std::cout << "k-space contribution: "
+              << ( ( ns_elapsed_kf + ns_elapsed_kff ).count() / 1000000000.0 )
+              << " s = "
+              << " potential: " << ( ns_elapsed_kf.count() / 1000000000.0 )
+              << " s + "
+              << " forces: " << ( ns_elapsed_kff.count() / 1000000000.0 )
+              << " s " << Uk << " " << std::endl;
+
+    // computation real-space contribution
+    Kokkos::fence();
+    if ( r_max > 0.5 * lx )
+    {
+        /*
+         *
+         *  Computation real-space contribution
+         *
+         */
+        // plain all to all comparison and regard of periodic images with
+        // distance > 1
+        auto start_time_r = std::chrono::high_resolution_clock::now();
+        Kokkos::parallel_reduce(
+            Kokkos::TeamPolicy<>( n_max, Kokkos::AUTO ),
+            KOKKOS_LAMBDA( Kokkos::TeamPolicy<>::member_type member,
+                           double &Ur_i ) {
+                int i = member.league_rank(); // * member.team_size() +
+                                              // member.team_rank();
+                if ( i < n_max )
+                {
+                    double Ur_inner = 0.0;
+                    int per_shells = std::ceil( r_max / lx );
+                    Kokkos::single( Kokkos::PerTeam( member ), [=] {
+                        if ( i == 0 )
+                            printf( "number of periodic shells in real-space "
+                                    "computation: %d\n",
+                                    per_shells );
+                    } );
+                    Kokkos::parallel_reduce(
+                        Kokkos::ThreadVectorRange( member, n_max ),
+                        [&]( int &j, double &Ur_j ) {
+                            for ( int pz = -per_shells; pz <= per_shells; ++pz )
+                                for ( int py = -per_shells; py <= per_shells;
+                                      ++py )
+                                    for ( int px = -per_shells;
+                                          px <= per_shells; ++px )
+                                    {
+                                        double dx =
+                                            r( i, 0 ) -
+                                            ( r( j, 0 ) + (double)px * lx );
+                                        double dy =
+                                            r( i, 1 ) -
+                                            ( r( j, 1 ) + (double)py * ly );
+                                        double dz =
+                                            r( i, 2 ) -
+                                            ( r( j, 2 ) + (double)pz * lz );
+                                        double d =
+                                            sqrt( dx * dx + dy * dy + dz * dz );
+                                        double contrib =
+                                            ( d <= r_max &&
+                                              std::abs( d ) >= 1e-12 )
+                                                ? 0.5 * q( i ) * q( j ) *
+                                                      erfc( alpha * d ) / d
+                                                : 0.0;
+                                        double f_fact =
+                                            ( d <= r_max &&
+                                              std::abs( d ) >= 1e-12 ) *
+                                            q( i ) * q( j ) *
+                                            ( 2.0 * sqrt( alpha / PI ) *
+                                                  exp( -alpha * d * d ) +
+                                              erfc( sqrt( alpha ) * d ) ) /
+                                            ( d * d +
+                                              ( std::abs( d ) <= 1e-12 ) );
+                                        Kokkos::atomic_add( &f( i, 0 ),
+                                                            f_fact * dx );
+                                        Kokkos::atomic_add( &f( i, 1 ),
+                                                            f_fact * dy );
+                                        Kokkos::atomic_add( &f( i, 2 ),
+                                                            f_fact * dz );
+                                        Kokkos::single(
+                                            Kokkos::PerThread( member ),
+                                            [&] { Ur_j += contrib; } );
+                                    }
+                        },
+                        Ur_inner );
+                    Kokkos::single( Kokkos::PerTeam( member ), [&] {
+                        p( i ) += Ur_inner;
+                        Ur_i += Ur_inner;
+                    } );
+                }
+            },
+            Ur );
+        auto end_time_r = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_r = end_time_r - start_time_r;
+        auto ns_elapsed_r =
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                elapsed_time_r );
+
+        std::cout << "real-space contribution: "
+                  << ( ns_elapsed_r.count() / 1000000000.0 ) << " s " << Ur
+                  << std::endl;
+    }
+    else
+    {
+
+        /*
+
+          //TODO: cellsize dynamic!
+          double lc = 1.0;
+          double cfactor = std::ceil(r_max / lc);
+          int nneigdim = 2*(int)cfactor+1;
+          int nneig = nneigdim * nneigdim * nneigdim;
+
+          std::cout << "l: " << lx << " cfactor: " << cfactor << " lc: " << lc
+          << " r_max: " << r_max << std::endl;
+
+          int n_cells = std::ceil(lx / lc) * std::ceil(ly / lc) * std::ceil(lz /
+          lc); Kokkos::View<int*, MemorySpace> cdim("cdim",3); cdim(0) =
+          std::ceil(lx / lc); cdim(1) = std::ceil(ly / lc); cdim(2) =
+          std::ceil(lz / lc);
+
+          // Kokkos View to save the cell a particle belongs to
+          Kokkos::View<int*, MemorySpace> cid("cid",n_max);
+          // Kokkos View to save the index of the particle in the cell
+          Kokkos::View<int*, MemorySpace> cidx("cidx",n_max);
+          // Kokkos View to store the number of particles in a cell
+          Kokkos::View<int*, MemorySpace> cn("cn",n_cells);
+          // Kokkos View to store the offsets for each cell
+          Kokkos::View<int*, MemorySpace> coff("coff",n_cells);
+
+          auto start_time_rsort = std::chrono::high_resolution_clock::now();
+
+          // initialize Views
+          Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_max),
+          KOKKOS_LAMBDA(const int idx)
+          {
+              cid(idx) = -1;
+              cidx(idx) = 0;
+          });
+
+          Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0,n_cells),
+          KOKKOS_LAMBDA(const int idx)
+          {
+              cn(idx) = 0;
+              coff(idx) = 0;
+          });
+
+
+          Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0, n_max),
+          KOKKOS_LAMBDA(const int idx)
+          {
+              // compute indices of cell particle belongs to
+              int cx = r(idx, 0) / lc;
+              int cy = r(idx, 1) / lc;
+              int cz = r(idx, 2) / lc;
+              // compute 1d cell index and store it
+              cid(idx) = cx + cy * cdim(0) + cz * cdim(0) * cdim(1);
+              int old_idx;
+              // try to update the number of particles in the cell and the local
+          index consistently do
+              {
+                  old_idx = cn(cid(idx));
+                  cidx(idx) = old_idx;
+              }
+              while
+          (!Kokkos::atomic_compare_exchange_strong(&cn(cid(idx)),old_idx,cn(cid(idx))+1));
+          });
+          Kokkos::fence();
+
+          // compute offsets
+          Kokkos::parallel_scan( Kokkos::RangePolicy<ExecutionSpace>(0,
+          n_cells), KOKKOS_LAMBDA(const int idx, double& upd, const bool& final)
+          {
+              if (final)
+                  coff(idx) = upd;
+              upd += cn(idx);
+          });
+          Kokkos::fence();
+
+          ParticleList part_tmp(n_max);
+          Cabana::deep_copy(part_tmp,particles);
+          auto r_tmp = Cabana::slice<Position>(part_tmp);
+          auto q_tmp = Cabana::slice<Charge>(part_tmp);
+          auto p_tmp = Cabana::slice<Potential>(part_tmp);
+          auto f_tmp = Cabana::slice<Force>(part_tmp);
+          auto v_tmp = Cabana::slice<Velocity>(part_tmp);
+          auto i_tmp = Cabana::slice<Index>(part_tmp);
+
+          // Kokkos View to save the cell a particle belongs to
+          Kokkos::View<int*, MemorySpace> cid_cp("cid",n_max);
+          // Kokkos View to save the index of the particle in the cell
+          Kokkos::View<int*, MemorySpace> cidx_cp("cidx",n_max);
+
+          Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0, n_max),
+          KOKKOS_LAMBDA( const int idx )
+          {
+              // compute new particle index in global array
+              int target = coff(cid(idx)) + cidx(idx);
+              // sort particles to correct position
+              r_tmp(target, 0) = r(idx, 0);
+              r_tmp(target, 1) = r(idx, 1);
+              r_tmp(target, 2) = r(idx, 2);
+              v_tmp(target, 0) = v(idx, 0);
+              v_tmp(target, 1) = v(idx, 1);
+              v_tmp(target, 2) = v(idx, 2);
+              f_tmp(target, 0) = f(idx, 0);
+              f_tmp(target, 1) = f(idx, 1);
+              f_tmp(target, 2) = f(idx, 2);
+              q_tmp(target) = q(idx);
+              p_tmp(target) = p(idx);
+              i_tmp(target) = i(idx);
+              cid_cp(target) = cid(idx);
+              cidx_cp(target) = cidx(idx);
+          });
+          Kokkos::fence();
+
+          Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>(0, n_max),
+          KOKKOS_LAMBDA( const int idx )
+          {
+              // sort particles to correct position
+              r(idx, 0) = r_tmp(idx, 0);
+              r(idx, 1) = r_tmp(idx, 1);
+              r(idx, 2) = r_tmp(idx, 2);
+              v(idx, 0) = v_tmp(idx, 0);
+              v(idx, 1) = v_tmp(idx, 1);
+              v(idx, 2) = v_tmp(idx, 2);
+              f(idx, 0) = f_tmp(idx, 0);
+              f(idx, 1) = f_tmp(idx, 1);
+              f(idx, 2) = f_tmp(idx, 2);
+              q(idx) = q_tmp(idx);
+              p(idx) = p_tmp(idx);
+              i(idx) = i_tmp(idx);
+          });
+          Kokkos::fence();
+          cid = cid_cp;
+          cidx = cidx_cp;
+
+          auto end_time_rsort = std::chrono::high_resolution_clock::now();
+          auto elapsed_time_rsort = end_time_rsort - start_time_rsort;
+
+          double Ur_ii = 0.0;
+          double Ur_ij = 0.0;
+
+          auto start_time_rij = std::chrono::high_resolution_clock::now();
+
+          for (int n = nneig/2+1; n < nneig; ++n)
+          {
+              double Ur_ijn;
+              //Kokkos::parallel_reduce(Kokkos::TeamPolicy<>(n_max,
+          Kokkos::AUTO), KOKKOS_LAMBDA(Kokkos::TeamPolicy<>::member_type member,
+          double& Ur_i){ Kokkos::parallel_reduce(n_cells, KOKKOS_LAMBDA(const
+          int idx, double& Ur_ic)
+              {
+                  int ic = idx; // / (nneig/2);
+                  int jcidx = n; // idx % (nneig/2) + (nneig/2+1);;
+
+                  int ix = ic % cdim(0);
+                  int iy = (ic / cdim(0)) % cdim(1);
+                  int iz = ic / (cdim(0) * cdim(1));
+
+                  int jx = jcidx % nneigdim - (int)cfactor;
+                  int jy = (jcidx / nneigdim) % nneigdim - (int)cfactor;
+                  int jz = jcidx / (nneigdim * nneigdim) - (int)cfactor;
+
+                  int jc =    (ix + jx + cdim(0))%cdim(0)
+                           +  (iy + jy + cdim(1))%cdim(1) * cdim(0)
+                           +  (iz + jz + cdim(2))%cdim(2) * cdim(0) * cdim(1);
+                  double contrib = 0;
+
+                  for (int ii = 0; ii < cn(ic); ++ii)
+                  {
+                      int i = coff(ic) + ii;
+                      double rx = r(i, 0);
+                      double ry = r(i, 1);
+                      double rz = r(i, 2);
+
+                      double dx, dy, dz, d, pij;
+                      int j;
+
+                      double fx_i = 0.0;
+                      double fy_i = 0.0;
+                      double fz_i = 0.0;
+
+                      double Ur_i = 0.0;
+                      for (int ij = 0; ij < cn(jc); ++ij)
+                      {
+                          j = coff(jc) + ij;
+
+                          dx = rx - r( j, 0 );
+                          dy = ry - r( j, 1 );
+                          dz = rz - r( j, 2 );
+                          dx -= round(dx / lx) * lx;
+                          dy -= round(dy / lx) * lx;
+                          dz -= round(dz / lx) * lx;
+                          d = sqrt(dx * dx + dy * dy + dz * dz);
+                          double qij = q(i) * q(j);
+                          pij = (d <= r_max) * 0.5 * qij * erfc( alpha * d) / d;
+                          double f_fact = (d <= r_max) * qij * ( 2.0 * sqrt(
+          alpha / PI ) * exp(-alpha * d * d) + erfc(sqrt(alpha) * d) ) / ( d * d
+          );
+
+                          double fx = f_fact * dx;
+                          double fy = f_fact * dy;
+                          double fz = f_fact * dz;
+
+                          fx_i += fx;
+                          fy_i += fy;
+                          fz_i += fz;
+
+                          Kokkos::atomic_add(&f(j,0),-fx);
+                          Kokkos::atomic_add(&f(j,1),-fy);
+                          Kokkos::atomic_add(&f(j,2),-fz);
+
+                          Ur_i +=  pij;
+                          Kokkos::atomic_add(&p(j), pij);
+                      }
+                      Kokkos::atomic_add(&p(i), Ur_i);
+                      Kokkos::atomic_add(&f(i,0),fx_i);
+                      Kokkos::atomic_add(&f(i,1),fy_i);
+                      Kokkos::atomic_add(&f(i,2),fz_i);
+
+                      contrib += 2.0 * Ur_i;
+                  }
+                  Ur_ic += contrib;
+              }, Ur_ijn);
+              if (Ur_ijn != Ur_ijn)
+                  printf("ERROR: nan in n = %d\n",n);
+              Ur_ij += Ur_ijn;
+          }
+
+          auto end_time_rij = std::chrono::high_resolution_clock::now();
+          auto elapsed_time_rij = end_time_rij - start_time_rij;
+          auto start_time_rii = std::chrono::high_resolution_clock::now();
+
+          Kokkos::parallel_reduce(n_cells, KOKKOS_LAMBDA(const int ic, double&
+          Ur_ic)
+          {
+              double contrib = 0.0;
+              for (int ii = 0; ii < cn(ic); ++ii)
+              {
+                  int i = coff(ic) + ii;
+                  double rx = r(i, 0);
+                  double ry = r(i, 1);
+                  double rz = r(i, 2);
+                  double Ur_i = 0.0;
+                  double fx_i = 0.0;
+                  double fy_i = 0.0;
+                  double fz_i = 0.0;
+
+                  for (int ij = ii + 1; ij < cn(ic); ++ij)
+                  {
+                      int j = coff(ic) + ij;
+                      double dx = rx - r( j, 0 );
+                      double dy = ry - r( j, 1 );
+                      double dz = rz - r( j, 2 );
+                      dx -= round(dx / lx) * lx;
+                      dy -= round(dy / lx) * lx;
+                      dz -= round(dz / lx) * lx;
+                      double d = sqrt(dx * dx + dy * dy + dz * dz);
+                      double qij = q(i) * q(j);
+                      double pij = (d <= r_max) * 0.5 * qij * erfc( alpha * d) /
+          d; double f_fact = (d <= r_max) * qij * ( 2.0 * sqrt( alpha / PI ) *
+          exp(-alpha * d * d) + erfc(sqrt(alpha) * d) ) / ( d * d );
+
+                      double fx = f_fact * dx;
+                      double fy = f_fact * dy;
+                      double fz = f_fact * dz;
+
+                      fx_i += fx;
+                      fy_i += fy;
+                      fz_i += fz;
+
+                      Kokkos::atomic_add(&f(j,0),-fx);
+                      Kokkos::atomic_add(&f(j,1),-fy);
+                      Kokkos::atomic_add(&f(j,2),-fz);
+
+                      Ur_i +=  pij;
+                      Kokkos::atomic_add(&p(j), pij);
+                  }
+                  Kokkos::atomic_add(&p(i), Ur_i);
+                  Kokkos::atomic_add(&f(i,0),fx_i);
+                  Kokkos::atomic_add(&f(i,1),fy_i);
+                  Kokkos::atomic_add(&f(i,2),fz_i);
+                  contrib += 2.0 * Ur_i;
+              }
+              Ur_ic += contrib;
+          }, Ur_ii);
+
+
+          auto end_time_rii = std::chrono::high_resolution_clock::now();
+          auto elapsed_time_rii = end_time_rii - start_time_rii;
+
+          Ur = Ur_ij + Ur_ii;
+
+          auto end_time_r = std::chrono::high_resolution_clock::now();
+          auto elapsed_time_r = elapsed_time_rii + elapsed_time_rij;
+          auto ns_elapsed_r =
+          std::chrono::duration_cast<std::chrono::nanoseconds>(elapsed_time_r);
+
+          std::cout << "real-space contribution: " <<
+                        (ns_elapsed_r.count()/1000000000.0) << " s " <<
+                        " = "
+                        << (elapsed_time_rsort.count()/1000000000.0) << " s
+          (sorting) + "
+                        << (elapsed_time_rii.count()/1000000000.0) << " s (local
+          cell) + "
+                        << (elapsed_time_rij.count()/1000000000.0) << " s
+          (neighbor cells) | "
+                        << Ur << " = " << Ur_ii << " + " << Ur_ij <<
+                        std::endl;
+          */
+
+        //** using Cabana structures to achieve the above **//
+
+        // TODO: cellsize dynamic!
+        double lc = 1.0;
+        double cfactor = std::ceil( r_max / lc );
+        int nneigdim = 2 * (int)cfactor + 1;
+        int nneig = nneigdim * nneigdim * nneigdim;
+
+        std::cout << "l: " << lx << " cfactor: " << cfactor << " lc: " << lc
+                  << " r_max: " << r_max << std::endl;
+
+        int n_cells =
+            std::ceil( lx / lc ) * std::ceil( ly / lc ) * std::ceil( lz / lc );
+        Kokkos::View<int *, MemorySpace> cdim( "cdim", 3 );
+        cdim( 0 ) = std::ceil( lx / lc );
+        cdim( 1 ) = std::ceil( ly / lc );
+        cdim( 2 ) = std::ceil( lz / lc );
+
+        auto start_time_rsort = std::chrono::high_resolution_clock::now();
+        // create a Cabana linked list
+        // lower end of system
+        double grid_min[3] = {0.0, 0.0, 0.0};
+        // upper end of system
+        double grid_max[3] = {lx, ly, lz};
+        // cell size
+        double grid_delta[3] = {lc, lc, lc};
+        // create LinkedCellList
+        Cabana::LinkedCellList<MemorySpace> cell_list( r, grid_delta, grid_min,
+                                                       grid_max );
+
+        // resort particles in original ParticleList to be sorted according to
+        // LinkedCellList
+        Cabana::permute( cell_list, particles );
+        auto end_time_rsort = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_rsort = end_time_rsort - start_time_rsort;
+
+        auto start_time_rij = std::chrono::high_resolution_clock::now();
+
+        // energy contribution from neighbor cells
+        double Ur_ij = 0.0;
+
+        for ( int n = nneig / 2 + 1; n < nneig; ++n )
+        {
+            double Ur_ijn;
+            // Kokkos::parallel_reduce(Kokkos::TeamPolicy<>(n_max,
+            // Kokkos::AUTO), KOKKOS_LAMBDA(Kokkos::TeamPolicy<>::member_type
+            // member, double& Ur_i){
+            Kokkos::parallel_reduce(
+                n_cells,
+                KOKKOS_LAMBDA( const int idx, double &Ur_ic ) {
+                    // get coordinates of local domain
+                    int ix, iy, iz;
+                    cell_list.ijkBinIndex( idx, ix, iy, iz );
+
+                    // index of neighbor (to dermine which neighbor it is
+                    int jcidx = n;
+
+                    // compute position in relation to local cell
+                    int jnx = jcidx % nneigdim - (int)cfactor;
+                    int jny = ( jcidx / nneigdim ) % nneigdim - (int)cfactor;
+                    int jnz = jcidx / ( nneigdim * nneigdim ) - (int)cfactor;
+
+                    // compute global cell index
+                    int jc = ( iz + jnz + cdim( 2 ) ) % cdim( 2 ) +
+                             ( iy + jny + cdim( 1 ) ) % cdim( 1 ) * cdim( 2 ) +
+                             ( ix + jnx + cdim( 0 ) ) % cdim( 0 ) * cdim( 1 ) *
+                                 cdim( 2 );
+
+                    // get neighbor coodinates
+                    int jx, jy, jz;
+                    cell_list.ijkBinIndex( jc, jx, jy, jz );
+
+                    double contrib = 0;
+
+                    for ( int ii = 0; ii < cell_list.binSize( ix, iy, iz );
+                          ++ii )
+                    {
+                        int i = cell_list.binOffset( ix, iy, iz ) + ii;
+                        double rx = r( i, 0 );
+                        double ry = r( i, 1 );
+                        double rz = r( i, 2 );
+
+                        double dx, dy, dz, d, pij;
+                        int j;
+
+                        double fx_i = 0.0;
+                        double fy_i = 0.0;
+                        double fz_i = 0.0;
+
+                        double Ur_i = 0.0;
+                        for ( int ij = 0; ij < cell_list.binSize( jx, jy, jz );
+                              ++ij )
+                        {
+                            j = cell_list.binOffset( jx, jy, jz ) + ij;
+
+                            dx = rx - r( j, 0 );
+                            dy = ry - r( j, 1 );
+                            dz = rz - r( j, 2 );
+                            dx -= round( dx / lx ) * lx;
+                            dy -= round( dy / lx ) * lx;
+                            dz -= round( dz / lx ) * lx;
+                            d = sqrt( dx * dx + dy * dy + dz * dz );
+                            double qij = q( i ) * q( j );
+                            pij = ( d <= r_max ) * 0.5 * qij *
+                                  erfc( alpha * d ) / d;
+                            double f_fact = ( d <= r_max ) * qij *
+                                            ( 2.0 * sqrt( alpha / PI ) *
+                                                  exp( -alpha * d * d ) +
+                                              erfc( sqrt( alpha ) * d ) ) /
+                                            ( d * d );
+
+                            double fx = f_fact * dx;
+                            double fy = f_fact * dy;
+                            double fz = f_fact * dz;
+
+                            fx_i += fx;
+                            fy_i += fy;
+                            fz_i += fz;
+
+                            Kokkos::atomic_add( &f( j, 0 ), -fx );
+                            Kokkos::atomic_add( &f( j, 1 ), -fy );
+                            Kokkos::atomic_add( &f( j, 2 ), -fz );
+
+                            Ur_i += pij;
+                            Kokkos::atomic_add( &p( j ), pij );
+                        }
+                        Kokkos::atomic_add( &p( i ), Ur_i );
+                        Kokkos::atomic_add( &f( i, 0 ), fx_i );
+                        Kokkos::atomic_add( &f( i, 1 ), fy_i );
+                        Kokkos::atomic_add( &f( i, 2 ), fz_i );
+
+                        contrib += 2.0 * Ur_i;
+                    }
+                    Ur_ic += contrib;
+                },
+                Ur_ijn );
+            if ( Ur_ijn != Ur_ijn )
+                printf( "ERROR: nan in n = %d\n", n );
+            Ur_ij += Ur_ijn;
+        }
+
+        auto end_time_rij = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_rij = end_time_rij - start_time_rij;
+        auto start_time_rii = std::chrono::high_resolution_clock::now();
+
+        // energy contribution from local cells
+        double Ur_ii = 0.0;
+        Kokkos::parallel_reduce(
+            n_cells,
+            KOKKOS_LAMBDA( const int ic, double &Ur_ic ) {
+                int ix, iy, iz;
+                cell_list.ijkBinIndex( ic, ix, iy, iz );
+
+                double contrib = 0.0;
+                for ( int ii = 0; ii < cell_list.binSize( ix, iy, iz ); ++ii )
+                {
+                    int i = cell_list.binOffset( ix, iy, iz ) + ii;
+                    double rx = r( i, 0 );
+                    double ry = r( i, 1 );
+                    double rz = r( i, 2 );
+                    double Ur_i = 0.0;
+                    double fx_i = 0.0;
+                    double fy_i = 0.0;
+                    double fz_i = 0.0;
+
+                    for ( int ij = ii + 1; ij < cell_list.binSize( ix, iy, iz );
+                          ++ij )
+                    {
+                        int j = cell_list.binOffset( ix, iy, iz ) + ij;
+                        double dx = rx - r( j, 0 );
+                        double dy = ry - r( j, 1 );
+                        double dz = rz - r( j, 2 );
+                        dx -= round( dx / lx ) * lx;
+                        dy -= round( dy / lx ) * lx;
+                        dz -= round( dz / lx ) * lx;
+                        double d = sqrt( dx * dx + dy * dy + dz * dz );
+                        double qij = q( i ) * q( j );
+                        double pij =
+                            ( d <= r_max ) * 0.5 * qij * erfc( alpha * d ) / d;
+                        double f_fact =
+                            ( d <= r_max ) * qij *
+                            ( 2.0 * sqrt( alpha / PI ) * exp( -alpha * d * d ) +
+                              erfc( sqrt( alpha ) * d ) ) /
+                            ( d * d );
+
+                        double fx = f_fact * dx;
+                        double fy = f_fact * dy;
+                        double fz = f_fact * dz;
+
+                        fx_i += fx;
+                        fy_i += fy;
+                        fz_i += fz;
+
+                        Kokkos::atomic_add( &f( j, 0 ), -fx );
+                        Kokkos::atomic_add( &f( j, 1 ), -fy );
+                        Kokkos::atomic_add( &f( j, 2 ), -fz );
+
+                        Ur_i += pij;
+                        Kokkos::atomic_add( &p( j ), pij );
+                    }
+                    Kokkos::atomic_add( &p( i ), Ur_i );
+                    Kokkos::atomic_add( &f( i, 0 ), fx_i );
+                    Kokkos::atomic_add( &f( i, 1 ), fy_i );
+                    Kokkos::atomic_add( &f( i, 2 ), fz_i );
+                    contrib += 2.0 * Ur_i;
+                }
+                Ur_ic += contrib;
+            },
+            Ur_ii );
+
+        auto end_time_rii = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_rii = end_time_rii - start_time_rii;
+
+        Ur = Ur_ij + Ur_ii;
+
+        auto end_time_r = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_r =
+            elapsed_time_rsort + elapsed_time_rii + elapsed_time_rij;
+        auto ns_elapsed_r =
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                elapsed_time_r );
+
+        std::cout << "real-space contribution: "
+                  << ( ns_elapsed_r.count() / 1000000000.0 ) << " s "
+                  << " = " << ( elapsed_time_rsort.count() / 1000000000.0 )
+                  << " s (sorting) + "
+                  << ( elapsed_time_rii.count() / 1000000000.0 )
+                  << " s (local cell) + "
+                  << ( elapsed_time_rij.count() / 1000000000.0 )
+                  << " s (neighbor cells) | " << Ur << " = " << Ur_ii << " + "
+                  << Ur_ij << std::endl;
+    }
 
     // computation of self-energy contribution
     Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
@@ -307,6 +810,9 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
     Udip = Udip_vec[0] * Udip_vec[0] + Udip_vec[1] * Udip_vec[1] +
            Udip_vec[2] * Udip_vec[2];
+
+    std::cout << "Ur: " << Ur << " Uk: " << Uk << " Uself: " << Uself
+              << " Udip: " << Udip << std::endl;
 
     return Ur + Uk + Uself + Udip;
 }
