@@ -89,11 +89,6 @@ int main( int argc, char **argv )
     std::cout << "sum of forces: " << tfx << " " << tfy << " " << tfz
               << std::endl;
 
-    // Clean up
-    // delete mesh;
-    // delete particles;
-    // Kokkos::fence();
-    // Kokkos::Cuda::finalize();
     Kokkos::finalize();
     return 0;
 }

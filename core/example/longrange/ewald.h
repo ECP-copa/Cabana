@@ -399,11 +399,9 @@ struct EwaldUkForcesFunctor
         // one time update of the forces of the local particle with the results
         Kokkos::single(Kokkos::PerTeam(member), [=] () 
         {
-            //printf("DEBUG [EwaldUk_fi] (%d): %le %le %le\n", i, EwaldUk_fi.vx, EwaldUk_fi.vy, EwaldUk_fi.vz);
             f(i, 0) = q(i) * EwaldUk_fi.vx;
             f(i, 1) = q(i) * EwaldUk_fi.vy;
             f(i, 2) = q(i) * EwaldUk_fi.vz;
-            //printf("DEBUG [EwaldUk_fi] (%d): %le %le %le -> %le %le %le\n", i, EwaldUk_fi.vx, EwaldUk_fi.vy, EwaldUk_fi.vz, f(i, 0), f(i, 1), f(i, 2));
         });
     }
 
