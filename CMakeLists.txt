@@ -73,6 +73,7 @@ find_package(Doxygen)
 if(Doxygen_FOUND)
   set(DOXYGEN_GENERATE_XML YES) 
   set(DOXYGEN_WARN_LOGFILE "warnings.log") 
+  set(DOXYGEN_WARN_IF_UNDOCUMENTED NO)
   doxygen_add_docs(doxygen core/src)
 endif()
 
