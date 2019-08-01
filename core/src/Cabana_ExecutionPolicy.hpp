@@ -24,7 +24,7 @@ namespace Cabana
 namespace Impl
 {
 /*!
-  \class
+  \class StructRange
 
   \brief 2D loop outer index range giving struct index range bounds based on a
   1D range input.
@@ -93,7 +93,7 @@ class SimdPolicy
       \brief Range constructor.
       \param begin The begininning of the 1D range. This will be decomposed
       into 2D indices.
-      \param begin The ending of the 1D range. This will be decomposed
+      \param end The ending of the 1D range. This will be decomposed
       into 2D indices.
     */
     SimdPolicy( const index_type begin, const index_type end )

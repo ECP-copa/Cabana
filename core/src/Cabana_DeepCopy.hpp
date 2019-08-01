@@ -371,7 +371,7 @@ deep_copy( DstSlice &dst, const SrcSlice &src,
 
   \param slice The slice to fill.
 
-  \param src The scalar to assign. All slice elements will be assigned this
+  \param scalar The scalar to assign. All slice elements will be assigned this
   value.
 */
 template <class Slice_t>
