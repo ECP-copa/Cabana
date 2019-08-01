@@ -232,7 +232,7 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src,
 
   \param aosoa The AoSoA to fill.
 
-  \param src The tuple to assign. All AoSoA elements will be assigned this
+  \param tuple The tuple to assign. All AoSoA elements will be assigned this
   value.
 */
 template <class AoSoA_t>
