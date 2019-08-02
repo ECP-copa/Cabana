@@ -303,7 +303,7 @@ struct is_linked_cell_list<const LinkedCellList<DeviceType>>
 
   \tparam LinkedCellListType The linked cell list type.
 
-  \tparm AoSoA_t The AoSoA type.
+  \tparam AoSoA_t The AoSoA type.
 
   \param linked_cell_list The linked cell list to permute the AoSoA with.
 
@@ -325,7 +325,7 @@ void permute(
 
   \tparam LinkedCellListType The linked cell list type.
 
-  \tparm SliceType The slice type.
+  \tparam SliceType The slice type.
 
   \param linked_cell_list The linked cell list to permute the slice with.
 

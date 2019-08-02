@@ -415,7 +415,7 @@ class AoSoA
 
       \param i The index to set the tuple at.
 
-      \param tuple The tuple to get the data from.
+      \param tpl The tuple to get the data from.
     */
     KOKKOS_INLINE_FUNCTION
     void setTuple( const size_type i, const tuple_type &tpl ) const

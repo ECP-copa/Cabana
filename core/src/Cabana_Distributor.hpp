@@ -365,7 +365,7 @@ void migrate( const Distributor_t &distributor, const AoSoA_t &src,
 
   \param distributor The distributor to use for the migration.
 
-  \param AoSoA The AoSoA containing the data to be migrated. Upon input, must
+  \param aosoa The AoSoA containing the data to be migrated. Upon input, must
   have the same number of elements as the inputs used to construct the
   destributor. At output, it will be the same size as th enumber of import
   elements on this rank provided by the distributor. Before using this

@@ -81,9 +81,9 @@ class Index
       \brief Given a struct index and array index in an AoSoA get the tuple
       index.
 
-      \param struct_index The struct index.
+      \param s The struct index.
 
-      \param array_index The array index.
+      \param a The array index.
 
       \return The tuple index.
     */
