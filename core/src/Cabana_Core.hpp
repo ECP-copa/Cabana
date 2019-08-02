@@ -64,7 +64,7 @@ CABANA_DEPRECATED void initKokkos( Args &&... args )
         // Kokkos::initialize() always initializes the default execution
         // space, so it suffices to check whether that was initialized.
         const bool kokkosIsInitialized =
-            Kokkos::DefaultExecutionSpace::is_initialized();
+            Kokkos::is_initialized();
 
         if ( !kokkosIsInitialized )
         {
@@ -76,7 +76,7 @@ CABANA_DEPRECATED void initKokkos( Args &&... args )
     }
 
     const bool kokkosIsInitialized =
-        Kokkos::DefaultExecutionSpace::is_initialized();
+        Kokkos::is_initialized();
 
     if ( !kokkosIsInitialized )
         throw std::runtime_error( "At the end of initKokkos, Kokkos"
