@@ -16,6 +16,23 @@ RUN export CMAKE_VERSION=3.13.4 && \
     sh ${CMAKE_SCRIPT} --skip-license --prefix=/usr && \
     rm ${CMAKE_SCRIPT}
 
+# Install CUDA-aware Open MPI
+RUN export OPENMPI_VERSION=4.0.0 && \
+    export OPENMPI_VERSION_SHORT=4.0 && \
+    export OPENMPI_SHA1=fee1d0287abfb150bae16957de342752c9bdd4e8 && \
+    export OPENMPI_URL=https://www.open-mpi.org/software/ompi/v${OPENMPI_VERSION_SHORT}/downloads/openmpi-${OPENMPI_VERSION}.tar.bz2 && \
+    export OPENMPI_ARCHIVE=openmpi-${OPENMPI_VERSION}.tar.bz2 && \
+    export OPENMPI_SOURCE_DIR=openmpi-${OPENMPI_VERSION} && \
+    export OPENMPI_INSTALL_PREFIX=/usr && \
+    wget --quiet ${OPENMPI_URL} --output-document=${OPENMPI_ARCHIVE} && \
+    echo "${OPENMPI_SHA1} ${OPENMPI_ARCHIVE}" | sha1sum -c && \
+    mkdir -p ${OPENMPI_SOURCE_DIR} && \
+    tar -xf ${OPENMPI_ARCHIVE} -C ${OPENMPI_SOURCE_DIR} --strip-components=1 && \
+    cd ${OPENMPI_SOURCE_DIR} && mkdir build && cd build && \
+    ../configure --prefix=${OPENMPI_INSTALL_PREFIX} --with-cuda && \
+    make -j8 install && \
+    rm -rf ${OPENMPI_ARCHIVE} ${OPENMPI_SOURCE_DIR}
+
 # Install Kokkos
 ENV KOKKOS_DIR=/opt/kokkos
 RUN export KOKKOS_VERSION=2.8.00 && \
@@ -35,20 +52,3 @@ RUN export KOKKOS_VERSION=2.8.00 && \
     && \
     make && make install && \
     rm -rf ${KOKKOS_ARCHIVE} ${KOKKOS_SOURCE_DIR}
-
-# Install CUDA-aware Open MPI
-RUN export OPENMPI_VERSION=4.0.0 && \
-    export OPENMPI_VERSION_SHORT=4.0 && \
-    export OPENMPI_SHA1=fee1d0287abfb150bae16957de342752c9bdd4e8 && \
-    export OPENMPI_URL=https://www.open-mpi.org/software/ompi/v${OPENMPI_VERSION_SHORT}/downloads/openmpi-${OPENMPI_VERSION}.tar.bz2 && \
-    export OPENMPI_ARCHIVE=openmpi-${OPENMPI_VERSION}.tar.bz2 && \
-    export OPENMPI_SOURCE_DIR=openmpi-${OPENMPI_VERSION} && \
-    export OPENMPI_INSTALL_PREFIX=/usr && \
-    wget --quiet ${OPENMPI_URL} --output-document=${OPENMPI_ARCHIVE} && \
-    echo "${OPENMPI_SHA1} ${OPENMPI_ARCHIVE}" | sha1sum -c && \
-    mkdir -p ${OPENMPI_SOURCE_DIR} && \
-    tar -xf ${OPENMPI_ARCHIVE} -C ${OPENMPI_SOURCE_DIR} --strip-components=1 && \
-    cd ${OPENMPI_SOURCE_DIR} && mkdir build && cd build && \
-    ../configure --prefix=${OPENMPI_INSTALL_PREFIX} --with-cuda && \
-    make -j8 install && \
-    rm -rf ${OPENMPI_ARCHIVE} ${OPENMPI_SOURCE_DIR}
