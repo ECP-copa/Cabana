@@ -71,8 +71,7 @@ endif()
 
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  set(DOXYGEN_GENERATE_XML YES) 
-  doxygen_add_docs(doxygen core)
+  doxygen_add_docs(doxygen core/src)
 endif()
 
 option(Cabana_ENABLE_MPI "Build Cabana with MPI support" OFF)
