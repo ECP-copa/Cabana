@@ -105,10 +105,10 @@ var searchBox = new SearchBox("searchBox", "search",false,'Search');
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a9e2cfed780e98447142078eb963e4c71"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9e2cfed780e98447142078eb963e4c71"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa_type</b> = <a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>aosoa_type</b> = <a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;</td></tr>
 <tr class="separator:a9e2cfed780e98447142078eb963e4c71"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a82f62d7060ceb32d56f600650087d784"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a82f62d7060ceb32d56f600650087d784"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>member_types</b> = <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a></td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>member_types</b> = DataTypes</td></tr>
 <tr class="separator:a82f62d7060ceb32d56f600650087d784"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a08bcb213b8730b4b6d9c4d4c97a1d7c6"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a08bcb213b8730b4b6d9c4d4c97a1d7c6"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
@@ -126,7 +126,7 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_traits</b> = 
 using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename memory_space::size_type</td></tr>
 <tr class="separator:a67e91888b0223290f9483ff5cec84872"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a811171fd00b054a3f89faaf469b94dbc"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a811171fd00b054a3f89faaf469b94dbc"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_type</b> = <a class="el" href="structCabana_1_1SoA.html">SoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">member_types</a>, vector_length &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_type</b> = <a class="el" href="structCabana_1_1SoA.html">SoA</a>&lt; member_types, vector_length &gt;</td></tr>
 <tr class="separator:a811171fd00b054a3f89faaf469b94dbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adc2f9918f512d9d7b37a34edea44aa6a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="adc2f9918f512d9d7b37a34edea44aa6a"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_view</b> = Kokkos::View&lt; <a class="el" href="structCabana_1_1SoA.html">soa_type</a> *, device_type, memory_traits &gt;</td></tr>
@@ -135,11 +135,11 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>soa_view</b> = Kokko
 using&#160;</td><td class="memItemRight" valign="bottom"><b>index_type</b> = <a class="el" href="classCabana_1_1Impl_1_1Index.html">Impl::Index</a>&lt; vector_length &gt;</td></tr>
 <tr class="separator:ae4ea168328e8d0ae5bad700291f91e34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ade4d16bcfecf74f5e3a34b27a9564a90"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ade4d16bcfecf74f5e3a34b27a9564a90"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>tuple_type</b> = <a class="el" href="structCabana_1_1Tuple.html">Tuple</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">member_types</a> &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>tuple_type</b> = <a class="el" href="structCabana_1_1Tuple.html">Tuple</a>&lt; member_types &gt;</td></tr>
 <tr class="separator:ade4d16bcfecf74f5e3a34b27a9564a90"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed3b54c102255b73ab7b94c37e87a687"><td class="memTemplParams" colspan="2"><a class="anchor" id="aed3b54c102255b73ab7b94c37e87a687"></a>
 template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:aed3b54c102255b73ab7b94c37e87a687"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_data_type</b> = typename <a class="el" href="structCabana_1_1MemberTypeAtIndex.html">MemberTypeAtIndex</a>&lt; M, <a class="el" href="structCabana_1_1MemberTypes.html">member_types</a> &gt;::type</td></tr>
+<tr class="memitem:aed3b54c102255b73ab7b94c37e87a687"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_data_type</b> = typename <a class="el" href="structCabana_1_1MemberTypeAtIndex.html">MemberTypeAtIndex</a>&lt; M, member_types &gt;::type</td></tr>
 <tr class="separator:aed3b54c102255b73ab7b94c37e87a687"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3760cb7516c5786f43188c787c93604c"><td class="memTemplParams" colspan="2"><a class="anchor" id="a3760cb7516c5786f43188c787c93604c"></a>
 template&lt;std::size_t M&gt; </td></tr>
@@ -241,13 +241,13 @@ class Cabana::AoSoA&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;</
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>label</em> = <code>&quot;&quot;</code></td><td>)</td>
@@ -276,13 +276,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_DEPRECATED <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
+          <td class="memname">CABANA_DEPRECATED <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
@@ -311,13 +311,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
           <td>(</td>
           <td class="paramtype">const std::string&#160;</td>
           <td class="paramname"><em>label</em>, </td>
@@ -356,13 +356,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="classCabana_1_1AoSoA.html">AoSoA</a> </td>
           <td>(</td>
           <td class="paramtype"><a class="el" href="structCabana_1_1SoA.html">soa_type</a> *&#160;</td>
           <td class="paramname"><em>ptr</em>, </td>
@@ -409,13 +409,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_FORCEINLINE_FUNCTION <a class="el" href="structCabana_1_1SoA.html">soa_type</a>&amp; <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::access </td>
+          <td class="memname">KOKKOS_FORCEINLINE_FUNCTION <a class="el" href="structCabana_1_1SoA.html">soa_type</a>&amp; <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::access </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
@@ -444,13 +444,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::arraySize </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::arraySize </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
@@ -479,13 +479,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_FUNCTION size_type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::capacity </td>
+          <td class="memname">KOKKOS_FUNCTION size_type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::capacity </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -510,13 +510,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structCabana_1_1SoA.html">soa_type</a>* <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::<a class="el" href="structdata.html">data</a> </td>
+          <td class="memname"><a class="el" href="structCabana_1_1SoA.html">soa_type</a>* <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::data </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -538,13 +538,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="structCabana_1_1Tuple.html">tuple_type</a> <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::getTuple </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="structCabana_1_1Tuple.html">tuple_type</a> <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::getTuple </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>i</em></td><td>)</td>
@@ -573,13 +573,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">std::string <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::label </td>
+          <td class="memname">std::string <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::label </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -602,13 +602,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::numSoA </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::numSoA </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -630,13 +630,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_DEPRECATED void* <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::ptr </td>
+          <td class="memname">CABANA_DEPRECATED void* <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::ptr </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -658,13 +658,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::reserve </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::reserve </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
@@ -689,13 +689,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::resize </td>
+          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::resize </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>n</em></td><td>)</td>
@@ -721,13 +721,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::setTuple </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::setTuple </td>
           <td>(</td>
           <td class="paramtype">const size_type&#160;</td>
           <td class="paramname"><em>i</em>, </td>
@@ -755,7 +755,7 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">i</td><td>The index to set the tuple at.</td></tr>
-    <tr><td class="paramname">tuple</td><td>The tuple to get the data from. </td></tr>
+    <tr><td class="paramname">tpl</td><td>The tuple to get the data from. </td></tr>
   </table>
   </dd>
 </dl>
@@ -766,13 +766,13 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_FUNCTION size_type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::size </td>
+          <td class="memname">KOKKOS_FUNCTION size_type <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::size </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -795,7 +795,7 @@ template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::Performa
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DataTypes, class DeviceType, int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits = Kokkos::MemoryManaged&gt; </div>
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
 <div class="memtemplate">
 template&lt;std::size_t M&gt; </div>
 <table class="mlabels">
@@ -803,7 +803,7 @@ template&lt;std::size_t M&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">CABANA_DEPRECATED <a class="el" href="classCabana_1_1Slice.html">member_slice_type</a>&lt;M&gt; <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; <a class="el" href="structCabana_1_1MemberTypes.html">DataTypes</a>, DeviceType, VectorLength, MemoryTraits &gt;::slice </td>
+          <td class="memname">CABANA_DEPRECATED <a class="el" href="classCabana_1_1Slice.html">member_slice_type</a>&lt;M&gt; <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::slice </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>slice_label</em> = <code>&quot;&quot;</code></td><td>)</td>

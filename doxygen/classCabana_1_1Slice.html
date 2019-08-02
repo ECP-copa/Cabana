@@ -163,7 +163,7 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a93a0064084e2b05c030e63ecc688734b">Slice</a> ()</td></tr>
 <tr class="memdesc:a93a0064084e2b05c030e63ecc688734b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="separator:a93a0064084e2b05c030e63ecc688734b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62c584101d666f3dfc5c6722df8e9f2e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a62c584101d666f3dfc5c6722df8e9f2e">Slice</a> (const pointer_type <a class="el" href="structdata.html">data</a>, const size_type <a class="el" href="classCabana_1_1Slice.html#a204a72ff6926cf2ae226e39be2c1355a">size</a>, const size_type num_soa, const std::string &amp;<a class="el" href="classCabana_1_1Slice.html#a5abadf6ab2a34e71a328b5481ca62e10">label</a>=&quot;&quot;)</td></tr>
+<tr class="memitem:a62c584101d666f3dfc5c6722df8e9f2e"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1Slice.html#a62c584101d666f3dfc5c6722df8e9f2e">Slice</a> (const pointer_type <a class="el" href="classCabana_1_1Slice.html#a27b3bc5012883ba352e4f16e9fdbcb85">data</a>, const size_type <a class="el" href="classCabana_1_1Slice.html#a204a72ff6926cf2ae226e39be2c1355a">size</a>, const size_type num_soa, const std::string &amp;<a class="el" href="classCabana_1_1Slice.html#a5abadf6ab2a34e71a328b5481ca62e10">label</a>=&quot;&quot;)</td></tr>
 <tr class="memdesc:a62c584101d666f3dfc5c6722df8e9f2e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="#a62c584101d666f3dfc5c6722df8e9f2e">More...</a><br /></td></tr>
 <tr class="separator:a62c584101d666f3dfc5c6722df8e9f2e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae615b44282c747d966f9503f5f49fb57"><td class="memTemplParams" colspan="2">template&lt;class MAT &gt; </td></tr>
@@ -319,7 +319,6 @@ template&lt;typename DataType, typename DeviceType, typename MemoryAccessType, i
   <table class="params">
     <tr><td class="paramname">data</td><td>Pointer to the first member of the slice. </td></tr>
     <tr><td class="paramname">size</td><td>The number of tuples in the slice. </td></tr>
-    <tr><td class="paramname">soa_stride</td><td>The number of elements in the slice's value type between starting elements of a struct. </td></tr>
     <tr><td class="paramname">num_soa</td><td>The number of structs in the slice. </td></tr>
     <tr><td class="paramname">label</td><td>An optional label for the slice. </td></tr>
   </table>
@@ -416,7 +415,7 @@ template&lt;typename DataType, typename DeviceType, typename MemoryAccessType, i
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION pointer_type <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::<a class="el" href="structdata.html">data</a> </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION pointer_type <a class="el" href="classCabana_1_1Slice.html">Cabana::Slice</a>&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;::data </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
