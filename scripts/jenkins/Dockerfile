@@ -49,6 +49,7 @@ RUN export KOKKOS_VERSION=2.9.00 && \
         --arch=Volta70 \
         --prefix=${KOKKOS_DIR} \
         --debug \
+        --with-options=disable_deprecated_code \
     && \
     make && make install && \
     rm -rf ${KOKKOS_ARCHIVE} ${KOKKOS_SOURCE_DIR}
