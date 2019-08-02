@@ -35,7 +35,7 @@ RUN export OPENMPI_VERSION=4.0.0 && \
 
 # Install Kokkos
 ENV KOKKOS_DIR=/opt/kokkos
-RUN export KOKKOS_VERSION=2.8.00 && \
+RUN export KOKKOS_VERSION=2.9.00 && \
     export KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     export KOKKOS_ARCHIVE=kokkos-${KOKKOS_VERSION}.tar.gz && \
     export KOKKOS_SOURCE_DIR=kokkos-${KOKKOS_VERSION} && \
