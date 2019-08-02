@@ -63,8 +63,7 @@ CABANA_DEPRECATED void initKokkos( Args &&... args )
         // Kokkos doesn't have a global is_initialized().  However,
         // Kokkos::initialize() always initializes the default execution
         // space, so it suffices to check whether that was initialized.
-        const bool kokkosIsInitialized =
-            Kokkos::is_initialized();
+        const bool kokkosIsInitialized = Kokkos::is_initialized();
 
         if ( !kokkosIsInitialized )
         {
@@ -75,8 +74,7 @@ CABANA_DEPRECATED void initKokkos( Args &&... args )
         }
     }
 
-    const bool kokkosIsInitialized =
-        Kokkos::is_initialized();
+    const bool kokkosIsInitialized = Kokkos::is_initialized();
 
     if ( !kokkosIsInitialized )
         throw std::runtime_error( "At the end of initKokkos, Kokkos"
