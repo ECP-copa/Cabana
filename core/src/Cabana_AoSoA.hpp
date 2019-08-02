@@ -210,7 +210,7 @@ class AoSoA
         , _num_soa( 0 )
     {
         static_assert(
-            !memory_traits::Unmanaged,
+            !memory_traits::is_unmanaged,
             "Construction by allocation cannot use unmanaged memory" );
         resize( _size );
     }
@@ -246,7 +246,7 @@ class AoSoA
         , _num_soa( num_soa )
         , _data( ptr, num_soa )
     {
-        static_assert( memory_traits::Unmanaged,
+        static_assert( memory_traits::is_unmanaged,
                        "Pointer construction requires unmanaged memory" );
     }
 
@@ -308,7 +308,7 @@ class AoSoA
     */
     void resize( const size_type n )
     {
-        static_assert( !memory_traits::Unmanaged,
+        static_assert( !memory_traits::is_unmanaged,
                        "Cannot resize unmanaged memory" );
 
         // Reserve memory if needed.
@@ -338,7 +338,7 @@ class AoSoA
     */
     void reserve( const size_type n )
     {
-        static_assert( !memory_traits::Unmanaged,
+        static_assert( !memory_traits::is_unmanaged,
                        "Cannot reserve unmanaged memory" );
 
         // If we aren't asking for more memory then we have nothing to do.
