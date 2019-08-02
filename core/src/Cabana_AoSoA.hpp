@@ -190,7 +190,7 @@ class AoSoA
         : _size( 0 )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _data( label )
+        , _data( label, 0 )
     {
     }
 
@@ -226,7 +226,7 @@ class AoSoA
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _data( label )
+        , _data( label, 0 )
     {
         resize( _size );
     }
