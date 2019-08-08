@@ -284,9 +284,9 @@ void executionTest()
         });
     auto v1_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), v1 );
-    for ( int i = 0; i < size_i; ++i )
+    for ( int i = 0; i < is1.extent(0); ++i )
     {
-        if ( min_i <= i && i < max_i )
+        if ( is1.min(0) <= i && i < is1.max(0) )
             EXPECT_EQ( v1_mirror(i), 1.0 );
         else
             EXPECT_EQ( v1_mirror(i), 0.0 );
@@ -306,11 +306,11 @@ void executionTest()
         });
     auto v2_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), v2 );
-    for ( int i = 0; i < size_i; ++i )
-        for ( int j = 0; j < size_j; ++j )
+    for ( int i = 0; i < is2.extent(0); ++i )
+        for ( int j = 0; j < is2.extent(1); ++j )
         {
-            if ( min_i <= i && i < max_i &&
-                 min_j <= j && j < max_j )
+            if ( is2.min(0) <= i && i < is2.max(0) &&
+                 is2.min(1) <= j && j < is2.max(1) )
                 EXPECT_EQ( v2_mirror(i,j), 1.0 );
             else
                 EXPECT_EQ( v2_mirror(i,j), 0.0 );
@@ -330,13 +330,13 @@ void executionTest()
         });
     auto v3_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), v3 );
-    for ( int i = 0; i < size_i; ++i )
-        for ( int j = 0; j < size_j; ++j )
-            for ( int k = 0; k < size_k; ++k )
+    for ( int i = 0; i < is3.extent(0); ++i )
+        for ( int j = 0; j < is3.extent(1); ++j )
+            for ( int k = 0; k < is3.extent(2); ++k )
             {
-                if ( min_i <= i && i < max_i &&
-                     min_j <= j && j < max_j &&
-                     min_k <= k && k < max_k )
+                if ( is3.min(0) <= i && i < is3.max(0) &&
+                     is3.min(1) <= j && j < is3.max(1) &&
+                     is3.min(2) <= k && k < is3.max(2) )
                     EXPECT_EQ( v3_mirror(i,j,k), 1.0 );
                 else
                     EXPECT_EQ( v3_mirror(i,j,k), 0.0 );
@@ -356,15 +356,15 @@ void executionTest()
         });
     auto v4_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), v4 );
-    for ( int i = 0; i < size_i; ++i )
-        for ( int j = 0; j < size_j; ++j )
-            for ( int k = 0; k < size_k; ++k )
-                for ( int l = 0; l < size_l; ++l )
+    for ( int i = 0; i < is4.extent(0); ++i )
+        for ( int j = 0; j < is4.extent(1); ++j )
+            for ( int k = 0; k < is4.extent(2); ++k )
+                for ( int l = 0; l < is4.extent(3); ++l )
                 {
-                    if ( min_i <= i && i < max_i &&
-                         min_j <= j && j < max_j &&
-                         min_k <= k && k < max_k &&
-                         min_l <= l && l < max_l )
+                    if ( is4.min(0) <= i && i < is4.max(0) &&
+                         is4.min(1) <= j && j < is4.max(1) &&
+                         is4.min(2) <= k && k < is4.max(2) &&
+                         is4.min(3) <= l && l < is4.max(3) )
                         EXPECT_EQ( v4_mirror(i,j,k,l), 1.0 );
                     else
                         EXPECT_EQ( v4_mirror(i,j,k,l), 0.0 );
@@ -384,9 +384,9 @@ void subviewTest()
     Kokkos::deep_copy( sv1, 1.0 );
     auto v1_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), v1 );
-    for ( int i = 0; i < size_i; ++i )
+    for ( int i = 0; i < is1.extent(0); ++i )
     {
-        if ( min_i <= i && i < max_i )
+        if ( is1.range(0).first <= i && i < is1.range(0).second )
             EXPECT_EQ( v1_mirror(i), 1.0 );
         else
             EXPECT_EQ( v1_mirror(i), 0.0 );
@@ -402,11 +402,11 @@ void subviewTest()
     Kokkos::deep_copy( sv2, 1.0 );
     auto v2_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), v2 );
-    for ( int i = 0; i < size_i; ++i )
-        for ( int j = 0; j < size_j; ++j )
+    for ( int i = 0; i < is2.extent(0); ++i )
+        for ( int j = 0; j < is2.extent(1); ++j )
         {
-            if ( min_i <= i && i < max_i &&
-                 min_j <= j && j < max_j )
+            if ( is2.range(0).first <= i && i < is2.range(0).second &&
+                 is2.range(1).first <= j && j < is2.range(1).second )
                 EXPECT_EQ( v2_mirror(i,j), 1.0 );
             else
                 EXPECT_EQ( v2_mirror(i,j), 0.0 );
@@ -422,13 +422,13 @@ void subviewTest()
     Kokkos::deep_copy( sv3, 1.0 );
     auto v3_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), v3 );
-    for ( int i = 0; i < size_i; ++i )
-        for ( int j = 0; j < size_j; ++j )
-            for ( int k = 0; k < size_k; ++k )
+    for ( int i = 0; i < is3.extent(0); ++i )
+        for ( int j = 0; j < is3.extent(1); ++j )
+            for ( int k = 0; k < is3.extent(2); ++k )
             {
-                if ( min_i <= i && i < max_i &&
-                     min_j <= j && j < max_j &&
-                     min_k <= k && k < max_k )
+                if ( is3.range(0).first <= i && i < is3.range(0).second &&
+                     is3.range(1).first <= j && j < is3.range(1).second &&
+                     is3.range(2).first <= k && k < is3.range(2).second )
                     EXPECT_EQ( v3_mirror(i,j,k), 1.0 );
                 else
                     EXPECT_EQ( v3_mirror(i,j,k), 0.0 );
@@ -444,15 +444,15 @@ void subviewTest()
     Kokkos::deep_copy( sv4, 1.0 );
     auto v4_mirror = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), v4 );
-    for ( int i = 0; i < size_i; ++i )
-        for ( int j = 0; j < size_j; ++j )
-            for ( int k = 0; k < size_k; ++k )
-                for ( int l = 0; l < size_l; ++l )
+    for ( int i = 0; i < is4.extent(0); ++i )
+        for ( int j = 0; j < is4.extent(1); ++j )
+            for ( int k = 0; k < is4.extent(2); ++k )
+                for ( int l = 0; l < is4.extent(3); ++l )
                 {
-                    if ( min_i <= i && i < max_i &&
-                         min_j <= j && j < max_j &&
-                         min_k <= k && k < max_k &&
-                         min_l <= l && l < max_l )
+                    if ( is4.range(0).first <= i && i < is4.range(0).second &&
+                         is4.range(1).first <= j && j < is4.range(1).second &&
+                         is4.range(2).first <= k && k < is4.range(2).second &&
+                         is4.range(3).first <= l && l < is4.range(3).second )
                         EXPECT_EQ( v4_mirror(i,j,k,l), 1.0 );
                     else
                         EXPECT_EQ( v4_mirror(i,j,k,l), 0.0 );

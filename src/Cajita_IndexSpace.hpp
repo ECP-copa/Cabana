@@ -89,34 +89,42 @@ class IndexSpace
     }
 
     //! Get the minimum index in a given dimension.
+    KOKKOS_INLINE_FUNCTION
     long min( const long dim ) const
     { return _min[dim]; }
 
     //! Get the minimum indices in all dimensions.
+    KOKKOS_INLINE_FUNCTION
     Kokkos::Array<long,Rank> min() const
     { return _min; }
 
     //! Get the maximum index in a given dimension.
+    KOKKOS_INLINE_FUNCTION
     long max( const long dim ) const
     { return _max[dim]; }
 
     //! Get the maximum indices in all dimensions.
+    KOKKOS_INLINE_FUNCTION
     Kokkos::Array<long,Rank> max() const
     { return _max; }
 
     //! Get the range of a given dimension.
-    std::pair<long,long> range( const long dim ) const
-    { return std::make_pair(_min[dim],_max[dim]); }
+    KOKKOS_INLINE_FUNCTION
+    Kokkos::pair<long,long> range( const long dim ) const
+    { return Kokkos::tie(_min[dim],_max[dim]); }
 
     //! Get the number of dimensions.
+    KOKKOS_INLINE_FUNCTION
     long rank() const
     { return Rank; }
 
     //! Get the extent of a given dimension.
+    KOKKOS_INLINE_FUNCTION
     long extent( const long dim ) const
     { return _max[dim] - _min[dim]; }
 
     //! Get the total size of the index space.
+    KOKKOS_INLINE_FUNCTION
     long size() const
     {
         long size = 1;
