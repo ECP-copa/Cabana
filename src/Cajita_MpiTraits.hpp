@@ -21,34 +21,34 @@ namespace Cajita
 
 //---------------------------------------------------------------------------//
 // Type traits
-template<typename T>
+template <typename T>
 struct MpiTraits;
 
-template<>
+template <>
 struct MpiTraits<char>
 {
     static MPI_Datatype type() { return MPI_CHAR; }
 };
 
-template<>
+template <>
 struct MpiTraits<int>
 {
     static MPI_Datatype type() { return MPI_INT; }
 };
 
-template<>
+template <>
 struct MpiTraits<long>
 {
     static MPI_Datatype type() { return MPI_LONG; }
 };
 
-template<>
+template <>
 struct MpiTraits<float>
 {
     static MPI_Datatype type() { return MPI_FLOAT; }
 };
 
-template<>
+template <>
 struct MpiTraits<double>
 {
     static MPI_Datatype type() { return MPI_DOUBLE; }

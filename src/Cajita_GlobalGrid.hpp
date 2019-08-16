@@ -16,8 +16,8 @@
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_Types.hpp>
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 #include <mpi.h>
 
@@ -29,7 +29,6 @@ namespace Cajita
 class GlobalGrid
 {
   public:
-
     /*!
      \brief Constructor.
      \param comm The communicator over which to define the grid.
@@ -37,17 +36,15 @@ class GlobalGrid
      \param partitioner The grid partitioner.
      \param cell_size The size of the cells in the grid.
     */
-    GlobalGrid( MPI_Comm comm,
-                const std::shared_ptr<Domain>& domain,
-                const Partitioner& partitioner,
-                const double cell_size );
+    GlobalGrid( MPI_Comm comm, const std::shared_ptr<Domain> &domain,
+                const Partitioner &partitioner, const double cell_size );
 
     // Get the communicator. This communicator was generated with a Cartesian
     // topology.
     MPI_Comm comm() const;
 
     // Get the domain of the grid.
-    const Domain& domain() const;
+    const Domain &domain() const;
 
     // Get the number of blocks in each dimension in the global mesh.
     int dimNumBlock( const int dim ) const;
@@ -67,7 +64,7 @@ class GlobalGrid
     int blockRank( const int i, const int j, const int k ) const;
 
     // Get the global number of entities in a given dimension.
-    template<class EntityType>
+    template <class EntityType>
     int globalNumEntity( EntityType, const int dim ) const;
 
     // Get the owned number of cells in a given dimension of this block.
@@ -81,7 +78,6 @@ class GlobalGrid
     double cellSize() const;
 
   private:
-
     MPI_Comm _cart_comm;
     std::shared_ptr<Domain> _domain;
     std::vector<int> _ranks_per_dim;
@@ -103,10 +99,8 @@ class GlobalGrid
   \param cell_size The size of the cells in the grid.
 */
 std::shared_ptr<GlobalGrid>
-createGlobalGrid( MPI_Comm comm,
-                  const std::shared_ptr<Domain> domain,
-                  const Partitioner& partitioner,
-                  const double cell_size );
+createGlobalGrid( MPI_Comm comm, const std::shared_ptr<Domain> domain,
+                  const Partitioner &partitioner, const double cell_size );
 
 //---------------------------------------------------------------------------//
 /*!
@@ -119,11 +113,10 @@ createGlobalGrid( MPI_Comm comm,
   \param cell_size The size of the cells in the grid.
 */
 std::shared_ptr<GlobalGrid>
-createGlobalGrid( MPI_Comm comm,
-                  const Partitioner& partitioner,
-                  const std::vector<bool>& periodic,
-                  const std::vector<double>& global_low_corner,
-                  const std::vector<double>& global_high_corner,
+createGlobalGrid( MPI_Comm comm, const Partitioner &partitioner,
+                  const std::vector<bool> &periodic,
+                  const std::vector<double> &global_low_corner,
+                  const std::vector<double> &global_high_corner,
                   const double cell_size );
 
 //---------------------------------------------------------------------------//

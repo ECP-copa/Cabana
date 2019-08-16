@@ -12,47 +12,43 @@
 #include <Cajita_GlobalGrid.hpp>
 
 #include <algorithm>
-#include <limits>
 #include <cmath>
+#include <limits>
 
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
 // Constructor.
-GlobalGrid::GlobalGrid( MPI_Comm comm,
-                        const std::shared_ptr<Domain>& domain,
-                        const Partitioner& partitioner,
-                        const double cell_size )
+GlobalGrid::GlobalGrid( MPI_Comm comm, const std::shared_ptr<Domain> &domain,
+                        const Partitioner &partitioner, const double cell_size )
     : _domain( domain )
     , _cell_size( cell_size )
 {
     // Compute how many cells are in each dimension.
     _global_num_cell.resize( 3 );
     for ( int d = 0; d < 3; ++d )
-        _global_num_cell[d] = std::rint((_domain->extent(d)) / cell_size);
+        _global_num_cell[d] = std::rint( ( _domain->extent( d ) ) / cell_size );
 
     // Check the cell size.
     for ( int d = 0; d < 3; ++d )
-        if ( std::abs(_global_num_cell[d] * cell_size - _domain->extent(d)) >
+        if ( std::abs( _global_num_cell[d] * cell_size -
+                       _domain->extent( d ) ) >
              10.0 * std::numeric_limits<double>::epsilon() )
-            throw std::invalid_argument("Dimension not divisible by cell size");
+            throw std::invalid_argument(
+                "Dimension not divisible by cell size" );
 
     // Partition the problem.
     _ranks_per_dim = partitioner.ranksPerDimension( comm, _global_num_cell );
 
     // Extract the periodicity of the boundary as integers.
-    std::vector<int> periodic_dims = { _domain->isPeriodic(Dim::I),
-                                       _domain->isPeriodic(Dim::J),
-                                       _domain->isPeriodic(Dim::K) };
+    std::vector<int> periodic_dims = {_domain->isPeriodic( Dim::I ),
+                                      _domain->isPeriodic( Dim::J ),
+                                      _domain->isPeriodic( Dim::K )};
 
     // Generate a communicator with a Cartesian topology.
     int reorder_cart_ranks = 1;
-    MPI_Cart_create( comm,
-                     3,
-                     _ranks_per_dim.data(),
-                     periodic_dims.data(),
-                     reorder_cart_ranks,
-                     &_cart_comm );
+    MPI_Cart_create( comm, 3, _ranks_per_dim.data(), periodic_dims.data(),
+                     reorder_cart_ranks, &_cart_comm );
 
     // Get the Cartesian topology index of this rank.
     int linear_rank;
@@ -94,17 +90,11 @@ GlobalGrid::GlobalGrid( MPI_Comm comm,
 
 //---------------------------------------------------------------------------//
 // Get the grid communicator.
-MPI_Comm GlobalGrid::comm() const
-{
-    return _cart_comm;
-}
+MPI_Comm GlobalGrid::comm() const { return _cart_comm; }
 
 //---------------------------------------------------------------------------//
 // Get the domain of the grid.
-const Domain& GlobalGrid::domain() const
-{
-    return *_domain;
-}
+const Domain &GlobalGrid::domain() const { return *_domain; }
 
 //---------------------------------------------------------------------------//
 // Get the number of blocks in each dimension in the global mesh.
@@ -124,10 +114,7 @@ int GlobalGrid::totalNumBlock() const
 
 //---------------------------------------------------------------------------//
 // Get the id of this block in a given dimension.
-int GlobalGrid::dimBlockId( const int dim ) const
-{
-    return _cart_rank[dim];
-}
+int GlobalGrid::dimBlockId( const int dim ) const { return _cart_rank[dim]; }
 
 //---------------------------------------------------------------------------//
 // Get the id of this block.
@@ -145,14 +132,14 @@ int GlobalGrid::blockId() const
 int GlobalGrid::blockRank( const int i, const int j, const int k ) const
 {
     // Get the indices.
-    std::vector<int> cr = { i, j, k };
+    std::vector<int> cr = {i, j, k};
 
     // Check for invalid indices. An index is invalid if it is out of bounds
     // and the dimension is not periodic. An out of bound index in a periodic
     // dimension is valid because it will wrap around to a valid index.
     for ( int d = 0; d < 3; ++d )
-        if ( !_domain->isPeriodic(d) &&
-             (cr[d] < 0 || _ranks_per_dim[d] <= cr[d]) )
+        if ( !_domain->isPeriodic( d ) &&
+             ( cr[d] < 0 || _ranks_per_dim[d] <= cr[d] ) )
             return -1;
 
     // If we have indices get their rank.
@@ -163,7 +150,7 @@ int GlobalGrid::blockRank( const int i, const int j, const int k ) const
 
 //---------------------------------------------------------------------------//
 // Get the global number of cells in a given dimension.
-template<>
+template <>
 int GlobalGrid::globalNumEntity( Cell, const int dim ) const
 {
     return _global_num_cell[dim];
@@ -171,12 +158,12 @@ int GlobalGrid::globalNumEntity( Cell, const int dim ) const
 
 //---------------------------------------------------------------------------//
 // Get the global number of nodes in a given dimension.
-template<>
+template <>
 int GlobalGrid::globalNumEntity( Node, const int dim ) const
 {
     // If this dimension is periodic that last node in the dimension is
     // repeated across the periodic boundary.
-    if ( _domain->isPeriodic(dim) )
+    if ( _domain->isPeriodic( dim ) )
         return _global_num_cell[dim];
     else
         return _global_num_cell[dim] + 1;
@@ -184,32 +171,29 @@ int GlobalGrid::globalNumEntity( Node, const int dim ) const
 
 //---------------------------------------------------------------------------//
 // Get the global number of I-faces in a given dimension.
-template<>
+template <>
 int GlobalGrid::globalNumEntity( Face<Dim::I>, const int dim ) const
 {
-    return ( Dim::I == dim )
-        ? globalNumEntity( Node(), dim )
-        : globalNumEntity( Cell(), dim );
+    return ( Dim::I == dim ) ? globalNumEntity( Node(), dim )
+                             : globalNumEntity( Cell(), dim );
 }
 
 //---------------------------------------------------------------------------//
 // Get the global number of J-faces in a given dimension.
-template<>
+template <>
 int GlobalGrid::globalNumEntity( Face<Dim::J>, const int dim ) const
 {
-    return ( Dim::J == dim )
-        ? globalNumEntity( Node(), dim )
-        : globalNumEntity( Cell(), dim );
+    return ( Dim::J == dim ) ? globalNumEntity( Node(), dim )
+                             : globalNumEntity( Cell(), dim );
 }
 
 //---------------------------------------------------------------------------//
 // Get the global number of K-faces in a given dimension.
-template<>
+template <>
 int GlobalGrid::globalNumEntity( Face<Dim::K>, const int dim ) const
 {
-    return ( Dim::K == dim )
-        ? globalNumEntity( Node(), dim )
-        : globalNumEntity( Cell(), dim );
+    return ( Dim::K == dim ) ? globalNumEntity( Node(), dim )
+                             : globalNumEntity( Cell(), dim );
 }
 
 //---------------------------------------------------------------------------//
@@ -229,37 +213,27 @@ int GlobalGrid::globalOffset( const int dim ) const
 
 //---------------------------------------------------------------------------//
 // Get the cell size.
-double GlobalGrid::cellSize() const
-{ return _cell_size; }
+double GlobalGrid::cellSize() const { return _cell_size; }
 
 //---------------------------------------------------------------------------//
 std::shared_ptr<GlobalGrid>
-createGlobalGrid( MPI_Comm comm,
-                  const std::shared_ptr<Domain> domain,
-                  const Partitioner& partitioner,
-                  const double cell_size )
+createGlobalGrid( MPI_Comm comm, const std::shared_ptr<Domain> domain,
+                  const Partitioner &partitioner, const double cell_size )
 {
-    return std::make_shared<GlobalGrid>( comm,
-                                         domain,
-                                         partitioner,
-                                         cell_size );
+    return std::make_shared<GlobalGrid>( comm, domain, partitioner, cell_size );
 }
 
 //---------------------------------------------------------------------------//
 std::shared_ptr<GlobalGrid>
-createGlobalGrid( MPI_Comm comm,
-                  const Partitioner& partitioner,
-                  const std::vector<bool>& periodic,
-                  const std::vector<double>& global_low_corner,
-                  const std::vector<double>& global_high_corner,
+createGlobalGrid( MPI_Comm comm, const Partitioner &partitioner,
+                  const std::vector<bool> &periodic,
+                  const std::vector<double> &global_low_corner,
+                  const std::vector<double> &global_high_corner,
                   const double cell_size )
 {
     auto domain =
         createDomain( global_low_corner, global_high_corner, periodic );
-    return std::make_shared<GlobalGrid>( comm,
-                                         domain,
-                                         partitioner,
-                                         cell_size );
+    return std::make_shared<GlobalGrid>( comm, domain, partitioner, cell_size );
 }
 
 //---------------------------------------------------------------------------//

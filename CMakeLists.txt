@@ -56,6 +56,15 @@ execute_process(
     -P cmake/SetupVersion.cmake
   WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR})
 
+# add code coverage build
+option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
+if(Cabana_ENABLE_COVERAGE_BUILD)
+      message(STATUS "Enabling coverage build")
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
+      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+endif()
+
 # create the library
 add_subdirectory(src)
 
@@ -89,4 +98,13 @@ option(Cajita_ENABLE_TESTING "Build tests" OFF)
 if(Cajita_ENABLE_TESTING)
   enable_testing()
   add_subdirectory(unit_test)
+endif()
+
+# clang format
+find_package(CLANG_FORMAT)
+if(CLANG_FORMAT_FOUND)
+  file(GLOB_RECURSE FORMAT_SOURCES src/*.cpp src/*.hpp)
+  add_custom_target(format
+    COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
+    DEPENDS ${FORMAT_SOURCES})
 endif()
