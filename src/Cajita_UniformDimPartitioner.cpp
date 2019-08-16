@@ -14,9 +14,9 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-std::vector<int> UniformDimPartitioner::ranksPerDimension(
-    MPI_Comm comm,
-    const std::vector<int>& ) const
+std::vector<int>
+UniformDimPartitioner::ranksPerDimension( MPI_Comm comm,
+                                          const std::vector<int> & ) const
 {
     int comm_size;
     MPI_Comm_size( comm, &comm_size );

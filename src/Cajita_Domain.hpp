@@ -12,8 +12,8 @@
 #ifndef CAJTIA_DOMAIN_HPP
 #define CAJTIA_DOMAIN_HPP
 
-#include <vector>
 #include <memory>
+#include <vector>
 
 namespace Cajita
 {
@@ -25,16 +25,15 @@ namespace Cajita
 class Domain
 {
   public:
-
     /*!
      \brief Constructor.
      \param global_low_corner The low corner of the domain in physical space.
      \param global_high_corner The high corner of the domain in physical space.
      \param periodic Whether each logical dimension is periodic.
     */
-    Domain( const std::vector<double>& global_low_corner,
-            const std::vector<double>& global_high_corner,
-            const std::vector<bool>& periodic );
+    Domain( const std::vector<double> &global_low_corner,
+            const std::vector<double> &global_high_corner,
+            const std::vector<bool> &periodic );
 
     // Get the global low corner of the domain.
     double lowCorner( const int dim ) const;
@@ -49,7 +48,6 @@ class Domain
     bool isPeriodic( const int dim ) const;
 
   private:
-
     std::vector<double> _global_low_corner;
     std::vector<double> _global_high_corner;
     std::vector<bool> _periodic;
@@ -64,10 +62,10 @@ class Domain
   \param global_high_corner The high corner of the domain in physical space.
   \param periodic Whether each logical dimension is periodic.
 */
-std::shared_ptr<Domain> createDomain(
-    const std::vector<double>& global_low_corner,
-    const std::vector<double>& global_high_corner,
-    const std::vector<bool>& periodic );
+std::shared_ptr<Domain>
+createDomain( const std::vector<double> &global_low_corner,
+              const std::vector<double> &global_high_corner,
+              const std::vector<bool> &periodic );
 
 //---------------------------------------------------------------------------//
 

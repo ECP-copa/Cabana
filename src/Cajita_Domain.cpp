@@ -15,13 +15,14 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 // Constructor.
-Domain::Domain( const std::vector<double>& global_low_corner,
-                const std::vector<double>& global_high_corner,
-                const std::vector<bool>& periodic )
+Domain::Domain( const std::vector<double> &global_low_corner,
+                const std::vector<double> &global_high_corner,
+                const std::vector<bool> &periodic )
     : _global_low_corner( global_low_corner )
     , _global_high_corner( global_high_corner )
     , _periodic( periodic )
-{}
+{
+}
 
 //---------------------------------------------------------------------------//
 // Get the global low corner of the domain.
@@ -46,19 +47,15 @@ double Domain::extent( const int dim ) const
 
 //---------------------------------------------------------------------------//
 // Get whether a given logical dimension is periodic.
-bool Domain::isPeriodic( const int dim ) const
-{
-    return _periodic[dim];
-}
+bool Domain::isPeriodic( const int dim ) const { return _periodic[dim]; }
 
 //---------------------------------------------------------------------------//
-std::shared_ptr<Domain> createDomain(
-    const std::vector<double>& global_low_corner,
-    const std::vector<double>& global_high_corner,
-    const std::vector<bool>& periodic )
+std::shared_ptr<Domain>
+createDomain( const std::vector<double> &global_low_corner,
+              const std::vector<double> &global_high_corner,
+              const std::vector<bool> &periodic )
 {
-    return std::make_shared<Domain>( global_low_corner,
-                                     global_high_corner,
+    return std::make_shared<Domain>( global_low_corner, global_high_corner,
                                      periodic );
 }
 

@@ -20,7 +20,8 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 struct Dim
 {
-    enum Values {
+    enum Values
+    {
         I = 0,
         J = 1,
         K = 2
@@ -32,46 +33,64 @@ struct Dim
 //---------------------------------------------------------------------------//
 
 // Mesh cell tag.
-struct Cell {};
+struct Cell
+{
+};
 
 // Mesh node tag.
-struct Node {};
+struct Node
+{
+};
 
 // Mesh face tags.
-template<int D>
+template <int D>
 struct Face;
 
 // I-face tag.
-template<>
-struct Face<Dim::I> {};
+template <>
+struct Face<Dim::I>
+{
+};
 
 // J-face tag.
-template<>
-struct Face<Dim::J> {};
+template <>
+struct Face<Dim::J>
+{
+};
 
 // K-face tag.
-template<>
-struct Face<Dim::K> {};
+template <>
+struct Face<Dim::K>
+{
+};
 
 //---------------------------------------------------------------------------//
 // Decomposition tags.
 //---------------------------------------------------------------------------//
 
 // Owned decomposition tag.
-struct Own {};
+struct Own
+{
+};
 
 // Ghosted decomposition tag.
-struct Ghost {};
+struct Ghost
+{
+};
 
 //---------------------------------------------------------------------------//
 // Index type tags.
 //---------------------------------------------------------------------------//
 
 // Local index tag.
-struct Local {};
+struct Local
+{
+};
 
 // Global index tag.
-struct Global {};
+struct Global
+{
+};
 
 //---------------------------------------------------------------------------//
 

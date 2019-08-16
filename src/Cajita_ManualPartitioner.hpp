@@ -24,15 +24,13 @@ namespace Cajita
 class ManualPartitioner : public Partitioner
 {
   public:
-
-    ManualPartitioner( const std::vector<int>& ranks_per_dim );
+    ManualPartitioner( const std::vector<int> &ranks_per_dim );
 
     std::vector<int> ranksPerDimension(
         MPI_Comm comm,
-        const std::vector<int>& global_cells_per_dim ) const override;
+        const std::vector<int> &global_cells_per_dim ) const override;
 
   private:
-
     std::vector<int> _ranks_per_dim;
 };
 

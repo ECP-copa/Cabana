@@ -24,10 +24,9 @@ namespace Cajita
 class UniformDimPartitioner : public Partitioner
 {
   public:
-
     std::vector<int> ranksPerDimension(
         MPI_Comm comm,
-        const std::vector<int>& global_cells_per_dim ) const override;
+        const std::vector<int> &global_cells_per_dim ) const override;
 };
 
 //---------------------------------------------------------------------------//
