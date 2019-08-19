@@ -53,7 +53,9 @@ TPME::TPME( double alpha, double r_max )
 void TPME::tune( double accuracy, ParticleList particles, double lx, double ly,
                  double lz )
 {
-    typedef Kokkos::MinLoc<double, int> reducer_type;
+    //Force symmetry for now
+    ly = lx;
+    lz = lx;
 
     auto q = Cabana::slice<Charge>( particles );
 
