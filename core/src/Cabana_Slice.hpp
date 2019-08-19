@@ -568,9 +568,8 @@ class Slice
       \brief Constructor.
       \param data Pointer to the first member of the slice.
       \param size The number of tuples in the slice.
-      \param soa_stride The number of elements in the slice's value type between
-      starting elements of a struct. \param num_soa The number of structs in the
-      slice. \param label An optional label for the slice.
+      \param num_soa The number of structs in the slice.
+      \param label An optional label for the slice.
     */
     Slice( const pointer_type data, const size_type size,
            const size_type num_soa, const std::string &label = "" )

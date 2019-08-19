@@ -232,7 +232,7 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src,
 
   \param aosoa The AoSoA to fill.
 
-  \param src The tuple to assign. All AoSoA elements will be assigned this
+  \param tuple The tuple to assign. All AoSoA elements will be assigned this
   value.
 */
 template <class AoSoA_t>
@@ -371,7 +371,7 @@ deep_copy( DstSlice &dst, const SrcSlice &src,
 
   \param slice The slice to fill.
 
-  \param src The scalar to assign. All slice elements will be assigned this
+  \param scalar The scalar to assign. All slice elements will be assigned this
   value.
 */
 template <class Slice_t>

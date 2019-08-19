@@ -453,6 +453,8 @@ binByKey( KeyViewType keys, const int nbin,
 
   \tparam SliceType Slice type for keys.
 
+  \param slice Slice of keys.
+
   \param begin The beginning index of the AoSoA range to sort.
 
   \param end The end index of the AoSoA range to sort.
@@ -541,7 +543,7 @@ BinningData<DeviceType> binByKey(
 
   \tparam BinningDataType The binning data type.
 
-  \tparm AoSoA_t The AoSoA type.
+  \tparam AoSoA_t The AoSoA type.
 
   \param binning_data The binning data.
 
@@ -589,7 +591,7 @@ void permute(
 
   \tparam BinningDataType The binning data type.
 
-  \tparm SliceType The slice type.
+  \tparam SliceType The slice type.
 
   \param binning_data The binning data.
 
