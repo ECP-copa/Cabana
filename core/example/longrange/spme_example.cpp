@@ -9,11 +9,11 @@ int main( int argc, char **argv )
     Kokkos::initialize( argc, argv );
 
     // crystal size
-    const int c_size = 2;
+    const int c_size = ( argc == 2 ) ? atoi( argv[1] ) : 32;
     // accuracy parameter for the tuning of Ewald
     const double accuracy = 1e-6;
     // width of unit cell (assume cube)
-    const double width = 1.0;
+    const double width = (double)c_size / 2.0;;
     // Number of mesh points in each direction for SPME
     const int n_meshpoints = 4096; // 16*16*16;
     // Declare alpha and rmax, but just let the tuner select their values later

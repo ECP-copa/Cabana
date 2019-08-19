@@ -11,6 +11,7 @@
 
 #include "spme.h"
 #include "definitions.h"
+#include "Cabana_LinkedCellList.hpp"
 #include <chrono>
 #include <cmath>
 #include <sys/time.h>
@@ -54,61 +55,37 @@ void TPME::tune( double accuracy, ParticleList particles, double lx, double ly,
 {
     typedef Kokkos::MinLoc<double, int> reducer_type;
     typedef reducer_type::value_type value_type;
-    value_type error_estimate;
 
     auto q = Cabana::slice<Charge>( particles );
-    double q_sum;
 
-    const int N_alpha = 200;
-    const int N_k = 2000;
+    const int N = particles.size();
 
-    const int n_max = particles.size();
-    // calculate sum of charge squares
-    Kokkos::parallel_reduce( n_max,
-                             KOKKOS_LAMBDA( const int idx, double &q_part ) {
-                                 q_part += q( idx ) * q( idx );
-                             },
-                             q_sum );
-    Kokkos::fence();
+    // Fincham 1994, Optimisation of the Ewald Sum for Large Systems
+    // only valid for cubic systems (needs adjustement for non-cubic systems)
+    constexpr double EXECUTION_TIME_RATIO_K_R = 2.0;
+    double p = -log( accuracy );
+    _alpha = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) *
+             pow( N, 1.0 / 6.0 ) / lx;
+    _k_max = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) *
+             pow( N, 1.0 / 6.0 ) / lx * 2.0 * PI;
+    _r_max = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) /
+             pow( N, 1.0 / 6.0 ) * lx;
+    _alpha = sqrt( p ) / _r_max;
+    _k_max = 2.0 * sqrt( p ) * _alpha;
 
-    double r_max = _r_max =
-        std::min( 0.49 * lx, 0.1 * lx + 1.0 ); // real space cutoff value
-    Kokkos::parallel_reduce(
-        "MinLocReduce", N_alpha * N_k,
-        KOKKOS_LAMBDA( const int &idx, value_type &team_errorest ) {
-            int ia = idx % N_alpha;
-            int ik = idx / N_alpha;
+    _k_max_int[0] = ceil( _k_max );
+    _k_max_int[1] = ceil( _k_max );
+    _k_max_int[2] = ceil( _k_max );
 
-            double alpha = (double)ia * 0.05 + 1.0; // splitting parameter
-            double k_max = (double)ik * 0.05;       // max k-vector
-
-            // Compute real part of error estimate
-            double delta_Ur = q_sum * sqrt( 0.5 * r_max / ( lx * ly * lz ) ) *
-                              std::pow( alpha * r_max, -2.0 ) *
-                              exp( -alpha * alpha * r_max * r_max );
-
-            // Compute k-space part of error estimate
-            double delta_Uk =
-                q_sum * alpha / PI_SQ * std::pow( k_max, -1.5 ) *
-                exp( -std::pow( PI * k_max / ( alpha * lx ), 2 ) );
-
-            // Total error estimate
-            double delta = delta_Ur + delta_Uk;
-            Kokkos::pair<double, double> values( alpha, k_max );
-
-            if ( ( delta < team_errorest.val ) && ( delta > 0.8 * accuracy ) )
-            {
-                team_errorest.val = delta;
-                team_errorest.loc = idx;
-            }
-        },
-        reducer_type( error_estimate ) );
-    Kokkos::fence();
-
-    _alpha = (double)( error_estimate.loc % N_alpha ) * 0.05 + 1.0;
-    _k_max = (double)( error_estimate.loc / N_alpha ) * 0.05;
-
-    _k_max_int[0] = _k_max_int[1] = _k_max_int[2] = std::ceil( _k_max );
+    std::cout << "tuned SPME values: " 
+              << "N: " << N << " "
+              << "accuracy: " << accuracy << " "
+              << "r_max: " << _r_max 
+              << " alpha: " << _alpha
+              << " k_max: " << _k_max_int[0] 
+              << " " << _k_max_int[1] 
+              << " " << _k_max_int[2] 
+              << " " << _k_max << std::endl;
 }
 //
 
@@ -155,10 +132,10 @@ double TPME::oneDeuler( int k, int meshwidth )
     for ( int l = 0; l < 3; l++ )
     {
         denomreal +=
-            TPME::oneDspline( std::min( 4.0 - ( l + 1.0 ), l + 1.0 ) ) *
+            TPME::oneDspline( fmin( 4.0 - ( l + 1.0 ), l + 1.0 ) ) *
             cos( 2.0 * PI * double( k ) * l / double( meshwidth ) );
         denomimag +=
-            TPME::oneDspline( std::min( 4.0 - ( l + 1.0 ), l + 1.0 ) ) *
+            TPME::oneDspline( fmin( 4.0 - ( l + 1.0 ), l + 1.0 ) ) *
             sin( 2.0 * PI * double( k ) * l / double( meshwidth ) );
     }
     // Compute the numerator, again splitting the complex exponential
@@ -182,6 +159,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     auto r = Cabana::slice<Position>( particles );
     auto q = Cabana::slice<Charge>( particles );
     auto p = Cabana::slice<Potential>( particles );
+    auto f = Cabana::slice<Force>( particles );
 
     // Mesh slices
     auto meshr = Cabana::slice<Position>( mesh );
@@ -220,74 +198,329 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     // endtime, endtime2; starttime = std::chrono::steady_clock::now();
 
     // computation real-space contribution
-    Kokkos::parallel_reduce(
-        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-        KOKKOS_LAMBDA( int idx, double &Ur_part ) {
-            double d[SPACE_DIM];
-            double k;
-            // For each particle with charge q, the real space contribution to
-            // energy is Ur_part = 0.5*q*SUM_i(q_i*erfc(alpha*dist)/dist) The
-            // sum is over all other particles in the cell and in neighboring
-            // images up to some real-space cutoff distance "r_max"
-            //
-            // Self-energy terms are included then corrected for later, with one
-            // exception:
-            // the self-energy term where kx=ky=kz here is explicitly excluded
-            // in the method as this would cause a division by zero
-            for ( auto i = 0; i < n_max; ++i )
-            {
-                // compute distance in x,y,z and charge multiple
-                for ( auto j = 0; j < 3; ++j )
-                {
-                    d[j] = r( idx, j ) - r( i, j );
-                }
-                double qiqj = q( idx ) * q( i );
-                for ( auto kx = 0; kx <= k_max_int[0]; ++kx )
-                {
-                    // check if cell within r_max distance in x
-                    k = (double)kx * lx;
-                    if ( k - lx > r_max )
-                        continue;
-                    for ( auto ky = 0; ky <= k_max_int[1]; ++ky )
-                    {
-                        // check if cell within r_max distance in x+y
-                        k = sqrt( (double)kx * (double)kx * lx * lx +
-                                  (double)ky * (double)ky * ly * ly );
-                        if ( k - lx > r_max )
-                            continue;
-                        for ( auto kz = 0; kz <= k_max_int[2]; ++kz )
-                        {
-                            // Exclude self-energy term when kx=ky=kz
-                            if ( kx == 0 && ky == 0 && kz == 0 && i == idx )
-                                continue;
-                            // check if cell within r_max distance in x+y+z
-                            k = sqrt( (double)kx * (double)kx * lx * lx +
-                                      (double)ky * (double)ky * ly * ly +
-                                      (double)kz * (double)kz * lz * lz );
-                            if ( k - lx > r_max )
-                                continue;
-                            // check if particle distance is less than r_max
-                            double scal = ( d[0] + (double)kx * lx ) *
-                                              ( d[0] + (double)kx * lx ) +
-                                          ( d[1] + (double)ky * ly ) *
-                                              ( d[1] + (double)ky * ly ) +
-                                          ( d[2] + (double)kz * lz ) *
-                                              ( d[2] + (double)kz * lz );
-                            scal = sqrt( scal );
-                            if ( scal > r_max )
-                                continue;
-                            // Compute real-space energy contribution of
-                            // interaction
-                            Ur_part += qiqj * erfc( alpha * scal ) / scal;
-                        }
-                    }
-                }
-            }
-            Ur_part *= 0.5;
-            p( idx ) += Ur_part;
-        },
-        Ur );
     Kokkos::fence();
+    if ( r_max > 0.5 * lx )
+    {
+        /*
+         *
+         *  Computation real-space contribution
+         *
+         */
+        // plain all to all comparison and regard of periodic images with
+        // distance > 1
+        auto start_time_r = std::chrono::high_resolution_clock::now();
+        Kokkos::parallel_reduce(
+            Kokkos::TeamPolicy<>( n_max, Kokkos::AUTO ),
+            KOKKOS_LAMBDA( Kokkos::TeamPolicy<>::member_type member,
+                           double &Ur_i ) {
+                int i = member.league_rank(); // * member.team_size() +
+                                              // member.team_rank();
+                if ( i < n_max )
+                {
+                    double Ur_inner = 0.0;
+                    int per_shells = std::ceil( r_max / lx );
+                    Kokkos::single( Kokkos::PerTeam( member ), [=] {
+                        if ( i == 0 )
+                            printf( "number of periodic shells in real-space "
+                                    "computation: %d\n",
+                                    per_shells );
+                    } );
+                    Kokkos::parallel_reduce(
+                        Kokkos::ThreadVectorRange( member, n_max ),
+                        [&]( int &j, double &Ur_j ) {
+                            for ( int pz = -per_shells; pz <= per_shells; ++pz )
+                                for ( int py = -per_shells; py <= per_shells;
+                                      ++py )
+                                    for ( int px = -per_shells;
+                                          px <= per_shells; ++px )
+                                    {
+                                        double dx =
+                                            r( i, 0 ) -
+                                            ( r( j, 0 ) + (double)px * lx );
+                                        double dy =
+                                            r( i, 1 ) -
+                                            ( r( j, 1 ) + (double)py * ly );
+                                        double dz =
+                                            r( i, 2 ) -
+                                            ( r( j, 2 ) + (double)pz * lz );
+                                        double d =
+                                            sqrt( dx * dx + dy * dy + dz * dz );
+                                        double contrib =
+                                            ( d <= r_max &&
+                                              std::abs( d ) >= 1e-12 )
+                                                ? 0.5 * q( i ) * q( j ) *
+                                                      erfc( alpha * d ) / d
+                                                : 0.0;
+                                        double f_fact =
+                                            ( d <= r_max &&
+                                              std::abs( d ) >= 1e-12 ) *
+                                            q( i ) * q( j ) *
+                                            ( 2.0 * sqrt( alpha / PI ) *
+                                                  exp( -alpha * d * d ) +
+                                              erfc( sqrt( alpha ) * d ) ) /
+                                            ( d * d +
+                                              ( std::abs( d ) <= 1e-12 ) );
+                                        Kokkos::atomic_add( &f( i, 0 ),
+                                                            f_fact * dx );
+                                        Kokkos::atomic_add( &f( i, 1 ),
+                                                            f_fact * dy );
+                                        Kokkos::atomic_add( &f( i, 2 ),
+                                                            f_fact * dz );
+                                        Kokkos::single(
+                                            Kokkos::PerThread( member ),
+                                            [&] { Ur_j += contrib; } );
+                                    }
+                        },
+                        Ur_inner );
+                    Kokkos::single( Kokkos::PerTeam( member ), [&] {
+                        p( i ) += Ur_inner;
+                        Ur_i += Ur_inner;
+                    } );
+                }
+            },
+            Ur );
+        auto end_time_r = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_r = end_time_r - start_time_r;
+        auto ns_elapsed_r =
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                elapsed_time_r );
+
+        std::cout << "real-space contribution: "
+                  << ( ns_elapsed_r.count() / 1000000000.0 ) << " s " << Ur
+                  << std::endl;
+    }
+    else
+    {
+
+        // TODO: cellsize dynamic!
+        double lc = 1.0;
+        double cfactor = std::ceil( r_max / lc );
+        int nneigdim = 2 * (int)cfactor + 1;
+        int nneig = nneigdim * nneigdim * nneigdim;
+
+        std::cout << "l: " << lx << " cfactor: " << cfactor << " lc: " << lc
+                  << " r_max: " << r_max << std::endl;
+
+        int n_cells =
+            std::ceil( lx / lc ) * std::ceil( ly / lc ) * std::ceil( lz / lc );
+        Kokkos::View<int *, MemorySpace> cdim( "cdim", 3 );
+        cdim( 0 ) = std::ceil( lx / lc );
+        cdim( 1 ) = std::ceil( ly / lc );
+        cdim( 2 ) = std::ceil( lz / lc );
+
+        auto start_time_rsort = std::chrono::high_resolution_clock::now();
+        // create a Cabana linked list
+        // lower end of system
+        double grid_min[3] = {0.0, 0.0, 0.0};
+        // upper end of system
+        double grid_max[3] = {lx, ly, lz};
+        // cell size
+        double grid_delta[3] = {lc, lc, lc};
+        // create LinkedCellList
+        Cabana::LinkedCellList<MemorySpace> cell_list( r, grid_delta, grid_min,
+                                                       grid_max );
+
+        // resort particles in original ParticleList to be sorted according to
+        // LinkedCellList
+        Cabana::permute( cell_list, particles );
+        auto end_time_rsort = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_rsort = end_time_rsort - start_time_rsort;
+
+        auto start_time_rij = std::chrono::high_resolution_clock::now();
+
+        // energy contribution from neighbor cells
+        double Ur_ij = 0.0;
+
+        for ( int n = nneig / 2 + 1; n < nneig; ++n )
+        {
+            double Ur_ijn;
+            Kokkos::parallel_reduce(
+                n_cells,
+                KOKKOS_LAMBDA( const int idx, double &Ur_ic ) {
+                    // get coordinates of local domain
+                    int ix, iy, iz;
+                    cell_list.ijkBinIndex( idx, ix, iy, iz );
+
+                    // index of neighbor (to dermine which neighbor it is
+                    int jcidx = n;
+
+                    // compute position in relation to local cell
+                    int jnx = jcidx % nneigdim - (int)cfactor;
+                    int jny = ( jcidx / nneigdim ) % nneigdim - (int)cfactor;
+                    int jnz = jcidx / ( nneigdim * nneigdim ) - (int)cfactor;
+
+                    // compute global cell index
+                    int jc = ( iz + jnz + cdim( 2 ) ) % cdim( 2 ) +
+                             ( iy + jny + cdim( 1 ) ) % cdim( 1 ) * cdim( 2 ) +
+                             ( ix + jnx + cdim( 0 ) ) % cdim( 0 ) * cdim( 1 ) *
+                                 cdim( 2 );
+
+                    // get neighbor coodinates
+                    int jx, jy, jz;
+                    cell_list.ijkBinIndex( jc, jx, jy, jz );
+
+                    double contrib = 0;
+
+                    for ( int ii = 0; ii < cell_list.binSize( ix, iy, iz );
+                          ++ii )
+                    {
+                        int i = cell_list.binOffset( ix, iy, iz ) + ii;
+                        double rx = r( i, 0 );
+                        double ry = r( i, 1 );
+                        double rz = r( i, 2 );
+
+                        double dx, dy, dz, d, pij;
+                        int j;
+
+                        double fx_i = 0.0;
+                        double fy_i = 0.0;
+                        double fz_i = 0.0;
+
+                        double Ur_i = 0.0;
+                        for ( int ij = 0; ij < cell_list.binSize( jx, jy, jz );
+                              ++ij )
+                        {
+                            j = cell_list.binOffset( jx, jy, jz ) + ij;
+
+                            dx = rx - r( j, 0 );
+                            dy = ry - r( j, 1 );
+                            dz = rz - r( j, 2 );
+                            dx -= round( dx / lx ) * lx;
+                            dy -= round( dy / lx ) * lx;
+                            dz -= round( dz / lx ) * lx;
+                            d = sqrt( dx * dx + dy * dy + dz * dz );
+                            double qij = q( i ) * q( j );
+                            pij = ( d <= r_max ) * 0.5 * qij *
+                                  erfc( alpha * d ) / d;
+                            double f_fact = ( d <= r_max ) * qij *
+                                            ( 2.0 * sqrt( alpha / PI ) *
+                                                  exp( -alpha * d * d ) +
+                                              erfc( sqrt( alpha ) * d ) ) /
+                                            ( d * d );
+
+                            double fx = f_fact * dx;
+                            double fy = f_fact * dy;
+                            double fz = f_fact * dz;
+
+                            fx_i += fx;
+                            fy_i += fy;
+                            fz_i += fz;
+
+                            Kokkos::atomic_add( &f( j, 0 ), -fx );
+                            Kokkos::atomic_add( &f( j, 1 ), -fy );
+                            Kokkos::atomic_add( &f( j, 2 ), -fz );
+
+                            Ur_i += pij;
+                            Kokkos::atomic_add( &p( j ), pij );
+                        }
+                        Kokkos::atomic_add( &p( i ), Ur_i );
+                        Kokkos::atomic_add( &f( i, 0 ), fx_i );
+                        Kokkos::atomic_add( &f( i, 1 ), fy_i );
+                        Kokkos::atomic_add( &f( i, 2 ), fz_i );
+
+                        contrib += 2.0 * Ur_i;
+                    }
+                    Ur_ic += contrib;
+                },
+                Ur_ijn );
+            if ( Ur_ijn != Ur_ijn )
+                printf( "ERROR: nan in n = %d\n", n );
+            Ur_ij += Ur_ijn;
+        }
+
+        auto end_time_rij = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_rij = end_time_rij - start_time_rij;
+        auto start_time_rii = std::chrono::high_resolution_clock::now();
+
+        // energy contribution from local cells
+        double Ur_ii = 0.0;
+        Kokkos::parallel_reduce(
+            n_cells,
+            KOKKOS_LAMBDA( const int ic, double &Ur_ic ) {
+                int ix, iy, iz;
+                cell_list.ijkBinIndex( ic, ix, iy, iz );
+
+                double contrib = 0.0;
+                for ( int ii = 0; ii < cell_list.binSize( ix, iy, iz ); ++ii )
+                {
+                    int i = cell_list.binOffset( ix, iy, iz ) + ii;
+                    double rx = r( i, 0 );
+                    double ry = r( i, 1 );
+                    double rz = r( i, 2 );
+                    double Ur_i = 0.0;
+                    double fx_i = 0.0;
+                    double fy_i = 0.0;
+                    double fz_i = 0.0;
+
+                    for ( int ij = ii + 1; ij < cell_list.binSize( ix, iy, iz );
+                          ++ij )
+                    {
+                        int j = cell_list.binOffset( ix, iy, iz ) + ij;
+                        double dx = rx - r( j, 0 );
+                        double dy = ry - r( j, 1 );
+                        double dz = rz - r( j, 2 );
+                        dx -= round( dx / lx ) * lx;
+                        dy -= round( dy / lx ) * lx;
+                        dz -= round( dz / lx ) * lx;
+                        double d = sqrt( dx * dx + dy * dy + dz * dz );
+                        double qij = q( i ) * q( j );
+                        double pij =
+                            ( d <= r_max ) * 0.5 * qij * erfc( alpha * d ) / d;
+                        double f_fact =
+                            ( d <= r_max ) * qij *
+                            ( 2.0 * sqrt( alpha / PI ) * exp( -alpha * d * d ) +
+                              erfc( sqrt( alpha ) * d ) ) /
+                            ( d * d );
+
+                        double fx = f_fact * dx;
+                        double fy = f_fact * dy;
+                        double fz = f_fact * dz;
+
+                        fx_i += fx;
+                        fy_i += fy;
+                        fz_i += fz;
+
+                        Kokkos::atomic_add( &f( j, 0 ), -fx );
+                        Kokkos::atomic_add( &f( j, 1 ), -fy );
+                        Kokkos::atomic_add( &f( j, 2 ), -fz );
+
+                        Ur_i += pij;
+                        Kokkos::atomic_add( &p( j ), pij );
+                    }
+                    Kokkos::atomic_add( &p( i ), Ur_i );
+                    Kokkos::atomic_add( &f( i, 0 ), fx_i );
+                    Kokkos::atomic_add( &f( i, 1 ), fy_i );
+                    Kokkos::atomic_add( &f( i, 2 ), fz_i );
+                    contrib += 2.0 * Ur_i;
+                }
+                Ur_ic += contrib;
+            },
+            Ur_ii );
+
+        auto end_time_rii = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_rii = end_time_rii - start_time_rii;
+
+        Ur = Ur_ij + Ur_ii;
+
+        auto end_time_r = std::chrono::high_resolution_clock::now();
+        auto elapsed_time_r =
+            elapsed_time_rsort + elapsed_time_rii + elapsed_time_rij;
+        auto ns_elapsed_r =
+            std::chrono::duration_cast<std::chrono::nanoseconds>(
+                elapsed_time_r );
+
+        std::cout << "real-space contribution: "
+                  << ( ns_elapsed_r.count() / 1000000000.0 ) << " s "
+                  << " = " << ( elapsed_time_rsort.count() / 1000000000.0 )
+                  << " s (sorting) + "
+                  << ( elapsed_time_rii.count() / 1000000000.0 )
+                  << " s (local cell) + "
+                  << ( elapsed_time_rij.count() / 1000000000.0 )
+                  << " s (neighbor cells) | " << Ur << " = " << Ur_ii << " + "
+                  << Ur_ij << std::endl;
+    }
+    
+
 
     // computation reciprocal-space contribution
 
@@ -311,7 +544,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
         {
             // x-distance between mesh point and particle
             xdist =
-                std::min( std::min( std::abs( meshr( idx, 0 ) - r( pidx, 0 ) ),
+                fmin( fmin( std::abs( meshr( idx, 0 ) - r( pidx, 0 ) ),
                                     std::abs( meshr( idx, 0 ) -
                                               ( r( pidx, 0 ) + 1.0 ) ) ),
                           std::abs( meshr( idx, 0 ) -
@@ -319,7 +552,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
                                       1.0 ) ) ); // account for periodic bndry
             // y-distance between mesh point and particle
             ydist =
-                std::min( std::min( std::abs( meshr( idx, 1 ) - r( pidx, 1 ) ),
+                fmin( fmin( std::abs( meshr( idx, 1 ) - r( pidx, 1 ) ),
                                     std::abs( meshr( idx, 1 ) -
                                               ( r( pidx, 1 ) + 1.0 ) ) ),
                           std::abs( meshr( idx, 1 ) -
@@ -327,7 +560,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
                                       1.0 ) ) ); // account for periodic bndry
             // z-distance between mesh point and particle
             zdist =
-                std::min( std::min( std::abs( meshr( idx, 2 ) - r( pidx, 2 ) ),
+                fmin( fmin( std::abs( meshr( idx, 2 ) - r( pidx, 2 ) ),
                                     std::abs( meshr( idx, 2 ) -
                                               ( r( pidx, 2 ) + 1.0 ) ) ),
                           std::abs( meshr( idx, 2 ) -
@@ -546,8 +779,15 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
 
     Udip = Udip_vec[0] * Udip_vec[0] + Udip_vec[1] * Udip_vec[1] +
            Udip_vec[2] * Udip_vec[2];
-
+    
     total_energy = Ur + Uk + Uself + Udip;
+
+    std::cout << "SPME (real-space): " << Ur << std::endl;
+    std::cout << "SPME (k-space):    " << Uk << std::endl;
+    std::cout << "SPME (self):       " << Uself << std::endl;
+    std::cout << "SPME (dipole):     " << Udip << std::endl;
+    std::cout << "SPME (total):      " << total_energy << std::endl;
+
 #ifndef Cabana_ENABLE_Cuda
     fftw_cleanup();
 #endif
