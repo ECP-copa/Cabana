@@ -9,11 +9,14 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_DATABUFFER_HPP
-#define CABANA_DATABUFFER_HPP
+#ifndef CABANA_BUFFEREDAOSOA_HPP
+#define CABANA_BUFFEREDAOSOA_HPP
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
+
+// TODO: ultimatley this should be less AoSoA centric and accept a view (which may affect how we call deep copy etc)
+// TODO: rename to BufferAoSoA or similar?
 
 namespace Cabana
 {
@@ -22,7 +25,7 @@ namespace Cabana
         int buffer_count,
         class Exec_Space,
         class AoSoA_t
-    > class DataBuffer;
+    > class BufferedAoSoA;
 
     /**
      * @brief Data buffer accessor that gives access to the current buffer
@@ -30,7 +33,7 @@ namespace Cabana
     template<
         class AoSoA_t
     >
-    class DataBufferAccessCurrent {
+    class BufferedAoSoAAccess {
         // TODO: populate
         // TODO: this needs to know which buffer we're in to do correct offsetting
 
@@ -39,7 +42,7 @@ namespace Cabana
             using AoSoA_type = AoSoA_t;
             using value_type = typename AoSoA_type::soa_type;
 
-            DataBufferAccessCurrent(const AoSoA_type& aosoa_in) : aosoa(aosoa_in)
+            BufferedAoSoAAccess(const AoSoA_type& aosoa_in) : aosoa(aosoa_in)
             {
                 // Intentionally empty
             }
@@ -52,31 +55,32 @@ namespace Cabana
                 // TODO: this doesn't handle the offset
                 return aosoa.at(args...);
             }
+            const AoSoA_type& aosoa;
         private:
-            AoSoA_type& aosoa;
     };
 
-    // TODO: this can probably be deleted
     /**
-     * @brief Data buffer accessor that gives access to some wrapped version of the DataBuffer
+     * @brief Data buffer accessor that gives access to some wrapped version of the BufferedAoSoA
      */
+    /*
+    // TODO: this can probably be deleted
     template<
         int max_buffered_tuples,
         int buffer_count,
         class Exec_Space,
         class AoSoA_t
     >
-    class DataBufferAccess {
+    class BufferedAoSoAAccess {
         // TODO: populate
         // TODO: this needs to know which buffer we're in to do correct offsetting
 
         public:
             // TODO: how complex can the return type be? Likely it's just a pointer part way into an AoSoA?
-            using DataBuffer_t = DataBuffer<max_buffered_tuples, buffer_count, Exec_Space, AoSoA_t>;
+            using BufferedAoSoA_t = BufferedAoSoA<max_buffered_tuples, buffer_count, Exec_Space, AoSoA_t>;
             using AoSoA_type = AoSoA_t;
             using value_type = typename AoSoA_type::soa_type;
 
-            DataBufferAccess(const DataBuffer_t& data_buffer_in) :
+            BufferedAoSoAAccess(const BufferedAoSoA_t& data_buffer_in) :
                 data_buffer(data_buffer_in),
                 aosoa(data_buffer_in.original_view) // TODO: we can likely remove this
             {
@@ -92,9 +96,10 @@ namespace Cabana
                 return aosoa.at(args...);
             }
         private:
-            const DataBuffer_t& data_buffer;
+            const BufferedAoSoA_t& data_buffer;
             AoSoA_type& aosoa;
     };
+    */
 
     // Requirements:
     // 1) User must be able to specify the memory space the data will be "buffered" into
@@ -109,7 +114,7 @@ namespace Cabana
         class Exec_Space, // TODO: we can possibly infer this somehow
         class AoSoA_t
     >
-    class DataBuffer { // TODO: fix this backwards naming between class and file
+    class BufferedAoSoA { // TODO: fix this backwards naming between class and file
         // const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
         public:
 
@@ -125,12 +130,12 @@ namespace Cabana
 
             // TODO: can we make this a nice auto detected unpack on the aosoa type?
             template<typename T1, typename T2>
-            DataBuffer(Cabana::AoSoA<T1, T2> original_view_in) : original_view(original_view_in)
+            BufferedAoSoA(Cabana::AoSoA<T1, T2> original_view_in) :
+                original_view(original_view_in),
+                buffer_size(max_buffered_tuples)
             {
                 // TODO: we could probably do an implicit conversion here like // ScatterView does
                 // return original_view
-
-                int buffer_size = max_buffered_tuples;
 
                 int num_buffers = requested_buffer_count;
 
@@ -141,14 +146,19 @@ namespace Cabana
                 }
             }
 
+            /** @brief Helper to access the number of buffers which exist.
+             * Makes no comment about the state or content of the buffers
+             *
+             * @return The number of total buffers available
+             */
             int get_buffer_count()
             {
                 return num_buffers;
             }
 
             // Start thinking about how to handle data movement...
-            void load_next_buffer()
-            {
+            void load_next_buffer(int start_index)
+            { // TODO: start index is not honored
                 last_filled_buffer++;
                 if (last_filled_buffer >= num_buffers)
                 {
@@ -160,22 +170,23 @@ namespace Cabana
                 Cabana::deep_copy( internal_buffers[last_filled_buffer] , original_view );
             }
 
-            // TODO: should access give you the "current" buffer?
+            /*
             KOKKOS_FORCEINLINE_FUNCTION // TODO: check this is the right thing to do?
-            DataBufferAccess<max_buffered_tuples, requested_buffer_count, Exec_Space, AoSoA_type> access() const
+            BufferedAoSoAAccess<max_buffered_tuples, requested_buffer_count, Exec_Space, AoSoA_type> access_old() const
             {
-                return DataBufferAccess<max_buffered_tuples, requested_buffer_count, Exec_Space, AoSoA_type>(*this);
+                return BufferedAoSoAAccess<max_buffered_tuples, requested_buffer_count, Exec_Space, AoSoA_type>(*this);
             }
+            */
 
             // TODO: this or the above should probably be deleted
             KOKKOS_FORCEINLINE_FUNCTION // TODO: check this is the right thing to do?
-            DataBufferAccess<max_buffered_tuples, requested_buffer_count, Exec_Space, AoSoA_type> access_buffer() const
+            BufferedAoSoAAccess<AoSoA_type> access() const
             {
-                return DataBufferAccessCurrent<AoSoA_type>(internal_buffers[last_filled_buffer] );
+                return BufferedAoSoAAccess<AoSoA_type>(internal_buffers[last_filled_buffer] );
             }
 
 
-            // TODO: make private once we figured the above DataBufferAccess
+            // TODO: make private once we figured the above BufferedAoSoAAccess
             // `operator()` out
             AoSoA_t& original_view;
 
@@ -196,19 +207,11 @@ namespace Cabana
              */
             int num_buffers;
 
+            int buffer_size;
+
         private:
-    };
-
-
-    // Requirements:
-    // 1) This must be user callable and seamlessly handle the data buffering
-    // 2) It must be able to accept 2D (simd) and 1D (Kokkos) loops/ range policies
-        // a) Safely peel/remainder loops if needed for the 2D case?
-    // 3) It should be able to warn in debug if you do something that we can detect as affecting performance, eg:
-        // a) warn if vector length does not make sense for target execution space
-    class DataBufferDispatcher {
     };
 
 } // end namespace Cabana
 
-#endif // CABANA_DATABUFFER_HPP
+#endif // CABANA_BUFFEREDAOSOA_HPP
