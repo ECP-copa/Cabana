@@ -54,8 +54,10 @@ void TPME::tune( double accuracy, ParticleList particles, double lx, double ly,
                  double lz )
 {
     //Force symmetry for now
-    ly = lx;
-    lz = lx;
+    if( lx != ly or lx != lz) {
+       std::cout << "Must have cubes for now!";
+       return;
+    }
 
     auto q = Cabana::slice<Charge>( particles );
 
