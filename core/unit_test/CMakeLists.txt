@@ -76,7 +76,7 @@ macro(Cabana_add_tests)
   endforeach()
 endmacro()
 
-Cabana_add_tests(NAMES AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
+Cabana_add_tests(NAMES AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel BufferedData)
 if(Cabana_ENABLE_MPI)
   Cabana_add_tests(MPI NAMES CommunicationPlan Distributor Halo)
 endif()
