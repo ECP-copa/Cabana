@@ -54,7 +54,6 @@ void TPME::tune( double accuracy, ParticleList particles, double lx, double ly,
                  double lz )
 {
     typedef Kokkos::MinLoc<double, int> reducer_type;
-    typedef reducer_type::value_type value_type;
 
     auto q = Cabana::slice<Charge>( particles );
 
@@ -73,18 +72,11 @@ void TPME::tune( double accuracy, ParticleList particles, double lx, double ly,
     _alpha = sqrt( p ) / _r_max;
     _k_max = 2.0 * sqrt( p ) * _alpha;
 
-    _k_max_int[0] = ceil( _k_max );
-    _k_max_int[1] = ceil( _k_max );
-    _k_max_int[2] = ceil( _k_max );
-
     std::cout << "tuned SPME values: " 
               << "N: " << N << " "
               << "accuracy: " << accuracy << " "
               << "r_max: " << _r_max 
               << " alpha: " << _alpha
-              << " k_max: " << _k_max_int[0] 
-              << " " << _k_max_int[1] 
-              << " " << _k_max_int[2] 
               << " " << _k_max << std::endl;
 }
 //
@@ -150,6 +142,10 @@ double TPME::oneDeuler( int k, int meshwidth )
 double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
                       double ly, double lz )
 {
+    //For now, force symmetry
+    ly = lx;
+    lz = lx;
+            
     // Initialize energies: real-space, k-space (reciprocal space), self-energy
     // correction, dipole correction
     double Ur = 0.0, Uk = 0.0, Uself = 0.0, Udip = 0.0;
@@ -183,16 +179,6 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     // double k_max = _k_max;
     double r_max = _r_max;
     double eps_r = _eps_r;
-
-#ifdef Cabana_ENABLE_Cuda
-    Kokkos::View<int *, Kokkos::CudaUVMSpace> k_max_int( "k_max_int", 3 );
-    for ( auto i = 0; i < 3; ++i )
-    {
-        k_max_int[i] = _k_max_int[i];
-    }
-#else
-    int *k_max_int = &( _k_max_int[0] );
-#endif
 
     // std::chrono::time_point<std::chrono::steady_clock> starttime, starttime2,
     // endtime, endtime2; starttime = std::chrono::steady_clock::now();
@@ -502,7 +488,6 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
 
         Ur = Ur_ij + Ur_ii;
 
-        auto end_time_r = std::chrono::high_resolution_clock::now();
         auto elapsed_time_r =
             elapsed_time_rsort + elapsed_time_rii + elapsed_time_rij;
         auto ns_elapsed_r =
