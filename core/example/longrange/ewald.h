@@ -112,22 +112,23 @@ struct EwaldUkForcesIJKFunctor
 {
     typedef Kokkos::View<double*>::size_type size_type;
 
-    size_type value_count;
 
-    /// index of particle i
-    int ii;
-    /// index of particle j
-    int ij;
-    /// system size
-    double lx, ly, lz;
-    /// list of particles positions
-    const ParticleList::member_slice_type<Position> r;
+    /// TeamPolicy used in nested parallel hierarchy
+    typename Kokkos::TeamPolicy<ExecutionSpace>::member_type member;
+    /// array size (forces therefore hardcoded to 3)
+    size_type value_count;
     /// k-space cutoff
     double k_max;
     /// spliting factor
     double alpha;
-    /// TeamPolicy used in nested parallel hierarchy
-    typename Kokkos::TeamPolicy<ExecutionSpace>::member_type member;
+    /// list of particles positions
+    const ParticleList::member_slice_type<Position> r;
+    /// system size
+    double lx, ly, lz;
+    /// index of particle i
+    int ii;
+    /// index of particle j
+    int ij;
 
     /// constructor of the functor
     /// @param mem       TeamPolicy used for the nested parallelism
@@ -225,22 +226,23 @@ struct EwaldUkForcesIJFunctor
 
     typedef Kokkos::View<double*>::size_type size_type;
 
-    size_type value_count;
 
-    /// system size
-    double lx, ly, lz;
-    /// list of positions
-    ParticleList::member_slice_type<Position> r;
-    /// list of charges
-    ParticleList::member_slice_type<Charge> q;
+    /// used TeamPolicy for the nested parallelism
+    typename Kokkos::TeamPolicy<ExecutionSpace>::member_type member;
+    /// array size (forces, therefore hardcoded to 3)
+    size_type value_count;
     /// k-space cutoff
     double k_max;
     /// splitting factor
     double alpha;
+    /// list of positions
+    ParticleList::member_slice_type<Position> r;
+    /// list of charges
+    ParticleList::member_slice_type<Charge> q;
+    /// system size
+    double lx, ly, lz;
     /// particle index
     int i;
-    /// used TeamPolicy for the nested parallelism
-    typename Kokkos::TeamPolicy<ExecutionSpace>::member_type member;
 
     /// constructor of the functor
     /// @param mem       TeamPolicy used to create nested parallelism
@@ -330,20 +332,20 @@ struct EwaldUkForcesFunctor
 
     size_type value_count;
 
-    /// system size
-    double lx, ly, lz;
+    /// number of k-vectors
+    int n_k;
+    /// k-space cutoff
+    double k_max;
+    /// splitting factor
+    double alpha;
     /// particle positions
     ParticleList::member_slice_type<Position> r;
     /// particles charges
     ParticleList::member_slice_type<Charge> q;
     /// particles forces
     ParticleList::member_slice_type<Force> f;
-    /// k-space cutoff
-    double k_max;
-    /// splitting factor
-    double alpha;
-    /// number of k-vectors
-    int n_k;
+    /// system size
+    double lx, ly, lz;
 
     /// constructor of functor
     /// @param p         reference to the list of particles and their parameters
@@ -432,12 +434,12 @@ struct EwaldUkFunctor
 
     size_type value_count;
 
+    /// splitting factor
+    double alpha;
     /// system size
     double lx, ly, lz;
     /// k-space cutoff
     double k_max;
-    /// splitting factor
-    double alpha;
     /// list of particle charges
     //Cabana::slice<Charge> q;
     ParticleList::member_slice_type<Charge> q;

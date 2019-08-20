@@ -36,22 +36,23 @@ void TEwald::tune( double accuracy, ParticleList particles, double lx,
                    double ly, double lz )
 {
     typedef Kokkos::MinLoc<double, int> reducer_type;
-    typedef reducer_type::value_type value_type;
 
     auto q = Cabana::slice<Charge>( particles );
 
     const int N = particles.size();
+
+    double l = std::max( std::max ( lx , ly ), lz );
 
     // Fincham 1994, Optimisation of the Ewald Sum for Large Systems
     // only valid for cubic systems (needs adjustement for non-cubic systems)
     constexpr double EXECUTION_TIME_RATIO_K_R = 2.0;
     double p = -log( accuracy );
     _alpha = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) *
-             pow( N, 1.0 / 6.0 ) / lx;
+             pow( N, 1.0 / 6.0 ) / l;
     _k_max = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) *
-             pow( N, 1.0 / 6.0 ) / lx * 2.0 * PI;
+             pow( N, 1.0 / 6.0 ) / l * 2.0 * PI;
     _r_max = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) /
-             pow( N, 1.0 / 6.0 ) * lx;
+             pow( N, 1.0 / 6.0 ) * l;
     _alpha = sqrt( p ) / _r_max;
     _k_max = 2.0 * sqrt( p ) * _alpha;
 
@@ -434,7 +435,6 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
         Ur = Ur_ij + Ur_ii;
 
-        auto end_time_r = std::chrono::high_resolution_clock::now();
         auto elapsed_time_r =
             elapsed_time_rsort + elapsed_time_rii + elapsed_time_rij;
         auto ns_elapsed_r =
