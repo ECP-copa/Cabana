@@ -10,8 +10,8 @@
  ****************************************************************************/
 
 #include "spme.h"
-#include "definitions.h"
 #include "Cabana_LinkedCellList.hpp"
+#include "definitions.h"
 #include <chrono>
 #include <cmath>
 #include <sys/time.h>
@@ -53,10 +53,11 @@ TPME::TPME( double alpha, double r_max )
 void TPME::tune( double accuracy, ParticleList particles, double lx, double ly,
                  double lz )
 {
-    //Force symmetry for now
-    if( lx != ly or lx != lz) {
-       std::cout << "Must have cubes for now!";
-       return;
+    // Force symmetry for now
+    if ( lx != ly or lx != lz )
+    {
+        std::cout << "Must have cubes for now!";
+        return;
     }
 
     auto q = Cabana::slice<Charge>( particles );
@@ -76,12 +77,11 @@ void TPME::tune( double accuracy, ParticleList particles, double lx, double ly,
     _alpha = sqrt( p ) / _r_max;
     _k_max = 2.0 * sqrt( p ) * _alpha;
 
-    std::cout << "tuned SPME values: " 
+    std::cout << "tuned SPME values: "
               << "N: " << N << " "
               << "accuracy: " << accuracy << " "
-              << "r_max: " << _r_max 
-              << " alpha: " << _alpha
-              << " " << _k_max << std::endl;
+              << "r_max: " << _r_max << " alpha: " << _alpha << " " << _k_max
+              << std::endl;
 }
 //
 
@@ -127,12 +127,10 @@ double TPME::oneDeuler( int k, int meshwidth )
     // sin and cos
     for ( int l = 0; l < 3; l++ )
     {
-        denomreal +=
-            TPME::oneDspline( fmin( 4.0 - ( l + 1.0 ), l + 1.0 ) ) *
-            cos( 2.0 * PI * double( k ) * l / double( meshwidth ) );
-        denomimag +=
-            TPME::oneDspline( fmin( 4.0 - ( l + 1.0 ), l + 1.0 ) ) *
-            sin( 2.0 * PI * double( k ) * l / double( meshwidth ) );
+        denomreal += TPME::oneDspline( fmin( 4.0 - ( l + 1.0 ), l + 1.0 ) ) *
+                     cos( 2.0 * PI * double( k ) * l / double( meshwidth ) );
+        denomimag += TPME::oneDspline( fmin( 4.0 - ( l + 1.0 ), l + 1.0 ) ) *
+                     sin( 2.0 * PI * double( k ) * l / double( meshwidth ) );
     }
     // Compute the numerator, again splitting the complex exponential
     double numreal = cos( 2.0 * PI * 3.0 * double( k ) / double( meshwidth ) );
@@ -146,10 +144,10 @@ double TPME::oneDeuler( int k, int meshwidth )
 double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
                       double ly, double lz )
 {
-    //For now, force symmetry
+    // For now, force symmetry
     ly = lx;
     lz = lx;
-            
+
     // Initialize energies: real-space, k-space (reciprocal space), self-energy
     // correction, dipole correction
     double Ur = 0.0, Uk = 0.0, Uself = 0.0, Udip = 0.0;
@@ -508,8 +506,6 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
                   << " s (neighbor cells) | " << Ur << " = " << Ur_ii << " + "
                   << Ur_ij << std::endl;
     }
-    
-
 
     // computation reciprocal-space contribution
 
@@ -532,29 +528,26 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
         for ( size_t pidx = 0; pidx < particles.size(); ++pidx )
         {
             // x-distance between mesh point and particle
-            xdist =
-                fmin( fmin( std::abs( meshr( idx, 0 ) - r( pidx, 0 ) ),
-                                    std::abs( meshr( idx, 0 ) -
-                                              ( r( pidx, 0 ) + 1.0 ) ) ),
-                          std::abs( meshr( idx, 0 ) -
-                                    ( r( pidx, 0 ) -
-                                      1.0 ) ) ); // account for periodic bndry
+            xdist = fmin(
+                fmin( std::abs( meshr( idx, 0 ) - r( pidx, 0 ) ),
+                      std::abs( meshr( idx, 0 ) - ( r( pidx, 0 ) + 1.0 ) ) ),
+                std::abs(
+                    meshr( idx, 0 ) -
+                    ( r( pidx, 0 ) - 1.0 ) ) ); // account for periodic bndry
             // y-distance between mesh point and particle
-            ydist =
-                fmin( fmin( std::abs( meshr( idx, 1 ) - r( pidx, 1 ) ),
-                                    std::abs( meshr( idx, 1 ) -
-                                              ( r( pidx, 1 ) + 1.0 ) ) ),
-                          std::abs( meshr( idx, 1 ) -
-                                    ( r( pidx, 1 ) -
-                                      1.0 ) ) ); // account for periodic bndry
+            ydist = fmin(
+                fmin( std::abs( meshr( idx, 1 ) - r( pidx, 1 ) ),
+                      std::abs( meshr( idx, 1 ) - ( r( pidx, 1 ) + 1.0 ) ) ),
+                std::abs(
+                    meshr( idx, 1 ) -
+                    ( r( pidx, 1 ) - 1.0 ) ) ); // account for periodic bndry
             // z-distance between mesh point and particle
-            zdist =
-                fmin( fmin( std::abs( meshr( idx, 2 ) - r( pidx, 2 ) ),
-                                    std::abs( meshr( idx, 2 ) -
-                                              ( r( pidx, 2 ) + 1.0 ) ) ),
-                          std::abs( meshr( idx, 2 ) -
-                                    ( r( pidx, 2 ) -
-                                      1.0 ) ) ); // account for periodic bndry
+            zdist = fmin(
+                fmin( std::abs( meshr( idx, 2 ) - r( pidx, 2 ) ),
+                      std::abs( meshr( idx, 2 ) - ( r( pidx, 2 ) + 1.0 ) ) ),
+                std::abs(
+                    meshr( idx, 2 ) -
+                    ( r( pidx, 2 ) - 1.0 ) ) ); // account for periodic bndry
 
             if ( xdist <= 2.0 * spacing and ydist <= 2.0 * spacing and
                  zdist <= 2.0 * spacing ) // more efficient way to do this? Skip
@@ -723,52 +716,49 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     Uk *= 0.5;
 
     // computation of self-energy contribution
-    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                             KOKKOS_LAMBDA( int idx, double &Uself_part ) {
-                                 Uself_part +=
-                                     -alpha / PI_SQRT * q( idx ) * q( idx );
-                                 p( idx ) += Uself_part;
-                             },
-                             Uself );
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+        KOKKOS_LAMBDA( int idx, double &Uself_part ) {
+            Uself_part += -alpha / PI_SQRT * q( idx ) * q( idx );
+            p( idx ) += Uself_part;
+        },
+        Uself );
     Kokkos::fence();
 
     // computation of dipole correction to energy
-    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-                                 double V = lx * ly * lz;
-                                 double Udip_prefactor =
-                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-                                 Udip_part +=
-                                     Udip_prefactor * q( idx ) * r( idx, 0 );
-                             },
-                             Udip_vec[0] );
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+            double V = lx * ly * lz;
+            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+            Udip_part += Udip_prefactor * q( idx ) * r( idx, 0 );
+        },
+        Udip_vec[0] );
     Kokkos::fence();
 
-    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-                                 double V = lx * ly * lz;
-                                 double Udip_prefactor =
-                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-                                 Udip_part +=
-                                     Udip_prefactor * q( idx ) * r( idx, 1 );
-                             },
-                             Udip_vec[1] );
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+            double V = lx * ly * lz;
+            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+            Udip_part += Udip_prefactor * q( idx ) * r( idx, 1 );
+        },
+        Udip_vec[1] );
     Kokkos::fence();
 
-    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-                                 double V = lx * ly * lz;
-                                 double Udip_prefactor =
-                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-                                 Udip_part +=
-                                     Udip_prefactor * q( idx ) * r( idx, 2 );
-                             },
-                             Udip_vec[2] );
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+            double V = lx * ly * lz;
+            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+            Udip_part += Udip_prefactor * q( idx ) * r( idx, 2 );
+        },
+        Udip_vec[2] );
     Kokkos::fence();
 
     Udip = Udip_vec[0] * Udip_vec[0] + Udip_vec[1] * Udip_vec[1] +
            Udip_vec[2] * Udip_vec[2];
-    
+
     total_energy = Ur + Uk + Uself + Udip;
 
     std::cout << "SPME (real-space): " << Ur << std::endl;
