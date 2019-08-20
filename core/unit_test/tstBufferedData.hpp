@@ -128,9 +128,9 @@ namespace Test
 
                 // Member 0.
                 for ( int i = 0; i < dim_1; ++i )
-                for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                slice_0.access( s, a, i, j, k ) = fval * (i+j+k) / 2.0;
+                    for ( int j = 0; j < dim_2; ++j )
+                        for ( int k = 0; k < dim_3; ++k )
+                            slice_0.access( s, a, i, j, k ) = fval * (i+j+k) / 2.0;
 
                 // Member 1.
                 slice_1.access( s, a ) = ival / 2.0;

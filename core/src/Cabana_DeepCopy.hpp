@@ -399,6 +399,61 @@ inline void deep_copy( Slice_t& slice,
 
 //---------------------------------------------------------------------------//
 
+// FIXME: this is very much *experimental* and incomplete -- use with great care
+template<class DstAoSoA, class SrcAoSoA>
+inline void deep_copy_partial(
+    DstAoSoA& dst,
+    const SrcAoSoA& src,
+    const int start,
+    const int end,
+    typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
+                             is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
+{
+    // TODO: this assume you're trying to cross exec spaces (i.e partial copy
+    // from CPU to GPU). You can likely do this faster and avoid data
+    // duplication if that is not true
+    // TODO: it might make sense to quick path this if start=0 and end=n
+
+    // When trying to copy partial data across execution spaces using Kokkos,
+    // you have to invoke a (potentially overly) complex pattern. You are not
+    // allowed to cross execution spaces by copying subviews, so you have to
+    // take great care (and pain!) to martial you data correctly. This
+    // typically means you have to make local copies of the data of the correct
+    // size, and copy those around. In this function, that will mean making an
+    // AoSoA of type SrcAoSoA that is of reduced size, populating it, and then
+    // invoking a Cabana::depp_copy (defined above). In the future there may be
+    // a more elegant way to do this, but for now this is "safe". Typically
+    // this creates extra memory overhead as we duplicate the copyable chunk in
+    // the src memory space, which can be painful if we're using with src=GPU,
+    // but luckily that is not the most common use-case.
+
+    // Make AoSoA in src space to copy over
+    int partial_size = (end-start);
+    SrcAoSoA src_partial("deep_copy_partial src", partial_size);
+
+    // Populate it with data using a parallel for
+    // TODO: this copy_func is borrow from above, so we could DRY
+    auto copy_func =
+        KOKKOS_LAMBDA( const std::size_t i )
+        { src_partial.setTuple( i+start, src.getTuple(i) ); };
+
+    Kokkos::RangePolicy<typename SrcAoSoA::execution_space>
+        exec_policy( 0, src_partial.size() );
+
+    Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
+    Kokkos::fence();
+
+    // TODO: assert that the size of dst much match src_partial.size()
+    // TODO: implement code path from when above is not true.
+    assert( src_partial.size() == dst.size() );
+
+    // It should now be safe to rely on existing deep copy, assuming dst is
+    // sized the same as src_partial. If that is not true we need to apply the
+    // same pattern on the other end
+
+    Cabana::deep_copy(dst, src_partial);
+}
+
 } // end namespace Cabana
 
 #endif // end CABANA_DEEPCOPY_HPP

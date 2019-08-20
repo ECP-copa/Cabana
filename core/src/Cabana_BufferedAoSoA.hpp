@@ -165,9 +165,17 @@ namespace Cabana
                     last_filled_buffer = 0;
                 }
 
+                int end_index = start_index + buffer_size;
+
                 // Copy from the main memory store into the "current" buffer
-                // TODO: does this imply the need for a subview so the sizes match?
-                Cabana::deep_copy( internal_buffers[last_filled_buffer] , original_view );
+                // TODO: does this imply the need for a subview so the sizes
+                // match?
+                Cabana::deep_copy_partial(
+                    internal_buffers[last_filled_buffer],
+                    original_view,
+                    start_index,
+                    end_index
+                );
             }
 
             /*
