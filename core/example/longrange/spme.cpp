@@ -548,6 +548,12 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
            Udip_vec[2] * Udip_vec[2];
 
     total_energy = Ur + Uk + Uself + Udip;
+
+    //Now, compute forces on each particle
+    
+
+
+
 #ifndef Cabana_ENABLE_Cuda
     fftw_cleanup();
 #endif
