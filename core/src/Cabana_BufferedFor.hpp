@@ -59,15 +59,33 @@ namespace Cabana
         std::cout << "running for " << niter << " buffered iterations " << std::endl;
 
         int begin = 0;
+        int end = begin+buffer_size;
+
         for (int i = 0; i < niter; i++)
         {
-            int end = begin+buffer_size;
+            std::cout << "Looping from " << begin << " to " << end
+                << " which is " << i*buffer_size << " in global space " <<
+                std::endl;
 
             buffered_aosoa.load_next_buffer(begin);
             simd_policy policy(begin, end);
             Cabana::simd_parallel_for( policy, functor, str );
 
-            begin += buffer_size;
+            Kokkos::fence();
+
+            // copy all data back from localbuffer into the correct location in
+            // global
+            // TODO: figure out the semantic of this
+            /*
+            int start_to = i*buffer_size;
+            Cabana::deep_copy_partial(
+                original_view,
+                internal_buffers[last_filled_buffer],
+                0, // start_from,
+                buffer_size, // end_from,
+                start_to
+            );
+            */
         }
     }
 } // namespace

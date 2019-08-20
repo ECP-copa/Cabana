@@ -400,12 +400,22 @@ inline void deep_copy( Slice_t& slice,
 //---------------------------------------------------------------------------//
 
 // FIXME: this is very much *experimental* and incomplete -- use with great care
+/**
+ * @brief Copy a partial chunk TODO
+ *
+ * @param dst
+ * @param src
+ * @param start_from
+ * @param end_from
+ * @param start_to
+ */
 template<class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial(
     DstAoSoA& dst,
     const SrcAoSoA& src,
-    const int start,
-    const int end,
+    const int to_index, // TODO: the order of these params is questionable
+    const int from_index,
+    const int count,
     typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
                              is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
 {
@@ -428,14 +438,13 @@ inline void deep_copy_partial(
     // but luckily that is not the most common use-case.
 
     // Make AoSoA in src space to copy over
-    int partial_size = (end-start);
-    SrcAoSoA src_partial("deep_copy_partial src", partial_size);
+    SrcAoSoA src_partial("deep_copy_partial src", count);
 
     // Populate it with data using a parallel for
     // TODO: this copy_func is borrow from above, so we could DRY
     auto copy_func =
         KOKKOS_LAMBDA( const std::size_t i )
-        { src_partial.setTuple( i+start, src.getTuple(i) ); };
+        { src_partial.setTuple( i+from_index, src.getTuple(i) ); };
 
     Kokkos::RangePolicy<typename SrcAoSoA::execution_space>
         exec_policy( 0, src_partial.size() );

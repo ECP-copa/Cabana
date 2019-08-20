@@ -45,6 +45,8 @@ namespace Cabana
             BufferedAoSoAAccess(const AoSoA_type& aosoa_in) : aosoa(aosoa_in)
             {
                 // Intentionally empty
+                std::cout << "Passed " << &aosoa_in << " and capture it into " << &aosoa << std::endl;
+                std::cout << "Data pointers " << aosoa_in.data() << " and " << aosoa.data() << std::endl;
             }
 
             // TODO: Kokkos rebuilds this from the underlying params, eg:
@@ -143,6 +145,7 @@ namespace Cabana
                 for (int i = 0; i < num_buffers; i++)
                 {
                     internal_buffers[i].resize(buffer_size);
+                    std::cout << " buf " << i << " = " << &(internal_buffers[i]) << std::endl;
                 }
             }
 
@@ -165,7 +168,12 @@ namespace Cabana
                     last_filled_buffer = 0;
                 }
 
-                int end_index = start_index + buffer_size;
+                std::cout << "Filled buffer " << last_filled_buffer <<
+                    " which has size " <<
+                    internal_buffers[last_filled_buffer].size() <<
+                    " and pointer " << &(internal_buffers[last_filled_buffer]) << 
+                    " with data from " << start_index <<
+                std::endl;
 
                 // Copy from the main memory store into the "current" buffer
                 // TODO: does this imply the need for a subview so the sizes
@@ -173,8 +181,9 @@ namespace Cabana
                 Cabana::deep_copy_partial(
                     internal_buffers[last_filled_buffer],
                     original_view,
+                    0, //to_index,
                     start_index,
-                    end_index
+                    buffer_size
                 );
             }
 
@@ -190,6 +199,7 @@ namespace Cabana
             KOKKOS_FORCEINLINE_FUNCTION // TODO: check this is the right thing to do?
             BufferedAoSoAAccess<AoSoA_type> access() const
             {
+                std::cout << "Accessing at " << last_filled_buffer << std::endl;
                 return BufferedAoSoAAccess<AoSoA_type>(internal_buffers[last_filled_buffer] );
             }
 

@@ -29,12 +29,12 @@ namespace Test
         const int dim_3 = 4;
 
         // Declare data types.
-        using DataTypes =
-            Cabana::MemberTypes<float[dim_1][dim_2][dim_3],
+        using DataTypes = Cabana::MemberTypes<
+            float[dim_1][dim_2][dim_3],
             int,
             double[dim_1],
             double[dim_1][dim_2]
-                >;
+        >;
 
         // Declare the AoSoA type.
         using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
@@ -105,7 +105,7 @@ namespace Test
         dval = 2.23;
         ival = 2;
 
-        std::cout << "Calling buffered for" << std::endl;
+        std::cout << "Calling buffered for using data from " << aosoa.data() << std::endl;
 
         // Overwrite the data in a buffered way
         Cabana::buffered_parallel_for(
@@ -120,6 +120,10 @@ namespace Test
                 // it safely. The `buffered_aosoa` may get captured by
                 // reference, and then not be valid in a GPU context
                 auto buffered_access = buffered_aosoa.access();
+
+                std::cout << "The underlying aosoa lives at " << &(buffered_access.aosoa) << " and has size " << buffered_access.aosoa.size() << std::endl;
+                std::cout << "The data of the accesed aosoa lives at " << (buffered_access.aosoa.data()) << std::endl;
+                std::cout << "The data of the buffered aosoa lives at " << (buffered_aosoa.internal_buffers[0].data()) << " and has size " << buffered_aosoa.internal_buffers[0].size() << std::endl;
 
                 auto slice_0 = Cabana::slice<0>(buffered_access.aosoa);
                 auto slice_1 = Cabana::slice<1>(buffered_access.aosoa);
