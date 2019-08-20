@@ -473,7 +473,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
 #ifdef Cabana_ENABLE_Cuda
     cufftPlan3d( &plantest, meshwidth, meshwidth, meshwidth, CUFFT_Z2Z );
     cufftExecZ2Z( plantest, Qr, Qktest, CUFFT_INVERSE ); // IFFT on Q
-
+    //Update the energy
     Kokkos::parallel_reduce(
         meshsize,
         KOKKOS_LAMBDA( const int idx, double &Uk_part ) {
@@ -487,6 +487,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     plantest = fftw_plan_dft_3d( meshwidth, meshwidth, meshwidth, Qr, Qktest,
                                  FFTW_BACKWARD, FFTW_ESTIMATE );
     fftw_execute( plantest ); // IFFT on Q
+    //update the energy
     Kokkos::parallel_reduce(
         meshsize,
         KOKKOS_LAMBDA( const int idx, double &Uk_part ) {
@@ -496,6 +497,14 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
         Uk );
     Kokkos::fence();
     fftw_destroy_plan( plantest );
+    //update Q for later force calcs
+    auto update_q = KOKKOS_LAMBDA( const int idx ) { 
+                        Qktest[idx][0] *= BC[idx][0];
+                        Qktest[idx][1] *= BC[idx][0];
+                    };
+
+    Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+                          update_q );
 #endif
 
     Uk *= 0.5;
@@ -550,7 +559,6 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     total_energy = Ur + Uk + Uself + Udip;
 
     //Now, compute forces on each particle
-    
 
 
 
