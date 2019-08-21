@@ -21,11 +21,11 @@ int main( int argc, char **argv )
     Kokkos::initialize( argc, argv );
 
     // crystal size
-    const int c_size = 2;
+    const int c_size = ( argc == 2 ) ? atoi( argv[1] ) : 32;
     // accuracy parameter for the tuning of Ewald
     const double accuracy = 1e-6;
     // width of unit cell (assume cube)
-    const double width = 1.0;
+    const double width = c_size / 2.0;
     // Number of particles, 3D
     const int n_particles = c_size * c_size * c_size;
 
@@ -48,6 +48,23 @@ int main( int argc, char **argv )
     timer.reset();
     // Perform the computation of real and imag space energies
     double total_energy = solver.compute( *particles, width, width, width );
+
+    // compute sum of forces (nicer with functor)
+    double tfx, tfy, tfz;
+    auto forces = Cabana::slice<Force>( *particles );
+    Kokkos::parallel_reduce(
+        particles->size(),
+        KOKKOS_LAMBDA( int idx, double &f_tmp ) { f_tmp += forces( idx, 0 ); },
+        tfx );
+    Kokkos::parallel_reduce(
+        particles->size(),
+        KOKKOS_LAMBDA( int idx, double &f_tmp ) { f_tmp += forces( idx, 1 ); },
+        tfy );
+    Kokkos::parallel_reduce(
+        particles->size(),
+        KOKKOS_LAMBDA( int idx, double &f_tmp ) { f_tmp += forces( idx, 2 ); },
+        tfz );
+
     auto exec_time = timer.seconds();
     timer.reset();
 
@@ -69,12 +86,9 @@ int main( int argc, char **argv )
     std::cout << "relative error (energy): "
               << 1.0 - ( n_particles * MADELUNG_NACL ) / total_energy
               << std::endl;
+    std::cout << "sum of forces: " << tfx << " " << tfy << " " << tfz
+              << std::endl;
 
-    // Clean up
-    // delete mesh;
-    // delete particles;
-    // Kokkos::fence();
-    // Kokkos::Cuda::finalize();
     Kokkos::finalize();
     return 0;
 }
