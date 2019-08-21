@@ -89,36 +89,21 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
     auto start_time_kf = std::chrono::high_resolution_clock::now();
     EwaldUkFunctor ukf( particles, _k_max, _alpha, lx, ly, lz );
-    std::cout << "k-space potentials functor created" << std::endl;
+    std::cout << "k-space functor created" << std::endl;
     int k_int = std::ceil( _k_max );
     int n_k = 8 * k_int * k_int * k_int + 12 * k_int * k_int + 6 * k_int + 1;
     Kokkos::parallel_reduce( n_k, ukf, Uk );
-    std::cout << "k-space potentials computed" << std::endl;
+    std::cout << "k-space contributions computed" << std::endl;
     Kokkos::fence();
     auto end_time_kf = std::chrono::high_resolution_clock::now();
-    auto start_time_kff = std::chrono::high_resolution_clock::now();
-    EwaldUkForcesFunctor<ExecutionSpace> uk_fi( r, q, f, _k_max, _alpha, n_k,
-                                                lx, ly, lz );
-    std::cout << "k-space forces functor created" << std::endl;
-    Kokkos::parallel_for(
-        Kokkos::TeamPolicy<ExecutionSpace>( n_max, Kokkos::AUTO ), uk_fi );
-    Kokkos::fence();
-
-    auto end_time_kff = std::chrono::high_resolution_clock::now();
     auto elapsed_time_kf = end_time_kf - start_time_kf;
-    auto elapsed_time_kff = end_time_kff - start_time_kff;
     auto ns_elapsed_kf =
         std::chrono::duration_cast<std::chrono::nanoseconds>( elapsed_time_kf );
-    auto ns_elapsed_kff = std::chrono::duration_cast<std::chrono::nanoseconds>(
-        elapsed_time_kff );
 
     std::cout << "k-space contribution: "
-              << ( ( ns_elapsed_kf + ns_elapsed_kff ).count() / 1000000000.0 )
-              << " s = "
-              << " potential: " << ( ns_elapsed_kf.count() / 1000000000.0 )
-              << " s + "
-              << " forces: " << ( ns_elapsed_kff.count() / 1000000000.0 )
-              << " s " << Uk << " " << std::endl;
+              << ( ns_elapsed_kf.count() / 1000000000.0 )
+              << " s "
+              << Uk << " " << std::endl;
 
     // computation real-space contribution
     Kokkos::fence();
