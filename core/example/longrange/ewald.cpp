@@ -27,42 +27,33 @@ TEwald::TEwald( double alpha, double r_max, double k_max )
     _alpha = alpha;
     _r_max = r_max;
     _k_max = k_max;
-    _k_max_int[0] = std::ceil( _k_max );
-    _k_max_int[1] = std::ceil( _k_max );
-    _k_max_int[2] = std::ceil( _k_max );
 }
 
 void TEwald::tune( double accuracy, ParticleList particles, double lx,
                    double ly, double lz )
 {
-    typedef Kokkos::MinLoc<double, int> reducer_type;
-    typedef reducer_type::value_type value_type;
-
     auto q = Cabana::slice<Charge>( particles );
 
     const int N = particles.size();
+
+    double l = std::max( std::max( lx, ly ), lz );
 
     // Fincham 1994, Optimisation of the Ewald Sum for Large Systems
     // only valid for cubic systems (needs adjustement for non-cubic systems)
     constexpr double EXECUTION_TIME_RATIO_K_R = 2.0;
     double p = -log( accuracy );
     _alpha = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) *
-             pow( N, 1.0 / 6.0 ) / lx;
+             pow( N, 1.0 / 6.0 ) / l;
     _k_max = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) *
-             pow( N, 1.0 / 6.0 ) / lx * 2.0 * PI;
+             pow( N, 1.0 / 6.0 ) / l * 2.0 * PI;
     _r_max = pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI ) /
-             pow( N, 1.0 / 6.0 ) * lx;
+             pow( N, 1.0 / 6.0 ) * l;
     _alpha = sqrt( p ) / _r_max;
     _k_max = 2.0 * sqrt( p ) * _alpha;
 
-    _k_max_int[0] = ceil( _k_max );
-    _k_max_int[1] = ceil( _k_max );
-    _k_max_int[2] = ceil( _k_max );
-
     std::cout << "tuned Ewald values: "
               << "r_max: " << _r_max << " alpha: " << _alpha
-              << " k_max: " << _k_max_int[0] << "  " << _k_max_int[1] << " "
-              << _k_max_int[2] << " " << _k_max << std::endl;
+              << " k_max: " << _k_max << std::endl;
 }
 
 double TEwald::compute( ParticleList &particles, double lx, double ly,
@@ -81,7 +72,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
     int n_max = particles.size();
 
-    auto init_p = KOKKOS_LAMBDA( const int idx )
+    auto init_parameters = KOKKOS_LAMBDA( const int idx )
     {
         p( idx ) = 0.0;
         f( idx, 0 ) = 0.0;
@@ -89,7 +80,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         f( idx, 2 ) = 0.0;
     };
     Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                          init_p );
+                          init_parameters );
     Kokkos::fence();
 
     double alpha = _alpha;
@@ -211,6 +202,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                 }
             },
             Ur );
+        Kokkos::fence();
         auto end_time_r = std::chrono::high_resolution_clock::now();
         auto elapsed_time_r = end_time_r - start_time_r;
         auto ns_elapsed_r =
@@ -223,6 +215,14 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     }
     else
     {
+
+        // In this branch a linked-cell list is used, which is using the Cabana
+        // implementation of linked cell neighbor list. To compute the
+        // real-space contribution the particles are sorted into cells of a
+        // given size and then for each cell the distances to particles in
+        // surrounding cells are computed. If the distance is smaller than the
+        // cut-off distance, the real-space interaction is computed and summed
+        // up for the total energy potential
 
         // TODO: cellsize dynamic!
         double lc = 1.0;
@@ -293,10 +293,13 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
                     double contrib = 0;
 
+                    // for all particles in the current cell
                     for ( int ii = 0; ii < cell_list.binSize( ix, iy, iz );
                           ++ii )
                     {
+                        // get index of particle,
                         int i = cell_list.binOffset( ix, iy, iz ) + ii;
+                        // and get the position of the particle
                         double rx = r( i, 0 );
                         double ry = r( i, 1 );
                         double rz = r( i, 2 );
@@ -309,31 +312,40 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                         double fz_i = 0.0;
 
                         double Ur_i = 0.0;
+                        // then loop over the particles in the chosen neighbor
+                        // cell
                         for ( int ij = 0; ij < cell_list.binSize( jx, jy, jz );
                               ++ij )
                         {
                             j = cell_list.binOffset( jx, jy, jz ) + ij;
 
+                            // compute the distance between particles
                             dx = rx - r( j, 0 );
                             dy = ry - r( j, 1 );
                             dz = rz - r( j, 2 );
+                            // use minimum image convention to get the shortest
+                            // distance
                             dx -= round( dx / lx ) * lx;
                             dy -= round( dy / lx ) * lx;
                             dz -= round( dz / lx ) * lx;
                             d = sqrt( dx * dx + dy * dy + dz * dz );
+                            // compute prefactor
                             double qij = q( i ) * q( j );
                             pij = ( d <= r_max ) * 0.5 * qij *
                                   erfc( alpha * d ) / d;
+                            // compute force prefactor
                             double f_fact = ( d <= r_max ) * qij *
                                             ( 2.0 * sqrt( alpha / PI ) *
                                                   exp( -alpha * d * d ) +
                                               erfc( sqrt( alpha ) * d ) ) /
                                             ( d * d );
-
+                            // compute force contributions
                             double fx = f_fact * dx;
                             double fy = f_fact * dy;
                             double fz = f_fact * dz;
 
+                            // use Newton's 3rd law to add contributions to both
+                            // particles
                             fx_i += fx;
                             fy_i += fy;
                             fz_i += fz;
@@ -342,9 +354,11 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                             Kokkos::atomic_add( &f( j, 1 ), -fy );
                             Kokkos::atomic_add( &f( j, 2 ), -fz );
 
+                            // update global energy reduction variable
                             Ur_i += pij;
                             Kokkos::atomic_add( &p( j ), pij );
                         }
+                        // update forces for local particle
                         Kokkos::atomic_add( &p( i ), Ur_i );
                         Kokkos::atomic_add( &f( i, 0 ), fx_i );
                         Kokkos::atomic_add( &f( i, 1 ), fy_i );
@@ -370,12 +384,16 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
             n_cells,
             KOKKOS_LAMBDA( const int ic, double &Ur_ic ) {
                 int ix, iy, iz;
+                // get index of local cell
                 cell_list.ijkBinIndex( ic, ix, iy, iz );
 
                 double contrib = 0.0;
+
+                // loop over the contents of the local cell
                 for ( int ii = 0; ii < cell_list.binSize( ix, iy, iz ); ++ii )
                 {
                     int i = cell_list.binOffset( ix, iy, iz ) + ii;
+                    // get position of current particle
                     double rx = r( i, 0 );
                     double ry = r( i, 1 );
                     double rz = r( i, 2 );
@@ -384,10 +402,13 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                     double fy_i = 0.0;
                     double fz_i = 0.0;
 
+                    // loop over all other particles in current cell
                     for ( int ij = ii + 1; ij < cell_list.binSize( ix, iy, iz );
                           ++ij )
                     {
                         int j = cell_list.binOffset( ix, iy, iz ) + ij;
+                        // compute distance and apply minimum image convention
+                        // for periodic boundary conditions
                         double dx = rx - r( j, 0 );
                         double dy = ry - r( j, 1 );
                         double dz = rz - r( j, 2 );
@@ -396,6 +417,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                         dz -= round( dz / lx ) * lx;
                         double d = sqrt( dx * dx + dy * dy + dz * dz );
                         double qij = q( i ) * q( j );
+                        // compute potential and force computations for
+                        // both interacting particles
                         double pij =
                             ( d <= r_max ) * 0.5 * qij * erfc( alpha * d ) / d;
                         double f_fact =
@@ -408,17 +431,21 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                         double fy = f_fact * dy;
                         double fz = f_fact * dz;
 
+                        // update redution variables for particle i
                         fx_i += fx;
                         fy_i += fy;
                         fz_i += fz;
 
+                        // update forces for particle j
                         Kokkos::atomic_add( &f( j, 0 ), -fx );
                         Kokkos::atomic_add( &f( j, 1 ), -fy );
                         Kokkos::atomic_add( &f( j, 2 ), -fz );
 
                         Ur_i += pij;
+                        // update potential energy for particle j
                         Kokkos::atomic_add( &p( j ), pij );
                     }
+                    // update particle i
                     Kokkos::atomic_add( &p( i ), Ur_i );
                     Kokkos::atomic_add( &f( i, 0 ), fx_i );
                     Kokkos::atomic_add( &f( i, 1 ), fy_i );
@@ -429,12 +456,14 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
             },
             Ur_ii );
 
+        Kokkos::fence();
         auto end_time_rii = std::chrono::high_resolution_clock::now();
         auto elapsed_time_rii = end_time_rii - start_time_rii;
 
+        // total real-space contribution is the sum of interactions with
+        // surrounding boxes and local boxes
         Ur = Ur_ij + Ur_ii;
 
-        auto end_time_r = std::chrono::high_resolution_clock::now();
         auto elapsed_time_r =
             elapsed_time_rsort + elapsed_time_rii + elapsed_time_rij;
         auto ns_elapsed_r =
