@@ -44,7 +44,6 @@ class TEwald
     double _alpha;
     double _r_max;
     double _k_max;
-    int _k_max_int[3];
 
     // dielectric constant (1.0 = vacuum)
     double _eps_r = 1.0;
@@ -332,12 +331,12 @@ struct EwaldUkForcesFunctor
 
     size_type value_count;
 
-    /// number of k-vectors
-    int n_k;
     /// k-space cutoff
     double k_max;
     /// splitting factor
     double alpha;
+    /// number of k-vectors
+    int n_k;
     /// particle positions
     ParticleList::member_slice_type<Position> r;
     /// particles charges
@@ -434,19 +433,18 @@ struct EwaldUkFunctor
 
     size_type value_count;
 
+    /// k-space cutoff
+    double k_max;
     /// splitting factor
     double alpha;
     /// system size
     double lx, ly, lz;
-    /// k-space cutoff
-    double k_max;
+    /// number of particles
+    int n_max;
     /// list of particle charges
-    //Cabana::slice<Charge> q;
     ParticleList::member_slice_type<Charge> q;
     /// list of particle positions
     ParticleList::member_slice_type<Position> r;
-    /// number of particles
-    int n_max;
 
     /// constructor of the functor
     /// @param p        reference to the list of particles and their parameters

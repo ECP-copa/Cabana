@@ -14,7 +14,6 @@ int main( int argc, char **argv )
     const double accuracy = 1e-6;
     // width of unit cell (assume cube)
     const double width = (double)c_size / 2.0;
-    ;
     // Number of mesh points in each direction for SPME
     const int n_meshpoints = 4096; // 16*16*16;
     // Declare alpha and rmax, but just let the tuner select their values later
