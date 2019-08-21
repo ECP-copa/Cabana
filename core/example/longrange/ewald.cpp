@@ -216,13 +216,13 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     else
     {
 
-        // In this branch a linked-cell list is used, which is using the Cabana implementation
-        // of linked cell neighbor list. To compute the real-space contribution the particles
-        // are sorted into cells of a given size and then for each cell the distances to
-        // particles in surrounding cells are computed. If the distance is smaller than the
-        // cut-off distance, the real-space interaction is computed and summed up for the
-        // total energy potential
-
+        // In this branch a linked-cell list is used, which is using the Cabana
+        // implementation of linked cell neighbor list. To compute the
+        // real-space contribution the particles are sorted into cells of a
+        // given size and then for each cell the distances to particles in
+        // surrounding cells are computed. If the distance is smaller than the
+        // cut-off distance, the real-space interaction is computed and summed
+        // up for the total energy potential
 
         // TODO: cellsize dynamic!
         double lc = 1.0;
@@ -312,7 +312,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                         double fz_i = 0.0;
 
                         double Ur_i = 0.0;
-                        //then loop over the particles in the chosen neighbor cell
+                        // then loop over the particles in the chosen neighbor
+                        // cell
                         for ( int ij = 0; ij < cell_list.binSize( jx, jy, jz );
                               ++ij )
                         {
@@ -322,7 +323,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                             dx = rx - r( j, 0 );
                             dy = ry - r( j, 1 );
                             dz = rz - r( j, 2 );
-                            // use minimum image convention to get the shortest distance
+                            // use minimum image convention to get the shortest
+                            // distance
                             dx -= round( dx / lx ) * lx;
                             dy -= round( dy / lx ) * lx;
                             dz -= round( dz / lx ) * lx;
@@ -342,7 +344,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                             double fy = f_fact * dy;
                             double fz = f_fact * dz;
 
-                            // use Newton's 3rd law to add contributions to both particles
+                            // use Newton's 3rd law to add contributions to both
+                            // particles
                             fx_i += fx;
                             fy_i += fy;
                             fz_i += fz;
@@ -452,7 +455,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                 Ur_ic += contrib;
             },
             Ur_ii );
-        
+
         Kokkos::fence();
         auto end_time_rii = std::chrono::high_resolution_clock::now();
         auto elapsed_time_rii = end_time_rii - start_time_rii;
