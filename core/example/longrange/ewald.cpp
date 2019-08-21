@@ -101,9 +101,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         std::chrono::duration_cast<std::chrono::nanoseconds>( elapsed_time_kf );
 
     std::cout << "k-space contribution: "
-              << ( ns_elapsed_kf.count() / 1000000000.0 )
-              << " s "
-              << Uk << " " << std::endl;
+              << ( ns_elapsed_kf.count() / 1000000000.0 ) << " s " << Uk << " "
+              << std::endl;
 
     // computation real-space contribution
     Kokkos::fence();
