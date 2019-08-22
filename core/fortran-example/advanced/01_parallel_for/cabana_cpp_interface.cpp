@@ -1,6 +1,6 @@
-#include <Cabana_Parallel.hpp>
-#include <Cabana_ExecutionPolicy.hpp>
 #include <Cabana_Core.hpp>
+#include <Cabana_ExecutionPolicy.hpp>
+#include <Cabana_Parallel.hpp>
 #include <Kokkos_Core.hpp>
 
 /****************************************************************************
@@ -46,8 +46,9 @@ using ExecutionSpace = Kokkos::Serial;
 /* Most particle routines can be written as a loop over particles.
    In the GPU case, launch a parallel_for over particles
    In the CPU case, launch a parallel_for over vectors
-   The vector loop is currently inclusive of the ends, so if you ask to operate over
-   particles 15-33 and your vector length is 16, you will operate over particle 1-48.
+   The vector loop is currently inclusive of the ends, so if you ask to operate
+   over particles 15-33 and your vector length is 16, you will operate over
+   particle 1-48.
 */
 
 // Define the function to be called by Fortran main
@@ -56,16 +57,14 @@ extern "C" int parallel_for_example( int sp, int ep );
 // Define the kernel that will be called inside the parallel_for
 extern "C" CABANA_FUNCTION void parallel_for_example_f( int );
 
-int parallel_for_example( int start_pt, int end_pt)
+int parallel_for_example( int start_pt, int end_pt )
 {
-  auto local_lambda = KOKKOS_LAMBDA( const int idx )
-  {
-     parallel_for_example_f(idx);
-  };
-  Kokkos::RangePolicy<ExecutionSpace> range_policy_vec( start_pt-1, end_pt );
-  Kokkos::parallel_for( range_policy_vec, local_lambda, "example_op" );
-  return 0;
+    auto local_lambda = KOKKOS_LAMBDA( const int idx )
+    {
+        parallel_for_example_f( idx );
+    };
+    Kokkos::RangePolicy<ExecutionSpace> range_policy_vec( start_pt - 1,
+                                                          end_pt );
+    Kokkos::parallel_for( range_policy_vec, local_lambda, "example_op" );
+    return 0;
 }
-
-
-
