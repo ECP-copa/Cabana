@@ -14,12 +14,19 @@
 
 #include <iostream>
 #include "definitions.h"
+#include "mpi.h"
 
 class TEwald
 {
   public:
     //constructor with accuracy
-    TEwald(const double accuracy_threshold, ParticleList particles, const double x_width, const double y_width, const double z_width);
+    TEwald(const double accuracy_threshold, 
+           const int N,
+           const double x_width, 
+           const double y_width, 
+           const double z_width,
+           Kokkos::View<double*>& domain_width,
+           MPI_Comm comm);
     
     //set base values for alpha, r_max, k_max
     TEwald(const double alpha, const double r_max, const double k_max);
@@ -28,7 +35,7 @@ class TEwald
     double compute(ParticleList& particles, const double x_width, const double y_width, const double z_width);
 
     // tune alpha, r_max, k_max to adhere to given accuracy
-    void tune(const double accuracy_threshold, ParticleList particles, const double x_width, const double y_width, const double z_width);
+    void tune(const double accuracy_threshold, int N, const double x_width, const double y_width, const double z_width);
 
     // setter functions for parameters
     void set_alpha(double);
@@ -49,6 +56,10 @@ class TEwald
     double _eps_r = 1.0;
 
     double* EwaldUk_coeffs;
+
+    Kokkos::View<double*> domain_width;
+
+    MPI_Comm comm;
 };
 
 /// Functor to compute the total k-space energy contribution
