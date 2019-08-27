@@ -301,11 +301,6 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     // process, which is done by using the 'scatter' implementation
     // of Cabana.
 
-    // TODO: cellsize dynamic (if still necessary?)
-    double lc = 1.0;
-    // double cfactor = std::ceil( r_max / lc );
-    // int nneigdim = 2 * (int)cfactor + 1;
-
     /*
     if (rank == 0)
         std::cout << "l: " << lx
@@ -424,7 +419,9 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         // and potentials of ghost particles
         // (they are accumulated during the scatter step)
         for ( int idx = n_local + offset;
-              idx < n_local + offset + halos.at( 2 * dim )->numGhost(); ++idx )
+              (std::size_t)idx <
+              n_local + offset + halos.at( 2 * dim )->numGhost();
+              ++idx )
         {
             p( idx ) = 0.0;
             f( idx, 0 ) = 0.0;
@@ -465,7 +462,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         // and potentials of ghost particles
         // (they are accumulated during the scatter step)
         for ( int idx = n_local + offset;
-              idx < n_local + offset + halos.at( 2 * dim + 1 )->numGhost();
+              (std::size_t)idx <
+              n_local + offset + halos.at( 2 * dim + 1 )->numGhost();
               ++idx )
         {
             p( idx ) = 0.0;
@@ -512,6 +510,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     */
 
     // create VerletList to iterate over
+    // TODO: cellsize dynamic (if still necessary?)
     ListType verlet_list( r, 0, n_local, r_max, 1.0, grid_min, grid_max );
 
     // compute forces and potential

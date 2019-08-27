@@ -86,8 +86,6 @@ void initializeParticles( ParticleList *particles, int c_size,
         n_particles *= loc_edges( dim );
     }
 
-    int rank = loc_coords.at( 0 );
-
     particles->resize( n_particles );
 
     auto x = Cabana::slice<Position>( *particles );
