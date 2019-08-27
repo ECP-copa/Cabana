@@ -21,7 +21,7 @@ int main( int argc, char **argv )
     MPI_Init_thread( &argc, &argv, MPI_THREAD_FUNNELED, &provided_thread_env );
 
     // check if MPI environment supports threaded execution
-    assert( provided == MPI_THREAD_FUNNELED );
+    assert( provided_thread_env == MPI_THREAD_FUNNELED );
 
     // Initialize the kokkos runtime.
     Kokkos::initialize( argc, argv );
