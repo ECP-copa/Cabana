@@ -362,6 +362,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
             },
             n_export.at( 2 * dim + 1 ) );
 
+        // list with the ranks and target processes for the halo
         Kokkos::View<int *, DeviceType> export_ranks_low(
             "export_ranks_low", n_export.at( 2 * dim ) );
         Kokkos::View<int *, DeviceType> export_ranks_up(
@@ -567,9 +568,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         }
     } );
 
-    // reduction of the global potential energy
-    MPI_Allreduce( MPI_IN_PLACE, &Ur, 1, MPI_DOUBLE, MPI_SUM, comm );
-
+    // send the force and potential contributions of the
+    // ghost particles back to the origin processes
     for ( int n_halo = 5; n_halo >= 0; --n_halo )
     {
         Cabana::scatter( *( halos.at( n_halo ) ), p );
@@ -584,7 +584,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         i = Cabana::slice<Index>( particles );
     }
 
-    // check if the particle array was reduced to correct size again
+    // check if the particle array was reduced to the correct size again
     assert( n_max == n_local );
 
     double Ur_local;
@@ -621,6 +621,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         std::cout << "starting dipole correction..." << std::endl;
     auto start_time_Udip = MPI_Wtime();
 
+    // computation of the dipole correction
+    // (for most cases probably irrelevant)
     // TODO: enhancement - combine these 3 reductions
     Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
                              KOKKOS_LAMBDA( int idx, double &Udip_part ) {
@@ -662,6 +664,10 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
     double end_time_Udip = MPI_Wtime();
     double elapsed_Udip = end_time_Udip - start_time_Udip;
+
+    // display minimum, maximum and avarage run-time over
+    // all processes as well as the single contributions
+    // of each partial contribution
 
     double times[4];
     double times_min[4];
@@ -745,5 +751,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         std::cout << std::resetiosflags( std::ios::scientific );
         std::cout << std::resetiosflags( std::ios::showpos );
     }
+
+    // return total potential
     return Ur + Uk + Uself + Udip;
 }
