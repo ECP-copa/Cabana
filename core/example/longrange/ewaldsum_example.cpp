@@ -33,7 +33,7 @@ int main( int argc, char **argv )
         // width of unit cell (assume cube)
         const double width = c_size / 2.0;
         // Number of particles, 3D
-        const int n_particles = c_size * c_size * c_size;
+        const long n_particles = c_size * c_size * c_size;
 
         // create a MPI cartesian communicator
         std::vector<int> dims( 3 );
@@ -86,6 +86,15 @@ int main( int argc, char **argv )
         // in uniform cubic grid pattern like NaCl
         initializeParticles( particles, c_size, cart_dims, domain_size,
                              loc_coords );
+
+        long test_n_particles = (long)particles->size();
+        MPI_Allreduce( MPI_IN_PLACE, &test_n_particles, 1, MPI_LONG, MPI_SUM,
+                       cart_comm );
+
+        if ( rank == 0 )
+            std::cout << "particles in system: " << test_n_particles << " "
+                      << n_particles << std::endl;
+        assert( n_particles == test_n_particles );
 
         // Create a Kokkos timer to measure performance
         Kokkos::Timer timer;
