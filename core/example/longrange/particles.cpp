@@ -67,8 +67,10 @@ void initializeParticles( ParticleList *particles, int c_size,
                           Kokkos::View<int *, MemorySpace> loc_coords )
 {
     // calculate the number of particles on the local domain
-    Kokkos::View<int *, MemorySpace> indices( "indices for particle creation", 6 );
-    Kokkos::View<int *, MemorySpace> loc_edges( "indices for particle creation", 3 );
+    Kokkos::View<int *, MemorySpace> indices( "indices for particle creation",
+                                              6 );
+    Kokkos::View<int *, MemorySpace> loc_edges( "indices for particle creation",
+                                                3 );
     int n_particles = 1;
 
     for ( int dim = 0; dim < 3; ++dim )
@@ -89,7 +91,7 @@ void initializeParticles( ParticleList *particles, int c_size,
     // debug output to check is there is any
     // error in the creation of the partial
     // chunks on each process
-    /* 
+    /*
     std::cout << "local coords: " <<
                     loc_coords(0) << " " <<
                     loc_coords(1) << " " <<
