@@ -89,7 +89,7 @@ void initializeParticles( ParticleList *particles, int c_size,
     // debug output to check is there is any
     // error in the creation of the partial
     // chunks on each process
-    
+    /* 
     std::cout << "local coords: " <<
                     loc_coords(0) << " " <<
                     loc_coords(1) << " " <<
@@ -110,7 +110,7 @@ void initializeParticles( ParticleList *particles, int c_size,
                     loc_edges(1) << " " <<
                     loc_edges(2) << " " <<
                  std::endl;
-    
+    */
 
     particles->resize( n_particles );
 

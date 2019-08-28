@@ -72,13 +72,9 @@ int main( int argc, char **argv )
         Kokkos::View<int *, MemorySpace> loc_coords_view("local coordinates",3);
         Kokkos::View<int *, MemorySpace> cart_dims_view("global dimensions",3);
 
-        std::cout << "Canary " << std::endl;
-
         loc_coords_view(0) = lx;
         loc_coords_view(1) = ly;
         loc_coords_view(2) = lz;
-
-        std::cout << "Canary " << std::endl;
 
         cart_dims_view(0) = dimx;
         cart_dims_view(1) = dimy;
