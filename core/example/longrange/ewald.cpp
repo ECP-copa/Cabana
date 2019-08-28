@@ -23,7 +23,7 @@
 #include <vector>
 
 TEwald::TEwald( double accuracy, long n_total, double lx, double ly, double lz,
-                Kokkos::View<double *> &domain_width, MPI_Comm comm )
+                Kokkos::View<double *, MemorySpace> domain, MPI_Comm comm )
 {
     // check if used communicator is cartesian
     int comm_type;
@@ -33,7 +33,7 @@ TEwald::TEwald( double accuracy, long n_total, double lx, double ly, double lz,
 
     _r_max = 0.0;
     tune( accuracy, n_total, lx, ly, lz );
-    this->domain_width = domain_width;
+    domain_width = domain;
 }
 
 // TODO: needs to be extended for parallel version
@@ -94,13 +94,19 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     auto v = Cabana::slice<Velocity>( particles );
     auto i = Cabana::slice<Index>( particles );
 
-    // compute domain size and make it available in the kernels
-    Kokkos::View<double *> domain_size( "domain size", 3 );
-    domain_size( 0 ) = domain_width( 1 ) - domain_width( 0 );
-    domain_size( 1 ) = domain_width( 3 ) - domain_width( 2 );
-    domain_size( 2 ) = domain_width( 5 ) - domain_width( 4 );
+    // for some reason using domain_width directly did not
+    // work on GPU (?)
+    Kokkos::View<double *, MemorySpace> domain_length( "domain length", 6 );
+    for ( int idx = 0; idx < 6; ++idx )
+        domain_length( idx ) = domain_width( idx );
 
-    Kokkos::View<double *> sys_size( "system size", 3 );
+    // compute domain size and make it available in the kernels
+    Kokkos::View<double *, MemorySpace> domain_size( "domain size", 3 );
+    domain_size( 0 ) = domain_length( 1 ) - domain_length( 0 );
+    domain_size( 1 ) = domain_length( 3 ) - domain_length( 2 );
+    domain_size( 2 ) = domain_length( 5 ) - domain_length( 4 );
+
+    Kokkos::View<double *, MemorySpace> sys_size( "system size", 3 );
     sys_size( 0 ) = lx;
     sys_size( 1 ) = ly;
     sys_size( 2 ) = lz;
@@ -165,8 +171,8 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     int n_kvec = ( 2 * k_int + 1 ) * ( 2 * k_int + 1 ) * ( 2 * k_int + 1 );
 
     // allocate View to store them
-    Kokkos::View<double *> U_trigonometric( "sine and cosine contributions",
-                                            2 * n_kvec );
+    Kokkos::View<double *, MemorySpace> U_trigonometric(
+        "sine and cosine contributions", 2 * n_kvec );
 
     // set all values to zero
     Kokkos::parallel_for( 2 * n_kvec, KOKKOS_LAMBDA( const int idx ) {
@@ -317,12 +323,13 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
     // create a Cabana linked list
     // lower end of system
-    double grid_min[3] = {-r_max + domain_width( 0 ),
-                          -r_max + domain_width( 2 ),
-                          -r_max + domain_width( 4 )};
+    double grid_min[3] = {-r_max + domain_length( 0 ),
+                          -r_max + domain_length( 2 ),
+                          -r_max + domain_length( 4 )};
     // upper end of system
-    double grid_max[3] = {domain_width( 1 ) + r_max, domain_width( 3 ) + r_max,
-                          domain_width( 5 ) + r_max};
+    double grid_max[3] = {domain_length( 1 ) + r_max,
+                          domain_length( 3 ) + r_max,
+                          domain_length( 5 ) + r_max};
 
     using ListAlgorithm = Cabana::HalfNeighborTag;
     using ListType =
@@ -346,19 +353,20 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         assert( r_max <= 2.0 * sys_size( dim ) );
 
         // find out how many particles are close to the -dim border
-        Kokkos::parallel_reduce(
-            n_max,
-            KOKKOS_LAMBDA( const int idx, int &low ) {
-                low += ( r( idx, dim ) <= domain_width( 2 * dim ) + r_max ) ? 1
-                                                                            : 0;
-            },
-            n_export.at( 2 * dim ) );
+        Kokkos::parallel_reduce( n_max,
+                                 KOKKOS_LAMBDA( const int idx, int &low ) {
+                                     low += ( r( idx, dim ) <=
+                                              domain_length( 2 * dim ) + r_max )
+                                                ? 1
+                                                : 0;
+                                 },
+                                 n_export.at( 2 * dim ) );
 
         // find out how many particles are close to the +dim border
         Kokkos::parallel_reduce(
             n_max,
             KOKKOS_LAMBDA( const int idx, int &up ) {
-                up += ( r( idx, dim ) >= domain_width( 2 * dim + 1 ) - r_max )
+                up += ( r( idx, dim ) >= domain_length( 2 * dim + 1 ) - r_max )
                           ? 1
                           : 0;
             },
@@ -380,13 +388,13 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         int idx_up = 0, idx_low = 0;
         for ( int idx = 0; idx < n_max; ++idx )
         {
-            if ( r( idx, dim ) <= domain_width( 2 * dim ) + r_max )
+            if ( r( idx, dim ) <= domain_length( 2 * dim ) + r_max )
             {
                 export_ranks_low( idx_low ) = neighbor_low.at( dim );
                 export_ids_low( idx_low ) = idx;
                 ++idx_low;
             }
-            if ( r( idx, dim ) >= domain_width( 2 * dim + 1 ) - r_max )
+            if ( r( idx, dim ) >= domain_length( 2 * dim + 1 ) - r_max )
             {
                 export_ranks_up( idx_up ) = neighbor_up.at( dim );
                 export_ids_up( idx_up ) = idx;

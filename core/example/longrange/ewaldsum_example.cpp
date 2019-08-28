@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include "definitions.h"
 #include "ewald.cpp"
 #include "example_definitions.h"
 #include "particles.cpp"
@@ -61,14 +62,36 @@ int main( int argc, char **argv )
         MPI_Cart_get( cart_comm, 3, cart_dims.data(), cart_periods.data(),
                       loc_coords.data() );
 
+        int lx = loc_coords.at( 0 );
+        int ly = loc_coords.at( 1 );
+        int lz = loc_coords.at( 2 );
+
+        int dimx = cart_dims.at( 0 );
+        int dimy = cart_dims.at( 1 );
+        int dimz = cart_dims.at( 2 );
+
+        Kokkos::View<int *, MemorySpace> loc_coords_view( "local coordinates",
+                                                          3 );
+        Kokkos::View<int *, MemorySpace> cart_dims_view( "global dimensions",
+                                                         3 );
+
+        loc_coords_view( 0 ) = lx;
+        loc_coords_view( 1 ) = ly;
+        loc_coords_view( 2 ) = lz;
+
+        cart_dims_view( 0 ) = dimx;
+        cart_dims_view( 1 ) = dimy;
+        cart_dims_view( 2 ) = dimz;
+
         // domain size
-        Kokkos::View<double *> domain_size( "domain size", 3 );
+        Kokkos::View<double *, MemorySpace> domain_size( "domain size", 3 );
         domain_size( 0 ) = width / (double)cart_dims.at( 0 );
         domain_size( 1 ) = width / (double)cart_dims.at( 1 );
         domain_size( 2 ) = width / (double)cart_dims.at( 2 );
 
         // domain width
-        Kokkos::View<double *> domain_width( "domain parameters", 6 );
+        Kokkos::View<double *, MemorySpace> domain_width( "domain parameters",
+                                                          6 );
         domain_width( 0 ) = loc_coords.at( 0 ) * domain_size( 0 );
         domain_width( 1 ) = ( loc_coords.at( 0 ) + 1 ) * domain_size( 0 );
         domain_width( 2 ) = loc_coords.at( 1 ) * domain_size( 1 );
@@ -82,11 +105,14 @@ int main( int argc, char **argv )
         if ( rank == 0 )
             std::cout << std::setprecision( 12 );
 
+        if ( rank == 0 )
+            std::cout << "initializing particles..." << std::endl;
+
         // Initialize the particles
         // Currently particles are initialized as alternating charges
         // in uniform cubic grid pattern like NaCl
-        initializeParticles( particles, c_size, cart_dims, domain_size,
-                             loc_coords );
+        initializeParticles( particles, c_size, cart_dims_view, domain_size,
+                             loc_coords_view );
 
         long test_n_particles = (long)particles->size();
         MPI_Allreduce( MPI_IN_PLACE, &test_n_particles, 1, MPI_LONG, MPI_SUM,
@@ -100,11 +126,15 @@ int main( int argc, char **argv )
         // Create a Kokkos timer to measure performance
         Kokkos::Timer timer;
 
+        if ( rank == 0 )
+            std::cout << "setting up solver..." << std::endl;
         // Create the solver and tune it for decent values of alpha and r_max
         TEwald solver( accuracy, n_particles, width, width, width, domain_width,
                        cart_comm );
         auto tune_time = timer.seconds();
         timer.reset();
+        if ( rank == 0 )
+            std::cout << "compute energy and forces..." << std::endl;
         // Perform the computation of real and imag space energies
         double total_energy = solver.compute( *particles, width, width, width );
 
