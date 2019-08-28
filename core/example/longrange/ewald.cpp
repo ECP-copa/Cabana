@@ -20,6 +20,7 @@
 #include <cmath>
 #include <iomanip>
 #include <string>
+#include <vector>
 
 TEwald::TEwald( double accuracy, int n_total, double lx, double ly, double lz,
                 Kokkos::View<double *> &domain_width, MPI_Comm comm )

@@ -13,6 +13,7 @@
 
 #include "definitions.h"
 #include "mpi.h"
+#include <vector>
 
 // function to initialize particles as a NaCl crystal of length crystal_size
 void initializeParticles( ParticleList particles, int crystal_size )
