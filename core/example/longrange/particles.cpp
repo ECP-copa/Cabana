@@ -76,8 +76,8 @@ void initializeParticles( ParticleList *particles, int c_size,
     {
         indices( 2 * dim ) =
             (int)std::ceil( loc_coords.at( dim ) * domain_size( dim ) / 0.5 );
-        indices( 2 * dim + 1 ) = (int)std::ceil( ( loc_coords.at( dim ) + 1 ) *
-                                                 domain_size( dim ) / 0.5 );
+        indices( 2 * dim + 1 ) = (int)std::floor( ( loc_coords.at( dim ) + 1 ) *
+                                                  domain_size( dim ) / 0.5 );
         if ( glob_dims.at( dim ) == loc_coords.at( dim ) + 1 ||
              fabs( ( loc_coords.at( dim ) + 1 ) * domain_size( dim ) / 0.5 -
                    (int)( ( loc_coords.at( dim ) + 1 ) * domain_size( dim ) /
@@ -86,6 +86,42 @@ void initializeParticles( ParticleList *particles, int c_size,
         loc_edges( dim ) = indices( 2 * dim + 1 ) - indices( 2 * dim ) + 1;
         n_particles *= loc_edges( dim );
     }
+
+    // debug output to check is there is any
+    // error in the creation of the partial
+    // chunks on each process
+    /*
+    std::cout << "local coords: " <<
+                    loc_coords.at(0) << " " <<
+                    loc_coords.at(1) << " " <<
+                    loc_coords.at(2) << " " <<
+                 "domain size: " <<
+                    domain_size(0) << " " <<
+                    domain_size(1) << " " <<
+                    domain_size(2) << " " <<
+                    domain_size(3) << " " <<
+                    domain_size(4) << " " <<
+                    domain_size(5) << " " <<
+                 "domain size: " <<
+                    domain_size(0) << " " <<
+                    domain_size(1) << " " <<
+                    domain_size(2) << " " <<
+                    domain_size(3) << " " <<
+                    domain_size(4) << " " <<
+                    domain_size(5) << " " <<
+                 "indices: " <<
+                    indices(0) << " " <<
+                    indices(1) << " " <<
+                    indices(2) << " " <<
+                    indices(3) << " " <<
+                    indices(4) << " " <<
+                    indices(5) << " " <<
+                 "local edges: " <<
+                    loc_edges(0) << " " <<
+                    loc_edges(1) << " " <<
+                    loc_edges(2) << " " <<
+                 std::endl;
+    */
 
     particles->resize( n_particles );
 

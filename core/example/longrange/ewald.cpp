@@ -22,7 +22,7 @@
 #include <string>
 #include <vector>
 
-TEwald::TEwald( double accuracy, int n_total, double lx, double ly, double lz,
+TEwald::TEwald( double accuracy, long n_total, double lx, double ly, double lz,
                 Kokkos::View<double *> &domain_width, MPI_Comm comm )
 {
     // check if used communicator is cartesian
@@ -44,7 +44,7 @@ TEwald::TEwald( double alpha, double r_max, double k_max )
     _k_max = k_max;
 }
 
-void TEwald::tune( double accuracy, int N, double lx, double ly, double lz )
+void TEwald::tune( double accuracy, long N, double lx, double ly, double lz )
 {
     double l = std::max( std::max( lx, ly ), lz );
 
@@ -57,8 +57,12 @@ void TEwald::tune( double accuracy, int N, double lx, double ly, double lz )
         pow( EXECUTION_TIME_RATIO_K_R, 1.0 / 6.0 ) * sqrt( p / PI );
 
     // to avoid problems with the real-space part,
+    // limit the cut-off to be not larger than
+    // the system size (might occur in really
+    // small / thin systems)
+
     tune_factor = ( tune_factor / pow( N, 1.0 / 6.0 ) >= 1.0 )
-                      ? pow( N, 1.0 / 6.0 ) * 0.99
+                      ? 0.99 * pow( N, 1.0 / 6.0 )
                       : tune_factor;
 
     _r_max = tune_factor / pow( N, 1.0 / 6.0 ) * l;
@@ -514,6 +518,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
     // create VerletList to iterate over
     // TODO: cellsize dynamic (if still necessary?)
+
     ListType verlet_list( r, 0, n_local, r_max, 1.0, grid_min, grid_max );
 
     // compute forces and potential
