@@ -21,7 +21,7 @@ class TEwald
   public:
     //constructor with accuracy
     TEwald(const double accuracy_threshold, 
-           const int N,
+           const long N,
            const double x_width, 
            const double y_width, 
            const double z_width,
@@ -35,7 +35,7 @@ class TEwald
     double compute(ParticleList& particles, const double x_width, const double y_width, const double z_width);
 
     // tune alpha, r_max, k_max to adhere to given accuracy
-    void tune(const double accuracy_threshold, int N, const double x_width, const double y_width, const double z_width);
+    void tune(const double accuracy_threshold, long N, const double x_width, const double y_width, const double z_width);
 
     // setter functions for parameters
     void set_alpha(double);
