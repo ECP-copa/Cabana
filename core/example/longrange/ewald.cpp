@@ -206,7 +206,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     // TODO: check if there is a better way to do this
     // reduce the partial results
 
-    double* U_trigon_array = new double[2 * n_kvec];
+    double *U_trigon_array = new double[2 * n_kvec];
     for ( int idx = 0; idx < 2 * n_kvec; ++idx )
         U_trigon_array[idx] = U_trigonometric( idx );
 
@@ -216,7 +216,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     for ( int idx = 0; idx < 2 * n_kvec; ++idx )
         U_trigonometric( idx ) = U_trigon_array[idx];
 
-    delete [] U_trigon_array;
+    delete[] U_trigon_array;
 
     Kokkos::parallel_reduce(
         n_max,
