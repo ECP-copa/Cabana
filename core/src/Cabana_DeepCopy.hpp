@@ -410,10 +410,11 @@ inline void deep_copy( Slice_t& slice,
  * @param start_to
  */
 template<class DstAoSoA, class SrcAoSoA>
-inline void deep_copy_partial(
+inline void deep_copy_partial_src(
     DstAoSoA& dst,
     const SrcAoSoA& src,
-    const int to_index, // TODO: the order of these params is questionable
+    const int to_index, // TODO: not honored
+    // TODO: the order of these params is questionable
     const int from_index,
     const int count,
     typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
@@ -461,6 +462,47 @@ inline void deep_copy_partial(
     // same pattern on the other end
 
     Cabana::deep_copy(dst, src_partial);
+}
+
+// TODO: this can be DRYd with deep_copy_partial, but we need a
+// way to denote if src or dst is the partial
+template<class DstAoSoA, class SrcAoSoA>
+inline void deep_copy_partial_dst(
+    DstAoSoA& dst,
+    const SrcAoSoA& src,
+    const int to_index, // TODO: the order of these params is questionable
+    const int from_index, // TODO: not honored
+    const int count,
+    typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
+                             is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
+{
+    // TODO: implement this
+    // Make AoSoA in dst space to copy over
+    DstAoSoA dst_partial("deep_copy_partial dst", count);
+    Cabana::deep_copy(dst_partial, src);
+
+    auto dst_slice = Cabana::slice<0>(dst);
+    auto dst_partial_slice = Cabana::slice<0>(dst_partial);
+    auto src_slice = Cabana::slice<0>(src);
+
+    assert(count <= src.size() );
+    assert(to_index + count <= dst.size() );
+
+    // Populate it with data using a parallel for
+    // TODO: this copy_func is borrow from above, so we could DRY
+    auto copy_func =
+        KOKKOS_LAMBDA( const std::size_t i )
+        {
+            dst.setTuple( i+to_index, dst_partial.getTuple(i) );
+        };
+
+    Kokkos::RangePolicy<typename SrcAoSoA::execution_space>
+        exec_policy( 0, dst_partial.size() );
+
+    Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
+    Kokkos::fence();
+
+    assert( dst_partial.size() == src.size() );
 }
 
 } // end namespace Cabana

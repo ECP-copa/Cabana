@@ -45,8 +45,6 @@ namespace Cabana
             BufferedAoSoAAccess(const AoSoA_type& aosoa_in) : aosoa(aosoa_in)
             {
                 // Intentionally empty
-                std::cout << "Passed " << &aosoa_in << " and capture it into " << &aosoa << std::endl;
-                std::cout << "Data pointers " << aosoa_in.data() << " and " << aosoa.data() << std::endl;
             }
 
             // TODO: Kokkos rebuilds this from the underlying params, eg:
@@ -141,19 +139,14 @@ namespace Cabana
 
                 last_filled_buffer = new int(1);
                 *last_filled_buffer = -1;
-                std::cout << "CONSTRUCTOR" << std::endl;
                 num_buffers = requested_buffer_count;
 
                 // Resize the buffers so we know they can hold enough
                 for (int i = 0; i < num_buffers; i++)
                 {
                     internal_buffers[i].resize(buffer_size);
-                    std::cout << " buf " << i << " = " << &(internal_buffers[i]) << std::endl;
                 }
             }
-
-            template<typename T1, typename T2>
-            BufferedAoSoA(const BufferedAoSoA &p2) { std::cout << "copy const" << std::endl; }
 
             /** @brief Helper to access the number of buffers which exist.
              * Makes no comment about the state or content of the buffers
@@ -165,27 +158,38 @@ namespace Cabana
                 return num_buffers;
             }
 
+            // TODO: this
+            /**
+             * @brief Copy the data from the last buffer to the "real data", at
+             * location start_index
+             *
+             * @param start_index Index to place buffer data into in original
+             * aosoa
+             */
+            void copy_buffer_back(int to_index)
+            {
+                Cabana::deep_copy_partial_dst(
+                    original_view,
+                    internal_buffers[(*last_filled_buffer)],
+                    to_index,
+                    0, //from index
+                    buffer_size
+                );
+            }
+
             // Start thinking about how to handle data movement...
             void load_next_buffer(int start_index)
-            { // TODO: start index is not honored
+            {
                 (*last_filled_buffer)++;
                 if ((*last_filled_buffer) >= num_buffers)
                 {
-                    std::cout << "reset last filled because num buffers = " << num_buffers << std::endl;
                     (*last_filled_buffer) = 0;
                 }
-
-                std::cout << "Filled buffer " << *last_filled_buffer <<
-                    " which has size " <<
-                    internal_buffers[(*last_filled_buffer)].size() <<
-                    " and pointer " << &(internal_buffers[(*last_filled_buffer)]) << 
-                    " with data from " << start_index <<
-                std::endl;
 
                 // Copy from the main memory store into the "current" buffer
                 // TODO: does this imply the need for a subview so the sizes
                 // match?
-                Cabana::deep_copy_partial(
+                Cabana::deep_copy_partial_src(
                     internal_buffers[(*last_filled_buffer)],
                     original_view,
                     0, //to_index,
@@ -206,7 +210,6 @@ namespace Cabana
             KOKKOS_FORCEINLINE_FUNCTION // TODO: check this is the right thing to do?
             BufferedAoSoAAccess<AoSoA_type> access() const
             {
-                std::cout << "Accessing at " << *last_filled_buffer << std::endl;
                 return BufferedAoSoAAccess<AoSoA_type>(internal_buffers[(*last_filled_buffer)] );
             }
 

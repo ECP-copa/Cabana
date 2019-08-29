@@ -63,9 +63,9 @@ namespace Cabana
 
         for (int i = 0; i < niter; i++)
         {
-            std::cout << "Looping from " << begin << " to " << end
-                << " which is " << i*buffer_size << " in global space " <<
-                std::endl;
+            //std::cout << "Looping from " << begin << " to " << end
+                //<< " which is " << i*buffer_size << " in global space " <<
+                //std::endl;
 
             buffered_aosoa.load_next_buffer(begin);
             simd_policy policy(begin, end);
@@ -75,17 +75,7 @@ namespace Cabana
 
             // copy all data back from localbuffer into the correct location in
             // global
-            // TODO: figure out the semantic of this
-            /*
-            int start_to = i*buffer_size;
-            Cabana::deep_copy_partial(
-                original_view,
-                internal_buffers[last_filled_buffer],
-                0, // start_from,
-                buffer_size, // end_from,
-                start_to
-            );
-            */
+            buffered_aosoa.copy_buffer_back(i*buffer_size);
         }
     }
 } // namespace
