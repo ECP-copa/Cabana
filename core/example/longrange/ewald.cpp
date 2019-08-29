@@ -31,7 +31,7 @@ TEwald::TEwald( double accuracy, long n_total, double lx, double ly, double lz,
     this->comm = comm;
 
     _r_max = 0.0;
-    tune( accuracy, n_total, lx, ly, lz );
+    tune( accuracy, n_total, lx, ly, lz, domain );
     domain_width = domain;
 }
 
@@ -43,9 +43,22 @@ TEwald::TEwald( double alpha, double r_max, double k_max )
     _k_max = k_max;
 }
 
-void TEwald::tune( double accuracy, long N, double lx, double ly, double lz )
+void TEwald::tune( double accuracy, 
+                   long N, 
+                   const double lx, 
+                   const double ly, 
+                   const double lz, 
+                   const Kokkos::View<double*, MemorySpace> domain )
 {
     double l = std::max( std::max( lx, ly ), lz );
+
+    double min_size = std::min(
+                            domain(1) - domain(0), 
+                            std::min(
+                                    domain(3)-domain(2),
+                                    domain(5)-domain(4)
+                                )
+                            );
 
     // Fincham 1994, Optimisation of the Ewald Sum for Large Systems
     // only valid for cubic systems (needs adjustement for non-cubic systems)
@@ -59,13 +72,19 @@ void TEwald::tune( double accuracy, long N, double lx, double ly, double lz )
     // limit the cut-off to be not larger than
     // the system size (might occur in really
     // small / thin systems)
-
-    tune_factor = ( tune_factor / pow( N, 1.0 / 6.0 ) >= 1.0 )
-                      ? 0.99 * pow( N, 1.0 / 6.0 )
-                      : tune_factor;
-
     _r_max = tune_factor / pow( N, 1.0 / 6.0 ) * l;
 
+    //tune_factor = ( tune_factor / pow( N, 1.0 / 6.0 ) >= 1.0 )
+    //                  ? 0.99 * pow( N, 1.0 / 6.0 )
+    //                  : tune_factor;
+
+    if (_r_max > 5)
+    {
+        tune_factor = pow( N, 1.0 / 6.0 ) * 0.9 * 4.5 / l;
+    }    
+
+
+    _r_max = tune_factor / pow( N, 1.0 / 6.0 ) * l;
     _alpha = tune_factor * pow( N, 1.0 / 6.0 ) / l;
     _k_max = tune_factor * pow( N, 1.0 / 6.0 ) / l * 2.0 * PI;
     _alpha = sqrt( p ) / _r_max;
@@ -166,7 +185,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     // in parallel independently again.
 
     // determine number of required sine / cosine values
-    int k_int = std::ceil( k_max );
+    int k_int = std::ceil( k_max ) + 1;
     int n_kvec = ( 2 * k_int + 1 ) * ( 2 * k_int + 1 ) * ( 2 * k_int + 1 );
 
     // allocate View to store them
@@ -177,6 +196,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     Kokkos::parallel_for( 2 * n_kvec, KOKKOS_LAMBDA( const int idx ) {
         U_trigonometric( idx ) = 0.0;
     } );
+    Kokkos::fence();
 
     // compute partial sums
     Kokkos::parallel_for( n_max, KOKKOS_LAMBDA( const int idx ) {
@@ -360,7 +380,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                                                 : 0;
                                  },
                                  n_export.at( 2 * dim ) );
-
+        Kokkos::fence();
         // find out how many particles are close to the +dim border
         Kokkos::parallel_reduce(
             n_max,
@@ -370,7 +390,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                           : 0;
             },
             n_export.at( 2 * dim + 1 ) );
-
+        Kokkos::fence();
         // list with the ranks and target processes for the halo
         Kokkos::View<int *, DeviceType> export_ranks_low(
             "export_ranks_low", n_export.at( 2 * dim ) );
@@ -526,7 +546,64 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     // create VerletList to iterate over
     // TODO: cellsize dynamic (if still necessary?)
 
-    ListType verlet_list( r, 0, n_local, r_max, 1.0, grid_min, grid_max );
+    double min_coords[3];
+    double max_coords[3];
+
+    for (int dim = 0; dim < 3; ++dim)
+    {
+        max_coords[dim] = -2.0 * r_max;
+        min_coords[dim] = sys_size(dim) + 2.0 * r_max;
+    }
+
+    for (int idx = 0; idx < n_max; ++idx)
+    {
+        for (int dim = 0; dim < 3; ++dim)
+        {
+            if (r( idx, dim) < min_coords[dim])
+                min_coords[dim] = r( idx, dim);
+            if (r( idx, dim) > max_coords[dim])
+                max_coords[dim] = r( idx, dim);
+        }
+    }
+
+    // compute cell size in a way that not too many cells are used
+    double cell_size;
+    cell_size =
+      std::max (
+        std::min ( 
+                    (grid_max[0] - grid_min[0]) / 20.0,
+                    std::min (
+                        (grid_max[1] - grid_min[1]) / 20.0,
+                        (grid_max[2] - grid_min[2]) / 20.0
+                    )
+                 ),
+                1.0);
+
+    std::cout <<
+        "rank: " << rank << " " << 
+        "n_local: " << n_local << " " <<
+        "n_max: " << n_max << " " <<
+        "min_coords: " <<
+            min_coords[0] << " " <<
+            min_coords[1] << " " <<
+            min_coords[2] << " " <<
+        "max_coords: " <<
+            max_coords[0] << " " <<
+            max_coords[1] << " " <<
+            max_coords[2] << " " <<
+        "| grid_min: " <<
+            grid_min[0] << " " <<
+            grid_min[1] << " " <<
+            grid_min[2] << " " <<
+        "grid_max: " <<
+            grid_max[0] << " " <<
+            grid_max[1] << " " <<
+            grid_max[2] << " " <<
+        "cell_size: " <<
+            cell_size << " " <<
+    std::endl;
+
+    ListType verlet_list( r, 0, n_local, r_max, cell_size, grid_min, grid_max );
 
     // compute forces and potential
     // loop only over local particles, as the forces for the
@@ -581,6 +658,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
             */
         }
     } );
+    Kokkos::fence();
 
     // send the force and potential contributions of the
     // ghost particles back to the origin processes
@@ -769,3 +847,4 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     // return total potential
     return Ur + Uk + Uself + Udip;
 }
+
