@@ -86,14 +86,29 @@ namespace Test
         Cabana::deep_copy( aosoa, mirror );
 
         // Feed it into the buffer
+        /*
         Cabana::BufferedAoSoA<
             max_buffered_tuples,
             buffer_count,
             target_exec_space,
             AoSoA_t
         > buffered_aosoa(aosoa);
+        */
 
-        int num_buffers = buffered_aosoa.get_buffer_count();
+        Cabana::BufferedAoSoA<
+            max_buffered_tuples,
+            buffer_count,
+            target_exec_space,
+            AoSoA_t
+        >* buffered_aosoa = new Cabana::BufferedAoSoA<
+                max_buffered_tuples,
+                buffer_count,
+                target_exec_space,
+                AoSoA_t
+        >(aosoa);
+
+        int num_buffers = buffered_aosoa->get_buffer_count();
+        //int num_buffers = buffered_aosoa.get_buffer_count();
 
         // Add call to safe in-loop handle
         //auto access_handler = test_buffer.access_old();
@@ -110,7 +125,7 @@ namespace Test
         // Overwrite the data in a buffered way
         Cabana::buffered_parallel_for(
             Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
-            buffered_aosoa,
+            *buffered_aosoa,
             KOKKOS_LAMBDA( const int s, const int a )
             {
                 // We have to call access and slice in the loop
@@ -119,11 +134,12 @@ namespace Test
                 // captured in the loop on GPU, and follow how ScatterView does
                 // it safely. The `buffered_aosoa` may get captured by
                 // reference, and then not be valid in a GPU context
-                auto buffered_access = buffered_aosoa.access();
+                //auto buffered_access = buffered_aosoa.access();
+                auto buffered_access = buffered_aosoa->access();
 
                 std::cout << "The underlying aosoa lives at " << &(buffered_access.aosoa) << " and has size " << buffered_access.aosoa.size() << std::endl;
                 std::cout << "The data of the accesed aosoa lives at " << (buffered_access.aosoa.data()) << std::endl;
-                std::cout << "The data of the buffered aosoa lives at " << (buffered_aosoa.internal_buffers[0].data()) << " and has size " << buffered_aosoa.internal_buffers[0].size() << std::endl;
+                //std::cout << "The data of the buffered aosoa lives at " << (buffered_aosoa.internal_buffers[0].data()) << " and has size " << buffered_aosoa.internal_buffers[0].size() << std::endl;
 
                 auto slice_0 = Cabana::slice<0>(buffered_access.aosoa);
                 auto slice_1 = Cabana::slice<1>(buffered_access.aosoa);

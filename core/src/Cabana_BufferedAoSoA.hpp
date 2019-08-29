@@ -139,7 +139,10 @@ namespace Cabana
                 // TODO: we could probably do an implicit conversion here like // ScatterView does
                 // return original_view
 
-                int num_buffers = requested_buffer_count;
+                last_filled_buffer = new int(1);
+                *last_filled_buffer = -1;
+                std::cout << "CONSTRUCTOR" << std::endl;
+                num_buffers = requested_buffer_count;
 
                 // Resize the buffers so we know they can hold enough
                 for (int i = 0; i < num_buffers; i++)
@@ -148,6 +151,9 @@ namespace Cabana
                     std::cout << " buf " << i << " = " << &(internal_buffers[i]) << std::endl;
                 }
             }
+
+            template<typename T1, typename T2>
+            BufferedAoSoA(const BufferedAoSoA &p2) { std::cout << "copy const" << std::endl; }
 
             /** @brief Helper to access the number of buffers which exist.
              * Makes no comment about the state or content of the buffers
@@ -162,16 +168,17 @@ namespace Cabana
             // Start thinking about how to handle data movement...
             void load_next_buffer(int start_index)
             { // TODO: start index is not honored
-                last_filled_buffer++;
-                if (last_filled_buffer >= num_buffers)
+                (*last_filled_buffer)++;
+                if ((*last_filled_buffer) >= num_buffers)
                 {
-                    last_filled_buffer = 0;
+                    std::cout << "reset last filled because num buffers = " << num_buffers << std::endl;
+                    (*last_filled_buffer) = 0;
                 }
 
-                std::cout << "Filled buffer " << last_filled_buffer <<
+                std::cout << "Filled buffer " << *last_filled_buffer <<
                     " which has size " <<
-                    internal_buffers[last_filled_buffer].size() <<
-                    " and pointer " << &(internal_buffers[last_filled_buffer]) << 
+                    internal_buffers[(*last_filled_buffer)].size() <<
+                    " and pointer " << &(internal_buffers[(*last_filled_buffer)]) << 
                     " with data from " << start_index <<
                 std::endl;
 
@@ -179,7 +186,7 @@ namespace Cabana
                 // TODO: does this imply the need for a subview so the sizes
                 // match?
                 Cabana::deep_copy_partial(
-                    internal_buffers[last_filled_buffer],
+                    internal_buffers[(*last_filled_buffer)],
                     original_view,
                     0, //to_index,
                     start_index,
@@ -199,8 +206,8 @@ namespace Cabana
             KOKKOS_FORCEINLINE_FUNCTION // TODO: check this is the right thing to do?
             BufferedAoSoAAccess<AoSoA_type> access() const
             {
-                std::cout << "Accessing at " << last_filled_buffer << std::endl;
-                return BufferedAoSoAAccess<AoSoA_type>(internal_buffers[last_filled_buffer] );
+                std::cout << "Accessing at " << *last_filled_buffer << std::endl;
+                return BufferedAoSoAAccess<AoSoA_type>(internal_buffers[(*last_filled_buffer)] );
             }
 
 
@@ -212,7 +219,7 @@ namespace Cabana
              * @brief Track which buffer we "filled" last, so we know where we
              * are in the round robin
              */
-            int last_filled_buffer = -1;
+            int* last_filled_buffer;
 
             /**
              * @brief Number of buffers we decided to use (possibly distinct
