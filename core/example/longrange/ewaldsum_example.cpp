@@ -140,21 +140,24 @@ int main( int argc, char **argv )
         // compute sum of forces (nicer with functor)
         double tfx, tfy, tfz;
         auto forces = Cabana::slice<Force>( *particles );
-        Kokkos::parallel_reduce( particles->size(),
-                                 KOKKOS_LAMBDA( int idx, double &f_tmp ) {
-                                     f_tmp += forces( idx, 0 );
-                                 },
-                                 tfx );
-        Kokkos::parallel_reduce( particles->size(),
-                                 KOKKOS_LAMBDA( int idx, double &f_tmp ) {
-                                     f_tmp += forces( idx, 1 );
-                                 },
-                                 tfy );
-        Kokkos::parallel_reduce( particles->size(),
-                                 KOKKOS_LAMBDA( int idx, double &f_tmp ) {
-                                     f_tmp += forces( idx, 2 );
-                                 },
-                                 tfz );
+        Kokkos::parallel_reduce(
+            particles->size(),
+            KOKKOS_LAMBDA( int idx, double &f_tmp ) {
+                f_tmp += forces( idx, 0 );
+            },
+            tfx );
+        Kokkos::parallel_reduce(
+            particles->size(),
+            KOKKOS_LAMBDA( int idx, double &f_tmp ) {
+                f_tmp += forces( idx, 1 );
+            },
+            tfy );
+        Kokkos::parallel_reduce(
+            particles->size(),
+            KOKKOS_LAMBDA( int idx, double &f_tmp ) {
+                f_tmp += forces( idx, 2 );
+            },
+            tfz );
 
         auto exec_time = timer.seconds();
         timer.reset();
