@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cabana_Tuple.hpp>
 #include <Cabana_Parallel.hpp>
+#include <Cabana_Tuple.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -21,32 +21,34 @@ namespace Test
 
 //---------------------------------------------------------------------------//
 // Check the data given a set of values.
-template<class view_type>
-void checkDataMembers(
-    view_type view,
-    const float fval, const double dval, const int ival,
-    const std::size_t dim_1, const std::size_t dim_2, const std::size_t dim_3 )
+template <class view_type>
+void checkDataMembers( view_type view, const float fval, const double dval,
+                       const int ival, const std::size_t dim_1,
+                       const std::size_t dim_2, const std::size_t dim_3 )
 {
-    for ( std::size_t idx = 0; idx < view.extent(0); ++idx )
+    auto mirror_view =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), view );
+    for ( std::size_t idx = 0; idx < mirror_view.extent( 0 ); ++idx )
     {
         // Member 0.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
-                    EXPECT_EQ( view(idx).template get<0>( i, j, k ),
-                               fval * (i+j+k) );
+                    EXPECT_EQ( Cabana::get<0>( mirror_view( idx ), i, j, k ),
+                               fval * ( i + j + k ) );
 
         // Member 1.
-        EXPECT_EQ( view(idx).template get<1>(), ival );
+        EXPECT_EQ( Cabana::get<1>( mirror_view( idx ) ), ival );
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            EXPECT_EQ( view(idx).template get<2>( i ), dval * i );
+            EXPECT_EQ( Cabana::get<2>( mirror_view( idx ), i ), dval * i );
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                EXPECT_EQ( view(idx).template get<3>( i, j ), dval * (i+j) );
+                EXPECT_EQ( Cabana::get<3>( mirror_view( idx ), i, j ),
+                           dval * ( i + j ) );
     }
 }
 
@@ -66,14 +68,14 @@ void runTest()
     using T3 = double[dim_1][dim_2];
 
     // Declare data types.
-    using DataTypes = Cabana::MemberTypes<T0,T1,T2,T3>;
+    using DataTypes = Cabana::MemberTypes<T0, T1, T2, T3>;
 
     // Declare the tuple type.
     using Tuple_t = Cabana::Tuple<DataTypes>;
 
     // Create a view of tuples.
     std::size_t num_data = 453;
-    Kokkos::View<Tuple_t*,TEST_MEMSPACE> tuples( "tuples", num_data );
+    Kokkos::View<Tuple_t *, TEST_MEMSPACE> tuples( "tuples", num_data );
 
     // Initialize data.
     float fval = 3.4;
@@ -85,19 +87,20 @@ void runTest()
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
-                    tuples( idx ).get<0>( i, j, k ) = fval * (i+j+k);
+                    Cabana::get<0>( tuples( idx ), i, j, k ) =
+                        fval * ( i + j + k );
 
         // Member 1.
-        tuples( idx ).get<1>() = ival;
+        Cabana::get<1>( tuples( idx ) ) = ival;
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            tuples( idx ).get<2>( i ) = dval * i;
+            Cabana::get<2>( tuples( idx ), i ) = dval * i;
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                tuples( idx ).get<3>( i, j ) = dval * (i+j);
+                Cabana::get<3>( tuples( idx ), i, j ) = dval * ( i + j );
     };
     Kokkos::fence();
 
@@ -113,10 +116,7 @@ void runTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST_F( TEST_CATEGORY, tuple_test )
-{
-    runTest();
-}
+TEST( TEST_CATEGORY, tuple_test ) { runTest(); }
 
 //---------------------------------------------------------------------------//
 

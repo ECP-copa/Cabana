@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -37,7 +37,7 @@ void linkedCellListExample()
        Start by declaring the types in our tuples will store. The first
        member will be the coordinates, the second an id.
     */
-    using DataTypes = Cabana::MemberTypes<double[3],int>;
+    using DataTypes = Cabana::MemberTypes<double[3], int>;
 
     /*
       Next declare the data layout of the AoSoA. We use the host space here
@@ -46,35 +46,38 @@ void linkedCellListExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 54;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A", num_tuple );
 
     /*
       Define the parameters of the Cartesian grid over which we will build the
       cell list. This is a simple 3x3x3 uniform grid on [0,3] in each
       direction. Each grid cell has a size of 1 in each dimension.
      */
-    double grid_min[3] = {0.0,0.0,0.0};
-    double grid_max[3] = {3.0,3.0,3.0};
-    double grid_delta[3] = {1.0,1.0,1.0};
+    double grid_min[3] = {0.0, 0.0, 0.0};
+    double grid_max[3] = {3.0, 3.0, 3.0};
+    double grid_delta[3] = {1.0, 1.0, 1.0};
 
     /*
       Create the particle ids.
     */
-    auto ids = aosoa.slice<1>();
-    for ( int i = 0; i < aosoa.size(); ++i )
-        ids(i) = i;
+    auto ids = Cabana::slice<1>( aosoa );
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
+        ids( i ) = i;
+
     /*
       Create the particle coordinates. We will put 2 particles in the center
       of each cell. We are ordering this such that each consecutive particle
       is in a different cell. When we use cell list to permute the particles
       later in the example, they will be regrouped by cell.
     */
-    auto positions = aosoa.slice<0>();
+    auto positions = Cabana::slice<0>( aosoa );
     int ppc = 2;
     int particle_counter = 0;
     for ( int p = 0; p < ppc; ++p )
@@ -100,8 +103,8 @@ void linkedCellListExample()
       Also note here that we are going to reorder the entire AoSoA. One may
       also construct a linked cell list over a subset of the particles.
      */
-    Cabana::LinkedCellList<MemorySpace> cell_list(
-        positions, grid_delta, grid_min, grid_max );
+    Cabana::LinkedCellList<DeviceType> cell_list( positions, grid_delta,
+                                                  grid_min, grid_max );
 
     /*
       Now permute the AoSoA (i.e. reorder the data) using the linked cell list.
@@ -117,23 +120,20 @@ void linkedCellListExample()
        still valid as long as we haven't resized, changes the capacity, or
        otherwise changed the memory associated with the AoSoA.
      */
-    for ( int i = 0; i < aosoa.size(); ++i )
-        std::cout << "Particle: id = " << ids(i)
-                  << ", coords (" << positions(i,0) << ","
-                  << positions(i,1) << "," << positions(i,2) << ")"
-                  << std::endl;
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
+        std::cout << "Particle: id = " << ids( i ) << ", coords ("
+                  << positions( i, 0 ) << "," << positions( i, 1 ) << ","
+                  << positions( i, 2 ) << ")" << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     linkedCellListExample();
-
-    Cabana::finalize();
 
     return 0;
 }

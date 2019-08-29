@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -44,9 +44,7 @@ void sliceExample()
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
     */
-    using DataTypes = Cabana::MemberTypes<double[3][3],
-                                          float[4],
-                                          int>;
+    using DataTypes = Cabana::MemberTypes<double[3][3], float[4], int>;
 
     /*
       Next declare the vector length of our SoAs. This is how many tuples the
@@ -56,9 +54,10 @@ void sliceExample()
     const int VectorLength = 4;
 
     /*
-      Finally declare the memory space in which the AoSoA will be
-      allocated. In this example we are writing basic loops that will execute
-      on the CPU. The HostSpace allocates memory in standard CPU RAM.
+      Finally declare the memory space in which the AoSoA will be allocated
+      and the execution space in which kernels will execute. In this example
+      we are writing basic loops that will execute on the CPU. The HostSpace
+      allocates memory in standard CPU RAM.
 
       Kokkos also supports execution on NVIDIA GPUs. To create an AoSoA
       allocated with CUDA Unified Virtual Memory (UVM) use
@@ -68,6 +67,8 @@ void sliceExample()
       context in which the memory is accessed.
     */
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA. We define how many tuples the aosoa will
@@ -76,18 +77,22 @@ void sliceExample()
        full (although its memory will still be allocated).
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
+                                                              num_tuple );
 
     /*
       Create a slice over each tuple member in the AoSoA. An integer template
       parameter is used to indicate which member to slice. A slice object
       simply wraps the data associated with an AoSoA member in a more
       conventient accessor structure. A slice therefore has the same memory
-      space as the AoSoA from which it was derived.
-     */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
-    auto slice_2 = aosoa.slice<2>();
+      space as the AoSoA from which it was derived. Slices may optionally be
+      assigned a label. This label is not included in the memory tracker
+      because slices are unmanaged memory but may still be used for diagnostic
+      purposes.
+    */
+    auto slice_0 = Cabana::slice<0>( aosoa, "my_slice_0" );
+    auto slice_1 = Cabana::slice<1>( aosoa, "my_slice_1" );
+    auto slice_2 = Cabana::slice<2>( aosoa, "my_slice_2" );
 
     /*
       Let's initialize the data using the 2D indexing scheme. Slice data can
@@ -98,19 +103,19 @@ void sliceExample()
       accessing the total number of tuples in the data structure and the array
       sizes.
     */
-    for ( int s = 0; s < slice_0.numSoA(); ++s )
+    for ( std::size_t s = 0; s < slice_0.numSoA(); ++s )
     {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                for ( int a = 0; a < slice_0.arraySize(s); ++a )
-                    slice_0.access(s,a,i,j) = 1.0 * (a + i + j);
+                for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+                    slice_0.access( s, a, i, j ) = 1.0 * ( a + i + j );
 
         for ( int i = 0; i < 4; ++i )
-            for ( int a = 0; a < slice_0.arraySize(s); ++a )
-                slice_1.access(s,a,i) = 1.0 * (a + i);
+            for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+                slice_1.access( s, a, i ) = 1.0 * ( a + i );
 
-        for ( int a = 0; a < slice_0.arraySize(s); ++a )
-            slice_2.access(s,a) = a + 1234;
+        for ( std::size_t a = 0; a < slice_0.arraySize( s ); ++a )
+            slice_2.access( s, a ) = a + 1234;
     }
 
     /*
@@ -128,30 +133,26 @@ void sliceExample()
     {
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                std::cout << "Tuple " << t
-                          << ", member 0 element (" << i << "," << j << "): "
-                          << slice_0(t,i,j) << std::endl;
+                std::cout << "Tuple " << t << ", member 0 element (" << i << ","
+                          << j << "): " << slice_0( t, i, j ) << std::endl;
 
         for ( int i = 0; i < 4; ++i )
-            std::cout << "Tuple " << t
-                      << ", member 1 element (" << i << "): "
-                      << slice_1(t,i) << std::endl;
+            std::cout << "Tuple " << t << ", member 1 element (" << i
+                      << "): " << slice_1( t, i ) << std::endl;
 
-        std::cout << "Tuple " << t
-                  << ", member 2: " << slice_2(t) << std::endl;
+        std::cout << "Tuple " << t << ", member 2: " << slice_2( t )
+                  << std::endl;
     }
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     sliceExample();
-
-    Cabana::finalize();
 
     return 0;
 }

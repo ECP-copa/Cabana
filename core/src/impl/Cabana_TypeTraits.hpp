@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -22,23 +22,25 @@ namespace Impl
 {
 //---------------------------------------------------------------------------//
 // Checks if an integer is a power of two. N must be greater than 0.
-template<int N, typename std::enable_if<(N > 0),int>::type = 0>
+template <int N>
 struct IsPowerOfTwo
 {
-    static constexpr bool value = ( (N & (N - 1)) == 0 );
+    static_assert( N > 0, "Vector length must be greather than 0" );
+    static constexpr bool value = ( ( N & ( N - 1 ) ) == 0 );
 };
 
 //---------------------------------------------------------------------------//
 // Calculate the base-2 logarithm of an integer which must be a power of 2 and
 // greater than 0.
-template<int N,
-         typename std::enable_if<(IsPowerOfTwo<N>::value),int>::type = 0>
+template <int N>
 struct LogBase2
 {
-    static constexpr int value = 1 + LogBase2<(N>>1U)>::value;
+    static_assert( IsPowerOfTwo<N>::value,
+                   "Vector length must be a power of two" );
+    static constexpr int value = 1 + LogBase2<( N >> 1U )>::value;
 };
 
-template<>
+template <>
 struct LogBase2<1>
 {
     static constexpr int value = 0;
@@ -46,10 +48,10 @@ struct LogBase2<1>
 
 //---------------------------------------------------------------------------//
 // Check that the provided vector length is valid.
-template<int N>
+template <int N>
 struct IsVectorLengthValid
 {
-    static constexpr bool value = (IsPowerOfTwo<N>::value && N > 0);
+    static constexpr bool value = ( IsPowerOfTwo<N>::value && N > 0 );
 };
 
 //---------------------------------------------------------------------------//

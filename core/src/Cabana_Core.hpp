@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -29,7 +29,7 @@
 #include <Cabana_VerletList.hpp>
 #include <Cabana_Version.hpp>
 
-#if( Cabana_ENABLE_MPI )
+#ifdef Cabana_ENABLE_MPI
 #include <Cabana_Distributor.hpp>
 #include <Cabana_Halo.hpp>
 #endif
@@ -56,15 +56,14 @@ bool cabana_initialized_kokkos = false;
 //---------------------------------------------------------------------------//
 // Initialize Kokkos, if it needs initialization.
 template <typename... Args>
-void initKokkos( Args &&... args )
+CABANA_DEPRECATED void initKokkos( Args &&... args )
 {
     if ( !cabana_initialized_kokkos )
     {
         // Kokkos doesn't have a global is_initialized().  However,
         // Kokkos::initialize() always initializes the default execution
         // space, so it suffices to check whether that was initialized.
-        const bool kokkosIsInitialized =
-            Kokkos::DefaultExecutionSpace::is_initialized();
+        const bool kokkosIsInitialized = Kokkos::is_initialized();
 
         if ( !kokkosIsInitialized )
         {
@@ -75,8 +74,7 @@ void initKokkos( Args &&... args )
         }
     }
 
-    const bool kokkosIsInitialized =
-        Kokkos::DefaultExecutionSpace::is_initialized();
+    const bool kokkosIsInitialized = Kokkos::is_initialized();
 
     if ( !kokkosIsInitialized )
         throw std::runtime_error( "At the end of initKokkos, Kokkos"
@@ -90,7 +88,7 @@ void initKokkos( Args &&... args )
 
 //---------------------------------------------------------------------------//
 template <typename... Args>
-void initialize( Args &&... args )
+CABANA_DEPRECATED void initialize( Args &&... args )
 {
     if ( !is_cabana_initialized )
         initKokkos( std::forward<Args>( args )... );
@@ -98,9 +96,11 @@ void initialize( Args &&... args )
 }
 
 //---------------------------------------------------------------------------//
+CABANA_DEPRECATED
 bool isInitialized() { return is_cabana_initialized; }
 
 //---------------------------------------------------------------------------//
+CABANA_DEPRECATED
 void finalize()
 {
     if ( !is_cabana_initialized )

@@ -3,18 +3,30 @@ language: cpp
 # against hwloc error (travis-ci/travis-ci#10019)
 sudo: required
 
+stages:
+  - canary
+  - test
+
+jobs:
+    include:
+        - stage: canary
+          env: BACKENDS="OpenMP" WERROR=ON
+
 env:
-  matrix:
-    - BACKENDS="OpenMP"
-    - BACKENDS="Serial"
-    - BACKENDS="Pthread"
-    - BACKENDS="Serial OpenMP"
-    - BACKENDS="Serial Pthread"
-    - BACKENDS="OpenMP" COVERAGE=ON
-    - BACKENDS="Serial" COVERAGE=ON
-    - BACKENDS="Pthread" COVERAGE=ON
-    - BACKENDS="Serial OpenMP" COVERAGE=ON
-    - BACKENDS="Serial Pthread" COVERAGE=ON
+  global:
+    - CCACHE_CPP2=yes # for clang
+  matrix: # note this matrix only applies to the "test" stage
+    - BACKENDS="OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="Serial" AMPI=ON
+    - BACKENDS="OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="Serial Pthread" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
 
 before_script:
   - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
@@ -23,6 +35,7 @@ before_script:
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
+  - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; export FC=gfortran-6; fi
   - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
@@ -32,33 +45,82 @@ before_script:
     make install &&
     popd &&
     popd
+  - if [[ ${SCAFACOS} ]]; then
+      travis_retry wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
+      tar -xzf scafacos-*.tar.gz &&
+      pushd scafacos* &&
+      ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
+      make -j2 &&
+      make install &&
+      popd;
+    fi
+  - if [[ ${AMPI} ]]; then
+      git clone --depth=1 https://github.com/UIUC-PPL/charm && pushd charm &&
+      ./build AMPI netlrts-linux-x86_64 ${CC} -j2 && export CXX=$PWD/bin/ampicxx && 
+      CMAKE_OPTS+=( -DMPIEXEC="$PWD/bin/ampirun" -DMPIEXEC_POSTFLAGS="+vp4" ) && 
+      CMAKE_OPTS+=( -DMPI_CXX_COMPILER="$PWD/bin/ampicxx" ) && 
+      popd;
+    fi
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
+  - if [[ ${COVERAGE} ]]; then
+       pip install --user coverxygen &&
+       mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov; 
+     fi
 
 addons:
   apt:
+    sources:
+      - ubuntu-toolchain-r-test
     packages:
       - doxygen
       - libhwloc-dev
       - openmpi-bin
       - libopenmpi-dev
+      - gfortran
+      - libgsl0-dev
+      - libfftw3-dev
+      - python-pip
+      - g++-6
+      - gfortran-6
 
 script:
+  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
+  - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
   - mkdir build && pushd build &&
-    cmake -DCMAKE_PREFIX_PATH=$HOME/kokkos
+    cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/scafacos"
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_MPI=ON
+          $([[ ${CC} = clang* ]] || echo -DCabana_ENABLE_FORTRAN_EXAMPLES=ON)
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
+          -DDOXYGEN_WARN_AS_ERROR=ON -DDOXYGEN_GENERATE_XML=ON -DDOXYGEN_WARN_IF_UNDOCUMENTED=OFF
+          ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
+          -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
-    make -j2 VERBOSE=1 &&
+    make -k -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
+    make format && git diff --exit-code &&
     make doxygen &&
     make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/usr/local && rmdir ${PWD}/install/usr &&
     popd
 
 after_success:
  - ccache -s
- - if [[ ${COVERAGE} ]]; then pushd build && bash <(curl -s https://codecov.io/bash) && popd; fi
- - if [[ ${TRAVIS_JOB_NUMBER} = *.1 ]]; then
+ - test "${TRAVIS_BUILD_STAGE_NAME}" = "Test" || travis_terminate 0
+ - if [[ ${COVERAGE} ]]; then
+     pushd build &&
+     if [[ ${CC} = clang ]]; then
+       codecov -x "llvm-cov gcov" -F "${CC}";
+     else
+       codecov -x gcov-6 -F "${CC}";
+     fi &&
+     if [[ $(doxygen --version) != 1.8.16 ]]; then
+       echo "Patching Doxygen files (see doxygen/doxygen#6892)" &&
+       sed -e '/enable_if</s/&/\&amp;/g' -e '/enable_if/s/<\([^a-z/]\)/\&lt;\1/g' -e '/enable_if/s/ >/ \&gt;/g' -i xml/*.xml;
+     fi &&
+     python -m coverxygen --src-dir .. --xml-dir xml/ --output doxygen.coverage.info && codecov -F doxygen -X gcov -f doxygen.coverage.info &&
+     popd;
+   fi
+ - if [[ ${TRAVIS_JOB_NUMBER} = *.2 ]]; then
      git fetch origin gh-pages && git checkout -b gh-pages FETCH_HEAD &&
      rm -rf doxygen &&
      mv build/html doxygen &&
@@ -75,6 +137,10 @@ after_success:
        git diff --cached --no-color | head -n 500;
      fi;
    fi
+
+branches:
+  only:
+  - master
 
 cache:
   - ccache

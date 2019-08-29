@@ -8,9 +8,16 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
 include_directories(${GTEST_SOURCE_DIR})
 add_library(cabana_core_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
+set_target_properties(cabana_core_gtest PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+    )
 
 include_directories(${CMAKE_CURRENT_BINARY_DIR})
 include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+set(gtest_args --gtest_color=yes)
 
 ##--------------------------------------------------------------------------##
 ## General tests.
@@ -18,43 +25,58 @@ include_directories(${CMAKE_CURRENT_SOURCE_DIR})
 foreach(_test Version Index CartesianGrid SoA)
   add_executable(${_test}_test tst${_test}.cpp unit_test_main.cpp)
   target_link_libraries(${_test}_test cabanacore cabana_core_gtest)
-  add_test(NAME ${_test}_test COMMAND ${_test}_test --gtest_color=yes)
+  add_test(NAME ${_test}_test COMMAND ${_test}_test ${gtest_args})
 endforeach()
 
 ##--------------------------------------------------------------------------##
-## On-node tests.
+## On-node tests with and without MPI.
 ##--------------------------------------------------------------------------##
-foreach(_device ${CABANA_SUPPORTED_DEVICES})
-  if(Cabana_ENABLE_${_device})
-    foreach(_test AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
-      add_executable(${_test}_test_${_device} ${_device}/tst${_test}_${_device}.cpp unit_test_main.cpp)
-      target_link_libraries(${_test}_test_${_device} cabanacore cabana_core_gtest)
-      if(_device STREQUAL Pthread OR _device STREQUAL OpenMP)
-        foreach(_thread 1 2)
-          add_test(NAME ${_test}_test_${_device}_${_thread} COMMAND
-            ${_test}_test_${_device} --gtest_color=yes --kokkos-threads=${_thread})
-        endforeach()
-      else()
-        add_test(NAME ${_test}_test_${_device} COMMAND ${_test}_test_${_device} --gtest_color=yes)
-      endif()
-    endforeach()
+macro(Cabana_add_tests)
+  cmake_parse_arguments(CABANA_UNIT_TEST "MPI" "" "NAMES" ${ARGN})
+  set(CABANA_UNIT_TEST_MPIEXEC_NUMPROCS 1)
+  if(MPIEXEC_MAX_NUMPROCS GREATER 1)
+    list(APPEND CABANA_UNIT_TEST_MPIEXEC_NUMPROCS ${MPIEXEC_MAX_NUMPROCS})
   endif()
-endforeach()
-
-##--------------------------------------------------------------------------##
-## MPI tests.
-##--------------------------------------------------------------------------##
-if(${Cabana_ENABLE_MPI})
+  set(CABANA_UNIT_TEST_NUMTHREADS 1 2)
+  if(CABANA_UNIT_TEST_MPI)
+    set(CABANA_UNIT_TEST_MAIN mpi_unit_test_main.cpp)
+  else()
+    set(CABANA_UNIT_TEST_MAIN unit_test_main.cpp)
+  endif()
   foreach(_device ${CABANA_SUPPORTED_DEVICES})
     if(Cabana_ENABLE_${_device})
-      foreach(_test CommunicationPlan Distributor Halo)
-        add_executable(${_test}_test_${_device} ${_device}/tst${_test}_${_device}.cpp mpi_unit_test_main.cpp)
-        target_link_libraries(${_test}_test_${_device} cabanacore cabana_core_gtest)
-        foreach(_np 1 ${MPIEXEC_MAX_NUMPROCS})
-          add_test(NAME ${_test}_test_${_device}_${_np} COMMAND
-            ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${_test}_test_${_device} --gtest_color=yes)
-        endforeach()
+      set(_dir ${CMAKE_CURRENT_BINARY_DIR}/${_device})
+      file(MAKE_DIRECTORY ${_dir})
+      foreach(_test ${CABANA_UNIT_TEST_NAMES})
+        set(_file ${_dir}/tst${_test}_${_device}.cpp)
+        file(WRITE ${_file} "#include <Test${_device}_Category.hpp>\n")
+        file(APPEND ${_file} "#include <tst${_test}.hpp>\n")
+        set(_target ${_test}_test_${_device})
+        add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
+        target_include_directories(${_target} PUBLIC ${_dir})
+        target_link_libraries(${_target} cabanacore cabana_core_gtest)
+        if(CABANA_UNIT_TEST_MPI)
+          foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
+            add_test(NAME ${_target}_${_np} COMMAND
+              ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
+              ${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
+          endforeach()
+        else()
+          if(_device STREQUAL Pthread OR _device STREQUAL OpenMP)
+            foreach(_thread ${CABANA_UNIT_TEST_NUMTHREADS})
+              add_test(NAME ${_target}_${_thread} COMMAND
+                ${_target} ${gtest_args} --kokkos-threads=${_thread})
+            endforeach()
+          else()
+            add_test(NAME ${_target} COMMAND ${_target} ${gtest_args})
+          endif()
+        endif()
       endforeach()
     endif()
   endforeach()
+endmacro()
+
+Cabana_add_tests(NAMES AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
+if(Cabana_ENABLE_MPI)
+  Cabana_add_tests(MPI NAMES CommunicationPlan Distributor Halo)
 endif()

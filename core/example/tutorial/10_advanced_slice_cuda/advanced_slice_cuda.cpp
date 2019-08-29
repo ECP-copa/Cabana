@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -21,12 +21,11 @@
 // Because the slice is declared to be atomic we can safely sum into it from
 // all threads.
 //---------------------------------------------------------------------------//
-template<class AtomicSlice>
-__global__
-void atomicThreadSum( AtomicSlice slice )
+template <class AtomicSlice>
+__global__ void atomicThreadSum( AtomicSlice slice )
 {
     /* Every thread writes to the slice atomically. */
-    slice(0) += 1.0;
+    slice( 0 ) += 1.0;
 }
 
 //---------------------------------------------------------------------------//
@@ -48,18 +47,20 @@ void atomicSliceExample()
     using DataTypes = Cabana::MemberTypes<double>;
     const int VectorLength = 32;
     using MemorySpace = Kokkos::CudaUVMSpace;
+    using ExecutionSpace = Kokkos::Cuda;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA. Just put a single value to demonstrate the atomic.
     */
     int num_tuple = 1;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A", num_tuple );
 
     /*
       Create a slice over the single value and assign it to zero.
      */
-    auto slice = aosoa.slice<0>();
-    slice(0) = 0.0;
+    auto slice = Cabana::slice<0>( aosoa );
+    slice( 0 ) = 0.0;
 
     /*
       Now create a version of the slice with atomic data access traits. We do
@@ -67,7 +68,7 @@ void atomicSliceExample()
       shallow and unmanaged copy. When both 1D and 2D data accesses are used
       reads and writes are atomic.
     */
-    decltype(slice)::atomic_access_slice atomic_slice = slice;
+    decltype( slice )::atomic_access_slice atomic_slice = slice;
 
     /*
       Now do a parallel sum atomically on the atomic slice. Launch a bunch of
@@ -75,7 +76,7 @@ void atomicSliceExample()
     */
     int num_cuda_block = 1;
     int cuda_block_size = 256;
-    atomicThreadSum<<<num_cuda_block,cuda_block_size>>>( atomic_slice );
+    atomicThreadSum<<<num_cuda_block, cuda_block_size>>>( atomic_slice );
 
     /*
       We are using UVM so synchronize the device to ensure the kernel finishes
@@ -89,22 +90,20 @@ void atomicSliceExample()
       an alias of this with different memory access traits.
      */
     std::cout << "Atomic add results" << std::endl;
-    std::cout << "Num CUDA threads = "
-              << num_cuda_block * cuda_block_size << std::endl;
-    std::cout << "Slice value =      " << slice(0) << std::endl;
+    std::cout << "Num CUDA threads = " << num_cuda_block * cuda_block_size
+              << std::endl;
+    std::cout << "Slice value =      " << slice( 0 ) << std::endl;
     std::cout << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     atomicSliceExample();
-
-    Cabana::finalize();
 
     return 0;
 }

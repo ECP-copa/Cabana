@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -13,7 +13,7 @@
 
 #include <Kokkos_Core.hpp>
 
-#include <iostream>
+#include <algorithm>
 
 #include <mpi.h>
 
@@ -54,42 +54,47 @@ void haloExchangeExample()
     /*
       Declare the AoSoA parameters.
     */
-    using DataTypes = Cabana::MemberTypes<double,double>;
+    using DataTypes = Cabana::MemberTypes<double, double>;
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 100;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "my_aosoa",
+                                                              num_tuple );
 
     /*
       Create slices and assign data.
      */
-    auto slice_0 = aosoa.slice<0>();
-    auto slice_1 = aosoa.slice<1>();
+    auto slice_0 = Cabana::slice<0>( aosoa );
+    auto slice_1 = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
-        slice_0(i) = 1.0;
-        slice_1(i) = 1.0;
+        slice_0( i ) = 1.0;
+        slice_1( i ) = 1.0;
     }
 
     /*
       Build a halo where the last 10 elements are sent to the next rank.
     */
     int local_num_send = 10;
-    Kokkos::View<int*,MemorySpace> export_ranks( "export_ranks", local_num_send );
-    Kokkos::View<int*,MemorySpace> export_ids( "export_ids", local_num_send );
+    Kokkos::View<int *, DeviceType> export_ranks( "export_ranks",
+                                                  local_num_send );
+    Kokkos::View<int *, DeviceType> export_ids( "export_ids", local_num_send );
 
     // Last 10 elements (elements 90-99) go to the next rank. Note that this
     // view will most often be filled within a parallel_for but we do so in
     // serial here for demonstration purposes.
+    int previous_rank = ( comm_rank == 0 ) ? comm_size - 1 : comm_rank - 1;
     int next_rank = ( comm_rank == comm_size - 1 ) ? 0 : comm_rank + 1;
     for ( int i = 0; i < local_num_send; ++i )
     {
-        export_ranks(i) = next_rank;
-        export_ids(i) = i + num_tuple - 10;
+        export_ranks( i ) = next_rank;
+        export_ids( i ) = i + num_tuple - 10;
     }
 
     /*
@@ -98,15 +103,18 @@ void haloExchangeExample()
       the second we know the topology of the communication plan (i.e. the
       ranks we send and receive from).
 
-      We know that we will only send/receive from this rank and the next rank
-      so use that information in this case because this substantially reduces
-      the amount of communication needed to compose the communication plan. If
-      this neighbor data were not supplied, extra global communication would
-      be needed to generate a list of neighbors.
+      We know that we will only send/receive from this rank and the
+      next/previous rank so use that information in this case because this
+      substantially reduces the amount of communication needed to compose the
+      communication plan. If this neighbor data were not supplied, extra
+      global communication would be needed to generate a list of neighbors.
      */
-    std::vector<int> neighbors = { comm_rank, next_rank };
-    Cabana::Halo<MemorySpace> halo(
-        MPI_COMM_WORLD, num_tuple, export_ids, export_ranks, neighbors );
+    std::vector<int> neighbors = {previous_rank, comm_rank, next_rank};
+    std::sort( neighbors.begin(), neighbors.end() );
+    auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
+    neighbors.resize( std::distance( neighbors.begin(), unique_end ) );
+    Cabana::Halo<DeviceType> halo( MPI_COMM_WORLD, num_tuple, export_ids,
+                                   export_ranks, neighbors );
 
     /*
       Resize the AoSoA to allow for additional ghost data. We can get the
@@ -126,8 +134,8 @@ void haloExchangeExample()
     /*
       Get new slices after resizing.
      */
-    slice_0 = aosoa.slice<0>();
-    slice_1 = aosoa.slice<1>();
+    slice_0 = Cabana::slice<0>( aosoa );
+    slice_1 = Cabana::slice<1>( aosoa );
 
     /*
       Gather data for the ghosts on this rank from our neighbors that own
@@ -155,15 +163,13 @@ void haloExchangeExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
     MPI_Init( &argc, &argv );
 
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     haloExchangeExample();
-
-    Cabana::finalize();
 
     MPI_Finalize();
 

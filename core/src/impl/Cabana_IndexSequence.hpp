@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -23,10 +23,10 @@ namespace Impl
   \class IndexSequence
   \brief General sequence of indices.
  */
-template<std::size_t... Indices>
+template <std::size_t... Indices>
 struct IndexSequence
 {
-    static constexpr std::size_t size = sizeof...(Indices);
+    static constexpr std::size_t size = sizeof...( Indices );
     using type = IndexSequence<Indices...>;
 };
 
@@ -34,24 +34,30 @@ struct IndexSequence
 /*!
  * \brief Append an index to a sequence.
  */
-template<std::size_t I, typename Sequence>
+template <std::size_t I, typename Sequence>
 struct ConcatenateIndexSequence;
 
-template<std::size_t I, std::size_t... Indices>
-struct ConcatenateIndexSequence<I,IndexSequence<Indices...> >
-    : IndexSequence<Indices...,I> {};
+template <std::size_t I, std::size_t... Indices>
+struct ConcatenateIndexSequence<I, IndexSequence<Indices...>>
+    : IndexSequence<Indices..., I>
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
  * \brief Create a sequence of size N.
  */
-template<std::size_t N>
+template <std::size_t N>
 struct MakeIndexSequence
-    : ConcatenateIndexSequence<N-1,typename MakeIndexSequence<N-1>::type>::type
-{};
+    : ConcatenateIndexSequence<N - 1,
+                               typename MakeIndexSequence<N - 1>::type>::type
+{
+};
 
-template<>
-struct MakeIndexSequence<1> : IndexSequence<0> {};
+template <>
+struct MakeIndexSequence<1> : IndexSequence<0>
+{
+};
 
 //---------------------------------------------------------------------------//
 

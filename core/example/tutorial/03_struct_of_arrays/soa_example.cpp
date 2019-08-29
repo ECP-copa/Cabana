@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -60,9 +60,7 @@ void soaExample()
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
     */
-    using DataTypes = Cabana::MemberTypes<double[3][3],
-                                          float[4],
-                                          int>;
+    using DataTypes = Cabana::MemberTypes<double[3][3], float[4], int>;
 
     /*
       Next declare the vector length of our SoA. This is how many tuples the
@@ -72,7 +70,7 @@ void soaExample()
     const int VectorLength = 4;
 
     /* Create the SoA. */
-    Cabana::SoA<DataTypes,VectorLength> soa;
+    Cabana::SoA<DataTypes, VectorLength> soa;
 
     /* Assign data to the SoA values using the multidimensional data
        accessors. Each SoA element is accessed via a `get<>` function who's
@@ -96,44 +94,42 @@ void soaExample()
     for ( int i = 0; i < 3; ++i )
         for ( int j = 0; j < 3; ++j )
             for ( int a = 0; a < VectorLength; ++a )
-                  soa.get<0>(a,i,j) = 1.0 * (a + i + j);
+                Cabana::get<0>( soa, a, i, j ) = 1.0 * ( a + i + j );
 
     for ( int i = 0; i < 4; ++i )
         for ( int a = 0; a < VectorLength; ++a )
-              soa.get<1>(a,i) = 1.0 * (a + i);
+            Cabana::get<1>( soa, a, i ) = 1.0 * ( a + i );
 
     for ( int a = 0; a < VectorLength; ++a )
-        soa.get<2>(a) = a + 1234;
+        Cabana::get<2>( soa, a ) = a + 1234;
 
     /* Read back the tuple data using the same multidimensional accessors */
     for ( int i = 0; i < 3; ++i )
         for ( int j = 0; j < 3; ++j )
             for ( int a = 0; a < VectorLength; ++a )
-                std::cout << "Tuple member 0, tuple index "
-                          << a << ", element (" << i << "," << j << "): "
-                          << soa.get<0>(a,i,j) << std::endl;
+                std::cout << "Tuple member 0, tuple index " << a
+                          << ", element (" << i << "," << j
+                          << "): " << Cabana::get<0>( soa, a, i, j )
+                          << std::endl;
 
     for ( int i = 0; i < 4; ++i )
         for ( int a = 0; a < VectorLength; ++a )
-            std::cout << "Tuple member 1, tuple index " << a
-                      << ", element (" << i << "): "
-                      << soa.get<1>(a,i) << std::endl;
+            std::cout << "Tuple member 1, tuple index " << a << ", element ("
+                      << i << "): " << Cabana::get<1>( soa, a, i ) << std::endl;
 
     for ( int a = 0; a < VectorLength; ++a )
-        std::cout << "Tuple member 2, tuple index " << a
-                  << ": " << soa.get<2>(a) << std::endl;
+        std::cout << "Tuple member 2, tuple index " << a << ": "
+                  << Cabana::get<2>( soa, a ) << std::endl;
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     soaExample();
-
-    Cabana::finalize();
 
     return 0;
 }

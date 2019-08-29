@@ -6,7 +6,8 @@ cmake_minimum_required(VERSION 3.9)
 ##---------------------------------------------------------------------------##
 # Define your project name and set up major project options
 ##---------------------------------------------------------------------------##
-project(Cabana LANGUAGES CXX VERSION 0.1.0)
+project(Cabana LANGUAGES CXX)
+set(PROJECT_VERSION "0.3.0-dev")
 
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
   #release comes with -O3 by default
@@ -54,6 +55,15 @@ if(NOT ENABLE_DEVICES)
 endif()
 message(STATUS "Enable Devices: ${ENABLE_DEVICES}")
 
+# if we are using Cuda, also add a "CudaUVM" device to use that memory space
+# in the test suite. Also enable a Cabana UVM option so the tests get triggered.
+foreach(_device ${ENABLE_DEVICES})
+  if(_device STREQUAL Cuda)
+    list(APPEND CABANA_SUPPORTED_DEVICES CudaUVM)
+    set(Cabana_ENABLE_CudaUVM ON)
+  endif()
+endforeach()
+
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
   enable_testing()
@@ -61,14 +71,13 @@ endif()
 
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core)
+  doxygen_add_docs(doxygen core/src)
 endif()
 
 option(Cabana_ENABLE_MPI "Build Cabana with MPI support" OFF)
 if(Cabana_ENABLE_MPI)
   find_package(MPI REQUIRED)
 endif()
-
 
 #------------------------------------------------------------------------------#
 # Architecture
@@ -93,14 +102,14 @@ if(CMAKE_BUILD_TYPE STREQUAL "Release")
   else()
     unset(INTERNAL_Cabana_BUILD_MARCH)
   endif()
+endif()
 
-  option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
-  if(Cabana_ENABLE_COVERAGE_BUILD)
+option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
+if(Cabana_ENABLE_COVERAGE_BUILD)
       message(STATUS "Enabling coverage build")
       set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
       set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
       set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
-  endif()
 endif()
 
 ##---------------------------------------------------------------------------##
@@ -123,3 +132,11 @@ add_subdirectory(core)
 
 configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+find_package(CLANG_FORMAT)
+if(CLANG_FORMAT_FOUND)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp)
+  add_custom_target(format
+    COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
+    DEPENDS ${FORMAT_SOURCES})
+endif()

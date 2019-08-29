@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -31,7 +31,7 @@ void verletListExample()
        Start by declaring the types in our tuples will store. The first
        member will be the coordinates, the second an id.
     */
-    using DataTypes = Cabana::MemberTypes<double[3],int>;
+    using DataTypes = Cabana::MemberTypes<double[3], int>;
 
     /*
       Next declare the data layout of the AoSoA. We use the host space here
@@ -40,34 +40,37 @@ void verletListExample()
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
+    using ExecutionSpace = Kokkos::Serial;
+    using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
     /*
        Create the AoSoA.
     */
     int num_tuple = 81;
-    Cabana::AoSoA<DataTypes,MemorySpace,VectorLength> aosoa( num_tuple );
+    Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A", num_tuple );
 
     /*
       Define the parameters of the Cartesian grid over which we will build the
       particles. This is a simple 3x3x3 uniform grid on [0,3] in each
       direction. Each grid cell has a size of 1 in each dimension.
      */
-    double grid_min[3] = {0.0,0.0,0.0};
-    double grid_max[3] = {3.0,3.0,3.0};
-    double grid_delta[3] = {1.0,1.0,1.0};
+    double grid_min[3] = {0.0, 0.0, 0.0};
+    double grid_max[3] = {3.0, 3.0, 3.0};
+    double grid_delta[3] = {1.0, 1.0, 1.0};
 
     /*
       Create the particle ids.
     */
-    auto ids = aosoa.slice<1>();
-    for ( int i = 0; i < aosoa.size(); ++i )
-        ids(i) = i;
+    auto ids = Cabana::slice<1>( aosoa );
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
+        ids( i ) = i;
+
     /*
       Create the particle coordinates. We will put 3 particles in the center
       of each cell. We will set the Verlet list parameters such that each
       particle should only neighbor the other particle it shares a cell with.
     */
-    auto positions = aosoa.slice<0>();
+    auto positions = Cabana::slice<0>( aosoa );
     int ppc = 3;
     int particle_counter = 0;
     for ( int p = 0; p < ppc; ++p )
@@ -119,10 +122,10 @@ void verletListExample()
     double neighborhood_radius = 0.25;
     double cell_ratio = 1.0;
     using ListAlgorithm = Cabana::FullNeighborTag;
-    using ListType = Cabana::VerletList<MemorySpace,ListAlgorithm>;
-    ListType verlet_list( positions, 0, positions.size(),
-                          neighborhood_radius, cell_ratio,
-                          grid_min, grid_max );
+    using ListType =
+        Cabana::VerletList<DeviceType, ListAlgorithm, Cabana::VerletLayoutCSR>;
+    ListType verlet_list( positions, 0, positions.size(), neighborhood_radius,
+                          cell_ratio, grid_min, grid_max );
 
     /*
       Now lets get the Verlet list data using the neighbor list
@@ -130,27 +133,27 @@ void verletListExample()
       memory space of the neighbor list. Each particle should have 2
       neighbors.
      */
-    for ( int i = 0; i < aosoa.size(); ++i )
+    for ( std::size_t i = 0; i < aosoa.size(); ++i )
     {
-        int num_n = Cabana::NeighborList<ListType>::numNeighbor(verlet_list,i);
+        int num_n =
+            Cabana::NeighborList<ListType>::numNeighbor( verlet_list, i );
         std::cout << "Particle " << i << " # neighbor = " << num_n << std::endl;
         for ( int j = 0; j < num_n; ++j )
             std::cout << "    neighbor " << j << " = "
                       << Cabana::NeighborList<ListType>::getNeighbor(
-                          verlet_list,i,j) << std::endl;
+                             verlet_list, i, j )
+                      << std::endl;
     }
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
-    Cabana::initialize(argc,argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     verletListExample();
-
-    Cabana::finalize();
 
     return 0;
 }

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -18,18 +18,10 @@
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-namespace Test {
+namespace Test
+{
 
-class cabana_version : public ::testing::Test {
-protected:
-  static void SetUpTestCase() {
-  }
-
-  static void TearDownTestCase() {
-  }
-};
-
-TEST_F( cabana_version, version_test )
+TEST( cabana_version, version_test )
 {
     auto const version_id = Cabana::version();
     EXPECT_TRUE( !version_id.empty() );

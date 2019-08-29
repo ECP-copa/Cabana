@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018 by the Cabana authors                                 *
+ * Copyright (c) 2018-2019 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -24,42 +24,42 @@ namespace Cabana
 namespace Impl
 {
 /*!
-  \class
+  \class StructRange
 
   \brief 2D loop outer index range giving struct index range bounds based on a
   1D range input.
 
   \tparam VectorLength The inner array size of the AoSoA.
 */
-template<int VectorLength, typename IndexType>
+template <int VectorLength, class IndexType>
 class StructRange
 {
   public:
-
     KOKKOS_INLINE_FUNCTION
-    static constexpr IndexType
-    structBegin( const IndexType begin )
+    static constexpr IndexType structBegin( const IndexType begin )
     {
-        return Index<VectorLength>::s(begin);
+        return Index<VectorLength>::s( begin );
     }
 
     KOKKOS_INLINE_FUNCTION
-    static constexpr IndexType
-    structEnd( const IndexType end )
+    static constexpr IndexType structEnd( const IndexType end )
     {
         // If the end is also at the front of an array that means the struct
         // index of end is also the ending struct index. If not, we are not
         // iterating all the way through the arrays of the last struct. In
         // this case we add 1 to ensure that the loop over structs loops
         // through all structs with data.
-        return (0 == Index<VectorLength>::a(end))
-            ? Index<VectorLength>::s(end) : Index<VectorLength>::s(end) + 1;
+        return ( 0 == Index<VectorLength>::a( end ) )
+                   ? Index<VectorLength>::s( end )
+                   : Index<VectorLength>::s( end ) + 1;
     }
 
     KOKKOS_INLINE_FUNCTION
-    static constexpr IndexType
-    size( const IndexType begin, const IndexType end )
-    { return structEnd(end) - structBegin(begin); }
+    static constexpr IndexType size( const IndexType begin,
+                                     const IndexType end )
+    {
+        return structEnd( end ) - structBegin( begin );
+    }
 };
 
 } // end namespace Impl
@@ -72,46 +72,52 @@ class StructRange
   Gives 2D range of indices for executing a vectorized functor over the inner
   array index.
 */
-template<int VectorLength, class ... Properties>
-class SimdPolicy : public Kokkos::TeamPolicy<
-    typename Kokkos::Impl::PolicyTraits<Properties ... >::execution_space,
-    Kokkos::Schedule<Kokkos::Dynamic> >
+template <int VectorLength, class... Properties>
+class SimdPolicy
+    : public Kokkos::TeamPolicy<
+          typename Kokkos::Impl::PolicyTraits<Properties...>::execution_space,
+          Kokkos::Schedule<Kokkos::Dynamic>>
 {
   private:
-    typedef Kokkos::Impl::PolicyTraits<Properties ... > traits;
+    typedef Kokkos::Impl::PolicyTraits<Properties...> traits;
 
   public:
-
     using work_tag = typename traits::work_tag;
     using execution_space = typename traits::execution_space;
-    using base_type = Kokkos::TeamPolicy<execution_space,
-                                         Kokkos::Schedule<Kokkos::Dynamic> >;
-    using execution_policy = SimdPolicy<VectorLength,Properties...>;
+    using base_type =
+        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    using execution_policy = SimdPolicy<VectorLength, Properties...>;
     using index_type = typename traits::index_type;
 
     /*!
       \brief Range constructor.
       \param begin The begininning of the 1D range. This will be decomposed
       into 2D indices.
-      \param begin The ending of the 1D range. This will be decomposed
+      \param end The ending of the 1D range. This will be decomposed
       into 2D indices.
     */
     SimdPolicy( const index_type begin, const index_type end )
-        : base_type( Impl::StructRange<VectorLength,index_type>::size(begin,end),
-                     1, VectorLength )
-        , _struct_begin( Impl::StructRange<VectorLength,index_type>::structBegin(begin) )
-        , _struct_end( Impl::StructRange<VectorLength,index_type>::structEnd(end) )
-        , _array_begin( Impl::Index<VectorLength>::a(begin) )
-        , _array_end( Impl::Index<VectorLength>::a(end) )
-    {}
+        : base_type(
+              Impl::StructRange<VectorLength, index_type>::size( begin, end ),
+              1, VectorLength )
+        , _struct_begin(
+              Impl::StructRange<VectorLength, index_type>::structBegin(
+                  begin ) )
+        , _struct_end(
+              Impl::StructRange<VectorLength, index_type>::structEnd( end ) )
+        , _array_begin( Impl::Index<VectorLength>::a( begin ) )
+        , _array_end( Impl::Index<VectorLength>::a( end ) )
+    {
+    }
 
     //! Get the starting struct index.
     KOKKOS_INLINE_FUNCTION index_type structBegin() const
-    { return _struct_begin; }
+    {
+        return _struct_begin;
+    }
 
     //! Get the ending struct index.
-    KOKKOS_INLINE_FUNCTION index_type structEnd() const
-    { return _struct_end; }
+    KOKKOS_INLINE_FUNCTION index_type structEnd() const { return _struct_end; }
 
     //! Given a struct id get the beginning array index.
     KOKKOS_INLINE_FUNCTION index_type arrayBegin( const index_type s ) const
@@ -129,12 +135,12 @@ class SimdPolicy : public Kokkos::TeamPolicy<
         // If we are in the last unfilled struct then use the array
         // index of end. If not, we are looping through the current array all
         // the way to the end so use the vector length.
-        return ( (s == _struct_end - 1) && (_array_end != 0) )
-            ? _array_end : VectorLength;
+        return ( ( s == _struct_end - 1 ) && ( _array_end != 0 ) )
+                   ? _array_end
+                   : VectorLength;
     }
 
   private:
-
     index_type _struct_begin;
     index_type _struct_end;
     index_type _array_begin;
