@@ -716,47 +716,44 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     Uk *= 0.5;
 
     // computation of self-energy contribution
-    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                             KOKKOS_LAMBDA( int idx, double &Uself_part ) {
-                                 Uself_part +=
-                                     -alpha / PI_SQRT * q( idx ) * q( idx );
-                                 p( idx ) += Uself_part;
-                             },
-                             Uself );
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+        KOKKOS_LAMBDA( int idx, double &Uself_part ) {
+            Uself_part += -alpha / PI_SQRT * q( idx ) * q( idx );
+            p( idx ) += Uself_part;
+        },
+        Uself );
     Kokkos::fence();
 
     // computation of dipole correction to energy
-    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-                                 double V = lx * ly * lz;
-                                 double Udip_prefactor =
-                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-                                 Udip_part +=
-                                     Udip_prefactor * q( idx ) * r( idx, 0 );
-                             },
-                             Udip_vec[0] );
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+            double V = lx * ly * lz;
+            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+            Udip_part += Udip_prefactor * q( idx ) * r( idx, 0 );
+        },
+        Udip_vec[0] );
     Kokkos::fence();
 
-    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-                                 double V = lx * ly * lz;
-                                 double Udip_prefactor =
-                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-                                 Udip_part +=
-                                     Udip_prefactor * q( idx ) * r( idx, 1 );
-                             },
-                             Udip_vec[1] );
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+            double V = lx * ly * lz;
+            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+            Udip_part += Udip_prefactor * q( idx ) * r( idx, 1 );
+        },
+        Udip_vec[1] );
     Kokkos::fence();
 
-    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-                                 double V = lx * ly * lz;
-                                 double Udip_prefactor =
-                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-                                 Udip_part +=
-                                     Udip_prefactor * q( idx ) * r( idx, 2 );
-                             },
-                             Udip_vec[2] );
+    Kokkos::parallel_reduce(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+            double V = lx * ly * lz;
+            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+            Udip_part += Udip_prefactor * q( idx ) * r( idx, 2 );
+        },
+        Udip_vec[2] );
     Kokkos::fence();
 
     Udip = Udip_vec[0] * Udip_vec[0] + Udip_vec[1] * Udip_vec[1] +
