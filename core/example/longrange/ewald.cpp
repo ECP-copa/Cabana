@@ -187,47 +187,45 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         "sine and cosine contributions", 2 * n_kvec );
 
     // set all values to zero
-    Kokkos::parallel_for(
-        2 * n_kvec,
-        KOKKOS_LAMBDA( const int idx ) { U_trigonometric( idx ) = 0.0; } );
+    Kokkos::parallel_for( 2 * n_kvec, KOKKOS_LAMBDA( const int idx ) {
+        U_trigonometric( idx ) = 0.0;
+    } );
     Kokkos::fence();
 
     // compute partial sums
-    Kokkos::parallel_for(
-        n_max, KOKKOS_LAMBDA( const int idx ) {
-            for ( int kz = -k_int; kz <= k_int; ++kz )
+    Kokkos::parallel_for( n_max, KOKKOS_LAMBDA( const int idx ) {
+        for ( int kz = -k_int; kz <= k_int; ++kz )
+        {
+            // compute wave vector component
+            double _kz = 2.0 * PI / lz * (double)kz;
+            for ( int ky = -k_int; ky <= k_int; ++ky )
             {
                 // compute wave vector component
-                double _kz = 2.0 * PI / lz * (double)kz;
-                for ( int ky = -k_int; ky <= k_int; ++ky )
+                double _ky = 2.0 * PI / ly * (double)ky;
+                for ( int kx = -k_int; kx <= k_int; ++kx )
                 {
+                    // no values required for the central box
+                    if ( kx == 0 && ky == 0 && kz == 0 )
+                        continue;
+                    // compute index in contribution array
+                    int kidx =
+                        ( kz + k_int ) * ( 2 * k_int + 1 ) * ( 2 * k_int + 1 ) +
+                        ( ky + k_int ) * ( 2 * k_int + 1 ) + ( kx + k_int );
                     // compute wave vector component
-                    double _ky = 2.0 * PI / ly * (double)ky;
-                    for ( int kx = -k_int; kx <= k_int; ++kx )
-                    {
-                        // no values required for the central box
-                        if ( kx == 0 && ky == 0 && kz == 0 )
-                            continue;
-                        // compute index in contribution array
-                        int kidx = ( kz + k_int ) * ( 2 * k_int + 1 ) *
-                                       ( 2 * k_int + 1 ) +
-                                   ( ky + k_int ) * ( 2 * k_int + 1 ) +
-                                   ( kx + k_int );
-                        // compute wave vector component
-                        double _kx = 2.0 * PI / lx * (double)kx;
-                        // compute dot product with local particle and wave
-                        // vector
-                        double kr = _kx * r( idx, 0 ) + _ky * r( idx, 1 ) +
-                                    _kz * r( idx, 2 );
-                        // add contributions
-                        Kokkos::atomic_add( &U_trigonometric( 2 * kidx ),
-                                            q( idx ) * cos( kr ) );
-                        Kokkos::atomic_add( &U_trigonometric( 2 * kidx + 1 ),
-                                            q( idx ) * cos( kr ) );
-                    }
+                    double _kx = 2.0 * PI / lx * (double)kx;
+                    // compute dot product with local particle and wave
+                    // vector
+                    double kr = _kx * r( idx, 0 ) + _ky * r( idx, 1 ) +
+                                _kz * r( idx, 2 );
+                    // add contributions
+                    Kokkos::atomic_add( &U_trigonometric( 2 * kidx ),
+                                        q( idx ) * cos( kr ) );
+                    Kokkos::atomic_add( &U_trigonometric( 2 * kidx + 1 ),
+                                        q( idx ) * cos( kr ) );
                 }
             }
-        } );
+        }
+    } );
     Kokkos::fence();
 
     // TODO: check if there is a better way to do this
@@ -369,14 +367,14 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
         assert( r_max <= 2.0 * sys_size( dim ) );
 
         // find out how many particles are close to the -dim border
-        Kokkos::parallel_reduce(
-            n_max,
-            KOKKOS_LAMBDA( const int idx, int &low ) {
-                low += ( r( idx, dim ) <= domain_length( 2 * dim ) + r_max )
-                           ? 1
-                           : 0;
-            },
-            n_export.at( 2 * dim ) );
+        Kokkos::parallel_reduce( n_max,
+                                 KOKKOS_LAMBDA( const int idx, int &low ) {
+                                     low += ( r( idx, dim ) <=
+                                              domain_length( 2 * dim ) + r_max )
+                                                ? 1
+                                                : 0;
+                                 },
+                                 n_export.at( 2 * dim ) );
         Kokkos::fence();
         // find out how many particles are close to the +dim border
         Kokkos::parallel_reduce(
@@ -605,58 +603,55 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     // loop only over local particles, as the forces for the
     // ghost particles are accumulated on them and the
     // source particles are processed on source process
-    Kokkos::parallel_for(
-        n_local, KOKKOS_LAMBDA( const int idx ) {
-            int num_n =
-                Cabana::NeighborList<ListType>::numNeighbor( verlet_list, idx );
+    Kokkos::parallel_for( n_local, KOKKOS_LAMBDA( const int idx ) {
+        int num_n =
+            Cabana::NeighborList<ListType>::numNeighbor( verlet_list, idx );
 
-            double rx = r( idx, 0 );
-            double ry = r( idx, 1 );
-            double rz = r( idx, 2 );
+        double rx = r( idx, 0 );
+        double ry = r( idx, 1 );
+        double rz = r( idx, 2 );
 
-            for ( int ij = 0; ij < num_n; ++ij )
-            {
-                int j = Cabana::NeighborList<ListType>::getNeighbor(
-                    verlet_list, idx, ij );
-                double dx = r( j, 0 ) - rx;
-                double dy = r( j, 1 ) - ry;
-                double dz = r( j, 2 ) - rz;
-                double d = sqrt( dx * dx + dy * dy + dz * dz );
+        for ( int ij = 0; ij < num_n; ++ij )
+        {
+            int j = Cabana::NeighborList<ListType>::getNeighbor( verlet_list,
+                                                                 idx, ij );
+            double dx = r( j, 0 ) - rx;
+            double dy = r( j, 1 ) - ry;
+            double dz = r( j, 2 ) - rz;
+            double d = sqrt( dx * dx + dy * dy + dz * dz );
 
-                // potential computation
-                double contrib =
-                    0.5 * q( idx ) * q( j ) * erfc( alpha * d ) / d;
-                Kokkos::atomic_add( &p( idx ), contrib );
-                Kokkos::atomic_add( &p( j ), contrib );
+            // potential computation
+            double contrib = 0.5 * q( idx ) * q( j ) * erfc( alpha * d ) / d;
+            Kokkos::atomic_add( &p( idx ), contrib );
+            Kokkos::atomic_add( &p( j ), contrib );
 
-                // force computation
-                double f_fact =
-                    q( idx ) * q( j ) *
-                    ( 2.0 * sqrt( alpha / PI ) * exp( -alpha * d * d ) +
-                      erfc( sqrt( alpha ) * d ) ) /
-                    ( d * d );
-                Kokkos::atomic_add( &f( idx, 0 ), f_fact * dx );
-                Kokkos::atomic_add( &f( idx, 1 ), f_fact * dy );
-                Kokkos::atomic_add( &f( idx, 2 ), f_fact * dz );
-                Kokkos::atomic_add( &f( j, 0 ), -f_fact * dx );
-                Kokkos::atomic_add( &f( j, 1 ), -f_fact * dy );
-                Kokkos::atomic_add( &f( j, 2 ), -f_fact * dz );
+            // force computation
+            double f_fact = q( idx ) * q( j ) *
+                            ( 2.0 * sqrt( alpha / PI ) * exp( -alpha * d * d ) +
+                              erfc( sqrt( alpha ) * d ) ) /
+                            ( d * d );
+            Kokkos::atomic_add( &f( idx, 0 ), f_fact * dx );
+            Kokkos::atomic_add( &f( idx, 1 ), f_fact * dy );
+            Kokkos::atomic_add( &f( idx, 2 ), f_fact * dz );
+            Kokkos::atomic_add( &f( j, 0 ), -f_fact * dx );
+            Kokkos::atomic_add( &f( j, 1 ), -f_fact * dy );
+            Kokkos::atomic_add( &f( j, 2 ), -f_fact * dz );
 
-                // Debug to compare pair-wise interactions
-                // LOTS of output
-                /*
-                std::cout << "contrib i-j: " <<
-                             "i: " << idx << " " <<
-                             "j: " << j << " " <<
-                             "contrib: " << contrib << " " <<
-                             "idx(i): " << i(idx) << " " <<
-                             "idx(j): " << i(j) << " " <<
-                             "r(i): " << r(idx,0) << " " << r(idx,1) << " " <<
-                r(idx,2) << " " << "r(j): " << r(j,0) << " " << r(j,1) << " " <<
-                r(j,2) << " " << std::endl;
-                */
-            }
-        } );
+            // Debug to compare pair-wise interactions
+            // LOTS of output
+            /*
+            std::cout << "contrib i-j: " <<
+                         "i: " << idx << " " <<
+                         "j: " << j << " " <<
+                         "contrib: " << contrib << " " <<
+                         "idx(i): " << i(idx) << " " <<
+                         "idx(j): " << i(j) << " " <<
+                         "r(i): " << r(idx,0) << " " << r(idx,1) << " " <<
+            r(idx,2) << " " << "r(j): " << r(j,0) << " " << r(j,1) << " " <<
+            r(j,2) << " " << std::endl;
+            */
+        }
+    } );
     Kokkos::fence();
 
     // send the force and potential contributions of the
@@ -695,13 +690,13 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
 
     double Uself_loc;
     // computation of self-energy contribution
-    Kokkos::parallel_reduce(
-        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-        KOKKOS_LAMBDA( int idx, double &Uself_part ) {
-            Uself_part += -alpha / PI_SQRT * q( idx ) * q( idx );
-            p( idx ) += Uself_part;
-        },
-        Uself_loc );
+    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+                             KOKKOS_LAMBDA( int idx, double &Uself_part ) {
+                                 Uself_part +=
+                                     -alpha / PI_SQRT * q( idx ) * q( idx );
+                                 p( idx ) += Uself_part;
+                             },
+                             Uself_loc );
     Kokkos::fence();
     MPI_Allreduce( &Uself_loc, &Uself, 1, MPI_DOUBLE, MPI_SUM, comm );
 
@@ -715,34 +710,37 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
     // computation of the dipole correction
     // (for most cases probably irrelevant)
     // TODO: enhancement - combine these 3 reductions
-    Kokkos::parallel_reduce(
-        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-            double V = lx * ly * lz;
-            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-            Udip_part += Udip_prefactor * q( idx ) * r( idx, 0 );
-        },
-        Udip_vec[0] );
+    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+                                 double V = lx * ly * lz;
+                                 double Udip_prefactor =
+                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+                                 Udip_part +=
+                                     Udip_prefactor * q( idx ) * r( idx, 0 );
+                             },
+                             Udip_vec[0] );
     Kokkos::fence();
 
-    Kokkos::parallel_reduce(
-        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-            double V = lx * ly * lz;
-            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-            Udip_part += Udip_prefactor * q( idx ) * r( idx, 1 );
-        },
-        Udip_vec[1] );
+    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+                                 double V = lx * ly * lz;
+                                 double Udip_prefactor =
+                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+                                 Udip_part +=
+                                     Udip_prefactor * q( idx ) * r( idx, 1 );
+                             },
+                             Udip_vec[1] );
     Kokkos::fence();
 
-    Kokkos::parallel_reduce(
-        Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
-        KOKKOS_LAMBDA( int idx, double &Udip_part ) {
-            double V = lx * ly * lz;
-            double Udip_prefactor = 2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
-            Udip_part += Udip_prefactor * q( idx ) * r( idx, 2 );
-        },
-        Udip_vec[2] );
+    Kokkos::parallel_reduce( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
+                             KOKKOS_LAMBDA( int idx, double &Udip_part ) {
+                                 double V = lx * ly * lz;
+                                 double Udip_prefactor =
+                                     2 * PI / ( ( 1.0 + 2.0 * eps_r ) * V );
+                                 Udip_part +=
+                                     Udip_prefactor * q( idx ) * r( idx, 2 );
+                             },
+                             Udip_vec[2] );
     Kokkos::fence();
 
     Udip = Udip_vec[0] * Udip_vec[0] + Udip_vec[1] * Udip_vec[1] +
