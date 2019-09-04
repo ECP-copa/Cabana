@@ -35,21 +35,23 @@ RUN export OPENMPI_VERSION=4.0.0 && \
 
 # Install Kokkos
 ENV KOKKOS_DIR=/opt/kokkos
-RUN export KOKKOS_VERSION=2.9.00 && \
-    export KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
-    export KOKKOS_ARCHIVE=kokkos-${KOKKOS_VERSION}.tar.gz && \
-    export KOKKOS_SOURCE_DIR=kokkos-${KOKKOS_VERSION} && \
+RUN KOKKOS_VERSION=2.9.00 && \
+    KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
+    KOKKOS_ARCHIVE=kokkos-${KOKKOS_HASH}.tar.gz && \
+    SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
     wget --quiet ${KOKKOS_URL} --output-document=${KOKKOS_ARCHIVE} && \
-    mkdir -p ${KOKKOS_SOURCE_DIR} && \
-    tar -xf ${KOKKOS_ARCHIVE} -C ${KOKKOS_SOURCE_DIR} --strip-components=1 && \
-    cd ${KOKKOS_SOURCE_DIR} && mkdir build && cd build && \
-    ../generate_makefile.bash \
-        --with-cuda \
-        --with-cuda-options=enable_lambda \
-        --arch=Volta70 \
-        --prefix=${KOKKOS_DIR} \
-        --debug \
-        --with-options=disable_deprecated_code \
-    && \
+    mkdir -p kokkos && \
+    tar -xf ${KOKKOS_ARCHIVE} -C kokkos --strip-components=1 && \
+    cd kokkos && \
+    mkdir -p build && cd build && \
+    cmake \
+      -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} \
+      -D CMAKE_BUILD_TYPE=Debug \
+      -D CMAKE_CXX_COMPILER=/scratch/kokkos/bin/nvcc_wrapper \
+      -D Kokkos_ENABLE_CUDA=ON \
+      -D Kokkos_ENABLE_CUDA_LAMBDA=ON \
+      -D Kokkos_ARCH=Volta70 \
+      -D Kokkos_ENABLE_DEPRECATED_CODE=OFF \
+    .. && \
     make && make install && \
-    rm -rf ${KOKKOS_ARCHIVE} ${KOKKOS_SOURCE_DIR}
+    rm -rf ${SCRATCH_DIR}
