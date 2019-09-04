@@ -21,7 +21,7 @@ option(CMAKE_VERBOSE_MAKEFILE "Generate verbose Makefiles" OFF)
 include(GNUInstallDirs)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-find_package(KOKKOS REQUIRED)
+find_package(Kokkos REQUIRED)
 
 option(Cabana_ENABLE_Serial "Build Cabana with Serial support" ON)
 
