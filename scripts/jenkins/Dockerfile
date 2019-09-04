@@ -35,7 +35,7 @@ RUN export OPENMPI_VERSION=4.0.0 && \
 
 # Install Kokkos
 ENV KOKKOS_DIR=/opt/kokkos
-RUN KOKKOS_VERSION=2.9.00 && \
+RUN KOKKOS_VERSION=bb988bb6d8f04c90345cdabc281c472e6a591eb9 && \
     KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_HASH}.tar.gz && \
     SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
