@@ -35,7 +35,7 @@ before_script:
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
   - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; export FC=gfortran-6; fi
-  - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
+  - git clone --depth=1 https://github.com/kokkos/kokkos.git --branch develop &&
     pushd kokkos &&
     mkdir build &&
     pushd build &&
