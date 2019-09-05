@@ -30,8 +30,8 @@ env:
 before_script:
   - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
   - ccache -z
-  - KOKKOS_OPTS=( --with-hwloc=/usr --gcc-toolchain=/usr )
-  - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
+  - KOKKOS_OPTS=( -DKokkos_ENABLE_HWLOC=ON )
+  - for i in ${BACKENDS}; do KOKKOS_OPTS+=( -DKokkos_ENABLE_${i^^}=ON ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
   - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; export FC=gfortran-6; fi
@@ -39,7 +39,7 @@ before_script:
     pushd kokkos &&
     mkdir build &&
     pushd build &&
-    ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} --with-options=disable_deprecated_code &&
+    cmake -DCMAKE_INSTALL_PREFIX=$HOME/kokkos ${KOKKOS_OPTS[@]} .. &&
     make -j2 &&
     make install &&
     popd &&
