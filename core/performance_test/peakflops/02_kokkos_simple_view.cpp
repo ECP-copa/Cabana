@@ -65,20 +65,18 @@ TEST( kokkos, simple )
     long n = static_cast<long>( CABANA_PERFORMANCE_ITERATIONS );
     long seed = CABANA_PERFORMANCE_SEED;
 
-    const int N = 1;
-
-    view_type a_( "a", N );
-    view_type x0_( "x0", N );
-    view_type x1_( "x1", N );
-    view_type x2_( "x2", N );
-    view_type x3_( "x3", N );
-    view_type x4_( "x4", N );
-    view_type x5_( "x5", N );
-    view_type x6_( "x6", N );
-    view_type x7_( "x7", N );
-    view_type x8_( "x8", N );
-    view_type x9_( "x9", N );
-    view_type c_( "c", N );
+    view_type a_( "a" );
+    view_type x0_( "x0" );
+    view_type x1_( "x1" );
+    view_type x2_( "x2" );
+    view_type x3_( "x3" );
+    view_type x4_( "x4" );
+    view_type x5_( "x5" );
+    view_type x6_( "x6" );
+    view_type x7_( "x7" );
+    view_type x8_( "x8" );
+    view_type x9_( "x9" );
+    view_type c_( "c" );
 
     long i;
     unsigned short rg[3] = {static_cast<unsigned short>( seed >> 16 ),
