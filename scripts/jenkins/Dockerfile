@@ -50,7 +50,7 @@ RUN KOKKOS_VERSION=bb988bb6d8f04c90345cdabc281c472e6a591eb9 && \
       -D CMAKE_CXX_COMPILER=/scratch/kokkos/bin/nvcc_wrapper \
       -D Kokkos_ENABLE_CUDA=ON \
       -D Kokkos_ENABLE_CUDA_LAMBDA=ON \
-      -D Kokkos_ARCH=Volta70 \
+      -D Kokkos_ARCH_VOLTA70=ON
       -D Kokkos_ENABLE_DEPRECATED_CODE=OFF \
     .. && \
     make && make install && \
