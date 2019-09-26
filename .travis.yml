@@ -39,7 +39,7 @@ before_script:
     pushd kokkos &&
     mkdir build &&
     pushd build &&
-    ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
+    ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} --with-options=disable_deprecated_code &&
     make -j2 &&
     make install &&
     popd &&
