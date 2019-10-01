@@ -162,12 +162,21 @@ IndexSpace<3> Block::indexSpace( Ghost t1, Cell t2, Global ) const
 // indices we own that we share with that neighbor to use as ghosts.
 template <>
 IndexSpace<3> Block::sharedIndexSpace( Own, Cell, const int off_i,
-                                       const int off_j, const int off_k ) const
+                                       const int off_j, const int off_k,
+                                       const int halo_width ) const
 {
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
     // Check that the offsets are valid.
     if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
          1 < off_k )
         throw std::logic_error( "Neighbor indices out of bounds" );
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error( "Requested halo width larger than block halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -194,7 +203,7 @@ IndexSpace<3> Block::sharedIndexSpace( Own, Cell, const int off_i,
 
         // Upper neighbor.
         else if ( 1 == nid[d] )
-            min[d] = owned_space.max( d ) - _halo_cell_width;
+            min[d] = owned_space.max( d ) - hw;
     }
 
     // Compute the upper bound.
@@ -203,7 +212,7 @@ IndexSpace<3> Block::sharedIndexSpace( Own, Cell, const int off_i,
     {
         // Lower neighbor.
         if ( -1 == nid[d] )
-            max[d] = owned_space.min( d ) + _halo_cell_width;
+            max[d] = owned_space.min( d ) + hw;
 
         // Middle neighbor.
         else if ( 0 == nid[d] )
@@ -222,10 +231,69 @@ IndexSpace<3> Block::sharedIndexSpace( Own, Cell, const int off_i,
 // indices owned by that neighbor that are shared with us to use as
 // ghosts.
 template <>
-IndexSpace<3> Block::sharedIndexSpace( Ghost, Cell tag, const int off_i,
-                                       const int off_j, const int off_k ) const
+IndexSpace<3> Block::sharedIndexSpace( Ghost, Cell, const int off_i,
+                                       const int off_j, const int off_k,
+                                       const int halo_width ) const
 {
-    return ghostedSharedIndexSpace( tag, off_i, off_j, off_k );
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
+    // Check that the offsets are valid.
+    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
+         1 < off_k )
+        throw std::logic_error( "Neighbor indices out of bounds" );
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error( "Requested halo width larger than block halo" );
+
+    // Check to see if this is a valid neighbor. If not, return a shared space
+    // of size 0.
+    if ( neighborRank( off_i, off_j, off_k ) < 0 )
+        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+
+    // Wrap the indices.
+    std::array<long, 3> nid = {off_i, off_j, off_k};
+
+    // Get the owned local index space.
+    auto owned_space = indexSpace( Own(), Cell(), Local() );
+
+    // Compute the lower bound.
+    std::array<long, 3> min;
+    for ( int d = 0; d < 3; ++d )
+    {
+        // Lower neighbor.
+        if ( -1 == nid[d] )
+            min[d] = owned_space.min( d ) - hw;
+
+        // Middle neighbor
+        else if ( 0 == nid[d] )
+            min[d] = owned_space.min( d );
+
+        // Upper neighbor.
+        else if ( 1 == nid[d] )
+            min[d] = owned_space.max( d );
+    }
+
+    // Compute the upper bound.
+    std::array<long, 3> max;
+    for ( int d = 0; d < 3; ++d )
+    {
+        // Lower neighbor.
+        if ( -1 == nid[d] )
+            max[d] = owned_space.min( d );
+
+        // Middle neighbor
+        else if ( 0 == nid[d] )
+            max[d] = owned_space.max( d );
+
+        // Upper neighbor.
+        else if ( 1 == nid[d] )
+            max[d] = owned_space.max( d ) + hw;
+    }
+
+    return IndexSpace<3>( min, max );
 }
 
 //---------------------------------------------------------------------------//
@@ -301,12 +369,21 @@ IndexSpace<3> Block::indexSpace( Ghost t1, Node t2, Global ) const
 // indices we own that we share with that neighbor to use as ghosts.
 template <>
 IndexSpace<3> Block::sharedIndexSpace( Own, Node, const int off_i,
-                                       const int off_j, const int off_k ) const
+                                       const int off_j, const int off_k,
+                                       const int halo_width ) const
 {
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
     // Check that the offsets are valid.
     if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
          1 < off_k )
         throw std::logic_error( "Neighbor indices out of bounds" );
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error( "Requested halo width larger than block halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -333,7 +410,7 @@ IndexSpace<3> Block::sharedIndexSpace( Own, Node, const int off_i,
 
         // Upper neighbor.
         else if ( 1 == nid[d] )
-            min[d] = owned_space.max( d ) - _halo_cell_width;
+            min[d] = owned_space.max( d ) - hw;
     }
 
     // Compute the upper bound.
@@ -342,7 +419,7 @@ IndexSpace<3> Block::sharedIndexSpace( Own, Node, const int off_i,
     {
         // Lower neighbor.
         if ( -1 == nid[d] )
-            max[d] = owned_space.min( d ) + _halo_cell_width + 1;
+            max[d] = owned_space.min( d ) + hw + 1;
 
         // Middle neighbor.
         else if ( 0 == nid[d] )
@@ -361,10 +438,69 @@ IndexSpace<3> Block::sharedIndexSpace( Own, Node, const int off_i,
 // indices owned by that neighbor that are shared with us to use as
 // ghosts.
 template <>
-IndexSpace<3> Block::sharedIndexSpace( Ghost, Node tag, const int off_i,
-                                       const int off_j, const int off_k ) const
+IndexSpace<3> Block::sharedIndexSpace( Ghost, Node, const int off_i,
+                                       const int off_j, const int off_k,
+                                       const int halo_width ) const
 {
-    return ghostedSharedIndexSpace( tag, off_i, off_j, off_k );
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
+    // Check that the offsets are valid.
+    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
+         1 < off_k )
+        throw std::logic_error( "Neighbor indices out of bounds" );
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error( "Requested halo width larger than block halo" );
+
+    // Check to see if this is a valid neighbor. If not, return a shared space
+    // of size 0.
+    if ( neighborRank( off_i, off_j, off_k ) < 0 )
+        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+
+    // Wrap the indices.
+    std::array<long, 3> nid = {off_i, off_j, off_k};
+
+    // Get the owned local index space.
+    auto owned_space = indexSpace( Own(), Node(), Local() );
+
+    // Compute the lower bound.
+    std::array<long, 3> min;
+    for ( int d = 0; d < 3; ++d )
+    {
+        // Lower neighbor.
+        if ( -1 == nid[d] )
+            min[d] = owned_space.min( d ) - hw;
+
+        // Middle neighbor
+        else if ( 0 == nid[d] )
+            min[d] = owned_space.min( d );
+
+        // Upper neighbor.
+        else if ( 1 == nid[d] )
+            min[d] = owned_space.max( d );
+    }
+
+    // Compute the upper bound.
+    std::array<long, 3> max;
+    for ( int d = 0; d < 3; ++d )
+    {
+        // Lower neighbor.
+        if ( -1 == nid[d] )
+            max[d] = owned_space.min( d );
+
+        // Middle neighbor
+        else if ( 0 == nid[d] )
+            max[d] = owned_space.max( d );
+
+        // Upper neighbor.
+        else if ( 1 == nid[d] )
+            max[d] = owned_space.max( d ) + hw + 1;
+    }
+
+    return IndexSpace<3>( min, max );
 }
 
 //---------------------------------------------------------------------------//
@@ -398,17 +534,19 @@ IndexSpace<3> Block::indexSpace( Ghost t1, Face<Dim::I> t2, Global t3 ) const
 //---------------------------------------------------------------------------//
 template <>
 IndexSpace<3> Block::sharedIndexSpace( Own t1, Face<Dim::I> t2, const int i,
-                                       const int j, const int k ) const
+                                       const int j, const int k,
+                                       const int hw ) const
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k );
+    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <>
 IndexSpace<3> Block::sharedIndexSpace( Ghost t1, Face<Dim::I> t2, const int i,
-                                       const int j, const int k ) const
+                                       const int j, const int k,
+                                       const int hw ) const
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k );
+    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
@@ -442,17 +580,19 @@ IndexSpace<3> Block::indexSpace( Ghost t1, Face<Dim::J> t2, Global t3 ) const
 //---------------------------------------------------------------------------//
 template <>
 IndexSpace<3> Block::sharedIndexSpace( Own t1, Face<Dim::J> t2, const int i,
-                                       const int j, const int k ) const
+                                       const int j, const int k,
+                                       const int hw ) const
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k );
+    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <>
 IndexSpace<3> Block::sharedIndexSpace( Ghost t1, Face<Dim::J> t2, const int i,
-                                       const int j, const int k ) const
+                                       const int j, const int k,
+                                       const int hw ) const
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k );
+    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
@@ -486,17 +626,19 @@ IndexSpace<3> Block::indexSpace( Ghost t1, Face<Dim::K> t2, Global t3 ) const
 //---------------------------------------------------------------------------//
 template <>
 IndexSpace<3> Block::sharedIndexSpace( Own t1, Face<Dim::K> t2, const int i,
-                                       const int j, const int k ) const
+                                       const int j, const int k,
+                                       const int hw ) const
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k );
+    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <>
 IndexSpace<3> Block::sharedIndexSpace( Ghost t1, Face<Dim::K> t2, const int i,
-                                       const int j, const int k ) const
+                                       const int j, const int k,
+                                       const int hw ) const
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k );
+    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
@@ -529,69 +671,6 @@ IndexSpace<3> Block::globalIndexSpace( Ghost, EntityType ) const
     {
         min[d] = _global_grid->globalOffset( d ) - own_local_space.min( d );
         max[d] = min[d] + ghost_local_space.extent( d );
-    }
-
-    return IndexSpace<3>( min, max );
-}
-
-//---------------------------------------------------------------------------//
-// Get the ghosted shared index space of the block.
-template <class EntityType>
-IndexSpace<3> Block::ghostedSharedIndexSpace( EntityType, const int off_i,
-                                              const int off_j,
-                                              const int off_k ) const
-{
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
-
-    // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), EntityType(), Local() );
-
-    // Get the ghosted local index space.
-    auto ghosted_space = indexSpace( Ghost(), EntityType(), Local() );
-
-    // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
-    {
-        // Lower neighbor.
-        if ( -1 == nid[d] )
-            min[d] = ghosted_space.min( d );
-
-        // Middle neighbor
-        else if ( 0 == nid[d] )
-            min[d] = owned_space.min( d );
-
-        // Upper neighbor.
-        else if ( 1 == nid[d] )
-            min[d] = owned_space.max( d );
-    }
-
-    // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
-    {
-        // Lower neighbor.
-        if ( -1 == nid[d] )
-            max[d] = owned_space.min( d );
-
-        // Middle neighbor
-        else if ( 0 == nid[d] )
-            max[d] = owned_space.max( d );
-
-        // Upper neighbor.
-        else if ( 1 == nid[d] )
-            max[d] = ghosted_space.max( d );
     }
 
     return IndexSpace<3>( min, max );
@@ -689,13 +768,21 @@ IndexSpace<3> Block::faceIndexSpace( Ghost t1, Face<Dir> t2, Global ) const
 // as ghosts.
 template <int Dir>
 IndexSpace<3> Block::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
-                                           const int off_j,
-                                           const int off_k ) const
+                                           const int off_j, const int off_k,
+                                           const int halo_width ) const
 {
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
     // Check that the offsets are valid.
     if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
          1 < off_k )
         throw std::logic_error( "Neighbor indices out of bounds" );
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error( "Requested halo width larger than block halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -722,7 +809,7 @@ IndexSpace<3> Block::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
 
         // Upper neighbor.
         else if ( 1 == nid[d] )
-            min[d] = owned_space.max( d ) - _halo_cell_width;
+            min[d] = owned_space.max( d ) - hw;
     }
 
     // Compute the upper bound.
@@ -731,8 +818,8 @@ IndexSpace<3> Block::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
     {
         // Lower neighbor.
         if ( -1 == nid[d] )
-            max[d] = ( Dir == d ) ? owned_space.min( d ) + _halo_cell_width + 1
-                                  : owned_space.min( d ) + _halo_cell_width;
+            max[d] = ( Dir == d ) ? owned_space.min( d ) + hw + 1
+                                  : owned_space.min( d ) + hw;
 
         // Middle neighbor.
         else if ( 0 == nid[d] )
@@ -751,11 +838,70 @@ IndexSpace<3> Block::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
 // Dir-direction face indices owned by that neighbor that are shared with us
 // to use as ghosts.
 template <int Dir>
-IndexSpace<3> Block::faceSharedIndexSpace( Ghost, Face<Dir> tag,
-                                           const int off_i, const int off_j,
-                                           const int off_k ) const
+IndexSpace<3> Block::faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
+                                           const int off_j, const int off_k,
+                                           const int halo_width ) const
 {
-    return ghostedSharedIndexSpace( tag, off_i, off_j, off_k );
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
+    // Check that the offsets are valid.
+    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
+         1 < off_k )
+        throw std::logic_error( "Neighbor indices out of bounds" );
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error( "Requested halo width larger than block halo" );
+
+    // Check to see if this is a valid neighbor. If not, return a shared space
+    // of size 0.
+    if ( neighborRank( off_i, off_j, off_k ) < 0 )
+        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+
+    // Wrap the indices.
+    std::array<long, 3> nid = {off_i, off_j, off_k};
+
+    // Get the owned local index space.
+    auto owned_space = indexSpace( Own(), Face<Dir>(), Local() );
+
+    // Compute the lower bound.
+    std::array<long, 3> min;
+    for ( int d = 0; d < 3; ++d )
+    {
+        // Lower neighbor.
+        if ( -1 == nid[d] )
+            min[d] = owned_space.min( d ) - hw;
+
+        // Middle neighbor
+        else if ( 0 == nid[d] )
+            min[d] = owned_space.min( d );
+
+        // Upper neighbor.
+        else if ( 1 == nid[d] )
+            min[d] = owned_space.max( d );
+    }
+
+    // Compute the upper bound.
+    std::array<long, 3> max;
+    for ( int d = 0; d < 3; ++d )
+    {
+        // Lower neighbor.
+        if ( -1 == nid[d] )
+            max[d] = owned_space.min( d );
+
+        // Middle neighbor
+        else if ( 0 == nid[d] )
+            max[d] = owned_space.max( d );
+
+        // Upper neighbor.
+        else if ( 1 == nid[d] )
+            max[d] = ( Dir == d ) ? owned_space.max( d ) + hw + 1
+                                  : owned_space.max( d ) + hw;
+    }
+
+    return IndexSpace<3>( min, max );
 }
 
 //---------------------------------------------------------------------------//
@@ -780,27 +926,6 @@ template IndexSpace<3> Block::globalIndexSpace( Ghost, Face<Dim::J> ) const;
 template IndexSpace<3> Block::globalIndexSpace( Own, Face<Dim::K> ) const;
 
 template IndexSpace<3> Block::globalIndexSpace( Ghost, Face<Dim::K> ) const;
-
-//---------------------------------------------------------------------------//
-// Ghosted shared indexing explicit instantiations.
-//---------------------------------------------------------------------------//
-template IndexSpace<3>
-Block::ghostedSharedIndexSpace( Cell, const int, const int, const int ) const;
-
-template IndexSpace<3>
-Block::ghostedSharedIndexSpace( Node, const int, const int, const int ) const;
-
-template IndexSpace<3> Block::ghostedSharedIndexSpace( Face<Dim::I>, const int,
-                                                       const int,
-                                                       const int ) const;
-
-template IndexSpace<3> Block::ghostedSharedIndexSpace( Face<Dim::J>, const int,
-                                                       const int,
-                                                       const int ) const;
-
-template IndexSpace<3> Block::ghostedSharedIndexSpace( Face<Dim::K>, const int,
-                                                       const int,
-                                                       const int ) const;
 
 //---------------------------------------------------------------------------//
 // Face indexing explicit instantiations
@@ -837,26 +962,32 @@ template IndexSpace<3> Block::faceIndexSpace( Ghost, Face<Dim::K>,
 
 template IndexSpace<3> Block::faceSharedIndexSpace( Own, Face<Dim::I>,
                                                     const int, const int,
+                                                    const int,
                                                     const int ) const;
 
 template IndexSpace<3> Block::faceSharedIndexSpace( Ghost, Face<Dim::I>,
                                                     const int, const int,
+                                                    const int,
                                                     const int ) const;
 
 template IndexSpace<3> Block::faceSharedIndexSpace( Own, Face<Dim::J>,
                                                     const int, const int,
+                                                    const int,
                                                     const int ) const;
 
 template IndexSpace<3> Block::faceSharedIndexSpace( Ghost, Face<Dim::J>,
                                                     const int, const int,
+                                                    const int,
                                                     const int ) const;
 
 template IndexSpace<3> Block::faceSharedIndexSpace( Own, Face<Dim::K>,
                                                     const int, const int,
+                                                    const int,
                                                     const int ) const;
 
 template IndexSpace<3> Block::faceSharedIndexSpace( Ghost, Face<Dim::K>,
                                                     const int, const int,
+                                                    const int,
                                                     const int ) const;
 
 //---------------------------------------------------------------------------//
