@@ -47,80 +47,93 @@ void gatherScatterTest( const ManualPartitioner& partitioner,
                                          cell_size );
 
     // Create an array on the cells.
-    int halo_width = 2;
+    unsigned array_halo_width = 3;
     int dofs_per_cell = 4;
     auto cell_layout =
-        createArrayLayout( global_grid, halo_width, dofs_per_cell, Cell() );
-    auto array = createArray<double,TEST_DEVICE>( "array", cell_layout );
+        createArrayLayout( global_grid, array_halo_width, dofs_per_cell, Cell() );
 
-    // Assign the owned cells a value of 1.
-    auto owned_space = cell_layout->indexSpace( Own(), Local() );
-    auto owned_subview = createSubview( array->view(), owned_space );
-    Kokkos::deep_copy( owned_subview, 1.0 );
+    // Loop over halo sizes up to the size of the array halo width.
+    for ( unsigned halo_width = 1; halo_width <= array_halo_width; ++halo_width )
+    {
+        // Assign the owned cells a value of 1 and the rest 0.
+        auto array = createArray<double,TEST_DEVICE>( "array", cell_layout );
+        ArrayOp::assign( *array, 0.0, Ghost() );
+        ArrayOp::assign( *array, 1.0, Own() );
 
-    // Create a halo.
-    auto halo = createHalo( *array, FullHaloPattern() );
+        // Create a halo.
+        auto halo = createHalo( *array, FullHaloPattern(), halo_width );
 
-    // Gather into the ghosts.
-    halo->gather( *array, 124 );
+        // Gather into the ghosts.
+        halo->gather( *array, 124 );
 
-    // Check the gather. We should get 1 everywhere in the array now.
-    auto ghosted_space = cell_layout->indexSpace( Ghost(), Local() );
-    auto host_view = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), array->view() );
-    for ( unsigned i = 0; i < ghosted_space.extent(0); ++i )
-        for ( unsigned j = 0; j < ghosted_space.extent(1); ++j )
-            for ( unsigned k = 0; k < ghosted_space.extent(2); ++k )
-                for ( unsigned l = 0; l < ghosted_space.extent(3); ++l )
-                    EXPECT_EQ( host_view(i,j,k,l), 1.0 );
+        // Check the gather. We should get 1 everywhere in the array now where
+        // there was ghost overlap. Otherwise there will still be 0.
+        auto owned_space = cell_layout->indexSpace( Own(), Local() );
+        auto ghosted_space = cell_layout->indexSpace( Ghost(), Local() );
+        auto host_view = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), array->view() );
+        for ( unsigned i = 0; i < ghosted_space.extent(0); ++i )
+            for ( unsigned j = 0; j < ghosted_space.extent(1); ++j )
+                for ( unsigned k = 0; k < ghosted_space.extent(2); ++k )
+                    for ( unsigned l = 0; l < ghosted_space.extent(3); ++l )
+                        if ( i < owned_space.min(Dim::I) - halo_width ||
+                             i >= owned_space.max(Dim::I) + halo_width ||
+                             j < owned_space.min(Dim::J) - halo_width ||
+                             j >= owned_space.max(Dim::J) + halo_width ||
+                             k < owned_space.min(Dim::K) - halo_width ||
+                             k >= owned_space.max(Dim::K) + halo_width )
+                            EXPECT_EQ( host_view(i,j,k,l), 0.0 );
+                        else
+                            EXPECT_EQ( host_view(i,j,k,l), 1.0 );
 
-    // Scatter from the ghosts back to owned.
-    halo->scatter( *array, 125 );
+        // Scatter from the ghosts back to owned.
+        halo->scatter( *array, 125 );
 
-    // Check the scatter. The value of the cell should be a function of how
-    // many neighbors it has. Corner neighbors get 8, edge neighbors get 4,
-    // face neighbors get 2, and no neighbors remain at 1.
+        // Check the scatter. The value of the cell should be a function of how
+        // many neighbors it has. Corner neighbors get 8, edge neighbors get 4,
+        // face neighbors get 2, and no neighbors remain at 1.
 
-    // This function checks if an index is in the halo of a low neighbor in
-    // the given dimension
-    auto in_dim_min_halo =
-        [=]( const int i, const int dim ){
-            if ( is_dim_periodic[dim] || global_grid->dimBlockId(dim) > 0 )
-                return i < (owned_space.min(dim) + halo_width);
-            else
-                return false;
-        };
+        // This function checks if an index is in the halo of a low neighbor in
+        // the given dimension
+        auto in_dim_min_halo =
+            [=]( const int i, const int dim ){
+                if ( is_dim_periodic[dim] || global_grid->dimBlockId(dim) > 0 )
+                    return i < (owned_space.min(dim) + halo_width);
+                else
+                    return false;
+            };
 
-    // This function checks if an index is in the halo of a high neighbor in
-    // the given dimension
-    auto in_dim_max_halo =
-        [=]( const int i, const int dim ){
-            if ( is_dim_periodic[dim] ||
-                 global_grid->dimBlockId(dim) <
-                 global_grid->dimNumBlock(dim) - 1 )
-                return i >= (owned_space.max(dim) - halo_width);
-            else
-                return false;
-        };
+        // This function checks if an index is in the halo of a high neighbor in
+        // the given dimension
+        auto in_dim_max_halo =
+            [=]( const int i, const int dim ){
+                if ( is_dim_periodic[dim] ||
+                     global_grid->dimBlockId(dim) <
+                     global_grid->dimNumBlock(dim) - 1 )
+                    return i >= (owned_space.max(dim) - halo_width);
+                else
+                    return false;
+            };
 
-    // Check results. Use the halo functions to figure out how many neighbor a
-    // given cell was ghosted to.
-    Kokkos::deep_copy( host_view, array->view() );
-    for ( unsigned i = owned_space.min(0); i < owned_space.max(0); ++i )
-        for ( unsigned j = owned_space.min(1); j < owned_space.max(1); ++j )
-            for ( unsigned k = owned_space.min(2); k < owned_space.max(2); ++k )
-            {
-                int num_n = 0;
-                if ( in_dim_min_halo(i,Dim::I) || in_dim_max_halo(i,Dim::I) )
-                    ++num_n;
-                if ( in_dim_min_halo(j,Dim::J) || in_dim_max_halo(j,Dim::J) )
-                    ++num_n;
-                if ( in_dim_min_halo(k,Dim::K) || in_dim_max_halo(k,Dim::K) )
-                    ++num_n;
-                double scatter_val = std::pow( 2.0, num_n );
-                for ( unsigned l = 0; l < owned_space.extent(3); ++l )
-                    EXPECT_EQ( host_view(i,j,k,l), scatter_val );
-            }
+        // Check results. Use the halo functions to figure out how many neighbor a
+        // given cell was ghosted to.
+        Kokkos::deep_copy( host_view, array->view() );
+        for ( unsigned i = owned_space.min(0); i < owned_space.max(0); ++i )
+            for ( unsigned j = owned_space.min(1); j < owned_space.max(1); ++j )
+                for ( unsigned k = owned_space.min(2); k < owned_space.max(2); ++k )
+                {
+                    int num_n = 0;
+                    if ( in_dim_min_halo(i,Dim::I) || in_dim_max_halo(i,Dim::I) )
+                        ++num_n;
+                    if ( in_dim_min_halo(j,Dim::J) || in_dim_max_halo(j,Dim::J) )
+                        ++num_n;
+                    if ( in_dim_min_halo(k,Dim::K) || in_dim_max_halo(k,Dim::K) )
+                        ++num_n;
+                    double scatter_val = std::pow( 2.0, num_n );
+                    for ( unsigned l = 0; l < owned_space.extent(3); ++l )
+                        EXPECT_EQ( host_view(i,j,k,l), scatter_val );
+                }
+    }
 }
 
 //---------------------------------------------------------------------------//

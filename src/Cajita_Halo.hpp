@@ -387,9 +387,10 @@ class Halo
 */
 template <class Scalar, class Device, class EntityType>
 std::shared_ptr<Halo<Scalar, Device>>
-createHalo( const ArrayLayout<EntityType> &layout, const HaloPattern &pattern )
+createHalo( const ArrayLayout<EntityType> &layout, const HaloPattern &pattern,
+            const int width = -1 )
 {
-    return std::make_shared<Halo<Scalar, Device>>( layout, pattern );
+    return std::make_shared<Halo<Scalar, Device>>( layout, pattern, width );
 }
 
 //---------------------------------------------------------------------------//
@@ -406,12 +407,12 @@ std::shared_ptr<
     Halo<typename Array<Scalar, EntityType, Params...>::value_type,
          typename Array<Scalar, EntityType, Params...>::device_type>>
 createHalo( const Array<Scalar, EntityType, Params...> &array,
-            const HaloPattern &pattern )
+            const HaloPattern &pattern, const int width = -1 )
 {
     return std::make_shared<
         Halo<typename Array<Scalar, EntityType, Params...>::value_type,
              typename Array<Scalar, EntityType, Params...>::device_type>>(
-        *( array.layout() ), pattern );
+        *( array.layout() ), pattern, width );
 }
 
 //---------------------------------------------------------------------------//
