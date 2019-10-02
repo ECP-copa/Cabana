@@ -20,6 +20,7 @@
 
 #include <HYPRE_struct_ls.h>
 #include <HYPRE_struct_mv.h>
+#include <HYPRE_struct_ls.h>
 
 #include <Kokkos_Core.hpp>
 
@@ -55,25 +56,30 @@ class StructuredSolver
 
         // Get the global index space spanned by the block on this rank. Note
         // that the upper bound is not a bound but rather the last index as
-        // this is what Hypre wants.
+        // this is what Hypre wants. Note that we reordered this to KJI from
+        // IJK to be consistent with HYPRE ordering. By setting up the grid
+        // like this, HYPRE will then want layout-right data indexed as
+        // (i,j,k) or (i,j,k,l) which will allow us to directly use
+        // Kokkos::deep_copy to move data between Cajita arrays and HYPRE data
+        // structures.
         auto global_space = layout.indexSpace( Own(), Global() );
-        _lower = {static_cast<HYPRE_Int>( global_space.min( Dim::I ) ),
+        _lower = {static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
                   static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
-                  static_cast<HYPRE_Int>( global_space.min( Dim::K ) )};
-        _upper = {static_cast<HYPRE_Int>( global_space.max( Dim::I ) ) - 1,
+                  static_cast<HYPRE_Int>( global_space.min( Dim::I ) )};
+        _upper = {static_cast<HYPRE_Int>( global_space.max( Dim::K ) ) - 1,
                   static_cast<HYPRE_Int>( global_space.max( Dim::J ) ) - 1,
-                  static_cast<HYPRE_Int>( global_space.max( Dim::K ) ) - 1};
+                  static_cast<HYPRE_Int>( global_space.max( Dim::I ) ) - 1};
         error =
             HYPRE_StructGridSetExtents( _grid, _lower.data(), _upper.data() );
         checkHypreError( error );
 
-        // Get periodicity
+        // Get periodicity. Note we invert the order of this to KJI as well.
         const auto &domain = layout.block()->globalGrid().domain();
         HYPRE_Int periodic[3];
         for ( int d = 0; d < 3; ++d )
-            periodic[d] = domain.isPeriodic( d )
+            periodic[2 - d] = domain.isPeriodic( d )
                               ? layout.block()->globalGrid().globalNumEntity(
-                                    EntityType(), d )
+                                  EntityType(), d )
                               : 0;
         error = HYPRE_StructGridSetPeriodic( _grid, periodic );
         checkHypreError( error );
@@ -82,10 +88,11 @@ class StructuredSolver
         error = HYPRE_StructGridAssemble( _grid );
         checkHypreError( error );
 
-        // Allocate LHS and RHS vectors and initialize to zero.
-        IndexSpace<3> reorder_space( {global_space.extent( Dim::K ),
+        // Allocate LHS and RHS vectors and initialize to zero. Note that we
+        // are fixing the views under these vectors to layout-right.
+        IndexSpace<3> reorder_space( {global_space.extent( Dim::I ),
                                       global_space.extent( Dim::J ),
-                                      global_space.extent( Dim::I )} );
+                                      global_space.extent( Dim::K )} );
         auto vector_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
@@ -175,25 +182,16 @@ class StructuredSolver
         // Get a view of the matrix values on the host.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
         auto owned_values = createSubview( values.view(), owned_space );
-        auto host_values = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), owned_values );
 
-        // Reorder the matrix values the way HYPRE wants them ordered.
+        // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
+        // layout-right.
         IndexSpace<4> reorder_space(
-            {owned_space.extent( Dim::K ), owned_space.extent( Dim::J ),
-             owned_space.extent( Dim::I ), _stencil_size} );
+            {owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
+             owned_space.extent( Dim::K ), _stencil_size} );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "a_values", reorder_space );
-
-        using host_exec_space = decltype( a_values )::execution_space;
-        Kokkos::parallel_for(
-            "StructuredSolver::setMatrixValues",
-            createExecutionPolicy( reorder_space, host_exec_space() ),
-            KOKKOS_LAMBDA( const int k, const int j, const int i,
-                           const int l ) {
-                a_values( k, j, i, l ) = host_values( i, j, k, l );
-            } );
+        Kokkos::deep_copy( a_values, owned_values );
 
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
@@ -242,24 +240,16 @@ class StructuredSolver
         // Get a local view of b on the host.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
         auto owned_b = createSubview( b.view(), owned_space );
-        auto b_values =
-            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), owned_b );
 
-        // Reorder b the way HYPRE wants it to be ordered
-        IndexSpace<3> reorder_space( {owned_space.extent( Dim::K ),
+        // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
+        IndexSpace<4> reorder_space( {owned_space.extent( Dim::I ),
                                       owned_space.extent( Dim::J ),
-                                      owned_space.extent( Dim::I )} );
+                                      owned_space.extent( Dim::K ),
+                                      1} );
         auto vector_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
-
-        using host_exec_space = decltype( vector_values )::execution_space;
-        Kokkos::parallel_for(
-            "StructuredSolver::setVectorValues",
-            createExecutionPolicy( reorder_space, host_exec_space() ),
-            KOKKOS_LAMBDA( const int k, const int j, const int i ) {
-                vector_values( k, j, i ) = b_values( i, j, k, 0 );
-            } );
+        Kokkos::deep_copy( vector_values, owned_b );
 
         // Insert b values into the HYPRE vector.
         error = HYPRE_StructVectorSetBoxValues(
@@ -278,19 +268,9 @@ class StructuredSolver
 
         // Get a local view of x on the host.
         auto owned_x = createSubview( x.view(), owned_space );
-        auto x_values =
-            Kokkos::create_mirror_view( Kokkos::HostSpace(), owned_x );
 
-        // Reorder x from the HYPRE order.
-        Kokkos::parallel_for(
-            "StructuredSolver::setVectorValues",
-            createExecutionPolicy( reorder_space, host_exec_space() ),
-            KOKKOS_LAMBDA( const int k, const int j, const int i ) {
-                x_values( i, j, k, 0 ) = vector_values( k, j, i );
-            } );
-
-        // Copy the solution to the LHS.
-        Kokkos::deep_copy( owned_x, x_values );
+        // Copy the HYPRE solution to the LHS.
+        Kokkos::deep_copy( owned_x, vector_values );
     }
 
     // Get the number of iterations taken on the last solve.
