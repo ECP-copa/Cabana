@@ -71,15 +71,13 @@ endif()
 
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  set(DOXYGEN_GENERATE_XML YES) 
-  doxygen_add_docs(doxygen core)
+  doxygen_add_docs(doxygen core/src)
 endif()
 
 option(Cabana_ENABLE_MPI "Build Cabana with MPI support" OFF)
 if(Cabana_ENABLE_MPI)
   find_package(MPI REQUIRED)
 endif()
-
 
 #------------------------------------------------------------------------------#
 # Architecture
@@ -134,3 +132,11 @@ add_subdirectory(core)
 
 configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+find_package(CLANG_FORMAT)
+if(CLANG_FORMAT_FOUND)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp)
+  add_custom_target(format
+    COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
+    DEPENDS ${FORMAT_SOURCES})
+endif()

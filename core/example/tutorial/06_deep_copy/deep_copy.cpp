@@ -37,9 +37,7 @@ void deepCopyExample()
        array of doubles, a rank-1 array of floats, and a single integer in
        each tuple.
     */
-    using DataTypes = Cabana::MemberTypes<double[3][3],
-                                          float[4],
-                                          int>;
+    using DataTypes = Cabana::MemberTypes<double[3][3], float[4], int>;
 
     /*
       Declare the vector length and memory space parameters of the source
@@ -48,7 +46,7 @@ void deepCopyExample()
     const int SrcVectorLength = 8;
     using SrcMemorySpace = Kokkos::HostSpace;
     using SrcExecutionSpace = Kokkos::Serial;
-    using SrcDevice = Kokkos::Device<SrcExecutionSpace,SrcMemorySpace>;
+    using SrcDevice = Kokkos::Device<SrcExecutionSpace, SrcMemorySpace>;
 
     /*
       Declare the vector length and memory space parameters of the destination
@@ -57,35 +55,35 @@ void deepCopyExample()
     const int DstVectorLength = 32;
     using DstMemorySpace = Kokkos::CudaUVMSpace;
     using DstExecutionSpace = Kokkos::Cuda;
-    using DstDevice = Kokkos::Device<DstExecutionSpace,DstMemorySpace>;
+    using DstDevice = Kokkos::Device<DstExecutionSpace, DstMemorySpace>;
 
     /*
        Create the source and destination AoSoAs.
     */
     int num_tuple = 5;
-    Cabana::AoSoA<DataTypes,SrcDevice,SrcVectorLength>
-        src_aosoa( "src", num_tuple );
-    Cabana::AoSoA<DataTypes,DstDevice,DstVectorLength>
-        dst_aosoa( "dst", num_tuple );
+    Cabana::AoSoA<DataTypes, SrcDevice, SrcVectorLength> src_aosoa( "src",
+                                                                    num_tuple );
+    Cabana::AoSoA<DataTypes, DstDevice, DstVectorLength> dst_aosoa( "dst",
+                                                                    num_tuple );
 
     /*
       Put some data in the source AoSoA.
     */
     for ( std::size_t s = 0; s < src_aosoa.numSoA(); ++s )
     {
-        auto& soa = src_aosoa.access(s);
+        auto &soa = src_aosoa.access( s );
 
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                for ( unsigned a = 0; a < src_aosoa.arraySize(s); ++a )
-                    Cabana::get<0>(soa,a,i,j) = 1.0 * (a + i + j);
+                for ( unsigned a = 0; a < src_aosoa.arraySize( s ); ++a )
+                    Cabana::get<0>( soa, a, i, j ) = 1.0 * ( a + i + j );
 
         for ( int i = 0; i < 4; ++i )
-            for ( unsigned a = 0; a < src_aosoa.arraySize(s); ++a )
-                Cabana::get<1>(soa,a,i) = 1.0 * (a + i);
+            for ( unsigned a = 0; a < src_aosoa.arraySize( s ); ++a )
+                Cabana::get<1>( soa, a, i ) = 1.0 * ( a + i );
 
-        for ( unsigned a = 0; a < src_aosoa.arraySize(s); ++a )
-            Cabana::get<2>(soa,a) = a + 1234;
+        for ( unsigned a = 0; a < src_aosoa.arraySize( s ); ++a )
+            Cabana::get<2>( soa, a ) = a + 1234;
     }
 
     /*
@@ -106,17 +104,16 @@ void deepCopyExample()
 
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
-                std::cout << "Tuple " << t
-                          << ", member 0 element (" << i << "," << j << "): "
-                          << Cabana::get<0>(tp,i,j) << std::endl;
+                std::cout << "Tuple " << t << ", member 0 element (" << i << ","
+                          << j << "): " << Cabana::get<0>( tp, i, j )
+                          << std::endl;
 
         for ( int i = 0; i < 4; ++i )
-            std::cout << "Tuple " << t
-                      << ", member 1 element (" << i << "): "
-                      << Cabana::get<1>(tp,i) << std::endl;
+            std::cout << "Tuple " << t << ", member 1 element (" << i
+                      << "): " << Cabana::get<1>( tp, i ) << std::endl;
 
-        std::cout << "Tuple " << t
-                  << ", member 2: " << Cabana::get<2>(tp) << std::endl;
+        std::cout << "Tuple " << t << ", member 2: " << Cabana::get<2>( tp )
+                  << std::endl;
     }
 
     /*
@@ -132,8 +129,8 @@ void deepCopyExample()
       allocated in a different mnemory space allowing for easy transfer back to
       the device:
      */
-    auto dst_aosoa_host = Cabana::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), dst_aosoa );
+    auto dst_aosoa_host =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), dst_aosoa );
 
     /*
        Note that this view is now in the provided host space. If we were to
@@ -173,19 +170,19 @@ void deepCopyExample()
     Cabana::Tuple<DataTypes> tp;
     for ( int i = 0; i < 3; ++i )
         for ( int j = 0; j < 3; ++j )
-            Cabana::get<0>(tp,i,j) = 1.0;
+            Cabana::get<0>( tp, i, j ) = 1.0;
     for ( int i = 0; i < 4; ++i )
-        Cabana::get<1>(tp,i) = 3.23;
-    Cabana::get<2>(tp) = 39;
+        Cabana::get<1>( tp, i ) = 3.23;
+    Cabana::get<2>( tp ) = 39;
     Cabana::deep_copy( dst_aosoa, tp );
 }
 
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char* argv[] )
+int main( int argc, char *argv[] )
 {
-    Kokkos::ScopeGuard scope_guard(argc, argv);
+    Kokkos::ScopeGuard scope_guard( argc, argv );
 
     deepCopyExample();
 

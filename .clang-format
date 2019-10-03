@@ -1,0 +1,9 @@
+BasedOnStyle:  LLVM
+---
+Language:        Cpp
+AlwaysBreakTemplateDeclarations: true
+BreakBeforeBraces: Allman
+BinPackParameters: true
+IndentWidth: 4
+SpacesInParentheses: true
+BreakConstructorInitializersBeforeComma: true

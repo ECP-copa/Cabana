@@ -56,16 +56,14 @@ bool cabana_initialized_kokkos = false;
 //---------------------------------------------------------------------------//
 // Initialize Kokkos, if it needs initialization.
 template <typename... Args>
-CABANA_DEPRECATED
-void initKokkos( Args &&... args )
+CABANA_DEPRECATED void initKokkos( Args &&... args )
 {
     if ( !cabana_initialized_kokkos )
     {
         // Kokkos doesn't have a global is_initialized().  However,
         // Kokkos::initialize() always initializes the default execution
         // space, so it suffices to check whether that was initialized.
-        const bool kokkosIsInitialized =
-            Kokkos::DefaultExecutionSpace::is_initialized();
+        const bool kokkosIsInitialized = Kokkos::is_initialized();
 
         if ( !kokkosIsInitialized )
         {
@@ -76,8 +74,7 @@ void initKokkos( Args &&... args )
         }
     }
 
-    const bool kokkosIsInitialized =
-        Kokkos::DefaultExecutionSpace::is_initialized();
+    const bool kokkosIsInitialized = Kokkos::is_initialized();
 
     if ( !kokkosIsInitialized )
         throw std::runtime_error( "At the end of initKokkos, Kokkos"
@@ -91,8 +88,7 @@ void initKokkos( Args &&... args )
 
 //---------------------------------------------------------------------------//
 template <typename... Args>
-CABANA_DEPRECATED
-void initialize( Args &&... args )
+CABANA_DEPRECATED void initialize( Args &&... args )
 {
     if ( !is_cabana_initialized )
         initKokkos( std::forward<Args>( args )... );
