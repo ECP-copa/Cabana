@@ -36,8 +36,8 @@ void poissonTest()
     // Create the global grid.
     double cell_size = 0.1;
     std::vector<bool> is_dim_periodic = {true,true,true};
-    std::vector<double> global_low_corner = {-1.0, -1.0, -1.0 };
-    std::vector<double> global_high_corner = { 1.0, 1.0, 1.0 };
+    std::vector<double> global_low_corner = {-1.0, -2.0, -1.0 };
+    std::vector<double> global_high_corner = { 1.0, 1.0, 0.5 };
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
                                          partitioner,
                                          is_dim_periodic,
@@ -60,7 +60,7 @@ void poissonTest()
 
     // Create a solver.
     auto solver =
-        createStructuredSolver( "PCG", *vector_layout, TEST_DEVICE() );
+        createStructuredSolver<double,TEST_DEVICE>( "PCG", *vector_layout );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int,3> > stencil =

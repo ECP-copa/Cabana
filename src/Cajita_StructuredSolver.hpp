@@ -35,13 +35,16 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 // Hypre structured solver interface for scalar fields.
-template <class EntityType, class DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
 class StructuredSolver
 {
   public:
     // Types.
     using entity_type = EntityType;
     using device_type = DeviceType;
+    using scalar_type = Scalar;
+    template<class ... Params>
+    using array_type = Array<scalar_type,entity_type,Params...>;
 
     /*!
       \brief Constructor.
@@ -94,7 +97,7 @@ class StructuredSolver
                                       global_space.extent( Dim::J ),
                                       global_space.extent( Dim::K )} );
         auto vector_values =
-            createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
+            createView<double, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
         Kokkos::deep_copy( vector_values, 0.0 );
 
@@ -167,9 +170,14 @@ class StructuredSolver
       stencil definition. Note that values corresponding to stencil entries
       outside of the domain should be set to zero.
     */
-    template <class Scalar>
-    void setMatrixValues( const Array<Scalar, EntityType, DeviceType> &values )
+    template <class ... ArrayParams>
+    void setMatrixValues( const array_type<ArrayParams...> &values )
     {
+        static_assert(
+            std::is_same<typename array_type<ArrayParams...>::device_type,
+            DeviceType>::value,
+            "Array device type and solver device type are different." );
+
         if ( values.layout()->dofsPerEntity() !=
              static_cast<int>( _stencil_size ) )
             throw std::runtime_error(
@@ -182,6 +190,8 @@ class StructuredSolver
         // Get a view of the matrix values on the host.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
         auto owned_values = createSubview( values.view(), owned_space );
+        auto owned_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), owned_values );
 
         // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
         // layout-right.
@@ -189,9 +199,9 @@ class StructuredSolver
             {owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
              owned_space.extent( Dim::K ), _stencil_size} );
         auto a_values =
-            createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
+            createView<double, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "a_values", reorder_space );
-        Kokkos::deep_copy( a_values, owned_values );
+        Kokkos::deep_copy( a_values, owned_mirror );
 
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
@@ -224,10 +234,15 @@ class StructuredSolver
       \param b The forcing term.
       \param x The solution.
     */
-    template <class Scalar>
-    void solve( const Array<Scalar, EntityType, DeviceType> &b,
-                Array<Scalar, EntityType, DeviceType> &x )
+    template <class ... ArrayParams>
+    void solve( const array_type<ArrayParams...> &b,
+                array_type<ArrayParams...> &x )
     {
+        static_assert(
+            std::is_same<typename array_type<ArrayParams...>::device_type,
+            DeviceType>::value,
+            "Array device type and solver device type are different." );
+
         if ( b.layout()->dofsPerEntity() != 1 ||
              x.layout()->dofsPerEntity() != 1 )
             throw std::runtime_error(
@@ -240,6 +255,8 @@ class StructuredSolver
         // Get a local view of b on the host.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
         auto owned_b = createSubview( b.view(), owned_space );
+        auto b_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), owned_b );
 
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         IndexSpace<4> reorder_space( {owned_space.extent( Dim::I ),
@@ -247,9 +264,9 @@ class StructuredSolver
                                       owned_space.extent( Dim::K ),
                                       1} );
         auto vector_values =
-            createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
+            createView<double, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
-        Kokkos::deep_copy( vector_values, owned_b );
+        Kokkos::deep_copy( vector_values, b_mirror );
 
         // Insert b values into the HYPRE vector.
         error = HYPRE_StructVectorSetBoxValues(
@@ -268,9 +285,12 @@ class StructuredSolver
 
         // Get a local view of x on the host.
         auto owned_x = createSubview( x.view(), owned_space );
+        auto x_mirror = Kokkos::create_mirror_view(
+            Kokkos::HostSpace(), owned_x );
 
         // Copy the HYPRE solution to the LHS.
-        Kokkos::deep_copy( owned_x, vector_values );
+        Kokkos::deep_copy( x_mirror, vector_values );
+        Kokkos::deep_copy( owned_x, x_mirror );
     }
 
     // Get the number of iterations taken on the last solve.
@@ -332,11 +352,11 @@ class StructuredSolver
 
 //---------------------------------------------------------------------------//
 // PCG solver.
-template <class EntityType, class DeviceType>
-class HypreStructPCG : public StructuredSolver<EntityType, DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructPCG : public StructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<EntityType, DeviceType>;
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
     HypreStructPCG( const ArrayLayout<EntityType> &layout )
         : Base( layout )
@@ -404,11 +424,11 @@ class HypreStructPCG : public StructuredSolver<EntityType, DeviceType>
 
 //---------------------------------------------------------------------------//
 // GMRES solver.
-template <class EntityType, class DeviceType>
-class HypreStructGMRES : public StructuredSolver<EntityType, DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructGMRES : public StructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<EntityType, DeviceType>;
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
     HypreStructGMRES( const ArrayLayout<EntityType> &layout )
         : Base( layout )
@@ -476,11 +496,11 @@ class HypreStructGMRES : public StructuredSolver<EntityType, DeviceType>
 
 //---------------------------------------------------------------------------//
 // PFMG solver.
-template <class EntityType, class DeviceType>
-class HypreStructPFMG : public StructuredSolver<EntityType, DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructPFMG : public StructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<EntityType, DeviceType>;
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
     HypreStructPFMG( const ArrayLayout<EntityType> &layout )
         : Base( layout )
@@ -548,11 +568,11 @@ class HypreStructPFMG : public StructuredSolver<EntityType, DeviceType>
 
 //---------------------------------------------------------------------------//
 // SMG solver.
-template <class EntityType, class DeviceType>
-class HypreStructSMG : public StructuredSolver<EntityType, DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructSMG : public StructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<EntityType, DeviceType>;
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
     HypreStructSMG( const ArrayLayout<EntityType> &layout )
         : Base( layout )
@@ -621,22 +641,22 @@ class HypreStructSMG : public StructuredSolver<EntityType, DeviceType>
 //---------------------------------------------------------------------------//
 // Factory
 //---------------------------------------------------------------------------//
-template <class EntityType, class DeviceType>
-std::shared_ptr<StructuredSolver<EntityType, DeviceType>>
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<StructuredSolver<Scalar, EntityType, DeviceType>>
 createStructuredSolver( const std::string &solver_type,
-                        const ArrayLayout<EntityType> &layout, DeviceType )
+                        const ArrayLayout<EntityType> &layout )
 {
     if ( "PCG" == solver_type )
-        return std::make_shared<HypreStructPCG<EntityType, DeviceType>>(
+        return std::make_shared<HypreStructPCG<Scalar, EntityType, DeviceType>>(
             layout );
     else if ( "GMRES" == solver_type )
-        return std::make_shared<HypreStructGMRES<EntityType, DeviceType>>(
+        return std::make_shared<HypreStructGMRES<Scalar, EntityType, DeviceType>>(
             layout );
     else if ( "PFMG" == solver_type )
-        return std::make_shared<HypreStructPFMG<EntityType, DeviceType>>(
+        return std::make_shared<HypreStructPFMG<Scalar, EntityType, DeviceType>>(
             layout );
     else if ( "SMG" == solver_type )
-        return std::make_shared<HypreStructSMG<EntityType, DeviceType>>(
+        return std::make_shared<HypreStructSMG<Scalar, EntityType, DeviceType>>(
             layout );
     else
         throw std::runtime_error( "Invalid solver type" );
