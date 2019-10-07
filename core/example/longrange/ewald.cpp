@@ -221,7 +221,7 @@ double TEwald::compute( ParticleList &particles, double lx, double ly,
                     Kokkos::atomic_add( &U_trigonometric( 2 * kidx ),
                                         q( idx ) * cos( kr ) );
                     Kokkos::atomic_add( &U_trigonometric( 2 * kidx + 1 ),
-                                        q( idx ) * cos( kr ) );
+                                        q( idx ) * sin( kr ) );
                 }
             }
         }
