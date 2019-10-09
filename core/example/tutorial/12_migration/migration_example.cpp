@@ -139,7 +139,7 @@ void migrationExample()
     // imported elements each rank will recieve. We discard 10 elements, get
     // 10 from our neighbor, and keep 80 of our own so this number should be 90.
     Cabana::AoSoA<DataTypes, DeviceType, VectorLength> destination(
-        distributor.totalNumImport() );
+        "destination", distributor.totalNumImport() );
 
     // Do the migration.
     Cabana::migrate( distributor, aosoa, destination );
