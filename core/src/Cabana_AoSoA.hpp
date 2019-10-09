@@ -286,7 +286,7 @@ class AoSoA
       necessarily equal to its storage capacity.
     */
     KOKKOS_FUNCTION
-    bool empty() const { return ( _size == 0 ); }
+    bool empty() const { return ( size() == 0 ); }
 
     /*!
       \brief Returns the size of the storage space currently allocated for the
