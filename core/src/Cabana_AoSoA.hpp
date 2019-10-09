@@ -190,8 +190,11 @@ class AoSoA
         : _size( 0 )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _data( label, 0 )
+        , _data( Kokkos::ViewAllocateWithoutInitializing( label ), 0 )
     {
+        static_assert(
+            !memory_traits::is_unmanaged,
+            "Construction by allocation cannot use unmanaged memory" );
     }
 
     /*!
@@ -226,8 +229,11 @@ class AoSoA
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _data( label, 0 )
+        , _data( Kokkos::ViewAllocateWithoutInitializing( label ), 0 )
     {
+        static_assert(
+            !memory_traits::is_unmanaged,
+            "Construction by allocation cannot use unmanaged memory" );
         resize( _size );
     }
 
@@ -283,7 +289,8 @@ class AoSoA
 
       Notice that this capacity does not suppose a limit on the size of the
       container. When this capacity is exhausted and more is needed, it is
-      automatically expanded by the container (reallocating it storage space).
+      automatically expanded by the container (reallocating the storage
+      space).
 
       The capacity of a container can be explicitly altered by calling member
       reserve.
@@ -358,8 +365,18 @@ class AoSoA
         // Assign the new capacity.
         _capacity = num_soa_alloc * vector_length;
 
-        // If we need more SoA objects then resize.
-        Kokkos::resize( _data, num_soa_alloc );
+        // We need more SoA objects so allocate a new view and copy the
+        // existing data.
+        soa_view resized_data(
+            Kokkos::ViewAllocateWithoutInitializing( _data.label() ),
+            num_soa_alloc );
+        if ( _num_soa > 0 )
+            Kokkos::deep_copy(
+                Kokkos::subview(
+                    resized_data,
+                    Kokkos::pair<size_type, size_type>( 0, _num_soa ) ),
+                _data );
+        _data = resized_data;
     }
 
     /*!
