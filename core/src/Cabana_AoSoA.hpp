@@ -200,27 +200,6 @@ class AoSoA
     /*!
       \brief Allocate a container with n tuples.
 
-      \param n The number of tuples in the container.
-
-      Note: this function has been deprecated in favor of the constructor that
-      uses a label as this is more consistent with the construction of a
-      Kokkos View.
-    */
-    CABANA_DEPRECATED
-    explicit AoSoA( const size_type n )
-        : _size( n )
-        , _capacity( 0 )
-        , _num_soa( 0 )
-    {
-        static_assert(
-            !memory_traits::is_unmanaged,
-            "Construction by allocation cannot use unmanaged memory" );
-        resize( _size );
-    }
-
-    /*!
-      \brief Allocate a container with n tuples.
-
       \param label A label for the data structure.
 
       \param n The number of tuples in the container.
@@ -493,27 +472,6 @@ class AoSoA
         Impl::tupleCopy( _data( index_type::s( i ) ), index_type::a( i ), tpl,
                          0 );
     }
-
-    /*!
-      \brief Get an unmanaged slice of a tuple member with default memory
-      access.
-      \tparam M The member index to get a slice of.
-      \param slice_label An optional label to assign to the slice.
-      \return The member slice.
-    */
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    member_slice_type<M> slice( const std::string &slice_label = "" ) const
-    {
-        return Cabana::slice<M>( *this, slice_label );
-    }
-
-    /*!
-      \brief Get an un-typed raw pointer to the entire data block.
-      \return An un-typed raw-pointer to the entire data block.
-    */
-    CABANA_DEPRECATED
-    void *ptr() const { return _data.data(); }
 
     /*!
       \brief Get a typed raw pointer to the entire data block.

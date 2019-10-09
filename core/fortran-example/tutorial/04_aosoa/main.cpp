@@ -102,7 +102,7 @@ int main( int argc, char *argv[] )
     int num_element = 5;
 
     /* Create a pointer of AosoaType */
-    AosoaTYPE *aosoa = new AosoaTYPE( num_element );
+    AosoaTYPE *aosoa = new AosoaTYPE( "aosoa", num_element );
 
     std::cout << "aosoa.size() = " << aosoa->size() << std::endl;
     std::cout << "aosoa.capacity() = " << aosoa->capacity() << std::endl;
@@ -110,7 +110,7 @@ int main( int argc, char *argv[] )
 
     /* In calling the Fortran subroutine, we cast aosoa to conventional struct,
        and pass it to Fortran */
-    aosoaExample( (local_data_struct_t *)( aosoa->ptr() ), num_element );
+    aosoaExample( (local_data_struct_t *)( aosoa->data() ), num_element );
 
     delete aosoa;
 
