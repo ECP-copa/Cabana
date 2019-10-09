@@ -3,6 +3,7 @@ var searchData=
   ['s',['s',['../classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b',1,'Cabana::Impl::Index']]],
   ['serialneighboroptag',['SerialNeighborOpTag',['../classCabana_1_1SerialNeighborOpTag.html',1,'Cabana']]],
   ['settuple',['setTuple',['../classCabana_1_1AoSoA.html#ac834c774799c45be41eacd0218c561cb',1,'Cabana::AoSoA']]],
+  ['shrinktofit',['shrinkToFit',['../classCabana_1_1AoSoA.html#a5cb720713784b07b508063af7b9b10e1',1,'Cabana::AoSoA']]],
   ['simdpolicy',['SimdPolicy',['../classCabana_1_1SimdPolicy.html',1,'Cabana']]],
   ['simdpolicy',['SimdPolicy',['../classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21',1,'Cabana::SimdPolicy']]],
   ['size',['size',['../classCabana_1_1AoSoA.html#a978ee8f822bf68ebe5ca827ebc3cd80f',1,'Cabana::AoSoA::size()'],['../classCabana_1_1Slice.html#a204a72ff6926cf2ae226e39be2c1355a',1,'Cabana::Slice::size()']]],

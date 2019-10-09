@@ -174,6 +174,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a978ee8f822bf68ebe5ca827ebc3cd80f"><td class="memItemLeft" align="right" valign="top">KOKKOS_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a978ee8f822bf68ebe5ca827ebc3cd80f">size</a> () const </td></tr>
 <tr class="memdesc:a978ee8f822bf68ebe5ca827ebc3cd80f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the number of tuples in the container.  <a href="#a978ee8f822bf68ebe5ca827ebc3cd80f">More...</a><br /></td></tr>
 <tr class="separator:a978ee8f822bf68ebe5ca827ebc3cd80f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a82854273825613ae396a41bc751deb5c"><td class="memItemLeft" align="right" valign="top">KOKKOS_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a82854273825613ae396a41bc751deb5c">empty</a> () const </td></tr>
+<tr class="memdesc:a82854273825613ae396a41bc751deb5c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns if the container is empty or not.  <a href="#a82854273825613ae396a41bc751deb5c">More...</a><br /></td></tr>
+<tr class="separator:a82854273825613ae396a41bc751deb5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2c7c9b4ed46b3988831d8a0c5edfaa3"><td class="memItemLeft" align="right" valign="top">KOKKOS_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#ab2c7c9b4ed46b3988831d8a0c5edfaa3">capacity</a> () const </td></tr>
 <tr class="memdesc:ab2c7c9b4ed46b3988831d8a0c5edfaa3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Returns the size of the storage space currently allocated for the container, expressed in terms of tuples.  <a href="#ab2c7c9b4ed46b3988831d8a0c5edfaa3">More...</a><br /></td></tr>
 <tr class="separator:ab2c7c9b4ed46b3988831d8a0c5edfaa3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -183,6 +186,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a657bd2a85ad107ee746a7fc2f4996dd3"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a657bd2a85ad107ee746a7fc2f4996dd3">reserve</a> (const size_type n)</td></tr>
 <tr class="memdesc:a657bd2a85ad107ee746a7fc2f4996dd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Requests that the container capacity be at least enough to contain n tuples.  <a href="#a657bd2a85ad107ee746a7fc2f4996dd3">More...</a><br /></td></tr>
 <tr class="separator:a657bd2a85ad107ee746a7fc2f4996dd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5cb720713784b07b508063af7b9b10e1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a5cb720713784b07b508063af7b9b10e1">shrinkToFit</a> ()</td></tr>
+<tr class="memdesc:a5cb720713784b07b508063af7b9b10e1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove unused capacity.  <a href="#a5cb720713784b07b508063af7b9b10e1">More...</a><br /></td></tr>
+<tr class="separator:a5cb720713784b07b508063af7b9b10e1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a48fc7416349739ce9e5ec3b017493fbc"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1AoSoA.html#a48fc7416349739ce9e5ec3b017493fbc">numSoA</a> () const </td></tr>
 <tr class="memdesc:a48fc7416349739ce9e5ec3b017493fbc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of structs-of-arrays in the container.  <a href="#a48fc7416349739ce9e5ec3b017493fbc">More...</a><br /></td></tr>
 <tr class="separator:a48fc7416349739ce9e5ec3b017493fbc"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -534,6 +540,35 @@ template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::Perfor
 
 </div>
 </div>
+<a class="anchor" id="a82854273825613ae396a41bc751deb5c"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_FUNCTION bool <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::empty </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Returns if the container is empty or not. </p>
+<dl class="section return"><dt>Returns</dt><dd>True if the number of tuples in the container is zero.</dd></dl>
+<p>This is the number of actual objects held in the container, which is not necessarily equal to its storage capacity. </p>
+
+</div>
+</div>
 <a class="anchor" id="ad60b044fe90293b911f7318c320f6f55"></a>
 <div class="memitem">
 <div class="memproto">
@@ -681,6 +716,7 @@ template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::Perfor
 <p>Requests that the container capacity be at least enough to contain n tuples. </p>
 <p>If n is greater than the current container capacity, the function causes the container to reallocate its storage increasing its capacity to n (or greater).</p>
 <p>In all other cases, the function call does not cause a reallocation and the container capacity is not affected.</p>
+<p>If reallocation occurs, all slices and all references to the elements are invalidated. If no reallocation takes place, no slices or references are invalidated.</p>
 <p>This function has no effect on the container size and cannot alter its tuples. </p>
 
 </div>
@@ -713,7 +749,7 @@ template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::Perfor
 <p>If n is smaller than the current container size, the content is reduced to its first n tuples.</p>
 <p>If n is greater than the current container size, the content is expanded by inserting at the end as many tuples as needed to reach a size of n.</p>
 <p>If n is also greater than the current container capacity, an automatic reallocation of the allocated storage space takes place.</p>
-<p>Notice that this function changes the actual content of the container by inserting or erasing tuples from it. </p>
+<p>Notice that this function changes the actual content of the container by inserting or erasing tuples from it. If reallocation occurs, all slices and all references to the elements are invalidated. If no reallocation takes place, no slices or references are invalidated. </p>
 
 </div>
 </div>
@@ -759,6 +795,34 @@ template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::Perfor
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a class="anchor" id="a5cb720713784b07b508063af7b9b10e1"></a>
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DataTypes , class DeviceType , int VectorLength = Impl::PerformanceTraits&lt;              typename DeviceType::execution_space&gt;::vector_length, class MemoryTraits  = Kokkos::MemoryManaged&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCabana_1_1AoSoA.html">Cabana::AoSoA</a>&lt; DataTypes, DeviceType, VectorLength, MemoryTraits &gt;::shrinkToFit </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Remove unused capacity. </p>
+<p>Will reduce the capacity to be the smallest number of SoAs needed to hold <a class="el" href="classCabana_1_1AoSoA.html#a978ee8f822bf68ebe5ca827ebc3cd80f" title="Returns the number of tuples in the container. ">size()</a> tuples. If reallocation occurs, all slices and all references to the elements are invalidated. If no reallocation takes place, no slices or references are invalidated. </p>
 
 </div>
 </div>
