@@ -78,7 +78,7 @@ void test1( const bool use_topology )
     EXPECT_EQ( halo->numGhost(), ghost_own_ranks.size() );
     auto own_ranks_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), ghost_own_ranks );
-    for ( int i = 0; i < my_size; ++i )
+    for ( int i = 0; i < static_cast<int>( halo->numGhost() ); ++i )
     {
         if ( i == 0 )
         {
@@ -296,7 +296,7 @@ void test2( const bool use_topology )
     EXPECT_EQ( halo->numGhost(), ghost_own_ranks.size() );
     auto own_ranks_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), ghost_own_ranks );
-    for ( int i = 0; i < my_size; ++i )
+    for ( int i = 0; i < static_cast<int>( halo->numGhost() ); ++i )
     {
         if ( i == 0 )
         {

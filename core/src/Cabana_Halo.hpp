@@ -203,13 +203,18 @@ class Halo : public CommunicationPlan<DeviceType>
     // Create the ghost owning ranks.
     void createGhostOwningRanks()
     {
+        // Allocate a view to hold the owner rank for each ghost element.
         _ghost_owning_ranks = Kokkos::View<int *, DeviceType>(
             Kokkos::ViewAllocateWithoutInitializing( "ghost_owning_ranks" ),
             numGhost() );
 
+        // Build the owning ranks on the host.
         auto owning_ranks_mirror = Kokkos::create_mirror_view(
             Kokkos::HostSpace(), _ghost_owning_ranks );
 
+        // The ghosts are ordered by the neighbor they came from. The ghosts
+        // that are imports from neighbor 0 is first, the imports from
+        // neighbor 1 are second, and so on.
         std::size_t ghost_id = 0;
         for ( int n = 0; n < this->numNeighbor(); ++n )
         {
@@ -220,6 +225,7 @@ class Halo : public CommunicationPlan<DeviceType>
             }
         }
 
+        // Copy owning ranks to the device so it is device-accessible.
         Kokkos::deep_copy( _ghost_owning_ranks, owning_ranks_mirror );
     }
 
