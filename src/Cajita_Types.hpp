@@ -64,6 +64,28 @@ struct Face<Dim::K>
 {
 };
 
+// Mesh edge tags.
+template <int D>
+struct Edge;
+
+// I-edge tag.
+template <>
+struct Edge<Dim::I>
+{
+};
+
+// J-edge tag.
+template <>
+struct Edge<Dim::J>
+{
+};
+
+// K-edge tag.
+template <>
+struct Edge<Dim::K>
+{
+};
+
 //---------------------------------------------------------------------------//
 // Decomposition tags.
 //---------------------------------------------------------------------------//

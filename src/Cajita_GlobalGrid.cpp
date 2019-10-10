@@ -197,6 +197,33 @@ int GlobalGrid::globalNumEntity( Face<Dim::K>, const int dim ) const
 }
 
 //---------------------------------------------------------------------------//
+// Get the global number of I-edges in a given dimension.
+template <>
+int GlobalGrid::globalNumEntity( Edge<Dim::I>, const int dim ) const
+{
+    return ( Dim::I == dim ) ? globalNumEntity( Cell(), dim )
+                             : globalNumEntity( Node(), dim );
+}
+
+//---------------------------------------------------------------------------//
+// Get the global number of J-edges in a given dimension.
+template <>
+int GlobalGrid::globalNumEntity( Edge<Dim::J>, const int dim ) const
+{
+    return ( Dim::J == dim ) ? globalNumEntity( Cell(), dim )
+                             : globalNumEntity( Node(), dim );
+}
+
+//---------------------------------------------------------------------------//
+// Get the global number of K-edges in a given dimension.
+template <>
+int GlobalGrid::globalNumEntity( Edge<Dim::K>, const int dim ) const
+{
+    return ( Dim::K == dim ) ? globalNumEntity( Cell(), dim )
+                             : globalNumEntity( Node(), dim );
+}
+
+//---------------------------------------------------------------------------//
 // Get the owned number of cells in a given dimension.
 int GlobalGrid::ownedNumCell( const int dim ) const
 {
