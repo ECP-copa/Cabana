@@ -65,11 +65,15 @@ class Block
     IndexSpace<3> indexSpace( DecompositionTag, EntityType, IndexType ) const;
 
     // Given a relative set of indices of a neighbor get the set of local
-    // entity indices shared with that neighbor in the given decomposition.
+    // entity indices shared with that neighbor in the given
+    // decomposition. Optionally provide a halo width for the shared
+    // space. This halo width must be less than or equal to the halo width of
+    // the block. The default behavior is to use the halo width of the block.
     template <class DecompositionTag, class EntityType>
     IndexSpace<3> sharedIndexSpace( DecompositionTag, EntityType,
                                     const int off_i, const int off_j,
-                                    const int off_k ) const;
+                                    const int off_k,
+                                    const int halo_width = -1 ) const;
 
   private:
     // Get the global index space of the block.
@@ -77,12 +81,6 @@ class Block
     IndexSpace<3> globalIndexSpace( Own, EntityType ) const;
     template <class EntityType>
     IndexSpace<3> globalIndexSpace( Ghost, EntityType ) const;
-
-    // Get the ghosted shared index space of the block.
-    template <class EntityType>
-    IndexSpace<3> ghostedSharedIndexSpace( EntityType, const int off_i,
-                                           const int off_j,
-                                           const int off_k ) const;
 
     // Get the face index space of the block.
     template <int Dir>
@@ -98,12 +96,12 @@ class Block
     // face indices shared with that neighbor in the given decomposition.
     template <int Dir>
     IndexSpace<3> faceSharedIndexSpace( Own, Face<Dir>, const int off_,
-                                        const int off_j,
-                                        const int off_k ) const;
+                                        const int off_j, const int off_k,
+                                        const int halo_width ) const;
     template <int Dir>
     IndexSpace<3> faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
-                                        const int off_j,
-                                        const int off_k ) const;
+                                        const int off_j, const int off_k,
+                                        const int halo_width ) const;
 
   private:
     std::shared_ptr<GlobalGrid> _global_grid;

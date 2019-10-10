@@ -91,9 +91,13 @@ class Halo
     /*!
       \brief Constructor.
       \param layout The array layout to build the halo for.
+      \param pattern The halo pattern to use for halo communication
+      \param width An option halo cell width. The default is to use the entire
+      halo width of the block.
     */
     template <class ArrayLayout_t>
-    Halo( const ArrayLayout_t &layout, const HaloPattern &pattern )
+    Halo( const ArrayLayout_t &layout, const HaloPattern &pattern,
+          const int width = -1 )
         : _comm( layout.block()->globalGrid().comm() )
     {
         // Function to get the local id of the neighbor.
@@ -149,7 +153,7 @@ class Halo
                 // Get the owned index space we share with this
                 // neighbor.
                 _owned_spaces.push_back(
-                    layout.sharedIndexSpace( Own(), i, j, k ) );
+                    layout.sharedIndexSpace( Own(), i, j, k, width ) );
 
                 // Create the buffer of data we own that we share
                 // with this neighbor.
@@ -159,7 +163,7 @@ class Halo
                 // Get the ghosted index space we share with this
                 // neighbor.
                 _ghosted_spaces.push_back(
-                    layout.sharedIndexSpace( Ghost(), i, j, k ) );
+                    layout.sharedIndexSpace( Ghost(), i, j, k, width ) );
 
                 // Create the buffer of ghost data that is owned
                 // by our neighbor
@@ -383,9 +387,10 @@ class Halo
 */
 template <class Scalar, class Device, class EntityType>
 std::shared_ptr<Halo<Scalar, Device>>
-createHalo( const ArrayLayout<EntityType> &layout, const HaloPattern &pattern )
+createHalo( const ArrayLayout<EntityType> &layout, const HaloPattern &pattern,
+            const int width = -1 )
 {
-    return std::make_shared<Halo<Scalar, Device>>( layout, pattern );
+    return std::make_shared<Halo<Scalar, Device>>( layout, pattern, width );
 }
 
 //---------------------------------------------------------------------------//
@@ -402,12 +407,12 @@ std::shared_ptr<
     Halo<typename Array<Scalar, EntityType, Params...>::value_type,
          typename Array<Scalar, EntityType, Params...>::device_type>>
 createHalo( const Array<Scalar, EntityType, Params...> &array,
-            const HaloPattern &pattern )
+            const HaloPattern &pattern, const int width = -1 )
 {
     return std::make_shared<
         Halo<typename Array<Scalar, EntityType, Params...>::value_type,
              typename Array<Scalar, EntityType, Params...>::device_type>>(
-        *( array.layout() ), pattern );
+        *( array.layout() ), pattern, width );
 }
 
 //---------------------------------------------------------------------------//

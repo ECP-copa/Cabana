@@ -67,16 +67,20 @@ class ArrayLayout
     }
 
     // Get the local index space of the array elements we shared with the
-    // given neighbor in the given decomposition.
+    // given neighbor in the given decomposition. Optionally provide a halo
+    // width for the shared space. This halo width must be less than or equal
+    // to the halo width of the block. The default behavior is to use the halo
+    // width of the block.
     template <class DecompositionTag>
     IndexSpace<4> sharedIndexSpace( DecompositionTag decomposition_tag,
                                     const int off_i, const int off_j,
-                                    const int off_k ) const
+                                    const int off_k,
+                                    const int halo_width = -1 ) const
     {
-        return appendDimension( _block->sharedIndexSpace( decomposition_tag,
-                                                          EntityType(), off_i,
-                                                          off_j, off_k ),
-                                _dofs_per_entity );
+        return appendDimension(
+            _block->sharedIndexSpace( decomposition_tag, EntityType(), off_i,
+                                      off_j, off_k, halo_width ),
+            _dofs_per_entity );
     }
 
   private:
