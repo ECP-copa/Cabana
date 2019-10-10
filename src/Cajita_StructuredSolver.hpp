@@ -75,9 +75,9 @@ class StructuredSolver
             _lower = {static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
                       static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
                       static_cast<HYPRE_Int>( global_space.min( Dim::I ) )};
-            _upper = {static_cast<HYPRE_Int>( global_space.max( Dim::K ) ) - 1,
-                      static_cast<HYPRE_Int>( global_space.max( Dim::J ) ) - 1,
-                      static_cast<HYPRE_Int>( global_space.max( Dim::I ) ) - 1};
+            _upper = {static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
+                      static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
+                      static_cast<HYPRE_Int>( global_space.max( Dim::I ) - 1 )};
             error = HYPRE_StructGridSetExtents( _grid, _lower.data(),
                                                 _upper.data() );
             checkHypreError( error );
@@ -104,8 +104,8 @@ class StructuredSolver
                                           global_space.extent( Dim::J ),
                                           global_space.extent( Dim::K )} );
             auto vector_values =
-                createView<double, Kokkos::LayoutRight, Kokkos::HostSpace>(
-                    "vector_values", reorder_space );
+                createView<HYPRE_Complex, Kokkos::LayoutRight,
+                           Kokkos::HostSpace>( "vector_values", reorder_space );
             Kokkos::deep_copy( vector_values, 0.0 );
 
             error = HYPRE_StructVectorCreate( _comm, _grid, &_b );
@@ -224,7 +224,7 @@ class StructuredSolver
             {owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
              owned_space.extent( Dim::K ), _stencil_size} );
         auto a_values =
-            createView<double, Kokkos::LayoutRight, Kokkos::HostSpace>(
+            createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "a_values", reorder_space );
         Kokkos::deep_copy( a_values, owned_mirror );
 
@@ -317,7 +317,7 @@ class StructuredSolver
                                       owned_space.extent( Dim::J ),
                                       owned_space.extent( Dim::K ), 1} );
         auto vector_values =
-            createView<double, Kokkos::LayoutRight, Kokkos::HostSpace>(
+            createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
         Kokkos::deep_copy( vector_values, b_mirror );
 
@@ -819,11 +819,12 @@ class HypreStructPFMG : public StructuredSolver<Scalar, EntityType, DeviceType>
     }
 
     // Set relaxation type.
+    //
     // 0 - Jacobi
     // 1 - Weighted Jacobi (default)
     // 2 - Red/Black Gauss-Seidel (symmetric: RB pre-relaxation, BR
-    // post-relaxation) 3 - Red/Black Gauss-Seidel (nonsymmetric: RB pre- and
     // post-relaxation)
+    // 3 - Red/Black Gauss-Seidel (nonsymmetric: RB pre- and post-relaxation)
     void setRelaxType( const int relax_type )
     {
         auto error = HYPRE_StructPFMGSetRelaxType( _solver, relax_type );
