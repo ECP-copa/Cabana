@@ -115,6 +115,7 @@ class Halo : public CommunicationPlan<DeviceType>
             element_export_ranks, neighbor_ranks, mpi_tag );
         this->createExportSteering( neighbor_ids, element_export_ranks,
                                     element_export_ids );
+        createGhostOwningRanks();
     }
 
     /*!
@@ -167,6 +168,7 @@ class Halo : public CommunicationPlan<DeviceType>
             this->createFromExportsOnly( element_export_ranks, mpi_tag );
         this->createExportSteering( neighbor_ids, element_export_ranks,
                                     element_export_ids );
+        createGhostOwningRanks();
     }
 
     /*!
@@ -185,8 +187,45 @@ class Halo : public CommunicationPlan<DeviceType>
     */
     std::size_t numGhost() const { return this->totalNumImport(); }
 
+    /*!
+      \brief For each ghost, get the MPI rank that it came from (i.e. the rank
+      that uniquely owns the ghost).
+
+      \return A Kokkos view of size numGhost() containing the owning MPI rank
+      of the ghost.
+     */
+    Kokkos::View<int *, DeviceType> ghostOwningRanks() const
+    {
+        return _ghost_owning_ranks;
+    }
+
+  private:
+    // Create the ghost owning ranks.
+    void createGhostOwningRanks()
+    {
+        _ghost_owning_ranks = Kokkos::View<int *, DeviceType>(
+            Kokkos::ViewAllocateWithoutInitializing( "ghost_owning_ranks" ),
+            numGhost() );
+
+        auto owning_ranks_mirror = Kokkos::create_mirror_view(
+            Kokkos::HostSpace(), _ghost_owning_ranks );
+
+        std::size_t ghost_id = 0;
+        for ( int n = 0; n < this->numNeighbor(); ++n )
+        {
+            auto nrank = this->neighborRank( n );
+            for ( std::size_t i = 0; i < this->numImport( n ); ++i, ++ghost_id )
+            {
+                owning_ranks_mirror( ghost_id ) = nrank;
+            }
+        }
+
+        Kokkos::deep_copy( _ghost_owning_ranks, owning_ranks_mirror );
+    }
+
   private:
     std::size_t _num_local;
+    Kokkos::View<int *, DeviceType> _ghost_owning_ranks;
 };
 
 //---------------------------------------------------------------------------//

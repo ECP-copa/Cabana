@@ -73,6 +73,27 @@ void test1( const bool use_topology )
     EXPECT_EQ( halo->numLocal(), num_local );
     EXPECT_EQ( halo->numGhost(), my_size );
 
+    // Check the owning ranks of the ghost data.
+    auto ghost_own_ranks = halo->ghostOwningRanks();
+    EXPECT_EQ( halo->numGhost(), ghost_own_ranks.size() );
+    auto own_ranks_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), ghost_own_ranks );
+    for ( int i = 0; i < my_size; ++i )
+    {
+        if ( i == 0 )
+        {
+            EXPECT_EQ( own_ranks_host( i ), my_rank );
+        }
+        else if ( i == my_rank )
+        {
+            EXPECT_EQ( own_ranks_host( i ), 0 );
+        }
+        else
+        {
+            EXPECT_EQ( own_ranks_host( i ), i );
+        }
+    }
+
     // Create an AoSoA of local data with space allocated for local data.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
@@ -269,6 +290,27 @@ void test2( const bool use_topology )
     // Check the plan.
     EXPECT_EQ( halo->numLocal(), num_local );
     EXPECT_EQ( halo->numGhost(), my_size );
+
+    // Check the owning ranks of the ghost data.
+    auto ghost_own_ranks = halo->ghostOwningRanks();
+    EXPECT_EQ( halo->numGhost(), ghost_own_ranks.size() );
+    auto own_ranks_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), ghost_own_ranks );
+    for ( int i = 0; i < my_size; ++i )
+    {
+        if ( i == 0 )
+        {
+            EXPECT_EQ( own_ranks_host( i ), my_rank );
+        }
+        else if ( i == my_rank )
+        {
+            EXPECT_EQ( own_ranks_host( i ), 0 );
+        }
+        else
+        {
+            EXPECT_EQ( own_ranks_host( i ), i );
+        }
+    }
 
     // Create an AoSoA of local data with space allocated for local data.
     using DataTypes = Cabana::MemberTypes<int, double[2]>;
