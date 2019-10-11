@@ -28,16 +28,16 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
-void poissonTest()
+void poissonTest( const std::string& solver_type, const std::string& precond_type )
 {
     // Let MPI compute the partitioning for this test.
     UniformDimPartitioner partitioner;
 
     // Create the global grid.
     double cell_size = 0.1;
-    std::vector<bool> is_dim_periodic = {true,true,true};
-    std::vector<double> global_low_corner = {-1.0, -1.0, -1.0 };
-    std::vector<double> global_high_corner = { 1.0, 1.0, 1.0 };
+    std::vector<bool> is_dim_periodic = {false,false,false};
+    std::vector<double> global_low_corner = {-1.0, -2.0, -1.0 };
+    std::vector<double> global_high_corner = { 1.0, 1.0, 0.5 };
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
                                          partitioner,
                                          is_dim_periodic,
@@ -60,7 +60,7 @@ void poissonTest()
 
     // Create a solver.
     auto solver =
-        createStructuredSolver( "PCG", *vector_layout, TEST_DEVICE() );
+        createStructuredSolver<double,TEST_DEVICE>( solver_type, *vector_layout );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int,3> > stencil =
@@ -77,20 +77,32 @@ void poissonTest()
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ){
             entry_view(i,j,k,0) = -6.0;
-            entry_view(i,j,k,1) = 0.0;
-            entry_view(i,j,k,2) = 0.0;
-            entry_view(i,j,k,3) = 0.0;
-            entry_view(i,j,k,4) = 0.0;
-            entry_view(i,j,k,5) = 0.0;
-            entry_view(i,j,k,6) = 0.0;
+            entry_view(i,j,k,1) = 1.0;
+            entry_view(i,j,k,2) = 1.0;
+            entry_view(i,j,k,3) = 1.0;
+            entry_view(i,j,k,4) = 1.0;
+            entry_view(i,j,k,5) = 1.0;
+            entry_view(i,j,k,6) = 1.0;
         } );
+
     solver->setMatrixValues( *matrix_entries );
 
     // Set the tolerance.
-    solver->setTolerance( 1.0e-4 );
+    solver->setTolerance( 1.0e-8 );
+
+    // Set the maximum iterations.
+    solver->setMaxIter( 2000 );
 
     // Set the print level.
     solver->setPrintLevel( 2 );
+
+    // Create a preconditioner.
+    if ( "none" != precond_type )
+    {
+        auto preconditioner =
+            createStructuredSolver<double,TEST_DEVICE>( precond_type, *vector_layout, true );
+        solver->setPreconditioner( preconditioner );
+    }
 
     // Setup the problem.
     solver->setup();
@@ -98,9 +110,26 @@ void poissonTest()
     // Solve the problem.
     solver->solve( *rhs, *lhs );
 
+    // Create a jacobi solver reference for comparison.
+    auto lhs_ref = createArray<double,TEST_DEVICE>( "lhs_ref", vector_layout );
+    ArrayOp::assign( *lhs_ref, 0.0, Own() );
+
+    auto jacobi_ref =
+        createStructuredSolver<double,TEST_DEVICE>( "Jacobi", *vector_layout );
+
+    jacobi_ref->setMatrixStencil( stencil );
+    jacobi_ref->setMatrixValues( *matrix_entries );
+    jacobi_ref->setTolerance( 1.0e-12 );
+    jacobi_ref->setPrintLevel( 2 );
+    jacobi_ref->setup();
+    jacobi_ref->solve( *rhs, *lhs_ref );
+
     // Check the results.
+    double epsilon = 1.0e-3;
     auto lhs_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), lhs->view() );
+    auto lhs_ref_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), lhs_ref->view() );
     for ( int i = owned_space.min(Dim::I);
           i < owned_space.max(Dim::I);
           ++i )
@@ -110,7 +139,7 @@ void poissonTest()
             for ( int k = owned_space.min(Dim::K);
                   k < owned_space.max(Dim::K);
                   ++k )
-                EXPECT_EQ( lhs_host(i,j,k,0), -1.0 / 6.0 );
+                EXPECT_NEAR( lhs_host(i,j,k,0), lhs_ref_host(i,j,k,0), epsilon );
 
     // Setup the problem again. We would need to do this if we changed the
     // matrix entries.
@@ -121,9 +150,15 @@ void poissonTest()
     ArrayOp::assign( *lhs, 0.0, Own() );
     solver->solve( *rhs, *lhs );
 
+    // Compute another reference solution.
+    ArrayOp::assign( *lhs_ref, 0.0, Own() );
+    jacobi_ref->solve( *rhs, *lhs_ref );
+
     // Check the results again
     lhs_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), lhs->view() );
+    lhs_ref_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), lhs_ref->view() );
     for ( int i = owned_space.min(Dim::I);
           i < owned_space.max(Dim::I);
           ++i )
@@ -133,15 +168,60 @@ void poissonTest()
             for ( int k = owned_space.min(Dim::K);
                   k < owned_space.max(Dim::K);
                   ++k )
-                EXPECT_EQ( lhs_host(i,j,k,0), -1.0 / 3.0 );
+                EXPECT_NEAR( lhs_host(i,j,k,0), lhs_ref_host(i,j,k,0), epsilon );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( structured_solver, poisson_test )
+TEST( structured_solver, pcg_none_test )
 {
-    poissonTest();
+    poissonTest( "PCG", "none" );
+}
+
+TEST( structured_solver, gmres_none_test )
+{
+    poissonTest( "GMRES", "none" );
+}
+
+TEST( structured_solver, bicgstab_none_test )
+{
+    poissonTest( "BiCGSTAB", "none" );
+}
+
+TEST( structured_solver, pfmg_none_test )
+{
+    poissonTest( "PFMG", "none" );
+}
+
+TEST( structured_solver, pcg_diag_test )
+{
+    poissonTest( "PCG", "Diagonal" );
+}
+
+TEST( structured_solver, gmres_diag_test )
+{
+    poissonTest( "GMRES", "Diagonal" );
+}
+
+TEST( structured_solver, bicgstab_diag_test )
+{
+    poissonTest( "BiCGSTAB", "Diagonal" );
+}
+
+TEST( structured_solver, pcg_jacobi_test )
+{
+    poissonTest( "PCG", "Jacobi" );
+}
+
+TEST( structured_solver, gmres_jacobi_test )
+{
+    poissonTest( "GMRES", "Jacobi" );
+}
+
+TEST( structured_solver, bicgstab_jacobi_test )
+{
+    poissonTest( "BiCGSTAB", "Jacobi" );
 }
 
 //---------------------------------------------------------------------------//

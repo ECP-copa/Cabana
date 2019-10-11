@@ -34,93 +34,118 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 // Hypre structured solver interface for scalar fields.
-template <class EntityType, class DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
 class StructuredSolver
 {
   public:
     // Types.
     using entity_type = EntityType;
     using device_type = DeviceType;
+    using scalar_type = Scalar;
+    template <class... Params>
+    using array_type = Array<scalar_type, entity_type, Params...>;
 
     /*!
       \brief Constructor.
       \param layout The array layout defining the vector space of the solver.
+      \param is_preconditioner Flag indicating if this solver will be used as
+      a preconditioner.
     */
-    StructuredSolver( const ArrayLayout<EntityType> &layout )
+    StructuredSolver( const ArrayLayout<EntityType> &layout,
+                      const bool is_preconditioner = false )
         : _comm( layout.block()->globalGrid().comm() )
+        , _is_preconditioner( is_preconditioner )
     {
-        // Create the grid.
-        auto error = HYPRE_StructGridCreate( _comm, 3, &_grid );
-        checkHypreError( error );
+        // Only create data structures if this is not a preconditioner.
+        if ( !_is_preconditioner )
+        {
+            // Create the grid.
+            auto error = HYPRE_StructGridCreate( _comm, 3, &_grid );
+            checkHypreError( error );
 
-        // Get the global index space spanned by the block on this rank. Note
-        // that the upper bound is not a bound but rather the last index as
-        // this is what Hypre wants.
-        auto global_space = layout.indexSpace( Own(), Global() );
-        _lower = {static_cast<HYPRE_Int>( global_space.min( Dim::I ) ),
-                  static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
-                  static_cast<HYPRE_Int>( global_space.min( Dim::K ) )};
-        _upper = {static_cast<HYPRE_Int>( global_space.max( Dim::I ) ) - 1,
-                  static_cast<HYPRE_Int>( global_space.max( Dim::J ) ) - 1,
-                  static_cast<HYPRE_Int>( global_space.max( Dim::K ) ) - 1};
-        error =
-            HYPRE_StructGridSetExtents( _grid, _lower.data(), _upper.data() );
-        checkHypreError( error );
+            // Get the global index space spanned by the block on this rank.
+            // Note that the upper bound is not a bound but rather the last
+            // index as this is what Hypre wants. Note that we reordered this to
+            // KJI from IJK to be consistent with HYPRE ordering. By setting up
+            // the grid like this, HYPRE will then want layout-right data
+            // indexed as (i,j,k) or (i,j,k,l) which will allow us to directly
+            // use Kokkos::deep_copy to move data between Cajita arrays and
+            // HYPRE data structures.
+            auto global_space = layout.indexSpace( Own(), Global() );
+            _lower = {static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
+                      static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
+                      static_cast<HYPRE_Int>( global_space.min( Dim::I ) )};
+            _upper = {static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
+                      static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
+                      static_cast<HYPRE_Int>( global_space.max( Dim::I ) - 1 )};
+            error = HYPRE_StructGridSetExtents( _grid, _lower.data(),
+                                                _upper.data() );
+            checkHypreError( error );
 
-        // Get periodicity
-        const auto &domain = layout.block()->globalGrid().domain();
-        HYPRE_Int periodic[3];
-        for ( int d = 0; d < 3; ++d )
-            periodic[d] = domain.isPeriodic( d )
-                              ? layout.block()->globalGrid().globalNumEntity(
-                                    EntityType(), d )
-                              : 0;
-        error = HYPRE_StructGridSetPeriodic( _grid, periodic );
-        checkHypreError( error );
+            // Get periodicity. Note we invert the order of this to KJI as well.
+            const auto &domain = layout.block()->globalGrid().domain();
+            HYPRE_Int periodic[3];
+            for ( int d = 0; d < 3; ++d )
+                periodic[2 - d] =
+                    domain.isPeriodic( d )
+                        ? layout.block()->globalGrid().globalNumEntity(
+                              EntityType(), d )
+                        : 0;
+            error = HYPRE_StructGridSetPeriodic( _grid, periodic );
+            checkHypreError( error );
 
-        // Assemble the grid.
-        error = HYPRE_StructGridAssemble( _grid );
-        checkHypreError( error );
+            // Assemble the grid.
+            error = HYPRE_StructGridAssemble( _grid );
+            checkHypreError( error );
 
-        // Allocate LHS and RHS vectors and initialize to zero.
-        IndexSpace<3> reorder_space( {global_space.extent( Dim::K ),
-                                      global_space.extent( Dim::J ),
-                                      global_space.extent( Dim::I )} );
-        auto vector_values =
-            createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
-                "vector_values", reorder_space );
-        Kokkos::deep_copy( vector_values, 0.0 );
+            // Allocate LHS and RHS vectors and initialize to zero. Note that we
+            // are fixing the views under these vectors to layout-right.
+            IndexSpace<3> reorder_space( {global_space.extent( Dim::I ),
+                                          global_space.extent( Dim::J ),
+                                          global_space.extent( Dim::K )} );
+            auto vector_values =
+                createView<HYPRE_Complex, Kokkos::LayoutRight,
+                           Kokkos::HostSpace>( "vector_values", reorder_space );
+            Kokkos::deep_copy( vector_values, 0.0 );
 
-        error = HYPRE_StructVectorCreate( _comm, _grid, &_b );
-        checkHypreError( error );
-        error = HYPRE_StructVectorInitialize( _b );
-        checkHypreError( error );
-        error = HYPRE_StructVectorSetBoxValues(
-            _b, _lower.data(), _upper.data(), vector_values.data() );
-        checkHypreError( error );
-        error = HYPRE_StructVectorAssemble( _b );
-        checkHypreError( error );
+            error = HYPRE_StructVectorCreate( _comm, _grid, &_b );
+            checkHypreError( error );
+            error = HYPRE_StructVectorInitialize( _b );
+            checkHypreError( error );
+            error = HYPRE_StructVectorSetBoxValues(
+                _b, _lower.data(), _upper.data(), vector_values.data() );
+            checkHypreError( error );
+            error = HYPRE_StructVectorAssemble( _b );
+            checkHypreError( error );
 
-        error = HYPRE_StructVectorCreate( _comm, _grid, &_x );
-        checkHypreError( error );
-        error = HYPRE_StructVectorInitialize( _x );
-        checkHypreError( error );
-        error = HYPRE_StructVectorSetBoxValues(
-            _x, _lower.data(), _upper.data(), vector_values.data() );
-        checkHypreError( error );
-        error = HYPRE_StructVectorAssemble( _x );
-        checkHypreError( error );
+            error = HYPRE_StructVectorCreate( _comm, _grid, &_x );
+            checkHypreError( error );
+            error = HYPRE_StructVectorInitialize( _x );
+            checkHypreError( error );
+            error = HYPRE_StructVectorSetBoxValues(
+                _x, _lower.data(), _upper.data(), vector_values.data() );
+            checkHypreError( error );
+            error = HYPRE_StructVectorAssemble( _x );
+            checkHypreError( error );
+        }
     }
 
     // Destructor.
     virtual ~StructuredSolver()
     {
-        HYPRE_StructVectorDestroy( _x );
-        HYPRE_StructVectorDestroy( _b );
-        HYPRE_StructMatrixDestroy( _A );
-        HYPRE_StructStencilDestroy( _stencil );
-        HYPRE_StructGridDestroy( _grid );
+        // We only make data if this is not a preconditioner.
+        if ( !_is_preconditioner )
+        {
+            HYPRE_StructVectorDestroy( _x );
+            HYPRE_StructVectorDestroy( _b );
+            HYPRE_StructMatrixDestroy( _A );
+            HYPRE_StructStencilDestroy( _stencil );
+            HYPRE_StructGridDestroy( _grid );
+        }
     }
+
+    //! Return if this solver is a preconditioner.
+    bool isPreconditioner() const { return _is_preconditioner; }
 
     /*!
       \brief Set the operator stencil.
@@ -133,6 +158,11 @@ class StructuredSolver
     void setMatrixStencil( const std::vector<std::array<int, 3>> &stencil,
                            const bool is_symmetric = false )
     {
+        // This function is only valid for non-preconditioners.
+        if ( _is_preconditioner )
+            throw std::logic_error(
+                "Cannot call setMatrixStencil() on preconditioners" );
+
         // Create the stencil.
         _stencil_size = stencil.size();
         auto error = HYPRE_StructStencilCreate( 3, _stencil_size, &_stencil );
@@ -160,9 +190,19 @@ class StructuredSolver
       stencil definition. Note that values corresponding to stencil entries
       outside of the domain should be set to zero.
     */
-    template <class Scalar>
-    void setMatrixValues( const Array<Scalar, EntityType, DeviceType> &values )
+    template <class... ArrayParams>
+    void setMatrixValues( const array_type<ArrayParams...> &values )
     {
+        // This function is only valid for non-preconditioners.
+        if ( _is_preconditioner )
+            throw std::logic_error(
+                "Cannot call setMatrixValues() on preconditioners" );
+
+        static_assert(
+            std::is_same<typename array_type<ArrayParams...>::device_type,
+                         DeviceType>::value,
+            "Array device type and solver device type are different." );
+
         if ( values.layout()->dofsPerEntity() !=
              static_cast<int>( _stencil_size ) )
             throw std::runtime_error(
@@ -175,25 +215,18 @@ class StructuredSolver
         // Get a view of the matrix values on the host.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
         auto owned_values = createSubview( values.view(), owned_space );
-        auto host_values = Kokkos::create_mirror_view_and_copy(
+        auto owned_mirror = Kokkos::create_mirror_view_and_copy(
             Kokkos::HostSpace(), owned_values );
 
-        // Reorder the matrix values the way HYPRE wants them ordered.
+        // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
+        // layout-right.
         IndexSpace<4> reorder_space(
-            {owned_space.extent( Dim::K ), owned_space.extent( Dim::J ),
-             owned_space.extent( Dim::I ), _stencil_size} );
+            {owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
+             owned_space.extent( Dim::K ), _stencil_size} );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "a_values", reorder_space );
-
-        using host_exec_space = decltype( a_values )::execution_space;
-        Kokkos::parallel_for(
-            "StructuredSolver::setMatrixValues",
-            createExecutionPolicy( reorder_space, host_exec_space() ),
-            KOKKOS_LAMBDA( const int k, const int j, const int i,
-                           const int l ) {
-                a_values( k, j, i, l ) = host_values( i, j, k, l );
-            } );
+        Kokkos::deep_copy( a_values, owned_mirror );
 
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
@@ -218,18 +251,52 @@ class StructuredSolver
         this->setPrintLevelImpl( print_level );
     }
 
+    // Set a preconditioner.
+    void setPreconditioner(
+        const std::shared_ptr<StructuredSolver<Scalar, EntityType, DeviceType>>
+            &preconditioner )
+    {
+        // This function is only valid for non-preconditioners.
+        if ( _is_preconditioner )
+            throw std::logic_error(
+                "Cannot call setPreconditioner() on a preconditioner" );
+
+        // Only a preconditioner can be used as a preconditioner.
+        if ( !preconditioner->isPreconditioner() )
+            throw std::logic_error( "Not a preconditioner" );
+
+        _preconditioner = preconditioner;
+        this->setPreconditionerImpl( *_preconditioner );
+    }
+
     // Setup the problem.
-    void setup() { this->setupImpl( _A, _b, _x ); }
+    void setup()
+    {
+        // This function is only valid for non-preconditioners.
+        if ( _is_preconditioner )
+            throw std::logic_error( "Cannot call setup() on preconditioners" );
+
+        this->setupImpl( _A, _b, _x );
+    }
 
     /*!
       \brief Solve the problem Ax = b for x.
       \param b The forcing term.
       \param x The solution.
     */
-    template <class Scalar>
-    void solve( const Array<Scalar, EntityType, DeviceType> &b,
-                Array<Scalar, EntityType, DeviceType> &x )
+    template <class... ArrayParams>
+    void solve( const array_type<ArrayParams...> &b,
+                array_type<ArrayParams...> &x )
     {
+        // This function is only valid for non-preconditioners.
+        if ( _is_preconditioner )
+            throw std::logic_error( "Cannot call solve() on preconditioners" );
+
+        static_assert(
+            std::is_same<typename array_type<ArrayParams...>::device_type,
+                         DeviceType>::value,
+            "Array device type and solver device type are different." );
+
         if ( b.layout()->dofsPerEntity() != 1 ||
              x.layout()->dofsPerEntity() != 1 )
             throw std::runtime_error(
@@ -242,24 +309,17 @@ class StructuredSolver
         // Get a local view of b on the host.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
         auto owned_b = createSubview( b.view(), owned_space );
-        auto b_values =
+        auto b_mirror =
             Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), owned_b );
 
-        // Reorder b the way HYPRE wants it to be ordered
-        IndexSpace<3> reorder_space( {owned_space.extent( Dim::K ),
+        // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
+        IndexSpace<4> reorder_space( {owned_space.extent( Dim::I ),
                                       owned_space.extent( Dim::J ),
-                                      owned_space.extent( Dim::I )} );
+                                      owned_space.extent( Dim::K ), 1} );
         auto vector_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
-
-        using host_exec_space = decltype( vector_values )::execution_space;
-        Kokkos::parallel_for(
-            "StructuredSolver::setVectorValues",
-            createExecutionPolicy( reorder_space, host_exec_space() ),
-            KOKKOS_LAMBDA( const int k, const int j, const int i ) {
-                vector_values( k, j, i ) = b_values( i, j, k, 0 );
-            } );
+        Kokkos::deep_copy( vector_values, b_mirror );
 
         // Insert b values into the HYPRE vector.
         error = HYPRE_StructVectorSetBoxValues(
@@ -278,19 +338,12 @@ class StructuredSolver
 
         // Get a local view of x on the host.
         auto owned_x = createSubview( x.view(), owned_space );
-        auto x_values =
+        auto x_mirror =
             Kokkos::create_mirror_view( Kokkos::HostSpace(), owned_x );
 
-        // Reorder x from the HYPRE order.
-        Kokkos::parallel_for(
-            "StructuredSolver::setVectorValues",
-            createExecutionPolicy( reorder_space, host_exec_space() ),
-            KOKKOS_LAMBDA( const int k, const int j, const int i ) {
-                x_values( i, j, k, 0 ) = vector_values( k, j, i );
-            } );
-
-        // Copy the solution to the LHS.
-        Kokkos::deep_copy( owned_x, x_values );
+        // Copy the HYPRE solution to the LHS.
+        Kokkos::deep_copy( x_mirror, vector_values );
+        Kokkos::deep_copy( owned_x, x_mirror );
     }
 
     // Get the number of iterations taken on the last solve.
@@ -301,6 +354,11 @@ class StructuredSolver
     {
         return this->getFinalRelativeResidualNormImpl();
     }
+
+    //! Preconditioner implementation details.
+    virtual HYPRE_StructSolver getHypreSolver() const = 0;
+    virtual HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const = 0;
+    virtual HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const = 0;
 
   protected:
     // Set convergence tolerance implementation.
@@ -326,6 +384,11 @@ class StructuredSolver
     // Get the relative residual norm achieved on the last solve.
     virtual double getFinalRelativeResidualNormImpl() = 0;
 
+    // Set a preconditioner.
+    virtual void setPreconditionerImpl(
+        const StructuredSolver<Scalar, EntityType, DeviceType>
+            &preconditioner ) = 0;
+
     // Check a hypre error.
     void checkHypreError( const int error ) const
     {
@@ -340,6 +403,7 @@ class StructuredSolver
 
   private:
     MPI_Comm _comm;
+    bool _is_preconditioner;
     HYPRE_StructGrid _grid;
     std::array<HYPRE_Int, 3> _lower;
     std::array<HYPRE_Int, 3> _upper;
@@ -348,25 +412,68 @@ class StructuredSolver
     HYPRE_StructMatrix _A;
     HYPRE_StructVector _b;
     HYPRE_StructVector _x;
+    std::shared_ptr<StructuredSolver<Scalar, EntityType, DeviceType>>
+        _preconditioner;
 };
 
 //---------------------------------------------------------------------------//
 // PCG solver.
-template <class EntityType, class DeviceType>
-class HypreStructPCG : public StructuredSolver<EntityType, DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructPCG : public StructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<EntityType, DeviceType>;
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructPCG( const ArrayLayout<EntityType> &layout )
-        : Base( layout )
+    HypreStructPCG( const ArrayLayout<EntityType> &layout,
+                    const bool is_preconditioner = false )
+        : Base( layout, is_preconditioner )
     {
+        if ( is_preconditioner )
+            throw std::logic_error(
+                "HYPRE PCG cannot be used as a preconditioner" );
+
         auto error = HYPRE_StructPCGCreate( layout.block()->globalGrid().comm(),
                                             &_solver );
         this->checkHypreError( error );
+
+        HYPRE_StructPCGSetTwoNorm( _solver, 1 );
     }
 
     ~HypreStructPCG() { HYPRE_StructPCGDestroy( _solver ); }
+
+    //! PCG SETTINGS
+
+    // Set the absolute tolerance
+    void setAbsoluteTol( const double tol )
+    {
+        auto error = HYPRE_StructPCGSetAbsoluteTol( _solver, tol );
+        this->checkHypreError( error );
+    }
+
+    // Additionally require that the relative difference in successive
+    // iterates be small.
+    void setRelChange( const int rel_change )
+    {
+        auto error = HYPRE_StructPCGSetRelChange( _solver, rel_change );
+        this->checkHypreError( error );
+    }
+
+    // Set the amount of logging to do.
+    void setLogging( const int logging )
+    {
+        auto error = HYPRE_StructPCGSetLogging( _solver, logging );
+        this->checkHypreError( error );
+    }
+
+    HYPRE_StructSolver getHypreSolver() const override { return _solver; }
+    HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
+    {
+        return HYPRE_StructPCGSetup;
+    }
+    HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const override
+    {
+        return HYPRE_StructPCGSolve;
+    }
 
   protected:
     void setToleranceImpl( const double tol ) override
@@ -418,27 +525,76 @@ class HypreStructPCG : public StructuredSolver<EntityType, DeviceType>
         return norm;
     }
 
+    void setPreconditionerImpl(
+        const StructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
+        override
+    {
+        auto error = HYPRE_StructPCGSetPrecond(
+            _solver, preconditioner.getHypreSolveFunction(),
+            preconditioner.getHypreSetupFunction(),
+            preconditioner.getHypreSolver() );
+        this->checkHypreError( error );
+    }
+
   private:
     HYPRE_StructSolver _solver;
 };
 
 //---------------------------------------------------------------------------//
 // GMRES solver.
-template <class EntityType, class DeviceType>
-class HypreStructGMRES : public StructuredSolver<EntityType, DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructGMRES : public StructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<EntityType, DeviceType>;
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructGMRES( const ArrayLayout<EntityType> &layout )
-        : Base( layout )
+    HypreStructGMRES( const ArrayLayout<EntityType> &layout,
+                      const bool is_preconditioner = false )
+        : Base( layout, is_preconditioner )
     {
+        if ( is_preconditioner )
+            throw std::logic_error(
+                "HYPRE GMRES cannot be used as a preconditioner" );
+
         auto error = HYPRE_StructGMRESCreate(
             layout.block()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
     }
 
     ~HypreStructGMRES() { HYPRE_StructGMRESDestroy( _solver ); }
+
+    //! GMRES SETTINGS
+
+    // Set the absolute tolerance
+    void setAbsoluteTol( const double tol )
+    {
+        auto error = HYPRE_StructGMRESSetAbsoluteTol( _solver, tol );
+        this->checkHypreError( error );
+    }
+
+    // Set the max size of the Krylov space.
+    void setKDim( const int k_dim )
+    {
+        auto error = HYPRE_StructGMRESSetKDim( _solver, k_dim );
+        this->checkHypreError( error );
+    }
+
+    // Set the amount of logging to do.
+    void setLogging( const int logging )
+    {
+        auto error = HYPRE_StructGMRESSetLogging( _solver, logging );
+        this->checkHypreError( error );
+    }
+
+    HYPRE_StructSolver getHypreSolver() const override { return _solver; }
+    HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
+    {
+        return HYPRE_StructGMRESSetup;
+    }
+    HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const override
+    {
+        return HYPRE_StructGMRESSolve;
+    }
 
   protected:
     void setToleranceImpl( const double tol ) override
@@ -490,27 +646,251 @@ class HypreStructGMRES : public StructuredSolver<EntityType, DeviceType>
         return norm;
     }
 
+    void setPreconditionerImpl(
+        const StructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
+        override
+    {
+        auto error = HYPRE_StructGMRESSetPrecond(
+            _solver, preconditioner.getHypreSolveFunction(),
+            preconditioner.getHypreSetupFunction(),
+            preconditioner.getHypreSolver() );
+        this->checkHypreError( error );
+    }
+
+  private:
+    HYPRE_StructSolver _solver;
+};
+
+//---------------------------------------------------------------------------//
+// BiCGSTAB solver.
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructBiCGSTAB
+    : public StructuredSolver<Scalar, EntityType, DeviceType>
+{
+  public:
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+
+    HypreStructBiCGSTAB( const ArrayLayout<EntityType> &layout,
+                         const bool is_preconditioner = false )
+        : Base( layout, is_preconditioner )
+    {
+        if ( is_preconditioner )
+            throw std::logic_error(
+                "HYPRE BiCGSTAB cannot be used as a preconditioner" );
+
+        auto error = HYPRE_StructBiCGSTABCreate(
+            layout.block()->globalGrid().comm(), &_solver );
+        this->checkHypreError( error );
+    }
+
+    ~HypreStructBiCGSTAB() { HYPRE_StructBiCGSTABDestroy( _solver ); }
+
+    //! BiCGSTAB SETTINGS
+
+    // Set the absolute tolerance
+    void setAbsoluteTol( const double tol )
+    {
+        auto error = HYPRE_StructBiCGSTABSetAbsoluteTol( _solver, tol );
+        this->checkHypreError( error );
+    }
+
+    // Set the amount of logging to do.
+    void setLogging( const int logging )
+    {
+        auto error = HYPRE_StructBiCGSTABSetLogging( _solver, logging );
+        this->checkHypreError( error );
+    }
+
+    HYPRE_StructSolver getHypreSolver() const override { return _solver; }
+    HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
+    {
+        return HYPRE_StructBiCGSTABSetup;
+    }
+    HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const override
+    {
+        return HYPRE_StructBiCGSTABSolve;
+    }
+
+  protected:
+    void setToleranceImpl( const double tol ) override
+    {
+        auto error = HYPRE_StructBiCGSTABSetTol( _solver, tol );
+        this->checkHypreError( error );
+    }
+
+    void setMaxIterImpl( const int max_iter ) override
+    {
+        auto error = HYPRE_StructBiCGSTABSetMaxIter( _solver, max_iter );
+        this->checkHypreError( error );
+    }
+
+    void setPrintLevelImpl( const int print_level ) override
+    {
+        auto error = HYPRE_StructBiCGSTABSetPrintLevel( _solver, print_level );
+        this->checkHypreError( error );
+    }
+
+    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
+                    HYPRE_StructVector x ) override
+    {
+        auto error = HYPRE_StructBiCGSTABSetup( _solver, A, b, x );
+        this->checkHypreError( error );
+    }
+
+    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
+                    HYPRE_StructVector x ) override
+    {
+        auto error = HYPRE_StructBiCGSTABSolve( _solver, A, b, x );
+        this->checkHypreError( error );
+    }
+
+    int getNumIterImpl() override
+    {
+        HYPRE_Int num_iter;
+        auto error = HYPRE_StructBiCGSTABGetNumIterations( _solver, &num_iter );
+        this->checkHypreError( error );
+        return num_iter;
+    }
+
+    double getFinalRelativeResidualNormImpl() override
+    {
+        HYPRE_Real norm;
+        auto error =
+            HYPRE_StructBiCGSTABGetFinalRelativeResidualNorm( _solver, &norm );
+        this->checkHypreError( error );
+        return norm;
+    }
+
+    void setPreconditionerImpl(
+        const StructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
+        override
+    {
+        auto error = HYPRE_StructBiCGSTABSetPrecond(
+            _solver, preconditioner.getHypreSolveFunction(),
+            preconditioner.getHypreSetupFunction(),
+            preconditioner.getHypreSolver() );
+        this->checkHypreError( error );
+    }
+
   private:
     HYPRE_StructSolver _solver;
 };
 
 //---------------------------------------------------------------------------//
 // PFMG solver.
-template <class EntityType, class DeviceType>
-class HypreStructPFMG : public StructuredSolver<EntityType, DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructPFMG : public StructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<EntityType, DeviceType>;
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructPFMG( const ArrayLayout<EntityType> &layout )
-        : Base( layout )
+    HypreStructPFMG( const ArrayLayout<EntityType> &layout,
+                     const bool is_preconditioner = false )
+        : Base( layout, is_preconditioner )
     {
         auto error = HYPRE_StructPFMGCreate(
             layout.block()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
+
+        if ( is_preconditioner )
+        {
+            error = HYPRE_StructPFMGSetZeroGuess( _solver );
+            this->checkHypreError( error );
+        }
     }
 
     ~HypreStructPFMG() { HYPRE_StructPFMGDestroy( _solver ); }
+
+    //! PFMG SETTINGS
+
+    // Set the maximum number of multigrid levels.
+    void setMaxLevels( const int max_levels )
+    {
+        auto error = HYPRE_StructPFMGSetMaxLevels( _solver, max_levels );
+        this->checkHypreError( error );
+    }
+
+    // Additionally require that the relative difference in successive
+    // iterates be small.
+    void setRelChange( const int rel_change )
+    {
+        auto error = HYPRE_StructPFMGSetRelChange( _solver, rel_change );
+        this->checkHypreError( error );
+    }
+
+    // Set relaxation type.
+    //
+    // 0 - Jacobi
+    // 1 - Weighted Jacobi (default)
+    // 2 - Red/Black Gauss-Seidel (symmetric: RB pre-relaxation, BR
+    // post-relaxation)
+    // 3 - Red/Black Gauss-Seidel (nonsymmetric: RB pre- and post-relaxation)
+    void setRelaxType( const int relax_type )
+    {
+        auto error = HYPRE_StructPFMGSetRelaxType( _solver, relax_type );
+        this->checkHypreError( error );
+    }
+
+    // Set the Jacobi weight
+    void setJacobiWeight( const double weight )
+    {
+        auto error = HYPRE_StructPFMGSetJacobiWeight( _solver, weight );
+        this->checkHypreError( error );
+    }
+
+    // Set type of coarse-grid operator to use.
+    //
+    // 0 - Galerkin (default)
+    // 1 - non-Galerkin 5-pt or 7-pt stencils
+    //
+    // Both operators are constructed algebraically.  The non-Galerkin option
+    // maintains a 5-pt stencil in 2D and a 7-pt stencil in 3D on all grid
+    // levels. The stencil coefficients are computed by averaging techniques.
+    void setRAPType( const int rap_type )
+    {
+        auto error = HYPRE_StructPFMGSetRAPType( _solver, rap_type );
+        this->checkHypreError( error );
+    }
+
+    // Set number of relaxation sweeps before coarse-grid correction.
+    void setNumPreRelax( const int num_pre_relax )
+    {
+        auto error = HYPRE_StructPFMGSetNumPreRelax( _solver, num_pre_relax );
+        this->checkHypreError( error );
+    }
+
+    // Set number of relaxation sweeps before coarse-grid correction.
+    void setNumPostRelax( const int num_post_relax )
+    {
+        auto error = HYPRE_StructPFMGSetNumPostRelax( _solver, num_post_relax );
+        this->checkHypreError( error );
+    }
+
+    // Skip relaxation on certain grids for isotropic problems.  This can
+    // greatly improve efficiency by eliminating unnecessary relaxations when
+    // the underlying problem is isotropic.
+    void setSkipRelax( const int skip_relax )
+    {
+        auto error = HYPRE_StructPFMGSetSkipRelax( _solver, skip_relax );
+        this->checkHypreError( error );
+    }
+
+    // Set the amount of logging to do.
+    void setLogging( const int logging )
+    {
+        auto error = HYPRE_StructPFMGSetLogging( _solver, logging );
+        this->checkHypreError( error );
+    }
+
+    HYPRE_StructSolver getHypreSolver() const override { return _solver; }
+    HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
+    {
+        return HYPRE_StructPFMGSetup;
+    }
+    HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const override
+    {
+        return HYPRE_StructPFMGSolve;
+    }
 
   protected:
     void setToleranceImpl( const double tol ) override
@@ -562,27 +942,82 @@ class HypreStructPFMG : public StructuredSolver<EntityType, DeviceType>
         return norm;
     }
 
+    void setPreconditionerImpl(
+        const StructuredSolver<Scalar, EntityType, DeviceType> & ) override
+    {
+        throw std::logic_error(
+            "HYPRE PFMG solver does not support preconditioning." );
+    }
+
   private:
     HYPRE_StructSolver _solver;
 };
 
 //---------------------------------------------------------------------------//
 // SMG solver.
-template <class EntityType, class DeviceType>
-class HypreStructSMG : public StructuredSolver<EntityType, DeviceType>
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructSMG : public StructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<EntityType, DeviceType>;
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructSMG( const ArrayLayout<EntityType> &layout )
-        : Base( layout )
+    HypreStructSMG( const ArrayLayout<EntityType> &layout,
+                    const bool is_preconditioner = false )
+        : Base( layout, is_preconditioner )
     {
         auto error = HYPRE_StructSMGCreate( layout.block()->globalGrid().comm(),
                                             &_solver );
         this->checkHypreError( error );
+
+        if ( is_preconditioner )
+        {
+            error = HYPRE_StructSMGSetZeroGuess( _solver );
+            this->checkHypreError( error );
+        }
     }
 
     ~HypreStructSMG() { HYPRE_StructSMGDestroy( _solver ); }
+
+    //! SMG Settings
+
+    // Additionally require that the relative difference in successive
+    // iterates be small.
+    void setRelChange( const int rel_change )
+    {
+        auto error = HYPRE_StructSMGSetRelChange( _solver, rel_change );
+        this->checkHypreError( error );
+    }
+
+    // Set number of relaxation sweeps before coarse-grid correction.
+    void setNumPreRelax( const int num_pre_relax )
+    {
+        auto error = HYPRE_StructSMGSetNumPreRelax( _solver, num_pre_relax );
+        this->checkHypreError( error );
+    }
+
+    // Set number of relaxation sweeps before coarse-grid correction.
+    void setNumPostRelax( const int num_post_relax )
+    {
+        auto error = HYPRE_StructSMGSetNumPostRelax( _solver, num_post_relax );
+        this->checkHypreError( error );
+    }
+
+    // Set the amount of logging to do.
+    void setLogging( const int logging )
+    {
+        auto error = HYPRE_StructSMGSetLogging( _solver, logging );
+        this->checkHypreError( error );
+    }
+
+    HYPRE_StructSolver getHypreSolver() const override { return _solver; }
+    HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
+    {
+        return HYPRE_StructSMGSetup;
+    }
+    HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const override
+    {
+        return HYPRE_StructSMGSolve;
+    }
 
   protected:
     void setToleranceImpl( const double tol ) override
@@ -634,30 +1069,292 @@ class HypreStructSMG : public StructuredSolver<EntityType, DeviceType>
         return norm;
     }
 
+    void setPreconditionerImpl(
+        const StructuredSolver<Scalar, EntityType, DeviceType> & ) override
+    {
+        throw std::logic_error(
+            "HYPRE SMG solver does not support preconditioning." );
+    }
+
   private:
     HYPRE_StructSolver _solver;
 };
 
 //---------------------------------------------------------------------------//
+// Jacobi solver.
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructJacobi
+    : public StructuredSolver<Scalar, EntityType, DeviceType>
+{
+  public:
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+
+    HypreStructJacobi( const ArrayLayout<EntityType> &layout,
+                       const bool is_preconditioner = false )
+        : Base( layout, is_preconditioner )
+    {
+        auto error = HYPRE_StructJacobiCreate(
+            layout.block()->globalGrid().comm(), &_solver );
+        this->checkHypreError( error );
+
+        if ( is_preconditioner )
+        {
+            error = HYPRE_StructJacobiSetZeroGuess( _solver );
+            this->checkHypreError( error );
+        }
+    }
+
+    ~HypreStructJacobi() { HYPRE_StructJacobiDestroy( _solver ); }
+
+    HYPRE_StructSolver getHypreSolver() const override { return _solver; }
+    HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
+    {
+        return HYPRE_StructJacobiSetup;
+    }
+    HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const override
+    {
+        return HYPRE_StructJacobiSolve;
+    }
+
+  protected:
+    void setToleranceImpl( const double tol ) override
+    {
+        auto error = HYPRE_StructJacobiSetTol( _solver, tol );
+        this->checkHypreError( error );
+    }
+
+    void setMaxIterImpl( const int max_iter ) override
+    {
+        auto error = HYPRE_StructJacobiSetMaxIter( _solver, max_iter );
+        this->checkHypreError( error );
+    }
+
+    void setPrintLevelImpl( const int ) override
+    {
+        // The Jacobi solver does not support a print level.
+    }
+
+    void setupImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
+                    HYPRE_StructVector x ) override
+    {
+        auto error = HYPRE_StructJacobiSetup( _solver, A, b, x );
+        this->checkHypreError( error );
+    }
+
+    void solveImpl( HYPRE_StructMatrix A, HYPRE_StructVector b,
+                    HYPRE_StructVector x ) override
+    {
+        auto error = HYPRE_StructJacobiSolve( _solver, A, b, x );
+        this->checkHypreError( error );
+    }
+
+    int getNumIterImpl() override
+    {
+        HYPRE_Int num_iter;
+        auto error = HYPRE_StructJacobiGetNumIterations( _solver, &num_iter );
+        this->checkHypreError( error );
+        return num_iter;
+    }
+
+    double getFinalRelativeResidualNormImpl() override
+    {
+        HYPRE_Real norm;
+        auto error =
+            HYPRE_StructJacobiGetFinalRelativeResidualNorm( _solver, &norm );
+        this->checkHypreError( error );
+        return norm;
+    }
+
+    void setPreconditionerImpl(
+        const StructuredSolver<Scalar, EntityType, DeviceType> & ) override
+    {
+        throw std::logic_error(
+            "HYPRE Jacobi solver does not support preconditioning." );
+    }
+
+  private:
+    HYPRE_StructSolver _solver;
+};
+
+//---------------------------------------------------------------------------//
+// Diagonal preconditioner.
+template <class Scalar, class EntityType, class DeviceType>
+class HypreStructDiagonal
+    : public StructuredSolver<Scalar, EntityType, DeviceType>
+{
+  public:
+    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+
+    HypreStructDiagonal( const ArrayLayout<EntityType> &layout,
+                         const bool is_preconditioner = false )
+        : Base( layout, is_preconditioner )
+    {
+        if ( !is_preconditioner )
+            throw std::logic_error(
+                "Diagonal preconditioner cannot be used as a solver" );
+    }
+
+    HYPRE_StructSolver getHypreSolver() const override { return nullptr; }
+    HYPRE_PtrToStructSolverFcn getHypreSetupFunction() const override
+    {
+        return HYPRE_StructDiagScaleSetup;
+    }
+    HYPRE_PtrToStructSolverFcn getHypreSolveFunction() const override
+    {
+        return HYPRE_StructDiagScale;
+    }
+
+  protected:
+    void setToleranceImpl( const double ) override
+    {
+        throw std::logic_error(
+            "Diagonal preconditioner cannot be used as a solver" );
+    }
+
+    void setMaxIterImpl( const int ) override
+    {
+        throw std::logic_error(
+            "Diagonal preconditioner cannot be used as a solver" );
+    }
+
+    void setPrintLevelImpl( const int ) override
+    {
+        throw std::logic_error(
+            "Diagonal preconditioner cannot be used as a solver" );
+    }
+
+    void setupImpl( HYPRE_StructMatrix, HYPRE_StructVector,
+                    HYPRE_StructVector ) override
+    {
+        throw std::logic_error(
+            "Diagonal preconditioner cannot be used as a solver" );
+    }
+
+    void solveImpl( HYPRE_StructMatrix, HYPRE_StructVector,
+                    HYPRE_StructVector ) override
+    {
+        throw std::logic_error(
+            "Diagonal preconditioner cannot be used as a solver" );
+    }
+
+    int getNumIterImpl() override
+    {
+        throw std::logic_error(
+            "Diagonal preconditioner cannot be used as a solver" );
+    }
+
+    double getFinalRelativeResidualNormImpl() override
+    {
+        throw std::logic_error(
+            "Diagonal preconditioner cannot be used as a solver" );
+    }
+
+    void setPreconditionerImpl(
+        const StructuredSolver<Scalar, EntityType, DeviceType> & ) override
+    {
+        throw std::logic_error(
+            "Diagonal preconditioner does not support preconditioning." );
+    }
+};
+
+//---------------------------------------------------------------------------//
+// Builders
+//---------------------------------------------------------------------------//
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<HypreStructPCG<Scalar, EntityType, DeviceType>>
+createHypreStructPCG( const ArrayLayout<EntityType> &layout,
+                      const bool is_preconditioner = false )
+{
+    return std::make_shared<HypreStructPCG<Scalar, EntityType, DeviceType>>(
+        layout, is_preconditioner );
+}
+
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<HypreStructGMRES<Scalar, EntityType, DeviceType>>
+createHypreStructGMRES( const ArrayLayout<EntityType> &layout,
+                        const bool is_preconditioner = false )
+{
+    return std::make_shared<HypreStructGMRES<Scalar, EntityType, DeviceType>>(
+        layout, is_preconditioner );
+}
+
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<HypreStructBiCGSTAB<Scalar, EntityType, DeviceType>>
+createHypreStructBiCGSTAB( const ArrayLayout<EntityType> &layout,
+                           const bool is_preconditioner = false )
+{
+    return std::make_shared<
+        HypreStructBiCGSTAB<Scalar, EntityType, DeviceType>>(
+        layout, is_preconditioner );
+}
+
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<HypreStructPFMG<Scalar, EntityType, DeviceType>>
+createHypreStructPFMG( const ArrayLayout<EntityType> &layout,
+                       const bool is_preconditioner = false )
+{
+    return std::make_shared<HypreStructPFMG<Scalar, EntityType, DeviceType>>(
+        layout, is_preconditioner );
+}
+
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<HypreStructSMG<Scalar, EntityType, DeviceType>>
+createHypreStructSMG( const ArrayLayout<EntityType> &layout,
+                      const bool is_preconditioner = false )
+{
+    return std::make_shared<HypreStructSMG<Scalar, EntityType, DeviceType>>(
+        layout, is_preconditioner );
+}
+
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<HypreStructJacobi<Scalar, EntityType, DeviceType>>
+createHypreStructJacobi( const ArrayLayout<EntityType> &layout,
+                         const bool is_preconditioner = false )
+{
+    return std::make_shared<HypreStructJacobi<Scalar, EntityType, DeviceType>>(
+        layout, is_preconditioner );
+}
+
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<HypreStructDiagonal<Scalar, EntityType, DeviceType>>
+createHypreStructDiagonal( const ArrayLayout<EntityType> &layout,
+                           const bool is_preconditioner = false )
+{
+    return std::make_shared<
+        HypreStructDiagonal<Scalar, EntityType, DeviceType>>(
+        layout, is_preconditioner );
+}
+
+//---------------------------------------------------------------------------//
 // Factory
 //---------------------------------------------------------------------------//
-template <class EntityType, class DeviceType>
-std::shared_ptr<StructuredSolver<EntityType, DeviceType>>
+template <class Scalar, class DeviceType, class EntityType>
+std::shared_ptr<StructuredSolver<Scalar, EntityType, DeviceType>>
 createStructuredSolver( const std::string &solver_type,
-                        const ArrayLayout<EntityType> &layout, DeviceType )
+                        const ArrayLayout<EntityType> &layout,
+                        const bool is_preconditioner = false )
 {
     if ( "PCG" == solver_type )
-        return std::make_shared<HypreStructPCG<EntityType, DeviceType>>(
-            layout );
+        return createHypreStructPCG<Scalar, DeviceType>( layout,
+                                                         is_preconditioner );
     else if ( "GMRES" == solver_type )
-        return std::make_shared<HypreStructGMRES<EntityType, DeviceType>>(
-            layout );
+        return createHypreStructGMRES<Scalar, DeviceType>( layout,
+                                                           is_preconditioner );
+    else if ( "BiCGSTAB" == solver_type )
+        return createHypreStructBiCGSTAB<Scalar, DeviceType>(
+            layout, is_preconditioner );
     else if ( "PFMG" == solver_type )
-        return std::make_shared<HypreStructPFMG<EntityType, DeviceType>>(
-            layout );
+        return createHypreStructPFMG<Scalar, DeviceType>( layout,
+                                                          is_preconditioner );
     else if ( "SMG" == solver_type )
-        return std::make_shared<HypreStructSMG<EntityType, DeviceType>>(
-            layout );
+        return createHypreStructSMG<Scalar, DeviceType>( layout,
+                                                         is_preconditioner );
+    else if ( "Jacobi" == solver_type )
+        return createHypreStructJacobi<Scalar, DeviceType>( layout,
+                                                            is_preconditioner );
+    else if ( "Diagonal" == solver_type )
+        return createHypreStructDiagonal<Scalar, DeviceType>(
+            layout, is_preconditioner );
     else
         throw std::runtime_error( "Invalid solver type" );
 }
