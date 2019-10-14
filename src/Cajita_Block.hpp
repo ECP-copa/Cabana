@@ -103,6 +103,27 @@ class Block
                                         const int off_j, const int off_k,
                                         const int halo_width ) const;
 
+    // Get the edge index space of the block.
+    template <int Dir>
+    IndexSpace<3> edgeIndexSpace( Own, Edge<Dir>, Local ) const;
+    template <int Dir>
+    IndexSpace<3> edgeIndexSpace( Own, Edge<Dir>, Global ) const;
+    template <int Dir>
+    IndexSpace<3> edgeIndexSpace( Ghost, Edge<Dir>, Local ) const;
+    template <int Dir>
+    IndexSpace<3> edgeIndexSpace( Ghost, Edge<Dir>, Global ) const;
+
+    // Given a relative set of indices of a neighbor get the set of local
+    // edge indices shared with that neighbor in the given decomposition.
+    template <int Dir>
+    IndexSpace<3> edgeSharedIndexSpace( Own, Edge<Dir>, const int off_,
+                                        const int off_j, const int off_k,
+                                        const int halo_width ) const;
+    template <int Dir>
+    IndexSpace<3> edgeSharedIndexSpace( Ghost, Edge<Dir>, const int off_i,
+                                        const int off_j, const int off_k,
+                                        const int halo_width ) const;
+
   private:
     std::shared_ptr<GlobalGrid> _global_grid;
     int _halo_cell_width;

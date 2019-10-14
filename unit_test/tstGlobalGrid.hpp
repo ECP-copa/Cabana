@@ -68,6 +68,90 @@ void gridTest( const std::vector<bool>& is_dim_periodic )
 
     }
 
+    // Number of I faces
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::I>(), Dim::I ),
+                   global_num_cell[Dim::I] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::I>(), Dim::I ),
+                   global_num_cell[Dim::I] + 1 );
+    EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::I>(), Dim::J ),
+               global_num_cell[Dim::J] );
+    EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::I>(), Dim::K ),
+               global_num_cell[Dim::K] );
+
+    // Number of J faces.
+    EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::J>(), Dim::I ),
+               global_num_cell[Dim::I] );
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::J>(), Dim::J ),
+                   global_num_cell[Dim::J] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::J>(), Dim::J ),
+                   global_num_cell[Dim::J] + 1 );
+    EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::J>(), Dim::K ),
+               global_num_cell[Dim::K] );
+
+    // Number of K faces.
+    EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::K>(), Dim::I ),
+               global_num_cell[Dim::I] );
+    EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::K>(), Dim::J ),
+               global_num_cell[Dim::J] );
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::K>(), Dim::K ),
+                   global_num_cell[Dim::K] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::K>(), Dim::K ),
+                   global_num_cell[Dim::K] + 1 );
+
+    // Number of I edges
+    EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::I>(), Dim::I ),
+               global_num_cell[Dim::I] );
+    if ( is_dim_periodic[Dim::J] )
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::I>(), Dim::J ),
+                   global_num_cell[Dim::J] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::I>(), Dim::J ),
+                   global_num_cell[Dim::J] + 1 );
+    if ( is_dim_periodic[Dim::K] )
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::I>(), Dim::K ),
+                   global_num_cell[Dim::K] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::I>(), Dim::K ),
+                   global_num_cell[Dim::K] + 1 );
+
+    // Number of J edges
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::J>(), Dim::I ),
+                   global_num_cell[Dim::I] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::J>(), Dim::I ),
+                   global_num_cell[Dim::I] + 1 );
+    EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::J>(), Dim::J ),
+               global_num_cell[Dim::J] );
+    if ( is_dim_periodic[Dim::K] )
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::J>(), Dim::K ),
+                   global_num_cell[Dim::K] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::J>(), Dim::K ),
+                   global_num_cell[Dim::K] + 1 );
+
+    // Number of K edges
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::K>(), Dim::I ),
+                   global_num_cell[Dim::I] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::K>(), Dim::I ),
+                   global_num_cell[Dim::I] + 1 );
+    if ( is_dim_periodic[Dim::J] )
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::K>(), Dim::J ),
+                   global_num_cell[Dim::J] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::K>(), Dim::J ),
+                   global_num_cell[Dim::J] + 1 );
+    EXPECT_EQ( global_grid->globalNumEntity( Edge<Dim::K>(), Dim::K ),
+               global_num_cell[Dim::K] );
+
     // Check the partitioning. The grid communicator has a Cartesian topology.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
