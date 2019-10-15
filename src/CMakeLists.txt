@@ -3,10 +3,11 @@ set(HEADERS_PUBLIC
   Cajita_Array.hpp
   Cajita_Block.hpp
   Cajita_BovWriter.hpp
-  Cajita_Domain.hpp
   Cajita_GlobalGrid.hpp
+  Cajita_GlobalMesh.hpp
   Cajita_Halo.hpp
   Cajita_IndexSpace.hpp
+  Cajita_LocalMesh.hpp
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
   Cajita_Partitioner.hpp
@@ -16,8 +17,8 @@ set(HEADERS_PUBLIC
 
 set(SOURCES_PUBLIC
   Cajita_Block.cpp
-  Cajita_Domain.cpp
   Cajita_GlobalGrid.cpp
+  Cajita_GlobalMesh.cpp
   Cajita_IndexSpace.cpp
   Cajita_ManualPartitioner.cpp
   Cajita_UniformDimPartitioner.cpp

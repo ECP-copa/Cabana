@@ -21,6 +21,7 @@
 
 #include <mpi.h>
 
+#include <array>
 #include <fstream>
 #include <iomanip>
 #include <iostream>
@@ -83,8 +84,8 @@ struct BovCentering<Node>
 // Create the MPI subarray for the given array.
 template <class Array_t>
 MPI_Datatype createSubarray( const Array_t &array,
-                             const std::vector<long> &owned_extents,
-                             const std::vector<long> &global_extents )
+                             const std::array<long, 4> &owned_extents,
+                             const std::array<long, 4> &global_extents )
 {
     using value_type = typename Array_t::value_type;
     const auto &global_grid = array.layout()->block()->globalGrid();
@@ -125,6 +126,9 @@ template <class Array_t>
 void writeTimeStep( const int time_step_index, const double time,
                     const Array_t &array )
 {
+    static_assert( isUniformMesh<typename Array_t::mesh_type>::value,
+                   "ViSIT BOV writer can only be used with uniform mesh" );
+
     // Types
     using entity_type = typename Array_t::entity_type;
     using value_type = typename Array_t::value_type;
@@ -134,9 +138,12 @@ void writeTimeStep( const int time_step_index, const double time,
     // Get the global grid.
     const auto &global_grid = array.layout()->block()->globalGrid();
 
+    // Get the global mesh.
+    const auto &global_mesh = global_grid.globalMesh();
+
     // If this is a node field, determine periodicity so we can add the last
     // node back to the visualization if needed.
-    std::vector<long> global_extents( 4, -1 );
+    std::array<long, 4> global_extents = {-1, -1, -1, -1};
     for ( int d = 0; d < 3; ++d )
     {
         if ( std::is_same<entity_type, Cell>::value )
@@ -146,7 +153,7 @@ void writeTimeStep( const int time_step_index, const double time,
     }
     global_extents[3] = array.layout()->dofsPerEntity();
     auto owned_index_space = array.layout()->indexSpace( Own(), Local() );
-    std::vector<long> owned_extents( 4, -1 );
+    std::array<long, 4> owned_extents = {-1, -1, -1, -1};
     for ( int d = 0; d < 3; ++d )
     {
         if ( std::is_same<entity_type, Cell>::value )
@@ -155,7 +162,7 @@ void writeTimeStep( const int time_step_index, const double time,
         }
         else if ( std::is_same<entity_type, Node>::value )
         {
-            if ( !global_grid.domain().isPeriodic( d ) ||
+            if ( !global_grid.isPeriodic( d ) ||
                  global_grid.dimBlockId( d ) <
                      global_grid.dimNumBlock( d ) - 1 )
                 owned_extents[d] = owned_index_space.extent( d );
@@ -252,20 +259,20 @@ void writeTimeStep( const int time_step_index, const double time,
                << std::endl;
 
         // Mesh low corner.
-        header << "BRICK_ORIGIN: " << global_grid.domain().lowCorner( Dim::I )
-               << " " << global_grid.domain().lowCorner( Dim::J ) << " "
-               << global_grid.domain().lowCorner( Dim::K ) << std::endl;
+        header << "BRICK_ORIGIN: " << global_mesh.lowCorner( Dim::I ) << " "
+               << global_mesh.lowCorner( Dim::J ) << " "
+               << global_mesh.lowCorner( Dim::K ) << std::endl;
 
         // Mesh global width
         header << "BRICK_SIZE: "
                << global_grid.globalNumEntity( Cell(), Dim::I ) *
-                      global_grid.cellSize()
+                      global_mesh.uniformCellSize()
                << " "
                << global_grid.globalNumEntity( Cell(), Dim::J ) *
-                      global_grid.cellSize()
+                      global_mesh.uniformCellSize()
                << " "
                << global_grid.globalNumEntity( Cell(), Dim::K ) *
-                      global_grid.cellSize()
+                      global_mesh.uniformCellSize()
                << std::endl;
 
         // Number of data components. Scalar and vector types are

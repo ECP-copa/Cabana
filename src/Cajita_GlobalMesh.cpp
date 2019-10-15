@@ -9,28 +9,15 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_UNIFORMDIMPARTITIONER_HPP
-#define CAJITA_UNIFORMDIMPARTITIONER_HPP
-
-#include <Cajita_Partitioner.hpp>
-
-#include <array>
-
-#include <mpi.h>
+#include <Cajita_GlobalMesh.hpp>
 
 namespace Cajita
 {
-//---------------------------------------------------------------------------//
-class UniformDimPartitioner : public Partitioner
-{
-  public:
-    std::array<int, 3> ranksPerDimension(
-        MPI_Comm comm,
-        const std::array<int, 3> &global_cells_per_dim ) const override;
-};
 
-//---------------------------------------------------------------------------//
+template class GlobalMesh<UniformMesh<float>>;
+template class GlobalMesh<UniformMesh<double>>;
+
+template class GlobalMesh<NonUniformMesh<float>>;
+template class GlobalMesh<NonUniformMesh<double>>;
 
 } // end namespace Cajita
-
-#endif // end CAJITA_UNIFORMDIMPARTITIONER_HPP

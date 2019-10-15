@@ -22,11 +22,15 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Local Cartesian grid block.
+// Local logical grid block.
 //---------------------------------------------------------------------------//
+template <class MeshType>
 class Block
 {
   public:
+    // Mesh type.
+    using mesh_type = MeshType;
+
     /*!
       \brief Constructor.
       \param global_grid The global grid from which the block will be
@@ -34,24 +38,14 @@ class Block
       \param halo_cell_width The number of halo cells surrounding the locally
       owned cells.
     */
-    Block( const std::shared_ptr<GlobalGrid> &global_grid,
+    Block( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
            const int halo_cell_width );
 
     // Get the global grid that owns the block.
-    const GlobalGrid &globalGrid() const;
-
-    // Get the physical coordinates of the low corner of the block in a given
-    // dimension in the given decomposition.
-    template <class DecompositionTag>
-    double lowCorner( DecompositionTag, const int dim ) const;
-
-    // Get the physical coordinates of the high corner of the block in a given
-    // dimension in the given decomposition.
-    template <class DecompositionTag>
-    double highCorner( DecompositionTag, const int dim ) const;
+    const GlobalGrid<MeshType> &globalGrid() const;
 
     // Get the number of cells in the halo.
-    int haloWidth() const;
+    int haloCellWidth() const;
 
     // Given the relative offsets of a neighbor rank relative to this block's
     // indices get the of the neighbor. If the neighbor rank is out of bounds
@@ -60,19 +54,134 @@ class Block
     // boundary.
     int neighborRank( const int off_i, const int off_j, const int off_k ) const;
 
-    // Get the index space of the block.
-    template <class DecompositionTag, class EntityType, class IndexType>
-    IndexSpace<3> indexSpace( DecompositionTag, EntityType, IndexType ) const;
+    /*
+       Get the index space of the block.
 
-    // Given a relative set of indices of a neighbor get the set of local
-    // entity indices shared with that neighbor in the given
-    // decomposition. Optionally provide a halo width for the shared
-    // space. This halo width must be less than or equal to the halo width of
-    // the block. The default behavior is to use the halo width of the block.
-    template <class DecompositionTag, class EntityType>
-    IndexSpace<3> sharedIndexSpace( DecompositionTag, EntityType,
-                                    const int off_i, const int off_j,
+       Interface has the same structure as:
+
+       template<class DecompositionTag, class EntityType, class IndexType>
+       IndexSpace<3>
+       indexSpace( DecompositionTag, EntityType, IndexType ) const;
+    */
+
+    IndexSpace<3> indexSpace( Own, Cell, Local ) const;
+    IndexSpace<3> indexSpace( Ghost, Cell, Local ) const;
+    IndexSpace<3> indexSpace( Own, Cell, Global ) const;
+    IndexSpace<3> indexSpace( Ghost, Cell, Global ) const;
+
+    IndexSpace<3> indexSpace( Own, Node, Local ) const;
+    IndexSpace<3> indexSpace( Ghost, Node, Local ) const;
+    IndexSpace<3> indexSpace( Own, Node, Global ) const;
+    IndexSpace<3> indexSpace( Ghost, Node, Global ) const;
+
+    IndexSpace<3> indexSpace( Own, Face<Dim::I>, Local ) const;
+    IndexSpace<3> indexSpace( Ghost, Face<Dim::I>, Local ) const;
+    IndexSpace<3> indexSpace( Own, Face<Dim::I>, Global ) const;
+    IndexSpace<3> indexSpace( Ghost, Face<Dim::I>, Global ) const;
+
+    IndexSpace<3> indexSpace( Own, Face<Dim::J>, Local ) const;
+    IndexSpace<3> indexSpace( Ghost, Face<Dim::J>, Local ) const;
+    IndexSpace<3> indexSpace( Own, Face<Dim::J>, Global ) const;
+    IndexSpace<3> indexSpace( Ghost, Face<Dim::J>, Global ) const;
+
+    IndexSpace<3> indexSpace( Own, Face<Dim::K>, Local ) const;
+    IndexSpace<3> indexSpace( Ghost, Face<Dim::K>, Local ) const;
+    IndexSpace<3> indexSpace( Own, Face<Dim::K>, Global ) const;
+    IndexSpace<3> indexSpace( Ghost, Face<Dim::K>, Global ) const;
+
+    IndexSpace<3> indexSpace( Own, Edge<Dim::I>, Local ) const;
+    IndexSpace<3> indexSpace( Ghost, Edge<Dim::I>, Local ) const;
+    IndexSpace<3> indexSpace( Own, Edge<Dim::I>, Global ) const;
+    IndexSpace<3> indexSpace( Ghost, Edge<Dim::I>, Global ) const;
+
+    IndexSpace<3> indexSpace( Own, Edge<Dim::J>, Local ) const;
+    IndexSpace<3> indexSpace( Ghost, Edge<Dim::J>, Local ) const;
+    IndexSpace<3> indexSpace( Own, Edge<Dim::J>, Global ) const;
+    IndexSpace<3> indexSpace( Ghost, Edge<Dim::J>, Global ) const;
+
+    IndexSpace<3> indexSpace( Own, Edge<Dim::K>, Local ) const;
+    IndexSpace<3> indexSpace( Ghost, Edge<Dim::K>, Local ) const;
+    IndexSpace<3> indexSpace( Own, Edge<Dim::K>, Global ) const;
+    IndexSpace<3> indexSpace( Ghost, Edge<Dim::K>, Global ) const;
+
+    /*
+       Given a relative set of indices of a neighbor get the set of local
+       entity indices shared with that neighbor in the given
+       decomposition. Optionally provide a halo width for the shared
+       space. This halo width must be less than or equal to the halo width of
+       the block. The default behavior is to use the halo width of the block.
+
+       Interface same structure as:
+
+       template<class DecompositionTag, class EntityType, class IndexType>
+       IndexSpace<3> sharedIndexSpace( DecompositionTag, EntityType,
+                                       const int off_i, const int off_j,
+                                       const int off_k,
+                                       const int halo_width = -1 ) const;
+    */
+
+    IndexSpace<3> sharedIndexSpace( Own, Cell, const int off_i, const int off_j,
                                     const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Ghost, Cell, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Own, Node, const int off_i, const int off_j,
+                                    const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Ghost, Node, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Own, Face<Dim::I>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Ghost, Face<Dim::I>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Own, Face<Dim::J>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Ghost, Face<Dim::J>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Own, Face<Dim::K>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Ghost, Face<Dim::K>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Own, Edge<Dim::I>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Ghost, Edge<Dim::I>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Own, Edge<Dim::J>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Ghost, Edge<Dim::J>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Own, Edge<Dim::K>, const int off_i,
+                                    const int off_j, const int off_k,
+                                    const int halo_width = -1 ) const;
+
+    IndexSpace<3> sharedIndexSpace( Ghost, Edge<Dim::K>, const int off_i,
+                                    const int off_j, const int off_k,
                                     const int halo_width = -1 ) const;
 
   private:
@@ -125,7 +234,7 @@ class Block
                                         const int halo_width ) const;
 
   private:
-    std::shared_ptr<GlobalGrid> _global_grid;
+    std::shared_ptr<GlobalGrid<MeshType>> _global_grid;
     int _halo_cell_width;
 };
 
@@ -139,9 +248,13 @@ class Block
   \param halo_cell_width The number of halo cells surrounding the locally
   owned cells.
 */
-std::shared_ptr<Block>
-createBlock( const std::shared_ptr<GlobalGrid> &global_grid,
-             const int halo_cell_width );
+template <class MeshType>
+std::shared_ptr<Block<MeshType>>
+createBlock( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
+             const int halo_cell_width )
+{
+    return std::make_shared<Block<MeshType>>( global_grid, halo_cell_width );
+}
 
 //---------------------------------------------------------------------------//
 

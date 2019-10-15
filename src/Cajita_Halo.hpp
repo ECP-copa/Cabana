@@ -385,10 +385,10 @@ class Halo
   buffers may be allocated. This means a halo constructed via this method is
   only compatible with arrays that have the same scalar and device type.
 */
-template <class Scalar, class Device, class EntityType>
+template <class Scalar, class Device, class EntityType, class MeshType>
 std::shared_ptr<Halo<Scalar, Device>>
-createHalo( const ArrayLayout<EntityType> &layout, const HaloPattern &pattern,
-            const int width = -1 )
+createHalo( const ArrayLayout<EntityType, MeshType> &layout,
+            const HaloPattern &pattern, const int width = -1 )
 {
     return std::make_shared<Halo<Scalar, Device>>( layout, pattern, width );
 }
@@ -402,16 +402,16 @@ createHalo( const ArrayLayout<EntityType> &layout, const HaloPattern &pattern,
   method is only compatible with arrays that have the same scalar and device
   type as the input array.
 */
-template <class Scalar, class EntityType, class... Params>
+template <class Scalar, class EntityType, class MeshType, class... Params>
 std::shared_ptr<
-    Halo<typename Array<Scalar, EntityType, Params...>::value_type,
-         typename Array<Scalar, EntityType, Params...>::device_type>>
-createHalo( const Array<Scalar, EntityType, Params...> &array,
+    Halo<typename Array<Scalar, EntityType, MeshType, Params...>::value_type,
+         typename Array<Scalar, EntityType, MeshType, Params...>::device_type>>
+createHalo( const Array<Scalar, EntityType, MeshType, Params...> &array,
             const HaloPattern &pattern, const int width = -1 )
 {
-    return std::make_shared<
-        Halo<typename Array<Scalar, EntityType, Params...>::value_type,
-             typename Array<Scalar, EntityType, Params...>::device_type>>(
+    return std::make_shared<Halo<
+        typename Array<Scalar, EntityType, MeshType, Params...>::value_type,
+        typename Array<Scalar, EntityType, MeshType, Params...>::device_type>>(
         *( array.layout() ), pattern, width );
 }
 

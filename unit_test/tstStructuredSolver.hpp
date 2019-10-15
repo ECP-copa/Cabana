@@ -10,6 +10,7 @@
  ****************************************************************************/
 
 #include <Cajita_Types.hpp>
+#include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
 #include <Cajita_Array.hpp>
@@ -30,20 +31,20 @@ namespace Test
 //---------------------------------------------------------------------------//
 void poissonTest( const std::string& solver_type, const std::string& precond_type )
 {
-    // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
-
     // Create the global grid.
     double cell_size = 0.1;
-    std::vector<bool> is_dim_periodic = {false,false,false};
-    std::vector<double> global_low_corner = {-1.0, -2.0, -1.0 };
-    std::vector<double> global_high_corner = { 1.0, 1.0, 0.5 };
+    std::array<bool,3> is_dim_periodic = {false,false,false};
+    std::array<double,3> global_low_corner = {-1.0, -2.0, -1.0 };
+    std::array<double,3> global_high_corner = { 1.0, 1.0, 0.5 };
+    auto global_mesh = createUniformGlobalMesh(
+        global_low_corner, global_high_corner, cell_size );
+
+    // Create the global grid.
+    UniformDimPartitioner partitioner;
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
-                                         partitioner,
+                                         global_mesh,
                                          is_dim_periodic,
-                                         global_low_corner,
-                                         global_high_corner,
-                                         cell_size );
+                                         partitioner );
 
     // Create a block.
     auto block = createBlock( global_grid, 0 );

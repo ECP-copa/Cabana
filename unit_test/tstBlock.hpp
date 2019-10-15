@@ -10,6 +10,7 @@
  ****************************************************************************/
 
 #include <Cajita_Types.hpp>
+#include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
 #include <Cajita_Block.hpp>
@@ -18,6 +19,7 @@
 
 #include <mpi.h>
 
+#include <array>
 #include <numeric>
 
 using namespace Cajita;
@@ -31,28 +33,31 @@ void periodicTest()
     // Let MPI compute the partitioning for this test.
     UniformDimPartitioner partitioner;
 
-    // Create the global grid.
+    // Create the global mesh.
     double cell_size = 0.23;
-    std::vector<int> global_num_cell = { 101, 85, 99 };
-    std::vector<bool> is_dim_periodic = {true,true,true};
-    std::vector<double> global_low_corner = { 1.2, 3.3, -2.8 };
-    std::vector<double> global_high_corner =
+    std::array<int,3> global_num_cell = { 101, 85, 99 };
+    std::array<double,3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double,3> global_high_corner =
         { global_low_corner[0] + cell_size * global_num_cell[0],
           global_low_corner[1] + cell_size * global_num_cell[1],
           global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = createUniformGlobalMesh( global_low_corner,
+                                                global_high_corner,
+                                                global_num_cell );
+
+    // Create the global grid.
+    std::array<bool,3> is_dim_periodic = {true,true,true};
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
-                                         partitioner,
+                                         global_mesh,
                                          is_dim_periodic,
-                                         global_low_corner,
-                                         global_high_corner,
-                                         cell_size );
+                                         partitioner );
 
     // Create a  grid block.
     int halo_width = 2;
     auto grid_block = createBlock( global_grid, halo_width );
 
     // Check sizes
-    EXPECT_EQ( grid_block->haloWidth(), halo_width );
+    EXPECT_EQ( grid_block->haloCellWidth(), halo_width );
 
     //////////////////
     // CELL SPACES
@@ -1792,78 +1797,6 @@ void periodicTest()
                0 );
     EXPECT_EQ( ghosted_shared_k_edge_space.max(Dim::K),
                halo_width );
-
-    //////////////////
-    // GEOMETRY
-    //////////////////
-
-    // Get another block without a halo and check the corners. Do an
-    // exclusive scan of sizes to get the local cell offset.
-    auto grid_block_2 = createBlock( global_grid, 0 );
-    int i_offset =
-        std::accumulate( local_num_cell_i.begin(),
-                         local_num_cell_i.begin() + cart_rank[Dim::I],
-                         0 );
-    int j_offset =
-        std::accumulate( local_num_cell_j.begin(),
-                         local_num_cell_j.begin() + cart_rank[Dim::J],
-                         0 );
-    int k_offset =
-        std::accumulate( local_num_cell_k.begin(),
-                         local_num_cell_k.begin() + cart_rank[Dim::K],
-                         0 );
-
-    EXPECT_EQ( grid_block_2->lowCorner(Own(),Dim::I),
-               i_offset * cell_size + global_low_corner[Dim::I] );
-    EXPECT_EQ( grid_block_2->lowCorner(Own(),Dim::J),
-               j_offset * cell_size + global_low_corner[Dim::J] );
-    EXPECT_EQ( grid_block_2->lowCorner(Own(),Dim::K),
-               k_offset * cell_size + global_low_corner[Dim::K] );
-
-    EXPECT_EQ( grid_block_2->highCorner(Own(),Dim::I),
-               (i_offset + local_num_cells[Dim::I]) * cell_size +
-               global_low_corner[Dim::I] );
-    EXPECT_EQ( grid_block_2->highCorner(Own(),Dim::J),
-               (j_offset + local_num_cells[Dim::J]) * cell_size +
-               global_low_corner[Dim::J] );
-    EXPECT_EQ( grid_block_2->highCorner(Own(),Dim::K),
-               (k_offset + local_num_cells[Dim::K]) * cell_size +
-               global_low_corner[Dim::K] );
-
-    EXPECT_EQ( grid_block_2->lowCorner(Ghost(),Dim::I),
-               i_offset * cell_size + global_low_corner[Dim::I] );
-    EXPECT_EQ( grid_block_2->lowCorner(Ghost(),Dim::J),
-               j_offset * cell_size + global_low_corner[Dim::J] );
-    EXPECT_EQ( grid_block_2->lowCorner(Ghost(),Dim::K),
-               k_offset * cell_size + global_low_corner[Dim::K] );
-
-    EXPECT_EQ( grid_block_2->highCorner(Ghost(),Dim::I),
-               (i_offset + local_num_cells[Dim::I]) * cell_size +
-               global_low_corner[Dim::I] );
-    EXPECT_EQ( grid_block_2->highCorner(Ghost(),Dim::J),
-               (j_offset + local_num_cells[Dim::J]) * cell_size +
-               global_low_corner[Dim::J] );
-    EXPECT_EQ( grid_block_2->highCorner(Ghost(),Dim::K),
-               (k_offset + local_num_cells[Dim::K]) * cell_size +
-               global_low_corner[Dim::K] );
-
-    // Compare ghosted corner to the corner of the block without a halo.
-    for ( int d = 0; d < 3; ++d )
-    {
-        EXPECT_EQ( grid_block_2->lowCorner(Ghost(),d) - cell_size * halo_width,
-                   grid_block->lowCorner(Ghost(),d) );
-        EXPECT_EQ( grid_block_2->lowCorner(Ghost(),d),
-                   grid_block->lowCorner(Own(),d) );
-        EXPECT_EQ( grid_block_2->lowCorner(Own(),d),
-                   grid_block->lowCorner(Own(),d) );
-
-        EXPECT_EQ( grid_block_2->highCorner(Ghost(),d) + cell_size * halo_width,
-                   grid_block->highCorner(Ghost(),d) );
-        EXPECT_EQ( grid_block_2->highCorner(Ghost(),d),
-                   grid_block->highCorner(Own(),d) );
-        EXPECT_EQ( grid_block_2->highCorner(Own(),d),
-                   grid_block->highCorner(Own(),d) );
-    }
 }
 
 //---------------------------------------------------------------------------//
@@ -1879,21 +1812,24 @@ void notPeriodicTest()
     // Let MPI compute the partitioning for this test.
     UniformDimPartitioner partitioner;
 
-    // Create the global grid.
+    // Create the global mesh.
     double cell_size = 0.23;
-    std::vector<int> global_num_cell = { 101, 85, 99 };
-    std::vector<bool> is_dim_periodic = {false,false,false};
-    std::vector<double> global_low_corner = { 1.2, 3.3, -2.8 };
-    std::vector<double> global_high_corner =
+    std::array<int,3> global_num_cell = { 101, 85, 99 };
+    std::array<bool,3> is_dim_periodic = {false,false,false};
+    std::array<double,3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double,3> global_high_corner =
         { global_low_corner[0] + cell_size * global_num_cell[0],
           global_low_corner[1] + cell_size * global_num_cell[1],
           global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = createUniformGlobalMesh( global_low_corner,
+                                                global_high_corner,
+                                                global_num_cell );
+
+    // Create the global grid.
     auto global_grid = createGlobalGrid( serial_comm,
-                                         partitioner,
+                                         global_mesh,
                                          is_dim_periodic,
-                                         global_low_corner,
-                                         global_high_corner,
-                                         cell_size );
+                                         partitioner );
     auto grid_comm = global_grid->comm();
 
     // Create a  grid block.
@@ -1901,7 +1837,7 @@ void notPeriodicTest()
     auto grid_block = createBlock( global_grid, halo_width );
 
     // Check sizes
-    EXPECT_EQ( grid_block->haloWidth(), halo_width );
+    EXPECT_EQ( grid_block->haloCellWidth(), halo_width );
 
     // Get the owned number of cells.
     auto owned_cell_space = grid_block->indexSpace( Own(), Cell(), Local() );
@@ -1981,13 +1917,6 @@ void notPeriodicTest()
             EXPECT_EQ( ghosted_k_face_space.extent(d), global_num_cell[d] + 1 );
         else
             EXPECT_EQ( ghosted_k_face_space.extent(d), global_num_cell[d] );
-    }
-
-    // Check the low corner.
-    for ( int d = 0; d < 3; ++d )
-    {
-        EXPECT_EQ( grid_block->lowCorner(Own(),d), global_low_corner[d] );
-        EXPECT_EQ( grid_block->lowCorner(Ghost(),d), global_low_corner[d] );
     }
 
     // Check neighbor ranks and shared spaces.

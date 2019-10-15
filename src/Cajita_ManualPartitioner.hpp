@@ -14,7 +14,7 @@
 
 #include <Cajita_Partitioner.hpp>
 
-#include <vector>
+#include <array>
 
 #include <mpi.h>
 
@@ -24,14 +24,14 @@ namespace Cajita
 class ManualPartitioner : public Partitioner
 {
   public:
-    ManualPartitioner( const std::vector<int> &ranks_per_dim );
+    ManualPartitioner( const std::array<int, 3> &ranks_per_dim );
 
-    std::vector<int> ranksPerDimension(
+    std::array<int, 3> ranksPerDimension(
         MPI_Comm comm,
-        const std::vector<int> &global_cells_per_dim ) const override;
+        const std::array<int, 3> &global_cells_per_dim ) const override;
 
   private:
-    std::vector<int> _ranks_per_dim;
+    std::array<int, 3> _ranks_per_dim;
 };
 
 //---------------------------------------------------------------------------//

@@ -56,12 +56,14 @@ macro(Cajita_add_tests)
 endmacro()
 
 set(SERIAL_TESTS
+  GlobalMesh
   IndexSpace
   )
 
 set(MPI_TESTS
   GlobalGrid
   Block
+  LocalMesh
   Array
   Halo
   BovWriter

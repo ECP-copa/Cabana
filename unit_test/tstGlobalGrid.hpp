@@ -10,6 +10,7 @@
  ****************************************************************************/
 
 #include <Cajita_Types.hpp>
+#include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
 
@@ -17,44 +18,38 @@
 
 #include <mpi.h>
 
+#include <array>
+
 using namespace Cajita;
 
 namespace Test
 {
 
 //---------------------------------------------------------------------------//
-void gridTest( const std::vector<bool>& is_dim_periodic )
+void gridTest( const std::array<bool,3>& is_dim_periodic )
 {
     // Let MPI compute the partitioning for this test.
     UniformDimPartitioner partitioner;
 
-    // Create the global grid.
+    // Create the global mesh.
     double cell_size = 0.23;
-    std::vector<int> global_num_cell = { 101, 85, 99 };
-    std::vector<double> global_low_corner = { 1.2, 3.3, -2.8 };
-    std::vector<double> global_high_corner =
+    std::array<int,3> global_num_cell = { 101, 85, 99 };
+    std::array<double,3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double,3> global_high_corner =
         { global_low_corner[0] + cell_size * global_num_cell[0],
           global_low_corner[1] + cell_size * global_num_cell[1],
           global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
-                                         partitioner,
-                                         is_dim_periodic,
-                                         global_low_corner,
-                                         global_high_corner,
-                                         cell_size );
+    auto global_mesh = createUniformGlobalMesh( global_low_corner,
+                                                global_high_corner,
+                                                global_num_cell );
 
-    // Check the domain.
-    auto domain = global_grid->domain();
-    for ( int d = 0; d < 3; ++d )
-    {
-        EXPECT_EQ( global_low_corner[d], domain.lowCorner(d) );
-        EXPECT_EQ( global_high_corner[d], domain.highCorner(d) );
-        EXPECT_EQ( cell_size * global_num_cell[d], domain.extent(d) );
-        EXPECT_EQ( is_dim_periodic[d], domain.isPeriodic(d) );
-    }
+    // Create the global grid.
+    auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
+                                         global_mesh,
+                                         is_dim_periodic,
+                                         partitioner );
 
     // Check the number of entities.
-    EXPECT_EQ( global_grid->cellSize(), cell_size );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( global_num_cell[d],
@@ -239,9 +234,9 @@ void gridTest( const std::vector<bool>& is_dim_periodic )
 //---------------------------------------------------------------------------//
 TEST( global_grid, grid_test )
 {
-    std::vector<bool> periodic = {true,true,true};
+    std::array<bool,3> periodic = {true,true,true};
     gridTest( periodic );
-    std::vector<bool> not_periodic = {false,false,false};
+    std::array<bool,3> not_periodic = {false,false,false};
     gridTest( not_periodic );
 }
 
