@@ -9,8 +9,6 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cabana_Core.hpp>
-
 #include <algorithm>
 #include <chrono>
 #include <cstdlib>
