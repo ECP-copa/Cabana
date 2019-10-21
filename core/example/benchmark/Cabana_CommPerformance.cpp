@@ -158,10 +158,10 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         for ( int t = 0; t < num_run; ++t )
         {
             // Create source particles.
-            aosoa_type src_particles( num_particle );
+            aosoa_type src_particles( "src_particles", num_particle );
 
             // Create destination particles.
-            aosoa_type dst_particles;
+            aosoa_type dst_particles( "dst_particles" );
 
             // Create a distributor using the fast construction method.
             distributor_fast_create.start( fraction );
@@ -286,7 +286,7 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         for ( int t = 0; t < num_run; ++t )
         {
             // Create the particles.
-            aosoa_type particles( num_particle );
+            aosoa_type particles( "particles", num_particle );
 
             // Create a halo using the fast construction method.
             halo_fast_create.start( fraction );
