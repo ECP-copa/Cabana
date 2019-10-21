@@ -157,6 +157,12 @@ int main( int argc, char **argv )
                                  },
                                  tfz );
 
+
+        double fx,fy,fz;
+        MPI_Allreduce(&tfx,&fx,1,MPI_DOUBLE,MPI_SUM,cart_comm);
+        MPI_Allreduce(&tfy,&fy,1,MPI_DOUBLE,MPI_SUM,cart_comm);
+        MPI_Allreduce(&tfz,&fz,1,MPI_DOUBLE,MPI_SUM,cart_comm);
+
         auto exec_time = timer.seconds();
         timer.reset();
 
@@ -181,10 +187,11 @@ int main( int argc, char **argv )
             std::cout << "relative error (energy): "
                       << 1.0 - ( n_particles * MADELUNG_NACL ) / total_energy
                       << std::endl;
-            std::cout << "sum of forces: " << tfx << " " << tfy << " " << tfz
+            std::cout << "sum of forces: " << fx << " " << fy << " " << fz
                       << std::endl;
         }
     }
+
     Kokkos::finalize();
     MPI_Finalize();
     return 0;

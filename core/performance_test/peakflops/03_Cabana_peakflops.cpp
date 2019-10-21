@@ -127,29 +127,29 @@ void move_AoSoA(
 #pragma omp simd
             for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
             {
-                auto _c = c.access( s ).get<0>( j );
-                auto _a = a.access( s ).get<0>( j );
+                auto _c = Cabana::get<0>( c.access( s ), j );
+                auto _a = Cabana::get<0>( a.access( s ), j );
 
-                x0.access( s ).get<0>( j ) =
-                    _a * x0.access( s ).get<0>( j ) + _c;
-                x1.access( s ).get<0>( j ) =
-                    _a * x1.access( s ).get<0>( j ) + _c;
-                x2.access( s ).get<0>( j ) =
-                    _a * x2.access( s ).get<0>( j ) + _c;
-                x3.access( s ).get<0>( j ) =
-                    _a * x3.access( s ).get<0>( j ) + _c;
-                x4.access( s ).get<0>( j ) =
-                    _a * x4.access( s ).get<0>( j ) + _c;
-                x5.access( s ).get<0>( j ) =
-                    _a * x5.access( s ).get<0>( j ) + _c;
-                x6.access( s ).get<0>( j ) =
-                    _a * x6.access( s ).get<0>( j ) + _c;
-                x7.access( s ).get<0>( j ) =
-                    _a * x7.access( s ).get<0>( j ) + _c;
-                x8.access( s ).get<0>( j ) =
-                    _a * x8.access( s ).get<0>( j ) + _c;
-                x9.access( s ).get<0>( j ) =
-                    _a * x9.access( s ).get<0>( j ) + _c;
+                Cabana::get<0>( x0.access( s ), j ) =
+                    _a * Cabana::get<0>( x0.access( s ), j ) + _c;
+                Cabana::get<0>( x1.access( s ), j ) =
+                    _a * Cabana::get<0>( x1.access( s ), j ) + _c;
+                Cabana::get<0>( x2.access( s ), j ) =
+                    _a * Cabana::get<0>( x2.access( s ), j ) + _c;
+                Cabana::get<0>( x3.access( s ), j ) =
+                    _a * Cabana::get<0>( x3.access( s ), j ) + _c;
+                Cabana::get<0>( x4.access( s ), j ) =
+                    _a * Cabana::get<0>( x4.access( s ), j ) + _c;
+                Cabana::get<0>( x5.access( s ), j ) =
+                    _a * Cabana::get<0>( x5.access( s ), j ) + _c;
+                Cabana::get<0>( x6.access( s ), j ) =
+                    _a * Cabana::get<0>( x6.access( s ), j ) + _c;
+                Cabana::get<0>( x7.access( s ), j ) =
+                    _a * Cabana::get<0>( x7.access( s ), j ) + _c;
+                Cabana::get<0>( x8.access( s ), j ) =
+                    _a * Cabana::get<0>( x8.access( s ), j ) + _c;
+                Cabana::get<0>( x9.access( s ), j ) =
+                    _a * Cabana::get<0>( x9.access( s ), j ) + _c;
             }
         }
     }
@@ -159,13 +159,17 @@ void move_AoSoA(
     {
         for ( j = 0; j < CABANA_PERFORMANCE_VECLENGTH; j++ )
         {
-            x0.access( s ).get<0>( j ) =
-                x0.access( s ).get<0>( j ) + x1.access( s ).get<0>( j ) +
-                x2.access( s ).get<0>( j ) + x3.access( s ).get<0>( j ) +
-                x4.access( s ).get<0>( j ) + x5.access( s ).get<0>( j ) +
-                x6.access( s ).get<0>( j ) + x7.access( s ).get<0>( j ) +
-                x8.access( s ).get<0>( j ) + x9.access( s ).get<0>( j ) +
-                (float)n;
+            Cabana::get<0>( x0.access( s ), j ) =
+                Cabana::get<0>( x0.access( s ), j ) +
+                Cabana::get<0>( x1.access( s ), j ) +
+                Cabana::get<0>( x2.access( s ), j ) +
+                Cabana::get<0>( x3.access( s ), j ) +
+                Cabana::get<0>( x4.access( s ), j ) +
+                Cabana::get<0>( x5.access( s ), j ) +
+                Cabana::get<0>( x6.access( s ), j ) +
+                Cabana::get<0>( x7.access( s ), j ) +
+                Cabana::get<0>( x8.access( s ), j ) +
+                Cabana::get<0>( x9.access( s ), j ) + (float)n;
         }
     }
 }
