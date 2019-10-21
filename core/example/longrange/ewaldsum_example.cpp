@@ -100,7 +100,7 @@ int main( int argc, char **argv )
         domain_width( 5 ) = ( loc_coords.at( 2 ) + 1 ) * domain_size( 2 );
 
         // Create an empty list of all the particles
-        ParticleList *particles = new ParticleList( 10 );
+        ParticleList *particles = new ParticleList( "particles", 10 );
 
         if ( rank == 0 )
             std::cout << std::setprecision( 12 );
