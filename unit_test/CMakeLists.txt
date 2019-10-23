@@ -57,6 +57,7 @@ endmacro()
 
 set(SERIAL_TESTS
   IndexSpace
+  Splines
   )
 
 set(MPI_TESTS

@@ -10,6 +10,7 @@ set(HEADERS_PUBLIC
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
   Cajita_Partitioner.hpp
+  Cajita_Splines.hpp
   Cajita_Types.hpp
   Cajita_UniformDimPartitioner.hpp
   )
