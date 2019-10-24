@@ -152,7 +152,7 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1>
         Impl::tupleCopy( *this, 0, t, 0 );
     }
 
-    KOKKOS_FORCEINLINE_FUNCTION Tuple( const Tuple &&t )
+    KOKKOS_FORCEINLINE_FUNCTION Tuple( Tuple &&t )
     {
         Impl::tupleCopy( *this, 0, t, 0 );
     }
