@@ -144,6 +144,30 @@ template <typename... Types>
 struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1>
 {
     using base = SoA<MemberTypes<Types...>, 1>;
+
+    KOKKOS_FORCEINLINE_FUNCTION Tuple() = default;
+
+    KOKKOS_FORCEINLINE_FUNCTION Tuple( const Tuple &t )
+    {
+        Impl::tupleCopy( *this, 0, t, 0 );
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION Tuple( Tuple &&t )
+    {
+        Impl::tupleCopy( *this, 0, t, 0 );
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION Tuple &operator=( const Tuple &t )
+    {
+        Impl::tupleCopy( *this, 0, t, 0 );
+        return *this;
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION Tuple &operator=( Tuple &&t )
+    {
+        Impl::tupleCopy( *this, 0, t, 0 );
+        return *this;
+    }
 };
 
 //---------------------------------------------------------------------------//
