@@ -105,6 +105,7 @@ void testAoSoA()
     EXPECT_EQ( aosoa.size(), int( 0 ) );
     EXPECT_EQ( aosoa.capacity(), int( 0 ) );
     EXPECT_EQ( aosoa.numSoA(), int( 0 ) );
+    EXPECT_TRUE( aosoa.empty() );
 
     // Resize
     int num_data = 35;
@@ -114,6 +115,7 @@ void testAoSoA()
     EXPECT_EQ( aosoa.size(), int( 35 ) );
     EXPECT_EQ( aosoa.capacity(), int( 48 ) );
     EXPECT_EQ( aosoa.numSoA(), int( 3 ) );
+    EXPECT_FALSE( aosoa.empty() );
 
     EXPECT_EQ( aosoa.arraySize( 0 ), int( 16 ) );
     EXPECT_EQ( aosoa.arraySize( 1 ), int( 16 ) );
@@ -195,6 +197,26 @@ void testAoSoA()
     // Make sure sizes and data changed but the capacity did not.
     EXPECT_EQ( aosoa.size(), int( 29 ) );
     EXPECT_EQ( aosoa.capacity(), int( 1024 ) );
+    EXPECT_EQ( aosoa.numSoA(), int( 2 ) );
+    EXPECT_EQ( aosoa.arraySize( 0 ), int( 16 ) );
+    EXPECT_EQ( aosoa.arraySize( 1 ), int( 13 ) );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+
+    // Now shrink to fit and check that the capacity changed to be as small as
+    // possible while the remainder of the size values and elements are the
+    // same.
+    aosoa.shrinkToFit();
+    EXPECT_EQ( aosoa.size(), int( 29 ) );
+    EXPECT_EQ( aosoa.capacity(), int( 32 ) );
+    EXPECT_EQ( aosoa.numSoA(), int( 2 ) );
+    EXPECT_EQ( aosoa.arraySize( 0 ), int( 16 ) );
+    EXPECT_EQ( aosoa.arraySize( 1 ), int( 13 ) );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+
+    // Shrink again - nothing should change this time.
+    aosoa.shrinkToFit();
+    EXPECT_EQ( aosoa.size(), int( 29 ) );
+    EXPECT_EQ( aosoa.capacity(), int( 32 ) );
     EXPECT_EQ( aosoa.numSoA(), int( 2 ) );
     EXPECT_EQ( aosoa.arraySize( 0 ), int( 16 ) );
     EXPECT_EQ( aosoa.arraySize( 1 ), int( 13 ) );

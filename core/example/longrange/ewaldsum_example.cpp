@@ -30,24 +30,24 @@ int main( int argc, char **argv )
     const int n_particles = c_size * c_size * c_size;
 
     // Create an empty list of all the particles
-    ParticleList *particles = new ParticleList( n_particles );
+    ParticleList particles( "particles", n_particles );
 
     std::cout << std::setprecision( 12 );
 
     // Initialize the particles
     // Currently particles are initialized as alternating charges
     // in uniform cubic grid pattern like NaCl
-    initializeParticles( *particles, c_size );
+    initializeParticles( particles, c_size );
 
     // Create a Kokkos timer to measure performance
     Kokkos::Timer timer;
 
     // Create the solver and tune it for decent values of alpha and r_max
-    TEwald solver( accuracy, *particles, width, width, width );
+    TEwald solver( accuracy, particles, width, width, width );
     auto tune_time = timer.seconds();
     timer.reset();
     // Perform the computation of real and imag space energies
-    double total_energy = solver.compute( *particles, width, width, width );
+    double total_energy = solver.compute( particles, width, width, width );
     auto exec_time = timer.seconds();
     timer.reset();
 
@@ -71,10 +71,6 @@ int main( int argc, char **argv )
               << std::endl;
 
     // Clean up
-    // delete mesh;
-    // delete particles;
-    // Kokkos::fence();
-    // Kokkos::Cuda::finalize();
     Kokkos::finalize();
     return 0;
 }

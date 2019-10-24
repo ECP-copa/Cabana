@@ -405,8 +405,8 @@ void testVerletListFull()
         nlist_full( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
                     cell_size_ratio, grid_min, grid_max );
 
-    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>
-        nlist = nlist_full;
+    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag> nlist;
+    nlist = nlist_full;
 
     // Check the neighbor list.
     auto position = Cabana::slice<0>( aosoa );
