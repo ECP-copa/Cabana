@@ -374,7 +374,8 @@ struct VerletListBuilder
     {
         // Allocate offsets.
         _data.offsets = Kokkos::View<int *, memory_space>(
-            "neighbor_offsets", _data.counts.size() );
+            Kokkos::ViewAllocateWithoutInitializing( "neighbor_offsets" ),
+            _data.counts.size() );
 
         // Calculate offsets from counts and the total number of counts.
         OffsetScanOp<memory_space> offset_op;
@@ -389,7 +390,8 @@ struct VerletListBuilder
 
         // Allocate the neighbor list.
         _data.neighbors = Kokkos::View<int *, memory_space>(
-            "neighbors", total_num_neighbor );
+            Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
+            total_num_neighbor );
 
         // Reset the counts. We count again when we fill.
         Kokkos::deep_copy( _data.counts, 0 );
@@ -415,7 +417,8 @@ struct VerletListBuilder
 
         // Allocate the neighbor list.
         _data.neighbors = Kokkos::View<int **, memory_space>(
-            "neighbors", _data.counts.size(), max_num_neighbor );
+            Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
+            _data.counts.size(), max_num_neighbor );
 
         // Reset the counts. We count again when we fill.
         Kokkos::deep_copy( _data.counts, 0 );
