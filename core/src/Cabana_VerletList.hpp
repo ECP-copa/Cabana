@@ -703,6 +703,13 @@ class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>>
 
     using TypeTag = AlgorithmTag;
 
+    // Get the total number of neighbors (maximum size of CSR list).
+    KOKKOS_INLINE_FUNCTION
+    static std::size_t maxNeighbor( const list_type &list )
+    {
+        return list._data.neighbors.extent( 0 );
+    }
+
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
     static std::size_t numNeighbor( const list_type &list,
@@ -732,6 +739,13 @@ class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayout2D>>
     using list_type = VerletList<MemorySpace, AlgorithmTag, VerletLayout2D>;
 
     using TypeTag = AlgorithmTag;
+
+    // Get the maximum number of neighbors per particle.
+    KOKKOS_INLINE_FUNCTION
+    static std::size_t maxNeighbor( const list_type &list )
+    {
+        return list._data.neighbors.extent( 1 );
+    }
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
