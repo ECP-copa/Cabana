@@ -23,12 +23,12 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 // Verlet List Memory Layout Tag.
 //---------------------------------------------------------------------------//
-// CSR Layout
+// CSR (compressed sparse row) Layout
 struct VerletLayoutCSR
 {
 };
 
-// 2D Layout.
+// 2D array Layout.
 struct VerletLayout2D
 {
 };
@@ -79,7 +79,9 @@ struct VerletListData<DeviceType, VerletLayout2D>
     KOKKOS_INLINE_FUNCTION
     void addNeighbor( const int pid, const int nid ) const
     {
-        neighbors( pid, Kokkos::atomic_fetch_add( &counts( pid ), 1 ) ) = nid;
+        int count = Kokkos::atomic_fetch_add( &counts( pid ), 1 );
+        if ( count < neighbors.extent(1) )
+            neighbors( pid, count ) = nid;
     }
 };
 
@@ -213,21 +215,36 @@ struct VerletListBuilder
     // Cell stencil.
     LinkedCellStencil<PositionValueType> cell_stencil;
 
+    // Check to count or refill.
+    bool refill;
+    bool count;
+
+    // Maximum neighbors per particle
+    std::size_t max_n;
+
     // Constructor.
     VerletListBuilder( PositionSlice slice, const std::size_t begin,
                        const std::size_t end,
                        const PositionValueType neighborhood_radius,
                        const PositionValueType cell_size_ratio,
                        const PositionValueType grid_min[3],
-                       const PositionValueType grid_max[3] )
+                       const PositionValueType grid_max[3],
+                       const std::size_t max_neigh )
         : pid_begin( begin )
         , pid_end( end )
         , cell_stencil( neighborhood_radius, cell_size_ratio, grid_min,
                         grid_max )
+        , max_n( max_neigh )
     {
+        count = true;
+        refill = false;
+
         // Create the count view.
         _data.counts =
             Kokkos::View<int *, memory_space>( "num_neighbors", slice.size() );
+
+        // Make a guess for the number of neighbors per particle for 2D lists.
+        initCounts( LayoutTag() );
 
         // Get the positions with random access read-only memory.
         position = slice;
@@ -246,7 +263,7 @@ struct VerletListBuilder
         rsqr = neighborhood_radius * neighborhood_radius;
     }
 
-    // Neighbor count team operator.
+    // Neighbor count team operator (only used for CSR lists).
     struct CountNeighborsTag
     {
     };
@@ -370,6 +387,19 @@ struct VerletListBuilder
             update += counts( i );
         }
     };
+
+    void initCounts( VerletLayoutCSR )
+    {}
+
+    void initCounts( VerletLayout2D )
+    {
+        count = false;
+
+        _data.neighbors = Kokkos::View<int **, memory_space>(
+            Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
+            _data.counts.size(), max_n );
+    }
+
     void processCounts( VerletLayoutCSR )
     {
         // Allocate offsets.
@@ -398,7 +428,7 @@ struct VerletListBuilder
     }
 
     // Process 2D counts by computing the maximum number of neighbors and
-    // allocating a 2D data structure.
+    // reallocating the 2D data structure if needed.
     void processCounts( VerletLayout2D )
     {
         // Calculate the maximum number of neighbors.
@@ -407,7 +437,7 @@ struct VerletListBuilder
         Kokkos::Max<int> max_reduce( max_num_neighbor );
         Kokkos::parallel_reduce(
             "Cabana::VerletListBuilder::reduce_max",
-            Kokkos::RangePolicy<execution_space>( 0, _data.counts.extent( 0 ) ),
+            Kokkos::RangePolicy<execution_space>( 0, _data.counts.size() ),
             KOKKOS_LAMBDA( const int i, int &value ) {
                 if ( counts( i ) > value )
                     value = counts( i );
@@ -415,13 +445,14 @@ struct VerletListBuilder
             max_reduce );
         Kokkos::fence();
 
-        // Allocate the neighbor list.
-        _data.neighbors = Kokkos::View<int **, memory_space>(
-            Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
-            _data.counts.size(), max_num_neighbor );
-
-        // Reset the counts. We count again when we fill.
-        Kokkos::deep_copy( _data.counts, 0 );
+        // Reallocate the neighbor list if previous size is exceeded.
+        if ( (std::size_t) max_num_neighbor > _data.neighbors.extent( 1 ) )
+        {
+            refill = true;
+            Kokkos::deep_copy( _data.counts, 0 );
+            _data.neighbors = Kokkos::View<int **, memory_space>(
+                "neighbors", _data.counts.size(), max_num_neighbor );
+        }
     }
 
     // Neighbor count team operator.
@@ -550,8 +581,6 @@ struct VerletListBuilder
 
   Neighbor list implementation most appropriate for somewhat regularly
   distributed particles due to the use of a Cartesian grid.
-
-  CSR layout implementation.
 */
 template <class DeviceType, class AlgorithmTag, class LayoutTag>
 class VerletList
@@ -610,6 +639,7 @@ class VerletList
                 const typename PositionSlice::value_type cell_size_ratio,
                 const typename PositionSlice::value_type grid_min[3],
                 const typename PositionSlice::value_type grid_max[3],
+                const std::size_t max_neigh = 32,
                 typename std::enable_if<( is_slice<PositionSlice>::value ),
                                         int>::type * = 0 )
     {
@@ -617,28 +647,44 @@ class VerletList
         using builder_type = Impl::VerletListBuilder<DeviceType, PositionSlice,
                                                      AlgorithmTag, LayoutTag>;
         builder_type builder( x, begin, end, neighborhood_radius,
-                              cell_size_ratio, grid_min, grid_max );
+                              cell_size_ratio, grid_min, grid_max, max_neigh );
 
         // For each particle in the range check each neighboring bin for
         // neighbor particles. Bins are at least the size of the neighborhood
         // radius so the bin in which the particle resides and any surrounding
         // bins are guaranteed to contain the neighboring particles.
-        typename builder_type::CountNeighborsPolicy count_policy(
+        // For CSR lists, we count, then fill neighbors. For 2D lists, we
+        // count and fill at the same time, unless the array size is exceeded,
+        // at which point only counting is continued to reallocate and refill.
+        typename builder_type::FillNeighborsPolicy fill_policy(
             builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );
-        Kokkos::parallel_for( "Cabana::VerletList::count_neighbors",
-                              count_policy, builder );
+        if ( builder.count )
+        {
+            typename builder_type::CountNeighborsPolicy count_policy(
+                builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );
+            Kokkos::parallel_for( "Cabana::VerletList::count_neighbors",
+                                  count_policy, builder );
+        }
+        else
+        {
+            builder.processCounts( LayoutTag() );
+            Kokkos::parallel_for( "Cabana::VerletList::fill_neighbors",
+                                  fill_policy, builder );
+        }
         Kokkos::fence();
 
         // Process the counts by computing offsets and allocating the neighbor
-        // list.
+        // list, if needed.
         builder.processCounts( LayoutTag() );
 
-        // For each particle in the range fill its part of the neighbor list.
-        typename builder_type::FillNeighborsPolicy fill_policy(
-            builder.bin_data_1d.numBin(), Kokkos::AUTO, 4 );
-        Kokkos::parallel_for( "Cabana::VerletList::fill_neighbors", fill_policy,
-                              builder );
-        Kokkos::fence();
+        // For each particle in the range fill (or refill) its part of the
+        // neighbor list.
+        if ( builder.count or builder.refill )
+        {
+            Kokkos::parallel_for( "Cabana::VerletList::fill_neighbors",
+                                  fill_policy, builder );
+            Kokkos::fence();
+        }
 
         // Get the data from the builder.
         _data = builder._data;
