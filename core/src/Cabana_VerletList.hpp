@@ -80,7 +80,7 @@ struct VerletListData<DeviceType, VerletLayout2D>
     void addNeighbor( const int pid, const int nid ) const
     {
         std::size_t count = Kokkos::atomic_fetch_add( &counts( pid ), 1 );
-        if ( count < neighbors.extent(1) )
+        if ( count < neighbors.extent( 1 ) )
             neighbors( pid, count ) = nid;
     }
 };
@@ -388,8 +388,7 @@ struct VerletListBuilder
         }
     };
 
-    void initCounts( VerletLayoutCSR )
-    {}
+    void initCounts( VerletLayoutCSR ) {}
 
     void initCounts( VerletLayout2D )
     {
@@ -446,7 +445,7 @@ struct VerletListBuilder
         Kokkos::fence();
 
         // Reallocate the neighbor list if previous size is exceeded.
-        if ( (std::size_t) max_num_neighbor > _data.neighbors.extent( 1 ) )
+        if ( (std::size_t)max_num_neighbor > _data.neighbors.extent( 1 ) )
         {
             refill = true;
             Kokkos::deep_copy( _data.counts, 0 );
