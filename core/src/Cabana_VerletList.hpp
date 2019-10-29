@@ -79,7 +79,7 @@ struct VerletListData<DeviceType, VerletLayout2D>
     KOKKOS_INLINE_FUNCTION
     void addNeighbor( const int pid, const int nid ) const
     {
-        int count = Kokkos::atomic_fetch_add( &counts( pid ), 1 );
+        std::size_t count = Kokkos::atomic_fetch_add( &counts( pid ), 1 );
         if ( count < neighbors.extent(1) )
             neighbors( pid, count ) = nid;
     }
