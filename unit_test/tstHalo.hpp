@@ -11,6 +11,7 @@
 
 #include <Cajita_Halo.hpp>
 #include <Cajita_Types.hpp>
+#include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_Array.hpp>
 #include <Cajita_ManualPartitioner.hpp>
@@ -22,6 +23,7 @@
 #include <mpi.h>
 
 #include <cmath>
+#include <array>
 
 using namespace Cajita;
 
@@ -29,22 +31,25 @@ namespace Test
 {
 //---------------------------------------------------------------------------//
 void gatherScatterTest( const ManualPartitioner& partitioner,
-                        const std::vector<bool>& is_dim_periodic )
+                        const std::array<bool,3>& is_dim_periodic )
 {
     // Create the global grid.
     double cell_size = 0.23;
-    std::vector<int> global_num_cell = { 32, 23, 41 };
-    std::vector<double> global_low_corner = { 1.2, 3.3, -2.8 };
-    std::vector<double> global_high_corner =
+    std::array<int,3> global_num_cell = { 32, 23, 41 };
+    std::array<double,3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double,3> global_high_corner =
         { global_low_corner[0] + cell_size * global_num_cell[0],
           global_low_corner[1] + cell_size * global_num_cell[1],
           global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = createUniformGlobalMesh( global_low_corner,
+                                                global_high_corner,
+                                                global_num_cell );
+
+    // Create the global grid.
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
-                                         partitioner,
+                                         global_mesh,
                                          is_dim_periodic,
-                                         global_low_corner,
-                                         global_high_corner,
-                                         cell_size );
+                                         partitioner );
 
     // Create an array on the cells.
     unsigned array_halo_width = 3;
@@ -144,12 +149,12 @@ TEST( TEST_CATEGORY, not_periodic_test )
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::vector<int> ranks_per_dim( 3 );
+    std::array<int,3> ranks_per_dim = {0,0,0};
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
     ManualPartitioner partitioner( ranks_per_dim );
 
     // Boundaries are not periodic.
-    std::vector<bool> is_dim_periodic = {false,false,false};
+    std::array<bool,3> is_dim_periodic = {false,false,false};
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
@@ -174,12 +179,12 @@ TEST( TEST_CATEGORY, periodic_test )
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::vector<int> ranks_per_dim( 3 );
+    std::array<int,3> ranks_per_dim = {0,0,0};
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
     ManualPartitioner partitioner( ranks_per_dim );
 
     // Every boundary is periodic
-    std::vector<bool> is_dim_periodic = {true,true,true};
+    std::array<bool,3> is_dim_periodic = {true,true,true};
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.

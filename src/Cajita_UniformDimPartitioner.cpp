@@ -14,14 +14,14 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-std::vector<int>
+std::array<int, 3>
 UniformDimPartitioner::ranksPerDimension( MPI_Comm comm,
-                                          const std::vector<int> & ) const
+                                          const std::array<int, 3> & ) const
 {
     int comm_size;
     MPI_Comm_size( comm, &comm_size );
 
-    std::vector<int> ranks_per_dim( 3 );
+    std::array<int, 3> ranks_per_dim = {0, 0, 0};
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
     return ranks_per_dim;

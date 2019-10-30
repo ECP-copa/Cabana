@@ -14,14 +14,15 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-ManualPartitioner::ManualPartitioner( const std::vector<int> &ranks_per_dim )
+ManualPartitioner::ManualPartitioner( const std::array<int, 3> &ranks_per_dim )
     : _ranks_per_dim( ranks_per_dim )
 {
 }
 
 //---------------------------------------------------------------------------//
-std::vector<int>
-ManualPartitioner::ranksPerDimension( MPI_Comm, const std::vector<int> & ) const
+std::array<int, 3>
+ManualPartitioner::ranksPerDimension( MPI_Comm,
+                                      const std::array<int, 3> & ) const
 {
     return _ranks_per_dim;
 }

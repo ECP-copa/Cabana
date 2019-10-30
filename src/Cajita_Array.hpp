@@ -30,19 +30,22 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 // Array layout.
 //---------------------------------------------------------------------------//
-template <class EntityType>
+template <class EntityType, class MeshType>
 class ArrayLayout
 {
   public:
     // Entity type.
     using entity_type = EntityType;
 
+    // Mesh type.
+    using mesh_type = MeshType;
+
     /*!
       \brief Constructor.
       \param block The grid block over which the layout will be constructed.
       \param dofs_per_entity The number of degrees-of-freedom per grid entity.
     */
-    ArrayLayout( const std::shared_ptr<Block> &block,
+    ArrayLayout( const std::shared_ptr<Block<MeshType>> &block,
                  const int dofs_per_entity )
         : _block( block )
         , _dofs_per_entity( dofs_per_entity )
@@ -50,7 +53,7 @@ class ArrayLayout
     }
 
     // Get the grid block over which this layout is defined.
-    const std::shared_ptr<Block> block() const { return _block; }
+    const std::shared_ptr<Block<MeshType>> block() const { return _block; }
 
     // Get the number of degrees-of-freedom on each grid entity.
     int dofsPerEntity() const { return _dofs_per_entity; }
@@ -84,8 +87,26 @@ class ArrayLayout
     }
 
   private:
-    std::shared_ptr<Block> _block;
+    std::shared_ptr<Block<MeshType>> _block;
     int _dofs_per_entity;
+};
+
+// Static type checker.
+template <class>
+struct is_array_layout : public std::false_type
+{
+};
+
+template <class EntityType, class MeshType>
+struct is_array_layout<ArrayLayout<EntityType, MeshType>>
+    : public std::true_type
+{
+};
+
+template <class EntityType, class MeshType>
+struct is_array_layout<const ArrayLayout<EntityType, MeshType>>
+    : public std::true_type
+{
 };
 
 //---------------------------------------------------------------------------//
@@ -96,12 +117,13 @@ class ArrayLayout
   \param block The grid block over which to create the layout.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
 */
-template <class EntityType>
-std::shared_ptr<ArrayLayout<EntityType>>
-createArrayLayout( const std::shared_ptr<Block> &block,
+template <class EntityType, class MeshType>
+std::shared_ptr<ArrayLayout<EntityType, MeshType>>
+createArrayLayout( const std::shared_ptr<Block<MeshType>> &block,
                    const int dofs_per_entity, EntityType )
 {
-    return std::make_shared<ArrayLayout<EntityType>>( block, dofs_per_entity );
+    return std::make_shared<ArrayLayout<EntityType, MeshType>>(
+        block, dofs_per_entity );
 }
 
 //---------------------------------------------------------------------------//
@@ -112,20 +134,20 @@ createArrayLayout( const std::shared_ptr<Block> &block,
   \param block The grid block over which to create the layout.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
 */
-template <class EntityType>
-std::shared_ptr<ArrayLayout<EntityType>>
-createArrayLayout( const std::shared_ptr<GlobalGrid> &global_grid,
+template <class EntityType, class MeshType>
+std::shared_ptr<ArrayLayout<EntityType, MeshType>>
+createArrayLayout( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
                    const int halo_cell_width, const int dofs_per_entity,
                    EntityType )
 {
-    return std::make_shared<ArrayLayout<EntityType>>(
+    return std::make_shared<ArrayLayout<EntityType, MeshType>>(
         createBlock( global_grid, halo_cell_width ), dofs_per_entity );
 }
 
 //---------------------------------------------------------------------------//
 // Array
 //---------------------------------------------------------------------------//
-template <class Scalar, class EntityType, class... Params>
+template <class Scalar, class EntityType, class MeshType, class... Params>
 class Array
 {
   public:
@@ -135,8 +157,11 @@ class Array
     // Entity type.
     using entity_type = EntityType;
 
+    // Mesh type.
+    using mesh_type = MeshType;
+
     // Array layout type.
-    using array_layout = ArrayLayout<entity_type>;
+    using array_layout = ArrayLayout<entity_type, mesh_type>;
 
     // View type.
     using view_type = Kokkos::View<value_type ****, Params...>;
@@ -216,13 +241,14 @@ struct is_array : public std::false_type
 {
 };
 
-template <class Scalar, class EntityType, class... Params>
-struct is_array<Array<Scalar, EntityType, Params...>> : public std::true_type
+template <class Scalar, class EntityType, class MeshType, class... Params>
+struct is_array<Array<Scalar, EntityType, MeshType, Params...>>
+    : public std::true_type
 {
 };
 
-template <class Scalar, class EntityType, class... Params>
-struct is_array<const Array<Scalar, EntityType, Params...>>
+template <class Scalar, class EntityType, class MeshType, class... Params>
+struct is_array<const Array<Scalar, EntityType, MeshType, Params...>>
     : public std::true_type
 {
 };
@@ -236,13 +262,13 @@ struct is_array<const Array<Scalar, EntityType, Params...>>
   \param label A label for the view.
   \param layout The array layout over which to construct the view.
  */
-template <class Scalar, class... Params, class EntityType>
-std::shared_ptr<Array<Scalar, EntityType, Params...>>
+template <class Scalar, class... Params, class EntityType, class MeshType>
+std::shared_ptr<Array<Scalar, EntityType, MeshType, Params...>>
 createArray( const std::string &label,
-             const std::shared_ptr<ArrayLayout<EntityType>> &layout )
+             const std::shared_ptr<ArrayLayout<EntityType, MeshType>> &layout )
 {
-    return std::make_shared<Array<Scalar, EntityType, Params...>>( label,
-                                                                   layout );
+    return std::make_shared<Array<Scalar, EntityType, MeshType, Params...>>(
+        label, layout );
 }
 
 //---------------------------------------------------------------------------//
@@ -255,13 +281,14 @@ createArray( const std::string &label,
   \param dof_min The minimum degree-of-freedom index of the subarray.
   \param dof_max The maximum degree-of-freedom index of the subarray.
 */
-template <class Scalar, class EntityType, class... Params>
-std::shared_ptr<
-    Array<Scalar, EntityType,
-          typename Array<Scalar, EntityType, Params...>::subview_layout,
-          typename Array<Scalar, EntityType, Params...>::device_type,
-          typename Array<Scalar, EntityType, Params...>::subview_memory_traits>>
-createSubarray( const Array<Scalar, EntityType, Params...> &array,
+template <class Scalar, class EntityType, class MeshType, class... Params>
+std::shared_ptr<Array<
+    Scalar, EntityType, MeshType,
+    typename Array<Scalar, EntityType, MeshType, Params...>::subview_layout,
+    typename Array<Scalar, EntityType, MeshType, Params...>::device_type,
+    typename Array<Scalar, EntityType, MeshType,
+                   Params...>::subview_memory_traits>>
+createSubarray( const Array<Scalar, EntityType, MeshType, Params...> &array,
                 const int dof_min, const int dof_max )
 {
     auto space = array.layout()->indexSpace( Ghost(), Local() );
@@ -272,11 +299,12 @@ createSubarray( const Array<Scalar, EntityType, Params...> &array,
     auto sub_layout = createArrayLayout( array.layout()->block(),
                                          dof_max - dof_min, EntityType() );
     return std::make_shared<Array<
-        Scalar, EntityType,
-        typename Array<Scalar, EntityType, Params...>::subview_layout,
-        typename Array<Scalar, EntityType, Params...>::device_type,
-        typename Array<Scalar, EntityType, Params...>::subview_memory_traits>>(
-        sub_layout, sub_view );
+        Scalar, EntityType, MeshType,
+        typename Array<Scalar, EntityType, MeshType, Params...>::subview_layout,
+        typename Array<Scalar, EntityType, MeshType, Params...>::device_type,
+        typename Array<Scalar, EntityType, MeshType,
+                       Params...>::subview_memory_traits>>( sub_layout,
+                                                            sub_view );
 }
 
 //---------------------------------------------------------------------------//
@@ -289,9 +317,9 @@ namespace ArrayOp
   \brief Clone an array. Do not initialize the clone.
   \param array The array to clone.
 */
-template <class Scalar, class... Params, class EntityType>
-std::shared_ptr<Array<Scalar, EntityType, Params...>>
-clone( const Array<Scalar, EntityType, Params...> &array )
+template <class Scalar, class... Params, class EntityType, class MeshType>
+std::shared_ptr<Array<Scalar, EntityType, MeshType, Params...>>
+clone( const Array<Scalar, EntityType, MeshType, Params...> &array )
 {
     return createArray<Scalar, Params...>( array.label(), array.layout() );
 }

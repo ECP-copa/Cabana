@@ -41,9 +41,7 @@ class StructuredSolver
     // Types.
     using entity_type = EntityType;
     using device_type = DeviceType;
-    using scalar_type = Scalar;
-    template <class... Params>
-    using array_type = Array<scalar_type, entity_type, Params...>;
+    using value_type = Scalar;
 
     /*!
       \brief Constructor.
@@ -51,11 +49,19 @@ class StructuredSolver
       \param is_preconditioner Flag indicating if this solver will be used as
       a preconditioner.
     */
-    StructuredSolver( const ArrayLayout<EntityType> &layout,
+    template <class ArrayLayout_t>
+    StructuredSolver( const ArrayLayout_t &layout,
                       const bool is_preconditioner = false )
         : _comm( layout.block()->globalGrid().comm() )
         , _is_preconditioner( is_preconditioner )
     {
+        static_assert( is_array_layout<ArrayLayout_t>::value,
+                       "Must use an array layout" );
+        static_assert(
+            std::is_same<typename ArrayLayout_t::entity_type,
+                         entity_type>::value,
+            "Array layout entity type mush match solver entity type" );
+
         // Only create data structures if this is not a preconditioner.
         if ( !_is_preconditioner )
         {
@@ -83,11 +89,11 @@ class StructuredSolver
             checkHypreError( error );
 
             // Get periodicity. Note we invert the order of this to KJI as well.
-            const auto &domain = layout.block()->globalGrid().domain();
+            const auto &global_grid = layout.block()->globalGrid();
             HYPRE_Int periodic[3];
             for ( int d = 0; d < 3; ++d )
                 periodic[2 - d] =
-                    domain.isPeriodic( d )
+                    global_grid.isPeriodic( d )
                         ? layout.block()->globalGrid().globalNumEntity(
                               EntityType(), d )
                         : 0;
@@ -190,18 +196,25 @@ class StructuredSolver
       stencil definition. Note that values corresponding to stencil entries
       outside of the domain should be set to zero.
     */
-    template <class... ArrayParams>
-    void setMatrixValues( const array_type<ArrayParams...> &values )
+    template <class Array_t>
+    void setMatrixValues( const Array_t &values )
     {
+        static_assert( is_array<Array_t>::value, "Must use an array" );
+        static_assert(
+            std::is_same<typename Array_t::entity_type, entity_type>::value,
+            "Array entity type mush match solver entity type" );
+        static_assert(
+            std::is_same<typename Array_t::device_type, DeviceType>::value,
+            "Array device type and solver device type are different." );
+
+        static_assert(
+            std::is_same<typename Array_t::value_type, value_type>::value,
+            "Array value type and solver value type are different." );
+
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
             throw std::logic_error(
                 "Cannot call setMatrixValues() on preconditioners" );
-
-        static_assert(
-            std::is_same<typename array_type<ArrayParams...>::device_type,
-                         DeviceType>::value,
-            "Array device type and solver device type are different." );
 
         if ( values.layout()->dofsPerEntity() !=
              static_cast<int>( _stencil_size ) )
@@ -284,18 +297,24 @@ class StructuredSolver
       \param b The forcing term.
       \param x The solution.
     */
-    template <class... ArrayParams>
-    void solve( const array_type<ArrayParams...> &b,
-                array_type<ArrayParams...> &x )
+    template <class Array_t>
+    void solve( const Array_t &b, Array_t &x )
     {
+        static_assert( is_array<Array_t>::value, "Must use an array" );
+        static_assert(
+            std::is_same<typename Array_t::entity_type, entity_type>::value,
+            "Array entity type mush match solver entity type" );
+        static_assert(
+            std::is_same<typename Array_t::device_type, DeviceType>::value,
+            "Array device type and solver device type are different." );
+
+        static_assert(
+            std::is_same<typename Array_t::value_type, value_type>::value,
+            "Array value type and solver value type are different." );
+
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
             throw std::logic_error( "Cannot call solve() on preconditioners" );
-
-        static_assert(
-            std::is_same<typename array_type<ArrayParams...>::device_type,
-                         DeviceType>::value,
-            "Array device type and solver device type are different." );
 
         if ( b.layout()->dofsPerEntity() != 1 ||
              x.layout()->dofsPerEntity() != 1 )
@@ -424,7 +443,8 @@ class HypreStructPCG : public StructuredSolver<Scalar, EntityType, DeviceType>
   public:
     using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructPCG( const ArrayLayout<EntityType> &layout,
+    template <class ArrayLayout_t>
+    HypreStructPCG( const ArrayLayout_t &layout,
                     const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -548,7 +568,8 @@ class HypreStructGMRES : public StructuredSolver<Scalar, EntityType, DeviceType>
   public:
     using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructGMRES( const ArrayLayout<EntityType> &layout,
+    template <class ArrayLayout_t>
+    HypreStructGMRES( const ArrayLayout_t &layout,
                       const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -670,7 +691,8 @@ class HypreStructBiCGSTAB
   public:
     using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructBiCGSTAB( const ArrayLayout<EntityType> &layout,
+    template <class ArrayLayout_t>
+    HypreStructBiCGSTAB( const ArrayLayout_t &layout,
                          const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -784,7 +806,8 @@ class HypreStructPFMG : public StructuredSolver<Scalar, EntityType, DeviceType>
   public:
     using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructPFMG( const ArrayLayout<EntityType> &layout,
+    template <class ArrayLayout_t>
+    HypreStructPFMG( const ArrayLayout_t &layout,
                      const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -961,7 +984,8 @@ class HypreStructSMG : public StructuredSolver<Scalar, EntityType, DeviceType>
   public:
     using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructSMG( const ArrayLayout<EntityType> &layout,
+    template <class ArrayLayout_t>
+    HypreStructSMG( const ArrayLayout_t &layout,
                     const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -1089,7 +1113,8 @@ class HypreStructJacobi
   public:
     using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructJacobi( const ArrayLayout<EntityType> &layout,
+    template <class ArrayLayout_t>
+    HypreStructJacobi( const ArrayLayout_t &layout,
                        const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -1185,7 +1210,8 @@ class HypreStructDiagonal
   public:
     using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
 
-    HypreStructDiagonal( const ArrayLayout<EntityType> &layout,
+    template <class ArrayLayout_t>
+    HypreStructDiagonal( const ArrayLayout_t &layout,
                          const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -1260,80 +1286,110 @@ class HypreStructDiagonal
 //---------------------------------------------------------------------------//
 // Builders
 //---------------------------------------------------------------------------//
-template <class Scalar, class DeviceType, class EntityType>
-std::shared_ptr<HypreStructPCG<Scalar, EntityType, DeviceType>>
-createHypreStructPCG( const ArrayLayout<EntityType> &layout,
+template <class Scalar, class DeviceType, class ArrayLayout_t>
+std::shared_ptr<
+    HypreStructPCG<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
+createHypreStructPCG( const ArrayLayout_t &layout,
                       const bool is_preconditioner = false )
 {
-    return std::make_shared<HypreStructPCG<Scalar, EntityType, DeviceType>>(
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+    return std::make_shared<HypreStructPCG<
+        Scalar, typename ArrayLayout_t::entity_type, DeviceType>>(
         layout, is_preconditioner );
 }
 
-template <class Scalar, class DeviceType, class EntityType>
-std::shared_ptr<HypreStructGMRES<Scalar, EntityType, DeviceType>>
-createHypreStructGMRES( const ArrayLayout<EntityType> &layout,
+template <class Scalar, class DeviceType, class ArrayLayout_t>
+std::shared_ptr<
+    HypreStructGMRES<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
+createHypreStructGMRES( const ArrayLayout_t &layout,
                         const bool is_preconditioner = false )
 {
-    return std::make_shared<HypreStructGMRES<Scalar, EntityType, DeviceType>>(
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+    return std::make_shared<HypreStructGMRES<
+        Scalar, typename ArrayLayout_t::entity_type, DeviceType>>(
         layout, is_preconditioner );
 }
 
-template <class Scalar, class DeviceType, class EntityType>
-std::shared_ptr<HypreStructBiCGSTAB<Scalar, EntityType, DeviceType>>
-createHypreStructBiCGSTAB( const ArrayLayout<EntityType> &layout,
+template <class Scalar, class DeviceType, class ArrayLayout_t>
+std::shared_ptr<HypreStructBiCGSTAB<Scalar, typename ArrayLayout_t::entity_type,
+                                    DeviceType>>
+createHypreStructBiCGSTAB( const ArrayLayout_t &layout,
                            const bool is_preconditioner = false )
 {
-    return std::make_shared<
-        HypreStructBiCGSTAB<Scalar, EntityType, DeviceType>>(
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+    return std::make_shared<HypreStructBiCGSTAB<
+        Scalar, typename ArrayLayout_t::entity_type, DeviceType>>(
         layout, is_preconditioner );
 }
 
-template <class Scalar, class DeviceType, class EntityType>
-std::shared_ptr<HypreStructPFMG<Scalar, EntityType, DeviceType>>
-createHypreStructPFMG( const ArrayLayout<EntityType> &layout,
+template <class Scalar, class DeviceType, class ArrayLayout_t>
+std::shared_ptr<
+    HypreStructPFMG<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
+createHypreStructPFMG( const ArrayLayout_t &layout,
                        const bool is_preconditioner = false )
 {
-    return std::make_shared<HypreStructPFMG<Scalar, EntityType, DeviceType>>(
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+    return std::make_shared<HypreStructPFMG<
+        Scalar, typename ArrayLayout_t::entity_type, DeviceType>>(
         layout, is_preconditioner );
 }
 
-template <class Scalar, class DeviceType, class EntityType>
-std::shared_ptr<HypreStructSMG<Scalar, EntityType, DeviceType>>
-createHypreStructSMG( const ArrayLayout<EntityType> &layout,
+template <class Scalar, class DeviceType, class ArrayLayout_t>
+std::shared_ptr<
+    HypreStructSMG<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
+createHypreStructSMG( const ArrayLayout_t &layout,
                       const bool is_preconditioner = false )
 {
-    return std::make_shared<HypreStructSMG<Scalar, EntityType, DeviceType>>(
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+    return std::make_shared<HypreStructSMG<
+        Scalar, typename ArrayLayout_t::entity_type, DeviceType>>(
         layout, is_preconditioner );
 }
 
-template <class Scalar, class DeviceType, class EntityType>
-std::shared_ptr<HypreStructJacobi<Scalar, EntityType, DeviceType>>
-createHypreStructJacobi( const ArrayLayout<EntityType> &layout,
+template <class Scalar, class DeviceType, class ArrayLayout_t>
+std::shared_ptr<
+    HypreStructJacobi<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
+createHypreStructJacobi( const ArrayLayout_t &layout,
                          const bool is_preconditioner = false )
 {
-    return std::make_shared<HypreStructJacobi<Scalar, EntityType, DeviceType>>(
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+    return std::make_shared<HypreStructJacobi<
+        Scalar, typename ArrayLayout_t::entity_type, DeviceType>>(
         layout, is_preconditioner );
 }
 
-template <class Scalar, class DeviceType, class EntityType>
-std::shared_ptr<HypreStructDiagonal<Scalar, EntityType, DeviceType>>
-createHypreStructDiagonal( const ArrayLayout<EntityType> &layout,
+template <class Scalar, class DeviceType, class ArrayLayout_t>
+std::shared_ptr<HypreStructDiagonal<Scalar, typename ArrayLayout_t::entity_type,
+                                    DeviceType>>
+createHypreStructDiagonal( const ArrayLayout_t &layout,
                            const bool is_preconditioner = false )
 {
-    return std::make_shared<
-        HypreStructDiagonal<Scalar, EntityType, DeviceType>>(
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+    return std::make_shared<HypreStructDiagonal<
+        Scalar, typename ArrayLayout_t::entity_type, DeviceType>>(
         layout, is_preconditioner );
 }
 
 //---------------------------------------------------------------------------//
 // Factory
 //---------------------------------------------------------------------------//
-template <class Scalar, class DeviceType, class EntityType>
-std::shared_ptr<StructuredSolver<Scalar, EntityType, DeviceType>>
+template <class Scalar, class DeviceType, class ArrayLayout_t>
+std::shared_ptr<
+    StructuredSolver<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
 createStructuredSolver( const std::string &solver_type,
-                        const ArrayLayout<EntityType> &layout,
+                        const ArrayLayout_t &layout,
                         const bool is_preconditioner = false )
 {
+    static_assert( is_array_layout<ArrayLayout_t>::value,
+                   "Must use an array layout" );
+
     if ( "PCG" == solver_type )
         return createHypreStructPCG<Scalar, DeviceType>( layout,
                                                          is_preconditioner );
