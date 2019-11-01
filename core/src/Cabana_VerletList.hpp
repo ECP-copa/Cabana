@@ -392,11 +392,14 @@ struct VerletListBuilder
 
     void initCounts( VerletLayout2D )
     {
-        count = false;
+        if ( max_n > 0 )
+        {
+            count = false;
 
-        _data.neighbors = Kokkos::View<int **, memory_space>(
-            Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
-            _data.counts.size(), max_n );
+            _data.neighbors = Kokkos::View<int **, memory_space>(
+                Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
+                _data.counts.size(), max_n );
+        }
     }
 
     void processCounts( VerletLayoutCSR )
@@ -445,7 +448,8 @@ struct VerletListBuilder
         Kokkos::fence();
 
         // Reallocate the neighbor list if previous size is exceeded.
-        if ( (std::size_t)max_num_neighbor > _data.neighbors.extent( 1 ) )
+        if ( count or (std::size_t)max_num_neighbor >
+             _data.neighbors.extent( 1 ) )
         {
             refill = true;
             Kokkos::deep_copy( _data.counts, 0 );
@@ -639,7 +643,7 @@ class VerletList
                 const typename PositionSlice::value_type cell_size_ratio,
                 const typename PositionSlice::value_type grid_min[3],
                 const typename PositionSlice::value_type grid_max[3],
-                const std::size_t max_neigh = 32,
+                const std::size_t max_neigh = 0,
                 typename std::enable_if<( is_slice<PositionSlice>::value ),
                                         int>::type * = 0 )
     {
