@@ -448,8 +448,8 @@ struct VerletListBuilder
         Kokkos::fence();
 
         // Reallocate the neighbor list if previous size is exceeded.
-        if ( count or (std::size_t)max_num_neighbor >
-             _data.neighbors.extent( 1 ) )
+        if ( count or ( std::size_t )
+                              max_num_neighbor > _data.neighbors.extent( 1 ) )
         {
             refill = true;
             Kokkos::deep_copy( _data.counts, 0 );
