@@ -450,7 +450,8 @@ struct VerletListBuilder
             refill = true;
             Kokkos::deep_copy( _data.counts, 0 );
             _data.neighbors = Kokkos::View<int **, memory_space>(
-                "neighbors", _data.counts.size(), max_num_neighbor );
+                Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
+                _data.counts.size(), max_num_neighbor );
         }
     }
 
