@@ -133,12 +133,18 @@ using&#160;</td><td class="memItemRight" valign="bottom"><b>FillNeighborsPolicy<
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:add1e135ba835b587f776323023ba56a5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="add1e135ba835b587f776323023ba56a5"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>VerletListBuilder</b> (PositionSlice slice, const std::size_t begin, const std::size_t end, const PositionValueType neighborhood_radius, const PositionValueType cell_size_ratio, const PositionValueType grid_min[3], const PositionValueType grid_max[3])</td></tr>
-<tr class="separator:add1e135ba835b587f776323023ba56a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac234a8f551bc838d2608ec38f5c265d8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="ac234a8f551bc838d2608ec38f5c265d8"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><b>VerletListBuilder</b> (PositionSlice slice, const std::size_t begin, const std::size_t end, const PositionValueType neighborhood_radius, const PositionValueType cell_size_ratio, const PositionValueType grid_min[3], const PositionValueType grid_max[3], const std::size_t max_neigh)</td></tr>
+<tr class="separator:ac234a8f551bc838d2608ec38f5c265d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aef42d512cddac5dc07702b17c095507a"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="aef42d512cddac5dc07702b17c095507a"></a>
 KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (const <a class="el" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html">CountNeighborsTag</a> &amp;, const typename CountNeighborsPolicy::member_type &amp;team) const </td></tr>
 <tr class="separator:aef42d512cddac5dc07702b17c095507a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a59e9cd670d37193102c2434e3a6106c4"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a59e9cd670d37193102c2434e3a6106c4"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>initCounts</b> (<a class="el" href="structCabana_1_1VerletLayoutCSR.html">VerletLayoutCSR</a>)</td></tr>
+<tr class="separator:a59e9cd670d37193102c2434e3a6106c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4fe320ca72458dbd147ac55a7612a2c7"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a4fe320ca72458dbd147ac55a7612a2c7"></a>
+void&#160;</td><td class="memItemRight" valign="bottom"><b>initCounts</b> (<a class="el" href="structCabana_1_1VerletLayout2D.html">VerletLayout2D</a>)</td></tr>
+<tr class="separator:a4fe320ca72458dbd147ac55a7612a2c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2865bb31c691254b4a748e03b29a8358"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a2865bb31c691254b4a748e03b29a8358"></a>
 void&#160;</td><td class="memItemRight" valign="bottom"><b>processCounts</b> (<a class="el" href="structCabana_1_1VerletLayoutCSR.html">VerletLayoutCSR</a>)</td></tr>
 <tr class="separator:a2865bb31c691254b4a748e03b29a8358"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -175,6 +181,15 @@ std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>pid_end</b></t
 <tr class="memitem:a8afa77c9538ef0cc2f1d709d9ac931a8"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a8afa77c9538ef0cc2f1d709d9ac931a8"></a>
 <a class="el" href="structCabana_1_1Impl_1_1LinkedCellStencil.html">LinkedCellStencil</a>&lt; PositionValueType &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>cell_stencil</b></td></tr>
 <tr class="separator:a8afa77c9538ef0cc2f1d709d9ac931a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a032c84fb270ce1ff46aa32e087558c27"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a032c84fb270ce1ff46aa32e087558c27"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>refill</b></td></tr>
+<tr class="separator:a032c84fb270ce1ff46aa32e087558c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9a8e4c781112d5060c4e1f5f4d835905"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="a9a8e4c781112d5060c4e1f5f4d835905"></a>
+bool&#160;</td><td class="memItemRight" valign="bottom"><b>count</b></td></tr>
+<tr class="separator:a9a8e4c781112d5060c4e1f5f4d835905"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af2884a6967316131231cfe65f92b3dc5"><td class="memItemLeft" align="right" valign="top"><a class="anchor" id="af2884a6967316131231cfe65f92b3dc5"></a>
+std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>max_n</b></td></tr>
+<tr class="separator:af2884a6967316131231cfe65f92b3dc5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>

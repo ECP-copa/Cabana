@@ -120,10 +120,10 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a852230bbd58d52943b24e9eb32941327">VerletList</a> ()</td></tr>
 <tr class="memdesc:a852230bbd58d52943b24e9eb32941327"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
 <tr class="separator:a852230bbd58d52943b24e9eb32941327"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a502869d08e3eaac15076645461ccff16"><td class="memTemplParams" colspan="2">template&lt;class PositionSlice &gt; </td></tr>
-<tr class="memitem:a502869d08e3eaac15076645461ccff16"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a502869d08e3eaac15076645461ccff16">VerletList</a> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionSlice &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a502869d08e3eaac15076645461ccff16"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <a href="#a502869d08e3eaac15076645461ccff16">More...</a><br /></td></tr>
-<tr class="separator:a502869d08e3eaac15076645461ccff16"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac99966cd035ac843f6ad70c7c6ba4183"><td class="memTemplParams" colspan="2">template&lt;class PositionSlice &gt; </td></tr>
+<tr class="memitem:ac99966cd035ac843f6ad70c7c6ba4183"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#ac99966cd035ac843f6ad70c7c6ba4183">VerletList</a> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionSlice &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ac99966cd035ac843f6ad70c7c6ba4183"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <a href="#ac99966cd035ac843f6ad70c7c6ba4183">More...</a><br /></td></tr>
+<tr class="separator:ac99966cd035ac843f6ad70c7c6ba4183"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -144,10 +144,9 @@ class Cabana::VerletList&lt; DeviceType, AlgorithmTag, LayoutTag &gt;</h3>
   </table>
   </dd>
 </dl>
-<p>Neighbor list implementation most appropriate for somewhat regularly distributed particles due to the use of a Cartesian grid.</p>
-<p>CSR layout implementation. </p>
+<p>Neighbor list implementation most appropriate for somewhat regularly distributed particles due to the use of a Cartesian grid. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a class="anchor" id="a502869d08e3eaac15076645461ccff16"></a>
+<a class="anchor" id="ac99966cd035ac843f6ad70c7c6ba4183"></a>
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
@@ -199,6 +198,12 @@ template&lt;class PositionSlice &gt; </div>
           <td></td>
           <td class="paramtype">const typename PositionSlice::value_type&#160;</td>
           <td class="paramname"><em>grid_max</em>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>max_neigh</em> = <code>0</code>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
