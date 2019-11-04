@@ -58,6 +58,7 @@ endmacro()
 set(SERIAL_TESTS
   GlobalMesh
   IndexSpace
+  Splines
   )
 
 set(MPI_TESTS
