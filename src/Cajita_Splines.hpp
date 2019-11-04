@@ -3,8 +3,6 @@
 
 #include <Kokkos_Core.hpp>
 
-#include <cmath>
-
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
@@ -26,7 +24,8 @@ struct Spline<1>
 
     /*!
       \brief Map a physical location to the logical space of the primal grid in
-      a single dimension. \param xp The coordinate to map to the logical space.
+      a single dimension.
+      \param xp The coordinate to map to the logical space.
       \param rdx The inverse of the physical distance between grid locations.
       \param low_x The physical location of the low corner of the primal
       grid.

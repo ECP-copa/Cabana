@@ -7,10 +7,12 @@ set(HEADERS_PUBLIC
   Cajita_GlobalMesh.hpp
   Cajita_Halo.hpp
   Cajita_IndexSpace.hpp
+  Cajita_Interpolation.hpp
   Cajita_LocalMesh.hpp
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
   Cajita_Partitioner.hpp
+  Cajita_PointSet.hpp
   Cajita_Splines.hpp
   Cajita_Types.hpp
   Cajita_UniformDimPartitioner.hpp
