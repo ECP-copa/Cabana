@@ -411,6 +411,18 @@ void testVerletListFull()
     // Check the neighbor list.
     auto position = Cabana::slice<0>( aosoa );
     checkFullNeighborList( nlist, position, test_radius );
+
+    // Check again, building with a large array allocation size
+    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>
+        nlist_max( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
+                   cell_size_ratio, grid_min, grid_max, 100 );
+    checkFullNeighborList( nlist_max, position, test_radius );
+
+    // Check again, building with a small array allocation size (refill)
+    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>
+        nlist_max2( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
+                    cell_size_ratio, grid_min, grid_max, 2 );
+    checkFullNeighborList( nlist_max2, position, test_radius );
 }
 
 //---------------------------------------------------------------------------//
@@ -435,6 +447,18 @@ void testVerletListHalf()
     // Check the neighbor list.
     auto position = Cabana::slice<0>( aosoa );
     checkHalfNeighborList( nlist, position, test_radius );
+
+    // Check again, building with a large array allocation size
+    Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag>
+        nlist_max( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
+                   cell_size_ratio, grid_min, grid_max, 100 );
+    checkHalfNeighborList( nlist_max, position, test_radius );
+
+    // Check again, building with a small array allocation size (refill)
+    Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag>
+        nlist_max2( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
+                    cell_size_ratio, grid_min, grid_max, 2 );
+    checkHalfNeighborList( nlist_max2, position, test_radius );
 }
 
 //---------------------------------------------------------------------------//
