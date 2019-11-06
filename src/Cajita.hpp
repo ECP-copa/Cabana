@@ -16,10 +16,11 @@
 #include <Cajita_Block.hpp>
 #include <Cajita_BovWriter.hpp>
 #include <Cajita_Config.hpp>
-#include <Cajita_Domain.hpp>
 #include <Cajita_GlobalGrid.hpp>
+#include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Halo.hpp>
 #include <Cajita_IndexSpace.hpp>
+#include <Cajita_LocalMesh.hpp>
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_Partitioner.hpp>
