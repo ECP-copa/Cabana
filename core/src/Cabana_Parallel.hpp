@@ -36,6 +36,15 @@ KOKKOS_FORCEINLINE_FUNCTION
     functor( s, a );
 }
 
+template <class WorkTag, class FunctorType, class IndexType>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<std::is_same<WorkTag, void>::value>::type
+functorTagDispatch( const FunctorType &functor, const IndexType i,
+                    const IndexType j, const IndexType k )
+{
+    functor( i, j, k );
+}
+
 // The user gave us a tag so call the version using that.
 template <class WorkTag, class FunctorType, class IndexType>
 KOKKOS_FORCEINLINE_FUNCTION
@@ -45,6 +54,16 @@ KOKKOS_FORCEINLINE_FUNCTION
 {
     const WorkTag t{};
     functor( t, s, a );
+}
+
+template <class WorkTag, class FunctorType, class IndexType>
+KOKKOS_FORCEINLINE_FUNCTION
+typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
+functorTagDispatch( const FunctorType &functor, const IndexType i,
+                    const IndexType j, const IndexType k )
+{
+    const WorkTag t{};
+    functor( t, i, j, k );
 }
 
 } // end namespace Impl
@@ -200,6 +219,37 @@ inline void neighbor_parallel_for(
                         NeighborList<NeighborListType>::getNeighbor( list, i,
                                                                      n ) ) );
         } );
+}
+
+// Extension of neighbor_parallel_for to angle-based particle interactions
+template <class FunctorType, class NeighborListType, class... ExecParameters>
+inline void angular_neighbor_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const SerialNeighborOpTag &tag, const std::string &str = "" )
+{
+    std::ignore = tag;
+
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using index_type =
+        typename Kokkos::RangePolicy<ExecParameters...>::index_type;
+
+    Kokkos::parallel_for(
+        str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
+            int nn = NeighborList<NeighborListType>::numNeighbor( list, i );
+
+            for ( int n = 0; n < nn-1; ++n )
+            {
+                index_type j = NeighborList<NeighborListType>::getNeighbor( list, i, n );
+
+                for ( int a = n+1; a < nn; ++a )
+                {
+                    index_type k = NeighborList<NeighborListType>::getNeighbor( list, i, a );
+                    Impl::functorTagDispatch<work_tag>( functor, i, j, k );
+                }
+            }
+        });
 }
 
 //---------------------------------------------------------------------------//
