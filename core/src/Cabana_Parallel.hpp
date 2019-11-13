@@ -336,6 +336,50 @@ inline void neighbor_parallel_for(
 
 //---------------------------------------------------------------------------//
 
+// Extension of team neighbor_parallel_for to angle-based particle interactions
+template <class FunctorType, class NeighborListType, class... ExecParameters>
+inline void angular_neighbor_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const TeamNeighborOpTag &tag, const std::string &str = "" )
+{
+    std::ignore = tag;
+
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using kokkos_policy =
+        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
+                               Kokkos::AUTO );
+
+    using index_type = typename kokkos_policy::index_type;
+
+    const auto range_begin = exec_policy.begin();
+
+    Kokkos::parallel_for(
+        str, team_policy,
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
+            index_type i = team.league_rank() + range_begin;
+
+            int nn = NeighborList<NeighborListType>::numNeighbor( list, i ) - 1;
+            Kokkos::parallel_for(
+                Kokkos::TeamThreadRange( team, nn ),
+                [&]( const index_type n ) {
+
+                    index_type j = NeighborList<NeighborListType>::getNeighbor( list, i, n );
+
+                    for ( int a = n+1; a < nn+1; ++a )
+                    {
+                        index_type k = NeighborList<NeighborListType>::getNeighbor( list, i, a );
+                        Impl::functorTagDispatch<work_tag>( functor, i, j, k );
+                    }
+                } );
+        } );
+}
+
 } // end namespace Cabana
 
 #endif // end CABANA_PARALLEL_HPP
