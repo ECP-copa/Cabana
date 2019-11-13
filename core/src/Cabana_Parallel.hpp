@@ -38,9 +38,9 @@ KOKKOS_FORCEINLINE_FUNCTION
 
 template <class WorkTag, class FunctorType, class IndexType>
 KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<std::is_same<WorkTag, void>::value>::type
-functorTagDispatch( const FunctorType &functor, const IndexType i,
-                    const IndexType j, const IndexType k )
+    typename std::enable_if<std::is_same<WorkTag, void>::value>::type
+    functorTagDispatch( const FunctorType &functor, const IndexType i,
+                        const IndexType j, const IndexType k )
 {
     functor( i, j, k );
 }
@@ -58,9 +58,9 @@ KOKKOS_FORCEINLINE_FUNCTION
 
 template <class WorkTag, class FunctorType, class IndexType>
 KOKKOS_FORCEINLINE_FUNCTION
-typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
-functorTagDispatch( const FunctorType &functor, const IndexType i,
-                    const IndexType j, const IndexType k )
+    typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
+    functorTagDispatch( const FunctorType &functor, const IndexType i,
+                        const IndexType j, const IndexType k )
 {
     const WorkTag t{};
     functor( t, i, j, k );
@@ -239,17 +239,19 @@ inline void angular_neighbor_parallel_for(
         str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
             int nn = NeighborList<NeighborListType>::numNeighbor( list, i );
 
-            for ( int n = 0; n < nn-1; ++n )
+            for ( int n = 0; n < nn - 1; ++n )
             {
-                index_type j = NeighborList<NeighborListType>::getNeighbor( list, i, n );
+                index_type j =
+                    NeighborList<NeighborListType>::getNeighbor( list, i, n );
 
-                for ( int a = n+1; a < nn; ++a )
+                for ( int a = n + 1; a < nn; ++a )
                 {
-                    index_type k = NeighborList<NeighborListType>::getNeighbor( list, i, a );
+                    index_type k = NeighborList<NeighborListType>::getNeighbor(
+                        list, i, a );
                     Impl::functorTagDispatch<work_tag>( functor, i, j, k );
                 }
             }
-        });
+        } );
 }
 
 //---------------------------------------------------------------------------//
@@ -366,14 +368,15 @@ inline void angular_neighbor_parallel_for(
 
             int nn = NeighborList<NeighborListType>::numNeighbor( list, i ) - 1;
             Kokkos::parallel_for(
-                Kokkos::TeamThreadRange( team, nn ),
-                [&]( const index_type n ) {
+                Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
+                    index_type j = NeighborList<NeighborListType>::getNeighbor(
+                        list, i, n );
 
-                    index_type j = NeighborList<NeighborListType>::getNeighbor( list, i, n );
-
-                    for ( int a = n+1; a < nn+1; ++a )
+                    for ( int a = n + 1; a < nn + 1; ++a )
                     {
-                        index_type k = NeighborList<NeighborListType>::getNeighbor( list, i, a );
+                        index_type k =
+                            NeighborList<NeighborListType>::getNeighbor( list,
+                                                                         i, a );
                         Impl::functorTagDispatch<work_tag>( functor, i, j, k );
                     }
                 } );

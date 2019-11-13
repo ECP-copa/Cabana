@@ -560,7 +560,8 @@ void testAngularParallelFor()
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
-    auto serial_count_op = KOKKOS_LAMBDA( const int i, const int j, const int k )
+    auto serial_count_op =
+        KOKKOS_LAMBDA( const int i, const int j, const int k )
     {
         Kokkos::atomic_add( &serial_result( i ), j );
         Kokkos::atomic_add( &serial_result( i ), k );
@@ -582,8 +583,8 @@ void testAngularParallelFor()
         computeFullNeighborList( Cabana::slice<0>( aosoa ), test_radius );
     auto test_list_copy = createTestListHostCopy( test_list );
     for ( int p = 0; p < num_particle; ++p )
-        for ( int n = 0; n < test_list_copy.counts( p )-1; ++n )
-            for ( int a = n+1; a < test_list_copy.counts( p ); ++a )
+        for ( int n = 0; n < test_list_copy.counts( p ) - 1; ++n )
+            for ( int a = n + 1; a < test_list_copy.counts( p ); ++a )
             {
                 test_result( p ) += test_list_copy.neighbors( p, n );
                 test_result( p ) += test_list_copy.neighbors( p, a );
