@@ -179,10 +179,8 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const SerialNeighborOpTag &tag, const std::string &str = "" )
+    const SerialNeighborOpTag, const std::string &str = "" )
 {
-    std::ignore = tag;
-
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
     using index_type =
@@ -206,10 +204,8 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void angular_neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const SerialNeighborOpTag &tag, const std::string &str = "" )
+    const SerialNeighborOpTag, const std::string &str = "" )
 {
-    std::ignore = tag;
-
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
     using index_type =
@@ -280,10 +276,8 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const TeamNeighborOpTag &tag, const std::string &str = "" )
+    const TeamNeighborOpTag, const std::string &str = "" )
 {
-    std::ignore = tag;
-
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
     using execution_space =
@@ -323,10 +317,8 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void angular_neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const TeamNeighborOpTag &tag, const std::string &str = "" )
+    const TeamNeighborOpTag, const std::string &str = "" )
 {
-    std::ignore = tag;
-
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
     using execution_space =
