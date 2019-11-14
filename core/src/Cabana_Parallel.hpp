@@ -27,43 +27,23 @@ namespace Impl
 {
 
 // No work tag was provided so call without a tag argument.
-template <class WorkTag, class FunctorType, class IndexType>
+template <class WorkTag, class FunctorType, class... IndexTypes>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor, const IndexType s,
-                        const IndexType a )
+    functorTagDispatch( const FunctorType &functor, IndexTypes &&... indices )
 {
-    functor( s, a );
-}
-
-template <class WorkTag, class FunctorType, class IndexType>
-KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor, const IndexType i,
-                        const IndexType j, const IndexType k )
-{
-    functor( i, j, k );
+    functor( std::forward<IndexTypes>( indices )... );
 }
 
 // The user gave us a tag so call the version using that.
-template <class WorkTag, class FunctorType, class IndexType>
+template <class WorkTag, class FunctorType, class... IndexTypes>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor, const IndexType s,
-                        const IndexType a )
+    functorTagDispatch( const FunctorType &functor,
+                        const IndexTypes &&... indices )
 {
     const WorkTag t{};
-    functor( t, s, a );
-}
-
-template <class WorkTag, class FunctorType, class IndexType>
-KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor, const IndexType i,
-                        const IndexType j, const IndexType k )
-{
-    const WorkTag t{};
-    functor( t, i, j, k );
+    functor( t, std::forward<IndexTypes>( indices )... );
 }
 
 } // end namespace Impl
