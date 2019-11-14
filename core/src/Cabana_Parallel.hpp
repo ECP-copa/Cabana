@@ -213,17 +213,19 @@ inline void angular_neighbor_parallel_for(
 
     Kokkos::parallel_for(
         str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
-            int nn = NeighborList<NeighborListType>::numNeighbor( list, i );
+            const int nn =
+                NeighborList<NeighborListType>::numNeighbor( list, i );
 
             for ( int n = 0; n < nn - 1; ++n )
             {
-                index_type j =
+                const index_type j =
                     NeighborList<NeighborListType>::getNeighbor( list, i, n );
 
                 for ( int a = n + 1; a < nn; ++a )
                 {
-                    index_type k = NeighborList<NeighborListType>::getNeighbor(
-                        list, i, a );
+                    const index_type k =
+                        NeighborList<NeighborListType>::getNeighbor( list, i,
+                                                                     a );
                     Impl::functorTagDispatch<work_tag>( functor, i, j, k );
                 }
             }
@@ -338,15 +340,17 @@ inline void angular_neighbor_parallel_for(
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
             index_type i = team.league_rank() + range_begin;
 
-            int nn = NeighborList<NeighborListType>::numNeighbor( list, i ) - 1;
+            const int nn =
+                NeighborList<NeighborListType>::numNeighbor( list, i ) - 1;
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
-                    index_type j = NeighborList<NeighborListType>::getNeighbor(
-                        list, i, n );
+                    const index_type j =
+                        NeighborList<NeighborListType>::getNeighbor( list, i,
+                                                                     n );
 
                     for ( int a = n + 1; a < nn + 1; ++a )
                     {
-                        index_type k =
+                        const index_type k =
                             NeighborList<NeighborListType>::getNeighbor( list,
                                                                          i, a );
                         Impl::functorTagDispatch<work_tag>( functor, i, j, k );
