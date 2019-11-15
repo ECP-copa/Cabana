@@ -581,6 +581,8 @@ void testAngularParallelFor()
                                                      num_particle );
     Kokkos::View<int *, memory_space> team_result( "team_result",
                                                    num_particle );
+    Kokkos::View<int *, memory_space> vector_result( "vector_result",
+                                                     num_particle );
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
@@ -595,6 +597,12 @@ void testAngularParallelFor()
         Kokkos::atomic_add( &team_result( i ), j );
         Kokkos::atomic_add( &team_result( i ), k );
     };
+    auto vector_count_op =
+        KOKKOS_LAMBDA( const int i, const int j, const int k )
+    {
+        Kokkos::atomic_add( &vector_result( i ), j );
+        Kokkos::atomic_add( &vector_result( i ), k );
+    };
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
     Cabana::neighbor_parallel_for( policy, serial_count_op, nlist,
                                    Cabana::SerialNeighborOpTag(),
@@ -602,6 +610,9 @@ void testAngularParallelFor()
     Cabana::neighbor_parallel_for( policy, team_count_op, nlist,
                                    Cabana::TeamNeighborOpTag(),
                                    Cabana::SerialAngularNeighborOpTag() );
+    Cabana::neighbor_parallel_for( policy, vector_count_op, nlist,
+                                   Cabana::TeamNeighborOpTag(),
+                                   Cabana::VectorAngularNeighborOpTag() );
     Kokkos::fence();
 
     // Get the expected result in serial
@@ -621,10 +632,13 @@ void testAngularParallelFor()
         Kokkos::HostSpace(), serial_result );
     auto team_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), team_result );
+    auto vector_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), vector_result );
     for ( int p = 0; p < num_particle; ++p )
     {
         EXPECT_EQ( test_result( p ), serial_mirror( p ) );
         EXPECT_EQ( test_result( p ), team_mirror( p ) );
+        EXPECT_EQ( test_result( p ), vector_mirror( p ) );
     }
 }
 

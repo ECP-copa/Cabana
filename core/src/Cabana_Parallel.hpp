@@ -133,8 +133,14 @@ class TeamNeighborOpTag
 {
 };
 
-//! Angular neighbor operations are executed in serial on each particle thread.
+//! Angular neighbor operations are executed in serial on each neighbor thread.
 class SerialAngularNeighborOpTag
+{
+};
+
+//! Angular neighbor operations are executed in parallel vector loops on each
+//! neighbor thread.
+class VectorAngularNeighborOpTag
 {
 };
 
@@ -362,6 +368,54 @@ inline void neighbor_parallel_for(
                                                                          i, a );
                         Impl::functorTagDispatch<work_tag>( functor, i, j, k );
                     }
+                } );
+        } );
+}
+
+// Extension of team neighbor_parallel_for to angle-based particle interactions
+template <class FunctorType, class NeighborListType, class... ExecParameters>
+inline void neighbor_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const TeamNeighborOpTag, const VectorAngularNeighborOpTag,
+    const std::string &str = "" )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using kokkos_policy =
+        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
+                               Kokkos::AUTO );
+
+    using index_type = typename kokkos_policy::index_type;
+
+    const auto range_begin = exec_policy.begin();
+
+    Kokkos::parallel_for(
+        str, team_policy,
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
+            index_type i = team.league_rank() + range_begin;
+
+            const int nn =
+                NeighborList<NeighborListType>::numNeighbor( list, i ) - 1;
+            Kokkos::parallel_for(
+                Kokkos::TeamThreadRange( team, nn ), [&]( const int n ) {
+                    const index_type j =
+                        NeighborList<NeighborListType>::getNeighbor( list, i,
+                                                                     n );
+
+                    Kokkos::parallel_for(
+                        Kokkos::ThreadVectorRange( team, n + 1, nn + 1 ),
+                        [&]( const int a ) {
+                            const index_type k =
+                                NeighborList<NeighborListType>::getNeighbor(
+                                    list, i, a );
+                            Impl::functorTagDispatch<work_tag>( functor, i, j,
+                                                                k );
+                        } );
                 } );
         } );
 }
