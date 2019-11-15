@@ -161,7 +161,7 @@ class VectorAngularNeighborOpTag
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a serial loop strategy over particle
+  \param Algorithm tag indicating a serial loop strategy over particle
   neighbors.
 
   \param str An optional name for the functor. Will be forwarded to the
@@ -210,7 +210,34 @@ inline void neighbor_parallel_for(
         } );
 }
 
-// Extension of neighbor_parallel_for to angle-based particle interactions
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor in parallel according to the execution \c policy
+  with a thread-local serial loop over particle neighbors and serial loop over
+  particle angular neighbors.
+
+  \tparam ExecutionSpace The execution space in which to execute the functor.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param tag Algorithm tag indicating a serial loop strategy over particle
+  neighbors.
+
+  \param tag Algorithm tag indicating a serial loop strategy over particle
+  angular neighbors.
+
+  \param str An optional name for the functor. Will be forwarded to the
+  Kokkos::parallel_for called by this code and can be used for identification
+  and profiling purposes.
+*/
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
@@ -325,8 +352,33 @@ inline void neighbor_parallel_for(
 }
 
 //---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor in parallel according to the execution \c policy
+  with team parallelism over particle neighbors and serial loop over particle
+  angular neighbors.
 
-// Extension of team neighbor_parallel_for to angle-based particle interactions
+  \tparam ExecutionSpace The execution space in which to execute the functor.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param tag Algorithm tag indicating a team parallel strategy over particle
+  neighbors.
+
+  \param tag Algorithm tag indicating a serial loop strategy over particle
+  angular neighbors.
+
+  \param str An optional name for the functor. Will be forwarded to the
+  Kokkos::parallel_for called by this code and can be used for identification
+  and profiling purposes.
+*/
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
@@ -372,7 +424,34 @@ inline void neighbor_parallel_for(
         } );
 }
 
-// Extension of team neighbor_parallel_for to angle-based particle interactions
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor in parallel according to the execution \c policy
+  with team parallelism over particle neighbors and vector loop parallelism over
+  particle angular neighbors.
+
+  \tparam ExecutionSpace The execution space in which to execute the functor.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param tag Algorithm tag indicating a team parallel strategy over particle
+  neighbors.
+
+  \param tag Algorithm tag indicating a vector parallel loop strategy over
+  particle angular neighbors.
+
+  \param str An optional name for the functor. Will be forwarded to the
+  Kokkos::parallel_for called by this code and can be used for identification
+  and profiling purposes.
+*/
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
