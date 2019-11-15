@@ -596,10 +596,12 @@ void testAngularParallelFor()
         Kokkos::atomic_add( &team_result( i ), k );
     };
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
-    Cabana::angular_neighbor_parallel_for( policy, serial_count_op, nlist,
-                                           Cabana::SerialNeighborOpTag() );
-    Cabana::angular_neighbor_parallel_for( policy, team_count_op, nlist,
-                                           Cabana::TeamNeighborOpTag() );
+    Cabana::neighbor_parallel_for( policy, serial_count_op, nlist,
+                                   Cabana::SerialNeighborOpTag(),
+                                   Cabana::SerialAngularNeighborOpTag() );
+    Cabana::neighbor_parallel_for( policy, team_count_op, nlist,
+                                   Cabana::TeamNeighborOpTag(),
+                                   Cabana::SerialAngularNeighborOpTag() );
     Kokkos::fence();
 
     // Get the expected result in serial

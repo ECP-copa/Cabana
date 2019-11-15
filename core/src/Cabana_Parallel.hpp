@@ -133,6 +133,11 @@ class TeamNeighborOpTag
 {
 };
 
+//! Angular neighbor operations are executed in serial on each particle thread.
+class SerialAngularNeighborOpTag
+{
+};
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute \c functor in parallel according to the execution \c policy
@@ -201,10 +206,11 @@ inline void neighbor_parallel_for(
 
 // Extension of neighbor_parallel_for to angle-based particle interactions
 template <class FunctorType, class NeighborListType, class... ExecParameters>
-inline void angular_neighbor_parallel_for(
+inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const SerialNeighborOpTag, const std::string &str = "" )
+    const SerialNeighborOpTag, const SerialAngularNeighborOpTag,
+    const std::string &str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -316,10 +322,11 @@ inline void neighbor_parallel_for(
 
 // Extension of team neighbor_parallel_for to angle-based particle interactions
 template <class FunctorType, class NeighborListType, class... ExecParameters>
-inline void angular_neighbor_parallel_for(
+inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const TeamNeighborOpTag, const std::string &str = "" )
+    const TeamNeighborOpTag, const SerialAngularNeighborOpTag,
+    const std::string &str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
