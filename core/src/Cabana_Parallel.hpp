@@ -255,7 +255,7 @@ inline void neighbor_parallel_for(
             const int nn =
                 NeighborList<NeighborListType>::numNeighbor( list, i );
 
-            for ( int n = 0; n < nn - 1; ++n )
+            for ( int n = 0; n < nn; ++n )
             {
                 const index_type j =
                     NeighborList<NeighborListType>::getNeighbor( list, i, n );
@@ -406,14 +406,14 @@ inline void neighbor_parallel_for(
             index_type i = team.league_rank() + range_begin;
 
             const int nn =
-                NeighborList<NeighborListType>::numNeighbor( list, i ) - 1;
+                NeighborList<NeighborListType>::numNeighbor( list, i );
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
                     const index_type j =
                         NeighborList<NeighborListType>::getNeighbor( list, i,
                                                                      n );
 
-                    for ( int a = n + 1; a < nn + 1; ++a )
+                    for ( int a = n + 1; a < nn; ++a )
                     {
                         const index_type k =
                             NeighborList<NeighborListType>::getNeighbor( list,
@@ -479,7 +479,7 @@ inline void neighbor_parallel_for(
             index_type i = team.league_rank() + range_begin;
 
             const int nn =
-                NeighborList<NeighborListType>::numNeighbor( list, i ) - 1;
+                NeighborList<NeighborListType>::numNeighbor( list, i );
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange( team, nn ), [&]( const int n ) {
                     const index_type j =
@@ -487,7 +487,7 @@ inline void neighbor_parallel_for(
                                                                      n );
 
                     Kokkos::parallel_for(
-                        Kokkos::ThreadVectorRange( team, n + 1, nn + 1 ),
+                        Kokkos::ThreadVectorRange( team, n + 1, nn ),
                         [&]( const int a ) {
                             const index_type k =
                                 NeighborList<NeighborListType>::getNeighbor(
