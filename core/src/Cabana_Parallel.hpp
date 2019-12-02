@@ -121,25 +121,30 @@ inline void simd_parallel_for(
 //---------------------------------------------------------------------------//
 // Algorithm tags.
 
+//! Loop over particle neighbors.
+class FirstNeighborsTag
+{
+};
+
+//! Loop over particle neighbors (first) and neighbor's neighbors (second)
+class SecondNeighborsTag
+{
+};
+
 //! Neighbor operations are executed in serial on each particle thread.
-class SerialNeighborOpTag
+class SerialOpTag
 {
 };
 
 //! Neighbor operations are executed in parallel in a team on each particle
 //! thread.
-class TeamNeighborOpTag
+class TeamOpTag
 {
 };
 
-//! Angular neighbor operations are executed in serial on each neighbor thread.
-class SerialAngularNeighborOpTag
-{
-};
-
-//! Angular neighbor operations are executed in parallel vector loops on each
-//! neighbor thread.
-class VectorAngularNeighborOpTag
+//! Neighbor operations are executed both in parallel in a team (first
+//! neighbors) and in vector loops on each neighbor thread (second neighbors).
+class TeamVectorOpTag
 {
 };
 
@@ -189,7 +194,7 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const SerialNeighborOpTag, const std::string &str = "" )
+    const FirstNeighborsTag, const SerialOpTag, const std::string &str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -241,8 +246,7 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const SerialNeighborOpTag, const SerialAngularNeighborOpTag,
-    const std::string &str = "" )
+    const SecondNeighborsTag, const SerialOpTag, const std::string &str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -316,7 +320,7 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const TeamNeighborOpTag, const std::string &str = "" )
+    const FirstNeighborsTag, const TeamOpTag, const std::string &str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -382,8 +386,7 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const TeamNeighborOpTag, const SerialAngularNeighborOpTag,
-    const std::string &str = "" )
+    const SecondNeighborsTag, const TeamOpTag, const std::string &str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -455,7 +458,7 @@ template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
-    const TeamNeighborOpTag, const VectorAngularNeighborOpTag,
+    const SecondNeighborsTag, const TeamVectorOpTag,
     const std::string &str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;

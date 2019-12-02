@@ -502,9 +502,11 @@ void testNeighborParallelFor()
     };
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
     Cabana::neighbor_parallel_for( policy, serial_count_op, nlist,
-                                   Cabana::SerialNeighborOpTag() );
+                                   Cabana::FirstNeighborsTag(),
+                                   Cabana::SerialOpTag() );
     Cabana::neighbor_parallel_for( policy, team_count_op, nlist,
-                                   Cabana::TeamNeighborOpTag() );
+                                   Cabana::FirstNeighborsTag(),
+                                   Cabana::TeamOpTag() );
     Kokkos::fence();
 
     // Get the expected result in serial
@@ -605,14 +607,14 @@ void testAngularParallelFor()
     };
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
     Cabana::neighbor_parallel_for( policy, serial_count_op, nlist,
-                                   Cabana::SerialNeighborOpTag(),
-                                   Cabana::SerialAngularNeighborOpTag() );
+                                   Cabana::SecondNeighborsTag(),
+                                   Cabana::SerialOpTag() );
     Cabana::neighbor_parallel_for( policy, team_count_op, nlist,
-                                   Cabana::TeamNeighborOpTag(),
-                                   Cabana::SerialAngularNeighborOpTag() );
+                                   Cabana::SecondNeighborsTag(),
+                                   Cabana::TeamOpTag() );
     Cabana::neighbor_parallel_for( policy, vector_count_op, nlist,
-                                   Cabana::TeamNeighborOpTag(),
-                                   Cabana::VectorAngularNeighborOpTag() );
+                                   Cabana::SecondNeighborsTag(),
+                                   Cabana::TeamVectorOpTag() );
     Kokkos::fence();
 
     // Get the expected result in serial
