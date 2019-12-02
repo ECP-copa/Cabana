@@ -1,6 +1,6 @@
-add_executable(Direct directsum_example.cpp)
-target_link_libraries(Direct cabanacore)
 if(Cabana_ENABLE_MPI)
+  add_executable(Direct directsum_example.cpp)
+  target_link_libraries(Direct cabanacore)
   add_executable(Ewald ewaldsum_example.cpp)
   target_link_libraries(Ewald cabanacore)
 endif()
