@@ -294,6 +294,11 @@ class CommunicationPlan
     }
 
     /*!
+      \brief Destructor.
+    */
+    virtual ~CommunicationPlan() { MPI_Comm_free( &_comm ); }
+
+    /*!
       \brief Get the MPI communicator.
     */
     MPI_Comm comm() const { return _comm; }
