@@ -65,8 +65,10 @@ set(MPI_TESTS
   GlobalGrid
   Block
   LocalMesh
+  PointSet
   Array
   Halo
+  Interpolation
   BovWriter
   )
 

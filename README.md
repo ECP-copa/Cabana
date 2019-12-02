@@ -1,3 +1,3 @@
 Cajita
 
-A small library for computations on uniform grids
+A small library for computations on Cartesian grids

@@ -183,7 +183,7 @@ class Halo
       other communication routines.
     */
     template <class Array_t>
-    void gather( const Array_t &array, const int mpi_tag )
+    void gather( const Array_t &array, const int mpi_tag ) const
     {
         // Check that the array type is valid.
         static_assert(
@@ -273,7 +273,7 @@ class Halo
       other communication routines.
     */
     template <class Array_t>
-    void scatter( const Array_t &array, const int mpi_tag )
+    void scatter( const Array_t &array, const int mpi_tag ) const
     {
         // Check that the array type is valid.
         static_assert(
