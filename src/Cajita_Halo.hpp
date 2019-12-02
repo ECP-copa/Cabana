@@ -98,8 +98,10 @@ class Halo
     template <class ArrayLayout_t>
     Halo( const ArrayLayout_t &layout, const HaloPattern &pattern,
           const int width = -1 )
-        : _comm( layout.block()->globalGrid().comm() )
     {
+        // Duplicate the communicator so we have our own communication space.
+        MPI_Comm_dup( layout.block()->globalGrid().comm(), &_comm );
+
         // Function to get the local id of the neighbor.
         auto neighbor_id = []( const int i, const int j, const int k ) {
             int nk = k + 1;
@@ -176,14 +178,9 @@ class Halo
     /*!
       \brief Gather data into our ghosts from their owners.
       \param array The array to gather.
-      \param mpi_tag An MPI tag for asynchronous communication. Note that a
-      range of MPI tags are used for the communication with this value being
-      the base. The range (mpi_tag,mpi_tag+27) will be used in the
-      communication. Users should avoid using this range of tags in their
-      other communication routines.
     */
     template <class Array_t>
-    void gather( const Array_t &array, const int mpi_tag ) const
+    void gather( const Array_t &array ) const
     {
         // Check that the array type is valid.
         static_assert(
@@ -203,6 +200,10 @@ class Halo
 
         // Allocate requests.
         std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
+
+        // Pick a tag to use for communication. This object has its own
+        // communication space so any tag will do.
+        const int mpi_tag = 1234;
 
         // Post receives.
         for ( int n = 0; n < num_n; ++n )
@@ -266,14 +267,9 @@ class Halo
     /*!
       \brief Scatter data from our ghosts to their owners.
       \param array The array to scatter.
-      \param mpi_tag An MPI tag for asynchronous communication. Note that a
-      range of MPI tags are used for the communication with this value being
-      the base. The range (mpi_tag,mpi_tag+27) will be used in the
-      communication. Users should avoid using this range of tags in their
-      other communication routines.
     */
     template <class Array_t>
-    void scatter( const Array_t &array, const int mpi_tag ) const
+    void scatter( const Array_t &array ) const
     {
         // Check that the array type is valid.
         static_assert(
@@ -293,6 +289,10 @@ class Halo
 
         // Requests.
         std::vector<MPI_Request> requests( 2 * num_n, MPI_REQUEST_NULL );
+
+        // Pick a tag to use for communication. This object has its own
+        // communication space so any tag will do.
+        const int mpi_tag = 2345;
 
         // Post receives for all neighbors that are not self sends.
         for ( int n = 0; n < num_n; ++n )

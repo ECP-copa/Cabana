@@ -93,7 +93,7 @@ void writeTest()
 
     // Gather the node data.
     auto node_halo = createHalo( *node_field, FullHaloPattern() );
-    node_halo->gather( *node_field, 453 );
+    node_halo->gather( *node_field );
 
     // Write the fields to a file.
     BovWriter::writeTimeStep( 302, 3.43, *cell_field );
