@@ -39,8 +39,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 template <class WorkTag, class FunctorType, class... IndexTypes>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor,
-                        const IndexTypes &&... indices )
+    functorTagDispatch( const FunctorType &functor, IndexTypes &&... indices )
 {
     const WorkTag t{};
     functor( t, std::forward<IndexTypes>( indices )... );
