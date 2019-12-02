@@ -94,9 +94,6 @@ class Halo : public CommunicationPlan<DeviceType>
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
 
-      \param mpi_tag The MPI tag to use for non-blocking communication in the
-      communication plan generation.
-
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
     */
@@ -104,7 +101,7 @@ class Halo : public CommunicationPlan<DeviceType>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType &element_export_ids,
           const RankViewType &element_export_ranks,
-          const std::vector<int> &neighbor_ranks, const int mpi_tag = 1221 )
+          const std::vector<int> &neighbor_ranks )
         : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
@@ -112,7 +109,7 @@ class Halo : public CommunicationPlan<DeviceType>
             throw std::runtime_error( "Export ids and ranks different sizes!" );
 
         auto neighbor_ids = this->createFromExportsAndTopology(
-            element_export_ranks, neighbor_ranks, mpi_tag );
+            element_export_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks,
                                     element_export_ids );
     }
@@ -147,24 +144,20 @@ class Halo : public CommunicationPlan<DeviceType>
       Kokkos view or Cabana slice in the same memory space as the
       communication plan.
 
-      \param mpi_tag The MPI tag to use for non-blocking communication in the
-      communication plan generation.
-
       \note Calling this function completely updates the state of this object
       and invalidates the previous state.
     */
     template <class IdViewType, class RankViewType>
     Halo( MPI_Comm comm, const std::size_t num_local,
           const IdViewType &element_export_ids,
-          const RankViewType &element_export_ranks, const int mpi_tag = 1221 )
+          const RankViewType &element_export_ranks )
         : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
         if ( element_export_ids.size() != element_export_ranks.size() )
             throw std::runtime_error( "Export ids and ranks different sizes!" );
 
-        auto neighbor_ids =
-            this->createFromExportsOnly( element_export_ranks, mpi_tag );
+        auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks,
                                     element_export_ids );
     }
@@ -229,14 +222,9 @@ struct is_halo<const Halo<DeviceType>> : public std::true_type
   elements are expected to appear first (i.e. in the first halo.numLocal()
   elements) and the ghosted elements are expected to appear second (i.e. in
   the next halo.numGhost() elements()).
-
-  \param mpi_tag The MPI tag to use for non-blocking communication in the
-  gather. Note here that if multiple instances of this function are being
-  called at once then different tags should be used in each function call to
-  avoid any communication conflicts.
 */
 template <class Halo_t, class AoSoA_t>
-void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
+void gather( const Halo_t &halo, AoSoA_t &aosoa,
              typename std::enable_if<( is_halo<Halo_t>::value &&
                                        is_aosoa<AoSoA_t>::value ),
                                      int>::type * = 0 )
@@ -270,6 +258,9 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
         recv_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
             halo.totalNumImport() );
+
+    // The halo has it's own communication space so choose any mpi tag.
+    const int mpi_tag = 2345;
 
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
@@ -352,14 +343,9 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa, int mpi_tag = 1002,
   elements are expected to appear first (i.e. in the first halo.numLocal()
   elements) and the ghosted elements are expected to appear second (i.e. in
   the next halo.numGhost() elements()).
-
-  \param mpi_tag The MPI tag to use for non-blocking communication in the
-  gather. Note here that if multiple instances of this function are being
-  called at once then different tags should be used in each function call to
-  avoid any communication conflicts.
 */
 template <class Halo_t, class Slice_t>
-void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
+void gather( const Halo_t &halo, Slice_t &slice,
              typename std::enable_if<( is_halo<Halo_t>::value &&
                                        is_slice<Slice_t>::value ),
                                      int>::type * = 0 )
@@ -410,6 +396,9 @@ void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
         recv_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
             halo.totalNumImport(), num_comp );
+
+    // The halo has it's own communication space so choose any mpi tag.
+    const int mpi_tag = 2345;
 
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
@@ -499,14 +488,9 @@ void gather( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1002,
   elements are expected to appear first (i.e. in the first halo.numLocal()
   elements) and the ghosted elements are expected to appear second (i.e. in
   the next halo.numGhost() elements()).
-
-  \param mpi_tag The MPI tag to use for non-blocking communication in the
-  scatter. Note here that if multiple instances of this function are being
-  called at once then different tags should be used in each function call to
-  avoid any communication conflicts.
 */
 template <class Halo_t, class Slice_t>
-void scatter( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1003,
+void scatter( const Halo_t &halo, Slice_t &slice,
               typename std::enable_if<( is_halo<Halo_t>::value &&
                                         is_slice<Slice_t>::value ),
                                       int>::type * = 0 )
@@ -560,6 +544,9 @@ void scatter( const Halo_t &halo, Slice_t &slice, int mpi_tag = 1003,
         recv_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
             halo.totalNumExport(), num_comp );
+
+    // The halo has it's own communication space so choose any mpi tag.
+    const int mpi_tag = 2345;
 
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
