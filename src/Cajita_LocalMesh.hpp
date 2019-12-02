@@ -48,6 +48,8 @@ class LocalMesh<Device, UniformMesh<Scalar>>
         const auto &global_mesh = global_grid.globalMesh();
 
         _cell_size = global_mesh.uniformCellSize();
+        _face_area = _cell_size * _cell_size;
+        _cell_volume = _cell_size * _face_area;
 
         // Compute the owned low corner
         for ( int d = 0; d < 3; ++d )
@@ -107,13 +109,6 @@ class LocalMesh<Device, UniformMesh<Scalar>>
         return _ghost_high_corner[dim];
     }
 
-    // Get the size of a cell in a given dimension given the local index of
-    // the cell in that dimension. The local indexing is relative to the
-    // ghosted decomposition of the mesh block and correlates directly to
-    // local index spaces associated with the block.
-    KOKKOS_INLINE_FUNCTION
-    Scalar cellSize( const int, const int ) const { return _cell_size; }
-
     // Get the coordinate of an entity of the given type in the given
     // dimension at given the local index of the entity in that dimension. The
     // local indexing is relative to the ghosted decomposition of the mesh
@@ -148,8 +143,40 @@ class LocalMesh<Device, UniformMesh<Scalar>>
                               : coordinate( Node(), i, dim );
     }
 
+    // Get the measure of an entity of the given type at the given index. The local
+    // indexing is relative to the ghosted decomposition of the mesh block and
+    // correlates directly to local index spaces associated with the block.
+    KOKKOS_INLINE_FUNCTION
+    Scalar measure( Node, const int, const int, const int ) const
+    {
+        return 0.0;
+    }
+
+    template <int Dir>
+    KOKKOS_INLINE_FUNCTION Scalar measure(
+        Edge<Dir>, const int, const int, const int ) const
+    {
+        return _cell_size;
+    }
+
+    template <int Dir>
+    KOKKOS_INLINE_FUNCTION Scalar measure(
+        Face<Dir>, const int, const int, const int ) const
+    {
+        return _face_area;
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    Scalar measure(
+        Cell, const int, const int, const int ) const
+    {
+        return _cell_volume;
+    }
+
   private:
     Scalar _cell_size;
+    Scalar _cell_volume;
+    Scalar _face_area;
     Kokkos::Array<Scalar, 3> _own_low_corner;
     Kokkos::Array<Scalar, 3> _own_high_corner;
     Kokkos::Array<Scalar, 3> _ghost_low_corner;
@@ -320,16 +347,6 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
         return _ghost_high_corner[dim];
     }
 
-    // Get the size of a cell in a given dimension given the local index of the
-    // cell in that dimension. The local indexing is relative to the ghosted
-    // decomposition of the mesh block and correlates directly to local index
-    // spaces associated with the block.
-    KOKKOS_INLINE_FUNCTION
-    Scalar cellSize( const int i, const int dim ) const
-    {
-        return _local_edges[dim]( i + 1 ) - _local_edges[dim]( i );
-    }
-
     // Get the coordinate of an entity of the given type in the given
     // dimension at given the local index of the entity in that dimension. The
     // local indexing is relative to the ghosted decomposition of the mesh
@@ -362,6 +379,61 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
     {
         return ( Dir == dim ) ? coordinate( Cell(), i, dim )
                               : coordinate( Node(), i, dim );
+    }
+
+    // Get the measure of an entity of the given type at the given index. The local
+    // indexing is relative to the ghosted decomposition of the mesh block and
+    // correlates directly to local index spaces associated with the block.
+    KOKKOS_INLINE_FUNCTION
+    Scalar measure( Node, const int, const int, const int ) const
+    {
+        return 0.0;
+    }
+
+    KOKKOS_INLINE_FUNCTION Scalar measure(
+        Edge<Dim::I>, const int i, const int, const int ) const
+    {
+        return _local_edges[Dim::I][i+1] - _local_edges[Dim::I][i];
+    }
+
+    KOKKOS_INLINE_FUNCTION Scalar measure(
+        Edge<Dim::J>, const int, const int j, const int ) const
+    {
+        return _local_edges[Dim::J][j+1] - _local_edges[Dim::J][j];
+    }
+
+    KOKKOS_INLINE_FUNCTION Scalar measure(
+        Edge<Dim::K>, const int, const int, const int k ) const
+    {
+        return _local_edges[Dim::K][k+1] - _local_edges[Dim::K][k];
+    }
+
+    KOKKOS_INLINE_FUNCTION Scalar measure(
+        Face<Dim::I>, const int i, const int j, const int k ) const
+    {
+        return measure(Edge<Dim::J>(),i,j,k) * measure(Edge<Dim::K>(),i,j,k);
+    }
+
+    KOKKOS_INLINE_FUNCTION Scalar measure(
+        Face<Dim::J>, const int i, const int j, const int k ) const
+    {
+        return measure(Edge<Dim::I>(),i,j,k) * measure(Edge<Dim::K>(),i,j,k);
+    }
+
+    KOKKOS_INLINE_FUNCTION Scalar measure(
+        Face<Dim::K>, const int i, const int j, const int k ) const
+    {
+        return measure(Edge<Dim::I>(),i,j,k) * measure(Edge<Dim::J>(),i,j,k);
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    Scalar measure(
+        Cell, const int i, const int j, const int k ) const
+    {
+        return
+            measure(Edge<Dim::I>(),i,j,k) *
+            measure(Edge<Dim::J>(),i,j,k) *
+            measure(Edge<Dim::K>(),i,j,k);
     }
 
   private:

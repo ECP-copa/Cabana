@@ -278,7 +278,7 @@ createPointSet(
 
     auto local_mesh = createLocalMesh<Kokkos::HostSpace>( block );
 
-    point_set.dx = local_mesh.cellSize( 0, 0 );
+    point_set.dx = local_mesh.measure( Edge<Dim::I>(), 0, 0, 0 );
 
     point_set.rdx = 1.0 / point_set.dx;
 

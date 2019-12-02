@@ -98,24 +98,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
               global_grid.ownedNumCell(d) ) );
     }
 
-    // Check the cell sizes.
-    auto cell_space = block.indexSpace( Ghost(), Cell(), Local() );
-    for ( int d = 0; d < 3; ++d )
-    {
-        Kokkos::View<double*,TEST_DEVICE> csize( "csize", cell_space.extent(d) );
-        Kokkos::parallel_for(
-            "get_cell_size",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,cell_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                csize(c) = local_mesh.cellSize( c, d );
-            });
-        auto csize_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), csize );
-        for ( int c = 0; c < cell_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( cell_size, csize_m(c) );
-    }
-
     // Check the cell locations.
+    auto cell_space = block.indexSpace( Ghost(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         Kokkos::View<double*,TEST_DEVICE> coord( "coord", cell_space.extent(d) );
@@ -366,6 +350,7 @@ void irregularTest( const std::array<int,3>& ranks_per_dim )
     auto local_mesh = createLocalMesh<TEST_DEVICE>( *block );
 
     // Get index spaces
+    auto own_cell_local_space = block->indexSpace( Own(), Cell(), Local() );
     auto ghost_cell_local_space = block->indexSpace( Ghost(), Cell(), Local() );
     auto own_cell_global_space = block->indexSpace( Own(), Cell(), Global() );
     auto ghost_cell_global_space = block->indexSpace( Ghost(), Cell(), Global() );
@@ -417,33 +402,34 @@ void irregularTest( const std::array<int,3>& ranks_per_dim )
     EXPECT_FLOAT_EQ( ghost_hc_m(Dim::K),
                      k_func(ghost_cell_global_space.max(Dim::K)) );
 
-    // Check the cell sizes.
-    for ( int d = 0; d < 3; ++d )
-    {
-        Kokkos::View<double*,TEST_DEVICE> csize( "csize", ghost_cell_local_space.extent(d) );
-        Kokkos::parallel_for(
-            "get_cell_size",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,ghost_cell_local_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                csize(c) = local_mesh.cellSize( c, d );
-            });
-        auto csize_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), csize );
-        for ( int c = 0; c < ghost_cell_local_space.extent(d); ++c )
-        {
-            double cell_size = 0.0;
-            if ( Dim::I == d )
-                cell_size = i_func(ghost_cell_global_space.min(d) + c+1) -
-                            i_func(ghost_cell_global_space.min(d) + c);
-            else if ( Dim::J == d )
-                cell_size = j_func(ghost_cell_global_space.min(d) + c+1) -
-                            j_func(ghost_cell_global_space.min(d) + c);
-            else
-                cell_size = k_func(ghost_cell_global_space.min(d) + c+1) -
-                            k_func(ghost_cell_global_space.min(d) + c);
-            EXPECT_FLOAT_EQ( cell_size, csize_m(c) );
-        }
-    }
+    // Check the cell measures.
+    auto cell_measure = createView<double,TEST_DEVICE>(
+        "cell_measures", ghost_cell_local_space );
+    Kokkos::parallel_for(
+        "get_cell_measure",
+        createExecutionPolicy( own_cell_local_space, TEST_EXECSPACE() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ){
+            cell_measure(i,j,k) =
+                local_mesh.measure( Cell(), i, j, k );
+        });
+    auto cell_measure_h = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), cell_measure );
+    for ( int i = own_cell_global_space.min(Dim::I);
+          i < own_cell_global_space.max(Dim::I); ++i )
+        for ( int j = own_cell_global_space.min(Dim::J);
+              j < own_cell_global_space.max(Dim::J); ++j )
+            for ( int k = own_cell_global_space.min(Dim::K);
+                  k < own_cell_global_space.max(Dim::K); ++k )
+            {
+                double measure = ( i_func(i+1) - i_func(i) ) *
+                                 ( j_func(j+1) - j_func(j) ) *
+                                 ( k_func(k+1) - k_func(k) );
+                double value = cell_measure_h(
+                    i - ghost_cell_global_space.min(Dim::I),
+                    j - ghost_cell_global_space.min(Dim::J),
+                    k - ghost_cell_global_space.min(Dim::K) );
+                EXPECT_FLOAT_EQ( measure, value );
+            }
 }
 
 //---------------------------------------------------------------------------//
