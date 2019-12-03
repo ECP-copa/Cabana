@@ -175,6 +175,9 @@ class Halo
         }
     }
 
+    // Destructor.
+    ~Halo() { MPI_Comm_free( &_comm ); }
+
     /*!
       \brief Gather data into our ghosts from their owners.
       \param array The array to gather.
