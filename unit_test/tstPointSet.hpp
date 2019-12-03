@@ -71,9 +71,12 @@ void pointSetTest()
             int pk = k - halo_width;
             int pid = pi + cell_space.extent(Dim::I) * (
                 pj + cell_space.extent(Dim::J) * pk );
-            points(pid,Dim::I) = local_mesh.coordinate(Cell(),i,Dim::I);
-            points(pid,Dim::J) = local_mesh.coordinate(Cell(),j,Dim::J);
-            points(pid,Dim::K) = local_mesh.coordinate(Cell(),k,Dim::K);
+            double x[3];
+            int idx[3] = {i,j,k};
+            local_mesh.coordinates( Cell(), idx, x );
+            points(pid,Dim::I) = x[Dim::I];
+            points(pid,Dim::J) = x[Dim::J];
+            points(pid,Dim::K) = x[Dim::K];
         });
 
     // Create a point set with linear spline interpolation to the nodes.
@@ -84,9 +87,11 @@ void pointSetTest()
     EXPECT_EQ( point_set.num_point, num_point );
     EXPECT_EQ( point_set.dx, cell_size );
     EXPECT_EQ( point_set.rdx, 1.0 / cell_size );
+    double xn_low[3];
+    int idx_low[3] = {0,0,0};
+    local_mesh.coordinates( Node(), idx_low, xn_low );
     for ( int d = 0; d < 3; ++d )
-        EXPECT_EQ( point_set.low_corner[d],
-                   local_mesh.coordinate(Node(),0,d) );
+        EXPECT_EQ( point_set.low_corner[d], xn_low[d] );
 
     // Check logical coordinates
     auto logical_coords_host = Kokkos::create_mirror_view_and_copy(

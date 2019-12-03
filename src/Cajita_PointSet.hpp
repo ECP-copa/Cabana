@@ -278,12 +278,13 @@ createPointSet(
 
     auto local_mesh = createLocalMesh<Kokkos::HostSpace>( block );
 
-    point_set.dx = local_mesh.measure( Edge<Dim::I>(), 0, 0, 0 );
+    int idx_low[3] = {0, 0, 0};
+    point_set.dx = local_mesh.measure( Edge<Dim::I>(), idx_low );
 
     point_set.rdx = 1.0 / point_set.dx;
 
-    for ( int d = 0; d < 3; ++d )
-        point_set.low_corner[d] = local_mesh.coordinate( EntityType(), 0, d );
+    local_mesh.coordinates( EntityType(), idx_low,
+                            point_set.low_corner.data() );
 
     updatePointSet( points, num_point, point_set );
 
