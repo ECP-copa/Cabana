@@ -79,6 +79,14 @@ GlobalGrid<MeshType>::GlobalGrid(
 }
 
 //---------------------------------------------------------------------------//
+// Destructor.
+template <class MeshType>
+GlobalGrid<MeshType>::~GlobalGrid()
+{
+    MPI_Comm_free( &_cart_comm );
+}
+
+//---------------------------------------------------------------------------//
 // Get the grid communicator.
 template <class MeshType>
 MPI_Comm GlobalGrid<MeshType>::comm() const

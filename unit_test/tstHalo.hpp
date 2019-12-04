@@ -69,7 +69,7 @@ void gatherScatterTest( const ManualPartitioner& partitioner,
         auto halo = createHalo( *array, FullHaloPattern(), halo_width );
 
         // Gather into the ghosts.
-        halo->gather( *array, 124 );
+        halo->gather( *array );
 
         // Check the gather. We should get 1 everywhere in the array now where
         // there was ghost overlap. Otherwise there will still be 0.
@@ -92,7 +92,7 @@ void gatherScatterTest( const ManualPartitioner& partitioner,
                             EXPECT_EQ( host_view(i,j,k,l), 1.0 );
 
         // Scatter from the ghosts back to owned.
-        halo->scatter( *array, 125 );
+        halo->scatter( *array );
 
         // Check the scatter. The value of the cell should be a function of how
         // many neighbors it has. Corner neighbors get 8, edge neighbors get 4,

@@ -45,6 +45,9 @@ class GlobalGrid
                 const std::array<bool, 3> &periodic,
                 const Partitioner &partitioner );
 
+    // Destructor.
+    ~GlobalGrid();
+
     // Get the communicator. This communicator was generated with a Cartesian
     // topology.
     MPI_Comm comm() const;

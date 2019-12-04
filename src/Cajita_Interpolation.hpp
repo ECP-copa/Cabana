@@ -108,7 +108,7 @@ void p2g(
 
     // Scatter interpolation contributions in the halo back to their owning
     // ranks.
-    halo.scatter( array, 4321 );
+    halo.scatter( array );
 }
 
 //---------------------------------------------------------------------------//
@@ -414,7 +414,7 @@ void g2p(
     using execution_space = typename DeviceType::execution_space;
 
     // Gather data into the halo before interpolating.
-    halo.gather( array, 4321 );
+    halo.gather( array );
 
     // Get a view of the array data.
     auto array_view = array.view();
