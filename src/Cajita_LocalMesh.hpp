@@ -12,7 +12,7 @@
 #ifndef CAJTIA_LOCALMESH_HPP
 #define CAJTIA_LOCALMESH_HPP
 
-#include <Cajita_Block.hpp>
+#include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -42,9 +42,9 @@ class LocalMesh<Device, UniformMesh<Scalar>>
     using execution_space = typename Device::execution_space;
 
     // Constructor.
-    LocalMesh( const Block<UniformMesh<Scalar>> &block )
+    LocalMesh( const LocalGrid<UniformMesh<Scalar>> &local_grid )
     {
-        const auto &global_grid = block.globalGrid();
+        const auto &global_grid = local_grid.globalGrid();
         const auto &global_mesh = global_grid.globalMesh();
 
         _cell_size = global_mesh.uniformCellSize();
@@ -68,21 +68,23 @@ class LocalMesh<Device, UniformMesh<Scalar>>
             _ghost_low_corner[d] =
                 ( global_grid.isPeriodic( d ) ||
                   global_grid.dimBlockId( d ) > 0 )
-                    ? lowCorner( Own(), d ) - block.haloCellWidth() * _cell_size
+                    ? lowCorner( Own(), d ) -
+                          local_grid.haloCellWidth() * _cell_size
                     : lowCorner( Own(), d );
 
         // Compute the ghosted high corner
         for ( int d = 0; d < 3; ++d )
-            _ghost_high_corner[d] = ( global_grid.isPeriodic( d ) ||
-                                      global_grid.dimBlockId( d ) <
-                                          global_grid.dimNumBlock( d ) - 1 )
-                                        ? highCorner( Own(), d ) +
-                                              block.haloCellWidth() * _cell_size
-                                        : highCorner( Own(), d );
+            _ghost_high_corner[d] =
+                ( global_grid.isPeriodic( d ) ||
+                  global_grid.dimBlockId( d ) <
+                      global_grid.dimNumBlock( d ) - 1 )
+                    ? highCorner( Own(), d ) +
+                          local_grid.haloCellWidth() * _cell_size
+                    : highCorner( Own(), d );
     }
 
-    // Get the physical coordinate of the low corner of the block in a given
-    // dimension in the given decomposition.
+    // Get the physical coordinate of the low corner of the local grid in a
+    // given dimension in the given decomposition.
     KOKKOS_INLINE_FUNCTION
     Scalar lowCorner( Own, const int dim ) const
     {
@@ -95,8 +97,8 @@ class LocalMesh<Device, UniformMesh<Scalar>>
         return _ghost_low_corner[dim];
     }
 
-    // Get the physical coordinate of the high corner of the block in a given
-    // dimension in the given decomposition.
+    // Get the physical coordinate of the high corner of the local grid in a
+    // given dimension in the given decomposition.
     KOKKOS_INLINE_FUNCTION
     Scalar highCorner( Own, const int dim ) const
     {
@@ -202,9 +204,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
     using execution_space = typename Device::execution_space;
 
     // Constructor.
-    LocalMesh( const Block<NonUniformMesh<Scalar>> &block )
+    LocalMesh( const LocalGrid<NonUniformMesh<Scalar>> &local_grid )
     {
-        const auto &global_grid = block.globalGrid();
+        const auto &global_grid = local_grid.globalGrid();
         const auto &global_mesh = global_grid.globalMesh();
 
         // Compute the owned low corner.
@@ -224,7 +226,8 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
             if ( global_grid.dimBlockId( d ) > 0 )
             {
                 _ghost_low_corner[d] = global_mesh.nonUniformEdge(
-                    d )[global_grid.globalOffset( d ) - block.haloCellWidth()];
+                    d )[global_grid.globalOffset( d ) -
+                        local_grid.haloCellWidth()];
             }
             else if ( global_grid.isPeriodic( d ) )
             {
@@ -233,7 +236,7 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
                     global_mesh.nonUniformEdge( d ).front() -
                     ( global_mesh.nonUniformEdge( d ).back() -
                       global_mesh.nonUniformEdge(
-                          d )[nedge - block.haloCellWidth() - 1] );
+                          d )[nedge - local_grid.haloCellWidth() - 1] );
             }
             else
             {
@@ -249,13 +252,15 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
             {
                 _ghost_high_corner[d] = global_mesh.nonUniformEdge(
                     d )[global_grid.globalOffset( d ) +
-                        global_grid.ownedNumCell( d ) + block.haloCellWidth()];
+                        global_grid.ownedNumCell( d ) +
+                        local_grid.haloCellWidth()];
             }
             else if ( global_grid.isPeriodic( d ) )
             {
                 _ghost_high_corner[d] =
                     global_mesh.nonUniformEdge( d ).back() +
-                    ( global_mesh.nonUniformEdge( d )[block.haloCellWidth()] -
+                    ( global_mesh.nonUniformEdge(
+                          d )[local_grid.haloCellWidth()] -
                       global_mesh.nonUniformEdge( d ).front() );
             }
             else
@@ -265,10 +270,12 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
         }
 
         // Get the node index spaces.
-        auto owned_nodes_local = block.indexSpace( Own(), Node(), Local() );
-        auto ghosted_nodes_local = block.indexSpace( Ghost(), Node(), Local() );
+        auto owned_nodes_local =
+            local_grid.indexSpace( Own(), Node(), Local() );
+        auto ghosted_nodes_local =
+            local_grid.indexSpace( Ghost(), Node(), Local() );
         auto ghosted_nodes_global =
-            block.indexSpace( Ghost(), Node(), Global() );
+            local_grid.indexSpace( Ghost(), Node(), Global() );
         for ( int d = 0; d < 3; ++d )
         {
             // Allocate edges on the device for this dimension.
@@ -295,10 +302,10 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
                         global_edge[ghosted_nodes_global.min( d ) + n];
             else if ( global_grid.isPeriodic( d ) )
                 for ( int n = 0; n < owned_nodes_local.min( d ); ++n )
-                    edge_mirror( n ) = global_edge.front() -
-                                       global_edge.back() +
-                                       global_edge[global_edge.size() - 1 -
-                                                   block.haloCellWidth() + n];
+                    edge_mirror( n ) =
+                        global_edge.front() - global_edge.back() +
+                        global_edge[global_edge.size() - 1 -
+                                    local_grid.haloCellWidth() + n];
 
             // Compute the upper boundary edges.
             if ( global_grid.dimBlockId( d ) <
@@ -320,8 +327,8 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
         }
     }
 
-    // Get the physical coordinate of the low corner of the block in a given
-    // dimension in the given decomposition.
+    // Get the physical coordinate of the low corner of the local grid in a
+    // given dimension in the given decomposition.
     KOKKOS_INLINE_FUNCTION
     Scalar lowCorner( Own, const int dim ) const
     {
@@ -334,8 +341,8 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
         return _ghost_low_corner[dim];
     }
 
-    // Get the physical coordinate of the high corner of the block in a given
-    // dimension in the given decomposition.
+    // Get the physical coordinate of the high corner of the local grid in a
+    // given dimension in the given decomposition.
     KOKKOS_INLINE_FUNCTION
     Scalar highCorner( Own, const int dim ) const
     {
@@ -396,8 +403,8 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
 
     // Get the measure of an entity of the given type at the given index. The
     // local indexing is relative to the ghosted decomposition of the mesh
-    // block and correlates directly to local index spaces associated with the
-    // block.
+    // local grid and correlates directly to local index spaces associated with
+    // the local grid.
     KOKKOS_INLINE_FUNCTION
     Scalar measure( Node, const int[3] ) const { return 0.0; }
 
@@ -448,9 +455,10 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
 //---------------------------------------------------------------------------//
 // Creation function.
 template <class Device, class MeshType>
-LocalMesh<Device, MeshType> createLocalMesh( const Block<MeshType> &block )
+LocalMesh<Device, MeshType>
+createLocalMesh( const LocalGrid<MeshType> &local_grid )
 {
-    return LocalMesh<Device, MeshType>( block );
+    return LocalMesh<Device, MeshType>( local_grid );
 }
 
 //---------------------------------------------------------------------------//

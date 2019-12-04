@@ -12,8 +12,8 @@
 #ifndef CAJITA_ARRAY_HPP
 #define CAJITA_ARRAY_HPP
 
-#include <Cajita_Block.hpp>
 #include <Cajita_IndexSpace.hpp>
+#include <Cajita_LocalGrid.hpp>
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_Types.hpp>
 
@@ -42,18 +42,22 @@ class ArrayLayout
 
     /*!
       \brief Constructor.
-      \param block The grid block over which the layout will be constructed.
-      \param dofs_per_entity The number of degrees-of-freedom per grid entity.
+      \param local_grid The local grid over which the layout will be
+      constructed. \param dofs_per_entity The number of degrees-of-freedom per
+      grid entity.
     */
-    ArrayLayout( const std::shared_ptr<Block<MeshType>> &block,
+    ArrayLayout( const std::shared_ptr<LocalGrid<MeshType>> &local_grid,
                  const int dofs_per_entity )
-        : _block( block )
+        : _local_grid( local_grid )
         , _dofs_per_entity( dofs_per_entity )
     {
     }
 
-    // Get the grid block over which this layout is defined.
-    const std::shared_ptr<Block<MeshType>> block() const { return _block; }
+    // Get the local grid over which this layout is defined.
+    const std::shared_ptr<LocalGrid<MeshType>> localGrid() const
+    {
+        return _local_grid;
+    }
 
     // Get the number of degrees-of-freedom on each grid entity.
     int dofsPerEntity() const { return _dofs_per_entity; }
@@ -64,16 +68,17 @@ class ArrayLayout
     IndexSpace<4> indexSpace( DecompositionTag decomposition_tag,
                               IndexType index_type ) const
     {
-        return appendDimension(
-            _block->indexSpace( decomposition_tag, EntityType(), index_type ),
-            _dofs_per_entity );
+        return appendDimension( _local_grid->indexSpace( decomposition_tag,
+                                                         EntityType(),
+                                                         index_type ),
+                                _dofs_per_entity );
     }
 
     // Get the local index space of the array elements we shared with the
     // given neighbor in the given decomposition. Optionally provide a halo
     // width for the shared space. This halo width must be less than or equal
-    // to the halo width of the block. The default behavior is to use the halo
-    // width of the block.
+    // to the halo width of the local grid. The default behavior is to use the
+    // halo width of the local grid.
     template <class DecompositionTag>
     IndexSpace<4> sharedIndexSpace( DecompositionTag decomposition_tag,
                                     const int off_i, const int off_j,
@@ -81,13 +86,13 @@ class ArrayLayout
                                     const int halo_width = -1 ) const
     {
         return appendDimension(
-            _block->sharedIndexSpace( decomposition_tag, EntityType(), off_i,
-                                      off_j, off_k, halo_width ),
+            _local_grid->sharedIndexSpace( decomposition_tag, EntityType(),
+                                           off_i, off_j, off_k, halo_width ),
             _dofs_per_entity );
     }
 
   private:
-    std::shared_ptr<Block<MeshType>> _block;
+    std::shared_ptr<LocalGrid<MeshType>> _local_grid;
     int _dofs_per_entity;
 };
 
@@ -113,25 +118,25 @@ struct is_array_layout<const ArrayLayout<EntityType, MeshType>>
 // Array layout creation.
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create an array layout over the entities of a block.
-  \param block The grid block over which to create the layout.
+  \brief Create an array layout over the entities of a local grid.
+  \param local_grid The local grid over which to create the layout.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
 */
 template <class EntityType, class MeshType>
 std::shared_ptr<ArrayLayout<EntityType, MeshType>>
-createArrayLayout( const std::shared_ptr<Block<MeshType>> &block,
+createArrayLayout( const std::shared_ptr<LocalGrid<MeshType>> &local_grid,
                    const int dofs_per_entity, EntityType )
 {
     return std::make_shared<ArrayLayout<EntityType, MeshType>>(
-        block, dofs_per_entity );
+        local_grid, dofs_per_entity );
 }
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create an array layout over the entities of a grid given block
-  parameters. An intermediate block will be created and assigned to the
+  \brief Create an array layout over the entities of a grid given local grid
+  parameters. An intermediate local grid will be created and assigned to the
   layout.
-  \param block The grid block over which to create the layout.
+  \param local_grid The local grid over which to create the layout.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
 */
 template <class EntityType, class MeshType>
@@ -141,7 +146,7 @@ createArrayLayout( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
                    EntityType )
 {
     return std::make_shared<ArrayLayout<EntityType, MeshType>>(
-        createBlock( global_grid, halo_cell_width ), dofs_per_entity );
+        createLocalGrid( global_grid, halo_cell_width ), dofs_per_entity );
 }
 
 //---------------------------------------------------------------------------//
@@ -296,7 +301,7 @@ createSubarray( const Array<Scalar, EntityType, MeshType, Params...> &array,
         {space.min( 0 ), space.min( 1 ), space.min( 2 ), dof_min},
         {space.max( 0 ), space.max( 1 ), space.max( 2 ), dof_max} );
     auto sub_view = createSubview( array.view(), sub_space );
-    auto sub_layout = createArrayLayout( array.layout()->block(),
+    auto sub_layout = createArrayLayout( array.layout()->localGrid(),
                                          dof_max - dof_min, EntityType() );
     return std::make_shared<Array<
         Scalar, EntityType, MeshType,
@@ -531,7 +536,7 @@ void dot( const Array_t &a, const Array_t &b,
 
     MPI_Allreduce( MPI_IN_PLACE, products.data(), products.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
-                   a.layout()->block()->globalGrid().comm() );
+                   a.layout()->localGrid()->globalGrid().comm() );
 }
 
 //---------------------------------------------------------------------------//
@@ -601,7 +606,7 @@ void normInf( const Array_t &array,
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_MAX,
-                   array.layout()->block()->globalGrid().comm() );
+                   array.layout()->localGrid()->globalGrid().comm() );
 }
 
 //---------------------------------------------------------------------------//
@@ -668,7 +673,7 @@ void norm1( const Array_t &array,
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
-                   array.layout()->block()->globalGrid().comm() );
+                   array.layout()->localGrid()->globalGrid().comm() );
 }
 
 //---------------------------------------------------------------------------//
@@ -735,7 +740,7 @@ void norm2( const Array_t &array,
 
     MPI_Allreduce( MPI_IN_PLACE, norms.data(), norms.size(),
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
-                   array.layout()->block()->globalGrid().comm() );
+                   array.layout()->localGrid()->globalGrid().comm() );
 
     for ( auto &n : norms )
         n = std::sqrt( n );

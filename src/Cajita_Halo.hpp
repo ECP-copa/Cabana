@@ -100,7 +100,7 @@ class Halo
           const int width = -1 )
     {
         // Duplicate the communicator so we have our own communication space.
-        MPI_Comm_dup( layout.block()->globalGrid().comm(), &_comm );
+        MPI_Comm_dup( layout.localGrid()->globalGrid().comm(), &_comm );
 
         // Function to get the local id of the neighbor.
         auto neighbor_id = []( const int i, const int j, const int k ) {
@@ -133,7 +133,7 @@ class Halo
             auto k = n[Dim::K];
 
             // Get the rank of the neighbor.
-            int rank = layout.block()->neighborRank( i, j, k );
+            int rank = layout.localGrid()->neighborRank( i, j, k );
 
             // If this is a valid rank add it as a neighbor.
             if ( rank >= 0 )

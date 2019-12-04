@@ -13,7 +13,7 @@
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
-#include <Cajita_Block.hpp>
+#include <Cajita_LocalGrid.hpp>
 
 #include <gtest/gtest.h>
 
@@ -52,19 +52,19 @@ void periodicTest()
                                          is_dim_periodic,
                                          partitioner );
 
-    // Create a  grid block.
+    // Create a local grid.
     int halo_width = 2;
-    auto grid_block = createBlock( global_grid, halo_width );
+    auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Check sizes
-    EXPECT_EQ( grid_block->haloCellWidth(), halo_width );
+    EXPECT_EQ( local_grid->haloCellWidth(), halo_width );
 
     //////////////////
     // CELL SPACES
     //////////////////
 
     // Get the local number of cells.
-    auto owned_cell_space = grid_block->indexSpace( Own(), Cell(), Local() );
+    auto owned_cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     std::vector<int> local_num_cells(3);
     for ( int d = 0; d < 3; ++d )
         local_num_cells[d] = owned_cell_space.extent(d);
@@ -99,7 +99,7 @@ void periodicTest()
                                         cart_rank[Dim::K] + k };
                 int nrank;
                 MPI_Cart_rank( grid_comm, nr.data(), &nrank );
-                EXPECT_EQ( grid_block->neighborRank(i,j,k), nrank );
+                EXPECT_EQ( local_grid->neighborRank(i,j,k), nrank );
             }
 
     // Check to make sure we got the right number of total cells in each
@@ -127,7 +127,7 @@ void periodicTest()
 
     // Check the global owned cell bounds.
     auto global_owned_cell_space =
-        grid_block->indexSpace( Own(), Cell(), Global() );
+        local_grid->indexSpace( Own(), Cell(), Global() );
     EXPECT_EQ( global_owned_cell_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) );
     EXPECT_EQ( global_owned_cell_space.max(Dim::I),
@@ -142,7 +142,7 @@ void periodicTest()
                global_grid->globalOffset(Dim::K) + local_num_cells[Dim::K] );
 
     // Check the ghosted cell bounds.
-    auto ghosted_cell_space = grid_block->indexSpace( Ghost(), Cell(), Local() );
+    auto ghosted_cell_space = local_grid->indexSpace( Ghost(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( ghosted_cell_space.extent(d),
@@ -151,7 +151,7 @@ void periodicTest()
 
     // Check the global ghosted cell bounds.
     auto global_ghosted_cell_space =
-        grid_block->indexSpace( Ghost(), Cell(), Global() );
+        local_grid->indexSpace( Ghost(), Cell(), Global() );
     EXPECT_EQ( global_ghosted_cell_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) - halo_width );
     EXPECT_EQ( global_ghosted_cell_space.max(Dim::I),
@@ -169,7 +169,7 @@ void periodicTest()
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto owned_shared_cell_space =
-        grid_block->sharedIndexSpace( Own(), Cell(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Cell(), -1, 0, 1 );
     EXPECT_EQ( owned_shared_cell_space.min(Dim::I),
                owned_cell_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_cell_space.max(Dim::I),
@@ -184,7 +184,7 @@ void periodicTest()
                owned_cell_space.max(Dim::K) );
 
     owned_shared_cell_space =
-        grid_block->sharedIndexSpace( Own(), Cell(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Own(), Cell(), 1, -1, 0 );
     EXPECT_EQ( owned_shared_cell_space.min(Dim::I),
                owned_cell_space.max(Dim::I) - halo_width );
     EXPECT_EQ( owned_shared_cell_space.max(Dim::I),
@@ -199,7 +199,7 @@ void periodicTest()
                owned_cell_space.max(Dim::K) );
 
     owned_shared_cell_space =
-        grid_block->sharedIndexSpace( Own(), Cell(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Own(), Cell(), 0, 1, -1 );
     EXPECT_EQ( owned_shared_cell_space.min(Dim::I),
                owned_cell_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_cell_space.max(Dim::I),
@@ -216,7 +216,7 @@ void periodicTest()
     // Check owned shared cell spaces again but this time with a specified
     // halo width.
     owned_shared_cell_space =
-        grid_block->sharedIndexSpace( Own(), Cell(), -1, 0, 1, 1 );
+        local_grid->sharedIndexSpace( Own(), Cell(), -1, 0, 1, 1 );
     EXPECT_EQ( owned_shared_cell_space.min(Dim::I),
                owned_cell_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_cell_space.max(Dim::I),
@@ -231,7 +231,7 @@ void periodicTest()
                owned_cell_space.max(Dim::K) );
 
     owned_shared_cell_space =
-        grid_block->sharedIndexSpace( Own(), Cell(), 1, -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Cell(), 1, -1, 0, 1 );
     EXPECT_EQ( owned_shared_cell_space.min(Dim::I),
                owned_cell_space.max(Dim::I) - 1 );
     EXPECT_EQ( owned_shared_cell_space.max(Dim::I),
@@ -246,7 +246,7 @@ void periodicTest()
                owned_cell_space.max(Dim::K) );
 
     owned_shared_cell_space =
-        grid_block->sharedIndexSpace( Own(), Cell(), 0, 1, -1, 1 );
+        local_grid->sharedIndexSpace( Own(), Cell(), 0, 1, -1, 1 );
     EXPECT_EQ( owned_shared_cell_space.min(Dim::I),
                owned_cell_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_cell_space.max(Dim::I),
@@ -264,7 +264,7 @@ void periodicTest()
     // neighbors that we know the bounds are correct in each dimension. The
     // three variations here cover all of the cases.
     auto ghosted_shared_cell_space =
-        grid_block->sharedIndexSpace( Ghost(), Cell(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Cell(), -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_cell_space.min(Dim::I),
                0 );
     EXPECT_EQ( ghosted_shared_cell_space.max(Dim::I),
@@ -279,7 +279,7 @@ void periodicTest()
                owned_cell_space.max(Dim::K) + halo_width );
 
     ghosted_shared_cell_space =
-        grid_block->sharedIndexSpace( Ghost(), Cell(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Ghost(), Cell(), 1, -1, 0 );
     EXPECT_EQ( ghosted_shared_cell_space.min(Dim::I),
                owned_cell_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_cell_space.max(Dim::I),
@@ -294,7 +294,7 @@ void periodicTest()
                owned_cell_space.max(Dim::K) );
 
     ghosted_shared_cell_space =
-        grid_block->sharedIndexSpace( Ghost(), Cell(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Ghost(), Cell(), 0, 1, -1 );
     EXPECT_EQ( ghosted_shared_cell_space.min(Dim::I),
                owned_cell_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_cell_space.max(Dim::I),
@@ -311,7 +311,7 @@ void periodicTest()
     // Check the ghosted shared cell spaces again but this time with a
     // specified halo width.
     ghosted_shared_cell_space =
-        grid_block->sharedIndexSpace( Ghost(), Cell(), -1, 0, 1, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Cell(), -1, 0, 1, 1 );
     EXPECT_EQ( ghosted_shared_cell_space.min(Dim::I),
                halo_width - 1 );
     EXPECT_EQ( ghosted_shared_cell_space.max(Dim::I),
@@ -326,7 +326,7 @@ void periodicTest()
                owned_cell_space.max(Dim::K) + 1 );
 
     ghosted_shared_cell_space =
-        grid_block->sharedIndexSpace( Ghost(), Cell(), 1, -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Cell(), 1, -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_cell_space.min(Dim::I),
                owned_cell_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_cell_space.max(Dim::I),
@@ -341,7 +341,7 @@ void periodicTest()
                owned_cell_space.max(Dim::K) );
 
     ghosted_shared_cell_space =
-        grid_block->sharedIndexSpace( Ghost(), Cell(), 0, 1, -1, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Cell(), 0, 1, -1, 1 );
     EXPECT_EQ( ghosted_shared_cell_space.min(Dim::I),
                owned_cell_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_cell_space.max(Dim::I),
@@ -360,7 +360,7 @@ void periodicTest()
     //////////////////
 
     // Get the local number of nodes.
-    auto owned_node_space = grid_block->indexSpace( Own(), Node(), Local() );
+    auto owned_node_space = local_grid->indexSpace( Own(), Node(), Local() );
     std::vector<int> local_num_nodes(3);
     for ( int d = 0; d < 3; ++d )
         local_num_nodes[d] = owned_node_space.extent(d);
@@ -404,7 +404,7 @@ void periodicTest()
 
     // Check the global node bounds.
     auto global_owned_node_space =
-        grid_block->indexSpace( Own(), Node(), Global() );
+        local_grid->indexSpace( Own(), Node(), Global() );
     EXPECT_EQ( global_owned_node_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) );
     EXPECT_EQ( global_owned_node_space.max(Dim::I),
@@ -419,7 +419,7 @@ void periodicTest()
                global_grid->globalOffset(Dim::K) + local_num_nodes[Dim::K] );
 
     // Check the ghosted node bounds.
-    auto ghosted_node_space = grid_block->indexSpace( Ghost(), Node(), Local() );
+    auto ghosted_node_space = local_grid->indexSpace( Ghost(), Node(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( ghosted_node_space.extent(d),
@@ -428,7 +428,7 @@ void periodicTest()
 
     // Check the ghosted global node bounds.
     auto global_ghosted_node_space =
-        grid_block->indexSpace( Ghost(), Node(), Global() );
+        local_grid->indexSpace( Ghost(), Node(), Global() );
     EXPECT_EQ( global_ghosted_node_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) - halo_width );
     EXPECT_EQ( global_ghosted_node_space.max(Dim::I),
@@ -446,7 +446,7 @@ void periodicTest()
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto owned_shared_node_space =
-        grid_block->sharedIndexSpace( Own(), Node(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Node(), -1, 0, 1 );
     EXPECT_EQ( owned_shared_node_space.min(Dim::I),
                owned_node_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_node_space.max(Dim::I),
@@ -461,7 +461,7 @@ void periodicTest()
                owned_node_space.max(Dim::K) );
 
     owned_shared_node_space =
-        grid_block->sharedIndexSpace( Own(), Node(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Own(), Node(), 1, -1, 0 );
     EXPECT_EQ( owned_shared_node_space.min(Dim::I),
                owned_node_space.max(Dim::I) - halo_width );
     EXPECT_EQ( owned_shared_node_space.max(Dim::I),
@@ -476,7 +476,7 @@ void periodicTest()
                owned_node_space.max(Dim::K) );
 
     owned_shared_node_space =
-        grid_block->sharedIndexSpace( Own(), Node(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Own(), Node(), 0, 1, -1 );
     EXPECT_EQ( owned_shared_node_space.min(Dim::I),
                owned_node_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_node_space.max(Dim::I),
@@ -493,7 +493,7 @@ void periodicTest()
     // Check the owned shared node spaces again but this time with a specified
     // halo width.
     owned_shared_node_space =
-        grid_block->sharedIndexSpace( Own(), Node(), -1, 0, 1, 1 );
+        local_grid->sharedIndexSpace( Own(), Node(), -1, 0, 1, 1 );
     EXPECT_EQ( owned_shared_node_space.min(Dim::I),
                owned_node_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_node_space.max(Dim::I),
@@ -508,7 +508,7 @@ void periodicTest()
                owned_node_space.max(Dim::K) );
 
     owned_shared_node_space =
-        grid_block->sharedIndexSpace( Own(), Node(), 1, -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Node(), 1, -1, 0, 1 );
     EXPECT_EQ( owned_shared_node_space.min(Dim::I),
                owned_node_space.max(Dim::I) - 1 );
     EXPECT_EQ( owned_shared_node_space.max(Dim::I),
@@ -523,7 +523,7 @@ void periodicTest()
                owned_node_space.max(Dim::K) );
 
     owned_shared_node_space =
-        grid_block->sharedIndexSpace( Own(), Node(), 0, 1, -1, 1 );
+        local_grid->sharedIndexSpace( Own(), Node(), 0, 1, -1, 1 );
     EXPECT_EQ( owned_shared_node_space.min(Dim::I),
                owned_node_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_node_space.max(Dim::I),
@@ -541,7 +541,7 @@ void periodicTest()
     // neighbors that we know the bounds are correct in each dimension. The
     // three variations here cover all of the cases.
     auto ghosted_shared_node_space =
-        grid_block->sharedIndexSpace( Ghost(), Node(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Node(), -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_node_space.min(Dim::I),
                0 );
     EXPECT_EQ( ghosted_shared_node_space.max(Dim::I),
@@ -556,7 +556,7 @@ void periodicTest()
                owned_node_space.max(Dim::K) + halo_width + 1 );
 
     ghosted_shared_node_space =
-        grid_block->sharedIndexSpace( Ghost(), Node(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Ghost(), Node(), 1, -1, 0 );
     EXPECT_EQ( ghosted_shared_node_space.min(Dim::I),
                owned_node_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_node_space.max(Dim::I),
@@ -571,7 +571,7 @@ void periodicTest()
                owned_node_space.max(Dim::K) );
 
     ghosted_shared_node_space =
-        grid_block->sharedIndexSpace( Ghost(), Node(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Ghost(), Node(), 0, 1, -1 );
     EXPECT_EQ( ghosted_shared_node_space.min(Dim::I),
                owned_node_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_node_space.max(Dim::I),
@@ -588,7 +588,7 @@ void periodicTest()
     // Check the ghosted shared node spaces again - this time with a specified
     // halo width.
     ghosted_shared_node_space =
-        grid_block->sharedIndexSpace( Ghost(), Node(), -1, 0, 1, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Node(), -1, 0, 1, 1 );
     EXPECT_EQ( ghosted_shared_node_space.min(Dim::I),
                owned_node_space.min(Dim::I) - 1  );
     EXPECT_EQ( ghosted_shared_node_space.max(Dim::I),
@@ -603,7 +603,7 @@ void periodicTest()
                owned_node_space.max(Dim::K) + 2 );
 
     ghosted_shared_node_space =
-        grid_block->sharedIndexSpace( Ghost(), Node(), 1, -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Node(), 1, -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_node_space.min(Dim::I),
                owned_node_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_node_space.max(Dim::I),
@@ -618,7 +618,7 @@ void periodicTest()
                owned_node_space.max(Dim::K) );
 
     ghosted_shared_node_space =
-        grid_block->sharedIndexSpace( Ghost(), Node(), 0, 1, -1, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Node(), 0, 1, -1, 1 );
     EXPECT_EQ( ghosted_shared_node_space.min(Dim::I),
                owned_node_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_node_space.max(Dim::I),
@@ -637,7 +637,7 @@ void periodicTest()
     //////////////////
 
     // Get the local number of I-faces.
-    auto owned_i_face_space = grid_block->indexSpace( Own(), Face<Dim::I>(), Local() );
+    auto owned_i_face_space = local_grid->indexSpace( Own(), Face<Dim::I>(), Local() );
     std::vector<int> local_num_i_faces(3);
     for ( int d = 0; d < 3; ++d )
         local_num_i_faces[d] = owned_i_face_space.extent(d);
@@ -670,7 +670,7 @@ void periodicTest()
 
     // Check the global bounds.
     auto global_owned_i_face_space =
-        grid_block->indexSpace( Own(), Face<Dim::I>(), Global() );
+        local_grid->indexSpace( Own(), Face<Dim::I>(), Global() );
     EXPECT_EQ( global_owned_i_face_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) );
     EXPECT_EQ( global_owned_i_face_space.max(Dim::I),
@@ -685,7 +685,7 @@ void periodicTest()
                global_grid->globalOffset(Dim::K) + local_num_cells[Dim::K] );
 
     auto global_ghosted_i_face_space =
-        grid_block->indexSpace( Ghost(), Face<Dim::I>(), Global() );
+        local_grid->indexSpace( Ghost(), Face<Dim::I>(), Global() );
     EXPECT_EQ( global_ghosted_i_face_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) - halo_width );
     EXPECT_EQ( global_ghosted_i_face_space.max(Dim::I),
@@ -703,7 +703,7 @@ void periodicTest()
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto owned_shared_i_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::I>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::I>(), -1, 0, 1 );
     EXPECT_EQ( owned_shared_i_face_space.min(Dim::I),
                owned_i_face_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_i_face_space.max(Dim::I),
@@ -718,7 +718,7 @@ void periodicTest()
                owned_i_face_space.max(Dim::K) );
 
     owned_shared_i_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::I>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::I>(), 1, -1, 0 );
     EXPECT_EQ( owned_shared_i_face_space.min(Dim::I),
                owned_i_face_space.max(Dim::I) - halo_width );
     EXPECT_EQ( owned_shared_i_face_space.max(Dim::I),
@@ -733,7 +733,7 @@ void periodicTest()
                owned_i_face_space.max(Dim::K) );
 
     owned_shared_i_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::I>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::I>(), 0, 1, -1 );
     EXPECT_EQ( owned_shared_i_face_space.min(Dim::I),
                owned_i_face_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_i_face_space.max(Dim::I),
@@ -750,7 +750,7 @@ void periodicTest()
     // Check the I-face owned shared spaces again, this time with a specified
     // halo width.
     owned_shared_i_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::I>(), -1, 0, 1, 1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::I>(), -1, 0, 1, 1 );
     EXPECT_EQ( owned_shared_i_face_space.min(Dim::I),
                owned_i_face_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_i_face_space.max(Dim::I),
@@ -765,7 +765,7 @@ void periodicTest()
                owned_i_face_space.max(Dim::K) );
 
     owned_shared_i_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::I>(), 1, -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::I>(), 1, -1, 0, 1 );
     EXPECT_EQ( owned_shared_i_face_space.min(Dim::I),
                owned_i_face_space.max(Dim::I) - 1 );
     EXPECT_EQ( owned_shared_i_face_space.max(Dim::I),
@@ -780,7 +780,7 @@ void periodicTest()
                owned_i_face_space.max(Dim::K) );
 
     owned_shared_i_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::I>(), 0, 1, -1, 1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::I>(), 0, 1, -1, 1 );
     EXPECT_EQ( owned_shared_i_face_space.min(Dim::I),
                owned_i_face_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_i_face_space.max(Dim::I),
@@ -798,7 +798,7 @@ void periodicTest()
     // the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto ghosted_shared_i_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::I>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::I>(), -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_i_face_space.min(Dim::I),
                0 );
     EXPECT_EQ( ghosted_shared_i_face_space.max(Dim::I),
@@ -813,7 +813,7 @@ void periodicTest()
                owned_i_face_space.max(Dim::K) + halo_width );
 
     ghosted_shared_i_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::I>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::I>(), 1, -1, 0 );
     EXPECT_EQ( ghosted_shared_i_face_space.min(Dim::I),
                owned_i_face_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_i_face_space.max(Dim::I),
@@ -828,7 +828,7 @@ void periodicTest()
                owned_i_face_space.max(Dim::K) );
 
     ghosted_shared_i_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::I>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::I>(), 0, 1, -1 );
     EXPECT_EQ( ghosted_shared_i_face_space.min(Dim::I),
                owned_i_face_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_i_face_space.max(Dim::I),
@@ -845,7 +845,7 @@ void periodicTest()
     // Check the I-face ghosted shared spaces again, this time with a
     // specified halo width.
     ghosted_shared_i_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::I>(), -1, 0, 1, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::I>(), -1, 0, 1, 1 );
     EXPECT_EQ( ghosted_shared_i_face_space.min(Dim::I),
                owned_i_face_space.min(Dim::I) - 1 );
     EXPECT_EQ( ghosted_shared_i_face_space.max(Dim::I),
@@ -860,7 +860,7 @@ void periodicTest()
                owned_i_face_space.max(Dim::K) + 1 );
 
     ghosted_shared_i_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::I>(), 1, -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::I>(), 1, -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_i_face_space.min(Dim::I),
                owned_i_face_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_i_face_space.max(Dim::I),
@@ -875,7 +875,7 @@ void periodicTest()
                owned_i_face_space.max(Dim::K) );
 
     ghosted_shared_i_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::I>(), 0, 1, -1, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::I>(), 0, 1, -1, 1 );
     EXPECT_EQ( ghosted_shared_i_face_space.min(Dim::I),
                owned_i_face_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_i_face_space.max(Dim::I),
@@ -894,7 +894,7 @@ void periodicTest()
     //////////////////
 
     // Get the local number of j-faces.
-    auto owned_j_face_space = grid_block->indexSpace( Own(), Face<Dim::J>(), Local() );
+    auto owned_j_face_space = local_grid->indexSpace( Own(), Face<Dim::J>(), Local() );
     std::vector<int> local_num_j_faces(3);
     for ( int d = 0; d < 3; ++d )
         local_num_j_faces[d] = owned_j_face_space.extent(d);
@@ -927,7 +927,7 @@ void periodicTest()
 
     // Check the global bounds.
     auto global_owned_j_face_space =
-        grid_block->indexSpace( Own(), Face<Dim::J>(), Global() );
+        local_grid->indexSpace( Own(), Face<Dim::J>(), Global() );
     EXPECT_EQ( global_owned_j_face_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) );
     EXPECT_EQ( global_owned_j_face_space.max(Dim::I),
@@ -942,7 +942,7 @@ void periodicTest()
                global_grid->globalOffset(Dim::K) + local_num_cells[Dim::K] );
 
     auto global_ghosted_j_face_space =
-        grid_block->indexSpace( Ghost(), Face<Dim::J>(), Global() );
+        local_grid->indexSpace( Ghost(), Face<Dim::J>(), Global() );
     EXPECT_EQ( global_ghosted_j_face_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) - halo_width );
     EXPECT_EQ( global_ghosted_j_face_space.max(Dim::I),
@@ -960,7 +960,7 @@ void periodicTest()
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto owned_shared_j_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::J>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::J>(), -1, 0, 1 );
     EXPECT_EQ( owned_shared_j_face_space.min(Dim::I),
                owned_j_face_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_j_face_space.max(Dim::I),
@@ -975,7 +975,7 @@ void periodicTest()
                owned_j_face_space.max(Dim::K) );
 
     owned_shared_j_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::J>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::J>(), 1, -1, 0 );
     EXPECT_EQ( owned_shared_j_face_space.min(Dim::I),
                owned_j_face_space.max(Dim::I) - halo_width );
     EXPECT_EQ( owned_shared_j_face_space.max(Dim::I),
@@ -990,7 +990,7 @@ void periodicTest()
                owned_j_face_space.max(Dim::K) );
 
     owned_shared_j_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::J>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::J>(), 0, 1, -1 );
     EXPECT_EQ( owned_shared_j_face_space.min(Dim::I),
                owned_j_face_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_j_face_space.max(Dim::I),
@@ -1008,7 +1008,7 @@ void periodicTest()
     // the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto ghosted_shared_j_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::J>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::J>(), -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_j_face_space.min(Dim::I),
                0 );
     EXPECT_EQ( ghosted_shared_j_face_space.max(Dim::I),
@@ -1023,7 +1023,7 @@ void periodicTest()
                owned_j_face_space.max(Dim::K) + halo_width );
 
     ghosted_shared_j_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::J>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::J>(), 1, -1, 0 );
     EXPECT_EQ( ghosted_shared_j_face_space.min(Dim::I),
                owned_j_face_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_j_face_space.max(Dim::I),
@@ -1038,7 +1038,7 @@ void periodicTest()
                owned_j_face_space.max(Dim::K) );
 
     ghosted_shared_j_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::J>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::J>(), 0, 1, -1 );
     EXPECT_EQ( ghosted_shared_j_face_space.min(Dim::I),
                owned_j_face_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_j_face_space.max(Dim::I),
@@ -1057,7 +1057,7 @@ void periodicTest()
     //////////////////
 
     // Get the local number of k-faces.
-    auto owned_k_face_space = grid_block->indexSpace( Own(), Face<Dim::K>(), Local() );
+    auto owned_k_face_space = local_grid->indexSpace( Own(), Face<Dim::K>(), Local() );
     std::vector<int> local_num_k_faces(3);
     for ( int d = 0; d < 3; ++d )
         local_num_k_faces[d] = owned_k_face_space.extent(d);
@@ -1090,7 +1090,7 @@ void periodicTest()
 
     // Check the global bounds.
     auto global_owned_k_face_space =
-        grid_block->indexSpace( Own(), Face<Dim::K>(), Global() );
+        local_grid->indexSpace( Own(), Face<Dim::K>(), Global() );
     EXPECT_EQ( global_owned_k_face_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) );
     EXPECT_EQ( global_owned_k_face_space.max(Dim::I),
@@ -1105,7 +1105,7 @@ void periodicTest()
                global_grid->globalOffset(Dim::K) + local_num_nodes[Dim::K] );
 
     auto global_ghosted_k_face_space =
-        grid_block->indexSpace( Ghost(), Face<Dim::K>(), Global() );
+        local_grid->indexSpace( Ghost(), Face<Dim::K>(), Global() );
     EXPECT_EQ( global_ghosted_k_face_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) - halo_width );
     EXPECT_EQ( global_ghosted_k_face_space.max(Dim::I),
@@ -1123,7 +1123,7 @@ void periodicTest()
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto owned_shared_k_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::K>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::K>(), -1, 0, 1 );
     EXPECT_EQ( owned_shared_k_face_space.min(Dim::I),
                owned_k_face_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_k_face_space.max(Dim::I),
@@ -1138,7 +1138,7 @@ void periodicTest()
                owned_k_face_space.max(Dim::K) );
 
     owned_shared_k_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::K>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::K>(), 1, -1, 0 );
     EXPECT_EQ( owned_shared_k_face_space.min(Dim::I),
                owned_k_face_space.max(Dim::I) - halo_width );
     EXPECT_EQ( owned_shared_k_face_space.max(Dim::I),
@@ -1153,7 +1153,7 @@ void periodicTest()
                owned_k_face_space.max(Dim::K) );
 
     owned_shared_k_face_space =
-        grid_block->sharedIndexSpace( Own(), Face<Dim::K>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Own(), Face<Dim::K>(), 0, 1, -1 );
     EXPECT_EQ( owned_shared_k_face_space.min(Dim::I),
                owned_k_face_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_k_face_space.max(Dim::I),
@@ -1171,7 +1171,7 @@ void periodicTest()
     // the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto ghosted_shared_k_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::K>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::K>(), -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_k_face_space.min(Dim::I),
                0 );
     EXPECT_EQ( ghosted_shared_k_face_space.max(Dim::I),
@@ -1186,7 +1186,7 @@ void periodicTest()
                owned_k_face_space.max(Dim::K) + halo_width + 1 );
 
     ghosted_shared_k_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::K>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::K>(), 1, -1, 0 );
     EXPECT_EQ( ghosted_shared_k_face_space.min(Dim::I),
                owned_k_face_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_k_face_space.max(Dim::I),
@@ -1201,7 +1201,7 @@ void periodicTest()
                owned_k_face_space.max(Dim::K) );
 
     ghosted_shared_k_face_space =
-        grid_block->sharedIndexSpace( Ghost(), Face<Dim::K>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Ghost(), Face<Dim::K>(), 0, 1, -1 );
     EXPECT_EQ( ghosted_shared_k_face_space.min(Dim::I),
                owned_k_face_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_k_face_space.max(Dim::I),
@@ -1220,7 +1220,7 @@ void periodicTest()
     //////////////////
 
     // Get the local number of I-edges.
-    auto owned_i_edge_space = grid_block->indexSpace( Own(), Edge<Dim::I>(), Local() );
+    auto owned_i_edge_space = local_grid->indexSpace( Own(), Edge<Dim::I>(), Local() );
     std::vector<int> local_num_i_edges(3);
     for ( int d = 0; d < 3; ++d )
         local_num_i_edges[d] = owned_i_edge_space.extent(d);
@@ -1253,7 +1253,7 @@ void periodicTest()
 
     // Check the global bounds.
     auto global_owned_i_edge_space =
-        grid_block->indexSpace( Own(), Edge<Dim::I>(), Global() );
+        local_grid->indexSpace( Own(), Edge<Dim::I>(), Global() );
     EXPECT_EQ( global_owned_i_edge_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) );
     EXPECT_EQ( global_owned_i_edge_space.max(Dim::I),
@@ -1268,7 +1268,7 @@ void periodicTest()
                global_grid->globalOffset(Dim::K) + local_num_cells[Dim::K] );
 
     auto global_ghosted_i_edge_space =
-        grid_block->indexSpace( Ghost(), Edge<Dim::I>(), Global() );
+        local_grid->indexSpace( Ghost(), Edge<Dim::I>(), Global() );
     EXPECT_EQ( global_ghosted_i_edge_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) - halo_width );
     EXPECT_EQ( global_ghosted_i_edge_space.max(Dim::I),
@@ -1286,7 +1286,7 @@ void periodicTest()
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto owned_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::I>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::I>(), -1, 0, 1 );
     EXPECT_EQ( owned_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_i_edge_space.max(Dim::I),
@@ -1301,7 +1301,7 @@ void periodicTest()
                owned_i_edge_space.max(Dim::K) );
 
     owned_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::I>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::I>(), 1, -1, 0 );
     EXPECT_EQ( owned_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.max(Dim::I) - halo_width );
     EXPECT_EQ( owned_shared_i_edge_space.max(Dim::I),
@@ -1316,7 +1316,7 @@ void periodicTest()
                owned_i_edge_space.max(Dim::K) );
 
     owned_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::I>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::I>(), 0, 1, -1 );
     EXPECT_EQ( owned_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_i_edge_space.max(Dim::I),
@@ -1333,7 +1333,7 @@ void periodicTest()
     // Check the I-edge owned shared spaces again, this time with a specified
     // halo width.
     owned_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::I>(), -1, 0, 1, 1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::I>(), -1, 0, 1, 1 );
     EXPECT_EQ( owned_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_i_edge_space.max(Dim::I),
@@ -1348,7 +1348,7 @@ void periodicTest()
                owned_i_edge_space.max(Dim::K) );
 
     owned_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::I>(), 1, -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::I>(), 1, -1, 0, 1 );
     EXPECT_EQ( owned_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.max(Dim::I) - 1 );
     EXPECT_EQ( owned_shared_i_edge_space.max(Dim::I),
@@ -1363,7 +1363,7 @@ void periodicTest()
                owned_i_edge_space.max(Dim::K) );
 
     owned_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::I>(), 0, 1, -1, 1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::I>(), 0, 1, -1, 1 );
     EXPECT_EQ( owned_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_i_edge_space.max(Dim::I),
@@ -1381,7 +1381,7 @@ void periodicTest()
     // the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto ghosted_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::I>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::I>(), -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_i_edge_space.min(Dim::I),
                0 );
     EXPECT_EQ( ghosted_shared_i_edge_space.max(Dim::I),
@@ -1396,7 +1396,7 @@ void periodicTest()
                owned_i_edge_space.max(Dim::K) + halo_width + 1 );
 
     ghosted_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::I>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::I>(), 1, -1, 0 );
     EXPECT_EQ( ghosted_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_i_edge_space.max(Dim::I),
@@ -1411,7 +1411,7 @@ void periodicTest()
                owned_i_edge_space.max(Dim::K) );
 
     ghosted_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::I>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::I>(), 0, 1, -1 );
     EXPECT_EQ( ghosted_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_i_edge_space.max(Dim::I),
@@ -1428,7 +1428,7 @@ void periodicTest()
     // Check the I-edge ghosted shared spaces again, this time with a
     // specified halo width.
     ghosted_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::I>(), -1, 0, 1, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::I>(), -1, 0, 1, 1 );
     EXPECT_EQ( ghosted_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.min(Dim::I) - 1 );
     EXPECT_EQ( ghosted_shared_i_edge_space.max(Dim::I),
@@ -1443,7 +1443,7 @@ void periodicTest()
                owned_i_edge_space.max(Dim::K) + 2 );
 
     ghosted_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::I>(), 1, -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::I>(), 1, -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_i_edge_space.max(Dim::I),
@@ -1458,7 +1458,7 @@ void periodicTest()
                owned_i_edge_space.max(Dim::K) );
 
     ghosted_shared_i_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::I>(), 0, 1, -1, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::I>(), 0, 1, -1, 1 );
     EXPECT_EQ( ghosted_shared_i_edge_space.min(Dim::I),
                owned_i_edge_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_i_edge_space.max(Dim::I),
@@ -1477,7 +1477,7 @@ void periodicTest()
     //////////////////
 
     // Get the local number of j-edges.
-    auto owned_j_edge_space = grid_block->indexSpace( Own(), Edge<Dim::J>(), Local() );
+    auto owned_j_edge_space = local_grid->indexSpace( Own(), Edge<Dim::J>(), Local() );
     std::vector<int> local_num_j_edges(3);
     for ( int d = 0; d < 3; ++d )
         local_num_j_edges[d] = owned_j_edge_space.extent(d);
@@ -1510,7 +1510,7 @@ void periodicTest()
 
     // Check the global bounds.
     auto global_owned_j_edge_space =
-        grid_block->indexSpace( Own(), Edge<Dim::J>(), Global() );
+        local_grid->indexSpace( Own(), Edge<Dim::J>(), Global() );
     EXPECT_EQ( global_owned_j_edge_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) );
     EXPECT_EQ( global_owned_j_edge_space.max(Dim::I),
@@ -1525,7 +1525,7 @@ void periodicTest()
                global_grid->globalOffset(Dim::K) + local_num_cells[Dim::K] );
 
     auto global_ghosted_j_edge_space =
-        grid_block->indexSpace( Ghost(), Edge<Dim::J>(), Global() );
+        local_grid->indexSpace( Ghost(), Edge<Dim::J>(), Global() );
     EXPECT_EQ( global_ghosted_j_edge_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) - halo_width );
     EXPECT_EQ( global_ghosted_j_edge_space.max(Dim::I),
@@ -1543,7 +1543,7 @@ void periodicTest()
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto owned_shared_j_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::J>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::J>(), -1, 0, 1 );
     EXPECT_EQ( owned_shared_j_edge_space.min(Dim::I),
                owned_j_edge_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_j_edge_space.max(Dim::I),
@@ -1558,7 +1558,7 @@ void periodicTest()
                owned_j_edge_space.max(Dim::K) );
 
     owned_shared_j_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::J>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::J>(), 1, -1, 0 );
     EXPECT_EQ( owned_shared_j_edge_space.min(Dim::I),
                owned_j_edge_space.max(Dim::I) - halo_width );
     EXPECT_EQ( owned_shared_j_edge_space.max(Dim::I),
@@ -1573,7 +1573,7 @@ void periodicTest()
                owned_j_edge_space.max(Dim::K) );
 
     owned_shared_j_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::J>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::J>(), 0, 1, -1 );
     EXPECT_EQ( owned_shared_j_edge_space.min(Dim::I),
                owned_j_edge_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_j_edge_space.max(Dim::I),
@@ -1591,7 +1591,7 @@ void periodicTest()
     // the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto ghosted_shared_j_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::J>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::J>(), -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_j_edge_space.min(Dim::I),
                0 );
     EXPECT_EQ( ghosted_shared_j_edge_space.max(Dim::I),
@@ -1606,7 +1606,7 @@ void periodicTest()
                owned_j_edge_space.max(Dim::K) + halo_width + 1 );
 
     ghosted_shared_j_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::J>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::J>(), 1, -1, 0 );
     EXPECT_EQ( ghosted_shared_j_edge_space.min(Dim::I),
                owned_j_edge_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_j_edge_space.max(Dim::I),
@@ -1621,7 +1621,7 @@ void periodicTest()
                owned_j_edge_space.max(Dim::K) );
 
     ghosted_shared_j_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::J>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::J>(), 0, 1, -1 );
     EXPECT_EQ( ghosted_shared_j_edge_space.min(Dim::I),
                owned_j_edge_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_j_edge_space.max(Dim::I),
@@ -1640,7 +1640,7 @@ void periodicTest()
     //////////////////
 
     // Get the local number of k-edges.
-    auto owned_k_edge_space = grid_block->indexSpace( Own(), Edge<Dim::K>(), Local() );
+    auto owned_k_edge_space = local_grid->indexSpace( Own(), Edge<Dim::K>(), Local() );
     std::vector<int> local_num_k_edges(3);
     for ( int d = 0; d < 3; ++d )
         local_num_k_edges[d] = owned_k_edge_space.extent(d);
@@ -1673,7 +1673,7 @@ void periodicTest()
 
     // Check the global bounds.
     auto global_owned_k_edge_space =
-        grid_block->indexSpace( Own(), Edge<Dim::K>(), Global() );
+        local_grid->indexSpace( Own(), Edge<Dim::K>(), Global() );
     EXPECT_EQ( global_owned_k_edge_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) );
     EXPECT_EQ( global_owned_k_edge_space.max(Dim::I),
@@ -1688,7 +1688,7 @@ void periodicTest()
                global_grid->globalOffset(Dim::K) + local_num_nodes[Dim::K] );
 
     auto global_ghosted_k_edge_space =
-        grid_block->indexSpace( Ghost(), Edge<Dim::K>(), Global() );
+        local_grid->indexSpace( Ghost(), Edge<Dim::K>(), Global() );
     EXPECT_EQ( global_ghosted_k_edge_space.min(Dim::I),
                global_grid->globalOffset(Dim::I) - halo_width );
     EXPECT_EQ( global_ghosted_k_edge_space.max(Dim::I),
@@ -1706,7 +1706,7 @@ void periodicTest()
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto owned_shared_k_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::K>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::K>(), -1, 0, 1 );
     EXPECT_EQ( owned_shared_k_edge_space.min(Dim::I),
                owned_k_edge_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_k_edge_space.max(Dim::I),
@@ -1721,7 +1721,7 @@ void periodicTest()
                owned_k_edge_space.max(Dim::K) );
 
     owned_shared_k_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::K>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::K>(), 1, -1, 0 );
     EXPECT_EQ( owned_shared_k_edge_space.min(Dim::I),
                owned_k_edge_space.max(Dim::I) - halo_width );
     EXPECT_EQ( owned_shared_k_edge_space.max(Dim::I),
@@ -1736,7 +1736,7 @@ void periodicTest()
                owned_k_edge_space.max(Dim::K) );
 
     owned_shared_k_edge_space =
-        grid_block->sharedIndexSpace( Own(), Edge<Dim::K>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Own(), Edge<Dim::K>(), 0, 1, -1 );
     EXPECT_EQ( owned_shared_k_edge_space.min(Dim::I),
                owned_k_edge_space.min(Dim::I) );
     EXPECT_EQ( owned_shared_k_edge_space.max(Dim::I),
@@ -1754,7 +1754,7 @@ void periodicTest()
     // the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
     auto ghosted_shared_k_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::K>(), -1, 0, 1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::K>(), -1, 0, 1 );
     EXPECT_EQ( ghosted_shared_k_edge_space.min(Dim::I),
                0 );
     EXPECT_EQ( ghosted_shared_k_edge_space.max(Dim::I),
@@ -1769,7 +1769,7 @@ void periodicTest()
                owned_k_edge_space.max(Dim::K) + halo_width );
 
     ghosted_shared_k_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::K>(), 1, -1, 0 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::K>(), 1, -1, 0 );
     EXPECT_EQ( ghosted_shared_k_edge_space.min(Dim::I),
                owned_k_edge_space.max(Dim::I) );
     EXPECT_EQ( ghosted_shared_k_edge_space.max(Dim::I),
@@ -1784,7 +1784,7 @@ void periodicTest()
                owned_k_edge_space.max(Dim::K) );
 
     ghosted_shared_k_edge_space =
-        grid_block->sharedIndexSpace( Ghost(), Edge<Dim::K>(), 0, 1, -1 );
+        local_grid->sharedIndexSpace( Ghost(), Edge<Dim::K>(), 0, 1, -1 );
     EXPECT_EQ( ghosted_shared_k_edge_space.min(Dim::I),
                owned_k_edge_space.min(Dim::I) );
     EXPECT_EQ( ghosted_shared_k_edge_space.max(Dim::I),
@@ -1832,35 +1832,35 @@ void notPeriodicTest()
                                          partitioner );
     auto grid_comm = global_grid->comm();
 
-    // Create a  grid block.
+    // Create a local mesh.
     int halo_width = 2;
-    auto grid_block = createBlock( global_grid, halo_width );
+    auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Check sizes
-    EXPECT_EQ( grid_block->haloCellWidth(), halo_width );
+    EXPECT_EQ( local_grid->haloCellWidth(), halo_width );
 
     // Get the owned number of cells.
-    auto owned_cell_space = grid_block->indexSpace( Own(), Cell(), Local() );
+    auto owned_cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( owned_cell_space.extent(d), global_num_cell[d] );
 
     // Get the ghosted number of cells.
-    auto ghosted_cell_space = grid_block->indexSpace( Ghost(), Cell(), Local() );
+    auto ghosted_cell_space = local_grid->indexSpace( Ghost(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( ghosted_cell_space.extent(d), global_num_cell[d] );
 
     // Get the owned number of nodes.
-    auto owned_node_space = grid_block->indexSpace( Own(), Node(), Local() );
+    auto owned_node_space = local_grid->indexSpace( Own(), Node(), Local() );
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( owned_node_space.extent(d), global_num_cell[d] + 1);
 
     // Get the ghosted number of nodes.
-    auto ghosted_node_space = grid_block->indexSpace( Ghost(), Node(), Local() );
+    auto ghosted_node_space = local_grid->indexSpace( Ghost(), Node(), Local() );
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( ghosted_node_space.extent(d), global_num_cell[d] + 1);
 
     // Get the owned number of I-faces.
-    auto owned_i_face_space = grid_block->indexSpace( Own(), Face<Dim::I>(), Local() );
+    auto owned_i_face_space = local_grid->indexSpace( Own(), Face<Dim::I>(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         if ( Dim::I == d )
@@ -1870,7 +1870,7 @@ void notPeriodicTest()
     }
 
     // Get the ghosted number of I-faces.
-    auto ghosted_i_face_space = grid_block->indexSpace( Ghost(), Face<Dim::I>(), Local() );
+    auto ghosted_i_face_space = local_grid->indexSpace( Ghost(), Face<Dim::I>(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         if ( Dim::I == d )
@@ -1880,7 +1880,7 @@ void notPeriodicTest()
     }
 
     // Get the owned number of J-faces.
-    auto owned_j_face_space = grid_block->indexSpace( Own(), Face<Dim::J>(), Local() );
+    auto owned_j_face_space = local_grid->indexSpace( Own(), Face<Dim::J>(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         if ( Dim::J == d )
@@ -1890,7 +1890,7 @@ void notPeriodicTest()
     }
 
     // Get the ghosted number of J-faces.
-    auto ghosted_j_face_space = grid_block->indexSpace( Ghost(), Face<Dim::J>(), Local() );
+    auto ghosted_j_face_space = local_grid->indexSpace( Ghost(), Face<Dim::J>(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         if ( Dim::J == d )
@@ -1900,7 +1900,7 @@ void notPeriodicTest()
     }
 
     // Get the owned number of K-faces.
-    auto owned_k_face_space = grid_block->indexSpace( Own(), Face<Dim::K>(), Local() );
+    auto owned_k_face_space = local_grid->indexSpace( Own(), Face<Dim::K>(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         if ( Dim::K == d )
@@ -1910,7 +1910,7 @@ void notPeriodicTest()
     }
 
     // Get the ghosted number of K-faces.
-    auto ghosted_k_face_space = grid_block->indexSpace( Ghost(), Face<Dim::K>(), Local() );
+    auto ghosted_k_face_space = local_grid->indexSpace( Ghost(), Face<Dim::K>(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         if ( Dim::K == d )
@@ -1932,50 +1932,50 @@ void notPeriodicTest()
                         global_grid->dimBlockId(Dim::K) + k };
                     int nrank;
                     MPI_Cart_rank( grid_comm, nr.data(), &nrank );
-                    EXPECT_EQ( grid_block->neighborRank(i,j,k), nrank );
+                    EXPECT_EQ( local_grid->neighborRank(i,j,k), nrank );
                 }
                 else
                 {
-                    EXPECT_EQ( grid_block->neighborRank(i,j,k), -1 );
+                    EXPECT_EQ( local_grid->neighborRank(i,j,k), -1 );
 
                     auto owned_shared_cell_space =
-                        grid_block->sharedIndexSpace( Own(), Cell(), i, j, k );
+                        local_grid->sharedIndexSpace( Own(), Cell(), i, j, k );
                     EXPECT_EQ( owned_shared_cell_space.size(), 0 );
 
                     auto ghosted_shared_cell_space =
-                        grid_block->sharedIndexSpace( Ghost(), Cell(), i, j, k );
+                        local_grid->sharedIndexSpace( Ghost(), Cell(), i, j, k );
                     EXPECT_EQ( ghosted_shared_cell_space.size(), 0 );
 
                     auto owned_shared_node_space =
-                        grid_block->sharedIndexSpace( Own(), Node(), i, j, k );
+                        local_grid->sharedIndexSpace( Own(), Node(), i, j, k );
                     EXPECT_EQ( owned_shared_node_space.size(), 0 );
 
                     auto ghosted_shared_node_space =
-                        grid_block->sharedIndexSpace( Ghost(), Node(), i, j, k );
+                        local_grid->sharedIndexSpace( Ghost(), Node(), i, j, k );
                     EXPECT_EQ( ghosted_shared_node_space.size(), 0 );
 
                     auto owned_shared_i_face_space =
-                        grid_block->sharedIndexSpace( Own(), Face<Dim::I>(), i, j, k );
+                        local_grid->sharedIndexSpace( Own(), Face<Dim::I>(), i, j, k );
                     EXPECT_EQ( owned_shared_i_face_space.size(), 0 );
 
                     auto ghosted_shared_i_face_space =
-                        grid_block->sharedIndexSpace( Ghost(), Face<Dim::I>(), i, j, k );
+                        local_grid->sharedIndexSpace( Ghost(), Face<Dim::I>(), i, j, k );
                     EXPECT_EQ( ghosted_shared_i_face_space.size(), 0 );
 
                     auto owned_shared_j_face_space =
-                        grid_block->sharedIndexSpace( Own(), Face<Dim::J>(), i, j, k );
+                        local_grid->sharedIndexSpace( Own(), Face<Dim::J>(), i, j, k );
                     EXPECT_EQ( owned_shared_j_face_space.size(), 0 );
 
                     auto ghosted_shared_j_face_space =
-                        grid_block->sharedIndexSpace( Ghost(), Face<Dim::J>(), i, j, k );
+                        local_grid->sharedIndexSpace( Ghost(), Face<Dim::J>(), i, j, k );
                     EXPECT_EQ( ghosted_shared_j_face_space.size(), 0 );
 
                     auto owned_shared_k_face_space =
-                        grid_block->sharedIndexSpace( Own(), Face<Dim::K>(), i, j, k );
+                        local_grid->sharedIndexSpace( Own(), Face<Dim::K>(), i, j, k );
                     EXPECT_EQ( owned_shared_k_face_space.size(), 0 );
 
                     auto ghosted_shared_k_face_space =
-                        grid_block->sharedIndexSpace( Ghost(), Face<Dim::K>(), i, j, k );
+                        local_grid->sharedIndexSpace( Ghost(), Face<Dim::K>(), i, j, k );
                     EXPECT_EQ( ghosted_shared_k_face_space.size(), 0 );
                 }
             }
@@ -1987,7 +1987,7 @@ void notPeriodicTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( grid_block, api_test )
+TEST( local_grid, api_test )
 {
     periodicTest();
     notPeriodicTest();

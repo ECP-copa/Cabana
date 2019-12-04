@@ -9,14 +9,14 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_Block.hpp>
+#include <Cajita_LocalGrid.hpp>
 
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
 // Constructor.
 template <class MeshType>
-Block<MeshType>::Block(
+LocalGrid<MeshType>::LocalGrid(
     const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
     const int halo_cell_width )
     : _global_grid( global_grid )
@@ -25,9 +25,9 @@ Block<MeshType>::Block(
 }
 
 //---------------------------------------------------------------------------//
-// Get the global grid that owns the block.
+// Get the global grid that owns the local grid.
 template <class MeshType>
-const GlobalGrid<MeshType> &Block<MeshType>::globalGrid() const
+const GlobalGrid<MeshType> &LocalGrid<MeshType>::globalGrid() const
 {
     return *_global_grid;
 }
@@ -35,20 +35,20 @@ const GlobalGrid<MeshType> &Block<MeshType>::globalGrid() const
 //---------------------------------------------------------------------------//
 // Get the halo size.
 template <class MeshType>
-int Block<MeshType>::haloCellWidth() const
+int LocalGrid<MeshType>::haloCellWidth() const
 {
     return _halo_cell_width;
 }
 
 //---------------------------------------------------------------------------//
-// Given the relative offsets of a neighbor rank relative to this block's
+// Given the relative offsets of a neighbor rank relative to this local grid's
 // indices get the of the neighbor. If the neighbor rank is out of bounds
 // return -1. Note that in the case of periodic boundaries out of bounds
 // indices are allowed as the indices will be wrapped around the periodic
 // boundary.
 template <class MeshType>
-int Block<MeshType>::neighborRank( const int off_i, const int off_j,
-                                   const int off_k ) const
+int LocalGrid<MeshType>::neighborRank( const int off_i, const int off_j,
+                                       const int off_k ) const
 {
     return _global_grid->blockRank( _global_grid->dimBlockId( Dim::I ) + off_i,
                                     _global_grid->dimBlockId( Dim::J ) + off_j,
@@ -59,7 +59,7 @@ int Block<MeshType>::neighborRank( const int off_i, const int off_j,
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned cells.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own, Cell, Local ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own, Cell, Local ) const
 {
     // Compute the lower bound.
     std::array<long, 3> min;
@@ -80,7 +80,7 @@ IndexSpace<3> Block<MeshType>::indexSpace( Own, Cell, Local ) const
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned and ghosted cells.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost, Cell, Local ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost, Cell, Local ) const
 {
     // Compute the size.
     std::array<long, 3> size;
@@ -107,7 +107,7 @@ IndexSpace<3> Block<MeshType>::indexSpace( Ghost, Cell, Local ) const
 //---------------------------------------------------------------------------//
 // Get the global index space of the owned cells.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Cell t2, Global ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Cell t2, Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -115,7 +115,7 @@ IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Cell t2, Global ) const
 //---------------------------------------------------------------------------//
 // Get the global index space of the owned and ghosted cells.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Cell t2, Global ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Cell t2, Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -125,8 +125,9 @@ IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Cell t2, Global ) const
 // indices we own that we share with that neighbor to use as ghosts.
 template <class MeshType>
 IndexSpace<3>
-Block<MeshType>::sharedIndexSpace( Own, Cell, const int off_i, const int off_j,
-                                   const int off_k, const int halo_width ) const
+LocalGrid<MeshType>::sharedIndexSpace( Own, Cell, const int off_i,
+                                       const int off_j, const int off_k,
+                                       const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -139,7 +140,8 @@ Block<MeshType>::sharedIndexSpace( Own, Cell, const int off_i, const int off_j,
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
-        throw std::logic_error( "Requested halo width larger than block halo" );
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -194,10 +196,10 @@ Block<MeshType>::sharedIndexSpace( Own, Cell, const int off_i, const int off_j,
 // indices owned by that neighbor that are shared with us to use as
 // ghosts.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost, Cell, const int off_i,
-                                                 const int off_j,
-                                                 const int off_k,
-                                                 const int halo_width ) const
+IndexSpace<3>
+LocalGrid<MeshType>::sharedIndexSpace( Ghost, Cell, const int off_i,
+                                       const int off_j, const int off_k,
+                                       const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -210,7 +212,8 @@ IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost, Cell, const int off_i,
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
-        throw std::logic_error( "Requested halo width larger than block halo" );
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -263,7 +266,7 @@ IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost, Cell, const int off_i,
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned nodes.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own, Node, Local ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own, Node, Local ) const
 {
     // Compute the lower bound.
     std::array<long, 3> min;
@@ -288,7 +291,7 @@ IndexSpace<3> Block<MeshType>::indexSpace( Own, Node, Local ) const
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned and ghosted nodes.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost, Node, Local ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost, Node, Local ) const
 {
     // Compute the size.
     std::array<long, 3> size;
@@ -315,7 +318,7 @@ IndexSpace<3> Block<MeshType>::indexSpace( Ghost, Node, Local ) const
 //---------------------------------------------------------------------------//
 // Get the global index space of the owned nodes.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Node t2, Global ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Node t2, Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -323,7 +326,7 @@ IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Node t2, Global ) const
 //---------------------------------------------------------------------------//
 // Get the global index space of the owned and ghosted nodes.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Node t2, Global ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Node t2, Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -333,8 +336,9 @@ IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Node t2, Global ) const
 // indices we own that we share with that neighbor to use as ghosts.
 template <class MeshType>
 IndexSpace<3>
-Block<MeshType>::sharedIndexSpace( Own, Node, const int off_i, const int off_j,
-                                   const int off_k, const int halo_width ) const
+LocalGrid<MeshType>::sharedIndexSpace( Own, Node, const int off_i,
+                                       const int off_j, const int off_k,
+                                       const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -347,7 +351,8 @@ Block<MeshType>::sharedIndexSpace( Own, Node, const int off_i, const int off_j,
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
-        throw std::logic_error( "Requested halo width larger than block halo" );
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -402,10 +407,10 @@ Block<MeshType>::sharedIndexSpace( Own, Node, const int off_i, const int off_j,
 // indices owned by that neighbor that are shared with us to use as
 // ghosts.
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost, Node, const int off_i,
-                                                 const int off_j,
-                                                 const int off_k,
-                                                 const int halo_width ) const
+IndexSpace<3>
+LocalGrid<MeshType>::sharedIndexSpace( Ghost, Node, const int off_i,
+                                       const int off_j, const int off_k,
+                                       const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -418,7 +423,8 @@ IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost, Node, const int off_i,
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
-        throw std::logic_error( "Requested halo width larger than block halo" );
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -470,312 +476,312 @@ IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost, Node, const int off_i,
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Face<Dim::I> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::I> t2,
+                                               Local t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Face<Dim::I> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::I> t2,
+                                               Local t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Face<Dim::I> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::I> t2,
+                                               Global t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Face<Dim::I> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::I> t2,
+                                               Global t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Own t1, Face<Dim::I> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Face<Dim::I> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::I> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::I> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Face<Dim::J> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::J> t2,
+                                               Local t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Face<Dim::J> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::J> t2,
+                                               Local t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Face<Dim::J> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::J> t2,
+                                               Global t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Face<Dim::J> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::J> t2,
+                                               Global t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Own t1, Face<Dim::J> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Face<Dim::J> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::J> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::J> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Face<Dim::K> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::K> t2,
+                                               Local t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Face<Dim::K> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::K> t2,
+                                               Local t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Face<Dim::K> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::K> t2,
+                                               Global t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Face<Dim::K> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::K> t2,
+                                               Global t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Own t1, Face<Dim::K> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Face<Dim::K> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::K> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::K> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return faceSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Edge<Dim::I> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::I> t2,
+                                               Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Edge<Dim::I> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::I> t2,
+                                               Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Edge<Dim::I> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::I> t2,
+                                               Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Edge<Dim::I> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::I> t2,
+                                               Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::I> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::I> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::I> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::I> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Edge<Dim::J> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::J> t2,
+                                               Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Edge<Dim::J> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::J> t2,
+                                               Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Edge<Dim::J> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::J> t2,
+                                               Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Edge<Dim::J> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::J> t2,
+                                               Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::J> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::J> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::J> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::J> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Edge<Dim::K> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::K> t2,
+                                               Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Edge<Dim::K> t2,
-                                           Local t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::K> t2,
+                                               Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Own t1, Edge<Dim::K> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::K> t2,
+                                               Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::indexSpace( Ghost t1, Edge<Dim::K> t2,
-                                           Global t3 ) const
+IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::K> t2,
+                                               Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::K> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::K> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::K> t2,
-                                                 const int i, const int j,
-                                                 const int k,
-                                                 const int hw ) const
+IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::K> t2,
+                                                     const int i, const int j,
+                                                     const int k,
+                                                     const int hw ) const
 {
     return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
 }
@@ -784,7 +790,7 @@ IndexSpace<3> Block<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::K> t2,
 // Get the global index space of the owned cells.
 template <class MeshType>
 template <class EntityType>
-IndexSpace<3> Block<MeshType>::globalIndexSpace( Own, EntityType ) const
+IndexSpace<3> LocalGrid<MeshType>::globalIndexSpace( Own, EntityType ) const
 {
     auto local_space = indexSpace( Own(), EntityType(), Local() );
     std::array<long, 3> min;
@@ -802,7 +808,7 @@ IndexSpace<3> Block<MeshType>::globalIndexSpace( Own, EntityType ) const
 // Get the global index space of the owned and ghosted cells.
 template <class MeshType>
 template <class EntityType>
-IndexSpace<3> Block<MeshType>::globalIndexSpace( Ghost, EntityType ) const
+IndexSpace<3> LocalGrid<MeshType>::globalIndexSpace( Ghost, EntityType ) const
 {
     auto own_local_space = indexSpace( Own(), EntityType(), Local() );
     auto ghost_local_space = indexSpace( Ghost(), EntityType(), Local() );
@@ -821,7 +827,7 @@ IndexSpace<3> Block<MeshType>::globalIndexSpace( Ghost, EntityType ) const
 // Get the local index space of the owned Dir-direction faces.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> Block<MeshType>::faceIndexSpace( Own, Face<Dir>, Local ) const
+IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Own, Face<Dir>, Local ) const
 {
     // Compute the lower bound.
     std::array<long, 3> min;
@@ -856,7 +862,8 @@ IndexSpace<3> Block<MeshType>::faceIndexSpace( Own, Face<Dir>, Local ) const
 // Get the local index space of the owned and ghosted Dir-direction faces.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> Block<MeshType>::faceIndexSpace( Ghost, Face<Dir>, Local ) const
+IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Ghost, Face<Dir>,
+                                                   Local ) const
 {
     // Compute the size.
     std::array<long, 3> size;
@@ -893,8 +900,8 @@ IndexSpace<3> Block<MeshType>::faceIndexSpace( Ghost, Face<Dir>, Local ) const
 // Get the global index space of the owned nodes.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> Block<MeshType>::faceIndexSpace( Own t1, Face<Dir> t2,
-                                               Global ) const
+IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Own t1, Face<Dir> t2,
+                                                   Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -903,8 +910,8 @@ IndexSpace<3> Block<MeshType>::faceIndexSpace( Own t1, Face<Dir> t2,
 // Get the global index space of the owned and ghosted nodes.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> Block<MeshType>::faceIndexSpace( Ghost t1, Face<Dir> t2,
-                                               Global ) const
+IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Ghost t1, Face<Dir> t2,
+                                                   Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -916,9 +923,9 @@ IndexSpace<3> Block<MeshType>::faceIndexSpace( Ghost t1, Face<Dir> t2,
 template <class MeshType>
 template <int Dir>
 IndexSpace<3>
-Block<MeshType>::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
-                                       const int off_j, const int off_k,
-                                       const int halo_width ) const
+LocalGrid<MeshType>::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
+                                           const int off_j, const int off_k,
+                                           const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -931,7 +938,8 @@ Block<MeshType>::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
-        throw std::logic_error( "Requested halo width larger than block halo" );
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -989,9 +997,9 @@ Block<MeshType>::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
 template <class MeshType>
 template <int Dir>
 IndexSpace<3>
-Block<MeshType>::faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
-                                       const int off_j, const int off_k,
-                                       const int halo_width ) const
+LocalGrid<MeshType>::faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
+                                           const int off_j, const int off_k,
+                                           const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -1004,7 +1012,8 @@ Block<MeshType>::faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
-        throw std::logic_error( "Requested halo width larger than block halo" );
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -1059,7 +1068,7 @@ Block<MeshType>::faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
 // Get the local index space of the owned Dir-direction edges.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> Block<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
+IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
 {
     // Compute the lower bound.
     std::array<long, 3> min;
@@ -1094,7 +1103,8 @@ IndexSpace<3> Block<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
 // Get the local index space of the owned and ghosted Dir-direction edges.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> Block<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>, Local ) const
+IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>,
+                                                   Local ) const
 {
     // Compute the size.
     std::array<long, 3> size;
@@ -1131,8 +1141,8 @@ IndexSpace<3> Block<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>, Local ) const
 // Get the global index space of the owned nodes.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> Block<MeshType>::edgeIndexSpace( Own t1, Edge<Dir> t2,
-                                               Global ) const
+IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Own t1, Edge<Dir> t2,
+                                                   Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -1141,8 +1151,8 @@ IndexSpace<3> Block<MeshType>::edgeIndexSpace( Own t1, Edge<Dir> t2,
 // Get the global index space of the owned and ghosted nodes.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> Block<MeshType>::edgeIndexSpace( Ghost t1, Edge<Dir> t2,
-                                               Global ) const
+IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Ghost t1, Edge<Dir> t2,
+                                                   Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -1154,9 +1164,9 @@ IndexSpace<3> Block<MeshType>::edgeIndexSpace( Ghost t1, Edge<Dir> t2,
 template <class MeshType>
 template <int Dir>
 IndexSpace<3>
-Block<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>, const int off_i,
-                                       const int off_j, const int off_k,
-                                       const int halo_width ) const
+LocalGrid<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>, const int off_i,
+                                           const int off_j, const int off_k,
+                                           const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -1169,7 +1179,8 @@ Block<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>, const int off_i,
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
-        throw std::logic_error( "Requested halo width larger than block halo" );
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -1227,9 +1238,9 @@ Block<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>, const int off_i,
 template <class MeshType>
 template <int Dir>
 IndexSpace<3>
-Block<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>, const int off_i,
-                                       const int off_j, const int off_k,
-                                       const int halo_width ) const
+LocalGrid<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>, const int off_i,
+                                           const int off_j, const int off_k,
+                                           const int halo_width ) const
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -1242,7 +1253,8 @@ Block<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>, const int off_i,
 
     // Check that the requested halo width is valid.
     if ( hw > _halo_cell_width )
-        throw std::logic_error( "Requested halo width larger than block halo" );
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
 
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
@@ -1296,238 +1308,331 @@ Block<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>, const int off_i,
 //---------------------------------------------------------------------------//
 // Global indexing explicit instantiations
 //---------------------------------------------------------------------------//
-#define CAJITA_INST_BLOCK_GLOBALINDEXSPACE( MESH, FP, DECOMP, ENTITY )         \
-    template IndexSpace<3> Block<MESH<FP>>::globalIndexSpace( DECOMP, ENTITY ) \
-        const;
+#define CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( MESH, FP, DECOMP, ENTITY )     \
+    template IndexSpace<3> LocalGrid<MESH<FP>>::globalIndexSpace(              \
+        DECOMP, ENTITY ) const;
 
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Own, Cell )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Ghost, Cell )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Own, Node )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Ghost, Node )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Own, Face<Dim::I> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Ghost, Face<Dim::I> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Own, Face<Dim::J> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Ghost, Face<Dim::J> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Own, Face<Dim::K> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, float, Ghost, Face<Dim::K> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Own, Cell )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Ghost, Cell )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Own, Node )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Ghost, Node )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Own, Face<Dim::I> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Ghost, Face<Dim::I> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Own, Face<Dim::J> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Ghost, Face<Dim::J> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Own, Face<Dim::K> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( UniformMesh, double, Ghost, Face<Dim::K> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Own, Cell )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost, Cell )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Own, Node )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost, Node )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Own, Face<Dim::I> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost, Face<Dim::I> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Own, Face<Dim::J> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost, Face<Dim::J> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Own, Face<Dim::K> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost, Face<Dim::K> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Own, Cell )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost, Cell )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Own, Node )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost, Node )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Own, Face<Dim::I> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost,
-                                    Face<Dim::I> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Own, Face<Dim::J> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost,
-                                    Face<Dim::J> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Own, Face<Dim::K> )
-CAJITA_INST_BLOCK_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost,
-                                    Face<Dim::K> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Own, Cell )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Ghost, Cell )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Own, Node )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Ghost, Node )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Own, Face<Dim::I> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Ghost,
+                                        Face<Dim::I> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Own, Face<Dim::J> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Ghost,
+                                        Face<Dim::J> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Own, Face<Dim::K> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, float, Ghost,
+                                        Face<Dim::K> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Own, Cell )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Ghost, Cell )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Own, Node )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Ghost, Node )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Own, Face<Dim::I> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Ghost,
+                                        Face<Dim::I> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Own, Face<Dim::J> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Ghost,
+                                        Face<Dim::J> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Own, Face<Dim::K> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( UniformMesh, double, Ghost,
+                                        Face<Dim::K> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Own, Cell )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost, Cell )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Own, Node )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost, Node )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Own,
+                                        Face<Dim::I> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost,
+                                        Face<Dim::I> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Own,
+                                        Face<Dim::J> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost,
+                                        Face<Dim::J> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Own,
+                                        Face<Dim::K> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, float, Ghost,
+                                        Face<Dim::K> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Own, Cell )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost, Cell )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Own, Node )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost, Node )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Own,
+                                        Face<Dim::I> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost,
+                                        Face<Dim::I> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Own,
+                                        Face<Dim::J> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost,
+                                        Face<Dim::J> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Own,
+                                        Face<Dim::K> )
+CAJITA_INST_LOCALGRID_GLOBALINDEXSPACE( NonUniformMesh, double, Ghost,
+                                        Face<Dim::K> )
 
 //---------------------------------------------------------------------------//
 // Face indexing explicit instantiations
 //---------------------------------------------------------------------------//
-#define CAJITA_INST_BLOCK_FACEINDEXSPACE( MESH, FP, DECOMP, DIM, INDEX )       \
-    template IndexSpace<3> Block<MESH<FP>>::faceIndexSpace( DECOMP, Face<DIM>, \
-                                                            INDEX ) const;
+#define CAJITA_INST_LOCALGRID_FACEINDEXSPACE( MESH, FP, DECOMP, DIM, INDEX )   \
+    template IndexSpace<3> LocalGrid<MESH<FP>>::faceIndexSpace(                \
+        DECOMP, Face<DIM>, INDEX ) const;
 
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Own, Dim::I, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Own, Dim::I, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::I, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::I, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Own, Dim::J, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Own, Dim::J, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::J, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::J, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Own, Dim::K, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Own, Dim::K, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::K, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::K, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Own, Dim::I, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Own, Dim::I, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::I, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::I, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Own, Dim::J, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Own, Dim::J, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::J, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::J, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Own, Dim::K, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Own, Dim::K, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::K, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::K, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::I, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::I, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::J, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::J, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::K, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::K, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::I, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::I, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I,
-                                  Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::J, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::J, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J,
-                                  Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::K, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::K, Global )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K, Local )
-CAJITA_INST_BLOCK_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K,
-                                  Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Own, Dim::I, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Own, Dim::I, Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::I, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Own, Dim::J, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Own, Dim::J, Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::J, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Own, Dim::K, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Own, Dim::K, Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::K, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, float, Ghost, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Own, Dim::I, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Own, Dim::I, Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Own, Dim::J, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Own, Dim::J, Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Own, Dim::K, Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Own, Dim::K, Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( UniformMesh, double, Ghost, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Own, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Own, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_FACEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K,
+                                      Global )
 
-#define CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( MESH, FP, DECOMP, DIM )        \
-    template IndexSpace<3> Block<MESH<FP>>::faceSharedIndexSpace(              \
+#define CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( MESH, FP, DECOMP, DIM )    \
+    template IndexSpace<3> LocalGrid<MESH<FP>>::faceSharedIndexSpace(          \
         DECOMP, Face<DIM>, const int, const int, const int, const int ) const;
 
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::I )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::I )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::J )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::J )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::K )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::K )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::I )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::I )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::J )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::J )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::K )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::K )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, double, Own, Dim::I )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, double, Own, Dim::J )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, double, Own, Dim::K )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::I )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::J )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::K )
-CAJITA_INST_BLOCK_FACESHAREDINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::I )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::I )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::J )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::J )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::K )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::K )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::I )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::I )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::J )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::J )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::K )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::K )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, double, Own,
+                                            Dim::I )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, double, Ghost,
+                                            Dim::I )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, double, Own,
+                                            Dim::J )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, double, Ghost,
+                                            Dim::J )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, double, Own,
+                                            Dim::K )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, double, Ghost,
+                                            Dim::K )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::I )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, float, Ghost,
+                                            Dim::I )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::J )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, float, Ghost,
+                                            Dim::J )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::K )
+CAJITA_INST_LOCALGRID_FACESHAREDINDEXSPACE( NonUniformMesh, float, Ghost,
+                                            Dim::K )
 
 //---------------------------------------------------------------------------//
 // Edge indexing explicit instantiations
 //---------------------------------------------------------------------------//
-#define CAJITA_INST_BLOCK_EDGEINDEXSPACE( MESH, FP, DECOMP, DIM, INDEX )       \
-    template IndexSpace<3> Block<MESH<FP>>::edgeIndexSpace( DECOMP, Edge<DIM>, \
-                                                            INDEX ) const;
+#define CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( MESH, FP, DECOMP, DIM, INDEX )   \
+    template IndexSpace<3> LocalGrid<MESH<FP>>::edgeIndexSpace(                \
+        DECOMP, Edge<DIM>, INDEX ) const;
 
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::I, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::I, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::I, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::I, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::J, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::J, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::J, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::J, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::K, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::K, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::K, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::K, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::I, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::I, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::I, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::I, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::J, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::J, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::J, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::J, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::K, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::K, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::K, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::K, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::I, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::I, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::J, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::J, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::K, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::K, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::I, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::I, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I,
-                                  Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::J, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::J, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J,
-                                  Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::K, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::K, Global )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K, Local )
-CAJITA_INST_BLOCK_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K,
-                                  Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::I, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::I, Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::I, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::J, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::J, Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::J, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::K, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Own, Dim::K, Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::K, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, float, Ghost, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::I, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::I, Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::J, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::J, Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::K, Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Own, Dim::K, Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( UniformMesh, double, Ghost, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Own, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Own, Dim::K,
+                                      Global )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K,
+                                      Local )
+CAJITA_INST_LOCALGRID_EDGEINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K,
+                                      Global )
 
-#define CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( MESH, FP, DECOMP, DIM )        \
-    template IndexSpace<3> Block<MESH<FP>>::edgeSharedIndexSpace(              \
+#define CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( MESH, FP, DECOMP, DIM )    \
+    template IndexSpace<3> LocalGrid<MESH<FP>>::edgeSharedIndexSpace(          \
         DECOMP, Edge<DIM>, const int, const int, const int, const int ) const;
 
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::I )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::I )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::J )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::J )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::K )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::K )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::I )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::I )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::J )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::J )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::K )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::K )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Own, Dim::I )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Ghost, Dim::I )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Own, Dim::J )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Ghost, Dim::J )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Own, Dim::K )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Ghost, Dim::K )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::I )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Ghost, Dim::I )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::J )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Ghost, Dim::J )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::K )
-CAJITA_INST_BLOCK_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Ghost, Dim::K )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::I )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::I )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::J )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::J )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, double, Own, Dim::K )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, double, Ghost, Dim::K )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::I )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::I )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::J )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::J )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, float, Own, Dim::K )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( UniformMesh, float, Ghost, Dim::K )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Own,
+                                            Dim::I )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Ghost,
+                                            Dim::I )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Own,
+                                            Dim::J )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Ghost,
+                                            Dim::J )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Own,
+                                            Dim::K )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, double, Ghost,
+                                            Dim::K )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::I )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Ghost,
+                                            Dim::I )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::J )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Ghost,
+                                            Dim::J )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Own, Dim::K )
+CAJITA_INST_LOCALGRID_EDGESHAREDINDEXSPACE( NonUniformMesh, float, Ghost,
+                                            Dim::K )
 
 //---------------------------------------------------------------------------//
 // Class explicit instantiations.
 
-template class Block<UniformMesh<float>>;
-template class Block<UniformMesh<double>>;
+template class LocalGrid<UniformMesh<float>>;
+template class LocalGrid<UniformMesh<double>>;
 
-template class Block<NonUniformMesh<float>>;
-template class Block<NonUniformMesh<double>>;
+template class LocalGrid<NonUniformMesh<float>>;
+template class LocalGrid<NonUniformMesh<double>>;
 
 //---------------------------------------------------------------------------//
 

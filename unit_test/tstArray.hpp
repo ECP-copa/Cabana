@@ -64,14 +64,14 @@ void layoutTest()
     // Check the owned index_space.
     auto array_node_owned_space =
         node_layout->indexSpace( Own(), Local() );
-    auto block_node_owned_space =
-        node_layout->block()->indexSpace( Own(), Node(), Local() );
+    auto grid_node_owned_space =
+        node_layout->localGrid()->indexSpace( Own(), Node(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_node_owned_space.min(d),
-                   block_node_owned_space.min(d) );
+                   grid_node_owned_space.min(d) );
         EXPECT_EQ( array_node_owned_space.max(d),
-                   block_node_owned_space.max(d) );
+                   grid_node_owned_space.max(d) );
     }
     EXPECT_EQ( array_node_owned_space.min(3), 0 );
     EXPECT_EQ( array_node_owned_space.max(3), dofs_per_node );
@@ -79,14 +79,14 @@ void layoutTest()
     // Check the ghosted index_space.
     auto array_node_ghosted_space =
         node_layout->indexSpace( Ghost(), Local() );
-    auto block_node_ghosted_space =
-        node_layout->block()->indexSpace( Ghost(), Node(), Local() );
+    auto grid_node_ghosted_space =
+        node_layout->localGrid()->indexSpace( Ghost(), Node(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_node_ghosted_space.min(d),
-                   block_node_ghosted_space.min(d) );
+                   grid_node_ghosted_space.min(d) );
         EXPECT_EQ( array_node_ghosted_space.max(d),
-                   block_node_ghosted_space.max(d) );
+                   grid_node_ghosted_space.max(d) );
     }
     EXPECT_EQ( array_node_ghosted_space.min(3), 0 );
     EXPECT_EQ( array_node_ghosted_space.max(3), dofs_per_node );
@@ -94,14 +94,14 @@ void layoutTest()
     // Check the shared owned index_space.
     auto array_node_shared_owned_space =
         node_layout->sharedIndexSpace(Own(),-1,0,1);
-    auto block_node_shared_owned_space =
-        node_layout->block()->sharedIndexSpace( Own(), Node(), -1, 0, 1 );
+    auto grid_node_shared_owned_space =
+        node_layout->localGrid()->sharedIndexSpace( Own(), Node(), -1, 0, 1 );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_node_shared_owned_space.min(d),
-                   block_node_shared_owned_space.min(d) );
+                   grid_node_shared_owned_space.min(d) );
         EXPECT_EQ( array_node_shared_owned_space.max(d),
-                   block_node_shared_owned_space.max(d) );
+                   grid_node_shared_owned_space.max(d) );
     }
     EXPECT_EQ( array_node_shared_owned_space.min(3), 0 );
     EXPECT_EQ( array_node_shared_owned_space.max(3), dofs_per_node );
@@ -109,14 +109,14 @@ void layoutTest()
     // Check the shared ghosted index_space.
     auto array_node_shared_ghosted_space =
         node_layout->sharedIndexSpace(Ghost(),1,-1,0);
-    auto block_node_shared_ghosted_space =
-        node_layout->block()->sharedIndexSpace( Ghost(), Node(), 1, -1, 0 );
+    auto grid_node_shared_ghosted_space =
+        node_layout->localGrid()->sharedIndexSpace( Ghost(), Node(), 1, -1, 0 );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_node_shared_ghosted_space.min(d),
-                   block_node_shared_ghosted_space.min(d) );
+                   grid_node_shared_ghosted_space.min(d) );
         EXPECT_EQ( array_node_shared_ghosted_space.max(d),
-                   block_node_shared_ghosted_space.max(d) );
+                   grid_node_shared_ghosted_space.max(d) );
     }
     EXPECT_EQ( array_node_shared_ghosted_space.min(3), 0 );
     EXPECT_EQ( array_node_shared_ghosted_space.max(3), dofs_per_node );
@@ -129,14 +129,14 @@ void layoutTest()
     // Check the owned index_space.
     auto array_cell_owned_space =
         cell_layout->indexSpace( Own(), Local() );
-    auto block_cell_owned_space =
-        cell_layout->block()->indexSpace( Own(), Cell(), Local() );
+    auto grid_cell_owned_space =
+        cell_layout->localGrid()->indexSpace( Own(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_cell_owned_space.min(d),
-                   block_cell_owned_space.min(d) );
+                   grid_cell_owned_space.min(d) );
         EXPECT_EQ( array_cell_owned_space.max(d),
-                   block_cell_owned_space.max(d) );
+                   grid_cell_owned_space.max(d) );
     }
     EXPECT_EQ( array_cell_owned_space.min(3), 0 );
     EXPECT_EQ( array_cell_owned_space.max(3), dofs_per_cell );
@@ -144,14 +144,14 @@ void layoutTest()
     // Check the ghosted index_space.
     auto array_cell_ghosted_space =
         cell_layout->indexSpace( Ghost(), Local() );
-    auto block_cell_ghosted_space =
-        cell_layout->block()->indexSpace( Ghost(), Cell(), Local() );
+    auto grid_cell_ghosted_space =
+        cell_layout->localGrid()->indexSpace( Ghost(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_cell_ghosted_space.min(d),
-                   block_cell_ghosted_space.min(d) );
+                   grid_cell_ghosted_space.min(d) );
         EXPECT_EQ( array_cell_ghosted_space.max(d),
-                   block_cell_ghosted_space.max(d) );
+                   grid_cell_ghosted_space.max(d) );
     }
     EXPECT_EQ( array_cell_ghosted_space.min(3), 0 );
     EXPECT_EQ( array_cell_ghosted_space.max(3), dofs_per_cell );
@@ -159,14 +159,14 @@ void layoutTest()
     // Check the shared owned index_space.
     auto array_cell_shared_owned_space =
         cell_layout->sharedIndexSpace(Own(),0,1,-1);
-    auto block_cell_shared_owned_space =
-        cell_layout->block()->sharedIndexSpace( Own(), Cell(), 0, 1, -1 );
+    auto grid_cell_shared_owned_space =
+        cell_layout->localGrid()->sharedIndexSpace( Own(), Cell(), 0, 1, -1 );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_cell_shared_owned_space.min(d),
-                   block_cell_shared_owned_space.min(d) );
+                   grid_cell_shared_owned_space.min(d) );
         EXPECT_EQ( array_cell_shared_owned_space.max(d),
-                   block_cell_shared_owned_space.max(d) );
+                   grid_cell_shared_owned_space.max(d) );
     }
     EXPECT_EQ( array_cell_shared_owned_space.min(3), 0 );
     EXPECT_EQ( array_cell_shared_owned_space.max(3), dofs_per_cell );
@@ -174,14 +174,14 @@ void layoutTest()
     // Check the shared ghosted index_space.
     auto array_cell_shared_ghosted_space =
         cell_layout->sharedIndexSpace(Ghost(),1,1,1);
-    auto block_cell_shared_ghosted_space =
-        cell_layout->block()->sharedIndexSpace( Ghost(), Cell(), 1, 1, 1 );
+    auto grid_cell_shared_ghosted_space =
+        cell_layout->localGrid()->sharedIndexSpace( Ghost(), Cell(), 1, 1, 1 );
     for ( int d = 0; d < 3; ++d )
     {
         EXPECT_EQ( array_cell_shared_ghosted_space.min(d),
-                   block_cell_shared_ghosted_space.min(d) );
+                   grid_cell_shared_ghosted_space.min(d) );
         EXPECT_EQ( array_cell_shared_ghosted_space.max(d),
-                   block_cell_shared_ghosted_space.max(d) );
+                   grid_cell_shared_ghosted_space.max(d) );
     }
     EXPECT_EQ( array_cell_shared_ghosted_space.min(3), 0 );
     EXPECT_EQ( array_cell_shared_ghosted_space.max(3), dofs_per_cell );

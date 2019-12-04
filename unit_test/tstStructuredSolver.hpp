@@ -46,12 +46,12 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
                                          is_dim_periodic,
                                          partitioner );
 
-    // Create a block.
-    auto block = createBlock( global_grid, 0 );
-    auto owned_space = block->indexSpace(Own(),Cell(),Local());
+    // Create a local grid.
+    auto local_mesh = createLocalGrid( global_grid, 0 );
+    auto owned_space = local_mesh->indexSpace(Own(),Cell(),Local());
 
     // Create the RHS.
-    auto vector_layout = createArrayLayout( block, 1, Cell() );
+    auto vector_layout = createArrayLayout( local_mesh, 1, Cell() );
     auto rhs = createArray<double,TEST_DEVICE>( "rhs", vector_layout );
     ArrayOp::assign( *rhs, 1.0, Own() );
 
@@ -69,7 +69,7 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
     solver->setMatrixStencil( stencil );
 
     // Create the matrix entries. The stencil is defined over cells.
-    auto matrix_entry_layout = createArrayLayout( block, 7, Cell() );
+    auto matrix_entry_layout = createArrayLayout( local_mesh, 7, Cell() );
     auto matrix_entries = createArray<double,TEST_DEVICE>(
         "matrix_entries", matrix_entry_layout );
     auto entry_view = matrix_entries->view();
