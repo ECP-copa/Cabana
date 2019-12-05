@@ -98,162 +98,339 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
               global_grid.ownedNumCell(d) ) );
     }
 
-    // Check the cell sizes.
+    // Check the cell locations and measures.
     auto cell_space = block.indexSpace( Ghost(), Cell(), Local() );
-    for ( int d = 0; d < 3; ++d )
     {
-        Kokkos::View<double*,TEST_DEVICE> csize( "csize", cell_space.extent(d) );
-        Kokkos::parallel_for(
-            "get_cell_size",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,cell_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                csize(c) = local_mesh.cellSize( c, d );
-            });
-        auto csize_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), csize );
-        for ( int c = 0; c < cell_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( cell_size, csize_m(c) );
-    }
-
-    // Check the cell locations.
-    for ( int d = 0; d < 3; ++d )
-    {
-        Kokkos::View<double*,TEST_DEVICE> coord( "coord", cell_space.extent(d) );
+        auto measure = createView<double,TEST_DEVICE>( "measure", cell_space );
+        auto loc_x = createView<double,TEST_DEVICE>( "loc_x", cell_space );
+        auto loc_y = createView<double,TEST_DEVICE>( "loc_y", cell_space );
+        auto loc_z = createView<double,TEST_DEVICE>( "loc_z", cell_space );
         Kokkos::parallel_for(
             "get_cell_coord",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,cell_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                coord(c) = local_mesh.coordinate( Cell(), c, d );
+            createExecutionPolicy( cell_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ){
+                double loc[3];
+                int idx[3] = {i,j,k};
+                local_mesh.coordinates( Cell(), idx, loc );
+                loc_x(i,j,k) = loc[Dim::I];
+                loc_y(i,j,k) = loc[Dim::J];
+                loc_z(i,j,k) = loc[Dim::K];
+                measure(i,j,k) = local_mesh.measure( Cell(), idx );
             });
-        auto coord_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), coord );
-        for ( int c = 0; c < cell_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( coord_m(c), ghost_lc_m(d) + cell_size * (c+0.5) );
+        auto measure_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), measure );
+        auto loc_x_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_x );
+        auto loc_y_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_y );
+        auto loc_z_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_z );
+        for ( int i = 0; i < cell_space.extent(Dim::I); ++i )
+            for ( int j = 0; j < cell_space.extent(Dim::J); ++j )
+                for ( int k = 0; k < cell_space.extent(Dim::K); ++k )
+                {
+                    EXPECT_FLOAT_EQ( loc_x_m(i,j,k),
+                                     ghost_lc_m(Dim::I) + cell_size * (i+0.5) );
+                    EXPECT_FLOAT_EQ( loc_y_m(i,j,k),
+                                     ghost_lc_m(Dim::J) + cell_size * (j+0.5) );
+                    EXPECT_FLOAT_EQ( loc_z_m(i,j,k),
+                                     ghost_lc_m(Dim::K) + cell_size * (k+0.5) );
+                    EXPECT_FLOAT_EQ( measure_m(i,j,k),
+                                     cell_size*cell_size*cell_size );
+                }
     }
 
     // Check the node locations.
     auto node_space = block.indexSpace( Ghost(), Node(), Local() );
-    for ( int d = 0; d < 3; ++d )
     {
-        Kokkos::View<double*,TEST_DEVICE> coord( "coord", node_space.extent(d) );
+        auto measure = createView<double,TEST_DEVICE>( "measure", node_space );
+        auto loc_x = createView<double,TEST_DEVICE>( "loc_x", node_space );
+        auto loc_y = createView<double,TEST_DEVICE>( "loc_y", node_space );
+        auto loc_z = createView<double,TEST_DEVICE>( "loc_z", node_space );
         Kokkos::parallel_for(
             "get_node_coord",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,node_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                coord(c) = local_mesh.coordinate( Node(), c, d );
+            createExecutionPolicy( node_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ){
+                double loc[3];
+                int idx[3] = {i,j,k};
+                local_mesh.coordinates( Node(), idx, loc );
+                loc_x(i,j,k) = loc[Dim::I];
+                loc_y(i,j,k) = loc[Dim::J];
+                loc_z(i,j,k) = loc[Dim::K];
+                measure(i,j,k) = local_mesh.measure( Node(), idx );
             });
-        auto coord_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), coord );
-        for ( int c = 0; c < node_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( coord_m(c), ghost_lc_m(d) + cell_size * c );
+        auto measure_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), measure );
+        auto loc_x_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_x );
+        auto loc_y_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_y );
+        auto loc_z_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_z );
+        for ( int i = 0; i < node_space.extent(Dim::I); ++i )
+            for ( int j = 0; j < node_space.extent(Dim::J); ++j )
+                for ( int k = 0; k < node_space.extent(Dim::K); ++k )
+                {
+                    EXPECT_FLOAT_EQ( loc_x_m(i,j,k),
+                                     ghost_lc_m(Dim::I) + cell_size * i );
+                    EXPECT_FLOAT_EQ( loc_y_m(i,j,k),
+                                     ghost_lc_m(Dim::J) + cell_size * j );
+                    EXPECT_FLOAT_EQ( loc_z_m(i,j,k),
+                                     ghost_lc_m(Dim::K) + cell_size * k );
+                    EXPECT_FLOAT_EQ( measure_m(i,j,k), 0.0 );
+                }
     }
 
     // Check the I-face locations.
     auto face_i_space = block.indexSpace( Ghost(), Face<Dim::I>(), Local() );
-    for ( int d = 0; d < 3; ++d )
     {
-        Kokkos::View<double*,TEST_DEVICE> coord( "coord", face_i_space.extent(d) );
+        auto measure = createView<double,TEST_DEVICE>( "measure", face_i_space );
+        auto loc_x = createView<double,TEST_DEVICE>( "loc_x", face_i_space );
+        auto loc_y = createView<double,TEST_DEVICE>( "loc_y", face_i_space );
+        auto loc_z = createView<double,TEST_DEVICE>( "loc_z", face_i_space );
         Kokkos::parallel_for(
             "get_face_i_coord",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,face_i_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                coord(c) = local_mesh.coordinate( Face<Dim::I>(), c, d );
+            createExecutionPolicy( face_i_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ){
+                double loc[3];
+                int idx[3] = {i,j,k};
+                local_mesh.coordinates( Face<Dim::I>(), idx, loc );
+                loc_x(i,j,k) = loc[Dim::I];
+                loc_y(i,j,k) = loc[Dim::J];
+                loc_z(i,j,k) = loc[Dim::K];
+                measure(i,j,k) = local_mesh.measure( Face<Dim::I>(), idx );
             });
-        auto coord_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), coord );
-        double offset = ( d == Dim::I ) ? 0.0 : 0.5;
-        for ( int c = 0; c < face_i_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( coord_m(c), ghost_lc_m(d) + cell_size * (c + offset) );
+        auto measure_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), measure );
+        auto loc_x_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_x );
+        auto loc_y_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_y );
+        auto loc_z_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_z );
+        for ( int i = 0; i < face_i_space.extent(Dim::I); ++i )
+            for ( int j = 0; j < face_i_space.extent(Dim::J); ++j )
+                for ( int k = 0; k < face_i_space.extent(Dim::K); ++k )
+                {
+                    EXPECT_FLOAT_EQ( loc_x_m(i,j,k),
+                                     ghost_lc_m(Dim::I) + cell_size * i );
+                    EXPECT_FLOAT_EQ( loc_y_m(i,j,k),
+                                     ghost_lc_m(Dim::J) + cell_size * (j+0.5) );
+                    EXPECT_FLOAT_EQ( loc_z_m(i,j,k),
+                                     ghost_lc_m(Dim::K) + cell_size * (k+0.5) );
+                    EXPECT_FLOAT_EQ( measure_m(i,j,k),
+                                     cell_size*cell_size );
+                }
     }
 
     // Check the J-face locations.
     auto face_j_space = block.indexSpace( Ghost(), Face<Dim::J>(), Local() );
-    for ( int d = 0; d < 3; ++d )
     {
-        Kokkos::View<double*,TEST_DEVICE> coord( "coord", face_j_space.extent(d) );
+        auto measure = createView<double,TEST_DEVICE>( "measure", face_j_space );
+        auto loc_x = createView<double,TEST_DEVICE>( "loc_x", face_j_space );
+        auto loc_y = createView<double,TEST_DEVICE>( "loc_y", face_j_space );
+        auto loc_z = createView<double,TEST_DEVICE>( "loc_z", face_j_space );
         Kokkos::parallel_for(
             "get_face_j_coord",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,face_j_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                coord(c) = local_mesh.coordinate( Face<Dim::J>(), c, d );
+            createExecutionPolicy( face_j_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ){
+                double loc[3];
+                int idx[3] = {i,j,k};
+                local_mesh.coordinates( Face<Dim::J>(), idx, loc );
+                loc_x(i,j,k) = loc[Dim::I];
+                loc_y(i,j,k) = loc[Dim::J];
+                loc_z(i,j,k) = loc[Dim::K];
+                measure(i,j,k) = local_mesh.measure( Face<Dim::J>(), idx );
             });
-        auto coord_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), coord );
-        double offset = ( d == Dim::J ) ? 0.0 : 0.5;
-        for ( int c = 0; c < face_j_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( coord_m(c), ghost_lc_m(d) + cell_size * (c + offset) );
+        auto measure_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), measure );
+        auto loc_x_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_x );
+        auto loc_y_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_y );
+        auto loc_z_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_z );
+        for ( int i = 0; i < face_j_space.extent(Dim::I); ++i )
+            for ( int j = 0; j < face_j_space.extent(Dim::J); ++j )
+                for ( int k = 0; k < face_j_space.extent(Dim::K); ++k )
+                {
+                    EXPECT_FLOAT_EQ( loc_x_m(i,j,k),
+                                     ghost_lc_m(Dim::I) + cell_size * (i+0.5) );
+                    EXPECT_FLOAT_EQ( loc_y_m(i,j,k),
+                                     ghost_lc_m(Dim::J) + cell_size * j );
+                    EXPECT_FLOAT_EQ( loc_z_m(i,j,k),
+                                     ghost_lc_m(Dim::K) + cell_size * (k+0.5) );
+                    EXPECT_FLOAT_EQ( measure_m(i,j,k),
+                                     cell_size*cell_size );
+                }
     }
 
     // Check the K-face locations.
     auto face_k_space = block.indexSpace( Ghost(), Face<Dim::K>(), Local() );
-    for ( int d = 0; d < 3; ++d )
     {
-        Kokkos::View<double*,TEST_DEVICE> coord( "coord", face_k_space.extent(d) );
+        auto measure = createView<double,TEST_DEVICE>( "measure", face_k_space );
+        auto loc_x = createView<double,TEST_DEVICE>( "loc_x", face_k_space );
+        auto loc_y = createView<double,TEST_DEVICE>( "loc_y", face_k_space );
+        auto loc_z = createView<double,TEST_DEVICE>( "loc_z", face_k_space );
         Kokkos::parallel_for(
             "get_face_k_coord",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,face_k_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                coord(c) = local_mesh.coordinate( Face<Dim::K>(), c, d );
+            createExecutionPolicy( face_k_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ){
+                double loc[3];
+                int idx[3] = {i,j,k};
+                local_mesh.coordinates( Face<Dim::K>(), idx, loc );
+                loc_x(i,j,k) = loc[Dim::I];
+                loc_y(i,j,k) = loc[Dim::J];
+                loc_z(i,j,k) = loc[Dim::K];
+                measure(i,j,k) = local_mesh.measure( Face<Dim::K>(), idx );
             });
-        auto coord_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), coord );
-        double offset = ( d == Dim::K ) ? 0.0 : 0.5;
-        for ( int c = 0; c < face_k_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( coord_m(c), ghost_lc_m(d) + cell_size * (c + offset) );
+        auto measure_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), measure );
+        auto loc_x_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_x );
+        auto loc_y_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_y );
+        auto loc_z_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_z );
+        for ( int i = 0; i < face_k_space.extent(Dim::I); ++i )
+            for ( int j = 0; j < face_k_space.extent(Dim::J); ++j )
+                for ( int k = 0; k < face_k_space.extent(Dim::K); ++k )
+                {
+                    EXPECT_FLOAT_EQ( loc_x_m(i,j,k),
+                                     ghost_lc_m(Dim::I) + cell_size * (i+0.5) );
+                    EXPECT_FLOAT_EQ( loc_y_m(i,j,k),
+                                     ghost_lc_m(Dim::J) + cell_size * (j+0.5) );
+                    EXPECT_FLOAT_EQ( loc_z_m(i,j,k),
+                                     ghost_lc_m(Dim::K) + cell_size * k );
+                    EXPECT_FLOAT_EQ( measure_m(i,j,k),
+                                     cell_size*cell_size );
+                }
     }
 
     // Check the I-edge locations.
     auto edge_i_space = block.indexSpace( Ghost(), Edge<Dim::I>(), Local() );
-    for ( int d = 0; d < 3; ++d )
     {
-        Kokkos::View<double*,TEST_DEVICE> coord( "coord", edge_i_space.extent(d) );
+        auto measure = createView<double,TEST_DEVICE>( "measure", edge_i_space );
+        auto loc_x = createView<double,TEST_DEVICE>( "loc_x", edge_i_space );
+        auto loc_y = createView<double,TEST_DEVICE>( "loc_y", edge_i_space );
+        auto loc_z = createView<double,TEST_DEVICE>( "loc_z", edge_i_space );
         Kokkos::parallel_for(
             "get_edge_i_coord",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,edge_i_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                coord(c) = local_mesh.coordinate( Edge<Dim::I>(), c, d );
+            createExecutionPolicy( edge_i_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ){
+                double loc[3];
+                int idx[3] = {i,j,k};
+                local_mesh.coordinates( Edge<Dim::I>(), idx, loc );
+                loc_x(i,j,k) = loc[Dim::I];
+                loc_y(i,j,k) = loc[Dim::J];
+                loc_z(i,j,k) = loc[Dim::K];
+                measure(i,j,k) = local_mesh.measure( Edge<Dim::I>(), idx );
             });
-        auto coord_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), coord );
-        double offset = ( d == Dim::I ) ? 0.5 : 0.0;
-        for ( int c = 0; c < edge_i_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( coord_m(c), ghost_lc_m(d) + cell_size * (c + offset) );
+        auto measure_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), measure );
+        auto loc_x_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_x );
+        auto loc_y_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_y );
+        auto loc_z_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_z );
+        for ( int i = 0; i < edge_i_space.extent(Dim::I); ++i )
+            for ( int j = 0; j < edge_i_space.extent(Dim::J); ++j )
+                for ( int k = 0; k < edge_i_space.extent(Dim::K); ++k )
+                {
+                    EXPECT_FLOAT_EQ( loc_x_m(i,j,k),
+                                     ghost_lc_m(Dim::I) + cell_size * (i+0.5) );
+                    EXPECT_FLOAT_EQ( loc_y_m(i,j,k),
+                                     ghost_lc_m(Dim::J) + cell_size * j );
+                    EXPECT_FLOAT_EQ( loc_z_m(i,j,k),
+                                     ghost_lc_m(Dim::K) + cell_size * k );
+                    EXPECT_FLOAT_EQ( measure_m(i,j,k),
+                                     cell_size );
+                }
     }
 
     // Check the J-edge locations.
     auto edge_j_space = block.indexSpace( Ghost(), Edge<Dim::J>(), Local() );
-    for ( int d = 0; d < 3; ++d )
     {
-        Kokkos::View<double*,TEST_DEVICE> coord( "coord", edge_j_space.extent(d) );
+        auto measure = createView<double,TEST_DEVICE>( "measure", edge_j_space );
+        auto loc_x = createView<double,TEST_DEVICE>( "loc_x", edge_j_space );
+        auto loc_y = createView<double,TEST_DEVICE>( "loc_y", edge_j_space );
+        auto loc_z = createView<double,TEST_DEVICE>( "loc_z", edge_j_space );
         Kokkos::parallel_for(
             "get_edge_j_coord",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,edge_j_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                coord(c) = local_mesh.coordinate( Edge<Dim::J>(), c, d );
+            createExecutionPolicy( edge_j_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ){
+                double loc[3];
+                int idx[3] = {i,j,k};
+                local_mesh.coordinates( Edge<Dim::J>(), idx, loc );
+                loc_x(i,j,k) = loc[Dim::I];
+                loc_y(i,j,k) = loc[Dim::J];
+                loc_z(i,j,k) = loc[Dim::K];
+                measure(i,j,k) = local_mesh.measure( Edge<Dim::J>(), idx );
             });
-        auto coord_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), coord );
-        double offset = ( d == Dim::J ) ? 0.5 : 0.0;
-        for ( int c = 0; c < edge_j_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( coord_m(c), ghost_lc_m(d) + cell_size * (c + offset) );
+        auto measure_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), measure );
+        auto loc_x_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_x );
+        auto loc_y_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_y );
+        auto loc_z_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_z );
+        for ( int i = 0; i < edge_j_space.extent(Dim::I); ++i )
+            for ( int j = 0; j < edge_j_space.extent(Dim::J); ++j )
+                for ( int k = 0; k < edge_j_space.extent(Dim::K); ++k )
+                {
+                    EXPECT_FLOAT_EQ( loc_x_m(i,j,k),
+                                     ghost_lc_m(Dim::I) + cell_size * i );
+                    EXPECT_FLOAT_EQ( loc_y_m(i,j,k),
+                                     ghost_lc_m(Dim::J) + cell_size * (j+0.5) );
+                    EXPECT_FLOAT_EQ( loc_z_m(i,j,k),
+                                     ghost_lc_m(Dim::K) + cell_size * k );
+                    EXPECT_FLOAT_EQ( measure_m(i,j,k),
+                                     cell_size );
+                }
     }
 
     // Check the K-edge locations.
     auto edge_k_space = block.indexSpace( Ghost(), Edge<Dim::K>(), Local() );
-    for ( int d = 0; d < 3; ++d )
     {
-        Kokkos::View<double*,TEST_DEVICE> coord( "coord", edge_k_space.extent(d) );
+        auto measure = createView<double,TEST_DEVICE>( "measure", edge_k_space );
+        auto loc_x = createView<double,TEST_DEVICE>( "loc_x", edge_k_space );
+        auto loc_y = createView<double,TEST_DEVICE>( "loc_y", edge_k_space );
+        auto loc_z = createView<double,TEST_DEVICE>( "loc_z", edge_k_space );
         Kokkos::parallel_for(
             "get_edge_k_coord",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,edge_k_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                coord(c) = local_mesh.coordinate( Edge<Dim::K>(), c, d );
+            createExecutionPolicy( edge_k_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ){
+                double loc[3];
+                int idx[3] = {i,j,k};
+                local_mesh.coordinates( Edge<Dim::K>(), idx, loc );
+                loc_x(i,j,k) = loc[Dim::I];
+                loc_y(i,j,k) = loc[Dim::J];
+                loc_z(i,j,k) = loc[Dim::K];
+                measure(i,j,k) = local_mesh.measure( Edge<Dim::K>(), idx );
             });
-        auto coord_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), coord );
-        double offset = ( d == Dim::K ) ? 0.5 : 0.0;
-        for ( int c = 0; c < edge_k_space.extent(d); ++c )
-            EXPECT_FLOAT_EQ( coord_m(c), ghost_lc_m(d) + cell_size * (c + offset) );
+        auto measure_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), measure );
+        auto loc_x_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_x );
+        auto loc_y_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_y );
+        auto loc_z_m = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), loc_z );
+        for ( int i = 0; i < edge_k_space.extent(Dim::I); ++i )
+            for ( int j = 0; j < edge_k_space.extent(Dim::J); ++j )
+                for ( int k = 0; k < edge_k_space.extent(Dim::K); ++k )
+                {
+                    EXPECT_FLOAT_EQ( loc_x_m(i,j,k),
+                                     ghost_lc_m(Dim::I) + cell_size * i );
+                    EXPECT_FLOAT_EQ( loc_y_m(i,j,k),
+                                     ghost_lc_m(Dim::J) + cell_size * j );
+                    EXPECT_FLOAT_EQ( loc_z_m(i,j,k),
+                                     ghost_lc_m(Dim::K) + cell_size * (k+0.5) );
+                    EXPECT_FLOAT_EQ( measure_m(i,j,k),
+                                     cell_size );
+                }
     }
 }
 
@@ -366,6 +543,7 @@ void irregularTest( const std::array<int,3>& ranks_per_dim )
     auto local_mesh = createLocalMesh<TEST_DEVICE>( *block );
 
     // Get index spaces
+    auto own_cell_local_space = block->indexSpace( Own(), Cell(), Local() );
     auto ghost_cell_local_space = block->indexSpace( Ghost(), Cell(), Local() );
     auto own_cell_global_space = block->indexSpace( Own(), Cell(), Global() );
     auto ghost_cell_global_space = block->indexSpace( Ghost(), Cell(), Global() );
@@ -417,33 +595,73 @@ void irregularTest( const std::array<int,3>& ranks_per_dim )
     EXPECT_FLOAT_EQ( ghost_hc_m(Dim::K),
                      k_func(ghost_cell_global_space.max(Dim::K)) );
 
-    // Check the cell sizes.
-    for ( int d = 0; d < 3; ++d )
-    {
-        Kokkos::View<double*,TEST_DEVICE> csize( "csize", ghost_cell_local_space.extent(d) );
-        Kokkos::parallel_for(
-            "get_cell_size",
-            Kokkos::RangePolicy<TEST_EXECSPACE>(0,ghost_cell_local_space.extent(d)),
-            KOKKOS_LAMBDA( const int c ){
-                csize(c) = local_mesh.cellSize( c, d );
-            });
-        auto csize_m = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), csize );
-        for ( int c = 0; c < ghost_cell_local_space.extent(d); ++c )
-        {
-            double cell_size = 0.0;
-            if ( Dim::I == d )
-                cell_size = i_func(ghost_cell_global_space.min(d) + c+1) -
-                            i_func(ghost_cell_global_space.min(d) + c);
-            else if ( Dim::J == d )
-                cell_size = j_func(ghost_cell_global_space.min(d) + c+1) -
-                            j_func(ghost_cell_global_space.min(d) + c);
-            else
-                cell_size = k_func(ghost_cell_global_space.min(d) + c+1) -
-                            k_func(ghost_cell_global_space.min(d) + c);
-            EXPECT_FLOAT_EQ( cell_size, csize_m(c) );
-        }
-    }
+    // Check the cell locations and measures.
+    auto cell_measure = createView<double,TEST_DEVICE>(
+        "cell_measures", ghost_cell_local_space );
+    auto cell_location_x = createView<double,TEST_DEVICE>(
+        "cell_locations_x", ghost_cell_local_space );
+    auto cell_location_y = createView<double,TEST_DEVICE>(
+        "cell_locations_y", ghost_cell_local_space );
+    auto cell_location_z = createView<double,TEST_DEVICE>(
+        "cell_locations_z", ghost_cell_local_space );
+    Kokkos::parallel_for(
+        "get_cell_data",
+        createExecutionPolicy( own_cell_local_space, TEST_EXECSPACE() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ){
+            int idx[3] = {i,j,k};
+            double loc[3];
+            local_mesh.coordinates( Cell(), idx, loc );
+            cell_location_x(i,j,k) = loc[Dim::I];
+            cell_location_y(i,j,k) = loc[Dim::J];
+            cell_location_z(i,j,k) = loc[Dim::K];
+            cell_measure(i,j,k) =
+                local_mesh.measure( Cell(), idx );
+        });
+    auto cell_measure_h = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), cell_measure );
+    auto cell_location_x_h = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), cell_location_x );
+    auto cell_location_y_h = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), cell_location_y );
+    auto cell_location_z_h = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), cell_location_z );
+    for ( int i = own_cell_global_space.min(Dim::I);
+          i < own_cell_global_space.max(Dim::I); ++i )
+        for ( int j = own_cell_global_space.min(Dim::J);
+              j < own_cell_global_space.max(Dim::J); ++j )
+            for ( int k = own_cell_global_space.min(Dim::K);
+                  k < own_cell_global_space.max(Dim::K); ++k )
+            {
+                double measure = ( i_func(i+1) - i_func(i) ) *
+                                 ( j_func(j+1) - j_func(j) ) *
+                                 ( k_func(k+1) - k_func(k) );
+                double compute_m = cell_measure_h(
+                    i - ghost_cell_global_space.min(Dim::I),
+                    j - ghost_cell_global_space.min(Dim::J),
+                    k - ghost_cell_global_space.min(Dim::K) );
+                EXPECT_FLOAT_EQ( measure, compute_m );
+
+                double x_loc = ( i_func(i+1) + i_func(i) ) / 2.0;
+                double compute_x = cell_location_x_h(
+                    i - ghost_cell_global_space.min(Dim::I),
+                    j - ghost_cell_global_space.min(Dim::J),
+                    k - ghost_cell_global_space.min(Dim::K) );
+                EXPECT_FLOAT_EQ( x_loc, compute_x );
+
+                double y_loc = ( j_func(j+1) + j_func(j) ) / 2.0;
+                double compute_y = cell_location_y_h(
+                    i - ghost_cell_global_space.min(Dim::I),
+                    j - ghost_cell_global_space.min(Dim::J),
+                    k - ghost_cell_global_space.min(Dim::K) );
+                EXPECT_FLOAT_EQ( y_loc, compute_y );
+
+                double z_loc = ( k_func(k+1) + k_func(k) ) / 2.0;
+                double compute_z = cell_location_z_h(
+                    i - ghost_cell_global_space.min(Dim::I),
+                    j - ghost_cell_global_space.min(Dim::J),
+                    k - ghost_cell_global_space.min(Dim::K) );
+                EXPECT_FLOAT_EQ( z_loc, compute_z );
+            }
 }
 
 //---------------------------------------------------------------------------//

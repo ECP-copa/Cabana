@@ -73,9 +73,12 @@ void interpolationTest()
             int pk = k - halo_width;
             int pid = pi + cell_space.extent(Dim::I) * (
                 pj + cell_space.extent(Dim::J) * pk );
-            points(pid,Dim::I) = local_mesh.coordinate(Cell(),i,Dim::I);
-            points(pid,Dim::J) = local_mesh.coordinate(Cell(),j,Dim::J);
-            points(pid,Dim::K) = local_mesh.coordinate(Cell(),k,Dim::K);
+            int idx[3] = {i,j,k};
+            double x[3];
+            local_mesh.coordinates( Cell(), idx, x );
+            points(pid,Dim::I) = x[Dim::I];
+            points(pid,Dim::J) = x[Dim::J];
+            points(pid,Dim::K) = x[Dim::K];
         });
 
     // Create a point set with cubic spline interpolation to the nodes.
