@@ -15,7 +15,7 @@
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_ManualPartitioner.hpp>
-#include <Cajita_Block.hpp>
+#include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
 
 #include <gtest/gtest.h>
@@ -32,15 +32,15 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
-template<class LocalMeshType, class BlockType>
+template<class LocalMeshType, class LocalGridType>
 void uniformLocalMeshTest( const LocalMeshType& local_mesh,
-                           const BlockType& block,
+                           const LocalGridType& local_grid,
                            const std::array<double,3>& low_corner,
                            const double cell_size,
                            const int halo_width )
 {
     // Get the global grid.
-    const auto& global_grid = block.globalGrid();
+    const auto& global_grid = local_grid.globalGrid();
 
     // Check the low and high corners.
     Kokkos::View<double[3],TEST_DEVICE> own_lc( "own_lc" );
@@ -91,7 +91,7 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
         int ghost_hc_offset =
             ( global_grid.isPeriodic( d ) ||
               global_grid.dimBlockId( d ) < global_grid.dimNumBlock( d ) - 1 )
-            ? block.haloCellWidth() : 0;
+            ? local_grid.haloCellWidth() : 0;
         EXPECT_FLOAT_EQ(
             ghost_hc_m(d), low_corner[d] + cell_size *
             ( global_grid.globalOffset(d) + ghost_hc_offset +
@@ -99,7 +99,7 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
     }
 
     // Check the cell locations and measures.
-    auto cell_space = block.indexSpace( Ghost(), Cell(), Local() );
+    auto cell_space = local_grid.indexSpace( Ghost(), Cell(), Local() );
     {
         auto measure = createView<double,TEST_DEVICE>( "measure", cell_space );
         auto loc_x = createView<double,TEST_DEVICE>( "loc_x", cell_space );
@@ -140,8 +140,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
                 }
     }
 
-    // Check the node locations.
-    auto node_space = block.indexSpace( Ghost(), Node(), Local() );
+    // Check the node locations and measures.
+    auto node_space = local_grid.indexSpace( Ghost(), Node(), Local() );
     {
         auto measure = createView<double,TEST_DEVICE>( "measure", node_space );
         auto loc_x = createView<double,TEST_DEVICE>( "loc_x", node_space );
@@ -181,8 +181,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
                 }
     }
 
-    // Check the I-face locations.
-    auto face_i_space = block.indexSpace( Ghost(), Face<Dim::I>(), Local() );
+    // Check the I-face locations and measures
+    auto face_i_space = local_grid.indexSpace( Ghost(), Face<Dim::I>(), Local() );
     {
         auto measure = createView<double,TEST_DEVICE>( "measure", face_i_space );
         auto loc_x = createView<double,TEST_DEVICE>( "loc_x", face_i_space );
@@ -223,8 +223,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
                 }
     }
 
-    // Check the J-face locations.
-    auto face_j_space = block.indexSpace( Ghost(), Face<Dim::J>(), Local() );
+    // Check the J-face locations and measures.
+    auto face_j_space = local_grid.indexSpace( Ghost(), Face<Dim::J>(), Local() );
     {
         auto measure = createView<double,TEST_DEVICE>( "measure", face_j_space );
         auto loc_x = createView<double,TEST_DEVICE>( "loc_x", face_j_space );
@@ -265,8 +265,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
                 }
     }
 
-    // Check the K-face locations.
-    auto face_k_space = block.indexSpace( Ghost(), Face<Dim::K>(), Local() );
+    // Check the K-face locations and measures.
+    auto face_k_space = local_grid.indexSpace( Ghost(), Face<Dim::K>(), Local() );
     {
         auto measure = createView<double,TEST_DEVICE>( "measure", face_k_space );
         auto loc_x = createView<double,TEST_DEVICE>( "loc_x", face_k_space );
@@ -307,8 +307,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
                 }
     }
 
-    // Check the I-edge locations.
-    auto edge_i_space = block.indexSpace( Ghost(), Edge<Dim::I>(), Local() );
+    // Check the I-edge locations and measures.
+    auto edge_i_space = local_grid.indexSpace( Ghost(), Edge<Dim::I>(), Local() );
     {
         auto measure = createView<double,TEST_DEVICE>( "measure", edge_i_space );
         auto loc_x = createView<double,TEST_DEVICE>( "loc_x", edge_i_space );
@@ -349,8 +349,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
                 }
     }
 
-    // Check the J-edge locations.
-    auto edge_j_space = block.indexSpace( Ghost(), Edge<Dim::J>(), Local() );
+    // Check the J-edge locations and measures.
+    auto edge_j_space = local_grid.indexSpace( Ghost(), Edge<Dim::J>(), Local() );
     {
         auto measure = createView<double,TEST_DEVICE>( "measure", edge_j_space );
         auto loc_x = createView<double,TEST_DEVICE>( "loc_x", edge_j_space );
@@ -391,8 +391,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
                 }
     }
 
-    // Check the K-edge locations.
-    auto edge_k_space = block.indexSpace( Ghost(), Edge<Dim::K>(), Local() );
+    // Check the K-edge locations and measures.
+    auto edge_k_space = local_grid.indexSpace( Ghost(), Edge<Dim::K>(), Local() );
     {
         auto measure = createView<double,TEST_DEVICE>( "measure", edge_k_space );
         auto loc_x = createView<double,TEST_DEVICE>( "loc_x", edge_k_space );
@@ -452,15 +452,15 @@ void uniformTest( const std::array<int,3>& ranks_per_dim,
                                          is_dim_periodic,
                                          partitioner );
 
-    // Create a  grid block.
+    // Create a local grid
     int halo_width = 1;
-    auto block = createBlock( global_grid, halo_width );
+    auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Create the local mesh.
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *block );
+    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
 
     // Test the local mesh.
-    uniformLocalMeshTest( local_mesh, *block, low_corner,
+    uniformLocalMeshTest( local_mesh, *local_grid, low_corner,
                           cell_size, halo_width );
 }
 
@@ -486,15 +486,15 @@ void nonUniformTest( const std::array<int,3>& ranks_per_dim,
                                          is_dim_periodic,
                                          partitioner );
 
-    // Create a  grid block.
+    // Create a local grid.
     int halo_width = 1;
-    auto block = createBlock( global_grid, halo_width );
+    auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Create the local mesh.
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *block );
+    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
 
     // Test the local mesh.
-    uniformLocalMeshTest( local_mesh, *block, low_corner,
+    uniformLocalMeshTest( local_mesh, *local_grid, low_corner,
                           cell_size, halo_width );
 }
 
@@ -535,18 +535,18 @@ void irregularTest( const std::array<int,3>& ranks_per_dim )
                                          periodic,
                                          partitioner );
 
-    // Create a  grid block.
+    // Create a local grid.
     int halo_width = 1;
-    auto block = createBlock( global_grid, halo_width );
+    auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Create the local mesh.
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *block );
+    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
 
     // Get index spaces
-    auto own_cell_local_space = block->indexSpace( Own(), Cell(), Local() );
-    auto ghost_cell_local_space = block->indexSpace( Ghost(), Cell(), Local() );
-    auto own_cell_global_space = block->indexSpace( Own(), Cell(), Global() );
-    auto ghost_cell_global_space = block->indexSpace( Ghost(), Cell(), Global() );
+    auto ghost_cell_local_space = local_grid->indexSpace( Ghost(), Cell(), Local() );
+    auto own_cell_global_space = local_grid->indexSpace( Own(), Cell(), Global() );
+    auto ghost_cell_global_space = local_grid->indexSpace( Ghost(), Cell(), Global() );
+    auto own_cell_local_space = local_grid->indexSpace( Own(), Cell(), Local() );
 
     // Check the low and high corners.
     Kokkos::View<double[3],TEST_DEVICE> own_lc( "own_lc" );

@@ -88,7 +88,7 @@ MPI_Datatype createSubarray( const Array_t &array,
                              const std::array<long, 4> &global_extents )
 {
     using value_type = typename Array_t::value_type;
-    const auto &global_grid = array.layout()->block()->globalGrid();
+    const auto &global_grid = array.layout()->localGrid()->globalGrid();
 
     int local_start[4] = {
         static_cast<int>( global_grid.globalOffset( Dim::K ) ),
@@ -136,7 +136,7 @@ void writeTimeStep( const int time_step_index, const double time,
     using execution_space = typename device_type::execution_space;
 
     // Get the global grid.
-    const auto &global_grid = array.layout()->block()->globalGrid();
+    const auto &global_grid = array.layout()->localGrid()->globalGrid();
 
     // Get the global mesh.
     const auto &global_mesh = global_grid.globalMesh();

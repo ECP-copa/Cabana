@@ -12,7 +12,7 @@
 #ifndef CAJITA_POINTSET_HPP
 #define CAJITA_POINTSET_HPP
 
-#include <Cajita_Block.hpp>
+#include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_Splines.hpp>
 
@@ -111,7 +111,7 @@ struct PointSet
   \tparam PointSetType The type of point set to update.
 
   \param points The points over which to build the point set. Will be indexed
-  as (point,dim). All points must be contained within the grid block that was
+  as (point,dim). All points must be contained within the local grid that was
   used to generate the point set.
 
   \param num_point The number of points. This is the size of the first
@@ -226,8 +226,8 @@ void updatePointSet( const PointCoordinates &points,
   \param num_alloc The number of points to allocate. Must be less than or
   equal to the input number of points.
 
-  \param block The grid block in which the points reside. All points must be
-  contained within the grid block.
+  \param local_grid The local grid in which the points reside. All points must
+  be contained within the local grid.
 
   \param An instance of the entity type to which the points will interpolate.
 
@@ -239,7 +239,8 @@ PointSet<typename PointCoordinates::value_type, EntityType, SplineOrder,
 createPointSet(
     const PointCoordinates &points, const std::size_t num_point,
     const std::size_t num_alloc,
-    const Block<UniformMesh<typename PointCoordinates::value_type>> &block,
+    const LocalGrid<UniformMesh<typename PointCoordinates::value_type>>
+        &local_grid,
     EntityType, Spline<SplineOrder> )
 {
     using scalar_type = typename PointCoordinates::value_type;
@@ -276,7 +277,7 @@ createPointSet(
             Kokkos::ViewAllocateWithoutInitializing( "PointSet::gradients" ),
             num_alloc );
 
-    auto local_mesh = createLocalMesh<Kokkos::HostSpace>( block );
+    auto local_mesh = createLocalMesh<Kokkos::HostSpace>( local_grid );
 
     int idx_low[3] = {0, 0, 0};
     point_set.dx = local_mesh.measure( Edge<Dim::I>(), idx_low );

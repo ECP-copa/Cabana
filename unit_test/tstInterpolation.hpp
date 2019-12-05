@@ -15,7 +15,7 @@
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
-#include <Cajita_Block.hpp>
+#include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_Splines.hpp>
 #include <Cajita_PointSet.hpp>
@@ -53,14 +53,14 @@ void interpolationTest()
                                          is_dim_periodic,
                                          partitioner );
 
-    // Create a  grid block.
+    // Create a  grid local_grid.
     int halo_width = 1;
-    auto block = createBlock( global_grid, halo_width );
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *block );
+    auto local_grid = createLocalGrid( global_grid, halo_width );
+    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
 
     // Create a point in the center of every cell.
     auto cell_space =
-        block->indexSpace( Own(), Cell(), Local() );
+        local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
     Kokkos::View<double*[3],TEST_DEVICE> points(
         Kokkos::ViewAllocateWithoutInitializing("points"), num_point );
@@ -83,17 +83,17 @@ void interpolationTest()
 
     // Create a point set with cubic spline interpolation to the nodes.
     auto point_set = createPointSet(
-        points, num_point, num_point, *block, Node(), Spline<3>() );
+        points, num_point, num_point, *local_grid, Node(), Spline<3>() );
 
     // Create a scalar field on the grid.
-    auto scalar_layout = createArrayLayout( block, 1, Node() );
+    auto scalar_layout = createArrayLayout( local_grid, 1, Node() );
     auto scalar_grid_field =
         createArray<double,TEST_DEVICE>( "scalar_grid_field", scalar_layout );
     auto scalar_halo = createHalo( *scalar_grid_field, FullHaloPattern() );
     auto scalar_grid_host = Kokkos::create_mirror_view( scalar_grid_field->view() );
 
     // Create a vector field on the grid.
-    auto vector_layout = createArrayLayout( block, 3, Node() );
+    auto vector_layout = createArrayLayout( local_grid, 3, Node() );
     auto vector_grid_field =
         createArray<double,TEST_DEVICE>( "vector_grid_field", vector_layout );
     auto vector_halo = createHalo( *vector_grid_field, FullHaloPattern() );

@@ -15,7 +15,7 @@
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
-#include <Cajita_Block.hpp>
+#include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_Splines.hpp>
 #include <Cajita_PointSet.hpp>
@@ -51,14 +51,14 @@ void pointSetTest()
                                          is_dim_periodic,
                                          partitioner );
 
-    // Create a  grid block.
+    // Create a local grid.
     int halo_width = 1;
-    auto block = createBlock( global_grid, halo_width );
-    auto local_mesh = createLocalMesh<TEST_DEVICE>( *block );
+    auto local_grid = createLocalGrid( global_grid, halo_width );
+    auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
 
     // Create a point in the center of every cell.
     auto cell_space =
-        block->indexSpace( Own(), Cell(), Local() );
+        local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
     Kokkos::View<double*[3],TEST_DEVICE> points(
         Kokkos::ViewAllocateWithoutInitializing("points"), num_point );
@@ -81,7 +81,7 @@ void pointSetTest()
 
     // Create a point set with linear spline interpolation to the nodes.
     auto point_set = createPointSet(
-        points, num_point, num_point, *block, Node(), Spline<1>() );
+        points, num_point, num_point, *local_grid, Node(), Spline<1>() );
 
     // Check the point set data.
     EXPECT_EQ( point_set.num_point, num_point );

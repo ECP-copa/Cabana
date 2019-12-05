@@ -1,7 +1,7 @@
 set(HEADERS_PUBLIC
   Cajita.hpp
   Cajita_Array.hpp
-  Cajita_Block.hpp
+  Cajita_LocalGrid.hpp
   Cajita_BovWriter.hpp
   Cajita_GlobalGrid.hpp
   Cajita_GlobalMesh.hpp
@@ -19,7 +19,7 @@ set(HEADERS_PUBLIC
   )
 
 set(SOURCES_PUBLIC
-  Cajita_Block.cpp
+  Cajita_LocalGrid.cpp
   Cajita_GlobalGrid.cpp
   Cajita_GlobalMesh.cpp
   Cajita_IndexSpace.cpp

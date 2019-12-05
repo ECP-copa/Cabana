@@ -63,7 +63,7 @@ set(SERIAL_TESTS
 
 set(MPI_TESTS
   GlobalGrid
-  Block
+  LocalGrid
   LocalMesh
   PointSet
   Array

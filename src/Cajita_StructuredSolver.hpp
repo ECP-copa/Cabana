@@ -13,9 +13,9 @@
 #define CAJITA_STRUCTUREDSOLVER_HPP
 
 #include <Cajita_Array.hpp>
-#include <Cajita_Block.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_IndexSpace.hpp>
+#include <Cajita_LocalGrid.hpp>
 #include <Cajita_Types.hpp>
 
 #include <HYPRE_struct_ls.h>
@@ -52,7 +52,7 @@ class StructuredSolver
     template <class ArrayLayout_t>
     StructuredSolver( const ArrayLayout_t &layout,
                       const bool is_preconditioner = false )
-        : _comm( layout.block()->globalGrid().comm() )
+        : _comm( layout.localGrid()->globalGrid().comm() )
         , _is_preconditioner( is_preconditioner )
     {
         static_assert( is_array_layout<ArrayLayout_t>::value,
@@ -69,14 +69,14 @@ class StructuredSolver
             auto error = HYPRE_StructGridCreate( _comm, 3, &_grid );
             checkHypreError( error );
 
-            // Get the global index space spanned by the block on this rank.
-            // Note that the upper bound is not a bound but rather the last
-            // index as this is what Hypre wants. Note that we reordered this to
-            // KJI from IJK to be consistent with HYPRE ordering. By setting up
-            // the grid like this, HYPRE will then want layout-right data
-            // indexed as (i,j,k) or (i,j,k,l) which will allow us to directly
-            // use Kokkos::deep_copy to move data between Cajita arrays and
-            // HYPRE data structures.
+            // Get the global index space spanned by the local grid on this
+            // rank. Note that the upper bound is not a bound but rather the
+            // last index as this is what Hypre wants. Note that we reordered
+            // this to KJI from IJK to be consistent with HYPRE ordering. By
+            // setting up the grid like this, HYPRE will then want layout-right
+            // data indexed as (i,j,k) or (i,j,k,l) which will allow us to
+            // directly use Kokkos::deep_copy to move data between Cajita arrays
+            // and HYPRE data structures.
             auto global_space = layout.indexSpace( Own(), Global() );
             _lower = {static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
                       static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
@@ -89,12 +89,12 @@ class StructuredSolver
             checkHypreError( error );
 
             // Get periodicity. Note we invert the order of this to KJI as well.
-            const auto &global_grid = layout.block()->globalGrid();
+            const auto &global_grid = layout.localGrid()->globalGrid();
             HYPRE_Int periodic[3];
             for ( int d = 0; d < 3; ++d )
                 periodic[2 - d] =
                     global_grid.isPeriodic( d )
-                        ? layout.block()->globalGrid().globalNumEntity(
+                        ? layout.localGrid()->globalGrid().globalNumEntity(
                               EntityType(), d )
                         : 0;
             error = HYPRE_StructGridSetPeriodic( _grid, periodic );
@@ -452,8 +452,8 @@ class HypreStructPCG : public StructuredSolver<Scalar, EntityType, DeviceType>
             throw std::logic_error(
                 "HYPRE PCG cannot be used as a preconditioner" );
 
-        auto error = HYPRE_StructPCGCreate( layout.block()->globalGrid().comm(),
-                                            &_solver );
+        auto error = HYPRE_StructPCGCreate(
+            layout.localGrid()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
 
         HYPRE_StructPCGSetTwoNorm( _solver, 1 );
@@ -578,7 +578,7 @@ class HypreStructGMRES : public StructuredSolver<Scalar, EntityType, DeviceType>
                 "HYPRE GMRES cannot be used as a preconditioner" );
 
         auto error = HYPRE_StructGMRESCreate(
-            layout.block()->globalGrid().comm(), &_solver );
+            layout.localGrid()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
     }
 
@@ -701,7 +701,7 @@ class HypreStructBiCGSTAB
                 "HYPRE BiCGSTAB cannot be used as a preconditioner" );
 
         auto error = HYPRE_StructBiCGSTABCreate(
-            layout.block()->globalGrid().comm(), &_solver );
+            layout.localGrid()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
     }
 
@@ -812,7 +812,7 @@ class HypreStructPFMG : public StructuredSolver<Scalar, EntityType, DeviceType>
         : Base( layout, is_preconditioner )
     {
         auto error = HYPRE_StructPFMGCreate(
-            layout.block()->globalGrid().comm(), &_solver );
+            layout.localGrid()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
 
         if ( is_preconditioner )
@@ -989,8 +989,8 @@ class HypreStructSMG : public StructuredSolver<Scalar, EntityType, DeviceType>
                     const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
-        auto error = HYPRE_StructSMGCreate( layout.block()->globalGrid().comm(),
-                                            &_solver );
+        auto error = HYPRE_StructSMGCreate(
+            layout.localGrid()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
 
         if ( is_preconditioner )
@@ -1119,7 +1119,7 @@ class HypreStructJacobi
         : Base( layout, is_preconditioner )
     {
         auto error = HYPRE_StructJacobiCreate(
-            layout.block()->globalGrid().comm(), &_solver );
+            layout.localGrid()->globalGrid().comm(), &_solver );
         this->checkHypreError( error );
 
         if ( is_preconditioner )

@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_BLOCK_HPP
-#define CAJITA_BLOCK_HPP
+#ifndef CAJITA_LOCALGRID_HPP
+#define CAJITA_LOCALGRID_HPP
 
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_IndexSpace.hpp>
@@ -22,10 +22,10 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Local logical grid block.
+// Local logical grid.
 //---------------------------------------------------------------------------//
 template <class MeshType>
-class Block
+class LocalGrid
 {
   public:
     // Mesh type.
@@ -33,29 +33,29 @@ class Block
 
     /*!
       \brief Constructor.
-      \param global_grid The global grid from which the block will be
+      \param global_grid The global grid from which the local grid will be
       constructed.
       \param halo_cell_width The number of halo cells surrounding the locally
       owned cells.
     */
-    Block( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
-           const int halo_cell_width );
+    LocalGrid( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
+               const int halo_cell_width );
 
-    // Get the global grid that owns the block.
+    // Get the global grid that owns the local grid.
     const GlobalGrid<MeshType> &globalGrid() const;
 
     // Get the number of cells in the halo.
     int haloCellWidth() const;
 
-    // Given the relative offsets of a neighbor rank relative to this block's
-    // indices get the of the neighbor. If the neighbor rank is out of bounds
-    // return -1. Note that in the case of periodic boundaries out of bounds
-    // indices are allowed as the indices will be wrapped around the periodic
-    // boundary.
+    // Given the relative offsets of a neighbor rank relative to this local
+    // grid's indices get the of the neighbor. If the neighbor rank is out of
+    // bounds return -1. Note that in the case of periodic boundaries out of
+    // bounds indices are allowed as the indices will be wrapped around the
+    // periodic boundary.
     int neighborRank( const int off_i, const int off_j, const int off_k ) const;
 
     /*
-       Get the index space of the block.
+       Get the index space of the local grid.
 
        Interface has the same structure as:
 
@@ -109,7 +109,8 @@ class Block
        entity indices shared with that neighbor in the given
        decomposition. Optionally provide a halo width for the shared
        space. This halo width must be less than or equal to the halo width of
-       the block. The default behavior is to use the halo width of the block.
+       the local grid. The default behavior is to use the halo width of the
+       local grid.
 
        Interface same structure as:
 
@@ -185,13 +186,13 @@ class Block
                                     const int halo_width = -1 ) const;
 
   private:
-    // Get the global index space of the block.
+    // Get the global index space of the local grid.
     template <class EntityType>
     IndexSpace<3> globalIndexSpace( Own, EntityType ) const;
     template <class EntityType>
     IndexSpace<3> globalIndexSpace( Ghost, EntityType ) const;
 
-    // Get the face index space of the block.
+    // Get the face index space of the local grid.
     template <int Dir>
     IndexSpace<3> faceIndexSpace( Own, Face<Dir>, Local ) const;
     template <int Dir>
@@ -212,7 +213,7 @@ class Block
                                         const int off_j, const int off_k,
                                         const int halo_width ) const;
 
-    // Get the edge index space of the block.
+    // Get the edge index space of the local grid.
     template <int Dir>
     IndexSpace<3> edgeIndexSpace( Own, Edge<Dir>, Local ) const;
     template <int Dir>
@@ -242,22 +243,23 @@ class Block
 // Creation function.
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create a block.
-  \param global_grid The global grid from which the block will be
+  \brief Create a local grid.
+  \param global_grid The global grid from which the local grid will be
   constructed.
   \param halo_cell_width The number of halo cells surrounding the locally
   owned cells.
 */
 template <class MeshType>
-std::shared_ptr<Block<MeshType>>
-createBlock( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
-             const int halo_cell_width )
+std::shared_ptr<LocalGrid<MeshType>>
+createLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
+                 const int halo_cell_width )
 {
-    return std::make_shared<Block<MeshType>>( global_grid, halo_cell_width );
+    return std::make_shared<LocalGrid<MeshType>>( global_grid,
+                                                  halo_cell_width );
 }
 
 //---------------------------------------------------------------------------//
 
 } // end namespace Cajita
 
-#endif // end CAJITA_BLOCK_HPP
+#endif // end CAJITA_LOCALGRID_HPP

@@ -13,7 +13,6 @@
 #define CAJITA_HPP
 
 #include <Cajita_Array.hpp>
-#include <Cajita_Block.hpp>
 #include <Cajita_BovWriter.hpp>
 #include <Cajita_Config.hpp>
 #include <Cajita_GlobalGrid.hpp>
@@ -21,6 +20,7 @@
 #include <Cajita_Halo.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_Interpolation.hpp>
+#include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_MpiTraits.hpp>
