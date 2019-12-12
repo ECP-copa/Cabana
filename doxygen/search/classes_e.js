@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['serialneighboroptag',['SerialNeighborOpTag',['../classCabana_1_1SerialNeighborOpTag.html',1,'Cabana']]],
+  ['secondneighborstag',['SecondNeighborsTag',['../classCabana_1_1SecondNeighborsTag.html',1,'Cabana']]],
+  ['serialoptag',['SerialOpTag',['../classCabana_1_1SerialOpTag.html',1,'Cabana']]],
   ['simdpolicy',['SimdPolicy',['../classCabana_1_1SimdPolicy.html',1,'Cabana']]],
   ['slice',['Slice',['../classCabana_1_1Slice.html',1,'Cabana']]],
   ['soa',['SoA',['../structCabana_1_1SoA.html',1,'Cabana']]],

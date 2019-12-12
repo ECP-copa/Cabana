@@ -1,14 +1,15 @@
 var searchData=
 [
   ['s',['s',['../classCabana_1_1Impl_1_1Index.html#a7b7e438320c5d0b28f32c3cc65e8097b',1,'Cabana::Impl::Index']]],
-  ['serialneighboroptag',['SerialNeighborOpTag',['../classCabana_1_1SerialNeighborOpTag.html',1,'Cabana']]],
+  ['secondneighborstag',['SecondNeighborsTag',['../classCabana_1_1SecondNeighborsTag.html',1,'Cabana']]],
+  ['serialoptag',['SerialOpTag',['../classCabana_1_1SerialOpTag.html',1,'Cabana']]],
   ['settuple',['setTuple',['../classCabana_1_1AoSoA.html#ac834c774799c45be41eacd0218c561cb',1,'Cabana::AoSoA']]],
   ['shrinktofit',['shrinkToFit',['../classCabana_1_1AoSoA.html#a5cb720713784b07b508063af7b9b10e1',1,'Cabana::AoSoA']]],
-  ['simdpolicy',['SimdPolicy',['../classCabana_1_1SimdPolicy.html',1,'Cabana']]],
   ['simdpolicy',['SimdPolicy',['../classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21',1,'Cabana::SimdPolicy']]],
+  ['simdpolicy',['SimdPolicy',['../classCabana_1_1SimdPolicy.html',1,'Cabana']]],
   ['size',['size',['../classCabana_1_1AoSoA.html#a978ee8f822bf68ebe5ca827ebc3cd80f',1,'Cabana::AoSoA::size()'],['../classCabana_1_1Slice.html#a204a72ff6926cf2ae226e39be2c1355a',1,'Cabana::Slice::size()']]],
-  ['slice',['Slice',['../classCabana_1_1Slice.html#a93a0064084e2b05c030e63ecc688734b',1,'Cabana::Slice::Slice()'],['../classCabana_1_1Slice.html#a62c584101d666f3dfc5c6722df8e9f2e',1,'Cabana::Slice::Slice(const pointer_type data, const size_type size, const size_type num_soa, const std::string &amp;label=&quot;&quot;)'],['../classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57',1,'Cabana::Slice::Slice(const Slice&lt; DataType, DeviceType, MAT, VectorLength, Stride &gt; &amp;rhs)']]],
   ['slice',['Slice',['../classCabana_1_1Slice.html',1,'Cabana']]],
+  ['slice',['Slice',['../classCabana_1_1Slice.html#a93a0064084e2b05c030e63ecc688734b',1,'Cabana::Slice::Slice()'],['../classCabana_1_1Slice.html#a62c584101d666f3dfc5c6722df8e9f2e',1,'Cabana::Slice::Slice(const pointer_type data, const size_type size, const size_type num_soa, const std::string &amp;label=&quot;&quot;)'],['../classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57',1,'Cabana::Slice::Slice(const Slice&lt; DataType, DeviceType, MAT, VectorLength, Stride &gt; &amp;rhs)']]],
   ['soa',['SoA',['../structCabana_1_1SoA.html',1,'Cabana']]],
   ['soa_3c_20membertypes_3c_20types_2e_2e_2e_20_3e_2c_201_20_3e',['SoA&lt; MemberTypes&lt; Types... &gt;, 1 &gt;',['../structCabana_1_1SoA.html',1,'Cabana']]],
   ['soa_3c_20membertypes_3c_20types_2e_2e_2e_20_3e_2c_20vectorlength_20_3e',['SoA&lt; MemberTypes&lt; Types... &gt;, VectorLength &gt;',['../structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_01_4_00_01VectorLength_01_4.html',1,'Cabana']]],
