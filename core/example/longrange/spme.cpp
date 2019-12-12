@@ -112,20 +112,23 @@ double TPME::oneDspline( double x )
     }
 }
 
-//Compute derivative of 1D cubic cardinal B-spline
+// Compute derivative of 1D cubic cardinal B-spline
 KOKKOS_INLINE_FUNCTION
 double TPME::oneDsplinederiv( double origx )
 {
-    double x = 2.0 - std::abs(origx);
+    double x = 2.0 - std::abs( origx );
     double forcedir = 1.0;
-    if (origx < 0.0 ) { forcedir = -1.0; }
+    if ( origx < 0.0 )
+    {
+        forcedir = -1.0;
+    }
     if ( x >= 0.0 and x < 1.0 )
     {
         return ( 1.0 / 2.0 ) * x * x * forcedir;
     }
     else if ( x >= 1.0 and x <= 2.0 )
     {
-        return (-( 3.0 / 2.0 ) * x * x + 4.0 * x - 2.0) * forcedir;
+        return ( -( 3.0 / 2.0 ) * x * x + 4.0 * x - 2.0 ) * forcedir;
     }
     // Using the symmetry here, only need to define function between 0 and 2
     // Beware: This means all input to this function should be made positive
@@ -195,16 +198,16 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     double total_energy = 0.0;
 
     // Set the potential of each particle to zero
-    auto init_p = KOKKOS_LAMBDA( const int idx ) { 
-                     p( idx ) = 0.0; 
-                     f( idx, 0) = 0.0;
-                     f( idx, 1) = 0.0;
-                     f( idx, 2) = 0.0;
+    auto init_p = KOKKOS_LAMBDA( const int idx )
+    {
+        p( idx ) = 0.0;
+        f( idx, 0 ) = 0.0;
+        f( idx, 1 ) = 0.0;
+        f( idx, 2 ) = 0.0;
     };
     Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
                           init_p );
     Kokkos::fence();
-
 
     double alpha = _alpha;
     // double k_max = _k_max;
@@ -717,7 +720,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
 #ifdef Cabana_ENABLE_Cuda
     cufftPlan3d( &plantest, meshwidth, meshwidth, meshwidth, CUFFT_Z2Z );
     cufftExecZ2Z( plantest, Qr, Qktest, CUFFT_INVERSE ); // IFFT on Q
-    //Update the energy
+    // Update the energy
     Kokkos::parallel_reduce(
         meshsize,
         KOKKOS_LAMBDA( const int idx, double &Uk_part ) {
@@ -731,7 +734,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     plantest = fftw_plan_dft_3d( meshwidth, meshwidth, meshwidth, Qr, Qktest,
                                  FFTW_BACKWARD, FFTW_ESTIMATE );
     fftw_execute( plantest ); // IFFT on Q
-    //update the energy
+    // update the energy
     Kokkos::parallel_reduce(
         meshsize,
         KOKKOS_LAMBDA( const int idx, double &Uk_part ) {
@@ -741,17 +744,18 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
         Uk );
     Kokkos::fence();
     fftw_destroy_plan( plantest );
-    //update Q for later force calcs
-    auto update_q = KOKKOS_LAMBDA( const int idx ) { 
-                        Qktest[idx][0] *= BC[idx][0];
-                        Qktest[idx][1] *= BC[idx][0];
-                    };
+    // update Q for later force calcs
+    auto update_q = KOKKOS_LAMBDA( const int idx )
+    {
+        Qktest[idx][0] *= BC[idx][0];
+        Qktest[idx][1] *= BC[idx][0];
+    };
 
     Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
                           update_q );
-    //FFT forward on altered Q array
-    planforward = fftw_plan_dft_3d( meshwidth, meshwidth, meshwidth, Qktest, Qktest,
-                                 FFTW_FORWARD, FFTW_ESTIMATE );
+    // FFT forward on altered Q array
+    planforward = fftw_plan_dft_3d( meshwidth, meshwidth, meshwidth, Qktest,
+                                    Qktest, FFTW_FORWARD, FFTW_ESTIMATE );
     fftw_execute( planforward );
     fftw_destroy_plan( planforward );
 #endif
@@ -807,21 +811,21 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
 
     total_energy = Ur + Uk + Uself + Udip;
 
-    //Now, compute forces on each particle
-    
-    //For each particle
+    // Now, compute forces on each particle
+
+    // For each particle
     //
-    //loop through each mesh point
+    // loop through each mesh point
     //
-    //Filter out mesh points where dx > 2gaps, dy > 2gaps, dz > 2 gaps?
+    // Filter out mesh points where dx > 2gaps, dy > 2gaps, dz > 2 gaps?
     //
-    //calculate B-spline coeffs x,y,z
+    // calculate B-spline coeffs x,y,z
     //
-    //calculate deriv of B-spline coeffs x,y,z
+    // calculate deriv of B-spline coeffs x,y,z
     //
-    //Fx += q*(deriv_Bx)*By*Bz*Qktest[meshpoint]
-    //Fy += q*(deriv_By)*Bx*Bz*Qktest[meshpoint]
-    //Fz += q*(deriv_Bz)*Bx*By*Qktest[meshpoint]
+    // Fx += q*(deriv_Bx)*By*Bz*Qktest[meshpoint]
+    // Fy += q*(deriv_By)*Bx*Bz*Qktest[meshpoint]
+    // Fz += q*(deriv_Bz)*Bx*By*Qktest[meshpoint]
     auto gather_f = KOKKOS_LAMBDA( const int pidx )
     {
         double xdist, ydist, zdist, closestpart, sign;
@@ -830,10 +834,14 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
             // x-distance between mesh point and particle
             closestpart = r( pidx, 0 );
             xdist = closestpart - meshr( idx, 0 );
-            if ( std::abs(xdist) > std::abs( meshr( idx, 0 ) - ( r( pidx, 0 ) + 1.0 ) ) ) {
+            if ( std::abs( xdist ) >
+                 std::abs( meshr( idx, 0 ) - ( r( pidx, 0 ) + 1.0 ) ) )
+            {
                 closestpart = r( pidx, 0 ) + 1.0;
             }
-            if ( std::abs(xdist) > std::abs( meshr( idx, 0 ) - ( r( pidx, 0 ) - 1.0 ) ) ) {
+            if ( std::abs( xdist ) >
+                 std::abs( meshr( idx, 0 ) - ( r( pidx, 0 ) - 1.0 ) ) )
+            {
                 closestpart = r( pidx, 0 ) - 1.0;
             }
             xdist = closestpart - meshr( idx, 0 );
@@ -841,64 +849,81 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
             // y-distance between mesh point and particle
             closestpart = r( pidx, 1 );
             ydist = closestpart - meshr( idx, 1 );
-            if ( std::abs(ydist) > std::abs( meshr( idx, 1 ) - ( r( pidx, 1 ) + 1.0 ) ) ) {
+            if ( std::abs( ydist ) >
+                 std::abs( meshr( idx, 1 ) - ( r( pidx, 1 ) + 1.0 ) ) )
+            {
                 closestpart = r( pidx, 1 ) + 1.0;
             }
-            if ( std::abs(ydist) > std::abs( meshr( idx, 1 ) - ( r( pidx, 1 ) - 1.0 ) ) ) {
+            if ( std::abs( ydist ) >
+                 std::abs( meshr( idx, 1 ) - ( r( pidx, 1 ) - 1.0 ) ) )
+            {
                 closestpart = r( pidx, 1 ) - 1.0;
             }
             ydist = closestpart - meshr( idx, 1 );
-            
+
             // z-distance between mesh point and particle
             closestpart = r( pidx, 2 );
             zdist = closestpart - meshr( idx, 2 );
-            if ( std::abs(zdist) > std::abs( meshr( idx, 2 ) - ( r( pidx, 2 ) + 1.0 ) ) ) {
+            if ( std::abs( zdist ) >
+                 std::abs( meshr( idx, 2 ) - ( r( pidx, 2 ) + 1.0 ) ) )
+            {
                 closestpart = r( pidx, 2 ) + 1.0;
             }
-            if ( std::abs(zdist) > std::abs( meshr( idx, 2 ) - ( r( pidx, 2 ) - 1.0 ) ) ) {
+            if ( std::abs( zdist ) >
+                 std::abs( meshr( idx, 2 ) - ( r( pidx, 2 ) - 1.0 ) ) )
+            {
                 closestpart = r( pidx, 2 ) - 1.0;
             }
             zdist = closestpart - meshr( idx, 2 );
-            
-            if ( std::abs(xdist) <= 2.0 * spacing and std::abs(ydist) <= 2.0 * spacing and
-                 std::abs(zdist) <= 2.0 * spacing ) // more efficient way to do this? Skip
-                                          // it? May be unnecessary.
+
+            if ( std::abs( xdist ) <= 2.0 * spacing and
+                 std::abs( ydist ) <= 2.0 * spacing and
+                 std::abs( zdist ) <=
+                     2.0 * spacing ) // more efficient way to do this? Skip
+                                     // it? May be unnecessary.
             {
                 // Calculate forces on particle from mesh point
-                f( pidx, 0 ) += q( pidx ) * 
-                                TPME::oneDsplinederiv( xdist / spacing ) *
-                                TPME::oneDspline( 2.0 - ( std::abs(ydist) / spacing ) ) *
-                                TPME::oneDspline( 2.0 - ( std::abs(zdist) / spacing ) ) * 
-                                Qktest[idx][0];
-                f( pidx, 1 ) += q( pidx ) *
-                                TPME::oneDspline( 2.0 - ( std::abs(xdist) / spacing ) ) *
-                                TPME::oneDsplinederiv( ydist / spacing ) *
-                                TPME::oneDspline( 2.0 - ( std::abs(zdist) / spacing ) ) * 
-                                Qktest[idx][0];
-                f( pidx, 2 ) += q( pidx ) *
-                                TPME::oneDspline( 2.0 - ( std::abs(xdist) / spacing ) ) *
-                                TPME::oneDspline( 2.0 - ( std::abs(ydist) / spacing ) ) *
-                                TPME::oneDsplinederiv( zdist / spacing ) * 
-                                Qktest[idx][0];
-                if( pidx == 0 ) { 
-                    std::cout << q( pidx ) *
-                                TPME::oneDspline( 2.0 - ( std::abs(xdist) / spacing ) ) *
-                                TPME::oneDsplinederiv( ydist / spacing ) *
-                                TPME::oneDspline( 2.0 - ( std::abs(zdist) / spacing ) ) * 
-                                Qktest[idx][0] << std::endl;
+                f( pidx, 0 ) +=
+                    q( pidx ) * TPME::oneDsplinederiv( xdist / spacing ) *
+                    TPME::oneDspline( 2.0 - ( std::abs( ydist ) / spacing ) ) *
+                    TPME::oneDspline( 2.0 - ( std::abs( zdist ) / spacing ) ) *
+                    Qktest[idx][0];
+                f( pidx, 1 ) +=
+                    q( pidx ) *
+                    TPME::oneDspline( 2.0 - ( std::abs( xdist ) / spacing ) ) *
+                    TPME::oneDsplinederiv( ydist / spacing ) *
+                    TPME::oneDspline( 2.0 - ( std::abs( zdist ) / spacing ) ) *
+                    Qktest[idx][0];
+                f( pidx, 2 ) +=
+                    q( pidx ) *
+                    TPME::oneDspline( 2.0 - ( std::abs( xdist ) / spacing ) ) *
+                    TPME::oneDspline( 2.0 - ( std::abs( ydist ) / spacing ) ) *
+                    TPME::oneDsplinederiv( zdist / spacing ) * Qktest[idx][0];
+                if ( pidx == 0 )
+                {
+                    std::cout
+                        << q( pidx ) *
+                               TPME::oneDspline(
+                                   2.0 - ( std::abs( xdist ) / spacing ) ) *
+                               TPME::oneDsplinederiv( ydist / spacing ) *
+                               TPME::oneDspline(
+                                   2.0 - ( std::abs( zdist ) / spacing ) ) *
+                               Qktest[idx][0]
+                        << std::endl;
                 }
             }
         }
     };
-    Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ), 
+    Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_max ),
                           gather_f );
     /*
     //Diagnostics for debugging
-    for ( size_t pidx = 0; pidx < n_max; ++pidx ) 
+    for ( size_t pidx = 0; pidx < n_max; ++pidx )
     {
-        std::cout << f( pidx, 0 ) << ", " << f( pidx, 1 ) <<  ", " << f( pidx, 2 ) << std::endl;
+        std::cout << f( pidx, 0 ) << ", " << f( pidx, 1 ) <<  ", " << f( pidx, 2
+    ) << std::endl;
     }
-    for ( size_t idx = 0; idx < meshsize; ++idx ) 
+    for ( size_t idx = 0; idx < meshsize; ++idx )
     {
         std::cout << Qktest[idx][0] << std::endl;
     }*/
