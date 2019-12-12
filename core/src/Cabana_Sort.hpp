@@ -198,7 +198,8 @@ copySliceToKeys( SliceType slice )
 {
     using KeyViewType =
         Kokkos::View<typename SliceType::value_type *, DeviceType>;
-    KeyViewType keys( "slice_keys", slice.size() );
+    KeyViewType keys( Kokkos::ViewAllocateWithoutInitializing( "slice_keys" ),
+                      slice.size() );
     Kokkos::RangePolicy<typename DeviceType::execution_space> exec_policy(
         0, slice.size() );
     auto copy_op = KOKKOS_LAMBDA( const std::size_t i )
@@ -561,7 +562,8 @@ void permute(
     auto end = binning_data.rangeEnd();
 
     Kokkos::View<typename AoSoA_t::tuple_type *, DeviceType> scratch_tuples(
-        "scratch_tuples", end - begin );
+        Kokkos::ViewAllocateWithoutInitializing( "scratch_tuples" ),
+        end - begin );
 
     auto permute_to_scratch = KOKKOS_LAMBDA( const std::size_t i )
     {
@@ -618,7 +620,8 @@ void permute(
     auto slice_data = slice.data();
 
     Kokkos::View<typename SliceType::value_type **, DeviceType> scratch_array(
-        "scratch_array", end - begin, num_comp );
+        Kokkos::ViewAllocateWithoutInitializing( "scratch_array" ), end - begin,
+        num_comp );
 
     auto permute_to_scratch = KOKKOS_LAMBDA( const std::size_t i )
     {

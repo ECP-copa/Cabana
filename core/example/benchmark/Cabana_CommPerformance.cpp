@@ -9,12 +9,13 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include "Cabana_BenchmarkTimer.hpp"
+
 #include <Cabana_Core.hpp>
 
 #include <Kokkos_Core.hpp>
 
 #include <algorithm>
-#include <chrono>
 #include <fstream>
 #include <iostream>
 #include <numeric>
@@ -23,123 +24,6 @@
 #include <vector>
 
 #include <mpi.h>
-
-//---------------------------------------------------------------------------//
-// Parallel timer. Carries multiple data points (the independent variable in
-// the parameter sweep) for each timer to allow for parametric sweeps. Each
-// timer can do multiple runs over each data point in the parameter sweep. The
-// name of the data point and its values can then be injected into the output
-// table.
-class ParallelTimer
-{
-  public:
-    // Create the timer.
-    ParallelTimer( MPI_Comm comm, const std::string &name, const int num_data )
-        : _comm( comm )
-        , _name( name )
-        , _starts( num_data )
-        , _data( num_data )
-        , _is_stopped( num_data, true )
-    {
-    }
-
-    // Start the timer for the given data point. It is assumed that this
-    // function is called collectively across all ranks in the communicator.
-    void start( const int data_point )
-    {
-        if ( !_is_stopped[data_point] )
-            throw std::logic_error( "attempted to start a running timer" );
-        auto now = std::chrono::high_resolution_clock::now();
-        _starts[data_point].push_back( now );
-        _is_stopped[data_point] = false;
-    }
-
-    // Stop the timer at the given data point. It is assumed that this
-    // function is called collectively across all ranks in the communicator.
-    void stop( const int data_point )
-    {
-        if ( _is_stopped[data_point] )
-            throw std::logic_error( "attempted to stop a stopped timer" );
-        auto now = std::chrono::high_resolution_clock::now();
-        std::chrono::duration<double, std::micro> fp_micro =
-            now - _starts[data_point].back();
-        _data[data_point].push_back( fp_micro.count() );
-        _is_stopped[data_point] = true;
-    }
-
-    // Write timer results on rank 0. Provide the values of the data points so
-    // they can be injected into the table. This function does collective
-    // communication.
-    template <typename Scalar>
-    void outputResults( std::ostream &stream,
-                        const std::string &data_point_name,
-                        const std::vector<Scalar> &data_point_vals ) const
-    {
-        // Get comm rank;
-        int comm_rank;
-        MPI_Comm_rank( _comm, &comm_rank );
-
-        // Get comm size;
-        int comm_size;
-        MPI_Comm_size( _comm, &comm_size );
-
-        // Write the data header.
-        if ( 0 == comm_rank )
-        {
-            stream << "\n";
-            stream << _name << "\n";
-            stream << "num_rank " << data_point_name << " min max ave"
-                   << "\n";
-        }
-
-        // Write out each data point
-        for ( std::size_t n = 0; n < _data.size(); ++n )
-        {
-            if ( !_is_stopped[n] )
-                throw std::logic_error(
-                    "attempted to output from a running timer" );
-
-            // Compute the minimum.
-            double local_min =
-                *std::min_element( _data[n].begin(), _data[n].end() );
-            double global_min = 0.0;
-            MPI_Reduce( &local_min, &global_min, 1, MPI_DOUBLE, MPI_MIN, 0,
-                        _comm );
-
-            // Compute the maximum.
-            double local_max =
-                *std::max_element( _data[n].begin(), _data[n].end() );
-            double global_max = 0.0;
-            MPI_Reduce( &local_max, &global_max, 1, MPI_DOUBLE, MPI_MAX, 0,
-                        _comm );
-
-            // Compute the average.
-            double local_sum =
-                std::accumulate( _data[n].begin(), _data[n].end(), 0.0 );
-            double average = 0.0;
-            MPI_Reduce( &local_sum, &average, 1, MPI_DOUBLE, MPI_SUM, 0,
-                        _comm );
-            average /= _data[n].size() * comm_size;
-
-            // Output on rank 0.
-            if ( 0 == comm_rank )
-            {
-                stream << comm_size << " " << data_point_vals[n] << " "
-                       << global_min << " " << global_max << " " << average
-                       << "\n";
-            }
-        }
-    }
-
-  private:
-    MPI_Comm _comm;
-    std::string _name;
-    std::vector<std::size_t> _byte_sizes;
-    std::vector<std::vector<std::chrono::high_resolution_clock::time_point>>
-        _starts;
-    std::vector<std::vector<double>> _data;
-    std::vector<bool> _is_stopped;
-};
 
 //---------------------------------------------------------------------------//
 // Performance test.
@@ -230,14 +114,14 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
     // -----------
 
     // Create distributor timers.
-    ParallelTimer distributor_fast_create(
-        comm, test_prefix + "distributor_fast_create", num_fraction );
-    ParallelTimer distributor_general_create(
-        comm, test_prefix + "distributor_general_create", num_fraction );
-    ParallelTimer distributor_aosoa_migrate(
-        comm, test_prefix + "distributor_aosoa_migrate", num_fraction );
-    ParallelTimer distributor_slice_migrate(
-        comm, test_prefix + "distributor_slice_migrate", num_fraction );
+    Cabana::Benchmark::Timer distributor_fast_create(
+        test_prefix + "distributor_fast_create", num_fraction );
+    Cabana::Benchmark::Timer distributor_general_create(
+        test_prefix + "distributor_general_create", num_fraction );
+    Cabana::Benchmark::Timer distributor_aosoa_migrate(
+        test_prefix + "distributor_aosoa_migrate", num_fraction );
+    Cabana::Benchmark::Timer distributor_slice_migrate(
+        test_prefix + "distributor_slice_migrate", num_fraction );
 
     // Loop over comm fractions.
     for ( int fraction = 0; fraction < num_fraction; ++fraction )
@@ -274,10 +158,10 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         for ( int t = 0; t < num_run; ++t )
         {
             // Create source particles.
-            aosoa_type src_particles( num_particle );
+            aosoa_type src_particles( "src_particles", num_particle );
 
             // Create destination particles.
-            aosoa_type dst_particles;
+            aosoa_type dst_particles( "dst_particles" );
 
             // Create a distributor using the fast construction method.
             distributor_fast_create.start( fraction );
@@ -342,26 +226,29 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
     }
 
     // Output results.
-    distributor_fast_create.outputResults( stream, "send_bytes", comm_bytes );
-    distributor_general_create.outputResults( stream, "send_bytes",
-                                              comm_bytes );
-    distributor_aosoa_migrate.outputResults( stream, "send_bytes", comm_bytes );
-    distributor_slice_migrate.outputResults( stream, "send_bytes", comm_bytes );
+    outputResults( stream, "send_bytes", comm_bytes, distributor_fast_create,
+                   comm );
+    outputResults( stream, "send_bytes", comm_bytes, distributor_general_create,
+                   comm );
+    outputResults( stream, "send_bytes", comm_bytes, distributor_aosoa_migrate,
+                   comm );
+    outputResults( stream, "send_bytes", comm_bytes, distributor_slice_migrate,
+                   comm );
 
     // HALO
     // ----
 
     // Create halo timers.
-    ParallelTimer halo_fast_create( comm, test_prefix + "halo_fast_create",
-                                    num_fraction );
-    ParallelTimer halo_general_create(
-        comm, test_prefix + "halo_general_create", num_fraction );
-    ParallelTimer halo_aosoa_gather( comm, test_prefix + "halo_aosoa_gather",
-                                     num_fraction );
-    ParallelTimer halo_slice_gather( comm, test_prefix + "halo_slice_gather",
-                                     num_fraction );
-    ParallelTimer halo_slice_scatter( comm, test_prefix + "halo_slice_scatter",
-                                      num_fraction );
+    Cabana::Benchmark::Timer halo_fast_create( test_prefix + "halo_fast_create",
+                                               num_fraction );
+    Cabana::Benchmark::Timer halo_general_create(
+        test_prefix + "halo_general_create", num_fraction );
+    Cabana::Benchmark::Timer halo_aosoa_gather(
+        test_prefix + "halo_aosoa_gather", num_fraction );
+    Cabana::Benchmark::Timer halo_slice_gather(
+        test_prefix + "halo_slice_gather", num_fraction );
+    Cabana::Benchmark::Timer halo_slice_scatter(
+        test_prefix + "halo_slice_scatter", num_fraction );
 
     // Loop over comm fractions.
     for ( int fraction = 0; fraction < num_fraction; ++fraction )
@@ -399,7 +286,7 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         for ( int t = 0; t < num_run; ++t )
         {
             // Create the particles.
-            aosoa_type particles( num_particle );
+            aosoa_type particles( "particles", num_particle );
 
             // Create a halo using the fast construction method.
             halo_fast_create.start( fraction );
@@ -479,11 +366,12 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
     }
 
     // Output results.
-    halo_fast_create.outputResults( stream, "send_bytes", comm_bytes );
-    halo_general_create.outputResults( stream, "send_bytes", comm_bytes );
-    halo_aosoa_gather.outputResults( stream, "send_bytes", comm_bytes );
-    halo_slice_gather.outputResults( stream, "send_bytes", comm_bytes );
-    halo_slice_scatter.outputResults( stream, "send_bytes", comm_bytes );
+    outputResults( stream, "send_bytes", comm_bytes, halo_fast_create, comm );
+    outputResults( stream, "send_bytes", comm_bytes, halo_general_create,
+                   comm );
+    outputResults( stream, "send_bytes", comm_bytes, halo_aosoa_gather, comm );
+    outputResults( stream, "send_bytes", comm_bytes, halo_slice_gather, comm );
+    outputResults( stream, "send_bytes", comm_bytes, halo_slice_scatter, comm );
 }
 
 //---------------------------------------------------------------------------//

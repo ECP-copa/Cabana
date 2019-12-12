@@ -87,7 +87,7 @@ void parallelForExample()
     const int num_element = 100;
     using AosoaTYPE = Cabana::AoSoA<DataTypes, MemorySpace, VECLEN>;
 
-    AosoaTYPE *aosoa = new AosoaTYPE( num_element );
+    AosoaTYPE *aosoa = new AosoaTYPE( "aosoa", num_element );
 
     /*
       Create slices and assign some data. One might consider using a parallel
@@ -100,10 +100,10 @@ void parallelForExample()
 
       For aosoa to be usable in Fortran, we cast it to local_data_struct_t,
       which is a C struct with exactly the same memory layout as the data in
-      aosoa->ptr().
+      aosoa->data().
      */
 
-    auto struct_p = (local_data_struct_t *)( aosoa->ptr() );
+    auto struct_p = (local_data_struct_t *)( aosoa->data() );
 
     /* Call the Fortran subroutine */
     initialization( struct_p, num_element );
