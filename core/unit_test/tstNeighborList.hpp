@@ -502,9 +502,11 @@ void testNeighborParallelFor()
     };
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
     Cabana::neighbor_parallel_for( policy, serial_count_op, nlist,
-                                   Cabana::SerialNeighborOpTag() );
+                                   Cabana::FirstNeighborsTag(),
+                                   Cabana::SerialOpTag() );
     Cabana::neighbor_parallel_for( policy, team_count_op, nlist,
-                                   Cabana::TeamNeighborOpTag() );
+                                   Cabana::FirstNeighborsTag(),
+                                   Cabana::TeamOpTag() );
     Kokkos::fence();
 
     // Get the expected result in serial
@@ -554,6 +556,95 @@ void testVerletListFullPartialRange()
 }
 
 //---------------------------------------------------------------------------//
+template <class LayoutTag>
+void testAngularParallelFor()
+{
+    // Create the AoSoA and fill with random particle positions.
+    int num_particle = 1e3;
+    double test_radius = 2.32;
+    double cell_size_ratio = 0.5;
+    double box_min = -5.3 * test_radius;
+    double box_max = 4.7 * test_radius;
+    auto aosoa = createParticles( num_particle, box_min, box_max );
+
+    // Create the neighbor list.
+    using ListType =
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
+    double grid_min[3] = {box_min, box_min, box_min};
+    double grid_max[3] = {box_max, box_max, box_max};
+    ListType nlist( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
+                    cell_size_ratio, grid_min, grid_max );
+
+    // Create Kokkos views for the write operation.
+    using memory_space = typename TEST_MEMSPACE::memory_space;
+    Kokkos::View<int *, Kokkos::HostSpace> test_result( "test_result",
+                                                        num_particle );
+    Kokkos::View<int *, memory_space> serial_result( "serial_result",
+                                                     num_particle );
+    Kokkos::View<int *, memory_space> team_result( "team_result",
+                                                   num_particle );
+    Kokkos::View<int *, memory_space> vector_result( "vector_result",
+                                                     num_particle );
+
+    // Test the list parallel operation by adding a value from each neighbor
+    // to the particle and compare to counts.
+    auto serial_count_op =
+        KOKKOS_LAMBDA( const int i, const int j, const int k )
+    {
+        Kokkos::atomic_add( &serial_result( i ), j );
+        Kokkos::atomic_add( &serial_result( i ), k );
+    };
+    auto team_count_op = KOKKOS_LAMBDA( const int i, const int j, const int k )
+    {
+        Kokkos::atomic_add( &team_result( i ), j );
+        Kokkos::atomic_add( &team_result( i ), k );
+    };
+    auto vector_count_op =
+        KOKKOS_LAMBDA( const int i, const int j, const int k )
+    {
+        Kokkos::atomic_add( &vector_result( i ), j );
+        Kokkos::atomic_add( &vector_result( i ), k );
+    };
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
+    Cabana::neighbor_parallel_for( policy, serial_count_op, nlist,
+                                   Cabana::SecondNeighborsTag(),
+                                   Cabana::SerialOpTag() );
+    Cabana::neighbor_parallel_for( policy, team_count_op, nlist,
+                                   Cabana::SecondNeighborsTag(),
+                                   Cabana::TeamOpTag() );
+    Cabana::neighbor_parallel_for( policy, vector_count_op, nlist,
+                                   Cabana::SecondNeighborsTag(),
+                                   Cabana::TeamVectorOpTag() );
+    Kokkos::fence();
+
+    // Get the expected result in serial
+    auto test_list =
+        computeFullNeighborList( Cabana::slice<0>( aosoa ), test_radius );
+    auto test_list_copy = createTestListHostCopy( test_list );
+    for ( int p = 0; p < num_particle; ++p )
+        for ( int n = 0; n < test_list_copy.counts( p ) - 1; ++n )
+            for ( int a = n + 1; a < test_list_copy.counts( p ); ++a )
+            {
+                test_result( p ) += test_list_copy.neighbors( p, n );
+                test_result( p ) += test_list_copy.neighbors( p, a );
+            }
+
+    // Check the result.
+    auto serial_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), serial_result );
+    auto team_mirror =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), team_result );
+    auto vector_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), vector_result );
+    for ( int p = 0; p < num_particle; ++p )
+    {
+        EXPECT_EQ( test_result( p ), serial_mirror( p ) );
+        EXPECT_EQ( test_result( p ), team_mirror( p ) );
+        EXPECT_EQ( test_result( p ), vector_mirror( p ) );
+    }
+}
+
+//---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
@@ -584,6 +675,9 @@ TEST( TEST_CATEGORY, parallel_for_test )
 {
     testNeighborParallelFor<Cabana::VerletLayoutCSR>();
     testNeighborParallelFor<Cabana::VerletLayout2D>();
+
+    testAngularParallelFor<Cabana::VerletLayoutCSR>();
+    testAngularParallelFor<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
