@@ -193,7 +193,8 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     const int n_max = particles.size();
 
     // Number of mesh points
-    const int meshsize = mesh.size();
+    //const int meshsize = mesh.size();
+    size_t meshsize = mesh.size();
 
     double total_energy = 0.0;
 
@@ -828,7 +829,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     // Fz += q*(deriv_Bz)*Bx*By*Qktest[meshpoint]
     auto gather_f = KOKKOS_LAMBDA( const int pidx )
     {
-        double xdist, ydist, zdist, closestpart, sign;
+        double xdist, ydist, zdist, closestpart;
         for ( size_t idx = 0; idx < meshsize; ++idx )
         {
             // x-distance between mesh point and particle
