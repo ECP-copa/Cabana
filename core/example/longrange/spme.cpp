@@ -193,7 +193,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     const int n_max = particles.size();
 
     // Number of mesh points
-    //const int meshsize = mesh.size();
+    // const int meshsize = mesh.size();
     size_t meshsize = mesh.size();
 
     double total_energy = 0.0;
