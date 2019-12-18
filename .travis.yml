@@ -56,7 +56,7 @@ before_script:
       pushd heffte &&
       mkdir build &&
       pushd build &&
-      cmake -DCMAKE_INSTALL_PREFIX="$HOME/heffte" -DFFTW_USE_STATIC_LIBS=ON -DCMAKE_PREFIX_PATH=$HOME/fftw-3.3.8 -DBUILD_GPU=OFF -DBUILD_SHARED=OFF .. &&
+      cmake -DCMAKE_INSTALL_PREFIX="$HOME/heffte" -DFFTW_USE_STATIC_LIBS=ON -DBUILD_GPU=OFF -DBUILD_SHARED=OFF .. &&
       make -j2 VERBOSE=1&&
       make install &&
       popd &&
