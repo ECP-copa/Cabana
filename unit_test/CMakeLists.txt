@@ -65,9 +65,9 @@ set(MPI_TESTS
   GlobalGrid
   LocalGrid
   LocalMesh
-  PointSet
   Array
   Halo
+  SplineEvaluation
   Interpolation
   BovWriter
   )

@@ -18,7 +18,6 @@
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_Splines.hpp>
-#include <Cajita_PointSet.hpp>
 #include <Cajita_Interpolation.hpp>
 #include <Cajita_Array.hpp>
 
@@ -81,10 +80,6 @@ void interpolationTest()
             points(pid,Dim::K) = x[Dim::K];
         });
 
-    // Create a point set with cubic spline interpolation to the nodes.
-    auto point_set = createPointSet(
-        points, num_point, num_point, *local_grid, Node(), Spline<3>() );
-
     // Create a scalar field on the grid.
     auto scalar_layout = createArrayLayout( local_grid, 1, Node() );
     auto scalar_grid_field =
@@ -128,7 +123,7 @@ void interpolationTest()
     // Interpolate a scalar point value to the grid.
     ArrayOp::assign( *scalar_grid_field, 0.0, Ghost() );
     auto scalar_p2g = createScalarValueP2G( scalar_point_field, -0.5 );
-    p2g( scalar_p2g, point_set, *scalar_halo, *scalar_grid_field );
+    p2g( scalar_p2g, points, num_point, Spline<1>(), *scalar_halo, *scalar_grid_field );
     Kokkos::deep_copy( scalar_grid_host, scalar_grid_field->view() );
     for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
         for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
@@ -138,7 +133,7 @@ void interpolationTest()
     // Interpolate a vector point value to the grid.
     ArrayOp::assign( *vector_grid_field, 0.0, Ghost() );
     auto vector_p2g = createVectorValueP2G( vector_point_field, -0.5 );
-    p2g( vector_p2g, point_set, *vector_halo, *vector_grid_field );
+    p2g( vector_p2g, points, num_point, Spline<1>(), *vector_halo, *vector_grid_field );
     Kokkos::deep_copy( vector_grid_host, vector_grid_field->view() );
     for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
         for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
@@ -149,7 +144,7 @@ void interpolationTest()
     // Interpolate a scalar point gradient value to the grid.
     ArrayOp::assign( *vector_grid_field, 0.0, Ghost() );
     auto scalar_grad_p2g = createScalarGradientP2G( scalar_point_field, -0.5 );
-    p2g( scalar_grad_p2g, point_set, *vector_halo, *vector_grid_field );
+    p2g( scalar_grad_p2g, points, num_point, Spline<1>(), *vector_halo, *vector_grid_field );
     Kokkos::deep_copy( vector_grid_host, vector_grid_field->view() );
     for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
         for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
@@ -160,7 +155,7 @@ void interpolationTest()
     // Interpolate a vector point divergence value to the grid.
     ArrayOp::assign( *scalar_grid_field, 0.0, Ghost() );
     auto vector_div_p2g = createVectorDivergenceP2G( vector_point_field, -0.5 );
-    p2g( vector_div_p2g, point_set, *scalar_halo, *scalar_grid_field );
+    p2g( vector_div_p2g, points, num_point, Spline<1>(), *scalar_halo, *scalar_grid_field );
     Kokkos::deep_copy( scalar_grid_host, scalar_grid_field->view() );
     for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
         for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
@@ -170,7 +165,7 @@ void interpolationTest()
     // Interpolate a tensor point divergence value to the grid.
     ArrayOp::assign( *vector_grid_field, 0.0, Ghost() );
     auto tensor_div_p2g = createTensorDivergenceP2G( tensor_point_field, -0.5 );
-    p2g( tensor_div_p2g, point_set, *vector_halo, *vector_grid_field );
+    p2g( tensor_div_p2g, points, num_point, Spline<1>(), *vector_halo, *vector_grid_field );
     Kokkos::deep_copy( vector_grid_host, vector_grid_field->view() );
     for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
         for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
@@ -188,7 +183,7 @@ void interpolationTest()
     // Interpolate a scalar grid value to the points.
     Kokkos::deep_copy( scalar_point_field, 0.0 );
     auto scalar_value_g2p = createScalarValueG2P( scalar_point_field, -0.5 );
-    g2p( *scalar_grid_field, *scalar_halo, point_set, scalar_value_g2p );
+    g2p( *scalar_grid_field, *scalar_halo, points, num_point, Spline<1>(), scalar_value_g2p );
     Kokkos::deep_copy( scalar_point_host, scalar_point_field );
     for ( int p = 0; p < num_point; ++p )
         EXPECT_FLOAT_EQ( scalar_point_host(p), -1.75 );
@@ -196,7 +191,7 @@ void interpolationTest()
     // Interpolate a vector grid value to the points.
     Kokkos::deep_copy( vector_point_field, 0.0 );
     auto vector_value_g2p = createVectorValueG2P( vector_point_field, -0.5 );
-    g2p( *vector_grid_field, *vector_halo, point_set, vector_value_g2p );
+    g2p( *vector_grid_field, *vector_halo, points, num_point, Spline<1>(), vector_value_g2p );
     Kokkos::deep_copy( vector_point_host, vector_point_field );
     for ( int p = 0; p < num_point; ++p )
         for ( int d = 0; d < 3; ++d )
@@ -205,7 +200,7 @@ void interpolationTest()
     // Interpolate a scalar grid gradient to the points.
     Kokkos::deep_copy( vector_point_field, 0.0 );
     auto scalar_gradient_g2p = createScalarGradientG2P( vector_point_field, -0.5 );
-    g2p( *scalar_grid_field, *scalar_halo, point_set, scalar_gradient_g2p );
+    g2p( *scalar_grid_field, *scalar_halo, points, num_point, Spline<1>(), scalar_gradient_g2p );
     Kokkos::deep_copy( vector_point_host, vector_point_field );
     for ( int p = 0; p < num_point; ++p )
         for ( int d = 0; d < 3; ++d )
@@ -214,7 +209,7 @@ void interpolationTest()
     // Interpolate a vector grid gradient to the points.
     Kokkos::deep_copy( tensor_point_field, 0.0 );
     auto vector_gradient_g2p = createVectorGradientG2P( tensor_point_field, -0.5 );
-    g2p( *vector_grid_field, *vector_halo, point_set, vector_gradient_g2p );
+    g2p( *vector_grid_field, *vector_halo, points, num_point, Spline<1>(), vector_gradient_g2p );
     Kokkos::deep_copy( tensor_point_host, tensor_point_field );
     for ( int p = 0; p < num_point; ++p )
         for ( int i = 0; i < 3; ++i )
@@ -224,7 +219,7 @@ void interpolationTest()
     // Interpolate a vector grid divergence to the points.
     Kokkos::deep_copy( scalar_point_field, 0.0 );
     auto vector_div_g2p = createVectorDivergenceG2P( scalar_point_field, -0.5 );
-    g2p( *vector_grid_field, *vector_halo, point_set, vector_div_g2p );
+    g2p( *vector_grid_field, *vector_halo, points, num_point, Spline<1>(), vector_div_g2p );
     Kokkos::deep_copy( scalar_point_host, scalar_point_field );
     for ( int p = 0; p < num_point; ++p )
         EXPECT_FLOAT_EQ( scalar_point_host(p) + 1.0, 1.0 );

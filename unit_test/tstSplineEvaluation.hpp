@@ -18,7 +18,6 @@
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_Splines.hpp>
-#include <Cajita_PointSet.hpp>
 
 #include <gtest/gtest.h>
 
@@ -32,9 +31,190 @@ using namespace Cajita;
 
 namespace Test
 {
+//---------------------------------------------------------------------------//
+template <class Scalar, class EntityType, int SplineOrder, class DeviceType>
+struct PointSet
+{
+    // Scalar type for geometric operations.
+    using scalar_type = Scalar;
+
+    // Entity type on which the basis is defined.
+    using entity_type = EntityType;
+
+    // Basis
+    static constexpr int spline_order = SplineOrder;
+    using basis_type = Spline<spline_order>;
+
+    // Number of basis values in each dimension.
+    static constexpr int ns = basis_type::num_knot;
+
+    // Kokkos types.
+    using device_type = DeviceType;
+    using execution_space = typename device_type::execution_space;
+    using memory_space = typename device_type::memory_space;
+
+    // Number of points.
+    std::size_t num_point;
+
+    // Number of allocated points.
+    std::size_t num_alloc;
+
+    // Point logical position. (point,dim)
+    Kokkos::View<Scalar * [3], device_type> logical_coords;
+
+    // Point mesh stencil. (point,ns,dim)
+    Kokkos::View<int * [ns][3], device_type> stencil;
+
+    // Point basis values at entities in stencil. (point,ns,dim)
+    Kokkos::View<Scalar * [ns][3], device_type> value;
+
+    // Point basis gradient values at entities in stencil
+    // (point,ni,nj,nk,dim)
+    Kokkos::View<Scalar * [ns][ns][ns][3], device_type> gradient;
+
+    // Mesh uniform cell size.
+    Scalar dx;
+
+    // Inverse uniform mesh cell size.
+    Scalar rdx;
+
+    // Location of the low corner of the local mesh for the given entity
+    // type.
+    Kokkos::Array<Scalar, 3> low_corner;
+};
 
 //---------------------------------------------------------------------------//
-void pointSetTest()
+template <class LocalMeshType, class EntityType, class PointCoordinates, class PointSetType>
+void updatePointSet( const LocalMeshType& local_mesh,
+                     EntityType,
+                     const PointCoordinates &points,
+                     const std::size_t num_point,
+                     PointSetType &point_set )
+{
+    static_assert( std::is_same<typename PointCoordinates::value_type,
+                                typename PointSetType::scalar_type>::value,
+                   "Point coordinate/mesh scalar type mismatch" );
+
+    // Device parameters.
+    using execution_space = typename PointSetType::execution_space;
+
+    // Scalar type
+    using scalar_type = typename PointSetType::scalar_type;
+
+    // Basis parameters.
+    using Basis = typename PointSetType::basis_type;
+    static constexpr int ns = PointSetType::ns;
+
+    // Update the size.
+    if ( num_point > point_set.num_alloc )
+        throw std::logic_error(
+            "Attempted to update point set with more points than allocation" );
+    point_set.num_point = num_point;
+
+    // Update point set value.
+    Kokkos::parallel_for(
+        "updatePointSet",
+        Kokkos::RangePolicy<execution_space>( 0, point_set.num_point ),
+        KOKKOS_LAMBDA( const int p ) {
+            // Create a spline evaluation data set. This is what we are
+            // actually testing in this test.
+            scalar_type px[3] =
+                { points(p,Dim::I), points(p,Dim::J), points(p,Dim::K) };
+            SplineData<scalar_type,Basis::order,EntityType> sd;
+            evaluateSpline( local_mesh, px, sd );
+
+            // Map the point coordinates to the logical space of the spline.
+            for ( int d = 0; d < 3; ++d )
+                point_set.logical_coords( p, d ) = sd.x[d];
+
+            // Get the point mesh stencil.
+            for ( int d = 0; d < 3; ++d )
+                for ( int n = 0; n < ns; ++n )
+                    point_set.stencil( p, n, d ) = sd.s[d][n];
+
+            // Evaluate the spline values at the entities in the stencil.
+            for ( int d = 0; d < 3; ++d )
+                for ( int n = 0; n < ns; ++n )
+                    point_set.value( p, n, d ) = sd.w[d][n];
+
+            // Evaluate the spline gradients at the entities in the stencil.
+            for ( int i = 0; i < ns; ++i )
+                for ( int j = 0; j < ns; ++j )
+                    for ( int k = 0; k < ns; ++k )
+                    {
+                        point_set.gradient( p, i, j, k, Dim::I ) =
+                            sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k];
+
+                        point_set.gradient( p, i, j, k, Dim::J ) =
+                            sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k];
+
+                        point_set.gradient( p, i, j, k, Dim::K ) =
+                            sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k];
+                    }
+        } );
+}
+
+template <class PointCoordinates, class EntityType, int SplineOrder>
+PointSet<typename PointCoordinates::value_type, EntityType, SplineOrder,
+         typename PointCoordinates::device_type>
+createPointSet(
+    const PointCoordinates &points, const std::size_t num_point,
+    const std::size_t num_alloc,
+    const LocalGrid<UniformMesh<typename PointCoordinates::value_type>>
+        &local_grid,
+    EntityType, Spline<SplineOrder> )
+{
+    using scalar_type = typename PointCoordinates::value_type;
+
+    using device_type = typename PointCoordinates::device_type;
+
+    using set_type =
+        PointSet<scalar_type, EntityType, SplineOrder, device_type>;
+
+    set_type point_set;
+
+    static constexpr int ns = set_type::ns;
+
+    if ( num_point > num_alloc )
+        throw std::logic_error(
+            "Attempted to create point set with more points than allocation" );
+    point_set.num_point = num_point;
+    point_set.num_alloc = num_alloc;
+
+    point_set.logical_coords = Kokkos::View<scalar_type * [3], device_type>(
+        Kokkos::ViewAllocateWithoutInitializing( "PointSet::logical_coords" ),
+        num_alloc );
+
+    point_set.stencil = Kokkos::View<int * [ns][3], device_type>(
+        Kokkos::ViewAllocateWithoutInitializing( "PointSet::stencil" ),
+        num_alloc );
+
+    point_set.value = Kokkos::View<scalar_type * [ns][3], device_type>(
+        Kokkos::ViewAllocateWithoutInitializing( "PointSet::value" ),
+        num_alloc );
+
+    point_set.gradient =
+        Kokkos::View<scalar_type * [ns][ns][ns][3], device_type>(
+            Kokkos::ViewAllocateWithoutInitializing( "PointSet::gradients" ),
+            num_alloc );
+
+    auto local_mesh = createLocalMesh<Kokkos::HostSpace>( local_grid );
+
+    int idx_low[3] = {0, 0, 0};
+    point_set.dx = local_mesh.measure( Edge<Dim::I>(), idx_low );
+
+    point_set.rdx = 1.0 / point_set.dx;
+
+    local_mesh.coordinates( EntityType(), idx_low,
+                            point_set.low_corner.data() );
+
+    updatePointSet( local_mesh, EntityType(), points, num_point, point_set );
+
+    return point_set;
+}
+
+//---------------------------------------------------------------------------//
+void splineEvaluationTest()
 {
     // Create the global mesh.
     std::array<double,3> low_corner = { -1.2, 0.1, 1.1 };
@@ -200,9 +380,9 @@ void pointSetTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( point_set, update_test )
+TEST( splines, eval_test )
 {
-    pointSetTest();
+    splineEvaluationTest();
 }
 
 //---------------------------------------------------------------------------//

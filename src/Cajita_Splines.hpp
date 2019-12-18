@@ -1,6 +1,9 @@
 #ifndef CAJITA_SPLINES_HPP
 #define CAJITA_SPLINES_HPP
 
+#include <Cajita_LocalMesh.hpp>
+#include <Cajita_Types.hpp>
+
 #include <Kokkos_Core.hpp>
 
 namespace Cajita
@@ -344,6 +347,55 @@ struct Spline<3>
         gradients[3] = ( 0.5 * xn * xn + 2.0 * xn + 2.0 ) * rdx;
     }
 };
+
+//---------------------------------------------------------------------------//
+// Spline Data
+//---------------------------------------------------------------------------//
+// Container for spline data evaluated at a point.
+template <typename Scalar, int Order, class EntityType>
+struct SplineData
+{
+    using scalar_type = Scalar;
+    static constexpr int order = Order;
+    using spline_type = Spline<Order>;
+    static constexpr int num_knot = spline_type::num_knot;
+    using entity_type = EntityType;
+
+    // Logical position.
+    Scalar x[3];
+
+    // Local interpolation stencil.
+    int s[3][num_knot];
+
+    // Weight values.
+    Scalar w[3][num_knot];
+
+    // Weight gradients.
+    Scalar g[3][num_knot];
+};
+
+// Evaluate spline data at a point in a uniform mesh.
+template <typename Scalar, int Order, class Device, class EntityType>
+KOKKOS_INLINE_FUNCTION void
+evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
+                const Scalar p[3], SplineData<Scalar, Order, EntityType> &data )
+{
+    using spline_type =
+        typename SplineData<Scalar, Order, EntityType>::spline_type;
+
+    Scalar low_x[3];
+    int low_id[3] = {0, 0, 0};
+    local_mesh.coordinates( EntityType(), low_id, low_x );
+    Scalar rdx = 1.0 / local_mesh.measure( Edge<Dim::I>(), low_id );
+
+    for ( int d = 0; d < 3; ++d )
+    {
+        data.x[d] = spline_type::mapToLogicalGrid( p[d], rdx, low_x[d] );
+        spline_type::stencil( data.x[d], data.s[d] );
+        spline_type::value( data.x[d], data.w[d] );
+        spline_type::gradient( data.x[d], rdx, data.g[d] );
+    }
+}
 
 //---------------------------------------------------------------------------//
 

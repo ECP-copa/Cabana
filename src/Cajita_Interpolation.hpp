@@ -14,7 +14,8 @@
 
 #include <Cajita_Array.hpp>
 #include <Cajita_Halo.hpp>
-#include <Cajita_PointSet.hpp>
+#include <Cajita_LocalMesh.hpp>
+#include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -33,6 +34,9 @@ namespace Cajita
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
   for a given point at a given entity.
 
+  \tparam PointCoordinates Container type with view traits containing the 3-d
+  point coordinates. Will be indexed as (point,dim).
+
   \tparam ArrayScalar The scalar type used for the interpolated data.
 
   \tparam MeshScalar The scalar type used for the geometry/interpolation data.
@@ -48,22 +52,29 @@ namespace Cajita
   \param functor A functor that interpolates from a given point to a given
   entity.
 
-  \param point_set The point set to use for interpolation.
+  \param points The points over which to perform the interpolation. Will be
+  indexed as (point,dim). The subset of indices in each point's interpolation
+  stencil must be contained within the local grid that will be used for the
+  interpolation
+
+  \param num_point The number of points. This is the size of the first
+  dimension of points.
+
+  \param Spline to use for interpolation.
 
   \param halo The halo associated with the grid array. This hallo will be used
   to scatter the interpolated data.
 
   \param array The grid array to which the point data will be interpolated.
 */
-template <class PointEvalFunctor, class ArrayScalar, class MeshScalar,
-          class EntityType, int SplineOrder, class DeviceType,
+template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
+          class MeshScalar, class EntityType, int SplineOrder, class DeviceType,
           class... ArrayParams>
-void p2g(
-    const PointEvalFunctor &functor,
-    const PointSet<MeshScalar, EntityType, SplineOrder, DeviceType> &point_set,
-    const Halo<ArrayScalar, DeviceType> &halo,
-    Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>
-        &array )
+void p2g( const PointEvalFunctor &functor, const PointCoordinates &points,
+          const std::size_t num_point, Spline<SplineOrder>,
+          const Halo<ArrayScalar, DeviceType> &halo,
+          Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
+                ArrayParams...> &array )
 {
     using array_type =
         Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>;
@@ -73,13 +84,17 @@ void p2g(
 
     using execution_space = typename DeviceType::execution_space;
 
+    // Create the local mesh.
+    auto local_mesh =
+        createLocalMesh<DeviceType>( *( array.layout()->localGrid() ) );
+
     // Create a scatter view of the array.
     auto array_view = array.view();
     auto array_sv = Kokkos::Experimental::create_scatter_view( array_view );
 
     // Loop over points and interpolate to the grid.
     Kokkos::parallel_for(
-        "p2g", Kokkos::RangePolicy<execution_space>( 0, point_set.num_point ),
+        "p2g", Kokkos::RangePolicy<execution_space>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Create a local scatter result.
             ArrayScalar result[PointEvalFunctor::value_count];
@@ -87,21 +102,28 @@ void p2g(
             // Access the scatter view.
             auto array_access = array_sv.access();
 
+            // Get the point coordinates.
+            MeshScalar px[3] = {points( p, Dim::I ), points( p, Dim::J ),
+                                points( p, Dim::K )};
+
+            // Create the local spline data.
+            using sd_type = SplineData<MeshScalar, SplineOrder, EntityType>;
+            sd_type sd;
+            evaluateSpline( local_mesh, px, sd );
+
             // Loop over the point stencil and evaluate the functor at each
             // entity in the stencil and apply each stencil result to the
             // array.
-            for ( int i = 0; i < point_set.ns; ++i )
-                for ( int j = 0; j < point_set.ns; ++j )
-                    for ( int k = 0; k < point_set.ns; ++k )
+            for ( int i = 0; i < sd_type::num_knot; ++i )
+                for ( int j = 0; j < sd_type::num_knot; ++j )
+                    for ( int k = 0; k < sd_type::num_knot; ++k )
                     {
-                        functor( point_set, p, i, j, k, result );
+                        functor( sd, p, i, j, k, result );
 
                         for ( int d = 0; d < PointEvalFunctor::value_count;
                               ++d )
-                            array_access( point_set.stencil( p, i, Dim::I ),
-                                          point_set.stencil( p, j, Dim::J ),
-                                          point_set.stencil( p, k, Dim::K ),
-                                          d ) += result[d];
+                            array_access( sd.s[Dim::I][i], sd.s[Dim::J][j],
+                                          sd.s[Dim::K][k], d ) += result[d];
                     }
         } );
     Kokkos::Experimental::contribute( array_view, array_sv );
@@ -141,14 +163,13 @@ struct ScalarValueP2G
         static_assert( 1 == ViewType::Rank, "View must be of scalars" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, value_type *result ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, value_type *result ) const
     {
-        result[0] = _multiplier * _x( p ) * point_set.value( p, i, Dim::I ) *
-                    point_set.value( p, j, Dim::J ) *
-                    point_set.value( p, k, Dim::K );
+        result[0] = _multiplier * _x( p ) * sd.w[Dim::I][i] * sd.w[Dim::J][j] *
+                    sd.w[Dim::K][k];
     }
 };
 
@@ -190,14 +211,13 @@ struct VectorValueP2G
         static_assert( 2 == ViewType::Rank, "View must be of vectors" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, value_type *result ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, value_type *result ) const
     {
-        value_type weight = _multiplier * point_set.value( p, i, Dim::I ) *
-                            point_set.value( p, j, Dim::J ) *
-                            point_set.value( p, k, Dim::K );
+        value_type weight =
+            _multiplier * sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k];
         for ( int d = 0; d < 3; ++d )
             result[d] = weight * _x( p, d );
     }
@@ -241,14 +261,18 @@ struct ScalarGradientP2G
         static_assert( 1 == ViewType::Rank, "View must be of scalars" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, value_type *result ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, value_type *result ) const
     {
         auto mx = _multiplier * _x( p );
-        for ( int d = 0; d < 3; ++d )
-            result[d] = mx * point_set.gradient( p, i, j, k, d );
+        result[Dim::I] =
+            mx * sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k];
+        result[Dim::J] =
+            mx * sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k];
+        result[Dim::K] =
+            mx * sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k];
     }
 };
 
@@ -290,15 +314,20 @@ struct VectorDivergenceP2G
         static_assert( 2 == ViewType::Rank, "View must be of vectors" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, value_type *result ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, value_type *result ) const
     {
-        result[0] = 0;
-        for ( int d = 0; d < 3; ++d )
-            result[0] += _x( p, d ) * point_set.gradient( p, i, j, k, d );
-        result[0] *= _multiplier;
+        result[0] = ( _x( p, Dim::I ) * sd.g[Dim::I][i] * sd.w[Dim::J][j] *
+                          sd.w[Dim::K][k] +
+
+                      _x( p, Dim::J ) * sd.w[Dim::I][i] * sd.g[Dim::J][j] *
+                          sd.w[Dim::K][k] +
+
+                      _x( p, Dim::K ) * sd.w[Dim::I][i] * sd.w[Dim::J][j] *
+                          sd.g[Dim::K][k] ) *
+                    _multiplier;
     }
 };
 
@@ -340,16 +369,21 @@ struct TensorDivergenceP2G
         static_assert( 3 == ViewType::Rank, "View must be of tensors" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, value_type *result ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, value_type *result ) const
     {
         for ( int d = 0; d < 3; ++d )
             result[d] = 0.0;
+
+        double rg[3] = {sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k],
+                        sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k],
+                        sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k]};
+
         for ( int d1 = 0; d1 < 3; ++d1 )
         {
-            auto mg = _multiplier * point_set.gradient( p, i, j, k, d1 );
+            auto mg = _multiplier * rg[d1];
             for ( int d0 = 0; d0 < 3; ++d0 )
                 result[d0] += mg * _x( p, d0, d1 );
         }
@@ -373,6 +407,9 @@ createTensorDivergenceP2G( const ViewType &x,
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
   for a given point at a given entity.
 
+  \tparam PointCoordinates Container type with view traits containing the 3-d
+  point coordinates. Will be indexed as (point,dim).
+
   \tparam ArrayScalar The scalar type used for the interpolated data.
 
   \tparam MeshScalar The scalar type used for the geometry/interpolation data.
@@ -385,25 +422,32 @@ createTensorDivergenceP2G( const ViewType &x,
 
   \tparam ArrayParams Parameters for the array type.
 
-  \param array The grid array to from the point data will be interpolated.
+  \param array The grid array from which the point data will be interpolated.
 
   \param halo The halo associated with the grid array. This hallo will be used
   to gather the array data before interpolation.
 
-  \param point_set The point set to use for interpolation.
+  \param points The points over which to perform the interpolation. Will be
+  indexed as (point,dim). The subset of indices in each point's interpolation
+  stencil must be contained within the local grid that will be used for the
+  interpolation
+
+  \param num_point The number of points. This is the size of the first
+  dimension of points.
+
+  \param Spline to use for interpolation.
 
   \param functor A functor that interpolates from a given entity to a given
   point.
 */
-template <class PointEvalFunctor, class ArrayScalar, class MeshScalar,
-          class EntityType, int SplineOrder, class DeviceType,
+template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
+          class MeshScalar, class EntityType, int SplineOrder, class DeviceType,
           class... ArrayParams>
-void g2p(
-    const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
-                ArrayParams...> &array,
-    const Halo<ArrayScalar, DeviceType> &halo,
-    const PointSet<MeshScalar, EntityType, SplineOrder, DeviceType> &point_set,
-    const PointEvalFunctor &functor )
+void g2p( const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
+                      ArrayParams...> &array,
+          const Halo<ArrayScalar, DeviceType> &halo,
+          const PointCoordinates &points, const std::size_t num_point,
+          Spline<SplineOrder>, const PointEvalFunctor &functor )
 {
     using array_type =
         Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>;
@@ -413,6 +457,10 @@ void g2p(
 
     using execution_space = typename DeviceType::execution_space;
 
+    // Create the local mesh.
+    auto local_mesh =
+        createLocalMesh<DeviceType>( *( array.layout()->localGrid() ) );
+
     // Gather data into the halo before interpolating.
     halo.gather( array );
 
@@ -421,25 +469,33 @@ void g2p(
 
     // Loop over points and interpolate from the grid.
     Kokkos::parallel_for(
-        "g2p", Kokkos::RangePolicy<execution_space>( 0, point_set.num_point ),
+        "g2p", Kokkos::RangePolicy<execution_space>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Create local gather values.
             ArrayScalar values[PointEvalFunctor::value_count];
 
+            // Get the point coordinates.
+            MeshScalar px[3] = {points( p, Dim::I ), points( p, Dim::J ),
+                                points( p, Dim::K )};
+
+            // Create the local spline data.
+            using sd_type = SplineData<MeshScalar, SplineOrder, EntityType>;
+            sd_type sd;
+            evaluateSpline( local_mesh, px, sd );
+
             // Loop over the point stencil and interpolate the grid data to
             // the points.
-            for ( int i = 0; i < point_set.ns; ++i )
-                for ( int j = 0; j < point_set.ns; ++j )
-                    for ( int k = 0; k < point_set.ns; ++k )
+            for ( int i = 0; i < sd_type::num_knot; ++i )
+                for ( int j = 0; j < sd_type::num_knot; ++j )
+                    for ( int k = 0; k < sd_type::num_knot; ++k )
                     {
                         for ( int d = 0; d < PointEvalFunctor::value_count;
                               ++d )
-                            values[d] = array_view(
-                                point_set.stencil( p, i, Dim::I ),
-                                point_set.stencil( p, j, Dim::J ),
-                                point_set.stencil( p, k, Dim::K ), d );
+                            values[d] =
+                                array_view( sd.s[Dim::I][i], sd.s[Dim::J][j],
+                                            sd.s[Dim::K][k], d );
 
-                        functor( point_set, p, i, j, k, values );
+                        functor( sd, p, i, j, k, values );
                     }
         } );
 }
@@ -474,14 +530,13 @@ struct ScalarValueG2P
         static_assert( 1 == ViewType::Rank, "View must be of scalars" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, const value_type *values ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, const value_type *values ) const
     {
-        _x( p ) += _multiplier * values[0] * point_set.value( p, i, Dim::I ) *
-                   point_set.value( p, j, Dim::J ) *
-                   point_set.value( p, k, Dim::K );
+        _x( p ) += _multiplier * values[0] * sd.w[Dim::I][i] * sd.w[Dim::J][j] *
+                   sd.w[Dim::K][k];
     }
 };
 
@@ -523,14 +578,13 @@ struct VectorValueG2P
         static_assert( 2 == ViewType::Rank, "View must be of vectors" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, const value_type *values ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, const value_type *values ) const
     {
-        value_type weight = _multiplier * point_set.value( p, i, Dim::I ) *
-                            point_set.value( p, j, Dim::J ) *
-                            point_set.value( p, k, Dim::K );
+        value_type weight =
+            _multiplier * sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k];
         for ( int d = 0; d < 3; ++d )
             _x( p, d ) += weight * values[d];
     }
@@ -574,14 +628,18 @@ struct ScalarGradientG2P
         static_assert( 2 == ViewType::Rank, "View must be of vectors" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, const value_type *values ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, const value_type *values ) const
     {
         auto mx = _multiplier * values[0];
-        for ( int d = 0; d < 3; ++d )
-            _x( p, d ) += mx * point_set.gradient( p, i, j, k, d );
+        _x( p, Dim::I ) +=
+            mx * sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k];
+        _x( p, Dim::J ) +=
+            mx * sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k];
+        _x( p, Dim::K ) +=
+            mx * sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k];
     }
 };
 
@@ -623,14 +681,18 @@ struct VectorGradientG2P
         static_assert( 3 == ViewType::Rank, "View must be of tensors" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, const value_type *values ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, const value_type *values ) const
     {
+        double rg[3] = {sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k],
+                        sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k],
+                        sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k]};
+
         for ( int d0 = 0; d0 < 3; ++d0 )
         {
-            auto mg = _multiplier * point_set.gradient( p, i, j, k, d0 );
+            auto mg = _multiplier * rg[d0];
             for ( int d1 = 0; d1 < 3; ++d1 )
                 _x( p, d0, d1 ) += mg * values[d1];
         }
@@ -675,15 +737,20 @@ struct VectorDivergenceG2P
         static_assert( 1 == ViewType::Rank, "View must be of scalars" );
     }
 
-    template <class PointSetType>
+    template <class SplineDataType>
     KOKKOS_INLINE_FUNCTION void
-    operator()( const PointSetType &point_set, const int p, const int i,
-                const int j, const int k, const value_type *values ) const
+    operator()( const SplineDataType &sd, const int p, const int i, const int j,
+                const int k, const value_type *values ) const
     {
-        value_type v_div = 0.0;
-        for ( int d = 0; d < 3; ++d )
-            v_div += point_set.gradient( p, i, j, k, d ) * values[d];
-        _x( p ) += v_div * _multiplier;
+        _x( p ) += ( values[Dim::I] * sd.g[Dim::I][i] * sd.w[Dim::J][j] *
+                         sd.w[Dim::K][k] +
+
+                     values[Dim::J] * sd.w[Dim::I][i] * sd.g[Dim::J][j] *
+                         sd.w[Dim::K][k] +
+
+                     values[Dim::K] * sd.w[Dim::I][i] * sd.w[Dim::J][j] *
+                         sd.g[Dim::K][k] ) *
+                   _multiplier;
     }
 };
 
