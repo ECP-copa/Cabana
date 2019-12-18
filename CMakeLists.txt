@@ -21,11 +21,20 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 # find dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+
 find_package(MPI REQUIRED)
+
 find_package(Kokkos REQUIRED)
+
 find_package(HYPRE)
 if(HYPRE_FOUND)
   set(CAJITA_HAVE_HYPRE ON)
+endif()
+
+find_package(FFTW)
+find_package(HEFFTE)
+if(HEFFTE_FOUND)
+  set(CAJITA_HAVE_HEFFTE ON)
 endif()
 
 # set the configure files
@@ -83,6 +92,18 @@ install(FILES
 if(HYPRE_FOUND)
   install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHYPRE.cmake
+    DESTINATION lib/cmake/Cajita )
+endif()
+
+if(HEFFTE_FOUND)
+  if(FFTW_FOUND)
+    install(FILES
+      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindFFTW.cmake
+      DESTINATION lib/cmake/Cajita )
+  endif()
+
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHEFFTE.cmake
     DESTINATION lib/cmake/Cajita )
 endif()
 

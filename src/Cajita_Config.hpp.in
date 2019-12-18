@@ -13,5 +13,6 @@
 #define CAJITA_CONFIG_HPP
 
 #cmakedefine CAJITA_HAVE_HYPRE
+#cmakedefine CAJITA_HAVE_HEFFTE
 
 #endif

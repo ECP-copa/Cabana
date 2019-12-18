@@ -73,6 +73,12 @@ if(HYPRE_FOUND)
     )
 endif()
 
+if(CAJITA_HAVE_HEFFTE)
+  list(APPEND MPI_TESTS
+    FastFourierTransform
+    )
+endif()
+
 Cajita_add_tests(NAMES ${SERIAL_TESTS})
 
 Cajita_add_tests(MPI NAMES ${MPI_TESTS})

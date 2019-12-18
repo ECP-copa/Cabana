@@ -1,0 +1,40 @@
+find_package(PkgConfig QUIET)
+pkg_check_modules(PC_HEFFTE QUIET heffte)
+
+find_path(HEFFTE_INCLUDE_DIR
+  NAMES heffte_fft3d.h
+  PATHS ${PC_HEFFTE_INCLUDE_DIRS})
+find_library(HEFFTE_LIBRARY
+  NAMES heffte
+  PATHS ${PC_HEFFTE_LIBRARY_DIRS})
+find_library(HEFFTE_GPU_LIBRARY
+  NAMES heffte_gpu
+  PATHS ${PC_HEFFTE_LIBRARY_DIRS})
+
+include(FindPackageHandleStandardArgs)
+
+find_package_handle_standard_args(HEFFTE
+  FOUND_VAR HEFFTE_FOUND
+  REQUIRED_VARS
+    HEFFTE_INCLUDE_DIR
+  VERSION_VAR HEFFTE_VERSION
+)
+
+if(HEFFTE_INCLUDE_DIR AND HEFFTE_LIBRARY)
+  add_library(HEFFTE::heffte UNKNOWN IMPORTED)
+  set_target_properties(HEFFTE::heffte PROPERTIES
+    IMPORTED_LOCATION ${HEFFTE_LIBRARY}
+    INTERFACE_INCLUDE_DIRECTORIES ${HEFFTE_INCLUDE_DIR})
+endif()
+
+if(HEFFTE_INCLUDE_DIR AND HEFFTE_GPU_LIBRARY)
+  add_library(HEFFTE::heffte_gpu UNKNOWN IMPORTED)
+  set_target_properties(HEFFTE::heffte_gpu PROPERTIES
+    IMPORTED_LOCATION ${HEFFTE_GPU_LIBRARY}
+    INTERFACE_INCLUDE_DIRECTORIES ${HEFFTE_INCLUDE_DIR})
+endif()
+
+mark_as_advanced(
+  HEFFTE_INCLUDE_DIR
+  HEFFTE_LIBRARY
+  HEFFTE_GPU_LIBRARY )

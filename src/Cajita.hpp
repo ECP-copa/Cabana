@@ -35,4 +35,8 @@
 #include <Cajita_HypreStructuredSolver.hpp>
 #endif
 
+#ifdef CAJITA_HAVE_HEFFTE
+#include <Cajita_FastFourierTransform.hpp>
+#endif
+
 #endif // end CAJITA_HPP
