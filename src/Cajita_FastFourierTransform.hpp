@@ -168,9 +168,9 @@ class FastFourierTransform
             throw std::logic_error(
                 "Only 1 complex value per entity allowed in FFT" );
 
-        // Set the memory type.
-        _fft.mem_type =
-            HeffteMemoryTraits<typename DeviceType::memory_space>::value;
+        // Set the memory type. For now we will just do FFTs on the host until
+        // we find the HEFFTE GPU memory bug.
+        _fft.mem_type = HEFFTE_MEM_CPU;
 
         // Let the fft allocate its own send/receive buffers.
         _fft.memoryflag = 1;
@@ -291,8 +291,17 @@ class FastFourierTransform
                 _fft_work( iw, jw, kw, 1 ) = x_view( i, j, k, 0 ).imag();
             } );
 
+        // Copy to the host. Once we fix the HEFFTE GPU memory bug we wont
+        // need this.
+        auto fft_work_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _fft_work );
+
         // Perform FFT.
-        _fft.compute( _fft_work.data(), _fft_work.data(), flag );
+        _fft.compute( fft_work_mirror.data(), fft_work_mirror.data(), flag );
+
+        // Copy back to the work array. Once we fix the HEFFTE GPU memory bug
+        // we wont need this.
+        Kokkos::deep_copy( _fft_work, fft_work_mirror );
 
         // Copy back to output array.
         Kokkos::parallel_for(

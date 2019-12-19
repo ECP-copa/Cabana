@@ -107,10 +107,12 @@ void forwardReverseTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( fast_fourier_transform, memory_test )
-{
-    memoryTest();
-}
+// NOTE: This test exposes the GPU FFT memory bug in HEFFTE. Re-enable this
+// when we enable GPU FFTs to test the bug.
+// TEST( fast_fourier_transform, memory_test )
+// {
+//     memoryTest();
+// }
 
 //---------------------------------------------------------------------------//
 TEST( fast_fourier_transform, forward_reverse_test )
