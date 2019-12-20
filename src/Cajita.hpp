@@ -25,7 +25,7 @@
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_Partitioner.hpp>
-#include <Cajita_PointSet.hpp>
+#include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
 #include <Cajita_Version.hpp>
