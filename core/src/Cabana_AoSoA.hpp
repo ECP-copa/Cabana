@@ -371,7 +371,8 @@ class AoSoA
                 Kokkos::subview(
                     resized_data,
                     Kokkos::pair<size_type, size_type>( 0, _num_soa ) ),
-                _data );
+                Kokkos::subview( _data, Kokkos::pair<size_type, size_type>(
+                                            0, _num_soa ) ) );
         _data = resized_data;
     }
 
@@ -405,7 +406,9 @@ class AoSoA
             _num_soa );
         if ( _num_soa > 0 )
             Kokkos::deep_copy(
-                resized_data,
+                Kokkos::subview(
+                    resized_data,
+                    Kokkos::pair<size_type, size_type>( 0, _num_soa ) ),
                 Kokkos::subview( _data, Kokkos::pair<size_type, size_type>(
                                             0, _num_soa ) ) );
         _data = resized_data;
