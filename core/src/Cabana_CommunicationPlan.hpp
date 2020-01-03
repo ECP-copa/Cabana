@@ -287,9 +287,16 @@ class CommunicationPlan
       \return The MPI communicator for this plan.
     */
     CommunicationPlan( MPI_Comm comm )
-        : _comm( comm )
     {
+        // Duplicate the communicator so this object has it's own
+        // communication space.
+        MPI_Comm_dup( comm, &_comm );
     }
+
+    /*!
+      \brief Destructor.
+    */
+    virtual ~CommunicationPlan() { MPI_Comm_free( &_comm ); }
 
     /*!
       \brief Get the MPI communicator.
@@ -411,9 +418,6 @@ class CommunicationPlan
       the data migration. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the communication plan.
 
-      \param mpi_tag The MPI tag to use for non-blocking communication in the
-      communication plan generation.
-
       \param neighbor_ranks List of ranks this rank will send to and receive
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
@@ -435,8 +439,7 @@ class CommunicationPlan
     template <class ViewType>
     Kokkos::View<size_type *, device_type>
     createFromExportsAndTopology( const ViewType &element_export_ranks,
-                                  const std::vector<int> &neighbor_ranks,
-                                  const int mpi_tag = 1221 )
+                                  const std::vector<int> &neighbor_ranks )
     {
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
@@ -452,6 +455,10 @@ class CommunicationPlan
         // Get the MPI rank we are currently on.
         int my_rank = -1;
         MPI_Comm_rank( _comm, &my_rank );
+
+        // Pick an mpi tag for communication. This object has it's own
+        // communication space so any mpi tag will do.
+        const int mpi_tag = 1221;
 
         // If we are sending to ourself put that one first in the neighbor
         // list.
@@ -535,9 +542,6 @@ class CommunicationPlan
       the data migration. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the communication plan.
 
-      \param mpi_tag The MPI tag to use for non-blocking communication in the
-      communication plan generation.
-
       \return The location of each export element in the send buffer for its
       given neighbor.
 
@@ -553,8 +557,7 @@ class CommunicationPlan
     */
     template <class ViewType>
     Kokkos::View<size_type *, device_type>
-    createFromExportsOnly( const ViewType &element_export_ranks,
-                           const int mpi_tag = 1221 )
+    createFromExportsOnly( const ViewType &element_export_ranks )
     {
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
@@ -566,6 +569,10 @@ class CommunicationPlan
         // Get the MPI rank we are currently on.
         int my_rank = -1;
         MPI_Comm_rank( _comm, &my_rank );
+
+        // Pick an mpi tag for communication. This object has it's own
+        // communication space so any mpi tag will do.
+        const int mpi_tag = 1221;
 
         // Count the number of sends this rank will do to other ranks. Keep
         // track of which slot we get in our neighbor's send buffer.
