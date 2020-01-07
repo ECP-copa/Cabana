@@ -221,6 +221,17 @@ void testAoSoA()
     EXPECT_EQ( aosoa.arraySize( 0 ), int( 16 ) );
     EXPECT_EQ( aosoa.arraySize( 1 ), int( 13 ) );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+
+    // Now resize smaller, then larger again to confirm underlying
+    // Kokkos::deep_copy will work without deprecated code.
+    aosoa.resize( 15 );
+    aosoa.resize( 47 );
+    EXPECT_EQ( aosoa.size(), int( 47 ) );
+    EXPECT_EQ( aosoa.capacity(), int( 48 ) );
+    EXPECT_EQ( aosoa.numSoA(), int( 3 ) );
+    EXPECT_EQ( aosoa.arraySize( 0 ), int( 16 ) );
+    EXPECT_EQ( aosoa.arraySize( 1 ), int( 16 ) );
+    EXPECT_EQ( aosoa.arraySize( 2 ), int( 15 ) );
 }
 
 //---------------------------------------------------------------------------//
