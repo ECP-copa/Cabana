@@ -52,18 +52,21 @@ struct Face;
 template <>
 struct Face<Dim::I>
 {
+    static constexpr int dim = Dim::I;
 };
 
 // J-face tag.
 template <>
 struct Face<Dim::J>
 {
+    static constexpr int dim = Dim::J;
 };
 
 // K-face tag.
 template <>
 struct Face<Dim::K>
 {
+    static constexpr int dim = Dim::K;
 };
 
 // Mesh edge tags.
@@ -74,64 +77,81 @@ struct Edge;
 template <>
 struct Edge<Dim::I>
 {
+    static constexpr int dim = Dim::I;
 };
 
 // J-edge tag.
 template <>
 struct Edge<Dim::J>
 {
+    static constexpr int dim = Dim::J;
 };
 
 // K-edge tag.
 template <>
 struct Edge<Dim::K>
 {
+    static constexpr int dim = Dim::K;
 };
 
-// Type checker.
+// Type checkers.
+template <class T>
+struct isCell : public std::false_type
+{
+};
+
+template <>
+struct isCell<Cell> : public std::true_type
+{
+};
+
+template <>
+struct isCell<const Cell> : public std::true_type
+{
+};
 
 template <class T>
-struct isEntityType : public std::false_type
+struct isNode : public std::false_type
 {
 };
 
 template <>
-struct isEntityType<Cell> : public std::true_type
+struct isNode<Node> : public std::true_type
 {
 };
 
 template <>
-struct isEntityType<const Cell> : public std::true_type
+struct isNode<const Node> : public std::true_type
 {
 };
 
-template <>
-struct isEntityType<Node> : public std::true_type
-{
-};
-
-template <>
-struct isEntityType<const Node> : public std::true_type
+template <class T>
+struct isFace : public std::false_type
 {
 };
 
 template <int Dir>
-struct isEntityType<Face<Dir>> : public std::true_type
+struct isFace<Face<Dir>> : public std::true_type
 {
 };
 
 template <int Dir>
-struct isEntityType<const Face<Dir>> : public std::true_type
+struct isFace<const Face<Dir>> : public std::true_type
+{
+};
+
+template <class T>
+struct isEdge : public std::false_type
 {
 };
 
 template <int Dir>
-struct isEntityType<Edge<Dir>> : public std::true_type
+struct isEdge<Edge<Dir>> : public std::true_type
 {
 };
 
 template <int Dir>
-struct isEntityType<const Edge<Dir>> : public std::true_type
+struct isEdge<const Edge<Dir>> : public std::true_type
 {
 };
 

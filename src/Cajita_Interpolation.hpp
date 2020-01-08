@@ -462,7 +462,7 @@ struct ScalarValueG2P
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type result;
         G2P::value( view, sd, result );
@@ -505,7 +505,7 @@ struct VectorValueG2P
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type result[3];
         G2P::value( view, sd, result );
@@ -549,7 +549,7 @@ struct ScalarGradientG2P
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type result[3];
         G2P::gradient( view, sd, result );
@@ -593,7 +593,7 @@ struct VectorGradientG2P
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type result[3][3];
         G2P::gradient( view, sd, result );
@@ -638,7 +638,7 @@ struct VectorDivergenceG2P
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type result;
         G2P::divergence( view, sd, result );
@@ -772,7 +772,7 @@ struct ScalarValueP2G
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type point_data = _x( p ) * _multiplier;
         P2G::value( point_data, sd, view );
@@ -814,7 +814,7 @@ struct VectorValueP2G
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type point_data[3];
         for ( int d = 0; d < 3; ++d )
@@ -858,7 +858,7 @@ struct ScalarGradientP2G
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type point_data = _x( p ) * _multiplier;
         P2G::gradient( point_data, sd, view );
@@ -900,7 +900,7 @@ struct VectorDivergenceP2G
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type point_data[3];
         for ( int d = 0; d < 3; ++d )
@@ -944,7 +944,7 @@ struct TensorDivergenceP2G
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
                                             const int p,
-                                            const GridViewType view ) const
+                                            const GridViewType &view ) const
     {
         value_type point_data[3][3];
         for ( int d0 = 0; d0 < 3; ++d0 )
