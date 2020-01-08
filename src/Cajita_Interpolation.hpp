@@ -202,6 +202,29 @@ divergence( const ViewType &view, const SplineDataType &sd,
 namespace P2G
 {
 //---------------------------------------------------------------------------//
+// Scatter-View type checker.
+template <class T>
+struct is_scatter_view : public std::false_type
+{
+};
+
+template <typename DataType, typename Layout, typename ExecSpace, int Op,
+          int duplication, int contribution>
+struct is_scatter_view<Kokkos::Experimental::ScatterView<
+    DataType, Layout, ExecSpace, Op, duplication, contribution>>
+    : public std::true_type
+{
+};
+
+template <typename DataType, typename Layout, typename ExecSpace, int Op,
+          int duplication, int contribution>
+struct is_scatter_view<const Kokkos::Experimental::ScatterView<
+    DataType, Layout, ExecSpace, Op, duplication, contribution>>
+    : public std::true_type
+{
+};
+
+//---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a scalar value to the grid.
   \param point_data The scalar value to at the point interpolate to the grid.
@@ -215,12 +238,16 @@ value( const PointDataType &point_data, const SplineDataType &sd,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
+    static_assert( is_scatter_view<ViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
     for ( int i = 0; i < SplineDataType::num_knot; ++i )
         for ( int j = 0; j < SplineDataType::num_knot; ++j )
             for ( int k = 0; k < SplineDataType::num_knot; ++k )
-                view( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k], 0 ) +=
-                    point_data * sd.w[Dim::I][i] * sd.w[Dim::J][j] *
-                    sd.w[Dim::K][k];
+                view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
+                             0 ) += point_data * sd.w[Dim::I][i] *
+                                    sd.w[Dim::J][j] * sd.w[Dim::K][k];
 }
 
 //---------------------------------------------------------------------------//
@@ -237,13 +264,18 @@ value( const PointDataType point_data[3], const SplineDataType &sd,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
+    static_assert( is_scatter_view<ViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
     for ( int i = 0; i < SplineDataType::num_knot; ++i )
         for ( int j = 0; j < SplineDataType::num_knot; ++j )
             for ( int k = 0; k < SplineDataType::num_knot; ++k )
                 for ( int d = 0; d < 3; ++d )
-                    view( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
-                          d ) += point_data[d] * sd.w[Dim::I][i] *
-                                 sd.w[Dim::J][j] * sd.w[Dim::K][k];
+                    view_access( sd.s[Dim::I][i], sd.s[Dim::J][j],
+                                 sd.s[Dim::K][k], d ) +=
+                        point_data[d] * sd.w[Dim::I][i] * sd.w[Dim::J][j] *
+                        sd.w[Dim::K][k];
 }
 
 //---------------------------------------------------------------------------//
@@ -258,21 +290,25 @@ KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
                                       const SplineDataType &sd,
                                       const ViewType &view )
 {
+    static_assert( is_scatter_view<ViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
     for ( int i = 0; i < SplineDataType::num_knot; ++i )
         for ( int j = 0; j < SplineDataType::num_knot; ++j )
             for ( int k = 0; k < SplineDataType::num_knot; ++k )
             {
-                view( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
-                      Dim::I ) += point_data * sd.g[Dim::I][i] *
-                                  sd.w[Dim::J][j] * sd.w[Dim::K][k];
+                view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
+                             Dim::I ) += point_data * sd.g[Dim::I][i] *
+                                         sd.w[Dim::J][j] * sd.w[Dim::K][k];
 
-                view( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
-                      Dim::J ) += point_data * sd.w[Dim::I][i] *
-                                  sd.g[Dim::J][j] * sd.w[Dim::K][k];
+                view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
+                             Dim::J ) += point_data * sd.w[Dim::I][i] *
+                                         sd.g[Dim::J][j] * sd.w[Dim::K][k];
 
-                view( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
-                      Dim::K ) += point_data * sd.w[Dim::I][i] *
-                                  sd.w[Dim::J][j] * sd.g[Dim::K][k];
+                view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
+                             Dim::K ) += point_data * sd.w[Dim::I][i] *
+                                         sd.w[Dim::J][j] * sd.g[Dim::K][k];
             }
 }
 
@@ -290,6 +326,10 @@ divergence( const PointDataType point_data[3], const SplineDataType &sd,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
+    static_assert( is_scatter_view<ViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
     for ( int i = 0; i < SplineDataType::num_knot; ++i )
         for ( int j = 0; j < SplineDataType::num_knot; ++j )
             for ( int k = 0; k < SplineDataType::num_knot; ++k )
@@ -303,8 +343,8 @@ divergence( const PointDataType point_data[3], const SplineDataType &sd,
                                        point_data[Dim::K] * sd.w[Dim::I][i] *
                                            sd.w[Dim::J][j] * sd.g[Dim::K][k];
 
-                view( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k], 0 ) +=
-                    result;
+                view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
+                             0 ) += result;
             }
 }
 
@@ -322,6 +362,10 @@ divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
+    static_assert( is_scatter_view<ViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
     for ( int i = 0; i < SplineDataType::num_knot; ++i )
         for ( int j = 0; j < SplineDataType::num_knot; ++j )
             for ( int k = 0; k < SplineDataType::num_knot; ++k )
@@ -334,8 +378,9 @@ divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
                 for ( int d1 = 0; d1 < 3; ++d1 )
                 {
                     for ( int d0 = 0; d0 < 3; ++d0 )
-                        view( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
-                              d0 ) += rg[d1] * point_data[d0][d1];
+                        view_access( sd.s[Dim::I][i], sd.s[Dim::J][j],
+                                     sd.s[Dim::K][k], d0 ) +=
+                            rg[d1] * point_data[d0][d1];
                 }
             }
 }
@@ -735,8 +780,7 @@ void p2g( const PointEvalFunctor &functor, const PointCoordinates &points,
             evaluateSpline( local_mesh, px, sd );
 
             // Evaluate the functor.
-            auto array_access = array_sv.access();
-            functor( sd, p, array_access );
+            functor( sd, p, array_sv );
         } );
     Kokkos::Experimental::contribute( array_view, array_sv );
 
