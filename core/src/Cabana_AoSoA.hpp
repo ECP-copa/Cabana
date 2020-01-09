@@ -114,7 +114,7 @@ class AoSoA
 
     // Host mirror type.
     using host_mirror_type =
-        AoSoA<DataTypes, Kokkos::HostSpace, VectorLength, MemoryTraits>;
+        AoSoA<DataTypes, Kokkos::HostSpace, VectorLength>;
 
     // Member data types.
     static_assert( is_member_types<DataTypes>::value,
