@@ -549,10 +549,14 @@ class Slice
     friend class Slice<DataType, DeviceType, RandomAccessMemory, VectorLength,
                        Stride>;
 
-    // Data rank.
+    // Equivalent Kokkos view rank. This rank assumes that the struct and
+    // array dimension are merged. For the true rank of the raw AoSoA data use
+    // the rank() function below which will account for the extra dimension
+    // from separate struct and array indices. This enumeration is for
+    // compatibility with Kokkos views.
     enum
     {
-        Rank = std::rank<DataType>::value
+        Rank = std::rank<DataType>::value + 1
     };
 
   public:
