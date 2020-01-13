@@ -361,6 +361,9 @@ struct SplineData
     static constexpr int num_knot = spline_type::num_knot;
     using entity_type = EntityType;
 
+    // Physical cell size.
+    Scalar dx;
+
     // Logical position.
     Scalar x[3];
 
@@ -386,7 +389,9 @@ evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
     Scalar low_x[3];
     int low_id[3] = {0, 0, 0};
     local_mesh.coordinates( EntityType(), low_id, low_x );
-    Scalar rdx = 1.0 / local_mesh.measure( Edge<Dim::I>(), low_id );
+
+    data.dx = local_mesh.measure( Edge<Dim::I>(), low_id );
+    Scalar rdx = 1.0 / data.dx;
 
     for ( int d = 0; d < 3; ++d )
     {
