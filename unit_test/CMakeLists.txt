@@ -67,6 +67,7 @@ set(MPI_TESTS
   LocalMesh
   Array
   Halo
+  ReferenceStructuredSolver
   SplineEvaluation
   Interpolation
   BovWriter
@@ -74,7 +75,7 @@ set(MPI_TESTS
 
 if(HYPRE_FOUND)
   list(APPEND MPI_TESTS
-    StructuredSolver
+    HypreStructuredSolver
     )
 endif()
 

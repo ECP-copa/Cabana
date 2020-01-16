@@ -14,7 +14,7 @@
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
 #include <Cajita_Array.hpp>
-#include <Cajita_StructuredSolver.hpp>
+#include <Cajita_HypreStructuredSolver.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -61,7 +61,7 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
 
     // Create a solver.
     auto solver =
-        createStructuredSolver<double,TEST_DEVICE>( solver_type, *vector_layout );
+        createHypreStructuredSolver<double,TEST_DEVICE>( solver_type, *vector_layout );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int,3> > stencil =
@@ -101,7 +101,7 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
     if ( "none" != precond_type )
     {
         auto preconditioner =
-            createStructuredSolver<double,TEST_DEVICE>( precond_type, *vector_layout, true );
+            createHypreStructuredSolver<double,TEST_DEVICE>( precond_type, *vector_layout, true );
         solver->setPreconditioner( preconditioner );
     }
 
@@ -116,7 +116,7 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
     ArrayOp::assign( *lhs_ref, 0.0, Own() );
 
     auto jacobi_ref =
-        createStructuredSolver<double,TEST_DEVICE>( "Jacobi", *vector_layout );
+        createHypreStructuredSolver<double,TEST_DEVICE>( "Jacobi", *vector_layout );
 
     jacobi_ref->setMatrixStencil( stencil );
     jacobi_ref->setMatrixValues( *matrix_entries );
