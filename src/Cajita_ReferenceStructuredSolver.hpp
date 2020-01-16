@@ -587,7 +587,7 @@ class ReferenceConjugateGradient :
         {
             // Compse a set of the neighbor ranks based on the stencil.
             for ( int d = 0; d < 3; ++d )
-                neighbor[d] = ( s[d] > 0 ) ? 1 : 0;
+                neighbor[d] = ( s[d] == 0 ) ? 0 : s[d]/std::abs(s[d]);
             neighbor_set.emplace( neighbor );
 
             // Compute the width of the halo needed to apply the stencil.
