@@ -31,7 +31,6 @@ if(HYPRE_FOUND)
   set(CAJITA_HAVE_HYPRE ON)
 endif()
 
-find_package(FFTW)
 find_package(HEFFTE)
 if(HEFFTE_FOUND)
   set(CAJITA_HAVE_HEFFTE ON)
@@ -92,18 +91,6 @@ install(FILES
 if(HYPRE_FOUND)
   install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHYPRE.cmake
-    DESTINATION lib/cmake/Cajita )
-endif()
-
-if(HEFFTE_FOUND)
-  if(FFTW_FOUND)
-    install(FILES
-      ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindFFTW.cmake
-      DESTINATION lib/cmake/Cajita )
-  endif()
-
-  install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHEFFTE.cmake
     DESTINATION lib/cmake/Cajita )
 endif()
 
