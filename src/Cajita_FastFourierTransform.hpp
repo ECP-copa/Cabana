@@ -220,8 +220,8 @@ class FastFourierTransform
                     permute, fftsize, sendsize, recvsize );
 
         // Check the size.
-        if ( fftsize != (int)entity_space.size() )
-            throw std::logic_error( "HEFFTE expected allocation size different "
+        if ( fftsize < (int)entity_space.size() )
+            throw std::logic_error( "HEFFTE expected allocation size smaller "
                                     "than local grid size" );
 
         // Allocate the work array. The work array only contains owned data.
