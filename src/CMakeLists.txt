@@ -51,12 +51,12 @@ if(HYPRE_FOUND)
 endif()
 
 if(HEFFTE_FOUND)
-  if (HEFFTE_LIBRARY)
+  if (TARGET HEFFTE::heffte)
     target_link_libraries(Cajita HEFFTE::heffte)
 
   endif()
 
-  if (HEFFTE_GPU_LIBRARY)
+  if (HEFFTE::heffte_gpu)
     target_link_libraries(Cajita HEFFTE::heffte_gpu)
   endif()
 
