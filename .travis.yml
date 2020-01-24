@@ -82,7 +82,7 @@ addons:
       - libfftw3-dev
 
 script:
-  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror} -Wno-gnu-zero-variadic-macro-arguments"
+  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/hypre;$HOME/heffte"
