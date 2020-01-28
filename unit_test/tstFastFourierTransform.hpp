@@ -18,6 +18,7 @@
 #include <Cajita_FastFourierTransform.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Random.hpp>
 
 #include <gtest/gtest.h>
 
@@ -61,20 +62,33 @@ void forwardReverseTest()
                                          partitioner );
 
     // Create a local grid.
-    auto local_mesh = createLocalGrid( global_grid, 0 );
-    auto owned_space = local_mesh->indexSpace(Own(),Cell(),Local());
+    auto local_grid = createLocalGrid( global_grid, 0 );
+    auto owned_space = local_grid->indexSpace(Own(),Cell(),Local());
+    auto ghosted_space = local_grid->indexSpace(Ghost(),Cell(),Local());
 
-    // Create the LHS.
-    auto vector_layout = createArrayLayout( local_mesh, 1, Cell() );
+    // Create a random vector to transform..
+    auto vector_layout = createArrayLayout( local_grid, 1, Cell() );
     auto lhs = createArray<Kokkos::complex<double>,TEST_DEVICE>( "lhs", vector_layout );
     auto lhs_view = lhs->view();
+    auto lhs_host = createArray<Kokkos::complex<double>,typename decltype(lhs_view)::array_layout,Kokkos::HostSpace>( "lhs_host", vector_layout );
+    auto lhs_host_view = lhs_host->view();
+    uint64_t seed = global_grid->blockId() + ( 19383747 % (global_grid->blockId() + 1) );
+    using rnd_type = Kokkos::Random_XorShift64_Pool<Kokkos::HostSpace>;
+    rnd_type pool;
+    pool.init( seed, ghosted_space.size() );
     Kokkos::parallel_for(
         "fill_lhs",
-        createExecutionPolicy(owned_space,TEST_EXECSPACE()),
+        createExecutionPolicy(owned_space,Kokkos::Serial()),
         KOKKOS_LAMBDA( const int i, const int j, const int k ){
-            lhs_view(i,j,k,0).real( 1.1 );
-            lhs_view(i,j,k,0).imag( -2.5 );
+            auto rand = pool.get_state( i + j + k );
+            lhs_host_view(i,j,k,0).real() =
+                Kokkos::rand<decltype(rand),double>::draw( rand, 0.0, 1.0 );
+            lhs_host_view(i,j,k,0).imag() =
+                Kokkos::rand<decltype(rand),double>::draw( rand, 0.0, 1.0 );
         });
+
+    // Copy to the device.
+    Kokkos::deep_copy( lhs_view, lhs_host_view );
 
     // Create an FFT
     auto fft = createFastFourierTransform<double,TEST_DEVICE>(
@@ -87,7 +101,7 @@ void forwardReverseTest()
     fft->reverse( *lhs );
 
     // Check the results.
-    auto lhs_host = Kokkos::create_mirror_view_and_copy(
+    auto lhs_result = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), lhs->view() );
     for ( int i = owned_space.min(Dim::I);
           i < owned_space.max(Dim::I);
@@ -99,8 +113,8 @@ void forwardReverseTest()
                   k < owned_space.max(Dim::K);
                   ++k )
             {
-                EXPECT_EQ( lhs_host(i,j,k,0).real(), 1.1 );
-                EXPECT_EQ( lhs_host(i,j,k,0).imag(), -2.5 );
+                EXPECT_FLOAT_EQ( lhs_host_view(i,j,k,0).real(), lhs_result(i,j,k,0).real() );
+                EXPECT_FLOAT_EQ( lhs_host_view(i,j,k,0).imag(), lhs_result(i,j,k,0).imag() );
             }
 }
 

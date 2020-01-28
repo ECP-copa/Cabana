@@ -207,9 +207,9 @@ class FastFourierTransform
 
         // Get the high corner of the global index space on this rank.
         std::array<int, 3> global_high = {
-            global_low[Dim::K] + local_num_entity[Dim::K] - 1,
+            global_low[Dim::I] + local_num_entity[Dim::I] - 1,
             global_low[Dim::J] + local_num_entity[Dim::J] - 1,
-            global_low[Dim::I] + local_num_entity[Dim::I] - 1};
+            global_low[Dim::K] + local_num_entity[Dim::K] - 1};
 
         // Setup the fft.
         int permute = 0;
