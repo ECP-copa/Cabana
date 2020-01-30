@@ -76,16 +76,22 @@ void forwardReverseTest()
     using rnd_type = Kokkos::Random_XorShift64_Pool<Kokkos::HostSpace>;
     rnd_type pool;
     pool.init( seed, ghosted_space.size() );
-    Kokkos::parallel_for(
-        "fill_lhs",
-        createExecutionPolicy(owned_space,Kokkos::Serial()),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ){
-            auto rand = pool.get_state( i + j + k );
-            lhs_host_view(i,j,k,0).real() =
-                Kokkos::rand<decltype(rand),double>::draw( rand, 0.0, 1.0 );
-            lhs_host_view(i,j,k,0).imag() =
-                Kokkos::rand<decltype(rand),double>::draw( rand, 0.0, 1.0 );
-        });
+    for ( int i = owned_space.min(Dim::I);
+          i < owned_space.max(Dim::I);
+          ++i )
+        for ( int j = owned_space.min(Dim::J);
+              j < owned_space.max(Dim::J);
+              ++j )
+            for ( int k = owned_space.min(Dim::K);
+                  k < owned_space.max(Dim::K);
+                  ++k )
+            {
+                auto rand = pool.get_state( i + j + k );
+                lhs_host_view(i,j,k,0).real() =
+                    Kokkos::rand<decltype(rand),double>::draw( rand, 0.0, 1.0 );
+                lhs_host_view(i,j,k,0).imag() =
+                    Kokkos::rand<decltype(rand),double>::draw( rand, 0.0, 1.0 );
+            }
 
     // Copy to the device.
     Kokkos::deep_copy( lhs_view, lhs_host_view );
