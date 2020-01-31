@@ -67,7 +67,6 @@ set(MPI_TESTS
   LocalMesh
   Array
   Halo
-  ReferenceStructuredSolver
   SplineEvaluation
   Interpolation
   BovWriter

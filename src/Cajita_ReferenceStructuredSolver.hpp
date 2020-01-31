@@ -33,7 +33,7 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Reference preconditioned structured solver interface for scalar fields.
+// Reference preconditioned structured solver interface.
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
 class ReferenceStructuredSolver
 {
@@ -118,7 +118,7 @@ class ReferenceStructuredSolver
 };
 
 //---------------------------------------------------------------------------//
-// Reference structured preconditioned conjugate gradient implementation.
+// Reference structured preconditioned block conjugate gradient implementation.
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
 class ReferenceConjugateGradient :
         public ReferenceStructuredSolver<Scalar,EntityType,MeshType,DeviceType>
