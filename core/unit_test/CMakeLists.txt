@@ -3,12 +3,8 @@ if(NOT Cabana_ENABLE_TESTING)
   return()
 endif()
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_PROJECT_BINARY_DIR}/include)
-include_directories(${CMAKE_PROJECT_BINARY_DIR}/googletest-src/googletest/include)
-
 set(gtest_args --gtest_color=yes)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
 ##--------------------------------------------------------------------------##
 ## General tests.
@@ -44,7 +40,7 @@ macro(Cabana_add_tests)
         file(APPEND ${_file} "#include <tst${_test}.hpp>\n")
         set(_target ${_test}_test_${_device})
         add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
-        target_include_directories(${_target} PUBLIC ${_dir})
+        target_include_directories(${_target} PUBLIC ${_dir} ${CMAKE_CURRENT_SOURCE_DIR})
         target_link_libraries(${_target} cabanacore gtest)
         if(CABANA_UNIT_TEST_MPI)
           foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})

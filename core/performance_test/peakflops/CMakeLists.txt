@@ -3,12 +3,8 @@ if(NOT Cabana_ENABLE_TESTING)
   return()
 endif()
 
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_PROJECT_BINARY_DIR}/include)
-include_directories(${CMAKE_PROJECT_BINARY_DIR}/googletest-src/googletest/include)
-
 set(gtest_args --gtest_color=yes)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
 set(Cabana_PERFORMANCE_EXPECTED_FLOPS "" CACHE STRING "Value for expected flops in performance tests")
 set(Cabana_PERFORMANCE_ERROR_MARGIN "" CACHE STRING "Error margin to use in performance tests")
