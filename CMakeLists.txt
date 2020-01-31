@@ -13,8 +13,7 @@ set(PROJECT_VERSION "0.3.0-dev")
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        release-1.10.0
+  URL https://github.com/google/googletest/archive/release-1.10.0.tar.gz
 )
 FetchContent_GetProperties(googletest)
 if(NOT googletest_POPULATED)
