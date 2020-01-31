@@ -1,8 +1,3 @@
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-include_directories(${CMAKE_PROJECT_BINARY_DIR}/include)
-include_directories(${CMAKE_PROJECT_BINARY_DIR}/googletest-src/googletest/include)
-
 set(gtest_args --gtest_color=yes)
 
 set(CAJITA_SUPPORTED_DEVICES Serial OpenMP Cuda)
@@ -32,7 +27,7 @@ macro(Cajita_add_tests)
         file(APPEND ${_file} "#include <tst${_test}.hpp>\n")
         set(_target ${_test}_test_${_device})
         add_executable(${_target} ${_file} ${CAJITA_UNIT_TEST_MAIN})
-        target_include_directories(${_target} PRIVATE ${_dir})
+        target_include_directories(${_target} PRIVATE ${_dir} ${CMAKE_CURRENT_SOURCE_DIR})
         target_link_libraries(${_target} PRIVATE Cajita gtest)
         if(CAJITA_UNIT_TEST_MPI)
           foreach(_np ${CAJITA_UNIT_TEST_MPIEXEC_NUMPROCS})

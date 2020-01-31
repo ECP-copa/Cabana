@@ -7,8 +7,7 @@ project(Cajita LANGUAGES CXX VERSION 0.1.0)
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        release-1.10.0
+  URL https://github.com/google/googletest/archive/release-1.10.0.tar.gz
 )
 FetchContent_GetProperties(googletest)
 if(NOT googletest_POPULATED)
