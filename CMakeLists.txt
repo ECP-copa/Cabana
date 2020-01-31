@@ -1,7 +1,7 @@
 ##---------------------------------------------------------------------------##
 ## Cabana/CMakeLists.txt
 ##---------------------------------------------------------------------------##
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.11)
 
 ##---------------------------------------------------------------------------##
 # Define your project name and set up major project options
