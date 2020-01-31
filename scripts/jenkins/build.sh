@@ -2,6 +2,11 @@
 
 rm -rf build
 mkdir -p build && cd build
+
+# fixme when image is updated to include git
+apt-get update
+apt install git
+
 cmake \
   -D CMAKE_BUILD_TYPE=Debug \
   -D CMAKE_CXX_COMPILER=$KOKKOS_DIR/bin/nvcc_wrapper \
