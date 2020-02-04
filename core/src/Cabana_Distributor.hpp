@@ -86,9 +86,6 @@ class Distributor : public CommunicationPlan<DeviceType>
       description of the topology of the point-to-point communication
       plan. The elements in this list must be unique.
 
-      \param mpi_tag The MPI tag to use for non-blocking communication in the
-      communication plan generation.
-
       \note For elements that you do not wish to export, use an export rank of
       -1 to signal that this element is *not* to be exported and will be
       ignored in the data migration. In other words, this element will be
@@ -98,12 +95,11 @@ class Distributor : public CommunicationPlan<DeviceType>
     */
     template <class ViewType>
     Distributor( MPI_Comm comm, const ViewType &element_export_ranks,
-                 const std::vector<int> &neighbor_ranks,
-                 const int mpi_tag = 1221 )
+                 const std::vector<int> &neighbor_ranks )
         : CommunicationPlan<DeviceType>( comm )
     {
         auto neighbor_ids = this->createFromExportsAndTopology(
-            element_export_ranks, neighbor_ranks, mpi_tag );
+            element_export_ranks, neighbor_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
@@ -127,9 +123,6 @@ class Distributor : public CommunicationPlan<DeviceType>
       the data migration. The input is expected to be a Kokkos view or Cabana
       slice in the same memory space as the distributor.
 
-      \param mpi_tag The MPI tag to use for non-blocking communication in the
-      communication plan generation.
-
       \note For elements that you do not wish to export, use an export rank of
       -1 to signal that this element is *not* to be exported and will be
       ignored in the data migration. In other words, this element will be
@@ -138,12 +131,10 @@ class Distributor : public CommunicationPlan<DeviceType>
       will be efficiently migrated.
     */
     template <class ViewType>
-    Distributor( MPI_Comm comm, const ViewType &element_export_ranks,
-                 const int mpi_tag = 1221 )
+    Distributor( MPI_Comm comm, const ViewType &element_export_ranks )
         : CommunicationPlan<DeviceType>( comm )
     {
-        auto neighbor_ids =
-            this->createFromExportsOnly( element_export_ranks, mpi_tag );
+        auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 };
@@ -175,7 +166,6 @@ namespace Impl
 template <class Distributor_t, class AoSoA_t>
 void distributeData(
     const Distributor_t &distributor, const AoSoA_t &src, AoSoA_t &dst,
-    int mpi_tag,
     typename std::enable_if<( is_distributor<Distributor_t>::value &&
                               is_aosoa<AoSoA_t>::value ),
                             int>::type * = 0 )
@@ -230,6 +220,9 @@ void distributeData(
     Kokkos::parallel_for( "Cabana::Impl::distributeData::build_send_buffer",
                           build_send_buffer_policy, build_send_buffer_func );
     Kokkos::fence();
+
+    // The distributor has its own communication space so choose any tag.
+    const int mpi_tag = 1234;
 
     // Post non-blocking receives.
     std::vector<MPI_Request> requests;
@@ -324,15 +317,10 @@ void distributeData(
   \param dst The AoSoA to which the migrated data will be written. Must be the
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
-
-  \param mpi_tag The MPI tag to use for non-blocking communication in the data
-  migration. Note here that if multiple instances of this function are being
-  called at once then different tags should be used in each function call to
-  avoid any communication conflicts.
 */
 template <class Distributor_t, class AoSoA_t>
 void migrate( const Distributor_t &distributor, const AoSoA_t &src,
-              AoSoA_t &dst, int mpi_tag = 1001,
+              AoSoA_t &dst,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
                                       int>::type * = 0 )
@@ -345,7 +333,7 @@ void migrate( const Distributor_t &distributor, const AoSoA_t &src,
             "Destination is the wrong size for migration!" );
 
     // Move the data.
-    Impl::distributeData( distributor, src, dst, mpi_tag );
+    Impl::distributeData( distributor, src, dst );
 }
 
 //---------------------------------------------------------------------------//
@@ -371,15 +359,9 @@ void migrate( const Distributor_t &distributor, const AoSoA_t &src,
   elements on this rank provided by the distributor. Before using this
   function, consider reserving enough memory in the data structure so
   reallocating is not necessary.
-
-  \param mpi_tag The MPI tag to use for non-blocking communication in the data
-  migration. Note here that if multiple instances of this function are being
-  called at once then different tags should be used in each function call to
-  avoid any communication conflicts.
 */
 template <class Distributor_t, class AoSoA_t>
 void migrate( const Distributor_t &distributor, AoSoA_t &aosoa,
-              int mpi_tag = 1001,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
                                       int>::type * = 0 )
@@ -399,7 +381,7 @@ void migrate( const Distributor_t &distributor, AoSoA_t &aosoa,
         aosoa.resize( distributor.totalNumImport() );
 
     // Move the data.
-    Impl::distributeData( distributor, aosoa, aosoa, mpi_tag );
+    Impl::distributeData( distributor, aosoa, aosoa );
 
     // If the destination decomposition is smaller than the source
     // decomposition resize after we have moved the data.
@@ -429,15 +411,10 @@ void migrate( const Distributor_t &distributor, AoSoA_t &aosoa,
   \param dst The slice to which the migrated data will be written. Must be the
   same size as the number of imports given by the distributor on this
   rank. Call totalNumImport() on the distributor to get this size value.
-
-  \param mpi_tag The MPI tag to use for non-blocking communication in the data
-  migration. Note here that if multiple instances of this function are being
-  called at once then different tags should be used in each function call to
-  avoid any communication conflicts.
 */
 template <class Distributor_t, class Slice_t>
 void migrate( const Distributor_t &distributor, const Slice_t &src,
-              Slice_t &dst, int mpi_tag = 1001,
+              Slice_t &dst,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_slice<Slice_t>::value ),
                                       int>::type * = 0 )
@@ -515,6 +492,9 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
     Kokkos::parallel_for( "Cabana::migrate::build_send_buffer",
                           build_send_buffer_policy, build_send_buffer_func );
     Kokkos::fence();
+
+    // The distributor has its own communication space so choose any tag.
+    const int mpi_tag = 1234;
 
     // Post non-blocking receives.
     std::vector<MPI_Request> requests;

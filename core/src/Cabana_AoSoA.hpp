@@ -112,6 +112,9 @@ class AoSoA
     // AoSoA type.
     using aosoa_type = AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>;
 
+    // Host mirror type.
+    using host_mirror_type = AoSoA<DataTypes, Kokkos::HostSpace, VectorLength>;
+
     // Member data types.
     static_assert( is_member_types<DataTypes>::value,
                    "AoSoA data types must be member types" );
@@ -190,29 +193,11 @@ class AoSoA
         : _size( 0 )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _data( label, 0 )
-    {
-    }
-
-    /*!
-      \brief Allocate a container with n tuples.
-
-      \param n The number of tuples in the container.
-
-      Note: this function has been deprecated in favor of the constructor that
-      uses a label as this is more consistent with the construction of a
-      Kokkos View.
-    */
-    CABANA_DEPRECATED
-    explicit AoSoA( const size_type n )
-        : _size( n )
-        , _capacity( 0 )
-        , _num_soa( 0 )
+        , _data( Kokkos::ViewAllocateWithoutInitializing( label ), 0 )
     {
         static_assert(
             !memory_traits::is_unmanaged,
             "Construction by allocation cannot use unmanaged memory" );
-        resize( _size );
     }
 
     /*!
@@ -226,8 +211,11 @@ class AoSoA
         : _size( n )
         , _capacity( 0 )
         , _num_soa( 0 )
-        , _data( label, 0 )
+        , _data( Kokkos::ViewAllocateWithoutInitializing( label ), 0 )
     {
+        static_assert(
+            !memory_traits::is_unmanaged,
+            "Construction by allocation cannot use unmanaged memory" );
         resize( _size );
     }
 
@@ -272,6 +260,17 @@ class AoSoA
     size_type size() const { return _size; }
 
     /*!
+      \brief Returns if the container is empty or not.
+
+      \return True if the number of tuples in the container is zero.
+
+      This is the number of actual objects held in the container, which is not
+      necessarily equal to its storage capacity.
+    */
+    KOKKOS_FUNCTION
+    bool empty() const { return ( size() == 0 ); }
+
+    /*!
       \brief Returns the size of the storage space currently allocated for the
       container, expressed in terms of tuples.
 
@@ -283,7 +282,8 @@ class AoSoA
 
       Notice that this capacity does not suppose a limit on the size of the
       container. When this capacity is exhausted and more is needed, it is
-      automatically expanded by the container (reallocating it storage space).
+      automatically expanded by the container (reallocating the storage
+      space).
 
       The capacity of a container can be explicitly altered by calling member
       reserve.
@@ -304,7 +304,9 @@ class AoSoA
       reallocation of the allocated storage space takes place.
 
       Notice that this function changes the actual content of the container by
-      inserting or erasing tuples from it.
+      inserting or erasing tuples from it. If reallocation occurs, all slices
+      and all references to the elements are invalidated. If no reallocation
+      takes place, no slices or references are invalidated.
     */
     void resize( const size_type n )
     {
@@ -333,6 +335,10 @@ class AoSoA
       In all other cases, the function call does not cause a reallocation and
       the container capacity is not affected.
 
+      If reallocation occurs, all slices and all references to the elements
+      are invalidated. If no reallocation takes place, no slices or references
+      are invalidated.
+
       This function has no effect on the container size and cannot alter its
       tuples.
     */
@@ -358,8 +364,55 @@ class AoSoA
         // Assign the new capacity.
         _capacity = num_soa_alloc * vector_length;
 
-        // If we need more SoA objects then resize.
-        Kokkos::resize( _data, num_soa_alloc );
+        // We need more SoA objects so allocate a new view and copy the
+        // existing data.
+        soa_view resized_data(
+            Kokkos::ViewAllocateWithoutInitializing( _data.label() ),
+            num_soa_alloc );
+        if ( _num_soa > 0 )
+            Kokkos::deep_copy(
+                Kokkos::subview(
+                    resized_data,
+                    Kokkos::pair<size_type, size_type>( 0, _num_soa ) ),
+                Kokkos::subview( _data, Kokkos::pair<size_type, size_type>(
+                                            0, _num_soa ) ) );
+        _data = resized_data;
+    }
+
+    /*!
+      \brief Remove unused capacity.
+
+      Will reduce the capacity to be the smallest number of SoAs needed to
+      hold size() tuples. If reallocation occurs, all slices and all
+      references to the elements are invalidated. If no reallocation takes
+      place, no slices or references are invalidated.
+    */
+    void shrinkToFit()
+    {
+        static_assert( !memory_traits::is_unmanaged,
+                       "Cannot shrink unmanaged memory" );
+
+        // If we aren't asking for any fewer SoA objects then we have nothing
+        // to do. The amount of allocated data has to be at least as big as
+        // _num_soa so we just need to check here that they are equivalent. If
+        // they are equivalent, the container is already as small as it can be.
+        if ( _data.size() == _num_soa )
+            return;
+
+        // Assign the new capacity.
+        _capacity = _num_soa * vector_length;
+
+        // We need fewer SoA objects so allocate a new view and copy the
+        // existing data.
+        soa_view resized_data(
+            Kokkos::ViewAllocateWithoutInitializing( _data.label() ),
+            _num_soa );
+        if ( _num_soa > 0 )
+            Kokkos::deep_copy(
+                resized_data,
+                Kokkos::subview( _data, Kokkos::pair<size_type, size_type>(
+                                            0, _num_soa ) ) );
+        _data = resized_data;
     }
 
     /*!
@@ -423,27 +476,6 @@ class AoSoA
         Impl::tupleCopy( _data( index_type::s( i ) ), index_type::a( i ), tpl,
                          0 );
     }
-
-    /*!
-      \brief Get an unmanaged slice of a tuple member with default memory
-      access.
-      \tparam M The member index to get a slice of.
-      \param slice_label An optional label to assign to the slice.
-      \return The member slice.
-    */
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    member_slice_type<M> slice( const std::string &slice_label = "" ) const
-    {
-        return Cabana::slice<M>( *this, slice_label );
-    }
-
-    /*!
-      \brief Get an un-typed raw pointer to the entire data block.
-      \return An un-typed raw-pointer to the entire data block.
-    */
-    CABANA_DEPRECATED
-    void *ptr() const { return _data.data(); }
 
     /*!
       \brief Get a typed raw pointer to the entire data block.

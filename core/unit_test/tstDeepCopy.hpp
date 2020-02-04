@@ -121,7 +121,7 @@ void testDeepCopy()
     checkDataMembers( dst_aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     // Create a second AoSoA and deep copy by slice.
-    DstAoSoA_t dst_aosoa_2( num_data );
+    DstAoSoA_t dst_aosoa_2( "dst", num_data );
     auto dst_slice_0 = Cabana::slice<0>( dst_aosoa_2 );
     auto dst_slice_1 = Cabana::slice<1>( dst_aosoa_2 );
     auto dst_slice_2 = Cabana::slice<2>( dst_aosoa_2 );

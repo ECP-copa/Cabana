@@ -143,96 +143,30 @@ get( const Tuple_t &tp, const std::size_t d0, const std::size_t d1,
 template <typename... Types>
 struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1>
 {
-    // Base class.
     using base = SoA<MemberTypes<Types...>, 1>;
 
-    // -------------------------------
-    // Access the data value at a given member index. These accessors are
-    // deprecated.
+    KOKKOS_FORCEINLINE_FUNCTION Tuple() = default;
 
-    // Rank 0
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
-        0 == std::rank<typename base::template member_data_type<M>>::value,
-        typename base::template member_reference_type<M>>::type
-    get()
+    KOKKOS_FORCEINLINE_FUNCTION Tuple( const Tuple &t )
     {
-        return Cabana::get<M>( *this );
+        Impl::tupleCopy( *this, 0, t, 0 );
     }
 
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
-        0 == std::rank<typename base::template member_data_type<M>>::value,
-        typename base::template member_value_type<M>>::type
-    get() const
+    KOKKOS_FORCEINLINE_FUNCTION Tuple( Tuple &&t )
     {
-        return Cabana::get<M>( *this );
+        Impl::tupleCopy( *this, 0, t, 0 );
     }
 
-    // Rank 1
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
-        1 == std::rank<typename base::template member_data_type<M>>::value,
-        typename base::template member_reference_type<M>>::type
-    get( const std::size_t d0 )
+    KOKKOS_FORCEINLINE_FUNCTION Tuple &operator=( const Tuple &t )
     {
-        return Cabana::get<M>( *this, d0 );
+        Impl::tupleCopy( *this, 0, t, 0 );
+        return *this;
     }
 
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
-        1 == std::rank<typename base::template member_data_type<M>>::value,
-        typename base::template member_value_type<M>>::type
-    get( const std::size_t d0 ) const
+    KOKKOS_FORCEINLINE_FUNCTION Tuple &operator=( Tuple &&t )
     {
-        return Cabana::get<M>( *this, d0 );
-    }
-
-    // Rank 2
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
-        2 == std::rank<typename base::template member_data_type<M>>::value,
-        typename base::template member_reference_type<M>>::type
-    get( const std::size_t d0, const std::size_t d1 )
-    {
-        return Cabana::get<M>( *this, d0, d1 );
-    }
-
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
-        2 == std::rank<typename base::template member_data_type<M>>::value,
-        typename base::template member_value_type<M>>::type
-    get( const std::size_t d0, const std::size_t d1 ) const
-    {
-        return Cabana::get<M>( *this, d0, d1 );
-    }
-
-    // Rank 3
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
-        3 == std::rank<typename base::template member_data_type<M>>::value,
-        typename base::template member_reference_type<M>>::type
-    get( const std::size_t d0, const std::size_t d1, const std::size_t d2 )
-    {
-        return Cabana::get<M>( *this, d0, d1, d2 );
-    }
-
-    CABANA_DEPRECATED
-    template <std::size_t M>
-    KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
-        3 == std::rank<typename base::template member_data_type<M>>::value,
-        typename base::template member_value_type<M>>::type
-    get( const std::size_t d0, const std::size_t d1,
-         const std::size_t d2 ) const
-    {
-        return Cabana::get<M>( *this, d0, d1, d2 );
+        Impl::tupleCopy( *this, 0, t, 0 );
+        return *this;
     }
 };
 

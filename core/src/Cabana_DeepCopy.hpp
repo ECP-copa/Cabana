@@ -66,8 +66,8 @@ inline SrcAoSoA create_mirror_view(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create a mirror view on the host of the given AoSoA in the given
-  memory space. Different space specialization allocates a new AoSoA.
+  \brief Create a mirror view of the given AoSoA in the given memory space.
+  Different space specialization allocates a new AoSoA.
 
   \note Memory allocation will only occur if the requested mirror
   memory space is different from that of the input AoSoA. If they are the
@@ -110,9 +110,9 @@ inline SrcAoSoA create_mirror_view_and_copy(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create a mirror on the host of the given AoSoA in the given memory
-  space and deep copy the AoSoA into the mirror. Different space
-  specialization allocates a new AoSoA and performs the deep copy.
+  \brief Create a mirror of the given AoSoA in the given memory space and deep
+  copy the AoSoA into the mirror. Different space specialization allocates a
+  new AoSoA and performs the deep copy.
 
   \note Memory allocation will only occur if the requested mirror
   memory space is different from that of the input AoSoA. If they are the

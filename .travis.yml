@@ -21,7 +21,6 @@ env:
     - BACKENDS="Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="Serial OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="Serial Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Serial" AMPI=ON
     - BACKENDS="OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
     - BACKENDS="Serial" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
     - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON CMAKE_BUILD_TYPE=Debug
@@ -29,10 +28,9 @@ env:
     - BACKENDS="Serial Pthread" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
 
 before_script:
-  - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
   - ccache -z
-  - KOKKOS_OPTS=( --with-hwloc=/usr --gcc-toolchain=/usr )
-  - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
+  - KOKKOS_OPTS=( -DCMAKE_CXX_COMPILER_LAUNCHER=ccache -DKokkos_ENABLE_HWLOC=ON )
+  - for i in ${BACKENDS}; do KOKKOS_OPTS+=( -DKokkos_ENABLE_${i^^}=ON ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
   - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; export FC=gfortran-6; fi
@@ -40,7 +38,7 @@ before_script:
     pushd kokkos &&
     mkdir build &&
     pushd build &&
-    ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
+    cmake -DCMAKE_INSTALL_PREFIX=$HOME/kokkos ${KOKKOS_OPTS[@]} .. &&
     make -j2 &&
     make install &&
     popd &&
@@ -52,13 +50,6 @@ before_script:
       ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
       make -j2 &&
       make install &&
-      popd;
-    fi
-  - if [[ ${AMPI} ]]; then
-      git clone --depth=1 https://github.com/UIUC-PPL/charm && pushd charm &&
-      ./build AMPI netlrts-linux-x86_64 ${CC} -j2 && export CXX=$PWD/bin/ampicxx && 
-      CMAKE_OPTS+=( -DMPIEXEC="$PWD/bin/ampirun" -DMPIEXEC_POSTFLAGS="+vp4" ) && 
-      CMAKE_OPTS+=( -DMPI_CXX_COMPILER="$PWD/bin/ampicxx" ) && 
       popd;
     fi
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
@@ -88,6 +79,7 @@ script:
   - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
   - mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/scafacos"
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_MPI=ON
           $([[ ${CC} = clang* ]] || echo -DCabana_ENABLE_FORTRAN_EXAMPLES=ON)
