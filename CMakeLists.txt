@@ -22,7 +22,7 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 # find dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
 find_package(MPI REQUIRED)
-find_package(KOKKOS REQUIRED)
+find_package(Kokkos REQUIRED)
 find_package(HYPRE)
 if(HYPRE_FOUND)
   set(CAJITA_HAVE_HYPRE ON)
@@ -77,7 +77,6 @@ configure_package_config_file(cmake/CajitaConfig.cmake.in
 
 install(FILES
   ${CMAKE_CURRENT_BINARY_DIR}/CajitaConfig.cmake
-  ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindKOKKOS.cmake
   ${CMAKE_CURRENT_BINARY_DIR}/CajitaSettings.cmake
   DESTINATION lib/cmake/Cajita )
 

@@ -1,6 +1,6 @@
 set(gtest_args --gtest_color=yes)
 
-set(CAJITA_SUPPORTED_DEVICES Serial OpenMP Cuda)
+set(CAJITA_SUPPORTED_DEVICES SERIAL OPENMP CUDA)
 
 macro(Cajita_add_tests)
   cmake_parse_arguments(CAJITA_UNIT_TEST "MPI" "" "NAMES" ${ARGN})
@@ -18,7 +18,7 @@ macro(Cajita_add_tests)
   endforeach()
   set(CAJITA_UNIT_TEST_MAIN unit_test_main.cpp)
   foreach(_device ${CAJITA_SUPPORTED_DEVICES})
-    if(Kokkos_DEVICES MATCHES "${_device}")
+    if(${Kokkos_DEVICES} MATCHES "${_device}")
       set(_dir ${CMAKE_CURRENT_BINARY_DIR}/${_device})
       file(MAKE_DIRECTORY ${_dir})
       foreach(_test ${CAJITA_UNIT_TEST_NAMES})
