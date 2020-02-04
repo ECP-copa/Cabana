@@ -16,14 +16,12 @@ env:
   global:
     - CCACHE_CPP2=yes # for clang
   matrix: # note this matrix only applies to the "test" stage
-    - BACKENDS="OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Serial" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Serial OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Serial Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="OpenMP" COVERAGE=ON HYPRE=ON CMAKE_BUILD_TYPE=Debug
-    - BACKENDS="Serial" COVERAGE=ON HYPRE=ON CMAKE_BUILD_TYPE=Debug
-    - BACKENDS="Pthread" COVERAGE=ON HYPRE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="SERIAL" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="SERIAL OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="SERIAL Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="OPENMP" COVERAGE=ON HYPRE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="SERIAL" COVERAGE=ON HYPRE=ON CMAKE_BUILD_TYPE=Debug
 
 before_script:
   - sudo ln -s /usr/bin/ccache /usr/lib/ccache/clang++
@@ -37,7 +35,7 @@ before_script:
     pushd kokkos &&
     mkdir build &&
     pushd build &&
-    ../generate_makefile.bash --prefix=$HOME/kokkos ${KOKKOS_OPTS[@]} &&
+    cmake -DCMAKE_INSTALL_PREFIX=$HOME/kokkos ${KOKKOS_OPTS[@]} .. &&
     make -j2 &&
     make install &&
     popd &&
@@ -76,6 +74,7 @@ script:
   - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/hypre"
+          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           ${CMAKE_OPTS[@]}
           -DCajita_ENABLE_TESTING=ON
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
