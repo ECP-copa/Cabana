@@ -1,5 +1,5 @@
 include(CMakeFindDependencyMacro)
-find_dependency(KOKKOS REQUIRED)
+find_dependency(Kokkos REQUIRED)
 if(@Cabana_ENABLE_MPI@)
   find_dependency(MPI REQUIRED CXX)
 endif()
