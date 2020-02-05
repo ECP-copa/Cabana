@@ -94,7 +94,7 @@ script:
     make format && git diff --exit-code &&
     make doxygen &&
     make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/$HOME/cabana && rmdir ${PWD}/install/$HOME &&
-    make install
+    make install &&
     popd &&
     cd  core/example/tutorial/01_hello_world &&
     mkdir build && pushd build &&
