@@ -1,9 +1,11 @@
-if(Cabana_ENABLE_MPI)
-  add_executable(Direct directsum_example.cpp)
-  target_link_libraries(Direct cabanacore)
-  add_executable(Ewald ewaldsum_example.cpp)
-  target_link_libraries(Ewald cabanacore)
+if(NOT Cabana_ENABLE_MPI)
+  return()
 endif()
+  
+add_executable(Direct directsum_example.cpp)
+target_link_libraries(Direct cabanacore)
+add_executable(Ewald ewaldsum_example.cpp)
+target_link_libraries(Ewald cabanacore)
 
 if(Cabana_ENABLE_Cuda)
   find_package(CUDA REQUIRED)
