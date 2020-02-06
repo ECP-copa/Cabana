@@ -13,7 +13,7 @@ set(PROJECT_VERSION "0.3.0-dev")
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  URL https://github.com/google/googletest/archive/release-1.10.0.tar.gz
+  URL https://github.com/google/googletest/archive/release-1.10.0.tar.gz http://distfiles.macports.org/gtest/googletest-1.10.0.tar.gz
 )
 FetchContent_GetProperties(googletest)
 if(NOT googletest_POPULATED)
