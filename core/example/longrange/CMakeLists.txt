@@ -1,13 +1,13 @@
 if(NOT Cabana_ENABLE_MPI)
   return()
 endif()
-  
+
 add_executable(Direct directsum_example.cpp)
 target_link_libraries(Direct cabanacore)
 add_executable(Ewald ewaldsum_example.cpp)
 target_link_libraries(Ewald cabanacore)
 
-if(Cabana_ENABLE_Cuda)
+if(Kokkos_ENABLE_CUDA)
   find_package(CUDA REQUIRED)
   add_executable(SPME spme_example.cpp)
   target_link_libraries(SPME cabanacore ${CUDA_CUFFT_LIBRARIES})

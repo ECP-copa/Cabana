@@ -1,14 +1,14 @@
-if(Cabana_ENABLE_Serial)
+if(Kokkos_ENABLE_SERIAL)
   add_executable(NeighborListMDPerfTest md_neighbor_perf_test.cpp)
   target_link_libraries(NeighborListMDPerfTest cabanacore)
 endif()
 
-if(Cabana_ENABLE_MPI AND Cabana_ENABLE_Cuda AND Cabana_ENABLE_OpenMP)
+if(Cabana_ENABLE_MPI AND Kokkos_ENABLE_CUDA AND Kokkos_ENABLE_OPENMP)
   add_executable(CommPerformance Cabana_CommPerformance.cpp)
   target_link_libraries(CommPerformance cabanacore)
 endif()
 
-if(Cabana_ENABLE_Serial OR Cabana_ENABLE_Cuda OR Cabana_ENABLE_OpenMP)
+if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP)
   add_executable(BinSortPerformance Cabana_BinSortPerformance.cpp)
   target_link_libraries(BinSortPerformance cabanacore)
 endif()

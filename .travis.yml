@@ -16,16 +16,16 @@ env:
   global:
     - CCACHE_CPP2=yes # for clang
   matrix: # note this matrix only applies to the "test" stage
-    - BACKENDS="OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Serial" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Serial OpenMP" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="Serial Pthread" WERROR=ON CMAKE_BUILD_TYPE=Release
-    - BACKENDS="OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
-    - BACKENDS="Serial" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
-    - BACKENDS="Pthread" COVERAGE=ON SCAFACOS=ON CMAKE_BUILD_TYPE=Debug
-    - BACKENDS="Serial OpenMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
-    - BACKENDS="Serial Pthread" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="SERIAL" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="SERIAL OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="SERIAL PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="OPENMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="SERIAL" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="PTHREAD" COVERAGE=ON SCAFACOS=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="SERIAL OPENMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="SERIAL PTHREAD" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
 
 before_script:
   - ccache -z
@@ -52,10 +52,10 @@ before_script:
       make install &&
       popd;
     fi
-  - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_ENABLE_${i}=ON ); done
+  - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_REQUIRE_${i}=ON ); done
   - if [[ ${COVERAGE} ]]; then
        pip install --user coverxygen &&
-       mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov; 
+       mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov;
      fi
 
 addons:
@@ -75,16 +75,18 @@ addons:
       - gfortran-6
 
 script:
-  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
-  - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}" 
+  - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
+  - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - mkdir build && pushd build &&
-    cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/scafacos"
+    cmake -DCMAKE_PREFIX_PATH="$HOME/scafacos"
           -DCMAKE_INSTALL_PREFIX="$HOME/cabana"
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          -DCabana_ENABLE_Serial=OFF ${CMAKE_OPTS[@]}
+          -DKokkos_INSTALL_PATH="$HOME/kokkos"
+          -DCabana_REQUIRE_SERIAL=OFF ${CMAKE_OPTS[@]}
           -DCabana_ENABLE_MPI=ON
           $([[ ${CC} = clang* ]] || echo -DCabana_ENABLE_FORTRAN_EXAMPLES=ON)
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
+          -DCabana_ENABLE_DOXYGEN=ON
           -DDOXYGEN_WARN_AS_ERROR=ON -DDOXYGEN_GENERATE_XML=ON -DDOXYGEN_WARN_IF_UNDOCUMENTED=OFF
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
           -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0

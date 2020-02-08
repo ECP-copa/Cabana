@@ -31,6 +31,8 @@ endforeach()
 ##--------------------------------------------------------------------------##
 ## On-node tests with and without MPI.
 ##--------------------------------------------------------------------------##
+set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
+
 macro(Cabana_add_tests)
   cmake_parse_arguments(CABANA_UNIT_TEST "MPI" "" "NAMES" ${ARGN})
   set(CABANA_UNIT_TEST_MPIEXEC_NUMPROCS 1)
@@ -44,7 +46,7 @@ macro(Cabana_add_tests)
     set(CABANA_UNIT_TEST_MAIN unit_test_main.cpp)
   endif()
   foreach(_device ${CABANA_SUPPORTED_DEVICES})
-    if(Cabana_ENABLE_${_device})
+    if(Kokkos_ENABLE_${_device})
       set(_dir ${CMAKE_CURRENT_BINARY_DIR}/${_device})
       file(MAKE_DIRECTORY ${_dir})
       foreach(_test ${CABANA_UNIT_TEST_NAMES})
@@ -63,7 +65,7 @@ macro(Cabana_add_tests)
               ${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
           endforeach()
         else()
-          if(_device STREQUAL Pthread OR _device STREQUAL OpenMP)
+          if(_device STREQUAL THREADS OR _device STREQUAL OPENMP)
             foreach(_thread ${CABANA_UNIT_TEST_NUMTHREADS})
               add_test(NAME ${_target}_${_thread} COMMAND
                 ${NONMPI_PRECOMMAND} ${_target} ${gtest_args} --kokkos-threads=${_thread})
