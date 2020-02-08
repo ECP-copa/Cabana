@@ -42,6 +42,7 @@ before_script:
   - if [[ ${HYPRE} ]]; then
       git clone --depth=1  https://github.com/hypre-space/hypre.git &&
       pushd hypre &&
+      git fetch --all --tags &&
       git checkout v2.18.2 &&
       pushd src &&
       ./configure --prefix=$HOME/hypre &&
