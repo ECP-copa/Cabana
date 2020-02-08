@@ -35,7 +35,7 @@ endif()
 add_library(Cajita ${SOURCES_PUBLIC})
 
 target_link_libraries(Cajita
-  Kokkos::Kokkos
+  Kokkos::kokkos
   MPI::MPI_CXX
   )
 
