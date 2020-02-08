@@ -53,7 +53,7 @@ class GlobalMesh<UniformMesh<Scalar>>
         {
             Scalar ext = globalNumCell( d ) * _cell_size;
             if ( std::abs( ext - extent( d ) ) >
-                 Scalar( 10.0 ) * std::numeric_limits<Scalar>::epsilon() )
+                 Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() )
                 throw std::logic_error(
                     "Extent not evenly divisible by uniform cell size" );
         }
@@ -72,9 +72,9 @@ class GlobalMesh<UniformMesh<Scalar>>
             cell_sizes[d] = ( _global_high_corner[d] - _global_low_corner[d] ) /
                             global_num_cell[d];
         if ( ( std::abs( cell_sizes[Dim::I] - cell_sizes[Dim::J] ) >
-               Scalar( 10.0 ) * std::numeric_limits<Scalar>::epsilon() ) ||
+               Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() ) ||
              ( std::abs( cell_sizes[Dim::I] - cell_sizes[Dim::K] ) >
-               Scalar( 10.0 ) * std::numeric_limits<Scalar>::epsilon() ) )
+               Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() ) )
             throw std::logic_error( "Cell sizes not equal" );
 
         // Set the cell size now that we have checked them.
@@ -87,7 +87,7 @@ class GlobalMesh<UniformMesh<Scalar>>
         {
             Scalar ext = globalNumCell( d ) * _cell_size;
             if ( std::abs( ext - extent( d ) ) >
-                 Scalar( 10.0 ) * std::numeric_limits<Scalar>::epsilon() )
+                 Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() )
                 throw std::logic_error(
                     "Extent not evenly divisible by uniform cell size" );
             if ( globalNumCell( d ) != global_num_cell[d] )
