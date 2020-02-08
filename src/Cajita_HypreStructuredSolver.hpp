@@ -265,9 +265,9 @@ class HypreStructuredSolver
     }
 
     // Set a preconditioner.
-    void setPreconditioner(
-        const std::shared_ptr<HypreStructuredSolver<Scalar, EntityType, DeviceType>>
-            &preconditioner )
+    void
+    setPreconditioner( const std::shared_ptr<HypreStructuredSolver<
+                           Scalar, EntityType, DeviceType>> &preconditioner )
     {
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
@@ -438,7 +438,8 @@ class HypreStructuredSolver
 //---------------------------------------------------------------------------//
 // PCG solver.
 template <class Scalar, class EntityType, class DeviceType>
-class HypreStructPCG : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
+class HypreStructPCG
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
@@ -546,8 +547,8 @@ class HypreStructPCG : public HypreStructuredSolver<Scalar, EntityType, DeviceTy
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
-        override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
+            &preconditioner ) override
     {
         auto error = HYPRE_StructPCGSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -563,7 +564,8 @@ class HypreStructPCG : public HypreStructuredSolver<Scalar, EntityType, DeviceTy
 //---------------------------------------------------------------------------//
 // GMRES solver.
 template <class Scalar, class EntityType, class DeviceType>
-class HypreStructGMRES : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
+class HypreStructGMRES
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
@@ -668,8 +670,8 @@ class HypreStructGMRES : public HypreStructuredSolver<Scalar, EntityType, Device
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
-        override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
+            &preconditioner ) override
     {
         auto error = HYPRE_StructGMRESSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -784,8 +786,8 @@ class HypreStructBiCGSTAB
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
-        override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
+            &preconditioner ) override
     {
         auto error = HYPRE_StructBiCGSTABSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -801,7 +803,8 @@ class HypreStructBiCGSTAB
 //---------------------------------------------------------------------------//
 // PFMG solver.
 template <class Scalar, class EntityType, class DeviceType>
-class HypreStructPFMG : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
+class HypreStructPFMG
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
@@ -979,7 +982,8 @@ class HypreStructPFMG : public HypreStructuredSolver<Scalar, EntityType, DeviceT
 //---------------------------------------------------------------------------//
 // SMG solver.
 template <class Scalar, class EntityType, class DeviceType>
-class HypreStructSMG : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
+class HypreStructSMG
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
@@ -1381,8 +1385,8 @@ createHypreStructDiagonal( const ArrayLayout_t &layout,
 // Factory
 //---------------------------------------------------------------------------//
 template <class Scalar, class DeviceType, class ArrayLayout_t>
-std::shared_ptr<
-    HypreStructuredSolver<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
+std::shared_ptr<HypreStructuredSolver<
+    Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
 createHypreStructuredSolver( const std::string &solver_type,
                              const ArrayLayout_t &layout,
                              const bool is_preconditioner = false )
