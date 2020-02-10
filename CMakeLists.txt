@@ -30,33 +30,25 @@ if(NOT Kokkos_FOUND)
   find_package(Kokkos 3 REQUIRED)
 endif()
 
-# check user requirements
-option(Cabana_REQUIRE_SERIAL "Build Cabana with required Kokkos SERIAL support" OFF)
-if( Cabana_REQUIRE_SERIAL )
-  kokkos_check( DEVICES SERIAL )
-endif()
+# set supported devices
+set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
 
-option(Cabana_REQUIRE_OPENMP "Build Cabana with required Kokkos OPENMP support" OFF)
-if( Cabana_REQUIRE_OPENMP )
-  kokkos_check( DEVICES OPENMP )
-endif()
+# check user required device types
+foreach(_device ${CABANA_SUPPORTED_DEVICES})
+  option(Cabana_REQUIRE_${_device} "Build Cabana with required Kokkos ${device} support" OFF)
+  if( Cabana_REQUIRE_${_device} )
+    kokkos_check( DEVICES ${_device} )
+  endif()
+endforeach()
 
-option(Cabana_REQUIRE_THREADS "Build Cabana with required Kokkos THREADS support" OFF)
-if( Cabana_REQUIRE_THREADS )
-  kokkos_check( DEVICES THREADS )
-endif()
-
-option(Cabana_REQUIRE_CUDA "Build Cabana with required Kokkos CUDA support" OFF)
-if( Cabana_REQUIRE_CUDA )
-  kokkos_check( DEVICES CUDA )
-endif()
-
+# enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
   enable_testing()
 endif()
 
-option(Cabana_ENABLE_DOXYGEN "Build doxygen" OFF)
+# enable doxygen
+option(Cabana_ENABLE_DOXYGEN "Build doxygen" ON)
 if(Cabana_ENABLE_DOXYGEN)
   find_package(Doxygen)
   if(Doxygen_FOUND)
@@ -64,6 +56,7 @@ if(Cabana_ENABLE_DOXYGEN)
   endif()
 endif()
 
+# enable MPI
 option(Cabana_ENABLE_MPI "Build Cabana with MPI support" OFF)
 if(Cabana_ENABLE_MPI)
   find_package(MPI REQUIRED)
