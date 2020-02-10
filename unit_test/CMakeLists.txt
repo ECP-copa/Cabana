@@ -69,7 +69,7 @@ set(MPI_TESTS
 
 if(HYPRE_FOUND)
   list(APPEND MPI_TESTS
-    StructuredSolver
+    HypreStructuredSolver
     )
 endif()
 

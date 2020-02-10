@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_STRUCTUREDSOLVER_HPP
-#define CAJITA_STRUCTUREDSOLVER_HPP
+#ifndef CAJITA_HYPRESTRUCTUREDSOLVER_HPP
+#define CAJITA_HYPRESTRUCTUREDSOLVER_HPP
 
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
@@ -35,7 +35,7 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 // Hypre structured solver interface for scalar fields.
 template <class Scalar, class EntityType, class DeviceType>
-class StructuredSolver
+class HypreStructuredSolver
 {
   public:
     // Types.
@@ -50,8 +50,8 @@ class StructuredSolver
       a preconditioner.
     */
     template <class ArrayLayout_t>
-    StructuredSolver( const ArrayLayout_t &layout,
-                      const bool is_preconditioner = false )
+    HypreStructuredSolver( const ArrayLayout_t &layout,
+                           const bool is_preconditioner = false )
         : _comm( layout.localGrid()->globalGrid().comm() )
         , _is_preconditioner( is_preconditioner )
     {
@@ -137,7 +137,7 @@ class StructuredSolver
     }
 
     // Destructor.
-    virtual ~StructuredSolver()
+    virtual ~HypreStructuredSolver()
     {
         // We only make data if this is not a preconditioner.
         if ( !_is_preconditioner )
@@ -265,9 +265,9 @@ class StructuredSolver
     }
 
     // Set a preconditioner.
-    void setPreconditioner(
-        const std::shared_ptr<StructuredSolver<Scalar, EntityType, DeviceType>>
-            &preconditioner )
+    void
+    setPreconditioner( const std::shared_ptr<HypreStructuredSolver<
+                           Scalar, EntityType, DeviceType>> &preconditioner )
     {
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
@@ -405,7 +405,7 @@ class StructuredSolver
 
     // Set a preconditioner.
     virtual void setPreconditionerImpl(
-        const StructuredSolver<Scalar, EntityType, DeviceType>
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
             &preconditioner ) = 0;
 
     // Check a hypre error.
@@ -431,17 +431,18 @@ class StructuredSolver
     HYPRE_StructMatrix _A;
     HYPRE_StructVector _b;
     HYPRE_StructVector _x;
-    std::shared_ptr<StructuredSolver<Scalar, EntityType, DeviceType>>
+    std::shared_ptr<HypreStructuredSolver<Scalar, EntityType, DeviceType>>
         _preconditioner;
 };
 
 //---------------------------------------------------------------------------//
 // PCG solver.
 template <class Scalar, class EntityType, class DeviceType>
-class HypreStructPCG : public StructuredSolver<Scalar, EntityType, DeviceType>
+class HypreStructPCG
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+    using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
     HypreStructPCG( const ArrayLayout_t &layout,
@@ -546,8 +547,8 @@ class HypreStructPCG : public StructuredSolver<Scalar, EntityType, DeviceType>
     }
 
     void setPreconditionerImpl(
-        const StructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
-        override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
+            &preconditioner ) override
     {
         auto error = HYPRE_StructPCGSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -563,10 +564,11 @@ class HypreStructPCG : public StructuredSolver<Scalar, EntityType, DeviceType>
 //---------------------------------------------------------------------------//
 // GMRES solver.
 template <class Scalar, class EntityType, class DeviceType>
-class HypreStructGMRES : public StructuredSolver<Scalar, EntityType, DeviceType>
+class HypreStructGMRES
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+    using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
     HypreStructGMRES( const ArrayLayout_t &layout,
@@ -668,8 +670,8 @@ class HypreStructGMRES : public StructuredSolver<Scalar, EntityType, DeviceType>
     }
 
     void setPreconditionerImpl(
-        const StructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
-        override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
+            &preconditioner ) override
     {
         auto error = HYPRE_StructGMRESSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -686,10 +688,10 @@ class HypreStructGMRES : public StructuredSolver<Scalar, EntityType, DeviceType>
 // BiCGSTAB solver.
 template <class Scalar, class EntityType, class DeviceType>
 class HypreStructBiCGSTAB
-    : public StructuredSolver<Scalar, EntityType, DeviceType>
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+    using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
     HypreStructBiCGSTAB( const ArrayLayout_t &layout,
@@ -784,8 +786,8 @@ class HypreStructBiCGSTAB
     }
 
     void setPreconditionerImpl(
-        const StructuredSolver<Scalar, EntityType, DeviceType> &preconditioner )
-        override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
+            &preconditioner ) override
     {
         auto error = HYPRE_StructBiCGSTABSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -801,10 +803,11 @@ class HypreStructBiCGSTAB
 //---------------------------------------------------------------------------//
 // PFMG solver.
 template <class Scalar, class EntityType, class DeviceType>
-class HypreStructPFMG : public StructuredSolver<Scalar, EntityType, DeviceType>
+class HypreStructPFMG
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+    using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
     HypreStructPFMG( const ArrayLayout_t &layout,
@@ -966,7 +969,7 @@ class HypreStructPFMG : public StructuredSolver<Scalar, EntityType, DeviceType>
     }
 
     void setPreconditionerImpl(
-        const StructuredSolver<Scalar, EntityType, DeviceType> & ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType> & ) override
     {
         throw std::logic_error(
             "HYPRE PFMG solver does not support preconditioning." );
@@ -979,10 +982,11 @@ class HypreStructPFMG : public StructuredSolver<Scalar, EntityType, DeviceType>
 //---------------------------------------------------------------------------//
 // SMG solver.
 template <class Scalar, class EntityType, class DeviceType>
-class HypreStructSMG : public StructuredSolver<Scalar, EntityType, DeviceType>
+class HypreStructSMG
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+    using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
     HypreStructSMG( const ArrayLayout_t &layout,
@@ -1094,7 +1098,7 @@ class HypreStructSMG : public StructuredSolver<Scalar, EntityType, DeviceType>
     }
 
     void setPreconditionerImpl(
-        const StructuredSolver<Scalar, EntityType, DeviceType> & ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType> & ) override
     {
         throw std::logic_error(
             "HYPRE SMG solver does not support preconditioning." );
@@ -1108,10 +1112,10 @@ class HypreStructSMG : public StructuredSolver<Scalar, EntityType, DeviceType>
 // Jacobi solver.
 template <class Scalar, class EntityType, class DeviceType>
 class HypreStructJacobi
-    : public StructuredSolver<Scalar, EntityType, DeviceType>
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+    using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
     HypreStructJacobi( const ArrayLayout_t &layout,
@@ -1191,7 +1195,7 @@ class HypreStructJacobi
     }
 
     void setPreconditionerImpl(
-        const StructuredSolver<Scalar, EntityType, DeviceType> & ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType> & ) override
     {
         throw std::logic_error(
             "HYPRE Jacobi solver does not support preconditioning." );
@@ -1205,10 +1209,10 @@ class HypreStructJacobi
 // Diagonal preconditioner.
 template <class Scalar, class EntityType, class DeviceType>
 class HypreStructDiagonal
-    : public StructuredSolver<Scalar, EntityType, DeviceType>
+    : public HypreStructuredSolver<Scalar, EntityType, DeviceType>
 {
   public:
-    using Base = StructuredSolver<Scalar, EntityType, DeviceType>;
+    using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
     HypreStructDiagonal( const ArrayLayout_t &layout,
@@ -1276,7 +1280,7 @@ class HypreStructDiagonal
     }
 
     void setPreconditionerImpl(
-        const StructuredSolver<Scalar, EntityType, DeviceType> & ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType> & ) override
     {
         throw std::logic_error(
             "Diagonal preconditioner does not support preconditioning." );
@@ -1381,11 +1385,11 @@ createHypreStructDiagonal( const ArrayLayout_t &layout,
 // Factory
 //---------------------------------------------------------------------------//
 template <class Scalar, class DeviceType, class ArrayLayout_t>
-std::shared_ptr<
-    StructuredSolver<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
-createStructuredSolver( const std::string &solver_type,
-                        const ArrayLayout_t &layout,
-                        const bool is_preconditioner = false )
+std::shared_ptr<HypreStructuredSolver<
+    Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
+createHypreStructuredSolver( const std::string &solver_type,
+                             const ArrayLayout_t &layout,
+                             const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
                    "Must use an array layout" );
@@ -1419,4 +1423,4 @@ createStructuredSolver( const std::string &solver_type,
 
 } // end namespace Cajita
 
-#endif // end CAJITA_STRUCTUREDSOLVER_HPP
+#endif // end CAJITA_HYPRESTRUCTUREDSOLVER_HPP

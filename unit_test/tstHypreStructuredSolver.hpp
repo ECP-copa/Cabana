@@ -14,7 +14,8 @@
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
 #include <Cajita_Array.hpp>
-#include <Cajita_StructuredSolver.hpp>
+#include <Cajita_HypreStructuredSolver.hpp>
+#include <Cajita_ReferenceStructuredSolver.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -47,7 +48,7 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
                                          partitioner );
 
     // Create a local grid.
-    auto local_mesh = createLocalGrid( global_grid, 0 );
+    auto local_mesh = createLocalGrid( global_grid, 1 );
     auto owned_space = local_mesh->indexSpace(Own(),Cell(),Local());
 
     // Create the RHS.
@@ -61,7 +62,7 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
 
     // Create a solver.
     auto solver =
-        createStructuredSolver<double,TEST_DEVICE>( solver_type, *vector_layout );
+        createHypreStructuredSolver<double,TEST_DEVICE>( solver_type, *vector_layout );
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int,3> > stencil =
@@ -101,7 +102,7 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
     if ( "none" != precond_type )
     {
         auto preconditioner =
-            createStructuredSolver<double,TEST_DEVICE>( precond_type, *vector_layout, true );
+            createHypreStructuredSolver<double,TEST_DEVICE>( precond_type, *vector_layout, true );
         solver->setPreconditioner( preconditioner );
     }
 
@@ -111,19 +112,50 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
     // Solve the problem.
     solver->solve( *rhs, *lhs );
 
-    // Create a jacobi solver reference for comparison.
+    // Create a solver reference for comparison.
     auto lhs_ref = createArray<double,TEST_DEVICE>( "lhs_ref", vector_layout );
     ArrayOp::assign( *lhs_ref, 0.0, Own() );
 
-    auto jacobi_ref =
-        createStructuredSolver<double,TEST_DEVICE>( "Jacobi", *vector_layout );
+    auto ref_solver =
+        createReferenceConjugateGradient<double,TEST_DEVICE>( *vector_layout );
+    ref_solver->setMatrixStencil( stencil );
+    const auto& ref_entries = ref_solver->getMatrixValues();
+    auto matrix_view = ref_entries.view();
+    auto global_space = local_mesh->indexSpace(Ghost(),Cell(),Global());
+    Kokkos::parallel_for(
+        "fill_ref_entries",
+        createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ){
+            matrix_view(i,j,k,0) = -6.0;
+            matrix_view(i,j,k,1) =
+                ( i + global_space.min(Dim::I) > 0 ) ? 1.0 : 0.0;
+            matrix_view(i,j,k,2) =
+                ( i + global_space.min(Dim::I) < global_space.max(Dim::I) - 1 ) ? 1.0 : 0.0;
+            matrix_view(i,j,k,3) =
+                ( j + global_space.min(Dim::J) > 0 ) ? 1.0 : 0.0;
+            matrix_view(i,j,k,4) =
+                ( j + global_space.min(Dim::J) < global_space.max(Dim::J) - 1 ) ? 1.0 : 0.0;
+            matrix_view(i,j,k,5) =
+                ( k + global_space.min(Dim::K) > 0 ) ? 1.0 : 0.0;
+            matrix_view(i,j,k,6) =
+                ( k + global_space.min(Dim::K) < global_space.max(Dim::K) - 1 ) ? 1.0 : 0.0;
+        });
 
-    jacobi_ref->setMatrixStencil( stencil );
-    jacobi_ref->setMatrixValues( *matrix_entries );
-    jacobi_ref->setTolerance( 1.0e-12 );
-    jacobi_ref->setPrintLevel( 2 );
-    jacobi_ref->setup();
-    jacobi_ref->solve( *rhs, *lhs_ref );
+    std::vector<std::array<int,3> > diag_stencil = { {0,0,0} };
+    ref_solver->setPreconditionerStencil( diag_stencil );
+    const auto& preconditioner_entries = ref_solver->getPreconditionerValues();
+    auto preconditioner_view = preconditioner_entries.view();
+    Kokkos::parallel_for(
+        "fill_preconditioner_entries",
+        createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ){
+            preconditioner_view(i,j,k,0) = -1.0 / 6.0;
+        } );
+
+    ref_solver->setTolerance( 1.0e-12 );
+    ref_solver->setPrintLevel( 1 );
+    ref_solver->setup();
+    ref_solver->solve( *rhs, *lhs_ref );
 
     // Check the results.
     double epsilon = 1.0e-3;
@@ -153,7 +185,7 @@ void poissonTest( const std::string& solver_type, const std::string& precond_typ
 
     // Compute another reference solution.
     ArrayOp::assign( *lhs_ref, 0.0, Own() );
-    jacobi_ref->solve( *rhs, *lhs_ref );
+    ref_solver->solve( *rhs, *lhs_ref );
 
     // Check the results again
     lhs_host = Kokkos::create_mirror_view_and_copy(

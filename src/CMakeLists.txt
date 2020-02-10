@@ -12,6 +12,7 @@ set(HEADERS_PUBLIC
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
   Cajita_Partitioner.hpp
+  Cajita_ReferenceStructuredSolver.hpp
   Cajita_Splines.hpp
   Cajita_Types.hpp
   Cajita_UniformDimPartitioner.hpp
@@ -28,7 +29,7 @@ set(SOURCES_PUBLIC
 
 if(HYPRE_FOUND)
   list(APPEND HEADERS_PUBLIC
-    Cajita_StructuredSolver.hpp
+    Cajita_HypreStructuredSolver.hpp
     )
 endif()
 
