@@ -25,6 +25,11 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # find kokkos
 find_package(Kokkos 3 REQUIRED)
 
+# ensure that we can use lambdas
+if(Kokkos_ENABLE_CUDA)
+  kokkos_check(OPTIONS CUDA_LAMBDA)
+endif()
+
 # set supported kokkos devices
 set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
 
