@@ -20,17 +20,12 @@ set(CMAKE_CXX_EXTENSIONS OFF) #...without compiler extensions like gnu++11
 option(CMAKE_VERBOSE_MAKEFILE "Generate verbose Makefiles" OFF)
 include(GNUInstallDirs)
 
-# allow users to directly point to a kokkos install
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-set(Kokkos_INSTALL_PATH "" CACHE PATH "Kokkos installation location" )
-if(Kokkos_INSTALL_PATH)
-  find_package(Kokkos 3 PATHS ${Kokkos_INSTALL_PATH} NO_DEFAULT_PATH)
-endif()
-if(NOT Kokkos_FOUND)
-  find_package(Kokkos 3 REQUIRED)
-endif()
 
-# set supported devices
+# find kokkos
+find_package(Kokkos 3 REQUIRED)
+
+# set supported kokkos devices
 set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
 
 # check user required device types
@@ -48,12 +43,9 @@ if(Cabana_ENABLE_TESTING)
 endif()
 
 # enable doxygen
-option(Cabana_ENABLE_DOXYGEN "Build doxygen" ON)
-if(Cabana_ENABLE_DOXYGEN)
-  find_package(Doxygen)
-  if(Doxygen_FOUND)
-    doxygen_add_docs(doxygen core/src)
-  endif()
+find_package(Doxygen)
+if(Doxygen_FOUND)
+  doxygen_add_docs(doxygen core/src)
 endif()
 
 # enable MPI
