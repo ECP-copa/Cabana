@@ -181,6 +181,21 @@ Kokkos::View<Scalar *, Params...> createView( const std::string &label,
 
 //---------------------------------------------------------------------------//
 /*!
+  \brief Given an index space and a data pointer create an unmanaged view over
+  the extent of that index space.
+
+  Rank-1 specialization.
+*/
+template <class Scalar, class... Params>
+Kokkos::View<Scalar *, Params..., Kokkos::MemoryUnmanaged>
+createView( const IndexSpace<1> &index_space, Scalar *data )
+{
+    return Kokkos::View<Scalar *, Params..., Kokkos::MemoryUnmanaged>(
+        data, index_space.extent( 0 ) );
+}
+
+//---------------------------------------------------------------------------//
+/*!
   \brief Given an index space create a view over the extent of that index
   space.
 
@@ -193,6 +208,21 @@ createView( const std::string &label, const IndexSpace<2> &index_space )
     return Kokkos::View<Scalar **, Params...>(
         Kokkos::ViewAllocateWithoutInitializing( label ),
         index_space.extent( 0 ), index_space.extent( 1 ) );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Given an index space and a data pointer create an unmanaged view over
+  the extent of that index space.
+
+  Rank-2 specialization.
+*/
+template <class Scalar, class... Params>
+Kokkos::View<Scalar **, Params..., Kokkos::MemoryUnmanaged>
+createView( const IndexSpace<2> &index_space, Scalar *data )
+{
+    return Kokkos::View<Scalar **, Params..., Kokkos::MemoryUnmanaged>(
+        data, index_space.extent( 0 ), index_space.extent( 1 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -214,6 +244,22 @@ createView( const std::string &label, const IndexSpace<3> &index_space )
 
 //---------------------------------------------------------------------------//
 /*!
+  \brief Given an index space and a data pointer create an unmanaged view over
+  the extent of that index space.
+
+  Rank-3 specialization.
+*/
+template <class Scalar, class... Params>
+Kokkos::View<Scalar ***, Params..., Kokkos::MemoryUnmanaged>
+createView( const IndexSpace<3> &index_space, Scalar *data )
+{
+    return Kokkos::View<Scalar ***, Params..., Kokkos::MemoryUnmanaged>(
+        data, index_space.extent( 0 ), index_space.extent( 1 ),
+        index_space.extent( 2 ) );
+}
+
+//---------------------------------------------------------------------------//
+/*!
   \brief Given an index space create a view over the extent of that index
   space.
 
@@ -226,6 +272,22 @@ createView( const std::string &label, const IndexSpace<4> &index_space )
     return Kokkos::View<Scalar ****, Params...>(
         Kokkos::ViewAllocateWithoutInitializing( label ),
         index_space.extent( 0 ), index_space.extent( 1 ),
+        index_space.extent( 2 ), index_space.extent( 3 ) );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Given an index space and a data pointer create an unmanaged view over
+  the extent of that index space.
+
+  Rank-4 specialization.
+*/
+template <class Scalar, class... Params>
+Kokkos::View<Scalar ****, Params..., Kokkos::MemoryUnmanaged>
+createView( const IndexSpace<4> &index_space, Scalar *data )
+{
+    return Kokkos::View<Scalar ****, Params..., Kokkos::MemoryUnmanaged>(
+        data, index_space.extent( 0 ), index_space.extent( 1 ),
         index_space.extent( 2 ), index_space.extent( 3 ) );
 }
 

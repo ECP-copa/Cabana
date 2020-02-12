@@ -224,10 +224,10 @@ class FastFourierTransform
             throw std::logic_error( "HEFFTE expected allocation size smaller "
                                     "than local grid size" );
 
-        // Allocate the work array. The work array only contains owned data.
-        auto subview_space = appendDimension( entity_space, 2 );
-        _fft_work = createView<Scalar, Kokkos::LayoutRight, DeviceType>(
-            "fft_work", subview_space );
+        // Allocate the work array.
+        _fft_work = Kokkos::View<Scalar *, DeviceType>(
+            Kokkos::ViewAllocateWithoutInitializing( "fft_work" ),
+            2 * fftsize );
     }
 
     /*!
@@ -275,10 +275,15 @@ class FastFourierTransform
             throw std::logic_error(
                 "Only 1 complex value per entity allowed in FFT" );
 
-        // Copy to the work array. The work array only contains owned data.
-        auto x_view = x.view();
+        // Create a subview of the work array to write the local data into.
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
+        auto work_view_space = appendDimension( own_space, 2 );
+        auto work_view = createView<Scalar, Kokkos::LayoutRight, DeviceType>(
+            work_view_space, _fft_work.data() );
+
+        // Copy to the work array. The work array only contains owned data.
+        auto x_view = x.view();
         Kokkos::parallel_for(
             "fft_copy_x_to_work",
             createExecutionPolicy( own_space,
@@ -287,8 +292,8 @@ class FastFourierTransform
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
                 auto kw = k - own_space.min( Dim::K );
-                _fft_work( iw, jw, kw, 0 ) = x_view( i, j, k, 0 ).real();
-                _fft_work( iw, jw, kw, 1 ) = x_view( i, j, k, 0 ).imag();
+                work_view( iw, jw, kw, 0 ) = x_view( i, j, k, 0 ).real();
+                work_view( iw, jw, kw, 1 ) = x_view( i, j, k, 0 ).imag();
             } );
 
         // Copy to the host. Once we fix the HEFFTE GPU memory bug we wont
@@ -312,14 +317,14 @@ class FastFourierTransform
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
                 auto kw = k - own_space.min( Dim::K );
-                x_view( i, j, k, 0 ).real() = _fft_work( iw, jw, kw, 0 );
-                x_view( i, j, k, 0 ).imag() = _fft_work( iw, jw, kw, 1 );
+                x_view( i, j, k, 0 ).real() = work_view( iw, jw, kw, 0 );
+                x_view( i, j, k, 0 ).imag() = work_view( iw, jw, kw, 1 );
             } );
     }
 
   private:
     HEFFTE_NS::FFT3d<Scalar> _fft;
-    Kokkos::View<Scalar ****, Kokkos::LayoutRight, DeviceType> _fft_work;
+    Kokkos::View<Scalar *, DeviceType> _fft_work;
 };
 
 //---------------------------------------------------------------------------//
