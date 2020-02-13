@@ -10,8 +10,6 @@ cmake \
   -D MPIEXEC_PREFLAGS="--allow-run-as-root;--mca;btl_smcuda_use_cuda_ipc;0" \
   -D Cabana_ENABLE_MPI=ON \
   -D Cabana_REQUIRE_CUDA=ON \
-  -D Cabana_REQUIRE_SERIAL=OFF \
-  -D Cabana_REQUIRE_OPENMP=OFF \
   -D Cabana_ENABLE_TESTING=ON \
   ../
 make -j4
