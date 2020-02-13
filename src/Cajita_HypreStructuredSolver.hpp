@@ -226,20 +226,29 @@ class HypreStructuredSolver
         checkHypreError( error );
 
         // Get a view of the matrix values on the host.
-        auto owned_space = values.layout()->indexSpace( Own(), Local() );
-        auto owned_values = createSubview( values.view(), owned_space );
-        auto owned_mirror = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), owned_values );
+        auto values_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), values.view() );
 
         // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
         // layout-right.
+        auto owned_space = values.layout()->indexSpace( Own(), Local() );
         IndexSpace<4> reorder_space(
             {owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
              owned_space.extent( Dim::K ), _stencil_size} );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "a_values", reorder_space );
-        Kokkos::deep_copy( a_values, owned_mirror );
+        Kokkos::parallel_for(
+            "a_copy",
+            createExecutionPolicy( owned_space,
+                                   Kokkos::HostSpace::execution_space() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k,
+                           const int n ) {
+                a_values( i - owned_space.min( Dim::I ),
+                          j - owned_space.min( Dim::J ),
+                          k - owned_space.min( Dim::K ), n ) =
+                    values_mirror( i, j, k, n );
+            } );
 
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
@@ -325,20 +334,29 @@ class HypreStructuredSolver
         auto error = HYPRE_StructVectorInitialize( _b );
         checkHypreError( error );
 
-        // Get a local view of b on the host.
-        auto owned_space = b.layout()->indexSpace( Own(), Local() );
-        auto owned_b = createSubview( b.view(), owned_space );
-        auto b_mirror =
-            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), owned_b );
+        // Get a local view of RHS on the host.
+        auto b_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), b.view() );
 
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
+        auto owned_space = b.layout()->indexSpace( Own(), Local() );
         IndexSpace<4> reorder_space( {owned_space.extent( Dim::I ),
                                       owned_space.extent( Dim::J ),
                                       owned_space.extent( Dim::K ), 1} );
         auto vector_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
-        Kokkos::deep_copy( vector_values, b_mirror );
+        Kokkos::parallel_for(
+            "b_copy",
+            createExecutionPolicy( owned_space,
+                                   Kokkos::HostSpace::execution_space() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k,
+                           const int n ) {
+                vector_values( i - owned_space.min( Dim::I ),
+                               j - owned_space.min( Dim::J ),
+                               k - owned_space.min( Dim::K ), n ) =
+                    b_mirror( i, j, k, n );
+            } );
 
         // Insert b values into the HYPRE vector.
         error = HYPRE_StructVectorSetBoxValues(
@@ -356,13 +374,24 @@ class HypreStructuredSolver
         checkHypreError( error );
 
         // Get a local view of x on the host.
-        auto owned_x = createSubview( x.view(), owned_space );
         auto x_mirror =
-            Kokkos::create_mirror_view( Kokkos::HostSpace(), owned_x );
+            Kokkos::create_mirror_view( Kokkos::HostSpace(), x.view() );
 
         // Copy the HYPRE solution to the LHS.
-        Kokkos::deep_copy( x_mirror, vector_values );
-        Kokkos::deep_copy( owned_x, x_mirror );
+        Kokkos::parallel_for(
+            "x_copy",
+            createExecutionPolicy( owned_space,
+                                   Kokkos::HostSpace::execution_space() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k,
+                           const int n ) {
+                x_mirror( i, j, k, n ) =
+                    vector_values( i - owned_space.min( Dim::I ),
+                                   j - owned_space.min( Dim::J ),
+                                   k - owned_space.min( Dim::K ), n );
+            } );
+
+        // Copy back to the device.
+        Kokkos::deep_copy( x.view(), x_mirror );
     }
 
     // Get the number of iterations taken on the last solve.
