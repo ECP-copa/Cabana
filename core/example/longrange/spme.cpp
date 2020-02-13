@@ -16,7 +16,7 @@
 #include <cmath>
 #include <sys/time.h>
 
-#ifdef Cabana_ENABLE_Cuda
+#ifdef KOKKOS_ENABLE_CUDA
 #include <cufft.h>
 #include <cufftw.h>
 #else
@@ -577,7 +577,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
 // Calculating the values of the BC array involves first shifting the fractional
 // coords then compute the B and C arrays as described in the paper This can be
 // done once at the start of a run if the mesh stays constant
-#ifdef Cabana_ENABLE_Cuda
+#ifdef KOKKOS_ENABLE_CUDA
     cufftDoubleComplex *BC;
     cudaMallocManaged( (void **)&BC, sizeof( cufftDoubleComplex ) * meshsize );
 #else
@@ -615,7 +615,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
                                   mz * mz ); // Unnecessary extra variable
 
 // Calculate BC. Why store the imag part at all?
-#ifdef Cabana_ENABLE_Cuda
+#ifdef KOKKOS_ENABLE_CUDA
                     BC[idx].x = TPME::oneDeuler( kx, meshwidth ) *
                                 TPME::oneDeuler( ky, meshwidth ) *
                                 TPME::oneDeuler( kz, meshwidth ) *
@@ -633,7 +633,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
                 }
                 else
                 {
-#ifdef Cabana_ENABLE_Cuda
+#ifdef KOKKOS_ENABLE_CUDA
                     BC[idx].x = 0.0;
                     BC[idx].y = 0.0; // set origin element to zero
 #else
@@ -655,7 +655,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
 //  the norm of that result (in reciprocal space) by the BC array
 
 // Set up the real-space charge and reciprocal-space charge
-#ifdef Cabana_ENABLE_Cuda
+#ifdef KOKKOS_ENABLE_CUDA
     cufftDoubleComplex *Qr, *Qktest;
     cufftHandle plantest;
     cudaMallocManaged( (void **)&Qr, sizeof( fftw_complex ) * meshsize );
@@ -685,7 +685,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     Kokkos::fence();
 
 // Plan out that IFFT on the real-space charge mesh
-#ifdef Cabana_ENABLE_Cuda
+#ifdef KOKKOS_ENABLE_CUDA
     cufftPlan3d( &plantest, meshwidth, meshwidth, meshwidth, CUFFT_Z2Z );
     cufftExecZ2Z( plantest, Qr, Qktest, CUFFT_INVERSE ); // IFFT on Q
 
@@ -770,7 +770,7 @@ double TPME::compute( ParticleList &particles, ParticleList &mesh, double lx,
     std::cout << "SPME (dipole):     " << Udip << std::endl;
     std::cout << "SPME (total):      " << total_energy << std::endl;
 
-#ifndef Cabana_ENABLE_Cuda
+#ifndef KOKKOS_ENABLE_CUDA
     fftw_cleanup();
 #endif
     return total_energy;

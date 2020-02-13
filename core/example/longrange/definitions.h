@@ -13,6 +13,7 @@
 #include <Cabana_AoSoA.hpp>
 #include <CabanaCore_config.hpp>
 #include "example_definitions.h"
+#include <Kokkos_Core.hpp>
 
 //Math definitions needed for solvers
 constexpr double PI(3.141592653589793238462643);
@@ -53,16 +54,16 @@ using ParticleDataTypes =
 
 
 // Declare the memory space.
-#ifdef Cabana_ENABLE_Cuda
+#ifdef KOKKOS_ENABLE_CUDA
 using MemorySpace = Kokkos::CudaUVMSpace;
 using ExecutionSpace = Kokkos::Cuda;
-#elif defined(Cabana_ENABLE_OpenMP)
+#elif defined(KOKKOS_ENABLE_OPENMP)
 using MemorySpace = Kokkos::HostSpace;
 using ExecutionSpace = Kokkos::OpenMP;
-#elif defined(Cabana_ENABLE_Pthread)
+#elif defined(KOKKOS_ENABLE_THREADS)
 using MemorySpace = Kokkos::HostSpace;
 using ExecutionSpace = Kokkos::Threads;
-#elif defined(Cabana_ENABLE_Serial)
+#elif defined(KOKKOS_ENABLE_SERIAL)
 using MemorySpace = Kokkos::HostSpace;
 using ExecutionSpace = Kokkos::Serial;
 #endif

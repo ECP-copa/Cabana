@@ -44,13 +44,13 @@ template <class ExecutionSpace>
 struct CountSendsAndCreateSteeringAlgorithm;
 
 // CUDA uses atomics.
-#ifdef Cabana_ENABLE_Cuda
+#ifdef KOKKOS_ENABLE_CUDA
 template <>
 struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Cuda>
 {
     using type = CountSendsAndCreateSteeringAtomic;
 };
-#endif // end Cabana_ENABLE_Cuda
+#endif // end KOKKOS_ENABLE_CUDA
 
 // The default is to use duplication.
 template <class ExecutionSpace>

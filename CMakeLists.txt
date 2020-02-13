@@ -21,60 +21,39 @@ option(CMAKE_VERBOSE_MAKEFILE "Generate verbose Makefiles" OFF)
 include(GNUInstallDirs)
 
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
-find_package(Kokkos REQUIRED)
 
-option(Cabana_ENABLE_Serial "Build Cabana with Serial support" ON)
+# find kokkos
+find_package(Kokkos 3 REQUIRED)
 
-option(Cabana_ENABLE_Pthread "Build Cabana with Pthread support" OFF)
-if( Cabana_ENABLE_Pthread )
-  find_package(Threads)
+# ensure that we can use lambdas
+if(Kokkos_ENABLE_CUDA)
+  kokkos_check(OPTIONS CUDA_LAMBDA)
 endif()
 
-option(Cabana_ENABLE_OpenMP "Build Cabana with OpenMP support" OFF)
-if( Cabana_ENABLE_OpenMP )
-  find_package(OpenMP)
-endif()
+# set supported kokkos devices
+set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
 
-option(Cabana_ENABLE_Cuda "Build Cabana with Cuda support" OFF)
-if( Cabana_ENABLE_Cuda )
-  enable_language( CUDA )
-endif()
-
-set(CABANA_SUPPORTED_DEVICES Serial Pthread OpenMP Cuda)
-set(ENABLE_DEVICES)
+# check user required device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
-  if(Cabana_ENABLE_${_device})
-    string(TOUPPER ${_device} _uppercase_device)
-    if(NOT Kokkos_DEVICES MATCHES ".*${_uppercase_device}.*")
-      message(FATAL_ERROR "Kokkos built with devices '${Kokkos_DEVICES}', but Cabana with ${_device} requested.")
-    endif()
-    list(APPEND ENABLE_DEVICES "${_device}")
-  endif()
-endforeach()
-if(NOT ENABLE_DEVICES)
-  message(FATAL_ERROR "NO Cabana backend enabled")
-endif()
-message(STATUS "Enable Devices: ${ENABLE_DEVICES}")
-
-# if we are using Cuda, also add a "CudaUVM" device to use that memory space
-# in the test suite. Also enable a Cabana UVM option so the tests get triggered.
-foreach(_device ${ENABLE_DEVICES})
-  if(_device STREQUAL Cuda)
-    list(APPEND CABANA_SUPPORTED_DEVICES CudaUVM)
-    set(Cabana_ENABLE_CudaUVM ON)
+  option(Cabana_REQUIRE_${_device} "Build Cabana with required Kokkos ${device} support" OFF)
+  if( Cabana_REQUIRE_${_device} )
+    kokkos_check( DEVICES ${_device} )
   endif()
 endforeach()
 
+# enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
   enable_testing()
 endif()
 
+# enable doxygen
 find_package(Doxygen)
 if(Doxygen_FOUND)
   doxygen_add_docs(doxygen core/src)
 endif()
 
+# enable MPI
 option(Cabana_ENABLE_MPI "Build Cabana with MPI support" OFF)
 if(Cabana_ENABLE_MPI)
   find_package(MPI REQUIRED)
