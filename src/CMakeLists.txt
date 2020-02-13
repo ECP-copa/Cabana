@@ -33,6 +33,12 @@ if(HYPRE_FOUND)
     )
 endif()
 
+if(CAJITA_HAVE_HEFFTE)
+  list(APPEND HEADERS_PUBLIC
+    Cajita_FastFourierTransform.hpp
+    )
+endif()
+
 add_library(Cajita ${SOURCES_PUBLIC})
 
 target_link_libraries(Cajita
@@ -42,6 +48,18 @@ target_link_libraries(Cajita
 
 if(HYPRE_FOUND)
   target_link_libraries(Cajita HYPRE::hypre)
+endif()
+
+if(HEFFTE_FOUND)
+  if (TARGET HEFFTE::heffte)
+    target_link_libraries(Cajita HEFFTE::heffte)
+
+  endif()
+
+  if (HEFFTE::heffte_gpu)
+    target_link_libraries(Cajita HEFFTE::heffte_gpu)
+  endif()
+
 endif()
 
 install(FILES ${HEADERS_PUBLIC}

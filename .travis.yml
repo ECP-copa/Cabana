@@ -51,6 +51,17 @@ before_script:
       popd &&
       popd;
     fi
+  - if [[ ${HEFFTE} ]]; then
+      git clone --depth=1  https://bitbucket.org/icl/heffte.git &&
+      pushd heffte &&
+      mkdir build &&
+      pushd build &&
+      cmake -DCMAKE_INSTALL_PREFIX="$HOME/heffte" -DFFTW_USE_STATIC_LIBS=ON -DBUILD_GPU=OFF .. &&
+      make -j2 VERBOSE=1&&
+      make install &&
+      popd &&
+      popd;
+    fi
   - if [[ ${COVERAGE} ]]; then
        pip install --user coverxygen &&
        mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov;
@@ -65,21 +76,21 @@ addons:
       - openmpi-bin
       - libopenmpi-dev
       - libgsl0-dev
-      - libfftw3-dev
       - python-pip
       - g++-6
       - gfortran-6
+      - libfftw3-dev
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - mkdir build && pushd build &&
-    cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/hypre"
+    cmake -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/hypre;$HOME/heffte"
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           ${CMAKE_OPTS[@]}
           -DCajita_ENABLE_TESTING=ON
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
-          ${COVERAGE:+-DCajita_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
+          ${COVERAGE:+-DCajita_ENABLE_COVERAGE_BUILD=ON} .. &&
     make -k -j2 VERBOSE=1 &&
     make test CTEST_OUTPUT_ON_FAILURE=1 &&
     make format && git diff --exit-code &&

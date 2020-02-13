@@ -6,7 +6,7 @@ find_path(HYPRE_INCLUDE_DIR
   PATHS ${PC_HYPRE_INCLUDE_DIRS})
 find_library(HYPRE_LIBRARY
   NAMES HYPRE
-  PAHTS ${PC_HYPRE_LIBRARY_DIRS})
+  PATHS ${PC_HYPRE_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
 

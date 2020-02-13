@@ -21,11 +21,19 @@ set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
 # find dependencies
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake ${CMAKE_MODULE_PATH})
+
 find_package(MPI REQUIRED)
+
 find_package(Kokkos REQUIRED)
+
 find_package(HYPRE)
 if(HYPRE_FOUND)
   set(CAJITA_HAVE_HYPRE ON)
+endif()
+
+find_package(HEFFTE)
+if(HEFFTE_FOUND)
+  set(CAJITA_HAVE_HEFFTE ON)
 endif()
 
 # set the configure files
