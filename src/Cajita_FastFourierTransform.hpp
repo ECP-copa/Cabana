@@ -43,8 +43,8 @@ struct HeffteMemoryTraits<Kokkos::CudaUVMSpace>
 };
 #endif
 
-template <class MemorySpace>
-struct HeffteMemoryTraits
+template <>
+struct HeffteMemoryTraits<Kokkos::HostSpace>
 {
     static constexpr heffte_memory_type_t value = HEFFTE_MEM_CPU;
 };
