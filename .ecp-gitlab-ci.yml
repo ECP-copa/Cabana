@@ -1,29 +1,25 @@
 # see https://docs.gitlab.com/ce/ci/yaml/README.html for all available options
 
 variables:
-  SCHEDULER_PARAMETERS: "-J Cabana_CI -W 0:05 -nnodes 1 -P GEN007CITEST"
+  SCHEDULER_PARAMETERS: "-J Cabana_CI -W 0:05 -nnodes 1 -P CSC304"
 
 stages:
   - buildKokkos
   - build
-# serialize testing to 2 per stage to working around bug in ci runner on ascent
-  - test
-  - test2
-  - test3
-  - test4
 
 .BuildKokkos:
   stage: buildKokkos
   before_script:
     - module load gcc
   script:
+    - module load cmake
     - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
-    - for i in ${BACKENDS}; do KOKKOS_OPTS+=( --with-${i,,[A-Z]} ); done
+    - for i in ${BACKENDS}; do KOKKOS_OPTS+=( -DKokkos_ENABLE_${i}=ON ); done
     - git clone --depth=1 https://github.com/kokkos/kokkos.git &&
       pushd kokkos &&
       mkdir build &&
       pushd build &&
-      ../generate_makefile.bash --prefix=${CI_PROJECT_DIR}/kokkos.install ${KOKKOS_OPTS[@]} ${KOKKOS_EXTRA_ARGS} &&
+      cmake -DCMAKE_INSTALL_PREFIX=${CI_PROJECT_DIR}/kokkos.install ${KOKKOS_OPTS[@]} ${KOKKOS_EXTRA_ARGS} .. &&
       make -j${j} &&
       make install &&
       popd &&
@@ -43,28 +39,15 @@ stages:
     - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_REQUIRE_${i}=ON ); done
     - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
     - mkdir build && cd build &&
-      cmake -DCMAKE_PREFIX_PATH=${CI_PROJECT_DIR}/kokkos.install -DCabana_ENABLE_TESTING=ON -DCabana_REQUIRE_SERIAL=OFF -DCabana_ENABLE_EXAMPLES=ON ${CMAKE_OPTS[@]} ${CMAKE_EXTRA_ARGS} .. &&
-      make -k -j${j} VERBOSE=1
+      cmake -DCMAKE_PREFIX_PATH=${CI_PROJECT_DIR}/kokkos.install -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_SERIAL=OFF -DCabana_ENABLE_EXAMPLES=ON ${CMAKE_OPTS[@]} ${CMAKE_EXTRA_ARGS} .. &&
+      make -k -j${j} VERBOSE=1 && make test CTEST_OUTPUT_ON_FAILURE=1
   tags:
     - nobatch
-  artifacts:
-    paths:
-      - build/
-
-.Test:
-  stage: test
-  before_script:
-    - module load gcc
-  script:
-    - cd build
-    - make test CTEST_OUTPUT_ON_FAILURE=1
-  tags:
-    - batch
 
 .BuildKokkos_CUDA:
   extends: .BuildKokkos
   variables:
-    KOKKOS_EXTRA_ARGS: "--arch=Volta70,Power9 --with-cuda-options=enable_lambda"
+    KOKKOS_EXTRA_ARGS: "-DKokkos_ARCH_VOLTA70=ON -DKokkos_ENABLE_CUDA_LAMBDA=ON -DCMAKE_CXX_COMPILER=${CI_PROJECT_DIR}/kokkos/bin/nvcc_wrapper"
   before_script:
     - module load gcc/6.4.0
     - module load cuda
@@ -73,12 +56,6 @@ stages:
   extends: .Build
   variables:
     CMAKE_EXTRA_ARGS: "-DCMAKE_CXX_COMPILER=${CI_PROJECT_DIR}/kokkos.install/bin/nvcc_wrapper"
-  before_script:
-    - module load gcc/6.4.0
-    - module load cuda
-
-.Test_CUDA:
-  extends: .Test
   before_script:
     - module load gcc/6.4.0
     - module load cuda
@@ -95,12 +72,6 @@ Build CUDA:
   dependencies:
    - BuildKokkos CUDA
 
-Test CUDA:
-  extends: .Test_CUDA
-  dependencies:
-   - Build CUDA
-   - BuildKokkos CUDA
-
 BuildKokkos SERIAL:
   variables:
     BACKENDS: "SERIAL"
@@ -111,12 +82,6 @@ Build SERIAL:
     BACKENDS: "SERIAL"
   extends: .Build
   dependencies:
-   - BuildKokkos SERIAL
-
-Test SERIAL:
-  extends: .Test
-  dependencies:
-   - Build SERIAL
    - BuildKokkos SERIAL
 
 BuildKokkos OPENMP:
@@ -131,13 +96,6 @@ Build OPENMP:
   dependencies:
    - BuildKokkos OPENMP
 
-Test OPENMP:
-  extends: .Test
-  stage: test2
-  dependencies:
-   - Build OPENMP
-   - BuildKokkos OPENMP
-
 BuildKokkos PTHREAD:
   variables:
     BACKENDS: "PTHREAD"
@@ -148,13 +106,6 @@ Build PTHREAD:
     BACKENDS: "PTHREAD"
   extends: .Build
   dependencies:
-   - BuildKokkos PTHREAD
-
-Test PTHREAD:
-  extends: .Test
-  stage: test2
-  dependencies:
-   - Build PTHREAD
    - BuildKokkos PTHREAD
 
 BuildKokkos SERIAL PTHREAD:
@@ -169,13 +120,6 @@ Build SERIAL PTHREAD:
   dependencies:
    - BuildKokkos SERIAL PTHREAD
 
-Test SERIAL PTHREAD:
-  extends: .Test
-  stage: test3
-  dependencies:
-   - Build SERIAL PTHREAD
-   - BuildKokkos SERIAL PTHREAD
-
 BuildKokkos SERIAL OPENMP:
   variables:
     BACKENDS: "SERIAL OPENMP"
@@ -186,13 +130,6 @@ Build SERIAL OPENMP:
     BACKENDS: "SERIAL OPENMP"
   extends: .Build
   dependencies:
-   - BuildKokkos SERIAL OPENMP
-
-Test SERIAL OPENMP:
-  extends: .Test
-  stage: test4
-  dependencies:
-   - Build SERIAL OPENMP
    - BuildKokkos SERIAL OPENMP
 
 BuildKokkos SERIAL CUDA:
@@ -207,13 +144,6 @@ Build SERIAL CUDA:
   dependencies:
    - BuildKokkos SERIAL CUDA
 
-Test SERIAL CUDA:
-  extends: .Test_CUDA
-  stage: test3
-  dependencies:
-   - Build SERIAL CUDA
-   - BuildKokkos SERIAL CUDA
-
 BuildKokkos SERIAL CUDA OPENMP:
   variables:
     BACKENDS: "SERIAL CUDA OPENMP"
@@ -226,9 +156,3 @@ Build SERIAL CUDA OPENMP:
   dependencies:
    - BuildKokkos SERIAL CUDA OPENMP
 
-Test SERIAL CUDA OPENMP:
-  extends: .Test_CUDA
-  stage: test4
-  dependencies:
-   - Build SERIAL CUDA OPENMP
-   - BuildKokkos SERIAL CUDA OPENMP
