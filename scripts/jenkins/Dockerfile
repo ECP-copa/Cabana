@@ -1,4 +1,5 @@
-FROM nvidia/cuda:10.1-devel-ubuntu18.04
+ARG BASE=nvidia/cuda:10.2-devel
+FROM $BASE
 
 ARG NPROCS=4
 
