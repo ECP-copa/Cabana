@@ -8,13 +8,22 @@ RUN apt-get update && apt-get install -y \
     rm -rf /var/lib/apt/lists/*
 
 # Install CMake
-RUN export CMAKE_VERSION=3.13.4 && \
-    export CMAKE_VERSION_SHORT=3.13 && \
-    export CMAKE_URL=https://cmake.org/files/v${CMAKE_VERSION_SHORT}/cmake-${CMAKE_VERSION}-Linux-x86_64.sh && \
-    export CMAKE_SCRIPT=cmake-${CMAKE_VERSION}-Linux-x86_64.sh && \
-    wget --quiet ${CMAKE_URL} --output-document=${CMAKE_SCRIPT} && \
-    sh ${CMAKE_SCRIPT} --skip-license --prefix=/usr && \
+ENV CMAKE_DIR=/opt/cmake
+RUN CMAKE_VERSION=3.13.4 && \
+    CMAKE_KEY=2D2CEF1034921684 && \
+    CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION} && \
+    CMAKE_SCRIPT=cmake-${CMAKE_VERSION}-Linux-x86_64.sh && \
+    CMAKE_SHA256=cmake-${CMAKE_VERSION}-SHA-256.txt && \
+    wget --quiet ${CMAKE_URL}/${CMAKE_SHA256} && \
+    wget --quiet ${CMAKE_URL}/${CMAKE_SHA256}.asc && \
+    wget --quiet ${CMAKE_URL}/${CMAKE_SCRIPT} && \
+    gpg --recv-keys ${CMAKE_KEY} && \
+    gpg --verify ${CMAKE_SHA256}.asc ${CMAKE_SHA256} && \
+    grep ${CMAKE_SCRIPT} ${CMAKE_SHA256} | sha256sum --check && \
+    mkdir -p ${CMAKE_DIR} && \
+    sh ${CMAKE_SCRIPT} --skip-license --prefix=${CMAKE_DIR} && \
     rm ${CMAKE_SCRIPT}
+ENV PATH=${CMAKE_DIR}/bin:$PATH
 
 # Install CUDA-aware Open MPI
 RUN export OPENMPI_VERSION=4.0.0 && \
