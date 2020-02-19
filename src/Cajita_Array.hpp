@@ -296,6 +296,9 @@ std::shared_ptr<Array<
 createSubarray( const Array<Scalar, EntityType, MeshType, Params...> &array,
                 const int dof_min, const int dof_max )
 {
+    if ( dof_min < 0 || dof_max > array.layout()->dofsPerEntity() )
+        throw std::logic_error( "Subarray dimensions out of bounds" );
+
     auto space = array.layout()->indexSpace( Ghost(), Local() );
     IndexSpace<4> sub_space(
         {space.min( 0 ), space.min( 1 ), space.min( 2 ), dof_min},
