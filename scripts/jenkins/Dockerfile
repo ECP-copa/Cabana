@@ -50,7 +50,7 @@ ENV PATH=${OPENMPI_DIR}/bin:$PATH
 
 # Install Kokkos
 ENV KOKKOS_DIR=/opt/kokkos
-RUN KOKKOS_VERSION=master && \
+RUN KOKKOS_VERSION=3.0.00 && \
     KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_VERSION}.tar.gz && \
     SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
@@ -62,7 +62,7 @@ RUN KOKKOS_VERSION=master && \
     cmake \
       -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} \
       -D CMAKE_BUILD_TYPE=Debug \
-      -D CMAKE_CXX_COMPILER=/scratch/kokkos/bin/nvcc_wrapper \
+      -D CMAKE_CXX_COMPILER=${SCRATCH_DIR}/kokkos/bin/nvcc_wrapper \
       -D Kokkos_ENABLE_CUDA=ON \
       -D Kokkos_ENABLE_CUDA_LAMBDA=ON \
       -D Kokkos_ARCH_VOLTA70=ON
