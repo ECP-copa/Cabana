@@ -1,0 +1,49 @@
+pipeline {
+    agent none
+
+    environment {
+        CCACHE_DIR = '/tmp/ccache'
+        CCACHE_MAXSIZE = '10G'
+        CCACHE_CPP2 = 'true'
+    }
+    stages {
+        stage('Build') {
+            parallel {
+                stage('CUDA-10.1-NVCC-DEBUG') {
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile'
+                            dir 'scripts/jenkins'
+                            additionalBuildArgs '--pull'
+                            label 'nvidia-docker && volta'
+                            args '-v /tmp/ccache.kokkos:/tmp/ccache'
+                        }
+                    }
+                    steps {
+                        sh 'ccache --zero-stats'
+                        sh '''
+                            rm -rf build && mkdir -p build && cd build && \
+                            cmake \
+                              -D CMAKE_BUILD_TYPE=Debug \
+                              -D CMAKE_CXX_COMPILER=$KOKKOS_DIR/bin/nvcc_wrapper \
+                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic" \
+                              -D CMAKE_PREFIX_PATH=$KOKKOS_DIR \
+                              -D MPIEXEC_PREFLAGS="--allow-run-as-root;--mca;btl_smcuda_use_cuda_ipc;0" \
+                              -D Cabana_ENABLE_MPI=ON \
+                              -D Cabana_REQUIRE_CUDA=ON \
+                              -D Cabana_ENABLE_TESTING=ON \
+                            .. && \
+                            make -j$NPROCS && \
+                            ctest --output-on-failure
+                        '''
+                    }
+                    post {
+                        always {
+                            sh 'ccache --show-stats'
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
