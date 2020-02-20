@@ -43,7 +43,7 @@ RUN OPENMPI_VERSION=4.0.2 && \
     mkdir -p openmpi && \
     tar -xf ${OPENMPI_ARCHIVE} -C openmpi --strip-components=1 && \
     mkdir -p build && cd build && \
-    ../openmpi/configure --prefix=${OPENMPI_DIR} ${CUDA_OPTIONS} && \
+    ../openmpi/configure --prefix=${OPENMPI_DIR} ${CUDA_OPTIONS} CFLAGS=-w && \
     make -j${NPROCS} install && \
     rm -rf ${SCRATCH_DIR}
 ENV PATH=${OPENMPI_DIR}/bin:$PATH
