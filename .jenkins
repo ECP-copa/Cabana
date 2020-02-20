@@ -4,12 +4,12 @@ pipeline {
     stages {
         stage('Build') {
             parallel {
-                stage('CUDA-10.1-NVCC-DEBUG') {
+                stage('CUDA-10.2-NVCC-DEBUG') {
                     agent {
                         dockerfile {
                             filename 'Dockerfile'
                             dir 'scripts/jenkins'
-                            additionalBuildArgs '--pull'
+                            additionalBuildArgs '--pull --build-arg BASE=nvidia/cuda:10.2-devel'
                             label 'nvidia-docker && volta'
                             args '-v /tmp/ccache.kokkos:/tmp/ccache'
                         }
