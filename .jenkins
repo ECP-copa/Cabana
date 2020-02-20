@@ -1,11 +1,6 @@
 pipeline {
     agent none
 
-    environment {
-        CCACHE_DIR = '/tmp/ccache'
-        CCACHE_MAXSIZE = '10G'
-        CCACHE_CPP2 = 'true'
-    }
     stages {
         stage('Build') {
             parallel {
@@ -20,7 +15,6 @@ pipeline {
                         }
                     }
                     steps {
-                        sh 'ccache --zero-stats'
                         sh '''
                             rm -rf build && mkdir -p build && cd build && \
                             cmake \
@@ -36,11 +30,6 @@ pipeline {
                             make -j$NPROCS && \
                             ctest --output-on-failure
                         '''
-                    }
-                    post {
-                        always {
-                            sh 'ccache --show-stats'
-                        }
                     }
                 }
             }
