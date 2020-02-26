@@ -214,8 +214,7 @@ class FastFourierTransform
         // Setup the fft.
         int permute = 0;
         int fftsize, sendsize, recvsize;
-        Scalar *work = nullptr;
-        _fft.setup( work, global_num_entity.data(), global_low.data(),
+        _fft.setup( global_num_entity.data(), global_low.data(),
                     global_high.data(), global_low.data(), global_high.data(),
                     permute, fftsize, sendsize, recvsize );
 
@@ -323,7 +322,7 @@ class FastFourierTransform
     }
 
   private:
-    HEFFTE_NS::FFT3d<Scalar> _fft;
+    HEFFTE::FFT3d<Scalar> _fft;
     Kokkos::View<Scalar *, DeviceType> _fft_work;
 };
 

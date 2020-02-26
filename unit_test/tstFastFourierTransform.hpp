@@ -34,7 +34,7 @@ namespace Test
 void memoryTest()
 {
     auto mtype = HeffteMemoryTraits<TEST_MEMSPACE>::value;
-    HEFFTE_NS::Memory fft_mem;
+    HEFFTE::Memory fft_mem;
     fft_mem.memory_type = mtype;
     int size = 12;
     int nbytes = size * sizeof(double);
