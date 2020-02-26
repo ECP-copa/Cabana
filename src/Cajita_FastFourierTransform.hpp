@@ -322,7 +322,7 @@ class FastFourierTransform
     }
 
   private:
-    HEFFTE_NS::FFT3d<Scalar> _fft;
+    HEFFTE::FFT3d<Scalar> _fft;
     Kokkos::View<Scalar *, DeviceType> _fft_work;
 };
 
