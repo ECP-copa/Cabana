@@ -75,6 +75,54 @@ struct MemberTypeAtIndex<M, MemberTypes<Types...>>
 };
 
 //---------------------------------------------------------------------------//
+/*!
+  \class CheckMemberTypes
+  \brief Check that member types are valied.
+*/
+template <std::size_t M, typename T, typename... Types>
+struct CheckMemberTypesImpl;
+
+template <typename T, typename... Types>
+struct CheckMemberTypesImpl<0, T, Types...>
+{
+    using type = T;
+    static_assert( std::is_trivial<type>::value,
+                   "Member types must be trivial" );
+
+    using value_type = typename std::remove_all_extents<type>::type;
+    static_assert( std::is_arithmetic<value_type>::value,
+                   "Member value types must be arithmetic" );
+
+    // Return true so we get the whole stack to evaluate all the assertions.
+    static constexpr bool value = true;
+};
+
+template <std::size_t M, typename T, typename... Types>
+struct CheckMemberTypesImpl
+{
+    using type = T;
+    static_assert( std::is_trivial<type>::value,
+                   "Member types must be trivial" );
+
+    using value_type = typename std::remove_all_extents<type>::type;
+    static_assert( std::is_arithmetic<value_type>::value,
+                   "Member value types must be arithmetic" );
+
+    static constexpr bool value = CheckMemberTypesImpl<M - 1, Types...>::value;
+};
+
+template <typename... Types>
+struct CheckMemberTypes;
+
+template <typename... Types>
+struct CheckMemberTypes<MemberTypes<Types...>>
+{
+    static constexpr int size = MemberTypes<Types...>::size;
+    static constexpr bool value =
+        CheckMemberTypesImpl<size - 1, Types...>::value;
+};
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Cabana
 
