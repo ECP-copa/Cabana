@@ -118,6 +118,8 @@ class AoSoA
     // Member data types.
     static_assert( is_member_types<DataTypes>::value,
                    "AoSoA data types must be member types" );
+    static_assert( CheckMemberTypes<DataTypes>::value,
+                   "AoSoA data type failure" );
     using member_types = DataTypes;
 
     // Device type.
