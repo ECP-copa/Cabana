@@ -185,17 +185,18 @@ class Halo : public CommunicationPlan<DeviceType>
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <typename>
-struct is_halo : public std::false_type
+struct is_halo_impl : public std::false_type
 {
 };
 
 template <typename DeviceType>
-struct is_halo<Halo<DeviceType>> : public std::true_type
+struct is_halo_impl<Halo<DeviceType>> : public std::true_type
 {
 };
 
-template <typename DeviceType>
-struct is_halo<const Halo<DeviceType>> : public std::true_type
+template <class T>
+struct is_halo : public is_halo_impl<typename std::remove_cv<
+                     typename std::remove_reference<T>::type>::type>::type
 {
 };
 

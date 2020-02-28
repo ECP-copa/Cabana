@@ -31,17 +31,19 @@ struct MemberTypes
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
-struct is_member_types : public std::false_type
+struct is_member_types_impl : public std::false_type
 {
 };
 
 template <typename... Types>
-struct is_member_types<MemberTypes<Types...>> : public std::true_type
+struct is_member_types_impl<MemberTypes<Types...>> : public std::true_type
 {
 };
 
-template <typename... Types>
-struct is_member_types<const MemberTypes<Types...>> : public std::true_type
+template <class T>
+struct is_member_types
+    : public is_member_types_impl<typename std::remove_cv<
+          typename std::remove_reference<T>::type>::type>::type
 {
 };
 

@@ -31,17 +31,18 @@ struct SoA;
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
-struct is_soa : public std::false_type
+struct is_soa_impl : public std::false_type
 {
 };
 
 template <class DataTypes, int VectorLength>
-struct is_soa<SoA<DataTypes, VectorLength>> : public std::true_type
+struct is_soa_impl<SoA<DataTypes, VectorLength>> : public std::true_type
 {
 };
 
-template <class DataTypes, int VectorLength>
-struct is_soa<const SoA<DataTypes, VectorLength>> : public std::true_type
+template <class T>
+struct is_soa : public is_soa_impl<typename std::remove_cv<
+                    typename std::remove_reference<T>::type>::type>::type
 {
 };
 

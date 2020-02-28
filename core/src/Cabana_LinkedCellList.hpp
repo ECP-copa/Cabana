@@ -282,18 +282,20 @@ class LinkedCellList
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <typename>
-struct is_linked_cell_list : public std::false_type
+struct is_linked_cell_list_impl : public std::false_type
 {
 };
 
 template <typename DeviceType>
-struct is_linked_cell_list<LinkedCellList<DeviceType>> : public std::true_type
-{
-};
-
-template <typename DeviceType>
-struct is_linked_cell_list<const LinkedCellList<DeviceType>>
+struct is_linked_cell_list_impl<LinkedCellList<DeviceType>>
     : public std::true_type
+{
+};
+
+template <class T>
+struct is_linked_cell_list
+    : public is_linked_cell_list_impl<typename std::remove_cv<
+          typename std::remove_reference<T>::type>::type>::type
 {
 };
 
