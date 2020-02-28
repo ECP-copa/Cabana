@@ -39,21 +39,20 @@ class AoSoA;
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
-struct is_aosoa : public std::false_type
+struct is_aosoa_impl : public std::false_type
 {
 };
 
 template <class DataTypes, class DeviceType, int VectorLength,
           class MemoryTraits>
-struct is_aosoa<AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
+struct is_aosoa_impl<AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
     : public std::true_type
 {
 };
 
-template <class DataTypes, class DeviceType, int VectorLength,
-          class MemoryTraits>
-struct is_aosoa<const AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
-    : public std::true_type
+template <class T>
+struct is_aosoa : public is_aosoa_impl<typename std::remove_cv<
+                      typename std::remove_reference<T>::type>::type>::type
 {
 };
 

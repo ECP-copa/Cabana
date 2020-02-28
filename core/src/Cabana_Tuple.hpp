@@ -31,17 +31,18 @@ struct Tuple;
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
-struct is_tuple : public std::false_type
+struct is_tuple_impl : public std::false_type
 {
 };
 
 template <class DataTypes>
-struct is_tuple<Tuple<DataTypes>> : public std::true_type
+struct is_tuple_impl<Tuple<DataTypes>> : public std::true_type
 {
 };
 
-template <class DataTypes>
-struct is_tuple<const Tuple<DataTypes>> : public std::true_type
+template <class T>
+struct is_tuple : public is_tuple_impl<typename std::remove_cv<
+                      typename std::remove_reference<T>::type>::type>::type
 {
 };
 
