@@ -142,17 +142,19 @@ class Distributor : public CommunicationPlan<DeviceType>
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <typename>
-struct is_distributor : public std::false_type
+struct is_distributor_impl : public std::false_type
 {
 };
 
 template <typename DeviceType>
-struct is_distributor<Distributor<DeviceType>> : public std::true_type
+struct is_distributor_impl<Distributor<DeviceType>> : public std::true_type
 {
 };
 
-template <typename DeviceType>
-struct is_distributor<const Distributor<DeviceType>> : public std::true_type
+template <class T>
+struct is_distributor
+    : public is_distributor_impl<typename std::remove_cv<
+          typename std::remove_reference<T>::type>::type>::type
 {
 };
 

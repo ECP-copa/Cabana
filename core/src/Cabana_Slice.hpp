@@ -808,7 +808,7 @@ class Slice
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <typename>
-struct is_slice : public std::false_type
+struct is_slice_impl : public std::false_type
 {
 };
 
@@ -816,17 +816,15 @@ struct is_slice : public std::false_type
 // on an AoSoA type.
 template <typename DataType, typename DeviceType, typename MemoryAccessType,
           int VectorLength, int Stride>
-struct is_slice<
+struct is_slice_impl<
     Slice<DataType, DeviceType, MemoryAccessType, VectorLength, Stride>>
     : public std::true_type
 {
 };
 
-template <typename DataType, typename DeviceType, typename MemoryAccessType,
-          int VectorLength, int Stride>
-struct is_slice<
-    const Slice<DataType, DeviceType, MemoryAccessType, VectorLength, Stride>>
-    : public std::true_type
+template <class T>
+struct is_slice : public is_slice_impl<typename std::remove_cv<
+                      typename std::remove_reference<T>::type>::type>::type
 {
 };
 
