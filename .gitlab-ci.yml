@@ -3,7 +3,7 @@ test:default:
   script:
     - apt-get update
     - apt-get install -y gcovr gfortran cmake g++ git bc
-    - git clone --depth=1 https://github.com/kokkos/kokkos.git && 
+    - git clone --depth=1 --branch 3.0.00 https://github.com/kokkos/kokkos.git && 
       pushd kokkos &&
       mkdir build &&
       pushd build &&
