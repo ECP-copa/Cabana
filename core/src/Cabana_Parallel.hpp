@@ -255,15 +255,15 @@ inline void neighbor_parallel_for(
 
     Kokkos::parallel_for(
         str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
-            const int nn =
+            const index_type nn =
                 NeighborList<NeighborListType>::numNeighbor( list, i );
 
-            for ( int n = 0; n < nn; ++n )
+            for ( index_type n = 0; n < nn; ++n )
             {
                 const index_type j =
                     NeighborList<NeighborListType>::getNeighbor( list, i, n );
 
-                for ( int a = n + 1; a < nn; ++a )
+                for ( index_type a = n + 1; a < nn; ++a )
                 {
                     const index_type k =
                         NeighborList<NeighborListType>::getNeighbor( list, i,
@@ -407,7 +407,7 @@ inline void neighbor_parallel_for(
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
             index_type i = team.league_rank() + range_begin;
 
-            const int nn =
+            const index_type nn =
                 NeighborList<NeighborListType>::numNeighbor( list, i );
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
@@ -415,7 +415,7 @@ inline void neighbor_parallel_for(
                         NeighborList<NeighborListType>::getNeighbor( list, i,
                                                                      n );
 
-                    for ( int a = n + 1; a < nn; ++a )
+                    for ( index_type a = n + 1; a < nn; ++a )
                     {
                         const index_type k =
                             NeighborList<NeighborListType>::getNeighbor( list,
@@ -480,17 +480,17 @@ inline void neighbor_parallel_for(
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
             index_type i = team.league_rank() + range_begin;
 
-            const int nn =
+            const index_type nn =
                 NeighborList<NeighborListType>::numNeighbor( list, i );
             Kokkos::parallel_for(
-                Kokkos::TeamThreadRange( team, nn ), [&]( const int n ) {
+                Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
                     const index_type j =
                         NeighborList<NeighborListType>::getNeighbor( list, i,
                                                                      n );
 
                     Kokkos::parallel_for(
                         Kokkos::ThreadVectorRange( team, n + 1, nn ),
-                        [&]( const int a ) {
+                        [&]( const index_type a ) {
                             const index_type k =
                                 NeighborList<NeighborListType>::getNeighbor(
                                     list, i, a );
