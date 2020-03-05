@@ -7,4 +7,6 @@
 
 #cmakedefine Cabana_ENABLE_MPI
 
+#cmakedefine Cabana_ENABLE_ARBORX
+
 #endif // CABANA_CORE_CONFIG_HPP
