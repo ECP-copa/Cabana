@@ -22,6 +22,14 @@ set(HEADERS_PUBLIC
   )
 
 #-----------------------------------------------------------------------------
+
+if(Cabana_ENABLE_ARBORX)
+  list(APPEND HEADERS_PUBLIC
+    Cabana_Experimental_NeighborList.hpp
+    )
+endif()
+
+#-----------------------------------------------------------------------------
 # MPI-dependent code
 if(Cabana_ENABLE_MPI)
   list(APPEND HEADERS_PUBLIC

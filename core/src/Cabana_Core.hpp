@@ -34,4 +34,8 @@
 #include <Cabana_Halo.hpp>
 #endif
 
+#ifdef Cabana_ENABLE_ARBORX
+#include <Cabana_Experimental_NeighborList.hpp>
+#endif
+
 #endif // end CABANA_CORE_HPP
