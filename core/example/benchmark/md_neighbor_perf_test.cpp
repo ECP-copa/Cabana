@@ -202,9 +202,16 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
         std::cout << "Run t: " << t << std::endl;
         auto start_time = std::chrono::high_resolution_clock::now();
 
+#if defined( Cabana_ENABLE_ARBORX )
+        auto const list = Cabana::Experimental::makeNeighborList<DeviceType>(
+            Cabana::slice<Position>( aosoa, "position" ), 0, aosoa.size(),
+            interaction_cutoff );
+#else
+
         Cabana::VerletList<DeviceType, NeighborListTag, Cabana::VerletLayoutCSR>
             list( Cabana::slice<Position>( aosoa, "position" ), 0, aosoa.size(),
                   interaction_cutoff, cell_size_ratio, grid_min, grid_max );
+#endif
 
         auto end_time = std::chrono::high_resolution_clock::now();
 
