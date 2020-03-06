@@ -17,10 +17,6 @@
 #define CABANA_FUNCTION KOKKOS_FUNCTION
 #define CABANA_INLINE_FUNCTION KOKKOS_INLINE_FUNCTION
 #define CABANA_FORCEINLINE_FUNCTION KOKKOS_FORCEINLINE_FUNCTION
-#if __has_cpp_attribute( deprecated ) && __cpluplus >= 201402L
 #define CABANA_DEPRECATED [[deprecated]]
-#else
-#define CABANA_DEPRECATED
-#endif
 
 #endif // end CABANA_MACROS_HPP

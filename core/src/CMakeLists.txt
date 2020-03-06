@@ -53,6 +53,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CM
 #-----------------------------------------------------------------------------
 
 add_library(cabanacore ${SOURCES_IMPL})
+target_compile_features(cabanacore PUBLIC cxx_attribute_deprecated)
 target_include_directories(cabanacore PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(cabanacore Kokkos::kokkos)
