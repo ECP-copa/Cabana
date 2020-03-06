@@ -652,7 +652,7 @@ void testVerletListFullPartialRange()
     auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
-#if !defined( Cabana_ENABLE_ARBORX ) || true // FIXME
+#if !defined( Cabana_ENABLE_ARBORX )
     double grid_min[3] = {box_min, box_min, box_min};
     double grid_max[3] = {box_max, box_max, box_max};
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag> nlist(

@@ -183,6 +183,7 @@ class NeighborList<Experimental::Impl::CrsGraph<MemorySpace, Tag>>
     static KOKKOS_FUNCTION size_type
     numNeighbor( crs_graph_type const &crs_graph, size_type p )
     {
+        assert( p < crs_graph.row_ptr.size() - 1 );
         return crs_graph.row_ptr( p + 1 ) - crs_graph.row_ptr( p );
     }
     static KOKKOS_FUNCTION size_type
