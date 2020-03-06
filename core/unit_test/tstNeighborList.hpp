@@ -10,8 +10,11 @@
  ****************************************************************************/
 
 #include <CabanaCore_config.hpp> // Cabana_ENABLE_ARBORX
-#include <Cabana_AoSoA.hpp>
+#if defined( Cabana_ENABLE_ARBORX )
 #include <Cabana_Experimental_NeighborList.hpp>
+#endif
+
+#include <Cabana_AoSoA.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_VerletList.hpp>
