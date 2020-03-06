@@ -204,6 +204,7 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
 
 #if defined( Cabana_ENABLE_ARBORX )
         auto const list = Cabana::Experimental::makeNeighborList<DeviceType>(
+            Cabana::FullNeighborTag{},
             Cabana::slice<Position>( aosoa, "position" ), 0, aosoa.size(),
             interaction_cutoff );
 #else
