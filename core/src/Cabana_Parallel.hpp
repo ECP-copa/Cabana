@@ -14,6 +14,7 @@
 
 #include <Cabana_ExecutionPolicy.hpp>
 #include <Cabana_NeighborList.hpp>
+#include <Cabana_Types.hpp> // is_accessible_from
 
 #include <Kokkos_Core.hpp>
 
@@ -198,19 +199,26 @@ inline void neighbor_parallel_for(
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
     using index_type =
         typename Kokkos::RangePolicy<ExecParameters...>::index_type;
+
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
     Kokkos::parallel_for(
         str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
             for ( index_type n = 0;
-                  n < NeighborList<NeighborListType>::numNeighbor( list, i );
-                  ++n )
+                  n < neighbor_list_traits::numNeighbor( list, i ); ++n )
                 Impl::functorTagDispatch<work_tag>(
                     functor, i,
                     static_cast<index_type>(
-                        NeighborList<NeighborListType>::getNeighbor( list, i,
-                                                                     n ) ) );
+                        neighbor_list_traits::getNeighbor( list, i, n ) ) );
         } );
 }
 
@@ -250,24 +258,31 @@ inline void neighbor_parallel_for(
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
     using index_type =
         typename Kokkos::RangePolicy<ExecParameters...>::index_type;
 
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
     Kokkos::parallel_for(
         str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
-            const index_type nn =
-                NeighborList<NeighborListType>::numNeighbor( list, i );
+            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
 
             for ( index_type n = 0; n < nn; ++n )
             {
                 const index_type j =
-                    NeighborList<NeighborListType>::getNeighbor( list, i, n );
+                    neighbor_list_traits::getNeighbor( list, i, n );
 
                 for ( index_type a = n + 1; a < nn; ++a )
                 {
                     const index_type k =
-                        NeighborList<NeighborListType>::getNeighbor( list, i,
-                                                                     a );
+                        neighbor_list_traits::getNeighbor( list, i, a );
                     Impl::functorTagDispatch<work_tag>( functor, i, j, k );
                 }
             }
@@ -334,6 +349,12 @@ inline void neighbor_parallel_for(
 
     using index_type = typename kokkos_policy::index_type;
 
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
     const auto range_begin = exec_policy.begin();
 
     Kokkos::parallel_for(
@@ -342,14 +363,12 @@ inline void neighbor_parallel_for(
             index_type i = team.league_rank() + range_begin;
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange(
-                    team,
-                    NeighborList<NeighborListType>::numNeighbor( list, i ) ),
+                    team, neighbor_list_traits::numNeighbor( list, i ) ),
                 [&]( const index_type n ) {
                     Impl::functorTagDispatch<work_tag>(
                         functor, i,
                         static_cast<index_type>(
-                            NeighborList<NeighborListType>::getNeighbor(
-                                list, i, n ) ) );
+                            neighbor_list_traits::getNeighbor( list, i, n ) ) );
                 } );
         } );
 }
@@ -400,6 +419,12 @@ inline void neighbor_parallel_for(
 
     using index_type = typename kokkos_policy::index_type;
 
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
     const auto range_begin = exec_policy.begin();
 
     Kokkos::parallel_for(
@@ -407,19 +432,16 @@ inline void neighbor_parallel_for(
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
             index_type i = team.league_rank() + range_begin;
 
-            const index_type nn =
-                NeighborList<NeighborListType>::numNeighbor( list, i );
+            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
                     const index_type j =
-                        NeighborList<NeighborListType>::getNeighbor( list, i,
-                                                                     n );
+                        neighbor_list_traits::getNeighbor( list, i, n );
 
                     for ( index_type a = n + 1; a < nn; ++a )
                     {
                         const index_type k =
-                            NeighborList<NeighborListType>::getNeighbor( list,
-                                                                         i, a );
+                            neighbor_list_traits::getNeighbor( list, i, a );
                         Impl::functorTagDispatch<work_tag>( functor, i, j, k );
                     }
                 } );
@@ -473,6 +495,12 @@ inline void neighbor_parallel_for(
 
     using index_type = typename kokkos_policy::index_type;
 
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
     const auto range_begin = exec_policy.begin();
 
     Kokkos::parallel_for(
@@ -480,20 +508,17 @@ inline void neighbor_parallel_for(
         KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
             index_type i = team.league_rank() + range_begin;
 
-            const index_type nn =
-                NeighborList<NeighborListType>::numNeighbor( list, i );
+            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
             Kokkos::parallel_for(
                 Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
                     const index_type j =
-                        NeighborList<NeighborListType>::getNeighbor( list, i,
-                                                                     n );
+                        neighbor_list_traits::getNeighbor( list, i, n );
 
                     Kokkos::parallel_for(
                         Kokkos::ThreadVectorRange( team, n + 1, nn ),
                         [&]( const index_type a ) {
                             const index_type k =
-                                NeighborList<NeighborListType>::getNeighbor(
-                                    list, i, a );
+                                neighbor_list_traits::getNeighbor( list, i, a );
                             Impl::functorTagDispatch<work_tag>( functor, i, j,
                                                                 k );
                         } );
