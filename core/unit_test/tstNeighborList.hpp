@@ -36,14 +36,14 @@ convert_crs_graph_to_verlet_list(
                                          Tag> const &crs_graph )
 {
     int const n_rows = crs_graph.row_ptr.size() - 1;
+    int const shift = crs_graph.shift;
+    int const total = crs_graph.total;
     int const n_entries = crs_graph.col_ind.size();
     Kokkos::View<int *, DeviceType> counts(
-        Kokkos::view_alloc( "verlet_list_counts", Kokkos::WithoutInitializing ),
-        n_rows );
+        Kokkos::view_alloc( "verlet_list_counts" ), total );
+
     Kokkos::View<int *, DeviceType> offsets(
-        Kokkos::view_alloc( "verlet_list_offsets",
-                            Kokkos::WithoutInitializing ),
-        n_rows );
+        Kokkos::view_alloc( "verlet_list_offsets" ), total );
     Kokkos::View<int *, DeviceType> neighbors(
         Kokkos::view_alloc( "verlet_list_neighbors",
                             Kokkos::WithoutInitializing ),
@@ -53,8 +53,8 @@ convert_crs_graph_to_verlet_list(
         KOKKOS_LAMBDA( int i ) {
             auto const first = crs_graph.row_ptr( i );
             auto const last = crs_graph.row_ptr( i + 1 );
-            offsets( i ) = first;
-            counts( i ) = last - first;
+            offsets( shift + i ) = first;
+            counts( shift + i ) = last - first;
             for ( int j = first; j < last; ++j )
             {
                 neighbors( j ) = crs_graph.col_ind( j );
@@ -73,27 +73,27 @@ convert_crs_graph_to_verlet_list(
                                          Tag> const &crs_graph )
 {
     int const n_rows = crs_graph.row_ptr.size() - 1;
+    int const shift = crs_graph.shift;
+    int const total = crs_graph.total;
     Kokkos::View<int *, DeviceType> counts(
-        Kokkos::view_alloc( "verlet_list_counts", Kokkos::WithoutInitializing ),
-        n_rows );
+        Kokkos::view_alloc( "verlet_list_counts" ), total );
     Kokkos::parallel_for(
         Kokkos::RangePolicy<typename DeviceType::execution_space>( 0, n_rows ),
         KOKKOS_LAMBDA( int i ) {
             auto const first = crs_graph.row_ptr( i );
             auto const last = crs_graph.row_ptr( i + 1 );
-            counts( i ) = last - first;
+            counts( shift + i ) = last - first;
         } );
     int const max_entries_per_row = ArborX::max( counts );
     Kokkos::View<int **, DeviceType> neighbors(
-        Kokkos::view_alloc( "verlet_list_neighbors",
-                            Kokkos::WithoutInitializing ),
-        n_rows, max_entries_per_row );
+        Kokkos::view_alloc( "verlet_list_neighbors" ), total,
+        max_entries_per_row );
     Kokkos::parallel_for(
         Kokkos::RangePolicy<typename DeviceType::execution_space>( 0, n_rows ),
         KOKKOS_LAMBDA( int i ) {
-            for ( int j = 0; j < counts( i ); ++j )
+            for ( int j = 0; j < counts( shift + i ); ++j )
             {
-                neighbors( i, j ) =
+                neighbors( shift + i, j ) =
                     crs_graph.col_ind( crs_graph.row_ptr( i ) + j );
             }
         } );
