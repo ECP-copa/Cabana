@@ -150,8 +150,8 @@ struct CrsGraph
 };
 } // namespace Impl
 
-template <typename DeviceType, typename Slice, typename Tag = FullNeighborTag>
-auto makeNeighborList( Slice const &coordinate_slice,
+template <typename DeviceType, typename Slice, typename Tag>
+auto makeNeighborList( Tag, Slice const &coordinate_slice,
                        typename Slice::size_type first,
                        typename Slice::size_type last,
                        typename Slice::value_type radius )
