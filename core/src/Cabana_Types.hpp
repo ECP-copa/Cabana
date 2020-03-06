@@ -14,6 +14,8 @@
 
 #include <Kokkos_Core.hpp>
 
+#include <Cabana_Macros.hpp>
+
 #include <type_traits>
 
 namespace Cabana
@@ -22,29 +24,29 @@ namespace Cabana
 // Execution Spaces
 //---------------------------------------------------------------------------//
 #if defined( KOKKOS_ENABLE_SERIAL )
-using Kokkos::Serial;
+using Serial CABANA_DEPRECATED = Kokkos::Serial;
 #endif
 
 #if defined( KOKKOS_ENABLE_THREADS )
-using Kokkos::Threads;
+using Threads CABANA_DEPRECATED = Kokkos::Threads;
 #endif
 
 #if defined( KOKKOS_ENABLE_OPENMP )
-using Kokkos::OpenMP;
+using OpenMP CABANA_DEPRECATED = Kokkos::OpenMP;
 #endif
 
 #if defined( KOKKOS_ENABLE_CUDA )
-using Kokkos::Cuda;
+using Cuda CABANA_DEPRECATED = Kokkos::Cuda;
 #endif
 
 //---------------------------------------------------------------------------//
 // Memory spaces
 //---------------------------------------------------------------------------//
 //! Host memory space
-using Kokkos::HostSpace;
+using HostSpace CABANA_DEPRECATED = Kokkos::HostSpace;
 
 #if defined( KOKKOS_ENABLE_CUDA )
-using Kokkos::CudaUVMSpace;
+using CudaUVMSpace CABANA_DEPRECATED = Kokkos::CudaUVMSpace;
 #endif
 
 //---------------------------------------------------------------------------//

@@ -95,7 +95,7 @@ void test1( const bool use_topology )
     Cabana::gather( *halo, data );
 
     // Check the results of the gather.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_host(
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
         "data_host", halo->numLocal() + halo->numGhost() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
@@ -292,7 +292,7 @@ void test2( const bool use_topology )
     Cabana::gather( *halo, data );
 
     // Check the results of the gather.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_host(
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
         "data_host", halo->numLocal() + halo->numGhost() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
