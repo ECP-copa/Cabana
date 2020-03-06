@@ -147,7 +147,10 @@ struct CrsGraph
 {
     Kokkos::View<int *, MemorySpace> col_ind;
     Kokkos::View<int *, MemorySpace> row_ptr;
+    typename MemorySpace::size_type shift;
+    typename MemorySpace::size_type total;
 };
+
 } // namespace Impl
 
 template <typename DeviceType, typename Slice, typename Tag>
@@ -166,7 +169,7 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
                Impl::NeighborDiscriminator<Tag>{}, indices, offset );
 
     return Impl::CrsGraph<typename DeviceType::memory_space, Tag>{
-        std::move( indices ), std::move( offset )};
+        std::move( indices ), std::move( offset ), first, bvh.size()};
 }
 
 } // namespace Experimental
@@ -183,13 +186,18 @@ class NeighborList<Experimental::Impl::CrsGraph<MemorySpace, Tag>>
     static KOKKOS_FUNCTION size_type
     numNeighbor( crs_graph_type const &crs_graph, size_type p )
     {
-        assert( p < crs_graph.row_ptr.size() - 1 );
+        assert( p >= 0 && p < crs_graph.total );
+        p -= crs_graph.shift;
+        if ( p < 0 || p >= crs_graph.row_ptr.size() - 1 )
+            return 0;
         return crs_graph.row_ptr( p + 1 ) - crs_graph.row_ptr( p );
     }
     static KOKKOS_FUNCTION size_type
     getNeighbor( crs_graph_type const &crs_graph, size_type p, size_type n )
     {
+        assert( p >= 0 && p < crs_graph.total );
         assert( n < numNeighbor( crs_graph, p ) );
+        p -= crs_graph.shift;
         return crs_graph.col_ind( crs_graph.row_ptr( p ) + n );
     }
 };
