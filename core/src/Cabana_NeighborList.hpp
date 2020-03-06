@@ -12,6 +12,8 @@
 #ifndef CABANA_NEIGHBORLIST_HPP
 #define CABANA_NEIGHBORLIST_HPP
 
+#include <Cabana_Macros.hpp>
+
 #include <Kokkos_Core.hpp>
 
 namespace Cabana
@@ -57,7 +59,7 @@ class NeighborList
 {
   public:
     // Get the list type tag. Either full or half.
-    using TypeTag = typename NeighborListType::TypeTag;
+    using TypeTag CABANA_DEPRECATED = typename NeighborListType::TypeTag;
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
