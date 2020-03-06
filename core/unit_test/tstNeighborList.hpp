@@ -9,7 +9,9 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include <CabanaCore_config.hpp> // Cabana_ENABLE_ARBORX
 #include <Cabana_AoSoA.hpp>
+#include <Cabana_Experimental_NeighborList.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_VerletList.hpp>
@@ -21,6 +23,83 @@
 
 #include <algorithm>
 #include <vector>
+
+#if defined( Cabana_ENABLE_ARBORX )
+template <typename DeviceType, typename Tag>
+Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayoutCSR>
+convert_crs_graph_to_verlet_list(
+    Cabana::VerletLayoutCSR,
+    Cabana::Experimental::Impl::CrsGraph<typename DeviceType::memory_space,
+                                         Tag> const &crs_graph )
+{
+    int const n_rows = crs_graph.row_ptr.size() - 1;
+    int const n_entries = crs_graph.col_ind.size();
+    Kokkos::View<int *, DeviceType> counts(
+        Kokkos::view_alloc( "verlet_list_counts", Kokkos::WithoutInitializing ),
+        n_rows );
+    Kokkos::View<int *, DeviceType> offsets(
+        Kokkos::view_alloc( "verlet_list_offsets",
+                            Kokkos::WithoutInitializing ),
+        n_rows );
+    Kokkos::View<int *, DeviceType> neighbors(
+        Kokkos::view_alloc( "verlet_list_neighbors",
+                            Kokkos::WithoutInitializing ),
+        n_entries );
+    Kokkos::parallel_for(
+        Kokkos::RangePolicy<typename DeviceType::execution_space>( 0, n_rows ),
+        KOKKOS_LAMBDA( int i ) {
+            auto const first = crs_graph.row_ptr( i );
+            auto const last = crs_graph.row_ptr( i + 1 );
+            offsets( i ) = first;
+            counts( i ) = last - first;
+            for ( int j = first; j < last; ++j )
+            {
+                neighbors( j ) = crs_graph.col_ind( j );
+            }
+        } );
+    Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayoutCSR> verlet_list;
+    verlet_list._data = {counts, offsets, neighbors};
+    return verlet_list;
+}
+
+template <typename DeviceType, typename Tag>
+Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayout2D>
+convert_crs_graph_to_verlet_list(
+    Cabana::VerletLayout2D,
+    Cabana::Experimental::Impl::CrsGraph<typename DeviceType::memory_space,
+                                         Tag> const &crs_graph )
+{
+    int const n_rows = crs_graph.row_ptr.size() - 1;
+    Kokkos::View<int *, DeviceType> counts(
+        Kokkos::view_alloc( "verlet_list_counts", Kokkos::WithoutInitializing ),
+        n_rows );
+    Kokkos::parallel_for(
+        Kokkos::RangePolicy<typename DeviceType::execution_space>( 0, n_rows ),
+        KOKKOS_LAMBDA( int i ) {
+            auto const first = crs_graph.row_ptr( i );
+            auto const last = crs_graph.row_ptr( i + 1 );
+            counts( i ) = last - first;
+        } );
+    int const max_entries_per_row = ArborX::max( counts );
+    Kokkos::View<int **, DeviceType> neighbors(
+        Kokkos::view_alloc( "verlet_list_neighbors",
+                            Kokkos::WithoutInitializing ),
+        n_rows, max_entries_per_row );
+    Kokkos::parallel_for(
+        Kokkos::RangePolicy<typename DeviceType::execution_space>( 0, n_rows ),
+        KOKKOS_LAMBDA( int i ) {
+            for ( int j = 0; j < counts( i ); ++j )
+            {
+                neighbors( i, j ) =
+                    crs_graph.col_ind( crs_graph.row_ptr( i ) + j );
+            }
+        } );
+    Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayout2D> verlet_list;
+    verlet_list._data = {counts, neighbors};
+    return verlet_list;
+}
+
+#endif
 
 namespace Test
 {
@@ -401,9 +480,20 @@ void testVerletListFull()
     // Create the neighbor list.
     double grid_min[3] = {box_min, box_min, box_min};
     double grid_max[3] = {box_max, box_max, box_max};
+#if !defined( Cabana_ENABLE_ARBORX )
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>
         nlist_full( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
                     cell_size_ratio, grid_min, grid_max );
+#else
+    using device_type = TEST_MEMSPACE; // sigh...
+    auto const tmp = Cabana::Experimental::makeNeighborList<device_type>(
+        Cabana::FullNeighborTag{}, Cabana::slice<0>( aosoa ), 0, aosoa.size(),
+        test_radius );
+    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>
+        nlist_full = convert_crs_graph_to_verlet_list<device_type,
+                                                      Cabana::FullNeighborTag>(
+            LayoutTag{}, tmp );
+#endif
 
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag> nlist;
     nlist = nlist_full;
@@ -440,9 +530,20 @@ void testVerletListHalf()
     // Create the neighbor list.
     double grid_min[3] = {box_min, box_min, box_min};
     double grid_max[3] = {box_max, box_max, box_max};
+#if !defined( Cabana_ENABLE_ARBORX )
     Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag> nlist(
         Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
         cell_size_ratio, grid_min, grid_max );
+#else
+    using device_type = TEST_MEMSPACE; // sigh...
+    auto const tmp = Cabana::Experimental::makeNeighborList<device_type>(
+        Cabana::HalfNeighborTag{}, Cabana::slice<0>( aosoa ), 0, aosoa.size(),
+        test_radius );
+    Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag>
+        nlist = convert_crs_graph_to_verlet_list<device_type,
+                                                 Cabana::HalfNeighborTag>(
+            LayoutTag{}, tmp );
+#endif
 
     // Check the neighbor list.
     auto position = Cabana::slice<0>( aosoa );
@@ -474,12 +575,20 @@ void testNeighborParallelFor()
     auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
+#if !defined( Cabana_ENABLE_ARBORX )
     using ListType =
         Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
     double grid_min[3] = {box_min, box_min, box_min};
     double grid_max[3] = {box_max, box_max, box_max};
     ListType nlist( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
                     cell_size_ratio, grid_min, grid_max );
+#else
+    (void)cell_size_ratio;
+    using device_type = TEST_MEMSPACE; // sigh...
+    auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
+        Cabana::FullNeighborTag{}, Cabana::slice<0>( aosoa ), 0, aosoa.size(),
+        test_radius );
+#endif
 
     // Create Kokkos views for the write operation.
     using memory_space = typename TEST_MEMSPACE::memory_space;
@@ -543,11 +652,19 @@ void testVerletListFullPartialRange()
     auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
+#if !defined( Cabana_ENABLE_ARBORX ) || true // FIXME
     double grid_min[3] = {box_min, box_min, box_min};
     double grid_max[3] = {box_max, box_max, box_max};
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag> nlist(
         Cabana::slice<0>( aosoa ), 0, num_ignore, test_radius, cell_size_ratio,
         grid_min, grid_max );
+#else
+    (void)cell_size_ratio;
+    using device_type = TEST_MEMSPACE; // sigh...
+    auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
+        Cabana::FullNeighborTag{}, Cabana::slice<0>( aosoa ), 0, num_ignore,
+        test_radius );
+#endif
 
     // Check the neighbor list.
     auto position = Cabana::slice<0>( aosoa );
@@ -568,12 +685,20 @@ void testAngularParallelFor()
     auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
+#if !defined( Cabana_ENABLE_ARBORX )
     using ListType =
         Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
     double grid_min[3] = {box_min, box_min, box_min};
     double grid_max[3] = {box_max, box_max, box_max};
     ListType nlist( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
                     cell_size_ratio, grid_min, grid_max );
+#else
+    (void)cell_size_ratio;
+    using device_type = TEST_MEMSPACE; // sigh...
+    auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
+        Cabana::FullNeighborTag{}, Cabana::slice<0>( aosoa ), 0, aosoa.size(),
+        test_radius );
+#endif
 
     // Create Kokkos views for the write operation.
     using memory_space = typename TEST_MEMSPACE::memory_space;
