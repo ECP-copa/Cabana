@@ -78,7 +78,7 @@ void test1( const bool use_topology )
     Cabana::migrate( *distributor, data_src, data_dst );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_dst_host( "data_dst_host",
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
     auto slice_dbl_dst_host = Cabana::slice<1>( data_dst_host );
@@ -146,7 +146,7 @@ void test2( const bool use_topology )
     Cabana::migrate( *distributor, data );
 
     // Get host copies of the migrated data.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_host( "data_host",
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
                                                            num_data / 2 );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
@@ -243,7 +243,7 @@ void test3( const bool use_topology )
         Kokkos::HostSpace(), inverse_steering );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_dst_host( "data_dst_host",
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     Cabana::deep_copy( data_dst_host, data_dst );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
@@ -321,7 +321,7 @@ void test4( const bool use_topology )
     Cabana::migrate( *distributor, data_src, data_dst );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_dst_host( "data_dst_host",
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_dst_host( "data_dst_host",
                                                                num_data );
     auto slice_int_dst_host = Cabana::slice<0>( data_dst_host );
     auto slice_dbl_dst_host = Cabana::slice<1>( data_dst_host );
@@ -427,7 +427,7 @@ void test5( const bool use_topology )
     Cabana::migrate( *distributor, slice_dbl_src, slice_dbl_dst );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_host( "data_host",
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
                                                            my_size );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
@@ -521,7 +521,7 @@ void test6( const bool use_topology )
         EXPECT_EQ( data.size(), 0 );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_host(
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
         "data_host", distributor->totalNumImport() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
@@ -602,7 +602,7 @@ void test7( const bool use_topology )
     EXPECT_EQ( data.size(), 1 );
 
     // Check the migration.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_host(
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host(
         "data_host", distributor->totalNumImport() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );
@@ -685,7 +685,7 @@ void test8( const bool use_topology )
     Cabana::migrate( *distributor, data );
 
     // Check the results.
-    Cabana::AoSoA<DataTypes, Cabana::HostSpace> data_host( "data_host",
+    Cabana::AoSoA<DataTypes, Kokkos::HostSpace> data_host( "data_host",
                                                            data.size() );
     auto slice_int_host = Cabana::slice<0>( data_host );
     auto slice_dbl_host = Cabana::slice<1>( data_host );

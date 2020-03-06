@@ -37,7 +37,7 @@ enum UserParticleFields
 using ParticleDataTypes = Cabana::MemberTypes<float>;
 
 // Declare the memory space.
-using MemorySpace = Cabana::HostSpace;
+using MemorySpace = Kokkos::HostSpace;
 
 // Set the type for the particle AoSoA.
 using ParticleList =

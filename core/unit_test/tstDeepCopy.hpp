@@ -295,27 +295,27 @@ void testAssign()
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, deep_copy_to_host_same_layout_test )
 {
-    testDeepCopy<Cabana::HostSpace, TEST_MEMSPACE, 16, 16>();
+    testDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 16>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, deep_copy_from_host_same_layout_test )
 {
-    testDeepCopy<TEST_MEMSPACE, Cabana::HostSpace, 16, 16>();
+    testDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 16>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, deep_copy_to_host_different_layout_test )
 {
-    testDeepCopy<Cabana::HostSpace, TEST_MEMSPACE, 16, 32>();
-    testDeepCopy<Cabana::HostSpace, TEST_MEMSPACE, 64, 8>();
+    testDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 16, 32>();
+    testDeepCopy<Kokkos::HostSpace, TEST_MEMSPACE, 64, 8>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, deep_copy_from_host_different_layout_test )
 {
-    testDeepCopy<TEST_MEMSPACE, Cabana::HostSpace, 64, 8>();
-    testDeepCopy<TEST_MEMSPACE, Cabana::HostSpace, 16, 32>();
+    testDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 64, 8>();
+    testDeepCopy<TEST_MEMSPACE, Kokkos::HostSpace, 16, 32>();
 }
 
 //---------------------------------------------------------------------------//
