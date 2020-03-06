@@ -58,6 +58,8 @@ template <class NeighborListType>
 class NeighborList
 {
   public:
+    using memory_space = typename NeighborListType::memory_space;
+
     // Get the list type tag. Either full or half.
     using TypeTag CABANA_DEPRECATED = typename NeighborListType::TypeTag;
 
