@@ -1,6 +1,7 @@
 # the next for lines are just, so that we can use this as
 # a standalone CMakeLists.txt for testing of the Target export
 cmake_minimum_required(VERSION 3.9)
+project(Cabana_HelloWorld)
 if(NOT TARGET Cabana::cabanacore)
   find_package(Cabana)
 endif()
