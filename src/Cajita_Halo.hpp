@@ -85,6 +85,9 @@ class Halo
     // Execution space.
     using execution_space = typename device_type::execution_space;
 
+    // Memory space.
+    using memory_space = typename device_type::memory_space;
+
     // View type.
     using view_type = Kokkos::View<value_type ****, device_type>;
 
@@ -190,8 +193,8 @@ class Halo
             std::is_same<value_type, typename Array_t::value_type>::value,
             "Array value type does not match halo value type" );
         static_assert(
-            std::is_same<device_type, typename Array_t::device_type>::value,
-            "Array device type does not match halo device type" );
+            std::is_same<memory_space, typename Array_t::memory_space>::value,
+            "Array memory space does not match halo memory space" );
 
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -279,8 +282,8 @@ class Halo
             std::is_same<value_type, typename Array_t::value_type>::value,
             "Array value type does not match halo value type" );
         static_assert(
-            std::is_same<device_type, typename Array_t::device_type>::value,
-            "Array device type does not match halo device type" );
+            std::is_same<memory_space, typename Array_t::memory_space>::value,
+            "Array memory space does not match halo memory space" );
 
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
