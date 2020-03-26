@@ -31,8 +31,8 @@ if(HYPRE_FOUND)
   set(CAJITA_HAVE_HYPRE ON)
 endif()
 
-find_package(HEFFTE)
-if(HEFFTE_FOUND)
+find_package(Heffte)
+if(Heffte_FOUND)
   set(CAJITA_HAVE_HEFFTE ON)
 endif()
 

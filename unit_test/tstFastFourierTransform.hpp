@@ -33,7 +33,7 @@ namespace Test
 //---------------------------------------------------------------------------//
 void memoryTest()
 {
-    auto mtype = HeffteMemoryTraits<TEST_MEMSPACE>::value;
+    auto mtype = Experimental::HeffteMemoryTraits<TEST_MEMSPACE>::value;
     HEFFTE::Memory fft_mem;
     fft_mem.memory_type = mtype;
     int size = 12;
@@ -97,8 +97,8 @@ void forwardReverseTest()
     Kokkos::deep_copy( lhs_view, lhs_host_view );
 
     // Create an FFT
-    auto fft = createFastFourierTransform<double,TEST_DEVICE>(
-        *vector_layout, FastFourierTransformParams{}.setCollectiveType( 2 ).setExchangeType( 0 ).setPackType( 2 ).setScalingType( 1 ) );
+    auto fft = Experimental::createFastFourierTransform<double,TEST_DEVICE>(
+        *vector_layout, Experimental::FastFourierTransformParams{}.setCollectiveType( 2 ).setExchangeType( 0 ).setPackType( 2 ).setScalingType( 1 ) );
 
     // Forward transform
     fft->forward( *lhs );
