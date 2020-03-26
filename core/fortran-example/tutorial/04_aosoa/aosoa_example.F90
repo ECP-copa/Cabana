@@ -1,5 +1,5 @@
 ! ****************************************************************************
-! * Copyright (c) 2018-2019 by the Cabana authors                            *
+! * Copyright (c) 2018-2020 by the Cabana authors                            *
 ! * All rights reserved.                                                     *
 ! *                                                                          *
 ! * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,7 +9,7 @@
 ! * SPDX-License-Identifier: BSD-3-Clause                                    *
 ! ****************************************************************************
 
-! Define the inner vector length of SOA 
+! Define the inner vector length of SOA
 #include "veclen.h"
 
 SUBROUTINE aosoaExample (part,num_part) BIND(C,name='aosoaExample')
@@ -18,15 +18,15 @@ SUBROUTINE aosoaExample (part,num_part) BIND(C,name='aosoaExample')
   integer i,j,a,s
 
   !The Fortran derived type has the same memory layout as the C struct defined by
-  ! struct local_data_struct_t {     
-  !   double d0[3][3][VECLEN];     
-  !   double d1[4][VECLEN];     
-  !   int    d2[VECLEN]; 
+  ! struct local_data_struct_t {
+  !   double d0[3][3][VECLEN];
+  !   double d1[4][VECLEN];
+  !   int    d2[VECLEN];
   ! };
 
-  type, BIND(C) :: ptl_type      
-     real (C_DOUBLE) :: d0(VECLEN,3,3) 
-     real (C_FLOAT ) :: d1(VECLEN,4) 
+  type, BIND(C) :: ptl_type
+     real (C_DOUBLE) :: d0(VECLEN,3,3)
+     real (C_FLOAT ) :: d1(VECLEN,4)
      integer (C_INT) :: d2(VECLEN)
   end type ptl_type
 
@@ -67,7 +67,7 @@ do s = 1, n_soa
 end do
 
 
-!ouput 
+!ouput
 print *
 print *, "Print from a Cabana Fortran kernel:"
 print *
@@ -83,7 +83,7 @@ end do
 do s = 1, n_soa
    do i = 1,4
       do a = 1,VECLEN
-         print *, "Aosoa member 1 element (",s,",",a,"),(",i,"):",part(s)%d1(a,i) 
+         print *, "Aosoa member 1 element (",s,",",a,"),(",i,"):",part(s)%d1(a,i)
       end do
    end do
 end do

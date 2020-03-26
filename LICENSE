@@ -1,6 +1,6 @@
 BSD 3-Clause License
 
-Copyright 2018-2019 the Cabana authors
+Copyright 2018-2020 the Cabana authors
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -33,7 +33,7 @@ This program was produced under U.S. Government contract 89233218CNA000001 for
 Los Alamos National Laboratory (LANL), U.S. Government Contract DE-AC52-07NA27344
 for Lawrence Livermore National Laboratory (LLNL), U.S. Government Contract
 DE-NA-0003525 for Sandia National Laboratories (SNL) and U.S. Government Contract
-DE-AC05-00OR22725 for Oak Ridge National Laboratory (ORNL). All rights in the 
+DE-AC05-00OR22725 for Oak Ridge National Laboratory (ORNL). All rights in the
 program are reserved by the U.S. Department of Energy/National Nuclear Security
 Administration. The Government is granted for itself and others acting on its
 behalf a nonexclusive, paid-up, irrevocable worldwide license in this material

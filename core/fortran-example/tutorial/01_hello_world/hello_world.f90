@@ -1,5 +1,5 @@
 ! ****************************************************************************
-! * Copyright (c) 2018-2019 by the Cabana authors                            *
+! * Copyright (c) 2018-2020 by the Cabana authors                            *
 ! * All rights reserved.                                                     *
 ! *                                                                          *
 ! * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -13,5 +13,3 @@ SUBROUTINE print_hello_world () BIND(C)
   USE, INTRINSIC :: ISO_C_BINDING
   print *,"Hello World from Cabana (Fortran)!"
 end SUBROUTINE print_hello_world
-    
- 
