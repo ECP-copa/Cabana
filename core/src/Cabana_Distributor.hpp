@@ -153,8 +153,7 @@ struct is_distributor_impl<Distributor<DeviceType>> : public std::true_type
 
 template <class T>
 struct is_distributor
-    : public is_distributor_impl<typename std::remove_cv<
-          typename std::remove_reference<T>::type>::type>::type
+    : public is_distributor_impl<typename std::remove_cv<T>::type>::type
 {
 };
 

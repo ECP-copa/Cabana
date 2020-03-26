@@ -42,8 +42,7 @@ struct is_member_types_impl<MemberTypes<Types...>> : public std::true_type
 
 template <class T>
 struct is_member_types
-    : public is_member_types_impl<typename std::remove_cv<
-          typename std::remove_reference<T>::type>::type>::type
+    : public is_member_types_impl<typename std::remove_cv<T>::type>::type
 {
 };
 
