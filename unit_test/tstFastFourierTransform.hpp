@@ -1,5 +1,5 @@
-/*******************************************n*********************************
- * Copyright (c) 2019 by the Cajita authors                                 *
+/****************************************************************************
+ * Copyright (c) 2019-2020 by the Cajita authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cajita library. Cajita is distributed under a   *
