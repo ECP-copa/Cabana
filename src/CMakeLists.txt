@@ -50,16 +50,8 @@ if(HYPRE_FOUND)
   target_link_libraries(Cajita HYPRE::hypre)
 endif()
 
-if(HEFFTE_FOUND)
-  if (TARGET HEFFTE::heffte)
-    target_link_libraries(Cajita HEFFTE::heffte)
-
-  endif()
-
-  if (HEFFTE::heffte_gpu)
-    target_link_libraries(Cajita HEFFTE::heffte_gpu)
-  endif()
-
+if(Heffte_FOUND)
+  target_link_libraries(Cajita Heffte::Heffte)
 endif()
 
 install(FILES ${HEADERS_PUBLIC}
