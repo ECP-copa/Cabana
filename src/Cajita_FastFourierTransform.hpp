@@ -25,6 +25,8 @@
 
 namespace Cajita
 {
+namespace Experimental
+{
 //---------------------------------------------------------------------------//
 template <class MemorySpace>
 struct HeffteMemoryTraits;
@@ -341,6 +343,7 @@ createFastFourierTransform( const ArrayLayout<EntityType, MeshType> &layout,
 
 //---------------------------------------------------------------------------//
 
+} // end namespace Experimental
 } // end namespace Cajita
 
 #endif // end CAJITA_FASTFOURIERTRANSFORM_HPP
