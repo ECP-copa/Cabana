@@ -823,8 +823,7 @@ struct is_slice_impl<
 };
 
 template <class T>
-struct is_slice : public is_slice_impl<typename std::remove_cv<
-                      typename std::remove_reference<T>::type>::type>::type
+struct is_slice : public is_slice_impl<typename std::remove_cv<T>::type>::type
 {
 };
 

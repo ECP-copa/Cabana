@@ -41,8 +41,7 @@ struct is_tuple_impl<Tuple<DataTypes>> : public std::true_type
 };
 
 template <class T>
-struct is_tuple : public is_tuple_impl<typename std::remove_cv<
-                      typename std::remove_reference<T>::type>::type>::type
+struct is_tuple : public is_tuple_impl<typename std::remove_cv<T>::type>::type
 {
 };
 
