@@ -51,10 +51,7 @@ struct Spline<0>
       \param indices The stencil index offsets.
     */
     KOKKOS_INLINE_FUNCTION
-    static void offsets( int indices[num_knot] )
-    {
-        indices[0] = 0;
-    }
+    static void offsets( int indices[num_knot] ) { indices[0] = 0; }
 
     /*!
       \brief Compute the stencil indices for a given logical space location.
@@ -65,7 +62,7 @@ struct Spline<0>
     KOKKOS_INLINE_FUNCTION static void stencil( const Scalar x0,
                                                 int indices[num_knot] )
     {
-        indices[0] = int( x0 );
+        indices[0] = static_cast<int>( x0 );
     }
 
     /*!
@@ -153,7 +150,7 @@ struct Spline<1>
     KOKKOS_INLINE_FUNCTION static void stencil( const Scalar x0,
                                                 int indices[num_knot] )
     {
-        indices[0] = int( x0 );
+        indices[0] = static_cast<int>( x0 );
         indices[1] = indices[0] + 1;
     }
 
@@ -169,7 +166,7 @@ struct Spline<1>
                                               Scalar values[num_knot] )
     {
         // Knot at i
-        Scalar xn = x0 - int( x0 );
+        Scalar xn = x0 - static_cast<int>( x0 );
         values[0] = 1.0 - xn;
 
         // Knot at i + 1
@@ -249,7 +246,7 @@ struct Spline<2>
     KOKKOS_INLINE_FUNCTION static void stencil( const Scalar x0,
                                                 int indices[num_knot] )
     {
-        indices[0] = int( x0 ) - 1;
+        indices[0] = static_cast<int>( x0 ) - 1;
         indices[1] = indices[0] + 1;
         indices[2] = indices[1] + 1;
     }
@@ -269,7 +266,7 @@ struct Spline<2>
         Scalar nine_eights = 9.0 / 8.0;
 
         // Knot at i - 1
-        Scalar xn = x0 - int( x0 ) + 0.5;
+        Scalar xn = x0 - static_cast<int>( x0 ) + 0.5;
         values[0] = 0.5 * xn * xn - 1.5 * xn + nine_eights;
 
         // Knot at i
@@ -295,7 +292,7 @@ struct Spline<2>
     gradient( const Scalar x0, const Scalar rdx, Scalar gradients[num_knot] )
     {
         // Knot at i - 1
-        Scalar xn = x0 - int( x0 ) + 0.5;
+        Scalar xn = x0 - static_cast<int>( x0 ) + 0.5;
         gradients[0] = ( xn - 1.5 ) * rdx;
 
         // Knot at i
@@ -361,7 +358,7 @@ struct Spline<3>
     KOKKOS_INLINE_FUNCTION static void stencil( const Scalar x0,
                                                 int indices[num_knot] )
     {
-        indices[0] = int( x0 ) - 1;
+        indices[0] = static_cast<int>( x0 ) - 1;
         indices[1] = indices[0] + 1;
         indices[2] = indices[1] + 1;
         indices[3] = indices[2] + 1;
@@ -384,7 +381,7 @@ struct Spline<3>
         Scalar four_thirds = two_thirds * 2.0;
 
         // Knot at i - 1
-        Scalar xn = x0 - int( x0 ) + 1.0;
+        Scalar xn = x0 - static_cast<int>( x0 ) + 1.0;
         Scalar xn2 = xn * xn;
         values[0] = -xn * xn2 * one_sixth + xn2 - 2.0 * xn + four_thirds;
 
@@ -418,7 +415,7 @@ struct Spline<3>
     gradient( const Scalar x0, const Scalar rdx, Scalar gradients[num_knot] )
     {
         // Knot at i - 1
-        Scalar xn = x0 - int( x0 ) + 1.0;
+        Scalar xn = x0 - static_cast<int>( x0 ) + 1.0;
         gradients[0] = ( -0.5 * xn * xn + 2.0 * xn - 2.0 ) * rdx;
 
         // Knot at i
