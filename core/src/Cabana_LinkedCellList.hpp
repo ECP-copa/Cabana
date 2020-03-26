@@ -294,8 +294,7 @@ struct is_linked_cell_list_impl<LinkedCellList<DeviceType>>
 
 template <class T>
 struct is_linked_cell_list
-    : public is_linked_cell_list_impl<typename std::remove_cv<
-          typename std::remove_reference<T>::type>::type>::type
+    : public is_linked_cell_list_impl<typename std::remove_cv<T>::type>::type
 {
 };
 

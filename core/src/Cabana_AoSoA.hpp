@@ -51,8 +51,7 @@ struct is_aosoa_impl<AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
 };
 
 template <class T>
-struct is_aosoa : public is_aosoa_impl<typename std::remove_cv<
-                      typename std::remove_reference<T>::type>::type>::type
+struct is_aosoa : public is_aosoa_impl<typename std::remove_cv<T>::type>::type
 {
 };
 
