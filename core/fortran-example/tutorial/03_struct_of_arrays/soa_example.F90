@@ -1,5 +1,5 @@
 ! ****************************************************************************
-! * Copyright (c) 2018-2019 by the Cabana authors                            *
+! * Copyright (c) 2018-2020 by the Cabana authors                            *
 ! * All rights reserved.                                                     *
 ! *                                                                          *
 ! * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -17,23 +17,23 @@ SUBROUTINE soaExample (part) BIND(C,name='soaExample')
   implicit none
   integer i,j,a
   !The Fortran derived type has the same memory layout as the C struct defined by
-  ! struct local_data_struct_t {     
-  !   double d0[3][3][VECLEN];     
-  !   double d1[4][VECLEN];     
-  !   int    d2[VECLEN]; 
-  ! };  
-  type, BIND(C) :: ptl_type      
-     real (C_DOUBLE) :: d0(VECLEN,3,3) 
-     real (C_FLOAT ) :: d1(VECLEN,4) 
+  ! struct local_data_struct_t {
+  !   double d0[3][3][VECLEN];
+  !   double d1[4][VECLEN];
+  !   int    d2[VECLEN];
+  ! };
+  type, BIND(C) :: ptl_type
+     real (C_DOUBLE) :: d0(VECLEN,3,3)
+     real (C_FLOAT ) :: d1(VECLEN,4)
      integer (C_INT) :: d2(VECLEN)
   end type ptl_type
 
   type(ptl_type) :: part
 
   !An interface is necessary for calling the function defined in C++
-  interface     
+  interface
      subroutine delete_soa() bind(C)
-       use iso_c_binding       
+       use iso_c_binding
      end subroutine delete_soa
   end interface
 
@@ -56,7 +56,7 @@ SUBROUTINE soaExample (part) BIND(C,name='soaExample')
      part%d2(a) = a + 1234
   end do
 
-! ouput 
+! ouput
   print *
   print *, "Print from a Cabana Fortran kernel:"
   print *
@@ -70,7 +70,7 @@ SUBROUTINE soaExample (part) BIND(C,name='soaExample')
 
   do i = 1,4
         do a = 1,VECLEN
-           print *, "Soa member 1 element (",a,",",i,"):",part%d1(a,i) 
+           print *, "Soa member 1 element (",a,",",i,"):",part%d1(a,i)
         end do
   end do
 

@@ -1,5 +1,5 @@
 ! ****************************************************************************
-! * Copyright (c) 2018-2019 by the Cabana authors                            *
+! * Copyright (c) 2018-2020 by the Cabana authors                            *
 ! * All rights reserved.                                                     *
 ! *                                                                          *
 ! * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -12,13 +12,13 @@
 program example
   use iso_c_binding
 
-  !An interface is necessary for calling a function defined in C++  
+  !An interface is necessary for calling a function defined in C++
   interface
      subroutine parallelForExample() bind(C, name="parallelForExample")
        use iso_c_binding
      end subroutine parallelForExample
   end interface
-  
+
   interface
      subroutine c_kokkos_finalize() bind(C, name="c_kokkos_finalize")
        use iso_c_binding
@@ -33,7 +33,7 @@ program example
 
   ! initialize Kokkos
   call c_kokkos_initlize()
-  
+
   ! the parallelForExample is in C++, which calls Fortran kernels.
   call parallelForExample();
 
