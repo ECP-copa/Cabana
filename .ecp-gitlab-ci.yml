@@ -11,6 +11,7 @@ stages:
   stage: buildKokkos
   before_script:
     - module load gcc
+    - module load git
   script:
     - module load cmake
     - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
@@ -51,6 +52,7 @@ stages:
   before_script:
     - module load gcc/6.4.0
     - module load cuda
+    - module load git
 
 .Build_CUDA:
   extends: .Build
