@@ -22,6 +22,62 @@ namespace Test
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
+TEST( cajita_splines, zero_spline_test )
+{
+    // Check partition of unity for the quadratic spline.
+    double xp = -1.4;
+    double low_x = -3.43;
+    double dx = 0.27;
+    double rdx = 1.0 / dx;
+    double values[1];
+
+    double x0 = Spline<0>::mapToLogicalGrid( xp, rdx, low_x );
+    Spline<0>::value( x0, values );
+    double sum = 0.0;
+    for ( auto x : values ) sum += x;
+    EXPECT_FLOAT_EQ( sum, 1.0 );
+
+    xp = 2.1789;
+    x0 = Spline<0>::mapToLogicalGrid( xp, rdx, low_x );
+    Spline<0>::value( x0, values );
+    sum = 0.0;
+    for ( auto x : values ) sum += x;
+    EXPECT_FLOAT_EQ( sum, 1.0 );
+
+    xp = low_x + 5 * dx;
+    x0 = Spline<0>::mapToLogicalGrid( xp, rdx, low_x );
+    Spline<0>::value( x0, values );
+    sum = 0.0;
+    for ( auto x : values ) sum += x;
+    EXPECT_FLOAT_EQ( sum, 1.0 );
+
+    // Check the stencil by putting a point in the center of a dual cell (on a
+    // node).
+    int node_id = 4;
+    xp = low_x + (node_id + 0.25) * dx;
+    x0 = Spline<0>::mapToLogicalGrid( xp, rdx, low_x );
+    int offsets[1];
+    Spline<0>::offsets( offsets );
+    EXPECT_EQ( int(x0) + offsets[0], node_id);
+
+    int stencil[1];
+    Spline<0>::stencil( x0, stencil );
+    EXPECT_EQ( stencil[0], node_id);
+
+    // Check the interpolation of a function.
+    auto grid_func = [=]( const double x ){ return 4.32*x - 0.31; };
+    double field[Spline<0>::num_knot];
+    field[0] = grid_func( low_x + node_id * dx );
+    Spline<0>::value( x0, values );
+    double field_xp = field[0] * values[0];
+    EXPECT_FLOAT_EQ( field_xp, field[0] );
+
+    // Check the derivative of a function.
+    Spline<0>::gradient( x0, rdx, values );
+    double field_grad = field[0] * values[0];
+    EXPECT_FLOAT_EQ( field_grad, 0.0 );
+}
+
 TEST( cajita_splines, linear_spline_test )
 {
     // Check partition of unity for the linear spline.
