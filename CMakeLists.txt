@@ -36,7 +36,7 @@ if(Cabana_ENABLE_ARBORX)
 endif()
 
 # set supported kokkos devices
-set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
+set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP)
 
 # check user required device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
