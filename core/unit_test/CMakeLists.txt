@@ -31,8 +31,6 @@ endforeach()
 ##--------------------------------------------------------------------------##
 ## On-node tests with and without MPI.
 ##--------------------------------------------------------------------------##
-set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
-
 set(CABANA_TEST_DEVICES)
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
   if(Kokkos_ENABLE_${_device})
