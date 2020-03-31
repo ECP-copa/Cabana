@@ -104,17 +104,23 @@ inline void simd_parallel_for(
 
     using index_type = typename team_policy::index_type;
 
-    Kokkos::parallel_for(
-        str, dynamic_cast<const team_policy &>( exec_policy ),
-        KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
-            index_type s = team.league_rank() + exec_policy.structBegin();
-            Kokkos::parallel_for(
-                Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
-                                           exec_policy.arrayEnd( s ) ),
-                [&]( const index_type a ) {
-                    Impl::functorTagDispatch<work_tag>( functor, s, a );
-                } );
-        } );
+    auto simd_func =
+        KOKKOS_LAMBDA( const typename team_policy::member_type &team )
+    {
+        index_type s = team.league_rank() + exec_policy.structBegin();
+        Kokkos::parallel_for(
+            Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
+                                       exec_policy.arrayEnd( s ) ),
+            [&]( const index_type a ) {
+                Impl::functorTagDispatch<work_tag>( functor, s, a );
+            } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( dynamic_cast<const team_policy &>( exec_policy ),
+                              simd_func );
+    else
+        Kokkos::parallel_for(
+            str, dynamic_cast<const team_policy &>( exec_policy ), simd_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -211,15 +217,19 @@ inline void neighbor_parallel_for(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    Kokkos::parallel_for(
-        str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
-            for ( index_type n = 0;
-                  n < neighbor_list_traits::numNeighbor( list, i ); ++n )
-                Impl::functorTagDispatch<work_tag>(
-                    functor, i,
-                    static_cast<index_type>(
-                        neighbor_list_traits::getNeighbor( list, i, n ) ) );
-        } );
+    auto neigh_func = KOKKOS_LAMBDA( const index_type i )
+    {
+        for ( index_type n = 0;
+              n < neighbor_list_traits::numNeighbor( list, i ); ++n )
+            Impl::functorTagDispatch<work_tag>(
+                functor, i,
+                static_cast<index_type>(
+                    neighbor_list_traits::getNeighbor( list, i, n ) ) );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( exec_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, exec_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -270,23 +280,27 @@ inline void neighbor_parallel_for(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    Kokkos::parallel_for(
-        str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
-            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+    auto neigh_func = KOKKOS_LAMBDA( const index_type i )
+    {
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
 
-            for ( index_type n = 0; n < nn; ++n )
+        for ( index_type n = 0; n < nn; ++n )
+        {
+            const index_type j =
+                neighbor_list_traits::getNeighbor( list, i, n );
+
+            for ( index_type a = n + 1; a < nn; ++a )
             {
-                const index_type j =
-                    neighbor_list_traits::getNeighbor( list, i, n );
-
-                for ( index_type a = n + 1; a < nn; ++a )
-                {
-                    const index_type k =
-                        neighbor_list_traits::getNeighbor( list, i, a );
-                    Impl::functorTagDispatch<work_tag>( functor, i, j, k );
-                }
+                const index_type k =
+                    neighbor_list_traits::getNeighbor( list, i, a );
+                Impl::functorTagDispatch<work_tag>( functor, i, j, k );
             }
-        } );
+        }
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( exec_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, exec_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -357,20 +371,24 @@ inline void neighbor_parallel_for(
 
     const auto range_begin = exec_policy.begin();
 
-    Kokkos::parallel_for(
-        str, team_policy,
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
-            index_type i = team.league_rank() + range_begin;
-            Kokkos::parallel_for(
-                Kokkos::TeamThreadRange(
-                    team, neighbor_list_traits::numNeighbor( list, i ) ),
-                [&]( const index_type n ) {
-                    Impl::functorTagDispatch<work_tag>(
-                        functor, i,
-                        static_cast<index_type>(
-                            neighbor_list_traits::getNeighbor( list, i, n ) ) );
-                } );
-        } );
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+    {
+        index_type i = team.league_rank() + range_begin;
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange(
+                team, neighbor_list_traits::numNeighbor( list, i ) ),
+            [&]( const index_type n ) {
+                Impl::functorTagDispatch<work_tag>(
+                    functor, i,
+                    static_cast<index_type>(
+                        neighbor_list_traits::getNeighbor( list, i, n ) ) );
+            } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( team_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, team_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -427,25 +445,29 @@ inline void neighbor_parallel_for(
 
     const auto range_begin = exec_policy.begin();
 
-    Kokkos::parallel_for(
-        str, team_policy,
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
-            index_type i = team.league_rank() + range_begin;
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+    {
+        index_type i = team.league_rank() + range_begin;
 
-            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
-            Kokkos::parallel_for(
-                Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
-                    const index_type j =
-                        neighbor_list_traits::getNeighbor( list, i, n );
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
+                const index_type j =
+                    neighbor_list_traits::getNeighbor( list, i, n );
 
-                    for ( index_type a = n + 1; a < nn; ++a )
-                    {
-                        const index_type k =
-                            neighbor_list_traits::getNeighbor( list, i, a );
-                        Impl::functorTagDispatch<work_tag>( functor, i, j, k );
-                    }
-                } );
-        } );
+                for ( index_type a = n + 1; a < nn; ++a )
+                {
+                    const index_type k =
+                        neighbor_list_traits::getNeighbor( list, i, a );
+                    Impl::functorTagDispatch<work_tag>( functor, i, j, k );
+                }
+            } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( team_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, team_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -503,27 +525,30 @@ inline void neighbor_parallel_for(
 
     const auto range_begin = exec_policy.begin();
 
-    Kokkos::parallel_for(
-        str, team_policy,
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
-            index_type i = team.league_rank() + range_begin;
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+    {
+        index_type i = team.league_rank() + range_begin;
 
-            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
-            Kokkos::parallel_for(
-                Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
-                    const index_type j =
-                        neighbor_list_traits::getNeighbor( list, i, n );
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
+                const index_type j =
+                    neighbor_list_traits::getNeighbor( list, i, n );
 
-                    Kokkos::parallel_for(
-                        Kokkos::ThreadVectorRange( team, n + 1, nn ),
-                        [&]( const index_type a ) {
-                            const index_type k =
-                                neighbor_list_traits::getNeighbor( list, i, a );
-                            Impl::functorTagDispatch<work_tag>( functor, i, j,
-                                                                k );
-                        } );
-                } );
-        } );
+                Kokkos::parallel_for(
+                    Kokkos::ThreadVectorRange( team, n + 1, nn ),
+                    [&]( const index_type a ) {
+                        const index_type k =
+                            neighbor_list_traits::getNeighbor( list, i, a );
+                        Impl::functorTagDispatch<work_tag>( functor, i, j, k );
+                    } );
+            } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( team_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, team_policy, neigh_func );
 }
 
 } // end namespace Cabana
