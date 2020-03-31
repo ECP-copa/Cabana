@@ -310,6 +310,9 @@ class AoSoA
     */
     void resize( const size_type n )
     {
+#if !defined( __HIP_DEVICE_COMPILE__ )
+        using std::floor;
+#endif
         static_assert( !memory_traits::is_unmanaged,
                        "Cannot resize unmanaged memory" );
 
@@ -319,7 +322,7 @@ class AoSoA
         // Update the sizes of the data. This is potentially different than
         // the amount of allocated data.
         _size = n;
-        _num_soa = std::floor( n / vector_length );
+        _num_soa = floor( n / vector_length );
         if ( 0 < n % vector_length )
             ++_num_soa;
     }
@@ -344,6 +347,9 @@ class AoSoA
     */
     void reserve( const size_type n )
     {
+#if !defined( __HIP_DEVICE_COMPILE__ )
+        using std::floor;
+#endif
         static_assert( !memory_traits::is_unmanaged,
                        "Cannot reserve unmanaged memory" );
 
@@ -352,7 +358,7 @@ class AoSoA
             return;
 
         // Figure out the new capacity.
-        size_type num_soa_alloc = std::floor( n / vector_length );
+        size_type num_soa_alloc = floor( n / vector_length );
         if ( 0 < n % vector_length )
             ++num_soa_alloc;
 
