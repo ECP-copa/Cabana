@@ -778,21 +778,21 @@ void testAngularParallelFor()
 TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_list_full_test )
+TEST( TEST_CATEGORY, verlet_list_full_test )
 {
     testVerletListFull<Cabana::VerletLayoutCSR>();
     testVerletListFull<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_list_half_test )
+TEST( TEST_CATEGORY, verlet_list_half_test )
 {
     testVerletListHalf<Cabana::VerletLayoutCSR>();
     testVerletListHalf<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, linked_cell_list_full_range_test )
+TEST( TEST_CATEGORY, verlet_list_full_range_test )
 {
     testVerletListFullPartialRange<Cabana::VerletLayoutCSR>();
     testVerletListFullPartialRange<Cabana::VerletLayout2D>();

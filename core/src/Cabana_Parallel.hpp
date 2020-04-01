@@ -66,9 +66,9 @@ KOKKOS_FORCEINLINE_FUNCTION
   \param functor The vectorized functor to execute in parallel. Must accept
   both a struct and array index.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 
   A "functor" is a callable object containing the function to execute in
   parallel, data needed for that execution, and an optional \c execution_space
@@ -172,12 +172,14 @@ class TeamVectorOpTag
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param Algorithm tag indicating a serial loop strategy over particle
+  \param neighborstag Iteration tag indicating operations over particle first
   neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param optag Algorithm tag indicating a serial loop strategy over neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 
   A "functor" is a class containing the function to execute in parallel, data
   needed for that execution, and an optional \c execution_space typedef.  Here
@@ -250,15 +252,14 @@ inline void neighbor_parallel_for(
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a serial loop strategy over particle
-  neighbors.
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
 
-  \param tag Algorithm tag indicating a serial loop strategy over particle
-  angular neighbors.
+  \param optag Algorithm tag indicating a serial loop strategy over neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
@@ -320,12 +321,14 @@ inline void neighbor_parallel_for(
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a team parallel strategy over particle
+  \param neighborstag Iteration tag indicating operations over particle first
   neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param optag Algorithm tag indicating a team parallel strategy over neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 
   A "functor" is a class containing the function to execute in parallel, data
   needed for that execution, and an optional \c execution_space typedef.  Here
@@ -409,15 +412,15 @@ inline void neighbor_parallel_for(
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a team parallel strategy over particle
-  neighbors.
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
 
-  \param tag Algorithm tag indicating a serial loop strategy over particle
-  angular neighbors.
+  \param optag Algorithm tag indicating a team parallel strategy over particle
+  first neighbors and serial execution over second neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
@@ -488,15 +491,15 @@ inline void neighbor_parallel_for(
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a team parallel strategy over particle
-  neighbors.
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
 
-  \param tag Algorithm tag indicating a vector parallel loop strategy over
-  particle angular neighbors.
+  \param optag Algorithm tag indicating a team parallel strategy over particle
+  first neighbors and vector parallel loop strategy over second neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
