@@ -30,6 +30,11 @@ if(Kokkos_ENABLE_CUDA)
   kokkos_check(OPTIONS CUDA_LAMBDA)
 endif()
 
+option(Cabana_ENABLE_ARBORX "Build Cabana with ArborX support" OFF)
+if(Cabana_ENABLE_ARBORX)
+  find_package(ArborX REQUIRED)
+endif()
+
 # set supported kokkos devices
 set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
 

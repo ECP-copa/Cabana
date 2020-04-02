@@ -22,6 +22,14 @@ set(HEADERS_PUBLIC
   )
 
 #-----------------------------------------------------------------------------
+
+if(Cabana_ENABLE_ARBORX)
+  list(APPEND HEADERS_PUBLIC
+    Cabana_Experimental_NeighborList.hpp
+    )
+endif()
+
+#-----------------------------------------------------------------------------
 # MPI-dependent code
 if(Cabana_ENABLE_MPI)
   list(APPEND HEADERS_PUBLIC
@@ -57,6 +65,9 @@ target_compile_features(cabanacore PUBLIC cxx_attribute_deprecated)
 target_include_directories(cabanacore PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(cabanacore Kokkos::kokkos)
+if(Cabana_ENABLE_ARBORX)
+  target_link_libraries(cabanacore ArborX::ArborX)
+endif()
 if(Cabana_ENABLE_MPI)
   target_link_libraries(cabanacore MPI::MPI_CXX)
 endif()
