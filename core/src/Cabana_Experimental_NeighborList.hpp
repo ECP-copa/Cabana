@@ -142,6 +142,8 @@ struct NeighborDiscriminator<Cabana::HalfNeighborTag>
     }
 };
 
+} // namespace Impl
+
 template <typename MemorySpace, typename Tag>
 struct CrsGraph
 {
@@ -150,8 +152,6 @@ struct CrsGraph
     typename MemorySpace::size_type shift;
     typename MemorySpace::size_type total;
 };
-
-} // namespace Impl
 
 template <typename DeviceType, typename Slice, typename Tag>
 auto makeNeighborList( Tag, Slice const &coordinate_slice,
@@ -168,17 +168,17 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
     bvh.query( Impl::makePredicates( coordinate_slice, first, last, radius ),
                Impl::NeighborDiscriminator<Tag>{}, indices, offset );
 
-    return Impl::CrsGraph<typename DeviceType::memory_space, Tag>{
+    return CrsGraph<typename DeviceType::memory_space, Tag>{
         std::move( indices ), std::move( offset ), first, bvh.size()};
 }
 
 } // namespace Experimental
 
 template <typename MemorySpace, typename Tag>
-class NeighborList<Experimental::Impl::CrsGraph<MemorySpace, Tag>>
+class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
 {
     using size_type = std::size_t;
-    using crs_graph_type = Experimental::Impl::CrsGraph<MemorySpace, Tag>;
+    using crs_graph_type = Experimental::CrsGraph<MemorySpace, Tag>;
 
   public:
     using TypeTag CABANA_DEPRECATED = Tag;

@@ -32,8 +32,8 @@ template <typename DeviceType, typename Tag>
 Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayoutCSR>
 convert_crs_graph_to_verlet_list(
     Cabana::VerletLayoutCSR,
-    Cabana::Experimental::Impl::CrsGraph<typename DeviceType::memory_space,
-                                         Tag> const &crs_graph )
+    Cabana::Experimental::CrsGraph<typename DeviceType::memory_space, Tag> const
+        &crs_graph )
 {
     int const n_rows = crs_graph.row_ptr.size() - 1;
     int const shift = crs_graph.shift;
@@ -69,8 +69,8 @@ template <typename DeviceType, typename Tag>
 Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayout2D>
 convert_crs_graph_to_verlet_list(
     Cabana::VerletLayout2D,
-    Cabana::Experimental::Impl::CrsGraph<typename DeviceType::memory_space,
-                                         Tag> const &crs_graph )
+    Cabana::Experimental::CrsGraph<typename DeviceType::memory_space, Tag> const
+        &crs_graph )
 {
     int const n_rows = crs_graph.row_ptr.size() - 1;
     int const shift = crs_graph.shift;
