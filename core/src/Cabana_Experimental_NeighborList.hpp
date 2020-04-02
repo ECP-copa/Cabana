@@ -53,8 +53,8 @@ struct SubsliceAndRadius
     value_type radius;
 };
 
-template <typename Slice,
-          typename = std::enable_if_t<Cabana::is_slice<Slice>::value>>
+template <typename Slice, typename = std::enable_if_t<Cabana::is_slice<
+                              std::remove_reference_t<Slice>>::value>>
 auto makePredicates(
     Slice &&slice, typename stdcxx20::remove_cvref_t<Slice>::size_type first,
     typename stdcxx20::remove_cvref_t<Slice>::size_type last,
