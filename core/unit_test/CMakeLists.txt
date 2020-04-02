@@ -58,8 +58,10 @@ macro(Cabana_add_tests)
     file(MAKE_DIRECTORY ${_dir})
     foreach(_test ${CABANA_UNIT_TEST_NAMES})
       set(_file ${_dir}/tst${_test}_${_device}.cpp)
-      file(WRITE ${_file} "#include <Test${_device}_Category.hpp>\n")
-      file(APPEND ${_file} "#include <tst${_test}.hpp>\n")
+      file(WRITE ${_file}
+        "#include <Test${_device}_Category.hpp>\n"
+        "#include <tst${_test}.hpp>\n"
+      )
       set(_target ${_test}_test_${_device})
       add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
       target_include_directories(${_target} PUBLIC ${_dir})
