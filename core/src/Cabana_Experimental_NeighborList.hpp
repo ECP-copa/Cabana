@@ -110,10 +110,10 @@ namespace Impl
 
 // Custom callback for ArborX::BVH::query()
 template <typename Tag>
-struct NeighborDiscriminator;
+struct NeighborDiscriminatorCallback;
 
 template <>
-struct NeighborDiscriminator<Cabana::FullNeighborTag>
+struct NeighborDiscriminatorCallback<Cabana::FullNeighborTag>
 {
     using tag = ArborX::Details::InlineCallbackTag;
     template <typename Predicate, typename OutputFunctor>
@@ -128,7 +128,7 @@ struct NeighborDiscriminator<Cabana::FullNeighborTag>
 };
 
 template <>
-struct NeighborDiscriminator<Cabana::HalfNeighborTag>
+struct NeighborDiscriminatorCallback<Cabana::HalfNeighborTag>
 {
     using tag = ArborX::Details::InlineCallbackTag;
     template <typename Predicate, typename OutputFunctor>
@@ -166,7 +166,7 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
     Kokkos::View<int *, DeviceType> offset(
         Kokkos::view_alloc( "offset", Kokkos::WithoutInitializing ), 0 );
     bvh.query( Impl::makePredicates( coordinate_slice, first, last, radius ),
-               Impl::NeighborDiscriminator<Tag>{}, indices, offset );
+               Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset );
 
     return CrsGraph<typename DeviceType::memory_space, Tag>{
         std::move( indices ), std::move( offset ), first, bvh.size()};
