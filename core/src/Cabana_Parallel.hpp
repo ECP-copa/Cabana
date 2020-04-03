@@ -66,9 +66,9 @@ KOKKOS_FORCEINLINE_FUNCTION
   \param functor The vectorized functor to execute in parallel. Must accept
   both a struct and array index.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 
   A "functor" is a callable object containing the function to execute in
   parallel, data needed for that execution, and an optional \c execution_space
@@ -104,17 +104,23 @@ inline void simd_parallel_for(
 
     using index_type = typename team_policy::index_type;
 
-    Kokkos::parallel_for(
-        str, dynamic_cast<const team_policy &>( exec_policy ),
-        KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
-            index_type s = team.league_rank() + exec_policy.structBegin();
-            Kokkos::parallel_for(
-                Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
-                                           exec_policy.arrayEnd( s ) ),
-                [&]( const index_type a ) {
-                    Impl::functorTagDispatch<work_tag>( functor, s, a );
-                } );
-        } );
+    auto simd_func =
+        KOKKOS_LAMBDA( const typename team_policy::member_type &team )
+    {
+        index_type s = team.league_rank() + exec_policy.structBegin();
+        Kokkos::parallel_for(
+            Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
+                                       exec_policy.arrayEnd( s ) ),
+            [&]( const index_type a ) {
+                Impl::functorTagDispatch<work_tag>( functor, s, a );
+            } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( dynamic_cast<const team_policy &>( exec_policy ),
+                              simd_func );
+    else
+        Kokkos::parallel_for(
+            str, dynamic_cast<const team_policy &>( exec_policy ), simd_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -166,12 +172,14 @@ class TeamVectorOpTag
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param Algorithm tag indicating a serial loop strategy over particle
+  \param neighborstag Iteration tag indicating operations over particle first
   neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param optag Algorithm tag indicating a serial loop strategy over neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 
   A "functor" is a class containing the function to execute in parallel, data
   needed for that execution, and an optional \c execution_space typedef.  Here
@@ -211,15 +219,19 @@ inline void neighbor_parallel_for(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    Kokkos::parallel_for(
-        str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
-            for ( index_type n = 0;
-                  n < neighbor_list_traits::numNeighbor( list, i ); ++n )
-                Impl::functorTagDispatch<work_tag>(
-                    functor, i,
-                    static_cast<index_type>(
-                        neighbor_list_traits::getNeighbor( list, i, n ) ) );
-        } );
+    auto neigh_func = KOKKOS_LAMBDA( const index_type i )
+    {
+        for ( index_type n = 0;
+              n < neighbor_list_traits::numNeighbor( list, i ); ++n )
+            Impl::functorTagDispatch<work_tag>(
+                functor, i,
+                static_cast<index_type>(
+                    neighbor_list_traits::getNeighbor( list, i, n ) ) );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( exec_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, exec_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -240,15 +252,14 @@ inline void neighbor_parallel_for(
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a serial loop strategy over particle
-  neighbors.
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
 
-  \param tag Algorithm tag indicating a serial loop strategy over particle
-  angular neighbors.
+  \param optag Algorithm tag indicating a serial loop strategy over neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
@@ -270,23 +281,27 @@ inline void neighbor_parallel_for(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    Kokkos::parallel_for(
-        str, exec_policy, KOKKOS_LAMBDA( const index_type i ) {
-            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+    auto neigh_func = KOKKOS_LAMBDA( const index_type i )
+    {
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
 
-            for ( index_type n = 0; n < nn; ++n )
+        for ( index_type n = 0; n < nn; ++n )
+        {
+            const index_type j =
+                neighbor_list_traits::getNeighbor( list, i, n );
+
+            for ( index_type a = n + 1; a < nn; ++a )
             {
-                const index_type j =
-                    neighbor_list_traits::getNeighbor( list, i, n );
-
-                for ( index_type a = n + 1; a < nn; ++a )
-                {
-                    const index_type k =
-                        neighbor_list_traits::getNeighbor( list, i, a );
-                    Impl::functorTagDispatch<work_tag>( functor, i, j, k );
-                }
+                const index_type k =
+                    neighbor_list_traits::getNeighbor( list, i, a );
+                Impl::functorTagDispatch<work_tag>( functor, i, j, k );
             }
-        } );
+        }
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( exec_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, exec_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -306,12 +321,14 @@ inline void neighbor_parallel_for(
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a team parallel strategy over particle
+  \param neighborstag Iteration tag indicating operations over particle first
   neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param optag Algorithm tag indicating a team parallel strategy over neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 
   A "functor" is a class containing the function to execute in parallel, data
   needed for that execution, and an optional \c execution_space typedef.  Here
@@ -357,20 +374,24 @@ inline void neighbor_parallel_for(
 
     const auto range_begin = exec_policy.begin();
 
-    Kokkos::parallel_for(
-        str, team_policy,
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
-            index_type i = team.league_rank() + range_begin;
-            Kokkos::parallel_for(
-                Kokkos::TeamThreadRange(
-                    team, neighbor_list_traits::numNeighbor( list, i ) ),
-                [&]( const index_type n ) {
-                    Impl::functorTagDispatch<work_tag>(
-                        functor, i,
-                        static_cast<index_type>(
-                            neighbor_list_traits::getNeighbor( list, i, n ) ) );
-                } );
-        } );
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+    {
+        index_type i = team.league_rank() + range_begin;
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange(
+                team, neighbor_list_traits::numNeighbor( list, i ) ),
+            [&]( const index_type n ) {
+                Impl::functorTagDispatch<work_tag>(
+                    functor, i,
+                    static_cast<index_type>(
+                        neighbor_list_traits::getNeighbor( list, i, n ) ) );
+            } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( team_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, team_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -391,15 +412,15 @@ inline void neighbor_parallel_for(
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a team parallel strategy over particle
-  neighbors.
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
 
-  \param tag Algorithm tag indicating a serial loop strategy over particle
-  angular neighbors.
+  \param optag Algorithm tag indicating a team parallel strategy over particle
+  first neighbors and serial execution over second neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
@@ -427,25 +448,29 @@ inline void neighbor_parallel_for(
 
     const auto range_begin = exec_policy.begin();
 
-    Kokkos::parallel_for(
-        str, team_policy,
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
-            index_type i = team.league_rank() + range_begin;
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+    {
+        index_type i = team.league_rank() + range_begin;
 
-            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
-            Kokkos::parallel_for(
-                Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
-                    const index_type j =
-                        neighbor_list_traits::getNeighbor( list, i, n );
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
+                const index_type j =
+                    neighbor_list_traits::getNeighbor( list, i, n );
 
-                    for ( index_type a = n + 1; a < nn; ++a )
-                    {
-                        const index_type k =
-                            neighbor_list_traits::getNeighbor( list, i, a );
-                        Impl::functorTagDispatch<work_tag>( functor, i, j, k );
-                    }
-                } );
-        } );
+                for ( index_type a = n + 1; a < nn; ++a )
+                {
+                    const index_type k =
+                        neighbor_list_traits::getNeighbor( list, i, a );
+                    Impl::functorTagDispatch<work_tag>( functor, i, j, k );
+                }
+            } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( team_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, team_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -466,15 +491,15 @@ inline void neighbor_parallel_for(
 
   \param list The neighbor list over which to execute the neighbor operations.
 
-  \param tag Algorithm tag indicating a team parallel strategy over particle
-  neighbors.
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
 
-  \param tag Algorithm tag indicating a vector parallel loop strategy over
-  particle angular neighbors.
+  \param optag Algorithm tag indicating a team parallel strategy over particle
+  first neighbors and vector parallel loop strategy over second neighbors.
 
-  \param str An optional name for the functor. Will be forwarded to the
-  Kokkos::parallel_for called by this code and can be used for identification
-  and profiling purposes.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
@@ -503,27 +528,30 @@ inline void neighbor_parallel_for(
 
     const auto range_begin = exec_policy.begin();
 
-    Kokkos::parallel_for(
-        str, team_policy,
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team ) {
-            index_type i = team.league_rank() + range_begin;
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+    {
+        index_type i = team.league_rank() + range_begin;
 
-            const index_type nn = neighbor_list_traits::numNeighbor( list, i );
-            Kokkos::parallel_for(
-                Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
-                    const index_type j =
-                        neighbor_list_traits::getNeighbor( list, i, n );
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team, nn ), [&]( const index_type n ) {
+                const index_type j =
+                    neighbor_list_traits::getNeighbor( list, i, n );
 
-                    Kokkos::parallel_for(
-                        Kokkos::ThreadVectorRange( team, n + 1, nn ),
-                        [&]( const index_type a ) {
-                            const index_type k =
-                                neighbor_list_traits::getNeighbor( list, i, a );
-                            Impl::functorTagDispatch<work_tag>( functor, i, j,
-                                                                k );
-                        } );
-                } );
-        } );
+                Kokkos::parallel_for(
+                    Kokkos::ThreadVectorRange( team, n + 1, nn ),
+                    [&]( const index_type a ) {
+                        const index_type k =
+                            neighbor_list_traits::getNeighbor( list, i, a );
+                        Impl::functorTagDispatch<work_tag>( functor, i, j, k );
+                    } );
+            } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( team_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, team_policy, neigh_func );
 }
 
 } // end namespace Cabana
