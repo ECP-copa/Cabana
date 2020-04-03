@@ -72,6 +72,10 @@ struct PointSet
     // (point,ni,nj,nk,dim)
     Kokkos::View<Scalar * [ns][ns][ns][3], device_type> gradient;
 
+    // Point basis distance values at entities in stencil
+    // (point,ni,nj,nk,dim)
+    Kokkos::View<Scalar * [ns][3], device_type> distance;
+
     // Mesh uniform cell size.
     Scalar dx;
 
@@ -151,6 +155,11 @@ void updatePointSet( const LocalMeshType& local_mesh,
                         point_set.gradient( p, i, j, k, Dim::K ) =
                             sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k];
                     }
+
+            // Evaluate the spline distances at the entities in the stencil.
+            for ( int d = 0; d < 3; ++d )
+                for ( int n = 0; n < ns; ++n )
+                    point_set.distance( p, n, d ) = sd.d[d][n];
         } );
 }
 
@@ -197,6 +206,10 @@ createPointSet(
         Kokkos::View<scalar_type * [ns][ns][ns][3], device_type>(
             Kokkos::ViewAllocateWithoutInitializing( "PointSet::gradients" ),
             num_alloc );
+
+    point_set.distance = Kokkos::View<scalar_type * [ns][3], device_type>(
+        Kokkos::ViewAllocateWithoutInitializing( "PointSet::distance" ),
+        num_alloc );
 
     auto local_mesh = createLocalMesh<Kokkos::HostSpace>( local_grid );
 
@@ -374,6 +387,30 @@ void splineEvaluationTest()
                 EXPECT_FLOAT_EQ( gradients_host(pid,0,1,1,Dim::I), -0.25/cell_size );
                 EXPECT_FLOAT_EQ( gradients_host(pid,0,1,1,Dim::J), 0.25/cell_size );
                 EXPECT_FLOAT_EQ( gradients_host(pid,0,1,1,Dim::K), 0.25/cell_size );
+            }
+
+    // Check distances
+    auto distances_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), point_set.distance );
+    for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
+        for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
+            for ( int k = cell_space.min(Dim::K); k < cell_space.max(Dim::K); ++k )
+            {
+                int pi = i - halo_width;
+                int pj = j - halo_width;
+                int pk = k - halo_width;
+                int pid = pi + cell_space.extent(Dim::I) * (
+                    pj + cell_space.extent(Dim::J) * pk );
+                for ( int d = 0; d < 3; ++d )
+                {
+                    double invariant = 0.0;
+                    for ( int n = 0; n < 2; ++n )
+                    {
+                        invariant +=
+                            values_host(pid,n,d) * distances_host(pid,n,d);
+                    }
+                    EXPECT_FLOAT_EQ( 1.0 - invariant, 1.0 );
+                }
             }
 }
 

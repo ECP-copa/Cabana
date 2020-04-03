@@ -465,6 +465,9 @@ struct SplineData
     // Local interpolation stencil.
     int s[3][num_knot];
 
+    // Physical distance.
+    Scalar d[3][num_knot];
+
     // Weight values.
     Scalar w[3][num_knot];
 
@@ -472,6 +475,7 @@ struct SplineData
     Scalar g[3][num_knot];
 };
 
+//---------------------------------------------------------------------------//
 // Evaluate spline data at a point in a uniform mesh.
 template <typename Scalar, int Order, class Device, class EntityType>
 KOKKOS_INLINE_FUNCTION void
@@ -494,6 +498,14 @@ evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
         spline_type::stencil( data.x[d], data.s[d] );
         spline_type::value( data.x[d], data.w[d] );
         spline_type::gradient( data.x[d], rdx, data.g[d] );
+    }
+
+    Scalar offset;
+    for ( int d = 0; d < 3; ++d )
+    {
+        offset = low_x[d] - p[d];
+        for ( int n = 0; n < spline_type::num_knot; ++n )
+            data.d[d][n] = offset + data.s[d][n] * data.dx;
     }
 }
 
