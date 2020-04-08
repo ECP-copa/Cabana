@@ -17,9 +17,9 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// parallel for example.
+// SIMD parallel for example.
 //---------------------------------------------------------------------------//
-void parallelForExample()
+void simdParallelForExample()
 {
     /*
       In previous examples we have demonstrated using the Slice directly with
@@ -180,7 +180,7 @@ int main( int argc, char *argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    parallelForExample();
+    simdParallelForExample();
 
     return 0;
 }

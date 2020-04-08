@@ -1,3 +1,0 @@
-add_executable(UnmanagedParallelFor parallel_for_example.cpp)
-target_link_libraries(UnmanagedParallelFor cabanacore)
-add_test(NAME Core_tutorial_14 COMMAND UnmanagedParallelFor)
