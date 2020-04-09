@@ -24,24 +24,24 @@ void tupleExample()
       of Cabana::Tuple that are different from std::tuple:
 
       *: Cabana tuples must consist of data of trivial types and classes. A
-         trivial type or class is one who's
+         trivial type or class is one:
 
-         1) storage is contiguous (i.e. trivially copyable)
+         1) whose storage is contiguous (i.e. trivially copyable)
 
          2) which only supports static default initialization (trivially
             default constructible), either cv-qualified or not.
 
-         Trivial types include scalar types, trivial classes and arrays of any
+         Trivial types include scalar types, trivial classes, and arrays of any
          such types. A trivial class is a class (defined with class, struct or
          union) that is both trivially default constructible and trivially
          copyable, which implies that:
 
-         1) uses the implicitly defined default copy and move constructors,
+         1) it uses the implicitly defined default copy and move constructors,
             copy and move assignments, and destructor
 
-         2) has no virtual members
+         2) it has no virtual members
 
-         3) has no non-static data members with brace- or equal- initializers
+         3) it has no non-static data members with brace- or equal- initializers
 
          4) its base class and non-static data members (if any) are themselves
             also trivial types

@@ -15,9 +15,9 @@
 #include <cstdio>
 
 //---------------------------------------------------------------------------//
-// Example of a parallel-for using an unmanaged view.
+// Example of an unmanaged AoSoA.
 //---------------------------------------------------------------------------//
-void parallelForExample()
+void unmanagedAoAoAExample()
 {
     /*
      * Summary: An unmanaged AoSoA allows the user to wrap manually allocated
@@ -144,7 +144,7 @@ int main( int argc, char *argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    parallelForExample();
+    unmanagedAoAoAExample();
 
     return 0;
 }

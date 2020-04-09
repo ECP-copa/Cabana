@@ -100,8 +100,14 @@ void linkedCellListExample()
       reordered. For some algorithms, this data structure may be all that is
       necessary if the data does not have to be physically reordered.
 
-      Also note here that we are going to reorder the entire AoSoA. One may
-      also construct a linked cell list over a subset of the particles.
+      Note here that we are going to reorder the entire AoSoA. One may
+      also construct a linked cell list over a subset of the particles. As an
+      exercise, try adding both start and end (int) inputs to define a subset
+      range of particles to permute:
+
+      Cabana::LinkedCellList<DeviceType> cell_list( positions, start, end,
+                                                    grid_delta,
+                                                    grid_min, grid_max );
      */
     Cabana::LinkedCellList<DeviceType> cell_list( positions, grid_delta,
                                                   grid_min, grid_max );

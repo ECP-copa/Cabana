@@ -22,8 +22,8 @@ void sortingExample()
       In many algorithms we will want to bin or sort AoSoA data to improve
       computational performance. Binning and sorting can be achieved by using
       a user-defined comparator function or by using an auxiliary set of key
-      values (such as a slice) who's sorted/binned order will define the order
-      of the AoSoA. In this example we will demonstrate sorting an AoSoA a
+      values (such as a slice) whose sorted/binned order will define the order
+      of the AoSoA. In this example we will demonstrate sorting an AoSoA with a
       slice of data as the keys.
     */
 
@@ -35,7 +35,7 @@ void sortingExample()
 
     /*
       Next declare the data layout of the AoSoA. We use the host space here
-      for the purposes of this example but all memory spaces, vector lengths,
+      for the purposes of this example, but all memory spaces, vector lengths,
       and member type configurations are compatible with sorting.
     */
     const int VectorLength = 4;
@@ -84,7 +84,7 @@ void sortingExample()
       some algorithms, this data structure may be all that is necessary if the
       data does not have to be physically reordered.
 
-      We are using auto for the sort_data return value here for convenience
+      We are using auto for the sort_data return value here for convenience,
       but the actual return type is Cabana::BinningData<MemorySpace>. Note
       that the binning data is templated on a memory space as it creates and
       stores data in the same memory space as the AoSoA.
@@ -137,7 +137,7 @@ void sortingExample()
       Now create the binning data. In this case let's create two bins: one
       for the 100's and one for the 200's.
 
-      We are using auto for the bin_data return value here for convenience
+      We are using auto for the bin_data return value here for convenience,
       but the actual return type is Cabana::BinningData<MemorySpace>. Note
       that the binning data is templated on a memory space as it creates and
       stores data in the same memory space as the AoSoA.
@@ -170,11 +170,11 @@ void sortingExample()
     /*
       We can also interrogate the binning data itself - this is useful in many
       cases where we may want to know how the data is binned and use that in
-      an algorithm but not actually permute the data.
+      an algorithm, but not actually permute the data.
 
       Using the binning data we just created let's see how many bins there are
       - we asked for 2 so we should get at least 2. This number may be
-      slightly larger due to integer arithmetic. In this cas it is 3:
+      slightly larger due to integer arithmetic. In this case it is 3:
      */
     std::cout << "bin_data.numBin() = " << bin_data.numBin() << std::endl;
 

@@ -20,9 +20,9 @@ void aosoaExample()
 {
     /*
       Cabana array-of-structs-of-arrays (AoSoAs) is simply a list of Cabana
-      SoAs. A Cabana AoSoA provides a convenient interface to create a
+      SoAs. A Cabana AoSoA provides a convenient interface to create and
       manipulate these lists. In addition to needing a definition of the tuple
-      types using Cabana::MemberTypes as well as defining the vector length
+      types using Cabana::MemberTypes, as well as defining the vector length
       for the SoAs, we now also need to declare where we want this list of
       SoAs allocated.
 
