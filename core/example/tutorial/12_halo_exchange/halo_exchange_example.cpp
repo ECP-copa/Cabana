@@ -14,6 +14,7 @@
 #include <Kokkos_Core.hpp>
 
 #include <algorithm>
+#include <iostream>
 
 #include <mpi.h>
 
@@ -68,14 +69,38 @@ void haloExchangeExample()
                                                               num_tuple );
 
     /*
-      Create slices and assign data.
+      Create slices with the MPI rank and a local ID so we can follow where the
+      data goes. One might consider using a parallel for loop in this case -
+      especially when the code being written is for an arbitrary memory space.
      */
-    auto slice_0 = Cabana::slice<0>( aosoa );
-    auto slice_1 = Cabana::slice<1>( aosoa );
+    auto slice_ranks = Cabana::slice<0>( aosoa );
+    auto slice_ids = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
-        slice_0( i ) = 1.0;
-        slice_1( i ) = 1.0;
+        slice_ranks( i ) = comm_rank;
+        slice_ids( i ) = i;
+    }
+
+    /*
+      Before migrating the data, let's print out the data in the slices
+      on one rank.
+    */
+    if ( comm_rank == 0 )
+    {
+        std::cout << "BEFORE exchange" << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
+            std::cout << slice_ranks( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ranks.size() << " ranks before exchange)"
+                  << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ids.size(); ++i )
+            std::cout << slice_ids( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ids.size() << " IDs before exchange)"
+                  << std::endl
+                  << std::endl;
     }
 
     /*
@@ -134,16 +159,37 @@ void haloExchangeExample()
     /*
       Get new slices after resizing.
      */
-    slice_0 = Cabana::slice<0>( aosoa );
-    slice_1 = Cabana::slice<1>( aosoa );
+    slice_ranks = Cabana::slice<0>( aosoa );
+    slice_ids = Cabana::slice<1>( aosoa );
 
     /*
       Gather data for the ghosts on this rank from our neighbors that own
       them. We can do this with slices or the entire AoSoA. The last ten
-      elements in the AoSoA should now have data from our neighbor (1.0 in
-      this case).
+      elements in the AoSoA should now have data from our neighbor (with
+      their previous local ID), with a total size of 110.
      */
     Cabana::gather( halo, aosoa );
+
+    /*
+      Having exchanged the data, let's print out the data on one rank.
+    */
+    if ( comm_rank == 0 )
+    {
+        std::cout << "AFTER gather" << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
+            std::cout << slice_ranks( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ranks.size() << " ranks after gather)"
+                  << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ids.size(); ++i )
+            std::cout << slice_ids( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ids.size() << " IDs after gather)"
+                  << std::endl
+                  << std::endl;
+    }
 
     /*
       Scatter the ghost data we have back to its owning rank. Any collisions
@@ -154,10 +200,30 @@ void haloExchangeExample()
 
       Elements 90-99 will now have their original values plus the values they
       received from their neighbors. We only have one neighbor in this case so
-      these elements should now have a value of 2.
+      these elements should now be doubled, with an unchanged total slice size.
      */
-    Cabana::scatter( halo, slice_0 );
-    Cabana::scatter( halo, slice_1 );
+    Cabana::scatter( halo, slice_ranks );
+    Cabana::scatter( halo, slice_ids );
+
+    /*
+      Having exchanged the data, let's print out the data on one rank.
+    */
+    if ( comm_rank == 0 )
+    {
+        std::cout << "AFTER scatter" << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
+            std::cout << slice_ranks( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ranks.size() << " ranks after scatter)"
+                  << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ids.size(); ++i )
+            std::cout << slice_ids( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ids.size() << " IDs after scatter)"
+                  << std::endl;
+    }
 }
 
 //---------------------------------------------------------------------------//

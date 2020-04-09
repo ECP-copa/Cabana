@@ -44,9 +44,9 @@ void neighborParallelForExample()
 
     /*
        Start by declaring the types in our tuples will store. The first
-       member will be the coordinates, the second an id.
+       member will be the coordinates, the second and third counters.
     */
-    using DataTypes = Cabana::MemberTypes<double[3], int>;
+    using DataTypes = Cabana::MemberTypes<double[3], int, int>;
 
     /*
       Declare the rest of the AoSoA parameters.
@@ -64,8 +64,9 @@ void neighborParallelForExample()
                                                               num_tuple );
 
     /*
-      Define the Cartesian grid and particle positions within it - this is
-      described in detail in the previous VerletList example.
+      Define the Cartesian grid and particle positions within it - this matches
+      the previous VerletList example exactly (and is described in detail
+      there).
     */
     double grid_min[3] = {0.0, 0.0, 0.0};
     double grid_max[3] = {3.0, 3.0, 3.0};
@@ -93,10 +94,12 @@ void neighborParallelForExample()
 
     /*
       Create a separate value per particle to sum neighbor values into,
-      initialized to one.
+      initialized to zero, and a value per particle to sum, one.
     */
-    auto val = Cabana::slice<1>( aosoa );
-    Cabana::deep_copy( val, 1 );
+    auto slice_i = Cabana::slice<1>( aosoa );
+    auto slice_n = Cabana::slice<2>( aosoa );
+    Cabana::deep_copy( slice_i, 0 );
+    Cabana::deep_copy( slice_n, 1 );
 
     /*
       Create the Verlet list - again this is described in detail in the
@@ -104,7 +107,7 @@ void neighborParallelForExample()
     */
     double neighborhood_radius = 0.25;
     double cell_ratio = 1.0;
-    using ListAlgorithm = Cabana::HalfNeighborTag;
+    using ListAlgorithm = Cabana::FullNeighborTag;
     using ListType =
         Cabana::VerletList<MemorySpace, ListAlgorithm, Cabana::VerletLayout2D>;
     ListType verlet_list( positions, 0, positions.size(), neighborhood_radius,
@@ -120,7 +123,7 @@ void neighborParallelForExample()
      */
     auto first_neighbor_kernel = KOKKOS_LAMBDA( const int i, const int j )
     {
-        val( i ) += val( j );
+        slice_i( i ) += slice_n( j );
     };
 
     /*
@@ -151,6 +154,17 @@ void neighborParallelForExample()
     Kokkos::fence();
 
     /*
+      Print out the results. Each value should be equal to the number of
+      neighbors. Note that this should also match the VerletList test -
+      two neighbors each.
+    */
+    std::cout << "Cabana::neighbor_parallel_for results (first, serial)"
+              << std::endl;
+    for ( std::size_t i = 0; i < slice_i.size(); i++ )
+        std::cout << slice_i( i ) << " ";
+    std::cout << std::endl << std::endl;
+
+    /*
       We can instead thread both over particles and neighbors, simply by
       changing the tag. Internally this uses a Kokkos team policy.
      */
@@ -160,18 +174,33 @@ void neighborParallelForExample()
     Kokkos::fence();
 
     /*
+      Print out the results again. Each value should now be doubled.
+    */
+    std::cout << "Cabana::neighbor_parallel_for results (first, team)"
+              << std::endl;
+    for ( std::size_t i = 0; i < slice_i.size(); i++ )
+        std::cout << slice_i( i ) << " ";
+    std::cout << std::endl << std::endl;
+
+    /*
       KERNEL 2 - Second neighbors
 
       Next we use a kernel that depends on triplets of particles - both the
-      neighbors and those neighbor's neighbors are required.
+      neighbors and those neighbor's neighbors are required - but is
+      otherwise extremely similar.
+    */
 
+    // First reset the slice to zero
+    Cabana::deep_copy( slice_i, 0 );
+
+    /*
       We define a new kernel for triplet interactions, indexing over central
       atom i, neighbor j, and second neighbor k.
     */
     auto second_neighbor_kernel =
         KOKKOS_LAMBDA( const int i, const int j, const int k )
     {
-        val( i ) += val( j ) + val( k );
+        slice_i( i ) += ( slice_n( j ) + slice_n( k ) ) / 2;
     };
 
     /*
@@ -179,14 +208,26 @@ void neighborParallelForExample()
       policy (because this only defines the outer loop over central particles)
       and the neighbor list.
 
-      We pass the new kernel involving first and second neighbors, as well as a
-      different indexing tag. In this case, the serial tag indicates that both
-      neighbor loops are serial, with threading only over central particles.
+      We pass the new kernel involving second neighbors, as well as a different
+      indexing tag to indicate this. In this case, the serial tag indicates that
+      both neighbor loops are serial, with threading only over central
+      particles.
      */
     Cabana::neighbor_parallel_for( policy, second_neighbor_kernel, verlet_list,
                                    Cabana::SecondNeighborsTag(),
                                    Cabana::SerialOpTag(), "ex_2nd_serial" );
     Kokkos::fence();
+
+    /*
+      Print out the results. Each value should be equal to the number of
+      triplets - this matches the VerletList test as well, since each pair of
+      neighbors corresponds to one triplet of particles.
+    */
+    std::cout << "Cabana::neighbor_parallel_for results (second, serial)"
+              << std::endl;
+    for ( std::size_t i = 0; i < slice_i.size(); i++ )
+        std::cout << slice_i( i ) << " ";
+    std::cout << std::endl << std::endl;
 
     /*
       We can again instead thread both over particles and neighbors, simply by
@@ -197,6 +238,15 @@ void neighborParallelForExample()
                                    Cabana::SecondNeighborsTag(),
                                    Cabana::TeamOpTag(), "ex_2nd_team" );
     Kokkos::fence();
+
+    /*
+      Print out the results again. Each value should now be doubled.
+    */
+    std::cout << "Cabana::neighbor_parallel_for results (second, team)"
+              << std::endl;
+    for ( std::size_t i = 0; i < slice_i.size(); i++ )
+        std::cout << slice_i( i ) << " ";
+    std::cout << std::endl << std::endl;
 
     /*
       One additional option is available which again maps to a Kokkos construct.
@@ -212,6 +262,15 @@ void neighborParallelForExample()
                                    Cabana::SecondNeighborsTag(),
                                    Cabana::TeamVectorOpTag(), "ex_2nd_vector" );
     Kokkos::fence();
+
+    /*
+      Print out the results one more time. Each value should now be tripled.
+    */
+    std::cout << "Cabana::neighbor_parallel_for results (second, team_vector)"
+              << std::endl;
+    for ( std::size_t i = 0; i < slice_i.size(); i++ )
+        std::cout << slice_i( i ) << " ";
+    std::cout << std::endl;
 }
 
 //---------------------------------------------------------------------------//
