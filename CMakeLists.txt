@@ -23,7 +23,7 @@ include(GNUInstallDirs)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # find kokkos
-find_package(Kokkos 3 REQUIRED)
+find_package(Kokkos 3.1 REQUIRED)
 
 # ensure that we can use lambdas
 if(Kokkos_ENABLE_CUDA)
