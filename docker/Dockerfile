@@ -67,5 +67,5 @@ RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz
       -D Kokkos_ENABLE_CUDA_LAMBDA=ON \
       -D Kokkos_ARCH_VOLTA70=ON \
     .. && \
-    make && make install && \
+    make -j${NPROCS} install && \
     rm -rf ${SCRATCH_DIR}
