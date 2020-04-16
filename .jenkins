@@ -8,7 +8,7 @@ pipeline {
                     agent {
                         dockerfile {
                             filename 'Dockerfile'
-                            dir 'scripts/jenkins'
+                            dir 'docker'
                             additionalBuildArgs '--pull --build-arg BASE=nvidia/cuda:10.2-devel'
                             label 'nvidia-docker && volta'
                             args '-v /tmp/ccache.kokkos:/tmp/ccache'
