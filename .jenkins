@@ -32,6 +32,33 @@ pipeline {
                         '''
                     }
                 }
+                stage('ROCM-3.3-HIPCC-DEBUG') {
+                    agent {
+                        dockerfile {
+                            filename 'Dockerfile.hipcc'
+                            dir 'docker'
+                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-18.04:3.3'
+                            args '-v /tmp/ccache.kokkos:/tmp/ccache --device=/dev/kfd --device=/dev/dri --security-opt seccomp=unconfined --group-add video'
+                            label 'rocm-docker && vega'
+                        }
+                    }
+                    steps {
+                        sh '''
+                            rm -rf build && mkdir -p build && cd build && \
+                            cmake \
+                              -D CMAKE_BUILD_TYPE=Debug \
+                              -D CMAKE_CXX_COMPILER=hipcc \
+                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic" \
+                              -D CMAKE_PREFIX_PATH=$KOKKOS_DIR \
+                              -D Cabana_ENABLE_MPI=OFF \
+                              -D Cabana_REQUIRE_HIP=ON \
+                              -D Cabana_ENABLE_TESTING=ON \
+                            .. && \
+                            make -j$NPROCS && \
+                            ctest --output-on-failure
+                        '''
+                    }
+                }
             }
         }
     }
