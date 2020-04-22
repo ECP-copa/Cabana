@@ -609,8 +609,8 @@ inline void neighbor_parallel_for(
   the Kokkos::parallel_reduce called by this code and can be used for
   identification and profiling purposes.
 */
-template <class FunctorType, class NeighborListType, class... ExecParameters,
-          class ReduceType>
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
 inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
@@ -679,8 +679,8 @@ inline void neighbor_parallel_reduce(
   the Kokkos::parallel_reduce called by this code and can be used for
   identification and profiling purposes.
 */
-template <class FunctorType, class NeighborListType, class... ExecParameters,
-          class ReduceType>
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
 inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
@@ -755,8 +755,8 @@ inline void neighbor_parallel_reduce(
   the Kokkos::parallel_reduce called by this code and can be used for
   identification and profiling purposes.
 */
-template <class FunctorType, class NeighborListType, class... ExecParameters,
-          class ReduceType>
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
 inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
@@ -840,8 +840,8 @@ inline void neighbor_parallel_reduce(
   the Kokkos::parallel_reduce called by this code and can be used for
   identification and profiling purposes.
 */
-template <class FunctorType, class NeighborListType, class... ExecParameters,
-          class ReduceType>
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
 inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
@@ -930,8 +930,8 @@ inline void neighbor_parallel_reduce(
   the Kokkos::parallel_reduce called by this code and can be used for
   identification and profiling purposes.
 */
-template <class FunctorType, class NeighborListType, class... ExecParameters,
-          class ReduceType>
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
 inline void neighbor_parallel_reduce(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
     const FunctorType &functor, const NeighborListType &list,
