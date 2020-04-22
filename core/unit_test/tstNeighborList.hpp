@@ -816,10 +816,13 @@ void testFirstNeighborParallelReduce()
     // Get the expected result in serial
     auto test_list = computeFullNeighborList( positions, test_radius );
     auto test_list_copy = createTestListHostCopy( test_list );
+    auto aosoa_mirror =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
     for ( int p = 0; p < num_particle; ++p )
         for ( int n = 0; n < test_list_copy.counts( p ); ++n )
-            test_sum += positions( p, 0 ) +
-                        positions( test_list_copy.neighbors( p, n ), 0 );
+            test_sum += positions_mirror( p, 0 ) +
+                        positions_mirror( test_list_copy.neighbors( p, n ), 0 );
 
     // Check the result.
     EXPECT_FLOAT_EQ( test_sum, serial_sum );
@@ -875,12 +878,16 @@ void testSecondNeighborParallelReduce()
     // Get the expected result in serial
     auto test_list = computeFullNeighborList( positions, test_radius );
     auto test_list_copy = createTestListHostCopy( test_list );
+    auto aosoa_mirror =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
     for ( int p = 0; p < num_particle; ++p )
         for ( int n = 0; n < test_list_copy.counts( p ); ++n )
             for ( int a = n + 1; a < test_list_copy.counts( p ); ++a )
-                test_sum += positions( p, 0 ) +
-                            positions( test_list_copy.neighbors( p, n ), 0 ) +
-                            positions( test_list_copy.neighbors( p, a ), 0 );
+                test_sum +=
+                    positions_mirror( p, 0 ) +
+                    positions_mirror( test_list_copy.neighbors( p, n ), 0 ) +
+                    positions_mirror( test_list_copy.neighbors( p, a ), 0 );
 
     // Check the result.
     EXPECT_FLOAT_EQ( test_sum, serial_sum );
