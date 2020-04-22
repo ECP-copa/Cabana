@@ -800,7 +800,7 @@ inline void neighbor_parallel_reduce(
                     nval );
             },
             reduce_n );
-        ival += reduce_n;
+        Kokkos::single( Kokkos::PerTeam( team ), [&]() { ival += reduce_n; } );
     };
     if ( str.empty() )
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
@@ -890,7 +890,7 @@ inline void neighbor_parallel_reduce(
                 }
             },
             reduce_n );
-        ival += reduce_n;
+        Kokkos::single( Kokkos::PerTeam( team ), [&]() { ival += reduce_n; } );
     };
     if ( str.empty() )
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
@@ -984,7 +984,7 @@ inline void neighbor_parallel_reduce(
                 nval += reduce_a;
             },
             reduce_n );
-        ival += reduce_n;
+        Kokkos::single( Kokkos::PerTeam( team ), [&]() { ival += reduce_n; } );
     };
     if ( str.empty() )
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
