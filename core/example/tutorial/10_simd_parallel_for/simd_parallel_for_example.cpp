@@ -17,9 +17,9 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// parallel for example.
+// SIMD parallel for example.
 //---------------------------------------------------------------------------//
-void parallelForExample()
+void simdParallelForExample()
 {
     /*
       In previous examples we have demonstrated using the Slice directly with
@@ -74,7 +74,7 @@ void parallelForExample()
     auto slice_1 = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
-        slice_0( i ) = 1.0;
+        slice_0( i ) = 0.0;
         slice_1( i ) = 1.0;
     }
 
@@ -93,7 +93,7 @@ void parallelForExample()
      */
     auto vector_kernel = KOKKOS_LAMBDA( const int s, const int a )
     {
-        slice_0.access( s, a ) = slice_1.access( s, a );
+        slice_0.access( s, a ) += slice_1.access( s, a );
     };
 
     /*
@@ -137,6 +137,16 @@ void parallelForExample()
     Kokkos::fence();
 
     /*
+      Print out parallel_for results. Each value should have been
+      incremented by 1.
+    */
+    std::cout << "Cabana::simd_parallel_for results (initially 0.0)"
+              << std::endl;
+    for ( std::size_t i = 0; i < slice_0.size(); i++ )
+        std::cout << slice_0( i ) << " ";
+    std::cout << std::endl << std::endl;
+
+    /*
       KERNEL 2 - NO VECTORIZATION/COALESCING
 
       Next we use a kernel that will not vectorize due to random memory
@@ -155,7 +165,7 @@ void parallelForExample()
         auto gen = pool.get_state();
         auto rand_idx =
             Kokkos::rand<RandomType, int>::draw( gen, 0, num_tuple );
-        slice_1( i ) = slice_0( rand_idx );
+        slice_1( i ) += slice_0( rand_idx );
         pool.free_state( gen );
     };
 
@@ -168,8 +178,18 @@ void parallelForExample()
     Kokkos::fence();
 
     /*
-          Note: Other Kokkos parallel concepts such as reductions and scans can
-       be used with Cabana slices and 1D indexing.
+      Print out parallel_for results. Each value should have been
+      incremented by 1, within the range given.
+    */
+    std::cout << "Kokkos::parallel_for with a partial range (initially 1.0)"
+              << std::endl;
+    for ( std::size_t i = 0; i < slice_1.size(); i++ )
+        std::cout << slice_1( i ) << " ";
+    std::cout << std::endl;
+
+    /*
+      Note: Other Kokkos parallel concepts such as reductions and scans can
+      be used with Cabana slices and 1D indexing.
     */
 }
 
@@ -180,7 +200,7 @@ int main( int argc, char *argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    parallelForExample();
+    simdParallelForExample();
 
     return 0;
 }

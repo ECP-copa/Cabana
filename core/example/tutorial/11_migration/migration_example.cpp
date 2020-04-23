@@ -14,6 +14,7 @@
 #include <Kokkos_Core.hpp>
 
 #include <algorithm>
+#include <iostream>
 
 #include <mpi.h>
 
@@ -63,17 +64,38 @@ void migrationExample()
     Cabana::AoSoA<DataTypes, DeviceType, VectorLength> aosoa( "A", num_tuple );
 
     /*
-      Create slices and assign data. The data values are equal to id of this
-      rank so we can track where the data goes. One might consider using a
-      parallel for loop in this case - especially when the code being written
-      is for an arbitrary memory space.
+      Create slices with the MPI rank and a local ID so we can follow where the
+      data goes. One might consider using a parallel for loop in this case -
+      especially when the code being written is for an arbitrary memory space.
      */
-    auto slice_0 = Cabana::slice<0>( aosoa );
-    auto slice_1 = Cabana::slice<1>( aosoa );
+    auto slice_ranks = Cabana::slice<0>( aosoa );
+    auto slice_ids = Cabana::slice<1>( aosoa );
     for ( int i = 0; i < num_tuple; ++i )
     {
-        slice_0( i ) = comm_rank;
-        slice_1( i ) = comm_rank;
+        slice_ranks( i ) = comm_rank;
+        slice_ids( i ) = i;
+    }
+
+    /*
+      Before migrating the data, let's print out the data in the slices
+      on one rank.
+    */
+    if ( comm_rank == 0 )
+    {
+        std::cout << "BEFORE migration" << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
+            std::cout << slice_ranks( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ranks.size() << " ranks before migrate)"
+                  << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ids.size(); ++i )
+            std::cout << slice_ids( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ids.size() << " IDs before migrate)"
+                  << std::endl
+                  << std::endl;
     }
 
     /*
@@ -150,10 +172,10 @@ void migrationExample()
       We can migrate each slice individually as well. This is useful when not
       all data in an AoSoA needs to be moved to a new decomposition.
      */
-    auto slice_0_dst = Cabana::slice<0>( destination );
-    auto slice_1_dst = Cabana::slice<1>( destination );
-    Cabana::migrate( distributor, slice_0, slice_0_dst );
-    Cabana::migrate( distributor, slice_1, slice_1_dst );
+    auto slice_ranks_dst = Cabana::slice<0>( destination );
+    auto slice_ids_dst = Cabana::slice<1>( destination );
+    Cabana::migrate( distributor, slice_ranks, slice_ranks_dst );
+    Cabana::migrate( distributor, slice_ids, slice_ids_dst );
 
     /*
       3) IN-PLACE MIGRATION.
@@ -163,13 +185,37 @@ void migrationExample()
       this automatically by moving the data to the new decomposition and
       resizing the AoSoA automatically.
 
-      In the code below, the AoSoA should be size 100 on input and size 90 on
-      output and contain the new data.
+      The AoSoA should be size 100 on input and size 90 on output, having
+      removed 10, moved 10, and added 10.
 
       Note: Any existing slices created from this AoSoA may be invalidated as
-      the data structure will be resized during migration.
+      the data structure will be resized as necessary during migration.
      */
     Cabana::migrate( distributor, aosoa );
+
+    /*
+      Having migrated the data, let's print out the in-place case on one rank.
+      We re-slice because the previous slices are no longer valid.
+    */
+    slice_ranks = Cabana::slice<0>( aosoa );
+    slice_ids = Cabana::slice<1>( aosoa );
+
+    if ( comm_rank == 0 )
+    {
+        std::cout << "AFTER migration" << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ranks.size(); ++i )
+            std::cout << slice_ranks( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ranks.size() << " ranks after migrate)"
+                  << std::endl
+                  << "(Rank " << comm_rank << ") ";
+        for ( std::size_t i = 0; i < slice_ids.size(); ++i )
+            std::cout << slice_ids( i ) << " ";
+        std::cout << std::endl
+                  << "(" << slice_ids.size() << " IDs after migrate)"
+                  << std::endl;
+    }
 }
 
 //---------------------------------------------------------------------------//

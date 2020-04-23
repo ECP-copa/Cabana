@@ -22,7 +22,7 @@ void deepCopyExample()
       The AoSoA object allocates memory in a given memory space with a layout
       specified by the SoA objects it contains - mainly the data types in the
       SoAs and the vector length of the SoA. When we call the copy constructor
-      or assignment operator of an AoSoA, a reference counted and shallow copy
+      or assignment operator of an AoSoA, a reference counted, shallow copy
       of that data is performed.
 
       In many cases we may want to actually copy the contents of an AoSoA into
@@ -126,7 +126,7 @@ void deepCopyExample()
 
       Given that the AoSoA we created above is on the GPU we can easily create
       another identical AoSoA containing the same contents but that is
-      allocated in a different mnemory space allowing for easy transfer back to
+      allocated in a different memory space allowing for easy transfer back to
       the device:
      */
     auto dst_aosoa_host =
@@ -134,7 +134,7 @@ void deepCopyExample()
 
     /*
        Note that this view is now in the provided host space. If we were to
-       use the same memory space as dst_aosoa in this function call we would
+       use the same memory space as dst_aosoa was created in we would
        have received the same dst_aosoa back - no memory allocations or copies
        would have occured. This is particularly useful for writing code that
        will run on both heterogenous and homogenous architectures where the

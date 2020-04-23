@@ -68,7 +68,7 @@ void verletListExample()
     /*
       Create the particle coordinates. We will put 3 particles in the center
       of each cell. We will set the Verlet list parameters such that each
-      particle should only neighbor the other particle it shares a cell with.
+      particle should only neighbor the other particles it shares a cell with.
     */
     auto positions = Cabana::slice<0>( aosoa );
     int ppc = 3;
@@ -115,9 +115,17 @@ void verletListExample()
              `i` is implied. This is specified by the Cabana::HalfNeighborTag
              algorithm tag.
 
-       We will build a full neighbor list in this example. As an exercise, try
-       changing the list algorithm tag to a half neighbor list and look at the
-       difference in the output.
+      In addition, we need to specify the layout of the neighhbor data,
+      either as compressed sparse row (CSR) or 2D lists.
+
+          *: CSR is specified by the Cabana::VerletLayoutCSR layout tag
+
+          *: 2D is specified by the Cabana::VerletLayout2D layout tag
+
+      We will build a full neighbor list with a CSR layout in this example.
+      As an exercise, try changing the list algorithm tag to a half neighbor
+      list and look at the difference in the output.
+
      */
     double neighborhood_radius = 0.25;
     double cell_ratio = 1.0;
