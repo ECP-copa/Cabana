@@ -47,21 +47,30 @@ class LocalMesh<Device, UniformMesh<Scalar>>
         const auto &global_grid = local_grid.globalGrid();
         const auto &global_mesh = global_grid.globalMesh();
 
-        _cell_size = global_mesh.uniformCellSize();
-        _face_area = _cell_size * _cell_size;
-        _cell_volume = _cell_size * _face_area;
+        // Get the cell size.
+        for ( int d = 0; d < 3; ++d )
+            _cell_size[d] = global_mesh.uniformCellSize( d );
+
+        // Compute face area.
+        _face_area[Dim::I] = _cell_size[Dim::J] * _cell_size[Dim::K];
+        _face_area[Dim::J] = _cell_size[Dim::I] * _cell_size[Dim::K];
+        _face_area[Dim::K] = _cell_size[Dim::I] * _cell_size[Dim::J];
+
+        // Compute cell volume.
+        _cell_volume =
+            _cell_size[Dim::I] * _cell_size[Dim::J] * _cell_size[Dim::K];
 
         // Compute the owned low corner
         for ( int d = 0; d < 3; ++d )
             _own_low_corner[d] = global_mesh.lowCorner( d ) +
-                                 _cell_size * global_grid.globalOffset( d );
+                                 _cell_size[d] * global_grid.globalOffset( d );
 
         // Compute the owned high corner
         for ( int d = 0; d < 3; ++d )
             _own_high_corner[d] =
                 global_mesh.lowCorner( d ) +
-                _cell_size * ( global_grid.globalOffset( d ) +
-                               global_grid.ownedNumCell( d ) );
+                _cell_size[d] * ( global_grid.globalOffset( d ) +
+                                  global_grid.ownedNumCell( d ) );
 
         // Compute the ghosted low corner
         for ( int d = 0; d < 3; ++d )
@@ -69,7 +78,7 @@ class LocalMesh<Device, UniformMesh<Scalar>>
                 ( global_grid.isPeriodic( d ) ||
                   global_grid.dimBlockId( d ) > 0 )
                     ? lowCorner( Own(), d ) -
-                          local_grid.haloCellWidth() * _cell_size
+                          local_grid.haloCellWidth() * _cell_size[d]
                     : lowCorner( Own(), d );
 
         // Compute the ghosted high corner
@@ -79,7 +88,7 @@ class LocalMesh<Device, UniformMesh<Scalar>>
                   global_grid.dimBlockId( d ) <
                       global_grid.dimNumBlock( d ) - 1 )
                     ? highCorner( Own(), d ) +
-                          local_grid.haloCellWidth() * _cell_size
+                          local_grid.haloCellWidth() * _cell_size[d]
                     : highCorner( Own(), d );
     }
 
@@ -120,14 +129,14 @@ class LocalMesh<Device, UniformMesh<Scalar>>
     {
         for ( int d = 0; d < 3; ++d )
             x[d] = _ghost_low_corner[d] +
-                   ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size;
+                   ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size[d];
     }
 
     KOKKOS_INLINE_FUNCTION
     void coordinates( Node, const int index[3], Scalar x[3] ) const
     {
         for ( int d = 0; d < 3; ++d )
-            x[d] = _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size;
+            x[d] = _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size[d];
     }
 
     template <int Dir>
@@ -136,10 +145,11 @@ class LocalMesh<Device, UniformMesh<Scalar>>
     {
         for ( int d = 0; d < 3; ++d )
             if ( Dir == d )
-                x[d] = _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size;
+                x[d] =
+                    _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size[d];
             else
                 x[d] = _ghost_low_corner[d] +
-                       ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size;
+                       ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size[d];
     }
 
     template <int Dir>
@@ -149,9 +159,10 @@ class LocalMesh<Device, UniformMesh<Scalar>>
         for ( int d = 0; d < 3; ++d )
             if ( Dir == d )
                 x[d] = _ghost_low_corner[d] +
-                       ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size;
+                       ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size[d];
             else
-                x[d] = _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size;
+                x[d] =
+                    _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size[d];
     }
 
     // Get the measure of an entity of the given type at the given index. The
@@ -164,22 +175,22 @@ class LocalMesh<Device, UniformMesh<Scalar>>
     template <int Dir>
     KOKKOS_INLINE_FUNCTION Scalar measure( Edge<Dir>, const int[3] ) const
     {
-        return _cell_size;
+        return _cell_size[Dir];
     }
 
     template <int Dir>
     KOKKOS_INLINE_FUNCTION Scalar measure( Face<Dir>, const int[3] ) const
     {
-        return _face_area;
+        return _face_area[Dir];
     }
 
     KOKKOS_INLINE_FUNCTION
     Scalar measure( Cell, const int[3] ) const { return _cell_volume; }
 
   private:
-    Scalar _cell_size;
+    Kokkos::Array<Scalar, 3> _cell_size;
+    Kokkos::Array<Scalar, 3> _face_area;
     Scalar _cell_volume;
-    Scalar _face_area;
     Kokkos::Array<Scalar, 3> _own_low_corner;
     Kokkos::Array<Scalar, 3> _own_high_corner;
     Kokkos::Array<Scalar, 3> _ghost_low_corner;

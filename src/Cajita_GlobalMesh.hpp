@@ -39,10 +39,30 @@ class GlobalMesh<UniformMesh<Scalar>>
     // Scalar type.
     using scalar_type = Scalar;
 
-    // Cell size constructor.
+    // Cell size constructor - all cell dimensions are the same.
     GlobalMesh( const std::array<Scalar, 3> &global_low_corner,
                 const std::array<Scalar, 3> &global_high_corner,
                 const Scalar cell_size )
+        : _global_low_corner( global_low_corner )
+        , _global_high_corner( global_high_corner )
+        , _cell_size( {cell_size, cell_size, cell_size} )
+    {
+        // Check that the domain is evenly divisible by the cell size in each
+        // dimension within round-off error.
+        for ( int d = 0; d < 3; ++d )
+        {
+            Scalar ext = globalNumCell( d ) * _cell_size[d];
+            if ( std::abs( ext - extent( d ) ) >
+                 Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() )
+                throw std::logic_error(
+                    "Extent not evenly divisible by uniform cell size" );
+        }
+    }
+
+    // Cell size constructor - each cell dimension can be different.
+    GlobalMesh( const std::array<Scalar, 3> &global_low_corner,
+                const std::array<Scalar, 3> &global_high_corner,
+                const std::array<Scalar, 3> &cell_size )
         : _global_low_corner( global_low_corner )
         , _global_high_corner( global_high_corner )
         , _cell_size( cell_size )
@@ -51,7 +71,7 @@ class GlobalMesh<UniformMesh<Scalar>>
         // dimension within round-off error.
         for ( int d = 0; d < 3; ++d )
         {
-            Scalar ext = globalNumCell( d ) * _cell_size;
+            Scalar ext = globalNumCell( d ) * _cell_size[d];
             if ( std::abs( ext - extent( d ) ) >
                  Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() )
                 throw std::logic_error(
@@ -66,26 +86,17 @@ class GlobalMesh<UniformMesh<Scalar>>
         : _global_low_corner( global_low_corner )
         , _global_high_corner( global_high_corner )
     {
-        // Compute the cell size. This should be the same in all dimensions.
-        std::array<Scalar, 3> cell_sizes;
+        // Compute the cell size in each dimension.
         for ( int d = 0; d < 3; ++d )
-            cell_sizes[d] = ( _global_high_corner[d] - _global_low_corner[d] ) /
+            _cell_size[d] = ( _global_high_corner[d] - _global_low_corner[d] ) /
                             global_num_cell[d];
-        if ( ( std::abs( cell_sizes[Dim::I] - cell_sizes[Dim::J] ) >
-               Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() ) ||
-             ( std::abs( cell_sizes[Dim::I] - cell_sizes[Dim::K] ) >
-               Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() ) )
-            throw std::logic_error( "Cell sizes not equal" );
-
-        // Set the cell size now that we have checked them.
-        _cell_size = cell_sizes[Dim::I];
 
         // Check that the domain is evenly divisible by the cell size in each
         // dimension within round-off error and that we got the expected
         // number of cells.
         for ( int d = 0; d < 3; ++d )
         {
-            Scalar ext = globalNumCell( d ) * _cell_size;
+            Scalar ext = globalNumCell( d ) * _cell_size[d];
             if ( std::abs( ext - extent( d ) ) >
                  Scalar( 100.0 ) * std::numeric_limits<Scalar>::epsilon() )
                 throw std::logic_error(
@@ -115,18 +126,18 @@ class GlobalMesh<UniformMesh<Scalar>>
     // Get the global numer of cells in a given dimension.
     int globalNumCell( const int dim ) const
     {
-        return std::rint( extent( dim ) / _cell_size );
+        return std::rint( extent( dim ) / _cell_size[dim] );
     }
 
     // UNIFORM MESH SPECIFIC
 
-    // get the uniform cell size.
-    Scalar uniformCellSize() const { return _cell_size; }
+    // Get the uniform cell size in a given dimension.
+    Scalar uniformCellSize( const int dim ) const { return _cell_size[dim]; }
 
   private:
     std::array<Scalar, 3> _global_low_corner;
     std::array<Scalar, 3> _global_high_corner;
-    Scalar _cell_size;
+    std::array<Scalar, 3> _cell_size;
 };
 
 // Creation function.
@@ -135,6 +146,16 @@ std::shared_ptr<GlobalMesh<UniformMesh<Scalar>>>
 createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
                          const std::array<Scalar, 3> &global_high_corner,
                          const Scalar cell_size )
+{
+    return std::make_shared<GlobalMesh<UniformMesh<Scalar>>>(
+        global_low_corner, global_high_corner, cell_size );
+}
+
+template <class Scalar>
+std::shared_ptr<GlobalMesh<UniformMesh<Scalar>>>
+createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
+                         const std::array<Scalar, 3> &global_high_corner,
+                         const std::array<Scalar, 3> &cell_size )
 {
     return std::make_shared<GlobalMesh<UniformMesh<Scalar>>>(
         global_low_corner, global_high_corner, cell_size );

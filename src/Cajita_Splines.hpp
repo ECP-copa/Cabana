@@ -457,7 +457,7 @@ struct SplineData
     using entity_type = EntityType;
 
     // Physical cell size.
-    Scalar dx;
+    Scalar dx[3];
 
     // Logical position.
     Scalar x[3];
@@ -489,15 +489,20 @@ evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
     int low_id[3] = {0, 0, 0};
     local_mesh.coordinates( EntityType(), low_id, low_x );
 
-    data.dx = local_mesh.measure( Edge<Dim::I>(), low_id );
-    Scalar rdx = 1.0 / data.dx;
+    data.dx[Dim::I] = local_mesh.measure( Edge<Dim::I>(), low_id );
+    data.dx[Dim::J] = local_mesh.measure( Edge<Dim::J>(), low_id );
+    data.dx[Dim::K] = local_mesh.measure( Edge<Dim::K>(), low_id );
+
+    Scalar rdx[3];
+    for ( int d = 0; d < 3; ++d )
+        rdx[d] = 1.0 / data.dx[d];
 
     for ( int d = 0; d < 3; ++d )
     {
-        data.x[d] = spline_type::mapToLogicalGrid( p[d], rdx, low_x[d] );
+        data.x[d] = spline_type::mapToLogicalGrid( p[d], rdx[d], low_x[d] );
         spline_type::stencil( data.x[d], data.s[d] );
         spline_type::value( data.x[d], data.w[d] );
-        spline_type::gradient( data.x[d], rdx, data.g[d] );
+        spline_type::gradient( data.x[d], rdx[d], data.g[d] );
     }
 
     Scalar offset;
@@ -505,7 +510,7 @@ evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
     {
         offset = low_x[d] - p[d];
         for ( int n = 0; n < spline_type::num_knot; ++n )
-            data.d[d][n] = offset + data.s[d][n] * data.dx;
+            data.d[d][n] = offset + data.s[d][n] * data.dx[d];
     }
 }
 
