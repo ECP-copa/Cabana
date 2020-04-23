@@ -132,7 +132,7 @@ class GlobalMesh<UniformMesh<Scalar>>
     // UNIFORM MESH SPECIFIC
 
     // Get the uniform cell size in a given dimension.
-    Scalar uniformCellSize( const int dim ) const { return _cell_size[dim]; }
+    Scalar cellSize( const int dim ) const { return _cell_size[dim]; }
 
   private:
     std::array<Scalar, 3> _global_low_corner;

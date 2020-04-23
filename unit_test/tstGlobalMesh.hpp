@@ -47,7 +47,7 @@ void uniformTest1()
         EXPECT_EQ( num_cell[d], global_mesh->globalNumCell(d) );
 
     for ( int d = 0; d < 3; ++d )
-        EXPECT_DOUBLE_EQ( global_mesh->uniformCellSize(d), cell_size );
+        EXPECT_DOUBLE_EQ( global_mesh->cellSize(d), cell_size );
 }
 
 //---------------------------------------------------------------------------//
@@ -75,7 +75,7 @@ void uniformTest2()
 
     double cell_size = 0.05;
     for ( int d = 0; d < 3; ++d )
-        EXPECT_DOUBLE_EQ( global_mesh->uniformCellSize(d), cell_size );
+        EXPECT_DOUBLE_EQ( global_mesh->cellSize(d), cell_size );
 }
 
 //---------------------------------------------------------------------------//
@@ -103,7 +103,7 @@ void uniformTest3()
         EXPECT_EQ( num_cell[d], global_mesh->globalNumCell(d) );
 
     for ( int d = 0; d < 3; ++d )
-        EXPECT_DOUBLE_EQ( global_mesh->uniformCellSize(d), cell_size[d] );
+        EXPECT_DOUBLE_EQ( global_mesh->cellSize(d), cell_size[d] );
 }
 
 //---------------------------------------------------------------------------//

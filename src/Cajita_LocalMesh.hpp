@@ -49,7 +49,7 @@ class LocalMesh<Device, UniformMesh<Scalar>>
 
         // Get the cell size.
         for ( int d = 0; d < 3; ++d )
-            _cell_size[d] = global_mesh.uniformCellSize( d );
+            _cell_size[d] = global_mesh.cellSize( d );
 
         // Compute face area.
         _face_area[Dim::I] = _cell_size[Dim::J] * _cell_size[Dim::K];
