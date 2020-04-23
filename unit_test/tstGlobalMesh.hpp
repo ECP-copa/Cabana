@@ -23,6 +23,7 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
+// Test uniform mesh with cubic cells.
 void uniformTest1()
 {
     std::array<double,3> low_corner = { -1.2, 0.1, 1.1 };
@@ -51,6 +52,7 @@ void uniformTest1()
 }
 
 //---------------------------------------------------------------------------//
+// Test uniform mesh with number of cells constructor.
 void uniformTest2()
 {
     std::array<double,3> low_corner = { -1.2, 0.1, 1.1 };
@@ -79,6 +81,8 @@ void uniformTest2()
 }
 
 //---------------------------------------------------------------------------//
+// test uniform mesh with cells that can have a different size in each
+// dimension
 void uniformTest3()
 {
     std::array<double,3> low_corner = { -1.2, 0.1, 1.1 };
@@ -107,6 +111,7 @@ void uniformTest3()
 }
 
 //---------------------------------------------------------------------------//
+// test a non uniform mesh
 void nonUniformTest()
 {
     std::vector<float> i_edge = { -0.3, 0.4, 1.1 };

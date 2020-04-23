@@ -28,7 +28,9 @@ template <class MeshType>
 class GlobalMesh;
 
 //---------------------------------------------------------------------------//
-// Global mesh partial specialization for uniform mesh.
+// Global mesh partial specialization for uniform mesh. Uniform meshes are
+// rectilinear meshes where every cell in the mesh is identical. A cell is
+// described by its width in each dimension.
 template <class Scalar>
 class GlobalMesh<UniformMesh<Scalar>>
 {
@@ -39,7 +41,8 @@ class GlobalMesh<UniformMesh<Scalar>>
     // Scalar type.
     using scalar_type = Scalar;
 
-    // Cell size constructor - all cell dimensions are the same.
+    // Cell size constructor - special case where all cell dimensions are the
+    // same.
     GlobalMesh( const std::array<Scalar, 3> &global_low_corner,
                 const std::array<Scalar, 3> &global_high_corner,
                 const Scalar cell_size )
@@ -172,7 +175,10 @@ createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
 }
 
 //---------------------------------------------------------------------------//
-// Global mesh partial specialization for non-uniform mesh.
+// Global mesh partial specialization for non-uniform mesh. Non-uniform meshes
+// have a list of node locations for each spatial dimension which describe a
+// rectilinear mesh that has arbitrary cell sizes - each cell can possibly be
+// different.
 template <class Scalar>
 class GlobalMesh<NonUniformMesh<Scalar>>
 {
