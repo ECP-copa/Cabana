@@ -20,8 +20,11 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <type_traits>
 #include <vector>
+
+#include <Kokkos_Core.hpp>
 
 namespace Cajita
 {
@@ -68,6 +71,50 @@ class FullHaloPattern : public HaloPattern
         this->setNeighbors( neighbors );
     }
 };
+
+//---------------------------------------------------------------------------//
+// Scatter reduction.
+//---------------------------------------------------------------------------//
+namespace ScatterReduce
+{
+
+struct Sum
+{
+};
+struct Min
+{
+};
+struct Max
+{
+};
+
+template <class ViewType, class BufferType>
+KOKKOS_INLINE_FUNCTION void apply( ScatterReduce::Sum, const ViewType &view,
+                                   const BufferType &buffer, const int i,
+                                   const int j, const int k, const int l )
+{
+    view( i, j, k, l ) += buffer( i, j, k, l );
+}
+
+template <class ViewType, class BufferType>
+KOKKOS_INLINE_FUNCTION void apply( ScatterReduce::Min, const ViewType &view,
+                                   const BufferType &buffer, const int i,
+                                   const int j, const int k, const int l )
+{
+    if ( view( i, j, k, l ) > buffer( i, j, k, l ) )
+        view( i, j, k, l ) = buffer( i, j, k, l );
+}
+
+template <class ViewType, class BufferType>
+KOKKOS_INLINE_FUNCTION void apply( ScatterReduce::Max, const ViewType &view,
+                                   const BufferType &buffer, const int i,
+                                   const int j, const int k, const int l )
+{
+    if ( view( i, j, k, l ) < buffer( i, j, k, l ) )
+        view( i, j, k, l ) = buffer( i, j, k, l );
+}
+
+} // end namespace ScatterReduce
 
 //---------------------------------------------------------------------------//
 // Halo exchange communication plan for migrating shared data between blocks.
@@ -271,11 +318,23 @@ class Halo
     }
 
     /*!
-      \brief Scatter data from our ghosts to their owners.
+      \brief Scatter data from our ghosts to their owners. Default sum
+      implementation.
       \param array The array to scatter.
     */
     template <class Array_t>
     void scatter( const Array_t &array ) const
+    {
+        scatter( array, ScatterReduce::Sum() );
+    }
+
+    /*!
+      \brief Scatter data from our ghosts to their owners using the given type
+      of reduce operation.
+      \param array The array to scatter.
+    */
+    template <class Array_t, class ReduceType>
+    void scatter( const Array_t &array, ReduceType ) const
     {
         // Check that the array type is valid.
         static_assert(
@@ -345,7 +404,7 @@ class Halo
                 unpack_complete = true;
             }
 
-            // Otherwise unpack the next buffer.
+            // Otherwise unpack the next buffer and apply the reduce operation.
             else
             {
                 auto subview =
@@ -361,7 +420,8 @@ class Halo
                     createExecutionPolicy( scatter_space, execution_space() ),
                     KOKKOS_LAMBDA( const int i, const int j, const int k,
                                    const int l ) {
-                        subview( i, j, k, l ) += owned_buffer( i, j, k, l );
+                        ScatterReduce::apply( ReduceType(), subview,
+                                              owned_buffer, i, j, k, l );
                     } );
             }
 
