@@ -20,8 +20,11 @@
 
 #include <algorithm>
 #include <array>
+#include <cmath>
 #include <type_traits>
 #include <vector>
+
+#include <Kokkos_Core.hpp>
 
 namespace Cajita
 {
@@ -68,6 +71,69 @@ class FullHaloPattern : public HaloPattern
         this->setNeighbors( neighbors );
     }
 };
+
+//---------------------------------------------------------------------------//
+// Scatter reduction.
+//---------------------------------------------------------------------------//
+namespace ScatterReduce
+{
+
+// Sum values from neighboring ranks into this rank's data.
+struct Sum
+{
+    template <class ViewType, class BufferType>
+    KOKKOS_INLINE_FUNCTION void
+    operator()( const ViewType &view, const BufferType &buffer, const int i,
+                const int j, const int k, const int l ) const
+    {
+        view( i, j, k, l ) += buffer( i, j, k, l );
+    }
+};
+
+// Assign this rank's data to be the minimum of it and its neighbor ranks'
+// values.
+struct Min
+{
+    template <class ViewType, class BufferType>
+    KOKKOS_INLINE_FUNCTION void
+    operator()( const ViewType &view, const BufferType &buffer, const int i,
+                const int j, const int k, const int l ) const
+    {
+        if ( view( i, j, k, l ) > buffer( i, j, k, l ) )
+            view( i, j, k, l ) = buffer( i, j, k, l );
+    }
+};
+
+// Assign this rank's data to be the maximum of it and its neighbor ranks'
+// values.
+struct Max
+{
+    template <class ViewType, class BufferType>
+    KOKKOS_INLINE_FUNCTION void
+    operator()( const ViewType &view, const BufferType &buffer, const int i,
+                const int j, const int k, const int l ) const
+    {
+        if ( view( i, j, k, l ) < buffer( i, j, k, l ) )
+            view( i, j, k, l ) = buffer( i, j, k, l );
+    }
+};
+
+// Replace this rank's data with its neighbor ranks' values. Note that if
+// multiple ranks scatter back to the same grid locations then the value
+// assigned will be from one of the neighbors but it is undetermined from
+// which neighbor that value will come.
+struct Replace
+{
+    template <class ViewType, class BufferType>
+    KOKKOS_INLINE_FUNCTION void
+    operator()( const ViewType &view, const BufferType &buffer, const int i,
+                const int j, const int k, const int l ) const
+    {
+        view( i, j, k, l ) = buffer( i, j, k, l );
+    }
+};
+
+} // end namespace ScatterReduce
 
 //---------------------------------------------------------------------------//
 // Halo exchange communication plan for migrating shared data between blocks.
@@ -271,11 +337,24 @@ class Halo
     }
 
     /*!
-      \brief Scatter data from our ghosts to their owners.
+      \brief Scatter data from our ghosts to their owners. Default sum
+      implementation.
       \param array The array to scatter.
     */
     template <class Array_t>
     void scatter( const Array_t &array ) const
+    {
+        scatter( array, ScatterReduce::Sum() );
+    }
+
+    /*!
+      \brief Scatter data from our ghosts to their owners using the given type
+      of reduce operation.
+      \param array The array to scatter.
+      \param reduce The functor used to reduce the results.
+    */
+    template <class Array_t, class ReduceFunc>
+    void scatter( const Array_t &array, const ReduceFunc &reduce ) const
     {
         // Check that the array type is valid.
         static_assert(
@@ -345,7 +424,7 @@ class Halo
                 unpack_complete = true;
             }
 
-            // Otherwise unpack the next buffer.
+            // Otherwise unpack the next buffer and apply the reduce operation.
             else
             {
                 auto subview =
@@ -361,7 +440,7 @@ class Halo
                     createExecutionPolicy( scatter_space, execution_space() ),
                     KOKKOS_LAMBDA( const int i, const int j, const int k,
                                    const int l ) {
-                        subview( i, j, k, l ) += owned_buffer( i, j, k, l );
+                        reduce( subview, owned_buffer, i, j, k, l );
                     } );
             }
 

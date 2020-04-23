@@ -112,7 +112,7 @@ class LocalGrid
        the local grid. The default behavior is to use the halo width of the
        local grid.
 
-       Interface same structure as:
+       Interface has the same structure as:
 
        template<class DecompositionTag, class EntityType, class IndexType>
        IndexSpace<3> sharedIndexSpace( DecompositionTag, EntityType,
