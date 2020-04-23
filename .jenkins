@@ -26,6 +26,7 @@ pipeline {
                               -D Cabana_ENABLE_MPI=ON \
                               -D Cabana_REQUIRE_CUDA=ON \
                               -D Cabana_ENABLE_TESTING=ON \
+                              -D Cabana_ENABLE_EXAMPLES=ON \
                             .. && \
                             make -j$NPROCS && \
                             ctest --output-on-failure
@@ -53,6 +54,7 @@ pipeline {
                               -D Cabana_ENABLE_MPI=OFF \
                               -D Cabana_REQUIRE_HIP=ON \
                               -D Cabana_ENABLE_TESTING=ON \
+                              -D Cabana_ENABLE_EXAMPLES=ON \
                             .. && \
                             make -j$NPROCS && \
                             ctest --output-on-failure
