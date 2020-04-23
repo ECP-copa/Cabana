@@ -567,7 +567,7 @@ void testVerletListHalf()
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag>
-void testNeighborParallelFor()
+void testFirstNeighborParallelFor()
 {
     // Create the AoSoA and fill with random particle positions.
     int num_particle = 1e3;
@@ -677,7 +677,7 @@ void testVerletListFullPartialRange()
 
 //---------------------------------------------------------------------------//
 template <class LayoutTag>
-void testAngularParallelFor()
+void testSecondNeighborParallelFor()
 {
     // Create the AoSoA and fill with random particle positions.
     int num_particle = 1e3;
@@ -773,6 +773,129 @@ void testAngularParallelFor()
 }
 
 //---------------------------------------------------------------------------//
+template <class LayoutTag>
+void testFirstNeighborParallelReduce()
+{
+    // Create the AoSoA and fill with random particle positions.
+    int num_particle = 1e3;
+    double test_radius = 2.32;
+    double cell_size_ratio = 0.5;
+    double box_min = -5.3 * test_radius;
+    double box_max = 4.7 * test_radius;
+    auto aosoa = createParticles( num_particle, box_min, box_max );
+    auto positions = Cabana::slice<0>( aosoa );
+
+    // Create the neighbor list.
+    using ListType =
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
+    double grid_min[3] = {box_min, box_min, box_min};
+    double grid_max[3] = {box_max, box_max, box_max};
+    ListType nlist( positions, 0, aosoa.size(), test_radius, cell_size_ratio,
+                    grid_min, grid_max );
+
+    // Reduction variables
+    double test_sum = 0;
+    double serial_sum = 0;
+    double team_sum = 0;
+
+    // Test the list parallel operation by adding a value from each neighbor
+    // to the particle and compare to counts.
+    auto sum_op = KOKKOS_LAMBDA( const int i, const int n, double &sum )
+    {
+        sum += positions( i, 0 ) + positions( n, 0 );
+    };
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
+    Cabana::neighbor_parallel_reduce(
+        policy, sum_op, nlist, Cabana::FirstNeighborsTag(),
+        Cabana::SerialOpTag(), serial_sum, "test_reduce_serial" );
+    Cabana::neighbor_parallel_reduce(
+        policy, sum_op, nlist, Cabana::FirstNeighborsTag(), Cabana::TeamOpTag(),
+        team_sum, "test_reduce_team" );
+    Kokkos::fence();
+
+    // Get the expected result in serial
+    auto test_list = computeFullNeighborList( positions, test_radius );
+    auto test_list_copy = createTestListHostCopy( test_list );
+    auto aosoa_mirror =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
+    for ( int p = 0; p < num_particle; ++p )
+        for ( int n = 0; n < test_list_copy.counts( p ); ++n )
+            test_sum += positions_mirror( p, 0 ) +
+                        positions_mirror( test_list_copy.neighbors( p, n ), 0 );
+
+    // Check the result.
+    EXPECT_FLOAT_EQ( test_sum, serial_sum );
+    EXPECT_FLOAT_EQ( test_sum, team_sum );
+}
+
+//---------------------------------------------------------------------------//
+template <class LayoutTag>
+void testSecondNeighborParallelReduce()
+{
+    // Create the AoSoA and fill with random particle positions.
+    int num_particle = 1e3;
+    double test_radius = 2.32;
+    double cell_size_ratio = 0.5;
+    double box_min = -5.3 * test_radius;
+    double box_max = 4.7 * test_radius;
+    auto aosoa = createParticles( num_particle, box_min, box_max );
+    auto positions = Cabana::slice<0>( aosoa );
+
+    // Create the neighbor list.
+    using ListType =
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
+    double grid_min[3] = {box_min, box_min, box_min};
+    double grid_max[3] = {box_max, box_max, box_max};
+    ListType nlist( positions, 0, aosoa.size(), test_radius, cell_size_ratio,
+                    grid_min, grid_max );
+
+    // Reduction variables
+    double test_sum = 0;
+    double serial_sum = 0;
+    double team_sum = 0;
+    double vector_sum = 0;
+
+    // Test the list parallel operation by adding a value from each neighbor
+    // to the particle and compare to counts.
+    auto sum_op =
+        KOKKOS_LAMBDA( const int i, const int n, const int a, double &sum )
+    {
+        sum += positions( i, 0 ) + positions( n, 0 ) + positions( a, 0 );
+    };
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
+    Cabana::neighbor_parallel_reduce(
+        policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
+        Cabana::SerialOpTag(), serial_sum, "test_reduce_serial" );
+    Cabana::neighbor_parallel_reduce(
+        policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
+        Cabana::TeamOpTag(), team_sum, "test_reduce_team" );
+    Cabana::neighbor_parallel_reduce(
+        policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
+        Cabana::TeamVectorOpTag(), vector_sum, "test_reduce_vector" );
+    Kokkos::fence();
+
+    // Get the expected result in serial
+    auto test_list = computeFullNeighborList( positions, test_radius );
+    auto test_list_copy = createTestListHostCopy( test_list );
+    auto aosoa_mirror =
+        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
+    for ( int p = 0; p < num_particle; ++p )
+        for ( int n = 0; n < test_list_copy.counts( p ); ++n )
+            for ( int a = n + 1; a < test_list_copy.counts( p ); ++a )
+                test_sum +=
+                    positions_mirror( p, 0 ) +
+                    positions_mirror( test_list_copy.neighbors( p, n ), 0 ) +
+                    positions_mirror( test_list_copy.neighbors( p, a ), 0 );
+
+    // Check the result.
+    EXPECT_FLOAT_EQ( test_sum, serial_sum );
+    EXPECT_FLOAT_EQ( test_sum, team_sum );
+    EXPECT_FLOAT_EQ( test_sum, vector_sum );
+}
+
+//---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
@@ -801,13 +924,22 @@ TEST( TEST_CATEGORY, verlet_list_full_range_test )
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, parallel_for_test )
 {
-    testNeighborParallelFor<Cabana::VerletLayoutCSR>();
-    testNeighborParallelFor<Cabana::VerletLayout2D>();
+    testFirstNeighborParallelFor<Cabana::VerletLayoutCSR>();
+    testFirstNeighborParallelFor<Cabana::VerletLayout2D>();
 
-    testAngularParallelFor<Cabana::VerletLayoutCSR>();
-    testAngularParallelFor<Cabana::VerletLayout2D>();
+    testSecondNeighborParallelFor<Cabana::VerletLayoutCSR>();
+    testSecondNeighborParallelFor<Cabana::VerletLayout2D>();
 }
 
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, parallel_reduce_test )
+{
+    testFirstNeighborParallelReduce<Cabana::VerletLayoutCSR>();
+    testFirstNeighborParallelReduce<Cabana::VerletLayout2D>();
+
+    testSecondNeighborParallelReduce<Cabana::VerletLayoutCSR>();
+    testSecondNeighborParallelReduce<Cabana::VerletLayout2D>();
+}
 //---------------------------------------------------------------------------//
 
 } // end namespace Test

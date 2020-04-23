@@ -46,6 +46,29 @@ KOKKOS_FORCEINLINE_FUNCTION
     functor( t, std::forward<IndexTypes>( indices )... );
 }
 
+// No work tag was provided so call reduce without a tag argument.
+template <class WorkTag, class FunctorType, class... IndexTypes,
+          class ReduceType>
+KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<std::is_same<WorkTag, void>::value>::type
+    functorTagDispatch( const FunctorType &functor, IndexTypes &&... indices,
+                        ReduceType &reduce_val )
+{
+    functor( std::forward<IndexTypes>( indices )..., reduce_val );
+}
+
+// The user gave us a tag so call the reduce version using that.
+template <class WorkTag, class FunctorType, class... IndexTypes,
+          class ReduceType>
+KOKKOS_FORCEINLINE_FUNCTION
+    typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
+    functorTagDispatch( const FunctorType &functor, IndexTypes &&... indices,
+                        ReduceType &reduce_val )
+{
+    const WorkTag t{};
+    functor( t, std::forward<IndexTypes>( indices )..., reduce_val );
+}
+
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//
@@ -158,7 +181,7 @@ class TeamVectorOpTag
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute \c functor in parallel according to the execution \c policy
-  with a thread-local serial loop over particle neighbors.
+  with a thread-local serial loop over particle first neighbors.
 
   \tparam FunctorType The functor type to execute.
 
@@ -237,8 +260,7 @@ inline void neighbor_parallel_for(
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute \c functor in parallel according to the execution \c policy
-  with a thread-local serial loop over particle neighbors and serial loop over
-  particle angular neighbors.
+  with thread-local serial loops over particle first and second neighbors.
 
   \tparam ExecutionSpace The execution space in which to execute the functor.
 
@@ -307,7 +329,7 @@ inline void neighbor_parallel_for(
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute \c functor in parallel according to the execution \c policy
-  with team parallelism over particle neighbors.
+  with team parallelism over particle first neighbors.
 
   \tparam ExecutionSpace The execution space in which to execute the functor.
 
@@ -397,8 +419,8 @@ inline void neighbor_parallel_for(
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute \c functor in parallel according to the execution \c policy
-  with team parallelism over particle neighbors and serial loop over particle
-  angular neighbors.
+  with team parallelism over particle first neighbors and serial loop over
+  second neighbors.
 
   \tparam ExecutionSpace The execution space in which to execute the functor.
 
@@ -476,8 +498,8 @@ inline void neighbor_parallel_for(
 //---------------------------------------------------------------------------//
 /*!
   \brief Execute \c functor in parallel according to the execution \c policy
-  with team parallelism over particle neighbors and vector loop parallelism over
-  particle angular neighbors.
+  with team parallelism over particle first neighbors and vector loop
+  parallelism over second neighbors.
 
   \tparam ExecutionSpace The execution space in which to execute the functor.
 
@@ -552,6 +574,422 @@ inline void neighbor_parallel_for(
         Kokkos::parallel_for( team_policy, neigh_func );
     else
         Kokkos::parallel_for( str, team_policy, neigh_func );
+}
+
+//---------------------------------------------------------------------------//
+// Neighbor Parallel Reduce
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor reduction in parallel according to the execution \c
+  policy with a thread-local serial loop over particle first neighbors.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \tparam ReduceType The reduction type.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param neighborstag Iteration tag indicating operations over particle first
+  neighbors.
+
+  \param optag Algorithm tag indicating a serial loop strategy over particle
+  neighbors.
+
+  \param reduce_val Scalar to be reduced across particles and neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_reduce called by this code and can be used for
+  identification and profiling purposes.
+*/
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
+inline void neighbor_parallel_reduce(
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const FirstNeighborsTag, const SerialOpTag, ReduceType &reduce_val,
+    const std::string &str = "" )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using index_type =
+        typename Kokkos::RangePolicy<ExecParameters...>::index_type;
+
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    auto neigh_reduce = KOKKOS_LAMBDA( const index_type i, ReduceType &ival )
+    {
+        for ( index_type n = 0;
+              n < neighbor_list_traits::numNeighbor( list, i ); ++n )
+            Impl::functorTagDispatch<work_tag>(
+                functor, i,
+                static_cast<index_type>(
+                    neighbor_list_traits::getNeighbor( list, i, n ) ),
+                ival );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_reduce( exec_policy, neigh_reduce, reduce_val );
+    else
+        Kokkos::parallel_reduce( str, exec_policy, neigh_reduce, reduce_val );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor reduction in parallel according to the execution \c
+  policy with thread-local serial loops over particle first and second
+  neighbors.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \tparam ReduceType The reduction type.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
+
+  \param optag Algorithm tag indicating a serial loop strategy over particle
+  neighbors.
+
+  \param reduce_val Scalar to be reduced across particles and neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_reduce called by this code and can be used for
+  identification and profiling purposes.
+*/
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
+inline void neighbor_parallel_reduce(
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const SecondNeighborsTag, const SerialOpTag, ReduceType &reduce_val,
+    const std::string &str = "" )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using index_type =
+        typename Kokkos::RangePolicy<ExecParameters...>::index_type;
+
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    auto neigh_reduce = KOKKOS_LAMBDA( const index_type i, ReduceType &ival )
+    {
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+
+        for ( index_type n = 0; n < nn; ++n )
+        {
+            const index_type j =
+                neighbor_list_traits::getNeighbor( list, i, n );
+
+            for ( index_type a = n + 1; a < nn; ++a )
+            {
+                const index_type k =
+                    neighbor_list_traits::getNeighbor( list, i, a );
+                Impl::functorTagDispatch<work_tag>( functor, i, j, k, ival );
+            }
+        }
+    };
+    if ( str.empty() )
+        Kokkos::parallel_reduce( exec_policy, neigh_reduce, reduce_val );
+    else
+        Kokkos::parallel_reduce( str, exec_policy, neigh_reduce, reduce_val );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor reduction in parallel according to the execution \c
+  policy with team parallelism over particle first neighbors.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \tparam ReduceType The reduction type.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param neighborstag Iteration tag indicating operations over particle first
+  neighbors.
+
+  \param optag Algorithm tag indicating a team parallel strategy over particle
+  neighbors.
+
+  \param reduce_val Scalar to be reduced across particles and neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_reduce called by this code and can be used for
+  identification and profiling purposes.
+*/
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
+inline void neighbor_parallel_reduce(
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const FirstNeighborsTag, const TeamOpTag, ReduceType &reduce_val,
+    const std::string &str = "" )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using kokkos_policy =
+        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
+                               Kokkos::AUTO );
+
+    using index_type = typename kokkos_policy::index_type;
+
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    const auto range_begin = exec_policy.begin();
+
+    auto neigh_reduce = KOKKOS_LAMBDA(
+        const typename kokkos_policy::member_type &team, ReduceType &ival )
+    {
+        index_type i = team.league_rank() + range_begin;
+        ReduceType reduce_n = 0;
+
+        Kokkos::parallel_reduce(
+            Kokkos::TeamThreadRange(
+                team, neighbor_list_traits::numNeighbor( list, i ) ),
+            [&]( const index_type n, ReduceType &nval ) {
+                Impl::functorTagDispatch<work_tag>(
+                    functor, i,
+                    static_cast<index_type>(
+                        neighbor_list_traits::getNeighbor( list, i, n ) ),
+                    nval );
+            },
+            reduce_n );
+        Kokkos::single( Kokkos::PerTeam( team ), [&]() { ival += reduce_n; } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
+    else
+        Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor reduction in parallel according to the execution \c
+  policy with team parallelism over particle first neighbors and serial loop
+  over second neighbors.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \tparam ReduceType The reduction type.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
+
+  \param optag Algorithm tag indicating a team parallel strategy over particle
+  first neighbors and serial loops over second neighbors.
+
+  \param reduce_val Scalar to be reduced across particles and neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_reduce called by this code and can be used for
+  identification and profiling purposes.
+*/
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
+inline void neighbor_parallel_reduce(
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const SecondNeighborsTag, const TeamOpTag, ReduceType &reduce_val,
+    const std::string &str = "" )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using kokkos_policy =
+        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
+                               Kokkos::AUTO );
+
+    using index_type = typename kokkos_policy::index_type;
+
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    const auto range_begin = exec_policy.begin();
+
+    auto neigh_reduce = KOKKOS_LAMBDA(
+        const typename kokkos_policy::member_type &team, ReduceType &ival )
+    {
+        index_type i = team.league_rank() + range_begin;
+        ReduceType reduce_n = 0;
+
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+        Kokkos::parallel_reduce(
+            Kokkos::TeamThreadRange( team, nn ),
+            [&]( const index_type n, ReduceType &nval ) {
+                const index_type j =
+                    neighbor_list_traits::getNeighbor( list, i, n );
+
+                for ( index_type a = n + 1; a < nn; ++a )
+                {
+                    const index_type k =
+                        neighbor_list_traits::getNeighbor( list, i, a );
+                    Impl::functorTagDispatch<work_tag>( functor, i, j, k,
+                                                        nval );
+                }
+            },
+            reduce_n );
+        Kokkos::single( Kokkos::PerTeam( team ), [&]() { ival += reduce_n; } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
+    else
+        Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor reduction in parallel according to the execution \c
+  policy with team parallelism over particle first neighbors and vector loop
+  parallelism over second neighbors.
+
+  \tparam FunctorType The functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \tparam ReduceType The reduction type.
+
+  \param exec_policy The policy over which to execute the functor.
+
+  \param functor The functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param neighborstag Iteration tag indicating operations over particle first
+  and second neighbors.
+
+  \param optag Algorithm tag indicating a team parallel strategy over particle
+  first neighbors and vector loops over second neighbors.
+
+  \param reduce_val Scalar to be reduced across particles and neighbors.
+
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_reduce called by this code and can be used for
+  identification and profiling purposes.
+*/
+template <class FunctorType, class NeighborListType, class ReduceType,
+          class... ExecParameters>
+inline void neighbor_parallel_reduce(
+    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
+    const FunctorType &functor, const NeighborListType &list,
+    const SecondNeighborsTag, const TeamVectorOpTag, ReduceType &reduce_val,
+    const std::string &str = "" )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using kokkos_policy =
+        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
+                               Kokkos::AUTO );
+
+    using index_type = typename kokkos_policy::index_type;
+
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    using memory_space = typename neighbor_list_traits::memory_space;
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    const auto range_begin = exec_policy.begin();
+
+    auto neigh_reduce = KOKKOS_LAMBDA(
+        const typename kokkos_policy::member_type &team, ReduceType &ival )
+    {
+        index_type i = team.league_rank() + range_begin;
+        ReduceType reduce_n = 0;
+
+        const index_type nn = neighbor_list_traits::numNeighbor( list, i );
+        Kokkos::parallel_reduce(
+            Kokkos::TeamThreadRange( team, nn ),
+            [&]( const index_type n, ReduceType &nval ) {
+                const index_type j =
+                    neighbor_list_traits::getNeighbor( list, i, n );
+                ReduceType reduce_a = 0;
+
+                Kokkos::parallel_reduce(
+                    Kokkos::ThreadVectorRange( team, n + 1, nn ),
+                    [&]( const index_type a, ReduceType &aval ) {
+                        const index_type k =
+                            neighbor_list_traits::getNeighbor( list, i, a );
+                        Impl::functorTagDispatch<work_tag>( functor, i, j, k,
+                                                            aval );
+                    },
+                    reduce_a );
+                nval += reduce_a;
+            },
+            reduce_n );
+        Kokkos::single( Kokkos::PerTeam( team ), [&]() { ival += reduce_n; } );
+    };
+    if ( str.empty() )
+        Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
+    else
+        Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
 }
 
 } // end namespace Cabana
