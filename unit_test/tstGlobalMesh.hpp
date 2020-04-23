@@ -23,6 +23,7 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
+// Test uniform mesh with cubic cells.
 void uniformTest1()
 {
     std::array<double,3> low_corner = { -1.2, 0.1, 1.1 };
@@ -46,10 +47,12 @@ void uniformTest1()
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( num_cell[d], global_mesh->globalNumCell(d) );
 
-    EXPECT_DOUBLE_EQ( global_mesh->uniformCellSize(), cell_size );
+    for ( int d = 0; d < 3; ++d )
+        EXPECT_DOUBLE_EQ( global_mesh->cellSize(d), cell_size );
 }
 
 //---------------------------------------------------------------------------//
+// Test uniform mesh with number of cells constructor.
 void uniformTest2()
 {
     std::array<double,3> low_corner = { -1.2, 0.1, 1.1 };
@@ -73,10 +76,42 @@ void uniformTest2()
         EXPECT_EQ( num_cell[d], global_mesh->globalNumCell(d) );
 
     double cell_size = 0.05;
-    EXPECT_DOUBLE_EQ( global_mesh->uniformCellSize(), cell_size );
+    for ( int d = 0; d < 3; ++d )
+        EXPECT_DOUBLE_EQ( global_mesh->cellSize(d), cell_size );
 }
 
 //---------------------------------------------------------------------------//
+// test uniform mesh with cells that can have a different size in each
+// dimension
+void uniformTest3()
+{
+    std::array<double,3> low_corner = { -1.2, 0.1, 1.1 };
+    std::array<double,3> high_corner = { -0.3, 9.5, 1.3 };
+    std::array<double,3> cell_size = {0.05,0.05,0.05};
+
+    auto global_mesh = createUniformGlobalMesh(
+        low_corner, high_corner, cell_size );
+
+    for ( int d = 0; d < 3; ++d )
+        EXPECT_DOUBLE_EQ( low_corner[d], global_mesh->lowCorner(d) );
+
+    for ( int d = 0; d < 3; ++d )
+        EXPECT_DOUBLE_EQ( high_corner[d], global_mesh->highCorner(d) );
+
+    for ( int d = 0; d < 3; ++d )
+        EXPECT_DOUBLE_EQ( high_corner[d] - low_corner[d],
+                          global_mesh->extent(d) );
+
+    std::array<int,3> num_cell = { 18, 188, 4 };
+    for ( int d = 0; d < 3; ++d )
+        EXPECT_EQ( num_cell[d], global_mesh->globalNumCell(d) );
+
+    for ( int d = 0; d < 3; ++d )
+        EXPECT_DOUBLE_EQ( global_mesh->cellSize(d), cell_size[d] );
+}
+
+//---------------------------------------------------------------------------//
+// test a non uniform mesh
 void nonUniformTest()
 {
     std::vector<float> i_edge = { -0.3, 0.4, 1.1 };
@@ -124,6 +159,7 @@ TEST( mesh, uniform_test )
 {
     uniformTest1();
     uniformTest2();
+    uniformTest3();
 }
 
 TEST( mesh, non_uniform_test )

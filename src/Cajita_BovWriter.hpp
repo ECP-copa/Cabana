@@ -266,13 +266,13 @@ void writeTimeStep( const int time_step_index, const double time,
         // Mesh global width
         header << "BRICK_SIZE: "
                << global_grid.globalNumEntity( Cell(), Dim::I ) *
-                      global_mesh.uniformCellSize()
+                      global_mesh.cellSize( Dim::I )
                << " "
                << global_grid.globalNumEntity( Cell(), Dim::J ) *
-                      global_mesh.uniformCellSize()
+                      global_mesh.cellSize( Dim::J )
                << " "
                << global_grid.globalNumEntity( Cell(), Dim::K ) *
-                      global_mesh.uniformCellSize()
+                      global_mesh.cellSize( Dim::K )
                << std::endl;
 
         // Number of data components. Scalar and vector types are
