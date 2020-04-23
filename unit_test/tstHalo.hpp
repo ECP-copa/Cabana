@@ -143,163 +143,55 @@ void gatherScatterTest( const ManualPartitioner& partitioner,
 }
 
 //---------------------------------------------------------------------------//
-void scatterMinTest()
+template<class ReduceFunc>
+struct TestHaloReduce;
+
+template<>
+struct TestHaloReduce<ScatterReduce::Min>
 {
-    // Create the global grid.
-    double cell_size = 0.23;
-    std::array<int,3> global_num_cell = { 32, 23, 41 };
-    std::array<double,3> global_low_corner = { 1.2, 3.3, -2.8 };
-    std::array<double,3> global_high_corner =
-        { global_low_corner[0] + cell_size * global_num_cell[0],
-          global_low_corner[1] + cell_size * global_num_cell[1],
-          global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = createUniformGlobalMesh( global_low_corner,
-                                                global_high_corner,
-                                                global_num_cell );
-
-    // Create the global grid.
-    std::array<bool,3> is_dim_periodic = {true,true,true};
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
-                                         global_mesh,
-                                         is_dim_periodic,
-                                         Cajita::UniformDimPartitioner() );
-
-    // Create an array on the cells.
-    unsigned array_halo_width = 2;
-    int dofs_per_cell = 4;
-    auto cell_layout =
-        createArrayLayout( global_grid, array_halo_width, dofs_per_cell, Cell() );
-    auto array = createArray<double,TEST_DEVICE>( "array", cell_layout );
-
-    // Assign the rank to the array.
-    int comm_rank;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-    ArrayOp::assign( *array, comm_rank, Ghost() );
-
-    // Create a halo pattern - just write to your 8 corner neighbors so we can
-    // eliminate overlap between neighbors and not need to resolve the
-    // collision.
-    HaloPattern pattern;
-    std::vector<std::array<int,3>> neighbors =
-        { {-1,-1,-1}, {1,-1,-1}, {-1,1,-1}, {1,1,-1},
-          {-1,-1,1}, {1,-1,1}, {-1,1,1}, {1,1,1} };
-    pattern.setNeighbors( neighbors );
-
-    // Create a halo.
-    auto halo = createHalo( *array, pattern );
-
-    // Scatter.
-    halo->scatter( *array, ScatterReduce::Min() );
-
-    // Check the reduction.
-    auto host_array = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), array->view() );
-    for ( const auto& n : neighbors )
+    template<class ViewType>
+    static KOKKOS_INLINE_FUNCTION void
+    check( ViewType view, int neighbor_rank, int comm_rank,
+           const int i, const int j, const int k, const int l )
     {
-        auto neighbor_rank =
-            cell_layout->localGrid()->neighborRank(n[0],n[1],n[2]);
-        auto shared_space =
-            cell_layout->localGrid()->sharedIndexSpace(
-                Cajita::Own(), Cajita::Cell(), n[0], n[1], n[2] );
-        for ( int i = shared_space.min(Dim::I);
-              i < shared_space.max(Dim::I);
-              ++i )
-            for ( int j = shared_space.min(Dim::J);
-                  j < shared_space.max(Dim::J);
-                  ++j )
-                for ( int k = shared_space.min(Dim::K);
-                      k < shared_space.max(Dim::K);
-                      ++k )
-                    for ( int l = 0; l < 4; ++l )
-                    {
-                        if ( neighbor_rank < comm_rank )
-                            EXPECT_EQ( host_array(i,j,k,l), neighbor_rank );
-                        else
-                            EXPECT_EQ( host_array(i,j,k,l), comm_rank );
-                    }
+        if ( neighbor_rank < comm_rank )
+            EXPECT_EQ( view(i,j,k,l), neighbor_rank );
+        else
+            EXPECT_EQ( view(i,j,k,l), comm_rank );
     }
-}
 
-//---------------------------------------------------------------------------//
-void scatterMaxTest()
+};
+
+template<>
+struct TestHaloReduce<ScatterReduce::Max>
 {
-    // Create the global grid.
-    double cell_size = 0.23;
-    std::array<int,3> global_num_cell = { 32, 23, 41 };
-    std::array<double,3> global_low_corner = { 1.2, 3.3, -2.8 };
-    std::array<double,3> global_high_corner =
-        { global_low_corner[0] + cell_size * global_num_cell[0],
-          global_low_corner[1] + cell_size * global_num_cell[1],
-          global_low_corner[2] + cell_size * global_num_cell[2] };
-    auto global_mesh = createUniformGlobalMesh( global_low_corner,
-                                                global_high_corner,
-                                                global_num_cell );
-
-    // Create the global grid.
-    std::array<bool,3> is_dim_periodic = {true,true,true};
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
-                                         global_mesh,
-                                         is_dim_periodic,
-                                         Cajita::UniformDimPartitioner() );
-
-    // Create an array on the cells.
-    unsigned array_halo_width = 2;
-    int dofs_per_cell = 4;
-    auto cell_layout =
-        createArrayLayout( global_grid, array_halo_width, dofs_per_cell, Cell() );
-    auto array = createArray<double,TEST_DEVICE>( "array", cell_layout );
-
-    // Assign the rank to the array.
-    int comm_rank;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-    ArrayOp::assign( *array, comm_rank, Ghost() );
-
-    // Create a halo pattern - just write to your 8 corner neighbors so we can
-    // eliminate overlap between neighbors and not need to resolve the
-    // collision.
-    HaloPattern pattern;
-    std::vector<std::array<int,3>> neighbors =
-        { {-1,-1,-1}, {1,-1,-1}, {-1,1,-1}, {1,1,-1},
-          {-1,-1,1}, {1,-1,1}, {-1,1,1}, {1,1,1} };
-    pattern.setNeighbors( neighbors );
-
-    // Create a halo.
-    auto halo = createHalo( *array, pattern );
-
-    // Scatter.
-    halo->scatter( *array, ScatterReduce::Max() );
-
-    // Check the reduction.
-    auto host_array = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), array->view() );
-    for ( const auto& n : neighbors )
+    template<class ViewType>
+    static KOKKOS_INLINE_FUNCTION void
+    check( ViewType view, int neighbor_rank, int comm_rank,
+           const int i, const int j, const int k, const int l )
     {
-        auto neighbor_rank =
-            cell_layout->localGrid()->neighborRank(n[0],n[1],n[2]);
-        auto shared_space =
-            cell_layout->localGrid()->sharedIndexSpace(
-                Cajita::Own(), Cajita::Cell(), n[0], n[1], n[2] );
-        for ( int i = shared_space.min(Dim::I);
-              i < shared_space.max(Dim::I);
-              ++i )
-            for ( int j = shared_space.min(Dim::J);
-                  j < shared_space.max(Dim::J);
-                  ++j )
-                for ( int k = shared_space.min(Dim::K);
-                      k < shared_space.max(Dim::K);
-                      ++k )
-                    for ( int l = 0; l < 4; ++l )
-                    {
-                        if ( neighbor_rank > comm_rank )
-                            EXPECT_EQ( host_array(i,j,k,l), neighbor_rank );
-                        else
-                            EXPECT_EQ( host_array(i,j,k,l), comm_rank );
-                    }
+        if ( neighbor_rank > comm_rank )
+            EXPECT_EQ( view(i,j,k,l), neighbor_rank );
+        else
+            EXPECT_EQ( view(i,j,k,l), comm_rank );
+
     }
-}
+};
 
-//---------------------------------------------------------------------------//
-void scatterReplaceTest()
+template<>
+struct TestHaloReduce<ScatterReduce::Replace>
+{
+    template<class ViewType>
+    static KOKKOS_INLINE_FUNCTION void
+    check( ViewType view, int neighbor_rank, int,
+           const int i, const int j, const int k, const int l )
+    {
+        EXPECT_EQ( view(i,j,k,l), neighbor_rank );
+    }
+};
+
+template<class ReduceFunc>
+void scatterReduceTest( const ReduceFunc& reduce )
 {
     // Create the global grid.
     double cell_size = 0.23;
@@ -345,7 +237,7 @@ void scatterReplaceTest()
     auto halo = createHalo( *array, pattern );
 
     // Scatter.
-    halo->scatter( *array, ScatterReduce::Replace() );
+    halo->scatter( *array, reduce );
 
     // Check the reduction.
     auto host_array = Kokkos::create_mirror_view_and_copy(
@@ -368,7 +260,8 @@ void scatterReplaceTest()
                       ++k )
                     for ( int l = 0; l < 4; ++l )
                     {
-                        EXPECT_EQ( host_array(i,j,k,l), neighbor_rank );
+                        TestHaloReduce<ReduceFunc>::check(
+                            host_array, neighbor_rank, comm_rank, i, j, k, l );
                     }
     }
 }
@@ -436,11 +329,21 @@ TEST( TEST_CATEGORY, periodic_test )
 }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, scatter_reduce_test )
+TEST( TEST_CATEGORY, scatter_reduce_max_test )
 {
-    scatterMinTest();
-    scatterMaxTest();
-    scatterReplaceTest();
+    scatterReduceTest( ScatterReduce::Max() );
+}
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, scatter_reduce_min_test )
+{
+    scatterReduceTest( ScatterReduce::Min() );
+}
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, scatter_reduce_replace_test )
+{
+    scatterReduceTest( ScatterReduce::Replace() );
 }
 
 //---------------------------------------------------------------------------//
