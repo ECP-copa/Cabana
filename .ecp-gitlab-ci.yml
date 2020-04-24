@@ -16,7 +16,7 @@ stages:
     - module load cmake
     - j="$(grep -c processor /proc/cpuinfo 2>/dev/null)" || j=0; ((j++))
     - for i in ${BACKENDS}; do KOKKOS_OPTS+=( -DKokkos_ENABLE_${i}=ON ); done
-    - git clone --depth=1 --branch 3.0.00 https://github.com/kokkos/kokkos.git &&
+    - git clone --depth=1 --branch 3.1.00 https://github.com/kokkos/kokkos.git &&
       pushd kokkos &&
       mkdir build &&
       pushd build &&
