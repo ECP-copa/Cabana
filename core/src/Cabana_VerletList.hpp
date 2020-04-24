@@ -18,6 +18,10 @@
 
 #include <Kokkos_Core.hpp>
 
+#ifdef KOKKOS_ENABLE_HIP
+#error Not supported when Kokkos experimental backend is enabled
+#endif
+
 namespace Cabana
 {
 //---------------------------------------------------------------------------//

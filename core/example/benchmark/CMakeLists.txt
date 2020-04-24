@@ -1,4 +1,4 @@
-if(Kokkos_ENABLE_SERIAL)
+if(Kokkos_ENABLE_SERIAL AND NOT Kokkos_ENABLE_HIP) # FIXME_HIP
   add_executable(NeighborListMDPerfTest md_neighbor_perf_test.cpp)
   target_link_libraries(NeighborListMDPerfTest cabanacore)
 endif()
