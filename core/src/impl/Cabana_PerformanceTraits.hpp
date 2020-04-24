@@ -73,6 +73,17 @@ class PerformanceTraits<Kokkos::Cuda>
 #endif
 
 //---------------------------------------------------------------------------//
+#if defined( KOKKOS_ENABLE_HIP )
+template <>
+class PerformanceTraits<Kokkos::Experimental::HIP>
+{
+  public:
+    static constexpr int vector_length =
+        Kokkos::Experimental::Impl::HIPTraits::WarpSize;
+};
+#endif
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Impl
 } // end namespace Cabana

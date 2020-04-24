@@ -49,9 +49,9 @@ RUN OPENMPI_VERSION=4.0.2 && \
 ENV PATH=${OPENMPI_DIR}/bin:$PATH
 
 # Install Kokkos
+ARG KOKKOS_VERSION=3.1.00
 ENV KOKKOS_DIR=/opt/kokkos
-RUN KOKKOS_VERSION=3.0.00 && \
-    KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
+RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_VERSION}.tar.gz && \
     SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
     wget --quiet ${KOKKOS_URL} --output-document=${KOKKOS_ARCHIVE} && \
@@ -67,5 +67,5 @@ RUN KOKKOS_VERSION=3.0.00 && \
       -D Kokkos_ENABLE_CUDA_LAMBDA=ON \
       -D Kokkos_ARCH_VOLTA70=ON \
     .. && \
-    make && make install && \
+    make -j${NPROCS} install && \
     rm -rf ${SCRATCH_DIR}

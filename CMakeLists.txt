@@ -23,7 +23,7 @@ include(GNUInstallDirs)
 set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
 # find kokkos
-find_package(Kokkos 3 REQUIRED)
+find_package(Kokkos 3.1 REQUIRED)
 
 # ensure that we can use lambdas
 if(Kokkos_ENABLE_CUDA)
@@ -36,7 +36,7 @@ if(Cabana_ENABLE_ARBORX)
 endif()
 
 # set supported kokkos devices
-set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA)
+set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP)
 
 # check user required device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
@@ -61,6 +61,9 @@ endif()
 # enable MPI
 option(Cabana_ENABLE_MPI "Build Cabana with MPI support" OFF)
 if(Cabana_ENABLE_MPI)
+  if(Kokkos_ENABLE_HIP)
+    message(SEND_ERROR "MPI not supported yet with Kokkos experimental HIP backend")
+  endif()
   find_package(MPI REQUIRED)
 endif()
 

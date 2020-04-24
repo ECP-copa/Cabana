@@ -9,35 +9,11 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_CORE_HPP
-#define CABANA_CORE_HPP
+#ifndef CABANA_TEST_HIP_CATEGORY_HPP
+#define CABANA_TEST_HIP_CATEGORY_HPP
 
-#include <CabanaCore_config.hpp>
+#define TEST_CATEGORY hip
+#define TEST_EXECSPACE Kokkos::Experimental::HIP
+#define TEST_MEMSPACE Kokkos::Experimental::HIPSpace
 
-#include <Cabana_AoSoA.hpp>
-#include <Cabana_DeepCopy.hpp>
-#include <Cabana_LinkedCellList.hpp>
-#include <Cabana_Macros.hpp>
-#include <Cabana_MemberTypes.hpp>
-#include <Cabana_NeighborList.hpp>
-#include <Cabana_Parallel.hpp>
-#include <Cabana_Slice.hpp>
-#include <Cabana_SoA.hpp>
-#include <Cabana_Sort.hpp>
-#include <Cabana_Tuple.hpp>
-#include <Cabana_Types.hpp>
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
-#include <Cabana_VerletList.hpp>
 #endif
-#include <Cabana_Version.hpp>
-
-#ifdef Cabana_ENABLE_MPI
-#include <Cabana_Distributor.hpp>
-#include <Cabana_Halo.hpp>
-#endif
-
-#ifdef Cabana_ENABLE_ARBORX
-#include <Cabana_Experimental_NeighborList.hpp>
-#endif
-
-#endif // end CABANA_CORE_HPP

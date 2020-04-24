@@ -147,7 +147,10 @@ class CartesianGrid
     KOKKOS_INLINE_FUNCTION
     int cellsBetween( const Real max, const Real min, const Real rdelta ) const
     {
-        return std::floor( ( max - min ) * rdelta );
+#if !defined( __HIP_DEVICE_COMPILE__ )
+        using std::floor;
+#endif
+        return floor( ( max - min ) * rdelta );
     }
 };
 
