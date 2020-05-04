@@ -98,6 +98,7 @@ struct Access<SliceLike, PredicatesTag>
         return attach( intersects( Sphere{point, x.radius} ), (int)i );
     }
 };
+
 } // namespace Traits
 } // namespace ArborX
 

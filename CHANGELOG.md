@@ -1,5 +1,29 @@
 # Change Log
 
+## 0.3.0
+
+**New Features**
+
+- Updated Kokkos dependency to version 3.1
+- CUDA and HIP support and testing in continuous integration
+- Mirror view capability for AoSoA
+- New performance benchmarks for sorting, communication, and neighbor lists
+- Improving AoSoA memory managment with empty() and shrinkToFit()
+- Second level neighbor parallel for and reduce algorithms for triplet operations
+- Unmanaged AoSoA for wrapping user memory
+
+**Bug Fixes and Improvements**
+- Using new CMake target for linking Kokkos
+- Removed numerous instances of default allocation of Kokkos Views
+- Eliminated use of user-defined MPI tags in communication algorithms
+- Cleaned usage of deprecated Kokkos code
+- Update for compilation with C++14
+- Significant performance enhancements to communication code
+
+**Experimental Features (subject to change in future releases)**
+- Tree-based neighbor lists using ArborX
+
+
 ## 0.2.0
 
 **New Features**
