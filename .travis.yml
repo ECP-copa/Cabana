@@ -23,7 +23,7 @@ env:
     - BACKENDS="SERIAL PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="OPENMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
     - BACKENDS="SERIAL" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
-    - BACKENDS="PTHREAD" COVERAGE=ON SCAFACOS=ON CMAKE_BUILD_TYPE=Debug
+    - BACKENDS="PTHREAD" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
     - BACKENDS="SERIAL OPENMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
     - BACKENDS="SERIAL PTHREAD" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
 
@@ -43,15 +43,6 @@ before_script:
     make install &&
     popd &&
     popd
-  - if [[ ${SCAFACOS} ]]; then
-      travis_retry wget https://github.com/scafacos/scafacos/releases/download/v1.0.1/scafacos-1.0.1.tar.gz &&
-      tar -xzf scafacos-*.tar.gz &&
-      pushd scafacos* &&
-      ./configure --enable-fcs-solvers=direct,p2nfft,p3m,ewald,fmm --prefix=$HOME/scafacos CC=mpicc CXX=mpicxx FC=mpif90 &&
-      make -j2 &&
-      make install &&
-      popd;
-    fi
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_REQUIRE_${i}=ON ); done
   - if [[ ${COVERAGE} ]]; then
        pip install --user coverxygen &&
@@ -78,8 +69,7 @@ script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - export FFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
   - mkdir build && pushd build &&
-    cmake -DCMAKE_PREFIX_PATH="$HOME/scafacos"
-          -DCMAKE_INSTALL_PREFIX="$HOME/cabana"
+    cmake -DCMAKE_INSTALL_PREFIX="$HOME/cabana"
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DKokkos_INSTALL_PATH="$HOME/kokkos"
           -DCabana_REQUIRE_SERIAL=OFF ${CMAKE_OPTS[@]}
@@ -100,7 +90,7 @@ script:
     popd &&
     cd  core/example/tutorial/01_hello_world &&
     mkdir build && pushd build &&
-    cmake -DCMAKE_PREFIX_PATH="$HOME/cabana;$HOME/kokkos;$HOME/scafacos" .. &&
+    cmake -DCMAKE_PREFIX_PATH="$HOME/cabana;$HOME/kokkos" .. &&
     make -k -j2 VERBOSE=1 &&
     popd
 
