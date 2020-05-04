@@ -708,9 +708,7 @@ class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>>
 {
   public:
     using list_type = VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>;
-
     using memory_space = MemorySpace;
-    using TypeTag CABANA_DEPRECATED = AlgorithmTag;
 
     // Get the total number of neighbors (maximum size of CSR list).
     KOKKOS_INLINE_FUNCTION
@@ -747,8 +745,6 @@ class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayout2D>>
   public:
     using memory_space = MemorySpace;
     using list_type = VerletList<MemorySpace, AlgorithmTag, VerletLayout2D>;
-
-    using TypeTag CABANA_DEPRECATED = AlgorithmTag;
 
     // Get the maximum number of neighbors per particle.
     KOKKOS_INLINE_FUNCTION

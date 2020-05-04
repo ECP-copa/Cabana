@@ -182,7 +182,6 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
     using crs_graph_type = Experimental::CrsGraph<MemorySpace, Tag>;
 
   public:
-    using TypeTag CABANA_DEPRECATED = Tag;
     using memory_space = MemorySpace;
     static KOKKOS_FUNCTION size_type
     numNeighbor( crs_graph_type const &crs_graph, size_type p )

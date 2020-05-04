@@ -60,9 +60,6 @@ class NeighborList
   public:
     using memory_space = typename NeighborListType::memory_space;
 
-    // Get the list type tag. Either full or half.
-    using TypeTag CABANA_DEPRECATED = typename NeighborListType::TypeTag;
-
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
     static std::size_t numNeighbor( const NeighborListType &list,

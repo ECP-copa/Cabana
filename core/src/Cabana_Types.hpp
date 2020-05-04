@@ -21,35 +21,6 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-// Execution Spaces
-//---------------------------------------------------------------------------//
-#if defined( KOKKOS_ENABLE_SERIAL )
-using Serial CABANA_DEPRECATED = Kokkos::Serial;
-#endif
-
-#if defined( KOKKOS_ENABLE_THREADS )
-using Threads CABANA_DEPRECATED = Kokkos::Threads;
-#endif
-
-#if defined( KOKKOS_ENABLE_OPENMP )
-using OpenMP CABANA_DEPRECATED = Kokkos::OpenMP;
-#endif
-
-#if defined( KOKKOS_ENABLE_CUDA )
-using Cuda CABANA_DEPRECATED = Kokkos::Cuda;
-#endif
-
-//---------------------------------------------------------------------------//
-// Memory spaces
-//---------------------------------------------------------------------------//
-//! Host memory space
-using HostSpace CABANA_DEPRECATED = Kokkos::HostSpace;
-
-#if defined( KOKKOS_ENABLE_CUDA )
-using CudaUVMSpace CABANA_DEPRECATED = Kokkos::CudaUVMSpace;
-#endif
-
-//---------------------------------------------------------------------------//
 // Memory access tags.
 //---------------------------------------------------------------------------//
 template <class>
