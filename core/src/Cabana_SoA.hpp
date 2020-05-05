@@ -14,12 +14,12 @@
 
 #include <Cabana_Macros.hpp>
 #include <Cabana_MemberTypes.hpp>
-#include <impl/Cabana_IndexSequence.hpp>
 
 #include <Kokkos_Core.hpp>
 
 #include <cstdlib>
 #include <type_traits>
+#include <utility>
 
 namespace Cabana
 {
@@ -123,7 +123,7 @@ template <int VectorLength, typename Sequence, typename... Types>
 struct SoAImpl;
 
 template <int VectorLength, std::size_t... Indices, typename... Types>
-struct SoAImpl<VectorLength, IndexSequence<Indices...>, Types...>
+struct SoAImpl<VectorLength, std::index_sequence<Indices...>, Types...>
     : StructMember<Indices, VectorLength, Types>...
 {
 };
@@ -260,8 +260,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 */
 template <typename... Types, int VectorLength>
 struct SoA<MemberTypes<Types...>, VectorLength>
-    : Impl::SoAImpl<VectorLength,
-                    typename Impl::MakeIndexSequence<sizeof...( Types )>::type,
+    : Impl::SoAImpl<VectorLength, std::make_index_sequence<sizeof...( Types )>,
                     Types...>
 {
     // Vector length
