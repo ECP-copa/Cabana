@@ -8,7 +8,6 @@ set(HEADERS_PUBLIC
   Cabana_DeepCopy.hpp
   Cabana_ExecutionPolicy.hpp
   Cabana_LinkedCellList.hpp
-  Cabana_Macros.hpp
   Cabana_MemberTypes.hpp
   Cabana_NeighborList.hpp
   Cabana_Parallel.hpp
