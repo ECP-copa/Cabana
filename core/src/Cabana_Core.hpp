@@ -25,9 +25,7 @@
 #include <Cabana_Sort.hpp>
 #include <Cabana_Tuple.hpp>
 #include <Cabana_Types.hpp>
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
 #include <Cabana_VerletList.hpp>
-#endif
 #include <Cabana_Version.hpp>
 
 #ifdef Cabana_ENABLE_MPI

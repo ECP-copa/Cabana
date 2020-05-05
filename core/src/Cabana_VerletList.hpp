@@ -14,13 +14,10 @@
 
 #include <Cabana_LinkedCellList.hpp>
 #include <Cabana_NeighborList.hpp>
+#include <Cabana_Parallel.hpp> // TeamOpTag, TeamVectorOpTag
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
-
-#ifdef KOKKOS_ENABLE_HIP
-#error Not supported when Kokkos experimental backend is enabled
-#endif
 
 namespace Cabana
 {
@@ -190,8 +187,20 @@ struct LinkedCellStencil
 //---------------------------------------------------------------------------//
 // Verlet List Builder
 //---------------------------------------------------------------------------//
+template <class Tag>
+struct CountNeighborsTag;
+
+template <>
+struct CountNeighborsTag<TeamVectorOpTag>
+{
+};
+template <>
+struct CountNeighborsTag<TeamOpTag>
+{
+};
+
 template <class DeviceType, class PositionSlice, class AlgorithmTag,
-          class LayoutTag>
+          class LayoutTag, class BuildOpTag>
 struct VerletListBuilder
 {
     // Types.
@@ -267,17 +276,15 @@ struct VerletListBuilder
         rsqr = neighborhood_radius * neighborhood_radius;
     }
 
-    // Neighbor count team operator (only used for CSR lists).
-    struct CountNeighborsTag
-    {
-    };
     using CountNeighborsPolicy =
-        Kokkos::TeamPolicy<execution_space, CountNeighborsTag,
+        Kokkos::TeamPolicy<execution_space, CountNeighborsTag<BuildOpTag>,
                            Kokkos::IndexType<int>,
                            Kokkos::Schedule<Kokkos::Dynamic>>;
+
+    // Neighbor count team vector operator (only used for CSR lists).
     KOKKOS_INLINE_FUNCTION
     void
-    operator()( const CountNeighborsTag &,
+    operator()( const CountNeighborsTag<TeamVectorOpTag> &,
                 const typename CountNeighborsPolicy::member_type &team ) const
     {
         // The league rank of the team is the cardinal cell index we are
@@ -365,6 +372,108 @@ struct VerletListBuilder
                                             }
                                         },
                                         cell_count );
+                                    stencil_count += cell_count;
+                                }
+                            }
+                    Kokkos::single( Kokkos::PerThread( team ), [&]() {
+                        _data.counts( pid ) = stencil_count;
+                    } );
+                }
+            } );
+    }
+
+    // Neighbor count team (+serial) operator (only used for CSR lists).
+    KOKKOS_INLINE_FUNCTION
+    void
+    operator()( const CountNeighborsTag<TeamOpTag> &,
+                const typename CountNeighborsPolicy::member_type &team ) const
+    {
+        // The league rank of the team is the cardinal cell index we are
+        // working on.
+        int cell = team.league_rank();
+
+        // Get the stencil for this cell.
+        int imin, imax, jmin, jmax, kmin, kmax;
+        cell_stencil.getCells( cell, imin, imax, jmin, jmax, kmin, kmax );
+
+        // Operate on the particles in the bin.
+        std::size_t b_offset = bin_data_1d.binOffset( cell );
+        Kokkos::parallel_for(
+            Kokkos::TeamThreadRange( team, 0, bin_data_1d.binSize( cell ) ),
+            [&]( const int bi ) {
+                // Get the true particle id. The binned particle index is the
+                // league rank of the team.
+                std::size_t pid = linked_cell_list.permutation( bi + b_offset );
+
+                if ( ( pid >= pid_begin ) && ( pid < pid_end ) )
+                {
+                    // Cache the particle coordinates.
+                    double x_p = position( pid, 0 );
+                    double y_p = position( pid, 1 );
+                    double z_p = position( pid, 2 );
+
+                    // Loop over the cell stencil.
+                    int stencil_count = 0;
+                    for ( int i = imin; i < imax; ++i )
+                        for ( int j = jmin; j < jmax; ++j )
+                            for ( int k = kmin; k < kmax; ++k )
+                            {
+                                // See if we should actually check this box for
+                                // neighbors.
+                                if ( cell_stencil.grid.minDistanceToPoint(
+                                         x_p, y_p, z_p, i, j, k ) <= rsqr )
+                                {
+                                    // Check the particles in this bin to see if
+                                    // they are neighbors. If they are add to
+                                    // the count for this bin.
+                                    int cell_count = 0;
+                                    std::size_t a_offset =
+                                        linked_cell_list.binOffset( i, j, k );
+
+                                    for ( int n = 0;
+                                          n <
+                                          linked_cell_list.binSize( i, j, k );
+                                          n++ )
+                                    {
+                                        //  Get the true id of the candidate
+                                        //  neighbor.
+                                        std::size_t nid =
+                                            linked_cell_list.permutation(
+                                                a_offset + n );
+
+                                        // Cache the candidate neighbor
+                                        // particle coordinates.
+                                        double x_n = position( nid, 0 );
+                                        double y_n = position( nid, 1 );
+                                        double z_n = position( nid, 2 );
+
+                                        // If this could be a valid
+                                        // neighbor, continue.
+                                        if ( NeighborDiscriminator<
+                                                 AlgorithmTag>::isValid( pid,
+                                                                         x_p,
+                                                                         y_p,
+                                                                         z_p,
+                                                                         nid,
+                                                                         x_n,
+                                                                         y_n,
+                                                                         z_n ) )
+                                        {
+                                            // Calculate the distance
+                                            // between the particle and its
+                                            // candidate neighbor.
+                                            PositionValueType dx = x_p - x_n;
+                                            PositionValueType dy = y_p - y_n;
+                                            PositionValueType dz = z_p - z_n;
+                                            PositionValueType dist_sqr =
+                                                dx * dx + dy * dy + dz * dz;
+
+                                            // If within the cutoff add to
+                                            // the count.
+                                            if ( dist_sqr <= rsqr )
+                                                cell_count += 1;
+                                        }
+                                    }
                                     stencil_count += cell_count;
                                 }
                             }
@@ -590,7 +699,8 @@ struct VerletListBuilder
   Neighbor list implementation most appropriate for somewhat regularly
   distributed particles due to the use of a Cartesian grid.
 */
-template <class DeviceType, class AlgorithmTag, class LayoutTag>
+template <class DeviceType, class AlgorithmTag, class LayoutTag,
+          class BuildTag = TeamVectorOpTag>
 class VerletList
 {
   public:
@@ -652,8 +762,9 @@ class VerletList
                                         int>::type * = 0 )
     {
         // Create a builder functor.
-        using builder_type = Impl::VerletListBuilder<DeviceType, PositionSlice,
-                                                     AlgorithmTag, LayoutTag>;
+        using builder_type =
+            Impl::VerletListBuilder<DeviceType, PositionSlice, AlgorithmTag,
+                                    LayoutTag, BuildTag>;
         builder_type builder( x, begin, end, neighborhood_radius,
                               cell_size_ratio, grid_min, grid_max, max_neigh );
 
@@ -703,11 +814,13 @@ class VerletList
 // Neighbor list interface implementation.
 //---------------------------------------------------------------------------//
 // CSR Data Layout
-template <class MemorySpace, class AlgorithmTag>
-class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>>
+template <class MemorySpace, class AlgorithmTag, class BuildTag>
+class NeighborList<
+    VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>>
 {
   public:
-    using list_type = VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>;
+    using list_type =
+        VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>;
     using memory_space = MemorySpace;
 
     // Get the total number of neighbors (maximum size of CSR list).
@@ -739,12 +852,14 @@ class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>>
 
 //---------------------------------------------------------------------------//
 // 2D Data Layout
-template <class MemorySpace, class AlgorithmTag>
-class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayout2D>>
+template <class MemorySpace, class AlgorithmTag, class BuildTag>
+class NeighborList<
+    VerletList<MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag>>
 {
   public:
     using memory_space = MemorySpace;
-    using list_type = VerletList<MemorySpace, AlgorithmTag, VerletLayout2D>;
+    using list_type =
+        VerletList<MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag>;
 
     // Get the maximum number of neighbors per particle.
     KOKKOS_INLINE_FUNCTION
