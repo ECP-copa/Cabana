@@ -12,8 +12,6 @@
 #ifndef CABANA_NEIGHBORLIST_HPP
 #define CABANA_NEIGHBORLIST_HPP
 
-#include <Cabana_Macros.hpp>
-
 #include <Kokkos_Core.hpp>
 
 namespace Cabana

@@ -14,8 +14,6 @@
 
 #include <Kokkos_Core.hpp>
 
-#include <Cabana_Macros.hpp>
-
 #include <type_traits>
 
 namespace Cabana

@@ -12,7 +12,6 @@
 #ifndef CABANA_AOSOA_HPP
 #define CABANA_AOSOA_HPP
 
-#include <Cabana_Macros.hpp>
 #include <Cabana_MemberTypes.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_SoA.hpp>

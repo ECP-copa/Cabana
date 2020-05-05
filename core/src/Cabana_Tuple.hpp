@@ -12,7 +12,6 @@
 #ifndef CABANA_TUPLE_HPP
 #define CABANA_TUPLE_HPP
 
-#include <Cabana_Macros.hpp>
 #include <Cabana_MemberTypes.hpp>
 #include <Cabana_SoA.hpp>
 

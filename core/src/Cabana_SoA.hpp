@@ -12,7 +12,6 @@
 #ifndef CABANA_SOA_HPP
 #define CABANA_SOA_HPP
 
-#include <Cabana_Macros.hpp>
 #include <Cabana_MemberTypes.hpp>
 #include <impl/Cabana_IndexSequence.hpp>
 
