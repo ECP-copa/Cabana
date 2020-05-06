@@ -50,6 +50,7 @@ pipeline {
                               -D CMAKE_BUILD_TYPE=Debug \
                               -D CMAKE_CXX_COMPILER=hipcc \
                               -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic" \
+                              -D MPIEXEC_PREFLAGS="--allow-run-as-root" \
                               -D CMAKE_PREFIX_PATH=$KOKKOS_DIR \
                               -D Cabana_ENABLE_MPI=ON \
                               -D Cabana_REQUIRE_HIP=ON \
