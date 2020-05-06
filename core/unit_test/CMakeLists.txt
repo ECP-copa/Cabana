@@ -87,12 +87,12 @@ macro(Cabana_add_tests)
   endforeach()
 endmacro()
 
-# FIXME NeighborList unit test does not compile with the HIP backend enabled yet
+# FIXME NeighborList unit test does not compile with the HIP backend enabled
+# yet. Also do not use MPI yet until the optional GPU-aware backend is
+# added.
 if(Kokkos_ENABLE_HIP)
   Cabana_add_tests(NAMES AoSoA Slice DeepCopy Tuple Sort LinkedCellList Parallel)
 else()
   Cabana_add_tests(NAMES AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
-endif()
-if(Cabana_ENABLE_MPI)
   Cabana_add_tests(MPI NAMES CommunicationPlan Distributor Halo)
 endif()

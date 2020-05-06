@@ -73,7 +73,6 @@ script:
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
           -DKokkos_INSTALL_PATH="$HOME/kokkos"
           -DCabana_REQUIRE_SERIAL=OFF ${CMAKE_OPTS[@]}
-          -DCabana_ENABLE_MPI=ON
           $([[ ${CC} = clang* ]] || echo -DCabana_ENABLE_FORTRAN_EXAMPLES=ON)
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DCabana_ENABLE_DOXYGEN=ON

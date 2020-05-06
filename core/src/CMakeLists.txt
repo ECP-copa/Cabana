@@ -4,9 +4,12 @@ configure_file(CabanaCore_config.hpp.cmakein CabanaCore_config.hpp)
 
 set(HEADERS_PUBLIC
   Cabana_AoSoA.hpp
+  Cabana_CommunicationPlan.hpp
   Cabana_Core.hpp
   Cabana_DeepCopy.hpp
+  Cabana_Distributor.hpp
   Cabana_ExecutionPolicy.hpp
+  Cabana_Halo.hpp
   Cabana_LinkedCellList.hpp
   Cabana_MemberTypes.hpp
   Cabana_NeighborList.hpp
@@ -25,16 +28,6 @@ set(HEADERS_PUBLIC
 if(Cabana_ENABLE_ARBORX)
   list(APPEND HEADERS_PUBLIC
     Cabana_Experimental_NeighborList.hpp
-    )
-endif()
-
-#-----------------------------------------------------------------------------
-# MPI-dependent code
-if(Cabana_ENABLE_MPI)
-  list(APPEND HEADERS_PUBLIC
-    Cabana_CommunicationPlan.hpp
-    Cabana_Distributor.hpp
-    Cabana_Halo.hpp
     )
 endif()
 
@@ -61,12 +54,9 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CM
 add_library(cabanacore ${SOURCES_IMPL})
 target_include_directories(cabanacore PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
-target_link_libraries(cabanacore Kokkos::kokkos)
+target_link_libraries(cabanacore Kokkos::kokkos MPI::MPI_CXX)
 if(Cabana_ENABLE_ARBORX)
   target_link_libraries(cabanacore ArborX::ArborX)
-endif()
-if(Cabana_ENABLE_MPI)
-  target_link_libraries(cabanacore MPI::MPI_CXX)
 endif()
 install(TARGETS cabanacore EXPORT Cabana_Targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 install(EXPORT Cabana_Targets FILE Cabana_Targets.cmake NAMESPACE Cabana:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
