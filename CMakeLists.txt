@@ -62,9 +62,6 @@ endif()
 # enable MPI
 option(Cabana_ENABLE_MPI "Build Cabana with MPI support" OFF)
 if(Cabana_ENABLE_MPI)
-  if(Kokkos_ENABLE_HIP)
-    message(SEND_ERROR "MPI not supported yet with Kokkos experimental HIP backend")
-  endif()
   find_package(MPI REQUIRED)
 endif()
 
