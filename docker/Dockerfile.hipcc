@@ -42,6 +42,24 @@ RUN CMAKE_VERSION=3.13.4 && \
     rm ${CMAKE_SCRIPT}
 ENV PATH=${CMAKE_DIR}/bin:$PATH
 
+# Install Open MPI
+ENV OPENMPI_DIR=/opt/openmpi
+RUN OPENMPI_VERSION=4.0.2 && \
+    OPENMPI_VERSION_SHORT=4.0 && \
+    OPENMPI_SHA1=32ce3761288575fb8e4f6296c9105c3a25cf3235 && \
+    OPENMPI_URL=https://download.open-mpi.org/release/open-mpi/v${OPENMPI_VERSION_SHORT}/openmpi-${OPENMPI_VERSION}.tar.bz2 && \
+    OPENMPI_ARCHIVE=openmpi-${OPENMPI_VERSION}.tar.bz2 && \
+    SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
+    wget --quiet ${OPENMPI_URL} --output-document=${OPENMPI_ARCHIVE} && \
+    echo "${OPENMPI_SHA1} ${OPENMPI_ARCHIVE}" | sha1sum -c && \
+    mkdir -p openmpi && \
+    tar -xf ${OPENMPI_ARCHIVE} -C openmpi --strip-components=1 && \
+    mkdir -p build && cd build && \
+    ../openmpi/configure --prefix=${OPENMPI_DIR} CFLAGS=-w && \
+    make -j${NPROCS} install && \
+    rm -rf ${SCRATCH_DIR}
+ENV PATH=${OPENMPI_DIR}/bin:$PATH
+
 # Install Kokkos
 ARG KOKKOS_VERSION=3.1.00
 ARG KOKKOS_OPTIONS="-DKokkos_ENABLE_HIP=ON -DKokkos_ENABLE_LIBDL=OFF -DKokkos_ENABLE_PROFILING=OFF -DCMAKE_CXX_FLAGS=-amdgpu-target=gfx906"
