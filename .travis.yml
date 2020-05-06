@@ -88,7 +88,7 @@ script:
     make install DESTDIR=${PWD}/install && rm -rf ${PWD}/install/$HOME/cabana && rmdir ${PWD}/install/$HOME &&
     make install &&
     popd &&
-    cd  core/example/tutorial/01_hello_world &&
+    cd example/tutorial/01_hello_world &&
     mkdir build && pushd build &&
     cmake -DCMAKE_PREFIX_PATH="$HOME/cabana;$HOME/kokkos" .. &&
     make -k -j2 VERBOSE=1 &&
