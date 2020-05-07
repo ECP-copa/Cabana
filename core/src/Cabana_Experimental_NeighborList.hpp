@@ -90,7 +90,10 @@ struct Access<SliceLike, PredicatesTag>
 {
     using memory_space = typename SliceLike::memory_space;
     using size_type = typename SliceLike::size_type;
-    static size_type size( SliceLike const &x ) { return x.last - x.first; }
+    static KOKKOS_FUNCTION size_type size( SliceLike const &x )
+    {
+        return x.last - x.first;
+    }
     static KOKKOS_FUNCTION auto get( SliceLike const &x, size_type i )
     {
         assert( i < size( x ) );
