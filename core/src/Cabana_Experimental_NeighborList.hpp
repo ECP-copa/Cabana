@@ -80,7 +80,9 @@ struct Access<Slice, PrimitivesTag,
     static size_type size( Slice const &x ) { return x.size(); }
     static KOKKOS_FUNCTION Point get( Slice const &x, size_type i )
     {
-        return {x( i, 0 ), x( i, 1 ), x( i, 2 )};
+        return {static_cast<float>( x( i, 0 ) ),
+                static_cast<float>( x( i, 1 ) ),
+                static_cast<float>( x( i, 2 ) )};
     }
 };
 template <typename SliceLike>
