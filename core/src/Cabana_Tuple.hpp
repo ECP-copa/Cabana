@@ -144,7 +144,7 @@ struct Tuple<MemberTypes<Types...>> : SoA<MemberTypes<Types...>, 1>
 {
     using base = SoA<MemberTypes<Types...>, 1>;
 
-    KOKKOS_FORCEINLINE_FUNCTION Tuple() = default;
+    KOKKOS_DEFAULTED_FUNCTION Tuple() = default;
 
     KOKKOS_FORCEINLINE_FUNCTION Tuple( const Tuple &t )
     {
