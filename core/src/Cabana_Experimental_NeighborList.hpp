@@ -160,13 +160,18 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
                        typename Slice::size_type last,
                        typename Slice::value_type radius )
 {
-    ArborX::BVH<DeviceType> bvh( coordinate_slice );
+    using MemorySpace = typename DeviceType::memory_space;
+    using ExecutionSpace = typename DeviceType::execution_space;
+    ExecutionSpace space{};
+
+    ArborX::BVH<MemorySpace> bvh( space, coordinate_slice );
 
     Kokkos::View<int *, DeviceType> indices(
         Kokkos::view_alloc( "indices", Kokkos::WithoutInitializing ), 0 );
     Kokkos::View<int *, DeviceType> offset(
         Kokkos::view_alloc( "offset", Kokkos::WithoutInitializing ), 0 );
-    bvh.query( Impl::makePredicates( coordinate_slice, first, last, radius ),
+    bvh.query( space,
+               Impl::makePredicates( coordinate_slice, first, last, radius ),
                Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset );
 
     return CrsGraph<typename DeviceType::memory_space, Tag>{
