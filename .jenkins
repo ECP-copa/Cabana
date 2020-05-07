@@ -54,7 +54,6 @@ pipeline {
                               -D MPIEXEC_PREFLAGS="--allow-run-as-root" \
                               -D CMAKE_PREFIX_PATH=$KOKKOS_DIR \
                               -D Cabana_ENABLE_MPI=ON \
-                              -D Cabana_ENABLE_ARBORX=ON \
                               -D Cabana_REQUIRE_HIP=ON \
                               -D Cabana_ENABLE_TESTING=ON \
                               -D Cabana_ENABLE_EXAMPLES=ON \
