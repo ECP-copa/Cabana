@@ -43,7 +43,7 @@ struct CountSendsAndCreateSteeringAtomic
 template <class ExecutionSpace>
 struct CountSendsAndCreateSteeringAlgorithm;
 
-// CUDA uses atomics.
+// CUDA and HIP use atomics.
 #ifdef KOKKOS_ENABLE_CUDA
 template <>
 struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Cuda>
@@ -51,6 +51,13 @@ struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Cuda>
     using type = CountSendsAndCreateSteeringAtomic;
 };
 #endif // end KOKKOS_ENABLE_CUDA
+#ifdef KOKKOS_ENABLE_HIP
+template <>
+struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Experimental::HIP>
+{
+    using type = CountSendsAndCreateSteeringAtomic;
+};
+#endif // end KOKKOS_ENABLE_HIP
 
 // The default is to use duplication.
 template <class ExecutionSpace>
