@@ -80,7 +80,9 @@ struct Access<Slice, PrimitivesTag,
     static size_type size( Slice const &x ) { return x.size(); }
     static KOKKOS_FUNCTION Point get( Slice const &x, size_type i )
     {
-        return {x( i, 0 ), x( i, 1 ), x( i, 2 )};
+        return {static_cast<float>( x( i, 0 ) ),
+                static_cast<float>( x( i, 1 ) ),
+                static_cast<float>( x( i, 2 ) )};
     }
 };
 template <typename SliceLike>
@@ -88,7 +90,10 @@ struct Access<SliceLike, PredicatesTag>
 {
     using memory_space = typename SliceLike::memory_space;
     using size_type = typename SliceLike::size_type;
-    static size_type size( SliceLike const &x ) { return x.last - x.first; }
+    static KOKKOS_FUNCTION size_type size( SliceLike const &x )
+    {
+        return x.last - x.first;
+    }
     static KOKKOS_FUNCTION auto get( SliceLike const &x, size_type i )
     {
         assert( i < size( x ) );
@@ -160,13 +165,18 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
                        typename Slice::size_type last,
                        typename Slice::value_type radius )
 {
-    ArborX::BVH<DeviceType> bvh( coordinate_slice );
+    using MemorySpace = typename DeviceType::memory_space;
+    using ExecutionSpace = typename DeviceType::execution_space;
+    ExecutionSpace space{};
+
+    ArborX::BVH<MemorySpace> bvh( space, coordinate_slice );
 
     Kokkos::View<int *, DeviceType> indices(
         Kokkos::view_alloc( "indices", Kokkos::WithoutInitializing ), 0 );
     Kokkos::View<int *, DeviceType> offset(
         Kokkos::view_alloc( "offset", Kokkos::WithoutInitializing ), 0 );
-    bvh.query( Impl::makePredicates( coordinate_slice, first, last, radius ),
+    bvh.query( space,
+               Impl::makePredicates( coordinate_slice, first, last, radius ),
                Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset );
 
     return CrsGraph<typename DeviceType::memory_space, Tag>{
@@ -186,16 +196,16 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
     static KOKKOS_FUNCTION size_type
     numNeighbor( crs_graph_type const &crs_graph, size_type p )
     {
-        assert( p >= 0 && p < crs_graph.total );
+        assert( (int)p >= 0 && p < crs_graph.total );
         p -= crs_graph.shift;
-        if ( p < 0 || p >= crs_graph.row_ptr.size() - 1 )
+        if ( (int)p < 0 || p >= crs_graph.row_ptr.size() - 1 )
             return 0;
         return crs_graph.row_ptr( p + 1 ) - crs_graph.row_ptr( p );
     }
     static KOKKOS_FUNCTION size_type
     getNeighbor( crs_graph_type const &crs_graph, size_type p, size_type n )
     {
-        assert( p >= 0 && p < crs_graph.total );
+        assert( (int)p >= 0 && p < crs_graph.total );
         assert( n < numNeighbor( crs_graph, p ) );
         p -= crs_graph.shift;
         return crs_graph.col_ind( crs_graph.row_ptr( p ) + n );

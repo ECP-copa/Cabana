@@ -84,19 +84,19 @@ convert_crs_graph_to_verlet_list(
             auto const last = crs_graph.row_ptr( i + 1 );
             counts( shift + i ) = last - first;
         } );
-    int const max_entries_per_row = ArborX::max( counts );
+    using ExecutionSpace = typename DeviceType::execution_space;
+    int const max_entries_per_row = ArborX::max( ExecutionSpace{}, counts );
     Kokkos::View<int **, DeviceType> neighbors(
         Kokkos::view_alloc( "verlet_list_neighbors" ), total,
         max_entries_per_row );
-    Kokkos::parallel_for(
-        Kokkos::RangePolicy<typename DeviceType::execution_space>( 0, n_rows ),
-        KOKKOS_LAMBDA( int i ) {
-            for ( int j = 0; j < counts( shift + i ); ++j )
-            {
-                neighbors( shift + i, j ) =
-                    crs_graph.col_ind( crs_graph.row_ptr( i ) + j );
-            }
-        } );
+    Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_rows ),
+                          KOKKOS_LAMBDA( int i ) {
+                              for ( int j = 0; j < counts( shift + i ); ++j )
+                              {
+                                  neighbors( shift + i, j ) = crs_graph.col_ind(
+                                      crs_graph.row_ptr( i ) + j );
+                              }
+                          } );
     Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayout2D> verlet_list;
     verlet_list._data = {counts, neighbors};
     return verlet_list;
@@ -586,7 +586,7 @@ void testFirstNeighborParallelFor()
     ListType nlist( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
                     cell_size_ratio, grid_min, grid_max );
 #else
-    (void)cell_size_ratio;
+    std::ignore = cell_size_ratio;
     using device_type = TEST_MEMSPACE; // sigh...
     auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
         Cabana::FullNeighborTag{}, Cabana::slice<0>( aosoa ), 0, aosoa.size(),
@@ -662,7 +662,7 @@ void testVerletListFullPartialRange()
         Cabana::slice<0>( aosoa ), 0, num_ignore, test_radius, cell_size_ratio,
         grid_min, grid_max );
 #else
-    (void)cell_size_ratio;
+    std::ignore = cell_size_ratio;
     using device_type = TEST_MEMSPACE; // sigh...
     auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
         Cabana::FullNeighborTag{}, Cabana::slice<0>( aosoa ), 0, num_ignore,
@@ -696,7 +696,7 @@ void testSecondNeighborParallelFor()
     ListType nlist( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
                     cell_size_ratio, grid_min, grid_max );
 #else
-    (void)cell_size_ratio;
+    std::ignore = cell_size_ratio;
     using device_type = TEST_MEMSPACE; // sigh...
     auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
         Cabana::FullNeighborTag{}, Cabana::slice<0>( aosoa ), 0, aosoa.size(),
