@@ -72,8 +72,14 @@ Cabana_add_dependency( PACKAGE MPI )
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
 
-# find Clangformat
+# find Clang Format
 Cabana_add_dependency( PACKAGE CLANG_FORMAT )
+
+# find hypre
+Cabana_add_dependency( PACKAGE HYPRE )
+
+# find heffte
+Cabana_add_dependency( PACKAGE Heffte )
 
 #------------------------------------------------------------------------------#
 # Tests and Documentation
