@@ -1,5 +1,6 @@
 # It only makes sense to run this if testing is enabled, as we depend on gtest
 if(NOT Cabana_ENABLE_TESTING)
+  message(WARNING "Cabana_ENABLE_TESTING disabled, skipping performance tests")
   return()
 endif()
 
@@ -14,35 +15,30 @@ if(NOT Cabana_PERFORMANCE_EXPECTED_FLOPS STREQUAL "")
     if (NOT Cabana_PERFORMANCE_EXPECTED_FLOPS MATCHES "^[0-9]+$")
       message(FATAL_ERROR "Cabana_PERFORMANCE_EXPECTED_FLOPS needs to be an integer")
     endif()
-    add_definitions("-DCABANA_PERFORMANCE_EXPECTED_FLOPS=${Cabana_PERFORMANCE_EXPECTED_FLOPS}")
 endif()
 
 if(NOT Cabana_PERFORMANCE_ERROR_MARGIN STREQUAL "")
     if (NOT Cabana_PERFORMANCE_ERROR_MARGIN MATCHES "^[0-9.]+$")
       message(FATAL_ERROR "Cabana_PERFORMANCE_ERROR_MARGIN needs to be a float")
     endif()
-    add_definitions("-DCABANA_PERFORMANCE_ERROR_MARGIN=${Cabana_PERFORMANCE_ERROR_MARGIN}")
 endif()
 
 if(NOT Cabana_PERFORMANCE_VECLENGTH STREQUAL "")
     if (NOT Cabana_PERFORMANCE_VECLENGTH MATCHES "^[0-9]+$")
       message(FATAL_ERROR "Cabana_PERFORMANCE_VECLENGTH needs to be an integer")
     endif()
-    add_definitions("-DCABANA_PERFORMANCE_VECLENGTH=${Cabana_PERFORMANCE_VECLENGTH}")
 endif()
 
 if(NOT Cabana_PERFORMANCE_ITERATIONS STREQUAL "")
     if (NOT Cabana_PERFORMANCE_ITERATIONS MATCHES "^[0-9]+$")
       message(FATAL_ERROR "Cabana_PERFORMANCE_ITERATIONS needs to be an integer")
     endif()
-    add_definitions("-DCABANA_PERFORMANCE_ITERATIONS=${Cabana_PERFORMANCE_ITERATIONS}")
 endif()
 
 if(NOT Cabana_PERFORMANCE_SEED STREQUAL "")
     if (NOT Cabana_PERFORMANCE_SEED MATCHES "^[0-9]+$")
       message(FATAL_ERROR "Cabana_PERFORMANCE_SEED needs to be an integer")
     endif()
-    add_definitions("-DCABANA_PERFORMANCE_SEED=${Cabana_PERFORMANCE_SEED}")
 endif()
 
 # we only want to run the below if we have access to "#pragma omp simd"
@@ -67,13 +63,18 @@ endif()
 
 set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
 
-include_directories(${GTEST_SOURCE_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
   # TODO: tidy unit_test_main.cpp path
   set(test "${_test}_performance_test")
   add_executable(${test} ${_test}.cpp ${CMAKE_SOURCE_DIR}/core/unit_test/unit_test_main.cpp)
+  target_include_directories(${test} PUBLIC ${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_definitions(${test} PUBLIC
+    CABANA_PERFORMANCE_EXPECTED_FLOPS=${Cabana_PERFORMANCE_EXPECTED_FLOPS}
+    CABANA_PERFORMANCE_ERROR_MARGIN=${Cabana_PERFORMANCE_ERROR_MARGIN}
+    CABANA_PERFORMANCE_VECLENGTH=${Cabana_PERFORMANCE_VECLENGTH}
+    CABANA_PERFORMANCE_ITERATIONS=${Cabana_PERFORMANCE_ITERATIONS}
+    CABANA_PERFORMANCE_SEED=${Cabana_PERFORMANCE_SEED}
+    )
   target_link_libraries(${test} cabanacore cabana_core_gtest)
   target_compile_options(${test} PRIVATE "-fopenmp")
   add_test(NAME ${test} COMMAND ${test})

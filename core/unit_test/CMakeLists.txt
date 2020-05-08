@@ -13,10 +13,6 @@ set_target_properties(cabana_core_gtest PROPERTIES
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
     )
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 set(gtest_args --gtest_color=yes)
 
 ##--------------------------------------------------------------------------##
@@ -24,6 +20,8 @@ set(gtest_args --gtest_color=yes)
 ##--------------------------------------------------------------------------##
 foreach(_test Version Index CartesianGrid SoA)
   add_executable(${_test}_test tst${_test}.cpp unit_test_main.cpp)
+  target_include_directories(${_test}_test PUBLIC
+    ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
   target_link_libraries(${_test}_test cabanacore cabana_core_gtest)
   add_test(NAME ${_test}_test COMMAND ${NONMPI_PRECOMMAND} ${_test}_test ${gtest_args})
 endforeach()
@@ -64,7 +62,8 @@ macro(Cabana_add_tests)
       )
       set(_target ${_test}_test_${_device})
       add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
-      target_include_directories(${_target} PUBLIC ${_dir})
+      target_include_directories(${_target} PUBLIC ${_dir}
+        ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
       target_link_libraries(${_target} cabanacore cabana_core_gtest)
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
