@@ -54,7 +54,7 @@ macro(Cabana_add_dependency)
   string(TOUPPER "${CABANA_DEPENDENCY_PACKAGE}" CABANA_DEPENDENCY_OPTION )
   option(
     Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION}
-    "Build Cabana with ${CABANA_DEPENDENCY_PACKAGE} support" OFF)
+    "Require Cabana to build with ${CABANA_DEPENDENCY_PACKAGE} support" OFF)
   find_package( ${CABANA_DEPENDENCY_PACKAGE} QUIET )
   if(Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION})
     if( NOT ${CABANA_DEPENDENCY_OPTION}_FOUND )
@@ -63,6 +63,7 @@ macro(Cabana_add_dependency)
   endif()
   if ( ${CABANA_DEPENDENCY_OPTION}_FOUND )
     message( STATUS "Found ${CABANA_DEPENDENCY_PACKAGE}" )
+    set(Cabana_HAVE_${CABANA_DEPENDENCY_OPTION} ON)
   endif()
 endmacro()
 
@@ -89,6 +90,9 @@ option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
   enable_testing()
 endif()
+
+# enable performance tests
+option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
 
 # enable doxygen
 find_package(Doxygen)
@@ -126,10 +130,10 @@ endif()
 ##---------------------------------------------------------------------------##
 option(Cabana_ENABLE_COVERAGE_BUILD "Do a coverage build" OFF)
 if(Cabana_ENABLE_COVERAGE_BUILD)
-      message(STATUS "Enabling coverage build")
-      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
-      set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
-      set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
+  message(STATUS "Enabling coverage build")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --coverage -O0")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} --coverage")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
 endif()
 
 ##---------------------------------------------------------------------------##
@@ -137,21 +141,37 @@ endif()
 ##---------------------------------------------------------------------------##
 FIND_PACKAGE(Git)
 IF(GIT_FOUND AND IS_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}/.git)
-    EXECUTE_PROCESS(
-        COMMAND           ${GIT_EXECUTABLE} log --pretty=format:%H -n 1
-        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-        OUTPUT_VARIABLE   Cabana_GIT_COMMIT_HASH
-        )
+  EXECUTE_PROCESS(
+    COMMAND           ${GIT_EXECUTABLE} log --pretty=format:%H -n 1
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    OUTPUT_VARIABLE   Cabana_GIT_COMMIT_HASH
+    )
 ELSE()
-    SET(Cabana_GIT_COMMIT_HASH "Not a git repository")
+  SET(Cabana_GIT_COMMIT_HASH "Not a git repository")
 ENDIF()
 MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 
 ##---------------------------------------------------------------------------##
 ## Libraries and Examples
 ##---------------------------------------------------------------------------##
-add_subdirectory(core)
-add_subdirectory(example)
+option(Cabana_ENABLE_CAJITA "Build Cajita" ON)
+if(Cabana_ENABLE_CAJITA)
+  if(MPI_FOUND)
+    add_subdirectory(cajita)
+  else()
+    message(FATAL_ERROR "Cajita requires MPI")
+  endif()
+endif()
+
+option(Cabana_ENABLE_CORE "Build Core" ON)
+if(Cabana_ENABLE_CORE)
+  add_subdirectory(core)
+endif()
+
+option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
+if(Cabana_ENABLE_EXAMPLES)
+  add_subdirectory(example)
+endif()
 
 ##---------------------------------------------------------------------------##
 ## Package Configuration
@@ -163,7 +183,7 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp example/*hpp example/*cpp)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp)
   add_custom_target(format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})

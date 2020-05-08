@@ -3,7 +3,7 @@ if(Kokkos_ENABLE_SERIAL AND NOT Kokkos_ENABLE_HIP) # FIXME_HIP
   target_link_libraries(NeighborListMDPerfTest cabanacore)
 endif()
 
-if(Cabana_ENABLE_MPI AND Kokkos_ENABLE_CUDA AND Kokkos_ENABLE_OPENMP)
+if(MPI_FOUND AND Kokkos_ENABLE_CUDA AND Kokkos_ENABLE_OPENMP)
   add_executable(CommPerformance Cabana_CommPerformance.cpp)
   target_link_libraries(CommPerformance cabanacore)
 endif()

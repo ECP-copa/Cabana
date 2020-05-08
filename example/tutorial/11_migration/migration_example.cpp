@@ -15,6 +15,7 @@
 
 #include <algorithm>
 #include <iostream>
+#include <vector>
 
 #include <mpi.h>
 

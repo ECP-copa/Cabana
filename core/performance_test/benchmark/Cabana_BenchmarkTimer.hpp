@@ -19,7 +19,7 @@
 #include <string>
 #include <vector>
 
-#ifdef Cabana_ENABLE_MPI
+#ifdef Cabana_HAVE_MPI
 #include <mpi.h>
 #endif
 
@@ -119,7 +119,7 @@ void outputResults( std::ostream &stream, const std::string &data_point_name,
 // Write timer results on rank 0. Provide the values of the data points so
 // they can be injected into the table. This function does collective
 // communication.
-#ifdef Cabana_ENABLE_MPI
+#ifdef Cabana_HAVE_MPI
 template <class Scalar>
 void outputResults( std::ostream &stream, const std::string &data_point_name,
                     const std::vector<Scalar> &data_point_vals,

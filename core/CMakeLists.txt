@@ -1,11 +1,9 @@
-##---------------------------------------------------------------------------##
-## File  : core/CMakeLists.txt
-##---------------------------------------------------------------------------##
-
 add_subdirectory(src)
-add_subdirectory(unit_test)
-add_subdirectory(performance_test)
 
-##---------------------------------------------------------------------------##
-## end of core/CMakeLists.txt
-##---------------------------------------------------------------------------##
+if(Cabana_ENABLE_TESTING)
+  add_subdirectory(unit_test)
+endif()
+
+if(Cabana_ENABLE_PERFORMANCE_TESTING)
+  add_subdirectory(performance_test)
+endif()

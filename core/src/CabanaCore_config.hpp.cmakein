@@ -5,8 +5,8 @@
 
 #define Cabana_GIT_COMMIT_HASH "@Cabana_GIT_COMMIT_HASH@"
 
-#cmakedefine Cabana_ENABLE_MPI
+#cmakedefine Cabana_HAVE_MPI
 
-#cmakedefine Cabana_ENABLE_ARBORX
+#cmakedefine Cabana_HAVE_ARBORX
 
 #endif // CABANA_CORE_CONFIG_HPP

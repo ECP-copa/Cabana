@@ -1,6 +1,18 @@
-set(gtest_args --gtest_color=yes)
+set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
-set(CAJITA_SUPPORTED_DEVICES SERIAL OPENMP CUDA)
+include_directories(${GTEST_SOURCE_DIR})
+add_library(cabana_cajita_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
+set_target_properties(cabana_cajita_gtest PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+    )
+
+include_directories(${CMAKE_CURRENT_BINARY_DIR})
+include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+
+set(gtest_args --gtest_color=yes)
 
 macro(Cajita_add_tests)
   cmake_parse_arguments(CAJITA_UNIT_TEST "MPI" "" "NAMES" ${ARGN})
@@ -17,7 +29,7 @@ macro(Cajita_add_tests)
     endif()
   endforeach()
   set(CAJITA_UNIT_TEST_MAIN unit_test_main.cpp)
-  foreach(_device ${CAJITA_SUPPORTED_DEVICES})
+  foreach(_device ${CABANA_SUPPORTED_DEVICES})
     if(Kokkos_ENABLE_${_device})
       set(_dir ${CMAKE_CURRENT_BINARY_DIR}/${_device})
       file(MAKE_DIRECTORY ${_dir})
@@ -25,10 +37,10 @@ macro(Cajita_add_tests)
         set(_file ${_dir}/tst${_test}_${_device}.cpp)
         file(WRITE ${_file} "#include <Test${_device}_Category.hpp>\n")
         file(APPEND ${_file} "#include <tst${_test}.hpp>\n")
-        set(_target ${_test}_test_${_device})
+        set(_target Cajita_${_test}_test_${_device})
         add_executable(${_target} ${_file} ${CAJITA_UNIT_TEST_MAIN})
         target_include_directories(${_target} PRIVATE ${_dir} ${CMAKE_CURRENT_SOURCE_DIR})
-        target_link_libraries(${_target} PRIVATE Cajita gtest)
+        target_link_libraries(${_target} PRIVATE Cajita cabana_cajita_gtest)
         if(CAJITA_UNIT_TEST_MPI)
           foreach(_np ${CAJITA_UNIT_TEST_MPIEXEC_NUMPROCS})
             add_test(NAME ${_target}_${_np} COMMAND
@@ -73,7 +85,7 @@ if(HYPRE_FOUND)
     )
 endif()
 
-if(CAJITA_HAVE_HEFFTE)
+if(HEFFTE_FOUND)
   list(APPEND MPI_TESTS
     FastFourierTransform
     )

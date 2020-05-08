@@ -1,3 +1,5 @@
+configure_file(Cajita_Config.hpp.in Cajita_Config.hpp)
+
 set(HEADERS_PUBLIC
   Cajita.hpp
   Cajita_Array.hpp
@@ -33,7 +35,7 @@ if(HYPRE_FOUND)
     )
 endif()
 
-if(CAJITA_HAVE_HEFFTE)
+if(HEFFTE_FOUND)
   list(APPEND HEADERS_PUBLIC
     Cajita_FastFourierTransform.hpp
     )
@@ -54,23 +56,23 @@ if(Heffte_FOUND)
   target_link_libraries(Cajita Heffte::Heffte)
 endif()
 
-install(FILES ${HEADERS_PUBLIC}
-  DESTINATION include)
-
 target_include_directories(Cajita
   PUBLIC
-    $<INSTALL_INTERFACE:include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/include>
-    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
-  )
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
+  $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 install(TARGETS Cajita
   EXPORT CajitaTargets
-  ARCHIVE LIBRARY PUBLIC_HEADER
-  ARCHIVE DESTINATION lib
-  )
+  LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
+  ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
 install(EXPORT CajitaTargets
-  NAMESPACE Cajita::
-  DESTINATION lib/cmake/Cajita
-  )
+  FILE CajitaTargets.cmake
+  NAMESPACE Cabana::
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
+
+install(FILES ${HEADERS_PUBLIC}
+  DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
+
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cajita_config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
