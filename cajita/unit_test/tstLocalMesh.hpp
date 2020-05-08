@@ -1,8 +1,8 @@
 /****************************************************************************
- * Copyright (c) 2019-2020 by the Cajita authors                            *
+ * Copyright (c) 2018-2020 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
- * This file is part of the Cajita library. Cajita is distributed under a   *
+ * This file is part of the Cabana library. Cabana is distributed under a   *
  * BSD 3-clause license. For the licensing terms see the LICENSE file in    *
  * the top-level directory.                                                 *
  *                                                                          *
