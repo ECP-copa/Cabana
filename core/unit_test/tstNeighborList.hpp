@@ -812,7 +812,6 @@ void testFirstNeighborParallelReduce()
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
 
     // Do the reductions.
-    double test_sum = 0;
     double serial_sum = 0;
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::FirstNeighborsTag(),
@@ -831,6 +830,7 @@ void testFirstNeighborParallelReduce()
     auto aosoa_mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
+    double test_sum = 0;
     for ( int p = 0; p < num_particle; ++p )
         for ( int n = 0; n < test_list_copy.counts( p ); ++n )
             test_sum += positions_mirror( p, 0 ) +
@@ -874,7 +874,6 @@ void testSecondNeighborParallelReduce()
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, aosoa.size() );
 
     // Do the reductions.
-    double test_sum = 0;
     double serial_sum = 0;
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
@@ -897,6 +896,7 @@ void testSecondNeighborParallelReduce()
     auto aosoa_mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
+    double test_sum = 0;
     for ( int p = 0; p < num_particle; ++p )
         for ( int n = 0; n < test_list_copy.counts( p ); ++n )
             for ( int a = n + 1; a < test_list_copy.counts( p ); ++a )

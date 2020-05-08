@@ -14,7 +14,7 @@
 
 #include <Cabana_LinkedCellList.hpp>
 #include <Cabana_NeighborList.hpp>
-#include <Cabana_Parallel.hpp> // TeamOpTag, TeamVectorOpTag
+#include <Cabana_Parallel.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -313,11 +313,17 @@ struct VerletListBuilder
                                 if ( cell_stencil.grid.minDistanceToPoint(
                                          x_p, y_p, z_p, i, j, k ) <= rsqr )
                                 {
+                                    std::size_t n_offset =
+                                        linked_cell_list.binOffset( i, j, k );
+                                    std::size_t num_n =
+                                        linked_cell_list.binSize( i, j, k );
+
                                     // Check the particles in this bin to see if
                                     // they are neighbors. If they are add to
                                     // the count for this bin.
                                     int cell_count = 0;
-                                    neighbor_reduce( team, pid, i, j, k,
+                                    neighbor_reduce( team, pid, x_p, y_p, z_p,
+                                                     n_offset, num_n,
                                                      cell_count, BuildOpTag() );
                                     stencil_count += cell_count;
                                 }
@@ -332,43 +338,14 @@ struct VerletListBuilder
     // Neighbor count team vector operator (only used for CSR lists).
     KOKKOS_INLINE_FUNCTION void
     neighbor_reduce( const typename CountNeighborsPolicy::member_type &team,
-                     const std::size_t pid, const int i, const int j,
-                     const int k, int &cell_count, TeamVectorOpTag ) const
+                     const std::size_t pid, const double x_p, const double y_p,
+                     const double z_p, const int n_offset, const int num_n,
+                     int &cell_count, TeamVectorOpTag ) const
     {
-        // Cache the particle coordinates (again).
-        double x_p = position( pid, 0 );
-        double y_p = position( pid, 1 );
-        double z_p = position( pid, 2 );
-
-        std::size_t a_offset = linked_cell_list.binOffset( i, j, k );
-
         Kokkos::parallel_reduce(
-            Kokkos::ThreadVectorRange( team,
-                                       linked_cell_list.binSize( i, j, k ) ),
+            Kokkos::ThreadVectorRange( team, num_n ),
             [&]( const int n, int &local_count ) {
-                //  Get the true id of the candidate  neighbor.
-                std::size_t nid = linked_cell_list.permutation( a_offset + n );
-
-                // Cache the candidate neighbor particle coordinates.
-                double x_n = position( nid, 0 );
-                double y_n = position( nid, 1 );
-                double z_n = position( nid, 2 );
-
-                // If this could be a valid neighbor, continue.
-                if ( NeighborDiscriminator<AlgorithmTag>::isValid(
-                         pid, x_p, y_p, z_p, nid, x_n, y_n, z_n ) )
-                {
-                    // Calculate the distance between the particle and its
-                    // candidate neighbor.
-                    PositionValueType dx = x_p - x_n;
-                    PositionValueType dy = y_p - y_n;
-                    PositionValueType dz = z_p - z_n;
-                    PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
-
-                    // If within the cutoff add to the count.
-                    if ( dist_sqr <= rsqr )
-                        local_count += 1;
-                }
+                neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n, local_count );
             },
             cell_count );
     }
@@ -376,41 +353,43 @@ struct VerletListBuilder
     // Neighbor count serial operator (only used for CSR lists).
     KOKKOS_INLINE_FUNCTION
     void neighbor_reduce( const typename CountNeighborsPolicy::member_type,
-                          const std::size_t pid, const int i, const int j,
-                          const int k, int &cell_count, TeamOpTag ) const
+                          const std::size_t pid, const double x_p,
+                          const double y_p, const double z_p,
+                          const int n_offset, const int num_n, int &cell_count,
+                          TeamOpTag ) const
     {
-        // Cache the particle coordinates (again).
-        double x_p = position( pid, 0 );
-        double y_p = position( pid, 1 );
-        double z_p = position( pid, 2 );
+        for ( int n = 0; n < num_n; n++ )
+            neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n, cell_count );
+    }
 
-        std::size_t a_offset = linked_cell_list.binOffset( i, j, k );
+    // Neighbor count kernel
+    KOKKOS_INLINE_FUNCTION
+    void neighbor_kernel( const int pid, const double x_p, const double y_p,
+                          const double z_p, const int n_offset, const int n,
+                          int &local_count ) const
+    {
+        //  Get the true id of the candidate  neighbor.
+        std::size_t nid = linked_cell_list.permutation( n_offset + n );
 
-        for ( int n = 0; n < linked_cell_list.binSize( i, j, k ); n++ )
+        // Cache the candidate neighbor particle coordinates.
+        double x_n = position( nid, 0 );
+        double y_n = position( nid, 1 );
+        double z_n = position( nid, 2 );
+
+        // If this could be a valid neighbor, continue.
+        if ( NeighborDiscriminator<AlgorithmTag>::isValid(
+                 pid, x_p, y_p, z_p, nid, x_n, y_n, z_n ) )
         {
-            //  Get the true id of the candidate  neighbor.
-            std::size_t nid = linked_cell_list.permutation( a_offset + n );
+            // Calculate the distance between the particle and its candidate
+            // neighbor.
+            PositionValueType dx = x_p - x_n;
+            PositionValueType dy = y_p - y_n;
+            PositionValueType dz = z_p - z_n;
+            PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
 
-            // Cache the candidate neighbor particle coordinates.
-            double x_n = position( nid, 0 );
-            double y_n = position( nid, 1 );
-            double z_n = position( nid, 2 );
-
-            // If this could be a valid neighbor, continue.
-            if ( NeighborDiscriminator<AlgorithmTag>::isValid(
-                     pid, x_p, y_p, z_p, nid, x_n, y_n, z_n ) )
-            {
-                // Calculate the distance between the particle and its candidate
-                // neighbor.
-                PositionValueType dx = x_p - x_n;
-                PositionValueType dy = y_p - y_n;
-                PositionValueType dz = z_p - z_n;
-                PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
-
-                // If within the cutoff add to the count.
-                if ( dist_sqr <= rsqr )
-                    cell_count += 1;
-            }
+            // If within the cutoff add to the count.
+            if ( dist_sqr <= rsqr )
+                local_count += 1;
         }
     }
 
