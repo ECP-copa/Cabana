@@ -63,7 +63,7 @@ macro(Cabana_add_dependency)
   endif()
   if ( ${CABANA_DEPENDENCY_OPTION}_FOUND )
     message( STATUS "Found ${CABANA_DEPENDENCY_PACKAGE}" )
-    set(Cabana_HAVE_${CABANA_DEPENDENCY_OPTION} ON)
+    set(Cabana_ENABLE_${CABANA_DEPENDENCY_OPTION} ON)
   endif()
 endmacro()
 

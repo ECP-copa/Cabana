@@ -30,11 +30,11 @@
 #include <Cajita_Types.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
 
-#ifdef Cabana_HAVE_HYPRE
+#ifdef Cabana_ENABLE_HYPRE
 #include <Cajita_HypreStructuredSolver.hpp>
 #endif
 
-#ifdef Cabana_HAVE_HEFFTE
+#ifdef Cabana_ENABLE_HEFFTE
 #include <Cajita_FastFourierTransform.hpp>
 #endif
 
