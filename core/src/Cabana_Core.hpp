@@ -30,12 +30,12 @@
 #endif
 #include <Cabana_Version.hpp>
 
-#ifdef Cabana_HAVE_MPI
+#ifdef Cabana_ENABLE_MPI
 #include <Cabana_Distributor.hpp>
 #include <Cabana_Halo.hpp>
 #endif
 
-#ifdef Cabana_HAVE_ARBORX
+#ifdef Cabana_ENABLE_ARBORX
 #include <Cabana_Experimental_NeighborList.hpp>
 #endif
 
