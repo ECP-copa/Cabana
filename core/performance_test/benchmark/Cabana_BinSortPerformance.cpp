@@ -30,7 +30,7 @@ template <class Device>
 void performanceTest( std::ostream &stream, const std::string &test_prefix )
 {
     // Declare problem sizes.
-    std::vector<int> problem_sizes = {1000, 10000, 100000, 1000000, 10000000};
+    std::vector<int> problem_sizes = { 1000, 10000, 100000, 1000000, 10000000 };
     int num_problem_size = problem_sizes.size();
 
     // Generate a random set of keys
@@ -46,8 +46,8 @@ void performanceTest( std::ostream &stream, const std::string &test_prefix )
     Kokkos::deep_copy( keys, host_keys );
 
     // Declare the number of bins to generate.
-    std::vector<int> num_bins = {10,     100,     1000,    10000,
-                                 100000, 1000000, 10000000};
+    std::vector<int> num_bins = { 10,     100,     1000,    10000,
+                                  100000, 1000000, 10000000 };
     int num_bin_size = num_bins.size();
 
     // Number of runs in the test loops.

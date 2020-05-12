@@ -61,7 +61,7 @@ convert_crs_graph_to_verlet_list(
             }
         } );
     Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayoutCSR> verlet_list;
-    verlet_list._data = {counts, offsets, neighbors};
+    verlet_list._data = { counts, offsets, neighbors };
     return verlet_list;
 }
 
@@ -89,16 +89,17 @@ convert_crs_graph_to_verlet_list(
     Kokkos::View<int **, DeviceType> neighbors(
         Kokkos::view_alloc( "verlet_list_neighbors" ), total,
         max_entries_per_row );
-    Kokkos::parallel_for( Kokkos::RangePolicy<ExecutionSpace>( 0, n_rows ),
-                          KOKKOS_LAMBDA( int i ) {
-                              for ( int j = 0; j < counts( shift + i ); ++j )
-                              {
-                                  neighbors( shift + i, j ) = crs_graph.col_ind(
-                                      crs_graph.row_ptr( i ) + j );
-                              }
-                          } );
+    Kokkos::parallel_for(
+        Kokkos::RangePolicy<ExecutionSpace>( 0, n_rows ),
+        KOKKOS_LAMBDA( int i ) {
+            for ( int j = 0; j < counts( shift + i ); ++j )
+            {
+                neighbors( shift + i, j ) =
+                    crs_graph.col_ind( crs_graph.row_ptr( i ) + j );
+            }
+        } );
     Cabana::VerletList<DeviceType, Tag, Cabana::VerletLayout2D> verlet_list;
-    verlet_list._data = {counts, neighbors};
+    verlet_list._data = { counts, neighbors };
     return verlet_list;
 }
 
@@ -112,8 +113,8 @@ void testLinkedCellStencil()
 {
     // Point in the middle
     {
-        double min[3] = {0.0, 0.0, 0.0};
-        double max[3] = {10.0, 10.0, 10.0};
+        double min[3] = { 0.0, 0.0, 0.0 };
+        double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
         Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
@@ -137,8 +138,8 @@ void testLinkedCellStencil()
 
     // Point in the lower right corner
     {
-        double min[3] = {0.0, 0.0, 0.0};
-        double max[3] = {10.0, 10.0, 10.0};
+        double min[3] = { 0.0, 0.0, 0.0 };
+        double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
         Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
@@ -162,8 +163,8 @@ void testLinkedCellStencil()
 
     // Point in the upper left corner
     {
-        double min[3] = {0.0, 0.0, 0.0};
-        double max[3] = {10.0, 10.0, 10.0};
+        double min[3] = { 0.0, 0.0, 0.0 };
+        double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
         Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
@@ -481,8 +482,8 @@ void testVerletListFull()
     auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
 #if !defined( Cabana_ENABLE_ARBORX )
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>
         nlist_full( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
@@ -531,8 +532,8 @@ void testVerletListHalf()
     auto aosoa = createParticles( num_particle, box_min, box_max );
 
     // Create the neighbor list.
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
 #if !defined( Cabana_ENABLE_ARBORX )
     Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag> nlist(
         Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
@@ -581,8 +582,8 @@ void testFirstNeighborParallelFor()
 #if !defined( Cabana_ENABLE_ARBORX )
     using ListType =
         Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
     ListType nlist( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
                     cell_size_ratio, grid_min, grid_max );
 #else
@@ -656,8 +657,8 @@ void testVerletListFullPartialRange()
 
     // Create the neighbor list.
 #if !defined( Cabana_ENABLE_ARBORX )
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag> nlist(
         Cabana::slice<0>( aosoa ), 0, num_ignore, test_radius, cell_size_ratio,
         grid_min, grid_max );
@@ -691,8 +692,8 @@ void testSecondNeighborParallelFor()
 #if !defined( Cabana_ENABLE_ARBORX )
     using ListType =
         Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
     ListType nlist( Cabana::slice<0>( aosoa ), 0, aosoa.size(), test_radius,
                     cell_size_ratio, grid_min, grid_max );
 #else
@@ -788,8 +789,8 @@ void testFirstNeighborParallelReduce()
     // Create the neighbor list.
     using ListType =
         Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
     ListType nlist( positions, 0, aosoa.size(), test_radius, cell_size_ratio,
                     grid_min, grid_max );
 
@@ -845,8 +846,8 @@ void testSecondNeighborParallelReduce()
     // Create the neighbor list.
     using ListType =
         Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag>;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
     ListType nlist( positions, 0, aosoa.size(), test_radius, cell_size_ratio,
                     grid_min, grid_max );
 

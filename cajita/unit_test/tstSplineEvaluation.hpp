@@ -11,21 +11,21 @@
 
 #include <Kokkos_Core.hpp>
 
-#include <Cajita_Types.hpp>
-#include <Cajita_GlobalMesh.hpp>
 #include <Cajita_GlobalGrid.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
+#include <Cajita_GlobalMesh.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_Splines.hpp>
+#include <Cajita_Types.hpp>
+#include <Cajita_UniformDimPartitioner.hpp>
 
 #include <gtest/gtest.h>
 
 #include <mpi.h>
 
 #include <array>
-#include <vector>
 #include <cmath>
+#include <vector>
 
 using namespace Cajita;
 
@@ -60,21 +60,21 @@ struct PointSet
     std::size_t num_alloc;
 
     // Point logical position. (point,dim)
-    Kokkos::View<Scalar * [3], device_type> logical_coords;
+    Kokkos::View<Scalar *[3], device_type> logical_coords;
 
     // Point mesh stencil. (point,ns,dim)
-    Kokkos::View<int * [ns][3], device_type> stencil;
+    Kokkos::View<int *[ns][3], device_type> stencil;
 
     // Point basis values at entities in stencil. (point,ns,dim)
-    Kokkos::View<Scalar * [ns][3], device_type> value;
+    Kokkos::View<Scalar *[ns][3], device_type> value;
 
     // Point basis gradient values at entities in stencil
     // (point,ni,nj,nk,dim)
-    Kokkos::View<Scalar * [ns][ns][ns][3], device_type> gradient;
+    Kokkos::View<Scalar *[ns][ns][ns][3], device_type> gradient;
 
     // Point basis distance values at entities in stencil
     // (point,ni,nj,nk,dim)
-    Kokkos::View<Scalar * [ns][3], device_type> distance;
+    Kokkos::View<Scalar *[ns][3], device_type> distance;
 
     // Mesh uniform cell size.
     Scalar dx;
@@ -88,12 +88,11 @@ struct PointSet
 };
 
 //---------------------------------------------------------------------------//
-template <class LocalMeshType, class EntityType, class PointCoordinates, class PointSetType>
-void updatePointSet( const LocalMeshType& local_mesh,
-                     EntityType,
+template <class LocalMeshType, class EntityType, class PointCoordinates,
+          class PointSetType>
+void updatePointSet( const LocalMeshType &local_mesh, EntityType,
                      const PointCoordinates &points,
-                     const std::size_t num_point,
-                     PointSetType &point_set )
+                     const std::size_t num_point, PointSetType &point_set )
 {
     static_assert( std::is_same<typename PointCoordinates::value_type,
                                 typename PointSetType::scalar_type>::value,
@@ -122,9 +121,9 @@ void updatePointSet( const LocalMeshType& local_mesh,
         KOKKOS_LAMBDA( const int p ) {
             // Create a spline evaluation data set. This is what we are
             // actually testing in this test.
-            scalar_type px[3] =
-                { points(p,Dim::I), points(p,Dim::J), points(p,Dim::K) };
-            SplineData<scalar_type,Basis::order,EntityType> sd;
+            scalar_type px[3] = { points( p, Dim::I ), points( p, Dim::J ),
+                                  points( p, Dim::K ) };
+            SplineData<scalar_type, Basis::order, EntityType> sd;
             evaluateSpline( local_mesh, px, sd );
 
             // Map the point coordinates to the logical space of the spline.
@@ -190,30 +189,30 @@ createPointSet(
     point_set.num_point = num_point;
     point_set.num_alloc = num_alloc;
 
-    point_set.logical_coords = Kokkos::View<scalar_type * [3], device_type>(
+    point_set.logical_coords = Kokkos::View<scalar_type *[3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::logical_coords" ),
         num_alloc );
 
-    point_set.stencil = Kokkos::View<int * [ns][3], device_type>(
+    point_set.stencil = Kokkos::View<int *[ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::stencil" ),
         num_alloc );
 
-    point_set.value = Kokkos::View<scalar_type * [ns][3], device_type>(
+    point_set.value = Kokkos::View<scalar_type *[ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::value" ),
         num_alloc );
 
     point_set.gradient =
-        Kokkos::View<scalar_type * [ns][ns][ns][3], device_type>(
+        Kokkos::View<scalar_type *[ns][ns][ns][3], device_type>(
             Kokkos::ViewAllocateWithoutInitializing( "PointSet::gradients" ),
             num_alloc );
 
-    point_set.distance = Kokkos::View<scalar_type * [ns][3], device_type>(
+    point_set.distance = Kokkos::View<scalar_type *[ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::distance" ),
         num_alloc );
 
     auto local_mesh = createLocalMesh<Kokkos::HostSpace>( local_grid );
 
-    int idx_low[3] = {0, 0, 0};
+    int idx_low[3] = { 0, 0, 0 };
     point_set.dx = local_mesh.measure( Edge<Dim::I>(), idx_low );
 
     point_set.rdx = 1.0 / point_set.dx;
@@ -230,19 +229,17 @@ createPointSet(
 void splineEvaluationTest()
 {
     // Create the global mesh.
-    std::array<double,3> low_corner = { -1.2, 0.1, 1.1 };
-    std::array<double,3> high_corner = { -0.3, 9.5, 2.3 };
+    std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
+    std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
     double cell_size = 0.05;
-    auto global_mesh = createUniformGlobalMesh(
-        low_corner, high_corner, cell_size );
+    auto global_mesh =
+        createUniformGlobalMesh( low_corner, high_corner, cell_size );
 
     // Create the global grid.
     UniformDimPartitioner partitioner;
-    std::array<bool,3> is_dim_periodic = {true,true,true};
-    auto global_grid = createGlobalGrid( MPI_COMM_WORLD,
-                                         global_mesh,
-                                         is_dim_periodic,
-                                         partitioner );
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                         is_dim_periodic, partitioner );
 
     // Create a local grid.
     int halo_width = 1;
@@ -250,38 +247,36 @@ void splineEvaluationTest()
     auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
 
     // Create a point in the center of every cell.
-    auto cell_space =
-        local_grid->indexSpace( Own(), Cell(), Local() );
+    auto cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
-    Kokkos::View<double*[3],TEST_DEVICE> points(
-        Kokkos::ViewAllocateWithoutInitializing("points"), num_point );
+    Kokkos::View<double *[3], TEST_DEVICE> points(
+        Kokkos::ViewAllocateWithoutInitializing( "points" ), num_point );
     Kokkos::parallel_for(
-        "fill_points",
-        createExecutionPolicy(cell_space,TEST_EXECSPACE()),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ){
+        "fill_points", createExecutionPolicy( cell_space, TEST_EXECSPACE() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
             int pi = i - halo_width;
             int pj = j - halo_width;
             int pk = k - halo_width;
-            int pid = pi + cell_space.extent(Dim::I) * (
-                pj + cell_space.extent(Dim::J) * pk );
+            int pid = pi + cell_space.extent( Dim::I ) *
+                               ( pj + cell_space.extent( Dim::J ) * pk );
             double x[3];
-            int idx[3] = {i,j,k};
+            int idx[3] = { i, j, k };
             local_mesh.coordinates( Cell(), idx, x );
-            points(pid,Dim::I) = x[Dim::I];
-            points(pid,Dim::J) = x[Dim::J];
-            points(pid,Dim::K) = x[Dim::K];
-        });
+            points( pid, Dim::I ) = x[Dim::I];
+            points( pid, Dim::J ) = x[Dim::J];
+            points( pid, Dim::K ) = x[Dim::K];
+        } );
 
     // Create a point set with linear spline interpolation to the nodes.
-    auto point_set = createPointSet(
-        points, num_point, num_point, *local_grid, Node(), Spline<1>() );
+    auto point_set = createPointSet( points, num_point, num_point, *local_grid,
+                                     Node(), Spline<1>() );
 
     // Check the point set data.
     EXPECT_EQ( point_set.num_point, num_point );
     EXPECT_EQ( point_set.dx, cell_size );
     EXPECT_EQ( point_set.rdx, 1.0 / cell_size );
     double xn_low[3];
-    int idx_low[3] = {0,0,0};
+    int idx_low[3] = { 0, 0, 0 };
     local_mesh.coordinates( Node(), idx_low, xn_low );
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( point_set.low_corner[d], xn_low[d] );
@@ -289,125 +284,159 @@ void splineEvaluationTest()
     // Check logical coordinates
     auto logical_coords_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), point_set.logical_coords );
-    for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
-        for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
-            for ( int k = cell_space.min(Dim::K); k < cell_space.max(Dim::K); ++k )
+    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
+        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+              ++j )
+            for ( int k = cell_space.min( Dim::K );
+                  k < cell_space.max( Dim::K ); ++k )
             {
                 int pi = i - halo_width;
                 int pj = j - halo_width;
                 int pk = k - halo_width;
-                int pid = pi + cell_space.extent(Dim::I) * (
-                    pj + cell_space.extent(Dim::J) * pk );
-                EXPECT_FLOAT_EQ( logical_coords_host(pid,Dim::I), i + 0.5 );
-                EXPECT_FLOAT_EQ( logical_coords_host(pid,Dim::J), j + 0.5 );
-                EXPECT_FLOAT_EQ( logical_coords_host(pid,Dim::K), k + 0.5 );
+                int pid = pi + cell_space.extent( Dim::I ) *
+                                   ( pj + cell_space.extent( Dim::J ) * pk );
+                EXPECT_FLOAT_EQ( logical_coords_host( pid, Dim::I ), i + 0.5 );
+                EXPECT_FLOAT_EQ( logical_coords_host( pid, Dim::J ), j + 0.5 );
+                EXPECT_FLOAT_EQ( logical_coords_host( pid, Dim::K ), k + 0.5 );
             }
 
     // Check stencil.
     auto stencil_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), point_set.stencil );
-    for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
-        for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
-            for ( int k = cell_space.min(Dim::K); k < cell_space.max(Dim::K); ++k )
+    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
+        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+              ++j )
+            for ( int k = cell_space.min( Dim::K );
+                  k < cell_space.max( Dim::K ); ++k )
             {
                 int pi = i - halo_width;
                 int pj = j - halo_width;
                 int pk = k - halo_width;
-                int pid = pi + cell_space.extent(Dim::I) * (
-                    pj + cell_space.extent(Dim::J) * pk );
-                EXPECT_EQ( stencil_host(pid,0,Dim::I), i );
-                EXPECT_EQ( stencil_host(pid,1,Dim::I), i + 1 );
-                EXPECT_EQ( stencil_host(pid,0,Dim::J), j );
-                EXPECT_EQ( stencil_host(pid,1,Dim::J), j + 1 );
-                EXPECT_EQ( stencil_host(pid,0,Dim::K), k );
-                EXPECT_EQ( stencil_host(pid,1,Dim::K), k + 1 );
+                int pid = pi + cell_space.extent( Dim::I ) *
+                                   ( pj + cell_space.extent( Dim::J ) * pk );
+                EXPECT_EQ( stencil_host( pid, 0, Dim::I ), i );
+                EXPECT_EQ( stencil_host( pid, 1, Dim::I ), i + 1 );
+                EXPECT_EQ( stencil_host( pid, 0, Dim::J ), j );
+                EXPECT_EQ( stencil_host( pid, 1, Dim::J ), j + 1 );
+                EXPECT_EQ( stencil_host( pid, 0, Dim::K ), k );
+                EXPECT_EQ( stencil_host( pid, 1, Dim::K ), k + 1 );
             }
 
     // Check values.
-    auto values_host = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), point_set.value );
-    for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
-        for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
-            for ( int k = cell_space.min(Dim::K); k < cell_space.max(Dim::K); ++k )
+    auto values_host = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                            point_set.value );
+    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
+        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+              ++j )
+            for ( int k = cell_space.min( Dim::K );
+                  k < cell_space.max( Dim::K ); ++k )
             {
                 int pi = i - halo_width;
                 int pj = j - halo_width;
                 int pk = k - halo_width;
-                int pid = pi + cell_space.extent(Dim::I) * (
-                    pj + cell_space.extent(Dim::J) * pk );
-                EXPECT_FLOAT_EQ( values_host(pid,0,Dim::I), 0.5 );
-                EXPECT_FLOAT_EQ( values_host(pid,1,Dim::I), 0.5 );
-                EXPECT_FLOAT_EQ( values_host(pid,0,Dim::J), 0.5 );
-                EXPECT_FLOAT_EQ( values_host(pid,1,Dim::J), 0.5 );
-                EXPECT_FLOAT_EQ( values_host(pid,0,Dim::K), 0.5 );
-                EXPECT_FLOAT_EQ( values_host(pid,1,Dim::K), 0.5 );
+                int pid = pi + cell_space.extent( Dim::I ) *
+                                   ( pj + cell_space.extent( Dim::J ) * pk );
+                EXPECT_FLOAT_EQ( values_host( pid, 0, Dim::I ), 0.5 );
+                EXPECT_FLOAT_EQ( values_host( pid, 1, Dim::I ), 0.5 );
+                EXPECT_FLOAT_EQ( values_host( pid, 0, Dim::J ), 0.5 );
+                EXPECT_FLOAT_EQ( values_host( pid, 1, Dim::J ), 0.5 );
+                EXPECT_FLOAT_EQ( values_host( pid, 0, Dim::K ), 0.5 );
+                EXPECT_FLOAT_EQ( values_host( pid, 1, Dim::K ), 0.5 );
             }
 
     // Check gradients.
     auto gradients_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), point_set.gradient );
-    for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
-        for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
-            for ( int k = cell_space.min(Dim::K); k < cell_space.max(Dim::K); ++k )
+    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
+        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+              ++j )
+            for ( int k = cell_space.min( Dim::K );
+                  k < cell_space.max( Dim::K ); ++k )
             {
                 int pi = i - halo_width;
                 int pj = j - halo_width;
                 int pk = k - halo_width;
-                int pid = pi + cell_space.extent(Dim::I) * (
-                    pj + cell_space.extent(Dim::J) * pk );
+                int pid = pi + cell_space.extent( Dim::I ) *
+                                   ( pj + cell_space.extent( Dim::J ) * pk );
 
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,0,0,Dim::I), -0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,0,0,Dim::J), -0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,0,0,Dim::K), -0.25/cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 0, 0, Dim::I ),
+                                 -0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 0, 0, Dim::J ),
+                                 -0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 0, 0, Dim::K ),
+                                 -0.25 / cell_size );
 
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,0,0,Dim::I), 0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,0,0,Dim::J), -0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,0,0,Dim::K), -0.25/cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 0, 0, Dim::I ),
+                                 0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 0, 0, Dim::J ),
+                                 -0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 0, 0, Dim::K ),
+                                 -0.25 / cell_size );
 
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,1,0,Dim::I), 0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,1,0,Dim::J), 0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,1,0,Dim::K), -0.25/cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 1, 0, Dim::I ),
+                                 0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 1, 0, Dim::J ),
+                                 0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 1, 0, Dim::K ),
+                                 -0.25 / cell_size );
 
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,1,0,Dim::I), -0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,1,0,Dim::J), 0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,1,0,Dim::K), -0.25/cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 1, 0, Dim::I ),
+                                 -0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 1, 0, Dim::J ),
+                                 0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 1, 0, Dim::K ),
+                                 -0.25 / cell_size );
 
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,0,1,Dim::I), -0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,0,1,Dim::J), -0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,0,1,Dim::K), 0.25/cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 0, 1, Dim::I ),
+                                 -0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 0, 1, Dim::J ),
+                                 -0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 0, 1, Dim::K ),
+                                 0.25 / cell_size );
 
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,0,1,Dim::I), 0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,0,1,Dim::J), -0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,0,1,Dim::K), 0.25/cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 0, 1, Dim::I ),
+                                 0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 0, 1, Dim::J ),
+                                 -0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 0, 1, Dim::K ),
+                                 0.25 / cell_size );
 
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,1,1,Dim::I), 0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,1,1,Dim::J), 0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,1,1,1,Dim::K), 0.25/cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 1, 1, Dim::I ),
+                                 0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 1, 1, Dim::J ),
+                                 0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 1, 1, 1, Dim::K ),
+                                 0.25 / cell_size );
 
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,1,1,Dim::I), -0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,1,1,Dim::J), 0.25/cell_size );
-                EXPECT_FLOAT_EQ( gradients_host(pid,0,1,1,Dim::K), 0.25/cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 1, 1, Dim::I ),
+                                 -0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 1, 1, Dim::J ),
+                                 0.25 / cell_size );
+                EXPECT_FLOAT_EQ( gradients_host( pid, 0, 1, 1, Dim::K ),
+                                 0.25 / cell_size );
             }
 
     // Check distances
     auto distances_host = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), point_set.distance );
-    for ( int i = cell_space.min(Dim::I); i < cell_space.max(Dim::I); ++i )
-        for ( int j = cell_space.min(Dim::J); j < cell_space.max(Dim::J); ++j )
-            for ( int k = cell_space.min(Dim::K); k < cell_space.max(Dim::K); ++k )
+    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
+        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+              ++j )
+            for ( int k = cell_space.min( Dim::K );
+                  k < cell_space.max( Dim::K ); ++k )
             {
                 int pi = i - halo_width;
                 int pj = j - halo_width;
                 int pk = k - halo_width;
-                int pid = pi + cell_space.extent(Dim::I) * (
-                    pj + cell_space.extent(Dim::J) * pk );
+                int pid = pi + cell_space.extent( Dim::I ) *
+                                   ( pj + cell_space.extent( Dim::J ) * pk );
                 for ( int d = 0; d < 3; ++d )
                 {
                     double invariant = 0.0;
                     for ( int n = 0; n < 2; ++n )
                     {
-                        invariant +=
-                            values_host(pid,n,d) * distances_host(pid,n,d);
+                        invariant += values_host( pid, n, d ) *
+                                     distances_host( pid, n, d );
                     }
                     EXPECT_FLOAT_EQ( 1.0 - invariant, 1.0 );
                 }
@@ -417,10 +446,7 @@ void splineEvaluationTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( splines, eval_test )
-{
-    splineEvaluationTest();
-}
+TEST( splines, eval_test ) { splineEvaluationTest(); }
 
 //---------------------------------------------------------------------------//
 

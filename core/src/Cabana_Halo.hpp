@@ -265,7 +265,7 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa,
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + halo.numImport( n );
@@ -281,7 +281,7 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa,
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         send_range.second = send_range.first + halo.numExport( n );
@@ -403,7 +403,7 @@ void gather( const Halo_t &halo, Slice_t &slice,
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + halo.numImport( n );
@@ -420,7 +420,7 @@ void gather( const Halo_t &halo, Slice_t &slice,
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         send_range.second = send_range.first + halo.numExport( n );
@@ -551,7 +551,7 @@ void scatter( const Halo_t &halo, Slice_t &slice,
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + halo.numExport( n );
@@ -568,7 +568,7 @@ void scatter( const Halo_t &halo, Slice_t &slice,
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         send_range.second = send_range.first + halo.numImport( n );

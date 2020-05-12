@@ -60,7 +60,7 @@ struct LayoutCabanaSlice
                                           size_t d0 = D0, size_t d1 = D1,
                                           size_t d2 = D2, size_t d3 = D3,
                                           size_t d4 = D4, size_t d5 = D5 )
-        : dimension{num_soa, vector_length, d0, d1, d2, d3, d4, d5}
+        : dimension{ num_soa, vector_length, d0, d1, d2, d3, d4, d5 }
     {
     }
 };
@@ -367,7 +367,7 @@ template <typename T, int VectorLength, int Stride>
 struct KokkosDataTypeImpl<T, 0, VectorLength, Stride>
 {
     using value_type = typename std::remove_all_extents<T>::type;
-    using data_type = value_type * [VectorLength];
+    using data_type = value_type *[VectorLength];
     using cabana_layout = Kokkos::LayoutCabanaSlice<Stride, VectorLength>;
 
     inline static cabana_layout createLayout( const std::size_t num_soa )
@@ -382,7 +382,7 @@ struct KokkosDataTypeImpl<T, 1, VectorLength, Stride>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
-    using data_type = value_type * [VectorLength][D0];
+    using data_type = value_type *[VectorLength][D0];
     using cabana_layout = Kokkos::LayoutCabanaSlice<Stride, VectorLength, D0>;
 
     inline static cabana_layout createLayout( const std::size_t num_soa )
@@ -398,7 +398,7 @@ struct KokkosDataTypeImpl<T, 2, VectorLength, Stride>
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
     static constexpr std::size_t D1 = std::extent<T, 1>::value;
-    using data_type = value_type * [VectorLength][D0][D1];
+    using data_type = value_type *[VectorLength][D0][D1];
     using cabana_layout =
         Kokkos::LayoutCabanaSlice<Stride, VectorLength, D0, D1>;
 
@@ -416,7 +416,7 @@ struct KokkosDataTypeImpl<T, 3, VectorLength, Stride>
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
     static constexpr std::size_t D1 = std::extent<T, 1>::value;
     static constexpr std::size_t D2 = std::extent<T, 2>::value;
-    using data_type = value_type * [VectorLength][D0][D1][D2];
+    using data_type = value_type *[VectorLength][D0][D1][D2];
     using cabana_layout =
         Kokkos::LayoutCabanaSlice<Stride, VectorLength, D0, D1, D2>;
 
