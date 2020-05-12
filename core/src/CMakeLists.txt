@@ -18,7 +18,7 @@ set(HEADERS_PUBLIC
   Cabana_Version.hpp
   )
 
-if(ARBORX_FOUND)
+if(ArborX_FOUND)
   list(APPEND HEADERS_PUBLIC
     Cabana_Experimental_NeighborList.hpp
     )
