@@ -1,7 +1,6 @@
 language: cpp
 
-# against hwloc error (travis-ci/travis-ci#10019)
-sudo: required
+dist: bionic
 
 stages:
   - canary
