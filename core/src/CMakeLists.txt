@@ -86,3 +86,5 @@ configure_file(CabanaConfig.cmakein
 
 write_basic_package_version_file("CabanaConfigVersion.cmake"
   VERSION ${PROJECT_VERSION} COMPATIBILITY ExactVersion)
+
+add_library(Cabana::cabanacore ALIAS cabanacore)
