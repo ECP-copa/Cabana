@@ -46,7 +46,7 @@ add_library(cabanacore ${SOURCES_IMPL})
 
 target_link_libraries(cabanacore Kokkos::kokkos)
 
-if(ARBORX_FOUND)
+if(ArborX_FOUND)
   target_link_libraries(cabanacore ArborX::ArborX)
 endif()
 
