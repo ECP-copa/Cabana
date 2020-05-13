@@ -15,6 +15,8 @@
 #include <Kokkos_Core.hpp>
 #include <Cabana_Parallel.hpp> // simd_for and SimdPolicy
 
+#include <cassert>
+
 namespace Cabana
 {
 
@@ -24,10 +26,16 @@ namespace Cabana
         // a) Safely peel/remainder loops if needed for the 2D case?
     // 3) It should be able to warn in debug if you do something that we can detect as affecting performance, eg:
         // a) warn if vector length does not make sense for target execution space
-    template<class BufferedAoSoA_t, class FunctorType, class ... ExecParameters>
+    template<
+        class BufferedAoSoA_t,
+        class Slice_list_t,
+        class FunctorType,
+        class ... ExecParameters
+    >
     inline void buffered_parallel_for(
             const Kokkos::RangePolicy<ExecParameters...>& exec_policy, // TODO: global or local range? => global?
             BufferedAoSoA_t buffered_aosoa, // TODO: passing this to a for is a bit odd? // TODO: does it need to be const?
+            Slice_list_t slice_list,
             const FunctorType& functor,
             const std::string& str = "" )
     {
@@ -63,9 +71,9 @@ namespace Cabana
 
         for (int i = 0; i < niter; i++)
         {
-            //std::cout << "Looping from " << begin << " to " << end
-                //<< " which is " << i*buffer_size << " in global space " <<
-                //std::endl;
+            std::cout << "Looping from " << begin << " to " << end
+                << " which is " << i*buffer_size << " in global space " <<
+                std::endl;
 
             buffered_aosoa.load_next_buffer(begin);
             simd_policy policy(begin, end);

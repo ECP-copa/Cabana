@@ -79,11 +79,11 @@ namespace Test
             // Declare the AoSoA type.
             using AoSoA_t = Cabana::AoSoA<DataTypes,TEST_MEMSPACE,vector_length>;
             std::string label = "sample_aosoa";
-            int num_data = 64;
+            int num_data = 512;
             AoSoA_t aosoa( label, num_data );
 
             // Start by only buffering over one AoSoA at a time for stress test
-            const int max_buffered_tuples = vector_length;
+            const int max_buffered_tuples = 8*vector_length;
 
             // emulate a minimum of triple buffering?
             const int buffer_count = 3;
@@ -136,17 +136,14 @@ namespace Test
                > buffered_aosoa(aosoa);
                */
 
-            Cabana::BufferedAoSoA<
+            using buf_t = Cabana::BufferedAoSoA<
                 max_buffered_tuples,
                 buffer_count,
                 target_exec_space,
                 AoSoA_t
-                    >* buffered_aosoa = new Cabana::BufferedAoSoA<
-                    max_buffered_tuples,
-                buffer_count,
-                target_exec_space,
-                AoSoA_t
-                    >(aosoa);
+            >;
+
+            buf_t* buffered_aosoa = new buf_t(aosoa);
 
             int num_buffers = buffered_aosoa->get_buffer_count();
             //int num_buffers = buffered_aosoa.get_buffer_count();
@@ -163,10 +160,14 @@ namespace Test
 
             std::cout << "Calling buffered for using data from " << aosoa.data() << std::endl;
 
+            // TODO: set this place holder
+            int slice_list = 0;
+
             // Overwrite the data in a buffered way
             Cabana::buffered_parallel_for(
                     Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
                     *buffered_aosoa,
+                    slice_list,
                     KOKKOS_LAMBDA( const int s, const int a )
                 {
                     // We have to call access and slice in the loop
@@ -190,18 +191,22 @@ namespace Test
                         {
                             for ( int k = 0; k < dim_3; ++k )
                             {
+                                printf("s %d a %d i %d j %d k %d \n", s, a, i, j, k);
                                 slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
+                                //buffered_asoa->slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
+                                //slice_view_0( s, a, i, j, k ) = fval * (i+j+k);
                             }
                         }
                     }
 
+                    /* Disabling due to cheating the return type of the slice list
                     // Member 1.
-                    slice_1.access( s, a ) = ival;
+                    slice_list[1].access( s, a ) = ival;
 
                     // Member 2.
                     for ( int i = 0; i < dim_1; ++i )
                     {
-                        slice_2.access( s, a, i ) = dval * i;
+                        slice_list[2].access( s, a, i ) = dval * i;
                     }
 
                     // Member 3.
@@ -209,9 +214,10 @@ namespace Test
                     {
                         for ( int j = 0; j < dim_2; ++j )
                         {
-                            slice_3.access( s, a, i, j ) = dval * (i+j);
+                            slice_list[3].access( s, a, i, j ) = dval * (i+j);
                         }
                     }
+                    */
                 },
                 "test buffered for"
             );

@@ -22,6 +22,8 @@
 #include <type_traits>
 #include <exception>
 
+#include <cassert>
+
 namespace Cabana
 {
 //---------------------------------------------------------------------------//

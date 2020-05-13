@@ -42,6 +42,7 @@ namespace Cabana
             using AoSoA_type = AoSoA_t;
             using value_type = typename AoSoA_type::soa_type;
 
+            KOKKOS_INLINE_FUNCTION
             BufferedAoSoAAccess(const AoSoA_type& aosoa_in) : aosoa(aosoa_in)
             {
                 // Intentionally empty
@@ -129,8 +130,9 @@ namespace Cabana
             AoSoA_t internal_buffers[requested_buffer_count];
 
             // TODO: can we make this a nice auto detected unpack on the aosoa type?
-            template<typename T1, typename T2>
-            BufferedAoSoA(Cabana::AoSoA<T1, T2> original_view_in) :
+            //template<typename T1, typename T2>
+            //BufferedAoSoA(Cabana::AoSoA<T1, T2> original_view_in) :
+            BufferedAoSoA(AoSoA_t original_view_in) :
                 original_view(original_view_in),
                 buffer_size(max_buffered_tuples)
             {
@@ -186,7 +188,7 @@ namespace Cabana
                     (*last_filled_buffer) = 0;
                 }
 
-                // Copy from the main memory store into the "current" buffer
+               // Copy from the main memory store into the "current" buffer
                 // TODO: does this imply the need for a subview so the sizes
                 // match?
                 Cabana::deep_copy_partial_src(
@@ -196,6 +198,9 @@ namespace Cabana
                     start_index,
                     buffer_size
                 );
+
+                //slice_0 = Cabana::slice<0>(internal_buffers[(*last_filled_buffer)]);
+                printf("Current buffer = %p \n", &internal_buffers[(*last_filled_buffer)] );
             }
 
             /*
@@ -237,8 +242,18 @@ namespace Cabana
 
             int buffer_size;
 
+            // TODO: array is likely the wrong type here...
+            // TODO: this hard coded 0 is obviously wrong..
+            static constexpr std::size_t num_slices = AoSoA_t::member_types::size;
+            //using slice_return_t = std::array<
+                //typename AoSoA_t::template member_slice_type<0>,
+                //num_slices>;
+            using slice_zt = typename AoSoA_t::template member_slice_type<0>;
+            using slice_return_t = std::array<slice_zt,num_slices>;
+
         private:
     };
+
 
 } // end namespace Cabana
 
