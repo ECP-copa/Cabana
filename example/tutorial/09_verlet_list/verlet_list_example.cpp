@@ -131,7 +131,8 @@ void verletListExample()
     double cell_ratio = 1.0;
     using ListAlgorithm = Cabana::FullNeighborTag;
     using ListType =
-        Cabana::VerletList<DeviceType, ListAlgorithm, Cabana::VerletLayoutCSR>;
+        Cabana::VerletList<DeviceType, ListAlgorithm, Cabana::VerletLayoutCSR,
+                           Cabana::TeamOpTag>;
     ListType verlet_list( positions, 0, positions.size(), neighborhood_radius,
                           cell_ratio, grid_min, grid_max );
 
