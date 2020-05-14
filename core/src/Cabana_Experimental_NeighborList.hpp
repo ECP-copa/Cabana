@@ -61,7 +61,7 @@ auto makePredicates(
     typename stdcxx20::remove_cvref_t<Slice>::value_type radius )
 {
     return Impl::SubsliceAndRadius<stdcxx20::remove_cvref_t<Slice>>{
-        std::forward<Slice>( slice ), first, last, radius };
+        std::forward<Slice>( slice ), first, last, radius};
 }
 } // namespace Impl
 } // namespace Experimental
@@ -80,9 +80,9 @@ struct Access<Slice, PrimitivesTag,
     static size_type size( Slice const &x ) { return x.size(); }
     static KOKKOS_FUNCTION Point get( Slice const &x, size_type i )
     {
-        return { static_cast<float>( x( i, 0 ) ),
-                 static_cast<float>( x( i, 1 ) ),
-                 static_cast<float>( x( i, 2 ) ) };
+        return {static_cast<float>( x( i, 0 ) ),
+                static_cast<float>( x( i, 1 ) ),
+                static_cast<float>( x( i, 2 ) )};
     }
 };
 template <typename SliceLike>
@@ -100,7 +100,7 @@ struct Access<SliceLike, PredicatesTag>
         auto const point =
             Access<typename SliceLike::slice_type, PrimitivesTag>::get(
                 x.slice, x.first + i );
-        return attach( intersects( Sphere{ point, x.radius } ), (int)i );
+        return attach( intersects( Sphere{point, x.radius} ), (int)i );
     }
 };
 
@@ -180,7 +180,7 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
                Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset );
 
     return CrsGraph<typename DeviceType::memory_space, Tag>{
-        std::move( indices ), std::move( offset ), first, bvh.size() };
+        std::move( indices ), std::move( offset ), first, bvh.size()};
 }
 
 } // namespace Experimental

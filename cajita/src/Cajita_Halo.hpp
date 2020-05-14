@@ -67,7 +67,7 @@ class FullHaloPattern : public HaloPattern
             for ( int j = -1; j < 2; ++j )
                 for ( int k = -1; k < 2; ++k )
                     if ( !( i == 0 && j == 0 && k == 0 ) )
-                        neighbors.push_back( { i, j, k } );
+                        neighbors.push_back( {i, j, k} );
         this->setNeighbors( neighbors );
     }
 };
@@ -431,10 +431,10 @@ class Halo
                     createSubview( view, _owned_spaces[unpack_index] );
                 auto owned_buffer = _owned_buffers[unpack_index];
                 IndexSpace<4> scatter_space(
-                    { static_cast<long>( subview.extent( 0 ) ),
-                      static_cast<long>( subview.extent( 1 ) ),
-                      static_cast<long>( subview.extent( 2 ) ),
-                      static_cast<long>( subview.extent( 3 ) ) } );
+                    {static_cast<long>( subview.extent( 0 ) ),
+                     static_cast<long>( subview.extent( 1 ) ),
+                     static_cast<long>( subview.extent( 2 ) ),
+                     static_cast<long>( subview.extent( 3 ) )} );
                 Kokkos::parallel_for(
                     "Cajita::Halo::scatterOwned",
                     createExecutionPolicy( scatter_space, execution_space() ),

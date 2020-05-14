@@ -534,7 +534,7 @@ class ReferenceConjugateGradient
     // Set the stencil of a matrix.
     void setStencil( const std::vector<std::array<int, 3>> &stencil,
                      const bool is_symmetric,
-                     Kokkos::View<int *[3], DeviceType> &device_stencil,
+                     Kokkos::View<int * [3], DeviceType> &device_stencil,
                      std::shared_ptr<Halo<Scalar, DeviceType>> &halo,
                      std::shared_ptr<Array_t> &matrix )
     {
@@ -547,7 +547,7 @@ class ReferenceConjugateGradient
         auto local_grid = _vectors->layout()->localGrid();
 
         // Copy stencil to the device.
-        device_stencil = Kokkos::View<int *[3], DeviceType>(
+        device_stencil = Kokkos::View<int * [3], DeviceType>(
             Kokkos::ViewAllocateWithoutInitializing( "stencil" ),
             stencil.size() );
         auto stencil_mirror =
@@ -599,8 +599,8 @@ class ReferenceConjugateGradient
     int _num_iter;
     Scalar _residual_norm;
     int _diag_entry;
-    Kokkos::View<int *[3], DeviceType> _A_stencil;
-    Kokkos::View<int *[3], DeviceType> _M_stencil;
+    Kokkos::View<int * [3], DeviceType> _A_stencil;
+    Kokkos::View<int * [3], DeviceType> _M_stencil;
     std::shared_ptr<Halo<Scalar, DeviceType>> _A_halo;
     std::shared_ptr<Halo<Scalar, DeviceType>> _M_halo;
     std::shared_ptr<Array_t> _A;

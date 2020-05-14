@@ -486,7 +486,7 @@ evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
         typename SplineData<Scalar, Order, EntityType>::spline_type;
 
     Scalar low_x[3];
-    int low_id[3] = { 0, 0, 0 };
+    int low_id[3] = {0, 0, 0};
     local_mesh.coordinates( EntityType(), low_id, low_x );
 
     data.dx[Dim::I] = local_mesh.measure( Edge<Dim::I>(), low_id );

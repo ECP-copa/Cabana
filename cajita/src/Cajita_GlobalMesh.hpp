@@ -48,7 +48,7 @@ class GlobalMesh<UniformMesh<Scalar>>
                 const Scalar cell_size )
         : _global_low_corner( global_low_corner )
         , _global_high_corner( global_high_corner )
-        , _cell_size( { cell_size, cell_size, cell_size } )
+        , _cell_size( {cell_size, cell_size, cell_size} )
     {
         // Check that the domain is evenly divisible by the cell size in each
         // dimension within round-off error.
@@ -193,7 +193,7 @@ class GlobalMesh<NonUniformMesh<Scalar>>
     GlobalMesh( const std::vector<Scalar> &i_edges,
                 const std::vector<Scalar> &j_edges,
                 const std::vector<Scalar> &k_edges )
-        : _edges( { i_edges, j_edges, k_edges } )
+        : _edges( {i_edges, j_edges, k_edges} )
     {
     }
 

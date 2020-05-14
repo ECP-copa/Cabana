@@ -60,21 +60,21 @@ struct PointSet
     std::size_t num_alloc;
 
     // Point logical position. (point,dim)
-    Kokkos::View<Scalar *[3], device_type> logical_coords;
+    Kokkos::View<Scalar * [3], device_type> logical_coords;
 
     // Point mesh stencil. (point,ns,dim)
-    Kokkos::View<int *[ns][3], device_type> stencil;
+    Kokkos::View<int * [ns][3], device_type> stencil;
 
     // Point basis values at entities in stencil. (point,ns,dim)
-    Kokkos::View<Scalar *[ns][3], device_type> value;
+    Kokkos::View<Scalar * [ns][3], device_type> value;
 
     // Point basis gradient values at entities in stencil
     // (point,ni,nj,nk,dim)
-    Kokkos::View<Scalar *[ns][ns][ns][3], device_type> gradient;
+    Kokkos::View<Scalar * [ns][ns][ns][3], device_type> gradient;
 
     // Point basis distance values at entities in stencil
     // (point,ni,nj,nk,dim)
-    Kokkos::View<Scalar *[ns][3], device_type> distance;
+    Kokkos::View<Scalar * [ns][3], device_type> distance;
 
     // Mesh uniform cell size.
     Scalar dx;
@@ -121,8 +121,8 @@ void updatePointSet( const LocalMeshType &local_mesh, EntityType,
         KOKKOS_LAMBDA( const int p ) {
             // Create a spline evaluation data set. This is what we are
             // actually testing in this test.
-            scalar_type px[3] = { points( p, Dim::I ), points( p, Dim::J ),
-                                  points( p, Dim::K ) };
+            scalar_type px[3] = {points( p, Dim::I ), points( p, Dim::J ),
+                                 points( p, Dim::K )};
             SplineData<scalar_type, Basis::order, EntityType> sd;
             evaluateSpline( local_mesh, px, sd );
 
@@ -189,30 +189,30 @@ createPointSet(
     point_set.num_point = num_point;
     point_set.num_alloc = num_alloc;
 
-    point_set.logical_coords = Kokkos::View<scalar_type *[3], device_type>(
+    point_set.logical_coords = Kokkos::View<scalar_type * [3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::logical_coords" ),
         num_alloc );
 
-    point_set.stencil = Kokkos::View<int *[ns][3], device_type>(
+    point_set.stencil = Kokkos::View<int * [ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::stencil" ),
         num_alloc );
 
-    point_set.value = Kokkos::View<scalar_type *[ns][3], device_type>(
+    point_set.value = Kokkos::View<scalar_type * [ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::value" ),
         num_alloc );
 
     point_set.gradient =
-        Kokkos::View<scalar_type *[ns][ns][ns][3], device_type>(
+        Kokkos::View<scalar_type * [ns][ns][ns][3], device_type>(
             Kokkos::ViewAllocateWithoutInitializing( "PointSet::gradients" ),
             num_alloc );
 
-    point_set.distance = Kokkos::View<scalar_type *[ns][3], device_type>(
+    point_set.distance = Kokkos::View<scalar_type * [ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::distance" ),
         num_alloc );
 
     auto local_mesh = createLocalMesh<Kokkos::HostSpace>( local_grid );
 
-    int idx_low[3] = { 0, 0, 0 };
+    int idx_low[3] = {0, 0, 0};
     point_set.dx = local_mesh.measure( Edge<Dim::I>(), idx_low );
 
     point_set.rdx = 1.0 / point_set.dx;
@@ -229,15 +229,15 @@ createPointSet(
 void splineEvaluationTest()
 {
     // Create the global mesh.
-    std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
-    std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
+    std::array<double, 3> low_corner = {-1.2, 0.1, 1.1};
+    std::array<double, 3> high_corner = {-0.3, 9.5, 2.3};
     double cell_size = 0.05;
     auto global_mesh =
         createUniformGlobalMesh( low_corner, high_corner, cell_size );
 
     // Create the global grid.
     UniformDimPartitioner partitioner;
-    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    std::array<bool, 3> is_dim_periodic = {true, true, true};
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
@@ -249,7 +249,7 @@ void splineEvaluationTest()
     // Create a point in the center of every cell.
     auto cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
-    Kokkos::View<double *[3], TEST_DEVICE> points(
+    Kokkos::View<double * [3], TEST_DEVICE> points(
         Kokkos::ViewAllocateWithoutInitializing( "points" ), num_point );
     Kokkos::parallel_for(
         "fill_points", createExecutionPolicy( cell_space, TEST_EXECSPACE() ),
@@ -260,7 +260,7 @@ void splineEvaluationTest()
             int pid = pi + cell_space.extent( Dim::I ) *
                                ( pj + cell_space.extent( Dim::J ) * pk );
             double x[3];
-            int idx[3] = { i, j, k };
+            int idx[3] = {i, j, k};
             local_mesh.coordinates( Cell(), idx, x );
             points( pid, Dim::I ) = x[Dim::I];
             points( pid, Dim::J ) = x[Dim::J];
@@ -276,7 +276,7 @@ void splineEvaluationTest()
     EXPECT_EQ( point_set.dx, cell_size );
     EXPECT_EQ( point_set.rdx, 1.0 / cell_size );
     double xn_low[3];
-    int idx_low[3] = { 0, 0, 0 };
+    int idx_low[3] = {0, 0, 0};
     local_mesh.coordinates( Node(), idx_low, xn_low );
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( point_set.low_corner[d], xn_low[d] );
