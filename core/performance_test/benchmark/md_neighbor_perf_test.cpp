@@ -37,6 +37,8 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
 
     // Declare the neighbor list type.
     using NeighborListTag = Cabana::FullNeighborTag;
+    using LayoutTag = Cabana::VerletLayoutCSR;
+    using BuildTag = Cabana::TeamVectorOpTag;
 
     // Declare the execution and memory spaces.
     using MemorySpace = Kokkos::HostSpace;
@@ -174,7 +176,7 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
     Cabana::permute( linked_cell_list, aosoa );
 
     // Create the list once to get some statistics.
-    Cabana::VerletList<DeviceType, NeighborListTag, Cabana::VerletLayoutCSR>
+    Cabana::VerletList<DeviceType, NeighborListTag, LayoutTag, BuildTag>
         stat_list( Cabana::slice<Position>( aosoa, "position" ), 0,
                    aosoa.size(), interaction_cutoff, cell_size_ratio, grid_min,
                    grid_max );
@@ -209,7 +211,7 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
             interaction_cutoff );
 #else
 
-        Cabana::VerletList<DeviceType, NeighborListTag, Cabana::VerletLayoutCSR>
+        Cabana::VerletList<DeviceType, NeighborListTag, LayoutTag, BuildTag>
             list( Cabana::slice<Position>( aosoa, "position" ), 0, aosoa.size(),
                   interaction_cutoff, cell_size_ratio, grid_min, grid_max );
 #endif

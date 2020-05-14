@@ -14,13 +14,10 @@
 
 #include <Cabana_LinkedCellList.hpp>
 #include <Cabana_NeighborList.hpp>
+#include <Cabana_Parallel.hpp>
 #include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
-
-#ifdef KOKKOS_ENABLE_HIP
-#error Not supported when Kokkos experimental backend is enabled
-#endif
 
 namespace Cabana
 {
@@ -191,7 +188,7 @@ struct LinkedCellStencil
 // Verlet List Builder
 //---------------------------------------------------------------------------//
 template <class DeviceType, class PositionSlice, class AlgorithmTag,
-          class LayoutTag>
+          class LayoutTag, class BuildOpTag>
 struct VerletListBuilder
 {
     // Types.
@@ -275,6 +272,7 @@ struct VerletListBuilder
         Kokkos::TeamPolicy<execution_space, CountNeighborsTag,
                            Kokkos::IndexType<int>,
                            Kokkos::Schedule<Kokkos::Dynamic>>;
+
     KOKKOS_INLINE_FUNCTION
     void
     operator()( const CountNeighborsTag &,
@@ -315,56 +313,18 @@ struct VerletListBuilder
                                 if ( cell_stencil.grid.minDistanceToPoint(
                                          x_p, y_p, z_p, i, j, k ) <= rsqr )
                                 {
+                                    std::size_t n_offset =
+                                        linked_cell_list.binOffset( i, j, k );
+                                    std::size_t num_n =
+                                        linked_cell_list.binSize( i, j, k );
+
                                     // Check the particles in this bin to see if
                                     // they are neighbors. If they are add to
                                     // the count for this bin.
                                     int cell_count = 0;
-                                    std::size_t a_offset =
-                                        linked_cell_list.binOffset( i, j, k );
-                                    Kokkos::parallel_reduce(
-                                        Kokkos::ThreadVectorRange(
-                                            team, linked_cell_list.binSize(
-                                                      i, j, k ) ),
-                                        [&]( const int n, int &local_count ) {
-                                            //  Get the true id of the candidate
-                                            //  neighbor.
-                                            std::size_t nid =
-                                                linked_cell_list.permutation(
-                                                    a_offset + n );
-
-                                            // Cache the candidate neighbor
-                                            // particle coordinates.
-                                            double x_n = position( nid, 0 );
-                                            double y_n = position( nid, 1 );
-                                            double z_n = position( nid, 2 );
-
-                                            // If this could be a valid
-                                            // neighbor, continue.
-                                            if ( NeighborDiscriminator<
-                                                     AlgorithmTag>::
-                                                     isValid( pid, x_p, y_p,
-                                                              z_p, nid, x_n,
-                                                              y_n, z_n ) )
-                                            {
-                                                // Calculate the distance
-                                                // between the particle and its
-                                                // candidate neighbor.
-                                                PositionValueType dx =
-                                                    x_p - x_n;
-                                                PositionValueType dy =
-                                                    y_p - y_n;
-                                                PositionValueType dz =
-                                                    z_p - z_n;
-                                                PositionValueType dist_sqr =
-                                                    dx * dx + dy * dy + dz * dz;
-
-                                                // If within the cutoff add to
-                                                // the count.
-                                                if ( dist_sqr <= rsqr )
-                                                    local_count += 1;
-                                            }
-                                        },
-                                        cell_count );
+                                    neighbor_reduce( team, pid, x_p, y_p, z_p,
+                                                     n_offset, num_n,
+                                                     cell_count, BuildOpTag() );
                                     stencil_count += cell_count;
                                 }
                             }
@@ -373,6 +333,64 @@ struct VerletListBuilder
                     } );
                 }
             } );
+    }
+
+    // Neighbor count team vector operator (only used for CSR lists).
+    KOKKOS_INLINE_FUNCTION void
+    neighbor_reduce( const typename CountNeighborsPolicy::member_type &team,
+                     const std::size_t pid, const double x_p, const double y_p,
+                     const double z_p, const int n_offset, const int num_n,
+                     int &cell_count, TeamVectorOpTag ) const
+    {
+        Kokkos::parallel_reduce(
+            Kokkos::ThreadVectorRange( team, num_n ),
+            [&]( const int n, int &local_count ) {
+                neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n, local_count );
+            },
+            cell_count );
+    }
+
+    // Neighbor count serial operator (only used for CSR lists).
+    KOKKOS_INLINE_FUNCTION
+    void neighbor_reduce( const typename CountNeighborsPolicy::member_type,
+                          const std::size_t pid, const double x_p,
+                          const double y_p, const double z_p,
+                          const int n_offset, const int num_n, int &cell_count,
+                          TeamOpTag ) const
+    {
+        for ( int n = 0; n < num_n; n++ )
+            neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n, cell_count );
+    }
+
+    // Neighbor count kernel
+    KOKKOS_INLINE_FUNCTION
+    void neighbor_kernel( const int pid, const double x_p, const double y_p,
+                          const double z_p, const int n_offset, const int n,
+                          int &local_count ) const
+    {
+        //  Get the true id of the candidate  neighbor.
+        std::size_t nid = linked_cell_list.permutation( n_offset + n );
+
+        // Cache the candidate neighbor particle coordinates.
+        double x_n = position( nid, 0 );
+        double y_n = position( nid, 1 );
+        double z_n = position( nid, 2 );
+
+        // If this could be a valid neighbor, continue.
+        if ( NeighborDiscriminator<AlgorithmTag>::isValid(
+                 pid, x_p, y_p, z_p, nid, x_n, y_n, z_n ) )
+        {
+            // Calculate the distance between the particle and its candidate
+            // neighbor.
+            PositionValueType dx = x_p - x_n;
+            PositionValueType dy = y_p - y_n;
+            PositionValueType dz = z_p - z_n;
+            PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
+
+            // If within the cutoff add to the count.
+            if ( dist_sqr <= rsqr )
+                local_count += 1;
+        }
     }
 
     // Process the CSR counts by computing offsets and allocating the neighbor
@@ -590,7 +608,8 @@ struct VerletListBuilder
   Neighbor list implementation most appropriate for somewhat regularly
   distributed particles due to the use of a Cartesian grid.
 */
-template <class DeviceType, class AlgorithmTag, class LayoutTag>
+template <class DeviceType, class AlgorithmTag, class LayoutTag,
+          class BuildTag = TeamVectorOpTag>
 class VerletList
 {
   public:
@@ -652,8 +671,9 @@ class VerletList
                                         int>::type * = 0 )
     {
         // Create a builder functor.
-        using builder_type = Impl::VerletListBuilder<DeviceType, PositionSlice,
-                                                     AlgorithmTag, LayoutTag>;
+        using builder_type =
+            Impl::VerletListBuilder<DeviceType, PositionSlice, AlgorithmTag,
+                                    LayoutTag, BuildTag>;
         builder_type builder( x, begin, end, neighborhood_radius,
                               cell_size_ratio, grid_min, grid_max, max_neigh );
 
@@ -703,11 +723,13 @@ class VerletList
 // Neighbor list interface implementation.
 //---------------------------------------------------------------------------//
 // CSR Data Layout
-template <class MemorySpace, class AlgorithmTag>
-class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>>
+template <class MemorySpace, class AlgorithmTag, class BuildTag>
+class NeighborList<
+    VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>>
 {
   public:
-    using list_type = VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>;
+    using list_type =
+        VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>;
     using memory_space = MemorySpace;
 
     // Get the total number of neighbors (maximum size of CSR list).
@@ -739,12 +761,14 @@ class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR>>
 
 //---------------------------------------------------------------------------//
 // 2D Data Layout
-template <class MemorySpace, class AlgorithmTag>
-class NeighborList<VerletList<MemorySpace, AlgorithmTag, VerletLayout2D>>
+template <class MemorySpace, class AlgorithmTag, class BuildTag>
+class NeighborList<
+    VerletList<MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag>>
 {
   public:
     using memory_space = MemorySpace;
-    using list_type = VerletList<MemorySpace, AlgorithmTag, VerletLayout2D>;
+    using list_type =
+        VerletList<MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag>;
 
     // Get the maximum number of neighbors per particle.
     KOKKOS_INLINE_FUNCTION
