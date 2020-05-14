@@ -1,0 +1,11 @@
+@PACKAGE_INIT@
+
+set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR} ${CMAKE_MODULE_PATH})
+
+find_package(MPI REQUIRED)
+find_package(Kokkos 3 REQUIRED)
+find_package(HYPRE)
+find_package(Heffte)
+
+include("${CMAKE_CURRENT_LIST_DIR}/CajitaTargets.cmake")
+check_required_components(Cajita)
