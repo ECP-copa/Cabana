@@ -49,8 +49,6 @@ before_script:
 
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
     packages:
       - doxygen
       - libhwloc-dev
