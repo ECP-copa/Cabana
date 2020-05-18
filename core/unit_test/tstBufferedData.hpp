@@ -163,6 +163,8 @@ namespace Test
             // TODO: set this place holder
             int slice_list = 0;
 
+            //Cabana::make_list<AoSoA_t::member_types> a;
+
             // Overwrite the data in a buffered way
             Cabana::buffered_parallel_for(
                     Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
@@ -179,34 +181,43 @@ namespace Test
                     //auto buffered_access = buffered_aosoa.access();
                     auto buffered_access = buffered_aosoa->access();
 
-                    auto slice_0 = Cabana::slice<0>(buffered_access.aosoa);
-                    auto slice_1 = Cabana::slice<1>(buffered_access.aosoa);
-                    auto slice_2 = Cabana::slice<2>(buffered_access.aosoa);
-                    auto slice_3 = Cabana::slice<3>(buffered_access.aosoa);
+                    //auto slice_0 = Cabana::slice<0>(buffered_access.aosoa);
+                    //auto slice_1 = Cabana::slice<1>(buffered_access.aosoa);
+                    //auto slice_2 = Cabana::slice<2>(buffered_access.aosoa);
+                    //auto slice_3 = Cabana::slice<3>(buffered_access.aosoa);
 
                     // Member 0.
                     for ( int i = 0; i < dim_1; ++i )
                     {
-                        for ( int j = 0; j < dim_2; ++j )
-                        {
-                            for ( int k = 0; k < dim_3; ++k )
-                            {
+                        int j = 0; int k = 0;
+                        //for ( int j = 0; j < dim_2; ++j )
+                        //{
+                            //for ( int k = 0; k < dim_3; ++k )
+                            //{
                                 printf("s %d a %d i %d j %d k %d \n", s, a, i, j, k);
-                                slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
+
+                                //const auto& t = buffered_access.aosoa.getTuple(i);
+                                    //printf("tuple 0 %e \n", Cabana::get<0>(t, i, j, k) );
+
+                                const auto slice_0 = buffered_aosoa->_Get<0>();
+                                slice_0.view()( 0, 0, 0, 0, 0 ) = fval * (i+j+k);
+                                //slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
+
+                                //slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
                                 //buffered_asoa->slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
                                 //slice_view_0( s, a, i, j, k ) = fval * (i+j+k);
-                            }
-                        }
+                            //}
+                        //}
                     }
 
-                    /* Disabling due to cheating the return type of the slice list
+                    /*
                     // Member 1.
-                    slice_list[1].access( s, a ) = ival;
+                    slice_1.access( s, a ) = ival;
 
                     // Member 2.
                     for ( int i = 0; i < dim_1; ++i )
                     {
-                        slice_list[2].access( s, a, i ) = dval * i;
+                        slice_2.access( s, a, i ) = dval * i;
                     }
 
                     // Member 3.
@@ -214,7 +225,7 @@ namespace Test
                     {
                         for ( int j = 0; j < dim_2; ++j )
                         {
-                            slice_list[3].access( s, a, i, j ) = dval * (i+j);
+                            slice_3.access( s, a, i, j ) = dval * (i+j);
                         }
                     }
                     */

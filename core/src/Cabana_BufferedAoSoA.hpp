@@ -12,6 +12,8 @@
 #ifndef CABANA_BUFFEREDAOSOA_HPP
 #define CABANA_BUFFEREDAOSOA_HPP
 
+#include <tuple>
+
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
 
@@ -20,6 +22,52 @@
 
 namespace Cabana
 {
+
+    // TODO: now I found out about member_slice_type ewe can just find the size
+    // of and do it that way, no need for such a full blown tuple unroll, but
+    // since I have this and it works I'm keeping it for now
+
+    // TODO: this could probably be a std::index_sequence?
+    // Contains the actual value for one item in the tuple.
+    template<typename AoSoA_t, std::size_t i, typename Item>
+        struct TupleLeaf {
+            //Item value;
+            using value_t = typename AoSoA_t::member_slice_type<i>;
+            value_t value;
+            TupleLeaf() {
+                std::cout << typeid(value).name() << std::endl;
+            };
+        };
+
+    // TupleImpl is a proxy for the final class that has an extra template parameter `i`.
+    template<typename AoSoA_t, std::size_t i, typename... Items> struct TupleImpl;
+
+    // Base case: empty tuple
+    template<typename AoSoA_t, std::size_t i> struct TupleImpl<AoSoA_t, i>{};
+
+    // Recursive specialization
+    template<typename AoSoA_t, std::size_t i, typename HeadItem, typename... TailItems>
+        struct TupleImpl<AoSoA_t, i, HeadItem, TailItems...> :
+        public TupleLeaf<AoSoA_t, i, HeadItem>, // This adds a `value` member of type HeadItem
+               public TupleImpl<AoSoA_t, i + 1, TailItems...> // This recurses
+    {
+    };
+
+
+    template<typename AoSoA_t, typename... Items>
+        struct _Tuple : TupleImpl<AoSoA_t, 0, Items...>
+    {
+        //public: _Tuple() { }
+    };
+
+    template<typename AoSoA_t, typename... Itmes> struct UnpackTuple;
+    template<typename AoSoA_t, typename... Items> struct UnpackTuple<AoSoA_t, MemberTypes<Items...>>
+        : _Tuple<AoSoA_t, Items...>
+    {
+        public:
+          static constexpr auto length = sizeof...(Items);
+    };
+
     template<
         int max_buffered_tuples,
         int buffer_count,
@@ -121,6 +169,27 @@ namespace Cabana
 
             using AoSoA_type = AoSoA_t;
 
+            UnpackTuple<AoSoA_t, typename AoSoA_t::member_types> slice_tuple;
+            //UnpackTuple<typename AoSoA_t::member_slice_type> slice_tuple2;
+
+
+            // Obtain a reference to i-th item in a tuple
+            // TODO: this taking AoSoA_t is obviously stupid
+            template<typename _AoSoA_t, std::size_t i, typename HeadItem, typename... TailItems>
+                KOKKOS_INLINE_FUNCTION
+                typename TupleLeaf<_AoSoA_t, i, HeadItem>::value_t&
+                Get(TupleImpl<_AoSoA_t, i, HeadItem, TailItems...>& tuple) {
+                    return slice_tuple.TupleLeaf<AoSoA_t, i, HeadItem>::value;
+                }
+
+            template<std::size_t i>
+                KOKKOS_INLINE_FUNCTION
+                typename AoSoA_t::member_slice_type<i>
+                _Get() {
+                    return Get<AoSoA_t, i>(slice_tuple);
+                }
+
+
             // We may we want to override the user on this
 
             // TODO: private?
@@ -148,7 +217,19 @@ namespace Cabana
                 {
                     internal_buffers[i].resize(buffer_size);
                 }
+
+                // TODO: delete
+                // TODO: better getter interface
+                //auto& s0 = Get<0>(slice_tuple);
+                //s0[0][0][0] = 1.1;
+
+                std::cout << slice_tuple.length << std::endl;
             }
+
+            //const int M = typename AoSoA_t::member_types::size;
+            //const int N4 = 4;
+            //using t = typename tuple_of<N4, double>;
+
 
             /** @brief Helper to access the number of buffers which exist.
              * Makes no comment about the state or content of the buffers
@@ -201,6 +282,31 @@ namespace Cabana
 
                 //slice_0 = Cabana::slice<0>(internal_buffers[(*last_filled_buffer)]);
                 printf("Current buffer = %p \n", &internal_buffers[(*last_filled_buffer)] );
+
+                // TODO: I'm not sure how we can loop over this at compile time
+                // without templating this function
+                //constexpr size_t M = decltype(slice_tuple)::length;
+                //if (constexpr (M>0)) {
+                   Get<AoSoA_t, 0>(slice_tuple) = Cabana::slice<0>(
+                            internal_buffers[(*last_filled_buffer)]
+                   );
+                   Get<AoSoA_t, 1>(slice_tuple) = Cabana::slice<1>(
+                            internal_buffers[(*last_filled_buffer)]
+                   );
+                   Get<AoSoA_t, 2>(slice_tuple) = Cabana::slice<2>(
+                            internal_buffers[(*last_filled_buffer)]
+                   );
+                   Get<AoSoA_t, 3>(slice_tuple) = Cabana::slice<3>(
+                            internal_buffers[(*last_filled_buffer)]
+                   );
+
+                   //Get<AoSoA_t, 4>(slice_tuple) = Cabana::slice<4>(
+                            //internal_buffers[(*last_filled_buffer)]
+                   //);
+                   //Get<AoSoA_t, 5>(slice_tuple) = Cabana::slice<5>(
+                            //internal_buffers[(*last_filled_buffer)]
+                   //);
+                //}
             }
 
             /*
