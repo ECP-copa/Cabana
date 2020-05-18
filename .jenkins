@@ -1,4 +1,7 @@
 pipeline {
+    triggers {
+        issueCommentTrigger('.*test this please.*')
+    }
     agent none
 
     stages {
