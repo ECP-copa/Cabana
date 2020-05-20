@@ -98,11 +98,12 @@ namespace Cabana
     // 4) User can provide a hint for ideal number of buffers to chunk the data into while buffering
     template<
         int max_buffered_tuples,
-        int requested_buffer_count, // TODO: this should probably be an optional hint, and not be prescriptive
-        class Exec_Space, // TODO: we can possibly infer this somehow
+        int requested_buffer_count, // TODO: should this be an optional hint, and not be prescriptive
+        class Exec_Space, // TODO: we can infer this?
         class AoSoA_t
     >
     class BufferedAoSoA {
+        // TODO: make things private
         public:
 
             using AoSoA_type = AoSoA_t;
@@ -110,7 +111,16 @@ namespace Cabana
             using slice_tuple_t = UnpackTuple<AoSoA_t, typename AoSoA_t::member_types>;
             slice_tuple_t slice_tuple;
 
-            // Obtain a reference to i-th item in a tuple
+            // TODO: this has nothing to do with the class, only the
+            // specialized get_slice does
+            /**
+             * @brief Underlying generic style getter to obtain a reference to
+             * i-th item in the slice tuple
+             *
+             * @param tuple The tuple to access from
+             *
+             * @return The i-th value in the tuple
+             */
             template<typename _AoSoA_t, std::size_t i, typename HeadItem, typename... TailItems>
                 KOKKOS_INLINE_FUNCTION
                 typename TupleLeaf<_AoSoA_t, i, HeadItem>::value_t&
@@ -118,35 +128,36 @@ namespace Cabana
                     return tuple.TupleLeaf<AoSoA_t, i, HeadItem>::value;
                 }
 
+            /**
+             * @brief Getter to access the slices this class generates for the
+             * user
+             *
+             * @return Valid slice for the current buffer at position i
+             */
             template<std::size_t i>
                 KOKKOS_INLINE_FUNCTION
-                typename AoSoA_t::member_slice_type<i>
+                typename AoSoA_t::member_slice_type<i>&
                 get_slice() {
                     return _Get<AoSoA_t, i>(slice_tuple);
                 }
 
-
-            // We may we want to override the user on this
-
-            // TODO: private?
-            // TODO: non-pointer may be preferable to pointer here but implies some extra copy construction? It's not too bad as we can just resize()
             // TODO: should this be a more heap based / dynamic allocation?
-            // TODO: we should place these in the "target" memory space
+            // TODO: should we place these in the "target" memory space, not
+            // the default?
             AoSoA_t internal_buffers[requested_buffer_count];
 
-            // TODO: can we make this a nice auto detected unpack on the aosoa type?
-            //template<typename T1, typename T2>
-            //BufferedAoSoA(Cabana::AoSoA<T1, T2> original_view_in) :
             BufferedAoSoA(AoSoA_t original_view_in) :
                 original_view(original_view_in),
                 buffer_size(max_buffered_tuples),
                 slice_tuple(internal_buffers[0])
             {
-                // TODO: we could probably do an implicit conversion here like // ScatterView does
-                // return original_view
-
+                // TODO: this is only used internally now, and can likely be a
+                // non-pointers
                 last_filled_buffer = new int(1);
                 *last_filled_buffer = -1;
+
+                // TODO: We may we want to override the user on their requested
+                // values if they don't make sense? Both num_buffers and buffer_size
                 num_buffers = requested_buffer_count;
 
                 // Resize the buffers so we know they can hold enough
@@ -154,19 +165,7 @@ namespace Cabana
                 {
                     internal_buffers[i].resize(buffer_size);
                 }
-
-                // TODO: delete
-                // TODO: better getter interface
-                //auto& s0 = Get<0>(slice_tuple);
-                //s0[0][0][0] = 1.1;
-
-                std::cout << slice_tuple.length << std::endl;
             }
-
-            //const int M = typename AoSoA_t::member_types::size;
-            //const int N4 = 4;
-            //using t = typename tuple_of<N4, double>;
-
 
             /** @brief Helper to access the number of buffers which exist.
              * Makes no comment about the state or content of the buffers
@@ -178,7 +177,6 @@ namespace Cabana
                 return num_buffers;
             }
 
-            // TODO: this
             /**
              * @brief Copy the data from the last buffer to the "real data", at
              * location start_index
@@ -206,59 +204,25 @@ namespace Cabana
                     (*last_filled_buffer) = 0;
                 }
 
-               // Copy from the main memory store into the "current" buffer
                 // TODO: does this imply the need for a subview so the sizes
                 // match?
-                Cabana::deep_copy_partial_src(
-                    internal_buffers[(*last_filled_buffer)],
-                    original_view,
-                    0, //to_index,
-                    start_index,
-                    buffer_size
-                );
 
-                //slice_0 = Cabana::slice<0>(internal_buffers[(*last_filled_buffer)]);
+                // Copy from the main memory store into the "current" buffer
+                Cabana::deep_copy_partial_src(
+                        internal_buffers[(*last_filled_buffer)],
+                        original_view,
+                        0, //to_index,
+                        start_index,
+                        buffer_size
+                        );
+
+                // TODO: delete debug print
                 printf("Current buffer = %p \n", &internal_buffers[(*last_filled_buffer)] );
 
-
-                // TODO: I'm not sure how we can loop over this at compile time
-                // without templating this function
-                //constexpr size_t M = decltype(slice_tuple)::length;
-                //if (constexpr (M>0)) {
-                   //Get<AoSoA_t, 0>(slice_tuple) = Cabana::slice<0>(
-                            //internal_buffers[(*last_filled_buffer)]
-                   //);
-                   //Get<AoSoA_t, 1>(slice_tuple) = Cabana::slice<1>(
-                            //internal_buffers[(*last_filled_buffer)]
-                   //);
-                   //Get<AoSoA_t, 2>(slice_tuple) = Cabana::slice<2>(
-                            //internal_buffers[(*last_filled_buffer)]
-                   //);
-                   //Get<AoSoA_t, 3>(slice_tuple) = Cabana::slice<3>(
-                            //internal_buffers[(*last_filled_buffer)]
-                   //);
-
-                   slice_tuple = slice_tuple_t(internal_buffers[(*last_filled_buffer)]);
-
-                   //Get<AoSoA_t, 4>(slice_tuple) = Cabana::slice<4>(
-                            //internal_buffers[(*last_filled_buffer)]
-                   //);
-                   //Get<AoSoA_t, 5>(slice_tuple) = Cabana::slice<5>(
-                            //internal_buffers[(*last_filled_buffer)]
-                   //);
-                //}
+                // Update the slice tuple to have slices based on the current buffer
+                slice_tuple = slice_tuple_t(internal_buffers[(*last_filled_buffer)]);
             }
 
-            /*
-            KOKKOS_FORCEINLINE_FUNCTION // TODO: check this is the right thing to do?
-            BufferedAoSoAAccess<max_buffered_tuples, requested_buffer_count, Exec_Space, AoSoA_type> access_old() const
-            {
-                return BufferedAoSoAAccess<max_buffered_tuples, requested_buffer_count, Exec_Space, AoSoA_type>(*this);
-            }
-            */
-
-            // TODO: make private once we figured the above BufferedAoSoAAccess
-            // `operator()` out
             AoSoA_t& original_view;
 
             /**
@@ -278,16 +242,10 @@ namespace Cabana
              */
             int num_buffers;
 
+            /**
+             * @brief Number of particles in each temporary buffer
+             */
             int buffer_size;
-
-            // TODO: array is likely the wrong type here...
-            // TODO: this hard coded 0 is obviously wrong..
-            static constexpr std::size_t num_slices = AoSoA_t::member_types::size;
-            //using slice_return_t = std::array<
-                //typename AoSoA_t::template member_slice_type<0>,
-                //num_slices>;
-            using slice_zt = typename AoSoA_t::template member_slice_type<0>;
-            using slice_return_t = std::array<slice_zt,num_slices>;
 
         private:
     };

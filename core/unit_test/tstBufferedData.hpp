@@ -185,10 +185,6 @@ namespace Test
                     const auto slice_1 = buffered_aosoa.get_slice<1>();
                     const auto slice_2 = buffered_aosoa.get_slice<2>();
                     const auto slice_3 = buffered_aosoa.get_slice<3>();
-                    //auto slice_0 = Cabana::slice<0>(buffered_access.aosoa);
-                    //auto slice_1 = Cabana::slice<1>(buffered_access.aosoa);
-                    //auto slice_2 = Cabana::slice<2>(buffered_access.aosoa);
-                    //auto slice_3 = Cabana::slice<3>(buffered_access.aosoa);
 
                     // Member 0.
                     for ( int i = 0; i < dim_1; ++i )
@@ -197,16 +193,7 @@ namespace Test
                         {
                             for ( int k = 0; k < dim_3; ++k )
                             {
-                                //printf("s %d a %d i %d j %d k %d \n", s, a, i, j, k);
-                                //const auto& t = buffered_access.aosoa.getTuple(i);
-                                    //printf("tuple 0 %e \n", Cabana::get<0>(t, i, j, k) );
-
-                                //slice_0.view()( 0, 0, 0, 0, 0 ) = fval * (i+j+k);
                                 slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
-
-                                //slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
-                                //buffered_asoa->slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
-                                //slice_view_0( s, a, i, j, k ) = fval * (i+j+k);
                             }
                         }
                     }
