@@ -170,7 +170,7 @@ namespace Test
                     Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
                     *buffered_aosoa,
                     slice_list,
-                    KOKKOS_LAMBDA( const int s, const int a )
+                    KOKKOS_LAMBDA( const int s, const int a, buf_t buffered_aosoa )
                 {
                     // We have to call access and slice in the loop
 
@@ -179,8 +179,12 @@ namespace Test
                     // it safely. The `buffered_aosoa` may get captured by
                     // reference, and then not be valid in a GPU context
                     //auto buffered_access = buffered_aosoa.access();
-                    auto buffered_access = buffered_aosoa->access();
+                    //auto buffered_access = buffered_aosoa.access();
 
+                    const auto slice_0 = buffered_aosoa._Get<0>();
+                    const auto slice_1 = buffered_aosoa._Get<1>();
+                    const auto slice_2 = buffered_aosoa._Get<2>();
+                    const auto slice_3 = buffered_aosoa._Get<3>();
                     //auto slice_0 = Cabana::slice<0>(buffered_access.aosoa);
                     //auto slice_1 = Cabana::slice<1>(buffered_access.aosoa);
                     //auto slice_2 = Cabana::slice<2>(buffered_access.aosoa);
@@ -189,28 +193,24 @@ namespace Test
                     // Member 0.
                     for ( int i = 0; i < dim_1; ++i )
                     {
-                        int j = 0; int k = 0;
-                        //for ( int j = 0; j < dim_2; ++j )
-                        //{
-                            //for ( int k = 0; k < dim_3; ++k )
-                            //{
-                                printf("s %d a %d i %d j %d k %d \n", s, a, i, j, k);
-
+                        for ( int j = 0; j < dim_2; ++j )
+                        {
+                            for ( int k = 0; k < dim_3; ++k )
+                            {
+                                //printf("s %d a %d i %d j %d k %d \n", s, a, i, j, k);
                                 //const auto& t = buffered_access.aosoa.getTuple(i);
                                     //printf("tuple 0 %e \n", Cabana::get<0>(t, i, j, k) );
 
-                                const auto slice_0 = buffered_aosoa->_Get<0>();
-                                slice_0.view()( 0, 0, 0, 0, 0 ) = fval * (i+j+k);
-                                //slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
+                                //slice_0.view()( 0, 0, 0, 0, 0 ) = fval * (i+j+k);
+                                slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
 
                                 //slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
                                 //buffered_asoa->slice_0.access( s, a, i, j, k ) = fval * (i+j+k);
                                 //slice_view_0( s, a, i, j, k ) = fval * (i+j+k);
-                            //}
-                        //}
+                            }
+                        }
                     }
 
-                    /*
                     // Member 1.
                     slice_1.access( s, a ) = ival;
 
@@ -228,7 +228,6 @@ namespace Test
                             slice_3.access( s, a, i, j ) = dval * (i+j);
                         }
                     }
-                    */
                 },
                 "test buffered for"
             );

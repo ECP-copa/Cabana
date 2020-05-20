@@ -20,6 +20,39 @@
 namespace Cabana
 {
 
+    template<class FunctorType, class extra_functor_arg_t, int VectorLength, class ... ExecParameters>
+        inline void custom_simd_parallel_for(
+                const SimdPolicy<VectorLength,ExecParameters...>& exec_policy,
+                const FunctorType& functor,
+                const extra_functor_arg_t& f_arg,
+                const std::string& str = "" )
+        {
+            using simd_policy = SimdPolicy<VectorLength,ExecParameters...>;
+
+            using work_tag = typename simd_policy::work_tag;
+
+            using team_policy = typename simd_policy::base_type;
+
+            using index_type = typename team_policy::index_type;
+
+            Kokkos::parallel_for(
+                    str,
+                    dynamic_cast<const team_policy&>(exec_policy),
+                    KOKKOS_LAMBDA( const typename team_policy::member_type& team )
+                    {
+                    index_type s = team.league_rank() + exec_policy.structBegin();
+                    Kokkos::parallel_for(
+                            Kokkos::ThreadVectorRange( team,
+                                exec_policy.arrayBegin(s),
+                                exec_policy.arrayEnd(s)),
+                            [&]( const index_type a )
+                            {
+                            //Impl::functorTagDispatch<work_tag>(functor,s,a);
+                                functor(s,a, f_arg);
+                            });
+                    });
+        }
+
     // Requirements:
     // 1) This must be user callable and seamlessly handle the data buffering
     // 2) It must be able to accept 2D (simd) and 1D (Kokkos) loops/ range policies
@@ -76,8 +109,16 @@ namespace Cabana
                 std::endl;
 
             buffered_aosoa.load_next_buffer(begin);
+
             simd_policy policy(begin, end);
-            Cabana::simd_parallel_for( policy, functor, str );
+
+            auto f = KOKKOS_LAMBDA( const int s, const int a, BufferedAoSoA_t buffered_aosoa )
+            {
+                functor( s, a, buffered_aosoa );
+            };
+
+            custom_simd_parallel_for( policy, f buffered_aosoa, str );
+            //Cabana::simd_parallel_for( policy, functor, str );
 
             Kokkos::fence();
 
