@@ -34,16 +34,20 @@ namespace Cabana
             //Item value;
             using value_t = typename AoSoA_t::member_slice_type<i>;
             value_t value;
-            TupleLeaf() {
-                std::cout << typeid(value).name() << std::endl;
-            };
+            TupleLeaf(AoSoA_t& aosoa) {
+                //std::cout << typeid(value).name() << std::endl;
+                value = Cabana::slice<i>(aosoa);
+            }
+            TupleLeaf() { std::cout << "blank" << std::endl; }
         };
 
     // TupleImpl is a proxy for the final class that has an extra template parameter `i`.
     template<typename AoSoA_t, std::size_t i, typename... Items> struct TupleImpl;
 
     // Base case: empty tuple
-    template<typename AoSoA_t, std::size_t i> struct TupleImpl<AoSoA_t, i>{};
+    template<typename AoSoA_t, std::size_t i> struct TupleImpl<AoSoA_t, i>{
+        TupleImpl(AoSoA_t& aosoa) { }
+    };
 
     // Recursive specialization
     template<typename AoSoA_t, std::size_t i, typename HeadItem, typename... TailItems>
@@ -51,13 +55,16 @@ namespace Cabana
         public TupleLeaf<AoSoA_t, i, HeadItem>, // This adds a `value` member of type HeadItem
                public TupleImpl<AoSoA_t, i + 1, TailItems...> // This recurses
     {
+        TupleImpl(AoSoA_t& aosoa) :
+            TupleLeaf<AoSoA_t, i, HeadItem>( aosoa ),
+            TupleImpl<AoSoA_t, i+1, TailItems...>( aosoa ) { }
     };
 
 
     template<typename AoSoA_t, typename... Items>
         struct _Tuple : TupleImpl<AoSoA_t, 0, Items...>
     {
-        //public: _Tuple() { }
+        _Tuple(AoSoA_t& aosoa) : TupleImpl<AoSoA_t, 0, Items...>(aosoa) { }
     };
 
     template<typename AoSoA_t, typename... Itmes> struct UnpackTuple;
@@ -66,6 +73,7 @@ namespace Cabana
     {
         public:
           static constexpr auto length = sizeof...(Items);
+          UnpackTuple(AoSoA_t& aosoa) : _Tuple<AoSoA_t, Items...>(aosoa) { }
     };
 
     template<
@@ -169,7 +177,8 @@ namespace Cabana
 
             using AoSoA_type = AoSoA_t;
 
-            UnpackTuple<AoSoA_t, typename AoSoA_t::member_types> slice_tuple;
+            using slice_tuple_t = UnpackTuple<AoSoA_t, typename AoSoA_t::member_types>;
+            slice_tuple_t slice_tuple;
             //UnpackTuple<typename AoSoA_t::member_slice_type> slice_tuple2;
 
 
@@ -203,7 +212,8 @@ namespace Cabana
             //BufferedAoSoA(Cabana::AoSoA<T1, T2> original_view_in) :
             BufferedAoSoA(AoSoA_t original_view_in) :
                 original_view(original_view_in),
-                buffer_size(max_buffered_tuples)
+                buffer_size(max_buffered_tuples),
+                slice_tuple(internal_buffers[0])
             {
                 // TODO: we could probably do an implicit conversion here like // ScatterView does
                 // return original_view
@@ -283,22 +293,25 @@ namespace Cabana
                 //slice_0 = Cabana::slice<0>(internal_buffers[(*last_filled_buffer)]);
                 printf("Current buffer = %p \n", &internal_buffers[(*last_filled_buffer)] );
 
+
                 // TODO: I'm not sure how we can loop over this at compile time
                 // without templating this function
                 //constexpr size_t M = decltype(slice_tuple)::length;
                 //if (constexpr (M>0)) {
-                   Get<AoSoA_t, 0>(slice_tuple) = Cabana::slice<0>(
-                            internal_buffers[(*last_filled_buffer)]
-                   );
-                   Get<AoSoA_t, 1>(slice_tuple) = Cabana::slice<1>(
-                            internal_buffers[(*last_filled_buffer)]
-                   );
-                   Get<AoSoA_t, 2>(slice_tuple) = Cabana::slice<2>(
-                            internal_buffers[(*last_filled_buffer)]
-                   );
-                   Get<AoSoA_t, 3>(slice_tuple) = Cabana::slice<3>(
-                            internal_buffers[(*last_filled_buffer)]
-                   );
+                   //Get<AoSoA_t, 0>(slice_tuple) = Cabana::slice<0>(
+                            //internal_buffers[(*last_filled_buffer)]
+                   //);
+                   //Get<AoSoA_t, 1>(slice_tuple) = Cabana::slice<1>(
+                            //internal_buffers[(*last_filled_buffer)]
+                   //);
+                   //Get<AoSoA_t, 2>(slice_tuple) = Cabana::slice<2>(
+                            //internal_buffers[(*last_filled_buffer)]
+                   //);
+                   //Get<AoSoA_t, 3>(slice_tuple) = Cabana::slice<3>(
+                            //internal_buffers[(*last_filled_buffer)]
+                   //);
+
+                   slice_tuple = slice_tuple_t(internal_buffers[(*last_filled_buffer)]);
 
                    //Get<AoSoA_t, 4>(slice_tuple) = Cabana::slice<4>(
                             //internal_buffers[(*last_filled_buffer)]

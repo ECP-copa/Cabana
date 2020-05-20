@@ -117,7 +117,7 @@ namespace Cabana
                 functor( s, a, buffered_aosoa );
             };
 
-            custom_simd_parallel_for( policy, f buffered_aosoa, str );
+            custom_simd_parallel_for( policy, f, buffered_aosoa, str );
             //Cabana::simd_parallel_for( policy, functor, str );
 
             Kokkos::fence();
