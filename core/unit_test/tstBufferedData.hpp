@@ -181,10 +181,10 @@ namespace Test
                     //auto buffered_access = buffered_aosoa.access();
                     //auto buffered_access = buffered_aosoa.access();
 
-                    const auto slice_0 = buffered_aosoa._Get<0>();
-                    const auto slice_1 = buffered_aosoa._Get<1>();
-                    const auto slice_2 = buffered_aosoa._Get<2>();
-                    const auto slice_3 = buffered_aosoa._Get<3>();
+                    const auto slice_0 = buffered_aosoa.get_slice<0>();
+                    const auto slice_1 = buffered_aosoa.get_slice<1>();
+                    const auto slice_2 = buffered_aosoa.get_slice<2>();
+                    const auto slice_3 = buffered_aosoa.get_slice<3>();
                     //auto slice_0 = Cabana::slice<0>(buffered_access.aosoa);
                     //auto slice_1 = Cabana::slice<1>(buffered_access.aosoa);
                     //auto slice_2 = Cabana::slice<2>(buffered_access.aosoa);

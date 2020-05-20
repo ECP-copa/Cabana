@@ -17,39 +17,41 @@
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
 
-// TODO: ultimatley this should be less AoSoA centric and accept a view (which may affect how we call deep copy etc)
-// TODO: rename to BufferAoSoA or similar?
-
 namespace Cabana
 {
+    // TODO: this tuple implementation could possibly be a std::index_sequence
+    // over Cabana::member_slice_type and be simplified?
 
-    // TODO: now I found out about member_slice_type ewe can just find the size
-    // of and do it that way, no need for such a full blown tuple unroll, but
-    // since I have this and it works I'm keeping it for now
-
-    // TODO: this could probably be a std::index_sequence?
-    // Contains the actual value for one item in the tuple.
+    /**
+     * @brief Contains the value for one item in the tuple.
+     *
+     * Here this is specialized to be a slice, where it is initialized based on
+     * the given aosoa. The extension to remove this and make it general is
+     * trivial
+     */
     template<typename AoSoA_t, std::size_t i, typename Item>
         struct TupleLeaf {
-            //Item value;
             using value_t = typename AoSoA_t::member_slice_type<i>;
             value_t value;
+
             TupleLeaf(AoSoA_t& aosoa) {
-                //std::cout << typeid(value).name() << std::endl;
                 value = Cabana::slice<i>(aosoa);
             }
-            TupleLeaf() { std::cout << "blank" << std::endl; }
         };
 
-    // TupleImpl is a proxy for the final class that has an extra template parameter `i`.
     template<typename AoSoA_t, std::size_t i, typename... Items> struct TupleImpl;
 
-    // Base case: empty tuple
+    /**
+     * @brief Base case for an empty tuple
+     */
     template<typename AoSoA_t, std::size_t i> struct TupleImpl<AoSoA_t, i>{
         TupleImpl(AoSoA_t& aosoa) { }
     };
 
-    // Recursive specialization
+    /**
+     * @brief Recursive specialization, unrolls the contents and creates the
+     * leaf nodes
+     */
     template<typename AoSoA_t, std::size_t i, typename HeadItem, typename... TailItems>
         struct TupleImpl<AoSoA_t, i, HeadItem, TailItems...> :
         public TupleLeaf<AoSoA_t, i, HeadItem>, // This adds a `value` member of type HeadItem
@@ -60,13 +62,24 @@ namespace Cabana
             TupleImpl<AoSoA_t, i+1, TailItems...>( aosoa ) { }
     };
 
-
+    /**
+     * @brief High level class for generic slice holding tuple
+     *
+     * We pass the AoSoA down through the hierarchy so the leaf can initialize
+     * the slice value. This is important, as it lets us unroll the types at
+     * compile time. Looping over the contents of the tuple is tricky, as we
+     * need to use the index as a type. If we don't like this tight c
+     */
     template<typename AoSoA_t, typename... Items>
         struct _Tuple : TupleImpl<AoSoA_t, 0, Items...>
     {
         _Tuple(AoSoA_t& aosoa) : TupleImpl<AoSoA_t, 0, Items...>(aosoa) { }
     };
 
+    /**
+     * @brief Helper class to support the use of a specialized tuples which is
+     * able to unpack Cabana::MemberTypes from an AoSoA
+     */
     template<typename AoSoA_t, typename... Itmes> struct UnpackTuple;
     template<typename AoSoA_t, typename... Items> struct UnpackTuple<AoSoA_t, MemberTypes<Items...>>
         : _Tuple<AoSoA_t, Items...>
@@ -75,88 +88,6 @@ namespace Cabana
           static constexpr auto length = sizeof...(Items);
           UnpackTuple(AoSoA_t& aosoa) : _Tuple<AoSoA_t, Items...>(aosoa) { }
     };
-
-    template<
-        int max_buffered_tuples,
-        int buffer_count,
-        class Exec_Space,
-        class AoSoA_t
-    > class BufferedAoSoA;
-
-    /**
-     * @brief Data buffer accessor that gives access to the current buffer
-     */
-    template<
-        class AoSoA_t
-    >
-    class BufferedAoSoAAccess {
-        // TODO: populate
-        // TODO: this needs to know which buffer we're in to do correct offsetting
-
-        public:
-            // TODO: how complex can the return type be? Likely it's just a pointer part way into an AoSoA?
-            using AoSoA_type = AoSoA_t;
-            using value_type = typename AoSoA_type::soa_type;
-
-            KOKKOS_INLINE_FUNCTION
-            BufferedAoSoAAccess(const AoSoA_type& aosoa_in) : aosoa(aosoa_in)
-            {
-                // Intentionally empty
-            }
-
-            // TODO: Kokkos rebuilds this from the underlying params, eg:
-            //  typedef ScatterView<DataType, Layout, ExecSpace, Op, ScatterNonDuplicated, contribution> view_type;
-            template <typename ... Args>
-            KOKKOS_FORCEINLINE_FUNCTION
-            value_type operator()(Args ... args) {
-                // TODO: this doesn't handle the offset
-                return aosoa.at(args...);
-            }
-            const AoSoA_type& aosoa;
-        private:
-    };
-
-    /**
-     * @brief Data buffer accessor that gives access to some wrapped version of the BufferedAoSoA
-     */
-    /*
-    // TODO: this can probably be deleted
-    template<
-        int max_buffered_tuples,
-        int buffer_count,
-        class Exec_Space,
-        class AoSoA_t
-    >
-    class BufferedAoSoAAccess {
-        // TODO: populate
-        // TODO: this needs to know which buffer we're in to do correct offsetting
-
-        public:
-            // TODO: how complex can the return type be? Likely it's just a pointer part way into an AoSoA?
-            using BufferedAoSoA_t = BufferedAoSoA<max_buffered_tuples, buffer_count, Exec_Space, AoSoA_t>;
-            using AoSoA_type = AoSoA_t;
-            using value_type = typename AoSoA_type::soa_type;
-
-            BufferedAoSoAAccess(const BufferedAoSoA_t& data_buffer_in) :
-                data_buffer(data_buffer_in),
-                aosoa(data_buffer_in.original_view) // TODO: we can likely remove this
-            {
-                // Intentionally empty
-            }
-
-            // TODO: Kokkos rebuilds this from the underlying params, eg:
-            //  typedef ScatterView<DataType, Layout, ExecSpace, Op, ScatterNonDuplicated, contribution> view_type;
-            template <typename ... Args>
-            KOKKOS_FORCEINLINE_FUNCTION
-            value_type operator()(Args ... args) {
-                // TODO: this doesn't handle the offset
-                return aosoa.at(args...);
-            }
-        private:
-            const BufferedAoSoA_t& data_buffer;
-            AoSoA_type& aosoa;
-    };
-    */
 
     // Requirements:
     // 1) User must be able to specify the memory space the data will be "buffered" into
@@ -171,31 +102,27 @@ namespace Cabana
         class Exec_Space, // TODO: we can possibly infer this somehow
         class AoSoA_t
     >
-    class BufferedAoSoA { // TODO: fix this backwards naming between class and file
-        // const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    class BufferedAoSoA {
         public:
 
             using AoSoA_type = AoSoA_t;
 
             using slice_tuple_t = UnpackTuple<AoSoA_t, typename AoSoA_t::member_types>;
             slice_tuple_t slice_tuple;
-            //UnpackTuple<typename AoSoA_t::member_slice_type> slice_tuple2;
-
 
             // Obtain a reference to i-th item in a tuple
-            // TODO: this taking AoSoA_t is obviously stupid
             template<typename _AoSoA_t, std::size_t i, typename HeadItem, typename... TailItems>
                 KOKKOS_INLINE_FUNCTION
                 typename TupleLeaf<_AoSoA_t, i, HeadItem>::value_t&
-                Get(TupleImpl<_AoSoA_t, i, HeadItem, TailItems...>& tuple) {
-                    return slice_tuple.TupleLeaf<AoSoA_t, i, HeadItem>::value;
+                _Get(TupleImpl<_AoSoA_t, i, HeadItem, TailItems...>& tuple) {
+                    return tuple.TupleLeaf<AoSoA_t, i, HeadItem>::value;
                 }
 
             template<std::size_t i>
                 KOKKOS_INLINE_FUNCTION
                 typename AoSoA_t::member_slice_type<i>
-                _Get() {
-                    return Get<AoSoA_t, i>(slice_tuple);
+                get_slice() {
+                    return _Get<AoSoA_t, i>(slice_tuple);
                 }
 
 
@@ -329,14 +256,6 @@ namespace Cabana
                 return BufferedAoSoAAccess<max_buffered_tuples, requested_buffer_count, Exec_Space, AoSoA_type>(*this);
             }
             */
-
-            // TODO: this or the above should probably be deleted
-            KOKKOS_FORCEINLINE_FUNCTION // TODO: check this is the right thing to do?
-            BufferedAoSoAAccess<AoSoA_type> access() const
-            {
-                return BufferedAoSoAAccess<AoSoA_type>(internal_buffers[(*last_filled_buffer)] );
-            }
-
 
             // TODO: make private once we figured the above BufferedAoSoAAccess
             // `operator()` out
