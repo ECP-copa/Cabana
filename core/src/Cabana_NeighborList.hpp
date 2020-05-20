@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2019 by the Cabana authors                            *
+ * Copyright (c) 2018-2020 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -27,7 +27,9 @@ namespace Cabana
   particle "i" neighbors particle "j" then "j" will be in the neighbor list
   for "i" and "i" will bin the the neighbor list for "j".
 */
-class FullNeighborTag {};
+class FullNeighborTag
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -39,7 +41,9 @@ class FullNeighborTag {};
   will be in the neighbor list for "i" while the fact that "i" is a neighbor
   of "j" is implied.
 */
-class HalfNeighborTag {};
+class HalfNeighborTag
+{
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -48,23 +52,21 @@ class HalfNeighborTag {};
   \brief Neighbor list interface. Provides an interface callable at the
   functor level that gives access to neighbor data for particles.
 */
-template<class NeighborListType>
+template <class NeighborListType>
 class NeighborList
 {
   public:
-
-    // Get the list type tag. Either full or half.
-    using TypeTag = typename NeighborListType::TypeTag;
+    using memory_space = typename NeighborListType::memory_space;
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t numNeighbor( const NeighborListType& list,
+    static std::size_t numNeighbor( const NeighborListType &list,
                                     const std::size_t particle_index );
 
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t getNeighbor( const NeighborListType& list,
+    static std::size_t getNeighbor( const NeighborListType &list,
                                     const std::size_t particle_index,
                                     const std::size_t neighbor_index );
 };

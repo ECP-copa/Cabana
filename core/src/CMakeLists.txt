@@ -10,7 +10,6 @@ set(HEADERS_PUBLIC
   Cabana_DeepCopy.hpp
   Cabana_ExecutionPolicy.hpp
   Cabana_LinkedCellList.hpp
-  Cabana_Macros.hpp
   Cabana_MemberTypes.hpp
   Cabana_NeighborList.hpp
   Cabana_Parallel.hpp
@@ -22,6 +21,14 @@ set(HEADERS_PUBLIC
   Cabana_VerletList.hpp
   Cabana_Version.hpp
   )
+
+#-----------------------------------------------------------------------------
+
+if(Cabana_ENABLE_ARBORX)
+  list(APPEND HEADERS_PUBLIC
+    Cabana_Experimental_NeighborList.hpp
+    )
+endif()
 
 #-----------------------------------------------------------------------------
 # MPI-dependent code
@@ -38,7 +45,6 @@ endif()
 set(HEADERS_IMPL
   impl/Cabana_CartesianGrid.hpp
   impl/Cabana_Index.hpp
-  impl/Cabana_IndexSequence.hpp
   impl/Cabana_PerformanceTraits.hpp
   impl/Cabana_TypeTraits.hpp
   )
@@ -55,9 +61,19 @@ install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CM
 #-----------------------------------------------------------------------------
 
 add_library(cabanacore ${SOURCES_IMPL})
-target_include_directories(cabanacore PUBLIC ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_BINARY_DIR})
+target_include_directories(cabanacore PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+  $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}> $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 target_link_libraries(cabanacore Kokkos::kokkos)
+if(Cabana_ENABLE_ARBORX)
+  target_link_libraries(cabanacore ArborX::ArborX)
+endif()
 if(Cabana_ENABLE_MPI)
   target_link_libraries(cabanacore MPI::MPI_CXX)
 endif()
-install(TARGETS cabanacore LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(TARGETS cabanacore EXPORT Cabana_Targets LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR} ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
+install(EXPORT Cabana_Targets FILE Cabana_Targets.cmake NAMESPACE Cabana:: DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
+include(CMakePackageConfigHelpers)
+configure_file(CabanaConfig.cmakein ${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake @ONLY)
+write_basic_package_version_file("CabanaConfigVersion.cmake" VERSION ${PROJECT_VERSION} COMPATIBILITY ExactVersion)
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfigVersion.cmake" DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
+add_library(Cabana::cabanacore ALIAS cabanacore)

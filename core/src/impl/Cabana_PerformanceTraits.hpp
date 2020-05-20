@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2019 by the Cabana authors                            *
+ * Copyright (c) 2018-2020 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -25,13 +25,13 @@ namespace Impl
   \class PerformanceTraits
   \brief Default settings for execution spaces.
 */
-template<class ExecutionSpace>
+template <class ExecutionSpace>
 class PerformanceTraits;
 
 //---------------------------------------------------------------------------//
 // Serial specialization.
 #if defined( KOKKOS_ENABLE_SERIAL )
-template<>
+template <>
 class PerformanceTraits<Kokkos::Serial>
 {
   public:
@@ -42,7 +42,7 @@ class PerformanceTraits<Kokkos::Serial>
 //---------------------------------------------------------------------------//
 // Threads specialization.
 #if defined( KOKKOS_ENABLE_THREADS )
-template<>
+template <>
 class PerformanceTraits<Kokkos::Threads>
 {
   public:
@@ -53,7 +53,7 @@ class PerformanceTraits<Kokkos::Threads>
 //---------------------------------------------------------------------------//
 // OpenMP specialization.
 #if defined( KOKKOS_ENABLE_OPENMP )
-template<>
+template <>
 class PerformanceTraits<Kokkos::OpenMP>
 {
   public:
@@ -64,11 +64,22 @@ class PerformanceTraits<Kokkos::OpenMP>
 //---------------------------------------------------------------------------//
 // Cuda specialization. Use the warp traits.
 #if defined( KOKKOS_ENABLE_CUDA )
-template<>
+template <>
 class PerformanceTraits<Kokkos::Cuda>
 {
   public:
     static constexpr int vector_length = Kokkos::Impl::CudaTraits::WarpSize;
+};
+#endif
+
+//---------------------------------------------------------------------------//
+#if defined( KOKKOS_ENABLE_HIP )
+template <>
+class PerformanceTraits<Kokkos::Experimental::HIP>
+{
+  public:
+    static constexpr int vector_length =
+        Kokkos::Experimental::Impl::HIPTraits::WarpSize;
 };
 #endif
 

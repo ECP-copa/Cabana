@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2019 by the Cabana authors                            *
+ * Copyright (c) 2018-2020 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,8 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cabana_SoA.hpp>
 #include <Cabana_MemberTypes.hpp>
+#include <Cabana_SoA.hpp>
 #include <Cabana_Types.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -42,20 +42,16 @@ void testSoA()
     const int vector_length = 4;
 
     // Declare an soa type.
-    using member_types = Cabana::MemberTypes<double,
-                                             int,
-                                             float,
-                                             double[2][3],
-                                             unsigned[5],
-                                             float[3][2][2]>;
-    using soa_type = Cabana::SoA<member_types,vector_length>;
+    using member_types = Cabana::MemberTypes<double, int, float, double[2][3],
+                                             unsigned[5], float[3][2][2]>;
+    using soa_type = Cabana::SoA<member_types, vector_length>;
 
     // Check that the data in the soa is contiguous.
     EXPECT_TRUE( std::is_trivial<soa_type>::value );
 
     // Check that the soa is the same size as the struct (i.e. they are
     // equivalent).
-    EXPECT_EQ( sizeof(FooData), sizeof(soa_type) );
+    EXPECT_EQ( sizeof( FooData ), sizeof( soa_type ) );
 
     // Create an soa.
     soa_type soa;
@@ -68,17 +64,14 @@ void testSoA()
     Cabana::get<5>( soa, 2, 1, 1, 1 ) = v2;
 
     // Check the data.
-    EXPECT_EQ( Cabana::get<0>(soa,3), v1 );
-    EXPECT_EQ( Cabana::get<5>(soa,2,1,1,1), v2 );
+    EXPECT_EQ( Cabana::get<0>( soa, 3 ), v1 );
+    EXPECT_EQ( Cabana::get<5>( soa, 2, 1, 1, 1 ), v2 );
 }
 
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( cabana_soa, soa_test )
-{
-    testSoA();
-}
+TEST( cabana_soa, soa_test ) { testSoA(); }
 
 //---------------------------------------------------------------------------//
 

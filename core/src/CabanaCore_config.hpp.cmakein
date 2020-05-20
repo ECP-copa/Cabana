@@ -7,12 +7,6 @@
 
 #cmakedefine Cabana_ENABLE_MPI
 
-#cmakedefine Cabana_ENABLE_Serial
-
-#cmakedefine Cabana_ENABLE_Pthread
-
-#cmakedefine Cabana_ENABLE_OpenMP
-
-#cmakedefine Cabana_ENABLE_Cuda
+#cmakedefine Cabana_ENABLE_ARBORX
 
 #endif // CABANA_CORE_CONFIG_HPP

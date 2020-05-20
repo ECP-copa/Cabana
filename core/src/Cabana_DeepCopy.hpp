@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2019 by the Cabana authors                            *
+ * Copyright (c) 2018-2020 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -19,8 +19,8 @@
 #include <Kokkos_Core.hpp>
 #include <Kokkos_ExecPolicy.hpp>
 
-#include <type_traits>
 #include <exception>
+#include <type_traits>
 
 #include <cassert>
 
@@ -30,22 +30,19 @@ namespace Cabana
 /*!
   \brief Allocate a mirror of the given AoSoA in the given space.
  */
-template<class Space, class SrcAoSoA>
-inline
-AoSoA<typename SrcAoSoA::member_types,Space,SrcAoSoA::vector_length>
+template <class Space, class SrcAoSoA>
+inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror(
-    const Space&,
-    const SrcAoSoA& src,
-    typename std::enable_if<(!std::is_same<typename SrcAoSoA::memory_space,
-                             typename Space::memory_space>::value)>::type* = 0 )
+    const Space &, const SrcAoSoA &src,
+    typename std::enable_if<
+        ( !std::is_same<typename SrcAoSoA::memory_space,
+                        typename Space::memory_space>::value )>::type * = 0 )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror() requires an AoSoA" );
-    return AoSoA<typename SrcAoSoA::member_types,
-                 Space,
+    return AoSoA<typename SrcAoSoA::member_types, Space,
                  SrcAoSoA::vector_length>(
-                     std::string(src.label()).append("_mirror"),
-                     src.size() );
+        std::string( src.label() ).append( "_mirror" ), src.size() );
 }
 
 //---------------------------------------------------------------------------//
@@ -57,14 +54,12 @@ create_mirror(
   is different from that of the input AoSoA. If they are the same, the
   original AoSoA (e.g. a view of that AoSoA) is returned.
  */
-template<class Space, class SrcAoSoA>
-inline
-SrcAoSoA
-create_mirror_view(
-    const Space&,
-    const SrcAoSoA& src,
-    typename std::enable_if<(std::is_same<typename SrcAoSoA::memory_space,
-                             typename Space::memory_space>::value)>::type* = 0 )
+template <class Space, class SrcAoSoA>
+inline SrcAoSoA create_mirror_view(
+    const Space &, const SrcAoSoA &src,
+    typename std::enable_if<
+        ( std::is_same<typename SrcAoSoA::memory_space,
+                       typename Space::memory_space>::value )>::type * = 0 )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror_view() requires an AoSoA" );
@@ -73,21 +68,20 @@ create_mirror_view(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create a mirror view on the host of the given AoSoA in the given
-  memory space. Different space specialization allocates a new AoSoA.
+  \brief Create a mirror view of the given AoSoA in the given memory space.
+  Different space specialization allocates a new AoSoA.
 
   \note Memory allocation will only occur if the requested mirror
   memory space is different from that of the input AoSoA. If they are the
   same, the original AoSoA (e.g. a view of that AoSoA) is returned.
  */
-template<class Space, class SrcAoSoA>
-inline
-AoSoA<typename SrcAoSoA::member_types,Space,SrcAoSoA::vector_length>
+template <class Space, class SrcAoSoA>
+inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror_view(
-    const Space& space,
-    const SrcAoSoA& src,
-    typename std::enable_if<(!std::is_same<typename SrcAoSoA::memory_space,
-                             typename Space::memory_space>::value)>::type* = 0 )
+    const Space &space, const SrcAoSoA &src,
+    typename std::enable_if<
+        ( !std::is_same<typename SrcAoSoA::memory_space,
+                        typename Space::memory_space>::value )>::type * = 0 )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror_view() requires an AoSoA" );
@@ -104,14 +98,12 @@ create_mirror_view(
   is different from that of the input AoSoA. If they are the same, the
   original AoSoA (e.g. a view of that AoSoA) is returned.
  */
-template<class Space, class SrcAoSoA>
-inline
-SrcAoSoA
-create_mirror_view_and_copy(
-    const Space&,
-    const SrcAoSoA& src,
-    typename std::enable_if<(std::is_same<typename SrcAoSoA::memory_space,
-                             typename Space::memory_space>::value)>::type* = 0 )
+template <class Space, class SrcAoSoA>
+inline SrcAoSoA create_mirror_view_and_copy(
+    const Space &, const SrcAoSoA &src,
+    typename std::enable_if<
+        ( std::is_same<typename SrcAoSoA::memory_space,
+                       typename Space::memory_space>::value )>::type * = 0 )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror_view_and_copy() requires an AoSoA" );
@@ -120,33 +112,31 @@ create_mirror_view_and_copy(
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Create a mirror on the host of the given AoSoA in the given memory
-  space and deep copy the AoSoA into the mirror. Different space
-  specialization allocates a new AoSoA and performs the deep copy.
+  \brief Create a mirror of the given AoSoA in the given memory space and deep
+  copy the AoSoA into the mirror. Different space specialization allocates a
+  new AoSoA and performs the deep copy.
 
   \note Memory allocation will only occur if the requested mirror
   memory space is different from that of the input AoSoA. If they are the
   same, the original AoSoA (e.g. a view of that AoSoA) is returned.
  */
-template<class Space, class SrcAoSoA>
-inline
-AoSoA<typename SrcAoSoA::member_types,Space,SrcAoSoA::vector_length>
+template <class Space, class SrcAoSoA>
+inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror_view_and_copy(
-    const Space& space,
-    const SrcAoSoA& src,
-    typename std::enable_if<(!std::is_same<typename SrcAoSoA::memory_space,
-                             typename Space::memory_space>::value)>::type* = 0 )
+    const Space &space, const SrcAoSoA &src,
+    typename std::enable_if<
+        ( !std::is_same<typename SrcAoSoA::memory_space,
+                        typename Space::memory_space>::value )>::type * = 0 )
 {
     static_assert( is_aosoa<SrcAoSoA>::value,
                    "create_mirror_view_and_copy() requires an AoSoA" );
 
     auto dst = create_mirror( space, src );
 
-    Kokkos::Impl::DeepCopy<
-        typename Space::memory_space,typename SrcAoSoA::memory_space>(
-            dst.data(),
-            src.data(),
-            src.numSoA() * sizeof(typename SrcAoSoA::soa_type) );
+    Kokkos::Impl::DeepCopy<typename Space::memory_space,
+                           typename SrcAoSoA::memory_space>(
+        dst.data(), src.data(),
+        src.numSoA() * sizeof( typename SrcAoSoA::soa_type ) );
 
     return dst;
 }
@@ -162,12 +152,11 @@ create_mirror_view_and_copy(
   Only AoSoA objects with the same set of member data types and size may be
   copied.
 */
-template<class DstAoSoA, class SrcAoSoA>
-inline void deep_copy(
-    DstAoSoA& dst,
-    const SrcAoSoA& src,
-    typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
-                             is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
+template <class DstAoSoA, class SrcAoSoA>
+inline void
+deep_copy( DstAoSoA &dst, const SrcAoSoA &src,
+           typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
+                                     is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
     using dst_type = DstAoSoA;
     using src_type = SrcAoSoA;
@@ -179,7 +168,7 @@ inline void deep_copy(
     // Check that the data types are the same.
     static_assert(
         std::is_same<typename dst_type::member_types,
-        typename src_type::member_types>::value,
+                     typename src_type::member_types>::value,
         "Attempted to deep copy AoSoA objects of different member types" );
 
     // Check for the same number of values.
@@ -190,8 +179,8 @@ inline void deep_copy(
     }
 
     // Get the pointers to the beginning of the data blocks.
-    void* dst_data = dst.data();
-    const void* src_data = src.data();
+    void *dst_data = dst.data();
+    const void *src_data = src.data();
 
     // Return if both pointers are null.
     if ( dst_data == nullptr && src_data == nullptr )
@@ -204,19 +193,18 @@ inline void deep_copy(
     auto src_num_soa = src.numSoA();
 
     // Return if the AoSoA memory occupies the same space.
-    if ( (dst_data == src_data) &&
-         (dst_num_soa * sizeof(dst_soa_type) ==
-          src_num_soa * sizeof(src_soa_type)) )
+    if ( ( dst_data == src_data ) && ( dst_num_soa * sizeof( dst_soa_type ) ==
+                                       src_num_soa * sizeof( src_soa_type ) ) )
     {
         return;
     }
 
     // If the inner array size is the same and both AoSoAs have the same number
     // of values then we can do a byte-wise copy directly.
-    if ( std::is_same<dst_soa_type,src_soa_type>::value )
+    if ( std::is_same<dst_soa_type, src_soa_type>::value )
     {
-        Kokkos::Impl::DeepCopy<dst_memory_space,src_memory_space>(
-            dst_data, src_data, dst_num_soa * sizeof(dst_soa_type) );
+        Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
+            dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
     }
 
     // Otherwise copy the data element-by-element because the data layout is
@@ -229,11 +217,12 @@ inline void deep_copy(
             typename dst_type::memory_space(), src );
 
         // Copy via tuples.
-        auto copy_func =
-            KOKKOS_LAMBDA( const std::size_t i )
-            { dst.setTuple( i, src_copy_on_dst.getTuple(i) ); };
-        Kokkos::RangePolicy<typename dst_type::execution_space>
-            exec_policy( 0, dst.size() );
+        auto copy_func = KOKKOS_LAMBDA( const std::size_t i )
+        {
+            dst.setTuple( i, src_copy_on_dst.getTuple( i ) );
+        };
+        Kokkos::RangePolicy<typename dst_type::execution_space> exec_policy(
+            0, dst.size() );
         Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
         Kokkos::fence();
     }
@@ -243,22 +232,23 @@ inline void deep_copy(
 /*!
   \brief Fill an AoSoA with a tuple.
 
-  \param slice The AoSoA to fill.
+  \param aosoa The AoSoA to fill.
 
-  \param src The tuple to assign. All AoSoA elements will be assigned this
+  \param tuple The tuple to assign. All AoSoA elements will be assigned this
   value.
 */
-template<class AoSoA_t>
-inline void deep_copy( AoSoA_t& aosoa,
-                       const typename AoSoA_t::tuple_type& tuple )
+template <class AoSoA_t>
+inline void deep_copy( AoSoA_t &aosoa,
+                       const typename AoSoA_t::tuple_type &tuple )
 {
     static_assert( is_aosoa<AoSoA_t>::value,
                    "Only AoSoAs can be assigned tuples" );
-    auto assign_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        { aosoa.setTuple( i, tuple ); };
-    Kokkos::RangePolicy<typename AoSoA_t::execution_space>
-        exec_policy( 0, aosoa.size() );
+    auto assign_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
+        aosoa.setTuple( i, tuple );
+    };
+    Kokkos::RangePolicy<typename AoSoA_t::execution_space> exec_policy(
+        0, aosoa.size() );
     Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, assign_func );
     Kokkos::fence();
 }
@@ -274,12 +264,11 @@ inline void deep_copy( AoSoA_t& aosoa,
   Only Slice objects with the same set of member data types and size may be
   copied.
 */
-template<class DstSlice, class SrcSlice>
-inline void deep_copy(
-    DstSlice& dst,
-    const SrcSlice& src,
-    typename std::enable_if<(is_slice<DstSlice>::value &&
-                             is_slice<SrcSlice>::value)>::type *  = 0 )
+template <class DstSlice, class SrcSlice>
+inline void
+deep_copy( DstSlice &dst, const SrcSlice &src,
+           typename std::enable_if<( is_slice<DstSlice>::value &&
+                                     is_slice<SrcSlice>::value )>::type * = 0 )
 {
     using dst_type = DstSlice;
     using src_type = SrcSlice;
@@ -287,7 +276,7 @@ inline void deep_copy(
     // Check that the data types are the same.
     static_assert(
         std::is_same<typename dst_type::value_type,
-        typename src_type::value_type>::value,
+                     typename src_type::value_type>::value,
         "Attempted to deep copy Slice objects of different value types" );
 
     // Check that the element dimensions are the same.
@@ -326,8 +315,8 @@ inline void deep_copy(
     auto src_num_soa = src.numSoA();
 
     // Return if the slice memory occupies the same space.
-    if ( (dst_data == src_data) &&
-         (dst_num_soa * dst.stride(0) == src_num_soa * src.stride(0)) )
+    if ( ( dst_data == src_data ) &&
+         ( dst_num_soa * dst.stride( 0 ) == src_num_soa * src.stride( 0 ) ) )
     {
         return;
     }
@@ -335,49 +324,46 @@ inline void deep_copy(
     // Get the number of components in each slice element.
     std::size_t num_comp = 1;
     for ( std::size_t d = 2; d < dst.rank(); ++d )
-        num_comp *= dst.extent(d);
+        num_comp *= dst.extent( d );
 
     // Gather the slice data in a flat view in the source space and copy it to
     // the destination space.
-    Kokkos::View<typename dst_type::value_type*,typename dst_type::memory_space>
+    Kokkos::View<typename dst_type::value_type *,
+                 typename dst_type::memory_space>
         gather_dst( "gather_dst", num_comp * dst.size() );
     {
-        Kokkos::View<typename src_type::value_type*,
+        Kokkos::View<typename src_type::value_type *,
                      typename src_type::memory_space>
             gather_src( "gather_src", num_comp * src.size() );
-        auto gather_func =
-            KOKKOS_LAMBDA( const std::size_t i )
-            {
-                auto src_offset =
-                SrcSlice::index_type::s(i) * src.stride(0) +
-                SrcSlice::index_type::a(i);
-                for ( std::size_t n = 0; n < num_comp; ++n )
-                    gather_src( i * num_comp + n ) =
-                        src_data[ src_offset + SrcSlice::vector_length * n ];
-            };
-        Kokkos::RangePolicy<typename src_type::execution_space>
-            gather_policy( 0, src.size() );
-        Kokkos::parallel_for(
-            "Cabana::deep_copy::gather", gather_policy, gather_func );
+        auto gather_func = KOKKOS_LAMBDA( const std::size_t i )
+        {
+            auto src_offset = SrcSlice::index_type::s( i ) * src.stride( 0 ) +
+                              SrcSlice::index_type::a( i );
+            for ( std::size_t n = 0; n < num_comp; ++n )
+                gather_src( i * num_comp + n ) =
+                    src_data[src_offset + SrcSlice::vector_length * n];
+        };
+        Kokkos::RangePolicy<typename src_type::execution_space> gather_policy(
+            0, src.size() );
+        Kokkos::parallel_for( "Cabana::deep_copy::gather", gather_policy,
+                              gather_func );
         Kokkos::fence();
         Kokkos::deep_copy( gather_dst, gather_src );
     }
 
     // Scatter back into the destination slice from the gathered slice.
-    auto scatter_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            auto dst_offset =
-            DstSlice::index_type::s(i) * dst.stride(0) +
-            DstSlice::index_type::a(i);
-            for ( std::size_t n = 0; n < num_comp; ++n )
-                dst_data[ dst_offset + DstSlice::vector_length * n ] =
-                    gather_dst( i * num_comp + n );
-        };
-    Kokkos::RangePolicy<typename dst_type::execution_space>
-        scatter_policy( 0, dst.size() );
-    Kokkos::parallel_for(
-        "Cabana::deep_copy::scatter", scatter_policy, scatter_func );
+    auto scatter_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
+        auto dst_offset = DstSlice::index_type::s( i ) * dst.stride( 0 ) +
+                          DstSlice::index_type::a( i );
+        for ( std::size_t n = 0; n < num_comp; ++n )
+            dst_data[dst_offset + DstSlice::vector_length * n] =
+                gather_dst( i * num_comp + n );
+    };
+    Kokkos::RangePolicy<typename dst_type::execution_space> scatter_policy(
+        0, dst.size() );
+    Kokkos::parallel_for( "Cabana::deep_copy::scatter", scatter_policy,
+                          scatter_func );
     Kokkos::fence();
 }
 
@@ -387,11 +373,11 @@ inline void deep_copy(
 
   \param slice The slice to fill.
 
-  \param src The scalar to assign. All slice elements will be assigned this
+  \param scalar The scalar to assign. All slice elements will be assigned this
   value.
 */
-template<class Slice_t>
-inline void deep_copy( Slice_t& slice,
+template <class Slice_t>
+inline void deep_copy( Slice_t &slice,
                        const typename Slice_t::value_type scalar )
 {
     static_assert( is_slice<Slice_t>::value,

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2019 by the Cabana authors                            *
+ * Copyright (c) 2018-2020 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -19,76 +19,73 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-// Execution Spaces
-//---------------------------------------------------------------------------//
-#if defined( KOKKOS_ENABLE_SERIAL )
-using Kokkos::Serial;
-#endif
-
-#if defined( KOKKOS_ENABLE_THREADS )
-using Kokkos::Threads;
-#endif
-
-#if defined( KOKKOS_ENABLE_OPENMP )
-using Kokkos::OpenMP;
-#endif
-
-#if defined( KOKKOS_ENABLE_CUDA )
-using Kokkos::Cuda;
-#endif
-
-//---------------------------------------------------------------------------//
-// Memory spaces
-//---------------------------------------------------------------------------//
-//! Host memory space
-using Kokkos::HostSpace;
-
-#if defined( KOKKOS_ENABLE_CUDA )
-using Kokkos::CudaUVMSpace;
-#endif
-
-//---------------------------------------------------------------------------//
 // Memory access tags.
 //---------------------------------------------------------------------------//
-template<class >
-struct is_memory_access_tag : public std::false_type {};
+template <class>
+struct is_memory_access_tag : public std::false_type
+{
+};
 
 //! Default memory access. Default memory is restricted to prevent aliasing in
 //! the larger AoSoA memory block to allow for potential vectorization.
 struct DefaultAccessMemory
 {
     using memory_access_type = DefaultAccessMemory;
-    using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
-                                                       Kokkos::Aligned |
-                                                       Kokkos::Restrict >;
+    using kokkos_memory_traits =
+        Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
+                             Kokkos::Restrict>;
 };
 
-template<>
-struct is_memory_access_tag<DefaultAccessMemory> : public std::true_type {};
+template <>
+struct is_memory_access_tag<DefaultAccessMemory> : public std::true_type
+{
+};
 
 //! Random access memory. Read-only and const with limited spatial locality.
 struct RandomAccessMemory
 {
     using memory_access_type = RandomAccessMemory;
-    using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
-                                                       Kokkos::Aligned |
-                                                       Kokkos::RandomAccess >;
+    using kokkos_memory_traits =
+        Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
+                             Kokkos::RandomAccess>;
 };
 
-template<>
-struct is_memory_access_tag<RandomAccessMemory> : public std::true_type {};
+template <>
+struct is_memory_access_tag<RandomAccessMemory> : public std::true_type
+{
+};
 
 //! Atomic memory access. All reads and writes are atomic.
 struct AtomicAccessMemory
 {
     using memory_access_type = AtomicAccessMemory;
-    using kokkos_memory_traits = Kokkos::MemoryTraits< Kokkos::Unmanaged |
-                                                       Kokkos::Aligned |
-                                                       Kokkos::Atomic >;
+    using kokkos_memory_traits =
+        Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
+                             Kokkos::Atomic>;
 };
 
-template<>
-struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type {};
+template <>
+struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type
+{
+};
+
+// Checks whether memory space is accessible from execution space.
+// This was taken from
+// https://github.com/arborx/ArborX/blob/c757ffcc0e7d2da4da2b4b4df8975365480e7bac/src/details/ArborX_DetailsKokkosExt.hpp#L33-L46
+template <typename MemorySpace, typename ExecutionSpace, typename = void>
+struct is_accessible_from : std::false_type
+{
+    static_assert( Kokkos::is_memory_space<MemorySpace>::value, "" );
+    static_assert( Kokkos::is_execution_space<ExecutionSpace>::value, "" );
+};
+
+template <typename MemorySpace, typename ExecutionSpace>
+struct is_accessible_from<
+    MemorySpace, ExecutionSpace,
+    typename std::enable_if<Kokkos::Impl::SpaceAccessibility<
+        ExecutionSpace, MemorySpace>::accessible>::type> : std::true_type
+{
+};
 
 //---------------------------------------------------------------------------//
 
