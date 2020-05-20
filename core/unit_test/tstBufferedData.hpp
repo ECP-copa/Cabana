@@ -126,16 +126,6 @@ namespace Test
             Cabana::deep_copy( aosoa, mirror );
             checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
-            // Feed it into the buffer
-            /*
-               Cabana::BufferedAoSoA<
-               max_buffered_tuples,
-               buffer_count,
-               target_exec_space,
-               AoSoA_t
-               > buffered_aosoa(aosoa);
-               */
-
             using buf_t = Cabana::BufferedAoSoA<
                 max_buffered_tuples,
                 buffer_count,
@@ -146,10 +136,6 @@ namespace Test
             buf_t* buffered_aosoa = new buf_t(aosoa);
 
             int num_buffers = buffered_aosoa->get_buffer_count();
-            //int num_buffers = buffered_aosoa.get_buffer_count();
-
-            // Add call to safe in-loop handle
-            //auto access_handler = test_buffer.access_old();
 
             // TODO: are the fences needed before we start?
 
@@ -160,16 +146,9 @@ namespace Test
 
             std::cout << "Calling buffered for using data from " << aosoa.data() << std::endl;
 
-            // TODO: set this place holder
-            int slice_list = 0;
-
-            //Cabana::make_list<AoSoA_t::member_types> a;
-
-            // Overwrite the data in a buffered way
             Cabana::buffered_parallel_for(
                     Kokkos::RangePolicy<TEST_EXECSPACE>(0,aosoa.size()),
                     *buffered_aosoa,
-                    slice_list,
                     KOKKOS_LAMBDA( const int s, const int a, buf_t buffered_aosoa )
                 {
                     // We have to call access and slice in the loop
