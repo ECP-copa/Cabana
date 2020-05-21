@@ -151,7 +151,7 @@ template <>
 struct TestHaloReduce<ScatterReduce::Min>
 {
     template <class ViewType>
-    static KOKKOS_INLINE_FUNCTION void
+    static void
     check( ViewType view, int neighbor_rank, int comm_rank, const int i,
            const int j, const int k, const int l )
     {
@@ -166,7 +166,7 @@ template <>
 struct TestHaloReduce<ScatterReduce::Max>
 {
     template <class ViewType>
-    static KOKKOS_INLINE_FUNCTION void
+    static void
     check( ViewType view, int neighbor_rank, int comm_rank, const int i,
            const int j, const int k, const int l )
     {
@@ -181,7 +181,7 @@ template <>
 struct TestHaloReduce<ScatterReduce::Replace>
 {
     template <class ViewType>
-    static KOKKOS_INLINE_FUNCTION void check( ViewType view, int neighbor_rank,
+    static void check( ViewType view, int neighbor_rank,
                                               int, const int i, const int j,
                                               const int k, const int l )
     {
