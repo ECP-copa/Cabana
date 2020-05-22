@@ -192,6 +192,7 @@ void writeTimeStep( const int time_step_index, const double time,
         KOKKOS_LAMBDA( const int k, const int j, const int i, const int l ) {
             owned_view( k, j, i, l ) = owned_subview( i, j, k, l );
         } );
+    Kokkos::fence();
 
     // Compose a data file name prefix.
     std::stringstream file_name;
