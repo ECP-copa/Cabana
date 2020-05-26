@@ -59,8 +59,8 @@ foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
   # TODO: tidy unit_test_main.cpp path
   set(test "${_test}_performance_test")
   add_executable(${test} ${_test}.cpp ${CMAKE_SOURCE_DIR}/core/unit_test/unit_test_main.cpp)
-  target_include_directories(${test} PUBLIC ${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-  target_compile_definitions(${test} PUBLIC
+  target_include_directories(${test} PRIVATE ${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  target_compile_definitions(${test} PRIVATE
     CABANA_PERFORMANCE_EXPECTED_FLOPS=${Cabana_PERFORMANCE_EXPECTED_FLOPS}
     CABANA_PERFORMANCE_ERROR_MARGIN=${Cabana_PERFORMANCE_ERROR_MARGIN}
     CABANA_PERFORMANCE_VECLENGTH=${Cabana_PERFORMANCE_VECLENGTH}
