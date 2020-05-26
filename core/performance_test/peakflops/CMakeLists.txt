@@ -4,41 +4,33 @@ if(NOT Cabana_ENABLE_TESTING)
   return()
 endif()
 
-set(Cabana_PERFORMANCE_EXPECTED_FLOPS "0" CACHE STRING "Value for expected flops in performance tests")
-set(Cabana_PERFORMANCE_ERROR_MARGIN "0" CACHE STRING "Error margin to use in performance tests")
+# For intel haswell, broadwell: set expected flops/cycle = 32, veclength=8, iterations=2e6
+# For intel skylake           : set expected flops/cycle = 64, veclength=16, iterations=2e8
+set(Cabana_PERFORMANCE_EXPECTED_FLOPS "32" CACHE STRING "Value for expected flops in performance tests")
+set(Cabana_PERFORMANCE_ERROR_MARGIN "0.9" CACHE STRING "Error margin to use in performance tests")
 set(Cabana_PERFORMANCE_VECLENGTH "8" CACHE STRING "Vector Length to use when running expected flops")
-set(Cabana_PERFORMANCE_ITERATIONS "10" CACHE STRING "Number of iterations to repeat the test for (increases flops)")
-set(Cabana_PERFORMANCE_SEED "0" CACHE STRING "Seed for performance test RNG")
+set(Cabana_PERFORMANCE_ITERATIONS "2000000" CACHE STRING "Number of iterations to repeat the test for (increases flops)")
+set(Cabana_PERFORMANCE_SEED "76843802738543" CACHE STRING "Seed for performance test RNG")
 
-if(NOT Cabana_PERFORMANCE_EXPECTED_FLOPS STREQUAL "")
-    #TODO: Should this test be pulled out into a function
-    if (NOT Cabana_PERFORMANCE_EXPECTED_FLOPS MATCHES "^[0-9]+$")
-      message(FATAL_ERROR "Cabana_PERFORMANCE_EXPECTED_FLOPS needs to be an integer")
-    endif()
+#TODO: Should this test be pulled out into a function
+if (NOT Cabana_PERFORMANCE_EXPECTED_FLOPS MATCHES "^[0-9]+$")
+  message(FATAL_ERROR "Cabana_PERFORMANCE_EXPECTED_FLOPS needs to be an integer")
 endif()
 
-if(NOT Cabana_PERFORMANCE_ERROR_MARGIN STREQUAL "")
-    if (NOT Cabana_PERFORMANCE_ERROR_MARGIN MATCHES "^[0-9.]+$")
-      message(FATAL_ERROR "Cabana_PERFORMANCE_ERROR_MARGIN needs to be a float")
-    endif()
+if (NOT Cabana_PERFORMANCE_ERROR_MARGIN MATCHES "^[0-9.]+$")
+  message(FATAL_ERROR "Cabana_PERFORMANCE_ERROR_MARGIN needs to be a float")
 endif()
 
-if(NOT Cabana_PERFORMANCE_VECLENGTH STREQUAL "")
-    if (NOT Cabana_PERFORMANCE_VECLENGTH MATCHES "^[0-9]+$")
-      message(FATAL_ERROR "Cabana_PERFORMANCE_VECLENGTH needs to be an integer")
-    endif()
+if (NOT Cabana_PERFORMANCE_VECLENGTH MATCHES "^[0-9]+$")
+  message(FATAL_ERROR "Cabana_PERFORMANCE_VECLENGTH needs to be an integer")
 endif()
 
-if(NOT Cabana_PERFORMANCE_ITERATIONS STREQUAL "")
-    if (NOT Cabana_PERFORMANCE_ITERATIONS MATCHES "^[0-9]+$")
-      message(FATAL_ERROR "Cabana_PERFORMANCE_ITERATIONS needs to be an integer")
-    endif()
+if (NOT Cabana_PERFORMANCE_ITERATIONS MATCHES "^[0-9]+$")
+  message(FATAL_ERROR "Cabana_PERFORMANCE_ITERATIONS needs to be an integer")
 endif()
 
-if(NOT Cabana_PERFORMANCE_SEED STREQUAL "")
-    if (NOT Cabana_PERFORMANCE_SEED MATCHES "^[0-9]+$")
-      message(FATAL_ERROR "Cabana_PERFORMANCE_SEED needs to be an integer")
-    endif()
+if (NOT Cabana_PERFORMANCE_SEED MATCHES "^[0-9]+$")
+  message(FATAL_ERROR "Cabana_PERFORMANCE_SEED needs to be an integer")
 endif()
 
 # we only want to run the below if we have access to "#pragma omp simd"
