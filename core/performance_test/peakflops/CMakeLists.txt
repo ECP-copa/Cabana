@@ -9,7 +9,7 @@ endif()
 set(Cabana_PERFORMANCE_EXPECTED_FLOPS "32" CACHE STRING "Value for expected flops in performance tests")
 set(Cabana_PERFORMANCE_ERROR_MARGIN "0.9" CACHE STRING "Error margin to use in performance tests")
 set(Cabana_PERFORMANCE_VECLENGTH "8" CACHE STRING "Vector Length to use when running expected flops")
-set(Cabana_PERFORMANCE_ITERATIONS "2000000" CACHE STRING "Number of iterations to repeat the test for (increases flops)")
+set(Cabana_PERFORMANCE_ITERATIONS "20000" CACHE STRING "Number of iterations to repeat the test for (increases flops)")
 set(Cabana_PERFORMANCE_SEED "76843802738543" CACHE STRING "Seed for performance test RNG")
 
 #TODO: Should this test be pulled out into a function
