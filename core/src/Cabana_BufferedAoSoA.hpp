@@ -212,7 +212,7 @@ class BufferedAoSoA
     {
         Cabana::deep_copy_partial_dst(
             original_view, internal_buffers[last_filled_buffer], to_index,
-            0, // from index
+            // 0, // from index
             buffer_size );
     }
 
