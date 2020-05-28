@@ -89,7 +89,8 @@ namespace Test
             const int buffer_count = 3;
 
             // Hard code into OpenMP space for now
-            using target_exec_space = Kokkos::OpenMP;
+            // TODO: specify the exec space via a test param
+            using target_exec_space = TEST_EXECSPACE;
 
             // Init the AoSoA data
             auto mirror = Cabana::create_mirror_view_and_copy(

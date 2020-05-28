@@ -31,7 +31,7 @@ namespace Cabana
      */
     template<typename AoSoA_t, std::size_t i, typename Item>
         struct TupleLeaf {
-            using value_t = typename AoSoA_t::member_slice_type<i>;
+            using value_t = typename AoSoA_t::template member_slice_type<i>;
             value_t value;
 
             TupleLeaf(AoSoA_t& aosoa) {
@@ -136,7 +136,7 @@ namespace Cabana
              */
             template<std::size_t i>
                 KOKKOS_INLINE_FUNCTION
-                typename AoSoA_t::member_slice_type<i>&
+                typename AoSoA_t::template member_slice_type<i>&
                 get_slice() {
                     return _Get<AoSoA_t, i>(slice_tuple);
                 }
