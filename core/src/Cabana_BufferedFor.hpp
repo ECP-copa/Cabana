@@ -66,7 +66,7 @@ namespace Cabana
     >
     inline void buffered_parallel_for(
             const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
-            BufferedAoSoA_t buffered_aosoa, // TODO: does it need to be const?
+            BufferedAoSoA_t& buffered_aosoa, // TODO: does it need to be const?
             const FunctorType& functor,
             const std::string& str = "" )
     {
@@ -104,7 +104,7 @@ namespace Cabana
                 << " which is " << i*buffer_size << " in global space " <<
                 std::endl;
 
-            buffered_aosoa.load_next_buffer(begin);
+            buffered_aosoa.load_next_buffer( buffer_size*i );
 
             simd_policy policy(begin, end);
 
@@ -120,7 +120,7 @@ namespace Cabana
 
             // copy all data back from localbuffer into the correct location in
             // global
-            buffered_aosoa.copy_buffer_back(i*buffer_size);
+            //buffered_aosoa.copy_buffer_back(i*buffer_size);
         }
     }
 } // namespace

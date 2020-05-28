@@ -429,16 +429,26 @@ inline void deep_copy_partial_src(
     // Make AoSoA in src space to copy over
     SrcAoSoA src_partial("deep_copy_partial src", count);
 
+    assert( from_index+count < src.size() );
+
+    std::cout << "Looping copy from 0 to " << src_partial.size() << " where src size is " << src.size() << std::endl;
+    std::cout << "From index is " << from_index << " so max pull from src is " << src_partial.size() + from_index << std::endl;
+
     // Populate it with data using a parallel for
     // TODO: this copy_func is borrow from above, so we could DRY
     auto copy_func =
         KOKKOS_LAMBDA( const std::size_t i )
-        { src_partial.setTuple( i+from_index, src.getTuple(i) ); };
+        {
+            std::cout << "Copy from " << i+from_index << " to " << i << std::endl;
+
+            // TODO: this seems to cause a seg?
+            src_partial.setTuple( i, src.getTuple(i+from_index) );
+        };
 
     Kokkos::RangePolicy<typename SrcAoSoA::execution_space>
         exec_policy( 0, src_partial.size() );
 
-    Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
+    Kokkos::parallel_for("Cabana::deep_copy", exec_policy, copy_func );
     Kokkos::fence();
 
     // TODO: assert that the size of dst much match src_partial.size()
@@ -450,6 +460,7 @@ inline void deep_copy_partial_src(
     // same pattern on the other end
 
     Cabana::deep_copy(dst, src_partial);
+    Kokkos::fence();
 }
 
 // TODO: this can be DRYd with deep_copy_partial, but we need a
@@ -469,10 +480,6 @@ inline void deep_copy_partial_dst(
     DstAoSoA dst_partial("deep_copy_partial dst", count);
     Cabana::deep_copy(dst_partial, src);
 
-    auto dst_slice = Cabana::slice<0>(dst);
-    auto dst_partial_slice = Cabana::slice<0>(dst_partial);
-    auto src_slice = Cabana::slice<0>(src);
-
     assert(count <= src.size() );
     assert(to_index + count <= dst.size() );
 
@@ -481,6 +488,7 @@ inline void deep_copy_partial_dst(
     auto copy_func =
         KOKKOS_LAMBDA( const std::size_t i )
         {
+            std::cout << "Copy " << i << std::endl;
             dst.setTuple( i+to_index, dst_partial.getTuple(i) );
         };
 

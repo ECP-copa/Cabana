@@ -153,17 +153,23 @@ namespace Cabana
             {
                 // TODO: this is only used internally now, and can likely be a
                 // non-pointers
-                last_filled_buffer = new int(1);
-                *last_filled_buffer = -1;
+                last_filled_buffer = -1;
 
                 // TODO: We may we want to override the user on their requested
                 // values if they don't make sense? Both num_buffers and buffer_size
                 num_buffers = requested_buffer_count;
 
+                std::cout << "The size of the passed view is " << original_view_in.size() << std::endl;
+                std::cout << "The size of our view is " << original_view.size() << std::endl;
+
                 // Resize the buffers so we know they can hold enough
                 for (int i = 0; i < num_buffers; i++)
                 {
-                    internal_buffers[i].resize(buffer_size);
+                    //internal_buffers[i].resize(buffer_size);
+                    std::cout << "Making buffer of size " << buffer_size << std::endl;
+                    std::string internal_buff_name = "internal_buff " + i;
+                    internal_buffers[i] = AoSoA_t(internal_buff_name, buffer_size);
+                    std::cout << "Buff " << i << " has size " << internal_buffers[i].size() << std::endl;
                 }
             }
 
@@ -188,7 +194,7 @@ namespace Cabana
             {
                 Cabana::deep_copy_partial_dst(
                     original_view,
-                    internal_buffers[(*last_filled_buffer)],
+                    internal_buffers[last_filled_buffer],
                     to_index,
                     0, //from index
                     buffer_size
@@ -198,29 +204,33 @@ namespace Cabana
             // Start thinking about how to handle data movement...
             void load_next_buffer(int start_index)
             {
-                (*last_filled_buffer)++;
-                if ((*last_filled_buffer) >= num_buffers)
+                last_filled_buffer++;
+                if (last_filled_buffer >= num_buffers)
                 {
-                    (*last_filled_buffer) = 0;
+                    last_filled_buffer = 0;
                 }
 
                 // TODO: does this imply the need for a subview so the sizes
                 // match?
+                //
+                std::cout << "Copy back " << last_filled_buffer << std::endl;
+                std::cout << "original size " << original_view.size() << std::endl;
+
 
                 // Copy from the main memory store into the "current" buffer
                 Cabana::deep_copy_partial_src(
-                        internal_buffers[(*last_filled_buffer)],
+                        internal_buffers[last_filled_buffer],
                         original_view,
                         0, //to_index,
                         start_index,
                         buffer_size
-                        );
+                );
 
                 // TODO: delete debug print
-                printf("Current buffer = %p \n", &internal_buffers[(*last_filled_buffer)] );
+                printf("Current buffer = %p \n", &internal_buffers[last_filled_buffer] );
 
                 // Update the slice tuple to have slices based on the current buffer
-                slice_tuple = slice_tuple_t(internal_buffers[(*last_filled_buffer)]);
+                slice_tuple = slice_tuple_t(internal_buffers[last_filled_buffer]);
             }
 
             AoSoA_t& original_view;
@@ -229,7 +239,7 @@ namespace Cabana
              * @brief Track which buffer we "filled" last, so we know where we
              * are in the round robin
              */
-            int* last_filled_buffer;
+            int last_filled_buffer;
 
             /**
              * @brief Number of buffers we decided to use (possibly distinct
