@@ -47,7 +47,9 @@ struct TupleImpl;
 template <typename AoSoA_t, std::size_t i>
 struct TupleImpl<AoSoA_t, i>
 {
-    TupleImpl( AoSoA_t &aosoa ) {}
+    // TODO: see how everyone wants to handle this unused param, or if it can
+    // be removed
+    TupleImpl( __attribute__((unused)) AoSoA_t& aosoa ) {}
 };
 
 /**
@@ -229,12 +231,8 @@ class BufferedAoSoA
         // Copy from the main memory store into the "current" buffer
         Cabana::deep_copy_partial_src( internal_buffers[last_filled_buffer],
                                        original_view,
-                                       0, // to_index,
+                                       //0, // to_index,
                                        start_index, buffer_size );
-
-        // TODO: delete debug print
-        printf( "Current buffer = %p \n",
-                &internal_buffers[last_filled_buffer] );
 
         // Update the slice tuple to have slices based on the current buffer
         slice_tuple = slice_tuple_t( internal_buffers[last_filled_buffer] );

@@ -77,7 +77,7 @@ inline void buffered_parallel_for(
 
     // not ready for complex situations yet..
     assert( global_begin == 0 );
-    assert( global_end == buffered_aosoa.original_view.size() );
+    assert( (size_t)global_end == buffered_aosoa.original_view.size() );
 
     // Calculate number buffer iterations needed to fit the data size
     int buffer_size = buffered_aosoa.buffer_size;

@@ -400,7 +400,7 @@ inline void deep_copy( Slice_t &slice,
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_src(
     DstAoSoA &dst, const SrcAoSoA &src,
-    const int to_index, // TODO: not honored
+    //const int to_index, // TODO: not honored
     // TODO: the order of these params is questionable
     const int from_index, const int count,
     typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
@@ -427,7 +427,7 @@ inline void deep_copy_partial_src(
     // Make AoSoA in src space to copy over
     SrcAoSoA src_partial( "deep_copy_partial src", count );
 
-    assert( from_index + count < src.size() );
+    assert( (size_t)(from_index + count) < src.size() );
 
     std::cout << "Looping copy from 0 to " << src_partial.size()
               << " where src size is " << src.size() << std::endl;
