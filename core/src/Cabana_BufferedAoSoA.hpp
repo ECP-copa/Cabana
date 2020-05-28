@@ -163,9 +163,9 @@ class BufferedAoSoA
     AoSoA_t internal_buffers[requested_buffer_count];
 
     BufferedAoSoA( AoSoA_t &original_view_in )
-        : original_view( original_view_in )
+        : slice_tuple( internal_buffers[0] )
+        , original_view( original_view_in )
         , buffer_size( max_buffered_tuples )
-        , slice_tuple( internal_buffers[0] )
     {
         // TODO: this is only used internally now, and can likely be a
         // non-pointers

@@ -29,8 +29,7 @@ inline void custom_simd_parallel_for(
 {
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
 
-    using work_tag = typename simd_policy::work_tag;
-
+    // using work_tag = typename simd_policy::work_tag;
     using team_policy = typename simd_policy::base_type;
 
     using index_type = typename team_policy::index_type;
@@ -67,10 +66,10 @@ inline void buffered_parallel_for(
 
     constexpr int VectorLength = BufferedAoSoA_t::AoSoA_type::vector_length;
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
-    using work_tag = typename simd_policy::work_tag;
-    using team_policy = typename simd_policy::base_type;
+    // using work_tag = typename simd_policy::work_tag;
+    // using team_policy = typename simd_policy::base_type;
 
-    using index_type = typename team_policy::index_type;
+    // using index_type = typename team_policy::index_type;
 
     int global_begin = exec_policy.begin();
     int global_end = exec_policy.end();
