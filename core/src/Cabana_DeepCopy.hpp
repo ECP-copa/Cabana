@@ -427,7 +427,7 @@ inline void deep_copy_partial_src(
     // Make AoSoA in src space to copy over
     SrcAoSoA src_partial( "deep_copy_partial src", count );
 
-    assert( (size_t)(from_index + count) < src.size() );
+    assert( (size_t)(from_index + count) <= src.size() );
 
     std::cout << "Looping copy from 0 to " << src_partial.size()
               << " where src size is " << src.size() << std::endl;
