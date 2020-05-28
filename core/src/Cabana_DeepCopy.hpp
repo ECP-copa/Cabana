@@ -397,16 +397,14 @@ inline void deep_copy( Slice_t &slice,
  * @param end_from
  * @param start_to
  */
-template<class DstAoSoA, class SrcAoSoA>
+template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_src(
-    DstAoSoA& dst,
-    const SrcAoSoA& src,
+    DstAoSoA &dst, const SrcAoSoA &src,
     const int to_index, // TODO: not honored
     // TODO: the order of these params is questionable
-    const int from_index,
-    const int count,
-    typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
-                             is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
+    const int from_index, const int count,
+    typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
+                              is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
     // TODO: this assume you're trying to cross exec spaces (i.e partial copy
     // from CPU to GPU). You can likely do this faster and avoid data
@@ -427,28 +425,26 @@ inline void deep_copy_partial_src(
     // but luckily that is not the most common use-case.
 
     // Make AoSoA in src space to copy over
-    SrcAoSoA src_partial("deep_copy_partial src", count);
+    SrcAoSoA src_partial( "deep_copy_partial src", count );
 
-    assert( from_index+count < src.size() );
+    assert( from_index + count < src.size() );
 
-    std::cout << "Looping copy from 0 to " << src_partial.size() << " where src size is " << src.size() << std::endl;
-    std::cout << "From index is " << from_index << " so max pull from src is " << src_partial.size() + from_index << std::endl;
+    std::cout << "Looping copy from 0 to " << src_partial.size()
+              << " where src size is " << src.size() << std::endl;
+    std::cout << "From index is " << from_index << " so max pull from src is "
+              << src_partial.size() + from_index << std::endl;
 
     // Populate it with data using a parallel for
     // TODO: this copy_func is borrow from above, so we could DRY
-    auto copy_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            std::cout << "Copy from " << i+from_index << " to " << i << std::endl;
+    auto copy_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
+        src_partial.setTuple( i, src.getTuple( i + from_index ) );
+    };
 
-            // TODO: this seems to cause a seg?
-            src_partial.setTuple( i, src.getTuple(i+from_index) );
-        };
+    Kokkos::RangePolicy<typename SrcAoSoA::execution_space> exec_policy(
+        0, src_partial.size() );
 
-    Kokkos::RangePolicy<typename SrcAoSoA::execution_space>
-        exec_policy( 0, src_partial.size() );
-
-    Kokkos::parallel_for("Cabana::deep_copy", exec_policy, copy_func );
+    Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
     Kokkos::fence();
 
     // TODO: assert that the size of dst much match src_partial.size()
@@ -459,41 +455,38 @@ inline void deep_copy_partial_src(
     // sized the same as src_partial. If that is not true we need to apply the
     // same pattern on the other end
 
-    Cabana::deep_copy(dst, src_partial);
+    Cabana::deep_copy( dst, src_partial );
     Kokkos::fence();
 }
 
 // TODO: this can be DRYd with deep_copy_partial, but we need a
 // way to denote if src or dst is the partial
-template<class DstAoSoA, class SrcAoSoA>
+template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_dst(
-    DstAoSoA& dst,
-    const SrcAoSoA& src,
-    const int to_index, // TODO: the order of these params is questionable
+    DstAoSoA &dst, const SrcAoSoA &src,
+    const int to_index,   // TODO: the order of these params is questionable
     const int from_index, // TODO: not honored
     const int count,
-    typename std::enable_if<(is_aosoa<DstAoSoA>::value &&
-                             is_aosoa<SrcAoSoA>::value)>::type *  = 0 )
+    typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
+                              is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
     // TODO: implement this
     // Make AoSoA in dst space to copy over
-    DstAoSoA dst_partial("deep_copy_partial dst", count);
-    Cabana::deep_copy(dst_partial, src);
+    DstAoSoA dst_partial( "deep_copy_partial dst", count );
+    Cabana::deep_copy( dst_partial, src );
 
-    assert(count <= src.size() );
-    assert(to_index + count <= dst.size() );
+    assert( count <= src.size() );
+    assert( to_index + count <= dst.size() );
 
     // Populate it with data using a parallel for
     // TODO: this copy_func is borrow from above, so we could DRY
-    auto copy_func =
-        KOKKOS_LAMBDA( const std::size_t i )
-        {
-            std::cout << "Copy " << i << std::endl;
-            dst.setTuple( i+to_index, dst_partial.getTuple(i) );
-        };
+    auto copy_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
+        dst.setTuple( i + to_index, dst_partial.getTuple( i ) );
+    };
 
-    Kokkos::RangePolicy<typename SrcAoSoA::execution_space>
-        exec_policy( 0, dst_partial.size() );
+    Kokkos::RangePolicy<typename SrcAoSoA::execution_space> exec_policy(
+        0, dst_partial.size() );
 
     Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
     Kokkos::fence();
