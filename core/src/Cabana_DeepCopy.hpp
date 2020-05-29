@@ -464,7 +464,7 @@ inline void deep_copy_partial_src(
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_dst(
     DstAoSoA &dst, const SrcAoSoA &src,
-    const int to_index,   // TODO: the order of these params is questionable
+    const int to_index, // TODO: the order of these params is questionable
     // const int from_index, // TODO: not honored
     const int count,
     typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
