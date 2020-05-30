@@ -32,7 +32,7 @@
 
   type, BIND(C) :: ptl_type
      real (C_DOUBLE) :: d0(VECLEN)
-     real (C_FLOAT ) :: d1(VECLEN)
+     real (C_DOUBLE) :: d1(VECLEN)
   end type ptl_type
 
   !Declared as AoSoA
@@ -66,7 +66,7 @@ SUBROUTINE kernel_1(part,s,a) BIND(C)
 
   type, BIND(C) :: ptl_type
      real (C_DOUBLE) :: d0(VECLEN)
-     real (C_FLOAT ) :: d1(VECLEN)
+     real (C_DOUBLE) :: d1(VECLEN)
   end type ptl_type
 
   type(ptl_type) :: part(*)
@@ -88,7 +88,7 @@ SUBROUTINE kernel_2(part,s0,a0,s1,a1) BIND(C)
 
   type, BIND(C) :: ptl_type
      real (C_DOUBLE) :: d0(VECLEN)
-     real (C_FLOAT ) :: d1(VECLEN)
+     real (C_DOUBLE) :: d1(VECLEN)
   end type ptl_type
 
   type(ptl_type) :: part(*)
