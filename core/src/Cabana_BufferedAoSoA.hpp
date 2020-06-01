@@ -188,7 +188,8 @@ class BufferedAoSoA
             // internal_buffers[i].resize(buffer_size);
             std::cout << "Making buffer of size " << buffer_size << std::endl;
 
-            std::string internal_buff_name = "internal_buff " + std::to_string(i);
+            std::string internal_buff_name =
+                "internal_buff " + std::to_string( i );
             internal_buffers[i] = AoSoA_t( internal_buff_name, buffer_size );
 
             std::cout << "Buff " << i << " has size "
