@@ -18,6 +18,8 @@ env:
     - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="SERIAL" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="SERIAL" WERROR=ON CMAKE_BUILD_TYPE=Release ARBORX=ON
+    - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release ARBORX=ON
     - BACKENDS="SERIAL OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="SERIAL PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="OPENMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
@@ -42,6 +44,15 @@ before_script:
     popd &&
     popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_REQUIRE_${i}=ON ); done
+  - if [[ ${ARBORX} ]];  then
+      git clone --depth=1 https://github.com/arborx/ArborX.git &&
+      pushd ArborX && mkdir build && pushd build &&
+      cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+            -DCMAKE_PREFIX_PATH=${HOME}/kokkos
+            -DCMAKE_INSTALL_PREFIX=${HOME}/ArborX .. &&
+      make -j2 VERBOSE=1 && make install &&
+      popd && popd;
+    fi
   - if [[ ${COVERAGE} ]]; then
        pip install --user coverxygen &&
        mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov;
@@ -65,9 +76,9 @@ script:
   - mkdir build && pushd build &&
     cmake -DCMAKE_INSTALL_PREFIX="$HOME/cabana"
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          -DCMAKE_PREFIX_PATH="$HOME/kokkos"
+          -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/ArborX"
           -DCabana_REQUIRE_SERIAL=OFF ${CMAKE_OPTS[@]}
-          -DCabana_REQUIRE_MPI=ON
+          -DCabana_REQUIRE_MPI=ON -DCabana_REQUIRE_ARBORX=${ARBORX}
           $([[ ${CC} = clang* ]] || echo -DCabana_ENABLE_FORTRAN_EXAMPLES=ON)
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DDOXYGEN_WARN_AS_ERROR=ON -DDOXYGEN_GENERATE_XML=ON -DDOXYGEN_WARN_IF_UNDOCUMENTED=OFF
