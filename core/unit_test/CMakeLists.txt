@@ -8,10 +8,6 @@ set_target_properties(cabana_core_gtest PROPERTIES
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
     )
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 set(gtest_args --gtest_color=yes)
 
 ##--------------------------------------------------------------------------##
@@ -60,7 +56,8 @@ macro(Cabana_add_tests)
       )
       set(_target Cabana_${_test}_test_${_device})
       add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
-      target_include_directories(${_target} PUBLIC ${_dir})
+      target_include_directories(${_target} PRIVATE ${_dir}
+        ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
       target_link_libraries(${_target} cabanacore cabana_core_gtest)
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})

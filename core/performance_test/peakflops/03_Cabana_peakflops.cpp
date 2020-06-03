@@ -257,15 +257,6 @@ bool check_expected_flops( double achieved_flops_clock )
 // Run the performance test.
 TEST( cabana, simple )
 {
-
-#ifndef CABANA_PERFORMANCE_ITERATIONS
-#define CABANA_PERFORMANCE_ITERATIONS                                          \
-    2e4 // use a higher number e.g. 2e6 for skylake
-#endif
-#ifndef CABANA_PERFORMANCE_SEED
-#define CABANA_PERFORMANCE_SEED 76843802738543
-#endif
-
     // number of outer loop (e.g. timestepping)
     long n = static_cast<long>( CABANA_PERFORMANCE_ITERATIONS );
     long seed = CABANA_PERFORMANCE_SEED;
