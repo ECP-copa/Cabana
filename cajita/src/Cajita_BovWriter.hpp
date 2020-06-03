@@ -33,6 +33,8 @@ namespace Cajita
 {
 namespace BovWriter
 {
+namespace Experimental
+{
 //---------------------------------------------------------------------------//
 // VisIt Brick-of-Values (BOV) grid field writer.
 //---------------------------------------------------------------------------//
@@ -287,6 +289,7 @@ void writeTimeStep( const int time_step_index, const double time,
 
 //---------------------------------------------------------------------------//
 
+} // end namespace Experimental
 } // end namespace BovWriter
 } // end namespace Cajita
 

@@ -10,7 +10,7 @@
  ****************************************************************************/
 
 #include <Cajita_Array.hpp>
-#include <Cajita_BovWriter.hpp>
+#include <Cajita_Experimental::BovWriter.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Halo.hpp>
@@ -92,8 +92,8 @@ void writeTest()
     node_halo->gather( *node_field );
 
     // Write the fields to a file.
-    BovWriter::writeTimeStep( 302, 3.43, *cell_field );
-    BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+    Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
+    Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
 
     // Read the data back in on rank 0 and make sure it is OK.
     int rank;

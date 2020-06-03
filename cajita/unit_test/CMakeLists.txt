@@ -84,7 +84,7 @@ set(MPI_TESTS
   Halo
   SplineEvaluation
   Interpolation
-  BovWriter
+# BovWriter
   )
 
 if(Cabana_ENABLE_HYPRE)

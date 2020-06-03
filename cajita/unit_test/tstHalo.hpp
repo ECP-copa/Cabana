@@ -151,9 +151,8 @@ template <>
 struct TestHaloReduce<ScatterReduce::Min>
 {
     template <class ViewType>
-    static void
-    check( ViewType view, int neighbor_rank, int comm_rank, const int i,
-           const int j, const int k, const int l )
+    static void check( ViewType view, int neighbor_rank, int comm_rank,
+                       const int i, const int j, const int k, const int l )
     {
         if ( neighbor_rank < comm_rank )
             EXPECT_EQ( view( i, j, k, l ), neighbor_rank );
@@ -166,9 +165,8 @@ template <>
 struct TestHaloReduce<ScatterReduce::Max>
 {
     template <class ViewType>
-    static void
-    check( ViewType view, int neighbor_rank, int comm_rank, const int i,
-           const int j, const int k, const int l )
+    static void check( ViewType view, int neighbor_rank, int comm_rank,
+                       const int i, const int j, const int k, const int l )
     {
         if ( neighbor_rank > comm_rank )
             EXPECT_EQ( view( i, j, k, l ), neighbor_rank );
@@ -181,9 +179,8 @@ template <>
 struct TestHaloReduce<ScatterReduce::Replace>
 {
     template <class ViewType>
-    static void check( ViewType view, int neighbor_rank,
-                                              int, const int i, const int j,
-                                              const int k, const int l )
+    static void check( ViewType view, int neighbor_rank, int, const int i,
+                       const int j, const int k, const int l )
     {
         EXPECT_EQ( view( i, j, k, l ), neighbor_rank );
     }
