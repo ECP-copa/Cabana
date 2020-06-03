@@ -32,7 +32,7 @@ pipeline {
                               -D Cabana_ENABLE_TESTING=ON \
                               -D Cabana_ENABLE_EXAMPLES=ON \
                             .. && \
-                            make -j$NPROCS && \
+                            make -j8 && \
                             ctest --output-on-failure
                         '''
                     }
@@ -61,7 +61,7 @@ pipeline {
                               -D Cabana_ENABLE_TESTING=ON \
                               -D Cabana_ENABLE_EXAMPLES=ON \
                             .. && \
-                            make -j$NPROCS && \
+                            make -j8 && \
                             ctest --output-on-failure
                         '''
                     }
