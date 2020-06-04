@@ -224,6 +224,57 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
                                       first, bvh.size()};
 }
 
+template <typename MemorySpace, typename Tag>
+struct Dense
+{
+    Kokkos::View<int *, MemorySpace> cnt;
+    Kokkos::View<int **, MemorySpace> val;
+    typename MemorySpace::size_type shift;
+    typename MemorySpace::size_type total;
+};
+
+template <typename DeviceType, typename Slice, typename Tag>
+auto make2DNeighborList( Tag, Slice const &coordinate_slice,
+                         typename Slice::size_type first,
+                         typename Slice::size_type last,
+                         typename Slice::value_type radius )
+{
+    using MemorySpace = typename DeviceType::memory_space;
+    using ExecutionSpace = typename DeviceType::execution_space;
+    ExecutionSpace space{};
+
+    ArborX::BVH<MemorySpace> bvh( space, coordinate_slice );
+
+    Kokkos::View<int *, DeviceType> indices( "indices", 0 );
+    Kokkos::View<int *, DeviceType> offset( "offset", 0 );
+
+    auto const predicates =
+        Impl::makePredicates( coordinate_slice, first, last, radius );
+
+    auto const n_queries = ArborX::Traits::
+        Access<decltype( predicates ), ArborX::Traits::PredicatesTag>::size(
+            predicates );
+
+    Kokkos::View<int *, DeviceType> counts( "counts", n_queries );
+    bvh.query(
+        space, predicates,
+        Impl::NeighborDiscriminatorCallback2D_FirstPass<decltype( counts ),
+                                                        Tag>{counts},
+        indices, offset );
+
+    Kokkos::View<int **, DeviceType> neighbors(
+        Kokkos::view_alloc( "neighbors", Kokkos::WithoutInitializing ),
+        n_queries, ArborX::max( space, counts ) );
+    Kokkos::deep_copy( counts, 0 ); // reset counts to zero
+    bvh.query(
+        space, predicates,
+        Impl::NeighborDiscriminatorCallback2D_SecondPass<
+            decltype( counts ), decltype( neighbors ), Tag>{counts, neighbors},
+        indices, offset );
+
+    return Dense<MemorySpace, Tag>{counts, neighbors, first, bvh.size()};
+}
+
 } // namespace Experimental
 
 template <typename MemorySpace, typename Tag>
