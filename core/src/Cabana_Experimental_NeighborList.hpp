@@ -205,7 +205,6 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
     static KOKKOS_FUNCTION size_type
     getNeighbor( crs_graph_type const &crs_graph, size_type p, size_type n )
     {
-        assert( (int)p >= 0 && p < crs_graph.total );
         assert( n < numNeighbor( crs_graph, p ) );
         p -= crs_graph.shift;
         return crs_graph.col_ind( crs_graph.row_ptr( p ) + n );
