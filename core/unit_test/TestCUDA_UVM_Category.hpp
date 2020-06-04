@@ -19,5 +19,6 @@
 #define TEST_CATEGORY cuda_uvm
 #define TEST_EXECSPACE Kokkos::Cuda
 #define TEST_MEMSPACE Kokkos::CudaUVMSpace
+#define TEST_DEVICE Kokkos::Device<Kokkos::Cuda, Kokkos::CudaUVMSpace>
 
 #endif // end CABANA_TEST_CUDAUVM_CATEGORY_HPP
