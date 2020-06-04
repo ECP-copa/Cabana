@@ -303,6 +303,32 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
     }
 };
 
+template <typename MemorySpace, typename Tag>
+class NeighborList<Experimental::Dense<MemorySpace, Tag>>
+{
+    using size_type = std::size_t;
+    using specialization_type = Experimental::Dense<MemorySpace, Tag>;
+
+  public:
+    using memory_space = MemorySpace;
+    static KOKKOS_FUNCTION size_type numNeighbor( specialization_type const &d,
+                                                  size_type p )
+    {
+        assert( (int)p >= 0 && p < d.total );
+        p -= d.shift;
+        if ( (int)p < 0 || p >= d.cnt.size() )
+            return 0;
+        return d.cnt( p );
+    }
+    static KOKKOS_FUNCTION size_type getNeighbor( specialization_type const &d,
+                                                  size_type p, size_type n )
+    {
+        assert( n < numNeighbor( d, p ) );
+        p -= d.shift;
+        return d.val( p, n );
+    }
+};
+
 } // namespace Cabana
 
 #endif
