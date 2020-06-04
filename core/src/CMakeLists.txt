@@ -70,9 +70,6 @@ install(EXPORT Cabana_Targets
   NAMESPACE Cabana::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
 
-install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfigVersion.cmake"
-  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
-
 install(FILES ${HEADERS_PUBLIC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
@@ -80,11 +77,5 @@ install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
-
-configure_file(CabanaConfig.cmakein
-  ${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake @ONLY)
-
-write_basic_package_version_file("CabanaConfigVersion.cmake"
-  VERSION ${PROJECT_VERSION} COMPATIBILITY ExactVersion)
 
 add_library(Cabana::cabanacore ALIAS cabanacore)

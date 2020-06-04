@@ -73,6 +73,11 @@ Cabana_add_dependency( PACKAGE CLANG_FORMAT )
 
 # find hypre
 Cabana_add_dependency( PACKAGE HYPRE )
+if(HYPRE_FOUND)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHYPRE.cmake
+    DESTINATION lib/cmake/Cabana )
+endif()
 
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte )
@@ -173,6 +178,15 @@ endif()
 ##---------------------------------------------------------------------------##
 configure_file(cmake/Cabana.pc.cmakein Cabana.pc @ONLY)
 install(FILES ${CMAKE_CURRENT_BINARY_DIR}/Cabana.pc DESTINATION ${CMAKE_INSTALL_LIBDIR}/pkgconfig)
+
+write_basic_package_version_file("CabanaConfigVersion.cmake"
+  VERSION ${PROJECT_VERSION} COMPATIBILITY ExactVersion)
+
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/cmake/CabanaConfig.cmakein
+  ${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake @ONLY)
+
+install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfigVersion.cmake"
+  DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
 
 ##---------------------------------------------------------------------------##
 ## Clang Format
