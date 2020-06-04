@@ -150,6 +150,45 @@ struct NeighborDiscriminatorCallback
     }
 };
 
+template <typename Counts, typename Tag>
+struct NeighborDiscriminatorCallback2D_FirstPass
+{
+    Counts counts;
+    using tag = ArborX::Details::InlineCallbackTag;
+    template <typename Predicate, typename OutputFunctor>
+    KOKKOS_FUNCTION void operator()( Predicate const &predicate,
+                                     int primitive_index,
+                                     OutputFunctor const & ) const
+    {
+        int const predicate_index = getData( predicate );
+        if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
+        {
+            ++counts( predicate_index );
+        }
+    }
+};
+
+template <typename Counts, typename Neighbors, typename Tag>
+struct NeighborDiscriminatorCallback2D_SecondPass
+{
+    Counts counts;
+    Neighbors neighbors;
+    using tag = ArborX::Details::InlineCallbackTag;
+    template <typename Predicate, typename OutputFunctor>
+    KOKKOS_FUNCTION void operator()( Predicate const &predicate,
+                                     int primitive_index,
+                                     OutputFunctor const & ) const
+    {
+        int const predicate_index = getData( predicate );
+        if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
+        {
+            assert( count( predicate_index ) < (int)neighbors.extent( 1 ) );
+            neighbors( predicate_index, counts( predicate_index )++ ) =
+                primitive_index;
+        }
+    }
+};
+
 } // namespace Impl
 
 template <typename MemorySpace, typename Tag>
