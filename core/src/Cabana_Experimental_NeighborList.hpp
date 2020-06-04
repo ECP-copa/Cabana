@@ -179,8 +179,8 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
                Impl::makePredicates( coordinate_slice, first, last, radius ),
                Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset );
 
-    return CrsGraph<typename DeviceType::memory_space, Tag>{
-        std::move( indices ), std::move( offset ), first, bvh.size()};
+    return CrsGraph<MemorySpace, Tag>{std::move( indices ), std::move( offset ),
+                                      first, bvh.size()};
 }
 
 } // namespace Experimental
