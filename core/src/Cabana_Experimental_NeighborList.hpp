@@ -114,36 +114,38 @@ namespace Experimental
 namespace Impl
 {
 
-// Custom callback for ArborX::BVH::query()
 template <typename Tag>
-struct NeighborDiscriminatorCallback;
+struct CollisionFilter;
 
 template <>
-struct NeighborDiscriminatorCallback<Cabana::FullNeighborTag>
+struct CollisionFilter<FullNeighborTag>
 {
-    using tag = ArborX::Details::InlineCallbackTag;
-    template <typename Predicate, typename OutputFunctor>
-    KOKKOS_FUNCTION void operator()( Predicate const &predicate, int i,
-                                     OutputFunctor const &out ) const
+    KOKKOS_FUNCTION bool static keep( int i, int j ) noexcept
     {
-        if ( getData( predicate ) != i ) // discard self-collision
-        {
-            out( i );
-        }
+        return i != j; // discard self-collision
     }
 };
 
 template <>
-struct NeighborDiscriminatorCallback<Cabana::HalfNeighborTag>
+struct CollisionFilter<HalfNeighborTag>
+{
+    KOKKOS_FUNCTION static bool keep( int i, int j ) noexcept { return i > j; }
+};
+
+// Custom callback for ArborX::BVH::query()
+template <typename Tag>
+struct NeighborDiscriminatorCallback
 {
     using tag = ArborX::Details::InlineCallbackTag;
     template <typename Predicate, typename OutputFunctor>
-    KOKKOS_FUNCTION void operator()( Predicate const &predicate, int i,
+    KOKKOS_FUNCTION void operator()( Predicate const &predicate,
+                                     int primitive_index,
                                      OutputFunctor const &out ) const
     {
-        if ( getData( predicate ) > i )
+        int const predicate_index = getData( predicate );
+        if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
         {
-            out( i );
+            out( primitive_index );
         }
     }
 };
