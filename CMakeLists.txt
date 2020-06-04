@@ -33,7 +33,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(Kokkos 3.1 REQUIRED)
 
 # set supported kokkos devices
-set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP)
+set(CABANA_SUPPORTED_DEVICES SERIAL PTHREAD OPENMP CUDA HIP)
 
 # check user required kokkos device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
