@@ -76,7 +76,7 @@ Cabana_add_dependency( PACKAGE HYPRE )
 if(HYPRE_FOUND)
   install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHYPRE.cmake
-    DESTINATION lib/cmake/Cabana )
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
 endif()
 
 # find heffte
