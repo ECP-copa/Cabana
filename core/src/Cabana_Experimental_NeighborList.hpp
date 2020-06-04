@@ -77,7 +77,7 @@ struct Access<Slice, PrimitivesTag,
 {
     using memory_space = typename Slice::memory_space;
     using size_type = typename Slice::size_type;
-    static size_type size( Slice const &x ) { return x.size(); }
+    static KOKKOS_FUNCTION size_type size( Slice const &x ) { return x.size(); }
     static KOKKOS_FUNCTION Point get( Slice const &x, size_type i )
     {
         return {static_cast<float>( x( i, 0 ) ),
