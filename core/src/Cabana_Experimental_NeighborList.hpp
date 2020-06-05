@@ -182,7 +182,7 @@ struct NeighborDiscriminatorCallback2D_SecondPass
         int const predicate_index = getData( predicate );
         if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
         {
-            assert( count( predicate_index ) < (int)neighbors.extent( 1 ) );
+            assert( counts( predicate_index ) < (int)neighbors.extent( 1 ) );
             neighbors( predicate_index, counts( predicate_index )++ ) =
                 primitive_index;
         }
