@@ -30,14 +30,15 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 
 //---------------------------------------------------------------------------//
-// local grid-to-point.
+// Local grid-to-point.
 //---------------------------------------------------------------------------//
 namespace G2P
 {
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a scalar value to a point.
-  \param view The view of scalar grid data from which to interpolate.
+  \param view A functor with view semantics of scalar grid data from which to
+  interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
   \param result The scalar value at the point.
 */
@@ -60,7 +61,10 @@ value( const ViewType &view, const SplineDataType &sd, PointDataType &result,
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a vector value to a point.
-  \param view The view of vector grid data from which to interpolate.
+  \param view A functor with view semantics of vector grid data from which to
+  interpolate.
+  \param view A functor with view semantics of scalar grid data from which to
+  interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
   \param result The vector value at the point.
 */
@@ -86,7 +90,8 @@ value( const ViewType &view, const SplineDataType &sd, PointDataType result[3],
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a scalar gradient to a point.
-  \param view The view of scalar grid data from which to interpolate.
+  \param view A functor with view semantics of scalar grid data from which to
+  interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
   \param result The scalar gradient at the point.
 */
@@ -124,7 +129,8 @@ gradient( const ViewType &view, const SplineDataType &sd,
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a vector gradient to a point.
-  \param view The view of vector grid data from which to interpolate.
+  \param view A functor with view sematics of vector grid data from which to
+  interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
   \param result The vector gradient at the point.
 */
@@ -162,7 +168,8 @@ gradient( const ViewType &view, const SplineDataType &sd,
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a vector divergence to a point.
-  \param view The view of vector grid data from which to interpolate.
+  \param view A functor with view semantics of vector grid data from which to
+  interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
   \param result The vector divergence at the point.
 */
@@ -229,7 +236,7 @@ struct is_scatter_view<const Kokkos::Experimental::ScatterView<
   \brief Interpolate a scalar value to the grid.
   \param point_data The scalar value to at the point interpolate to the grid.
   \param sd The spline data to use for the interpolation.
-  \param view The view of scalar grid data to interpolate to.
+  \param view The scatter view of scalar grid data to interpolate to.
 */
 template <class PointDataType, class ViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
@@ -255,7 +262,7 @@ value( const PointDataType &point_data, const SplineDataType &sd,
   \brief Interpolate a vector value to the grid.
   \param point_data The vector value at the point to interpolate to the grid.
   \param sd The spline data to use for the interpolation.
-  \param view The view of vector grid data to interpolate to.
+  \param view The scatter view of vector grid data to interpolate to.
 */
 template <class PointDataType, class ViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
@@ -281,9 +288,11 @@ value( const PointDataType point_data[3], const SplineDataType &sd,
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate the gradient of a scalar to the grid.
-  \param point_data The scalar at the point who's gradient to interpolate to the
-  grid. \param sd The spline data to use for the interpolation. \param view The
-  view of scalar gradient grid data to interpolate to.
+  \param point_data The scalar at the point who's gradient to interpolate to
+  the grid.
+  \param sd The spline data to use for the interpolation.
+  \param view The scatter view of scalar gradient grid data to interpolate
+  to.
 */
 template <class PointDataType, class ViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
@@ -316,8 +325,10 @@ KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
 /*!
   \brief Interpolate the divergence of a vector to the grid.
   \param point_data The vector at the point who's divergence to interpolate to
-  the grid. \param sd The spline data to use for the interpolation. \param view
-  The view of vector divergence grid data to interpolate to.
+  the grid.
+  \param sd The spline data to use for the interpolation.
+  \param view The scatter view of vector divergence grid data to interpolate
+  to.
 */
 template <class PointDataType, class ViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
@@ -352,8 +363,10 @@ divergence( const PointDataType point_data[3], const SplineDataType &sd,
 /*!
   \brief Interpolate the divergence of a tensor to the grid.
   \param point_data The tensor at the point who's divergence to interpolate to
-  the grid. \param sd The spline data to use for the interpolation. \param view
-  The view of tensor divergence grid data to interpolate to.
+  the grid.
+  \param sd The spline data to use for the interpolation.
+  \param view The scatter view of tensor divergence grid data to interpolate
+  to.
 */
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION void
@@ -397,7 +410,7 @@ divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
 // Global grid-to-Point
 //---------------------------------------------------------------------------//
 /*
- \brief Local Grid-to-Point interpolation.
+ \brief Global Grid-to-Point interpolation.
 
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
   for a given point at a given entity.
@@ -703,7 +716,7 @@ createVectorDivergenceG2P( const ViewType &x,
 // Global point-to-grid
 //---------------------------------------------------------------------------//
 /*!
-  \brief Local Point-to-Grid interpolation.
+  \brief Global Point-to-Grid interpolation.
 
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
   for a given point at a given entity.
