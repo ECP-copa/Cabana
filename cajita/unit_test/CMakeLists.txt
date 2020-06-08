@@ -79,6 +79,7 @@ set(SERIAL_TESTS
 set(MPI_TESTS
   GlobalGrid
   LocalGrid
+  IndexConversion
   LocalMesh
   Array
   Halo
