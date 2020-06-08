@@ -67,42 +67,34 @@ class LocalGrid
     IndexSpace<3> indexSpace( Own, Cell, Local ) const;
     IndexSpace<3> indexSpace( Ghost, Cell, Local ) const;
     IndexSpace<3> indexSpace( Own, Cell, Global ) const;
-    IndexSpace<3> indexSpace( Ghost, Cell, Global ) const;
 
     IndexSpace<3> indexSpace( Own, Node, Local ) const;
     IndexSpace<3> indexSpace( Ghost, Node, Local ) const;
     IndexSpace<3> indexSpace( Own, Node, Global ) const;
-    IndexSpace<3> indexSpace( Ghost, Node, Global ) const;
 
     IndexSpace<3> indexSpace( Own, Face<Dim::I>, Local ) const;
     IndexSpace<3> indexSpace( Ghost, Face<Dim::I>, Local ) const;
     IndexSpace<3> indexSpace( Own, Face<Dim::I>, Global ) const;
-    IndexSpace<3> indexSpace( Ghost, Face<Dim::I>, Global ) const;
 
     IndexSpace<3> indexSpace( Own, Face<Dim::J>, Local ) const;
     IndexSpace<3> indexSpace( Ghost, Face<Dim::J>, Local ) const;
     IndexSpace<3> indexSpace( Own, Face<Dim::J>, Global ) const;
-    IndexSpace<3> indexSpace( Ghost, Face<Dim::J>, Global ) const;
 
     IndexSpace<3> indexSpace( Own, Face<Dim::K>, Local ) const;
     IndexSpace<3> indexSpace( Ghost, Face<Dim::K>, Local ) const;
     IndexSpace<3> indexSpace( Own, Face<Dim::K>, Global ) const;
-    IndexSpace<3> indexSpace( Ghost, Face<Dim::K>, Global ) const;
 
     IndexSpace<3> indexSpace( Own, Edge<Dim::I>, Local ) const;
     IndexSpace<3> indexSpace( Ghost, Edge<Dim::I>, Local ) const;
     IndexSpace<3> indexSpace( Own, Edge<Dim::I>, Global ) const;
-    IndexSpace<3> indexSpace( Ghost, Edge<Dim::I>, Global ) const;
 
     IndexSpace<3> indexSpace( Own, Edge<Dim::J>, Local ) const;
     IndexSpace<3> indexSpace( Ghost, Edge<Dim::J>, Local ) const;
     IndexSpace<3> indexSpace( Own, Edge<Dim::J>, Global ) const;
-    IndexSpace<3> indexSpace( Ghost, Edge<Dim::J>, Global ) const;
 
     IndexSpace<3> indexSpace( Own, Edge<Dim::K>, Local ) const;
     IndexSpace<3> indexSpace( Ghost, Edge<Dim::K>, Local ) const;
     IndexSpace<3> indexSpace( Own, Edge<Dim::K>, Global ) const;
-    IndexSpace<3> indexSpace( Ghost, Edge<Dim::K>, Global ) const;
 
     /*
        Given a relative set of indices of a neighbor get the set of local
@@ -189,8 +181,6 @@ class LocalGrid
     // Get the global index space of the local grid.
     template <class EntityType>
     IndexSpace<3> globalIndexSpace( Own, EntityType ) const;
-    template <class EntityType>
-    IndexSpace<3> globalIndexSpace( Ghost, EntityType ) const;
 
     // Get the face index space of the local grid.
     template <int Dir>
@@ -199,8 +189,6 @@ class LocalGrid
     IndexSpace<3> faceIndexSpace( Own, Face<Dir>, Global ) const;
     template <int Dir>
     IndexSpace<3> faceIndexSpace( Ghost, Face<Dir>, Local ) const;
-    template <int Dir>
-    IndexSpace<3> faceIndexSpace( Ghost, Face<Dir>, Global ) const;
 
     // Given a relative set of indices of a neighbor get the set of local
     // face indices shared with that neighbor in the given decomposition.
@@ -220,8 +208,6 @@ class LocalGrid
     IndexSpace<3> edgeIndexSpace( Own, Edge<Dir>, Global ) const;
     template <int Dir>
     IndexSpace<3> edgeIndexSpace( Ghost, Edge<Dir>, Local ) const;
-    template <int Dir>
-    IndexSpace<3> edgeIndexSpace( Ghost, Edge<Dir>, Global ) const;
 
     // Given a relative set of indices of a neighbor get the set of local
     // edge indices shared with that neighbor in the given decomposition.

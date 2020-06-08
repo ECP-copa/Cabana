@@ -285,13 +285,13 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
             local_grid.indexSpace( Own(), Node(), Local() );
         auto ghosted_nodes_local =
             local_grid.indexSpace( Ghost(), Node(), Local() );
-        auto ghosted_nodes_global =
-            local_grid.indexSpace( Ghost(), Node(), Global() );
+        auto owned_nodes_global =
+            local_grid.indexSpace( Own(), Node(), Global() );
         for ( int d = 0; d < 3; ++d )
         {
             // Allocate edges on the device for this dimension.
             const auto &global_edge = global_mesh.nonUniformEdge( d );
-            int nedge = ghosted_nodes_global.extent( d );
+            int nedge = ghosted_nodes_local.extent( d );
             _local_edges[d] = Kokkos::View<Scalar *, Device>(
                 Kokkos::ViewAllocateWithoutInitializing( "local_edges" ),
                 nedge );
@@ -303,14 +303,15 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
             // Compute the owned edges.
             for ( int n = owned_nodes_local.min( d );
                   n < owned_nodes_local.max( d ); ++n )
-                edge_mirror( n ) =
-                    global_edge[ghosted_nodes_global.min( d ) + n];
+                edge_mirror( n ) = global_edge[owned_nodes_global.min( d ) + n -
+                                               owned_nodes_local.min( d )];
 
             // Compute the lower boundary edges.
             if ( global_grid.dimBlockId( d ) > 0 )
                 for ( int n = 0; n < owned_nodes_local.min( d ); ++n )
                     edge_mirror( n ) =
-                        global_edge[ghosted_nodes_global.min( d ) + n];
+                        global_edge[owned_nodes_global.min( d ) + n -
+                                    owned_nodes_local.min( d )];
             else if ( global_grid.isPeriodic( d ) )
                 for ( int n = 0; n < owned_nodes_local.min( d ); ++n )
                     edge_mirror( n ) =
@@ -324,7 +325,8 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
                 for ( int n = owned_nodes_local.max( d );
                       n < ghosted_nodes_local.max( d ); ++n )
                     edge_mirror( n ) =
-                        global_edge[ghosted_nodes_global.min( d ) + n];
+                        global_edge[owned_nodes_global.min( d ) + n -
+                                    owned_nodes_local.min( d )];
             else if ( global_grid.isPeriodic( d ) )
                 for ( int n = 0; n < ghosted_nodes_local.max( d ) -
                                          owned_nodes_local.max( d );

@@ -569,8 +569,6 @@ void irregularTest( const std::array<int, 3> &ranks_per_dim )
         local_grid->indexSpace( Ghost(), Cell(), Local() );
     auto own_cell_global_space =
         local_grid->indexSpace( Own(), Cell(), Global() );
-    auto ghost_cell_global_space =
-        local_grid->indexSpace( Ghost(), Cell(), Global() );
     auto own_cell_local_space =
         local_grid->indexSpace( Own(), Cell(), Local() );
 
@@ -613,18 +611,24 @@ void irregularTest( const std::array<int, 3> &ranks_per_dim )
                      k_func( own_cell_global_space.max( Dim::K ) ) );
 
     EXPECT_FLOAT_EQ( ghost_lc_m( Dim::I ),
-                     i_func( ghost_cell_global_space.min( Dim::I ) ) );
+                     i_func( own_cell_global_space.min( Dim::I ) -
+                             own_cell_local_space.min( Dim::I ) ) );
     EXPECT_FLOAT_EQ( ghost_lc_m( Dim::J ),
-                     j_func( ghost_cell_global_space.min( Dim::J ) ) );
+                     j_func( own_cell_global_space.min( Dim::J ) -
+                             own_cell_local_space.min( Dim::J ) ) );
     EXPECT_FLOAT_EQ( ghost_lc_m( Dim::K ),
-                     k_func( ghost_cell_global_space.min( Dim::K ) ) );
+                     k_func( own_cell_global_space.min( Dim::K ) -
+                             own_cell_local_space.min( Dim::K ) ) );
 
     EXPECT_FLOAT_EQ( ghost_hc_m( Dim::I ),
-                     i_func( ghost_cell_global_space.max( Dim::I ) ) );
+                     i_func( own_cell_global_space.max( Dim::I ) +
+                             own_cell_local_space.min( Dim::I ) ) );
     EXPECT_FLOAT_EQ( ghost_hc_m( Dim::J ),
-                     j_func( ghost_cell_global_space.max( Dim::J ) ) );
+                     j_func( own_cell_global_space.max( Dim::J ) +
+                             own_cell_local_space.min( Dim::J ) ) );
     EXPECT_FLOAT_EQ( ghost_hc_m( Dim::K ),
-                     k_func( ghost_cell_global_space.max( Dim::K ) ) );
+                     k_func( own_cell_global_space.max( Dim::K ) +
+                             own_cell_local_space.min( Dim::K ) ) );
 
     // Check the cell locations and measures.
     auto cell_measure = createView<double, TEST_DEVICE>(
@@ -666,30 +670,42 @@ void irregularTest( const std::array<int, 3> &ranks_per_dim )
                                  ( j_func( j + 1 ) - j_func( j ) ) *
                                  ( k_func( k + 1 ) - k_func( k ) );
                 double compute_m =
-                    cell_measure_h( i - ghost_cell_global_space.min( Dim::I ),
-                                    j - ghost_cell_global_space.min( Dim::J ),
-                                    k - ghost_cell_global_space.min( Dim::K ) );
+                    cell_measure_h( i - own_cell_global_space.min( Dim::I ) +
+                                        own_cell_local_space.min( Dim::I ),
+                                    j - own_cell_global_space.min( Dim::J ) +
+                                        own_cell_local_space.min( Dim::J ),
+                                    k - own_cell_global_space.min( Dim::K ) +
+                                        own_cell_local_space.min( Dim::K ) );
                 EXPECT_FLOAT_EQ( measure, compute_m );
 
                 double x_loc = ( i_func( i + 1 ) + i_func( i ) ) / 2.0;
-                double compute_x = cell_location_x_h(
-                    i - ghost_cell_global_space.min( Dim::I ),
-                    j - ghost_cell_global_space.min( Dim::J ),
-                    k - ghost_cell_global_space.min( Dim::K ) );
+                double compute_x =
+                    cell_location_x_h( i - own_cell_global_space.min( Dim::I ) +
+                                           own_cell_local_space.min( Dim::I ),
+                                       j - own_cell_global_space.min( Dim::J ) +
+                                           own_cell_local_space.min( Dim::J ),
+                                       k - own_cell_global_space.min( Dim::K ) +
+                                           own_cell_local_space.min( Dim::K ) );
                 EXPECT_FLOAT_EQ( x_loc, compute_x );
 
                 double y_loc = ( j_func( j + 1 ) + j_func( j ) ) / 2.0;
-                double compute_y = cell_location_y_h(
-                    i - ghost_cell_global_space.min( Dim::I ),
-                    j - ghost_cell_global_space.min( Dim::J ),
-                    k - ghost_cell_global_space.min( Dim::K ) );
+                double compute_y =
+                    cell_location_y_h( i - own_cell_global_space.min( Dim::I ) +
+                                           own_cell_local_space.min( Dim::I ),
+                                       j - own_cell_global_space.min( Dim::J ) +
+                                           own_cell_local_space.min( Dim::J ),
+                                       k - own_cell_global_space.min( Dim::K ) +
+                                           own_cell_local_space.min( Dim::K ) );
                 EXPECT_FLOAT_EQ( y_loc, compute_y );
 
                 double z_loc = ( k_func( k + 1 ) + k_func( k ) ) / 2.0;
-                double compute_z = cell_location_z_h(
-                    i - ghost_cell_global_space.min( Dim::I ),
-                    j - ghost_cell_global_space.min( Dim::J ),
-                    k - ghost_cell_global_space.min( Dim::K ) );
+                double compute_z =
+                    cell_location_z_h( i - own_cell_global_space.min( Dim::I ) +
+                                           own_cell_local_space.min( Dim::I ),
+                                       j - own_cell_global_space.min( Dim::J ) +
+                                           own_cell_local_space.min( Dim::J ),
+                                       k - own_cell_global_space.min( Dim::K ) +
+                                           own_cell_local_space.min( Dim::K ) );
                 EXPECT_FLOAT_EQ( z_loc, compute_z );
             }
 }

@@ -90,7 +90,7 @@ void poissonTest( const std::string &solver_type,
     solver->setMatrixValues( *matrix_entries );
 
     // Set the tolerance.
-    solver->setTolerance( 1.0e-8 );
+    solver->setTolerance( 1.0e-9 );
 
     // Set the maximum iterations.
     solver->setMaxIter( 2000 );
@@ -121,30 +121,24 @@ void poissonTest( const std::string &solver_type,
     ref_solver->setMatrixStencil( stencil );
     const auto &ref_entries = ref_solver->getMatrixValues();
     auto matrix_view = ref_entries.view();
-    auto global_space = local_mesh->indexSpace( Ghost(), Cell(), Global() );
+    auto global_space = local_mesh->indexSpace( Own(), Cell(), Global() );
+    int ncell_i = global_grid->globalNumEntity( Cell(), Dim::I );
+    int ncell_j = global_grid->globalNumEntity( Cell(), Dim::J );
+    int ncell_k = global_grid->globalNumEntity( Cell(), Dim::K );
     Kokkos::parallel_for(
         "fill_ref_entries",
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+            int gi = i + global_space.min( Dim::I ) - owned_space.min( Dim::I );
+            int gj = j + global_space.min( Dim::J ) - owned_space.min( Dim::J );
+            int gk = k + global_space.min( Dim::K ) - owned_space.min( Dim::K );
             matrix_view( i, j, k, 0 ) = -6.0;
-            matrix_view( i, j, k, 1 ) =
-                ( i + global_space.min( Dim::I ) > 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 2 ) = ( i + global_space.min( Dim::I ) <
-                                          global_space.max( Dim::I ) - 1 )
-                                            ? 1.0
-                                            : 0.0;
-            matrix_view( i, j, k, 3 ) =
-                ( j + global_space.min( Dim::J ) > 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 4 ) = ( j + global_space.min( Dim::J ) <
-                                          global_space.max( Dim::J ) - 1 )
-                                            ? 1.0
-                                            : 0.0;
-            matrix_view( i, j, k, 5 ) =
-                ( k + global_space.min( Dim::K ) > 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 6 ) = ( k + global_space.min( Dim::K ) <
-                                          global_space.max( Dim::K ) - 1 )
-                                            ? 1.0
-                                            : 0.0;
+            matrix_view( i, j, k, 1 ) = ( gi - 1 >= 0 ) ? 1.0 : 0.0;
+            matrix_view( i, j, k, 2 ) = ( gi + 1 < ncell_i ) ? 1.0 : 0.0;
+            matrix_view( i, j, k, 3 ) = ( gj - 1 >= 0 ) ? 1.0 : 0.0;
+            matrix_view( i, j, k, 4 ) = ( gj + 1 < ncell_j ) ? 1.0 : 0.0;
+            matrix_view( i, j, k, 5 ) = ( gk - 1 >= 0 ) ? 1.0 : 0.0;
+            matrix_view( i, j, k, 6 ) = ( gk + 1 < ncell_k ) ? 1.0 : 0.0;
         } );
 
     std::vector<std::array<int, 3>> diag_stencil = {{0, 0, 0}};
@@ -158,13 +152,12 @@ void poissonTest( const std::string &solver_type,
             preconditioner_view( i, j, k, 0 ) = -1.0 / 6.0;
         } );
 
-    ref_solver->setTolerance( 1.0e-12 );
+    ref_solver->setTolerance( 1.0e-11 );
     ref_solver->setPrintLevel( 1 );
     ref_solver->setup();
     ref_solver->solve( *rhs, *lhs_ref );
 
     // Check the results.
-    double epsilon = 1.0e-3;
     auto lhs_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), lhs->view() );
     auto lhs_ref_host = Kokkos::create_mirror_view_and_copy(
@@ -175,8 +168,8 @@ void poissonTest( const std::string &solver_type,
               ++j )
             for ( int k = owned_space.min( Dim::K );
                   k < owned_space.max( Dim::K ); ++k )
-                EXPECT_NEAR( lhs_host( i, j, k, 0 ), lhs_ref_host( i, j, k, 0 ),
-                             epsilon );
+                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
+                                 lhs_ref_host( i, j, k, 0 ) );
 
     // Setup the problem again. We would need to do this if we changed the
     // matrix entries.
@@ -202,8 +195,8 @@ void poissonTest( const std::string &solver_type,
               ++j )
             for ( int k = owned_space.min( Dim::K );
                   k < owned_space.max( Dim::K ); ++k )
-                EXPECT_NEAR( lhs_host( i, j, k, 0 ), lhs_ref_host( i, j, k, 0 ),
-                             epsilon );
+                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
+                                 lhs_ref_host( i, j, k, 0 ) );
 }
 
 //---------------------------------------------------------------------------//
