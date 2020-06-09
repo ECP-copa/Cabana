@@ -17,6 +17,8 @@
 
 #include <Kokkos_Core.hpp>
 
+#include <type_traits>
+
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
@@ -446,9 +448,92 @@ struct Spline<3>
 //---------------------------------------------------------------------------//
 // Spline Data
 //---------------------------------------------------------------------------//
-// Container for spline data evaluated at a point.
+// Spline data tags.
+struct SplinePhysicalCellSize {};
+struct SplineLogicalPosition {};
+struct SplinePhysicalDistance {};
+struct SplineWeightValues {};
+struct SplineWeightPhysicalGradients{};
+
+// Data members holder
+template<class ... DataTags>
+struct SplineDataMemberTypes {};
+
+// Determine if a given tag is present.
+template<typename T, typename SplineDataMemberTypes_t>
+struct has_spline_tag;
+
+template<typename T>
+struct has_spline_tag<T,SplineDataMemberTypes<>> : std::false_type {};
+
+template<typename T, typename U, typename ... Tags>
+struct has_spline_tag<T,SplineDataMemberTypes<U,Tags...>>
+    : has_spline_tag<T,SplineDataMemberTypes<Tags...>> {};
+
+template<typename T, typename ... Tags>
+struct has_spline_tag<T,SplineDataMemberTypes<T,Tags...>>
+    : std::true_type {};
+
+// Spline data members.
+template<typename Scalar, int Order, class Tag>
+struct SplineDataMember;
+
+template<typename Scalar, int Order>
+struct SplineDataMember<Scalar,Order,SplinePhysicalCellSize>
+{
+    // Physical cell size.
+    Scalar dx[3];
+};
+
+template<typename Scalar, int Order>
+struct SplineDataMember<Scalar,Order,SplineLogicalPosition>
+{
+    // Logical position.
+    Scalar x[3];
+};
+
+template<typename Scalar, int Order>
+struct SplineDataMember<Scalar,Order,SplinePhysicalDistance>
+{
+    using spline_type = Spline<Order>;
+    static constexpr int num_knot = spline_type::num_knot;
+
+    // Physical distance.
+    Scalar d[3][num_knot];
+};
+
+template<typename Scalar, int Order>
+struct SplineDataMember<Scalar,Order,SplineWeightValues>
+{
+    using spline_type = Spline<Order>;
+    static constexpr int num_knot = spline_type::num_knot;
+
+    // Weight values.
+    Scalar w[3][num_knot];
+};
+
+template<typename Scalar, int Order>
+struct SplineDataMember<Scalar,Order,SplineWeightPhysicalGradients>
+{
+    using spline_type = Spline<Order>;
+    static constexpr int num_knot = spline_type::num_knot;
+
+    // Weight physical gradients.
+    Scalar g[3][num_knot];
+};
+
+// Spline data container.
+template <typename Scalar, int Order, class EntityType, class Tags = void>
+struct SplineData;
+
+// Default of void has all data members.
 template <typename Scalar, int Order, class EntityType>
-struct SplineData
+struct SplineData<Scalar,Order,EntityType,void>
+    : SplineDataMember<Scalar,Order,SplinePhysicalCellSize>
+    , SplineDataMember<Scalar,Order,SplineLogicalPosition>
+    , SplineDataMember<Scalar,Order,SplinePhysicalDistance>
+    , SplineDataMember<Scalar,Order,SplineWeightValues>
+    , SplineDataMember<Scalar,Order,SplineWeightPhysicalGradients>
 {
     using scalar_type = Scalar;
     static constexpr int order = Order;
@@ -456,62 +541,256 @@ struct SplineData
     static constexpr int num_knot = spline_type::num_knot;
     using entity_type = EntityType;
 
-    // Physical cell size.
-    Scalar dx[3];
-
-    // Logical position.
-    Scalar x[3];
+    using has_physical_cell_size = std::true_type;
+    using has_logical_position = std::true_type;
+    using has_physical_distance = std::true_type;
+    using has_weight_values = std::true_type;
+    using has_weight_physical_gradients = std::true_type;
 
     // Local interpolation stencil.
     int s[3][num_knot];
-
-    // Physical distance.
-    Scalar d[3][num_knot];
-
-    // Weight values.
-    Scalar w[3][num_knot];
-
-    // Weight gradients.
-    Scalar g[3][num_knot];
 };
 
-//---------------------------------------------------------------------------//
-// Evaluate spline data at a point in a uniform mesh.
-template <typename Scalar, int Order, class Device, class EntityType>
-KOKKOS_INLINE_FUNCTION void
-evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
-                const Scalar p[3], SplineData<Scalar, Order, EntityType> &data )
+// Specify each data member individually through tags.
+template <typename Scalar, int Order, class EntityType, class ... Tags>
+struct SplineData<Scalar,Order,EntityType,SplineDataMemberTypes<Tags...>>
+    : SplineDataMember<Scalar,Order,Tags>...
+{
+    using scalar_type = Scalar;
+    static constexpr int order = Order;
+    using spline_type = Spline<Order>;
+    static constexpr int num_knot = spline_type::num_knot;
+    using entity_type = EntityType;
+
+    using member_tags = SplineDataMemberTypes<Tags...>;
+
+    using has_physical_cell_size = has_spline_tag<SplinePhysicalCellSize,member_tags>;
+    using has_logical_position = has_spline_tag<SplineLogicalPosition,member_tags>;
+    using has_physical_distance = has_spline_tag<SplinePhysicalDistance,member_tags>;
+    using has_weight_values = has_spline_tag<SplineWeightValues,member_tags>;
+    using has_weight_physical_gradients = has_spline_tag<SplineWeightPhysicalGradients,member_tags>;
+
+    // Local interpolation stencil.
+    int s[3][num_knot];
+};
+
+// Assign physical cell size to the spline data.
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::true_type,
+                    SplinePhysicalCellSize,
+                    SplineData<Scalar, Order, EntityType, DataTags> &data,
+                    const int d,
+                    const Scalar dx )
+{
+    data.dx[d] = dx;
+}
+
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::false_type,
+                    SplinePhysicalCellSize,
+                    SplineData<Scalar, Order, EntityType, DataTags> &,
+                    const int ,
+                    const Scalar  )
+{}
+
+// Assign logical position to the spline data.
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::true_type,
+                    SplineLogicalPosition,
+                    SplineData<Scalar, Order, EntityType, DataTags> &data,
+                    const int d,
+                    const Scalar x )
+{
+    data.x[d] = x;
+}
+
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::false_type,
+                    SplineLogicalPosition,
+                    SplineData<Scalar, Order, EntityType, DataTags> &,
+                    const int ,
+                    const Scalar  )
+{}
+
+// Assign weight values to the spline data.
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::true_type,
+                    SplineWeightValues,
+                    SplineData<Scalar, Order, EntityType, DataTags> &data,
+                    const Scalar x[3] )
+
 {
     using spline_type =
-        typename SplineData<Scalar, Order, EntityType>::spline_type;
-
-    Scalar low_x[3];
-    int low_id[3] = {0, 0, 0};
-    local_mesh.coordinates( EntityType(), low_id, low_x );
-
-    data.dx[Dim::I] = local_mesh.measure( Edge<Dim::I>(), low_id );
-    data.dx[Dim::J] = local_mesh.measure( Edge<Dim::J>(), low_id );
-    data.dx[Dim::K] = local_mesh.measure( Edge<Dim::K>(), low_id );
-
-    Scalar rdx[3];
+        typename SplineData<Scalar, Order, EntityType, DataTags>::spline_type;
     for ( int d = 0; d < 3; ++d )
-        rdx[d] = 1.0 / data.dx[d];
+        spline_type::value( x[d], data.w[d] );
+}
 
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::false_type,
+                    SplineWeightValues,
+                    SplineData<Scalar, Order, EntityType, DataTags> &,
+                    const Scalar[3] )
+
+{}
+
+// Assign weight physical gradients to the spline data.
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::true_type,
+                    SplineWeightPhysicalGradients,
+                    SplineData<Scalar, Order, EntityType, DataTags> &data,
+                    const Scalar x[3],
+                    const Scalar rdx[3] )
+
+{
+    using spline_type =
+        typename SplineData<Scalar, Order, EntityType, DataTags>::spline_type;
     for ( int d = 0; d < 3; ++d )
-    {
-        data.x[d] = spline_type::mapToLogicalGrid( p[d], rdx[d], low_x[d] );
-        spline_type::stencil( data.x[d], data.s[d] );
-        spline_type::value( data.x[d], data.w[d] );
-        spline_type::gradient( data.x[d], rdx[d], data.g[d] );
-    }
+        spline_type::gradient( x[d], rdx[d], data.g[d] );
+}
 
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::false_type,
+                    SplineWeightPhysicalGradients,
+                    SplineData<Scalar, Order, EntityType, DataTags> &,
+                    const Scalar[3],
+                    const Scalar[3] )
+
+{}
+
+// Assign physical distance to the spline data.
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::true_type,
+                    SplinePhysicalDistance,
+                    SplineData<Scalar, Order, EntityType, DataTags> &data,
+                    const Scalar low_x[3],
+                    const Scalar p[3],
+                    const Scalar dx[3] )
+
+{
+    using spline_type =
+        typename SplineData<Scalar, Order, EntityType, DataTags>::spline_type;
     Scalar offset;
     for ( int d = 0; d < 3; ++d )
     {
         offset = low_x[d] - p[d];
         for ( int n = 0; n < spline_type::num_knot; ++n )
-            data.d[d][n] = offset + data.s[d][n] * data.dx[d];
+            data.d[d][n] = offset + data.s[d][n] * dx[d];
     }
+}
+
+template <typename Scalar,
+          int Order,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION
+void setSplineData( std::false_type,
+                    SplinePhysicalDistance,
+                    SplineData<Scalar, Order, EntityType, DataTags> &,
+                    const Scalar[3],
+                    const Scalar[3],
+                    const Scalar[3] )
+{}
+
+//---------------------------------------------------------------------------//
+// Evaluate spline data at a point in a uniform mesh.
+template <typename Scalar,
+          int Order,
+          class Device,
+          class EntityType,
+          class  DataTags>
+KOKKOS_INLINE_FUNCTION void
+evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
+                const Scalar p[3],
+                SplineData<Scalar, Order, EntityType, DataTags> &data )
+{
+    // data type
+    using sd_type = SplineData<Scalar, Order, EntityType, DataTags>;
+
+    // spline type.
+
+    // Get the low corner of the mesh.
+    Scalar low_x[3];
+    int low_id[3] = {0, 0, 0};
+    local_mesh.coordinates( EntityType(), low_id, low_x );
+
+    // Compute the physical cell size.
+    Scalar dx[3];
+    for ( int d = 0; d < 3; ++d )
+    {
+        dx[d] = local_mesh.measure( Edge<Dim::I>(), low_id );
+        setSplineData(
+            typename sd_type::has_physical_cell_size(),
+            SplinePhysicalCellSize(), data, d, dx[d] );
+    }
+
+    // Compute the inverse physicall cell size.
+    Scalar rdx[3];
+    for ( int d = 0; d < 3; ++d )
+        rdx[d] = 1.0 / data.dx[d];
+
+    // Compute the reference coordinates.
+    Scalar x[3];
+    for ( int d = 0; d < 3; ++d )
+    {
+        x[d] = sd_type::spline_type::mapToLogicalGrid( p[d], rdx[d], low_x[d] );
+        setSplineData( typename sd_type::has_logical_position(),
+                       SplineLogicalPosition(), data, d, x[d] );
+    }
+
+    // Compute the stencil.
+    for ( int d = 0; d < 3; ++d )
+    {
+        sd_type::spline_type::stencil( x[d], data.s[d] );
+    }
+
+    // Compute the weight values.
+    setSplineData(
+        typename sd_type::has_weight_values(), SplineWeightValues(), data, x );
+
+    // Compute the weight gradients.
+    setSplineData( typename sd_type::has_weight_physical_gradients(),
+                   SplineWeightPhysicalGradients(), data, x, rdx );
+
+    // Compute the physical distance.
+    setSplineData( typename sd_type::has_physical_distance(),
+                   SplinePhysicalDistance(), data, low_x, p, dx );
 }
 
 //---------------------------------------------------------------------------//
