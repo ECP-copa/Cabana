@@ -123,15 +123,15 @@ void updatePointSet( const LocalMeshType &local_mesh, EntityType,
         SplineData<scalar_type, Basis::order, EntityType, spline_data_tags>;
 
     // Check members.
-    static_assert( sd_type::has_physical_cell_size::value,
+    static_assert( sd_type::has_physical_cell_size,
                    "spline data missing physical cell size" );
-    static_assert( sd_type::has_logical_position::value,
+    static_assert( sd_type::has_logical_position,
                    "spline data missing logical position" );
-    static_assert( sd_type::has_physical_distance::value,
+    static_assert( sd_type::has_physical_distance,
                    "spline data missing physical distance" );
-    static_assert( sd_type::has_weight_values::value,
+    static_assert( sd_type::has_weight_values,
                    "spline data missing weight values" );
-    static_assert( sd_type::has_weight_physical_gradients::value,
+    static_assert( sd_type::has_weight_physical_gradients,
                    "spline data missing weight physical gradients" );
 
     // Update the size.

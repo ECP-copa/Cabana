@@ -48,7 +48,7 @@ value( const ViewType &view, const SplineDataType &sd, PointDataType &result,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "G2P::value requires spline weight values" );
 
     result = 0.0;
@@ -77,7 +77,7 @@ value( const ViewType &view, const SplineDataType &sd, PointDataType result[3],
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "G2P::value requires spline weight values" );
 
     for ( int d = 0; d < 3; ++d )
@@ -108,9 +108,9 @@ gradient( const ViewType &view, const SplineDataType &sd,
           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                   void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "G2P::gradient requires spline weight values" );
-    static_assert( SplineDataType::has_weight_physical_gradients::value,
+    static_assert( SplineDataType::has_weight_physical_gradients,
                    "G2P::gradient requires spline weight physical gradients" );
 
     for ( int d = 0; d < 3; ++d )
@@ -152,9 +152,9 @@ gradient( const ViewType &view, const SplineDataType &sd,
           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                   void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "G2P::gradient requires spline weight values" );
-    static_assert( SplineDataType::has_weight_physical_gradients::value,
+    static_assert( SplineDataType::has_weight_physical_gradients,
                    "G2P::gradient requires spline weight physical gradients" );
 
     for ( int d0 = 0; d0 < 3; ++d0 )
@@ -196,10 +196,10 @@ divergence( const ViewType &view, const SplineDataType &sd,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "G2P::divergence requires spline weight values" );
     static_assert(
-        SplineDataType::has_weight_physical_gradients::value,
+        SplineDataType::has_weight_physical_gradients,
         "G2P::divergence requires spline weight physical gradients" );
 
     result = 0.0;
@@ -267,7 +267,7 @@ value( const PointDataType &point_data, const SplineDataType &sd,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "P2G::value requires spline weight values" );
 
     static_assert( is_scatter_view<ViewType>::value,
@@ -296,7 +296,7 @@ value( const PointDataType point_data[3], const SplineDataType &sd,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "P2G::value requires spline weight values" );
 
     static_assert( is_scatter_view<ViewType>::value,
@@ -327,9 +327,9 @@ KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
                                       const SplineDataType &sd,
                                       const ViewType &view )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "P2G::gradient requires spline weight values" );
-    static_assert( SplineDataType::has_weight_physical_gradients::value,
+    static_assert( SplineDataType::has_weight_physical_gradients,
                    "P2G::gradient requires spline weight physical gradients" );
 
     static_assert( is_scatter_view<ViewType>::value,
@@ -370,10 +370,10 @@ divergence( const PointDataType point_data[3], const SplineDataType &sd,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "P2G::divergence requires spline weight values" );
     static_assert(
-        SplineDataType::has_weight_physical_gradients::value,
+        SplineDataType::has_weight_physical_gradients,
         "P2G::divergence requires spline weight physical gradients" );
 
     static_assert( is_scatter_view<ViewType>::value,
@@ -414,10 +414,10 @@ divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
-    static_assert( SplineDataType::has_weight_values::value,
+    static_assert( SplineDataType::has_weight_values,
                    "P2G::divergence requires spline weight values" );
     static_assert(
-        SplineDataType::has_weight_physical_gradients::value,
+        SplineDataType::has_weight_physical_gradients,
         "P2G::divergence requires spline weight physical gradients" );
 
     static_assert( is_scatter_view<ViewType>::value,
