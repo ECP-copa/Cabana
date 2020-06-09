@@ -147,25 +147,6 @@ void periodicTest()
                    owned_cell_space.extent( d ) + 2 * halo_width );
     }
 
-    // Check the global ghosted cell bounds.
-    auto global_ghosted_cell_space =
-        local_grid->indexSpace( Ghost(), Cell(), Global() );
-    EXPECT_EQ( global_ghosted_cell_space.min( Dim::I ),
-               global_grid->globalOffset( Dim::I ) - halo_width );
-    EXPECT_EQ( global_ghosted_cell_space.max( Dim::I ),
-               global_grid->globalOffset( Dim::I ) + local_num_cells[Dim::I] +
-                   halo_width );
-    EXPECT_EQ( global_ghosted_cell_space.min( Dim::J ),
-               global_grid->globalOffset( Dim::J ) - halo_width );
-    EXPECT_EQ( global_ghosted_cell_space.max( Dim::J ),
-               global_grid->globalOffset( Dim::J ) + local_num_cells[Dim::J] +
-                   halo_width );
-    EXPECT_EQ( global_ghosted_cell_space.min( Dim::K ),
-               global_grid->globalOffset( Dim::K ) - halo_width );
-    EXPECT_EQ( global_ghosted_cell_space.max( Dim::K ),
-               global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] +
-                   halo_width );
-
     // Check the cells we own that we will share with our neighbors. Cover
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
@@ -416,25 +397,6 @@ void periodicTest()
                    owned_node_space.extent( d ) + 2 * halo_width + 1 );
     }
 
-    // Check the ghosted global node bounds.
-    auto global_ghosted_node_space =
-        local_grid->indexSpace( Ghost(), Node(), Global() );
-    EXPECT_EQ( global_ghosted_node_space.min( Dim::I ),
-               global_grid->globalOffset( Dim::I ) - halo_width );
-    EXPECT_EQ( global_ghosted_node_space.max( Dim::I ),
-               global_grid->globalOffset( Dim::I ) + local_num_nodes[Dim::I] +
-                   halo_width + 1 );
-    EXPECT_EQ( global_ghosted_node_space.min( Dim::J ),
-               global_grid->globalOffset( Dim::J ) - halo_width );
-    EXPECT_EQ( global_ghosted_node_space.max( Dim::J ),
-               global_grid->globalOffset( Dim::J ) + local_num_nodes[Dim::J] +
-                   halo_width + 1 );
-    EXPECT_EQ( global_ghosted_node_space.min( Dim::K ),
-               global_grid->globalOffset( Dim::K ) - halo_width );
-    EXPECT_EQ( global_ghosted_node_space.max( Dim::K ),
-               global_grid->globalOffset( Dim::K ) + local_num_nodes[Dim::K] +
-                   halo_width + 1 );
-
     // Check the nodes we own that we will share with our neighbors. Cover
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
@@ -671,24 +633,6 @@ void periodicTest()
                global_grid->globalOffset( Dim::K ) );
     EXPECT_EQ( global_owned_i_face_space.max( Dim::K ),
                global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] );
-
-    auto global_ghosted_i_face_space =
-        local_grid->indexSpace( Ghost(), Face<Dim::I>(), Global() );
-    EXPECT_EQ( global_ghosted_i_face_space.min( Dim::I ),
-               global_grid->globalOffset( Dim::I ) - halo_width );
-    EXPECT_EQ( global_ghosted_i_face_space.max( Dim::I ),
-               global_grid->globalOffset( Dim::I ) + local_num_nodes[Dim::I] +
-                   halo_width + 1 );
-    EXPECT_EQ( global_ghosted_i_face_space.min( Dim::J ),
-               global_grid->globalOffset( Dim::J ) - halo_width );
-    EXPECT_EQ( global_ghosted_i_face_space.max( Dim::J ),
-               global_grid->globalOffset( Dim::J ) + local_num_cells[Dim::J] +
-                   halo_width );
-    EXPECT_EQ( global_ghosted_i_face_space.min( Dim::K ),
-               global_grid->globalOffset( Dim::K ) - halo_width );
-    EXPECT_EQ( global_ghosted_i_face_space.max( Dim::K ),
-               global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] +
-                   halo_width );
 
     // Check the I-faces we own that we will share with our neighbors. Cover
     // enough of the neighbors that we know the bounds are correct in each
@@ -927,24 +871,6 @@ void periodicTest()
     EXPECT_EQ( global_owned_j_face_space.max( Dim::K ),
                global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] );
 
-    auto global_ghosted_j_face_space =
-        local_grid->indexSpace( Ghost(), Face<Dim::J>(), Global() );
-    EXPECT_EQ( global_ghosted_j_face_space.min( Dim::I ),
-               global_grid->globalOffset( Dim::I ) - halo_width );
-    EXPECT_EQ( global_ghosted_j_face_space.max( Dim::I ),
-               global_grid->globalOffset( Dim::I ) + local_num_cells[Dim::I] +
-                   halo_width );
-    EXPECT_EQ( global_ghosted_j_face_space.min( Dim::J ),
-               global_grid->globalOffset( Dim::J ) - halo_width );
-    EXPECT_EQ( global_ghosted_j_face_space.max( Dim::J ),
-               global_grid->globalOffset( Dim::J ) + local_num_nodes[Dim::J] +
-                   halo_width + 1 );
-    EXPECT_EQ( global_ghosted_j_face_space.min( Dim::K ),
-               global_grid->globalOffset( Dim::K ) - halo_width );
-    EXPECT_EQ( global_ghosted_j_face_space.max( Dim::K ),
-               global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] +
-                   halo_width );
-
     // Check the j-faces we own that we will share with our neighbors. Cover
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
@@ -1088,24 +1014,6 @@ void periodicTest()
     EXPECT_EQ( global_owned_k_face_space.max( Dim::K ),
                global_grid->globalOffset( Dim::K ) + local_num_nodes[Dim::K] );
 
-    auto global_ghosted_k_face_space =
-        local_grid->indexSpace( Ghost(), Face<Dim::K>(), Global() );
-    EXPECT_EQ( global_ghosted_k_face_space.min( Dim::I ),
-               global_grid->globalOffset( Dim::I ) - halo_width );
-    EXPECT_EQ( global_ghosted_k_face_space.max( Dim::I ),
-               global_grid->globalOffset( Dim::I ) + local_num_cells[Dim::I] +
-                   halo_width );
-    EXPECT_EQ( global_ghosted_k_face_space.min( Dim::J ),
-               global_grid->globalOffset( Dim::J ) - halo_width );
-    EXPECT_EQ( global_ghosted_k_face_space.max( Dim::J ),
-               global_grid->globalOffset( Dim::J ) + local_num_cells[Dim::J] +
-                   halo_width );
-    EXPECT_EQ( global_ghosted_k_face_space.min( Dim::K ),
-               global_grid->globalOffset( Dim::K ) - halo_width );
-    EXPECT_EQ( global_ghosted_k_face_space.max( Dim::K ),
-               global_grid->globalOffset( Dim::K ) + local_num_nodes[Dim::K] +
-                   halo_width + 1 );
-
     // Check the k-faces we own that we will share with our neighbors. Cover
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
@@ -1248,24 +1156,6 @@ void periodicTest()
                global_grid->globalOffset( Dim::K ) );
     EXPECT_EQ( global_owned_i_edge_space.max( Dim::K ),
                global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] );
-
-    auto global_ghosted_i_edge_space =
-        local_grid->indexSpace( Ghost(), Edge<Dim::I>(), Global() );
-    EXPECT_EQ( global_ghosted_i_edge_space.min( Dim::I ),
-               global_grid->globalOffset( Dim::I ) - halo_width );
-    EXPECT_EQ( global_ghosted_i_edge_space.max( Dim::I ),
-               global_grid->globalOffset( Dim::I ) + local_num_nodes[Dim::I] +
-                   halo_width );
-    EXPECT_EQ( global_ghosted_i_edge_space.min( Dim::J ),
-               global_grid->globalOffset( Dim::J ) - halo_width );
-    EXPECT_EQ( global_ghosted_i_edge_space.max( Dim::J ),
-               global_grid->globalOffset( Dim::J ) + local_num_cells[Dim::J] +
-                   halo_width + 1 );
-    EXPECT_EQ( global_ghosted_i_edge_space.min( Dim::K ),
-               global_grid->globalOffset( Dim::K ) - halo_width );
-    EXPECT_EQ( global_ghosted_i_edge_space.max( Dim::K ),
-               global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] +
-                   halo_width + 1 );
 
     // Check the I-edges we own that we will share with our neighbors. Cover
     // enough of the neighbors that we know the bounds are correct in each
@@ -1504,24 +1394,6 @@ void periodicTest()
     EXPECT_EQ( global_owned_j_edge_space.max( Dim::K ),
                global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] );
 
-    auto global_ghosted_j_edge_space =
-        local_grid->indexSpace( Ghost(), Edge<Dim::J>(), Global() );
-    EXPECT_EQ( global_ghosted_j_edge_space.min( Dim::I ),
-               global_grid->globalOffset( Dim::I ) - halo_width );
-    EXPECT_EQ( global_ghosted_j_edge_space.max( Dim::I ),
-               global_grid->globalOffset( Dim::I ) + local_num_cells[Dim::I] +
-                   halo_width + 1 );
-    EXPECT_EQ( global_ghosted_j_edge_space.min( Dim::J ),
-               global_grid->globalOffset( Dim::J ) - halo_width );
-    EXPECT_EQ( global_ghosted_j_edge_space.max( Dim::J ),
-               global_grid->globalOffset( Dim::J ) + local_num_nodes[Dim::J] +
-                   halo_width );
-    EXPECT_EQ( global_ghosted_j_edge_space.min( Dim::K ),
-               global_grid->globalOffset( Dim::K ) - halo_width );
-    EXPECT_EQ( global_ghosted_j_edge_space.max( Dim::K ),
-               global_grid->globalOffset( Dim::K ) + local_num_cells[Dim::K] +
-                   halo_width + 1 );
-
     // Check the j-edges we own that we will share with our neighbors. Cover
     // enough of the neighbors that we know the bounds are correct in each
     // dimension. The three variations here cover all of the cases.
@@ -1664,24 +1536,6 @@ void periodicTest()
                global_grid->globalOffset( Dim::K ) );
     EXPECT_EQ( global_owned_k_edge_space.max( Dim::K ),
                global_grid->globalOffset( Dim::K ) + local_num_nodes[Dim::K] );
-
-    auto global_ghosted_k_edge_space =
-        local_grid->indexSpace( Ghost(), Edge<Dim::K>(), Global() );
-    EXPECT_EQ( global_ghosted_k_edge_space.min( Dim::I ),
-               global_grid->globalOffset( Dim::I ) - halo_width );
-    EXPECT_EQ( global_ghosted_k_edge_space.max( Dim::I ),
-               global_grid->globalOffset( Dim::I ) + local_num_cells[Dim::I] +
-                   halo_width + 1 );
-    EXPECT_EQ( global_ghosted_k_edge_space.min( Dim::J ),
-               global_grid->globalOffset( Dim::J ) - halo_width );
-    EXPECT_EQ( global_ghosted_k_edge_space.max( Dim::J ),
-               global_grid->globalOffset( Dim::J ) + local_num_cells[Dim::J] +
-                   halo_width + 1 );
-    EXPECT_EQ( global_ghosted_k_edge_space.min( Dim::K ),
-               global_grid->globalOffset( Dim::K ) - halo_width );
-    EXPECT_EQ( global_ghosted_k_edge_space.max( Dim::K ),
-               global_grid->globalOffset( Dim::K ) + local_num_nodes[Dim::K] +
-                   halo_width );
 
     // Check the k-edges we own that we will share with our neighbors. Cover
     // enough of the neighbors that we know the bounds are correct in each
