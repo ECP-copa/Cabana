@@ -32,6 +32,13 @@ class IndexSpace
     //! Number of dimensions.
     static constexpr long Rank = N;
 
+    //! Default constructor.
+    IndexSpace()
+    {
+        std::fill( _min.data(), _min.data() + Rank, -1 );
+        std::fill( _max.data(), _max.data() + Rank, -1 );
+    }
+
     /*!
       \brief Initializer list size constructor.
     */
@@ -70,6 +77,7 @@ class IndexSpace
     }
 
     //! Comparison operator.
+    KOKKOS_INLINE_FUNCTION
     bool operator==( const IndexSpace<N> &rhs ) const
     {
         for ( long i = 0; i < N; ++i )
@@ -81,6 +89,7 @@ class IndexSpace
     }
 
     //! Comparison operator.
+    KOKKOS_INLINE_FUNCTION
     bool operator!=( const IndexSpace<N> &rhs ) const
     {
         return !( operator==( rhs ) );

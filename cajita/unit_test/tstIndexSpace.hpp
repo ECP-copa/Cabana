@@ -536,6 +536,22 @@ void comparisonTest()
 }
 
 //---------------------------------------------------------------------------//
+void defaultConstructorTest()
+{
+    IndexSpace<3> is1;
+    EXPECT_EQ( is1.min( 0 ), -1 );
+    EXPECT_EQ( is1.min( 1 ), -1 );
+    EXPECT_EQ( is1.min( 2 ), -1 );
+    EXPECT_EQ( is1.max( 0 ), -1 );
+    EXPECT_EQ( is1.max( 1 ), -1 );
+    EXPECT_EQ( is1.max( 2 ), -1 );
+
+    IndexSpace<3> is2( {9, 2, 1}, {12, 16, 4} );
+    is1 = is2;
+    EXPECT_TRUE( is1 == is2 );
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, index_space_test )
@@ -547,6 +563,7 @@ TEST( TEST_CATEGORY, index_space_test )
     sizeAppendTest();
     rangeAppendTest();
     comparisonTest();
+    defaultConstructorTest();
 }
 
 //---------------------------------------------------------------------------//
