@@ -48,6 +48,9 @@ value( const ViewType &view, const SplineDataType &sd, PointDataType &result,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "G2P::value requires spline weight values" );
+
     result = 0.0;
 
     for ( int i = 0; i < SplineDataType::num_knot; ++i )
@@ -74,6 +77,9 @@ value( const ViewType &view, const SplineDataType &sd, PointDataType result[3],
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "G2P::value requires spline weight values" );
+
     for ( int d = 0; d < 3; ++d )
         result[d] = 0.0;
 
@@ -102,6 +108,11 @@ gradient( const ViewType &view, const SplineDataType &sd,
           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                   void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "G2P::gradient requires spline weight values" );
+    static_assert( SplineDataType::has_weight_physical_gradients::value,
+                   "G2P::gradient requires spline weight physical gradients" );
+
     for ( int d = 0; d < 3; ++d )
         result[d] = 0.0;
 
@@ -129,7 +140,7 @@ gradient( const ViewType &view, const SplineDataType &sd,
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a vector gradient to a point.
-  \param view A functor with view sematics of vector grid data from which to
+  \param view A functor with view semantics of vector grid data from which to
   interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
   \param result The vector gradient at the point.
@@ -141,6 +152,11 @@ gradient( const ViewType &view, const SplineDataType &sd,
           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                   void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "G2P::gradient requires spline weight values" );
+    static_assert( SplineDataType::has_weight_physical_gradients::value,
+                   "G2P::gradient requires spline weight physical gradients" );
+
     for ( int d0 = 0; d0 < 3; ++d0 )
         for ( int d1 = 0; d1 < 3; ++d1 )
             result[d0][d1] = 0.0;
@@ -180,6 +196,12 @@ divergence( const ViewType &view, const SplineDataType &sd,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "G2P::divergence requires spline weight values" );
+    static_assert(
+        SplineDataType::has_weight_physical_gradients::value,
+        "G2P::divergence requires spline weight physical gradients" );
+
     result = 0.0;
 
     for ( int i = 0; i < SplineDataType::num_knot; ++i )
@@ -245,6 +267,9 @@ value( const PointDataType &point_data, const SplineDataType &sd,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "P2G::value requires spline weight values" );
+
     static_assert( is_scatter_view<ViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
@@ -271,6 +296,9 @@ value( const PointDataType point_data[3], const SplineDataType &sd,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "P2G::value requires spline weight values" );
+
     static_assert( is_scatter_view<ViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
@@ -299,6 +327,11 @@ KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
                                       const SplineDataType &sd,
                                       const ViewType &view )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "P2G::gradient requires spline weight values" );
+    static_assert( SplineDataType::has_weight_physical_gradients::value,
+                   "P2G::gradient requires spline weight physical gradients" );
+
     static_assert( is_scatter_view<ViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
@@ -337,6 +370,12 @@ divergence( const PointDataType point_data[3], const SplineDataType &sd,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "P2G::divergence requires spline weight values" );
+    static_assert(
+        SplineDataType::has_weight_physical_gradients::value,
+        "P2G::divergence requires spline weight physical gradients" );
+
     static_assert( is_scatter_view<ViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
@@ -375,6 +414,12 @@ divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
+    static_assert( SplineDataType::has_weight_values::value,
+                   "P2G::divergence requires spline weight values" );
+    static_assert(
+        SplineDataType::has_weight_physical_gradients::value,
+        "P2G::divergence requires spline weight physical gradients" );
+
     static_assert( is_scatter_view<ViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
