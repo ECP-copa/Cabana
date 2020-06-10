@@ -260,17 +260,17 @@ struct is_scatter_view<const Kokkos::Experimental::ScatterView<
   \param sd The spline data to use for the interpolation.
   \param view The scatter view of scalar grid data to interpolate to.
 */
-template <class PointDataType, class ViewType, class SplineDataType>
+template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
 value( const PointDataType &point_data, const SplineDataType &sd,
-       const ViewType &view,
+       const ScatterViewType &view,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::value requires spline weight values" );
 
-    static_assert( is_scatter_view<ViewType>::value,
+    static_assert( is_scatter_view<ScatterViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
 
@@ -289,17 +289,17 @@ value( const PointDataType &point_data, const SplineDataType &sd,
   \param sd The spline data to use for the interpolation.
   \param view The scatter view of vector grid data to interpolate to.
 */
-template <class PointDataType, class ViewType, class SplineDataType>
+template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
 value( const PointDataType point_data[3], const SplineDataType &sd,
-       const ViewType &view,
+       const ScatterViewType &view,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                void *>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::value requires spline weight values" );
 
-    static_assert( is_scatter_view<ViewType>::value,
+    static_assert( is_scatter_view<ScatterViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
 
@@ -322,17 +322,17 @@ value( const PointDataType point_data[3], const SplineDataType &sd,
   \param view The scatter view of scalar gradient grid data to interpolate
   to.
 */
-template <class PointDataType, class ViewType, class SplineDataType>
+template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
                                       const SplineDataType &sd,
-                                      const ViewType &view )
+                                      const ScatterViewType &view )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::gradient requires spline weight values" );
     static_assert( SplineDataType::has_weight_physical_gradients,
                    "P2G::gradient requires spline weight physical gradients" );
 
-    static_assert( is_scatter_view<ViewType>::value,
+    static_assert( is_scatter_view<ScatterViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
 
@@ -363,10 +363,10 @@ KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
   \param view The scatter view of vector divergence grid data to interpolate
   to.
 */
-template <class PointDataType, class ViewType, class SplineDataType>
+template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
 divergence( const PointDataType point_data[3], const SplineDataType &sd,
-            const ViewType &view,
+            const ScatterViewType &view,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
@@ -376,7 +376,7 @@ divergence( const PointDataType point_data[3], const SplineDataType &sd,
         SplineDataType::has_weight_physical_gradients,
         "P2G::divergence requires spline weight physical gradients" );
 
-    static_assert( is_scatter_view<ViewType>::value,
+    static_assert( is_scatter_view<ScatterViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
 
@@ -407,10 +407,10 @@ divergence( const PointDataType point_data[3], const SplineDataType &sd,
   \param view The scatter view of tensor divergence grid data to interpolate
   to.
 */
-template <class ViewType, class SplineDataType, class PointDataType>
+template <class ScatterViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION void
 divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
-            const ViewType &view,
+            const ScatterViewType &view,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
                                     void *>::type = 0 )
 {
@@ -420,7 +420,7 @@ divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
         SplineDataType::has_weight_physical_gradients,
         "P2G::divergence requires spline weight physical gradients" );
 
-    static_assert( is_scatter_view<ViewType>::value,
+    static_assert( is_scatter_view<ScatterViewType>::value,
                    "P2G requires a Kokkos::ScatterView" );
     auto view_access = view.access();
 
