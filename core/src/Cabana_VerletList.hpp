@@ -24,12 +24,12 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 // Verlet List Memory Layout Tag.
 //---------------------------------------------------------------------------//
-// CSR (compressed sparse row) Layout
+//! CSR (compressed sparse row) neighbor list layout.
 struct VerletLayoutCSR
 {
 };
 
-// 2D array Layout.
+//! 2D array neighbor list layout.
 struct VerletLayout2D
 {
 };
@@ -622,6 +622,9 @@ struct VerletListBuilder
 
   \tparam LayoutTag Tag indicating whether to use a CSR or 2D data layout.
 
+  \tparam BuildTag Tag indicating whether to use hierarchical team or team
+  vector parallelism when building neighbor lists.
+
   Neighbor list implementation most appropriate for somewhat regularly
   distributed particles due to the use of a Cartesian grid.
 */
@@ -671,6 +674,10 @@ class VerletList
 
       \param grid_max The maximum value of the grid containing the particles
       in each dimension.
+
+      \param max_neigh Optional maximum number of neighbors per particle to
+      pre-allocate the neighbor list. Potentially avoids recounting with 2D
+      layout only.
 
       Particles outside of the neighborhood radius will not be considered
       neighbors. Only compute the neighbors of those that are within the given
