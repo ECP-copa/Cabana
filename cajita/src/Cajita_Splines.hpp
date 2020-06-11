@@ -747,7 +747,7 @@ evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
     // Compute the inverse physicall cell size.
     Scalar rdx[3];
     for ( int d = 0; d < 3; ++d )
-        rdx[d] = 1.0 / data.dx[d];
+        rdx[d] = 1.0 / dx[d];
 
     // Compute the reference coordinates.
     Scalar x[3];
