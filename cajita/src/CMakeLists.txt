@@ -55,6 +55,7 @@ endif()
 
 if(Heffte_FOUND)
   target_link_libraries(Cajita Heffte::Heffte)
+  target_include_directories(Cajita PUBLIC ${Heffte_INCLUDE_DIR})
 endif()
 
 target_include_directories(Cajita
