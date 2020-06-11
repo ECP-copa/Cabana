@@ -36,7 +36,7 @@ if(HYPRE_FOUND)
     )
 endif()
 
-if(HEFFTE_FOUND)
+if(Heffte_FOUND)
   list(APPEND HEADERS_PUBLIC
     Cajita_FastFourierTransform.hpp
     )
