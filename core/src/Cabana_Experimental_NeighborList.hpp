@@ -69,11 +69,9 @@ auto makePredicates(
 
 namespace ArborX
 {
-namespace Traits
-{
 template <typename Slice>
-struct Access<Slice, PrimitivesTag,
-              std::enable_if_t<Cabana::is_slice<Slice>::value>>
+struct AccessTraits<Slice, PrimitivesTag,
+                    std::enable_if_t<Cabana::is_slice<Slice>{}>>
 {
     using memory_space = typename Slice::memory_space;
     using size_type = typename Slice::size_type;
@@ -86,7 +84,7 @@ struct Access<Slice, PrimitivesTag,
     }
 };
 template <typename SliceLike>
-struct Access<SliceLike, PredicatesTag>
+struct AccessTraits<SliceLike, PredicatesTag>
 {
     using memory_space = typename SliceLike::memory_space;
     using size_type = typename SliceLike::size_type;
@@ -98,13 +96,11 @@ struct Access<SliceLike, PredicatesTag>
     {
         assert( i < size( x ) );
         auto const point =
-            Access<typename SliceLike::slice_type, PrimitivesTag>::get(
+            AccessTraits<typename SliceLike::slice_type, PrimitivesTag>::get(
                 x.slice, x.first + i );
         return attach( intersects( Sphere{point, x.radius} ), (int)i );
     }
 };
-
-} // namespace Traits
 } // namespace ArborX
 
 namespace Cabana
@@ -256,9 +252,9 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
     auto const predicates =
         Impl::makePredicates( coordinate_slice, first, last, radius );
 
-    auto const n_queries = ArborX::Traits::
-        Access<decltype( predicates ), ArborX::Traits::PredicatesTag>::size(
-            predicates );
+    auto const n_queries =
+        ArborX::AccessTraits<decltype( predicates ),
+                             ArborX::PredicatesTag>::size( predicates );
 
     Kokkos::View<int *, DeviceType> counts( "counts", n_queries );
     bvh.query(
