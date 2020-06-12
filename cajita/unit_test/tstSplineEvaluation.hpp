@@ -32,7 +32,8 @@ using namespace Cajita;
 namespace Test
 {
 //---------------------------------------------------------------------------//
-template <class Scalar, class EntityType, int SplineOrder, class DeviceType>
+template <class Scalar, class EntityType, int SplineOrder, class DeviceType,
+          class DataTags>
 struct PointSet
 {
     // Scalar type for geometric operations.
@@ -48,6 +49,9 @@ struct PointSet
     // Number of basis values in each dimension.
     static constexpr int ns = basis_type::num_knot;
 
+    // Spline data tags.
+    using spline_data_tags = DataTags;
+
     // Kokkos types.
     using device_type = DeviceType;
     using execution_space = typename device_type::execution_space;
@@ -58,6 +62,9 @@ struct PointSet
 
     // Number of allocated points.
     std::size_t num_alloc;
+
+    // Physical cell size. (point,dim)
+    Kokkos::View<Scalar * [3], device_type> cell_size;
 
     // Point logical position. (point,dim)
     Kokkos::View<Scalar * [3], device_type> logical_coords;
@@ -108,6 +115,25 @@ void updatePointSet( const LocalMeshType &local_mesh, EntityType,
     using Basis = typename PointSetType::basis_type;
     static constexpr int ns = PointSetType::ns;
 
+    // Spline data tags.
+    using spline_data_tags = typename PointSetType::spline_data_tags;
+
+    // spline data type
+    using sd_type =
+        SplineData<scalar_type, Basis::order, EntityType, spline_data_tags>;
+
+    // Check members.
+    static_assert( sd_type::has_physical_cell_size,
+                   "spline data missing physical cell size" );
+    static_assert( sd_type::has_logical_position,
+                   "spline data missing logical position" );
+    static_assert( sd_type::has_physical_distance,
+                   "spline data missing physical distance" );
+    static_assert( sd_type::has_weight_values,
+                   "spline data missing weight values" );
+    static_assert( sd_type::has_weight_physical_gradients,
+                   "spline data missing weight physical gradients" );
+
     // Update the size.
     if ( num_point > point_set.num_alloc )
         throw std::logic_error(
@@ -123,8 +149,12 @@ void updatePointSet( const LocalMeshType &local_mesh, EntityType,
             // actually testing in this test.
             scalar_type px[3] = {points( p, Dim::I ), points( p, Dim::J ),
                                  points( p, Dim::K )};
-            SplineData<scalar_type, Basis::order, EntityType> sd;
+            sd_type sd;
             evaluateSpline( local_mesh, px, sd );
+
+            // Get the cell size.
+            for ( int d = 0; d < 3; ++d )
+                point_set.cell_size( p, d ) = sd.dx[d];
 
             // Map the point coordinates to the logical space of the spline.
             for ( int d = 0; d < 3; ++d )
@@ -162,9 +192,11 @@ void updatePointSet( const LocalMeshType &local_mesh, EntityType,
         } );
 }
 
-template <class PointCoordinates, class EntityType, int SplineOrder>
+//---------------------------------------------------------------------------//
+template <class DataTags, class PointCoordinates, class EntityType,
+          int SplineOrder>
 PointSet<typename PointCoordinates::value_type, EntityType, SplineOrder,
-         typename PointCoordinates::device_type>
+         typename PointCoordinates::device_type, DataTags>
 createPointSet(
     const PointCoordinates &points, const std::size_t num_point,
     const std::size_t num_alloc,
@@ -177,7 +209,7 @@ createPointSet(
     using device_type = typename PointCoordinates::device_type;
 
     using set_type =
-        PointSet<scalar_type, EntityType, SplineOrder, device_type>;
+        PointSet<scalar_type, EntityType, SplineOrder, device_type, DataTags>;
 
     set_type point_set;
 
@@ -188,6 +220,10 @@ createPointSet(
             "Attempted to create point set with more points than allocation" );
     point_set.num_point = num_point;
     point_set.num_alloc = num_alloc;
+
+    point_set.cell_size = Kokkos::View<scalar_type * [3], device_type>(
+        Kokkos::ViewAllocateWithoutInitializing( "PointSet::cell_size" ),
+        num_alloc );
 
     point_set.logical_coords = Kokkos::View<scalar_type * [3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::logical_coords" ),
@@ -226,6 +262,7 @@ createPointSet(
 }
 
 //---------------------------------------------------------------------------//
+template <class DataTags>
 void splineEvaluationTest()
 {
     // Create the global mesh.
@@ -268,8 +305,8 @@ void splineEvaluationTest()
         } );
 
     // Create a point set with linear spline interpolation to the nodes.
-    auto point_set = createPointSet( points, num_point, num_point, *local_grid,
-                                     Node(), Spline<1>() );
+    auto point_set = createPointSet<DataTags>(
+        points, num_point, num_point, *local_grid, Node(), Spline<1>() );
 
     // Check the point set data.
     EXPECT_EQ( point_set.num_point, num_point );
@@ -280,6 +317,25 @@ void splineEvaluationTest()
     local_mesh.coordinates( Node(), idx_low, xn_low );
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( point_set.low_corner[d], xn_low[d] );
+
+    // Check cell size
+    auto cell_size_host = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), point_set.cell_size );
+    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
+        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+              ++j )
+            for ( int k = cell_space.min( Dim::K );
+                  k < cell_space.max( Dim::K ); ++k )
+            {
+                int pi = i - halo_width;
+                int pj = j - halo_width;
+                int pk = k - halo_width;
+                int pid = pi + cell_space.extent( Dim::I ) *
+                                   ( pj + cell_space.extent( Dim::J ) * pk );
+                EXPECT_FLOAT_EQ( cell_size_host( pid, Dim::I ), 0.05 );
+                EXPECT_FLOAT_EQ( cell_size_host( pid, Dim::J ), 0.05 );
+                EXPECT_FLOAT_EQ( cell_size_host( pid, Dim::K ), 0.05 );
+            }
 
     // Check logical coordinates
     auto logical_coords_host = Kokkos::create_mirror_view_and_copy(
@@ -446,7 +502,16 @@ void splineEvaluationTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( splines, eval_test ) { splineEvaluationTest(); }
+TEST( splines, eval_test )
+{
+    // Check with default data members on spline data.
+    splineEvaluationTest<void>();
+
+    // Set each spline data member individually.
+    splineEvaluationTest<SplineDataMemberTypes<
+        SplinePhysicalCellSize, SplineLogicalPosition, SplinePhysicalDistance,
+        SplineWeightValues, SplineWeightPhysicalGradients>>();
+}
 
 //---------------------------------------------------------------------------//
 
