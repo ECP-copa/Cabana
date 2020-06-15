@@ -36,7 +36,7 @@ if(HYPRE_FOUND)
     )
 endif()
 
-if(HEFFTE_FOUND)
+if(Heffte_FOUND)
   list(APPEND HEADERS_PUBLIC
     Cajita_FastFourierTransform.hpp
     )
@@ -44,17 +44,17 @@ endif()
 
 add_library(Cajita ${SOURCES_PUBLIC})
 
-target_link_libraries(Cajita
+target_link_libraries(Cajita PUBLIC
   Kokkos::kokkos
   MPI::MPI_CXX
   )
 
 if(HYPRE_FOUND)
-  target_link_libraries(Cajita HYPRE::hypre)
+  target_link_libraries(Cajita PUBLIC HYPRE::hypre)
 endif()
 
 if(Heffte_FOUND)
-  target_link_libraries(Cajita Heffte::Heffte)
+  target_link_libraries(Cajita PUBLIC Heffte::Heffte)
 endif()
 
 target_include_directories(Cajita
