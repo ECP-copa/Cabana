@@ -124,11 +124,7 @@ void testBufferedDataCreation()
     using buf_t = Cabana::BufferedAoSoA<max_buffered_tuples, buffer_count,
                                         target_exec_space, AoSoA_t>;
 
-    buf_t buffered_aosoa( aosoa );
-
-    // int num_buffers = buffered_aosoa.get_buffer_count();
-
-    // TODO: are the fences needed before we start?
+    buf_t buffered_aosoa_in( aosoa );
 
     // Reset values so the outcome differs
     fval = 3.4;
@@ -136,7 +132,7 @@ void testBufferedDataCreation()
     ival = 1;
 
     Cabana::buffered_parallel_for(
-        Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ), buffered_aosoa,
+        Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ), buffered_aosoa_in,
         KOKKOS_LAMBDA( const int s, const int a, buf_t buffered_aosoa ) {
             // We have to call access and slice in the loop
 
