@@ -23,33 +23,33 @@ namespace Cabana
 // over Cabana::member_slice_type and be simplified?
 
 /**
- * @brief Contains the value for one item in the tuple.
+ * @brief Contains the value for one item in the SliceAtIndex tuple.
  *
  * Here this is specialized to be a slice, where it is initialized based on
  * the given aosoa. The extension to remove this and make it general is
  * trivial
  */
 template <typename AoSoA_t, std::size_t i, typename Item>
-struct TupleLeaf
+struct SliceAtIndexLeaf
 {
     using value_t = typename AoSoA_t::template member_slice_type<i>;
     value_t value;
 
-    TupleLeaf( AoSoA_t &aosoa ) { value = Cabana::slice<i>( aosoa ); }
+    SliceAtIndexLeaf( AoSoA_t &aosoa ) { value = Cabana::slice<i>( aosoa ); }
 };
 
 template <typename AoSoA_t, std::size_t i, typename... Items>
-struct TupleImpl;
+struct SliceAtIndexImpl;
 
 /**
- * @brief Base case for an empty tuple
+ * @brief Base case for an empty SliceAtIndex tuple
  */
 template <typename AoSoA_t, std::size_t i>
-struct TupleImpl<AoSoA_t, i>
+struct SliceAtIndexImpl<AoSoA_t, i>
 {
     // TODO: see how everyone wants to handle this unused param, or if it can
     // be removed
-    TupleImpl( __attribute__( ( unused ) ) AoSoA_t &aosoa ) {}
+    SliceAtIndexImpl( __attribute__( ( unused ) ) AoSoA_t &aosoa ) {}
 };
 
 /**
@@ -58,20 +58,20 @@ struct TupleImpl<AoSoA_t, i>
  */
 template <typename AoSoA_t, std::size_t i, typename HeadItem,
           typename... TailItems>
-struct TupleImpl<AoSoA_t, i, HeadItem, TailItems...>
-    : public TupleLeaf<AoSoA_t, i,
+struct SliceAtIndexImpl<AoSoA_t, i, HeadItem, TailItems...>
+    : public SliceAtIndexLeaf<AoSoA_t, i,
                        HeadItem>, // This adds a `value` member of type HeadItem
-      public TupleImpl<AoSoA_t, i + 1, TailItems...> // This recurses
+      public SliceAtIndexImpl<AoSoA_t, i + 1, TailItems...> // This recurses
 {
-    TupleImpl( AoSoA_t &aosoa )
-        : TupleLeaf<AoSoA_t, i, HeadItem>( aosoa )
-        , TupleImpl<AoSoA_t, i + 1, TailItems...>( aosoa )
+    SliceAtIndexImpl( AoSoA_t &aosoa )
+        : SliceAtIndexLeaf<AoSoA_t, i, HeadItem>( aosoa )
+        , SliceAtIndexImpl<AoSoA_t, i + 1, TailItems...>( aosoa )
     {
     }
 };
 
 /**
- * @brief High level class for generic slice holding tuple
+ * @brief High level class for generic slice holding SliceAtIndex tuple
  *
  * We pass the AoSoA down through the hierarchy so the leaf can initialize
  * the slice value. This is important, as it lets us unroll the types at
@@ -79,27 +79,27 @@ struct TupleImpl<AoSoA_t, i, HeadItem, TailItems...>
  * need to use the index as a type. If we don't like this tight c
  */
 template <typename AoSoA_t, typename... Items>
-struct _Tuple : TupleImpl<AoSoA_t, 0, Items...>
+struct _SliceAtIndex : SliceAtIndexImpl<AoSoA_t, 0, Items...>
 {
-    _Tuple( AoSoA_t &aosoa )
-        : TupleImpl<AoSoA_t, 0, Items...>( aosoa )
+    _SliceAtIndex( AoSoA_t &aosoa )
+        : SliceAtIndexImpl<AoSoA_t, 0, Items...>( aosoa )
     {
     }
 };
 
 /**
- * @brief Helper class to support the use of a specialized tuples which is
- * able to unpack Cabana::MemberTypes from an AoSoA
+ * @brief Helper class to support the use of a specialized SliceAtIndex tuple
+ * which is able to unpack Cabana::MemberTypes from an AoSoA
  */
 template <typename AoSoA_t, typename... Itmes>
-struct UnpackTuple;
+struct UnpackSliceAtIndex;
 template <typename AoSoA_t, typename... Items>
-struct UnpackTuple<AoSoA_t, MemberTypes<Items...>> : _Tuple<AoSoA_t, Items...>
+struct UnpackSliceAtIndex<AoSoA_t, MemberTypes<Items...>> : _SliceAtIndex<AoSoA_t, Items...>
 {
   public:
     static constexpr auto length = sizeof...( Items );
-    UnpackTuple( AoSoA_t &aosoa )
-        : _Tuple<AoSoA_t, Items...>( aosoa )
+    UnpackSliceAtIndex( AoSoA_t &aosoa )
+        : _SliceAtIndex<AoSoA_t, Items...>( aosoa )
     {
     }
 };
@@ -125,7 +125,7 @@ class BufferedAoSoA
   public:
     using AoSoA_type = AoSoA_t;
 
-    using slice_tuple_t = UnpackTuple<AoSoA_t, typename AoSoA_t::member_types>;
+    using slice_tuple_t = UnpackSliceAtIndex<AoSoA_t, typename AoSoA_t::member_types>;
     slice_tuple_t slice_tuple;
 
     // TODO: this has nothing to do with the class, only the
@@ -140,10 +140,10 @@ class BufferedAoSoA
      */
     template <typename _AoSoA_t, std::size_t i, typename HeadItem,
               typename... TailItems>
-    KOKKOS_INLINE_FUNCTION typename TupleLeaf<_AoSoA_t, i, HeadItem>::value_t &
-    _Get( TupleImpl<_AoSoA_t, i, HeadItem, TailItems...> &tuple )
+    KOKKOS_INLINE_FUNCTION typename SliceAtIndexLeaf<_AoSoA_t, i, HeadItem>::value_t &
+    _Get( SliceAtIndexImpl<_AoSoA_t, i, HeadItem, TailItems...> &tuple )
     {
-        return tuple.TupleLeaf<AoSoA_t, i, HeadItem>::value;
+        return tuple.SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value;
     }
 
     /**
