@@ -20,4 +20,7 @@ template class GlobalMesh<UniformMesh<double>>;
 template class GlobalMesh<NonUniformMesh<float>>;
 template class GlobalMesh<NonUniformMesh<double>>;
 
+template class GlobalMesh<SparseMesh<float>>;
+template class GlobalMesh<SparseMesh<double>>;
+
 } // end namespace Cajita

@@ -203,6 +203,14 @@ struct NonUniformMesh
     using scalar_type = Scalar;
 };
 
+// Sparse mesh tag
+template <class Scalar>
+struct SparseMesh
+{
+    // Scalar type for mesh floating point operations.
+    using scalar_type = Scalar;
+};
+
 // Type checker.
 template <class T>
 struct isMeshType : public std::false_type
@@ -226,6 +234,16 @@ struct isMeshType<NonUniformMesh<Scalar>> : public std::true_type
 
 template <class Scalar>
 struct isMeshType<const NonUniformMesh<Scalar>> : public std::true_type
+{
+};
+
+template <class Scalar>
+struct isMeshType<SparseMesh<Scalar>> : public std::true_type
+{
+};
+
+template <class Scalar>
+struct isMeshType<const SparseMesh<Scalar>> : public std::true_type
 {
 };
 
@@ -261,6 +279,21 @@ struct isNonUniformMesh<const NonUniformMesh<Scalar>> : public std::true_type
 {
 };
 
+// Sparse mesh checker
+template <class T>
+struct isSparseMesh : public std::false_type
+{
+};
+
+template <class Scalar>
+struct isSparseMesh<SparseMesh<Scalar>> : public std::true_type
+{
+};
+
+template <class Scalar>
+struct isSparseMesh<const SparseMesh<Scalar>> : public std::true_type
+{
+};
 //---------------------------------------------------------------------------//
 
 } // end namespace Cajita
