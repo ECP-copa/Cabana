@@ -56,7 +56,8 @@ class GlobalMesh
         {
             scalar_type ext = globalNumCell( d ) * _cell_size[d];
             if ( std::abs( ext - extent( d ) ) >
-                 scalar_type( 100.0 ) * std::numeric_limits<scalar_type>::epsilon() )
+                 scalar_type( 100.0 ) *
+                     std::numeric_limits<scalar_type>::epsilon() )
                 throw std::logic_error(
                     "Extent not evenly divisible by uniform cell size" );
         }
@@ -76,7 +77,8 @@ class GlobalMesh
         {
             scalar_type ext = globalNumCell( d ) * _cell_size[d];
             if ( std::abs( ext - extent( d ) ) >
-                 scalar_type( 100.0 ) * std::numeric_limits<scalar_type>::epsilon() )
+                 scalar_type( 100.0 ) *
+                     std::numeric_limits<scalar_type>::epsilon() )
                 throw std::logic_error(
                     "Extent not evenly divisible by uniform cell size" );
         }
@@ -101,7 +103,8 @@ class GlobalMesh
         {
             scalar_type ext = globalNumCell( d ) * _cell_size[d];
             if ( std::abs( ext - extent( d ) ) >
-                 scalar_type( 100.0 ) * std::numeric_limits<scalar_type>::epsilon() )
+                 scalar_type( 100.0 ) *
+                     std::numeric_limits<scalar_type>::epsilon() )
                 throw std::logic_error(
                     "Extent not evenly divisible by uniform cell size" );
             if ( globalNumCell( d ) != global_num_cell[d] )
@@ -112,7 +115,10 @@ class GlobalMesh
     // GLOBAL MESH INTERFACE
 
     // Get the global low corner of the mesh.
-    scalar_type lowCorner( const int dim ) const { return _global_low_corner[dim]; }
+    scalar_type lowCorner( const int dim ) const
+    {
+        return _global_low_corner[dim];
+    }
 
     // Get the global high corner of the mesh.
     scalar_type highCorner( const int dim ) const
