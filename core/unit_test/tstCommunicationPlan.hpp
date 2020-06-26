@@ -577,6 +577,29 @@ void test7( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
+void testTopology()
+{
+    // Get my rank.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+
+    std::vector<int> neighbor_ranks = { 0, 2, 2,  1,  1,      1,
+                                        2, 3, 10, 27, my_rank };
+    auto unique_ranks = Cabana::Impl::getUniqueTopology( neighbor_ranks );
+
+    // Check this rank is first.
+    EXPECT_EQ( my_rank, unique_ranks[0] );
+
+    // Check each rank is unique.
+    for ( std::size_t n = 0; n < unique_ranks.size(); ++n )
+        for ( std::size_t m = 0; m < unique_ranks.size(); ++m )
+            if ( n != m )
+            {
+                EXPECT_NE( unique_ranks[n], unique_ranks[m] );
+            }
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, comm_plan_test_1 ) { test1( true ); }
@@ -606,6 +629,8 @@ TEST( TEST_CATEGORY, comm_plan_test_5_no_topo ) { test5( false ); }
 TEST( TEST_CATEGORY, comm_plan_test_6_no_topo ) { test6( false ); }
 
 TEST( TEST_CATEGORY, comm_plan_test_7_no_topo ) { test7( false ); }
+
+TEST( TEST_CATEGORY, comm_plan_test_topology ) { testTopology(); }
 
 //---------------------------------------------------------------------------//
 

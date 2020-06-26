@@ -21,6 +21,7 @@
 #include <mpi.h>
 
 #include <exception>
+#include <type_traits>
 #include <vector>
 
 namespace Cabana
@@ -199,45 +200,20 @@ struct is_halo : public is_halo_impl<typename std::remove_cv<T>::type>::type
 {
 };
 
-//---------------------------------------------------------------------------//
-/*!
-  \brief Synchronously gather data from the local decomposition to the ghosts
-  using the halo forward communication plan. AoSoA version. This is a
-  uniquely-owned to multiply-owned communication.
-
-  A gather sends data from a locally owned elements to one or many ranks on
-  which they exist as ghosts. A locally owned element may be sent to as many
-  ranks as desired to be used as a ghost on those ranks. The value of the
-  element in the locally owned decomposition will be the value assigned to the
-  element in the ghosted decomposition.
-
-  \tparam Halo_t Halo type - must be a Halo.
-
-  \tparam AoSoA_t AoSoA type - must be an AoSoA.
-
-  \param halo The halo to use for the gather.
-
-  \param aosoa The AoSoA on which to perform the gather. The AoSoA should have
-  a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned
-  elements are expected to appear first (i.e. in the first halo.numLocal()
-  elements) and the ghosted elements are expected to appear second (i.e. in
-  the next halo.numGhost() elements()).
-*/
-template <class Halo_t, class AoSoA_t>
-void gather( const Halo_t& halo, AoSoA_t& aosoa,
-             typename std::enable_if<( is_halo<Halo_t>::value &&
-                                       is_aosoa<AoSoA_t>::value ),
-                                     int>::type* = 0 )
+namespace Impl
 {
-    // Check that the AoSoA is the right size.
-    if ( aosoa.size() != halo.numLocal() + halo.numGhost() )
-        throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
-    // Allocate a send buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
-        send_buffer(
-            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
-            halo.totalNumExport() );
+template <class Halo_t, class Container_t>
+void checkSize( const Halo_t& halo, Container_t& container )
+{
+    // Check that the AoSoA/slice is the right size.
+    if ( container.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "AoSoA/slice is the wrong size for gather!" );
+}
+
+template <class Halo_t, class AoSoA_t, class View_t>
+void sendBuffer( const Halo_t& halo, AoSoA_t& aosoa, View_t& send_buffer )
+{
 
     // Get the steering vector for the sends.
     auto steering = halo.getExportSteering();
@@ -252,7 +228,32 @@ void gather( const Halo_t& halo, AoSoA_t& aosoa,
     Kokkos::parallel_for( "Cabana::gather::gather_send_buffer",
                           gather_send_buffer_policy, gather_send_buffer_func );
     Kokkos::fence();
+}
 
+template <class Halo_t, class AoSoA_t, class View_t, class Modify_t>
+void sendBuffer( const Halo_t& halo, AoSoA_t& aosoa, View_t& send_buffer,
+                 const Modify_t& modify_functor )
+{
+    // Get the steering vector for the sends.
+    auto steering = halo.getExportSteering();
+
+    // Gather from the local data into a tuple-contiguous send buffer.
+    // Pass send buffer to user modification functor class to add shifts.
+    auto gather_send_buffer_func = KOKKOS_LAMBDA( const std::size_t i )
+    {
+        send_buffer( i ) = aosoa.getTuple( steering( i ) );
+        modify_functor( send_buffer, i );
+    };
+    Kokkos::RangePolicy<typename Halo_t::execution_space>
+        gather_send_buffer_policy( 0, halo.totalNumExport() );
+    Kokkos::parallel_for( "Cabana::gather::gather_send_buffer",
+                          gather_send_buffer_policy, gather_send_buffer_func );
+    Kokkos::fence();
+}
+
+template <class Halo_t, class AoSoA_t, class View_t>
+void recvBuffer( const Halo_t& halo, AoSoA_t& aosoa, const View_t& send_buffer )
+{
     // Allocate a receive buffer.
     Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
         recv_buffer(
@@ -320,6 +321,98 @@ void gather( const Halo_t& halo, AoSoA_t& aosoa,
     MPI_Barrier( halo.comm() );
 }
 
+} // namespace Impl
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Synchronously gather data from the local decomposition to the ghosts
+  using the halo forward communication plan. AoSoA version, where the buffer is
+  modified before being sent. This is a uniquely-owned to multiply-owned
+  communication.
+
+  A gather sends data from a locally owned elements to one or many ranks on
+  which they exist as ghosts. A locally owned element may be sent to as many
+  ranks as desired to be used as a ghost on those ranks. The value of the
+  element in the locally owned decomposition will be the value assigned to the
+  element in the ghosted decomposition.
+
+  \tparam Halo_t Halo type - must be a Halo.
+
+  \tparam AoSoA_t AoSoA type - must be an AoSoA.
+
+  \tparam Modify_t Buffer modification type.
+
+  \param halo The halo to use for the gather.
+
+  \param aosoa The AoSoA on which to perform the gather. The AoSoA should have
+  a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned
+  elements are expected to appear first (i.e. in the first halo.numLocal()
+  elements) and the ghosted elements are expected to appear second (i.e. in
+  the next halo.numGhost() elements()).
+
+  \param modify_functor Class containing functor to modify the send buffer
+  before being sent (e.g. for periodic coordinate update).
+*/
+template <class Halo_t, class AoSoA_t, class Modify_t>
+void gather( const Halo_t& halo, AoSoA_t& aosoa, const Modify_t& modify_functor,
+             typename std::enable_if<( is_halo<Halo_t>::value &&
+                                       is_aosoa<AoSoA_t>::value ),
+                                     int>::type* = 0 )
+{
+    Impl::checkSize( halo, aosoa );
+
+    // Allocate a send buffer.
+    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
+        send_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
+            halo.totalNumExport() );
+
+    Impl::sendBuffer( halo, aosoa, send_buffer, modify_functor );
+    Impl::recvBuffer( halo, aosoa, send_buffer );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Synchronously gather data from the local decomposition to the ghosts
+  using the halo forward communication plan. AoSoA version. This is a
+  uniquely-owned to multiply-owned communication.
+
+  A gather sends data from a locally owned elements to one or many ranks on
+  which they exist as ghosts. A locally owned element may be sent to as many
+  ranks as desired to be used as a ghost on those ranks. The value of the
+  element in the locally owned decomposition will be the value assigned to the
+  element in the ghosted decomposition.
+
+  \tparam Halo_t Halo type - must be a Halo.
+
+  \tparam AoSoA_t AoSoA type - must be an AoSoA.
+
+  \param halo The halo to use for the gather.
+
+  \param aosoa The AoSoA on which to perform the gather. The AoSoA should have
+  a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned
+  elements are expected to appear first (i.e. in the first halo.numLocal()
+  elements) and the ghosted elements are expected to appear second (i.e. in
+  the next halo.numGhost() elements()).
+*/
+template <class Halo_t, class AoSoA_t>
+void gather( const Halo_t& halo, AoSoA_t& aosoa,
+             typename std::enable_if<( is_halo<Halo_t>::value &&
+                                       is_aosoa<AoSoA_t>::value ),
+                                     int>::type* = 0 )
+{
+    Impl::checkSize( halo, aosoa );
+
+    // Allocate a send buffer.
+    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
+        send_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
+            halo.totalNumExport() );
+
+    Impl::sendBuffer( halo, aosoa, send_buffer );
+    Impl::recvBuffer( halo, aosoa, send_buffer );
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Synchronously gather data from the local decomposition to the ghosts
@@ -351,8 +444,7 @@ void gather( const Halo_t& halo, Slice_t& slice,
                                      int>::type* = 0 )
 {
     // Check that the Slice is the right size.
-    if ( slice.size() != halo.numLocal() + halo.numGhost() )
-        throw std::runtime_error( "Slice is the wrong size for gather!" );
+    Impl::checkSize( halo, slice );
 
     // Get the number of components in the slice.
     std::size_t num_comp = 1;
