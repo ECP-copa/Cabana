@@ -104,6 +104,24 @@ struct UnpackSliceAtIndex<AoSoA_t, MemberTypes<Items...>> : _SliceAtIndex<AoSoA_
     }
 };
 
+// TODO: where is the right place for this?
+/**
+ * @brief Underlying generic style getter to obtain a reference to
+ * i-th item in the slice tuple
+ *
+ * @param tuple The tuple to access from
+ *
+ * @return The i-th value in the tuple
+ */
+template <typename AoSoA_t, std::size_t i, typename HeadItem,
+         typename... TailItems>
+ KOKKOS_INLINE_FUNCTION
+ typename SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value_t&
+ get( SliceAtIndexImpl<AoSoA_t, i, HeadItem, TailItems...> &tuple )
+ {
+     return tuple.SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value;
+ }
+
 // Requirements:
 // 1) User must be able to specify the memory space the data will be "buffered"
 // into a) we can presumably detect the existing allocated space, and determine
@@ -128,23 +146,6 @@ class BufferedAoSoA
     using slice_tuple_t = UnpackSliceAtIndex<AoSoA_t, typename AoSoA_t::member_types>;
     slice_tuple_t slice_tuple;
 
-    // TODO: this has nothing to do with the class, only the
-    // specialized get_slice does
-    /**
-     * @brief Underlying generic style getter to obtain a reference to
-     * i-th item in the slice tuple
-     *
-     * @param tuple The tuple to access from
-     *
-     * @return The i-th value in the tuple
-     */
-    template <typename _AoSoA_t, std::size_t i, typename HeadItem,
-              typename... TailItems>
-    KOKKOS_INLINE_FUNCTION typename SliceAtIndexLeaf<_AoSoA_t, i, HeadItem>::value_t &
-    _Get( SliceAtIndexImpl<_AoSoA_t, i, HeadItem, TailItems...> &tuple )
-    {
-        return tuple.SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value;
-    }
 
     /**
      * @brief Getter to access the slices this class generates for the
@@ -156,7 +157,7 @@ class BufferedAoSoA
     KOKKOS_INLINE_FUNCTION typename AoSoA_t::template member_slice_type<i> &
     get_slice()
     {
-        return _Get<AoSoA_t, i>( slice_tuple );
+        return Cabana::get<AoSoA_t, i>( slice_tuple );
     }
 
     // TODO: should this be a more heap based / dynamic allocation?
