@@ -54,14 +54,6 @@ axpy_10( const view_type &__restrict__ a, const view_type &__restrict__ x0,
 
 TEST( kokkos, simple )
 {
-#ifndef CABANA_PERFORMANCE_ITERATIONS
-#define CABANA_PERFORMANCE_ITERATIONS                                          \
-    2e6 // use a higher number e.g. 2e8 for skylake
-#endif
-#ifndef CABANA_PERFORMANCE_SEED
-#define CABANA_PERFORMANCE_SEED 76843802738543
-#endif
-
     long n = static_cast<long>( CABANA_PERFORMANCE_ITERATIONS );
     long seed = CABANA_PERFORMANCE_SEED;
 

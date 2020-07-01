@@ -166,14 +166,12 @@ class SerialOpTag
 {
 };
 
-//! Neighbor operations are executed in parallel in a team on each particle
-//! thread.
+//! Neighbor operations are executed with team parallelism.
 class TeamOpTag
 {
 };
 
-//! Neighbor operations are executed both in parallel in a team (first
-//! neighbors) and in vector loops on each neighbor thread (second neighbors).
+//! Neighbor operations are executed with team vector parallelism.
 class TeamVectorOpTag
 {
 };

@@ -135,14 +135,6 @@ axpy_10( struct data *__restrict__ a, struct data *__restrict__ x0,
 
 TEST( cpp, simple )
 {
-
-#ifndef CABANA_PERFORMANCE_ITERATIONS
-#define CABANA_PERFORMANCE_ITERATIONS 2e6
-#endif
-#ifndef CABANA_PERFORMANCE_SEED
-#define CABANA_PERFORMANCE_SEED 76843802738543
-#endif
-
     long n = static_cast<long>( CABANA_PERFORMANCE_ITERATIONS );
     long seed = CABANA_PERFORMANCE_SEED;
 

@@ -1,7 +1,6 @@
 language: cpp
 
-# against hwloc error (travis-ci/travis-ci#10019)
-sudo: required
+dist: bionic
 
 stages:
   - canary
@@ -10,7 +9,7 @@ stages:
 jobs:
     include:
         - stage: canary
-          env: BACKENDS="OpenMP" WERROR=ON
+          env: BACKENDS="OPENMP" WERROR=ON
 
 env:
   global:
@@ -19,6 +18,8 @@ env:
     - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="SERIAL" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
+    - BACKENDS="SERIAL" WERROR=ON CMAKE_BUILD_TYPE=Release ARBORX=ON
+    - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release ARBORX=ON
     - BACKENDS="SERIAL OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="SERIAL PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="OPENMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
@@ -33,7 +34,6 @@ before_script:
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( -DKokkos_ENABLE_${i^^}=ON ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
-  - if [[ ${CC} = gcc ]]; then export CXX=g++-6; export CC=gcc-6; export FC=gfortran-6; fi
   - git clone --depth=1 --branch 3.1.00 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
@@ -44,6 +44,15 @@ before_script:
     popd &&
     popd
   - for i in ${BACKENDS}; do CMAKE_OPTS+=( -DCabana_REQUIRE_${i}=ON ); done
+  - if [[ ${ARBORX} ]];  then
+      git clone --depth=1 https://github.com/arborx/ArborX.git &&
+      pushd ArborX && mkdir build && pushd build &&
+      cmake -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+            -DCMAKE_PREFIX_PATH=${HOME}/kokkos
+            -DCMAKE_INSTALL_PREFIX=${HOME}/ArborX .. &&
+      make -j2 VERBOSE=1 && make install &&
+      popd && popd;
+    fi
   - if [[ ${COVERAGE} ]]; then
        pip install --user coverxygen &&
        mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov;
@@ -51,8 +60,6 @@ before_script:
 
 addons:
   apt:
-    sources:
-      - ubuntu-toolchain-r-test
     packages:
       - doxygen
       - libhwloc-dev
@@ -62,8 +69,6 @@ addons:
       - libgsl0-dev
       - libfftw3-dev
       - python-pip
-      - g++-6
-      - gfortran-6
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
@@ -71,12 +76,11 @@ script:
   - mkdir build && pushd build &&
     cmake -DCMAKE_INSTALL_PREFIX="$HOME/cabana"
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          -DKokkos_INSTALL_PATH="$HOME/kokkos"
+          -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/ArborX"
           -DCabana_REQUIRE_SERIAL=OFF ${CMAKE_OPTS[@]}
-          -DCabana_ENABLE_MPI=ON
+          -DCabana_REQUIRE_MPI=ON -DCabana_REQUIRE_ARBORX=${ARBORX}
           $([[ ${CC} = clang* ]] || echo -DCabana_ENABLE_FORTRAN_EXAMPLES=ON)
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
-          -DCabana_ENABLE_DOXYGEN=ON
           -DDOXYGEN_WARN_AS_ERROR=ON -DDOXYGEN_GENERATE_XML=ON -DDOXYGEN_WARN_IF_UNDOCUMENTED=OFF
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
           -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0
