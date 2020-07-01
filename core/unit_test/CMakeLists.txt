@@ -1,8 +1,3 @@
-# setup gtest
-if(NOT Cabana_ENABLE_TESTING)
-  return()
-endif()
-
 set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
@@ -13,19 +8,16 @@ set_target_properties(cabana_core_gtest PROPERTIES
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
     )
-
-include_directories(${CMAKE_CURRENT_BINARY_DIR})
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
-
 set(gtest_args --gtest_color=yes)
 
 ##--------------------------------------------------------------------------##
 ## General tests.
 ##--------------------------------------------------------------------------##
 foreach(_test Version Index CartesianGrid SoA)
-  add_executable(${_test}_test tst${_test}.cpp unit_test_main.cpp)
-  target_link_libraries(${_test}_test cabanacore cabana_core_gtest)
-  add_test(NAME ${_test}_test COMMAND ${NONMPI_PRECOMMAND} ${_test}_test ${gtest_args})
+  set(_target Cabana_${_test}_test)
+  add_executable(${_target} tst${_test}.cpp unit_test_main.cpp)
+  target_link_libraries(${_target} cabanacore cabana_core_gtest)
+  add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
 endforeach()
 
 ##--------------------------------------------------------------------------##
@@ -62,9 +54,10 @@ macro(Cabana_add_tests)
         "#include <Test${_device}_Category.hpp>\n"
         "#include <tst${_test}.hpp>\n"
       )
-      set(_target ${_test}_test_${_device})
+      set(_target Cabana_${_test}_test_${_device})
       add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
-      target_include_directories(${_target} PUBLIC ${_dir})
+      target_include_directories(${_target} PRIVATE ${_dir}
+        ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
       target_link_libraries(${_target} cabanacore cabana_core_gtest)
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
@@ -88,6 +81,11 @@ macro(Cabana_add_tests)
 endmacro()
 
 Cabana_add_tests(NAMES AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel BufferedData)
+
+if(Cabana_ENABLE_ARBORX)
+  Cabana_add_tests(NAMES NeighborListArborX)
+endif()
+
 if(Cabana_ENABLE_MPI)
   Cabana_add_tests(MPI NAMES CommunicationPlan Distributor Halo)
 endif()

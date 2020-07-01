@@ -9,11 +9,33 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_TEST_PTHREAD_CATEGORY_HPP
-#define CABANA_TEST_PTHREAD_CATEGORY_HPP
+#ifndef CAJITA_MANUALPARTITIONER_HPP
+#define CAJITA_MANUALPARTITIONER_HPP
 
-#define TEST_CATEGORY pthread
-#define TEST_EXECSPACE Kokkos::Threads
-#define TEST_MEMSPACE Kokkos::HostSpace
+#include <Cajita_Partitioner.hpp>
 
-#endif // end CABANA_TEST_PTHREAD_CATEGORY_HPP
+#include <array>
+
+#include <mpi.h>
+
+namespace Cajita
+{
+//---------------------------------------------------------------------------//
+class ManualPartitioner : public Partitioner
+{
+  public:
+    ManualPartitioner( const std::array<int, 3> &ranks_per_dim );
+
+    std::array<int, 3> ranksPerDimension(
+        MPI_Comm comm,
+        const std::array<int, 3> &global_cells_per_dim ) const override;
+
+  private:
+    std::array<int, 3> _ranks_per_dim;
+};
+
+//---------------------------------------------------------------------------//
+
+} // end namespace Cajita
+
+#endif // end CAJITA_MANUALPARTITIONER_HPP

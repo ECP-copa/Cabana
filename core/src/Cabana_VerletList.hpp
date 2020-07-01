@@ -24,12 +24,12 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 // Verlet List Memory Layout Tag.
 //---------------------------------------------------------------------------//
-// CSR (compressed sparse row) Layout
+//! CSR (compressed sparse row) neighbor list layout.
 struct VerletLayoutCSR
 {
 };
 
-// 2D array Layout.
+//! 2D array neighbor list layout.
 struct VerletLayout2D
 {
 };
@@ -335,7 +335,7 @@ struct VerletListBuilder
             } );
     }
 
-    // Neighbor count team vector operator (only used for CSR lists).
+    // Neighbor count team vector loop (only used for CSR lists).
     KOKKOS_INLINE_FUNCTION void
     neighbor_reduce( const typename CountNeighborsPolicy::member_type &team,
                      const std::size_t pid, const double x_p, const double y_p,
@@ -350,7 +350,7 @@ struct VerletListBuilder
             cell_count );
     }
 
-    // Neighbor count serial operator (only used for CSR lists).
+    // Neighbor count serial loop (only used for CSR lists).
     KOKKOS_INLINE_FUNCTION
     void neighbor_reduce( const typename CountNeighborsPolicy::member_type,
                           const std::size_t pid, const double x_p,
@@ -530,60 +530,77 @@ struct VerletListBuilder
                                 {
                                     // Check the particles in this bin to see if
                                     // they are neighbors.
-                                    std::size_t a_offset =
+                                    std::size_t n_offset =
                                         linked_cell_list.binOffset( i, j, k );
-                                    Kokkos::parallel_for(
-                                        Kokkos::ThreadVectorRange(
-                                            team, linked_cell_list.binSize(
-                                                      i, j, k ) ),
-                                        [&]( const int n ) {
-                                            //  Get the true id of the candidate
-                                            //  neighbor.
-                                            std::size_t nid =
-                                                linked_cell_list.permutation(
-                                                    a_offset + n );
-
-                                            // Cache the candidate neighbor
-                                            // particle coordinates.
-                                            double x_n = position( nid, 0 );
-                                            double y_n = position( nid, 1 );
-                                            double z_n = position( nid, 2 );
-
-                                            // If this could be a valid
-                                            // neighbor, continue.
-                                            if ( NeighborDiscriminator<
-                                                     AlgorithmTag>::
-                                                     isValid( pid, x_p, y_p,
-                                                              z_p, nid, x_n,
-                                                              y_n, z_n ) )
-                                            {
-                                                // Calculate the distance
-                                                // between the particle and its
-                                                // candidate neighbor.
-                                                PositionValueType dx =
-                                                    x_p - x_n;
-                                                PositionValueType dy =
-                                                    y_p - y_n;
-                                                PositionValueType dz =
-                                                    z_p - z_n;
-                                                PositionValueType dist_sqr =
-                                                    dx * dx + dy * dy + dz * dz;
-
-                                                // If within the cutoff
-                                                // increment the neighbor count
-                                                // and add as a neighbor at that
-                                                // index.
-                                                if ( dist_sqr <= rsqr )
-                                                {
-                                                    _data.addNeighbor( pid,
-                                                                       nid );
-                                                }
-                                            }
-                                        } );
+                                    int num_n =
+                                        linked_cell_list.binSize( i, j, k );
+                                    neighbor_for( team, pid, x_p, y_p, z_p,
+                                                  n_offset, num_n,
+                                                  BuildOpTag() );
                                 }
                             }
                 }
             } );
+    }
+
+    // Neighbor fill team vector loop.
+    KOKKOS_INLINE_FUNCTION void
+    neighbor_for( const typename FillNeighborsPolicy::member_type &team,
+                  const std::size_t pid, const double x_p, const double y_p,
+                  const double z_p, const int n_offset, const int num_n,
+                  TeamVectorOpTag ) const
+    {
+        Kokkos::parallel_for(
+            Kokkos::ThreadVectorRange( team, num_n ), [&]( const int n ) {
+                neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n );
+            } );
+    }
+
+    // Neighbor fill serial loop.
+    KOKKOS_INLINE_FUNCTION
+    void neighbor_for( const typename FillNeighborsPolicy::member_type team,
+                       const std::size_t pid, const double x_p,
+                       const double y_p, const double z_p, const int n_offset,
+                       const int num_n, TeamOpTag ) const
+    {
+        for ( int n = 0; n < num_n; n++ )
+            Kokkos::single( Kokkos::PerThread( team ), [&]() {
+                neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n );
+            } );
+    }
+
+    // Neighbor fill kernel.
+    KOKKOS_INLINE_FUNCTION
+    void neighbor_kernel( const int pid, const double x_p, const double y_p,
+                          const double z_p, const int n_offset,
+                          const int n ) const
+    {
+        //  Get the true id of the candidate neighbor.
+        std::size_t nid = linked_cell_list.permutation( n_offset + n );
+
+        // Cache the candidate neighbor particle coordinates.
+        double x_n = position( nid, 0 );
+        double y_n = position( nid, 1 );
+        double z_n = position( nid, 2 );
+
+        // If this could be a valid neighbor, continue.
+        if ( NeighborDiscriminator<AlgorithmTag>::isValid(
+                 pid, x_p, y_p, z_p, nid, x_n, y_n, z_n ) )
+        {
+            // Calculate the distance between the particle and its candidate
+            // neighbor.
+            PositionValueType dx = x_p - x_n;
+            PositionValueType dy = y_p - y_n;
+            PositionValueType dz = z_p - z_n;
+            PositionValueType dist_sqr = dx * dx + dy * dy + dz * dz;
+
+            // If within the cutoff increment the neighbor count and add as a
+            // neighbor at that index.
+            if ( dist_sqr <= rsqr )
+            {
+                _data.addNeighbor( pid, nid );
+            }
+        }
     }
 };
 
@@ -604,6 +621,9 @@ struct VerletListBuilder
   list.
 
   \tparam LayoutTag Tag indicating whether to use a CSR or 2D data layout.
+
+  \tparam BuildTag Tag indicating whether to use hierarchical team or team
+  vector parallelism when building neighbor lists.
 
   Neighbor list implementation most appropriate for somewhat regularly
   distributed particles due to the use of a Cartesian grid.
@@ -654,6 +674,10 @@ class VerletList
 
       \param grid_max The maximum value of the grid containing the particles
       in each dimension.
+
+      \param max_neigh Optional maximum number of neighbors per particle to
+      pre-allocate the neighbor list. Potentially avoids recounting with 2D
+      layout only.
 
       Particles outside of the neighborhood radius will not be considered
       neighbors. Only compute the neighbors of those that are within the given

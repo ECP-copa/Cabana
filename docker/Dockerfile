@@ -72,7 +72,7 @@ RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz
 
 # Install ArborX
 ENV ARBORX_DIR=/opt/arborx
-RUN ARBORX_VERSION=7a6cbdf577f73aa86a28c04b5a28de2ebe28d45f && \
+RUN ARBORX_VERSION=4b8fe6ff6fd48b020ccc26a67df0d9c2792408a7 && \
     ARBORX_URL=https://github.com/arborx/ArborX/archive/${ARBORX_VERSION}.tar.gz && \
     ARBORX_ARCHIVE=arborx.tar.gz && \
     wget --quiet ${ARBORX_URL} --output-document=${ARBORX_ARCHIVE} && \
