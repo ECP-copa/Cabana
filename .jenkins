@@ -37,12 +37,12 @@ pipeline {
                         '''
                     }
                 }
-                stage('ROCM-3.3-HIPCC-DEBUG') {
+                stage('ROCM-3.5-HIPCC-DEBUG') {
                     agent {
                         dockerfile {
                             filename 'Dockerfile.hipcc'
                             dir 'docker'
-                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-18.04:3.3'
+                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-18.04:3.5'
                             args '-v /tmp/ccache.kokkos:/tmp/ccache --device=/dev/kfd --device=/dev/dri --security-opt seccomp=unconfined --group-add video'
                             label 'rocm-docker && vega'
                         }
