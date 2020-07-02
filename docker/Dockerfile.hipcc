@@ -44,9 +44,9 @@ ENV PATH=${CMAKE_DIR}/bin:$PATH
 
 # Install Open MPI
 ENV OPENMPI_DIR=/opt/openmpi
-RUN OPENMPI_VERSION=4.0.2 && \
+RUN OPENMPI_VERSION=4.0.4 && \
     OPENMPI_VERSION_SHORT=4.0 && \
-    OPENMPI_SHA1=32ce3761288575fb8e4f6296c9105c3a25cf3235 && \
+    OPENMPI_SHA1=50861c22a4b92ca2e069cd49d756dd96c659bfa8 && \
     OPENMPI_URL=https://download.open-mpi.org/release/open-mpi/v${OPENMPI_VERSION_SHORT}/openmpi-${OPENMPI_VERSION}.tar.bz2 && \
     OPENMPI_ARCHIVE=openmpi-${OPENMPI_VERSION}.tar.bz2 && \
     SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
