@@ -75,3 +75,24 @@ RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz
     cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} -D CMAKE_CXX_COMPILER=hipcc ${KOKKOS_OPTIONS} .. && \
     make -j${NPROCS} install && \
     rm -rf ${SCRATCH_DIR}
+
+# Install ArborX
+ENV ARBORX_DIR=/opt/arborx
+RUN ARBORX_VERSION=3aa11ffc57cad33ab098e444ee33c2cea54678db && \
+    ARBORX_URL=https://github.com/arborx/ArborX/archive/${ARBORX_VERSION}.tar.gz && \
+    ARBORX_ARCHIVE=arborx.tar.gz && \
+    wget --quiet ${ARBORX_URL} --output-document=${ARBORX_ARCHIVE} && \
+    mkdir arborx && \
+    tar -xf ${ARBORX_ARCHIVE} -C arborx --strip-components=1 && \
+    cd arborx && \
+    mkdir -p build && cd build && \
+    cmake \
+      -D CMAKE_INSTALL_PREFIX=${ARBORX_DIR} \
+      -D CMAKE_BUILD_TYPE=Debug \
+      -D CMAKE_CXX_COMPILER=hipcc \
+      -D CMAKE_CXX_FLAGS=-amdgpu-target=gfx906 \
+      -D CMAKE_CXX_EXTENSIONS=OFF \
+      -D CMAKE_PREFIX_PATH=${KOKKOS_DIR} \
+    .. && \
+    make -j${NPROCS} install && \
+    cd ../.. && rm -r arborx
