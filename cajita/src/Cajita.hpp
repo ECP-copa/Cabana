@@ -27,6 +27,7 @@
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
+#include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>

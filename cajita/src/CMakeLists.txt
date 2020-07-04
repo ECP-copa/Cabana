@@ -10,6 +10,7 @@ set(HEADERS_PUBLIC
   Cajita_Halo.hpp
   Cajita_IndexConversion.hpp
   Cajita_IndexSpace.hpp
+  Cajita_SparseIndexSpace.hpp
   Cajita_Interpolation.hpp
   Cajita_LocalMesh.hpp
   Cajita_ManualPartitioner.hpp
