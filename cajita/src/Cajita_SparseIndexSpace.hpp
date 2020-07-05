@@ -26,10 +26,11 @@ class SparseIndexSpace
     static constexpr int BlockSizeTotal
     {
         int BS = 1;
-        for ( decltype( N ) curDim = 0; curDim < N; curDim++ )
+        for ( decltype( Rank ) curDim = 0; curDim < Rank; curDim++ )
             BS *= BlockSize;
         return BS;
     }
+    using LocalIndex = SparseIndexSpace<Rank, BlockSizePerDim>;
 
     SparseIndexSpace() {}
 
@@ -51,13 +52,27 @@ class SparseIndexSpace
 /*!
   \class SparseBlockLocalIndexSpace
   \brief Block local index space, hierarchical structure (cell->block->whole
-  domain) \brief CellNo : uint64_t \brief CellId : (int...)
+  domain); CellNo : uint64_t; CellId : (int...)
+  \brief Lexicographical order is used to traverse the interior of this
+  small-sized blocks
  */
-
 template <long N, int BlkSizePerDim>
 class SparseBlockLocalIndexSpace
 {
-    // coord <=> offset computations
+  public:
+    //! Number of dimensions
+    static constexpr long Rank = N;
+    //! Number of cells inside each block per dim
+    static constexpr int BlockSizePerDim = BlkSizePerDim;
+    //! Total number of cells inside each block
+    static constexpr int BlockSizeTotal
+    {
+        int BS = 1;
+        for ( decltype( Rank ) curDim = 0; curDim < Rank; curDim++ )
+            BS *= BlockSize;
+        return BS;
+    }
+    //! coord <=> offset computations
     struct Coord2OffsetDim
     {
         template <typename Coord>
@@ -65,7 +80,7 @@ class SparseBlockLocalIndexSpace
         {
             uint64_t result = (uint64_t)i;
             for ( int i = 0; i < dimNo; i++ )
-                result *= BlkSizePerDim;
+                result *= BlockSizePerDim;
             return result;
         }
     };
@@ -76,12 +91,47 @@ class SparseBlockLocalIndexSpace
         constexpr auto operator()( int dimNo, Coord &i, const uint64_t &offset )
             -> uint64_t
         {
-            i = offset % BlkSizePerDim;
-            return static_cast<uint64_t>( offset / BlkSizePerDim );
+            i = offset % BlockSizePerDim;
+            return static_cast<uint64_t>( offset / BlockSizePerDim );
         }
     };
 
+    template <typename... Coords>
+    static constexpr auto coord2Offset( Coords &&... coords ) -> uint64_t
+    {
+        return from_coord<Coord2OffsetDim>( std::forward<Coords>( coords )... );
+    }
+
+    template <typename Key, typename... Coords>
+    static constexpr void offset2Coord( Key &&key, Coords &... coords )
+    {
+        to_coord<Offset2CoordDim>( std::forward<Key>( key ),
+                                   std::forward<Coords>( coords ) );
+    }
+
   protected:
+    template <typename Func, typename... Coords>
+    static constexpr auto from_coord( Coords &&... coords ) -> uint64_t
+    {
+        if ( sizeof...( Coords ) != Rank )
+            throw std::invalid_argument( "Dimension of coordinate mismatch" );
+        using Integer = std::common_type_t<Coords...>;
+        if ( !( std::is_integral<Integer>::value ) )
+            throw std::invalid_argument( "Coordinate is not integral type" );
+        return from_coord_impl<Func>( 0, coords... );
+    }
+
+    template <typename Func, typename Key, typename... Coords>
+    static constexpr void to_coord( Key &&key, Coords &... coords )->uint64_t
+    {
+        if ( sizeof...( Coords ) != Rank )
+            throw std::invalid_argument( "Dimension of coordinate mismatch" );
+        using Integer = std::common_type_t<Coords...>;
+        if ( !( std::is_integral<Integer>::value ) )
+            throw std::invalid_argument( "Coordinate is not integral type" );
+        return to_coord_impl<Func>( 0, key, coords... );
+    }
+
     template <typename Func, typename Coord>
     static constexpr auto from_coord_impl( int &&dimNo, Coord &&i )
     {
@@ -93,7 +143,7 @@ class SparseBlockLocalIndexSpace
                                            Coords &&... is )
     {
         auto result = Func()( dimNo, std::forward<Coord>( i ) );
-        if ( dimNo + 1 < N )
+        if ( dimNo + 1 < Rank )
             result += from_coord_impl<Func>( dimNo + 1,
                                              std::forward<Coords>( is )... );
         return result;
@@ -110,7 +160,7 @@ class SparseBlockLocalIndexSpace
                                          Coords &... is )
     {
         Key newKey = Func()( dimNo, i, std::forward<Key>( key ) );
-        if ( dimNo + 1 < N )
+        if ( dimNo + 1 < Rank )
             to_coord_impl<Func>( dimNo + 1, std::forward<Key>( Newkey ),
                                  is... );
     }
