@@ -7,21 +7,197 @@
 #include <array>
 #include <string>
 
+#include <Kokkos_UnorderedMap.hpp>
+
 namespace Cajita
 {
+
+struct HashTypes
+{
+    enum Values
+    {
+        Naive = 0,
+        Morton = 1,
+    };
+};
+
+//---------------------------------------------------------------------------//
+// bit operations for Morton Code computing
+template <typename Integer>
+constexpr Integer bit_length( Integer N ) noexcept
+{
+    if ( N )
+        return bit_length( N >> 1 ) + static_cast<Integer>( 1 );
+    else
+        return 0;
+}
+
+template <typename Integer>
+constexpr Integer bit_count( Integer N ) noexcept
+{
+    return bit_length( N - 1 );
+}
+
+template <typename Integer>
+constexpr Integer binary_reverse( Integer data,
+                                  char loc = sizeof( Integer ) * 8 - 1 )
+{
+    if ( data == 0 )
+        return 0;
+    return ( ( data & 1 ) << loc ) | binary_reverse( data >> 1, loc - 1 );
+}
+
+template <typename Integer>
+constexpr unsigned count_leading_zeros( Integer data )
+{
+    unsigned res{0};
+    data = binary_reverse( data );
+    if ( data == 0 )
+        return sizeof( Integer ) * 8;
+    while ( ( data & 1 ) == 0 )
+        res++, data >>= 1;
+    return res;
+}
+
+constexpr int bit_pack( const uint64_t mask, const uint64_t data )
+{
+    uint64_t slresult = 0;
+    uint64_t &ulresult{slresult};
+    uint64_t uldata = data;
+    int count = 0;
+    ulresult = 0;
+
+    uint64_t rmask = binary_reverse( mask );
+    unsigned char lz{0};
+
+    while ( rmask )
+    {
+        lz = count_leading_zeros( rmask );
+        uldata >>= lz;
+        ulresult <<= 1;
+        count++;
+        ulresult |= ( uldata & 1 );
+        uldata >>= 1;
+        rmask <<= lz + 1;
+    }
+    ulresult <<= 64 - count; // 64 bits (maybe not use a constant 64 ...?)
+    ulresult = binary_reverse( ulresult );
+    return (int)slresult;
+}
+
+constexpr uint64_t bit_spread( const uint64_t mask, const int data )
+{
+    uint64_t rmask = binary_reverse( mask );
+    int dat = data;
+    uint64_t result = 0;
+    unsigned char lz{0};
+    while ( rmask )
+    {
+        lz = count_leading_zeros( rmask ) + 1;
+        result = result << lz | ( dat & 1 );
+        dat >>= 1, rmask <<= lz;
+    }
+    result = binary_reverse( result ) >> count_leading_zeros( mask );
+    return result;
+}
+
+// BlockKey (hash) <=> BlockID
+template <typename Key, typename HashType>
+struct BlockID2HashKey;
+
+template <typename Key, typename HashType>
+struct HashKey2BlockID;
+
+// functions to compute hash key
+template <typename Key>
+struct BlockID2HashKey<Key, HashTypes::Naive>
+{
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr auto operator()( std::array<int, 3> blocknum,
+                               std::array<int, 3> blockid ) -> Key
+    {
+        return blockid[0] * blocknum[1] * blocknum[2] +
+               blockid[1] * blocknum[2] + blockid[2];
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr auto operator()( std::array<int, 3> blocknum, int blockid_x,
+                               int blockid_y, int blockid_z ) -> Key
+    {
+        return blockid_x * blocknum[1] * blocknum[2] + blockid_y * blocknum[2] +
+               blockid_z;
+    }
+};
+
+template <typename Key>
+struct BlockID2HashKey<Key, HashTypes::Morton>
+{
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr auto operator()() -> Key
+    {
+        // pass
+    }
+};
+
+template <typename Key>
+struct HashKey2BlockID<Key, HashTypes::Naive>
+{
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr void operator()( Key blockkey, std::array<int, 3> blocksize,
+                               std::array<int, 3> &blockid )
+    {
+        blockid[2] = blockkey % blocksize[2];
+        blockid[1] = static_cast<Key>( blockkey / blocksize[2] ) % blocksize[1];
+        blockid[0] =
+            static_cast<Key>( blockkey / blocksize[2] / blocksize[1] ) %
+            blocksize[0];
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr void operator()( Key blockkey, std::array<int, 3> blocksize,
+                               int &blockid_x, int &blockid_y, int &blockid_z )
+    {
+        blockid_z = blockkey % blocksize[2];
+        blockid_y = static_cast<Key>( blockkey / blocksize[2] ) % blocksize[1];
+        blockid_x = static_cast<Key>( blockkey / blocksize[2] / blocksize[1] ) %
+                    blocksize[0];
+    }
+};
+
+template <typename Key>
+struct HashKey2BlockID<Key, HashTypes::Morton>
+{
+    // pass
+};
+
 //---------------------------------------------------------------------------//
 /*!
   \class SparseIndexSpace
   \brief Sparse index space, hierarchical structure (cell->block->whole domain)
+  \ ValueType : blockNo type
  */
-template <long N, int BlkSizePerDim = 4>
+template <long N, int BlkNPerDim = 4, typename Hash = HashTypes::Naive,
+          typename Device = Kokkos::DefaultExecutionSpace,
+          typename Key = uint64_t, typename Value = uint32_t>
 class SparseIndexSpace
 {
   public:
     //! Number of dimensions
     static constexpr long Rank = N;
     //! Number of cells inside each block per dim
-    static constexpr int BlockSizePerDim = BlkSizePerDim;
+    static constexpr int BlockSizePerDim = BlkNPerDim;
+    //! Number of bits account for block ID info
+    static constexpr int BlockBits = bit_count( BlockSizePerDim );
+    //! Key type, for blockkey and blockhashedkey
+    using KeyType = Key;
+    //! Value type, for the blockno
+    using ValueType = Value;
+    //! Hash Type
+    using HashType = Hash;
+    enum : unsigned long long
+    {
+        HashKeyOffset = 127
+    };
     //! Total number of cells inside each block
     static constexpr int BlockSizeTotal
     {
@@ -32,10 +208,45 @@ class SparseIndexSpace
     }
     using LocalIndex = SparseIndexSpace<Rank, BlockSizePerDim>;
 
-    SparseIndexSpace() {}
+    SparseIndexSpace( int capacity )
+        : _capacity_hint( 1 << bit_count( capacity ) )
+        , _block_table( _capacity_hint )
+        , _value_table( _capacity_hint )
+        , _valid_block_num( 0 )
+    {
+        _block_table.clear();
+        _value_table.clear();
+        _mask = _capacity_hint - 1;
+    }
 
     // Should support
-    // insert
+    // insert, when you are sure that the block does not exist
+    KOKKOS_FORCEINLINE_FUNCTION
+    void insert( std::array<int, 3> &&blocksize, std::array<int, 3> &&blockid )
+    {
+        if ( _valid_block_num >= _capacity_hint )
+        {
+            _capacity_hint *= 2;
+            _key_table.rehash( _capacity_hint );
+            _value_table.rehash( _capacity_hint );
+        }
+        const KeyType blockKey =
+            _op_blk2key( std::forward<std::array<int, 3>>( blocksize ),
+                         std::forward<std::array<int, 3>>( blockid ) );
+        KeyType hashedEntry = blockKey & _mask;
+        while ( _key_table.query( hashedEntry ) !=
+                Kokkos::UnorderedMap::invalid_index )
+        {
+            hashedEntry += HashKeyOffset;
+            if ( hashedEntry > _mask )
+                hashedEntry &= _mask;
+        }
+        _key_table.insert( hashedEntry, blockKey );
+        _value_table.insert( hashedEntry,
+                             _valid_block_num++ ); // should be atomic ++, how
+                                                   // can I express that?
+    }
+
     // query
     // query and insert
     // compare operations?
@@ -43,9 +254,17 @@ class SparseIndexSpace
 
   private:
     // hash table (blockId -> blockNo)
+    Kokkos::UnorderedMap<KeyType, KeyType, Device> _key_table;
+    Kokkos::UnorderedMap<KeyType, ValueType, Device> _value_table;
     // Valid block number
-    // Valid block Ids
+    int _valid_block_num;
     // allocated size
+    int _capacity_hint;
+    // hash mask
+    uint64_t _mask;
+    // BlockID <=> BlockKey Op
+    BlockID2HashKey<KeyType, HashType> _op_blk2key;
+    HashKey2BlockID<KeyType, HashType> _op_key2blk;
 }; // end class SparseIndexSpace
 
 //---------------------------------------------------------------------------//
@@ -164,7 +383,7 @@ class SparseBlockLocalIndexSpace
             to_coord_impl<Func>( dimNo + 1, std::forward<Key>( Newkey ),
                                  is... );
     }
-}
+}; // end SparseBlockLocalIndexSpace
 
 } // end namespace Cajita
 
