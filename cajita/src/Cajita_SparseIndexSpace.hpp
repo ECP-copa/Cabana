@@ -109,6 +109,7 @@ template <typename Key, typename HashType>
 struct HashKey2BlockID;
 
 // functions to compute hash key
+// can be rewriten in a recursive way
 template <typename Key>
 struct BlockID2HashKey<Key, HashTypes::Naive>
 {
@@ -139,6 +140,7 @@ struct BlockID2HashKey<Key, HashTypes::Morton>
     }
 };
 
+    // can be rewriten in a recursive way
 template <typename Key>
 struct HashKey2BlockID<Key, HashTypes::Naive>
 {
@@ -194,10 +196,8 @@ class SparseIndexSpace
     using ValueType = Value;
     //! Hash Type
     using HashType = Hash;
-    enum : unsigned long long
-    {
-        HashKeyOffset = 127
-    };
+    //! When need more capacity of the hash table, then rehash by factor 2
+    static constexpr Rehash_Coeff = 2;
     //! Total number of cells inside each block
     static constexpr int BlockSizeTotal
     {
@@ -213,38 +213,39 @@ class SparseIndexSpace
         , _block_table( _capacity_hint )
         , _value_table( _capacity_hint )
         , _valid_block_num( 0 )
+        , _op_blk2key(), _op_key2blk()
     {
         _block_table.clear();
         _value_table.clear();
-        _mask = _capacity_hint - 1;
     }
 
     // Should support
-    // insert, when you are sure that the block does not exist
+    // insert, return the blockNo
+    // Need to rethink this part, if blockNo is determined by the sequence of inserting
+    // there should be no need to identify the naive/morton coding of the block
+    // Need Ordered_Map to make use of the naive/morton codring results
     KOKKOS_FORCEINLINE_FUNCTION
-    void insert( std::array<int, 3> &&blocksize, std::array<int, 3> &&blockid )
+    ValueType insert( std::array<int, 3> &&blocksize, 
+                      std::array<int, 3> &&blockid )
     {
-        if ( _valid_block_num >= _capacity_hint )
+        if ( _blk_table.size() >= _capacity_hint )
         {
-            _capacity_hint *= 2;
+            _capacity_hint *= Rehash_Coeff;
             _key_table.rehash( _capacity_hint );
             _value_table.rehash( _capacity_hint );
+            // TODO: view reallocate needed
         }
         const KeyType blockKey =
             _op_blk2key( std::forward<std::array<int, 3>>( blocksize ),
                          std::forward<std::array<int, 3>>( blockid ) );
-        KeyType hashedEntry = blockKey & _mask;
-        while ( _key_table.query( hashedEntry ) !=
+        ValueType blockNo;
+        if ( (blockNo = _key_table.find( blockKey )) ==
                 Kokkos::UnorderedMap::invalid_index )
         {
-            hashedEntry += HashKeyOffset;
-            if ( hashedEntry > _mask )
-                hashedEntry &= _mask;
+            blockNo = _blk_table.size();
+            _blk_table.insert( blockKey, blockNo );
         }
-        _key_table.insert( hashedEntry, blockKey );
-        _value_table.insert( hashedEntry,
-                             _valid_block_num++ ); // should be atomic ++, how
-                                                   // can I express that?
+        return blockNo;
     }
 
     // query
@@ -254,14 +255,11 @@ class SparseIndexSpace
 
   private:
     // hash table (blockId -> blockNo)
-    Kokkos::UnorderedMap<KeyType, KeyType, Device> _key_table;
-    Kokkos::UnorderedMap<KeyType, ValueType, Device> _value_table;
+    Kokkos::UnorderedMap<KeyType, ValueType, Device> _blk_table;
     // Valid block number
     int _valid_block_num;
     // allocated size
     int _capacity_hint;
-    // hash mask
-    uint64_t _mask;
     // BlockID <=> BlockKey Op
     BlockID2HashKey<KeyType, HashType> _op_blk2key;
     HashKey2BlockID<KeyType, HashType> _op_key2blk;
