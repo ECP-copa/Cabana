@@ -13,6 +13,7 @@
 #define CAJITA_HALO_HPP
 
 #include <Cajita_Array.hpp>
+#include <Cajita_Hilbert.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_MpiTraits.hpp>
 
@@ -297,14 +298,38 @@ class Halo
             if ( 0 < _owned_buffers[n].size() )
             {
                 // Pack the send buffer.
-                auto subview = createSubview( view, _owned_spaces[n] );
-                Kokkos::deep_copy( _owned_buffers[n], subview );
+                if ( std::string( typeid(view.layout()).name() ).find("LayoutHilbert") != std::string::npos ) {
+                    view_type sendBuffer( "sendBuffer", _owned_spaces[n].extent( 0 ), _owned_spaces[n].extent( 1 ), _owned_spaces[n].extent( 2 ), _owned_spaces[n].extent( 3 ) );
 
-                // Post a send.
-                MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].size(),
-                           MpiTraits<value_type>::type(), _neighbor_ranks[n],
-                           mpi_tag + _send_tags[n], _comm,
-                           &requests[num_n + n] );
+                    for ( int ii = _owned_spaces[n].min( 0 ); ii < _owned_spaces[n].max( 0 ); ii++ ) {
+                        for ( int jj = _owned_spaces[n].min( 1 ); jj < _owned_spaces[n].max( 1 ); jj++ ) {
+                            for ( int kk = _owned_spaces[n].min( 2 ); kk < _owned_spaces[n].max( 2 ); kk++ ) {
+                                for ( int ll = _owned_spaces[n].min( 3 ); ll < _owned_spaces[n].max( 3 ); ll++ ) {
+                                    int ii_own = ii - _owned_spaces[n].min( 0 );
+                                    int jj_own = jj - _owned_spaces[n].min( 1 );
+                                    int kk_own = kk - _owned_spaces[n].min( 2 );
+                                    int ll_own = ll - _owned_spaces[n].min( 3 );
+
+                                    sendBuffer( ii_own, jj_own, kk_own, ll_own ) = view( ii, jj, kk, ll );
+
+                                }
+                            }
+                        }
+                    }
+
+                    MPI_Isend( sendBuffer.data(), _owned_buffers[n].size(), MpiTraits<value_type>::type(), _neighbor_ranks[n], mpi_tag + _send_tags[n], _comm, &requests[num_n + n] );
+                }
+
+                else {
+                    auto subview = createSubview( view, _owned_spaces[n] );
+                    Kokkos::deep_copy( _owned_buffers[n], subview );
+
+                    // Post a send.
+                    MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].size(),
+                            MpiTraits<value_type>::type(), _neighbor_ranks[n],
+                            mpi_tag + _send_tags[n], _comm,
+                            &requests[num_n + n] );
+                }
             }
         }
 
@@ -326,9 +351,30 @@ class Halo
             // Otherwise unpack the next buffer.
             else
             {
-                auto subview =
-                    createSubview( view, _ghosted_spaces[unpack_index] );
-                Kokkos::deep_copy( subview, _ghosted_buffers[unpack_index] );
+                if ( std::string( typeid(view.layout()).name() ).find("LayoutHilbert") != std::string::npos ) {
+                    view_type ghostedBuffer = _ghosted_buffers[unpack_index];
+
+                    for ( int ii = _ghosted_spaces[unpack_index].min( 0 ); ii < _ghosted_spaces[unpack_index].max( 0 ); ii++ ) {
+                        for ( int jj = _ghosted_spaces[unpack_index].min( 1 ); jj < _ghosted_spaces[unpack_index].max( 1 ); jj++ ) {
+                            for ( int kk = _ghosted_spaces[unpack_index].min( 2 ); kk < _ghosted_spaces[unpack_index].max( 2 ); kk++ ) {
+                                for ( int ll = _ghosted_spaces[unpack_index].min( 3 ); ll < _ghosted_spaces[unpack_index].max( 3 ); ll++ ) {
+                                    int ii_own = ii - _ghosted_spaces[unpack_index].min( 0 );
+                                    int jj_own = jj - _ghosted_spaces[unpack_index].min( 1 );
+                                    int kk_own = kk - _ghosted_spaces[unpack_index].min( 2 );
+                                    int ll_own = ll - _ghosted_spaces[unpack_index].min( 3 );
+
+                                    view( ii, jj, kk, ll ) = ghostedBuffer( ii_own, jj_own, kk_own, ll_own );
+
+                                }
+                            }
+                        }
+                    }
+                }
+                else {
+                    auto subview =
+                        createSubview( view, _ghosted_spaces[unpack_index] );
+                    Kokkos::deep_copy( subview, _ghosted_buffers[unpack_index] );
+                }
             }
         }
 

@@ -8,6 +8,7 @@ set(HEADERS_PUBLIC
   Cajita_GlobalGrid.hpp
   Cajita_GlobalMesh.hpp
   Cajita_Halo.hpp
+  Cajita_Hilbert.hpp
   Cajita_IndexConversion.hpp
   Cajita_IndexSpace.hpp
   Cajita_Interpolation.hpp
