@@ -140,7 +140,7 @@ struct BlockID2HashKey<Key, HashTypes::Morton>
     }
 };
 
-    // can be rewriten in a recursive way
+// can be rewriten in a recursive way
 template <typename Key>
 struct HashKey2BlockID<Key, HashTypes::Naive>
 {
@@ -184,11 +184,14 @@ template <long N, int BlkNPerDim = 4, typename Hash = HashTypes::Naive,
 class SparseIndexSpace
 {
   public:
-    //! Number of dimensions
+    //! Number of dimensions, should be 2
     static constexpr long Rank = N;
     //! Number of cells inside each block per dim
     static constexpr int BlockSizePerDim = BlkNPerDim;
+    static constexpr int BlockSizeTotal = BlkNPerDim * BlkNPerDim * BlkNPerDim;
     //! Number of bits account for block ID info
+    // If we can make more constrictions on BlockSizePerDim (=2^n)
+    // we can use bit operations to compute the blockNo/cellNo
     static constexpr int BlockBits = bit_count( BlockSizePerDim );
     //! Key type, for blockkey and blockhashedkey
     using KeyType = Key;
@@ -213,19 +216,30 @@ class SparseIndexSpace
         , _block_table( _capacity_hint )
         , _value_table( _capacity_hint )
         , _valid_block_num( 0 )
-        , _op_blk2key(), _op_key2blk()
+        , _op_blk2key()
+        , _op_key2blk()
+        , _min_ch( -1 )
+        , _max_ch( -1 )
     {
         _block_table.clear();
         _value_table.clear();
     }
 
-    // Should support
+    // set ch min/max
+    void set_ch_min( const int ch_min ) { _min_ch = ch_min; }
+    void set_ch_max( const int ch_max ) { _max_ch = ch_max; }
+
+    // get ch min/max
+    int chmin() const { return _min_ch; }
+    int chmax() const { return _max_ch; }
+
     // insert, return the blockNo
-    // Need to rethink this part, if blockNo is determined by the sequence of inserting
-    // there should be no need to identify the naive/morton coding of the block
-    // Need Ordered_Map to make use of the naive/morton codring results
+    // Need to rethink this part, if blockNo is determined by the sequence of
+    // inserting there should be no need to identify the naive/morton coding of
+    // the block Need Ordered_Map to make use of the naive/morton codring
+    // results
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType insert( std::array<int, 3> &&blocksize, 
+    ValueType insert( std::array<int, 3> &&blocksize,
                       std::array<int, 3> &&blockid )
     {
         if ( _blk_table.size() >= _capacity_hint )
@@ -239,8 +253,8 @@ class SparseIndexSpace
             _op_blk2key( std::forward<std::array<int, 3>>( blocksize ),
                          std::forward<std::array<int, 3>>( blockid ) );
         ValueType blockNo;
-        if ( (blockNo = _key_table.find( blockKey )) ==
-                Kokkos::UnorderedMap::invalid_index )
+        if ( ( blockNo = _key_table.find( blockKey ) ) ==
+             Kokkos::UnorderedMap::invalid_index )
         {
             blockNo = _blk_table.size();
             _blk_table.insert( blockKey, blockNo );
@@ -249,12 +263,23 @@ class SparseIndexSpace
     }
 
     // query
-    // query and insert
+    KOKKOS_FORCEINLINE_FUNCTION
+    ValueType find( std::array<int, 3> &&blocksize,
+                    std::array<int, 3> &&blockid )
+    {
+        return _blk_table.find(
+            _op_blk2key( std::forward<std::array<int, 3>>( blocksize ),
+                         std::forward<std::array<int, 3>>( blockid ) ) );
+    }
+
     // compare operations?
     // get min/max operations?
 
   private:
     // hash table (blockId -> blockNo)
+    // Perhaps need another table, two options:
+    // 1. Two table, one for owned blk, one for ghost blk
+    // 2. Two table, one for all blk, one for owned/ghost label (same key)
     Kokkos::UnorderedMap<KeyType, ValueType, Device> _blk_table;
     // Valid block number
     int _valid_block_num;
@@ -263,6 +288,9 @@ class SparseIndexSpace
     // BlockID <=> BlockKey Op
     BlockID2HashKey<KeyType, HashType> _op_blk2key;
     HashKey2BlockID<KeyType, HashType> _op_key2blk;
+    // min and max for the ch space (temporal setting)
+    int _min_ch;
+    int _max_ch;
 }; // end class SparseIndexSpace
 
 //---------------------------------------------------------------------------//
@@ -388,7 +416,26 @@ class SparseBlockLocalIndexSpace
 //---------------------------------------------------------------------------//
 // execution policies
 // range over all possible blocks
+
 // range over all possible cells inside a block
+template <class ExecutionSpace, typename SparseIndexSpace_t,
+          int rank = SparseIndexSpace_t::Rank,
+          ypename std::enable_if_t<rank == 2> * = nullptr>
+Kokkos::MDRangePolicy<ExecutionSpace, Kokkos::Rank<SparseIndexSpace_t::Rank>>
+createExecutionPolicy( const SparseIndexSpace_t &index_space,
+                       std::array<int, 3> &&blocksize,
+                       std::array<int, 3> &&blockid, const ExecutionSpace & )
+{
+    auto blockNo = index_space.find( blocksize, blockid );
+    Kokkos::Array<long, 2> min, max;
+    min[0] = blockNo;
+    max[0] = blockNo + index_space.BlockSizeTotal;
+    min[1] = index_space.chmin();
+    max[1] = index_space.chmax();
+
+    return Kokkos::MDRangePolicy<ExecutionSpace, Kokkos::Rank<rank>>( min,
+                                                                      max );
+}
 
 //---------------------------------------------------------------------------//
 // create view
