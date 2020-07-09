@@ -116,32 +116,48 @@ struct BlockID2HashKey<Key, HashTypes::Naive>
     KOKKOS_FORCEINLINE_FUNCTION
     constexpr auto operator()( std::array<int, 3> blockid ) -> Key
     {
-        return blockid[0] * _blocknum[1] * _blocknum[2] 
-             + blockid[1] * _blocknum[2] 
-             + blockid[2];
+        return blockid[0] * _blocknum[1] * _blocknum[2] +
+               blockid[1] * _blocknum[2] + blockid[2];
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr auto operator()( int blockid_x,
-                               int blockid_y, 
-                               int blockid_z ) -> Key
+    constexpr auto operator()( int blockid_x, int blockid_y, int blockid_z )
+        -> Key
     {
-        return blockid_x * _blocknum[1] * _blocknum[2] 
-             + blockid_y * _blocknum[2] 
-             + blockid_z;
+        return blockid_x * _blocknum[1] * _blocknum[2] +
+               blockid_y * _blocknum[2] + blockid_z;
     }
-    
-private:
+
+  private:
     std::array<int, 3> _blocknum;
 };
 
 template <typename Key>
 struct BlockID2HashKey<Key, HashTypes::Morton>
 {
+    BlockID2HashKey( std::array<int, 3> ) {} // ugly
+
+    enum : uint64_t
+    { // hand-coded now, can be improved by iterative func
+        page_zmask = ( 0x9249249249249249UL ),
+        page_ymask = ( 0x2492492492492492UL ),
+        page_xmask = ( 0x4924924924924924UL )
+    };
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr auto operator()() -> Key
+    constexpr auto operator()( std::array<int, 3> blockid ) -> Key
     {
-        // pass
+        return bit_spread( page_zmask, blockid[2] ) |
+               bit_spread( page_ymask, blockid[1] ) |
+               bit_spread( page_xmask, blockid[0] );
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr auto operator()( int blockid_x, int blockid_y, int blockid_z )
+        -> Key
+    {
+        return bit_spread( page_zmask, blockid_z ) |
+               bit_spread( page_ymask, blockid_y ) |
+               bit_spread( page_xmask, blockid_x );
     }
 };
 
@@ -150,8 +166,7 @@ template <typename Key>
 struct HashKey2BlockID<Key, HashTypes::Naive>
 {
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr void operator()( Key blockkey,
-                               std::array<int, 3> &blockid )
+    constexpr void operator()( Key blockkey, std::array<int, 3> &blockid )
     {
         blockid[2] = blockkey % _blocknum[2];
         blockid[1] = static_cast<Key>( blockkey / _blocknum[2] ) % _blocknum[1];
@@ -161,8 +176,8 @@ struct HashKey2BlockID<Key, HashTypes::Naive>
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr void operator()( Key blockkey,
-                               int &blockid_x, int &blockid_y, int &blockid_z )
+    constexpr void operator()( Key blockkey, int &blockid_x, int &blockid_y,
+                               int &blockid_z )
     {
         blockid_z = blockkey % _blocknum[2];
         blockid_y = static_cast<Key>( blockkey / _blocknum[2] ) % _blocknum[1];
@@ -170,14 +185,38 @@ struct HashKey2BlockID<Key, HashTypes::Naive>
                     _blocknum[0];
     }
 
-private:
+  private:
     std::array<int, 3> _blocknum;
 };
 
 template <typename Key>
 struct HashKey2BlockID<Key, HashTypes::Morton>
 {
-    // pass
+    HashKey2BlockID( std::array<int, 3> ) {} // ugly
+
+    enum : uint64_t
+    { // hand-coded now, can be improved by iterative func
+        page_zmask = ( 0x9249249249249249UL ),
+        page_ymask = ( 0x2492492492492492UL ),
+        page_xmask = ( 0x4924924924924924UL )
+    };
+
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr void operator()( Key blockkey, std::array<int, 3> &blockid )
+    {
+        blockid[2] = bit_pack( page_zmask, blockkey );
+        blockid[1] = bit_pack( page_ymask, blockkey );
+        blockid[0] = bit_pack( page_xmask, blockkey );
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION
+    constexpr void operator()( Key blockkey, int &blockid_x, int &blockid_y,
+                               int &blockid_z )
+    {
+        blockid_z = bit_pack( page_zmask, blockkey );
+        blockid_y = bit_pack( page_ymask, blockkey );
+        blockid_x = bit_pack( page_xmask, blockkey );
+    }
 };
 
 //---------------------------------------------------------------------------//
