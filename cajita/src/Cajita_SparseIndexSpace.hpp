@@ -454,8 +454,6 @@ class SparseBlockLocalIndexSpace
     }
 }; // end SparseBlockLocalIndexSpace
 
-} // end namespace Cajita
-
 //---------------------------------------------------------------------------//
 // execution policies
 // range over all possible blocks
@@ -486,4 +484,5 @@ createExecutionPolicy( const SparseIndexSpace_t &index_space,
 
 // appendDimension
 
+} // end namespace Cajita
 #endif ///< ! CAJITA_SPARSE_INDEXSPACE_HPP
