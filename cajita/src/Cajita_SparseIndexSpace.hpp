@@ -114,20 +114,25 @@ template <typename Key>
 struct BlockID2HashKey<Key, HashTypes::Naive>
 {
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr auto operator()( std::array<int, 3> blocknum,
-                               std::array<int, 3> blockid ) -> Key
+    constexpr auto operator()( std::array<int, 3> blockid ) -> Key
     {
-        return blockid[0] * blocknum[1] * blocknum[2] +
-               blockid[1] * blocknum[2] + blockid[2];
+        return blockid[0] * _blocknum[1] * _blocknum[2] 
+             + blockid[1] * _blocknum[2] 
+             + blockid[2];
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr auto operator()( std::array<int, 3> blocknum, int blockid_x,
-                               int blockid_y, int blockid_z ) -> Key
+    constexpr auto operator()( int blockid_x,
+                               int blockid_y, 
+                               int blockid_z ) -> Key
     {
-        return blockid_x * blocknum[1] * blocknum[2] + blockid_y * blocknum[2] +
-               blockid_z;
+        return blockid_x * _blocknum[1] * _blocknum[2] 
+             + blockid_y * _blocknum[2] 
+             + blockid_z;
     }
+    
+private:
+    std::array<int, 3> _blocknum;
 };
 
 template <typename Key>
@@ -145,25 +150,28 @@ template <typename Key>
 struct HashKey2BlockID<Key, HashTypes::Naive>
 {
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr void operator()( Key blockkey, std::array<int, 3> blocksize,
+    constexpr void operator()( Key blockkey,
                                std::array<int, 3> &blockid )
     {
-        blockid[2] = blockkey % blocksize[2];
-        blockid[1] = static_cast<Key>( blockkey / blocksize[2] ) % blocksize[1];
+        blockid[2] = blockkey % _blocknum[2];
+        blockid[1] = static_cast<Key>( blockkey / _blocknum[2] ) % _blocknum[1];
         blockid[0] =
-            static_cast<Key>( blockkey / blocksize[2] / blocksize[1] ) %
-            blocksize[0];
+            static_cast<Key>( blockkey / _blocknum[2] / _blocknum[1] ) %
+            _blocknum[0];
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr void operator()( Key blockkey, std::array<int, 3> blocksize,
+    constexpr void operator()( Key blockkey,
                                int &blockid_x, int &blockid_y, int &blockid_z )
     {
-        blockid_z = blockkey % blocksize[2];
-        blockid_y = static_cast<Key>( blockkey / blocksize[2] ) % blocksize[1];
-        blockid_x = static_cast<Key>( blockkey / blocksize[2] / blocksize[1] ) %
-                    blocksize[0];
+        blockid_z = blockkey % _blocknum[2];
+        blockid_y = static_cast<Key>( blockkey / _blocknum[2] ) % _blocknum[1];
+        blockid_x = static_cast<Key>( blockkey / _blocknum[2] / _blocknum[1] ) %
+                    _blocknum[0];
     }
+
+private:
+    std::array<int, 3> _blocknum;
 };
 
 template <typename Key>
@@ -211,13 +219,13 @@ class SparseIndexSpace
     }
     using LocalIndex = SparseIndexSpace<Rank, BlockSizePerDim>;
 
-    SparseIndexSpace( int capacity )
+    SparseIndexSpace( int capacity, std::array<int, 3> blocknum )
         : _capacity_hint( 1 << bit_count( capacity ) )
         , _block_table( _capacity_hint )
         , _value_table( _capacity_hint )
         , _valid_block_num( 0 )
-        , _op_blk2key()
-        , _op_key2blk()
+        , _op_blk2key( blocknum )
+        , _op_key2blk( blocknum )
         , _min_ch( -1 )
         , _max_ch( -1 )
     {
@@ -239,8 +247,7 @@ class SparseIndexSpace
     // the block Need Ordered_Map to make use of the naive/morton codring
     // results
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType insert( std::array<int, 3> &&blocksize,
-                      std::array<int, 3> &&blockid )
+    ValueType insert( std::array<int, 3> &&blockid )
     {
         if ( _blk_table.size() >= _capacity_hint )
         {
@@ -250,8 +257,7 @@ class SparseIndexSpace
             // TODO: view reallocate needed
         }
         const KeyType blockKey =
-            _op_blk2key( std::forward<std::array<int, 3>>( blocksize ),
-                         std::forward<std::array<int, 3>>( blockid ) );
+            _op_blk2key( std::forward<std::array<int, 3>>( blockid ) );
         ValueType blockNo;
         if ( ( blockNo = _key_table.find( blockKey ) ) ==
              Kokkos::UnorderedMap::invalid_index )
@@ -264,12 +270,10 @@ class SparseIndexSpace
 
     // query
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType find( std::array<int, 3> &&blocksize,
-                    std::array<int, 3> &&blockid )
+    ValueType find( std::array<int, 3> &&blockid )
     {
         return _blk_table.find(
-            _op_blk2key( std::forward<std::array<int, 3>>( blocksize ),
-                         std::forward<std::array<int, 3>>( blockid ) ) );
+            _op_blk2key( std::forward<std::array<int, 3>>( blockid ) ) );
     }
 
     // compare operations?
@@ -423,10 +427,9 @@ template <class ExecutionSpace, typename SparseIndexSpace_t,
           ypename std::enable_if_t<rank == 2> * = nullptr>
 Kokkos::MDRangePolicy<ExecutionSpace, Kokkos::Rank<SparseIndexSpace_t::Rank>>
 createExecutionPolicy( const SparseIndexSpace_t &index_space,
-                       std::array<int, 3> &&blocksize,
                        std::array<int, 3> &&blockid, const ExecutionSpace & )
 {
-    auto blockNo = index_space.find( blocksize, blockid );
+    auto blockNo = index_space.find( blockid );
     Kokkos::Array<long, 2> min, max;
     min[0] = blockNo;
     max[0] = blockNo + index_space.BlockSizeTotal;
