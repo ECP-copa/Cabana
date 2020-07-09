@@ -13,6 +13,7 @@
 #define CABANA_BUFFEREDAOSOA_HPP
 
 #include <tuple>
+#include <vector>
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
@@ -21,6 +22,8 @@ namespace Cabana
 {
 // TODO: this tuple implementation could possibly be a std::index_sequence
 // over Cabana::member_slice_type and be simplified?
+// TODO: Use the same tuple pattern as in Cabana::SoA using
+// std::make_index_sequence
 
 /**
  * @brief Contains the value for one item in the SliceAtIndex tuple.
@@ -36,6 +39,7 @@ struct SliceAtIndexLeaf
     value_t value;
 
     SliceAtIndexLeaf( AoSoA_t &aosoa ) { value = Cabana::slice<i>( aosoa ); }
+    SliceAtIndexLeaf() {}
 };
 
 template <typename AoSoA_t, std::size_t i, typename... Items>
@@ -50,6 +54,7 @@ struct SliceAtIndexImpl<AoSoA_t, i>
     // TODO: see how everyone wants to handle this unused param, or if it can
     // be removed
     SliceAtIndexImpl( __attribute__( ( unused ) ) AoSoA_t &aosoa ) {}
+    SliceAtIndexImpl() {}
 };
 
 /**
@@ -60,7 +65,8 @@ template <typename AoSoA_t, std::size_t i, typename HeadItem,
           typename... TailItems>
 struct SliceAtIndexImpl<AoSoA_t, i, HeadItem, TailItems...>
     : public SliceAtIndexLeaf<AoSoA_t, i,
-                       HeadItem>, // This adds a `value` member of type HeadItem
+                              HeadItem>, // This adds a `value` member of type
+                                         // HeadItem
       public SliceAtIndexImpl<AoSoA_t, i + 1, TailItems...> // This recurses
 {
     SliceAtIndexImpl( AoSoA_t &aosoa )
@@ -68,6 +74,7 @@ struct SliceAtIndexImpl<AoSoA_t, i, HeadItem, TailItems...>
         , SliceAtIndexImpl<AoSoA_t, i + 1, TailItems...>( aosoa )
     {
     }
+    SliceAtIndexImpl() {}
 };
 
 /**
@@ -85,6 +92,7 @@ struct _SliceAtIndex : SliceAtIndexImpl<AoSoA_t, 0, Items...>
         : SliceAtIndexImpl<AoSoA_t, 0, Items...>( aosoa )
     {
     }
+    _SliceAtIndex() {}
 };
 
 /**
@@ -93,18 +101,22 @@ struct _SliceAtIndex : SliceAtIndexImpl<AoSoA_t, 0, Items...>
  */
 template <typename AoSoA_t, typename... Itmes>
 struct UnpackSliceAtIndex;
+
 template <typename AoSoA_t, typename... Items>
-struct UnpackSliceAtIndex<AoSoA_t, MemberTypes<Items...>> : _SliceAtIndex<AoSoA_t, Items...>
+struct UnpackSliceAtIndex<AoSoA_t, MemberTypes<Items...>>
+    : _SliceAtIndex<AoSoA_t, Items...>
 {
   public:
     static constexpr auto length = sizeof...( Items );
+
     UnpackSliceAtIndex( AoSoA_t &aosoa )
         : _SliceAtIndex<AoSoA_t, Items...>( aosoa )
     {
     }
+    UnpackSliceAtIndex() {}
 };
 
-// TODO: where is the right place for this?
+// TODO: where is the right place for this function to live?
 /**
  * @brief Underlying generic style getter to obtain a reference to
  * i-th item in the slice tuple
@@ -114,38 +126,37 @@ struct UnpackSliceAtIndex<AoSoA_t, MemberTypes<Items...>> : _SliceAtIndex<AoSoA_
  * @return The i-th value in the tuple
  */
 template <typename AoSoA_t, std::size_t i, typename HeadItem,
-         typename... TailItems>
- KOKKOS_INLINE_FUNCTION
- typename SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value_t&
- get( SliceAtIndexImpl<AoSoA_t, i, HeadItem, TailItems...> &tuple )
- {
-     return tuple.SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value;
- }
+          typename... TailItems>
+KOKKOS_INLINE_FUNCTION
+    typename SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value_t &
+    get( SliceAtIndexImpl<AoSoA_t, i, HeadItem, TailItems...> &tuple )
+{
+    return tuple.SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value;
+}
 
-// Requirements:
-// 1) User must be able to specify the memory space the data will be "buffered"
-// into a) we can presumably detect the existing allocated space, and determine
-// if they are the same
-// 2) User must be able to specify the execution space the data will be
-// "buffered" into This will let us detect situations where data can be
-// automatically buffered
-// 3) User must specify the maximum number of tuples that we are allowed to auto
-// allocated without running OOM 4) User can provide a hint for ideal number of
-// buffers to chunk the data into while buffering
-template <int max_buffered_tuples,
-          int requested_buffer_count, // TODO: should this be an optional hint,
-                                      // and not be prescriptive
-          class Exec_Space,           // TODO: we can infer this?
-          class AoSoA_t>
+/**
+ * @brief
+ *
+ * Target_Memory_Space The memory space to buffer into
+ * AoSoA_t The type of the AoSoA we're buffering from
+ */
+template <class Target_Memory_Space, class AoSoA_t>
 class BufferedAoSoA
 {
     // TODO: make things private
   public:
-    using AoSoA_type = AoSoA_t;
+    using from_AoSoA_type = AoSoA_t;
 
-    using slice_tuple_t = UnpackSliceAtIndex<AoSoA_t, typename AoSoA_t::member_types>;
+    // Figure out the compatible AoSoA_t for the Target_Memory_Space
+    using target_AoSoA_t = Cabana::AoSoA<typename from_AoSoA_type::member_types,
+                                         Target_Memory_Space>;
+    // Cabana::AoSoA<DataTypes, TEST_MEMSPACE, vector_length>;
+
+    using slice_tuple_t =
+        UnpackSliceAtIndex<target_AoSoA_t,
+                           typename target_AoSoA_t::member_types>;
+
     slice_tuple_t slice_tuple;
-
 
     /**
      * @brief Getter to access the slices this class generates for the
@@ -154,21 +165,36 @@ class BufferedAoSoA
      * @return Valid slice for the current buffer at position i
      */
     template <std::size_t i>
-    KOKKOS_INLINE_FUNCTION typename AoSoA_t::template member_slice_type<i> &
-    get_slice()
+    KOKKOS_INLINE_FUNCTION
+        typename target_AoSoA_t::template member_slice_type<i> &
+        get_slice()
     {
-        return Cabana::get<AoSoA_t, i>( slice_tuple );
+        return Cabana::get<target_AoSoA_t, i>( slice_tuple );
     }
 
-    // TODO: should this be a more heap based / dynamic allocation?
     // TODO: should we place these in the "target" memory space, not
     // the default?
-    AoSoA_t internal_buffers[requested_buffer_count];
+    std::vector<target_AoSoA_t> internal_buffers;
 
-    BufferedAoSoA( AoSoA_t &original_view_in )
-        : slice_tuple( internal_buffers[0] )
-        , original_view( original_view_in )
+    /**
+     * @brief constructor for BufferedAoSoA
+     *
+     * @param original_view_in The view to buffer
+     * @param requested_buffer_count The number of buffered (3=triple buffered)
+     * @param max_buffered_tuples The max size of a single buffer in tuples
+     * (the memory requirement is this class is roughly
+     * requested_buffer_count*max_buffered_tuples*sizeof(particle)
+     */
+    BufferedAoSoA( AoSoA_t &original_view_in, int requested_buffer_count,
+                   int max_buffered_tuples )
+        : // I need to init slice_tuple avoid the default constructor, the type
+          // may need changing when we respect their passed in space and this
+          // can likely be done more cleanly if we simplify the tuple
+          // implementation
+        // slice_tuple( target_AoSoA_t()  )
+        original_view( original_view_in )
         , buffer_size( max_buffered_tuples )
+        , num_buffers( requested_buffer_count )
     {
         // TODO: this is only used internally now, and can likely be a
         // non-pointers
@@ -176,7 +202,8 @@ class BufferedAoSoA
 
         // TODO: We may we want to override the user on their requested
         // values if they don't make sense? Both num_buffers and buffer_size
-        num_buffers = requested_buffer_count;
+
+        internal_buffers.resize( num_buffers );
 
         std::cout << "The size of the passed view is "
                   << original_view_in.size() << std::endl;
@@ -191,7 +218,8 @@ class BufferedAoSoA
 
             std::string internal_buff_name =
                 "internal_buff " + std::to_string( i );
-            internal_buffers[i] = AoSoA_t( internal_buff_name, buffer_size );
+            internal_buffers[i] =
+                target_AoSoA_t( internal_buff_name, buffer_size );
 
             std::cout << "Buff " << i << " has size "
                       << internal_buffers[i].size() << std::endl;
@@ -223,6 +251,7 @@ class BufferedAoSoA
     // Start thinking about how to handle data movement...
     void load_next_buffer( int start_index )
     {
+        // TODO: once this is asynchronous we have to be careful here
         last_filled_buffer++;
         if ( last_filled_buffer >= num_buffers )
         {

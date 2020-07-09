@@ -64,7 +64,8 @@ inline void buffered_parallel_for(
     // TODO: passing a kokkos range policy and then building a simd policy
     // doesn't make a whole lot of sense?
 
-    constexpr int VectorLength = BufferedAoSoA_t::AoSoA_type::vector_length;
+    constexpr int VectorLength =
+        BufferedAoSoA_t::from_AoSoA_type::vector_length;
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
     // using work_tag = typename simd_policy::work_tag;
     // using team_policy = typename simd_policy::base_type;

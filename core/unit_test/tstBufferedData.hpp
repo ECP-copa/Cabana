@@ -121,10 +121,9 @@ void testBufferedDataCreation()
     Cabana::deep_copy( aosoa, mirror );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
-    using buf_t = Cabana::BufferedAoSoA<max_buffered_tuples, buffer_count,
-                                        target_exec_space, AoSoA_t>;
+    using buf_t = Cabana::BufferedAoSoA<target_exec_space, AoSoA_t>;
 
-    buf_t buffered_aosoa_in( aosoa );
+    buf_t buffered_aosoa_in( aosoa, buffer_count, max_buffered_tuples );
 
     // Reset values so the outcome differs
     fval = 3.4;
@@ -132,7 +131,8 @@ void testBufferedDataCreation()
     ival = 1;
 
     Cabana::buffered_parallel_for(
-        Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ), buffered_aosoa_in,
+        Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
+        buffered_aosoa_in,
         KOKKOS_LAMBDA( const int s, const int a, buf_t buffered_aosoa ) {
             // We have to call access and slice in the loop
 
