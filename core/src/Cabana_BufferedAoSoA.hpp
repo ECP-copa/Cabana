@@ -193,8 +193,8 @@ class BufferedAoSoA
           // implementation
         // slice_tuple( target_AoSoA_t()  )
         original_view( original_view_in )
-        , buffer_size( max_buffered_tuples )
         , num_buffers( requested_buffer_count )
+        , buffer_size( max_buffered_tuples )
     {
         // TODO: this is only used internally now, and can likely be a
         // non-pointers
