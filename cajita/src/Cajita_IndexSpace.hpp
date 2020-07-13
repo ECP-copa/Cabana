@@ -311,14 +311,7 @@ auto createSubview( const ViewType &view, const IndexSpace<1> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ) ) )
 {
     static_assert( 1 == ViewType::Rank, "Incorrect view rank" );
-    if ( std::string( typeid(view.layout()).name() ).find("LayoutHilbert") != std::string::npos ) {
-      ViewType subView( "subView", index_space.extent( 0 ) );
-      hilbertSubview( view, subView, index_space );
-      return subView;
-    }
-    else {
-      return Kokkos::subview( view, index_space.range( 0 ) );
-    }
+    return Kokkos::subview( view, index_space.range( 0 ) );
 }
 
 //---------------------------------------------------------------------------//
@@ -333,15 +326,8 @@ auto createSubview( const ViewType &view, const IndexSpace<2> &index_space )
                                   index_space.range( 1 ) ) )
 {
     static_assert( 2 == ViewType::Rank, "Incorrect view rank" );
-    if ( std::string( typeid(view.layout()).name() ).find("LayoutHilbert") != std::string::npos ) {
-      ViewType subView( "subView", index_space.extent( 0 ), index_space.extent( 1 ) );
-      hilbertSubview( view, subView, index_space );
-      return subView;
-    }
-    else {
-      return Kokkos::subview( view, index_space.range( 0 ),
+    return Kokkos::subview( view, index_space.range( 0 ),
                               index_space.range( 1 ) );
-    }
 }
 
 //---------------------------------------------------------------------------//
@@ -357,15 +343,8 @@ auto createSubview( const ViewType &view, const IndexSpace<3> &index_space )
                                   index_space.range( 2 ) ) )
 {
     static_assert( 3 == ViewType::Rank, "Incorrect view rank" );
-      if ( std::string( typeid(view.layout()).name() ).find("LayoutHilbert") != std::string::npos ) {
-      ViewType subView( "subView", index_space.extent( 0 ), index_space.extent( 1 ), index_space.extent( 2 ) );
-      hilbertSubview( view, subView, index_space );
-      return subView;
-    }
-    else {
-      return Kokkos::subview( view, index_space.range( 0 ),
+    return Kokkos::subview( view, index_space.range( 0 ),
                               index_space.range( 1 ), index_space.range( 2 ) );
-    }
 }
 
 //---------------------------------------------------------------------------//
@@ -382,16 +361,10 @@ auto createSubview( const ViewType &view, const IndexSpace<4> &index_space )
                                   index_space.range( 3 ) ) )
 {
     static_assert( 4 == ViewType::Rank, "Incorrect view rank" );
-    if ( std::string( typeid(view.layout()).name() ).find("LayoutHilbert") != std::string::npos ) {
-      ViewType subView( "subView", index_space.extent( 0 ), index_space.extent( 1 ), index_space.extent( 2 ), index_space.extent( 3 ) );
-      hilbertSubview( view, subView, index_space );
-      return subView;
-    }
-    else {
-      return Kokkos::subview( view, index_space.range( 0 ),
+    return Kokkos::subview( view, index_space.range( 0 ),
                               index_space.range( 1 ), index_space.range( 2 ),
                               index_space.range( 3 ) );
-    }
+  
 }
 
 //---------------------------------------------------------------------------//

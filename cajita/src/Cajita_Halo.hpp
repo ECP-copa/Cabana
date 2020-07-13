@@ -327,15 +327,9 @@ class Halo
             // Otherwise unpack the next buffer.
             else
             {
-                if ( std::string( typeid(view.layout()).name() ).find("LayoutHilbert") != std::string::npos ) {
-                    view_type ghostedBuffer = _ghosted_buffers[unpack_index];
-                    Cajita::hilbertCopy( view, _ghosted_buffers[unpack_index], _ghosted_spaces[unpack_index] );
-                }
-                else {
-                    auto subview =
+                auto subview =
                         createSubview( view, _ghosted_spaces[unpack_index] );
                     Kokkos::deep_copy( subview, _ghosted_buffers[unpack_index] );
-                }
             }
         }
 
