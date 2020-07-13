@@ -45,7 +45,7 @@ namespace Cajita
         using device_type = typename HilbertViewType::device_type;
         using exec_space = typename device_type::execution_space;
 
-        Kokkos::parallel_for( "Hilbert_Subview1", Cajita::createExecutionPolicy( index_space, exec_space() ), KOKKOS_LAMBDA( const int ii, const int jj ) {
+        Kokkos::parallel_for( "Hilbert_Subview2", Cajita::createExecutionPolicy( index_space, exec_space() ), KOKKOS_LAMBDA( const int ii, const int jj ) {
             int ii_own = ii - index_space.min( 0 );
             int jj_own = jj - index_space.min( 1 );
 
@@ -58,7 +58,7 @@ namespace Cajita
         using device_type = typename HilbertViewType::device_type;
         using exec_space = typename device_type::execution_space;
 
-        Kokkos::parallel_for( "Hilbert_Subview1", Cajita::createExecutionPolicy( index_space, exec_space() ), KOKKOS_LAMBDA( const int ii, const int jj, const int kk ) {
+        Kokkos::parallel_for( "Hilbert_Subview3", Cajita::createExecutionPolicy( index_space, exec_space() ), KOKKOS_LAMBDA( const int ii, const int jj, const int kk ) {
             int ii_own = ii - index_space.min( 0 );
             int jj_own = jj - index_space.min( 1 );
             int kk_own = kk - index_space.min( 2 );
@@ -72,7 +72,7 @@ namespace Cajita
         using device_type = typename HilbertViewType::device_type;
         using exec_space = typename device_type::execution_space;
 
-        Kokkos::parallel_for( "Hilbert_Subview1", Cajita::createExecutionPolicy( index_space, exec_space() ), KOKKOS_LAMBDA( const int ii, const int jj, const int kk, const int ll ) {
+        Kokkos::parallel_for( "Hilbert_Subview4", Cajita::createExecutionPolicy( index_space, exec_space() ), KOKKOS_LAMBDA( const int ii, const int jj, const int kk, const int ll ) {
             int ii_own = ii - index_space.min( 0 );
             int jj_own = jj - index_space.min( 1 );
             int kk_own = kk - index_space.min( 2 );
@@ -101,7 +101,9 @@ namespace Kokkos
         explicit constexpr LayoutHilbertRight( size_t N0 = 0, size_t N1 = 0, size_t N2 = 0,
                                             size_t N3 = 0, size_t N4 = 0, size_t N5 = 0,
                                             size_t N6 = 0, size_t N7 = 0 )
-        : dimension{ N0, N1, N2, N3, N4, N5, N6, N7 }
+        : dimension{ ( N0 > N1 ) ? std::pow( 2, ceil( log( N0 ) / log ( 2 ) ) ) : std::pow( 2, ceil( log( N1 ) / log ( 2 ) ) ), 
+                    ( N0 > N1 ) ? std::pow( 2, ceil( log( N0 ) / log ( 2 ) ) ) : std::pow( 2, ceil( log( N1 ) / log ( 2 ) ) ), 
+                    N2, N3, N4, N5, N6, N7 }
         {}
 
     };
@@ -122,95 +124,15 @@ namespace Kokkos
         explicit constexpr LayoutHilbertLeft( size_t N0 = 0, size_t N1 = 0, size_t N2 = 0,
                                             size_t N3 = 0, size_t N4 = 0, size_t N5 = 0,
                                             size_t N6 = 0, size_t N7 = 0 )
-        : dimension{ N0, N1, N2, N3, N4, N5, N6, N7 }
+        : dimension{ ( N0 > N1 ) ? std::pow( 2, ceil( log( N0 ) / log ( 2 ) ) ) : std::pow( 2, ceil( log( N1 ) / log ( 2 ) ) ), 
+                    ( N0 > N1 ) ? std::pow( 2, ceil( log( N0 ) / log ( 2 ) ) ) : std::pow( 2, ceil( log( N1 ) / log ( 2 ) ) ), 
+                    N2, N3, N4, N5, N6, N7 }
         {}
 
     };
 
     namespace Impl
     {
-        struct HilbertMap2D {
-            int hilbert_step;
-            Kokkos::View<int*> map;
-
-            HilbertMap2D() {};
-
-            HilbertMap2D( long unsigned int width, long unsigned int height ) {
-                // std::cout << "HilbertMap2D: " << width << " " << height << "\n";
-                if ( width > 0 && height > 0 ) {
-                    hilbert_step = 0;
-                    Kokkos::resize( map, width * height );
-
-                    if ( width >= height ) {
-                        gilbert2d( 0, 0, width, 0, 0, height, width, height );
-                    }
-                    else {
-                        gilbert2d( 0, 0, 0, height, width, 0, width, height );
-                    }
-                }
-            };
-
-            void gilbert2d( int x, int y, int ax, int ay, int bx, int by, int nx, int ny ) {
-                int w = std::abs( ax + ay );
-                int h = std::abs( bx + by );
-
-                int dax = ( ( ax > 0 ) - ( ax < 0 ) );
-                int day = ( ( ay > 0 ) - ( ay < 0 ) );
-                int dbx = ( ( bx > 0 ) - ( bx < 0 ) );
-                int dby = ( ( by > 0 ) - ( by < 0 ) );
-
-                if ( h == 1 ) {
-                    for ( int i = 0; i < w; i++ ) {
-                        if ( DEBUG ) std::cout << "( " << x << ", " << y << " )\t" << x + nx * y << "\t" << hilbert_step << "\n";
-                        map( x + nx * y ) = hilbert_step;
-                        hilbert_step ++;
-                        x += dax;
-                        y += day;
-                    }
-                    return;
-                }
-
-                if ( w == 1 ) {
-                    for ( int i = 0; i < h; i++ ) {
-                        if ( DEBUG ) std::cout << "( " << x << ", " << y << " )\t" << x + nx * y << "\t" << hilbert_step << "\n";
-                        map( x + nx * y ) = hilbert_step;
-                        hilbert_step ++;
-                        x += dbx;
-                        y += dby;
-                    }
-                    return;
-                }
-
-                int ax2 = ax / 2;
-                int ay2 = ay / 2;
-                int bx2 = bx / 2;
-                int by2 = by / 2;
-
-                int w2 = std::abs( ax2 + ay2 );
-                int h2 = std::abs( bx2 + by2 );
-
-                if ( 2 * w > 3 * h ) {
-                    if ( ( w2 % 2 ) && ( w > 2 ) ) {
-                        ax2 += dax;
-                        ay2 += day;
-                    }
-
-                    gilbert2d( x, y, ax2, ay2, bx, by, nx, ny );
-                    gilbert2d( x + ax2, y + ay2, ax - ax2, ay - ay2, bx, by, nx, ny );
-                }
-                else {
-                    if ( ( h2 % 2 ) && ( h > 2 ) ) {
-                        bx2 += dbx;
-                        by2 += dby;
-                    }
-
-                    gilbert2d( x, y, bx2, by2, ax2, ay2, nx, ny );
-                    gilbert2d( x + bx2, y + by2, ax, ay, bx - bx2, by - by2, nx, ny );
-                    gilbert2d( x + ( ax - dax ) + ( bx2 - dbx ), y + ( ay - day ) + ( by2 - dby ), -bx2, -by2, - ( ax - ax2 ), - ( ay - ay2 ), nx, ny );
-                }
-            };
-        };
-
         template <class Dimension>
         struct ViewOffset<Dimension, Kokkos::LayoutHilbertRight, void> {
 
@@ -222,8 +144,39 @@ namespace Kokkos
             typedef Kokkos::LayoutHilbertRight array_layout;
 
             dimension_type m_dim;
+            std::vector<int> m_off; 
 
-            HilbertMap2D hilbert_map{ m_dim.N0, m_dim.N1 };
+            template <typename I0, typename I1>
+            KOKKOS_INLINE_FUNCTION
+            int hilbert2d( I0 const& i0, I1 const& i1 ) const {
+                int n = ( m_dim.N0 > m_dim.N1 ) ? m_dim.N0 : m_dim.N1;
+                int rx = 0;
+                int ry = 0;
+                int s = 0;
+                int d = 0;
+
+                I0 x = i0;
+                I1 y = i1;
+
+                for ( s = n / 2; s > 0; s /= 2 ) {
+                    rx = ( x & s ) > 0;
+                    ry = ( y & s ) > 0;
+                    d += s * s * ( ( 3 * rx ) ^ ry );
+
+                    if ( ry == 0 ) {
+                        if ( rx == 1 ) {
+                            x = n - 1 - x;
+                            y = n - 1 - y;
+                        }
+
+                        int t = x;
+                        x = y;
+                        y = t;
+                    }
+                }
+
+                return d;
+            }
 
             // rank 1
             template <typename I0>
@@ -236,11 +189,11 @@ namespace Kokkos
             template <typename I0, typename I1>
             KOKKOS_INLINE_FUNCTION 
             constexpr size_type operator()( I0 const& i0, I1 const& i1 ) const {
-                // std::cout << i0 + m_dim.N0 * i1 << "\t";
+                std::cout << i0 + m_dim.N0 * i1 << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0 + m_off[0], i1 + m_off[1] ) - hilbert2d( m_off[0], m_off[1] );
 
-                // std::cout << "Hilbert Index: " << hilbert << "\t";
+                std::cout << "Hilbert Index: " << hilbert << "\t";
 
                 return hilbert;
             };
@@ -249,11 +202,11 @@ namespace Kokkos
             template <typename I0, typename I1, typename I2>
             KOKKOS_INLINE_FUNCTION 
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2 ) const {
-                // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * i2 ) << "\t";
+                std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * i2 ) << "\t";
                 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0 + m_off[0], i1 + m_off[1] ) - hilbert2d( m_off[0], m_off[1] );
 
-                // std::cout << "Hilbert Index: " << m_dim.N0 * m_dim.N1 * i2 + hilbert << "\t";
+                std::cout << "Hilbert Index: " << m_dim.N0 * m_dim.N1 * i2 + hilbert << "\t";
 
                 return m_dim.N0 * m_dim.N1 * i2 + hilbert;
             };
@@ -262,11 +215,11 @@ namespace Kokkos
             template <typename I0, typename I1, typename I2, typename I3>
             KOKKOS_INLINE_FUNCTION 
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3 ) const {
-                // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
+                std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0 + m_off[0], i1 + m_off[1] ) - hilbert2d( m_off[0], m_off[1] );
 
-                // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * i3 ) + hilbert << "\t" << "Subflag: " << sub_flag << "\t";
+                std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * i3 ) + hilbert << "\t";
 
                 return ( m_dim.N0 * m_dim.N1 ) * ( i3 + m_dim.N3 * i2 ) + hilbert;
             };
@@ -277,7 +230,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3, I4 const& i4 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0 + m_off[0], i1 + m_off[1] ) - hilbert2d( m_off[0], m_off[1] );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * ( i3 + m_dim.N3 * i4 ) ) + hilbert << "\t";
 
@@ -290,7 +243,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3, I4 const& i4, I5 const& i5 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0 + m_off[0], i1 + m_off[1] ) - hilbert2d( m_off[0], m_off[1] );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * ( i3 + m_dim.N3 * ( i4 + m_dim.N4 * i5 ) ) ) + hilbert << "\t";
 
@@ -303,7 +256,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3, I4 const& i4, I5 const& i5, I6 const& i6 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0 + m_off[0], i1 + m_off[1] ) - hilbert2d( m_off[0], m_off[1] );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * ( i3 + m_dim.N3 * ( i4 + m_dim.N4 * ( i5 + m_dim.N5 * i6 ) ) ) ) + hilbert << "\t";
 
@@ -316,7 +269,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3, I4 const& i4, I5 const& i5, I6 const& i6, I7 const& i7 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0 + m_off[0], i1 + m_off[1] ) - hilbert2d( m_off[0], m_off[1] );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * ( i3 + m_dim.N3 * ( i4 + m_dim.N4 * ( i5 + m_dim.N5 * ( i6 + m_dim.N6 * i7 ) ) ) ) ) + hilbert << "\t";
 
@@ -455,20 +408,30 @@ namespace Kokkos
 
             KOKKOS_INLINE_FUNCTION 
             constexpr ViewOffset( std::integral_constant<unsigned, 0> const&, Kokkos::LayoutHilbertRight const& rhs)
-            : m_dim( rhs.dimension[0], rhs.dimension[1], rhs.dimension[2], rhs.dimension[3], rhs.dimension[4], rhs.dimension[5], rhs.dimension[6], rhs.dimension[7] ) {};
+            : m_dim( rhs.dimension[0], rhs.dimension[1], rhs.dimension[2], rhs.dimension[3], rhs.dimension[4], rhs.dimension[5], rhs.dimension[6], rhs.dimension[7] ),
+            m_off( { 0, 0, 0, 0, 0, 0, 0, 0 } )
+            {};
 
             template <class DimRHS, class LayoutRHS>
             KOKKOS_INLINE_FUNCTION 
             constexpr ViewOffset( const ViewOffset<DimRHS, LayoutRHS, void>& rhs )
-            : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3, rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 ) {
+            : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3, rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 ),
+            m_off( { 0, 0, 0, 0, 0, 0, 0, 0 } ) {
                 static_assert( int( DimRHS::rank ) == int( dimension_type::rank ), "ViewOffset assignment requires equal rank" );
             };
 
             template <class DimRHS, class LayoutRHS>
             KOKKOS_INLINE_FUNCTION 
             constexpr ViewOffset( const ViewOffset<DimRHS, LayoutRHS, void>& rhs, const SubviewExtents<DimRHS::rank, dimension_type::rank>& sub )
-            : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3, rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 )
-            {};
+            : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3, rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 ),
+            m_off( { sub.domain_offset( 0 ), sub.domain_offset( 1 ), sub.domain_offset( 2 ), sub.domain_offset( 3 ), sub.domain_offset( 4 ), sub.domain_offset( 5 ), sub.domain_offset( 6 ), sub.domain_offset( 7 ) } )
+            {
+                std::cout << sub.range_extent( 0 ) << " " << sub.range_extent( 1 ) << " " << sub.range_extent( 2 ) << " " << sub.range_extent( 3 ) << " " << sub.range_extent( 4 ) << " " <<
+                sub.range_extent( 5 ) << " " << sub.range_extent( 6 ) << " " << sub.range_extent( 7 ) << " " << "\n";
+
+                std::cout << sub.domain_offset( 0 ) << " " << sub.domain_offset( 1 ) << " " << sub.domain_offset( 2 ) << " " << sub.domain_offset( 3 ) << " " << sub.domain_offset( 4 ) << " " <<
+                sub.domain_offset( 5 ) << " " << sub.domain_offset( 6 ) << " " << sub.domain_offset( 7 ) << " " << "\n";
+            };
         };
 
         template <int RankDest, int RankSrc, int CurrentArg, class Arg,
@@ -588,7 +551,37 @@ namespace Kokkos
 
             dimension_type m_dim;
 
-            HilbertMap2D hilbert_map{ m_dim.N0, m_dim.N1 };
+            template <typename I0, typename I1>
+            KOKKOS_INLINE_FUNCTION
+            int hilbert2d( I0 const& i0, I1 const& i1 ) const {
+                int n = ( m_dim.N0 > m_dim.N1 ) ? m_dim.N0 : m_dim.N1;
+                int rx = 0;
+                int ry = 0;
+                int s = 0;
+                int d = 0;
+
+                I0 x = i0;
+                I1 y = i1;
+
+                for ( s = n / 2; s > 0; s /= 2 ) {
+                    rx = ( x & s ) > 0;
+                    ry = ( y & s ) > 0;
+                    d += s * s * ( ( 3 * rx ) ^ ry );
+
+                    if ( ry == 0 ) {
+                        if ( rx == 1 ) {
+                            x = n - 1 - x;
+                            y = n - 1 - y;
+                        }
+
+                        int t = x;
+                        x = y;
+                        y = t;
+                    }
+                }
+
+                return d;
+            }
 
             // rank 1
             template <typename I0>
@@ -603,7 +596,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1 ) const {
                 // std::cout << i0 + m_dim.N0 * i1 << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0, i1 );
 
                 // std::cout << "Hilbert Index: " << hilbert << "\t";
 
@@ -616,7 +609,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * i2 ) << "\t";
                 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0, i1 );
 
                 // std::cout << "Hilbert Index: " << m_dim.N0 * m_dim.N1 * i2 + hilbert << "\t";
 
@@ -629,7 +622,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0, i1 );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * i3 ) + hilbert << "\t" << "Subflag: " << sub_flag << "\t";
 
@@ -642,7 +635,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3, I4 const& i4 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0, i1 );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * ( i3 + m_dim.N3 * i4 ) ) + hilbert << "\t";
 
@@ -655,7 +648,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3, I4 const& i4, I5 const& i5 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0, i1 );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * ( i3 + m_dim.N3 * ( i4 + m_dim.N4 * i5 ) ) ) + hilbert << "\t";
 
@@ -668,7 +661,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3, I4 const& i4, I5 const& i5, I6 const& i6 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0, i1 );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * ( i3 + m_dim.N3 * ( i4 + m_dim.N4 * ( i5 + m_dim.N5 * i6 ) ) ) ) + hilbert << "\t";
 
@@ -681,7 +674,7 @@ namespace Kokkos
             constexpr size_type operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3, I4 const& i4, I5 const& i5, I6 const& i6, I7 const& i7 ) const {
                 // std::cout << i0 + m_dim.N0 * ( i1 + m_dim.N1 * ( i2 + m_dim.N2 * i3 ) ) << "\t";
 
-                int hilbert = hilbert_map.map( i0 + m_dim.N0 * i1 );
+                int hilbert = hilbert2d( i0, i1 );
 
                 // std::cout << "Hilbert Index: " << ( m_dim.N0 * m_dim.N1 ) * ( i2 + m_dim.N2 * ( i3 + m_dim.N3 * ( i4 + m_dim.N4 * ( i5 + m_dim.N5 * ( i6 + m_dim.N6 * i7 ) ) ) ) ) + hilbert << "\t";
 
