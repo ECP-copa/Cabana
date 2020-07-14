@@ -18,6 +18,11 @@
 
 namespace Test
 {
+
+class TestTag
+{
+};
+
 // TODO: dry with tstAoSoA
 //---------------------------------------------------------------------------//
 // Check the data given a set of values in an aosoa.
@@ -54,6 +59,46 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
             for ( int j = 0; j < dim_2; ++j )
                 EXPECT_EQ( slice_3( idx, i, j ), dval * ( i + j ) );
     }
+}
+
+template <class buf_t>
+class Tagfunctor_op
+{
+  public:
+    // TODO: this needs a constructor and to actually use the data
+    KOKKOS_INLINE_FUNCTION void operator()( const TestTag &,
+                                            buf_t buffered_aosoa, const int s,
+                                            const int a ) const
+    {
+    }
+    KOKKOS_INLINE_FUNCTION void operator()(
+        // const TestTag &,
+        buf_t buffered_aosoa, const int s, const int a ) const
+    {
+    }
+};
+
+void testBufferedTag()
+{
+    using DataTypes = Cabana::MemberTypes<float>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+
+    // Cabana::simd_parallel_for( policy_1, func_1, "2d_test_1" );
+
+    int num_data = 10;
+    AoSoA_t aosoa( "test tag aosoa", num_data );
+
+    const int buffer_count = 3;
+    const int max_buffered_tuples = 40;
+
+    using buf_t = Cabana::BufferedAoSoA<TEST_EXECSPACE, AoSoA_t>;
+    buf_t buffered_aosoa_in( aosoa, buffer_count, max_buffered_tuples );
+
+    Tagfunctor_op<buf_t> func_1;
+
+    Cabana::buffered_parallel_for(
+        Kokkos::RangePolicy<TEST_EXECSPACE, TestTag>( 0, aosoa.size() ),
+        buffered_aosoa_in, func_1, "test buffered for tag" );
 }
 
 void testBufferedDataCreation()
@@ -133,7 +178,7 @@ void testBufferedDataCreation()
     Cabana::buffered_parallel_for(
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
         buffered_aosoa_in,
-        KOKKOS_LAMBDA( const int s, const int a, buf_t buffered_aosoa ) {
+        KOKKOS_LAMBDA( buf_t buffered_aosoa, const int s, const int a ) {
             // We have to call access and slice in the loop
 
             // We have to be really careful about how this access is
@@ -188,5 +233,6 @@ void testBufferedDataCreation()
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, bufferedData_test ) { testBufferedDataCreation(); }
+TEST( TEST_CATEGORY, bufferedData_tag_test ) { testBufferedTag(); }
 
 } // namespace Test

@@ -29,7 +29,7 @@ inline void custom_simd_parallel_for(
 {
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
 
-    // using work_tag = typename simd_policy::work_tag;
+    using work_tag = typename simd_policy::work_tag;
     using team_policy = typename simd_policy::base_type;
 
     using index_type = typename team_policy::index_type;
@@ -42,10 +42,60 @@ inline void custom_simd_parallel_for(
                 Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
                                            exec_policy.arrayEnd( s ) ),
                 [&]( const index_type a ) {
-                    // Impl::functorTagDispatch<work_tag>(functor,s,a);
-                    functor( s, a, f_arg );
+                    Impl::functorTagDispatch<work_tag>( functor, f_arg, s, a );
+                    // functor( f_arg, s, a);
                 } );
         } );
+}
+
+// TODO: we can likely merge this to exsiting functorTagDispatch with a simple
+// interface change
+template <class WorkTag, class FunctorType,
+          class BufferedAoSoA_t
+          //, class... IndexTypes
+          //, typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
+          //= 0
+          ,
+          typename std::enable_if<!std::is_same<WorkTag, void>::value>::type * =
+              nullptr>
+auto build_functor( BufferedAoSoA_t buffered_aosoa, const FunctorType &functor
+                    //, IndexTypes &&... indices )
+)
+{
+    const WorkTag t{};
+    auto f = KOKKOS_LAMBDA( WorkTag t, BufferedAoSoA_t buffered_aosoa,
+                            // std::forward<IndexTypes>( indices )...
+                            int s, int i )
+    {
+        functor( t, buffered_aosoa, s, i
+                 // std::forward<IndexTypes>(indices)...
+        );
+    };
+    return f;
+}
+
+template <class WorkTag, class FunctorType,
+          class BufferedAoSoA_t
+          //, class... IndexTypes
+          ,
+          typename std::enable_if<std::is_same<WorkTag, void>::value>::type * =
+              nullptr>
+auto build_functor( BufferedAoSoA_t buffered_aosoa, const FunctorType &functor
+                    //, IndexTypes &&... indices )
+)
+{
+    // const WorkTag t{};
+    auto f = KOKKOS_LAMBDA( BufferedAoSoA_t buffered_aosoa,
+                            // std::forward<IndexTypes>( indices )...
+                            int s, int i )
+    {
+        functor(
+            // t,
+            buffered_aosoa, s, i
+            // std::forward<IndexTypes>(indices)...
+        );
+    };
+    return f;
 }
 
 // Requirements:
@@ -67,7 +117,7 @@ inline void buffered_parallel_for(
     constexpr int VectorLength =
         BufferedAoSoA_t::from_AoSoA_type::vector_length;
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
-    // using work_tag = typename simd_policy::work_tag;
+    using work_tag = typename simd_policy::work_tag;
     // using team_policy = typename simd_policy::base_type;
 
     // using index_type = typename team_policy::index_type;
@@ -100,11 +150,14 @@ inline void buffered_parallel_for(
 
         simd_policy policy( begin, end );
 
+        auto f = build_functor<work_tag>( buffered_aosoa, functor );
+
+        /*
         auto f = KOKKOS_LAMBDA( const int s, const int a,
                                 BufferedAoSoA_t buffered_aosoa )
         {
             functor( s, a, buffered_aosoa );
-        };
+        };*/
 
         custom_simd_parallel_for( policy, f, buffered_aosoa, str );
         // Cabana::simd_parallel_for( policy, functor, str );

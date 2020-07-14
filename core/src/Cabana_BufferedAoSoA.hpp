@@ -285,8 +285,7 @@ class BufferedAoSoA
      *
      * I think it's important to make a distinction between how
      * many buffers the user thinks they need, and how many we decide
-     * to use. This could get messy when passing around the templates
-     * though, so likely this needs to become constexpr in nature
+     * to use.
      */
     int num_buffers;
 
