@@ -142,7 +142,7 @@ get( const ParameterPack_t &pp )
 template <typename ParameterPack_t, typename T, typename... Types>
 void fillParameterPackImpl( ParameterPack_t &pp,
                             const std::integral_constant<std::size_t, 0>,
-                            const T &t, Types... )
+                            const T &t, const Types&... )
 {
     get<ParameterPack_t::size - 1>( pp ) = t;
 }
@@ -151,7 +151,7 @@ template <typename ParameterPack_t, std::size_t N, typename T,
           typename... Types>
 void fillParameterPackImpl( ParameterPack_t &pp,
                             const std::integral_constant<std::size_t, N>,
-                            const T &t, Types... ts )
+                            const T &t, const Types&... ts )
 {
     get<ParameterPack_t::size - 1 - N>( pp ) = t;
     fillParameterPackImpl( pp, std::integral_constant<std::size_t, N - 1>(),
@@ -159,7 +159,7 @@ void fillParameterPackImpl( ParameterPack_t &pp,
 }
 
 template <typename ParameterPack_t, typename... Types>
-void fillParameterPack( ParameterPack_t &pp, Types... ts )
+void fillParameterPack( ParameterPack_t &pp, const Types&... ts )
 {
     fillParameterPackImpl(
         pp, std::integral_constant<std::size_t, ParameterPack_t::size - 1>(),
@@ -169,7 +169,7 @@ void fillParameterPack( ParameterPack_t &pp, Types... ts )
 //---------------------------------------------------------------------------//
 // Create a parameter pack.
 template <typename... Types>
-ParameterPack<Types...> makeParameterPack( Types... ts )
+ParameterPack<Types...> makeParameterPack( const Types&... ts )
 {
     ParameterPack<Types...> pp;
     fillParameterPack( pp, ts... );
@@ -276,7 +276,7 @@ class MultiHalo
     */
     template <class... ArrayTypes>
     MultiHalo( const HaloPattern &pattern, const int width,
-               ArrayTypes... arrays )
+               const ArrayTypes&... arrays )
     {
         // Get the MPI communicator. All arrays should have the same
         // communicator.
@@ -358,7 +358,7 @@ class MultiHalo
       as the input arrays.
     */
     template <class ExecutionSpace, class... ArrayTypes>
-    void gather( const ExecutionSpace &exec_space, ArrayTypes... arrays ) const
+    void gather( const ExecutionSpace &exec_space, const ArrayTypes&... arrays ) const
     {
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -441,7 +441,7 @@ class MultiHalo
     */
     template <class ExecutionSpace, class ReduceOp, class... ArrayTypes>
     void scatter( const ExecutionSpace &exec_space, const ReduceOp &reduce_op,
-                  ArrayTypes... arrays ) const
+                  const ArrayTypes&... arrays ) const
     {
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -524,7 +524,7 @@ class MultiHalo
 
     template <class Array_t, class... ArrayTypes>
     void getByteSizes( std::vector<int> &byte_sizes, const int array_idx,
-                       const Array_t &, ArrayTypes... arrays )
+                       const Array_t &, const ArrayTypes&... arrays )
     {
         byte_sizes[array_idx] = sizeof( typename Array_t::value_type );
         getByteSizes( byte_sizes, array_idx + 1, arrays... );
@@ -532,7 +532,7 @@ class MultiHalo
 
     // Get the communicator.
     template <class Array_t, class... ArrayTypes>
-    void getComm( const Array_t &array, ArrayTypes... )
+    void getComm( const Array_t &array, const ArrayTypes&... )
     {
         // Duplicate the communicator so we have our own communication space.
         MPI_Comm_dup( array.layout()->localGrid()->globalGrid().comm(),
@@ -541,7 +541,7 @@ class MultiHalo
 
     // Get the local grid from the arrays.
     template <class Array_t, class... ArrayTypes>
-    auto getLocalGrid( const Array_t &array, ArrayTypes... )
+    auto getLocalGrid( const Array_t &array, const ArrayTypes&... )
     {
         return array.layout()->localGrid();
     }
@@ -563,7 +563,7 @@ class MultiHalo
                          DecompositionTag decomposition_tag, const int i,
                          const int j, const int k, const int width,
                          const int array_idx, const Array_t &array,
-                         ArrayTypes... arrays )
+                         const ArrayTypes&... arrays )
     {
         shared_spaces[array_idx] = array.layout()->sharedIndexSpace(
             decomposition_tag, i, j, k, width );
@@ -578,7 +578,7 @@ class MultiHalo
                    const int ni, const int nj, const int nk,
                    std::vector<Kokkos::View<char *, memory_space>> &buffers,
                    std::vector<Kokkos::View<int * [6], memory_space>> &steering,
-                   ArrayTypes... arrays )
+                   const ArrayTypes&... arrays )
     {
         // Number of arrays.
         int num_array = sizeof...( ArrayTypes );
@@ -892,7 +892,7 @@ struct ArrayPackMemorySpace
 // Creation function.
 template <class... ArrayTypes>
 auto createMultiHalo( const HaloPattern &pattern, const int width,
-                      ArrayTypes... arrays )
+                      const ArrayTypes&... arrays )
 {
     using memory_space = typename ArrayPackMemorySpace<ArrayTypes...>::type;
     return std::make_shared<MultiHalo<memory_space>>( pattern, width,
