@@ -172,19 +172,19 @@ void gatherScatterTest( const ManualPartitioner &partitioner,
         auto halo = createHalo( *array, FullHaloPattern(), halo_width );
 
         // Gather into the ghosts.
-        halo->gather( *array );
+        halo->gather( TEST_EXECSPACE(), *array );
 
         // Check the gather.
         checkGather( halo_width, *array );
 
         // Scatter from the ghosts back to owned.
-        halo->scatter( *array );
+        halo->scatter( TEST_EXECSPACE(), ScatterReduce::Sum(), *array );
 
         // Check the scatter.
         checkScatter( is_dim_periodic, halo_width, *array );
     }
 
-    // Repeat the process but this time with multiple arrays in a MultiHalo
+    // Repeat the process but this time with multiple arrays in a Halo
     for ( unsigned halo_width = 1; halo_width <= array_halo_width;
           ++halo_width )
     {
@@ -255,10 +255,10 @@ void gatherScatterTest( const ManualPartitioner &partitioner,
         ArrayOp::assign( *edge_k_array, 1.0, Own() );
 
         // Create a multihalo.
-        auto halo = createMultiHalo( FullHaloPattern(), halo_width, *cell_array,
-                                     *node_array, *face_i_array, *face_j_array,
-                                     *face_k_array, *edge_i_array,
-                                     *edge_j_array, *edge_k_array );
+        auto halo =
+            createHalo( FullHaloPattern(), halo_width, *cell_array, *node_array,
+                        *face_i_array, *face_j_array, *face_k_array,
+                        *edge_i_array, *edge_j_array, *edge_k_array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *cell_array, *node_array, *face_i_array,
@@ -380,7 +380,7 @@ void scatterReduceTest( const ReduceFunc &reduce )
     auto halo = createHalo( *array, pattern );
 
     // Scatter.
-    halo->scatter( *array, reduce );
+    halo->scatter( TEST_EXECSPACE(), reduce, *array );
 
     // Check the reduction.
     auto host_array = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),

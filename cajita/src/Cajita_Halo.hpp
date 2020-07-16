@@ -258,13 +258,13 @@ struct Replace
 // between blocks. Arrays may be defined on different entity types and have
 // different data types.
 //
-// The general halo operates on an arbitrary set of arrays. Each of these
-// arrays must be defined on the same local grid meaning they that share the
-// same communicator and halo size. The arrays must also reside in the same
-// memory space.
-//---------------------------------------------------------------------------//
+// The halo operates on an arbitrary set of arrays. Each of these arrays must
+// be defined on the same local grid meaning they that share the same
+// communicator and halo size. The arrays must also reside in the same memory
+// space. These requirements are checked at construction.
+// ---------------------------------------------------------------------------//
 template <class MemorySpace>
-class MultiHalo
+class Halo
 {
   public:
     // Memory space.
@@ -280,8 +280,8 @@ class MultiHalo
       provided in the same order
     */
     template <class... ArrayTypes>
-    MultiHalo( const HaloPattern &pattern, const int width,
-               const ArrayTypes &... arrays )
+    Halo( const HaloPattern &pattern, const int width,
+          const ArrayTypes &... arrays )
     {
         // Get the MPI communicator. All arrays must have the same
         // communicator.
@@ -350,7 +350,7 @@ class MultiHalo
     }
 
     // Destructor.
-    ~MultiHalo() { MPI_Comm_free( &_comm ); }
+    ~Halo() { MPI_Comm_free( &_comm ); }
 
     /*!
       \brief Gather data into our ghosts from their owners.
@@ -878,6 +878,8 @@ class MultiHalo
 };
 
 //---------------------------------------------------------------------------//
+// Creation function.
+//---------------------------------------------------------------------------//
 // Infer array memory space.
 template <class ArrayT, class... Types>
 struct ArrayPackMemorySpace
@@ -886,144 +888,78 @@ struct ArrayPackMemorySpace
 };
 
 //---------------------------------------------------------------------------//
-// Creation function.
+/*!
+  \brief Array creation function.
+  \param pattern The pattern to build the halo from.
+  \param width Must be less than or equal to the width of the array halo.
+  \param arrays The arrays over which to build the halo.
+*/
 template <class... ArrayTypes>
-auto createMultiHalo( const HaloPattern &pattern, const int width,
-                      const ArrayTypes &... arrays )
+auto createHalo( const HaloPattern &pattern, const int width,
+                 const ArrayTypes &... arrays )
 {
     using memory_space = typename ArrayPackMemorySpace<ArrayTypes...>::type;
-    return std::make_shared<MultiHalo<memory_space>>( pattern, width,
-                                                      arrays... );
+    return std::make_shared<Halo<memory_space>>( pattern, width, arrays... );
 }
 
 //---------------------------------------------------------------------------//
-// Single array halo exchange communication plan for migrating shared data
-// between blocks.
-// ---------------------------------------------------------------------------//
-template <class Scalar, class DeviceType>
-class Halo
+// Backwards-compatible single array creation functions.
+//---------------------------------------------------------------------------//
+// Array-like container adapter to hold layout and data information for
+// creating halos.
+template <class Scalar, class MemorySpace, class ArrayLayout>
+struct LayoutAdapter
 {
-  public:
-    // Scalar type.
     using value_type = Scalar;
-
-    // Device type.
-    using device_type = DeviceType;
-
-    // Execution space.
-    using execution_space = typename device_type::execution_space;
-
-    // Memory space.
-    using memory_space = typename device_type::memory_space;
-
-    // View type.
-    using view_type = Kokkos::View<value_type ****, device_type>;
-
-    // Array-like container to hold layout and data information.
-    template <class ScalarT, class MemorySpaceT, class ArrayLayoutT>
-    struct LayoutContainer
-    {
-        using value_type = ScalarT;
-        using memory_space = MemorySpaceT;
-        const ArrayLayoutT &array_layout;
-        const ArrayLayoutT *layout() const { return &array_layout; }
-    };
-
-    /*!
-      \brief Constructor.
-      \param layout The array layout to build the halo for.
-      \param pattern The halo pattern to use for halo communication
-      \param width An option halo cell width. The default is to use the entire
-      halo width of the block.
-    */
-    template <class ArrayLayout_t>
-    Halo( const ArrayLayout_t &layout, const HaloPattern &pattern,
-          const int width = -1 )
-    {
-        // Wrap data in an array-like container.
-        LayoutContainer<Scalar, memory_space, ArrayLayout_t> container{layout};
-
-        // Create a multi-halo.
-        _mhalo = createMultiHalo( pattern, width, container );
-    }
-
-    /*!
-      \brief Gather data into our ghosts from their owners.
-      \param array The array to gather.
-    */
-    template <class Array_t>
-    void gather( const Array_t &array ) const
-    {
-        _mhalo->gather( execution_space(), array );
-    }
-
-    /*!
-      \brief Scatter data from our ghosts to their owners. Default sum
-      implementation.
-      \param array The array to scatter.
-    */
-    template <class Array_t>
-    void scatter( const Array_t &array ) const
-    {
-        scatter( array, ScatterReduce::Sum() );
-    }
-
-    /*!
-      \brief Scatter data from our ghosts to their owners using the given type
-      of reduce operation.
-      \param array The array to scatter.
-      \param reduce_op The functor used to reduce the results.
-    */
-    template <class Array_t, class ReduceOp>
-    void scatter( const Array_t &array, const ReduceOp &reduce_op ) const
-    {
-        _mhalo->scatter( execution_space(), reduce_op, array );
-    }
-
-  private:
-    std::shared_ptr<MultiHalo<memory_space>> _mhalo;
+    using memory_space = MemorySpace;
+    const ArrayLayout &array_layout;
+    const ArrayLayout *layout() const { return &array_layout; }
 };
 
-//---------------------------------------------------------------------------//
-// Creation function.
 //---------------------------------------------------------------------------//
 /*!
   \brief Create a halo with a layout.
   \param layout The array layout to build the halo for.
+  \param pattern The pattern to build the halo from.
+  \param width Must be less than or equal to the width of the array
+  halo. Defaults to the width of the array halo.
   \note The scalar type and device type must be specified so the proper
   buffers may be allocated. This means a halo constructed via this method is
   only compatible with arrays that have the same scalar and device type.
 */
 template <class Scalar, class Device, class EntityType, class MeshType>
-std::shared_ptr<Halo<Scalar, Device>>
-createHalo( const ArrayLayout<EntityType, MeshType> &layout,
-            const HaloPattern &pattern, const int width = -1 )
+auto createHalo( const ArrayLayout<EntityType, MeshType> &layout,
+                 const HaloPattern &pattern, const int width = -1 )
 {
-    return std::make_shared<Halo<Scalar, Device>>( layout, pattern, width );
+    LayoutAdapter<Scalar, typename Device::memory_space,
+                  ArrayLayout<EntityType, MeshType>>
+        adapter{layout};
+    return createHalo( pattern, width, adapter );
 }
 
 //---------------------------------------------------------------------------//
 /*!
   \brief Create a halo.
-  \param layout The array to build the halo for.
+  \param array The array to build the halo for.
+  \param pattern The pattern to build the halo from.
+  \param width Must be less than or equal to the width of the array
+  halo. Defaults to the width of the array halo.
   \note The scalar type and device type are specified via the input arrays so
   the proper buffers may be allocated. This means a halo constructed via this
   method is only compatible with arrays that have the same scalar and device
   type as the input array.
 */
 template <class Scalar, class EntityType, class MeshType, class... Params>
-std::shared_ptr<
-    Halo<typename Array<Scalar, EntityType, MeshType, Params...>::value_type,
-         typename Array<Scalar, EntityType, MeshType, Params...>::device_type>>
-createHalo( const Array<Scalar, EntityType, MeshType, Params...> &array,
-            const HaloPattern &pattern, const int width = -1 )
+auto createHalo( const Array<Scalar, EntityType, MeshType, Params...> &array,
+                 const HaloPattern &pattern, const int width = -1 )
 {
-    return std::make_shared<Halo<
-        typename Array<Scalar, EntityType, MeshType, Params...>::value_type,
-        typename Array<Scalar, EntityType, MeshType, Params...>::device_type>>(
-        *( array.layout() ), pattern, width );
+    LayoutAdapter<
+        Scalar,
+        typename Array<Scalar, EntityType, MeshType, Params...>::memory_space,
+        typename Array<Scalar, EntityType, MeshType, Params...>::array_layout>
+        adapter{*array.layout()};
+    return createHalo( pattern, width, adapter );
 }
-
 //---------------------------------------------------------------------------//
 
 } // end namespace Cajita
