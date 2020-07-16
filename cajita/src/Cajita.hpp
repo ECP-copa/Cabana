@@ -18,6 +18,7 @@
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Halo.hpp>
+#include <Cajita_Hilbert.hpp>
 #include <Cajita_IndexConversion.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_Interpolation.hpp>

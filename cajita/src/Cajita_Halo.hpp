@@ -13,7 +13,6 @@
 #define CAJITA_HALO_HPP
 
 #include <Cajita_Array.hpp>
-#include <Cajita_Hilbert.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_MpiTraits.hpp>
 
@@ -303,9 +302,9 @@ class Halo
 
                 // Post a send.
                 MPI_Isend( _owned_buffers[n].data(), _owned_buffers[n].size(),
-                        MpiTraits<value_type>::type(), _neighbor_ranks[n],
-                        mpi_tag + _send_tags[n], _comm,
-                        &requests[num_n + n] );
+                           MpiTraits<value_type>::type(), _neighbor_ranks[n],
+                           mpi_tag + _send_tags[n], _comm,
+                           &requests[num_n + n] );
             }
         }
 
@@ -328,8 +327,8 @@ class Halo
             else
             {
                 auto subview =
-                        createSubview( view, _ghosted_spaces[unpack_index] );
-                    Kokkos::deep_copy( subview, _ghosted_buffers[unpack_index] );
+                    createSubview( view, _ghosted_spaces[unpack_index] );
+                Kokkos::deep_copy( subview, _ghosted_buffers[unpack_index] );
             }
         }
 
