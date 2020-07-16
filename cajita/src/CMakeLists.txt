@@ -15,6 +15,7 @@ set(HEADERS_PUBLIC
   Cajita_LocalMesh.hpp
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
+  Cajita_Parallel.hpp
   Cajita_Partitioner.hpp
   Cajita_ReferenceStructuredSolver.hpp
   Cajita_Splines.hpp
