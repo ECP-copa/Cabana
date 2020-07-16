@@ -520,30 +520,6 @@ class MultiHalo
     }
 
   public:
-    // Get the byte sizes of the array value types. Also check that the memory
-    // spaces are compatible.
-    template <std::size_t N, class Array_t>
-    void getByteSizes( std::array<std::size_t, N> &byte_sizes,
-                       const std::size_t array_idx, const Array_t & )
-    {
-        static_assert(
-            std::is_same<typename Array_t::memory_space, memory_space>::value,
-            "Memory space of array is different than halo" );
-        byte_sizes[array_idx] = sizeof( typename Array_t::value_type );
-    }
-
-    template <std::size_t N, class Array_t, class... ArrayTypes>
-    void getByteSizes( std::array<std::size_t, N> &byte_sizes,
-                       const std::size_t array_idx, const Array_t &,
-                       const ArrayTypes &... arrays )
-    {
-        static_assert(
-            std::is_same<typename Array_t::memory_space, memory_space>::value,
-            "Memory space of array is different than halo" );
-        byte_sizes[array_idx] = sizeof( typename Array_t::value_type );
-        getByteSizes( byte_sizes, array_idx + 1, arrays... );
-    }
-
     // Get the communicator and check to make sure all are the same.
     template <class Array_t>
     void getComm( const Array_t &array )
@@ -568,37 +544,28 @@ class MultiHalo
             throw std::runtime_error( "Arrays have different communicators" );
     }
 
-    // Get the local grid from the arrays.
-    template <class Array_t, class... ArrayTypes>
-    auto getLocalGrid( const Array_t &array, const ArrayTypes &... )
+    // Get the local grid from the arrays. Check that the grids have the same
+    // halo size.
+    template <class Array_t>
+    auto getLocalGrid( const Array_t &array )
     {
         return array.layout()->localGrid();
     }
 
-    // Get the shared index space of an array for a given neighbor in the
-    // given decomposition.
-    template <std::size_t N, class DecompositionTag, class Array_t>
-    void getSharedSpace( std::array<IndexSpace<4>, N> &shared_spaces,
-                         DecompositionTag, const int i, const int j,
-                         const int k, const int width, const int array_idx,
-                         const Array_t &array )
+    template <class Array_t, class... ArrayTypes>
+    auto getLocalGrid( const Array_t &array, const ArrayTypes &... arrays )
     {
-        shared_spaces[array_idx] = array.layout()->sharedIndexSpace(
-            DecompositionTag(), i, j, k, width );
-    }
+        // Recurse.
+        auto local_grid = getLocalGrid( arrays... );
 
-    template <std::size_t N, class DecompositionTag, class Array_t,
-              class... ArrayTypes>
-    void getSharedSpace( std::array<IndexSpace<4>, N> &shared_spaces,
-                         DecompositionTag decomposition_tag, const int i,
-                         const int j, const int k, const int width,
-                         const int array_idx, const Array_t &array,
-                         const ArrayTypes &... arrays )
-    {
-        shared_spaces[array_idx] = array.layout()->sharedIndexSpace(
-            decomposition_tag, i, j, k, width );
-        getSharedSpace( shared_spaces, decomposition_tag, i, j, k, width,
-                        array_idx + 1, arrays... );
+        // Check that the halo sizes same.
+        if ( local_grid->haloCellWidth() !=
+             array.layout()->localGrid()->haloCellWidth() )
+        {
+            throw std::runtime_error( "Arrays have different halo widths" );
+        }
+
+        return local_grid;
     }
 
     // Build communication data.
@@ -614,14 +581,14 @@ class MultiHalo
         const std::size_t num_array = sizeof...( ArrayTypes );
 
         // Get the byte sizes of array value types.
-        std::array<std::size_t, num_array> value_byte_sizes;
-        getByteSizes( value_byte_sizes, 0, arrays... );
+        std::array<std::size_t, num_array> value_byte_sizes = {
+            sizeof( typename ArrayTypes::value_type )...};
 
         // Get the index spaces we share with this neighbor. We
         // get a shared index space for each array.
-        std::array<IndexSpace<4>, num_array> spaces;
-        getSharedSpace( spaces, decomposition_tag, ni, nj, nk, width, 0,
-                        arrays... );
+        std::array<IndexSpace<4>, num_array> spaces = {
+            ( arrays.layout()->sharedIndexSpace( decomposition_tag, ni, nj, nk,
+                                                 width ) )...};
 
         // Compute the buffer size of this neighbor and the
         // number of elements in the buffer.
