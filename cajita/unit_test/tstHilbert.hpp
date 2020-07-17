@@ -227,7 +227,7 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     // space ) = shared_halo_value Our remaining owned cells = 1.0 Loop over
     // entire index space of local view ( owned + ghost cells )
     Kokkos::parallel_for(
-        "SmallInitialize",
+        "HilbertInitialize",
         Kokkos::MDRangePolicy<Kokkos::Rank<4>>(
             { 0, 0, 0, 0 },
             { ghosted_space.max( 0 ), ghosted_space.max( 1 ),
