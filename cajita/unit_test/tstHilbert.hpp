@@ -37,30 +37,31 @@ void LayoutHilbert2DSubviewTest()
     int dim4 = 2;
 
     // Create Hilbert View
-    Kokkos::View<double ****, Kokkos::LayoutHilbert2D> HilbertArray(
-        "Hilbert", dim1, dim2, dim3, dim4 );
+    Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
+        HilbertArray( "Hilbert", dim1, dim2, dim3, dim4 );
 
     // Create Regular View
-    Kokkos::View<double ****> RegularArray( "Regular", dim1, dim2, dim3, dim4 );
+    Kokkos::View<double ****, TEST_DEVICE> RegularArray( "Regular", dim1, dim2,
+                                                         dim3, dim4 );
 
     // Loop over both views and assign values ( in typical increase LayoutRight
     // order )
-    for ( int i = 0; i < dim1; i++ )
-    {
-        for ( int j = 0; j < dim2; j++ )
-        {
-            for ( int k = 0; k < dim3; k++ )
-            {
-                for ( int l = 0; l < dim4; l++ )
-                {
-                    HilbertArray( i, j, k, l ) =
-                        i + dim1 * ( j + dim2 * ( k + (dim3)*l ) );
-                    RegularArray( i, j, k, l ) =
-                        i + dim1 * ( j + dim2 * ( k + (dim3)*l ) );
-                }
-            }
-        }
-    }
+    Kokkos::parallel_for(
+        "Initialize",
+        Kokkos::MDRangePolicy<Kokkos::Rank<4>>( { 0, 0, 0, 0 },
+                                                { dim1, dim2, dim3, dim4 } ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
+            HilbertArray( i, j, k, l ) =
+                i + dim1 * ( j + dim2 * ( k + (dim3)*l ) );
+            RegularArray( i, j, k, l ) =
+                i + dim1 * ( j + dim2 * ( k + (dim3)*l ) );
+        } );
+
+    // Create copies on host to check
+    auto host_view_hilbert = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), HilbertArray );
+    auto host_view_regular = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), RegularArray );
 
     // Check that the Hilbert View has been assigned consistently with the
     // Regular Array
@@ -68,8 +69,8 @@ void LayoutHilbert2DSubviewTest()
         for ( int j = 0; j < dim2; j++ )
             for ( int k = 0; k < dim3; k++ )
                 for ( int l = 0; l < dim4; l++ )
-                    EXPECT_EQ( HilbertArray( i, j, k, l ),
-                               RegularArray( i, j, k, l ) );
+                    EXPECT_EQ( host_view_hilbert( i, j, k, l ),
+                               host_view_regular( i, j, k, l ) );
 
     // Create subview index space - mimicking a halo subview of width 2
     Cajita::IndexSpace<4> space;
@@ -89,20 +90,28 @@ void LayoutHilbert2DSubviewTest()
     int replaceVal = 7012;
 
     // Create Small Regular View the same dimensions as the subview
-    Kokkos::View<double ****> RegularSmall(
+    Kokkos::View<double ****, TEST_DEVICE> RegularSmall(
         "RegularSmall", space.extent( 0 ), space.extent( 1 ), space.extent( 2 ),
         space.extent( 3 ) );
 
     // Loop over all indices in Small Regular View and set each value to
     // replacement value
-    for ( int i = space.min( 0 ); i < space.max( 0 ); i++ )
-        for ( int j = space.min( 1 ); j < space.max( 1 ); j++ )
-            for ( int k = space.min( 2 ); k < space.max( 2 ); k++ )
-                for ( int l = space.min( 3 ); l < space.max( 3 ); l++ )
-                    RegularSmall( i, j, k, l ) = replaceVal;
+    Kokkos::parallel_for(
+        "SmallInitialize",
+        Kokkos::MDRangePolicy<Kokkos::Rank<4>>(
+            { space.min( 0 ), space.min( 1 ), space.min( 2 ), space.min( 3 ) },
+            { space.max( 0 ), space.max( 1 ), space.max( 2 ),
+              space.max( 3 ) } ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
+            RegularSmall( i, j, k, l ) = replaceVal;
+        } );
 
     // Deep copy Small Regular View over to the Hilbert Subview
     Kokkos::deep_copy( HilbertSub, RegularSmall );
+
+    // Create copy on host to check
+    auto host_view_hilbert_new = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), HilbertArray );
 
     // Check that the replacement value got copied over correctly from the Small
     // Regular View, to the Hilbert Subview and hence the original Hilbert view
@@ -114,9 +123,10 @@ void LayoutHilbert2DSubviewTest()
                          j >= space.min( 1 ) && j < space.max( 1 ) &&
                          k >= space.min( 2 ) && k < space.max( 2 ) &&
                          l >= space.min( 3 ) && l < space.max( 3 ) )
-                        EXPECT_EQ( HilbertSub( i, j, k, l ), replaceVal );
+                        EXPECT_EQ( host_view_hilbert_new( i, j, k, l ),
+                                   replaceVal );
                     else
-                        EXPECT_EQ( HilbertArray( i, j, k, l ),
+                        EXPECT_EQ( host_view_hilbert_new( i, j, k, l ),
                                    i + dim1 * ( j + dim2 * ( k + (dim3)*l ) ) );
 }
 
@@ -132,7 +142,7 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     int halo_width = 2;
 
     // Set grid information
-    std::array<int, 3> global_num_cell = { 78, 23, 1 };
+    std::array<int, 3> global_num_cell = { 104, 104, 1 };
     std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
@@ -216,51 +226,52 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     // Cells we are sending ( in our owned space, but in our neighbors ghost
     // space ) = shared_halo_value Our remaining owned cells = 1.0 Loop over
     // entire index space of local view ( owned + ghost cells )
-    for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
-    {
-        for ( unsigned j = 0; j < ghosted_space.extent( 1 ); ++j )
-        {
-            for ( unsigned k = 0; k < ghosted_space.extent( 2 ); ++k )
+    Kokkos::parallel_for(
+        "SmallInitialize",
+        Kokkos::MDRangePolicy<Kokkos::Rank<4>>(
+            { 0, 0, 0, 0 },
+            { ghosted_space.max( 0 ), ghosted_space.max( 1 ),
+              ghosted_space.max( 2 ), ghosted_space.max( 3 ) } ),
+        KOKKOS_LAMBDA( const unsigned i, const unsigned j, const unsigned k,
+                       const unsigned l ) {
+            // My ghost cells = 0.0
+            if ( i < owned_space.min( Cajita::Dim::I ) ||
+                 i >= owned_space.max( Cajita::Dim::I ) ||
+                 j < owned_space.min( Cajita::Dim::J ) ||
+                 j >= owned_space.max( Cajita::Dim::J ) ||
+                 k < owned_space.min( Cajita::Dim::K ) ||
+                 k >= owned_space.max( Cajita::Dim::K ) )
+                array_view( i, j, k, l ) = 0.0;
+            else
             {
-                for ( unsigned l = 0; l < ghosted_space.extent( 3 ); ++l )
+                // Loop over all neighbors
+                for ( int n = 0; n < num_neighbors; n++ )
                 {
-                    // My ghost cells = 0.0
-                    if ( i < owned_space.min( Cajita::Dim::I ) ||
-                         i >= owned_space.max( Cajita::Dim::I ) ||
-                         j < owned_space.min( Cajita::Dim::J ) ||
-                         j >= owned_space.max( Cajita::Dim::J ) ||
-                         k < owned_space.min( Cajita::Dim::K ) ||
-                         k >= owned_space.max( Cajita::Dim::K ) )
-                        array_view( i, j, k, l ) = 0.0;
-                    else
-                    {
-                        // Loop over all neighbors
-                        for ( int n = 0; n < num_neighbors; n++ )
-                        {
-                            // Get shared index space with current neighbor
-                            auto shared = owned_shared_spaces[n];
+                    // Get shared index space with current neighbor
+                    auto shared = owned_shared_spaces[n];
 
-                            // Cells we are sending ( in our owned space, but in
-                            // our neighbors ghost space ) = shared_halo_value
-                            if ( i >= shared.min( Cajita::Dim::I ) &&
-                                 i < shared.max( Cajita::Dim::I ) &&
-                                 j >= shared.min( Cajita::Dim::J ) &&
-                                 j < shared.max( Cajita::Dim::J ) &&
-                                 k >= shared.min( Cajita::Dim::K ) &&
-                                 k < shared.max( Cajita::Dim::K ) )
-                                array_view( i, j, k, l ) = shared_halo_value;
-                        }
-                        // Our remaining owned cells = 1.0
-                        if ( array_view( i, j, k, l ) != shared_halo_value )
-                            array_view( i, j, k, l ) = 1.0;
-                    }
+                    // Cells we are sending ( in our owned space, but in
+                    // our neighbors ghost space ) = shared_halo_value
+                    if ( i >= shared.min( Cajita::Dim::I ) &&
+                         i < shared.max( Cajita::Dim::I ) &&
+                         j >= shared.min( Cajita::Dim::J ) &&
+                         j < shared.max( Cajita::Dim::J ) &&
+                         k >= shared.min( Cajita::Dim::K ) &&
+                         k < shared.max( Cajita::Dim::K ) )
+                        array_view( i, j, k, l ) = shared_halo_value;
                 }
+                // Our remaining owned cells = 1.0
+                if ( array_view( i, j, k, l ) != shared_halo_value )
+                    array_view( i, j, k, l ) = 1.0;
             }
-        }
-    }
+        } );
 
     // Gather
     halo->gather( *array );
+
+    // Create copy on host to check
+    auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                          array->view() );
 
     // Test if Halo succeeded as expected
     // Result should be:
@@ -284,8 +295,9 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                          j >= owned_space.max( Cajita::Dim::J ) ||
                          k < owned_space.min( Cajita::Dim::K ) ||
                          k >= owned_space.max( Cajita::Dim::K ) )
-                        EXPECT_EQ( array_view( i, j, k, l ),
-                                   shared_halo_value );
+                    {
+                        EXPECT_EQ( host_view( i, j, k, l ), shared_halo_value );
+                    }
                     else
                     {
                         // Loop over all neighbors
@@ -302,8 +314,10 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                                  j < shared.max( Cajita::Dim::J ) &&
                                  k >= shared.min( Cajita::Dim::K ) &&
                                  k < shared.max( Cajita::Dim::K ) )
-                                EXPECT_EQ( array_view( i, j, k, l ),
+                            {
+                                EXPECT_EQ( host_view( i, j, k, l ),
                                            shared_halo_value );
+                            }
                         }
                     }
                 }

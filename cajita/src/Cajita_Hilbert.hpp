@@ -155,7 +155,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     {
         // Return regular index since 1-D
         return i0;
-    };
+    }
 
     // rank 2
     template <typename I0, typename I1>
@@ -168,7 +168,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
 
         // Return hilbert index
         return hilbert_index;
-    };
+    }
 
     // rank 3
     template <typename I0, typename I1, typename I2>
@@ -181,7 +181,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
 
         // Use hilbert index to map to 3 dimensions
         return orig_dim.N0 * orig_dim.N1 * i2 + hilbert_index;
-    };
+    }
 
     // rank 4
     template <typename I0, typename I1, typename I2, typename I3>
@@ -195,7 +195,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
         // Use hilbert index to map to 4 dimensions
         return ( orig_dim.N0 * orig_dim.N1 ) * ( i3 + orig_dim.N3 * i2 ) +
                hilbert_index;
-    };
+    }
 
     // rank 5
     template <typename I0, typename I1, typename I2, typename I3, typename I4>
@@ -211,7 +211,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
         return ( orig_dim.N0 * orig_dim.N1 ) *
                    ( i4 + orig_dim.N4 * ( i3 + orig_dim.N3 * i2 ) ) +
                hilbert_index;
-    };
+    }
 
     // rank 6
     template <typename I0, typename I1, typename I2, typename I3, typename I4,
@@ -230,7 +230,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
                      orig_dim.N5 *
                          ( i4 + orig_dim.N4 * ( i3 + orig_dim.N3 * i2 ) ) ) +
                hilbert_index;
-    };
+    }
 
     // rank 7
     template <typename I0, typename I1, typename I2, typename I3, typename I4,
@@ -251,7 +251,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
                                     ( i4 + orig_dim.N4 *
                                                ( i3 + orig_dim.N3 * i2 ) ) ) ) +
                hilbert_index;
-    };
+    }
 
     // rank 8
     template <typename I0, typename I1, typename I2, typename I3, typename I4,
@@ -275,7 +275,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
                                                      ( i3 + orig_dim.N3 *
                                                                 i2 ) ) ) ) ) +
                hilbert_index;
-    };
+    }
 
     // Return layout
     KOKKOS_INLINE_FUNCTION
@@ -283,55 +283,55 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     {
         return array_layout( m_dim.N0, m_dim.N1, m_dim.N2, m_dim.N3, m_dim.N4,
                              m_dim.N5, m_dim.N6, m_dim.N7 );
-    };
+    }
 
     // Dimenion 0
     KOKKOS_INLINE_FUNCTION constexpr size_type dimension_0() const
     {
         return m_dim.N0;
-    };
+    }
 
     // Dimension 1
     KOKKOS_INLINE_FUNCTION constexpr size_type dimension_1() const
     {
         return m_dim.N1;
-    };
+    }
 
     // Dimension 2
     KOKKOS_INLINE_FUNCTION constexpr size_type dimension_2() const
     {
         return m_dim.N2;
-    };
+    }
 
     // Dimension 3
     KOKKOS_INLINE_FUNCTION constexpr size_type dimension_3() const
     {
         return m_dim.N3;
-    };
+    }
 
     // Dimension 4
     KOKKOS_INLINE_FUNCTION constexpr size_type dimension_4() const
     {
         return m_dim.N4;
-    };
+    }
 
     // Dimension 5
     KOKKOS_INLINE_FUNCTION constexpr size_type dimension_5() const
     {
         return m_dim.N5;
-    };
+    }
 
     // Dimesion 6
     KOKKOS_INLINE_FUNCTION constexpr size_type dimension_6() const
     {
         return m_dim.N6;
-    };
+    }
 
     // Dimension 7
     KOKKOS_INLINE_FUNCTION constexpr size_type dimension_7() const
     {
         return m_dim.N7;
-    };
+    }
 
     /* Cardinality of the domain index space */
     KOKKOS_INLINE_FUNCTION
@@ -339,7 +339,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     {
         return m_dim.N0 * m_dim.N1 * m_dim.N2 * m_dim.N3 * m_dim.N4 * m_dim.N5 *
                m_dim.N6 * m_dim.N7;
-    };
+    }
 
     /* Span of the range space */
     KOKKOS_INLINE_FUNCTION
@@ -347,55 +347,55 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     {
         return m_dim.N0 * m_dim.N1 * m_dim.N2 * m_dim.N3 * m_dim.N4 * m_dim.N5 *
                m_dim.N6 * m_dim.N7;
-    };
+    }
 
-    // Not contiguous
+    // Contiguous - for deep copy
     KOKKOS_INLINE_FUNCTION constexpr bool span_is_contiguous() const
     {
-        return false;
-    };
+        return true;
+    }
 
     /* Strides of dimensions */
     // Kept as default - not applicable to Hilbert space
     KOKKOS_INLINE_FUNCTION
-    constexpr size_type stride_0() const { return 1; };
+    constexpr size_type stride_0() const { return 1; }
 
     KOKKOS_INLINE_FUNCTION
-    constexpr size_type stride_1() const { return m_dim.N0; };
+    constexpr size_type stride_1() const { return m_dim.N0; }
 
     KOKKOS_INLINE_FUNCTION
-    constexpr size_type stride_2() const { return m_dim.N0 * m_dim.N1; };
+    constexpr size_type stride_2() const { return m_dim.N0 * m_dim.N1; }
 
     KOKKOS_INLINE_FUNCTION
     constexpr size_type stride_3() const
     {
         return m_dim.N0 * m_dim.N1 * m_dim.N2;
-    };
+    }
 
     KOKKOS_INLINE_FUNCTION
     constexpr size_type stride_4() const
     {
         return m_dim.N0 * m_dim.N1 * m_dim.N2 * m_dim.N3;
-    };
+    }
 
     KOKKOS_INLINE_FUNCTION
     constexpr size_type stride_5() const
     {
         return m_dim.N0 * m_dim.N1 * m_dim.N2 * m_dim.N3 * m_dim.N4;
-    };
+    }
 
     KOKKOS_INLINE_FUNCTION
     constexpr size_type stride_6() const
     {
         return m_dim.N0 * m_dim.N1 * m_dim.N2 * m_dim.N3 * m_dim.N4 * m_dim.N5;
-    };
+    }
 
     KOKKOS_INLINE_FUNCTION
     constexpr size_type stride_7() const
     {
         return m_dim.N0 * m_dim.N1 * m_dim.N2 * m_dim.N3 * m_dim.N4 * m_dim.N5 *
                m_dim.N6;
-    };
+    }
 
     // Stride with [ rank ] value is the total length
     // Kept as default - not applicable to hilbert space
@@ -435,7 +435,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
         {
             s[8] = s[7] * m_dim.N7;
         }
-    };
+    }
 
     ViewOffset() = default;
     ViewOffset( const ViewOffset & ) = default;
@@ -451,7 +451,9 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
         , orig_dim( rhs.dimension[0], rhs.dimension[1], rhs.dimension[2],
                     rhs.dimension[3], rhs.dimension[4], rhs.dimension[5],
                     rhs.dimension[6], rhs.dimension[7] )
-        , m_off( 0, 0, 0, 0, 0, 0, 0, 0 ){};
+        , m_off( 0, 0, 0, 0, 0, 0, 0, 0 )
+    {
+    }
 
     // Copy
     template <class DimRHS, class LayoutRHS>
@@ -465,7 +467,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     {
         static_assert( int( DimRHS::rank ) == int( dimension_type::rank ),
                        "ViewOffset assignment requires equal rank" );
-    };
+    }
 
     // Subview
     template <class DimRHS, class LayoutRHS>
@@ -481,7 +483,9 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
         , m_off( sub.domain_offset( 0 ), sub.domain_offset( 1 ),
                  sub.domain_offset( 2 ), sub.domain_offset( 3 ),
                  sub.domain_offset( 4 ), sub.domain_offset( 5 ),
-                 sub.domain_offset( 6 ), sub.domain_offset( 7 ) ){};
+                 sub.domain_offset( 6 ), sub.domain_offset( 7 ) )
+    {
+    }
 };
 
 // Implement subview functionality for LayoutHilbert2D
