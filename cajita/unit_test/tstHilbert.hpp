@@ -177,10 +177,19 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     // Get underlying view for assignment
     auto array_view = array->view();
 
-    // Generate vectors of index spaces - 1 for each neighbor
-    std::vector<Cajita::IndexSpace<3>> owned_shared_spaces;
-    std::vector<Cajita::IndexSpace<3>> ghosted_shared_spaces;
+    // Generate Kokkos Views to store neighbor data for later use
+    Kokkos::View<unsigned int **, TEST_DEVICE> owned_shared_spaces(
+        "Owned_Shared_Spaces", 27, 6 );
+    Kokkos::View<unsigned int **, TEST_DEVICE> ghosted_shared_spaces(
+        "Ghosted_Shared_Spaces", 27, 6 );
 
+    // Create copies on host to populate
+    auto host_owned_shared_spaces = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), owned_shared_spaces );
+    auto host_ghosted_shared_spaces = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), ghosted_shared_spaces );
+
+    int num_neighbors = 0;
     // Loop over all possible neighbors
     for ( int i = -1; i < 2; ++i )
     {
@@ -204,17 +213,44 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                         auto shared_send_cells = local_grid->sharedIndexSpace(
                             Cajita::Own(), Cajita::Cell(), i, j, k );
 
-                        // Add index spaces to vectors
-                        owned_shared_spaces.push_back( shared_send_cells );
-                        ghosted_shared_spaces.push_back( shared_recv_cells );
+                        // Add index spaces to host mirror views
+                        host_owned_shared_spaces( num_neighbors, 0 ) =
+                            shared_send_cells.min( 0 );
+                        host_owned_shared_spaces( num_neighbors, 1 ) =
+                            shared_send_cells.min( 1 );
+                        host_owned_shared_spaces( num_neighbors, 2 ) =
+                            shared_send_cells.min( 2 );
+                        host_owned_shared_spaces( num_neighbors, 3 ) =
+                            shared_send_cells.max( 0 );
+                        host_owned_shared_spaces( num_neighbors, 4 ) =
+                            shared_send_cells.max( 1 );
+                        host_owned_shared_spaces( num_neighbors, 5 ) =
+                            shared_send_cells.max( 2 );
+
+                        host_ghosted_shared_spaces( num_neighbors, 0 ) =
+                            shared_recv_cells.min( 0 );
+                        host_ghosted_shared_spaces( num_neighbors, 1 ) =
+                            shared_recv_cells.min( 1 );
+                        host_ghosted_shared_spaces( num_neighbors, 2 ) =
+                            shared_recv_cells.min( 2 );
+                        host_ghosted_shared_spaces( num_neighbors, 3 ) =
+                            shared_recv_cells.max( 0 );
+                        host_ghosted_shared_spaces( num_neighbors, 4 ) =
+                            shared_recv_cells.max( 1 );
+                        host_ghosted_shared_spaces( num_neighbors, 5 ) =
+                            shared_recv_cells.max( 2 );
+
+                        // Increase neighbor count
+                        num_neighbors++;
                     }
                 }
             }
         }
     }
 
-    // Find number of neighbors
-    int num_neighbors = owned_shared_spaces.size();
+    // Deep copy from host to device
+    Kokkos::deep_copy( owned_shared_spaces, host_owned_shared_spaces );
+    Kokkos::deep_copy( ghosted_shared_spaces, host_ghosted_shared_spaces );
 
     // Value to set to Cells we are sending ( in our owned space, but in our
     // neighbors ghost space )
@@ -248,16 +284,18 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                 for ( int n = 0; n < num_neighbors; n++ )
                 {
                     // Get shared index space with current neighbor
-                    auto shared = owned_shared_spaces[n];
+                    auto shared_min0 = owned_shared_spaces( n, 0 );
+                    auto shared_min1 = owned_shared_spaces( n, 1 );
+                    auto shared_min2 = owned_shared_spaces( n, 2 );
+                    auto shared_max0 = owned_shared_spaces( n, 3 );
+                    auto shared_max1 = owned_shared_spaces( n, 4 );
+                    auto shared_max2 = owned_shared_spaces( n, 5 );
 
                     // Cells we are sending ( in our owned space, but in
                     // our neighbors ghost space ) = shared_halo_value
-                    if ( i >= shared.min( Cajita::Dim::I ) &&
-                         i < shared.max( Cajita::Dim::I ) &&
-                         j >= shared.min( Cajita::Dim::J ) &&
-                         j < shared.max( Cajita::Dim::J ) &&
-                         k >= shared.min( Cajita::Dim::K ) &&
-                         k < shared.max( Cajita::Dim::K ) )
+                    if ( i >= shared_min0 && i < shared_max0 &&
+                         j >= shared_min1 && j < shared_max1 &&
+                         k >= shared_min2 && k < shared_max2 )
                         array_view( i, j, k, l ) = shared_halo_value;
                 }
                 // Our remaining owned cells = 1.0
@@ -304,16 +342,18 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                         for ( int n = 0; n < num_neighbors; n++ )
                         {
                             // Get shared index space with current neighbor
-                            auto shared = owned_shared_spaces[n];
+                            auto shared_min0 = owned_shared_spaces( n, 0 );
+                            auto shared_min1 = owned_shared_spaces( n, 1 );
+                            auto shared_min2 = owned_shared_spaces( n, 2 );
+                            auto shared_max0 = owned_shared_spaces( n, 3 );
+                            auto shared_max1 = owned_shared_spaces( n, 4 );
+                            auto shared_max2 = owned_shared_spaces( n, 5 );
 
                             // Cells we are sending ( in our owned space, but in
                             // our neighbors ghost space ) = shared_halo_value
-                            if ( i >= shared.min( Cajita::Dim::I ) &&
-                                 i < shared.max( Cajita::Dim::I ) &&
-                                 j >= shared.min( Cajita::Dim::J ) &&
-                                 j < shared.max( Cajita::Dim::J ) &&
-                                 k >= shared.min( Cajita::Dim::K ) &&
-                                 k < shared.max( Cajita::Dim::K ) )
+                            if ( i >= shared_min0 && i < shared_max0 &&
+                                 j >= shared_min1 && j < shared_max1 &&
+                                 k >= shared_min2 && k < shared_max2 )
                             {
                                 EXPECT_EQ( host_view( i, j, k, l ),
                                            shared_halo_value );
