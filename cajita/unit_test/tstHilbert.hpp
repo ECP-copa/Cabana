@@ -30,11 +30,20 @@ namespace Test
 
 void LayoutHilbert2DSubviewTest()
 {
+    // typedef
+    typedef
+        typename Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
+            view_type;
+
     // Set dimensions
     int dim1 = 27;
     int dim2 = 51;
     int dim3 = 1;
     int dim4 = 2;
+
+    // View Index Space
+    auto view_space =
+        Cajita::IndexSpace<4>( {0, 0, 0, 0}, {dim1, dim2, dim3, dim4} );
 
     // Create Hilbert View
     Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
@@ -48,14 +57,15 @@ void LayoutHilbert2DSubviewTest()
     // order )
     Kokkos::parallel_for(
         "Initialize",
-        Kokkos::MDRangePolicy<Kokkos::Rank<4>>( { 0, 0, 0, 0 },
-                                                { dim1, dim2, dim3, dim4 } ),
+        Cajita::createExecutionPolicy( view_space,
+                                       view_type::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
             HilbertArray( i, j, k, l ) =
                 i + dim1 * ( j + dim2 * ( k + (dim3)*l ) );
             RegularArray( i, j, k, l ) =
                 i + dim1 * ( j + dim2 * ( k + (dim3)*l ) );
         } );
+    view_type::execution_space().fence();
 
     // Create copies on host to check
     auto host_view_hilbert = Kokkos::create_mirror_view_and_copy(
@@ -74,7 +84,7 @@ void LayoutHilbert2DSubviewTest()
 
     // Create subview index space - mimicking a halo subview of width 2
     Cajita::IndexSpace<4> space;
-    space = Cajita::IndexSpace<4>( { 0, 0, 0, 0 }, { 2, dim2, dim3, dim4 } );
+    space = Cajita::IndexSpace<4>( {0, 0, 0, 0}, {2, dim2, dim3, dim4} );
 
     // Create Hilbert subview from Hilbert View
     auto HilbertSub =
@@ -98,13 +108,11 @@ void LayoutHilbert2DSubviewTest()
     // replacement value
     Kokkos::parallel_for(
         "SmallInitialize",
-        Kokkos::MDRangePolicy<Kokkos::Rank<4>>(
-            { space.min( 0 ), space.min( 1 ), space.min( 2 ), space.min( 3 ) },
-            { space.max( 0 ), space.max( 1 ), space.max( 2 ),
-              space.max( 3 ) } ),
+        Cajita::createExecutionPolicy( space, view_type::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
             RegularSmall( i, j, k, l ) = replaceVal;
         } );
+    view_type::execution_space().fence();
 
     // Deep copy Small Regular View over to the Hilbert Subview
     Kokkos::deep_copy( HilbertSub, RegularSmall );
@@ -134,6 +142,12 @@ void LayoutHilbert2DSubviewTest()
 void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                                 const std::array<bool, 3> &is_dim_periodic )
 {
+    // typedef
+    typedef
+        typename Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
+            view_type;
+
+    // Get rank
     int rank;
     MPI_Comm_rank( MPI_COMM_WORLD, &rank );
 
@@ -142,12 +156,12 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     int halo_width = 2;
 
     // Set grid information
-    std::array<int, 3> global_num_cell = { 104, 104, 1 };
-    std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
+    std::array<int, 3> global_num_cell = {104, 104, 1};
+    std::array<double, 3> global_low_corner = {0.0, 0.0, 0.0};
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2] };
+        global_low_corner[2] + cell_size * global_num_cell[2]};
 
     // Create local grid
     auto global_mesh = Cajita::createUniformGlobalMesh(
@@ -264,10 +278,8 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     // entire index space of local view ( owned + ghost cells )
     Kokkos::parallel_for(
         "HilbertInitialize",
-        Kokkos::MDRangePolicy<Kokkos::Rank<4>>(
-            { 0, 0, 0, 0 },
-            { ghosted_space.max( 0 ), ghosted_space.max( 1 ),
-              ghosted_space.max( 2 ), ghosted_space.max( 3 ) } ),
+        Cajita::createExecutionPolicy( ghosted_space,
+                                       view_type::execution_space() ),
         KOKKOS_LAMBDA( const unsigned i, const unsigned j, const unsigned k,
                        const unsigned l ) {
             // My ghost cells = 0.0
@@ -303,6 +315,7 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                     array_view( i, j, k, l ) = 1.0;
             }
         } );
+    view_type::execution_space().fence();
 
     // Gather
     halo->gather( *array );
@@ -386,13 +399,13 @@ TEST( layout_hilbert, layout_hilbert2d_test )
         x_ranks /= 2;
     }
     int y_ranks = comm_size / x_ranks;
-    std::array<int, 3> ranks_per_dim = { x_ranks, y_ranks, 1 };
+    std::array<int, 3> ranks_per_dim = {x_ranks, y_ranks, 1};
 
     // Create 2-D partitioner
     Cajita::ManualPartitioner partitioner( ranks_per_dim );
 
     // Test the non-periodic case
-    std::array<bool, 3> is_dim_periodic = { false, false, false };
+    std::array<bool, 3> is_dim_periodic = {false, false, false};
 
     LayoutHilbert2DGatherTest( partitioner, is_dim_periodic );
 }
