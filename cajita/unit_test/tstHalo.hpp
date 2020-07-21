@@ -31,6 +31,109 @@ using namespace Cajita;
 namespace Test
 {
 //---------------------------------------------------------------------------//
+// Halo padding in each dimension for different entity types.
+int haloPad( Cell, int ) { return 0; }
+
+int haloPad( Node, int ) { return 1; }
+
+template <int D>
+int haloPad( Face<D>, int d )
+{
+    return ( d == D ) ? 1 : 0;
+}
+
+template <int D>
+int haloPad( Edge<D>, int d )
+{
+    return ( d == D ) ? 0 : 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check initial array gather. We should get 1 everywhere in the array now
+// where there was ghost overlap. Otherwise there will still be 0.
+template <class Array>
+void checkGather( const int halo_width, const Array &array )
+{
+    auto owned_space = array.layout()->indexSpace( Own(), Local() );
+    auto ghosted_space = array.layout()->indexSpace( Ghost(), Local() );
+    auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                          array.view() );
+    auto pad_i = haloPad( typename Array::entity_type(), Dim::I );
+    auto pad_j = haloPad( typename Array::entity_type(), Dim::J );
+    auto pad_k = haloPad( typename Array::entity_type(), Dim::K );
+    for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
+        for ( unsigned j = 0; j < ghosted_space.extent( 1 ); ++j )
+            for ( unsigned k = 0; k < ghosted_space.extent( 2 ); ++k )
+                for ( unsigned l = 0; l < ghosted_space.extent( 3 ); ++l )
+                    if ( i < owned_space.min( Dim::I ) - halo_width ||
+                         i >= owned_space.max( Dim::I ) + halo_width + pad_i ||
+                         j < owned_space.min( Dim::J ) - halo_width ||
+                         j >= owned_space.max( Dim::J ) + halo_width + pad_j ||
+                         k < owned_space.min( Dim::K ) - halo_width ||
+                         k >= owned_space.max( Dim::K ) + halo_width + pad_k )
+                        EXPECT_EQ( host_view( i, j, k, l ), 0.0 );
+                    else
+                        EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
+// Check array scatter. The value of the cell should be a function of how many
+// neighbors it has. Corner neighbors get 8, edge neighbors get 4, face
+// neighbors get 2, and no neighbors remain at 1.
+template <class Array>
+void checkScatter( const std::array<bool, 3> &is_dim_periodic,
+                   const int halo_width, const Array &array )
+{
+    // Get data.
+    auto owned_space = array.layout()->indexSpace( Own(), Local() );
+    auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                          array.view() );
+    const auto &global_grid = array.layout()->localGrid()->globalGrid();
+
+    // This function checks if an index is in the halo of a low neighbor in
+    // the given dimension
+    auto in_dim_min_halo = [&]( const int i, const int dim ) {
+        if ( is_dim_periodic[dim] || global_grid.dimBlockId( dim ) > 0 )
+            return i < ( owned_space.min( dim ) + halo_width +
+                         haloPad( typename Array::entity_type(), dim ) );
+        else
+            return false;
+    };
+
+    // This function checks if an index is in the halo of a high neighbor in
+    // the given dimension
+    auto in_dim_max_halo = [&]( const int i, const int dim ) {
+        if ( is_dim_periodic[dim] || global_grid.dimBlockId( dim ) <
+                                         global_grid.dimNumBlock( dim ) - 1 )
+            return i >= ( owned_space.max( dim ) - halo_width );
+        else
+            return false;
+    };
+
+    // Check results. Use the halo functions to figure out how many neighbor
+    // a given cell was ghosted to.
+    for ( unsigned i = owned_space.min( 0 ); i < owned_space.max( 0 ); ++i )
+        for ( unsigned j = owned_space.min( 1 ); j < owned_space.max( 1 ); ++j )
+            for ( unsigned k = owned_space.min( 2 ); k < owned_space.max( 2 );
+                  ++k )
+            {
+                int num_n = 0;
+                if ( in_dim_min_halo( i, Dim::I ) ||
+                     in_dim_max_halo( i, Dim::I ) )
+                    ++num_n;
+                if ( in_dim_min_halo( j, Dim::J ) ||
+                     in_dim_max_halo( j, Dim::J ) )
+                    ++num_n;
+                if ( in_dim_min_halo( k, Dim::K ) ||
+                     in_dim_max_halo( k, Dim::K ) )
+                    ++num_n;
+                double scatter_val = std::pow( 2.0, num_n );
+                for ( unsigned l = 0; l < owned_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), scatter_val );
+            }
+}
+
+//---------------------------------------------------------------------------//
 void gatherScatterTest( const ManualPartitioner &partitioner,
                         const std::array<bool, 3> &is_dim_periodic )
 {
@@ -49,18 +152,19 @@ void gatherScatterTest( const ManualPartitioner &partitioner,
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
-    // Create an array on the cells.
+    // Array parameters.
     unsigned array_halo_width = 3;
-    int dofs_per_cell = 4;
-    auto cell_layout = createArrayLayout( global_grid, array_halo_width,
-                                          dofs_per_cell, Cell() );
 
     // Loop over halo sizes up to the size of the array halo width.
     for ( unsigned halo_width = 1; halo_width <= array_halo_width;
           ++halo_width )
     {
+        // Create a cell array.
+        auto layout =
+            createArrayLayout( global_grid, array_halo_width, 4, Cell() );
+        auto array = createArray<double, TEST_DEVICE>( "array", layout );
+
         // Assign the owned cells a value of 1 and the rest 0.
-        auto array = createArray<double, TEST_DEVICE>( "array", cell_layout );
         ArrayOp::assign( *array, 0.0, Ghost() );
         ArrayOp::assign( *array, 1.0, Own() );
 
@@ -68,78 +172,123 @@ void gatherScatterTest( const ManualPartitioner &partitioner,
         auto halo = createHalo( *array, FullHaloPattern(), halo_width );
 
         // Gather into the ghosts.
-        halo->gather( *array );
+        halo->gather( TEST_EXECSPACE(), *array );
 
-        // Check the gather. We should get 1 everywhere in the array now where
-        // there was ghost overlap. Otherwise there will still be 0.
-        auto owned_space = cell_layout->indexSpace( Own(), Local() );
-        auto ghosted_space = cell_layout->indexSpace( Ghost(), Local() );
-        auto host_view = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), array->view() );
-        for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
-            for ( unsigned j = 0; j < ghosted_space.extent( 1 ); ++j )
-                for ( unsigned k = 0; k < ghosted_space.extent( 2 ); ++k )
-                    for ( unsigned l = 0; l < ghosted_space.extent( 3 ); ++l )
-                        if ( i < owned_space.min( Dim::I ) - halo_width ||
-                             i >= owned_space.max( Dim::I ) + halo_width ||
-                             j < owned_space.min( Dim::J ) - halo_width ||
-                             j >= owned_space.max( Dim::J ) + halo_width ||
-                             k < owned_space.min( Dim::K ) - halo_width ||
-                             k >= owned_space.max( Dim::K ) + halo_width )
-                            EXPECT_EQ( host_view( i, j, k, l ), 0.0 );
-                        else
-                            EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
+        // Check the gather.
+        checkGather( halo_width, *array );
 
         // Scatter from the ghosts back to owned.
-        halo->scatter( *array );
+        halo->scatter( TEST_EXECSPACE(), ScatterReduce::Sum(), *array );
 
-        // Check the scatter. The value of the cell should be a function of how
-        // many neighbors it has. Corner neighbors get 8, edge neighbors get 4,
-        // face neighbors get 2, and no neighbors remain at 1.
+        // Check the scatter.
+        checkScatter( is_dim_periodic, halo_width, *array );
+    }
 
-        // This function checks if an index is in the halo of a low neighbor in
-        // the given dimension
-        auto in_dim_min_halo = [=]( const int i, const int dim ) {
-            if ( is_dim_periodic[dim] || global_grid->dimBlockId( dim ) > 0 )
-                return i < ( owned_space.min( dim ) + halo_width );
-            else
-                return false;
-        };
+    // Repeat the process but this time with multiple arrays in a Halo
+    for ( unsigned halo_width = 1; halo_width <= array_halo_width;
+          ++halo_width )
+    {
+        // Create arrays of different layouts and dof counts.
+        auto cell_layout =
+            createArrayLayout( global_grid, array_halo_width, 4, Cell() );
+        auto cell_array =
+            createArray<double, TEST_DEVICE>( "cell_array", cell_layout );
 
-        // This function checks if an index is in the halo of a high neighbor in
-        // the given dimension
-        auto in_dim_max_halo = [=]( const int i, const int dim ) {
-            if ( is_dim_periodic[dim] ||
-                 global_grid->dimBlockId( dim ) <
-                     global_grid->dimNumBlock( dim ) - 1 )
-                return i >= ( owned_space.max( dim ) - halo_width );
-            else
-                return false;
-        };
+        auto node_layout =
+            createArrayLayout( global_grid, array_halo_width, 3, Node() );
+        auto node_array =
+            createArray<float, TEST_DEVICE>( "node_array", node_layout );
 
-        // Check results. Use the halo functions to figure out how many neighbor
-        // a given cell was ghosted to.
-        Kokkos::deep_copy( host_view, array->view() );
-        for ( unsigned i = owned_space.min( 0 ); i < owned_space.max( 0 ); ++i )
-            for ( unsigned j = owned_space.min( 1 ); j < owned_space.max( 1 );
-                  ++j )
-                for ( unsigned k = owned_space.min( 2 );
-                      k < owned_space.max( 2 ); ++k )
-                {
-                    int num_n = 0;
-                    if ( in_dim_min_halo( i, Dim::I ) ||
-                         in_dim_max_halo( i, Dim::I ) )
-                        ++num_n;
-                    if ( in_dim_min_halo( j, Dim::J ) ||
-                         in_dim_max_halo( j, Dim::J ) )
-                        ++num_n;
-                    if ( in_dim_min_halo( k, Dim::K ) ||
-                         in_dim_max_halo( k, Dim::K ) )
-                        ++num_n;
-                    double scatter_val = std::pow( 2.0, num_n );
-                    for ( unsigned l = 0; l < owned_space.extent( 3 ); ++l )
-                        EXPECT_EQ( host_view( i, j, k, l ), scatter_val );
-                }
+        auto face_i_layout = createArrayLayout( global_grid, array_halo_width,
+                                                4, Face<Dim::I>() );
+        auto face_i_array =
+            createArray<double, TEST_DEVICE>( "face_i_array", face_i_layout );
+
+        auto face_j_layout = createArrayLayout( global_grid, array_halo_width,
+                                                1, Face<Dim::J>() );
+        auto face_j_array =
+            createArray<double, TEST_DEVICE>( "face_j_array", face_j_layout );
+
+        auto face_k_layout = createArrayLayout( global_grid, array_halo_width,
+                                                2, Face<Dim::K>() );
+        auto face_k_array =
+            createArray<float, TEST_DEVICE>( "face_k_array", face_k_layout );
+
+        auto edge_i_layout = createArrayLayout( global_grid, array_halo_width,
+                                                3, Edge<Dim::I>() );
+        auto edge_i_array =
+            createArray<float, TEST_DEVICE>( "edge_i_array", edge_i_layout );
+
+        auto edge_j_layout = createArrayLayout( global_grid, array_halo_width,
+                                                2, Edge<Dim::J>() );
+        auto edge_j_array =
+            createArray<float, TEST_DEVICE>( "edge_j_array", edge_j_layout );
+
+        auto edge_k_layout = createArrayLayout( global_grid, array_halo_width,
+                                                1, Edge<Dim::K>() );
+        auto edge_k_array =
+            createArray<double, TEST_DEVICE>( "edge_k_array", edge_k_layout );
+
+        // Assign the owned cells a value of 1 and the rest 0.
+        ArrayOp::assign( *cell_array, 0.0, Ghost() );
+        ArrayOp::assign( *cell_array, 1.0, Own() );
+
+        ArrayOp::assign( *node_array, 0.0, Ghost() );
+        ArrayOp::assign( *node_array, 1.0, Own() );
+
+        ArrayOp::assign( *face_i_array, 0.0, Ghost() );
+        ArrayOp::assign( *face_i_array, 1.0, Own() );
+
+        ArrayOp::assign( *face_j_array, 0.0, Ghost() );
+        ArrayOp::assign( *face_j_array, 1.0, Own() );
+
+        ArrayOp::assign( *face_k_array, 0.0, Ghost() );
+        ArrayOp::assign( *face_k_array, 1.0, Own() );
+
+        ArrayOp::assign( *edge_i_array, 0.0, Ghost() );
+        ArrayOp::assign( *edge_i_array, 1.0, Own() );
+
+        ArrayOp::assign( *edge_j_array, 0.0, Ghost() );
+        ArrayOp::assign( *edge_j_array, 1.0, Own() );
+
+        ArrayOp::assign( *edge_k_array, 0.0, Ghost() );
+        ArrayOp::assign( *edge_k_array, 1.0, Own() );
+
+        // Create a multihalo.
+        auto halo =
+            createHalo( FullHaloPattern(), halo_width, *cell_array, *node_array,
+                        *face_i_array, *face_j_array, *face_k_array,
+                        *edge_i_array, *edge_j_array, *edge_k_array );
+
+        // Gather into the ghosts.
+        halo->gather( TEST_EXECSPACE(), *cell_array, *node_array, *face_i_array,
+                      *face_j_array, *face_k_array, *edge_i_array,
+                      *edge_j_array, *edge_k_array );
+
+        // Check the gather.
+        checkGather( halo_width, *cell_array );
+        checkGather( halo_width, *node_array );
+        checkGather( halo_width, *face_i_array );
+        checkGather( halo_width, *face_j_array );
+        checkGather( halo_width, *face_k_array );
+        checkGather( halo_width, *edge_i_array );
+        checkGather( halo_width, *edge_j_array );
+        checkGather( halo_width, *edge_k_array );
+
+        // Scatter from the ghosts back to owned.
+        halo->scatter( TEST_EXECSPACE(), ScatterReduce::Sum(), *cell_array,
+                       *node_array, *face_i_array, *face_j_array, *face_k_array,
+                       *edge_i_array, *edge_j_array, *edge_k_array );
+
+        // Check the scatter.
+        checkScatter( is_dim_periodic, halo_width, *cell_array );
+        checkScatter( is_dim_periodic, halo_width, *node_array );
+        checkScatter( is_dim_periodic, halo_width, *face_i_array );
+        checkScatter( is_dim_periodic, halo_width, *face_j_array );
+        checkScatter( is_dim_periodic, halo_width, *face_k_array );
+        checkScatter( is_dim_periodic, halo_width, *edge_i_array );
+        checkScatter( is_dim_periodic, halo_width, *edge_j_array );
+        checkScatter( is_dim_periodic, halo_width, *edge_k_array );
     }
 }
 
@@ -231,7 +380,7 @@ void scatterReduceTest( const ReduceFunc &reduce )
     auto halo = createHalo( *array, pattern );
 
     // Scatter.
-    halo->scatter( *array, reduce );
+    halo->scatter( TEST_EXECSPACE(), reduce, *array );
 
     // Check the reduction.
     auto host_array = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
