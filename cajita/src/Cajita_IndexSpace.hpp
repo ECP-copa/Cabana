@@ -337,7 +337,8 @@ createView( const IndexSpace<4> &index_space, Scalar *data )
   Rank-1 specialization.
 */
 template <class ViewType>
-auto createSubview( const ViewType &view, const IndexSpace<1> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
+                                           const IndexSpace<1> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ) ) )
 {
     static_assert( 1 == ViewType::Rank, "Incorrect view rank" );
@@ -351,7 +352,8 @@ auto createSubview( const ViewType &view, const IndexSpace<1> &index_space )
   Rank-2 specialization.
 */
 template <class ViewType>
-auto createSubview( const ViewType &view, const IndexSpace<2> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
+                                           const IndexSpace<2> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ) ) )
 {
@@ -367,7 +369,8 @@ auto createSubview( const ViewType &view, const IndexSpace<2> &index_space )
   Rank-3 specialization.
 */
 template <class ViewType>
-auto createSubview( const ViewType &view, const IndexSpace<3> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
+                                           const IndexSpace<3> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ),
                                   index_space.range( 2 ) ) )
@@ -384,7 +387,8 @@ auto createSubview( const ViewType &view, const IndexSpace<3> &index_space )
   Rank-4 specialization.
 */
 template <class ViewType>
-auto createSubview( const ViewType &view, const IndexSpace<4> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
+                                           const IndexSpace<4> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ),
                                   index_space.range( 2 ),

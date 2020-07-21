@@ -498,15 +498,15 @@ template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
           class... ArrayParams>
 void g2p( const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
                       ArrayParams...> &array,
-          const Halo<ArrayScalar, DeviceType> &halo,
-          const PointCoordinates &points, const std::size_t num_point,
-          Spline<SplineOrder>, const PointEvalFunctor &functor )
+          const Halo<DeviceType> &halo, const PointCoordinates &points,
+          const std::size_t num_point, Spline<SplineOrder>,
+          const PointEvalFunctor &functor )
 {
     using array_type =
         Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>;
-    static_assert(
-        std::is_same<DeviceType, typename array_type::device_type>::value,
-        "Mismatching points/array device types." );
+    static_assert( std::is_same<typename Halo<DeviceType>::memory_space,
+                                typename array_type::memory_space>::value,
+                   "Mismatching points/array memory space." );
 
     using execution_space = typename DeviceType::execution_space;
 
@@ -515,7 +515,7 @@ void g2p( const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
         createLocalMesh<DeviceType>( *( array.layout()->localGrid() ) );
 
     // Gather data into the halo before interpolating.
-    halo.gather( array );
+    halo.gather( execution_space(), array );
 
     // Get a view of the array data.
     auto array_view = array.view();
@@ -804,15 +804,15 @@ template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
           class... ArrayParams>
 void p2g( const PointEvalFunctor &functor, const PointCoordinates &points,
           const std::size_t num_point, Spline<SplineOrder>,
-          const Halo<ArrayScalar, DeviceType> &halo,
+          const Halo<DeviceType> &halo,
           Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
                 ArrayParams...> &array )
 {
     using array_type =
         Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>;
-    static_assert(
-        std::is_same<DeviceType, typename array_type::device_type>::value,
-        "Mismatching points/array device types." );
+    static_assert( std::is_same<typename Halo<DeviceType>::memory_space,
+                                typename array_type::memory_space>::value,
+                   "Mismatching points/array memory space." );
 
     using execution_space = typename DeviceType::execution_space;
 
@@ -844,7 +844,7 @@ void p2g( const PointEvalFunctor &functor, const PointCoordinates &points,
 
     // Scatter interpolation contributions in the halo back to their owning
     // ranks.
-    halo.scatter( array );
+    halo.scatter( execution_space(), ScatterReduce::Sum(), array );
 }
 
 //---------------------------------------------------------------------------//

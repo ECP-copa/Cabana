@@ -84,7 +84,7 @@ void testConversion( const std::array<bool, 3> &is_dim_periodic )
 
     // Gather to get the ghosted global indices.
     auto halo = createHalo( *global_index_array, FullHaloPattern() );
-    halo->gather( *global_index_array );
+    halo->gather( TEST_EXECSPACE(), *global_index_array );
 
     // Do a loop over ghosted local indices and fill with the index
     // conversion.
