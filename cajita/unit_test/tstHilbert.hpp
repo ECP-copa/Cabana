@@ -180,7 +180,7 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
             "array", cell_vector_layout );
 
     // Create halo
-    auto halo = createHalo( *array, Cajita::FullHaloPattern(), halo_width );
+    auto halo = createHalo( Cajita::FullHaloPattern(), halo_width, *array );
 
     // Get owned and ghosted index spaces
     auto owned_space =
@@ -318,7 +318,7 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     view_type::execution_space().fence();
 
     // Gather
-    halo->gather( *array );
+    halo->gather( TEST_EXECSPACE(), *array );
 
     // Create copy on host to check
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
