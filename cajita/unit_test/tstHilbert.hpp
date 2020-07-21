@@ -355,12 +355,12 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                         for ( int n = 0; n < num_neighbors; n++ )
                         {
                             // Get shared index space with current neighbor
-                            auto shared_min0 = owned_shared_spaces( n, 0 );
-                            auto shared_min1 = owned_shared_spaces( n, 1 );
-                            auto shared_min2 = owned_shared_spaces( n, 2 );
-                            auto shared_max0 = owned_shared_spaces( n, 3 );
-                            auto shared_max1 = owned_shared_spaces( n, 4 );
-                            auto shared_max2 = owned_shared_spaces( n, 5 );
+                            auto shared_min0 = host_owned_shared_spaces( n, 0 );
+                            auto shared_min1 = host_owned_shared_spaces( n, 1 );
+                            auto shared_min2 = host_owned_shared_spaces( n, 2 );
+                            auto shared_max0 = host_owned_shared_spaces( n, 3 );
+                            auto shared_max1 = host_owned_shared_spaces( n, 4 );
+                            auto shared_max2 = host_owned_shared_spaces( n, 5 );
 
                             // Cells we are sending ( in our owned space, but in
                             // our neighbors ghost space ) = shared_halo_value
