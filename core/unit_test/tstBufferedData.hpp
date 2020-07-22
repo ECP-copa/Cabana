@@ -80,19 +80,20 @@ class Tagfunctor_op
 
 void testBufferedTag()
 {
+    std::cout << "Testing buffered tag" << std::endl;
     using DataTypes = Cabana::MemberTypes<float>;
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
 
     // Cabana::simd_parallel_for( policy_1, func_1, "2d_test_1" );
 
-    int num_data = 10;
+    int num_data = 100;
     AoSoA_t aosoa( "test tag aosoa", num_data );
 
     const int buffer_count = 3;
     const int max_buffered_tuples = 40;
 
-    using buf_t = Cabana::BufferedAoSoA<TEST_EXECSPACE, AoSoA_t>;
-    buf_t buffered_aosoa_in( aosoa, buffer_count, max_buffered_tuples );
+    using buf_t = Cabana::BufferedAoSoA<buffer_count, TEST_EXECSPACE, AoSoA_t>;
+    buf_t buffered_aosoa_in( aosoa, max_buffered_tuples );
 
     Tagfunctor_op<buf_t> func_1;
 
@@ -166,9 +167,9 @@ void testBufferedDataCreation()
     Cabana::deep_copy( aosoa, mirror );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
-    using buf_t = Cabana::BufferedAoSoA<target_exec_space, AoSoA_t>;
+    using buf_t = Cabana::BufferedAoSoA<buffer_count, target_exec_space, AoSoA_t>;
 
-    buf_t buffered_aosoa_in( aosoa, buffer_count, max_buffered_tuples );
+    buf_t buffered_aosoa_in( aosoa, max_buffered_tuples );
 
     // Reset values so the outcome differs
     fval = 3.4;

@@ -140,7 +140,10 @@ KOKKOS_INLINE_FUNCTION
  * Target_Memory_Space The memory space to buffer into
  * AoSoA_t The type of the AoSoA we're buffering from
  */
-template <class Target_Memory_Space, class AoSoA_t>
+
+// TODO: requested_buffer_count should be a runy time param, but for now I have it as compile time, as it impliues a memory allocation. This currently causes a call to host functions / malloc on the GPU when the BufgferedAoSoA is passed, which would need to be fixed
+template <int requested_buffer_count,
+         class Target_Memory_Space, class AoSoA_t>
 class BufferedAoSoA
 {
     // TODO: make things private
@@ -172,9 +175,8 @@ class BufferedAoSoA
         return Cabana::get<target_AoSoA_t, i>( slice_tuple );
     }
 
-    // TODO: should we place these in the "target" memory space, not
-    // the default?
-    std::vector<target_AoSoA_t> internal_buffers;
+    target_AoSoA_t internal_buffers[requested_buffer_count];
+    //std::vector<target_AoSoA_t> internal_buffers;
 
     /**
      * @brief constructor for BufferedAoSoA
@@ -185,8 +187,7 @@ class BufferedAoSoA
      * (the memory requirement is this class is roughly
      * requested_buffer_count*max_buffered_tuples*sizeof(particle)
      */
-    BufferedAoSoA( AoSoA_t &original_view_in, int requested_buffer_count,
-                   int max_buffered_tuples )
+    BufferedAoSoA( AoSoA_t &original_view_in, int max_buffered_tuples )
         : // I need to init slice_tuple avoid the default constructor, the type
           // may need changing when we respect their passed in space and this
           // can likely be done more cleanly if we simplify the tuple
@@ -203,7 +204,7 @@ class BufferedAoSoA
         // TODO: We may we want to override the user on their requested
         // values if they don't make sense? Both num_buffers and buffer_size
 
-        internal_buffers.resize( num_buffers );
+        //internal_buffers.resize( num_buffers );
 
         std::cout << "The size of the passed view is "
                   << original_view_in.size() << std::endl;

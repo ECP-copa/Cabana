@@ -20,12 +20,17 @@
 namespace Cabana
 {
 
-template <class FunctorType, class extra_functor_arg_t, int VectorLength,
-          class... ExecParameters>
+template <
+    class FunctorType, class extra_functor_arg_t, int VectorLength,
+          class... ExecParameters
+          >
 inline void custom_simd_parallel_for(
     const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
     const FunctorType &functor, const extra_functor_arg_t &f_arg,
-    const std::string &str = "" )
+    const std::string &str = "" 
+    //,
+          //typename std::enable_if<!std::is_same<typename SimdPolicy<VectorLength, ExecParameters...>::work_tag, void>::value>::type = 0
+    )
 {
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
 
@@ -33,6 +38,8 @@ inline void custom_simd_parallel_for(
     using team_policy = typename simd_policy::base_type;
 
     using index_type = typename team_policy::index_type;
+
+    std::cout << "regular if" << std::endl;
 
     Kokkos::parallel_for(
         str, dynamic_cast<const team_policy &>( exec_policy ),
@@ -48,55 +55,44 @@ inline void custom_simd_parallel_for(
         } );
 }
 
-// TODO: we can likely merge this to exsiting functorTagDispatch with a simple
-// interface change
-template <class WorkTag, class FunctorType,
-          class BufferedAoSoA_t
-          //, class... IndexTypes
-          //, typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
-          //= 0
-          ,
-          typename std::enable_if<!std::is_same<WorkTag, void>::value>::type * =
-              nullptr>
-auto build_functor( BufferedAoSoA_t buffered_aosoa, const FunctorType &functor
-                    //, IndexTypes &&... indices )
-)
+/*
+template <
+class FunctorType, class extra_functor_arg_t, int VectorLength,
+          class... ExecParameters
+          >
+inline void custom_simd_parallel_for(
+    const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
+    const FunctorType &functor, const extra_functor_arg_t &f_arg,
+    const std::string &str = "",
+          typename std::enable_if<std::is_same<typename SimdPolicy<VectorLength, ExecParameters...>::work_tag, void>::value>::type = 0
+    )
 {
-    const WorkTag t{};
-    auto f = KOKKOS_LAMBDA( WorkTag t, BufferedAoSoA_t buffered_aosoa,
-                            // std::forward<IndexTypes>( indices )...
-                            int s, int i )
-    {
-        functor( t, buffered_aosoa, s, i
-                 // std::forward<IndexTypes>(indices)...
-        );
-    };
-    return f;
-}
+    using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
 
-template <class WorkTag, class FunctorType,
-          class BufferedAoSoA_t
-          //, class... IndexTypes
-          ,
-          typename std::enable_if<std::is_same<WorkTag, void>::value>::type * =
-              nullptr>
-auto build_functor( BufferedAoSoA_t buffered_aosoa, const FunctorType &functor
-                    //, IndexTypes &&... indices )
-)
-{
-    // const WorkTag t{};
-    auto f = KOKKOS_LAMBDA( BufferedAoSoA_t buffered_aosoa,
-                            // std::forward<IndexTypes>( indices )...
-                            int s, int i )
-    {
-        functor(
-            // t,
-            buffered_aosoa, s, i
-            // std::forward<IndexTypes>(indices)...
-        );
-    };
-    return f;
+    using work_tag = typename simd_policy::work_tag;
+    using team_policy = typename simd_policy::base_type;
+
+    using index_type = typename team_policy::index_type;
+
+    std::cout << "eanble if" << std::endl;
+
+    // TODO: wrap functor to refresh capture of buffered aosoa, like
+    // build_functor() used to
+
+    Kokkos::parallel_for(
+        str, dynamic_cast<const team_policy &>( exec_policy ),
+        KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
+            index_type s = team.league_rank() + exec_policy.structBegin();
+            Kokkos::parallel_for(
+                Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
+                                           exec_policy.arrayEnd( s ) ),
+                [&]( const index_type a ) {
+                    Impl::functorTagDispatch<work_tag>( functor, f_arg, s, a );
+                    // functor( f_arg, s, a);
+                } );
+        } );
 }
+*/
 
 // Requirements:
 // 1) This must be user callable and seamlessly handle the data buffering
@@ -150,7 +146,7 @@ inline void buffered_parallel_for(
 
         simd_policy policy( begin, end );
 
-        auto f = build_functor<work_tag>( buffered_aosoa, functor );
+        //auto f = build_functor<work_tag>( buffered_aosoa, functor );
 
         /*
         auto f = KOKKOS_LAMBDA( const int s, const int a,
@@ -159,7 +155,7 @@ inline void buffered_parallel_for(
             functor( s, a, buffered_aosoa );
         };*/
 
-        custom_simd_parallel_for( policy, f, buffered_aosoa, str );
+        custom_simd_parallel_for( policy, functor, buffered_aosoa, str );
         // Cabana::simd_parallel_for( policy, functor, str );
 
         Kokkos::fence();
