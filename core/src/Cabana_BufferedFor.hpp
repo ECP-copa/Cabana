@@ -20,17 +20,16 @@
 namespace Cabana
 {
 
-template <
-    class FunctorType, class extra_functor_arg_t, int VectorLength,
-          class... ExecParameters
-          >
+template <class FunctorType, class extra_functor_arg_t, int VectorLength,
+          class... ExecParameters>
 inline void custom_simd_parallel_for(
     const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
     const FunctorType &functor, const extra_functor_arg_t &f_arg,
-    const std::string &str = "" 
+    const std::string &str = ""
     //,
-          //typename std::enable_if<!std::is_same<typename SimdPolicy<VectorLength, ExecParameters...>::work_tag, void>::value>::type = 0
-    )
+    // typename std::enable_if<!std::is_same<typename SimdPolicy<VectorLength,
+    // ExecParameters...>::work_tag, void>::value>::type = 0
+)
 {
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
 
@@ -64,7 +63,8 @@ inline void custom_simd_parallel_for(
     const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
     const FunctorType &functor, const extra_functor_arg_t &f_arg,
     const std::string &str = "",
-          typename std::enable_if<std::is_same<typename SimdPolicy<VectorLength, ExecParameters...>::work_tag, void>::value>::type = 0
+          typename std::enable_if<std::is_same<typename SimdPolicy<VectorLength,
+ExecParameters...>::work_tag, void>::value>::type = 0
     )
 {
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
@@ -146,7 +146,7 @@ inline void buffered_parallel_for(
 
         simd_policy policy( begin, end );
 
-        //auto f = build_functor<work_tag>( buffered_aosoa, functor );
+        // auto f = build_functor<work_tag>( buffered_aosoa, functor );
 
         /*
         auto f = KOKKOS_LAMBDA( const int s, const int a,

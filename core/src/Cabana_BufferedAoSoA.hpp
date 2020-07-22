@@ -141,9 +141,11 @@ KOKKOS_INLINE_FUNCTION
  * AoSoA_t The type of the AoSoA we're buffering from
  */
 
-// TODO: requested_buffer_count should be a runy time param, but for now I have it as compile time, as it impliues a memory allocation. This currently causes a call to host functions / malloc on the GPU when the BufgferedAoSoA is passed, which would need to be fixed
-template <int requested_buffer_count,
-         class Target_Memory_Space, class AoSoA_t>
+// TODO: requested_buffer_count should be a runy time param, but for now I have
+// it as compile time, as it impliues a memory allocation. This currently causes
+// a call to host functions / malloc on the GPU when the BufgferedAoSoA is
+// passed, which would need to be fixed
+template <int requested_buffer_count, class Target_Memory_Space, class AoSoA_t>
 class BufferedAoSoA
 {
     // TODO: make things private
@@ -176,7 +178,7 @@ class BufferedAoSoA
     }
 
     target_AoSoA_t internal_buffers[requested_buffer_count];
-    //std::vector<target_AoSoA_t> internal_buffers;
+    // std::vector<target_AoSoA_t> internal_buffers;
 
     /**
      * @brief constructor for BufferedAoSoA
@@ -204,7 +206,7 @@ class BufferedAoSoA
         // TODO: We may we want to override the user on their requested
         // values if they don't make sense? Both num_buffers and buffer_size
 
-        //internal_buffers.resize( num_buffers );
+        // internal_buffers.resize( num_buffers );
 
         std::cout << "The size of the passed view is "
                   << original_view_in.size() << std::endl;

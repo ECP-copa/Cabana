@@ -167,7 +167,8 @@ void testBufferedDataCreation()
     Cabana::deep_copy( aosoa, mirror );
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
-    using buf_t = Cabana::BufferedAoSoA<buffer_count, target_exec_space, AoSoA_t>;
+    using buf_t =
+        Cabana::BufferedAoSoA<buffer_count, target_exec_space, AoSoA_t>;
 
     buf_t buffered_aosoa_in( aosoa, max_buffered_tuples );
 
