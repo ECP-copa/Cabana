@@ -1,2 +1,1 @@
 add_subdirectory(tutorial)
-add_subdirectory(fortran_example)
