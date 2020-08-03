@@ -105,7 +105,7 @@ void testBufferedTag()
 void testBufferedDataCreation()
 {
     // Create an AoSoA
-    const int vector_length = 16;
+    const int vector_length = 32;
 
     // Data dimensions.
     const int dim_1 = 3;

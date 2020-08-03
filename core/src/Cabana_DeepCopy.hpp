@@ -154,7 +154,7 @@ create_mirror_view_and_copy(
 */
 template <class DstAoSoA, class SrcAoSoA>
 inline void
-deep_copy( DstAoSoA &dst, const SrcAoSoA &src,
+deep_copy( DstAoSoA &dst, const SrcAoSoA &src, bool async = false,
            typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
                                      is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
@@ -203,8 +203,18 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src,
     // of values then we can do a byte-wise copy directly.
     if ( std::is_same<dst_soa_type, src_soa_type>::value )
     {
-        Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
-            dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
+        if ( async )
+        {
+            std::cout << __FILE__ << ":" << __LINE__ << " => Async copy "
+                      << std::endl;
+            Kokkos::Impl::DeepCopyAsyncCuda(
+                dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
+        }
+        else
+        {
+            Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
+                dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
+        }
     }
 
     // Otherwise copy the data element-by-element because the data layout is
@@ -455,8 +465,9 @@ inline void deep_copy_partial_src(
     // sized the same as src_partial. If that is not true we need to apply the
     // same pattern on the other end
 
-    Cabana::deep_copy( dst, src_partial );
-    Kokkos::fence();
+    bool async = 1; // TODO: this could be a template?
+    Cabana::deep_copy( dst, src_partial, async );
+    // Cabana::deep_copy( dst, src_partial );
 }
 
 // TODO: this can be DRYd with deep_copy_partial, but we need a

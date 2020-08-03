@@ -20,6 +20,47 @@
 namespace Cabana
 {
 
+namespace
+{
+template <class ExecSpace>
+struct SpaceInstance
+{
+    static ExecSpace create() { return ExecSpace(); }
+    static void destroy( ExecSpace & ) {}
+    static bool overlap() { return false; }
+};
+
+#ifndef KOKKOS_ENABLE_DEBUG
+#ifdef KOKKOS_ENABLE_CUDA
+template <>
+struct SpaceInstance<Kokkos::Cuda>
+{
+    static Kokkos::Cuda create()
+    {
+        cudaStream_t stream;
+        cudaStreamCreate( &stream );
+        return Kokkos::Cuda( stream );
+    }
+    static void destroy( Kokkos::Cuda &space )
+    {
+        cudaStream_t stream = space.cuda_stream();
+        cudaStreamDestroy( stream );
+    }
+    static bool overlap()
+    {
+        bool value = true;
+        auto local_rank_str = std::getenv( "CUDA_LAUNCH_BLOCKING" );
+        if ( local_rank_str )
+        {
+            value = ( std::atoi( local_rank_str ) == 0 );
+        }
+        return value;
+    }
+};
+#endif
+#endif
+} // namespace
+
 template <class FunctorType, class extra_functor_arg_t, int VectorLength,
           class... ExecParameters>
 inline void custom_simd_parallel_for(
@@ -38,7 +79,15 @@ inline void custom_simd_parallel_for(
 
     using index_type = typename team_policy::index_type;
 
-    std::cout << "regular if" << std::endl;
+    // std::cout << "regular if" << std::endl;
+
+    using ex = typename simd_policy::execution_space;
+
+    // TODO: this casues a seg fawult even if we don't use it???
+    // Kokkos::DefaultExecutionSpace space1 =
+    // SpaceInstance<Kokkos::DefaultExecutionSpace>::create(); std::cout <<
+    // "Enabling async .. " << SpaceInstance<ex>::overlap() << std::endl;
+    // SpaceInstance<ex>::destroy(space1);
 
     Kokkos::parallel_for(
         str, dynamic_cast<const team_policy &>( exec_policy ),
@@ -137,33 +186,41 @@ inline void buffered_parallel_for(
     int begin = 0;
     int end = begin + buffer_size;
 
+    // Load the first buffer, and block
+    buffered_aosoa.load_next_buffer( buffer_size );
+    Kokkos::fence();
+
     for ( int i = 0; i < niter; i++ )
     {
+        // Now, for each iteration of the loop, we can:
+        // 1) Run the code
+        // 2) Pull the last copy back
+        // 3) Push the next one down
+
         std::cout << "Looping from " << begin << " to " << end << " which is "
                   << i * buffer_size << " in global space " << std::endl;
 
-        buffered_aosoa.load_next_buffer( buffer_size * i );
-
         simd_policy policy( begin, end );
-
-        // auto f = build_functor<work_tag>( buffered_aosoa, functor );
-
-        /*
-        auto f = KOKKOS_LAMBDA( const int s, const int a,
-                                BufferedAoSoA_t buffered_aosoa )
-        {
-            functor( s, a, buffered_aosoa );
-        };*/
 
         custom_simd_parallel_for( policy, functor, buffered_aosoa, str );
         // Cabana::simd_parallel_for( policy, functor, str );
 
-        Kokkos::fence();
+        if ( i < niter - 1 )
+        { // Don't copy "next" on the last iteration
+            buffered_aosoa.load_next_buffer( buffer_size * ( i + 1 ) );
+        }
 
         // copy all data back from localbuffer into the correct location in
         // global
-        // buffered_aosoa.copy_buffer_back(i*buffer_size);
+        // TODO: re-enable the copy back
+        // buffered_aosoa.copy_buffer_back( buffer_size * (i-1) );
+
+        Kokkos::fence();
     }
+
+    // TODO: re-enable the copy back
+    // Copy the last iteration back
+    // buffered_aosoa.copy_buffer_back( buffer_size * (niter) );
 }
 } // namespace Cabana
 #endif // CABANA_BUFFEREDFOR_HPP
