@@ -74,6 +74,7 @@ set(SERIAL_TESTS
   GlobalMesh
   IndexSpace
   Parallel
+  ParameterPack
   Splines
   )
 
