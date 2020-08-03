@@ -24,41 +24,42 @@ namespace Test
 void captureTest()
 {
     // Make some Kokkos views.
-    Kokkos::View<double[1],TEST_MEMSPACE> dbl_view( "dbl_view" );
-    Kokkos::View<int[1][1],TEST_MEMSPACE> int_view( "int_view" );
+    Kokkos::View<double[1], TEST_MEMSPACE> dbl_view( "dbl_view" );
+    Kokkos::View<int[1][1], TEST_MEMSPACE> int_view( "int_view" );
 
     // Make a parameter pack so we can capture them as a group.
     auto pack = makeParameterPack( dbl_view, int_view );
 
     // Update the pack in a kernel
-    Kokkos::parallel_for(
-        "fill_pack",
-        Kokkos::RangePolicy<TEST_EXECSPACE>(0,1),
-        KOKKOS_LAMBDA( const int ){
-            auto dv = get<0>( pack );
-            auto iv = get<1>( pack );
+    Kokkos::parallel_for( "fill_pack",
+                          Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
+                          KOKKOS_LAMBDA( const int ) {
+                              auto dv = get<0>( pack );
+                              auto iv = get<1>( pack );
 
-            dv(0) = 3.14;
-            iv(0,0) = 12;
-        } );
+                              dv( 0 ) = 3.14;
+                              iv( 0, 0 ) = 12;
+                          } );
 
     // Check the capture.
-    auto dbl_host = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), dbl_view );
-    auto int_host = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), int_view );
+    auto dbl_host =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), dbl_view );
+    auto int_host =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), int_view );
 
-    EXPECT_EQ( dbl_host(0), 3.14 );
-    EXPECT_EQ( int_host(0,0), 12 );
+    EXPECT_EQ( dbl_host( 0 ), 3.14 );
+    EXPECT_EQ( int_host( 0, 0 ), 12 );
 }
+
+//---------------------------------------------------------------------------//
+void emptyTest() { std::ignore = makeParameterPack(); }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, parameter_pack_test )
-{
-    captureTest();
-}
+TEST( TEST_CATEGORY, parameter_pack_capture ) { captureTest(); }
+
+TEST( TEST_CATEGORY, parameter_pack_empty ) { emptyTest(); }
 
 //---------------------------------------------------------------------------//
 

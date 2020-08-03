@@ -157,6 +157,12 @@ void fillParameterPack( ParameterPack_t &pp, const Types &... ts )
         ts... );
 }
 
+// Empty case.
+template <typename ParameterPack_t>
+void fillParameterPack( ParameterPack_t & )
+{
+}
+
 //---------------------------------------------------------------------------//
 // Create a parameter pack.
 template <typename... Types>
