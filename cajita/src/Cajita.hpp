@@ -26,6 +26,7 @@
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_Parallel.hpp>
+#include <Cajita_ParameterPack.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
 #include <Cajita_Splines.hpp>
