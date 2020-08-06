@@ -642,14 +642,12 @@ void test8( const bool use_topology )
     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, 1 );
     Kokkos::parallel_for( range_policy, fill_ranks );
     Kokkos::fence();
+
+    // Neighbors made unique internally.
     std::vector<int> neighbor_ranks( 3 );
     neighbor_ranks[0] = ( my_rank == 0 ) ? my_size - 1 : my_rank - 1;
     neighbor_ranks[1] = my_rank;
     neighbor_ranks[2] = ( my_rank == my_size - 1 ) ? 0 : my_rank + 1;
-    std::sort( neighbor_ranks.begin(), neighbor_ranks.end() );
-    auto unique_it =
-        std::unique( neighbor_ranks.begin(), neighbor_ranks.end() );
-    neighbor_ranks.resize( std::distance( neighbor_ranks.begin(), unique_it ) );
 
     // Create the plan.
     if ( use_topology )

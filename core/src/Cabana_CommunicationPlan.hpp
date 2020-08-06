@@ -428,7 +428,7 @@ class CommunicationPlan
       \param neighbor_ranks List of ranks this rank will send to and receive
       from. This list can include the calling rank. This is effectively a
       description of the topology of the point-to-point communication
-      plan. The elements in this list must be unique.
+      plan. Only the unique elements in this list are used.
 
       \return The location of each export element in the send buffer for its
       given neighbor.
@@ -451,8 +451,11 @@ class CommunicationPlan
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
 
-        // Store the neighbors.
+        // Store the unique neighbors.
         _neighbors = neighbor_ranks;
+        std::sort( _neighbors.begin(), _neighbors.end() );
+        auto unique_end = std::unique( _neighbors.begin(), _neighbors.end() );
+        _neighbors.resize( std::distance( _neighbors.begin(), unique_end ) );
         int num_n = _neighbors.size();
 
         // Get the size of this communicator.
