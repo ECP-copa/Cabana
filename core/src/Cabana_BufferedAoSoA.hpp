@@ -189,7 +189,7 @@ class BufferedAoSoA
      * (the memory requirement is this class is roughly
      * requested_buffer_count*max_buffered_tuples*sizeof(particle)
      */
-    BufferedAoSoA( AoSoA_t &original_view_in, int max_buffered_tuples )
+    BufferedAoSoA( AoSoA_t original_view_in, int max_buffered_tuples )
         : // I need to init slice_tuple avoid the default constructor, the type
           // may need changing when we respect their passed in space and this
           // can likely be done more cleanly if we simplify the tuple
@@ -205,6 +205,9 @@ class BufferedAoSoA
 
         // TODO: We may we want to override the user on their requested
         // values if they don't make sense? Both num_buffers and buffer_size
+
+        // TODO: add asserts to check the balance between the size (num_data)
+        // and the max_buffered_tuples
 
         // internal_buffers.resize( num_buffers );
 
@@ -243,15 +246,18 @@ class BufferedAoSoA
      * @param start_index Index to place buffer data into in original
      * aosoa
      */
-    void copy_buffer_back( int to_index )
+    void copy_buffer_back( int buffer_index, int to_index )
     {
-        Cabana::deep_copy_partial_dst(
-            original_view, internal_buffers[last_filled_buffer], to_index,
-            // 0, // from index
-            buffer_size );
+        std::cout << "original view size " << original_view.size() << std::endl;
+        Cabana::deep_copy_partial_dst( original_view,
+                                       internal_buffers[buffer_index], to_index,
+                                       // 0, // from index
+                                       buffer_size );
     }
 
     // Start thinking about how to handle data movement...
+    // TODO: Should this accept a buffer index to allow explicit control? The
+    // reason it counts for you is so we can wrap at num_buffers
     void load_next_buffer( int start_index )
     {
         // TODO: once this is asynchronous we have to be careful here
@@ -274,7 +280,7 @@ class BufferedAoSoA
         slice_tuple = slice_tuple_t( internal_buffers[last_filled_buffer] );
     }
 
-    AoSoA_t &original_view;
+    AoSoA_t original_view;
 
     /**
      * @brief Track which buffer we "filled" last, so we know where we

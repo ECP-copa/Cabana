@@ -187,7 +187,7 @@ inline void buffered_parallel_for(
     int end = begin + buffer_size;
 
     // Load the first buffer, and block
-    buffered_aosoa.load_next_buffer( buffer_size );
+    buffered_aosoa.load_next_buffer( 0 );
     Kokkos::fence();
 
     for ( int i = 0; i < niter; i++ )
@@ -210,17 +210,14 @@ inline void buffered_parallel_for(
             buffered_aosoa.load_next_buffer( buffer_size * ( i + 1 ) );
         }
 
+        Kokkos::fence();
+
         // copy all data back from localbuffer into the correct location in
         // global
-        // TODO: re-enable the copy back
-        // buffered_aosoa.copy_buffer_back( buffer_size * (i-1) );
-
-        Kokkos::fence();
+        // TODO: I don't like the way this forcefully round robins the buffers
+        buffered_aosoa.copy_buffer_back( i % buffered_aosoa.get_buffer_count(),
+                                         buffer_size * ( i ) );
     }
-
-    // TODO: re-enable the copy back
-    // Copy the last iteration back
-    // buffered_aosoa.copy_buffer_back( buffer_size * (niter) );
 }
 } // namespace Cabana
 #endif // CABANA_BUFFEREDFOR_HPP

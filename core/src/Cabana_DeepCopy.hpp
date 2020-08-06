@@ -441,8 +441,9 @@ inline void deep_copy_partial_src(
 
     std::cout << "Looping copy from 0 to " << src_partial.size()
               << " where src size is " << src.size() << std::endl;
-    std::cout << "From index is " << from_index << " so max pull from src is "
-              << src_partial.size() + from_index << std::endl;
+    std::cout << "From index is " << from_index << " so pull from src is "
+              << from_index << ".." << src_partial.size() + from_index
+              << std::endl;
 
     // Populate it with data using a parallel for
     // TODO: this copy_func is borrow from above, so we could DRY
@@ -474,23 +475,28 @@ inline void deep_copy_partial_src(
 // way to denote if src or dst is the partial
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_dst(
-    DstAoSoA &dst, const SrcAoSoA &src,
+    DstAoSoA dst, const SrcAoSoA src,
     const int to_index, // TODO: the order of these params is questionable
     // const int from_index, // TODO: not honored
     const int count,
     typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
                               is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
-    // TODO: implement this
+    std::cout << "About to do deep copy back to " << to_index << " .. "
+              << count + to_index << std::endl;
+
     // Make AoSoA in dst space to copy over
     DstAoSoA dst_partial( "deep_copy_partial dst", count );
+
+    std::cout << "dst partial size " << dst_partial.size() << std::endl;
+    std::cout << "src size " << src.size() << std::endl;
+
     Cabana::deep_copy( dst_partial, src );
 
-    assert( count <= src.size() );
+    // assert( count <= src.size() );
     assert( to_index + count <= dst.size() );
 
     // Populate it with data using a parallel for
-    // TODO: this copy_func is borrow from above, so we could DRY
     auto copy_func = KOKKOS_LAMBDA( const std::size_t i )
     {
         dst.setTuple( i + to_index, dst_partial.getTuple( i ) );

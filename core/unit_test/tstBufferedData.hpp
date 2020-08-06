@@ -29,10 +29,14 @@ class TestTag
 template <class aosoa_type>
 void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
                        const int ival, const int dim_1, const int dim_2,
-                       const int dim_3 )
+                       const int dim_3, int copy_back = 1 )
 {
     auto mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+
+    if (copy_back == 0) {
+        mirror = aosoa;
+    }
 
     auto slice_0 = Cabana::slice<0>( mirror );
     auto slice_1 = Cabana::slice<1>( mirror );
@@ -82,15 +86,19 @@ void testBufferedTag()
 {
     std::cout << "Testing buffered tag" << std::endl;
     using DataTypes = Cabana::MemberTypes<float>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+
+    // TODO: right now I have to specify the vector length so I can ensure it's
+    // the same to do a byte wise async copy
+    const int vector_length = 32;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE, vector_length>;
 
     // Cabana::simd_parallel_for( policy_1, func_1, "2d_test_1" );
 
-    int num_data = 100;
+    int num_data = 512;
     AoSoA_t aosoa( "test tag aosoa", num_data );
 
     const int buffer_count = 3;
-    const int max_buffered_tuples = 40;
+    const int max_buffered_tuples = 32;
 
     using buf_t = Cabana::BufferedAoSoA<buffer_count, TEST_EXECSPACE, AoSoA_t>;
     buf_t buffered_aosoa_in( aosoa, max_buffered_tuples );
@@ -119,7 +127,7 @@ void testBufferedDataCreation()
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE, vector_length>;
     std::string label = "sample_aosoa";
-    int num_data = 512;
+    int num_data = 1024;
     AoSoA_t aosoa( label, num_data );
 
     // Start by only buffering over one AoSoA at a time for stress test
@@ -227,8 +235,10 @@ void testBufferedDataCreation()
         },
         "test buffered for" );
 
-    // TODO: test the data values
+    // TODO: test the data values that get bought back for us, not only what we
+    // copy back. Currently the test runs on data that's already on the GPU...
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 0 );
 }
 
 //---------------------------------------------------------------------------//
