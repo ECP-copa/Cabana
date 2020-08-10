@@ -1,7 +1,7 @@
-#ifnedf CAJITA_SPARSE_INDEXSPACE_HPP
+#ifndef CAJITA_SPARSE_INDEXSPACE_HPP
 #define CAJITA_SPARSE_INDEXSPACE_HPP
 
-#include <Kokkos_Core.hpp>
+#include <Kokkos_UnorderedMap.hpp>
 
 #include <array>
 #include <string>
@@ -9,13 +9,10 @@
 namespace Cajita
 {
 
-struct HashTypes
+enum class HashTypes : unsigned char
 {
-    enum Values
-    {
-        Naive = 0,
-        Morton = 1,
-    };
+    Naive = 0,
+    Morton = 1
 };
 
 //---------------------------------------------------------------------------//
@@ -100,10 +97,10 @@ constexpr uint64_t bit_spread( const uint64_t mask, const int data )
 //---------------------------------------------------------------------------//
 
 // Tile Hash Key (hash) <=> TileID
-template <typename Key, typename HashType>
+template <typename Key, HashTypes HashT>
 struct TileID2HashKey;
 
-template <typename Key, typename HashType>
+template <typename Key, HashTypes HashT>
 struct HashKey2TileID;
 
 // functions to compute hash key
@@ -111,31 +108,26 @@ struct HashKey2TileID;
 template <typename Key>
 struct TileID2HashKey<Key, HashTypes::Naive>
 {
-    TileID2HashKey( std::array<int, 3> &&tnum )
-        : _tilenum( tnum )
+    TileID2HashKey( std::initializer_list<int> &&tnum )
     {
+        std::copy( tnum.begin(), tnum.end(), _tilenum.data() );
     }
     TileID2HashKey( int i, int j, int k )
-        : _tilenum( i, j, k )
     {
+        _tilenum[0] = i;
+        _tilenum[1] = j;
+        _tilenum[2] = k;
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr auto operator()( std::array<int, 3> tileid ) -> Key
+    constexpr auto operator()( int tile_i, int tile_j, int tile_k ) -> Key
     {
-        return tileid[0] * _tilenum[1] * _tilenum[2] + tileid[1] * _tilenum[2] +
-               tileid[2];
-    }
-
-    KOKKOS_FORCEINLINE_FUNCTION
-    constexpr auto operator()( int tileid_x, int tileid_y, int tileid_z ) -> Key
-    {
-        return tileid_x * _tilenum[1] * _tilenum[2] + tileid_y * _tilenum[2] +
-               tileid_z;
+        return tile_i * _tilenum[1] * _tilenum[2] + tile_j * _tilenum[2] +
+               tile_k;
     }
 
   private:
-    std::array<int, 3> _tilenum;
+    Kokkos::Array<int, 3> _tilenum;
 };
 
 template <typename Key>
@@ -146,24 +138,17 @@ struct TileID2HashKey<Key, HashTypes::Morton>
 
     enum : uint64_t
     { // hand-coded now, can be improved by iterative func
-        page_zmask = ( 0x9249249249249249UL ),
-        page_ymask = ( 0x2492492492492492UL ),
-        page_xmask = ( 0x4924924924924924UL )
+        page_kmask = ( 0x9249249249249249UL ),
+        page_jmask = ( 0x2492492492492492UL ),
+        page_imask = ( 0x4924924924924924UL )
     };
-    KOKKOS_FORCEINLINE_FUNCTION
-    constexpr auto operator()( std::array<int, 3> tileid ) -> Key
-    {
-        return bit_spread( page_zmask, tileid[2] ) |
-               bit_spread( page_ymask, tileid[1] ) |
-               bit_spread( page_xmask, tileid[0] );
-    }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr auto operator()( int tileid_x, int tileid_y, int tileid_z ) -> Key
+    constexpr auto operator()( int tile_i, int tile_j, int tile_k ) -> Key
     {
-        return bit_spread( page_zmask, tileid_z ) |
-               bit_spread( page_ymask, tileid_y ) |
-               bit_spread( page_xmask, tileid_x );
+        return bit_spread( page_kmask, tile_k ) |
+               bit_spread( page_jmask, tile_j ) |
+               bit_spread( page_imask, tile_i );
     }
 };
 
@@ -190,17 +175,17 @@ struct HashKey2TileID<Key, HashTypes::Naive>
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr void operator()( Key tilekey, int &tileid_x, int &tileid_y,
-                               int &tileid_z )
+    constexpr void operator()( Key tilekey, int &tile_i, int &tile_j,
+                               int &tile_k )
     {
-        tileid_z = tilekey % _tilenum[2];
-        tileid_y = static_cast<Key>( tilekey / _tilenum[2] ) % _tilenum[1];
-        tileid_x = static_cast<Key>( tilekey / _tilenum[2] / _tilenum[1] ) %
-                   _tilenum[0];
+        tile_k = tilekey % _tilenum[2];
+        tile_j = static_cast<Key>( tilekey / _tilenum[2] ) % _tilenum[1];
+        tile_i = static_cast<Key>( tilekey / _tilenum[2] / _tilenum[1] ) %
+                 _tilenum[0];
     }
 
   private:
-    std::array<int, 3> _tilenum;
+    Kokkos::Array<int, 3> _tilenum;
 };
 
 template <typename Key>
@@ -210,37 +195,44 @@ struct HashKey2TileID<Key, HashTypes::Morton>
     HashKey2TileID( int, int, int ) {}
     enum : uint64_t
     { // hand-coded now, can be improved by iterative func
-        page_zmask = ( 0x9249249249249249UL ),
-        page_ymask = ( 0x2492492492492492UL ),
-        page_xmask = ( 0x4924924924924924UL )
+        page_kmask = ( 0x9249249249249249UL ),
+        page_jmask = ( 0x2492492492492492UL ),
+        page_imask = ( 0x4924924924924924UL )
     };
 
     KOKKOS_FORCEINLINE_FUNCTION
     constexpr void operator()( Key tilekey, std::array<int, 3> &tileid )
     {
-        tileid[2] = bit_pack( page_zmask, tilekey );
-        tileid[1] = bit_pack( page_ymask, tilekey );
-        tileid[0] = bit_pack( page_xmask, tilekey );
+        tileid[2] = bit_pack( page_kmask, tilekey );
+        tileid[1] = bit_pack( page_jmask, tilekey );
+        tileid[0] = bit_pack( page_imask, tilekey );
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    constexpr void operator()( Key tilekey, int &tileid_x, int &tileid_y,
-                               int &tileid_z )
+    constexpr void operator()( Key tilekey, int &tile_i, int &tile_j,
+                               int &tile_k )
     {
-        tileid_z = bit_pack( page_zmask, tilekey );
-        tileid_y = bit_pack( page_ymask, tilekey );
-        tileid_x = bit_pack( page_xmask, tilekey );
+        tile_k = bit_pack( page_kmask, tilekey );
+        tile_j = bit_pack( page_jmask, tilekey );
+        tile_i = bit_pack( page_imask, tilekey );
     }
 };
 
 //---------------------------------------------------------------------------//
+template <int N, unsigned long long TBits, unsigned long long TSizePerDim,
+          unsigned long long TSize, HashTypes Hash, typename Device,
+          typename Key, typename Value>
+class BlockIndexSpace;
+
+template <int TBits, int TSizePerDim, int TSize>
+class TileIndexSpace;
 /*!
   \class SparseIndexSpace
   \brief Sparse index space, hierarchical structure (cell->tile->block)
   \ ValueType : tileNo type
  */
 template <int N = 3, unsigned long long TileNPerDim = 4,
-          typename Hash = HashTypes::Naive,
+          HashTypes Hash = HashTypes::Naive,
           typename Device = Kokkos::DefaultExecutionSpace,
           typename Key = uint64_t, typename Value = uint64_t>
 class SparseIndexSpace
@@ -259,9 +251,9 @@ class SparseIndexSpace
     static constexpr unsigned long long TileSize =
         TileSizePerDim * TileSizePerDim * TileSizePerDim;
     //! Types
-    using KeyType = Key;     // tile hash key type
-    using ValueType = Value; // tile value type
-    using HashType = Hash;   // hash table type
+    using KeyType = Key;                        // tile hash key type
+    using ValueType = Value;                    // tile value type
+    static constexpr HashTypes HashType = Hash; // hash table type
 
     // size should be global
     SparseIndexSpace( const std::array<int, N> &size, int capacity,
@@ -275,45 +267,46 @@ class SparseIndexSpace
 
     //! given a cell ijk, insert the tile such cell reside in
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType insert_cell( int cellid_x, int cellid_y, int cellid_z )
+    ValueType insert_cell( int cell_i, int cell_j, int cell_k )
     {
-        return _blkIdSpace.insert( cellid_x >> TileBitsPerDim,
-                                   cellid_y >> TileBitsPerDim,
-                                   cellid_z >> TileBitsPerDim );
+        return _blkIdSpace.insert( cell_i >> TileBitsPerDim,
+                                   cell_j >> TileBitsPerDim,
+                                   cell_k >> TileBitsPerDim );
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType insert_tile( int tileid_x, int tileid_y, int tileid_z )
+    ValueType insert_tile( int cell_i, int cell_j, int cell_k )
     {
-        return _blkIdSpace.insert( tileid_x, tileid_y, tileid_z );
+        return _blkIdSpace.insert( cell_i, cell_j, cell_k );
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType query_cell( int cellid_x, int cellid_y, int cellid_z )
+    ValueType query_cell( int cell_i, int cell_j, int cell_k )
     {
-        auto tileid = _blkIdSpace.find( cellid_x >> TileBitsPerDim,
-                                        cellid_y >> TileBitsPerDim,
-                                        cellid_z >> TileBitsPerDim );
-        auto cellid = _tileIdSpace.coord_to_offset(
-            cellid_x & TileMask, cellid_y & TileMask, cellid_z & TileMask );
+        auto tileid = _blkIdSpace.find( cell_i >> TileBitsPerDim,
+                                        cell_j >> TileBitsPerDim,
+                                        cell_k >> TileBitsPerDim );
+        auto cellid = _tileIdSpace.coord_to_offset( cell_i & TileMaskPerDim,
+                                                    cell_j & TileMaskPerDim,
+                                                    cell_k & TileMaskPerDim );
         return ( ValueType )( ( tileid << TileBits ) & cellid );
     }
 
   private:
     //! block index space, map tile ijk to tile No
-    BlockIndexSpace<TileBitsPerDim, TileSizePerDim, TSize, HashType, Device,
-                    KeyType, ValueType>
+    BlockIndexSpace<Rank, TileBitsPerDim, TileSizePerDim, TileSize, HashType,
+                    Device, KeyType, ValueType>
         _blkIdSpace;
     //! tile index space, map cell ijk to cell local No inside a tile
-    TileIndexSpace<TileBitsPerDim, TileSizePerDim, TSize> _tileIdSpace;
+    TileIndexSpace<TileBitsPerDim, TileSizePerDim, TileSize> _tileIdSpace;
     //! space size (global), channel size
     Kokkos::Array<int, Rank> _min;
     Kokkos::Array<int, Rank> _max;
 };
 
 //---------------------------------------------------------------------------//
-template <unsigned long long TBits, unsigned long long TSizePerDim,
-          unsigned long long TSize, typename Hash, typename Device,
+template <int N, unsigned long long TBits, unsigned long long TSizePerDim,
+          unsigned long long TSize, HashTypes Hash, typename Device,
           typename Key, typename Value>
 class BlockIndexSpace
 {
@@ -323,9 +316,9 @@ class BlockIndexSpace
     static constexpr unsigned long long TileSizePerDim = TSizePerDim;
     static constexpr unsigned long long TileSize = TSize;
     //! Types
-    using KeyType = Key;     // tile hash key type
-    using ValueType = Value; // tile value type
-    using HashType = Hash;   // hash table type
+    using KeyType = Key;                        // tile hash key type
+    using ValueType = Value;                    // tile value type
+    static constexpr HashTypes HashType = Hash; // hash table type
 
     BlockIndexSpace( int capacity, float rehash_factor,
                      std::array<int, N> &size )
@@ -336,12 +329,11 @@ class BlockIndexSpace
         , _op_ijk2key( size[0], size[1], size[2] )
         , _op_key2ijk( size[0], size[1], size[2] )
     {
-        _block_table.clear();
-        _value_table.clear();
+        _tile_table.clear();
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType insert( int tileid_x, int tileid_y, int tileid_z )
+    ValueType insert( int tile_i, int tile_j, int tile_k )
     {
         if ( _tile_table.size() >= _tile_capacity )
         {
@@ -349,14 +341,14 @@ class BlockIndexSpace
             _tile_table.rehash( _tile_capacity );
             // TODO: view reallocate needed
         }
-        const KeyType tileKey = _op_ijk2key( tileid_x, tileid_y, tileid_z );
+        const KeyType tileKey = _op_ijk2key( tile_i, tile_j, tile_k );
         ValueType tileNo;
-        if ( ( tileNo = _key_table.find( tileKey ) ) ==
-             Kokkos::UnorderedMap::invalid_index )
+        if ( ( tileNo = _tile_table.find( tileKey ) ) ==
+             _tile_table.invalid_index )
         {
             // current impl: use inserting sequence as id
             // rethink: sort the id .
-            tileNo = _blk_table.size();
+            tileNo = _tile_table.size();
             _tile_table.insert( tileKey, tileNo );
         }
         return tileNo;
@@ -370,9 +362,9 @@ class BlockIndexSpace
 
     // query
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType find( int tileid_x, int tileid_y, int tileid_z )
+    ValueType find( int tile_i, int tile_j, int tile_k )
     {
-        return _blk_table.find( _op_ijk2key( tileid_x, tileid_y, tileid_z ) );
+        return _tile_table.find( _op_ijk2key( tile_i, tile_j, tile_k ) );
     }
 
   private:
@@ -399,6 +391,7 @@ class TileIndexSpace
     static constexpr int TileBitsPerDim = TBits;
     static constexpr int TileSizePerDim = TSizePerDim;
     static constexpr int TileSize = TSize;
+    static constexpr int Rank = 3;
 
     //! Coord  <=> Offset Computations
     struct Coord2OffsetDim
@@ -419,7 +412,7 @@ class TileIndexSpace
         constexpr auto operator()( int dimNo, Coord &i, const uint64_t &offset )
             -> uint64_t
         {
-            i = offset % BlockSizePerDim;
+            i = offset % TileSizePerDim;
             return static_cast<uint64_t>( offset / TileSizePerDim );
         }
     };
@@ -435,7 +428,7 @@ class TileIndexSpace
     static constexpr void offset_to_coord( Key &&key, Coords &... coords )
     {
         to_coord<Offset2CoordDim>( std::forward<Key>( key ),
-                                   std::forward<Coords>( coords ) );
+                                   std::forward<Coords>( coords )... );
     }
 
   protected:
@@ -451,7 +444,7 @@ class TileIndexSpace
     }
 
     template <typename Func, typename Key, typename... Coords>
-    static constexpr void to_coord( Key &&key, Coords &... coords )->uint64_t
+    static constexpr void to_coord( Key &&key, Coords &... coords )
     {
         if ( sizeof...( Coords ) != Rank )
             throw std::invalid_argument( "Dimension of coordinate mismatch" );
@@ -490,7 +483,7 @@ class TileIndexSpace
     {
         Key newKey = Func()( dimNo, i, std::forward<Key>( key ) );
         if ( dimNo + 1 < Rank )
-            to_coord_impl<Func>( dimNo + 1, std::forward<Key>( Newkey ),
+            to_coord_impl<Func>( dimNo + 1, std::forward<Key>( newKey ),
                                  is... );
     }
 };
