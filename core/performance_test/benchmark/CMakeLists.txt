@@ -3,7 +3,7 @@ if(Kokkos_ENABLE_SERIAL)
   target_link_libraries(NeighborListMDPerfTest cabanacore)
 endif()
 
-if(MPI_FOUND AND Kokkos_ENABLE_CUDA AND Kokkos_ENABLE_OPENMP)
+if(Cabana_ENABLE_MPI AND Kokkos_ENABLE_CUDA AND Kokkos_ENABLE_OPENMP)
   add_executable(CommPerformance Cabana_CommPerformance.cpp)
   target_link_libraries(CommPerformance cabanacore)
 endif()
