@@ -133,7 +133,7 @@ struct TileID2HashKey<Key, HashTypes::Naive>
 template <typename Key>
 struct TileID2HashKey<Key, HashTypes::Morton>
 {
-    TileID2HashKey( std::array<int, 3> && ) {} // ugly
+    TileID2HashKey( std::initializer_list<int> &&tnum ) {} // ugly
     TileID2HashKey( int, int, int ) {}
 
     enum : uint64_t
@@ -156,22 +156,16 @@ struct TileID2HashKey<Key, HashTypes::Morton>
 template <typename Key>
 struct HashKey2TileID<Key, HashTypes::Naive>
 {
-    HashKey2TileID( std::array<int, 3> &&tnum )
-        : _tilenum( tnum )
+    HashKey2TileID( std::initializer_list<int> &&tnum )
+        : _tilenum()
     {
+        std::copy( tnum.begin(), tnum.end(), _tilenum.data() );
     }
     HashKey2TileID( int i, int j, int k )
-        : _tilenum( i, j, k )
     {
-    }
-
-    KOKKOS_FORCEINLINE_FUNCTION
-    constexpr void operator()( Key tilekey, std::array<int, 3> &tileid )
-    {
-        tileid[2] = tilekey % _tilenum[2];
-        tileid[1] = static_cast<Key>( tilekey / _tilenum[2] ) % _tilenum[1];
-        tileid[0] = static_cast<Key>( tilekey / _tilenum[2] / _tilenum[1] ) %
-                    _tilenum[0];
+        _tilenum[0] = i;
+        _tilenum[1] = j;
+        _tilenum[2] = k;
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
@@ -191,7 +185,7 @@ struct HashKey2TileID<Key, HashTypes::Naive>
 template <typename Key>
 struct HashKey2TileID<Key, HashTypes::Morton>
 {
-    HashKey2TileID( std::array<int, 3> && ) {} // ugly
+    HashKey2TileID( std::initializer_list<int> &&tnum ) {} // ugly
     HashKey2TileID( int, int, int ) {}
     enum : uint64_t
     { // hand-coded now, can be improved by iterative func
@@ -199,14 +193,6 @@ struct HashKey2TileID<Key, HashTypes::Morton>
         page_jmask = ( 0x2492492492492492UL ),
         page_imask = ( 0x4924924924924924UL )
     };
-
-    KOKKOS_FORCEINLINE_FUNCTION
-    constexpr void operator()( Key tilekey, std::array<int, 3> &tileid )
-    {
-        tileid[2] = bit_pack( page_kmask, tilekey );
-        tileid[1] = bit_pack( page_jmask, tilekey );
-        tileid[0] = bit_pack( page_imask, tilekey );
-    }
 
     KOKKOS_FORCEINLINE_FUNCTION
     constexpr void operator()( Key tilekey, int &tile_i, int &tile_j,
@@ -257,10 +243,9 @@ class SparseIndexSpace
     static constexpr HashTypes HashType = Hash; // hash table type
 
     // size should be global
-    SparseIndexSpace( const std::array<int, N> &size, int capacity,
-                      float rehash_factor )
-        : _blkIdSpace( 1 << bit_count( capacity ), rehash_factor, size )
-        , _tileIdSpace()
+    SparseIndexSpace( const std::array<int, N> size, const int capacity,
+                      const float rehash_factor )
+        : _blkIdSpace( size, 1 << bit_count( capacity ), rehash_factor )
     {
         std::fill( _min.data(), _min.data() + Rank, 0 );
         std::copy( size.begin(), size.end(), _max.data() );
@@ -270,9 +255,9 @@ class SparseIndexSpace
     KOKKOS_FORCEINLINE_FUNCTION
     ValueType insert_cell( int cell_i, int cell_j, int cell_k )
     {
-        return _blkIdSpace.insert( cell_i >> CellBitsPerTileDim,
-                                   cell_j >> CellBitsPerTileDim,
-                                   cell_k >> CellBitsPerTileDim );
+        return insert_tile( cell_i >> CellBitsPerTileDim,
+                            cell_j >> CellBitsPerTileDim,
+                            cell_k >> CellBitsPerTileDim );
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
@@ -322,8 +307,8 @@ class BlockIndexSpace
     using ValueType = Value;                    // tile value type
     static constexpr HashTypes HashType = Hash; // hash table type
 
-    BlockIndexSpace( int capacity, float rehash_factor,
-                     std::array<int, N> &size )
+    BlockIndexSpace( const std::array<int, N> size, const int capacity,
+                     const float rehash_factor )
         : _tile_num( 0 )
         , _tile_capacity( capacity )
         , _rehash_coeff( rehash_factor )
