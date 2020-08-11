@@ -75,6 +75,7 @@ set(SERIAL_TESTS
   IndexSpace
   Parallel
   ParameterPack
+  SparseIndexSpace
   Splines
   )
 

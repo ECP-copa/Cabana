@@ -1,4 +1,4 @@
-#include <Cajita_IndexSpace.hpp>
+#include <Cajita_SparseIndexSpace.hpp>
 
 #include <Kokkos_Core.hpp>
 
