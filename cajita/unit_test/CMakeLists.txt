@@ -73,6 +73,7 @@ endmacro()
 set(SERIAL_TESTS
   GlobalMesh
   IndexSpace
+  SparseIndexSpace
   Splines
   )
 
