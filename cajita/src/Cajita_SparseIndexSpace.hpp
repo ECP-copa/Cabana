@@ -219,37 +219,38 @@ struct HashKey2TileID<Key, HashTypes::Morton>
 };
 
 //---------------------------------------------------------------------------//
-template <int N, unsigned long long TBits, unsigned long long TSizePerDim,
-          unsigned long long TSize, HashTypes Hash, typename Device,
-          typename Key, typename Value>
+template <typename MemorySpace, int N, unsigned long long CBits,
+          unsigned long long CNumPerDim, unsigned long long CNumPerTile,
+          HashTypes Hash, typename Key, typename Value>
 class BlockIndexSpace;
 
-template <int TBits, int TSizePerDim, int TSize>
+template <int CBits, int CNumPerDim, int CNumPerTile>
 class TileIndexSpace;
 /*!
   \class SparseIndexSpace
   \brief Sparse index space, hierarchical structure (cell->tile->block)
   \ ValueType : tileNo type
  */
-template <int N = 3, unsigned long long TileNPerDim = 4,
-          HashTypes Hash = HashTypes::Naive,
-          typename Device = Kokkos::DefaultExecutionSpace,
-          typename Key = uint64_t, typename Value = uint64_t>
+template <typename MemorySpace, int N = 3,
+          unsigned long long CellPerTileDim = 4,
+          HashTypes Hash = HashTypes::Naive, typename Key = uint64_t,
+          typename Value = uint64_t>
 class SparseIndexSpace
 {
   public:
     //! Number of dimensions, 3 = ijk, or 4 = ijk + ch
     static constexpr int Rank = N;
     //! Number of cells inside each tile, tile size reset to power of 2
-    static constexpr unsigned long long TileBitsPerDim =
-        bit_count( TileNPerDim );
-    static constexpr unsigned long long TileSizePerDim = 1 << TileBitsPerDim;
-    static constexpr unsigned long long TileMaskPerDim =
-        ( 1 << TileBitsPerDim ) - 1;
-    static constexpr unsigned long long TileBits =
-        TileBitsPerDim + TileBitsPerDim + TileBitsPerDim;
-    static constexpr unsigned long long TileSize =
-        TileSizePerDim * TileSizePerDim * TileSizePerDim;
+    static constexpr unsigned long long CellBitsPerTileDim =
+        bit_count( CellPerTileDim );
+    static constexpr unsigned long long CellNumPerTileDim =
+        1 << CellBitsPerTileDim;
+    static constexpr unsigned long long CellMaskPerTileDim =
+        ( 1 << CellBitsPerTileDim ) - 1;
+    static constexpr unsigned long long CellBitsPerTile =
+        CellBitsPerTileDim + CellBitsPerTileDim + CellBitsPerTileDim;
+    static constexpr unsigned long long CellNumPerTile =
+        CellNumPerTileDim * CellNumPerTileDim * CellNumPerTileDim;
     //! Types
     using KeyType = Key;                        // tile hash key type
     using ValueType = Value;                    // tile value type
@@ -269,9 +270,9 @@ class SparseIndexSpace
     KOKKOS_FORCEINLINE_FUNCTION
     ValueType insert_cell( int cell_i, int cell_j, int cell_k )
     {
-        return _blkIdSpace.insert( cell_i >> TileBitsPerDim,
-                                   cell_j >> TileBitsPerDim,
-                                   cell_k >> TileBitsPerDim );
+        return _blkIdSpace.insert( cell_i >> CellBitsPerTileDim,
+                                   cell_j >> CellBitsPerTileDim,
+                                   cell_k >> CellBitsPerTileDim );
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
@@ -283,38 +284,39 @@ class SparseIndexSpace
     KOKKOS_FORCEINLINE_FUNCTION
     ValueType query_cell( int cell_i, int cell_j, int cell_k )
     {
-        auto tileid = _blkIdSpace.find( cell_i >> TileBitsPerDim,
-                                        cell_j >> TileBitsPerDim,
-                                        cell_k >> TileBitsPerDim );
-        auto cellid = _tileIdSpace.coord_to_offset( cell_i & TileMaskPerDim,
-                                                    cell_j & TileMaskPerDim,
-                                                    cell_k & TileMaskPerDim );
-        return ( ValueType )( ( tileid << TileBits ) & cellid );
+        auto tileid = _blkIdSpace.find( cell_i >> CellBitsPerTileDim,
+                                        cell_j >> CellBitsPerTileDim,
+                                        cell_k >> CellBitsPerTileDim );
+        auto cellid = _tileIdSpace.coord_to_offset(
+            cell_i & CellMaskPerTileDim, cell_j & CellMaskPerTileDim,
+            cell_k & CellMaskPerTileDim );
+        return ( ValueType )( ( tileid << CellBitsPerTile ) & cellid );
     }
 
   private:
     //! block index space, map tile ijk to tile No
-    BlockIndexSpace<Rank, TileBitsPerDim, TileSizePerDim, TileSize, HashType,
-                    Device, KeyType, ValueType>
+    BlockIndexSpace<MemorySpace, Rank, CellBitsPerTileDim, CellNumPerTileDim,
+                    CellNumPerTile, HashType, KeyType, ValueType>
         _blkIdSpace;
     //! tile index space, map cell ijk to cell local No inside a tile
-    TileIndexSpace<TileBitsPerDim, TileSizePerDim, TileSize> _tileIdSpace;
+    TileIndexSpace<CellBitsPerTileDim, CellNumPerTileDim, CellNumPerTile>
+        _tileIdSpace;
     //! space size (global), channel size
     Kokkos::Array<int, Rank> _min;
     Kokkos::Array<int, Rank> _max;
 };
 
 //---------------------------------------------------------------------------//
-template <int N, unsigned long long TBits, unsigned long long TSizePerDim,
-          unsigned long long TSize, HashTypes Hash, typename Device,
-          typename Key, typename Value>
+template <typename MemorySpace, int N, unsigned long long CBits,
+          unsigned long long CNumPerDim, unsigned long long CNumPerTile,
+          HashTypes Hash, typename Key, typename Value>
 class BlockIndexSpace
 {
   public:
     //! Number of cells inside each tile
-    static constexpr unsigned long long TileBitsPerDim = TBits;
-    static constexpr unsigned long long TileSizePerDim = TSizePerDim;
-    static constexpr unsigned long long TileSize = TSize;
+    static constexpr unsigned long long CellBitsPerTileDim = CBits;
+    static constexpr unsigned long long CellNumPerTileDim = CNumPerDim;
+    static constexpr unsigned long long CellNumPerTile = CNumPerTile;
     //! Types
     using KeyType = Key;                        // tile hash key type
     using ValueType = Value;                    // tile value type
@@ -376,21 +378,21 @@ class BlockIndexSpace
     //! table
     float _rehash_coeff;
     //! hash table (tile IJK <=> tile No)
-    Kokkos::UnorderedMap<KeyType, ValueType, Device> _tile_table;
+    Kokkos::UnorderedMap<KeyType, ValueType, MemorySpace> _tile_table;
     //! Op: tile IJK <=> tile No
     TileID2HashKey<KeyType, HashType> _op_ijk2key;
     HashKey2TileID<KeyType, HashType> _op_key2ijk;
 };
 
 //---------------------------------------------------------------------------//
-template <int TBits, int TSizePerDim, int TSize>
+template <int CBits, int CNumPerDim, int CNumPerTile>
 class TileIndexSpace
 {
   public:
     //! Number of cells inside each tile
-    static constexpr int TileBitsPerDim = TBits;
-    static constexpr int TileSizePerDim = TSizePerDim;
-    static constexpr int TileSize = TSize;
+    static constexpr int CellBitsPerTileDim = CBits;
+    static constexpr int CellNumPerTileDim = CNumPerDim;
+    static constexpr int CellNumPerTile = CNumPerTile;
     static constexpr int Rank = 3;
 
     //! Coord  <=> Offset Computations
@@ -401,7 +403,7 @@ class TileIndexSpace
         {
             uint64_t result = (uint64_t)i;
             for ( int i = 0; i < dimNo; i++ )
-                result *= TileSizePerDim;
+                result *= CellNumPerTileDim;
             return result;
         }
     };
@@ -412,8 +414,8 @@ class TileIndexSpace
         constexpr auto operator()( int dimNo, Coord &i, const uint64_t &offset )
             -> uint64_t
         {
-            i = offset % TileSizePerDim;
-            return static_cast<uint64_t>( offset / TileSizePerDim );
+            i = offset % CellNumPerTileDim;
+            return static_cast<uint64_t>( offset / CellNumPerTileDim );
         }
     };
 
