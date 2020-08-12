@@ -457,8 +457,8 @@ inline void deep_copy_partial_src(
     Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
     Kokkos::fence();
 
-    std::cout << "src particle size " << src_partial.size() << " dst size " <<
-        dst.size() << std::endl;
+    std::cout << "src particle size " << src_partial.size() << " dst size "
+              << dst.size() << std::endl;
 
     assert( src_partial.size() == dst.size() );
 
@@ -484,8 +484,7 @@ inline void deep_copy_partial_src(
  */
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_dst(
-    DstAoSoA dst,
-    const SrcAoSoA src,
+    DstAoSoA dst, const SrcAoSoA src,
     const int to_index, // TODO: the order of these params is questionable
     // const int from_index, // TODO: not honored
     const int count,
@@ -514,16 +513,6 @@ inline void deep_copy_partial_dst(
     // Populate it with data using a parallel for
     auto copy_func = KOKKOS_LAMBDA( const std::size_t i )
     {
-        printf("Copy from particle %d to global %d \n", i, i+to_index);
-        printf("OVerwrite %e with %e. %p = %p. src %e %p \n",
-                d_0(i, 0, 0, 1),
-                dp_0(i, 0, 0, 1),
-                &d_0(i, 0, 0, 1),
-                &dp_0(i, 0, 0, 1),
-                s_0(i,  0,0, 1),
-                &s_0(i, 0,0, 1)
-              );
-
         dst.setTuple( i + to_index, dst_partial.getTuple( i ) );
     };
 

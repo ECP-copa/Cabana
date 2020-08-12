@@ -34,7 +34,8 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
     auto mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
 
-    if (copy_back == 0) {
+    if ( copy_back == 0 )
+    {
         mirror = aosoa;
     }
 
@@ -121,7 +122,8 @@ void testBufferedTag()
 void testBufferedDataCreation()
 {
     // Create an AoSoA
-    // TODO: we want this to match the target space so we can do a fast async copy
+    // TODO: we want this to match the target space so we can do a fast async
+    // copy
     const int vector_length = 16;
 
     // Data dimensions.
@@ -212,8 +214,6 @@ void testBufferedDataCreation()
             const auto slice_2 = buffered_aosoa.get_slice<2>();
             const auto slice_3 = buffered_aosoa.get_slice<3>();
 
-            printf("Slice 0 is %p \n", &slice_0);
-
             // Member 0.
 
             for ( int i = 0; i < dim_1; ++i )
@@ -222,12 +222,6 @@ void testBufferedDataCreation()
                 {
                     for ( int k = 0; k < dim_3; ++k )
                     {
-                        printf("Setting %d %d %d %d %d to be %e (was %e) %p \n",
-                                s, a, i, j, k, 
-                                fval * ( i + j +  k ),
-                                slice_0.access( s, a, i, j, k),
-                                &slice_0.access( s, a, i, j, k ));
-
                         slice_0.access( s, a, i, j, k ) = fval * ( i + j + k );
                     }
                 }
@@ -256,13 +250,13 @@ void testBufferedDataCreation()
     // TODO: test the data values that get bought back for us, not only what we
     // copy back. Currently the test runs on data that's already on the GPU...
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
-    //checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 0 );
+    // checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 0 );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, bufferedData_test ) { testBufferedDataCreation(); }
-//TEST( TEST_CATEGORY, bufferedData_tag_test ) { testBufferedTag(); }
+// TEST( TEST_CATEGORY, bufferedData_tag_test ) { testBufferedTag(); }
 
 } // namespace Test

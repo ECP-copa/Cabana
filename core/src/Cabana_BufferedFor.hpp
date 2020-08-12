@@ -83,18 +83,16 @@ inline void custom_simd_parallel_for(
 
     using ex = typename simd_policy::execution_space;
 
-    /*
     auto f = KOKKOS_LAMBDA( extra_functor_arg_t buffered_aosoa,
-            //std::forward<IndexTypes>( indices )...
-            int s, int i )
+                            // std::forward<IndexTypes>( indices )...
+                            int s, int i )
     {
         functor(
-                // t,
-                buffered_aosoa, s, i
-                // std::forward<IndexTypes>(indices)...
-               );
+            // t,
+            buffered_aosoa, s, i
+            // std::forward<IndexTypes>(indices)...
+        );
     };
-    */
 
     // TODO: this casues a seg fawult even if we don't use it???
     // Kokkos::DefaultExecutionSpace space1 =
@@ -110,7 +108,7 @@ inline void custom_simd_parallel_for(
                 Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
                                            exec_policy.arrayEnd( s ) ),
                 [&]( const index_type a ) {
-                    Impl::functorTagDispatch<work_tag>( functor, f_arg, s, a );
+                    Impl::functorTagDispatch<work_tag>( f, f_arg, s, a );
                     // functor( f_arg, s, a);
                 } );
         } );
@@ -166,8 +164,8 @@ ExecParameters...>::work_tag, void>::value>::type = 0
 template <class BufferedAoSoA_t, class FunctorType, class... ExecParameters>
 inline void buffered_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    BufferedAoSoA_t &buffered_aosoa,
-    const FunctorType &functor, const std::string &str = "" )
+    BufferedAoSoA_t &buffered_aosoa, const FunctorType &functor,
+    const std::string &str = "" )
 {
     // TODO: passing a kokkos range policy and then building a simd policy
     // doesn't make a whole lot of sense?
@@ -214,15 +212,15 @@ inline void buffered_parallel_for(
 
         simd_policy policy( begin, end );
 
-        buffered_aosoa.slice_buffer(i);
+        // TODO: this uses a global object so will break if we go fully async
+        buffered_aosoa.slice_buffer( i );
 
         custom_simd_parallel_for( policy, functor, buffered_aosoa, str );
         // Cabana::simd_parallel_for( policy, functor, str );
         Kokkos::fence();
 
-         auto s = Cabana::slice<0>(buffered_aosoa.internal_buffers[0]);
-        std::cout << "buffer 0 at i=0 0 0 1 = " << s(0, 0, 0, 1) << " = " << s.access(0, 0, 0, 0, 1) << " pointer is " << &s(0,0,0,1) << std::endl;
-        std::cout << "buffer 0 at i=0 0 0 2 = " << s(0, 0, 0, 2) << " = " << s.access(0, 0, 0, 0, 2) << " pointer is " << &s(0,0,0,2) << std::endl;
+        auto s = Cabana::slice<0>( buffered_aosoa.internal_buffers[0] );
+
         if ( i < niter - 1 )
         { // Don't copy "next" on the last iteration
             buffered_aosoa.load_buffer( i + 1 );
@@ -232,26 +230,11 @@ inline void buffered_parallel_for(
 
         // copy all data back from localbuffer into the correct location in
         // global
-        std::cout << "copy back buffer " << i % buffered_aosoa.get_buffer_count() << std::endl;
+        std::cout << "copy back buffer "
+                  << i % buffered_aosoa.get_buffer_count() << std::endl;
 
         buffered_aosoa.copy_buffer_back( i % buffered_aosoa.get_buffer_count(),
                                          buffer_size * ( i ) );
-    }
-
-    auto aosoa = buffered_aosoa.original_view;
-    auto slice_0 = Cabana::slice<0>( aosoa );
-    for (int idx = 0; idx < aosoa.size(); idx++)
-    {
-        int dim_1 = 3;
-        int dim_2 = 2;
-        int dim_3 = 4;
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                for ( int k = 0; k < dim_3; ++k )
-                    printf("aosoa slice 0 at %i %i %i %i = %e \n", idx, i, j, k,
-                            slice_0( idx, i, j, k )
-                //slice_0( idx )
-              );
     }
 }
 } // namespace Cabana

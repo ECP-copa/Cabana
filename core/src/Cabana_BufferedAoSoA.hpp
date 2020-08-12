@@ -232,11 +232,13 @@ class BufferedAoSoA
         }
     }
 
-    void slice_buffer(int buffer_index)
+    void slice_buffer( int buffer_index )
     {
         // TODO: using this global variable is asking for trouble
-        slice_tuple = slice_tuple_t( internal_buffers[buffer_index % get_buffer_count() ] );
-        std::cout << "Slicing buffer " << buffer_index << " to give slice<0> = " << &get_slice<0>() << std::endl;
+        slice_tuple = slice_tuple_t(
+            internal_buffers[buffer_index % get_buffer_count()] );
+        std::cout << "Slicing buffer " << buffer_index
+                  << " to give slice<0> = " << &get_slice<0>() << std::endl;
     }
 
     /** @brief Helper to access the number of buffers which exist.
@@ -274,14 +276,14 @@ class BufferedAoSoA
 
         int start_index = normalized_buffer_number * buffer_size;
         // Copy from the main memory store into the "current" buffer
-        Cabana::deep_copy_partial_src( internal_buffers[normalized_buffer_number],
-                                       original_view,
-                                       // 0, // to_index,
-                                       start_index, buffer_size );
+        Cabana::deep_copy_partial_src(
+            internal_buffers[normalized_buffer_number], original_view,
+            // 0, // to_index,
+            start_index, buffer_size );
 
         // TODO: is this likely to cause a problem at runtime?
         // Update the slice tuple to have slices based on the current buffer
-        //slice_tuple = slice_tuple_t( internal_buffers[buffer_number] );
+        // slice_tuple = slice_tuple_t( internal_buffers[buffer_number] );
     }
 
     AoSoA_t original_view;
