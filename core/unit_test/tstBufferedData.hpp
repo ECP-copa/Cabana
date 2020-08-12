@@ -121,10 +121,9 @@ void testBufferedTag()
 
 void testBufferedDataCreation()
 {
-    // Create an AoSoA
-    // TODO: we want this to match the target space so we can do a fast async
+    // We want this to match the target space so we can do a fast async
     // copy
-    const int vector_length = 16;
+    const int vector_length = 32; // TODO: make this 32 be the default for GPU
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -247,16 +246,14 @@ void testBufferedDataCreation()
         },
         "test buffered for" );
 
-    // TODO: test the data values that get bought back for us, not only what we
-    // copy back. Currently the test runs on data that's already on the GPU...
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
-    // checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 0 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 0 );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, bufferedData_test ) { testBufferedDataCreation(); }
-// TEST( TEST_CATEGORY, bufferedData_tag_test ) { testBufferedTag(); }
+//TEST( TEST_CATEGORY, bufferedData_tag_test ) { testBufferedTag(); }
 
 } // namespace Test

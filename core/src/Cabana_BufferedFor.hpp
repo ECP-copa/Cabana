@@ -20,8 +20,7 @@
 namespace Cabana
 {
 
-namespace
-{
+//// START KOKKOS OVERLAP/ASYNC CODE /////
 template <class ExecSpace>
 struct SpaceInstance
 {
@@ -59,7 +58,7 @@ struct SpaceInstance<Kokkos::Cuda>
 };
 #endif
 #endif
-} // namespace
+//// END KOKKOS OVERLAP/ASYNC CODE /////
 
 template <class FunctorType, class extra_functor_arg_t, int VectorLength,
           class... ExecParameters>
@@ -67,7 +66,6 @@ inline void custom_simd_parallel_for(
     const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
     const FunctorType &functor, const extra_functor_arg_t &f_arg,
     const std::string &str = ""
-    //,
     // typename std::enable_if<!std::is_same<typename SimdPolicy<VectorLength,
     // ExecParameters...>::work_tag, void>::value>::type = 0
 )
@@ -79,18 +77,12 @@ inline void custom_simd_parallel_for(
 
     using index_type = typename team_policy::index_type;
 
-    // std::cout << "regular if" << std::endl;
-
     using ex = typename simd_policy::execution_space;
 
-    auto f = KOKKOS_LAMBDA( extra_functor_arg_t buffered_aosoa,
-                            // std::forward<IndexTypes>( indices )...
-                            int s, int i )
+    auto f = KOKKOS_LAMBDA( extra_functor_arg_t buffered_aosoa, int s, int i )
     {
         functor(
-            // t,
             buffered_aosoa, s, i
-            // std::forward<IndexTypes>(indices)...
         );
     };
 
@@ -114,46 +106,6 @@ inline void custom_simd_parallel_for(
         } );
 }
 
-/*
-template <
-class FunctorType, class extra_functor_arg_t, int VectorLength,
-          class... ExecParameters
-          >
-inline void custom_simd_parallel_for(
-    const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
-    const FunctorType &functor, const extra_functor_arg_t &f_arg,
-    const std::string &str = "",
-          typename std::enable_if<std::is_same<typename SimdPolicy<VectorLength,
-ExecParameters...>::work_tag, void>::value>::type = 0
-    )
-{
-    using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
-
-    using work_tag = typename simd_policy::work_tag;
-    using team_policy = typename simd_policy::base_type;
-
-    using index_type = typename team_policy::index_type;
-
-    std::cout << "eanble if" << std::endl;
-
-    // TODO: wrap functor to refresh capture of buffered aosoa, like
-    // build_functor() used to
-
-    Kokkos::parallel_for(
-        str, dynamic_cast<const team_policy &>( exec_policy ),
-        KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
-            index_type s = team.league_rank() + exec_policy.structBegin();
-            Kokkos::parallel_for(
-                Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
-                                           exec_policy.arrayEnd( s ) ),
-                [&]( const index_type a ) {
-                    Impl::functorTagDispatch<work_tag>( functor, f_arg, s, a );
-                    // functor( f_arg, s, a);
-                } );
-        } );
-}
-*/
-
 // Requirements:
 // 1) This must be user callable and seamlessly handle the data buffering
 // 2) It must be able to accept 2D (simd) and 1D (Kokkos) loops/ range policies
@@ -161,6 +113,17 @@ ExecParameters...>::work_tag, void>::value>::type = 0
 // 3) It should be able to warn in debug if you do something that we can detect
 // as affecting performance, eg: a) warn if vector length does not make sense
 // for target execution space
+
+/**
+ * @brief Execute a buffered parallel for the given AoSoA, which follows the
+ * interface for the regular parallel_for
+ *
+ * @param exec_policy Execution policy, which controls the global loop bounds
+ * @param buffered_aosoa Buffered AoSoA object that holds the data on which the
+ * loop will execute.
+ * @param functor User specified functor that will be excuted
+ * @param str Optional name for the parallel_for
+ */
 template <class BufferedAoSoA_t, class FunctorType, class... ExecParameters>
 inline void buffered_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,

@@ -135,9 +135,7 @@ KOKKOS_INLINE_FUNCTION
 }
 
 /**
- * @brief
- *
- * Target_Memory_Space The memory space to buffer into
+ * @brief Target_Memory_Space The memory space to buffer into
  * AoSoA_t The type of the AoSoA we're buffering from
  */
 
@@ -161,7 +159,11 @@ class BufferedAoSoA
         UnpackSliceAtIndex<target_AoSoA_t,
                            typename target_AoSoA_t::member_types>;
 
+    // Holds a collection of slices for a single buffer. Currently means we can
+    // only hold slices to a single buffer at a time
     slice_tuple_t slice_tuple;
+    // (We could make slice_tuple an array to hold multiple buffers worth of slices,
+    // but the user should not have to know which buffer they are in.)
 
     /**
      * @brief Getter to access the slices this class generates for the
@@ -177,6 +179,8 @@ class BufferedAoSoA
         return Cabana::get<target_AoSoA_t, i>( slice_tuple );
     }
 
+    // Internal buffers which we use to buffer data back and forth, and also
+    // where we perform the compute
     target_AoSoA_t internal_buffers[requested_buffer_count];
     // std::vector<target_AoSoA_t> internal_buffers;
 
@@ -190,48 +194,36 @@ class BufferedAoSoA
      * requested_buffer_count*max_buffered_tuples*sizeof(particle)
      */
     BufferedAoSoA( AoSoA_t original_view_in, int max_buffered_tuples )
-        : // I need to init buffer_index avoid the default constructor, the type
-          // may need changing when we respect their passed in space and this
-          // can likely be done more cleanly if we simplify the tuple
-          // implementation
-        // slice_tuple( target_AoSoA_t()  )
+        :
         original_view( original_view_in )
         , num_buffers( requested_buffer_count )
         , buffer_size( max_buffered_tuples )
     {
-        // TODO: this is only used internally now, and can likely be a
-        // non-pointers
-        last_filled_buffer = -1;
-
         // TODO: We may we want to override the user on their requested
         // values if they don't make sense? Both num_buffers and buffer_size
 
         // TODO: add asserts to check the balance between the size (num_data)
         // and the max_buffered_tuples
 
-        // internal_buffers.resize( num_buffers );
-
-        std::cout << "The size of the passed view is "
-                  << original_view_in.size() << std::endl;
-        std::cout << "The size of our view is " << original_view.size()
-                  << std::endl;
-
         // Resize the buffers so we know they can hold enough
         for ( int i = 0; i < num_buffers; i++ )
         {
-            // internal_buffers[i].resize(buffer_size);
             std::cout << "Making buffer of size " << buffer_size << std::endl;
 
             std::string internal_buff_name =
                 "internal_buff " + std::to_string( i );
             internal_buffers[i] =
                 target_AoSoA_t( internal_buff_name, buffer_size );
-
-            std::cout << "Buff " << i << " has size "
-                      << internal_buffers[i].size() << std::endl;
         }
     }
 
+    /**
+     * @brief Populate the slice_tuple with the correct slices for a given
+     * buffer
+     *
+     * @param buffer_index The index of the buffer, in the internal_buffers, to
+     * use when populatating slice_buffer
+     */
     void slice_buffer( int buffer_index )
     {
         // TODO: using this global variable is asking for trouble
@@ -264,9 +256,12 @@ class BufferedAoSoA
                                        buffer_size );
     }
 
-    // Start thinking about how to handle data movement...
-    // TODO: Should this accept a buffer index to allow explicit control? The
-    // reason it counts for you is so we can wrap at num_buffers
+    /**
+     * @brief Load a given buffer, populating it with data from the original
+     * AoSoA
+     *
+     * @param buffer_number The index of the (internal) buffer to populate
+     */
     void load_buffer( int buffer_number )
     {
         // TODO: does this imply the need for a subview so the sizes
@@ -287,12 +282,6 @@ class BufferedAoSoA
     }
 
     AoSoA_t original_view;
-
-    /**
-     * @brief Track which buffer we "filled" last, so we know where we
-     * are in the round robin
-     */
-    int last_filled_buffer;
 
     /**
      * @brief Number of buffers we decided to use (possibly distinct
