@@ -397,9 +397,8 @@ inline void deep_copy( Slice_t &slice,
 
 //---------------------------------------------------------------------------//
 
-// FIXME: this is very much *experimental* and incomplete -- use with great care
 /**
- * @brief Copy a partial chunk TODO
+ * @brief Copy a partial chunk from src into the destination array
  *
  * @param dst
  * @param src
@@ -410,13 +409,13 @@ inline void deep_copy( Slice_t &slice,
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_src(
     DstAoSoA &dst, const SrcAoSoA &src,
-    // const int to_index, // TODO: not honored
+    // const int to_index,
     // TODO: the order of these params is questionable
     const int from_index, const int count,
     typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
                               is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
-    // TODO: this assume you're trying to cross exec spaces (i.e partial copy
+    // TODO: this assumes you're trying to cross exec spaces (i.e partial copy
     // from CPU to GPU). You can likely do this faster and avoid data
     // duplication if that is not true
     // TODO: it might make sense to quick path this if start=0 and end=n
@@ -458,8 +457,6 @@ inline void deep_copy_partial_src(
     Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
     Kokkos::fence();
 
-    // TODO: assert that the size of dst much match src_partial.size()
-    // TODO: implement code path from when above is not true.
     assert( src_partial.size() == dst.size() );
 
     // It should now be safe to rely on existing deep copy, assuming dst is
@@ -473,9 +470,19 @@ inline void deep_copy_partial_src(
 
 // TODO: this can be DRYd with deep_copy_partial, but we need a
 // way to denote if src or dst is the partial
+/**
+ * @brief Copy the full src array into a partial place in destination
+ *
+ * @param dst TODO
+ * @param src
+ * @param to_index
+ * @param count
+ * @param
+ */
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_dst(
-    DstAoSoA dst, const SrcAoSoA src,
+    DstAoSoA dst,
+    const SrcAoSoA src,
     const int to_index, // TODO: the order of these params is questionable
     // const int from_index, // TODO: not honored
     const int count,
@@ -492,14 +499,26 @@ inline void deep_copy_partial_dst(
     std::cout << "src size " << src.size() << std::endl;
 
     Cabana::deep_copy( dst_partial, src );
+    Kokkos::fence();
 
     // assert( count <= src.size() );
     assert( to_index + count <= dst.size() );
 
+    auto d_0 = Cabana::slice<0>( dst );
+    auto dp_0 = Cabana::slice<0>( dst_partial );
+
     // Populate it with data using a parallel for
     auto copy_func = KOKKOS_LAMBDA( const std::size_t i )
     {
-        dst.setTuple( i + to_index, dst_partial.getTuple( i ) );
+        printf("Copy from particle %d to global %d \n", i, i+to_index);
+        printf("OVerwrite %e with %e. %p = %p \n",
+                d_0(i, 0, 0, 1),
+                dp_0(i, 0, 0, 1),
+                &d_0(i, 0, 0, 1),
+                &dp_0(i, 0, 0, 1)
+              );
+
+        //dst.setTuple( i + to_index, dst_partial.getTuple( i ) );
     };
 
     Kokkos::RangePolicy<typename SrcAoSoA::execution_space> exec_policy(

@@ -153,7 +153,7 @@ ExecParameters...>::work_tag, void>::value>::type = 0
 template <class BufferedAoSoA_t, class FunctorType, class... ExecParameters>
 inline void buffered_parallel_for(
     const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    BufferedAoSoA_t &buffered_aosoa, // TODO: does it need to be const?
+    BufferedAoSoA_t &buffered_aosoa,
     const FunctorType &functor, const std::string &str = "" )
 {
     // TODO: passing a kokkos range policy and then building a simd policy
@@ -179,7 +179,6 @@ inline void buffered_parallel_for(
     int buffer_size = buffered_aosoa.buffer_size;
     int niter = nelem / buffer_size;
 
-    // TODO: delete temporary prints
     std::cout << "running for " << niter << " buffered iterations "
               << std::endl;
 
@@ -194,8 +193,8 @@ inline void buffered_parallel_for(
     {
         // Now, for each iteration of the loop, we can:
         // 1) Run the code
-        // 2) Pull the last copy back
-        // 3) Push the next one down
+        // 2) Push the next one down (this could be re ordered to be earlier?)
+        // 3) Pull the last copy back
 
         std::cout << "Looping from " << begin << " to " << end << " which is "
                   << i * buffer_size << " in global space " << std::endl;
@@ -214,9 +213,26 @@ inline void buffered_parallel_for(
 
         // copy all data back from localbuffer into the correct location in
         // global
-        // TODO: I don't like the way this forcefully round robins the buffers
+        std::cout << "copy back buffer " << i % buffered_aosoa.get_buffer_count() << std::endl;
+
         buffered_aosoa.copy_buffer_back( i % buffered_aosoa.get_buffer_count(),
                                          buffer_size * ( i ) );
+    }
+
+    auto aosoa = buffered_aosoa.original_view;
+    auto slice_0 = Cabana::slice<0>( aosoa );
+    for (int idx = 0; idx < aosoa.size(); idx++)
+    {
+        int dim_1 = 3;
+        int dim_2 = 2;
+        int dim_3 = 4;
+        for ( int i = 0; i < dim_1; ++i )
+            for ( int j = 0; j < dim_2; ++j )
+                for ( int k = 0; k < dim_3; ++k )
+                    printf("aosoa slice 0 at %i %i %i %i = %e \n", idx, i, j, k,
+                            slice_0( idx, i, j, k )
+                //slice_0( idx )
+              );
     }
 }
 } // namespace Cabana
