@@ -190,7 +190,7 @@ class BufferedAoSoA
      * requested_buffer_count*max_buffered_tuples*sizeof(particle)
      */
     BufferedAoSoA( AoSoA_t original_view_in, int max_buffered_tuples )
-        : // I need to init slice_tuple avoid the default constructor, the type
+        : // I need to init buffer_index avoid the default constructor, the type
           // may need changing when we respect their passed in space and this
           // can likely be done more cleanly if we simplify the tuple
           // implementation
@@ -232,6 +232,13 @@ class BufferedAoSoA
         }
     }
 
+    void slice_buffer(int buffer_index)
+    {
+        // TODO: using this global variable is asking for trouble
+        slice_tuple = slice_tuple_t( internal_buffers[buffer_index % get_buffer_count() ] );
+        std::cout << "Slicing buffer " << buffer_index << " to give slice<0> = " << &get_slice<0>() << std::endl;
+    }
+
     /** @brief Helper to access the number of buffers which exist.
      * Makes no comment about the state or content of the buffers
      *
@@ -258,26 +265,23 @@ class BufferedAoSoA
     // Start thinking about how to handle data movement...
     // TODO: Should this accept a buffer index to allow explicit control? The
     // reason it counts for you is so we can wrap at num_buffers
-    void load_next_buffer( int start_index )
+    void load_buffer( int buffer_number )
     {
-        // TODO: once this is asynchronous we have to be careful here
-        last_filled_buffer++;
-        if ( last_filled_buffer >= num_buffers )
-        {
-            last_filled_buffer = 0;
-        }
-
         // TODO: does this imply the need for a subview so the sizes
         // match?
 
+        int normalized_buffer_number = buffer_number % get_buffer_count();
+
+        int start_index = normalized_buffer_number * buffer_size;
         // Copy from the main memory store into the "current" buffer
-        Cabana::deep_copy_partial_src( internal_buffers[last_filled_buffer],
+        Cabana::deep_copy_partial_src( internal_buffers[normalized_buffer_number],
                                        original_view,
                                        // 0, // to_index,
                                        start_index, buffer_size );
 
+        // TODO: is this likely to cause a problem at runtime?
         // Update the slice tuple to have slices based on the current buffer
-        slice_tuple = slice_tuple_t( internal_buffers[last_filled_buffer] );
+        //slice_tuple = slice_tuple_t( internal_buffers[buffer_number] );
     }
 
     AoSoA_t original_view;

@@ -121,7 +121,8 @@ void testBufferedTag()
 void testBufferedDataCreation()
 {
     // Create an AoSoA
-    const int vector_length = 32;
+    // TODO: we want this to match the target space so we can do a fast async copy
+    const int vector_length = 16;
 
     // Data dimensions.
     const int dim_1 = 3;
@@ -215,15 +216,18 @@ void testBufferedDataCreation()
 
             // Member 0.
 
-            printf("Setting %d %d 0, 0, 1 to be %e (was %e) %p \n",
-                s, a,  fval * ( 0 + 0 + 1 ), slice_0.access( s, a, 0, 0, 1), &slice_0.access( s, a, 0, 0, 1 )
-                    );
             for ( int i = 0; i < dim_1; ++i )
             {
                 for ( int j = 0; j < dim_2; ++j )
                 {
                     for ( int k = 0; k < dim_3; ++k )
                     {
+                        printf("Setting %d %d %d %d %d to be %e (was %e) %p \n",
+                                s, a, i, j, k, 
+                                fval * ( i + j +  k ),
+                                slice_0.access( s, a, i, j, k),
+                                &slice_0.access( s, a, i, j, k ));
+
                         slice_0.access( s, a, i, j, k ) = fval * ( i + j + k );
                     }
                 }

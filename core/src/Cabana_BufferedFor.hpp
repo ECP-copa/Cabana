@@ -83,6 +83,19 @@ inline void custom_simd_parallel_for(
 
     using ex = typename simd_policy::execution_space;
 
+    /*
+    auto f = KOKKOS_LAMBDA( extra_functor_arg_t buffered_aosoa,
+            //std::forward<IndexTypes>( indices )...
+            int s, int i )
+    {
+        functor(
+                // t,
+                buffered_aosoa, s, i
+                // std::forward<IndexTypes>(indices)...
+               );
+    };
+    */
+
     // TODO: this casues a seg fawult even if we don't use it???
     // Kokkos::DefaultExecutionSpace space1 =
     // SpaceInstance<Kokkos::DefaultExecutionSpace>::create(); std::cout <<
@@ -186,7 +199,7 @@ inline void buffered_parallel_for(
     int end = begin + buffer_size;
 
     // Load the first buffer, and block
-    buffered_aosoa.load_next_buffer( 0 );
+    buffered_aosoa.load_buffer( 0 );
     Kokkos::fence();
 
     for ( int i = 0; i < niter; i++ )
@@ -201,12 +214,18 @@ inline void buffered_parallel_for(
 
         simd_policy policy( begin, end );
 
+        buffered_aosoa.slice_buffer(i);
+
         custom_simd_parallel_for( policy, functor, buffered_aosoa, str );
         // Cabana::simd_parallel_for( policy, functor, str );
+        Kokkos::fence();
 
+         auto s = Cabana::slice<0>(buffered_aosoa.internal_buffers[0]);
+        std::cout << "buffer 0 at i=0 0 0 1 = " << s(0, 0, 0, 1) << " = " << s.access(0, 0, 0, 0, 1) << " pointer is " << &s(0,0,0,1) << std::endl;
+        std::cout << "buffer 0 at i=0 0 0 2 = " << s(0, 0, 0, 2) << " = " << s.access(0, 0, 0, 0, 2) << " pointer is " << &s(0,0,0,2) << std::endl;
         if ( i < niter - 1 )
         { // Don't copy "next" on the last iteration
-            buffered_aosoa.load_next_buffer( buffer_size * ( i + 1 ) );
+            buffered_aosoa.load_buffer( i + 1 );
         }
 
         Kokkos::fence();

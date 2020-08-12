@@ -457,6 +457,9 @@ inline void deep_copy_partial_src(
     Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
     Kokkos::fence();
 
+    std::cout << "src particle size " << src_partial.size() << " dst size " <<
+        dst.size() << std::endl;
+
     assert( src_partial.size() == dst.size() );
 
     // It should now be safe to rely on existing deep copy, assuming dst is
@@ -506,22 +509,25 @@ inline void deep_copy_partial_dst(
 
     auto d_0 = Cabana::slice<0>( dst );
     auto dp_0 = Cabana::slice<0>( dst_partial );
+    auto s_0 = Cabana::slice<0>( src );
 
     // Populate it with data using a parallel for
     auto copy_func = KOKKOS_LAMBDA( const std::size_t i )
     {
         printf("Copy from particle %d to global %d \n", i, i+to_index);
-        printf("OVerwrite %e with %e. %p = %p \n",
+        printf("OVerwrite %e with %e. %p = %p. src %e %p \n",
                 d_0(i, 0, 0, 1),
                 dp_0(i, 0, 0, 1),
                 &d_0(i, 0, 0, 1),
-                &dp_0(i, 0, 0, 1)
+                &dp_0(i, 0, 0, 1),
+                s_0(i,  0,0, 1),
+                &s_0(i, 0,0, 1)
               );
 
-        //dst.setTuple( i + to_index, dst_partial.getTuple( i ) );
+        dst.setTuple( i + to_index, dst_partial.getTuple( i ) );
     };
 
-    Kokkos::RangePolicy<typename SrcAoSoA::execution_space> exec_policy(
+    Kokkos::RangePolicy<typename DstAoSoA::execution_space> exec_policy(
         0, dst_partial.size() );
 
     Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
