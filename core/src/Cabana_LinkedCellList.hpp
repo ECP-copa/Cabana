@@ -214,7 +214,9 @@ class LinkedCellList
         // Allocate the binning data. Note that the permutation vector spans
         // only the length of begin-end;
         std::size_t ncell = totalBins();
-        Kokkos::View<int *, memory_space> counts( "counts", ncell );
+        Kokkos::View<int *, memory_space> counts(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing, "counts" ),
+            ncell );
         OffsetView offsets(
             Kokkos::view_alloc( Kokkos::WithoutInitializing, "offsets" ),
             ncell );
