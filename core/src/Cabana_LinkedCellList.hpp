@@ -215,8 +215,12 @@ class LinkedCellList
         // only the length of begin-end;
         std::size_t ncell = totalBins();
         Kokkos::View<int *, memory_space> counts( "counts", ncell );
-        OffsetView offsets( "offsets", ncell );
-        OffsetView permute( "permute", end - begin );
+        OffsetView offsets(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing, "offsets" ),
+            ncell );
+        OffsetView permute(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing, "permute" ),
+            end - begin );
 
         // Get a local copy of the grid because it is class data and a lambda
         // function will not capture it otherwise via CUDA.
