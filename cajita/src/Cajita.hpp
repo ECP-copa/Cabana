@@ -12,9 +12,10 @@
 #ifndef CAJITA_HPP
 #define CAJITA_HPP
 
+#include <Cajita_Config.hpp>
+
 #include <Cajita_Array.hpp>
 #include <Cajita_BovWriter.hpp>
-#include <Cajita_Config.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Halo.hpp>
