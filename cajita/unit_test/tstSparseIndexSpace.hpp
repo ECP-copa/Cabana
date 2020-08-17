@@ -11,6 +11,7 @@ namespace Test
 //---------------------------------------------------------------------------//
 void testTileSpace()
 {
+    /* ijk <=> id*/
     {
         // size 4x4x4
         constexpr int size_bit = 2;
@@ -23,6 +24,11 @@ void testTileSpace()
                 {
                     auto idx = tis.coord_to_offset( i, j, k );
                     EXPECT_EQ( idx, idx_gt );
+                    int ci, cj, ck;
+                    tis.offset_to_coord( idx_gt, ci, cj, ck );
+                    EXPECT_EQ( ci, i );
+                    EXPECT_EQ( cj, j );
+                    EXPECT_EQ( ck, k );
                     idx_gt++;
                 }
     }
@@ -39,6 +45,11 @@ void testTileSpace()
                 {
                     auto idx = tis.coord_to_offset( i, j, k );
                     EXPECT_EQ( idx, idx_gt );
+                    int ci, cj, ck;
+                    tis.offset_to_coord( idx_gt, ci, cj, ck );
+                    EXPECT_EQ( ci, i );
+                    EXPECT_EQ( cj, j );
+                    EXPECT_EQ( ck, k );
                     idx_gt++;
                 }
     }
@@ -55,6 +66,11 @@ void testTileSpace()
                 {
                     auto idx = tis.coord_to_offset( i, j, k );
                     EXPECT_EQ( idx, idx_gt );
+                    int ci, cj, ck;
+                    tis.offset_to_coord( idx_gt, ci, cj, ck );
+                    EXPECT_EQ( ci, i );
+                    EXPECT_EQ( cj, j );
+                    EXPECT_EQ( ck, k );
                     idx_gt++;
                 }
     }
