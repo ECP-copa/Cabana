@@ -395,12 +395,12 @@ class TileIndexSpace
 
     struct Offset2CoordDim
     {
-        template <typename Coord>
-        constexpr auto operator()( int dimNo, Coord &i, const uint64_t &offset )
+        template <typename Coord, typename Key>
+        constexpr auto operator()( int dimNo, Coord &i, Key &&offset )
             -> uint64_t
         {
             i = offset % CellNumPerTileDim;
-            return static_cast<uint64_t>( offset / CellNumPerTileDim );
+            return ( offset / CellNumPerTileDim );
         }
     };
 
@@ -414,8 +414,7 @@ class TileIndexSpace
     template <typename Key, typename... Coords>
     static constexpr void offset_to_coord( Key &&key, Coords &... coords )
     {
-        to_coord<Offset2CoordDim>( std::forward<Key>( key ),
-                                   std::forward<Coords>( coords )... );
+        to_coord<Offset2CoordDim>( std::forward<Key>( key ), coords... );
     }
 
   protected:
@@ -438,7 +437,7 @@ class TileIndexSpace
         using Integer = std::common_type_t<Coords...>;
         if ( !( std::is_integral<Integer>::value ) )
             throw std::invalid_argument( "Coordinate is not integral type" );
-        return to_coord_impl<Func>( 0, key, coords... );
+        return to_coord_impl<Func>( 0, std::forward<Key>( key ), coords... );
     }
 
     template <typename Func, typename Coord>
@@ -459,19 +458,19 @@ class TileIndexSpace
     }
 
     template <typename Func, typename Key, typename Coord>
-    static constexpr void to_coord_impl( int &&dimNo, Key &&key, Coord &i )
+    static constexpr void to_coord_impl( int &&dimNo, Key &&key,
+                                         Coord &i ) noexcept
     {
         Func()( dimNo, i, std::forward<Key>( key ) );
     }
 
     template <typename Func, typename Key, typename Coord, typename... Coords>
     static constexpr void to_coord_impl( int &&dimNo, Key &&key, Coord &i,
-                                         Coords &... is )
+                                         Coords &... is ) noexcept
     {
-        Key newKey = Func()( dimNo, i, std::forward<Key>( key ) );
+        auto newKey = Func()( dimNo, i, std::forward<Key>( key ) );
         if ( dimNo + 1 < Rank )
-            to_coord_impl<Func>( dimNo + 1, std::forward<Key>( newKey ),
-                                 is... );
+            to_coord_impl<Func>( dimNo + 1, newKey, is... );
     }
 };
 
