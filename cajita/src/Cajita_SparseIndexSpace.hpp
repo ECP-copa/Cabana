@@ -330,13 +330,16 @@ class BlockIndexSpace
         }
         const KeyType tileKey = _op_ijk2key( tile_i, tile_j, tile_k );
         ValueType tileNo;
-        if ( ( tileNo = _tile_table.find( tileKey ) ) ==
-             _tile_table.invalid_index )
+        if ( !_tile_table.exists( tileKey ) )
         {
             // current impl: use inserting sequence as id
             // rethink: sort the id .
             tileNo = _tile_table.size();
             _tile_table.insert( tileKey, tileNo );
+        }
+        else
+        {
+            tileNo = _tile_table.find( tileKey );
         }
         return tileNo;
     }
@@ -351,7 +354,20 @@ class BlockIndexSpace
     KOKKOS_FORCEINLINE_FUNCTION
     ValueType find( int tile_i, int tile_j, int tile_k )
     {
-        return _tile_table.find( _op_ijk2key( tile_i, tile_j, tile_k ) );
+        return _tile_table.value_at(
+            _tile_table.find( _op_ijk2key( tile_i, tile_j, tile_k ) ) );
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION
+    KeyType ijk_to_key( int tile_i, int tile_j, int tile_k )
+    {
+        return _op_ijk2key( tile_i, tile_j, tile_k );
+    }
+
+    KOKKOS_FORCEINLINE_FUNCTION
+    void key_to_ijk( KeyType &key, int &tile_i, int &tile_j, int &tile_k )
+    {
+        return _op_key2ijk( key, tile_i, tile_j, tile_k );
     }
 
   private:
