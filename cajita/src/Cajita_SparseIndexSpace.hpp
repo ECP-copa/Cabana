@@ -243,8 +243,8 @@ class SparseIndexSpace
     static constexpr HashTypes HashType = Hash; // hash table type
 
     // size should be global
-    SparseIndexSpace( const std::array<int, N> size, const int capacity,
-                      const float rehash_factor )
+    SparseIndexSpace( const std::array<int, N> size,
+                      const unsigned int capacity, const float rehash_factor )
         : _blkIdSpace( {size[0] >> CellNumPerTileDim,
                         size[1] >> CellNumPerTileDim,
                         size[2] >> CellNumPerTileDim},
@@ -311,7 +311,7 @@ class BlockIndexSpace
     using ValueType = Value;                    // tile value type
     static constexpr HashTypes HashType = Hash; // hash table type
 
-    BlockIndexSpace( const std::array<int, N> size, const int capacity,
+    BlockIndexSpace( const std::array<int, N> size, const unsigned int capacity,
                      const float rehash_factor )
         : _tile_capacity( capacity )
         , _rehash_coeff( rehash_factor )
@@ -378,7 +378,7 @@ class BlockIndexSpace
 
   private:
     //! pre-allocated size
-    int _tile_capacity;
+    unsigned int _tile_capacity;
     //! default factor, rehash by which when need more capacity of the hash
     //! table
     float _rehash_coeff;
@@ -430,8 +430,7 @@ class TileIndexSpace
     struct Offset2CoordDim
     {
         template <typename Coord, typename Key>
-        constexpr auto operator()( int dimNo, Coord &i, Key &&offset )
-            -> uint64_t
+        constexpr auto operator()( Coord &i, Key &&offset ) -> uint64_t
         {
             i = offset % CellNumPerTileDim;
             return ( offset / CellNumPerTileDim );
@@ -481,14 +480,14 @@ class TileIndexSpace
     static constexpr void to_coord_impl( int &&dimNo, Key &&key,
                                          Coord &i ) noexcept
     {
-        Func()( dimNo, i, std::forward<Key>( key ) );
+        Func()( i, std::forward<Key>( key ) );
     }
 
     template <typename Func, typename Key, typename Coord, typename... Coords>
     static constexpr void to_coord_impl( int &&dimNo, Key &&key, Coord &i,
                                          Coords &... is ) noexcept
     {
-        auto newKey = Func()( dimNo, i, std::forward<Key>( key ) );
+        auto newKey = Func()( i, std::forward<Key>( key ) );
         if ( dimNo + 1 < Rank )
             to_coord_impl<Func>( dimNo + 1, newKey, is... );
     }
