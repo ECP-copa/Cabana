@@ -92,8 +92,9 @@ void testBlockSpace()
     float rehash_factor = 1.5;
     {
         // static constexpr HashTypes hashType = HashTypes::Naive;
-        BlockIndexSpace<TEST_MEMSPACE, N, CellBitsPerTileDim, CellNumPerTileDim,
-                        CellNumPerTile, hashType, KeyType, ValueType>
+        BlockIndexSpace<TEST_EXECSPACE, N, CellBitsPerTileDim,
+                        CellNumPerTileDim, CellNumPerTile, hashType, KeyType,
+                        ValueType>
             bis( size, capacity, rehash_factor );
         int insert_num = 0;
 
@@ -111,6 +112,8 @@ void testBlockSpace()
                     EXPECT_EQ( tj, j );
                     EXPECT_EQ( tk, k );
                     insert_num++;
+                    auto current_size = bis.valid_block_num();
+                    EXPECT_EQ( current_size, insert_num );
                 }
 
         insert_num = 0;
@@ -125,6 +128,46 @@ void testBlockSpace()
     }
 }
 
+void testSparseIndexSpace()
+{
+    constexpr int N = 3;
+    int size_per_dim = 256;
+    std::array<int, N> size( {size_per_dim, size_per_dim, size_per_dim} );
+    int capacity = size_per_dim * size_per_dim;
+    float rehash_factor = 1.5;
+    SparseIndexSpace<TEST_EXECSPACE> sis( size, capacity, rehash_factor );
+    TileIndexSpace<2, 4, 4 * 4> tis;
+
+    auto cbd = sis.CellBitsPerTileDim;
+    EXPECT_EQ( cbd, 2 );
+
+    auto cnd = sis.CellNumPerTileDim;
+    EXPECT_EQ( cnd, 4 );
+
+    auto cmd = sis.CellMaskPerTileDim;
+    EXPECT_EQ( cmd, 3 );
+
+    auto cbt = sis.CellBitsPerTile;
+    EXPECT_EQ( cbt, 6 );
+
+    auto cnt = sis.CellNumPerTile;
+    EXPECT_EQ( cnt, 64 );
+
+    for ( int i = 0; i < size[0]; i++ )
+        for ( int j = 0; j < size[1]; j++ )
+            for ( int k = 0; k < size[2]; k++ )
+            {
+                auto tid = sis.insert_cell( i, j, k );
+                auto qid = sis.query_cell( i, j, k );
+                auto cid =
+                    tid * sis.CellNumPerTile +
+                    tis.coord_to_offset( ( i & sis.CellMaskPerTileDim ),
+                                         ( j & sis.CellMaskPerTileDim ),
+                                         ( k & sis.CellMaskPerTileDim ) );
+                EXPECT_EQ( cid, qid );
+            }
+}
+
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
@@ -133,6 +176,7 @@ TEST( TEST_CATEGORY, sparse_index_space_test )
     testTileSpace();
     testBlockSpace<HashTypes::Naive>();
     testBlockSpace<HashTypes::Morton>();
+    testSparseIndexSpace();
 }
 
 //---------------------------------------------------------------------------//

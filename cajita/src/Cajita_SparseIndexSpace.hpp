@@ -205,7 +205,7 @@ struct HashKey2TileID<Key, HashTypes::Morton>
 };
 
 //---------------------------------------------------------------------------//
-template <typename MemorySpace, int N, unsigned long long CBits,
+template <typename ExecutionSpace, int N, unsigned long long CBits,
           unsigned long long CNumPerDim, unsigned long long CNumPerTile,
           HashTypes Hash, typename Key, typename Value>
 class BlockIndexSpace;
@@ -217,7 +217,7 @@ class TileIndexSpace;
   \brief Sparse index space, hierarchical structure (cell->tile->block)
   \ ValueType : tileNo type
  */
-template <typename MemorySpace, int N = 3,
+template <typename ExecutionSpace, int N = 3,
           unsigned long long CellPerTileDim = 4,
           HashTypes Hash = HashTypes::Naive, typename Key = uint64_t,
           typename Value = uint64_t>
@@ -245,7 +245,10 @@ class SparseIndexSpace
     // size should be global
     SparseIndexSpace( const std::array<int, N> size, const int capacity,
                       const float rehash_factor )
-        : _blkIdSpace( size, 1 << bit_count( capacity ), rehash_factor )
+        : _blkIdSpace( {size[0] >> CellNumPerTileDim,
+                        size[1] >> CellNumPerTileDim,
+                        size[2] >> CellNumPerTileDim},
+                       1 << bit_count( capacity ), rehash_factor )
     {
         std::fill( _min.data(), _min.data() + Rank, 0 );
         std::copy( size.begin(), size.end(), _max.data() );
@@ -261,9 +264,9 @@ class SparseIndexSpace
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
-    ValueType insert_tile( int cell_i, int cell_j, int cell_k )
+    ValueType insert_tile( int tile_i, int tile_j, int tile_k )
     {
-        return _blkIdSpace.insert( cell_i, cell_j, cell_k );
+        return _blkIdSpace.insert( tile_i, tile_j, tile_k );
     }
 
     KOKKOS_FORCEINLINE_FUNCTION
@@ -275,12 +278,13 @@ class SparseIndexSpace
         auto cellid = _tileIdSpace.coord_to_offset(
             cell_i & CellMaskPerTileDim, cell_j & CellMaskPerTileDim,
             cell_k & CellMaskPerTileDim );
-        return ( ValueType )( ( tileid << CellBitsPerTile ) & cellid );
+        return ( ValueType )( ( tileid << CellBitsPerTile ) | cellid );
+        // return (ValueType)tileid;
     }
 
   private:
     //! block index space, map tile ijk to tile No
-    BlockIndexSpace<MemorySpace, Rank, CellBitsPerTileDim, CellNumPerTileDim,
+    BlockIndexSpace<ExecutionSpace, Rank, CellBitsPerTileDim, CellNumPerTileDim,
                     CellNumPerTile, HashType, KeyType, ValueType>
         _blkIdSpace;
     //! tile index space, map cell ijk to cell local No inside a tile
@@ -292,7 +296,7 @@ class SparseIndexSpace
 };
 
 //---------------------------------------------------------------------------//
-template <typename MemorySpace, int N, unsigned long long CBits,
+template <typename ExecutionSpace, int N, unsigned long long CBits,
           unsigned long long CNumPerDim, unsigned long long CNumPerTile,
           HashTypes Hash, typename Key, typename Value>
 class BlockIndexSpace
@@ -309,8 +313,7 @@ class BlockIndexSpace
 
     BlockIndexSpace( const std::array<int, N> size, const int capacity,
                      const float rehash_factor )
-        : _tile_num( 0 )
-        , _tile_capacity( capacity )
+        : _tile_capacity( capacity )
         , _rehash_coeff( rehash_factor )
         , _tile_table( capacity )
         , _op_ijk2key( size[0], size[1], size[2] )
@@ -318,6 +321,9 @@ class BlockIndexSpace
     {
         _tile_table.clear();
     }
+
+    KOKKOS_FORCEINLINE_FUNCTION
+    int valid_block_num() { return _tile_table.size(); }
 
     KOKKOS_FORCEINLINE_FUNCTION
     ValueType insert( int tile_i, int tile_j, int tile_k )
@@ -339,7 +345,7 @@ class BlockIndexSpace
         }
         else
         {
-            tileNo = _tile_table.find( tileKey );
+            tileNo = _tile_table.value_at( _tile_table.find( tileKey ) );
         }
         return tileNo;
     }
@@ -371,15 +377,13 @@ class BlockIndexSpace
     }
 
   private:
-    //! valid block number
-    int _tile_num;
     //! pre-allocated size
     int _tile_capacity;
     //! default factor, rehash by which when need more capacity of the hash
     //! table
     float _rehash_coeff;
     //! hash table (tile IJK <=> tile No)
-    Kokkos::UnorderedMap<KeyType, ValueType, MemorySpace> _tile_table;
+    Kokkos::UnorderedMap<KeyType, ValueType, ExecutionSpace> _tile_table;
     //! Op: tile IJK <=> tile No
     TileID2HashKey<KeyType, HashType> _op_ijk2key;
     HashKey2TileID<KeyType, HashType> _op_key2ijk;
