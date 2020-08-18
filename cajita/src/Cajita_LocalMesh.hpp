@@ -120,6 +120,19 @@ class LocalMesh<Device, UniformMesh<Scalar>>
         return _ghost_high_corner[dim];
     }
 
+    // Get the extent of a given dimension.
+    KOKKOS_INLINE_FUNCTION
+    Scalar extent( Own, const int dim ) const
+    {
+        return _own_high_corner[dim] - _own_low_corner[dim];
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    Scalar extent( Ghost, const int dim ) const
+    {
+        return _ghost_high_corner[dim] - _ghost_low_corner[dim];
+    }
+
     // Get the coordinates of an entity of the given type given the local
     // index of the entity. The local indexing is
     // relative to the ghosted decomposition of the mesh block and correlates
@@ -366,6 +379,19 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
     Scalar highCorner( Ghost, const int dim ) const
     {
         return _ghost_high_corner[dim];
+    }
+
+    // Get the extent of a given dimension.
+    KOKKOS_INLINE_FUNCTION
+    Scalar extent( Own, const int dim ) const
+    {
+        return _own_high_corner[dim] - _own_low_corner[dim];
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    Scalar extent( Ghost, const int dim ) const
+    {
+        return _ghost_high_corner[dim] - _ghost_low_corner[dim];
     }
 
     // Get the coordinate of an entity of the given type given the local index
