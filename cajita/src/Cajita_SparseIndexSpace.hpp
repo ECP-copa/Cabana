@@ -380,6 +380,20 @@ class TileIndexSpace
     static constexpr int CellNumPerTile = CNumPerTile;
     static constexpr int Rank = 3;
 
+    //! Cell ijk <=> Cell Id
+    template <typename... Coords>
+    static constexpr auto coord_to_offset( Coords &&... coords ) -> uint64_t
+    {
+        return from_coord<Coord2OffsetDim>( std::forward<Coords>( coords )... );
+    }
+
+    template <typename Key, typename... Coords>
+    static constexpr void offset_to_coord( Key &&key, Coords &... coords )
+    {
+        to_coord<Offset2CoordDim>( std::forward<Key>( key ), coords... );
+    }
+
+  protected:
     //! Coord  <=> Offset Computations
     struct Coord2OffsetDim
     {
@@ -404,20 +418,6 @@ class TileIndexSpace
         }
     };
 
-    //! Cell ijk <=> Cell Id
-    template <typename... Coords>
-    static constexpr auto coord_to_offset( Coords &&... coords ) -> uint64_t
-    {
-        return from_coord<Coord2OffsetDim>( std::forward<Coords>( coords )... );
-    }
-
-    template <typename Key, typename... Coords>
-    static constexpr void offset_to_coord( Key &&key, Coords &... coords )
-    {
-        to_coord<Offset2CoordDim>( std::forward<Key>( key ), coords... );
-    }
-
-  protected:
     template <typename Func, typename... Coords>
     static constexpr auto from_coord( Coords &&... coords ) -> uint64_t
     {
