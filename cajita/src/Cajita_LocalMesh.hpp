@@ -121,16 +121,10 @@ class LocalMesh<Device, UniformMesh<Scalar>>
     }
 
     // Get the extent of a given dimension.
-    KOKKOS_INLINE_FUNCTION
-    Scalar extent( Own, const int dim ) const
+    template <typename Decomposition>
+    KOKKOS_FUNCTION Scalar extent( Decomposition d, const int dim ) const
     {
-        return _own_high_corner[dim] - _own_low_corner[dim];
-    }
-
-    KOKKOS_INLINE_FUNCTION
-    Scalar extent( Ghost, const int dim ) const
-    {
-        return _ghost_high_corner[dim] - _ghost_low_corner[dim];
+        return highCorner( d, dim ) - lowCorner( d, dim );
     }
 
     // Get the coordinates of an entity of the given type given the local
@@ -382,16 +376,10 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
     }
 
     // Get the extent of a given dimension.
-    KOKKOS_INLINE_FUNCTION
-    Scalar extent( Own, const int dim ) const
+    template <typename Decomposition>
+    KOKKOS_FUNCTION Scalar extent( Decomposition d, const int dim ) const
     {
-        return _own_high_corner[dim] - _own_low_corner[dim];
-    }
-
-    KOKKOS_INLINE_FUNCTION
-    Scalar extent( Ghost, const int dim ) const
-    {
-        return _ghost_high_corner[dim] - _ghost_low_corner[dim];
+        return highCorner( d, dim ) - lowCorner( d, dim );
     }
 
     // Get the coordinate of an entity of the given type given the local index
