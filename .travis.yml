@@ -98,7 +98,7 @@ script:
 
 after_success:
  - ccache -s
- - test "${TRAVIS_BUILD_STAGE_NAME}" = "Test" || travis_terminate 0
+ - test "${TRAVIS_BUILD_STAGE_NAME}" = "test" || travis_terminate 0
  - if [[ ${COVERAGE} ]]; then
      pushd build &&
      if [[ ${CC} = clang ]]; then
