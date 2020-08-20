@@ -16,6 +16,7 @@ set(HEADERS_PUBLIC
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
   Cajita_Parallel.hpp
+  Cajita_ParameterPack.hpp
   Cajita_Partitioner.hpp
   Cajita_ReferenceStructuredSolver.hpp
   Cajita_Splines.hpp
@@ -32,13 +33,13 @@ set(SOURCES_PUBLIC
   Cajita_UniformDimPartitioner.cpp
   )
 
-if(HYPRE_FOUND)
+if(Cabana_ENABLE_HYPRE)
   list(APPEND HEADERS_PUBLIC
     Cajita_HypreStructuredSolver.hpp
     )
 endif()
 
-if(Heffte_FOUND)
+if(Cabana_ENABLE_HEFFTE)
   list(APPEND HEADERS_PUBLIC
     Cajita_FastFourierTransform.hpp
     )
@@ -51,11 +52,11 @@ target_link_libraries(Cajita PUBLIC
   MPI::MPI_CXX
   )
 
-if(HYPRE_FOUND)
+if(Cabana_ENABLE_HYPRE)
   target_link_libraries(Cajita PUBLIC HYPRE::hypre)
 endif()
 
-if(Heffte_FOUND)
+if(Cabana_ENABLE_HEFFTE)
   target_link_libraries(Cajita PUBLIC Heffte::Heffte)
 endif()
 

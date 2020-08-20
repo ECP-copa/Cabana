@@ -65,7 +65,6 @@ addons:
       - libhwloc-dev
       - openmpi-bin
       - libopenmpi-dev
-      - gfortran
       - libgsl0-dev
       - libfftw3-dev
       - python-pip
@@ -79,7 +78,6 @@ script:
           -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/ArborX"
           -DCabana_REQUIRE_SERIAL=OFF ${CMAKE_OPTS[@]}
           -DCabana_REQUIRE_MPI=ON -DCabana_REQUIRE_ARBORX=${ARBORX}
-          $([[ ${CC} = clang* ]] || echo -DCabana_ENABLE_FORTRAN_EXAMPLES=ON)
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DDOXYGEN_WARN_AS_ERROR=ON -DDOXYGEN_GENERATE_XML=ON -DDOXYGEN_WARN_IF_UNDOCUMENTED=OFF
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
