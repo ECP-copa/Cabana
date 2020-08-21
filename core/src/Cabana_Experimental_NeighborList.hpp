@@ -152,10 +152,9 @@ struct NeighborDiscriminatorCallback2D_FirstPass
 {
     Counts counts;
     using tag = ArborX::Details::InlineCallbackTag;
-    template <typename Predicate, typename OutputFunctor>
+    template <typename Predicate>
     KOKKOS_FUNCTION void operator()( Predicate const &predicate,
-                                     int primitive_index,
-                                     OutputFunctor const & ) const
+                                     int primitive_index ) const
     {
         int const predicate_index = getData( predicate );
         if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
@@ -172,10 +171,9 @@ struct NeighborDiscriminatorCallback2D_SecondPass
     Counts counts;
     Neighbors neighbors;
     using tag = ArborX::Details::InlineCallbackTag;
-    template <typename Predicate, typename OutputFunctor>
+    template <typename Predicate>
     KOKKOS_FUNCTION void operator()( Predicate const &predicate,
-                                     int primitive_index,
-                                     OutputFunctor const & ) const
+                                     int primitive_index ) const
     {
         int const predicate_index = getData( predicate );
         if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
@@ -246,9 +244,6 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
 
     ArborX::BVH<MemorySpace> bvh( space, coordinate_slice );
 
-    Kokkos::View<int *, DeviceType> indices( "indices", 0 );
-    Kokkos::View<int *, DeviceType> offset( "offset", 0 );
-
     auto const predicates =
         Impl::makePredicates( coordinate_slice, first, last, radius );
 
@@ -260,18 +255,16 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
     bvh.query(
         space, predicates,
         Impl::NeighborDiscriminatorCallback2D_FirstPass<decltype( counts ),
-                                                        Tag>{counts},
-        indices, offset );
+                                                        Tag>{counts} );
 
     Kokkos::View<int **, DeviceType> neighbors(
         Kokkos::view_alloc( "neighbors", Kokkos::WithoutInitializing ),
         n_queries, ArborX::max( space, counts ) );
     Kokkos::deep_copy( counts, 0 ); // reset counts to zero
-    bvh.query(
-        space, predicates,
-        Impl::NeighborDiscriminatorCallback2D_SecondPass<
-            decltype( counts ), decltype( neighbors ), Tag>{counts, neighbors},
-        indices, offset );
+    bvh.query( space, predicates,
+               Impl::NeighborDiscriminatorCallback2D_SecondPass<
+                   decltype( counts ), decltype( neighbors ), Tag>{counts,
+                                                                   neighbors} );
 
     return Dense<MemorySpace, Tag>{counts, neighbors, first, bvh.size()};
 }
