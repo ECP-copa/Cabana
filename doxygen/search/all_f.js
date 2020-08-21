@@ -1,9 +1,10 @@
 var searchData=
 [
   ['randomaccessmemory',['RandomAccessMemory',['../structCabana_1_1RandomAccessMemory.html',1,'Cabana']]],
-  ['rangebegin',['rangeBegin',['../classCabana_1_1LinkedCellList.html#a1d56c091ed49cf2f7ec61f156510240c',1,'Cabana::LinkedCellList::rangeBegin()'],['../classCabana_1_1BinningData.html#a23b22f6dc4163a14070fca74f08e5819',1,'Cabana::BinningData::rangeBegin()']]],
-  ['rangeend',['rangeEnd',['../classCabana_1_1LinkedCellList.html#af9686e95ae57b0a78fb5045bc680ae17',1,'Cabana::LinkedCellList::rangeEnd()'],['../classCabana_1_1BinningData.html#a964700cb9c448bd7a9556a3511e54595',1,'Cabana::BinningData::rangeEnd()']]],
-  ['rank',['rank',['../classCabana_1_1Slice.html#abbd46b84c792064a0e86ad4db6069d37',1,'Cabana::Slice::rank()'],['../structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_01_4_00_01VectorLength_01_4.html#ace4e40d085e6c66ccf4818e1dcea22de',1,'Cabana::SoA&lt; MemberTypes&lt; Types... &gt;, VectorLength &gt;::rank()']]],
+  ['rangebegin',['rangeBegin',['../classCabana_1_1LinkedCellList.html#ad9ff1ddb33c7bdaa5fa77e757ea06864',1,'Cabana::LinkedCellList::rangeBegin()'],['../classCabana_1_1BinningData.html#a888557843e3d212d26b68edfc20fc3ca',1,'Cabana::BinningData::rangeBegin()']]],
+  ['rangeend',['rangeEnd',['../classCabana_1_1LinkedCellList.html#acebc1a31367383db7fa262f9ef07dff6',1,'Cabana::LinkedCellList::rangeEnd()'],['../classCabana_1_1BinningData.html#a476f60500c483028d92e06a71de5889a',1,'Cabana::BinningData::rangeEnd()']]],
+  ['rank',['rank',['../classCabana_1_1Slice.html#a33614ed6d9aa8f39dd843cdad7ff37ef',1,'Cabana::Slice::rank()'],['../structCabana_1_1SoA_3_01MemberTypes_3_01Types_8_8_8_01_4_00_01VectorLength_01_4.html#a426ba5294aee79730525ddf016bd5f46',1,'Cabana::SoA&lt; MemberTypes&lt; Types... &gt;, VectorLength &gt;::rank()']]],
+  ['remove_5fcvref',['remove_cvref',['../structCabana_1_1Experimental_1_1stdcxx20_1_1remove__cvref.html',1,'Cabana::Experimental::stdcxx20']]],
   ['reserve',['reserve',['../classCabana_1_1AoSoA.html#a657bd2a85ad107ee746a7fc2f4996dd3',1,'Cabana::AoSoA']]],
   ['resize',['resize',['../classCabana_1_1AoSoA.html#aec7a382835b5809eadba130ce2e9da9f',1,'Cabana::AoSoA']]]
 ];
