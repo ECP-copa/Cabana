@@ -97,13 +97,37 @@ void forwardReverseTest()
     // Copy to the device.
     Kokkos::deep_copy( lhs_view, lhs_host_view );
 
-    // Create an FFT
-    auto fft = Experimental::createFastFourierTransform<double, TEST_DEVICE>(
-        *vector_layout, Experimental::FastFourierTransformParams{}
-                            .setCollectiveType( 2 )
-                            .setExchangeType( 0 )
-                            .setPackType( 2 )
-                            .setScalingType( 1 ) );
+    // Create an FFT // ! Old version
+    // auto fft = Experimental::createFastFourierTransform<double, TEST_DEVICE>(
+    //     *vector_layout, Experimental::FastFourierTransformParams{}
+    //                         .setCollectiveType( 2 )
+    //                         .setExchangeType( 0 )
+    //                         .setPackType( 2 )       // ! Now there is only a single Pack kernel
+    //                         .setScalingType( 1 ) ); // ! Now scale is input for the compute kernel
+
+    //* New heFFTe version for create FFT plans
+    
+    //* Define the FFT backend 
+    auto backend_tag = heffte::backend::cufft;  //* can also be backend::fftw, backend::mkl
+
+    //* Instantiate a set of default parameters according to the backend type
+    heffte::plan_options params = heffte::default_options<backend_tag>();
+    
+    //* Choose the desired options
+    //* 1. MPI communication
+    params.use_alltoall = true;
+    // params.use_alltoall = false;  //* MPI point-to-point
+
+    //* 2. Data exchange type  
+    params.use_pencils = true;  //* Pencil decomposition
+    // params.use_pencils = false; //* Slab decomposition
+
+    //* 3. Data handling
+    params.use_reorder = true;  //* Use data in contiguous memory (requires tensor transposition)
+    // params.use_reorder = false; //* Use strided data (does not require tensor transposition)
+
+    auto fft = Experimental::createFastFourierTransform<backend_tag, double, TEST_DEVICE>(
+        *vector_layout, params);                            
 
     // Forward transform
     fft->forward( *lhs );
@@ -131,6 +155,7 @@ void forwardReverseTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
+//! There should not be any bug with the modifications made, please contact heFFTe team otherwise.
 // NOTE: This test exposes the GPU FFT memory bug in HEFFTE. Re-enable this
 // when we enable GPU FFTs to test the bug.
 // TEST( fast_fourier_transform, memory_test )
