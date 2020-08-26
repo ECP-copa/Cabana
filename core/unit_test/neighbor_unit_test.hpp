@@ -77,12 +77,14 @@ createParticles( const int num_particle, const double box_min,
                  const double box_max )
 {
     using DataTypes = Cabana::MemberTypes<double[3]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t aosoa( "aosoa", num_particle );
+    using AoSoA_t_h = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
+    AoSoA_t_h aosoa_host( "host_aosoa", num_particle );
 
-    auto position = Cabana::slice<0>( aosoa );
-    using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
-    using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
+    auto position = Cabana::slice<0>( aosoa_host );
+    using PoolType =
+        Kokkos::Random_XorShift64_Pool<Kokkos::DefaultHostExecutionSpace>;
+    using RandomType =
+        Kokkos::Random_XorShift64<Kokkos::DefaultHostExecutionSpace>;
     PoolType pool( 342343901 );
     auto random_coord_op = KOKKOS_LAMBDA( const int p )
     {
@@ -95,6 +97,10 @@ createParticles( const int num_particle, const double box_min,
     Kokkos::RangePolicy<TEST_EXECSPACE> exec_policy( 0, num_particle );
     Kokkos::parallel_for( exec_policy, random_coord_op );
     Kokkos::fence();
+
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t aosoa( "aosoa", num_particle );
+    Cabana::deep_copy( aosoa, aosoa_host );
     return aosoa;
 }
 
