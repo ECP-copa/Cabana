@@ -224,6 +224,8 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
                        typename Slice::size_type last,
                        typename Slice::value_type radius, int buffer_size = 0 )
 {
+    assert( buffer_size >= 0 );
+
     using MemorySpace = typename DeviceType::memory_space;
     using ExecutionSpace = typename DeviceType::execution_space;
     ExecutionSpace space{};
@@ -259,6 +261,8 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
                          typename Slice::value_type radius,
                          int buffer_size = 0 )
 {
+    assert( buffer_size >= 0 );
+
     using MemorySpace = typename DeviceType::memory_space;
     using ExecutionSpace = typename DeviceType::execution_space;
     ExecutionSpace space{};
