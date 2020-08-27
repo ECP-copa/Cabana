@@ -276,8 +276,9 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
     Kokkos::View<int *, DeviceType> counts( "counts", n_queries );
     if ( buffer_size > 0 )
     {
-        neighbors = Kokkos::View<int **, DeviceType>( "neighbors", n_queries,
-                                                      buffer_size );
+        neighbors = Kokkos::View<int **, DeviceType>(
+            Kokkos::view_alloc( "neighbors", Kokkos::WithoutInitializing ),
+            n_queries, buffer_size );
         bvh.query(
             space, predicates,
             Impl::NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization<
