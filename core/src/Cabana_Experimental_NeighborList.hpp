@@ -132,7 +132,6 @@ struct CollisionFilter<HalfNeighborTag>
 template <typename Tag>
 struct NeighborDiscriminatorCallback
 {
-    using tag = ArborX::Details::InlineCallbackTag;
     template <typename Predicate, typename OutputFunctor>
     KOKKOS_FUNCTION void operator()( Predicate const &predicate,
                                      int primitive_index,
@@ -151,7 +150,6 @@ template <typename Counts, typename Tag>
 struct NeighborDiscriminatorCallback2D_FirstPass
 {
     Counts counts;
-    using tag = ArborX::Details::InlineCallbackTag;
     template <typename Predicate>
     KOKKOS_FUNCTION void operator()( Predicate const &predicate,
                                      int primitive_index ) const
@@ -170,7 +168,6 @@ struct NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization
 {
     Counts counts;
     Neighbors neighbors;
-    using tag = ArborX::Details::InlineCallbackTag;
     template <typename Predicate>
     KOKKOS_FUNCTION void operator()( Predicate const &predicate,
                                      int primitive_index ) const
@@ -193,7 +190,6 @@ struct NeighborDiscriminatorCallback2D_SecondPass
 {
     Counts counts;
     Neighbors neighbors;
-    using tag = ArborX::Details::InlineCallbackTag;
     template <typename Predicate>
     KOKKOS_FUNCTION void operator()( Predicate const &predicate,
                                      int primitive_index ) const
