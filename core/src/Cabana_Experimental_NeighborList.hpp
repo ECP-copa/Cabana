@@ -226,7 +226,7 @@ template <typename DeviceType, typename Slice, typename Tag>
 auto makeNeighborList( Tag, Slice const &coordinate_slice,
                        typename Slice::size_type first,
                        typename Slice::size_type last,
-                       typename Slice::value_type radius )
+                       typename Slice::value_type radius, int buffer_size = 0 )
 {
     using MemorySpace = typename DeviceType::memory_space;
     using ExecutionSpace = typename DeviceType::execution_space;
@@ -238,9 +238,10 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
         Kokkos::view_alloc( "indices", Kokkos::WithoutInitializing ), 0 );
     Kokkos::View<int *, DeviceType> offset(
         Kokkos::view_alloc( "offset", Kokkos::WithoutInitializing ), 0 );
-    bvh.query( space,
-               Impl::makePredicates( coordinate_slice, first, last, radius ),
-               Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset );
+    bvh.query(
+        space, Impl::makePredicates( coordinate_slice, first, last, radius ),
+        Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset,
+        ArborX::Experimental::TraversalPolicy().setBufferSize( buffer_size ) );
 
     return CrsGraph<MemorySpace, Tag>{std::move( indices ), std::move( offset ),
                                       first, bvh.size()};
