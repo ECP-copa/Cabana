@@ -164,6 +164,29 @@ struct NeighborDiscriminatorCallback2D_FirstPass
     }
 };
 
+// Preallocate and attempt fill in the first pass
+template <typename Counts, typename Neighbors, typename Tag>
+struct NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization
+{
+    Counts counts;
+    Neighbors neighbors;
+    using tag = ArborX::Details::InlineCallbackTag;
+    template <typename Predicate>
+    KOKKOS_FUNCTION void operator()( Predicate const &predicate,
+                                     int primitive_index ) const
+    {
+        int const predicate_index = getData( predicate );
+        if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
+        {
+            if ( counts( predicate_index ) < (int)neighbors.extent( 1 ) )
+            {
+                neighbors( predicate_index, counts( predicate_index )++ ) =
+                    primitive_index; // WARNING see below**
+            }
+        }
+    }
+};
+
 // Fill in the second pass
 template <typename Counts, typename Neighbors, typename Tag>
 struct NeighborDiscriminatorCallback2D_SecondPass
@@ -236,7 +259,8 @@ template <typename DeviceType, typename Slice, typename Tag>
 auto make2DNeighborList( Tag, Slice const &coordinate_slice,
                          typename Slice::size_type first,
                          typename Slice::size_type last,
-                         typename Slice::value_type radius )
+                         typename Slice::value_type radius,
+                         int buffer_size = 0 )
 {
     using MemorySpace = typename DeviceType::memory_space;
     using ExecutionSpace = typename DeviceType::execution_space;
@@ -251,15 +275,39 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
         ArborX::AccessTraits<decltype( predicates ),
                              ArborX::PredicatesTag>::size( predicates );
 
+    Kokkos::View<int **, DeviceType> neighbors;
     Kokkos::View<int *, DeviceType> counts( "counts", n_queries );
-    bvh.query(
-        space, predicates,
-        Impl::NeighborDiscriminatorCallback2D_FirstPass<decltype( counts ),
-                                                        Tag>{counts} );
+    if ( buffer_size > 0 )
+    {
+        neighbors = Kokkos::View<int **, DeviceType>( "neighbors", n_queries,
+                                                      buffer_size );
+        bvh.query(
+            space, predicates,
+            Impl::NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization<
+                decltype( counts ), decltype( neighbors ), Tag>{counts,
+                                                                neighbors} );
+    }
+    else
+    {
+        bvh.query(
+            space, predicates,
+            Impl::NeighborDiscriminatorCallback2D_FirstPass<decltype( counts ),
+                                                            Tag>{counts} );
+    }
 
-    Kokkos::View<int **, DeviceType> neighbors(
+    auto const max_neighbors = ArborX::max( space, counts );
+    if ( max_neighbors <= buffer_size )
+    {
+        // NOTE We do not bother shrinking to eliminate the excess allocation.
+        // NOTE If buffer_size is 0, neighbors is default constructed.  This is
+        // fine with the current design/implementation of NeighborList access
+        // traits.
+        return Dense<MemorySpace, Tag>{counts, neighbors, first, bvh.size()};
+    }
+
+    neighbors = Kokkos::View<int **, DeviceType>(
         Kokkos::view_alloc( "neighbors", Kokkos::WithoutInitializing ),
-        n_queries, ArborX::max( space, counts ) );
+        n_queries, max_neighbors ); // realloc storage for neighbors
     Kokkos::deep_copy( counts, 0 ); // reset counts to zero
     bvh.query( space, predicates,
                Impl::NeighborDiscriminatorCallback2D_SecondPass<
