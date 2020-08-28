@@ -17,6 +17,7 @@
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_Types.hpp>
+#include <Cajita_UniformDimPartitioner.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -27,7 +28,6 @@
 namespace Test
 {
 //---------------------------------------------------------------------------//
-
 void LayoutHilbert2DSubviewTest()
 {
     // typedef
@@ -43,7 +43,7 @@ void LayoutHilbert2DSubviewTest()
 
     // View Index Space
     auto view_space =
-        Cajita::IndexSpace<4>( {0, 0, 0, 0}, {dim1, dim2, dim3, dim4} );
+        Cajita::IndexSpace<4>( { 0, 0, 0, 0 }, { dim1, dim2, dim3, dim4 } );
 
     // Create Hilbert View
     Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
@@ -84,7 +84,7 @@ void LayoutHilbert2DSubviewTest()
 
     // Create subview index space - mimicking a halo subview of width 2
     Cajita::IndexSpace<4> space;
-    space = Cajita::IndexSpace<4>( {0, 0, 0, 0}, {2, dim2, dim3, dim4} );
+    space = Cajita::IndexSpace<4>( { 0, 0, 0, 0 }, { 2, dim2, dim3, dim4 } );
 
     // Create Hilbert subview from Hilbert View
     auto HilbertSub =
@@ -156,12 +156,12 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     int halo_width = 2;
 
     // Set grid information
-    std::array<int, 3> global_num_cell = {104, 104, 1};
-    std::array<double, 3> global_low_corner = {0.0, 0.0, 0.0};
+    std::array<int, 3> global_num_cell = { 104, 104, 1 };
+    std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
 
     // Create local grid
     auto global_mesh = Cajita::createUniformGlobalMesh(
@@ -270,7 +270,6 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     // neighbors ghost space )
     double shared_halo_value = 2.0;
 
-    // TODO: ArrayOp does not appear to work correctly
     // Set view values such that
     // My ghost cells = 0.0
     // Cells we are sending ( in our owned space, but in our neighbors ghost
@@ -380,12 +379,145 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
 }
 
 //---------------------------------------------------------------------------//
+void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
+                                 const std::array<bool, 3> &is_dim_periodic )
+{
+    // typedef
+    typedef
+        typename Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
+            view_type;
+
+    // Get rank
+    int rank;
+    MPI_Comm_rank( MPI_COMM_WORLD, &rank );
+
+    // Define Cell Size and Number of Halo Cells in Each Direction
+    double cell_size = 0.25;
+    int halo_width = 2;
+
+    // Set grid information
+    std::array<int, 3> global_num_cell = { 104, 104, 1 };
+    std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+
+    // Create local grid
+    auto global_mesh = Cajita::createUniformGlobalMesh(
+        global_low_corner, global_high_corner, cell_size );
+    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                                 is_dim_periodic, partitioner );
+    auto local_grid = Cajita::createLocalGrid( global_grid, halo_width );
+
+    // Create vector layout with 2 dofs
+    auto cell_vector_layout =
+        Cajita::createArrayLayout( local_grid, 2, Cajita::Cell() );
+
+    // Create array with LayoutHilbert2D
+    auto array =
+        Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
+            "array", cell_vector_layout );
+
+    // Create halo
+    auto halo = createHalo( Cajita::FullHaloPattern(), halo_width, *array );
+
+    // Get owned and ghosted index spaces
+    auto owned_space =
+        cell_vector_layout->indexSpace( Cajita::Own(), Cajita::Local() );
+    auto ghosted_space =
+        cell_vector_layout->indexSpace( Cajita::Ghost(), Cajita::Local() );
+
+    // Get underlying view for assignment
+    auto array_view = array->view();
+}
+
+//---------------------------------------------------------------------------//
+void LayoutHilbert2DArrayOpTest()
+{
+    // typedef
+    typedef
+        typename Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
+            view_type;
+
+    double own_value = 1.0;
+    double ghost_value = 2.0;
+
+    // Let MPI compute the partitioning for this test.
+    Cajita::UniformDimPartitioner partitioner;
+
+    // Test the non-periodic case
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
+
+    // Define Cell Size and Number of Halo Cells in Each Direction
+    double cell_size = 0.25;
+    int halo_width = 2;
+
+    // Set grid information
+    std::array<int, 3> global_num_cell = { 5, 5, 1 };
+    std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
+    std::array<double, 3> global_high_corner = {
+        cell_size * ( global_num_cell[0] ), cell_size * ( global_num_cell[1] ),
+        cell_size * ( global_num_cell[2] ) };
+
+    // Create local grid
+    auto global_mesh = Cajita::createUniformGlobalMesh(
+        global_low_corner, global_high_corner, cell_size );
+    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                                 is_dim_periodic, partitioner );
+    auto local_grid = Cajita::createLocalGrid( global_grid, halo_width );
+
+    // Create vector layout with 1 dof
+    auto cell_vector_layout =
+        Cajita::createArrayLayout( local_grid, 1, Cajita::Cell() );
+
+    // Create array with LayoutHilbert2D
+    auto array =
+        Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
+            "array", cell_vector_layout );
+
+    // Create halo
+    auto halo = createHalo( Cajita::FullHaloPattern(), halo_width, *array );
+
+    // Get owned and ghosted index spaces
+    auto owned_space =
+        cell_vector_layout->indexSpace( Cajita::Own(), Cajita::Local() );
+    auto ghosted_space =
+        cell_vector_layout->indexSpace( Cajita::Ghost(), Cajita::Local() );
+
+    // Assign values to own and ghost cells
+    Cajita::ArrayOp::assign( *array, ghost_value, Cajita::Ghost() );
+
+    auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                          array->view() );
+
+    for ( int i = ghosted_space.min( 0 ); i < ghosted_space.max( 0 ); i++ )
+    {
+        for ( int j = ghosted_space.min( 1 ); j < ghosted_space.max( 1 ); j++ )
+        {
+            for ( int k = ghosted_space.min( 2 ); k < ghosted_space.max( 2 );
+                  k++ )
+            {
+                for ( int l = ghosted_space.min( 3 );
+                      l < ghosted_space.max( 3 ); l++ )
+                {
+                    EXPECT_EQ( host_view( i, j, k, l ), ghost_value );
+                }
+            }
+        }
+    }
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( layout_hilbert, layout_hilbert2d_test )
 {
     // Test Subview Functionality
     LayoutHilbert2DSubviewTest();
+
+    // ArrayOp Test
+    LayoutHilbert2DArrayOpTest();
 
     // Test Halo Gather Routine
     // Let MPI compute the partitioning for this test.
@@ -399,15 +531,19 @@ TEST( layout_hilbert, layout_hilbert2d_test )
         x_ranks /= 2;
     }
     int y_ranks = comm_size / x_ranks;
-    std::array<int, 3> ranks_per_dim = {x_ranks, y_ranks, 1};
+    std::array<int, 3> ranks_per_dim = { x_ranks, y_ranks, 1 };
 
     // Create 2-D partitioner
     Cajita::ManualPartitioner partitioner( ranks_per_dim );
 
     // Test the non-periodic case
-    std::array<bool, 3> is_dim_periodic = {false, false, false};
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
 
+    // Gather Test
     LayoutHilbert2DGatherTest( partitioner, is_dim_periodic );
+
+    // Scatter Test
+    // LayoutHilbert2DScatterTest( partitioner, is_dim_periodic );
 }
 
 //---------------------------------------------------------------------------//

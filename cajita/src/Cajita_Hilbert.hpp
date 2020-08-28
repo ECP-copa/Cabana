@@ -353,7 +353,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     // Contiguous - for deep copy
     KOKKOS_INLINE_FUNCTION constexpr bool span_is_contiguous() const
     {
-        return true;
+        return false;
     }
 
     /* Strides of dimensions */
