@@ -75,7 +75,7 @@ void LayoutHilbert2DSubviewTest()
                         HilbertArray.extent( 1 ), HilbertArray.extent( 2 ),
                         HilbertArray.extent( 3 ) );
     buff_type::HostMirror host_view_hilbert =
-        Kokkos::create_mirror_view( dev_view );
+        Kokkos::create_mirror( Kokkos::HostSpace(), dev_view );
 
     Kokkos::deep_copy( dev_view, HilbertArray );
     Kokkos::deep_copy( host_view_hilbert, dev_view );
@@ -132,7 +132,7 @@ void LayoutHilbert2DSubviewTest()
                             HilbertArray.extent( 1 ), HilbertArray.extent( 2 ),
                             HilbertArray.extent( 3 ) );
     buff_type::HostMirror host_view_hilbert_new =
-        Kokkos::create_mirror_view( dev_view_new );
+        Kokkos::create_mirror( Kokkos::HostSpace(), dev_view_new );
 
     Kokkos::deep_copy( dev_view_new, HilbertArray );
     Kokkos::deep_copy( host_view_hilbert_new, dev_view_new );
@@ -198,7 +198,7 @@ void LayoutHilbert2DArrayOpTest()
     buff_type dev_view( "dev_view", array->view().extent( 0 ),
                         array->view().extent( 1 ), array->view().extent( 2 ),
                         array->view().extent( 3 ) );
-    buff_type::HostMirror host_view = Kokkos::create_mirror_view( dev_view );
+    buff_type::HostMirror host_view = Kokkos::create_mirror( Kokkos::HostSpace(), dev_view );
 
     Kokkos::deep_copy( dev_view, array->view() );
     Kokkos::deep_copy( host_view, dev_view );
@@ -215,7 +215,7 @@ void LayoutHilbert2DArrayOpTest()
     Cajita::ArrayOp::scale( *array, 0.5, Cajita::Ghost() );
 
     // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
+    host_view = Kokkos::create_mirror( Kokkos::HostSpace(), dev_view );
 
     Kokkos::deep_copy( dev_view, array->view() );
     Kokkos::deep_copy( host_view, dev_view );
@@ -231,7 +231,7 @@ void LayoutHilbert2DArrayOpTest()
     Cajita::ArrayOp::scale( *array, scales, Cajita::Ghost() );
 
     // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
+    host_view = Kokkos::create_mirror( Kokkos::HostSpace(), dev_view );
 
     Kokkos::deep_copy( dev_view, array->view() );
     Kokkos::deep_copy( host_view, dev_view );
@@ -250,7 +250,7 @@ void LayoutHilbert2DArrayOpTest()
     Cajita::ArrayOp::update( *array, 3.0, *array_2, 2.0, Cajita::Ghost() );
 
     // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
+    host_view = Kokkos::create_mirror( Kokkos::HostSpace(), dev_view );
 
     Kokkos::deep_copy( dev_view, array->view() );
     Kokkos::deep_copy( host_view, dev_view );
@@ -280,7 +280,7 @@ void LayoutHilbert2DArrayOpTest()
                            subarray->view().extent( 2 ),
                            subarray->view().extent( 3 ) );
     buff_type::HostMirror host_subview =
-        Kokkos::create_mirror_view( dev_subview );
+        Kokkos::create_mirror( Kokkos::HostSpace(), dev_subview );
 
     Kokkos::deep_copy( dev_subview, subarray->view() );
     Kokkos::deep_copy( host_subview, dev_subview );
@@ -328,7 +328,7 @@ void LayoutHilbert2DArrayOpTest()
 
     auto array_view = array->view();
     Kokkos::parallel_for( "dofs", dofs_per_cell, KOKKOS_LAMBDA( int n ) {
-            array_view( 4, 4, 2, n ) = large_vals( n );
+        array_view( 4, 4, 2, n ) = large_vals( n );
     } );
 
     std::vector<double> norm_inf( dofs_per_cell );
@@ -340,7 +340,7 @@ void LayoutHilbert2DArrayOpTest()
     Cajita::ArrayOp::copy( *array, *array_2, Cajita::Own() );
 
     // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
+    host_view = Kokkos::create_mirror( Kokkos::HostSpace(), dev_view );
 
     Kokkos::deep_copy( dev_view, array->view() );
     Kokkos::deep_copy( host_view, dev_view );
@@ -361,10 +361,10 @@ void LayoutHilbert2DArrayOpTest()
     Cajita::ArrayOp::copy( *array_3, *array, Cajita::Own() );
 
     // Create copy on host to check
-    buff_type dev_view_3( "dev_view", array_3->view().extent( 0 ),
-                        array_3->view().extent( 1 ), array_3->view().extent( 2 ),
-                        array_3->view().extent( 3 ) );
-    host_view = Kokkos::create_mirror_view( dev_view_3 );
+    buff_type dev_view_3( 
+        "dev_view", array_3->view().extent( 0 ), array_3->view().extent( 1 ), 
+        array_3->view().extent( 2 ), array_3->view().extent( 3 ) );
+    host_view = Kokkos::create_mirror( Kokkos::HostSpace(), dev_view_3 );
 
     Kokkos::deep_copy( dev_view_3, array_3->view() );
     Kokkos::deep_copy( host_view, dev_view_3 );
@@ -382,10 +382,10 @@ void LayoutHilbert2DArrayOpTest()
     auto array_4 = Cajita::ArrayOp::cloneCopy( *array, Cajita::Own() );
 
     // Create copy on host to check
-    buff_type dev_view_4( "dev_view", array_4->view().extent( 0 ),
-                        array_4->view().extent( 1 ), array_4->view().extent( 2 ),
-                        array_4->view().extent( 3 ) );
-    host_view = Kokkos::create_mirror_view( dev_view_4 );
+    buff_type dev_view_4( 
+        "dev_view", array_4->view().extent( 0 ), array_4->view().extent( 1 ), 
+        array_4->view().extent( 2 ), array_4->view().extent( 3 ) );
+    host_view = Kokkos::create_mirror( Kokkos::HostSpace(), dev_view_4 );
 
     Kokkos::deep_copy( dev_view_4, array_4->view() );
     Kokkos::deep_copy( host_view, dev_view_4 );
@@ -588,7 +588,7 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     buff_type dev_view( "dev_view", array->view().extent( 0 ),
                         array->view().extent( 1 ), array->view().extent( 2 ),
                         array->view().extent( 3 ) );
-    buff_type::HostMirror host_view = Kokkos::create_mirror_view( dev_view );
+    buff_type::HostMirror host_view = Kokkos::create_mirror( Kokkos::HostSpace(), dev_view );
 
     Kokkos::deep_copy( dev_view, array->view() );
     Kokkos::deep_copy( host_view, dev_view );
