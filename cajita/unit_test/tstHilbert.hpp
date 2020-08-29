@@ -155,6 +155,252 @@ void LayoutHilbert2DSubviewTest()
 }
 
 //---------------------------------------------------------------------------//
+void LayoutHilbert2DArrayOpTest()
+{
+    // typedef
+    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+
+    // Let MPI compute the partitioning for this test.
+    Cajita::UniformDimPartitioner partitioner;
+
+    // Create the global mesh.
+    double cell_size = 0.23;
+    std::array<int, 3> global_num_cell = {101, 101, 1};
+    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2]};
+    auto global_mesh = Cajita::createUniformGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+
+    // Create the global grid.
+    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                                 is_dim_periodic, partitioner );
+
+    // Create an array layout on the cells.
+    int halo_width = 2;
+    int dofs_per_cell = 4;
+    auto cell_layout = Cajita::createArrayLayout(
+        global_grid, halo_width, dofs_per_cell, Cajita::Cell() );
+
+    // Create an array.
+    std::string label( "test_array" );
+    auto array =
+        Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
+            label, cell_layout );
+
+    // Assign a value to the entire the array.
+    Cajita::ArrayOp::assign( *array, 2.0, Cajita::Ghost() );
+
+    // Create copy on host to check
+    buff_type dev_view( "dev_view", array->view().extent( 0 ),
+                        array->view().extent( 1 ), array->view().extent( 2 ),
+                        array->view().extent( 3 ) );
+    buff_type::HostMirror host_view = Kokkos::create_mirror_view( dev_view );
+
+    Kokkos::deep_copy( dev_view, array->view() );
+    Kokkos::deep_copy( host_view, dev_view );
+
+    auto ghosted_space =
+        array->layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
+    for ( long i = 0; i < ghosted_space.extent( Cajita::Dim::I ); ++i )
+        for ( long j = 0; j < ghosted_space.extent( Cajita::Dim::J ); ++j )
+            for ( long k = 0; k < ghosted_space.extent( Cajita::Dim::K ); ++k )
+                for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), 2.0 );
+
+    // Scale the entire array with a single value.
+    Cajita::ArrayOp::scale( *array, 0.5, Cajita::Ghost() );
+
+    // Create copy on host to check
+    host_view = Kokkos::create_mirror_view( dev_view );
+
+    Kokkos::deep_copy( dev_view, array->view() );
+    Kokkos::deep_copy( host_view, dev_view );
+
+    for ( long i = 0; i < ghosted_space.extent( Cajita::Dim::I ); ++i )
+        for ( long j = 0; j < ghosted_space.extent( Cajita::Dim::J ); ++j )
+            for ( long k = 0; k < ghosted_space.extent( Cajita::Dim::K ); ++k )
+                for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
+
+    // Scale each array component by a different value.
+    std::vector<double> scales = {2.3, 1.5, 8.9, -12.1};
+    Cajita::ArrayOp::scale( *array, scales, Cajita::Ghost() );
+
+    // Create copy on host to check
+    host_view = Kokkos::create_mirror_view( dev_view );
+
+    Kokkos::deep_copy( dev_view, array->view() );
+    Kokkos::deep_copy( host_view, dev_view );
+
+    for ( long i = 0; i < ghosted_space.extent( Cajita::Dim::I ); ++i )
+        for ( long j = 0; j < ghosted_space.extent( Cajita::Dim::J ); ++j )
+            for ( long k = 0; k < ghosted_space.extent( Cajita::Dim::K ); ++k )
+                for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), scales[l] );
+
+    // Create another array and update.
+    auto array_2 =
+        Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
+            label, cell_layout );
+    Cajita::ArrayOp::assign( *array_2, 0.5, Cajita::Ghost() );
+    Cajita::ArrayOp::update( *array, 3.0, *array_2, 2.0, Cajita::Ghost() );
+
+    // Create copy on host to check
+    host_view = Kokkos::create_mirror_view( dev_view );
+
+    Kokkos::deep_copy( dev_view, array->view() );
+    Kokkos::deep_copy( host_view, dev_view );
+
+    for ( long i = 0; i < ghosted_space.extent( Cajita::Dim::I ); ++i )
+        for ( long j = 0; j < ghosted_space.extent( Cajita::Dim::J ); ++j )
+            for ( long k = 0; k < ghosted_space.extent( Cajita::Dim::K ); ++k )
+                for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), 3.0 * scales[l] + 1.0 );
+
+    // Check the subarray.
+    auto subarray = Cajita::createSubarray( *array, 2, 4 );
+    auto sub_ghosted_space =
+        subarray->layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
+    EXPECT_EQ( sub_ghosted_space.rank(), 4 );
+    EXPECT_EQ( sub_ghosted_space.extent( Cajita::Dim::I ),
+               ghosted_space.extent( Cajita::Dim::I ) );
+    EXPECT_EQ( sub_ghosted_space.extent( Cajita::Dim::J ),
+               ghosted_space.extent( Cajita::Dim::J ) );
+    EXPECT_EQ( sub_ghosted_space.extent( Cajita::Dim::K ),
+               ghosted_space.extent( Cajita::Dim::K ) );
+    EXPECT_EQ( sub_ghosted_space.extent( 3 ), 2 );
+
+    // Create copy on host to check
+    buff_type dev_subview( "dev_subview", subarray->view().extent( 0 ),
+                           subarray->view().extent( 1 ),
+                           subarray->view().extent( 2 ),
+                           subarray->view().extent( 3 ) );
+    buff_type::HostMirror host_subview =
+        Kokkos::create_mirror_view( dev_subview );
+
+    Kokkos::deep_copy( dev_subview, subarray->view() );
+    Kokkos::deep_copy( host_subview, dev_subview );
+
+    for ( long i = 0; i < sub_ghosted_space.extent( Cajita::Dim::I ); ++i )
+        for ( long j = 0; j < sub_ghosted_space.extent( Cajita::Dim::J ); ++j )
+            for ( long k = 0; k < sub_ghosted_space.extent( Cajita::Dim::K );
+                  ++k )
+                for ( long l = 0; l < sub_ghosted_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_subview( i, j, k, l ),
+                               3.0 * scales[l + 2] + 1.0 );
+
+    // Compute the dot product of the two arrays.
+    std::vector<double> dots( dofs_per_cell );
+    Cajita::ArrayOp::dot( *array, *array_2, dots );
+    int total_num_node =
+        global_grid->globalNumEntity( Cajita::Node(), Cajita::Dim::I ) *
+        global_grid->globalNumEntity( Cajita::Node(), Cajita::Dim::J ) *
+        global_grid->globalNumEntity( Cajita::Node(), Cajita::Dim::K );
+    for ( int n = 0; n < dofs_per_cell; ++n )
+        EXPECT_FLOAT_EQ( dots[n],
+                         ( 3.0 * scales[n] + 1.0 ) * 0.5 * total_num_node );
+
+    // Compute the two-norm of the array components
+    std::vector<double> norm_2( dofs_per_cell );
+    Cajita::ArrayOp::norm2( *array, norm_2 );
+    for ( int n = 0; n < dofs_per_cell; ++n )
+        EXPECT_FLOAT_EQ( norm_2[n],
+                         std::sqrt( std::pow( 3.0 * scales[n] + 1.0, 2.0 ) *
+                                    total_num_node ) );
+
+    // Compute the one-norm of the array components
+    std::vector<double> norm_1( dofs_per_cell );
+    Cajita::ArrayOp::norm1( *array, norm_1 );
+    for ( int n = 0; n < dofs_per_cell; ++n )
+        EXPECT_FLOAT_EQ( norm_1[n],
+                         fabs( 3.0 * scales[n] + 1.0 ) * total_num_node );
+
+    // Compute the infinity-norm of the array components
+    Kokkos::View<double *> large_vals( "large_vals", dofs_per_cell );
+    large_vals( 0 ) = -1939304932.2;
+    large_vals( 1 ) = 20399994.532;
+    large_vals( 2 ) = 9098201010.114;
+    large_vals( 3 ) = -89877402343.99;
+
+    auto array_view = array->view();
+    Kokkos::parallel_for( "dofs", dofs_per_cell, KOKKOS_LAMBDA( int n ) {
+            array_view( 4, 4, 2, n ) = large_vals( n );
+    } );
+
+    std::vector<double> norm_inf( dofs_per_cell );
+    Cajita::ArrayOp::normInf( *array, norm_inf );
+    for ( int n = 0; n < dofs_per_cell; ++n )
+        EXPECT_FLOAT_EQ( norm_inf[n], fabs( large_vals[n] ) );
+
+    // Check the copy.
+    Cajita::ArrayOp::copy( *array, *array_2, Cajita::Own() );
+
+    // Create copy on host to check
+    host_view = Kokkos::create_mirror_view( dev_view );
+
+    Kokkos::deep_copy( dev_view, array->view() );
+    Kokkos::deep_copy( host_view, dev_view );
+
+    auto owned_space =
+        array->layout()->indexSpace( Cajita::Own(), Cajita::Local() );
+    for ( long i = owned_space.min( Cajita::Dim::I );
+          i < owned_space.max( Cajita::Dim::I ); ++i )
+        for ( long j = owned_space.min( Cajita::Dim::J );
+              j < owned_space.max( Cajita::Dim::J ); ++j )
+            for ( long k = owned_space.min( Cajita::Dim::K );
+                  k < owned_space.max( Cajita::Dim::K ); ++k )
+                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
+
+    // Now make a clone and copy.
+    auto array_3 = Cajita::ArrayOp::clone( *array );
+    Cajita::ArrayOp::copy( *array_3, *array, Cajita::Own() );
+
+    // Create copy on host to check
+    buff_type dev_view_3( "dev_view", array_3->view().extent( 0 ),
+                        array_3->view().extent( 1 ), array_3->view().extent( 2 ),
+                        array_3->view().extent( 3 ) );
+    host_view = Kokkos::create_mirror_view( dev_view_3 );
+
+    Kokkos::deep_copy( dev_view_3, array_3->view() );
+    Kokkos::deep_copy( host_view, dev_view_3 );
+
+    for ( long i = owned_space.min( Cajita::Dim::I );
+          i < owned_space.max( Cajita::Dim::I ); ++i )
+        for ( long j = owned_space.min( Cajita::Dim::J );
+              j < owned_space.max( Cajita::Dim::J ); ++j )
+            for ( long k = owned_space.min( Cajita::Dim::K );
+                  k < owned_space.max( Cajita::Dim::K ); ++k )
+                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
+
+    // Test the fused clone copy.
+    auto array_4 = Cajita::ArrayOp::cloneCopy( *array, Cajita::Own() );
+
+    // Create copy on host to check
+    buff_type dev_view_4( "dev_view", array_4->view().extent( 0 ),
+                        array_4->view().extent( 1 ), array_4->view().extent( 2 ),
+                        array_4->view().extent( 3 ) );
+    host_view = Kokkos::create_mirror_view( dev_view_4 );
+
+    Kokkos::deep_copy( dev_view_4, array_4->view() );
+    Kokkos::deep_copy( host_view, dev_view_4 );
+
+    for ( long i = owned_space.min( Cajita::Dim::I );
+          i < owned_space.max( Cajita::Dim::I ); ++i )
+        for ( long j = owned_space.min( Cajita::Dim::J );
+              j < owned_space.max( Cajita::Dim::J ); ++j )
+            for ( long k = owned_space.min( Cajita::Dim::K );
+                  k < owned_space.max( Cajita::Dim::K ); ++k )
+                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
+}
+
+//---------------------------------------------------------------------------//
 void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
                                 const std::array<bool, 3> &is_dim_periodic )
 {
@@ -403,257 +649,22 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
 }
 
 //---------------------------------------------------------------------------//
-void LayoutHilbert2DArrayOpTest()
-{
-    // typedef
-    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
-
-    // Let MPI compute the partitioning for this test.
-    Cajita::UniformDimPartitioner partitioner;
-
-    // Create the global mesh.
-    double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {101, 101, 1};
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
-    std::array<double, 3> global_high_corner = {
-        global_low_corner[0] + cell_size * global_num_cell[0],
-        global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
-    auto global_mesh = Cajita::createUniformGlobalMesh(
-        global_low_corner, global_high_corner, global_num_cell );
-
-    // Create the global grid.
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
-
-    // Create an array layout on the cells.
-    int halo_width = 2;
-    int dofs_per_cell = 4;
-    auto cell_layout = Cajita::createArrayLayout(
-        global_grid, halo_width, dofs_per_cell, Cajita::Cell() );
-
-    // Create an array.
-    std::string label( "test_array" );
-    auto array =
-        Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
-            label, cell_layout );
-
-    // Assign a value to the entire the array.
-    Cajita::ArrayOp::assign( *array, 2.0, Cajita::Ghost() );
-
-    // Create copy on host to check
-    buff_type dev_view( "dev_view", array->view().extent( 0 ),
-                        array->view().extent( 1 ), array->view().extent( 2 ),
-                        array->view().extent( 3 ) );
-    buff_type::HostMirror host_view = Kokkos::create_mirror_view( dev_view );
-
-    Kokkos::deep_copy( dev_view, array->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    auto ghosted_space =
-        array->layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
-    for ( long i = 0; i < ghosted_space.extent( Cajita::Dim::I ); ++i )
-        for ( long j = 0; j < ghosted_space.extent( Cajita::Dim::J ); ++j )
-            for ( long k = 0; k < ghosted_space.extent( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 2.0 );
-
-    // Scale the entire array with a single value.
-    Cajita::ArrayOp::scale( *array, 0.5, Cajita::Ghost() );
-
-    // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
-
-    Kokkos::deep_copy( dev_view, array->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    for ( long i = 0; i < ghosted_space.extent( Cajita::Dim::I ); ++i )
-        for ( long j = 0; j < ghosted_space.extent( Cajita::Dim::J ); ++j )
-            for ( long k = 0; k < ghosted_space.extent( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
-
-    // Scale each array component by a different value.
-    std::vector<double> scales = {2.3, 1.5, 8.9, -12.1};
-    Cajita::ArrayOp::scale( *array, scales, Cajita::Ghost() );
-
-    // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
-
-    Kokkos::deep_copy( dev_view, array->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    for ( long i = 0; i < ghosted_space.extent( Cajita::Dim::I ); ++i )
-        for ( long j = 0; j < ghosted_space.extent( Cajita::Dim::J ); ++j )
-            for ( long k = 0; k < ghosted_space.extent( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), scales[l] );
-
-    // Create another array and update.
-    auto array_2 =
-        Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
-            label, cell_layout );
-    Cajita::ArrayOp::assign( *array_2, 0.5, Cajita::Ghost() );
-    Cajita::ArrayOp::update( *array, 3.0, *array_2, 2.0, Cajita::Ghost() );
-
-    // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
-
-    Kokkos::deep_copy( dev_view, array->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    for ( long i = 0; i < ghosted_space.extent( Cajita::Dim::I ); ++i )
-        for ( long j = 0; j < ghosted_space.extent( Cajita::Dim::J ); ++j )
-            for ( long k = 0; k < ghosted_space.extent( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 3.0 * scales[l] + 1.0 );
-
-    // Check the subarray.
-    auto subarray = Cajita::createSubarray( *array, 2, 4 );
-    auto sub_ghosted_space =
-        subarray->layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
-    EXPECT_EQ( sub_ghosted_space.rank(), 4 );
-    EXPECT_EQ( sub_ghosted_space.extent( Cajita::Dim::I ),
-               ghosted_space.extent( Cajita::Dim::I ) );
-    EXPECT_EQ( sub_ghosted_space.extent( Cajita::Dim::J ),
-               ghosted_space.extent( Cajita::Dim::J ) );
-    EXPECT_EQ( sub_ghosted_space.extent( Cajita::Dim::K ),
-               ghosted_space.extent( Cajita::Dim::K ) );
-    EXPECT_EQ( sub_ghosted_space.extent( 3 ), 2 );
-
-    // Create copy on host to check
-    buff_type dev_subview( "dev_subview", subarray->view().extent( 0 ),
-                           subarray->view().extent( 1 ),
-                           subarray->view().extent( 2 ),
-                           subarray->view().extent( 3 ) );
-    buff_type::HostMirror host_subview =
-        Kokkos::create_mirror_view( dev_subview );
-
-    Kokkos::deep_copy( dev_subview, subarray->view() );
-    Kokkos::deep_copy( host_subview, dev_subview );
-
-    for ( long i = 0; i < sub_ghosted_space.extent( Cajita::Dim::I ); ++i )
-        for ( long j = 0; j < sub_ghosted_space.extent( Cajita::Dim::J ); ++j )
-            for ( long k = 0; k < sub_ghosted_space.extent( Cajita::Dim::K );
-                  ++k )
-                for ( long l = 0; l < sub_ghosted_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_subview( i, j, k, l ),
-                               3.0 * scales[l + 2] + 1.0 );
-
-    // Compute the dot product of the two arrays.
-    std::vector<double> dots( dofs_per_cell );
-    Cajita::ArrayOp::dot( *array, *array_2, dots );
-    int total_num_node =
-        global_grid->globalNumEntity( Cajita::Node(), Cajita::Dim::I ) *
-        global_grid->globalNumEntity( Cajita::Node(), Cajita::Dim::J ) *
-        global_grid->globalNumEntity( Cajita::Node(), Cajita::Dim::K );
-    for ( int n = 0; n < dofs_per_cell; ++n )
-        EXPECT_FLOAT_EQ( dots[n],
-                         ( 3.0 * scales[n] + 1.0 ) * 0.5 * total_num_node );
-
-    // Compute the two-norm of the array components
-    std::vector<double> norm_2( dofs_per_cell );
-    Cajita::ArrayOp::norm2( *array, norm_2 );
-    for ( int n = 0; n < dofs_per_cell; ++n )
-        EXPECT_FLOAT_EQ( norm_2[n],
-                         std::sqrt( std::pow( 3.0 * scales[n] + 1.0, 2.0 ) *
-                                    total_num_node ) );
-
-    // Compute the one-norm of the array components
-    std::vector<double> norm_1( dofs_per_cell );
-    Cajita::ArrayOp::norm1( *array, norm_1 );
-    for ( int n = 0; n < dofs_per_cell; ++n )
-        EXPECT_FLOAT_EQ( norm_1[n],
-                         fabs( 3.0 * scales[n] + 1.0 ) * total_num_node );
-
-    // Compute the infinity-norm of the array components
-    Kokkos::View<double *> large_vals( "large_vals", dofs_per_cell );
-    large_vals( 0 ) = -1939304932.2;
-    large_vals( 1 ) = 20399994.532;
-    large_vals( 2 ) = 9098201010.114;
-    large_vals( 3 ) = -89877402343.99;
-
-    auto array_view = array->view();
-    Kokkos::parallel_for(
-        "dofs", dofs_per_cell, KOKKOS_LAMBDA( int n ) {
-            array_view( 4, 4, 2, n ) = large_vals( n );
-        } );
-
-    std::vector<double> norm_inf( dofs_per_cell );
-    Cajita::ArrayOp::normInf( *array, norm_inf );
-    for ( int n = 0; n < dofs_per_cell; ++n )
-        EXPECT_FLOAT_EQ( norm_inf[n], fabs( large_vals[n] ) );
-
-    // Check the copy.
-    Cajita::ArrayOp::copy( *array, *array_2, Cajita::Own() );
-
-    // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
-
-    Kokkos::deep_copy( dev_view, array->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    auto owned_space =
-        array->layout()->indexSpace( Cajita::Own(), Cajita::Local() );
-    for ( long i = owned_space.min( Cajita::Dim::I );
-          i < owned_space.max( Cajita::Dim::I ); ++i )
-        for ( long j = owned_space.min( Cajita::Dim::J );
-              j < owned_space.max( Cajita::Dim::J ); ++j )
-            for ( long k = owned_space.min( Cajita::Dim::K );
-                  k < owned_space.max( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
-
-    // Now make a clone and copy.
-    auto array_3 = Cajita::ArrayOp::clone( *array );
-    Cajita::ArrayOp::copy( *array_3, *array, Cajita::Own() );
-
-    // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
-
-    Kokkos::deep_copy( dev_view, array_3->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    for ( long i = owned_space.min( Cajita::Dim::I );
-          i < owned_space.max( Cajita::Dim::I ); ++i )
-        for ( long j = owned_space.min( Cajita::Dim::J );
-              j < owned_space.max( Cajita::Dim::J ); ++j )
-            for ( long k = owned_space.min( Cajita::Dim::K );
-                  k < owned_space.max( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
-
-    // Test the fused clone copy.
-    auto array_4 = Cajita::ArrayOp::cloneCopy( *array, Cajita::Own() );
-
-    // Create copy on host to check
-    host_view = Kokkos::create_mirror_view( dev_view );
-
-    Kokkos::deep_copy( dev_view, array_4->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    for ( long i = owned_space.min( Cajita::Dim::I );
-          i < owned_space.max( Cajita::Dim::I ); ++i )
-        for ( long j = owned_space.min( Cajita::Dim::J );
-              j < owned_space.max( Cajita::Dim::J ); ++j )
-            for ( long k = owned_space.min( Cajita::Dim::K );
-                  k < owned_space.max( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
-}
-
-//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( layout_hilbert, layout_hilbert2d_test )
+TEST( layout_hilbert, layout_hilbert_subview_test )
 {
     // Test Subview Functionality
     LayoutHilbert2DSubviewTest();
+}
 
+TEST( layout_hilbert, layout_hilbert_arrayop_test )
+{
     // ArrayOp Test
     LayoutHilbert2DArrayOpTest();
+}
 
+TEST( layout_hilbert, layout_hilbert_gather_test )
+{
     // Test Halo Gather Routine
     // Let MPI compute the partitioning for this test.
     int comm_size;
