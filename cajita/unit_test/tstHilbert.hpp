@@ -562,7 +562,7 @@ void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
 
     // Create the global grid.
     auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                         is_dim_periodic, partitioner );
+                                                 is_dim_periodic, partitioner );
 
     // Array parameters.
     unsigned array_halo_width = 3;
