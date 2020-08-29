@@ -477,6 +477,45 @@ int haloPad( Cajita::Edge<D>, int d )
 }
 
 //---------------------------------------------------------------------------//
+// Check initial array gather. We should get 1 everywhere in the array now
+// where there was ghost overlap. Otherwise there will still be 0.
+template <class Array>
+void checkGather( const int halo_width, const Array &array )
+{
+    // typedef
+    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+
+    auto owned_space = array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
+    auto ghosted_space = array.layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
+
+    // Create copy on host to check
+    buff_type dev_view( "dev_view", array.view().extent( 0 ),
+                        array.view().extent( 1 ), array.view().extent( 2 ),
+                        array.view().extent( 3 ) );
+    auto host_view = Kokkos::create_mirror( dev_view );
+
+    Kokkos::deep_copy( dev_view, array.view() );
+    Kokkos::deep_copy( host_view, dev_view );
+
+    auto pad_i = haloPad( typename Array::entity_type(), Cajita::Dim::I );
+    auto pad_j = haloPad( typename Array::entity_type(), Cajita::Dim::J );
+    auto pad_k = haloPad( typename Array::entity_type(), Cajita::Dim::K );
+    for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
+        for ( unsigned j = 0; j < ghosted_space.extent( 1 ); ++j )
+            for ( unsigned k = 0; k < ghosted_space.extent( 2 ); ++k )
+                for ( unsigned l = 0; l < ghosted_space.extent( 3 ); ++l )
+                    if ( i < owned_space.min( Cajita::Dim::I ) - halo_width ||
+                         i >= owned_space.max( Cajita::Dim::I ) + halo_width + pad_i ||
+                         j < owned_space.min( Cajita::Dim::J ) - halo_width ||
+                         j >= owned_space.max( Cajita::Dim::J ) + halo_width + pad_j ||
+                         k < owned_space.min( Cajita::Dim::K ) - halo_width ||
+                         k >= owned_space.max( Cajita::Dim::K ) + halo_width + pad_k )
+                        EXPECT_EQ( host_view( i, j, k, l ), 0.0 );
+                    else
+                        EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
+}
+
+//---------------------------------------------------------------------------//
 // Check array scatter. The value of the cell should be a function of how many
 // neighbors it has. Corner neighbors get 8, edge neighbors get 4, face
 // neighbors get 2, and no neighbors remain at 1.
@@ -588,6 +627,9 @@ void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *array );
+
+        // Check the gather.
+        checkGather( halo_width, *array );
 
         // Scatter from the ghosts back to owned.
         halo->scatter( TEST_EXECSPACE(), Cajita::ScatterReduce::Sum(), *array );
