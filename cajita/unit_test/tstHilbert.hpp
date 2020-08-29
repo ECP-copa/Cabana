@@ -163,7 +163,7 @@ void LayoutHilbert2DArrayOpTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {101, 101, 1};
+    std::array<int, 3> global_num_cell = {101, 85, 99};
     std::array<bool, 3> is_dim_periodic = {true, true, true};
     std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
     std::array<double, 3> global_high_corner = {
@@ -317,21 +317,35 @@ void LayoutHilbert2DArrayOpTest()
                          fabs( 3.0 * scales[n] + 1.0 ) * total_num_node );
 
     // Compute the infinity-norm of the array components
-    Kokkos::View<double *, TEST_DEVICE> large_vals( "large_vals", dofs_per_cell );
+    Kokkos::View<double *, TEST_DEVICE> large_vals( "large_vals",
+                                                    dofs_per_cell );
     large_vals( 0 ) = -1939304932.2;
     large_vals( 1 ) = 20399994.532;
     large_vals( 2 ) = 9098201010.114;
     large_vals( 3 ) = -89877402343.99;
 
+    std::array<long, 1> dofs_min = {0};
+    std::array<long, 1> dofs_max = {dofs_per_cell};
+
+    Cajita::IndexSpace<1> dofs_index( dofs_min, dofs_max );
+
     auto array_view = array->view();
-    Kokkos::parallel_for( "dofs", dofs_per_cell, KOKKOS_LAMBDA( int n ) {
-        array_view( 4, 4, 2, n ) = large_vals( n );
-    } );
+    Kokkos::parallel_for( "dofs",
+                            Cajita::createExecutionPolicy( 
+                                dofs_index, buff_type::execution_space() ),
+                        KOKKOS_LAMBDA( const int n ) {
+                            array_view( 4, 4, 4, n ) = large_vals( n );
+                        } );
+    buff_type::execution_space().fence();
 
     std::vector<double> norm_inf( dofs_per_cell );
     Cajita::ArrayOp::normInf( *array, norm_inf );
+
+    auto host_large_vals = Kokkos::create_mirror_view( large_vals );
+    Kokkos::deep_copy( host_large_vals, large_vals );
+
     for ( int n = 0; n < dofs_per_cell; ++n )
-        EXPECT_FLOAT_EQ( norm_inf[n], fabs( large_vals[n] ) );
+        EXPECT_FLOAT_EQ( norm_inf[n], fabs( host_large_vals( n ) ) );
 
     // Check the copy.
     Cajita::ArrayOp::copy( *array, *array_2, Cajita::Own() );
