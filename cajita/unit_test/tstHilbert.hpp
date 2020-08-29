@@ -586,6 +586,9 @@ void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
         auto halo =
             Cajita::createHalo( *array, Cajita::FullHaloPattern(), halo_width );
 
+        // Gather into the ghosts.
+        halo->gather( TEST_EXECSPACE(), *array );
+
         // Scatter from the ghosts back to owned.
         halo->scatter( TEST_EXECSPACE(), Cajita::ScatterReduce::Sum(), *array );
 
