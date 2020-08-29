@@ -459,6 +459,138 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
 }
 
 //---------------------------------------------------------------------------//
+// Halo padding in each dimension for different entity types.
+int haloPad( Cajita::Cell, int ) { return 0; }
+
+int haloPad( Cajita::Node, int ) { return 1; }
+
+template <int D>
+int haloPad( Cajita::Face<D>, int d )
+{
+    return ( d == D ) ? 1 : 0;
+}
+
+template <int D>
+int haloPad( Cajita::Edge<D>, int d )
+{
+    return ( d == D ) ? 0 : 1;
+}
+
+//---------------------------------------------------------------------------//
+// Check array scatter. The value of the cell should be a function of how many
+// neighbors it has. Corner neighbors get 8, edge neighbors get 4, face
+// neighbors get 2, and no neighbors remain at 1.
+template <class Array>
+void checkScatter( const std::array<bool, 3> &is_dim_periodic,
+                   const int halo_width, const Array &array )
+{
+    // typedef
+    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+
+    // Get data.
+    auto owned_space = array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
+
+    // Create copy on host to check
+    buff_type dev_view( "dev_view", array.view().extent( 0 ),
+                        array.view().extent( 1 ), array.view().extent( 2 ),
+                        array.view().extent( 3 ) );
+    auto host_view = Kokkos::create_mirror( dev_view );
+
+    Kokkos::deep_copy( dev_view, array.view() );
+    Kokkos::deep_copy( host_view, dev_view );
+
+    const auto &global_grid = array.layout()->localGrid()->globalGrid();
+
+    // This function checks if an index is in the halo of a low neighbor in
+    // the given dimension
+    auto in_dim_min_halo = [&]( const int i, const int dim ) {
+        if ( is_dim_periodic[dim] || global_grid.dimBlockId( dim ) > 0 )
+            return i < ( owned_space.min( dim ) + halo_width +
+                         haloPad( typename Array::entity_type(), dim ) );
+        else
+            return false;
+    };
+
+    // This function checks if an index is in the halo of a high neighbor in
+    // the given dimension
+    auto in_dim_max_halo = [&]( const int i, const int dim ) {
+        if ( is_dim_periodic[dim] || global_grid.dimBlockId( dim ) <
+                                         global_grid.dimNumBlock( dim ) - 1 )
+            return i >= ( owned_space.max( dim ) - halo_width );
+        else
+            return false;
+    };
+
+    // Check results. Use the halo functions to figure out how many neighbor
+    // a given cell was ghosted to.
+    for ( unsigned i = owned_space.min( 0 ); i < owned_space.max( 0 ); ++i )
+        for ( unsigned j = owned_space.min( 1 ); j < owned_space.max( 1 ); ++j )
+            for ( unsigned k = owned_space.min( 2 ); k < owned_space.max( 2 );
+                  ++k )
+            {
+                int num_n = 0;
+                if ( in_dim_min_halo( i, Cajita::Dim::I ) ||
+                     in_dim_max_halo( i, Cajita::Dim::I ) )
+                    ++num_n;
+                if ( in_dim_min_halo( j, Cajita::Dim::J ) ||
+                     in_dim_max_halo( j, Cajita::Dim::J ) )
+                    ++num_n;
+                if ( in_dim_min_halo( k, Cajita::Dim::K ) ||
+                     in_dim_max_halo( k, Cajita::Dim::K ) )
+                    ++num_n;
+                double scatter_val = std::pow( 2.0, num_n );
+                for ( unsigned l = 0; l < owned_space.extent( 3 ); ++l )
+                    EXPECT_EQ( host_view( i, j, k, l ), scatter_val );
+            }
+}
+
+//---------------------------------------------------------------------------//
+void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
+                        const std::array<bool, 3> &is_dim_periodic )
+{
+    // Create the global grid.
+    double cell_size = 0.23;
+    std::array<int, 3> global_num_cell = {32, 23, 41};
+    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2]};
+    auto global_mesh = Cajita::createUniformGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+
+    // Create the global grid.
+    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                         is_dim_periodic, partitioner );
+
+    // Array parameters.
+    unsigned array_halo_width = 3;
+
+    // Loop over halo sizes up to the size of the array halo width.
+    for ( unsigned halo_width = 1; halo_width <= array_halo_width;
+          ++halo_width )
+    {
+        // Create a cell array.
+        auto layout =
+            Cajita::createArrayLayout( global_grid, array_halo_width, 4, Cajita::Cell() );
+        auto array = Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>( "array", layout );
+
+        // Assign the owned cells a value of 1 and the rest 0.
+        Cajita::ArrayOp::assign( *array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *array, 1.0, Cajita::Own() );
+
+        // Create a halo.
+        auto halo = Cajita::createHalo( *array, Cajita::FullHaloPattern(), halo_width );
+
+        // Scatter from the ghosts back to owned.
+        halo->scatter( TEST_EXECSPACE(), Cajita::ScatterReduce::Sum(), *array );
+
+        // Check the scatter.
+        checkScatter( is_dim_periodic, halo_width, *array );
+    }
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( layout_hilbert, layout_hilbert_subview_test )
@@ -499,7 +631,7 @@ TEST( layout_hilbert, layout_hilbert_gather_test )
     LayoutHilbert2DGatherTest( partitioner, is_dim_periodic );
 
     // Scatter Test
-    // LayoutHilbert2DScatterTest( partitioner, is_dim_periodic );
+    LayoutHilbert2DScatterTest( partitioner, is_dim_periodic );
 }
 
 //---------------------------------------------------------------------------//
