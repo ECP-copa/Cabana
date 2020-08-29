@@ -488,7 +488,8 @@ void checkScatter( const std::array<bool, 3> &is_dim_periodic,
     typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
 
     // Get data.
-    auto owned_space = array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
+    auto owned_space =
+        array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
 
     // Create copy on host to check
     buff_type dev_view( "dev_view", array.view().extent( 0 ),
@@ -546,7 +547,7 @@ void checkScatter( const std::array<bool, 3> &is_dim_periodic,
 
 //---------------------------------------------------------------------------//
 void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
-                        const std::array<bool, 3> &is_dim_periodic )
+                                 const std::array<bool, 3> &is_dim_periodic )
 {
     // Create the global grid.
     double cell_size = 0.23;
