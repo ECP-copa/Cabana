@@ -485,8 +485,10 @@ void checkGather( const int halo_width, const Array &array )
     // typedef
     typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
 
-    auto owned_space = array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
-    auto ghosted_space = array.layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
+    auto owned_space =
+        array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
+    auto ghosted_space =
+        array.layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
 
     // Create copy on host to check
     buff_type dev_view( "dev_view", array.view().extent( 0 ),
@@ -505,11 +507,14 @@ void checkGather( const int halo_width, const Array &array )
             for ( unsigned k = 0; k < ghosted_space.extent( 2 ); ++k )
                 for ( unsigned l = 0; l < ghosted_space.extent( 3 ); ++l )
                     if ( i < owned_space.min( Cajita::Dim::I ) - halo_width ||
-                         i >= owned_space.max( Cajita::Dim::I ) + halo_width + pad_i ||
+                         i >= owned_space.max( Cajita::Dim::I ) + halo_width +
+                                  pad_i ||
                          j < owned_space.min( Cajita::Dim::J ) - halo_width ||
-                         j >= owned_space.max( Cajita::Dim::J ) + halo_width + pad_j ||
+                         j >= owned_space.max( Cajita::Dim::J ) + halo_width +
+                                  pad_j ||
                          k < owned_space.min( Cajita::Dim::K ) - halo_width ||
-                         k >= owned_space.max( Cajita::Dim::K ) + halo_width + pad_k )
+                         k >= owned_space.max( Cajita::Dim::K ) + halo_width +
+                                  pad_k )
                         EXPECT_EQ( host_view( i, j, k, l ), 0.0 );
                     else
                         EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
