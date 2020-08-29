@@ -35,15 +35,18 @@ void LayoutHilbert2DSubviewTest()
         typename Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
             view_type;
 
+    // typedef
+    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+
     // Set dimensions
-    int dim1 = 27;
+    int dim1 = 45;
     int dim2 = 51;
     int dim3 = 1;
     int dim4 = 2;
 
     // View Index Space
     auto view_space =
-        Cajita::IndexSpace<4>( { 0, 0, 0, 0 }, { dim1, dim2, dim3, dim4 } );
+        Cajita::IndexSpace<4>( {0, 0, 0, 0}, {dim1, dim2, dim3, dim4} );
 
     // Create Hilbert View
     Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
@@ -68,8 +71,15 @@ void LayoutHilbert2DSubviewTest()
     view_type::execution_space().fence();
 
     // Create copies on host to check
-    auto host_view_hilbert = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), HilbertArray );
+    buff_type dev_view( "dev_view", HilbertArray.extent( 0 ),
+                        HilbertArray.extent( 1 ), HilbertArray.extent( 2 ),
+                        HilbertArray.extent( 3 ) );
+    buff_type::HostMirror host_view_hilbert =
+        Kokkos::create_mirror_view( dev_view );
+
+    Kokkos::deep_copy( dev_view, HilbertArray );
+    Kokkos::deep_copy( host_view_hilbert, dev_view );
+
     auto host_view_regular = Kokkos::create_mirror_view_and_copy(
         Kokkos::HostSpace(), RegularArray );
 
@@ -84,7 +94,7 @@ void LayoutHilbert2DSubviewTest()
 
     // Create subview index space - mimicking a halo subview of width 2
     Cajita::IndexSpace<4> space;
-    space = Cajita::IndexSpace<4>( { 0, 0, 0, 0 }, { 2, dim2, dim3, dim4 } );
+    space = Cajita::IndexSpace<4>( {0, 0, 0, 0}, {2, dim2, dim3, dim4} );
 
     // Create Hilbert subview from Hilbert View
     auto HilbertSub =
@@ -118,8 +128,14 @@ void LayoutHilbert2DSubviewTest()
     Kokkos::deep_copy( HilbertSub, RegularSmall );
 
     // Create copy on host to check
-    auto host_view_hilbert_new = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), HilbertArray );
+    buff_type dev_view_new( "dev_view_new", HilbertArray.extent( 0 ),
+                            HilbertArray.extent( 1 ), HilbertArray.extent( 2 ),
+                            HilbertArray.extent( 3 ) );
+    buff_type::HostMirror host_view_hilbert_new =
+        Kokkos::create_mirror_view( dev_view_new );
+
+    Kokkos::deep_copy( dev_view_new, HilbertArray );
+    Kokkos::deep_copy( host_view_hilbert_new, dev_view_new );
 
     // Check that the replacement value got copied over correctly from the Small
     // Regular View, to the Hilbert Subview and hence the original Hilbert view
@@ -159,12 +175,12 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     int halo_width = 2;
 
     // Set grid information
-    std::array<int, 3> global_num_cell = { 104, 104, 1 };
-    std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
+    std::array<int, 3> global_num_cell = {104, 104, 1};
+    std::array<double, 3> global_low_corner = {0.0, 0.0, 0.0};
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2] };
+        global_low_corner[2] + cell_size * global_num_cell[2]};
 
     // Create local grid
     auto global_mesh = Cajita::createUniformGlobalMesh(
@@ -323,7 +339,9 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     halo->gather( TEST_EXECSPACE(), *array );
 
     // Create copy on host to check
-    buff_type dev_view( "dev_view", 128, 128, 1, 2 );
+    buff_type dev_view( "dev_view", array->view().extent( 0 ),
+                        array->view().extent( 1 ), array->view().extent( 2 ),
+                        array->view().extent( 3 ) );
     buff_type::HostMirror host_view = Kokkos::create_mirror_view( dev_view );
 
     Kokkos::deep_copy( dev_view, array->view() );
@@ -395,13 +413,13 @@ void LayoutHilbert2DArrayOpTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 101, 101, 1 };
-    std::array<bool, 3> is_dim_periodic = { true, true, true };
-    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<int, 3> global_num_cell = {101, 101, 1};
+    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2] };
+        global_low_corner[2] + cell_size * global_num_cell[2]};
     auto global_mesh = Cajita::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -425,7 +443,9 @@ void LayoutHilbert2DArrayOpTest()
     Cajita::ArrayOp::assign( *array, 2.0, Cajita::Ghost() );
 
     // Create copy on host to check
-    buff_type dev_view( "dev_view", 128, 128, 5, 4 );
+    buff_type dev_view( "dev_view", array->view().extent( 0 ),
+                        array->view().extent( 1 ), array->view().extent( 2 ),
+                        array->view().extent( 3 ) );
     buff_type::HostMirror host_view = Kokkos::create_mirror_view( dev_view );
 
     Kokkos::deep_copy( dev_view, array->view() );
@@ -455,7 +475,7 @@ void LayoutHilbert2DArrayOpTest()
                     EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
 
     // Scale each array component by a different value.
-    std::vector<double> scales = { 2.3, 1.5, 8.9, -12.1 };
+    std::vector<double> scales = {2.3, 1.5, 8.9, -12.1};
     Cajita::ArrayOp::scale( *array, scales, Cajita::Ghost() );
 
     // Create copy on host to check
@@ -503,7 +523,10 @@ void LayoutHilbert2DArrayOpTest()
     EXPECT_EQ( sub_ghosted_space.extent( 3 ), 2 );
 
     // Create copy on host to check
-    buff_type dev_subview( "dev_subview", 105, 105, 5, 2 );
+    buff_type dev_subview( "dev_subview", subarray->view().extent( 0 ),
+                           subarray->view().extent( 1 ),
+                           subarray->view().extent( 2 ),
+                           subarray->view().extent( 3 ) );
     buff_type::HostMirror host_subview =
         Kokkos::create_mirror_view( dev_subview );
 
@@ -643,13 +666,13 @@ TEST( layout_hilbert, layout_hilbert2d_test )
         x_ranks /= 2;
     }
     int y_ranks = comm_size / x_ranks;
-    std::array<int, 3> ranks_per_dim = { x_ranks, y_ranks, 1 };
+    std::array<int, 3> ranks_per_dim = {x_ranks, y_ranks, 1};
 
     // Create 2-D partitioner
     Cajita::ManualPartitioner partitioner( ranks_per_dim );
 
     // Test the non-periodic case
-    std::array<bool, 3> is_dim_periodic = { false, false, false };
+    std::array<bool, 3> is_dim_periodic = {false, false, false};
 
     // Gather Test
     LayoutHilbert2DGatherTest( partitioner, is_dim_periodic );
