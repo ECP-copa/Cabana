@@ -130,8 +130,7 @@ void LayoutHilbert2DSubviewTest()
     buff_type dev_view_new( "dev_view_new", HilbertArray.extent( 0 ),
                             HilbertArray.extent( 1 ), HilbertArray.extent( 2 ),
                             HilbertArray.extent( 3 ) );
-    auto host_view_hilbert_new =
-        Kokkos::create_mirror( dev_view_new );
+    auto host_view_hilbert_new = Kokkos::create_mirror( dev_view_new );
 
     Kokkos::deep_copy( dev_view_new, HilbertArray );
     Kokkos::deep_copy( host_view_hilbert_new, dev_view_new );
@@ -318,7 +317,7 @@ void LayoutHilbert2DArrayOpTest()
                          fabs( 3.0 * scales[n] + 1.0 ) * total_num_node );
 
     // Compute the infinity-norm of the array components
-    Kokkos::View<double *> large_vals( "large_vals", dofs_per_cell );
+    Kokkos::View<double *, TEST_DEVICE> large_vals( "large_vals", dofs_per_cell );
     large_vals( 0 ) = -1939304932.2;
     large_vals( 1 ) = 20399994.532;
     large_vals( 2 ) = 9098201010.114;
