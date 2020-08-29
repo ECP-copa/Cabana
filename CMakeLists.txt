@@ -54,7 +54,7 @@ macro(Cabana_add_dependency)
   string(TOUPPER "${CABANA_DEPENDENCY_PACKAGE}" CABANA_DEPENDENCY_OPTION )
   option(
     Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION}
-    "Require Cabana to build with ${CABANA_DEPENDENCY_PACKAGE} support" ${CABANA_DEPENDENCY_PACKAGE}_FOUND)
+    "Require Cabana to build with ${CABANA_DEPENDENCY_PACKAGE} support")
   if(Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION})
     find_package( ${CABANA_DEPENDENCY_PACKAGE} REQUIRED )
   else()
