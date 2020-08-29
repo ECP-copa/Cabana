@@ -571,16 +571,19 @@ void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
           ++halo_width )
     {
         // Create a cell array.
-        auto layout =
-            Cajita::createArrayLayout( global_grid, array_halo_width, 4, Cajita::Cell() );
-        auto array = Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>( "array", layout );
+        auto layout = Cajita::createArrayLayout( global_grid, array_halo_width,
+                                                 4, Cajita::Cell() );
+        auto array =
+            Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
+                "array", layout );
 
         // Assign the owned cells a value of 1 and the rest 0.
         Cajita::ArrayOp::assign( *array, 0.0, Cajita::Ghost() );
         Cajita::ArrayOp::assign( *array, 1.0, Cajita::Own() );
 
         // Create a halo.
-        auto halo = Cajita::createHalo( *array, Cajita::FullHaloPattern(), halo_width );
+        auto halo =
+            Cajita::createHalo( *array, Cajita::FullHaloPattern(), halo_width );
 
         // Scatter from the ghosts back to owned.
         halo->scatter( TEST_EXECSPACE(), Cajita::ScatterReduce::Sum(), *array );
