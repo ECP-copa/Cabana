@@ -331,8 +331,8 @@ void LayoutHilbert2DArrayOpTest()
 
     auto array_view = array->view();
     Kokkos::parallel_for( "dofs",
-                            Cajita::createExecutionPolicy( 
-                                dofs_index, buff_type::execution_space() ),
+                        Cajita::createExecutionPolicy( 
+                            dofs_index, buff_type::execution_space() ),
                         KOKKOS_LAMBDA( const int n ) {
                             array_view( 4, 4, 4, n ) = large_vals( n );
                         } );
@@ -341,74 +341,11 @@ void LayoutHilbert2DArrayOpTest()
     std::vector<double> norm_inf( dofs_per_cell );
     Cajita::ArrayOp::normInf( *array, norm_inf );
 
-    auto host_large_vals = Kokkos::create_mirror_view( large_vals );
+    auto host_large_vals = Kokkos::create_mirror( large_vals );
     Kokkos::deep_copy( host_large_vals, large_vals );
 
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( norm_inf[n], fabs( host_large_vals( n ) ) );
-
-    // Check the copy.
-    Cajita::ArrayOp::copy( *array, *array_2, Cajita::Own() );
-
-    // Create copy on host to check
-    host_view = Kokkos::create_mirror( dev_view );
-
-    Kokkos::deep_copy( dev_view, array->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    auto owned_space =
-        array->layout()->indexSpace( Cajita::Own(), Cajita::Local() );
-    for ( long i = owned_space.min( Cajita::Dim::I );
-          i < owned_space.max( Cajita::Dim::I ); ++i )
-        for ( long j = owned_space.min( Cajita::Dim::J );
-              j < owned_space.max( Cajita::Dim::J ); ++j )
-            for ( long k = owned_space.min( Cajita::Dim::K );
-                  k < owned_space.max( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
-
-    // Now make a clone and copy.
-    auto array_3 = Cajita::ArrayOp::clone( *array );
-    Cajita::ArrayOp::copy( *array_3, *array, Cajita::Own() );
-
-    // Create copy on host to check
-    buff_type dev_view_3(
-        "dev_view", array_3->view().extent( 0 ), array_3->view().extent( 1 ),
-        array_3->view().extent( 2 ), array_3->view().extent( 3 ) );
-    host_view = Kokkos::create_mirror( dev_view_3 );
-
-    Kokkos::deep_copy( dev_view_3, array_3->view() );
-    Kokkos::deep_copy( host_view, dev_view_3 );
-
-    for ( long i = owned_space.min( Cajita::Dim::I );
-          i < owned_space.max( Cajita::Dim::I ); ++i )
-        for ( long j = owned_space.min( Cajita::Dim::J );
-              j < owned_space.max( Cajita::Dim::J ); ++j )
-            for ( long k = owned_space.min( Cajita::Dim::K );
-                  k < owned_space.max( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
-
-    // Test the fused clone copy.
-    auto array_4 = Cajita::ArrayOp::cloneCopy( *array, Cajita::Own() );
-
-    // Create copy on host to check
-    buff_type dev_view_4(
-        "dev_view", array_4->view().extent( 0 ), array_4->view().extent( 1 ),
-        array_4->view().extent( 2 ), array_4->view().extent( 3 ) );
-    host_view = Kokkos::create_mirror( dev_view_4 );
-
-    Kokkos::deep_copy( dev_view_4, array_4->view() );
-    Kokkos::deep_copy( host_view, dev_view_4 );
-
-    for ( long i = owned_space.min( Cajita::Dim::I );
-          i < owned_space.max( Cajita::Dim::I ); ++i )
-        for ( long j = owned_space.min( Cajita::Dim::J );
-              j < owned_space.max( Cajita::Dim::J ); ++j )
-            for ( long k = owned_space.min( Cajita::Dim::K );
-                  k < owned_space.max( Cajita::Dim::K ); ++k )
-                for ( long l = 0; l < owned_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 0.5 );
 }
 
 //---------------------------------------------------------------------------//
