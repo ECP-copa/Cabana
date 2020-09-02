@@ -233,23 +233,34 @@ namespace P2G
 //---------------------------------------------------------------------------//
 // Scatter-View type checker.
 template <class T>
-struct is_scatter_view : public std::false_type
+struct is_scatter_view_impl : public std::false_type
 {
 };
 
+#if ( KOKKOS_VERSION < 30200 )
+// FIXME: This is for Kokkos 3.1 and earlier
 template <typename DataType, typename Layout, typename ExecSpace, int Op,
           int duplication, int contribution>
-struct is_scatter_view<Kokkos::Experimental::ScatterView<
+struct is_scatter_view_impl<Kokkos::Experimental::ScatterView<
     DataType, Layout, ExecSpace, Op, duplication, contribution>>
     : public std::true_type
 {
 };
 
-template <typename DataType, typename Layout, typename ExecSpace, int Op,
-          int duplication, int contribution>
-struct is_scatter_view<const Kokkos::Experimental::ScatterView<
+#else
+// FIXME: This is for Kokkos 3.2 and later.
+template <typename DataType, typename Layout, typename ExecSpace, typename Op,
+          typename duplication, typename contribution>
+struct is_scatter_view_impl<Kokkos::Experimental::ScatterView<
     DataType, Layout, ExecSpace, Op, duplication, contribution>>
     : public std::true_type
+{
+};
+#endif
+
+template <class T>
+struct is_scatter_view
+    : public is_scatter_view_impl<typename std::remove_cv<T>::type>::type
 {
 };
 
