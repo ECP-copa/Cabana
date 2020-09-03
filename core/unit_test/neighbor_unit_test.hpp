@@ -170,21 +170,16 @@ computeFullNeighborList( const PositionSlice &position,
 }
 
 //---------------------------------------------------------------------------//
-template <class ListType, class PositionSlice>
+template <class ListType, class TestListType>
 void checkFullNeighborList( const ListType &nlist,
-                            const PositionSlice &position,
-                            const double test_radius )
+                            const TestListType &N2_list_copy,
+                            const int num_particle )
 {
-    // Create a full N^2 neighbor list to check against.
-    auto N2_list = computeFullNeighborList( position, test_radius );
-    auto N2_list_copy = createTestListHostCopy( N2_list );
-
-    // Create test neighbor list.
+    // Create host neighbor list copy.
     auto list_copy = copyListToHost( nlist, N2_list_copy.neighbors.extent( 0 ),
                                      N2_list_copy.neighbors.extent( 1 ) );
 
     // Check the results.
-    int num_particle = position.size();
     for ( int p = 0; p < num_particle; ++p )
     {
         // First check that the number of neighbors are the same.
@@ -211,23 +206,18 @@ void checkFullNeighborList( const ListType &nlist,
 }
 
 //---------------------------------------------------------------------------//
-template <class ListType, class PositionSlice>
+template <class ListType, class TestListType>
 void checkHalfNeighborList( const ListType &nlist,
-                            const PositionSlice &position,
-                            const double test_radius )
+                            const TestListType &N2_list_copy,
+                            const int num_particle )
 {
-    // Create a full N^2 neighbor list to check against.
-    auto N2_list = computeFullNeighborList( position, test_radius );
-    auto N2_list_copy = createTestListHostCopy( N2_list );
-
-    // Create test neighbor list.
+    // Create host neighbor list copy.
     auto list_copy = copyListToHost( nlist, N2_list_copy.neighbors.extent( 0 ),
                                      N2_list_copy.neighbors.extent( 1 ) );
 
     // Check that the full list is twice the size of the half list.
     int half_size = 0;
     int full_size = 0;
-    int num_particle = position.size();
     for ( int p = 0; p < num_particle; ++p )
     {
         half_size += list_copy.counts( p );
@@ -257,22 +247,17 @@ void checkHalfNeighborList( const ListType &nlist,
 }
 
 //---------------------------------------------------------------------------//
-template <class ListType, class PositionSlice>
+template <class ListType, class TestListType>
 void checkFullNeighborListPartialRange( const ListType &nlist,
-                                        const PositionSlice &position,
-                                        const double test_radius,
+                                        const TestListType N2_list_copy,
+                                        const int num_particle,
                                         const int num_ignore )
 {
-    // Create a full N^2 neighbor list to check against.
-    auto N2_list = computeFullNeighborList( position, test_radius );
-    auto N2_list_copy = createTestListHostCopy( N2_list );
-
-    // Create test neighbor list.
+    // Create host neighbor list copy.
     auto list_copy = copyListToHost( nlist, N2_list_copy.neighbors.extent( 0 ),
                                      N2_list_copy.neighbors.extent( 1 ) );
 
     // Check the results.
-    int num_particle = position.size();
     for ( int p = 0; p < num_particle; ++p )
     {
         if ( p < num_ignore )
@@ -306,13 +291,12 @@ void checkFullNeighborListPartialRange( const ListType &nlist,
 }
 
 //---------------------------------------------------------------------------//
-template <class ListType, class PositionSlice>
+template <class ListType, class TestListType>
 void checkFirstNeighborParallelFor( const ListType &nlist,
-                                    const PositionSlice &position,
-                                    const double test_radius )
+                                    const TestListType &N2_list_copy,
+                                    const int num_particle )
 {
     // Create Kokkos views for the write operation.
-    int num_particle = position.size();
     using memory_space = typename TEST_MEMSPACE::memory_space;
     Kokkos::View<int *, Kokkos::HostSpace> N2_result( "N2_result",
                                                       num_particle );
@@ -340,9 +324,7 @@ void checkFirstNeighborParallelFor( const ListType &nlist,
                                    Cabana::TeamOpTag(), "test_1st_team" );
     Kokkos::fence();
 
-    // Create a full N^2 neighbor list to check against.
-    auto N2_list = computeFullNeighborList( position, test_radius );
-    auto N2_list_copy = createTestListHostCopy( N2_list );
+    // Use a full N^2 neighbor list to check against.
     for ( int p = 0; p < num_particle; ++p )
         for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
             N2_result( p ) += N2_list_copy.neighbors( p, n );
@@ -360,13 +342,12 @@ void checkFirstNeighborParallelFor( const ListType &nlist,
 }
 
 //---------------------------------------------------------------------------//
-template <class ListType, class PositionSlice>
+template <class ListType, class TestListType>
 void checkSecondNeighborParallelFor( const ListType &nlist,
-                                     const PositionSlice &position,
-                                     const double test_radius )
+                                     const TestListType &N2_list_copy,
+                                     const int num_particle )
 {
     // Create Kokkos views for the write operation.
-    int num_particle = position.size();
     using memory_space = typename TEST_MEMSPACE::memory_space;
     Kokkos::View<int *, Kokkos::HostSpace> N2_result( "N2_result",
                                                       num_particle );
@@ -408,9 +389,7 @@ void checkSecondNeighborParallelFor( const ListType &nlist,
         Cabana::TeamVectorOpTag(), "test_2nd_vector" );
     Kokkos::fence();
 
-    // Create a full N^2 neighbor list to check against.
-    auto N2_list = computeFullNeighborList( position, test_radius );
-    auto N2_list_copy = createTestListHostCopy( N2_list );
+    // Use a full N^2 neighbor list to check against.
     for ( int p = 0; p < num_particle; ++p )
         for ( int n = 0; n < N2_list_copy.counts( p ) - 1; ++n )
             for ( int a = n + 1; a < N2_list_copy.counts( p ); ++a )
@@ -434,10 +413,10 @@ void checkSecondNeighborParallelFor( const ListType &nlist,
     }
 }
 //---------------------------------------------------------------------------//
-template <class ListType, class AoSoAType>
+template <class ListType, class TestListType, class AoSoAType>
 void checkFirstNeighborParallelReduce( const ListType &nlist,
-                                       const AoSoAType &aosoa,
-                                       const double test_radius )
+                                       const TestListType &N2_list_copy,
+                                       const AoSoAType &aosoa )
 {
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
@@ -463,9 +442,7 @@ void checkFirstNeighborParallelReduce( const ListType &nlist,
 #endif
     Kokkos::fence();
 
-    // Get the expected result in serial
-    auto N2_list = computeFullNeighborList( position, test_radius );
-    auto N2_list_copy = createTestListHostCopy( N2_list );
+    // Get the expected result from N^2 list in serial.
     auto aosoa_mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
@@ -483,10 +460,10 @@ void checkFirstNeighborParallelReduce( const ListType &nlist,
 }
 
 //---------------------------------------------------------------------------//
-template <class ListType, class AoSoAType>
+template <class ListType, class TestListType, class AoSoAType>
 void checkSecondNeighborParallelReduce( const ListType &nlist,
-                                        const AoSoAType &aosoa,
-                                        const double test_radius )
+                                        const TestListType &N2_list_copy,
+                                        const AoSoAType &aosoa )
 {
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
@@ -517,9 +494,7 @@ void checkSecondNeighborParallelReduce( const ListType &nlist,
 #endif
     Kokkos::fence();
 
-    // Get the expected result in serial
-    auto N2_list = computeFullNeighborList( position, test_radius );
-    auto N2_list_copy = createTestListHostCopy( N2_list );
+    // Get the expected result from N^2 list in serial.
     auto aosoa_mirror =
         Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
     auto positions_mirror = Cabana::slice<0>( aosoa_mirror );
@@ -539,6 +514,35 @@ void checkSecondNeighborParallelReduce( const ListType &nlist,
     EXPECT_FLOAT_EQ( N2_sum, vector_sum );
 #endif
 }
+
+//---------------------------------------------------------------------------//
+// Default test settings.
+struct NeighborListTestData
+{
+    int num_particle = 1e3;
+    double test_radius = 2.32;
+    double box_min = -5.3 * test_radius;
+    double box_max = 4.7 * test_radius;
+
+    double cell_size_ratio = 0.5;
+    double grid_min[3] = {box_min, box_min, box_min};
+    double grid_max[3] = {box_max, box_max, box_max};
+
+    Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE> aosoa;
+    TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>
+        N2_list_copy;
+
+    NeighborListTestData()
+    {
+        // Create the AoSoA and fill with random particle positions.
+        aosoa = createParticles( num_particle, box_min, box_max );
+
+        // Create a full N^2 neighbor list to check against.
+        auto N2_list =
+            computeFullNeighborList( Cabana::slice<0>( aosoa ), test_radius );
+        N2_list_copy = createTestListHostCopy( N2_list );
+    }
+};
 
 //---------------------------------------------------------------------------//
 } // end namespace Test
