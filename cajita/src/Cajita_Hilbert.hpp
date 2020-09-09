@@ -60,33 +60,15 @@ struct LayoutHilbert2D
                                         size_t N2 = 0, size_t N3 = 0,
                                         size_t N4 = 0, size_t N5 = 0,
                                         size_t N6 = 0, size_t N7 = 0 )
-        : dimension{ N0, N1, N2, N3, N4, N5, N6, N7 }
+        : dimension{N0, N1, N2, N3, N4, N5, N6, N7}
     {
         // Force N0 and N1 to be 2^n for Square Hilbert Space
         dimension[0] = (size_t)std::pow(
             (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
         dimension[1] = (size_t)std::pow(
-            (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
+            (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
         dimension[2] = (size_t)std::pow(
-            (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
-        if ( N1 > N0 && N1 > N2 )
-        {
-            dimension[0] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
-            dimension[1] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
-            dimension[2] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
-        }
-        if ( N2 > N1 && N2 > N0 )
-        {
-            dimension[0] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N2 ) / log( 2.0 ) ) );
-            dimension[1] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N2 ) / log( 2.0 ) ) );
-            dimension[2] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N2 ) / log( 2.0 ) ) );
-        }
+            (double)2, (double)ceil( log( (double)N2 ) / log( 2.0 ) ) );
     }
 };
 
@@ -122,6 +104,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
 
     // Calculate 3D Hilbert index given an ( x, y, z ) coordinate and the size
     // of the hilbert space ( n )
+    // Compact 3D Hilbert Indices, using algorithm described in
+    // Compact Hilbert Indices, Dalhousie University Technical Report
     template <typename I0, typename I1, typename I2>
     KOKKOS_INLINE_FUNCTION size_t hilbert3d( I0 const &i0, I1 const &i1,
                                              I2 const &i2 ) const
@@ -130,18 +114,82 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
         int ve = 0;
         int vd = 2;
 
-        unsigned int M = orig_dim.N0;
-        if ( orig_dim.N1 > M )
-            M = orig_dim.N1;
-        if ( orig_dim.N2 > M )
-            M = orig_dim.N2;
+        unsigned int N0 = orig_dim.N0;
+        unsigned int N1 = orig_dim.N1;
+        unsigned int N2 = orig_dim.N2;
 
+        unsigned int M = N0;
+        if ( N1 > M )
+            M = N1;
+        if ( N2 > M )
+            M = N2;
+
+        // Log 2 of dimensions
+        unsigned int m0 = 0;
+        while ( N0 >>= 1 )
+            m0++;
+        unsigned int m1 = 0;
+        while ( N1 >>= 1 )
+            m1++;
+        unsigned int m2 = 0;
+        while ( N2 >>= 1 )
+            m2++;
+
+        // Log 2 of max dimension
         int m = 0;
         while ( M >>= 1 )
             m++;
 
         for ( int i = m - 1; i > -1; i-- )
         {
+
+            // Extract Mask in 3 Dimensions
+            int mu = 0;
+            mu = mu << 1;
+            if ( m2 > i )
+                mu = mu | 1;
+            mu = mu << 1;
+            if ( m1 > i )
+                mu = mu | 1;
+            mu = mu << 1;
+            if ( m0 > i )
+                mu = mu | 1;
+
+            // Add bit components
+            int mu_norm = 0;
+            for ( int j = 0; j < 3; j++ )
+                mu_norm += ( mu & ( 1 << j ) ) >> j;
+
+            // Right rotation
+            int dright = vd + 1;
+            dright = dright % 3;
+            int outright = mu >> dright;
+
+            int bitright;
+            for ( int i = 0; i < dright; i++ )
+            {
+                bitright = ( mu & ( 1 << i ) ) >> i;
+                outright |= bitright << ( 3 + i - dright );
+            }
+
+            mu = outright;
+
+            // Right rotation
+            int x = ve;
+            int d2 = vd + 1;
+            d2 = d2 % 3;
+            int out2 = x >> d2;
+
+            int bit2;
+            for ( int i = 0; i < d2; i++ )
+            {
+                bit2 = ( x & ( 1 << i ) ) >> i;
+                out2 |= bit2 << ( 3 + i - d2 );
+            }
+
+            int pi = out2 & ( ( ~mu ) & ( 7 ) );
+
+            // Summation
             int l0 = ( i0 & ( 1 << i ) ) >> i;
             int l1 = ( i1 & ( 1 << i ) ) >> i;
             int l2 = ( i2 & ( 1 << i ) ) >> i;
@@ -149,8 +197,10 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
             int lsum =
                 ( l0 * ( 1 << 0 ) ) + ( l1 * ( 1 << 1 ) ) + ( l2 * ( 1 << 2 ) );
 
+            // Transform
             int out = lsum ^ ve;
 
+            // Right rotation
             int bit;
             int d = ( vd + 1 ) % 3;
             int newlsum = out >> d;
@@ -161,6 +211,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
             }
             lsum = newlsum;
 
+            // Inverse gray code
             int w = lsum;
             int j = 1;
 
@@ -170,29 +221,43 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
                 j = j + 1;
             }
 
+            // Gray code rank
+            int r = 0;
+            for ( int k = 2; k > -1; k-- )
+            {
+                int bc = ( mu & ( 1 << k ) ) >> k;
+                if ( ( mu & ( 1 << k ) ) >> k )
+                {
+                    r = ( r << 1 ) | ( ( w & ( 1 << k ) ) >> k );
+                }
+            }
+
+            // Get entry point
             int we;
             if ( w == 0 )
                 we = 0;
             else
             {
-                int temp = 2 * ( w - 1 / 2 );
+                int temp = 2 * ( ( w - 1 ) / 2 );
                 we = temp ^ ( temp >> 1 );
             }
 
+            // Left rotation
             int bitleft;
             int dleft = ( vd + 1 ) % 3;
-            int shift = we << d;
+            int shift = we << dleft;
             shift = shift & ( 7 );
 
             for ( int i = 0; i < dleft; i++ )
             {
-                bitleft =
-                    ( we & ( 1 << ( 2 - dleft + 1 + i ) ) ) >> ( 2 - dleft + 1 + i );
+                bitleft = ( we & ( 1 << ( 2 - dleft + 1 + i ) ) ) >>
+                          ( 2 - dleft + 1 + i );
                 shift |= bitleft << i;
             }
 
             ve = ve ^ shift;
 
+            // Direction of arrow
             int wd;
             if ( w == 0 )
                 wd = 0;
@@ -217,7 +282,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
 
             vd = ( vd + wd + 1 ) % 3;
 
-            h = ( h << 3 ) | w;
+            h = ( h << mu_norm ) | r;
         }
 
         return h;
