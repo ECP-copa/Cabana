@@ -130,7 +130,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
         int ve = 0;
         int vd = 2;
 
-        int M = orig_dim.N0;
+        unsigned int M = orig_dim.N0;
         if ( orig_dim.N1 > M )
             M = orig_dim.N1;
         if ( orig_dim.N2 > M )
@@ -153,10 +153,10 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
 
             int bit;
             int d = ( vd + 1 ) % 3;
-            int newlsum = lsum >> d;
+            int newlsum = out >> d;
             for ( int i = 0; i < d; i++ )
             {
-                bit = ( lsum & ( 1 << i ) ) >> i;
+                bit = ( out & ( 1 << i ) ) >> i;
                 newlsum |= bit << ( 3 + i - d );
             }
             lsum = newlsum;
@@ -182,13 +182,12 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
             int bitleft;
             int dleft = ( vd + 1 ) % 3;
             int shift = we << d;
-            int excess = shift;
-            shift = shift & ( 4 );
+            shift = shift & ( 7 );
 
-            for ( int i = 0; i < d; i++ )
+            for ( int i = 0; i < dleft; i++ )
             {
                 bitleft =
-                    ( we & ( 1 << ( 2 - d + 1 + i ) ) ) >> ( 2 - d + 1 + i );
+                    ( we & ( 1 << ( 2 - dleft + 1 + i ) ) ) >> ( 2 - dleft + 1 + i );
                 shift |= bitleft << i;
             }
 
