@@ -60,22 +60,32 @@ struct LayoutHilbert2D
                                         size_t N2 = 0, size_t N3 = 0,
                                         size_t N4 = 0, size_t N5 = 0,
                                         size_t N6 = 0, size_t N7 = 0 )
-        : dimension{N0, N1, N2, N3, N4, N5, N6, N7}
+        : dimension{ N0, N1, N2, N3, N4, N5, N6, N7 }
     {
         // Force N0 and N1 to be 2^n for Square Hilbert Space
-        if ( N0 > N1 )
+        dimension[0] = (size_t)std::pow(
+            (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
+        dimension[1] = (size_t)std::pow(
+            (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
+        dimension[2] = (size_t)std::pow(
+            (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
+        if ( N1 > N0 && N1 > N2 )
         {
             dimension[0] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
+                (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
             dimension[1] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
+                (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
+            dimension[2] = (size_t)std::pow(
+                (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
         }
-        else
+        if ( N2 > N1 && N2 > N0 )
         {
             dimension[0] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
+                (double)2, (double)ceil( log( (double)N2 ) / log( 2.0 ) ) );
             dimension[1] = (size_t)std::pow(
-                (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
+                (double)2, (double)ceil( log( (double)N2 ) / log( 2.0 ) ) );
+            dimension[2] = (size_t)std::pow(
+                (double)2, (double)ceil( log( (double)N2 ) / log( 2.0 ) ) );
         }
     }
 };
@@ -108,7 +118,111 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     dimension_type m_off;
 
     // Calculate offset if subview. If not subview = 0
-    size_t offset = hilbert2d( m_off.N0, m_off.N1 );
+    size_t offset = hilbert3d( m_off.N0, m_off.N1, m_off.N2 );
+
+    // Calculate 3D Hilbert index given an ( x, y, z ) coordinate and the size
+    // of the hilbert space ( n )
+    template <typename I0, typename I1, typename I2>
+    KOKKOS_INLINE_FUNCTION size_t hilbert3d( I0 const &i0, I1 const &i1,
+                                             I2 const &i2 ) const
+    {
+        int h = 0;
+        int ve = 0;
+        int vd = 2;
+
+        int M = orig_dim.N0;
+        if ( orig_dim.N1 > M )
+            M = orig_dim.N1;
+        if ( orig_dim.N2 > M )
+            M = orig_dim.N2;
+
+        int m = 0;
+        while ( M >>= 1 )
+            m++;
+
+        for ( int i = m - 1; i > -1; i-- )
+        {
+            int l0 = ( i0 & ( 1 << i ) ) >> i;
+            int l1 = ( i1 & ( 1 << i ) ) >> i;
+            int l2 = ( i2 & ( 1 << i ) ) >> i;
+
+            int lsum =
+                ( l0 * ( 1 << 0 ) ) + ( l1 * ( 1 << 1 ) ) + ( l2 * ( 1 << 2 ) );
+
+            int out = lsum ^ ve;
+
+            int bit;
+            int d = ( vd + 1 ) % 3;
+            int newlsum = lsum >> d;
+            for ( int i = 0; i < d; i++ )
+            {
+                bit = ( lsum & ( 1 << i ) ) >> i;
+                newlsum |= bit << ( 3 + i - d );
+            }
+            lsum = newlsum;
+
+            int w = lsum;
+            int j = 1;
+
+            while ( j < 3 )
+            {
+                w = w ^ ( lsum >> j );
+                j = j + 1;
+            }
+
+            int we;
+            if ( w == 0 )
+                we = 0;
+            else
+            {
+                int temp = 2 * ( w - 1 / 2 );
+                we = temp ^ ( temp >> 1 );
+            }
+
+            int bitleft;
+            int dleft = ( vd + 1 ) % 3;
+            int shift = we << d;
+            int excess = shift;
+            shift = shift & ( 4 );
+
+            for ( int i = 0; i < d; i++ )
+            {
+                bitleft =
+                    ( we & ( 1 << ( 2 - d + 1 + i ) ) ) >> ( 2 - d + 1 + i );
+                shift |= bitleft << i;
+            }
+
+            ve = ve ^ shift;
+
+            int wd;
+            if ( w == 0 )
+                wd = 0;
+            else if ( ( w % 2 ) == 0 )
+            {
+                int gval = 0;
+                int gtemp =
+                    ( ( w - 1 ) ^ ( ( w - 1 ) >> 1 ) ) ^ ( w ^ ( w >> 1 ) );
+                while ( gtemp >>= 1 )
+                    gval++;
+                wd = gval % 3;
+            }
+            else
+            {
+                int gval = 0;
+                int gtemp =
+                    ( w ^ ( w >> 1 ) ) ^ ( ( w + 1 ) ^ ( ( w + 1 ) >> 1 ) );
+                while ( gtemp >>= 1 )
+                    gval++;
+                wd = gval % 3;
+            }
+
+            vd = ( vd + wd + 1 ) % 3;
+
+            h = ( h << 3 ) | w;
+        }
+
+        return h;
+    }
 
     // Calculate 2D Hilbert index given an ( x, y ) coordinate and the size of
     // the hilbert space ( n )
@@ -154,8 +268,11 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     template <typename I0>
     KOKKOS_INLINE_FUNCTION constexpr size_type operator()( I0 const &i0 ) const
     {
-        // Return regular index since 1-D
-        return i0;
+        // Calculate 3D hilbert index
+        size_t hilbert_index = hilbert3d( i0 + m_off.N0, 0, 0 ) - offset;
+
+        // Return hilbert index
+        return hilbert_index;
     }
 
     // rank 2
@@ -163,9 +280,9 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     KOKKOS_INLINE_FUNCTION constexpr size_type operator()( I0 const &i0,
                                                            I1 const &i1 ) const
     {
-        // Calculate 2D hilbert index
+        // Calculate 3D hilbert index
         size_t hilbert_index =
-            hilbert2d( i0 + m_off.N0, i1 + m_off.N1 ) - offset;
+            hilbert3d( i0 + m_off.N0, i1 + m_off.N1, 0 ) - offset;
 
         // Return hilbert index
         return hilbert_index;
@@ -176,12 +293,12 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     KOKKOS_INLINE_FUNCTION constexpr size_type
     operator()( I0 const &i0, I1 const &i1, I2 const &i2 ) const
     {
-        // Calculate 2D hilbert index
+        // Calculate 3D hilbert index
         size_t hilbert_index =
-            hilbert2d( i0 + m_off.N0, i1 + m_off.N1 ) - offset;
+            hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 3 dimensions
-        return orig_dim.N0 * orig_dim.N1 * i2 + hilbert_index;
+        return hilbert_index;
     }
 
     // rank 4
@@ -189,13 +306,12 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     KOKKOS_INLINE_FUNCTION constexpr size_type
     operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3 ) const
     {
-        // Calculate 2D hilbert index
+        // Calculate 3D hilbert index
         size_t hilbert_index =
-            hilbert2d( i0 + m_off.N0, i1 + m_off.N1 ) - offset;
+            hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 4 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 ) * ( i3 + orig_dim.N3 * i2 ) +
-               hilbert_index;
+        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 * i3 ) + hilbert_index;
     }
 
     // rank 5
@@ -204,13 +320,13 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3,
                 I4 const &i4 ) const
     {
-        // Calculate 2D hilbert index
+        // Calculate 3D hilbert index
         size_t hilbert_index =
-            hilbert2d( i0 + m_off.N0, i1 + m_off.N1 ) - offset;
+            hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 5 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 ) *
-                   ( i4 + orig_dim.N4 * ( i3 + orig_dim.N3 * i2 ) ) +
+        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 ) *
+                   ( i4 + orig_dim.N4 * i3 ) +
                hilbert_index;
     }
 
@@ -221,15 +337,13 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3,
                 I4 const &i4, I5 const &i5 ) const
     {
-        // Calculate 2D hilbert index
+        // Calculate 3D hilbert index
         size_t hilbert_index =
-            hilbert2d( i0 + m_off.N0, i1 + m_off.N1 ) - offset;
+            hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 6 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 ) *
-                   ( i5 +
-                     orig_dim.N5 *
-                         ( i4 + orig_dim.N4 * ( i3 + orig_dim.N3 * i2 ) ) ) +
+        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 ) *
+                   ( i5 + orig_dim.N5 * ( i4 + orig_dim.N4 * i3 ) ) +
                hilbert_index;
     }
 
@@ -240,17 +354,15 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3,
                 I4 const &i4, I5 const &i5, I6 const &i6 ) const
     {
-        // Calculate 2D hilbert index
+        // Calculate 3D hilbert index
         size_t hilbert_index =
-            hilbert2d( i0 + m_off.N0, i1 + m_off.N1 ) - offset;
+            hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 7 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 ) *
+        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 ) *
                    ( i6 +
                      orig_dim.N6 *
-                         ( i5 + orig_dim.N5 *
-                                    ( i4 + orig_dim.N4 *
-                                               ( i3 + orig_dim.N3 * i2 ) ) ) ) +
+                         ( i5 + orig_dim.N5 * ( i4 + orig_dim.N4 * i3 ) ) ) +
                hilbert_index;
     }
 
@@ -261,20 +373,17 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3,
                 I4 const &i4, I5 const &i5, I6 const &i6, I7 const &i7 ) const
     {
-        // Calculate 2D hilbert index
+        /// Calculate 3D hilbert index
         size_t hilbert_index =
-            hilbert2d( i0 + m_off.N0, i1 + m_off.N1 ) - offset;
+            hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 8 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 ) *
+        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 ) *
                    ( i7 +
                      orig_dim.N7 *
-                         ( i6 +
-                           orig_dim.N6 *
-                               ( i5 + orig_dim.N5 *
-                                          ( i4 + orig_dim.N4 *
-                                                     ( i3 + orig_dim.N3 *
-                                                                i2 ) ) ) ) ) +
+                         ( i6 + orig_dim.N6 *
+                                    ( i5 + orig_dim.N5 *
+                                               ( i4 + orig_dim.N4 * i3 ) ) ) ) +
                hilbert_index;
     }
 
