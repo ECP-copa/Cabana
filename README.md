@@ -30,4 +30,4 @@ We encourage you to contribute to Cabana! Please check the
 
 ## License
 
-Cabana is distrubted under an [open source 3-clause BSD license](LICENSE).
+Cabana is distributed under an [open source 3-clause BSD license](LICENSE).
