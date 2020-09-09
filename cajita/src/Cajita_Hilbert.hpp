@@ -125,13 +125,13 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
             M = N2;
 
         // Log 2 of dimensions
-        unsigned int m0 = 0;
+        int m0 = 0;
         while ( N0 >>= 1 )
             m0++;
-        unsigned int m1 = 0;
+        int m1 = 0;
         while ( N1 >>= 1 )
             m1++;
-        unsigned int m2 = 0;
+        int m2 = 0;
         while ( N2 >>= 1 )
             m2++;
 
@@ -187,8 +187,6 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
                 out2 |= bit2 << ( 3 + i - d2 );
             }
 
-            int pi = out2 & ( ( ~mu ) & ( 7 ) );
-
             // Summation
             int l0 = ( i0 & ( 1 << i ) ) >> i;
             int l1 = ( i1 & ( 1 << i ) ) >> i;
@@ -225,7 +223,6 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
             int r = 0;
             for ( int k = 2; k > -1; k-- )
             {
-                int bc = ( mu & ( 1 << k ) ) >> k;
                 if ( ( mu & ( 1 << k ) ) >> k )
                 {
                     r = ( r << 1 ) | ( ( w & ( 1 << k ) ) >> k );
