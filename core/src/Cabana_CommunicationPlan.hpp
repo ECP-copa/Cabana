@@ -301,6 +301,23 @@ class CommunicationPlan
     }
 
     /*!
+      \brief Copy constructor.
+    */
+    CommunicationPlan( const CommunicationPlan &cp )
+    {
+        MPI_Comm_dup( cp.comm(), &_comm );
+    }
+
+    /*!
+      \brief Copy assignment operator.
+    */
+    CommunicationPlan &operator=( const CommunicationPlan &cp )
+    {
+        MPI_Comm_dup( cp.comm(), &_comm );
+        return *this;
+    }
+
+    /*!
       \brief Destructor.
     */
     virtual ~CommunicationPlan() { MPI_Comm_free( &_comm ); }
