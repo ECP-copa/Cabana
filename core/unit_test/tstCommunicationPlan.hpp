@@ -575,6 +575,12 @@ void test7( const bool use_topology )
         EXPECT_EQ( n, host_steering( n ) );
 }
 
+void test_copy()
+{
+    Cabana::CommunicationPlan<TEST_DEVICE> comm_plan( MPI_COMM_WORLD );
+    auto comm_dup = comm_plan;
+}
+
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
@@ -606,6 +612,7 @@ TEST( TEST_CATEGORY, comm_plan_test_6_no_topo ) { test6( false ); }
 
 TEST( TEST_CATEGORY, comm_plan_test_7_no_topo ) { test7( false ); }
 
+TEST( TEST_CATEGORY, comm_plan_test_copy ) { test_copy(); }
 //---------------------------------------------------------------------------//
 
 } // end namespace Test
