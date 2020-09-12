@@ -306,6 +306,13 @@ class CommunicationPlan
     CommunicationPlan( const CommunicationPlan &cp )
     {
         MPI_Comm_dup( cp.comm(), &_comm );
+        _neighbors = cp._neighbors;
+        _total_num_export = cp._total_num_export;
+        _total_num_import = cp._total_num_import;
+        _num_export = cp._num_export;
+        _num_import = cp._num_import;
+        _num_export_element = cp._num_export_element;
+        _export_steering = cp._export_steering;
     }
 
     /*!
@@ -314,6 +321,13 @@ class CommunicationPlan
     CommunicationPlan &operator=( const CommunicationPlan &cp )
     {
         MPI_Comm_dup( cp.comm(), &_comm );
+        _neighbors = cp._neighbors;
+        _total_num_export = cp._total_num_export;
+        _total_num_import = cp._total_num_import;
+        _num_export = cp._num_export;
+        _num_import = cp._num_import;
+        _num_export_element = cp._num_export_element;
+        _export_steering = cp._export_steering;
         return *this;
     }
 
