@@ -29,46 +29,108 @@ class TestTag
 template <class aosoa_type>
 void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
                        const int ival, const int dim_1, const int dim_2,
-                       const int dim_3, int copy_back = 1 )
+                       const int dim_3, int short_cut = 1 )
 {
-    auto mirror =
-        Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    //auto mirror =
+        //Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
 
-    if ( copy_back == 0 )
+    //if ( copy_back == 0 )
+    //{
+        //mirror = aosoa;
+    //}
+
+    auto slice_0 = Cabana::slice<0>( aosoa );
+    auto slice_1 = Cabana::slice<1>( aosoa );
+    auto slice_2 = Cabana::slice<2>( aosoa );
+    auto slice_3 = Cabana::slice<3>( aosoa );
+
+    if (short_cut)
     {
-        mirror = aosoa;
-    }
+        // this is aimed to massively cut down the print spam at the
+        //cost of knowing what went wrong
 
-    auto slice_0 = Cabana::slice<0>( mirror );
-    auto slice_1 = Cabana::slice<1>( mirror );
-    auto slice_2 = Cabana::slice<2>( mirror );
-    auto slice_3 = Cabana::slice<3>( mirror );
-
-    for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
-    {
-        // Member 0.
-        for ( int i = 0; i < dim_1; ++i )
+        int correct = 1;
+        for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
         {
-            for ( int j = 0; j < dim_2; ++j )
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
             {
-                for ( int k = 0; k < dim_3; ++k )
+                for ( int j = 0; j < dim_2; ++j )
                 {
-                    EXPECT_EQ( slice_0( idx, i, j, k ), fval * ( i + j + k ) );
+                    for ( int k = 0; k < dim_3; ++k )
+                    {
+                        if (slice_0( idx, i, j, k ) != fval * ( i + j + k ))
+                        {
+                            correct = 0;
+                        }
+                    }
+                }
+            }
+
+            // Member 1.
+            if (slice_1(idx) != ival)
+            {
+                correct = 0;
+            }
+            // Catches both slice_0 and slice_1 checks
+            if (! correct ) break;
+
+            for ( int i = 0; i < dim_1; ++i )
+            {
+                if (slice_2( idx, i) != dval * i)
+                {
+                    correct = 0;
+                }
+            }
+
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+            {
+                for ( int j = 0; j < dim_2; ++j )
+                {
+                    if ( slice_3( idx, i, j) != dval * ( i + j) )
+                    {
+                        correct = 0;
+                    }
                 }
             }
         }
+        EXPECT_EQ( correct, 1);
+    }
+    else { // no shortcut, full debug info
 
-        // Member 1.
-        EXPECT_EQ( slice_1( idx ), ival );
+        for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
+        {
+            // Member 0.
+            for ( int i = 0; i < dim_1; ++i )
+            {
+                for ( int j = 0; j < dim_2; ++j )
+                {
+                    for ( int k = 0; k < dim_3; ++k )
+                    {
+                        EXPECT_EQ( slice_0( idx, i, j, k ), fval * ( i + j + k ) );
+                    }
+                }
+            }
 
-        // Member 2.
-        for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( slice_2( idx, i ), dval * i );
+            // Member 1.
+            EXPECT_EQ( slice_1( idx ), ival );
 
-        // Member 3.
-        for ( int i = 0; i < dim_1; ++i )
-            for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( slice_3( idx, i, j ), dval * ( i + j ) );
+            for ( int i = 0; i < dim_1; ++i )
+            {
+                // Member 2.
+                EXPECT_EQ( slice_2( idx, i ), dval * i );
+            }
+
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+            {
+                for ( int j = 0; j < dim_2; ++j )
+                {
+                    EXPECT_EQ( slice_3( idx, i, j ), dval * ( i + j ) );
+                }
+            }
+        }
     }
 }
 
@@ -136,12 +198,24 @@ void testBufferedDataCreation()
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace, vector_length>;
+
+    // TODO: for some reason CudaHostPinnedSpace breaks correctness. I guess I
+    // must be missing a fence somehow?
+    //using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::CudaHostPinnedSpace,
+          //vector_length>;
+
     std::string label = "sample_aosoa";
-    int num_data = 1024;
+
+    //int num_data = 1024;
+    //int num_data = 1024; // * 1024;   // 2kb
+    //int num_data = 1024 * 1024;       // 200mb
+    //int num_data = 1024 * 1024 * 32;  // 6.4GB
+    int num_data = 1024 * 1024 * 112;   // 20GB (20199768064)
+
     AoSoA_t aosoa( label, num_data );
 
     // Start by only buffering over one AoSoA at a time for stress test
-    const int max_buffered_tuples = 8 * vector_length;
+    const int max_buffered_tuples = aosoa.size() / 4;
 
     // emulate a minimum of triple buffering?
     const int buffer_count = 3;
@@ -191,9 +265,9 @@ void testBufferedDataCreation()
     buf_t buffered_aosoa_in( aosoa, max_buffered_tuples );
 
     // Reset values so the outcome differs
-    fval = 3.4;
-    dval = 1.23;
-    ival = 1;
+    fval = 4.4;
+    dval = 2.23;
+    ival = 2;
 
     Cabana::buffered_parallel_for(
         Kokkos::RangePolicy<target_exec_space>( 0, aosoa.size() ),
@@ -246,8 +320,9 @@ void testBufferedDataCreation()
         },
         "test buffered for" );
 
+    Kokkos::fence();
+
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 0 );
 }
 
 //---------------------------------------------------------------------------//
