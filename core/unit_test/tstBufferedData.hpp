@@ -195,6 +195,11 @@ void testBufferedDataCreation()
     // Declare data types.
     using DataTypes = Cabana::MemberTypes<float[dim_1][dim_2][dim_3], int,
                                           double[dim_1], double[dim_1][dim_2]>;
+    // float * 24 = 96bytes
+    // int * 1    = 4 bytes
+    // double * 3 = 24 bytes
+    // double * 6 = 48 bytes
+    // TOTAL      = 172
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace, vector_length>;
@@ -322,7 +327,7 @@ void testBufferedDataCreation()
 
     Kokkos::fence();
 
-    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 1);
 }
 
 //---------------------------------------------------------------------------//

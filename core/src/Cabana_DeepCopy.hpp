@@ -434,10 +434,11 @@ inline void deep_copy_partial_src(
     // but luckily that is not the most common use-case.
 
     // Make AoSoA in src space to copy over
-    SrcAoSoA src_partial( "deep_copy_partial src", count );
 
     assert( ( size_t )( from_index + count ) <= src.size() );
 
+#ifdef CABANA_DEEPCOPY_SAFE
+    SrcAoSoA src_partial( "deep_copy_partial src", count );
     std::cout << "Looping copy from 0 to " << src_partial.size()
               << " where src size is " << src.size() << std::endl;
     std::cout << "From index is " << from_index << " so pull from src is "
@@ -469,6 +470,26 @@ inline void deep_copy_partial_src(
     bool async = 1; // TODO: this could be a template?
     Cabana::deep_copy( dst, src_partial, async );
     // Cabana::deep_copy( dst, src_partial );
+
+#else
+    std::cout << "CALLING KOKKOS IMPL SRC (loading buffer)" << std::endl;
+
+    // Reach into Kokkos and use the impl to try and generate a memcopy
+    using dst_memory_space = typename DstAoSoA::memory_space;
+    using src_memory_space = typename SrcAoSoA::memory_space;
+    using dst_soa_type = typename DstAoSoA::soa_type;
+
+    assert( from_index % SrcAoSoA::vector_length == 0);
+
+    auto* src_pointer = src.data();
+    // Move it along in chunks of SoAs
+    src_pointer += (from_index / SrcAoSoA::vector_length);
+
+    Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
+      dst.data(), src_pointer, dst.numSoA() * sizeof( dst_soa_type ) );
+
+#endif
+
 }
 
 // TODO: this can be DRYd with deep_copy_partial, but we need a
@@ -504,7 +525,8 @@ inline void deep_copy_partial_dst(
     Cabana::deep_copy( dst_partial, src );
     Kokkos::fence();
 
-    // assert( count <= src.size() );
+    assert( count <= src.size() );
+    assert( dst_partial.size() == src.size() );
     assert( to_index + count <= dst.size() );
 
     // Populate it with data using a parallel for
@@ -519,24 +541,25 @@ inline void deep_copy_partial_dst(
     Kokkos::parallel_for( "Cabana::deep_copy", exec_policy, copy_func );
     Kokkos::fence();
 #else
+    std::cout << "CALLING KOKKOS IMPL DEST (unloading buffer)" << std::endl;
     // Reach into Kokkos and use the impl to try and generate a memcopy
     using dst_memory_space = typename DstAoSoA::memory_space;
     using src_memory_space = typename SrcAoSoA::memory_space;
-    using dst_soa_type = typename DstAoSoA::soa_type;
+    using src_soa_type = typename DstAoSoA::soa_type;
 
     auto* dst_pointer = dst.data();
 
     assert( to_index % DstAoSoA::vector_length == 0);
-    // Move ti along in chunks of SoAs
+    // Move it along in chunks of SoAs
     dst_pointer += (to_index / DstAoSoA::vector_length);
 
-    // TODO: offset the dst pointer to make it go to the right place
+    std::cout << "copy " << count << " to " << to_index << std::endl;
+    std::cout << "Copy " << src.numSoA() * sizeof(src_soa_type) << " bytes from src " << src.data() << " to " << dst_pointer << std::endl;
     Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
-      dst_pointer, src.data(), src.numSoA() * sizeof( dst_soa_type ) );
+      dst_pointer, src.data(), src.numSoA() * sizeof( src_soa_type ) );
+    std::cout << "... Done " << std::endl;
 
 #endif
-
-    assert( dst_partial.size() == src.size() );
 }
 
 } // end namespace Cabana
