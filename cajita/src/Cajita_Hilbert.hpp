@@ -632,8 +632,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
         const ViewOffset<DimRHS, LayoutRHS, void> &rhs )
         : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3,
                  rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 )
-        , orig_dim( rhs.dimension_0(), rhs.dimension_1(), rhs.dimension_2(), 
-                    rhs.dimension_3(), rhs.dimension_4(), rhs.dimension_5(), 
+        , orig_dim( rhs.dimension_0(), rhs.dimension_1(), rhs.dimension_2(),
+                    rhs.dimension_3(), rhs.dimension_4(), rhs.dimension_5(),
                     rhs.dimension_6(), rhs.dimension_7() )
         , m_off( 0, 0, 0, 0, 0, 0, 0, 0 )
     {
