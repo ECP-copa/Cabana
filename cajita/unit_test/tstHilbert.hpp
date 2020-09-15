@@ -28,11 +28,11 @@
 namespace Test
 {
 //---------------------------------------------------------------------------//
-void LayoutHilbert2DSubviewTest()
+void LayoutHilbert3DSubviewTest()
 {
     // typedef
     typedef
-        typename Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
+        typename Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
             view_type;
 
     // typedef
@@ -49,7 +49,7 @@ void LayoutHilbert2DSubviewTest()
         Cajita::IndexSpace<4>( {0, 0, 0, 0}, {dim1, dim2, dim3, dim4} );
 
     // Create Hilbert View
-    Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
+    Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
         HilbertArray( "Hilbert", dim1, dim2, dim3, dim4 );
 
     // Create Regular View
@@ -153,7 +153,7 @@ void LayoutHilbert2DSubviewTest()
 }
 
 //---------------------------------------------------------------------------//
-void LayoutHilbert2DArrayOpTest()
+void LayoutHilbert3DArrayOpTest()
 {
     // typedef
     typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
@@ -186,7 +186,7 @@ void LayoutHilbert2DArrayOpTest()
     // Create an array.
     std::string label( "test_array" );
     auto array =
-        Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
+        Cajita::createArray<double, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
             label, cell_layout );
 
     // Assign a value to the entire the array.
@@ -211,12 +211,12 @@ void LayoutHilbert2DArrayOpTest()
 }
 
 //---------------------------------------------------------------------------//
-void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
+void LayoutHilbert3DGatherTest( const Cajita::ManualPartitioner &partitioner,
                                 const std::array<bool, 3> &is_dim_periodic )
 {
     // typedef
     typedef
-        typename Kokkos::View<double ****, Kokkos::LayoutHilbert2D, TEST_DEVICE>
+        typename Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
             view_type;
 
     // typedef
@@ -249,9 +249,9 @@ void LayoutHilbert2DGatherTest( const Cajita::ManualPartitioner &partitioner,
     auto cell_vector_layout =
         Cajita::createArrayLayout( local_grid, 2, Cajita::Cell() );
 
-    // Create array with LayoutHilbert2D
+    // Create array with LayoutHilbert3D
     auto array =
-        Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
+        Cajita::createArray<double, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
             "array", cell_vector_layout );
 
     // Create halo
@@ -590,7 +590,7 @@ void checkScatter( const std::array<bool, 3> &is_dim_periodic,
 }
 
 //---------------------------------------------------------------------------//
-void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
+void LayoutHilbert3DScatterTest( const Cajita::ManualPartitioner &partitioner,
                                  const std::array<bool, 3> &is_dim_periodic )
 {
     // Create the global grid.
@@ -619,7 +619,7 @@ void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
         auto layout = Cajita::createArrayLayout( global_grid, array_halo_width,
                                                  4, Cajita::Cell() );
         auto array =
-            Cajita::createArray<double, Kokkos::LayoutHilbert2D, TEST_DEVICE>(
+            Cajita::createArray<double, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
                 "array", layout );
 
         // Assign the owned cells a value of 1 and the rest 0.
@@ -650,13 +650,13 @@ void LayoutHilbert2DScatterTest( const Cajita::ManualPartitioner &partitioner,
 TEST( layout_hilbert, layout_hilbert_subview_test )
 {
     // Test Subview Functionality
-    LayoutHilbert2DSubviewTest();
+    LayoutHilbert3DSubviewTest();
 }
 
 TEST( layout_hilbert, layout_hilbert_arrayop_test )
 {
     // ArrayOp Test
-    LayoutHilbert2DArrayOpTest();
+    LayoutHilbert3DArrayOpTest();
 }
 
 TEST( layout_hilbert, layout_hilbert_gather_test )
@@ -682,10 +682,10 @@ TEST( layout_hilbert, layout_hilbert_gather_test )
     std::array<bool, 3> is_dim_periodic = {false, false, false};
 
     // Gather Test
-    LayoutHilbert2DGatherTest( partitioner, is_dim_periodic );
+    LayoutHilbert3DGatherTest( partitioner, is_dim_periodic );
 
     // Scatter Test
-    LayoutHilbert2DScatterTest( partitioner, is_dim_periodic );
+    LayoutHilbert3DScatterTest( partitioner, is_dim_periodic );
 }
 
 //---------------------------------------------------------------------------//

@@ -24,11 +24,11 @@
 namespace Kokkos
 {
 //---------------------------------------------------------------------------//
-// LayoutHilbert2D
+// LayoutHilbert3D
 //---------------------------------------------------------------------------//
-struct LayoutHilbert2D
+struct LayoutHilbert3D
 {
-    typedef LayoutHilbert2D array_layout;
+    typedef LayoutHilbert3D array_layout;
 
     // Dimension array
     size_t dimension[ARRAY_LAYOUT_MAX_RANK];
@@ -39,10 +39,10 @@ struct LayoutHilbert2D
     };
 
     // Defaults
-    LayoutHilbert2D( LayoutHilbert2D const & ) = default;
-    LayoutHilbert2D( LayoutHilbert2D && ) = default;
-    LayoutHilbert2D &operator=( LayoutHilbert2D const & ) = default;
-    LayoutHilbert2D &operator=( LayoutHilbert2D && ) = default;
+    LayoutHilbert3D( LayoutHilbert3D const & ) = default;
+    LayoutHilbert3D( LayoutHilbert3D && ) = default;
+    LayoutHilbert3D &operator=( LayoutHilbert3D const & ) = default;
+    LayoutHilbert3D &operator=( LayoutHilbert3D && ) = default;
 
     /*!
       \brief Constructor.
@@ -56,7 +56,7 @@ struct LayoutHilbert2D
       \param N7 Entries in 8th-Dimension
     */
     KOKKOS_INLINE_FUNCTION
-    explicit constexpr LayoutHilbert2D( size_t N0 = 0, size_t N1 = 0,
+    explicit constexpr LayoutHilbert3D( size_t N0 = 0, size_t N1 = 0,
                                         size_t N2 = 0, size_t N3 = 0,
                                         size_t N4 = 0, size_t N5 = 0,
                                         size_t N6 = 0, size_t N7 = 0 )
@@ -77,9 +77,9 @@ namespace Impl
 //---------------------------------------------------------------------------//
 // HView Offset which implements the index mapping
 //---------------------------------------------------------------------------//
-// ViewOffset struct for LayoutHilbert2D
+// ViewOffset struct for LayoutHilbert3D
 template <class Dimension>
-struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
+struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
 {
 
     using is_mapping_plugin = std::true_type;
@@ -87,7 +87,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
 
     typedef size_t size_type;
     typedef Dimension dimension_type;
-    typedef Kokkos::LayoutHilbert2D array_layout;
+    typedef Kokkos::LayoutHilbert3D array_layout;
 
     // Store current dimensions
     dimension_type m_dim;
@@ -288,7 +288,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     // Calculate 2D Hilbert index given an ( x, y ) coordinate and the size of
     // the hilbert space ( n )
     template <typename I0, typename I1>
-    KOKKOS_INLINE_FUNCTION size_t hilbert2d( I0 const &i0, I1 const &i1 ) const
+    KOKKOS_INLINE_FUNCTION size_t Hilbert3D( I0 const &i0, I1 const &i1 ) const
     {
         int n = ( orig_dim.N0 > orig_dim.N1 ) ? orig_dim.N0 : orig_dim.N1;
         int rx = 0;
@@ -615,7 +615,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     // Default creation
     KOKKOS_INLINE_FUNCTION
     constexpr ViewOffset( std::integral_constant<unsigned, 0> const &,
-                          Kokkos::LayoutHilbert2D const &rhs )
+                          Kokkos::LayoutHilbert3D const &rhs )
         : m_dim( rhs.dimension[0], rhs.dimension[1], rhs.dimension[2],
                  rhs.dimension[3], rhs.dimension[4], rhs.dimension[5],
                  rhs.dimension[6], rhs.dimension[7] )
@@ -632,8 +632,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
         const ViewOffset<DimRHS, LayoutRHS, void> &rhs )
         : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3,
                  rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 )
-        , orig_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3,
-                    rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 )
+        , orig_dim( rhs.dimension_0(), rhs.dimension_1(), rhs.dimension_2(), rhs.dimension_3(),
+                    rhs.dimensioin_4(), rhs.dimension_5(), rhs.dimension_6(), rhs.dimension_7() )
         , m_off( 0, 0, 0, 0, 0, 0, 0, 0 )
     {
         static_assert( int( DimRHS::rank ) == int( dimension_type::rank ),
@@ -659,11 +659,11 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert2D, void>
     }
 };
 
-// Implement subview functionality for LayoutHilbert2D
+// Implement subview functionality for LayoutHilbert3D
 template <int RankDest, int RankSrc, int CurrentArg, class Arg,
           class... SubViewArgs>
-struct SubviewLegalArgsCompileTime<Kokkos::LayoutHilbert2D,
-                                   Kokkos::LayoutHilbert2D, RankDest, RankSrc,
+struct SubviewLegalArgsCompileTime<Kokkos::LayoutHilbert3D,
+                                   Kokkos::LayoutHilbert3D, RankDest, RankSrc,
                                    CurrentArg, Arg, SubViewArgs...>
 {
     enum
@@ -683,8 +683,8 @@ struct SubviewLegalArgsCompileTime<Kokkos::LayoutHilbert2D,
 };
 
 template <int RankDest, int RankSrc, int CurrentArg, class Arg>
-struct SubviewLegalArgsCompileTime<Kokkos::LayoutHilbert2D,
-                                   Kokkos::LayoutHilbert2D, RankDest, RankSrc,
+struct SubviewLegalArgsCompileTime<Kokkos::LayoutHilbert3D,
+                                   Kokkos::LayoutHilbert3D, RankDest, RankSrc,
                                    CurrentArg, Arg>
 {
     enum
@@ -700,7 +700,7 @@ struct ViewMapping<
     typename std::enable_if<(
         std::is_same<typename SrcTraits::specialize, void>::value &&
         ( std::is_same<typename SrcTraits::array_layout,
-                       Kokkos::LayoutHilbert2D>::value ) )>::type,
+                       Kokkos::LayoutHilbert3D>::value ) )>::type,
     SrcTraits, Args...>
 {
 
@@ -762,8 +762,8 @@ struct ViewMapping<
                                       SrcTraits::rank, 0, Args...>::value ||
           ( rank <= 2 && R0 &&
             std::is_same<typename SrcTraits::array_layout,
-                         Kokkos::LayoutHilbert2D>::value ) ),
-        typename SrcTraits::array_layout, Kokkos::LayoutHilbert2D>::type
+                         Kokkos::LayoutHilbert3D>::value ) ),
+        typename SrcTraits::array_layout, Kokkos::LayoutHilbert3D>::type
         array_layout;
 
     typedef typename SrcTraits::value_type value_type;
