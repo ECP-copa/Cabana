@@ -332,7 +332,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
         // Calculate 3D hilbert index
         size_t hilbert_index = hilbert3d( i0 + m_off.N0, 0, 0 ) - offset;
 
-        // Return hilbert index
+        // Return hilbert index to map to 1 dimension
         return hilbert_index;
     }
 
@@ -345,7 +345,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
         size_t hilbert_index =
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, 0 ) - offset;
 
-        // Return hilbert index
+        // Return hilbert index to map to 2 dimensions
         return hilbert_index;
     }
 
