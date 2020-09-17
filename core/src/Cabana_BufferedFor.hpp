@@ -19,6 +19,8 @@
 
 namespace Cabana
 {
+namespace Experimental
+{
 
 //// START KOKKOS OVERLAP/ASYNC CODE /////
 template <class ExecSpace>
@@ -200,5 +202,6 @@ inline void buffered_parallel_for(
                                          buffer_size * ( i ) );
     }
 }
-} // namespace Cabana
+} // end namespace Experimental
+} // end namespace Cabana
 #endif // CABANA_BUFFEREDFOR_HPP

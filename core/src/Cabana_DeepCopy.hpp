@@ -517,6 +517,7 @@ inline void deep_copy_partial_dst(
 
     // Make AoSoA in dst space to copy over
     std::cout << "src size " << src.size() << std::endl;
+
 #ifdef CABANA_DEEPCOPY_SAFE
     DstAoSoA dst_partial( "deep_copy_partial dst", count );
 

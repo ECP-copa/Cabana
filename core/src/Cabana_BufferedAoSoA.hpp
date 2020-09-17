@@ -20,6 +20,7 @@
 
 namespace Cabana
 {
+namespace Experimental {
 // TODO: this tuple implementation could possibly be a std::index_sequence
 // over Cabana::member_slice_type and be simplified?
 // TODO: Use the same tuple pattern as in Cabana::SoA using
@@ -184,7 +185,7 @@ class BufferedAoSoA
         typename target_AoSoA_t::template member_slice_type<i> &
         get_slice()
     {
-        return Cabana::get<target_AoSoA_t, i>( slice_tuple );
+        return Cabana::Experimental::get<target_AoSoA_t, i>( slice_tuple );
     }
 
     // Internal buffers which we use to buffer data back and forth, and also
@@ -309,6 +310,7 @@ class BufferedAoSoA
   private:
 };
 
+} // end namespace Experimental
 } // end namespace Cabana
 
 #endif // CABANA_BUFFEREDAOSOA_HPP
