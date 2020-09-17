@@ -36,9 +36,9 @@ void forwardReverseTest()
 {
     // Create the global mesh.
     double cell_size = 0.1;
-    std::array<bool, 3> is_dim_periodic = { true, true, true };
-    std::array<double, 3> global_low_corner = { -1.0, -2.0, -1.0 };
-    std::array<double, 3> global_high_corner = { 1.0, 1.0, 0.5 };
+    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<double, 3> global_low_corner = {-1.0, -2.0, -1.0};
+    std::array<double, 3> global_high_corner = {1.0, 1.0, 0.5};
     auto global_mesh = createUniformGlobalMesh( global_low_corner,
                                                 global_high_corner, cell_size );
 
@@ -85,38 +85,28 @@ void forwardReverseTest()
     // Copy to the device.
     Kokkos::deep_copy( lhs_view, lhs_host_view );
 
-    //* New heFFTe version for create FFT plans
-    //* Define the FFT backend
-    using backend_tag =
-        heffte::backend::fftw; //* can also be backend::cufft, backend::mkl
+    // Create FFT options
+    Experimental::FastFourierTransformParams params;
 
-    //* Instantiate a set of default parameters according to the backend type
-    heffte::plan_options params = heffte::default_options<backend_tag>();
+    // Set MPI communication
+    params.set_alltoall( true );
 
-    //* Choose the desired options
-    //* 1. MPI communication
-    params.use_alltoall = true;
-    // params.use_alltoall = false;  //* MPI point-to-point
+    // Set data exchange type (false uses slab decomposition)
+    params.set_pencils( true );
 
-    //* 2. Data exchange type
-    params.use_pencils = true; //* Pencil decomposition
-    // params.use_pencils = false; //* Slab decomposition
+    // Set data handling (true uses contiguous memory and requires tensor
+    // transposition; false uses strided data with no transposition)
+    params.set_reorder( true );
 
-    //* 3. Data handling
-    params.use_reorder =
-        true; //* Use data in contiguous memory (requires tensor transposition)
-    // params.use_reorder = false; //* Use strided data (does not require tensor
-    // transposition)
-
-    auto fft = Experimental::createFastFourierTransform<backend_tag, double,
-                                                        TEST_DEVICE>(
-        *vector_layout, params );
+    auto fft =
+        Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
+            *vector_layout, params );
 
     // Forward transform
-    fft->forward( *lhs );
+    fft->forward( *lhs, Experimental::FFTScaleFull() );
 
     // Reverse transform
-    fft->reverse( *lhs );
+    fft->reverse( *lhs, Experimental::FFTScaleNone() );
 
     // Check the results.
     auto lhs_result =
