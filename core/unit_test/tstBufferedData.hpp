@@ -214,8 +214,7 @@ void testBufferedDataCreation()
     using AoSoA_t =
         Cabana::AoSoA<DataTypes, Kokkos::CudaHostPinnedSpace, vector_length>;
 #else
-    using AoSoA_t =
-        Cabana::AoSoA<DataTypes, Kokkos::HostSpace, vector_length>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace, vector_length>;
 #endif
 
     std::string label = "sample_aosoa";

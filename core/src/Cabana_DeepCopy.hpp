@@ -219,9 +219,9 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src, // bool async = false,
         }
 #else
         */
-            Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
-                dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
-//#endif
+        Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
+            dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
+        //#endif
     }
 
     // Otherwise copy the data element-by-element because the data layout is
