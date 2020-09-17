@@ -154,7 +154,7 @@ create_mirror_view_and_copy(
 */
 template <class DstAoSoA, class SrcAoSoA>
 inline void
-deep_copy( DstAoSoA &dst, const SrcAoSoA &src, bool async = false,
+deep_copy( DstAoSoA &dst, const SrcAoSoA &src, bool //async = false,
            typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
                                      is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
