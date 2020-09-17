@@ -203,6 +203,7 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src, bool async = false,
     // of values then we can do a byte-wise copy directly.
     if ( std::is_same<dst_soa_type, src_soa_type>::value )
     {
+#ifdef __CUDA_ARCH__
         if ( async )
         {
             std::cout << __FILE__ << ":" << __LINE__ << " => Async copy "
@@ -215,6 +216,10 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src, bool async = false,
             Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
                 dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
         }
+#else
+            Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
+                dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
+#endif
     }
 
     // Otherwise copy the data element-by-element because the data layout is
