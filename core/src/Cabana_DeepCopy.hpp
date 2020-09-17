@@ -154,7 +154,7 @@ create_mirror_view_and_copy(
 */
 template <class DstAoSoA, class SrcAoSoA>
 inline void
-deep_copy( DstAoSoA &dst, const SrcAoSoA &src, bool //async = false,
+deep_copy( DstAoSoA &dst, const SrcAoSoA &src, // bool async = false,
            typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
                                      is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
@@ -203,6 +203,7 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src, bool //async = false,
     // of values then we can do a byte-wise copy directly.
     if ( std::is_same<dst_soa_type, src_soa_type>::value )
     {
+        /*
 #ifdef __CUDA_ARCH__
         if ( async )
         {
@@ -217,9 +218,10 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src, bool //async = false,
                 dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
         }
 #else
+        */
             Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
                 dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
-#endif
+//#endif
     }
 
     // Otherwise copy the data element-by-element because the data layout is
