@@ -79,18 +79,10 @@ inline void custom_simd_parallel_for(
 
     using index_type = typename team_policy::index_type;
 
-    using ex = typename simd_policy::execution_space;
-
     auto f = KOKKOS_LAMBDA( extra_functor_arg_t buffered_aosoa, int s, int i )
     {
         functor( buffered_aosoa, s, i );
     };
-
-    // TODO: this casues a seg fawult even if we don't use it???
-    // Kokkos::DefaultExecutionSpace space1 =
-    // SpaceInstance<Kokkos::DefaultExecutionSpace>::create(); std::cout <<
-    // "Enabling async .. " << SpaceInstance<ex>::overlap() << std::endl;
-    // SpaceInstance<ex>::destroy(space1);
 
     Kokkos::parallel_for(
         str, dynamic_cast<const team_policy &>( exec_policy ),
@@ -136,7 +128,6 @@ inline void buffered_parallel_for(
     constexpr int VectorLength =
         BufferedAoSoA_t::from_AoSoA_type::vector_length;
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
-    using work_tag = typename simd_policy::work_tag;
     // using team_policy = typename simd_policy::base_type;
 
     // using index_type = typename team_policy::index_type;
