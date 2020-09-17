@@ -20,7 +20,8 @@
 
 namespace Cabana
 {
-namespace Experimental {
+namespace Experimental
+{
 // TODO: this tuple implementation could possibly be a std::index_sequence
 // over Cabana::member_slice_type and be simplified?
 // TODO: Use the same tuple pattern as in Cabana::SoA using
@@ -151,16 +152,13 @@ class BufferedAoSoA
   public:
     using from_AoSoA_type = AoSoA_t;
 
-
     // Figure out the compatible AoSoA_t for the Target_Memory_Space
     using target_AoSoA_t = Cabana::AoSoA<
-        typename from_AoSoA_type::member_types,
-        Target_Memory_Space,
+        typename from_AoSoA_type::member_types, Target_Memory_Space,
         // Doing this put the burden on the user to get it right...
         // Without it you can get into trouble with copy sizes not matching
         // because the sizeof(soa_type) doesn't match
-        AoSoA_t::vector_length
-    >;
+        AoSoA_t::vector_length>;
 
     // Cabana::AoSoA<DataTypes, TEST_MEMSPACE, vector_length>;
 
@@ -171,8 +169,8 @@ class BufferedAoSoA
     // Holds a collection of slices for a single buffer. Currently means we can
     // only hold slices to a single buffer at a time
     slice_tuple_t slice_tuple;
-    // (We could make slice_tuple an array to hold multiple buffers worth of slices,
-    // but the user should not have to know which buffer they are in.)
+    // (We could make slice_tuple an array to hold multiple buffers worth of
+    // slices, but the user should not have to know which buffer they are in.)
 
     /**
      * @brief Getter to access the slices this class generates for the
@@ -199,12 +197,11 @@ class BufferedAoSoA
      * @param original_view_in The view to buffer
      * @param requested_buffer_count The number of buffered (3=triple buffered)
      * @param max_buffered_tuples The max size of a single buffer in tuples
-     * (the memory requirement is this class is roughly 
+     * (the memory requirement is this class is roughly
      * requested_buffer_count*max_buffered_tuples*sizeof(particle)
      */
     BufferedAoSoA( AoSoA_t original_view_in, int max_buffered_tuples )
-        :
-        original_view( original_view_in )
+        : original_view( original_view_in )
         , num_buffers( requested_buffer_count )
         , buffer_size( max_buffered_tuples )
     {

@@ -479,17 +479,16 @@ inline void deep_copy_partial_src(
     using src_memory_space = typename SrcAoSoA::memory_space;
     using dst_soa_type = typename DstAoSoA::soa_type;
 
-    assert( from_index % SrcAoSoA::vector_length == 0);
+    assert( from_index % SrcAoSoA::vector_length == 0 );
 
-    auto* src_pointer = src.data();
+    auto *src_pointer = src.data();
     // Move it along in chunks of SoAs
-    src_pointer += (from_index / SrcAoSoA::vector_length);
+    src_pointer += ( from_index / SrcAoSoA::vector_length );
 
     Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
-      dst.data(), src_pointer, dst.numSoA() * sizeof( dst_soa_type ) );
+        dst.data(), src_pointer, dst.numSoA() * sizeof( dst_soa_type ) );
 
 #endif
-
 }
 
 // TODO: this can be DRYd with deep_copy_partial, but we need a
@@ -548,16 +547,18 @@ inline void deep_copy_partial_dst(
     using src_memory_space = typename SrcAoSoA::memory_space;
     using src_soa_type = typename DstAoSoA::soa_type;
 
-    auto* dst_pointer = dst.data();
+    auto *dst_pointer = dst.data();
 
-    assert( to_index % DstAoSoA::vector_length == 0);
+    assert( to_index % DstAoSoA::vector_length == 0 );
     // Move it along in chunks of SoAs
-    dst_pointer += (to_index / DstAoSoA::vector_length);
+    dst_pointer += ( to_index / DstAoSoA::vector_length );
 
     std::cout << "copy " << count << " to " << to_index << std::endl;
-    std::cout << "Copy " << src.numSoA() * sizeof(src_soa_type) << " bytes from src " << src.data() << " to " << dst_pointer << std::endl;
+    std::cout << "Copy " << src.numSoA() * sizeof( src_soa_type )
+              << " bytes from src " << src.data() << " to " << dst_pointer
+              << std::endl;
     Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
-      dst_pointer, src.data(), src.numSoA() * sizeof( src_soa_type ) );
+        dst_pointer, src.data(), src.numSoA() * sizeof( src_soa_type ) );
     std::cout << "... Done " << std::endl;
 
 #endif

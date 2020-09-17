@@ -83,9 +83,7 @@ inline void custom_simd_parallel_for(
 
     auto f = KOKKOS_LAMBDA( extra_functor_arg_t buffered_aosoa, int s, int i )
     {
-        functor(
-            buffered_aosoa, s, i
-        );
+        functor( buffered_aosoa, s, i );
     };
 
     // TODO: this casues a seg fawult even if we don't use it???

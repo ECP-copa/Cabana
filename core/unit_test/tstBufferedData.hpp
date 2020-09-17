@@ -31,12 +31,12 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
                        const int ival, const int dim_1, const int dim_2,
                        const int dim_3, int short_cut = 1 )
 {
-    //auto mirror =
-        //Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
+    // auto mirror =
+    // Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(), aosoa );
 
-    //if ( copy_back == 0 )
+    // if ( copy_back == 0 )
     //{
-        //mirror = aosoa;
+    // mirror = aosoa;
     //}
 
     auto slice_0 = Cabana::slice<0>( aosoa );
@@ -44,10 +44,10 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
     auto slice_2 = Cabana::slice<2>( aosoa );
     auto slice_3 = Cabana::slice<3>( aosoa );
 
-    if (short_cut)
+    if ( short_cut )
     {
         // this is aimed to massively cut down the print spam at the
-        //cost of knowing what went wrong
+        // cost of knowing what went wrong
 
         int correct = 1;
         for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
@@ -59,7 +59,7 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
                 {
                     for ( int k = 0; k < dim_3; ++k )
                     {
-                        if (slice_0( idx, i, j, k ) != fval * ( i + j + k ))
+                        if ( slice_0( idx, i, j, k ) != fval * ( i + j + k ) )
                         {
                             correct = 0;
                         }
@@ -68,16 +68,17 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
             }
 
             // Member 1.
-            if (slice_1(idx) != ival)
+            if ( slice_1( idx ) != ival )
             {
                 correct = 0;
             }
             // Catches both slice_0 and slice_1 checks
-            if (! correct ) break;
+            if ( !correct )
+                break;
 
             for ( int i = 0; i < dim_1; ++i )
             {
-                if (slice_2( idx, i) != dval * i)
+                if ( slice_2( idx, i ) != dval * i )
                 {
                     correct = 0;
                 }
@@ -88,16 +89,17 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
             {
                 for ( int j = 0; j < dim_2; ++j )
                 {
-                    if ( slice_3( idx, i, j) != dval * ( i + j) )
+                    if ( slice_3( idx, i, j ) != dval * ( i + j ) )
                     {
                         correct = 0;
                     }
                 }
             }
         }
-        EXPECT_EQ( correct, 1);
+        EXPECT_EQ( correct, 1 );
     }
-    else { // no shortcut, full debug info
+    else
+    { // no shortcut, full debug info
 
         for ( std::size_t idx = 0; idx < aosoa.size(); ++idx )
         {
@@ -108,7 +110,8 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
                 {
                     for ( int k = 0; k < dim_3; ++k )
                     {
-                        EXPECT_EQ( slice_0( idx, i, j, k ), fval * ( i + j + k ) );
+                        EXPECT_EQ( slice_0( idx, i, j, k ),
+                                   fval * ( i + j + k ) );
                     }
                 }
             }
@@ -202,20 +205,21 @@ void testBufferedDataCreation()
     // TOTAL      = 172
 
     // Declare the AoSoA type.
-    // using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace, vector_length>;
+    // using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace,
+    // vector_length>;
 
     // TODO: for some reason CudaHostPinnedSpace breaks correctness. I guess I
     // must be missing a fence somehow?
-    using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::CudaHostPinnedSpace,
-          vector_length>;
+    using AoSoA_t =
+        Cabana::AoSoA<DataTypes, Kokkos::CudaHostPinnedSpace, vector_length>;
 
     std::string label = "sample_aosoa";
 
-    //int num_data = 1024;
-    //int num_data = 1024; // * 1024;   // 2kb
-    int num_data = 1024 * 1024;       // 200mb
-    //int num_data = 1024 * 1024 * 32;  // 6.4GB
-    //int num_data = 1024 * 1024 * 112;   // 20GB (20199768064)
+    // int num_data = 1024;
+    // int num_data = 1024; // * 1024;   // 2kb
+    int num_data = 1024 * 1024; // 200mb
+    // int num_data = 1024 * 1024 * 32;  // 6.4GB
+    // int num_data = 1024 * 1024 * 112;   // 20GB (20199768064)
 
     AoSoA_t aosoa( label, num_data );
 
@@ -265,7 +269,8 @@ void testBufferedDataCreation()
     checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3 );
 
     using buf_t =
-        Cabana::Experimental::BufferedAoSoA<buffer_count, target_exec_space, AoSoA_t>;
+        Cabana::Experimental::BufferedAoSoA<buffer_count, target_exec_space,
+                                            AoSoA_t>;
 
     buf_t buffered_aosoa_in( aosoa, max_buffered_tuples );
 
@@ -327,15 +332,15 @@ void testBufferedDataCreation()
 
     Kokkos::fence();
 
-    //checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 1);
-    EXPECT_EQ(1 , 1);
-    exit(0);
+    // checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 1);
+    EXPECT_EQ( 1, 1 );
+    exit( 0 );
 }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, bufferedData_test ) { testBufferedDataCreation(); }
-//TEST( TEST_CATEGORY, bufferedData_tag_test ) { testBufferedTag(); }
+// TEST( TEST_CATEGORY, bufferedData_tag_test ) { testBufferedTag(); }
 
 } // namespace Test
