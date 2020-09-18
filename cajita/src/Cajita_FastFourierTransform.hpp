@@ -51,12 +51,12 @@ class FastFourierTransformParams
     bool reorder = true;
 
   public:
-    void set_alltoall( bool value ) { alltoall = value; }
-    void set_pencils( bool value ) { pencils = value; }
-    void set_reorder( bool value ) { reorder = value; }
-    bool get_alltoall() const { return alltoall; }
-    bool get_pencils() const { return pencils; }
-    bool get_reorder() const { return reorder; }
+    void setAllToAll( bool value ) { alltoall = value; }
+    void setPencils( bool value ) { pencils = value; }
+    void setReorder( bool value ) { reorder = value; }
+    bool getAllToAll() const { return alltoall; }
+    bool getPencils() const { return pencils; }
+    bool getReorder() const { return reorder; }
 };
 
 struct FFTScaleFull
@@ -114,11 +114,6 @@ class HeffteFastFourierTransform
     using exec_space = typename device_type::execution_space;
     using backend_type = typename HeffteBackendTraits<exec_space>::backend_type;
 
-    using FastFourierTransform<Scalar, EntityType, MeshType,
-                               DeviceType>::global_high;
-    using FastFourierTransform<Scalar, EntityType, MeshType,
-                               DeviceType>::global_low;
-
     /*!
       \brief Constructor
       \param layout The array layout defining the vector space of the transform.
@@ -133,14 +128,14 @@ class HeffteFastFourierTransform
             throw std::logic_error(
                 "Only 1 complex value per entity allowed in FFT" );
 
-        heffte::box3d inbox = {global_low, global_high};
-        heffte::box3d outbox = {global_low, global_high};
+        heffte::box3d inbox = {this->global_low, this->global_high};
+        heffte::box3d outbox = {this->global_low, this->global_high};
 
         heffte::plan_options heffte_params =
             heffte::default_options<backend_type>();
-        heffte_params.use_alltoall = params.get_alltoall();
-        heffte_params.use_pencils = params.get_pencils();
-        heffte_params.use_reorder = params.get_reorder();
+        heffte_params.use_alltoall = params.getAllToAll();
+        heffte_params.use_pencils = params.getPencils();
+        heffte_params.use_reorder = params.getReorder();
 
         // Set FFT options from given parameters
         _fft = std::make_shared<heffte::fft3d<backend_type>>(
@@ -312,9 +307,9 @@ createHeffteFastFourierTransform(
     const heffte::plan_options heffte_params =
         heffte::default_options<backend_type>();
     FastFourierTransformParams params;
-    params.set_alltoall( heffte_params.use_alltoall );
-    params.set_pencils( heffte_params.use_pencils );
-    params.set_reorder( heffte_params.use_reorder );
+    params.setAllToAll( heffte_params.use_alltoall );
+    params.setPencils( heffte_params.use_pencils );
+    params.setReorder( heffte_params.use_reorder );
 
     return std::make_shared<
         HeffteFastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>(

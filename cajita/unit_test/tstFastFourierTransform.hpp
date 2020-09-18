@@ -89,14 +89,14 @@ void forwardReverseTest()
     Experimental::FastFourierTransformParams params;
 
     // Set MPI communication
-    params.set_alltoall( true );
+    params.setAllToAll( true );
 
     // Set data exchange type (false uses slab decomposition)
-    params.set_pencils( true );
+    params.setPencils( true );
 
     // Set data handling (true uses contiguous memory and requires tensor
     // transposition; false uses strided data with no transposition)
-    params.set_reorder( true );
+    params.setReorder( true );
 
     auto fft =
         Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
