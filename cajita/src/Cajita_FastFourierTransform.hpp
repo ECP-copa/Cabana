@@ -29,6 +29,7 @@ namespace Experimental
 {
 //---------------------------------------------------------------------------//
 
+// TODO: Add HIP backend specialization when available.
 #ifdef KOKKOS_ENABLE_CUDA
 template <>
 struct HeffteBackendTraits<Kokkos::Cuda>
