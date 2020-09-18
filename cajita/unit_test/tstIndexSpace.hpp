@@ -276,9 +276,9 @@ void executionTest()
     int size_i = 12;
     IndexSpace<1> is1( {min_i}, {max_i} );
     Kokkos::View<double *, TEST_DEVICE> v1( "v1", size_i );
-    Kokkos::parallel_for( "fill_rank_1",
-                          createExecutionPolicy( is1, TEST_EXECSPACE() ),
-                          KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
+    Kokkos::parallel_for(
+        "fill_rank_1", createExecutionPolicy( is1, TEST_EXECSPACE() ),
+        KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
     auto v1_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), v1 );
     for ( int i = 0; i < is1.extent( 0 ); ++i )

@@ -64,24 +64,24 @@ struct PointSet
     std::size_t num_alloc;
 
     // Physical cell size. (point,dim)
-    Kokkos::View<Scalar * [3], device_type> cell_size;
+    Kokkos::View<Scalar *[3], device_type> cell_size;
 
     // Point logical position. (point,dim)
-    Kokkos::View<Scalar * [3], device_type> logical_coords;
+    Kokkos::View<Scalar *[3], device_type> logical_coords;
 
     // Point mesh stencil. (point,ns,dim)
-    Kokkos::View<int * [ns][3], device_type> stencil;
+    Kokkos::View<int *[ns][3], device_type> stencil;
 
     // Point basis values at entities in stencil. (point,ns,dim)
-    Kokkos::View<Scalar * [ns][3], device_type> value;
+    Kokkos::View<Scalar *[ns][3], device_type> value;
 
     // Point basis gradient values at entities in stencil
     // (point,ni,nj,nk,dim)
-    Kokkos::View<Scalar * [ns][ns][ns][3], device_type> gradient;
+    Kokkos::View<Scalar *[ns][ns][ns][3], device_type> gradient;
 
     // Point basis distance values at entities in stencil
     // (point,ni,nj,nk,dim)
-    Kokkos::View<Scalar * [ns][3], device_type> distance;
+    Kokkos::View<Scalar *[ns][3], device_type> distance;
 
     // Mesh uniform cell size.
     Scalar dx;
@@ -221,28 +221,28 @@ createPointSet(
     point_set.num_point = num_point;
     point_set.num_alloc = num_alloc;
 
-    point_set.cell_size = Kokkos::View<scalar_type * [3], device_type>(
+    point_set.cell_size = Kokkos::View<scalar_type *[3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::cell_size" ),
         num_alloc );
 
-    point_set.logical_coords = Kokkos::View<scalar_type * [3], device_type>(
+    point_set.logical_coords = Kokkos::View<scalar_type *[3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::logical_coords" ),
         num_alloc );
 
-    point_set.stencil = Kokkos::View<int * [ns][3], device_type>(
+    point_set.stencil = Kokkos::View<int *[ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::stencil" ),
         num_alloc );
 
-    point_set.value = Kokkos::View<scalar_type * [ns][3], device_type>(
+    point_set.value = Kokkos::View<scalar_type *[ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::value" ),
         num_alloc );
 
     point_set.gradient =
-        Kokkos::View<scalar_type * [ns][ns][ns][3], device_type>(
+        Kokkos::View<scalar_type *[ns][ns][ns][3], device_type>(
             Kokkos::ViewAllocateWithoutInitializing( "PointSet::gradients" ),
             num_alloc );
 
-    point_set.distance = Kokkos::View<scalar_type * [ns][3], device_type>(
+    point_set.distance = Kokkos::View<scalar_type *[ns][3], device_type>(
         Kokkos::ViewAllocateWithoutInitializing( "PointSet::distance" ),
         num_alloc );
 
@@ -286,7 +286,7 @@ void splineEvaluationTest()
     // Create a point in the center of every cell.
     auto cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
-    Kokkos::View<double * [3], TEST_DEVICE> points(
+    Kokkos::View<double *[3], TEST_DEVICE> points(
         Kokkos::ViewAllocateWithoutInitializing( "points" ), num_point );
     Kokkos::parallel_for(
         "fill_points", createExecutionPolicy( cell_space, TEST_EXECSPACE() ),

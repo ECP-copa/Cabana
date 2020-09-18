@@ -494,7 +494,8 @@ inline void deep_copy_partial_src(
 
     // Count should be dst.numSoA()
     Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
-        dst.data(), src_pointer, count * sizeof( dst_soa_type ) );
+        dst.data(), src_pointer,
+        ( count / SrcAoSoA::vector_length ) * sizeof( dst_soa_type ) );
 
 #endif
 }
