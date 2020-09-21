@@ -63,7 +63,7 @@ void unmanagedAoAoAExample()
     // We use `new` here to represent an arbitrary pointer, in a typical
     // example this will be passed in from a users existing code/memory
     // allocation (possibly from Fortran)
-    Data *local_data = new Data[num_tuple];
+    Data * local_data = new Data[num_tuple];
 
     // This is equivalent to a Cabana AoSoA of:
     // using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
@@ -140,7 +140,7 @@ void unmanagedAoAoAExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char * argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 

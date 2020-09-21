@@ -31,15 +31,15 @@ void captureTest()
     auto pack = makeParameterPack( dbl_view, int_view );
 
     // Update the pack in a kernel
-    Kokkos::parallel_for( "fill_pack",
-                          Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
-                          KOKKOS_LAMBDA( const int ) {
-                              auto dv = get<0>( pack );
-                              auto iv = get<1>( pack );
+    Kokkos::parallel_for(
+        "fill_pack", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
+        KOKKOS_LAMBDA( const int ) {
+            auto dv = get<0>( pack );
+            auto iv = get<1>( pack );
 
-                              dv( 0 ) = 3.14;
-                              iv( 0, 0 ) = 12;
-                          } );
+            dv( 0 ) = 3.14;
+            iv( 0, 0 ) = 12;
+        } );
 
     // Check the capture.
     auto dbl_host =

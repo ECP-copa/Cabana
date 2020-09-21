@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char * argv[] )
 {
     /* The Kokkos runtime used by Cabana must be initialized and finalized.
        Kokkos::ScopeGuard inializes Kokkos and guarantees it is finalized,

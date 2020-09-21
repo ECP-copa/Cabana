@@ -71,7 +71,7 @@ void deepCopyExample()
     */
     for ( std::size_t s = 0; s < src_aosoa.numSoA(); ++s )
     {
-        auto &soa = src_aosoa.access( s );
+        auto & soa = src_aosoa.access( s );
 
         for ( int i = 0; i < 3; ++i )
             for ( int j = 0; j < 3; ++j )
@@ -180,7 +180,7 @@ void deepCopyExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char * argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
