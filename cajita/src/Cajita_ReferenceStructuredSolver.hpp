@@ -546,7 +546,7 @@ class ReferenceConjugateGradient
     // Set the stencil of a matrix.
     void setStencil( const std::vector<std::array<int, 3>> &stencil,
                      const bool is_symmetric,
-                     Kokkos::View<int * [3], DeviceType> &device_stencil,
+                     Kokkos::View<int *[3], DeviceType> &device_stencil,
                      std::shared_ptr<Halo<memory_space>> &halo,
                      std::shared_ptr<Array_t> &matrix )
     {
@@ -611,8 +611,8 @@ class ReferenceConjugateGradient
     int _num_iter;
     Scalar _residual_norm;
     int _diag_entry;
-    Kokkos::View<int * [3], DeviceType> _A_stencil;
-    Kokkos::View<int * [3], DeviceType> _M_stencil;
+    Kokkos::View<int *[3], DeviceType> _A_stencil;
+    Kokkos::View<int *[3], DeviceType> _M_stencil;
     std::shared_ptr<Halo<memory_space>> _A_halo;
     std::shared_ptr<Halo<memory_space>> _M_halo;
     std::shared_ptr<Array_t> _A;
