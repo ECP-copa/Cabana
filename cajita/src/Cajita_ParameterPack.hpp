@@ -109,7 +109,7 @@ template <std::size_t N, class ParameterPack_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_parameter_pack<ParameterPack_t>::value,
     typename ParameterPack_t::template value_type<N> &>::type
-get( ParameterPack_t &pp )
+get( ParameterPack_t & pp )
 {
     return static_cast<typename ParameterPack_t::template element_type<N> &>(
                pp )
@@ -120,7 +120,7 @@ template <std::size_t N, class ParameterPack_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_parameter_pack<ParameterPack_t>::value,
     const typename ParameterPack_t::template value_type<N> &>::type
-get( const ParameterPack_t &pp )
+get( const ParameterPack_t & pp )
 {
     return static_cast<
                const typename ParameterPack_t::template element_type<N> &>( pp )
@@ -131,18 +131,18 @@ get( const ParameterPack_t &pp )
 // Fill a parameter pack. Note the indexing is such that the Nth element of a
 // parameter pack is the Nth element of the tuple.
 template <typename ParameterPack_t, typename T, typename... Types>
-void fillParameterPackImpl( ParameterPack_t &pp,
+void fillParameterPackImpl( ParameterPack_t & pp,
                             const std::integral_constant<std::size_t, 0>,
-                            const T &t, const Types &... )
+                            const T & t, const Types &... )
 {
     get<ParameterPack_t::size - 1>( pp ) = t;
 }
 
 template <typename ParameterPack_t, std::size_t N, typename T,
           typename... Types>
-void fillParameterPackImpl( ParameterPack_t &pp,
+void fillParameterPackImpl( ParameterPack_t & pp,
                             const std::integral_constant<std::size_t, N>,
-                            const T &t, const Types &... ts )
+                            const T & t, const Types &... ts )
 {
     get<ParameterPack_t::size - 1 - N>( pp ) = t;
     fillParameterPackImpl( pp, std::integral_constant<std::size_t, N - 1>(),
@@ -150,7 +150,7 @@ void fillParameterPackImpl( ParameterPack_t &pp,
 }
 
 template <typename ParameterPack_t, typename... Types>
-void fillParameterPack( ParameterPack_t &pp, const Types &... ts )
+void fillParameterPack( ParameterPack_t & pp, const Types &... ts )
 {
     fillParameterPackImpl(
         pp, std::integral_constant<std::size_t, ParameterPack_t::size - 1>(),

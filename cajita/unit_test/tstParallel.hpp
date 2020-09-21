@@ -44,7 +44,7 @@ struct TestFunctor1
     void operator()( const ForTag &, const int i ) const { v( i ) = 2.0; }
 
     KOKKOS_INLINE_FUNCTION
-    void operator()( const ReduceTag &, const int i, double &result ) const
+    void operator()( const ReduceTag &, const int i, double & result ) const
     {
         result += v( i );
     }
@@ -62,7 +62,7 @@ struct TestFunctor2
 
     KOKKOS_INLINE_FUNCTION
     void operator()( const ReduceTag &, const int i, const int j,
-                     double &result ) const
+                     double & result ) const
     {
         result += v( i, j );
     }
@@ -82,7 +82,7 @@ struct TestFunctorArray
 
     KOKKOS_INLINE_FUNCTION
     void operator()( const ReduceTag &, const int i, const int j, const int k,
-                     double &result ) const
+                     double & result ) const
     {
         for ( int l = 0; l < 4; ++l )
             result += v( i, j, k, l );
@@ -98,8 +98,9 @@ void parallelIndexSpaceTest()
     int size_i = 12;
     IndexSpace<1> is1( {min_i}, {max_i} );
     Kokkos::View<double *, TEST_DEVICE> v1( "v1", size_i );
-    grid_parallel_for( "fill_rank_1", TEST_EXECSPACE(), is1,
-                       KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
+    grid_parallel_for(
+        "fill_rank_1", TEST_EXECSPACE(), is1,
+        KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
     auto v1_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), v1 );
     for ( int i = 0; i < size_i; ++i )
@@ -114,7 +115,7 @@ void parallelIndexSpaceTest()
     double sum1 = 0.0;
     grid_parallel_reduce(
         "reduce_rank_1", TEST_EXECSPACE(), is1,
-        KOKKOS_LAMBDA( const int i, double &result ) { result += v1( i ); },
+        KOKKOS_LAMBDA( const int i, double & result ) { result += v1( i ); },
         sum1 );
     EXPECT_EQ( sum1, is1.size() );
 
@@ -162,7 +163,7 @@ void parallelIndexSpaceTest()
     double sum2 = 0.0;
     grid_parallel_reduce(
         "reduce_rank_2", TEST_EXECSPACE(), is2,
-        KOKKOS_LAMBDA( const int i, const int j, double &result ) {
+        KOKKOS_LAMBDA( const int i, const int j, double & result ) {
             result += v2( i, j );
         },
         sum2 );
@@ -225,12 +226,12 @@ void parallelLocalGridTest()
 
     // Assign a value to the entire the array.
     auto array_view = array->view();
-    grid_parallel_for( "fill_array", TEST_EXECSPACE(), *local_grid, Ghost(),
-                       Cell(),
-                       KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-                           for ( int l = 0; l < 4; ++l )
-                               array_view( i, j, k, l ) = 1.0;
-                       } );
+    grid_parallel_for(
+        "fill_array", TEST_EXECSPACE(), *local_grid, Ghost(), Cell(),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+            for ( int l = 0; l < 4; ++l )
+                array_view( i, j, k, l ) = 1.0;
+        } );
     auto host_view =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), array_view );
     auto ghosted_space = array->layout()->indexSpace( Ghost(), Local() );
@@ -244,7 +245,8 @@ void parallelLocalGridTest()
     double sum = 0.0;
     grid_parallel_reduce(
         "reduce_array", TEST_EXECSPACE(), *local_grid, Ghost(), Cell(),
-        KOKKOS_LAMBDA( const int i, const int j, const int k, double &result ) {
+        KOKKOS_LAMBDA( const int i, const int j, const int k,
+                       double & result ) {
             for ( int l = 0; l < 4; ++l )
                 result += array_view( i, j, k, l );
         },

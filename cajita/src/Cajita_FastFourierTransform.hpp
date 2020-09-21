@@ -77,7 +77,7 @@ class FastFourierTransformParams
       If this function is not used to set the type then 2 is used as the
       default.
     */
-    FastFourierTransformParams &setCollectiveType( const int type )
+    FastFourierTransformParams & setCollectiveType( const int type )
     {
         collective = type;
         return *this;
@@ -93,7 +93,7 @@ class FastFourierTransformParams
       If this function is not used to set the type then 0 is used as the
       default.
     */
-    FastFourierTransformParams &setExchangeType( const int type )
+    FastFourierTransformParams & setExchangeType( const int type )
     {
         exchange = type;
         return *this;
@@ -110,7 +110,7 @@ class FastFourierTransformParams
       If this function is not used to set the type then 2 is used as the
       default.
     */
-    FastFourierTransformParams &setPackType( const int type )
+    FastFourierTransformParams & setPackType( const int type )
     {
         packflag = type;
         return *this;
@@ -126,7 +126,7 @@ class FastFourierTransformParams
       If this function is not used to set the type then 1 is used as the
       default.
     */
-    FastFourierTransformParams &setScalingType( const int type )
+    FastFourierTransformParams & setScalingType( const int type )
     {
         scaled = type;
         return *this;
@@ -162,8 +162,8 @@ class FastFourierTransform
       transform.
       \param params Parameters for the 3D FFT.
     */
-    FastFourierTransform( const ArrayLayout<EntityType, MeshType> &layout,
-                          const FastFourierTransformParams &params )
+    FastFourierTransform( const ArrayLayout<EntityType, MeshType> & layout,
+                          const FastFourierTransformParams & params )
         : _fft( layout.localGrid()->globalGrid().comm() )
     {
         if ( 1 != layout.dofsPerEntity() )
@@ -184,7 +184,7 @@ class FastFourierTransform
         _fft.scaled = params.scaled;
 
         // Get the global grid.
-        const auto &global_grid = layout.localGrid()->globalGrid();
+        const auto & global_grid = layout.localGrid()->globalGrid();
 
         // Get the global dimensions of the problem. K indices move the
         // fastest because we fix the work array to be layout right.
@@ -236,7 +236,7 @@ class FastFourierTransform
       \param in The array on which to perform the forward transform.
     */
     template <class Array_t>
-    void forward( const Array_t &x )
+    void forward( const Array_t & x )
     {
         compute( x, 1 );
     }
@@ -246,14 +246,14 @@ class FastFourierTransform
      \param out The array on which to perform the reverse transform.
     */
     template <class Array_t>
-    void reverse( const Array_t &x )
+    void reverse( const Array_t & x )
     {
         compute( x, -1 );
     }
 
   public:
     template <class Array_t>
-    void compute( const Array_t &x, const int flag )
+    void compute( const Array_t & x, const int flag )
     {
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
@@ -333,8 +333,8 @@ class FastFourierTransform
 //---------------------------------------------------------------------------//
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
 std::shared_ptr<FastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>
-createFastFourierTransform( const ArrayLayout<EntityType, MeshType> &layout,
-                            const FastFourierTransformParams &params )
+createFastFourierTransform( const ArrayLayout<EntityType, MeshType> & layout,
+                            const FastFourierTransformParams & params )
 {
     return std::make_shared<
         FastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>(

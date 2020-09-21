@@ -601,7 +601,7 @@ template <typename Scalar, int Order, class EntityType, class DataTags>
 KOKKOS_INLINE_FUNCTION std::enable_if_t<
     SplineData<Scalar, Order, EntityType, DataTags>::has_physical_cell_size>
 setSplineData( SplinePhysicalCellSize,
-               SplineData<Scalar, Order, EntityType, DataTags> &data,
+               SplineData<Scalar, Order, EntityType, DataTags> & data,
                const int d, const Scalar dx )
 {
     data.dx[d] = dx;
@@ -621,7 +621,7 @@ template <typename Scalar, int Order, class EntityType, class DataTags>
 KOKKOS_INLINE_FUNCTION std::enable_if_t<
     SplineData<Scalar, Order, EntityType, DataTags>::has_logical_position>
 setSplineData( SplineLogicalPosition,
-               SplineData<Scalar, Order, EntityType, DataTags> &data,
+               SplineData<Scalar, Order, EntityType, DataTags> & data,
                const int d, const Scalar x )
 {
     data.x[d] = x;
@@ -641,7 +641,7 @@ template <typename Scalar, int Order, class EntityType, class DataTags>
 KOKKOS_INLINE_FUNCTION std::enable_if_t<
     SplineData<Scalar, Order, EntityType, DataTags>::has_weight_values>
 setSplineData( SplineWeightValues,
-               SplineData<Scalar, Order, EntityType, DataTags> &data,
+               SplineData<Scalar, Order, EntityType, DataTags> & data,
                const Scalar x[3] )
 
 {
@@ -667,7 +667,7 @@ KOKKOS_INLINE_FUNCTION
     std::enable_if_t<SplineData<Scalar, Order, EntityType,
                                 DataTags>::has_weight_physical_gradients>
     setSplineData( SplineWeightPhysicalGradients,
-                   SplineData<Scalar, Order, EntityType, DataTags> &data,
+                   SplineData<Scalar, Order, EntityType, DataTags> & data,
                    const Scalar x[3], const Scalar rdx[3] )
 
 {
@@ -693,7 +693,7 @@ template <typename Scalar, int Order, class EntityType, class DataTags>
 KOKKOS_INLINE_FUNCTION std::enable_if_t<
     SplineData<Scalar, Order, EntityType, DataTags>::has_physical_distance>
 setSplineData( SplinePhysicalDistance,
-               SplineData<Scalar, Order, EntityType, DataTags> &data,
+               SplineData<Scalar, Order, EntityType, DataTags> & data,
                const Scalar low_x[3], const Scalar p[3], const Scalar dx[3] )
 
 {
@@ -722,9 +722,9 @@ setSplineData( SplinePhysicalDistance,
 template <typename Scalar, int Order, class Device, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION void
-evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
+evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> & local_mesh,
                 const Scalar p[3],
-                SplineData<Scalar, Order, EntityType, DataTags> &data )
+                SplineData<Scalar, Order, EntityType, DataTags> & data )
 {
     // data type
     using sd_type = SplineData<Scalar, Order, EntityType, DataTags>;

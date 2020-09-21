@@ -41,9 +41,9 @@ class GlobalGrid
      \param partitioner The grid partitioner.
     */
     GlobalGrid( MPI_Comm comm,
-                const std::shared_ptr<GlobalMesh<MeshType>> &global_mesh,
-                const std::array<bool, 3> &periodic,
-                const Partitioner &partitioner );
+                const std::shared_ptr<GlobalMesh<MeshType>> & global_mesh,
+                const std::array<bool, 3> & periodic,
+                const Partitioner & partitioner );
 
     // Destructor.
     ~GlobalGrid();
@@ -53,7 +53,7 @@ class GlobalGrid
     MPI_Comm comm() const;
 
     // Get the global mesh data.
-    const GlobalMesh<MeshType> &globalMesh() const;
+    const GlobalMesh<MeshType> & globalMesh() const;
 
     // Get whether a given dimension is periodic.
     bool isPeriodic( const int dim ) const;
@@ -114,8 +114,8 @@ class GlobalGrid
 */
 template <class MeshType>
 std::shared_ptr<GlobalGrid<MeshType>> createGlobalGrid(
-    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>> &global_mesh,
-    const std::array<bool, 3> &periodic, const Partitioner &partitioner )
+    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>> & global_mesh,
+    const std::array<bool, 3> & periodic, const Partitioner & partitioner )
 {
     return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
                                                    partitioner );

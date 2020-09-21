@@ -26,7 +26,7 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
-void gridTest( const std::array<bool, 3> &is_dim_periodic )
+void gridTest( const std::array<bool, 3> & is_dim_periodic )
 {
     // Let MPI compute the partitioning for this test.
     UniformDimPartitioner partitioner;

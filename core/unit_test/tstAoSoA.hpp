@@ -267,11 +267,11 @@ void testRawData()
 
     // Get raw pointers to the data as one would in a C interface (no
     // templates).
-    float *p0 = slice_0.data();
-    int *p1 = slice_1.data();
-    double *p2 = slice_2.data();
-    int *p3 = slice_3.data();
-    double *p4 = slice_4.data();
+    float * p0 = slice_0.data();
+    int * p1 = slice_1.data();
+    double * p2 = slice_2.data();
+    int * p3 = slice_3.data();
+    double * p4 = slice_4.data();
 
     // Get the strides between the member arrays.
     int st0 = slice_0.stride( 0 );
@@ -480,7 +480,7 @@ void testAccess()
     Kokkos::parallel_for(
         "data_fill", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.numSoA() ),
         KOKKOS_LAMBDA( const int s ) {
-            auto &soa = aosoa.access( s );
+            auto & soa = aosoa.access( s );
 
             for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a )
             {

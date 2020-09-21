@@ -139,17 +139,17 @@ void nonUniformTest()
     EXPECT_EQ( 3, global_mesh->globalNumCell( Dim::J ) );
     EXPECT_EQ( 4, global_mesh->globalNumCell( Dim::K ) );
 
-    const auto &mesh_i = global_mesh->nonUniformEdge( Dim::I );
+    const auto & mesh_i = global_mesh->nonUniformEdge( Dim::I );
     int ni = mesh_i.size();
     for ( int i = 0; i < ni; ++i )
         EXPECT_FLOAT_EQ( i_edge[i], mesh_i[i] );
 
-    const auto &mesh_j = global_mesh->nonUniformEdge( Dim::J );
+    const auto & mesh_j = global_mesh->nonUniformEdge( Dim::J );
     int nj = mesh_j.size();
     for ( int j = 0; j < nj; ++j )
         EXPECT_FLOAT_EQ( j_edge[j], mesh_j[j] );
 
-    const auto &mesh_k = global_mesh->nonUniformEdge( Dim::K );
+    const auto & mesh_k = global_mesh->nonUniformEdge( Dim::K );
     int nk = mesh_k.size();
     for ( int k = 0; k < nk; ++k )
         EXPECT_FLOAT_EQ( k_edge[k], mesh_k[k] );

@@ -39,8 +39,8 @@ class CommPlanTester : public Cabana::CommunicationPlan<
 
     template <class ViewType>
     Kokkos::View<size_type *, device_type>
-    createFromExportsAndNeighbors( const ViewType &element_export_ranks,
-                                   const std::vector<int> &neighbor_ranks )
+    createFromExportsAndNeighbors( const ViewType & element_export_ranks,
+                                   const std::vector<int> & neighbor_ranks )
     {
         return this->createFromExportsAndTopology( element_export_ranks,
                                                    neighbor_ranks );
@@ -48,22 +48,22 @@ class CommPlanTester : public Cabana::CommunicationPlan<
 
     template <class ViewType>
     Kokkos::View<size_type *, device_type>
-    createFromExports( const ViewType &element_export_ranks )
+    createFromExports( const ViewType & element_export_ranks )
     {
         return this->createFromExportsOnly( element_export_ranks );
     }
 
     template <class ViewType>
     void createSteering( Kokkos::View<size_type *, device_type> neighbor_ids,
-                         const ViewType &element_export_ranks )
+                         const ViewType & element_export_ranks )
     {
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
     template <class RankViewType, class IdViewType>
     void createSteering( Kokkos::View<size_type *, device_type> neighbor_ids,
-                         const RankViewType &element_export_ranks,
-                         const IdViewType &element_export_ids )
+                         const RankViewType & element_export_ranks,
+                         const IdViewType & element_export_ids )
     {
         this->createExportSteering( neighbor_ids, element_export_ranks,
                                     element_export_ids );

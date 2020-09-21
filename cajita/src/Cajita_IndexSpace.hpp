@@ -42,7 +42,7 @@ class IndexSpace
     /*!
       \brief Initializer list size constructor.
     */
-    IndexSpace( const std::initializer_list<long> &size )
+    IndexSpace( const std::initializer_list<long> & size )
     {
         std::fill( _min.data(), _min.data() + Rank, 0 );
         std::copy( size.begin(), size.end(), _max.data() );
@@ -51,8 +51,8 @@ class IndexSpace
     /*!
       \brief Initializer list range constructor.
     */
-    IndexSpace( const std::initializer_list<long> &min,
-                const std::initializer_list<long> &max )
+    IndexSpace( const std::initializer_list<long> & min,
+                const std::initializer_list<long> & max )
     {
         std::copy( min.begin(), min.end(), _min.data() );
         std::copy( max.begin(), max.end(), _max.data() );
@@ -61,7 +61,7 @@ class IndexSpace
     /*!
       \brief Vector size constructor.
     */
-    IndexSpace( const std::array<long, N> &size )
+    IndexSpace( const std::array<long, N> & size )
     {
         std::fill( _min.data(), _min.data() + Rank, 0 );
         std::copy( size.begin(), size.end(), _max.data() );
@@ -70,7 +70,8 @@ class IndexSpace
     /*!
       \brief Vector range constructor.
     */
-    IndexSpace( const std::array<long, N> &min, const std::array<long, N> &max )
+    IndexSpace( const std::array<long, N> & min,
+                const std::array<long, N> & max )
     {
         std::copy( min.begin(), min.end(), _min.data() );
         std::copy( max.begin(), max.end(), _max.data() );
@@ -78,7 +79,7 @@ class IndexSpace
 
     //! Comparison operator.
     KOKKOS_INLINE_FUNCTION
-    bool operator==( const IndexSpace<N> &rhs ) const
+    bool operator==( const IndexSpace<N> & rhs ) const
     {
         for ( long i = 0; i < N; ++i )
         {
@@ -90,7 +91,7 @@ class IndexSpace
 
     //! Comparison operator.
     KOKKOS_INLINE_FUNCTION
-    bool operator!=( const IndexSpace<N> &rhs ) const
+    bool operator!=( const IndexSpace<N> & rhs ) const
     {
         return !( operator==( rhs ) );
     }
@@ -152,7 +153,7 @@ class IndexSpace
 */
 template <class ExecutionSpace>
 Kokkos::RangePolicy<ExecutionSpace>
-createExecutionPolicy( const IndexSpace<1> &index_space,
+createExecutionPolicy( const IndexSpace<1> & index_space,
                        const ExecutionSpace & )
 {
     return Kokkos::RangePolicy<ExecutionSpace>( index_space.min( 0 ),
@@ -167,8 +168,8 @@ createExecutionPolicy( const IndexSpace<1> &index_space,
 */
 template <class ExecutionSpace, class WorkTag>
 Kokkos::RangePolicy<ExecutionSpace, WorkTag>
-createExecutionPolicy( const IndexSpace<1> &index_space, const ExecutionSpace &,
-                       const WorkTag & )
+createExecutionPolicy( const IndexSpace<1> & index_space,
+                       const ExecutionSpace &, const WorkTag & )
 {
     return Kokkos::RangePolicy<ExecutionSpace, WorkTag>( index_space.min( 0 ),
                                                          index_space.max( 0 ) );
@@ -180,7 +181,8 @@ createExecutionPolicy( const IndexSpace<1> &index_space, const ExecutionSpace &,
 */
 template <class IndexSpace_t, class ExecutionSpace>
 Kokkos::MDRangePolicy<ExecutionSpace, Kokkos::Rank<IndexSpace_t::Rank>>
-createExecutionPolicy( const IndexSpace_t &index_space, const ExecutionSpace & )
+createExecutionPolicy( const IndexSpace_t & index_space,
+                       const ExecutionSpace & )
 {
     return Kokkos::MDRangePolicy<ExecutionSpace,
                                  Kokkos::Rank<IndexSpace_t::Rank>>(
@@ -194,7 +196,7 @@ createExecutionPolicy( const IndexSpace_t &index_space, const ExecutionSpace & )
 */
 template <class IndexSpace_t, class ExecutionSpace, class WorkTag>
 Kokkos::MDRangePolicy<ExecutionSpace, WorkTag, Kokkos::Rank<IndexSpace_t::Rank>>
-createExecutionPolicy( const IndexSpace_t &index_space, const ExecutionSpace &,
+createExecutionPolicy( const IndexSpace_t & index_space, const ExecutionSpace &,
                        const WorkTag & )
 {
     return Kokkos::MDRangePolicy<ExecutionSpace, WorkTag,
@@ -210,8 +212,8 @@ createExecutionPolicy( const IndexSpace_t &index_space, const ExecutionSpace &,
   Rank-1 specialization.
 */
 template <class Scalar, class... Params>
-Kokkos::View<Scalar *, Params...> createView( const std::string &label,
-                                              const IndexSpace<1> &index_space )
+Kokkos::View<Scalar *, Params...>
+createView( const std::string & label, const IndexSpace<1> & index_space )
 {
     return Kokkos::View<Scalar *, Params...>(
         Kokkos::ViewAllocateWithoutInitializing( label ),
@@ -227,7 +229,7 @@ Kokkos::View<Scalar *, Params...> createView( const std::string &label,
 */
 template <class Scalar, class... Params>
 Kokkos::View<Scalar *, Params..., Kokkos::MemoryUnmanaged>
-createView( const IndexSpace<1> &index_space, Scalar *data )
+createView( const IndexSpace<1> & index_space, Scalar * data )
 {
     return Kokkos::View<Scalar *, Params..., Kokkos::MemoryUnmanaged>(
         data, index_space.extent( 0 ) );
@@ -242,7 +244,7 @@ createView( const IndexSpace<1> &index_space, Scalar *data )
 */
 template <class Scalar, class... Params>
 Kokkos::View<Scalar **, Params...>
-createView( const std::string &label, const IndexSpace<2> &index_space )
+createView( const std::string & label, const IndexSpace<2> & index_space )
 {
     return Kokkos::View<Scalar **, Params...>(
         Kokkos::ViewAllocateWithoutInitializing( label ),
@@ -258,7 +260,7 @@ createView( const std::string &label, const IndexSpace<2> &index_space )
 */
 template <class Scalar, class... Params>
 Kokkos::View<Scalar **, Params..., Kokkos::MemoryUnmanaged>
-createView( const IndexSpace<2> &index_space, Scalar *data )
+createView( const IndexSpace<2> & index_space, Scalar * data )
 {
     return Kokkos::View<Scalar **, Params..., Kokkos::MemoryUnmanaged>(
         data, index_space.extent( 0 ), index_space.extent( 1 ) );
@@ -273,7 +275,7 @@ createView( const IndexSpace<2> &index_space, Scalar *data )
 */
 template <class Scalar, class... Params>
 Kokkos::View<Scalar ***, Params...>
-createView( const std::string &label, const IndexSpace<3> &index_space )
+createView( const std::string & label, const IndexSpace<3> & index_space )
 {
     return Kokkos::View<Scalar ***, Params...>(
         Kokkos::ViewAllocateWithoutInitializing( label ),
@@ -290,7 +292,7 @@ createView( const std::string &label, const IndexSpace<3> &index_space )
 */
 template <class Scalar, class... Params>
 Kokkos::View<Scalar ***, Params..., Kokkos::MemoryUnmanaged>
-createView( const IndexSpace<3> &index_space, Scalar *data )
+createView( const IndexSpace<3> & index_space, Scalar * data )
 {
     return Kokkos::View<Scalar ***, Params..., Kokkos::MemoryUnmanaged>(
         data, index_space.extent( 0 ), index_space.extent( 1 ),
@@ -306,7 +308,7 @@ createView( const IndexSpace<3> &index_space, Scalar *data )
 */
 template <class Scalar, class... Params>
 Kokkos::View<Scalar ****, Params...>
-createView( const std::string &label, const IndexSpace<4> &index_space )
+createView( const std::string & label, const IndexSpace<4> & index_space )
 {
     return Kokkos::View<Scalar ****, Params...>(
         Kokkos::ViewAllocateWithoutInitializing( label ),
@@ -323,7 +325,7 @@ createView( const std::string &label, const IndexSpace<4> &index_space )
 */
 template <class Scalar, class... Params>
 Kokkos::View<Scalar ****, Params..., Kokkos::MemoryUnmanaged>
-createView( const IndexSpace<4> &index_space, Scalar *data )
+createView( const IndexSpace<4> & index_space, Scalar * data )
 {
     return Kokkos::View<Scalar ****, Params..., Kokkos::MemoryUnmanaged>(
         data, index_space.extent( 0 ), index_space.extent( 1 ),
@@ -337,8 +339,8 @@ createView( const IndexSpace<4> &index_space, Scalar *data )
   Rank-1 specialization.
 */
 template <class ViewType>
-KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
-                                           const IndexSpace<1> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType & view,
+                                           const IndexSpace<1> & index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ) ) )
 {
     static_assert( 1 == ViewType::Rank, "Incorrect view rank" );
@@ -352,8 +354,8 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
   Rank-2 specialization.
 */
 template <class ViewType>
-KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
-                                           const IndexSpace<2> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType & view,
+                                           const IndexSpace<2> & index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ) ) )
 {
@@ -369,8 +371,8 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
   Rank-3 specialization.
 */
 template <class ViewType>
-KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
-                                           const IndexSpace<3> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType & view,
+                                           const IndexSpace<3> & index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ),
                                   index_space.range( 2 ) ) )
@@ -387,8 +389,8 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
   Rank-4 specialization.
 */
 template <class ViewType>
-KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
-                                           const IndexSpace<4> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType & view,
+                                           const IndexSpace<4> & index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ),
                                   index_space.range( 2 ),
@@ -404,7 +406,7 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
 // Given an N-dimensional index space append an additional dimension with the
 // given size.
 template <long N>
-IndexSpace<N + 1> appendDimension( const IndexSpace<N> &index_space,
+IndexSpace<N + 1> appendDimension( const IndexSpace<N> & index_space,
                                    const long size )
 {
     std::array<long, N + 1> min;
@@ -424,7 +426,7 @@ IndexSpace<N + 1> appendDimension( const IndexSpace<N> &index_space,
 // Given an N-dimensional index space append an additional dimension with the
 // given range.
 template <long N>
-IndexSpace<N + 1> appendDimension( const IndexSpace<N> &index_space,
+IndexSpace<N + 1> appendDimension( const IndexSpace<N> & index_space,
                                    const long min, const long max )
 {
     std::array<long, N + 1> range_min;

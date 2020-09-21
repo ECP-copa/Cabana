@@ -52,7 +52,7 @@ int haloPad( Edge<D>, int d )
 // Check initial array gather. We should get 1 everywhere in the array now
 // where there was ghost overlap. Otherwise there will still be 0.
 template <class Array>
-void checkGather( const int halo_width, const Array &array )
+void checkGather( const int halo_width, const Array & array )
 {
     auto owned_space = array.layout()->indexSpace( Own(), Local() );
     auto ghosted_space = array.layout()->indexSpace( Ghost(), Local() );
@@ -81,14 +81,14 @@ void checkGather( const int halo_width, const Array &array )
 // neighbors it has. Corner neighbors get 8, edge neighbors get 4, face
 // neighbors get 2, and no neighbors remain at 1.
 template <class Array>
-void checkScatter( const std::array<bool, 3> &is_dim_periodic,
-                   const int halo_width, const Array &array )
+void checkScatter( const std::array<bool, 3> & is_dim_periodic,
+                   const int halo_width, const Array & array )
 {
     // Get data.
     auto owned_space = array.layout()->indexSpace( Own(), Local() );
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                           array.view() );
-    const auto &global_grid = array.layout()->localGrid()->globalGrid();
+    const auto & global_grid = array.layout()->localGrid()->globalGrid();
 
     // This function checks if an index is in the halo of a low neighbor in
     // the given dimension
@@ -134,8 +134,8 @@ void checkScatter( const std::array<bool, 3> &is_dim_periodic,
 }
 
 //---------------------------------------------------------------------------//
-void gatherScatterTest( const ManualPartitioner &partitioner,
-                        const std::array<bool, 3> &is_dim_periodic )
+void gatherScatterTest( const ManualPartitioner & partitioner,
+                        const std::array<bool, 3> & is_dim_periodic )
 {
     // Create the global grid.
     double cell_size = 0.23;
@@ -336,7 +336,7 @@ struct TestHaloReduce<ScatterReduce::Replace>
 };
 
 template <class ReduceFunc>
-void scatterReduceTest( const ReduceFunc &reduce )
+void scatterReduceTest( const ReduceFunc & reduce )
 {
     // Create the global grid.
     double cell_size = 0.23;
@@ -385,7 +385,7 @@ void scatterReduceTest( const ReduceFunc &reduce )
     // Check the reduction.
     auto host_array = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                            array->view() );
-    for ( const auto &n : neighbors )
+    for ( const auto & n : neighbors )
     {
         auto neighbor_rank =
             cell_layout->localGrid()->neighborRank( n[0], n[1], n[2] );

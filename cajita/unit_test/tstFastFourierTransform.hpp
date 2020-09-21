@@ -38,7 +38,7 @@ void memoryTest()
     fft_mem.memory_type = mtype;
     int size = 12;
     int nbytes = size * sizeof( double );
-    double *ptr = (double *)fft_mem.smalloc( nbytes, mtype );
+    double * ptr = (double *)fft_mem.smalloc( nbytes, mtype );
     EXPECT_NE( ptr, nullptr );
     fft_mem.sfree( ptr, mtype );
 }

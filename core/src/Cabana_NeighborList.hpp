@@ -60,13 +60,13 @@ class NeighborList
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t numNeighbor( const NeighborListType &list,
+    static std::size_t numNeighbor( const NeighborListType & list,
                                     const std::size_t particle_index );
 
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t getNeighbor( const NeighborListType &list,
+    static std::size_t getNeighbor( const NeighborListType & list,
                                     const std::size_t particle_index,
                                     const std::size_t neighbor_index );
 };

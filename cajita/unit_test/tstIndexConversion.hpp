@@ -32,7 +32,7 @@ namespace Test
 {
 //---------------------------------------------------------------------------//
 template <class EntityType>
-void testConversion( const std::array<bool, 3> &is_dim_periodic )
+void testConversion( const std::array<bool, 3> & is_dim_periodic )
 {
     // Let MPI compute the partitioning for this test.
     UniformDimPartitioner partitioner;

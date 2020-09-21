@@ -37,7 +37,7 @@ class Timer
 {
   public:
     // Create the timer.
-    Timer( const std::string &name, const int num_data )
+    Timer( const std::string & name, const int num_data )
         : _name( name )
         , _starts( num_data )
         , _data( num_data )
@@ -78,9 +78,9 @@ class Timer
 // Write timer results. Provide the values of the data points so
 // they can be injected into the table.
 template <class Scalar>
-void outputResults( std::ostream &stream, const std::string &data_point_name,
-                    const std::vector<Scalar> &data_point_vals,
-                    const Timer &timer )
+void outputResults( std::ostream & stream, const std::string & data_point_name,
+                    const std::vector<Scalar> & data_point_vals,
+                    const Timer & timer )
 {
     // Write the data header.
     stream << "\n";
@@ -121,9 +121,9 @@ void outputResults( std::ostream &stream, const std::string &data_point_name,
 // communication.
 #ifdef Cabana_ENABLE_MPI
 template <class Scalar>
-void outputResults( std::ostream &stream, const std::string &data_point_name,
-                    const std::vector<Scalar> &data_point_vals,
-                    const Timer &timer, MPI_Comm comm )
+void outputResults( std::ostream & stream, const std::string & data_point_name,
+                    const std::vector<Scalar> & data_point_vals,
+                    const Timer & timer, MPI_Comm comm )
 {
     // Get comm rank;
     int comm_rank;

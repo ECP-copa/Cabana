@@ -33,13 +33,13 @@ namespace Test
 
 //---------------------------------------------------------------------------//
 template <class LocalMeshType, class LocalGridType>
-void uniformLocalMeshTest( const LocalMeshType &local_mesh,
-                           const LocalGridType &local_grid,
-                           const std::array<double, 3> &low_corner,
+void uniformLocalMeshTest( const LocalMeshType & local_mesh,
+                           const LocalGridType & local_grid,
+                           const std::array<double, 3> & low_corner,
                            const double cell_size, const int halo_width )
 {
     // Get the global grid.
-    const auto &global_grid = local_grid.globalGrid();
+    const auto & global_grid = local_grid.globalGrid();
 
     // Check the low and high corners.
     Kokkos::View<double[3], TEST_DEVICE> own_lc( "own_lc" );
@@ -473,8 +473,8 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
 }
 
 //---------------------------------------------------------------------------//
-void uniformTest( const std::array<int, 3> &ranks_per_dim,
-                  const std::array<bool, 3> &is_dim_periodic )
+void uniformTest( const std::array<int, 3> & ranks_per_dim,
+                  const std::array<bool, 3> & is_dim_periodic )
 {
     // Create the global mesh.
     std::array<double, 3> low_corner = {-1.2, 0.1, 1.1};
@@ -501,8 +501,8 @@ void uniformTest( const std::array<int, 3> &ranks_per_dim,
 }
 
 //---------------------------------------------------------------------------//
-void nonUniformTest( const std::array<int, 3> &ranks_per_dim,
-                     const std::array<bool, 3> &is_dim_periodic )
+void nonUniformTest( const std::array<int, 3> & ranks_per_dim,
+                     const std::array<bool, 3> & is_dim_periodic )
 {
     // Create the global mesh.
     std::array<double, 3> low_corner = {-1.2, 0.1, 1.1};
@@ -533,7 +533,7 @@ void nonUniformTest( const std::array<int, 3> &ranks_per_dim,
 }
 
 //---------------------------------------------------------------------------//
-void irregularTest( const std::array<int, 3> &ranks_per_dim )
+void irregularTest( const std::array<int, 3> & ranks_per_dim )
 {
     // Create the global mesh using functions to build the edges. Use a cyclic
     // pattern for the cell sizes so we can easily compute cell sizes from

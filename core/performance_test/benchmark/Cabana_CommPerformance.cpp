@@ -30,8 +30,8 @@
 // Data device type is where the data to be communicated lives.
 // Comm device type is the device we want to use for communication.
 template <class DataDevice, class CommDevice>
-void performanceTest( std::ostream &stream, const std::size_t num_particle,
-                      const std::string &test_prefix )
+void performanceTest( std::ostream & stream, const std::size_t num_particle,
+                      const std::string & test_prefix )
 {
     // PROBLEM SETUP
     // -------------
@@ -376,7 +376,7 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
 
 //---------------------------------------------------------------------------//
 // main
-int main( int argc, char *argv[] )
+int main( int argc, char * argv[] )
 {
     // Initialize environment
     MPI_Init( &argc, &argv );

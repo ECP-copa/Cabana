@@ -27,7 +27,7 @@
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
-void performanceTest( std::ostream &stream, const std::string &test_prefix )
+void performanceTest( std::ostream & stream, const std::string & test_prefix )
 {
     // Declare problem sizes.
     std::vector<int> problem_sizes = {1000, 10000, 100000, 1000000, 10000000};
@@ -180,7 +180,7 @@ void performanceTest( std::ostream &stream, const std::string &test_prefix )
 
 //---------------------------------------------------------------------------//
 // main
-int main( int argc, char *argv[] )
+int main( int argc, char * argv[] )
 {
     // Initialize environment
     Kokkos::initialize( argc, argv );

@@ -143,7 +143,7 @@ class LinkedCellList
       the slowest and the k index mvoes the fastest.
     */
     KOKKOS_INLINE_FUNCTION
-    void ijkBinIndex( const int cardinal, int &i, int &j, int &k ) const
+    void ijkBinIndex( const int cardinal, int & i, int & j, int & k ) const
     {
         _grid.ijkBinIndex( cardinal, i, j, k );
     }
@@ -247,7 +247,7 @@ class LinkedCellList
 
         // Compute offsets.
         Kokkos::RangePolicy<execution_space> cell_range( 0, ncell );
-        auto offset_scan = KOKKOS_LAMBDA( const std::size_t c, int &update,
+        auto offset_scan = KOKKOS_LAMBDA( const std::size_t c, int & update,
                                           const bool final_pass )
         {
             if ( final_pass )
@@ -318,7 +318,7 @@ struct is_linked_cell_list
  */
 template <class LinkedCellListType, class AoSoA_t>
 void permute(
-    const LinkedCellListType &linked_cell_list, AoSoA_t &aosoa,
+    const LinkedCellListType & linked_cell_list, AoSoA_t & aosoa,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
                               is_aosoa<AoSoA_t>::value ),
                             int>::type * = 0 )
@@ -340,7 +340,7 @@ void permute(
  */
 template <class LinkedCellListType, class SliceType>
 void permute(
-    const LinkedCellListType &linked_cell_list, SliceType &slice,
+    const LinkedCellListType & linked_cell_list, SliceType & slice,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
                               is_slice<SliceType>::value ),
                             int>::type * = 0 )

@@ -31,7 +31,7 @@ namespace Cabana
 template <class Space, class SrcAoSoA>
 inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror(
-    const Space &, const SrcAoSoA &src,
+    const Space &, const SrcAoSoA & src,
     typename std::enable_if<
         ( !std::is_same<typename SrcAoSoA::memory_space,
                         typename Space::memory_space>::value )>::type * = 0 )
@@ -54,7 +54,7 @@ create_mirror(
  */
 template <class Space, class SrcAoSoA>
 inline SrcAoSoA create_mirror_view(
-    const Space &, const SrcAoSoA &src,
+    const Space &, const SrcAoSoA & src,
     typename std::enable_if<
         ( std::is_same<typename SrcAoSoA::memory_space,
                        typename Space::memory_space>::value )>::type * = 0 )
@@ -76,7 +76,7 @@ inline SrcAoSoA create_mirror_view(
 template <class Space, class SrcAoSoA>
 inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror_view(
-    const Space &space, const SrcAoSoA &src,
+    const Space & space, const SrcAoSoA & src,
     typename std::enable_if<
         ( !std::is_same<typename SrcAoSoA::memory_space,
                         typename Space::memory_space>::value )>::type * = 0 )
@@ -98,7 +98,7 @@ create_mirror_view(
  */
 template <class Space, class SrcAoSoA>
 inline SrcAoSoA create_mirror_view_and_copy(
-    const Space &, const SrcAoSoA &src,
+    const Space &, const SrcAoSoA & src,
     typename std::enable_if<
         ( std::is_same<typename SrcAoSoA::memory_space,
                        typename Space::memory_space>::value )>::type * = 0 )
@@ -121,7 +121,7 @@ inline SrcAoSoA create_mirror_view_and_copy(
 template <class Space, class SrcAoSoA>
 inline AoSoA<typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length>
 create_mirror_view_and_copy(
-    const Space &space, const SrcAoSoA &src,
+    const Space & space, const SrcAoSoA & src,
     typename std::enable_if<
         ( !std::is_same<typename SrcAoSoA::memory_space,
                         typename Space::memory_space>::value )>::type * = 0 )
@@ -152,7 +152,7 @@ create_mirror_view_and_copy(
 */
 template <class DstAoSoA, class SrcAoSoA>
 inline void
-deep_copy( DstAoSoA &dst, const SrcAoSoA &src,
+deep_copy( DstAoSoA & dst, const SrcAoSoA & src,
            typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
                                      is_aosoa<SrcAoSoA>::value )>::type * = 0 )
 {
@@ -177,8 +177,8 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src,
     }
 
     // Get the pointers to the beginning of the data blocks.
-    void *dst_data = dst.data();
-    const void *src_data = src.data();
+    void * dst_data = dst.data();
+    const void * src_data = src.data();
 
     // Return if both pointers are null.
     if ( dst_data == nullptr && src_data == nullptr )
@@ -236,8 +236,8 @@ deep_copy( DstAoSoA &dst, const SrcAoSoA &src,
   value.
 */
 template <class AoSoA_t>
-inline void deep_copy( AoSoA_t &aosoa,
-                       const typename AoSoA_t::tuple_type &tuple )
+inline void deep_copy( AoSoA_t & aosoa,
+                       const typename AoSoA_t::tuple_type & tuple )
 {
     static_assert( is_aosoa<AoSoA_t>::value,
                    "Only AoSoAs can be assigned tuples" );
@@ -264,7 +264,7 @@ inline void deep_copy( AoSoA_t &aosoa,
 */
 template <class DstSlice, class SrcSlice>
 inline void
-deep_copy( DstSlice &dst, const SrcSlice &src,
+deep_copy( DstSlice & dst, const SrcSlice & src,
            typename std::enable_if<( is_slice<DstSlice>::value &&
                                      is_slice<SrcSlice>::value )>::type * = 0 )
 {
@@ -375,7 +375,7 @@ deep_copy( DstSlice &dst, const SrcSlice &src,
   value.
 */
 template <class Slice_t>
-inline void deep_copy( Slice_t &slice,
+inline void deep_copy( Slice_t & slice,
                        const typename Slice_t::value_type scalar )
 {
     static_assert( is_slice<Slice_t>::value,

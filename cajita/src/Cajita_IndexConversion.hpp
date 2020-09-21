@@ -54,7 +54,7 @@ struct L2G
     Kokkos::Array<bool, 3> boundary_hi;
 
     // Constructor.
-    L2G( const LocalGrid<MeshType> &local_grid )
+    L2G( const LocalGrid<MeshType> & local_grid )
     {
         // Local index set of owned entities.
         auto local_own_space =
@@ -77,7 +77,7 @@ struct L2G
             global_own_min[d] = global_own_space.min( d );
 
         // Get the global grid.
-        const auto &global_grid = local_grid.globalGrid();
+        const auto & global_grid = local_grid.globalGrid();
 
         // Global number of entities.
         for ( int d = 0; d < 3; ++d )
@@ -99,8 +99,8 @@ struct L2G
 
     // Convert local indices to global indices.
     KOKKOS_INLINE_FUNCTION
-    void operator()( const int li, const int lj, const int lk, int &gi, int &gj,
-                     int &gk ) const
+    void operator()( const int li, const int lj, const int lk, int & gi,
+                     int & gj, int & gk ) const
     {
         // I
         // Compute periodic wrap-around on low I boundary.
@@ -170,7 +170,7 @@ struct L2G
 //---------------------------------------------------------------------------//
 // Creation function.
 template <class MeshType, class EntityType>
-L2G<MeshType, EntityType> createL2G( const LocalGrid<MeshType> &local_grid,
+L2G<MeshType, EntityType> createL2G( const LocalGrid<MeshType> & local_grid,
                                      EntityType )
 {
     return L2G<MeshType, EntityType>( local_grid );

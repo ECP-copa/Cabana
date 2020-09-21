@@ -75,7 +75,7 @@ class CartesianGrid
 
     // Get the number of cells in each direction.
     KOKKOS_INLINE_FUNCTION
-    void numCells( int &num_x, int &num_y, int &num_z )
+    void numCells( int & num_x, int & num_y, int & num_z )
     {
         num_x = _nx;
         num_y = _ny;
@@ -98,8 +98,8 @@ class CartesianGrid
 
     // Given a position get the ijk indices of the cell in which
     KOKKOS_INLINE_FUNCTION
-    void locatePoint( const Real xp, const Real yp, const Real zp, int &ic,
-                      int &jc, int &kc ) const
+    void locatePoint( const Real xp, const Real yp, const Real zp, int & ic,
+                      int & jc, int & kc ) const
     {
         ic = cellsBetween( xp, _min_x, _rdx );
         jc = cellsBetween( yp, _min_y, _rdy );
@@ -136,7 +136,7 @@ class CartesianGrid
     }
 
     KOKKOS_INLINE_FUNCTION
-    void ijkBinIndex( const int cardinal, int &i, int &j, int &k ) const
+    void ijkBinIndex( const int cardinal, int & i, int & j, int & k ) const
     {
         i = cardinal / ( _ny * _nz );
         j = ( cardinal / _nz ) % _ny;

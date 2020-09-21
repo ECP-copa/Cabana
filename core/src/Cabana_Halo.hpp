@@ -99,9 +99,9 @@ class Halo : public CommunicationPlan<DeviceType>
     */
     template <class IdViewType, class RankViewType>
     Halo( MPI_Comm comm, const std::size_t num_local,
-          const IdViewType &element_export_ids,
-          const RankViewType &element_export_ranks,
-          const std::vector<int> &neighbor_ranks )
+          const IdViewType & element_export_ids,
+          const RankViewType & element_export_ranks,
+          const std::vector<int> & neighbor_ranks )
         : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
@@ -149,8 +149,8 @@ class Halo : public CommunicationPlan<DeviceType>
     */
     template <class IdViewType, class RankViewType>
     Halo( MPI_Comm comm, const std::size_t num_local,
-          const IdViewType &element_export_ids,
-          const RankViewType &element_export_ranks )
+          const IdViewType & element_export_ids,
+          const RankViewType & element_export_ranks )
         : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
@@ -224,7 +224,7 @@ struct is_halo : public is_halo_impl<typename std::remove_cv<T>::type>::type
   the next halo.numGhost() elements()).
 */
 template <class Halo_t, class AoSoA_t>
-void gather( const Halo_t &halo, AoSoA_t &aosoa,
+void gather( const Halo_t & halo, AoSoA_t & aosoa,
              typename std::enable_if<( is_halo<Halo_t>::value &&
                                        is_aosoa<AoSoA_t>::value ),
                                      int>::type * = 0 )
@@ -345,7 +345,7 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa,
   the next halo.numGhost() elements()).
 */
 template <class Halo_t, class Slice_t>
-void gather( const Halo_t &halo, Slice_t &slice,
+void gather( const Halo_t & halo, Slice_t & slice,
              typename std::enable_if<( is_halo<Halo_t>::value &&
                                        is_slice<Slice_t>::value ),
                                      int>::type * = 0 )
@@ -490,7 +490,7 @@ void gather( const Halo_t &halo, Slice_t &slice,
   the next halo.numGhost() elements()).
 */
 template <class Halo_t, class Slice_t>
-void scatter( const Halo_t &halo, Slice_t &slice,
+void scatter( const Halo_t & halo, Slice_t & slice,
               typename std::enable_if<( is_halo<Halo_t>::value &&
                                         is_slice<Slice_t>::value ),
                                       int>::type * = 0 )

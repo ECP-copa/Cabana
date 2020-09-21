@@ -97,9 +97,9 @@ struct PointSet
 //---------------------------------------------------------------------------//
 template <class LocalMeshType, class EntityType, class PointCoordinates,
           class PointSetType>
-void updatePointSet( const LocalMeshType &local_mesh, EntityType,
-                     const PointCoordinates &points,
-                     const std::size_t num_point, PointSetType &point_set )
+void updatePointSet( const LocalMeshType & local_mesh, EntityType,
+                     const PointCoordinates & points,
+                     const std::size_t num_point, PointSetType & point_set )
 {
     static_assert( std::is_same<typename PointCoordinates::value_type,
                                 typename PointSetType::scalar_type>::value,
@@ -198,10 +198,10 @@ template <class DataTags, class PointCoordinates, class EntityType,
 PointSet<typename PointCoordinates::value_type, EntityType, SplineOrder,
          typename PointCoordinates::device_type, DataTags>
 createPointSet(
-    const PointCoordinates &points, const std::size_t num_point,
+    const PointCoordinates & points, const std::size_t num_point,
     const std::size_t num_alloc,
-    const LocalGrid<UniformMesh<typename PointCoordinates::value_type>>
-        &local_grid,
+    const LocalGrid<UniformMesh<typename PointCoordinates::value_type>> &
+        local_grid,
     EntityType, Spline<SplineOrder> )
 {
     using scalar_type = typename PointCoordinates::value_type;

@@ -42,10 +42,10 @@ class LocalMesh<Device, UniformMesh<Scalar>>
     using execution_space = typename Device::execution_space;
 
     // Constructor.
-    LocalMesh( const LocalGrid<UniformMesh<Scalar>> &local_grid )
+    LocalMesh( const LocalGrid<UniformMesh<Scalar>> & local_grid )
     {
-        const auto &global_grid = local_grid.globalGrid();
-        const auto &global_mesh = global_grid.globalMesh();
+        const auto & global_grid = local_grid.globalGrid();
+        const auto & global_mesh = global_grid.globalMesh();
 
         // Get the cell size.
         for ( int d = 0; d < 3; ++d )
@@ -222,10 +222,10 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
     using execution_space = typename Device::execution_space;
 
     // Constructor.
-    LocalMesh( const LocalGrid<NonUniformMesh<Scalar>> &local_grid )
+    LocalMesh( const LocalGrid<NonUniformMesh<Scalar>> & local_grid )
     {
-        const auto &global_grid = local_grid.globalGrid();
-        const auto &global_mesh = global_grid.globalMesh();
+        const auto & global_grid = local_grid.globalGrid();
+        const auto & global_mesh = global_grid.globalMesh();
 
         // Compute the owned low corner.
         for ( int d = 0; d < 3; ++d )
@@ -297,7 +297,7 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
         for ( int d = 0; d < 3; ++d )
         {
             // Allocate edges on the device for this dimension.
-            const auto &global_edge = global_mesh.nonUniformEdge( d );
+            const auto & global_edge = global_mesh.nonUniformEdge( d );
             int nedge = ghosted_nodes_local.extent( d );
             _local_edges[d] = Kokkos::View<Scalar *, Device>(
                 Kokkos::ViewAllocateWithoutInitializing( "local_edges" ),
@@ -483,7 +483,7 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
 // Creation function.
 template <class Device, class MeshType>
 LocalMesh<Device, MeshType>
-createLocalMesh( const LocalGrid<MeshType> &local_grid )
+createLocalMesh( const LocalGrid<MeshType> & local_grid )
 {
     return LocalMesh<Device, MeshType>( local_grid );
 }
