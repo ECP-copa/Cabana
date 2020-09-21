@@ -44,26 +44,34 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
     // Check the low and high corners.
     Kokkos::View<double[3], TEST_DEVICE> own_lc( "own_lc" );
     Kokkos::View<double[3], TEST_DEVICE> own_hc( "own_hc" );
+    Kokkos::View<double[3], TEST_DEVICE> own_ext( "own_extent" );
     Kokkos::View<double[3], TEST_DEVICE> ghost_lc( "ghost_lc" );
     Kokkos::View<double[3], TEST_DEVICE> ghost_hc( "ghost_hc" );
+    Kokkos::View<double[3], TEST_DEVICE> ghost_ext( "ghost_extent" );
 
     Kokkos::parallel_for(
         "get_corners", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 3 ),
         KOKKOS_LAMBDA( const int d ) {
             own_lc( d ) = local_mesh.lowCorner( Own(), d );
             own_hc( d ) = local_mesh.highCorner( Own(), d );
+            own_ext( d ) = local_mesh.extent( Own(), d );
             ghost_lc( d ) = local_mesh.lowCorner( Ghost(), d );
             ghost_hc( d ) = local_mesh.highCorner( Ghost(), d );
+            ghost_ext( d ) = local_mesh.extent( Ghost(), d );
         } );
 
     auto own_lc_m =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), own_lc );
     auto own_hc_m =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), own_hc );
+    auto own_ext_m =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), own_ext );
     auto ghost_lc_m =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), ghost_lc );
     auto ghost_hc_m =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), ghost_hc );
+    auto ghost_ext_m =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), ghost_ext );
 
     for ( int d = 0; d < 3; ++d )
         EXPECT_FLOAT_EQ( own_lc_m( d ),
@@ -77,6 +85,10 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
                                            global_grid.ownedNumCell( d ) ) );
 
     for ( int d = 0; d < 3; ++d )
+        EXPECT_FLOAT_EQ( own_ext_m( d ),
+                         cell_size * global_grid.ownedNumCell( d ) );
+
+    for ( int d = 0; d < 3; ++d )
     {
         int ghost_lc_offset =
             ( global_grid.isPeriodic( d ) || global_grid.dimBlockId( d ) > 0 )
@@ -86,10 +98,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
                          low_corner[d] +
                              cell_size * ( global_grid.globalOffset( d ) -
                                            ghost_lc_offset ) );
-    }
 
-    for ( int d = 0; d < 3; ++d )
-    {
         int ghost_hc_offset =
             ( global_grid.isPeriodic( d ) ||
               global_grid.dimBlockId( d ) < global_grid.dimNumBlock( d ) - 1 )
@@ -100,6 +109,10 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
                              cell_size * ( global_grid.globalOffset( d ) +
                                            ghost_hc_offset +
                                            global_grid.ownedNumCell( d ) ) );
+
+        EXPECT_FLOAT_EQ( ghost_ext_m( d ),
+                         cell_size * ( global_grid.ownedNumCell( d ) +
+                                       ghost_hc_offset + ghost_lc_offset ) );
     }
 
     // Check the cell locations and measures.

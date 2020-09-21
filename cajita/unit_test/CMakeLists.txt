@@ -38,7 +38,7 @@ macro(Cajita_add_tests)
       list(APPEND CAJITA_UNIT_TEST_NUMTHREADS ${_nt})
     endif()
   endforeach()
-  set(CAJITA_UNIT_TEST_MAIN unit_test_main.cpp)
+  set(CAJITA_UNIT_TEST_MAIN ../../core/unit_test/mpi_unit_test_main.cpp)
   foreach(_device ${CAJITA_TEST_DEVICES})
     set(_dir ${CMAKE_CURRENT_BINARY_DIR}/${_device})
     file(MAKE_DIRECTORY ${_dir})
@@ -73,6 +73,8 @@ endmacro()
 set(SERIAL_TESTS
   GlobalMesh
   IndexSpace
+  Parallel
+  ParameterPack
   Splines
   )
 

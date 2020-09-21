@@ -26,52 +26,49 @@ namespace Test
 void testArborXListFull()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    NeighborListTestData test_data;
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Create the neighbor list.
     using device_type = TEST_MEMSPACE; // sigh...
     auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-        Cabana::FullNeighborTag{}, position, 0, aosoa.size(), test_radius );
+        Cabana::FullNeighborTag{}, position, 0, position.size(),
+        test_data.test_radius );
 
     // Check the neighbor list.
-    checkFullNeighborList( nlist, position, test_radius );
+    checkFullNeighborList( nlist, test_data.N2_list_copy,
+                           test_data.num_particle );
 }
 
 //---------------------------------------------------------------------------//
 void testArborXListHalf()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    NeighborListTestData test_data;
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-            Cabana::HalfNeighborTag{}, position, 0, aosoa.size(), test_radius );
+            Cabana::HalfNeighborTag{}, position, 0, position.size(),
+            test_data.test_radius );
 
         // Check the neighbor list.
-        checkHalfNeighborList( nlist, position, test_radius );
+        checkHalfNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
     }
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist =
             Cabana::Experimental::make2DNeighborList<device_type>(
-                Cabana::HalfNeighborTag{}, position, 0, aosoa.size(),
-                test_radius );
+                Cabana::HalfNeighborTag{}, position, 0, position.size(),
+                test_data.test_radius );
 
         // Check the neighbor list.
-        checkHalfNeighborList( nlist, position, test_radius );
+        checkHalfNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
     }
 }
 
@@ -79,23 +76,20 @@ void testArborXListHalf()
 void testArborXListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
+    NeighborListTestData test_data;
     int num_ignore = 800;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-            Cabana::FullNeighborTag{}, position, 0, num_ignore, test_radius );
+            Cabana::FullNeighborTag{}, position, 0, num_ignore,
+            test_data.test_radius );
 
         // Check the neighbor list.
-        checkFullNeighborListPartialRange( nlist, position, test_radius,
-                                           num_ignore );
+        checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
+                                           test_data.num_particle, num_ignore );
     }
     {
         // Create the neighbor list.
@@ -103,11 +97,11 @@ void testArborXListFullPartialRange()
         auto const nlist =
             Cabana::Experimental::make2DNeighborList<device_type>(
                 Cabana::FullNeighborTag{}, position, 0, num_ignore,
-                test_radius );
+                test_data.test_radius );
 
         // Check the neighbor list.
-        checkFullNeighborListPartialRange( nlist, position, test_radius,
-                                           num_ignore );
+        checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
+                                           test_data.num_particle, num_ignore );
     }
 }
 
@@ -115,34 +109,35 @@ void testArborXListFullPartialRange()
 void testNeighborArborXParallelFor()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    NeighborListTestData test_data;
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-            Cabana::FullNeighborTag{}, position, 0, aosoa.size(), test_radius );
+            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            test_data.test_radius );
 
-        checkFirstNeighborParallelFor( nlist, position, test_radius );
+        checkFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                       test_data.num_particle );
 
-        checkSecondNeighborParallelFor( nlist, position, test_radius );
+        checkSecondNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                        test_data.num_particle );
     }
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist =
             Cabana::Experimental::make2DNeighborList<device_type>(
-                Cabana::FullNeighborTag{}, position, 0, aosoa.size(),
-                test_radius );
+                Cabana::FullNeighborTag{}, position, 0, position.size(),
+                test_data.test_radius );
 
-        checkFirstNeighborParallelFor( nlist, position, test_radius );
+        checkFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                       test_data.num_particle );
 
-        checkSecondNeighborParallelFor( nlist, position, test_radius );
+        checkSecondNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                        test_data.num_particle );
     }
 }
 
@@ -150,34 +145,35 @@ void testNeighborArborXParallelFor()
 void testNeighborArborXParallelReduce()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    NeighborListTestData test_data;
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-            Cabana::FullNeighborTag{}, position, 0, aosoa.size(), test_radius );
+            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            test_data.test_radius );
 
-        checkFirstNeighborParallelReduce( nlist, aosoa, test_radius );
+        checkFirstNeighborParallelReduce( nlist, test_data.N2_list_copy,
+                                          test_data.aosoa );
 
-        checkSecondNeighborParallelReduce( nlist, aosoa, test_radius );
+        checkSecondNeighborParallelReduce( nlist, test_data.N2_list_copy,
+                                           test_data.aosoa );
     }
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist =
             Cabana::Experimental::make2DNeighborList<device_type>(
-                Cabana::FullNeighborTag{}, position, 0, aosoa.size(),
-                test_radius );
+                Cabana::FullNeighborTag{}, position, 0, position.size(),
+                test_data.test_radius );
 
-        checkFirstNeighborParallelReduce( nlist, aosoa, test_radius );
+        checkFirstNeighborParallelReduce( nlist, test_data.N2_list_copy,
+                                          test_data.aosoa );
 
-        checkSecondNeighborParallelReduce( nlist, aosoa, test_radius );
+        checkSecondNeighborParallelReduce( nlist, test_data.N2_list_copy,
+                                           test_data.aosoa );
     }
 }
 

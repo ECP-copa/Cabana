@@ -41,6 +41,8 @@ class ReferenceStructuredSolver
     // Types.
     using entity_type = EntityType;
     using device_type = DeviceType;
+    using memory_space = typename device_type::memory_space;
+    using execution_space = typename device_type::execution_space;
     using value_type = Scalar;
     using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
 
@@ -131,7 +133,18 @@ class ReferenceConjugateGradient
     using device_type = DeviceType;
     using value_type = Scalar;
     using execution_space = typename device_type::execution_space;
+    using memory_space = typename device_type::memory_space;
     using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
+
+    // Array-like container to hold layout and data information.
+    template <class ScalarT, class MemorySpaceT, class ArrayLayoutT>
+    struct LayoutContainer
+    {
+        using value_type = ScalarT;
+        using memory_space = MemorySpaceT;
+        const ArrayLayoutT &array_layout;
+        const ArrayLayoutT *layout() const { return &array_layout; }
+    };
 
     /*!
       \brief Constructor.
@@ -267,7 +280,7 @@ class ReferenceConjugateGradient
         Kokkos::deep_copy( p_old_view, x_view );
 
         // Gather the LHS through gatheing p and z.
-        _A_halo->gather( *A_halo_vectors );
+        _A_halo->gather( execution_space(), *A_halo_vectors );
 
         // Compute the initial residual and norm.
         _residual_norm = 0.0;
@@ -313,11 +326,10 @@ class ReferenceConjugateGradient
             return;
 
         // r and q.
-        _M_halo->gather( *M_halo_vectors );
+        _M_halo->gather( execution_space(), *M_halo_vectors );
 
         // Compute the initial preconditioned residual.
         Scalar zTr_old = 0.0;
-        _M_halo->gather( *M_halo_vectors );
         Kokkos::parallel_reduce(
             "compute_z0",
             createExecutionPolicy( entity_space, execution_space() ),
@@ -348,7 +360,7 @@ class ReferenceConjugateGradient
                        MPI_SUM, local_grid->globalGrid().comm() );
 
         // Gather the LHS through gatheing p and z.
-        _A_halo->gather( *A_halo_vectors );
+        _A_halo->gather( execution_space(), *A_halo_vectors );
 
         // Compute A*p and pT*A*p.
         Scalar pTAp = 0.0;
@@ -389,7 +401,7 @@ class ReferenceConjugateGradient
         while ( _residual_norm > _tol && _num_iter < _max_iter )
         {
             // Gather r and q.
-            _M_halo->gather( *M_halo_vectors );
+            _M_halo->gather( execution_space(), *M_halo_vectors );
 
             // Kernel 1: Compute x, r, residual norm, and zTr
             alpha = zTr_old / pTAp;
@@ -461,7 +473,7 @@ class ReferenceConjugateGradient
             }
 
             // Gather p and z.
-            _A_halo->gather( *A_halo_vectors );
+            _A_halo->gather( execution_space(), *A_halo_vectors );
 
             // Kernel 2: Compute p, A*p, and p^T*A*p
             beta = zTr_new / zTr_old;
@@ -534,8 +546,8 @@ class ReferenceConjugateGradient
     // Set the stencil of a matrix.
     void setStencil( const std::vector<std::array<int, 3>> &stencil,
                      const bool is_symmetric,
-                     Kokkos::View<int *[3], DeviceType> &device_stencil,
-                     std::shared_ptr<Halo<Scalar, DeviceType>> &halo,
+                     Kokkos::View<int * [3], DeviceType> &device_stencil,
+                     std::shared_ptr<Halo<memory_space>> &halo,
                      std::shared_ptr<Array_t> &matrix )
     {
         // For now we don't support symmetry.
@@ -599,10 +611,10 @@ class ReferenceConjugateGradient
     int _num_iter;
     Scalar _residual_norm;
     int _diag_entry;
-    Kokkos::View<int *[3], DeviceType> _A_stencil;
-    Kokkos::View<int *[3], DeviceType> _M_stencil;
-    std::shared_ptr<Halo<Scalar, DeviceType>> _A_halo;
-    std::shared_ptr<Halo<Scalar, DeviceType>> _M_halo;
+    Kokkos::View<int * [3], DeviceType> _A_stencil;
+    Kokkos::View<int * [3], DeviceType> _M_stencil;
+    std::shared_ptr<Halo<memory_space>> _A_halo;
+    std::shared_ptr<Halo<memory_space>> _M_halo;
     std::shared_ptr<Array_t> _A;
     std::shared_ptr<Array_t> _M;
     std::shared_ptr<Array_t> _vectors;

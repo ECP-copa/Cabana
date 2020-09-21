@@ -59,8 +59,8 @@ macro(Cabana_add_dependency)
     "Require Cabana to build with ${CABANA_DEPENDENCY_PACKAGE} support" ${CABANA_DEPENDENCY_PACKAGE}_FOUND)
   if(Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION})
     find_package( ${CABANA_DEPENDENCY_PACKAGE} REQUIRED )
-    set(Cabana_ENABLE_${CABANA_DEPENDENCY_OPTION} ON)
   endif()
+  set(Cabana_ENABLE_${CABANA_DEPENDENCY_OPTION} ${${CABANA_DEPENDENCY_PACKAGE}_FOUND})
 endmacro()
 
 # find MPI

@@ -162,12 +162,42 @@ createExecutionPolicy( const IndexSpace<1> &index_space,
 //---------------------------------------------------------------------------//
 /*!
   \brief Create a multi-dimensional execution policy over an index space.
+
+  Rank-1 specialization with a work tag.
+*/
+template <class ExecutionSpace, class WorkTag>
+Kokkos::RangePolicy<ExecutionSpace, WorkTag>
+createExecutionPolicy( const IndexSpace<1> &index_space, const ExecutionSpace &,
+                       const WorkTag & )
+{
+    return Kokkos::RangePolicy<ExecutionSpace, WorkTag>( index_space.min( 0 ),
+                                                         index_space.max( 0 ) );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a multi-dimensional execution policy over an index space.
 */
 template <class IndexSpace_t, class ExecutionSpace>
 Kokkos::MDRangePolicy<ExecutionSpace, Kokkos::Rank<IndexSpace_t::Rank>>
 createExecutionPolicy( const IndexSpace_t &index_space, const ExecutionSpace & )
 {
     return Kokkos::MDRangePolicy<ExecutionSpace,
+                                 Kokkos::Rank<IndexSpace_t::Rank>>(
+        index_space.min(), index_space.max() );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Create a multi-dimensional execution policy over an index space with
+  a work tag.
+*/
+template <class IndexSpace_t, class ExecutionSpace, class WorkTag>
+Kokkos::MDRangePolicy<ExecutionSpace, WorkTag, Kokkos::Rank<IndexSpace_t::Rank>>
+createExecutionPolicy( const IndexSpace_t &index_space, const ExecutionSpace &,
+                       const WorkTag & )
+{
+    return Kokkos::MDRangePolicy<ExecutionSpace, WorkTag,
                                  Kokkos::Rank<IndexSpace_t::Rank>>(
         index_space.min(), index_space.max() );
 }
@@ -307,7 +337,8 @@ createView( const IndexSpace<4> &index_space, Scalar *data )
   Rank-1 specialization.
 */
 template <class ViewType>
-auto createSubview( const ViewType &view, const IndexSpace<1> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
+                                           const IndexSpace<1> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ) ) )
 {
     static_assert( 1 == ViewType::Rank, "Incorrect view rank" );
@@ -321,7 +352,8 @@ auto createSubview( const ViewType &view, const IndexSpace<1> &index_space )
   Rank-2 specialization.
 */
 template <class ViewType>
-auto createSubview( const ViewType &view, const IndexSpace<2> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
+                                           const IndexSpace<2> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ) ) )
 {
@@ -337,7 +369,8 @@ auto createSubview( const ViewType &view, const IndexSpace<2> &index_space )
   Rank-3 specialization.
 */
 template <class ViewType>
-auto createSubview( const ViewType &view, const IndexSpace<3> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
+                                           const IndexSpace<3> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ),
                                   index_space.range( 2 ) ) )
@@ -354,7 +387,8 @@ auto createSubview( const ViewType &view, const IndexSpace<3> &index_space )
   Rank-4 specialization.
 */
 template <class ViewType>
-auto createSubview( const ViewType &view, const IndexSpace<4> &index_space )
+KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType &view,
+                                           const IndexSpace<4> &index_space )
     -> decltype( Kokkos::subview( view, index_space.range( 0 ),
                                   index_space.range( 1 ),
                                   index_space.range( 2 ),

@@ -107,42 +107,45 @@ template <class LayoutTag, class BuildTag>
 void testVerletListFull()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    NeighborListTestData test_data;
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Create the neighbor list.
-    double cell_size_ratio = 0.5;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
-    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
-                       BuildTag>
-        nlist_full( position, 0, aosoa.size(), test_radius, cell_size_ratio,
-                    grid_min, grid_max );
-    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
-                       BuildTag>
-        nlist;
+    {
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
+                           BuildTag>
+            nlist_full( position, 0, position.size(), test_data.test_radius,
+                        test_data.cell_size_ratio, test_data.grid_min,
+                        test_data.grid_max );
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
+                           BuildTag>
+            nlist;
 
-    nlist = nlist_full;
+        nlist = nlist_full;
 
-    checkFullNeighborList( nlist, position, test_radius );
-
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
     // Check again, building with a large array allocation size
-    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
-                       BuildTag>
-        nlist_max( position, 0, aosoa.size(), test_radius, cell_size_ratio,
-                   grid_min, grid_max, 100 );
-    checkFullNeighborList( nlist_max, position, test_radius );
-
+    {
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
+                           BuildTag>
+            nlist_max( position, 0, position.size(), test_data.test_radius,
+                       test_data.cell_size_ratio, test_data.grid_min,
+                       test_data.grid_max, 100 );
+        checkFullNeighborList( nlist_max, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
     // Check again, building with a small array allocation size (refill)
-    Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
-                       BuildTag>
-        nlist_max2( position, 0, aosoa.size(), test_radius, cell_size_ratio,
-                    grid_min, grid_max, 2 );
-    checkFullNeighborList( nlist_max2, position, test_radius );
+    {
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
+                           BuildTag>
+            nlist_max2( position, 0, position.size(), test_data.test_radius,
+                        test_data.cell_size_ratio, test_data.grid_min,
+                        test_data.grid_max, 2 );
+        checkFullNeighborList( nlist_max2, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -150,38 +153,41 @@ template <class LayoutTag, class BuildTag>
 void testVerletListHalf()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    NeighborListTestData test_data;
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Create the neighbor list.
-    double cell_size_ratio = 0.5;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
-    Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag,
-                       BuildTag>
-        nlist( position, 0, aosoa.size(), test_radius, cell_size_ratio,
-               grid_min, grid_max );
+    {
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag,
+                           BuildTag>
+            nlist( position, 0, position.size(), test_data.test_radius,
+                   test_data.cell_size_ratio, test_data.grid_min,
+                   test_data.grid_max );
 
-    // Check the neighbor list.
-    checkHalfNeighborList( nlist, position, test_radius );
-
+        // Check the neighbor list.
+        checkHalfNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
     // Check again, building with a large array allocation size
-    Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag,
-                       BuildTag>
-        nlist_max( position, 0, aosoa.size(), test_radius, cell_size_ratio,
-                   grid_min, grid_max, 100 );
-    checkHalfNeighborList( nlist_max, position, test_radius );
-
+    {
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag,
+                           BuildTag>
+            nlist_max( position, 0, position.size(), test_data.test_radius,
+                       test_data.cell_size_ratio, test_data.grid_min,
+                       test_data.grid_max, 100 );
+        checkHalfNeighborList( nlist_max, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
     // Check again, building with a small array allocation size (refill)
-    Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag,
-                       BuildTag>
-        nlist_max2( position, 0, aosoa.size(), test_radius, cell_size_ratio,
-                    grid_min, grid_max, 2 );
-    checkHalfNeighborList( nlist_max2, position, test_radius );
+    {
+        Cabana::VerletList<TEST_MEMSPACE, Cabana::HalfNeighborTag, LayoutTag,
+                           BuildTag>
+            nlist_max2( position, 0, position.size(), test_data.test_radius,
+                        test_data.cell_size_ratio, test_data.grid_min,
+                        test_data.grid_max, 2 );
+        checkHalfNeighborList( nlist_max2, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -189,26 +195,20 @@ template <class LayoutTag, class BuildTag>
 void testVerletListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
+    NeighborListTestData test_data;
     int num_ignore = 800;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Create the neighbor list.
-    double cell_size_ratio = 0.5;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
                        BuildTag>
-        nlist( position, 0, num_ignore, test_radius, cell_size_ratio, grid_min,
-               grid_max );
+        nlist( position, 0, num_ignore, test_data.test_radius,
+               test_data.cell_size_ratio, test_data.grid_min,
+               test_data.grid_max );
 
     // Check the neighbor list.
-    checkFullNeighborListPartialRange( nlist, position, test_radius,
-                                       num_ignore );
+    checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
+                                       test_data.num_particle, num_ignore );
 }
 
 //---------------------------------------------------------------------------//
@@ -216,25 +216,21 @@ template <class LayoutTag>
 void testNeighborParallelFor()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    NeighborListTestData test_data;
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Create the neighbor list.
     using ListType = Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag,
                                         LayoutTag, Cabana::TeamOpTag>;
-    double cell_size_ratio = 0.5;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
-    ListType nlist( position, 0, aosoa.size(), test_radius, cell_size_ratio,
-                    grid_min, grid_max );
+    ListType nlist( position, 0, position.size(), test_data.test_radius,
+                    test_data.cell_size_ratio, test_data.grid_min,
+                    test_data.grid_max );
 
-    checkFirstNeighborParallelFor( nlist, position, test_radius );
+    checkFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                   test_data.num_particle );
 
-    checkSecondNeighborParallelFor( nlist, position, test_radius );
+    checkSecondNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                    test_data.num_particle );
 }
 
 //---------------------------------------------------------------------------//
@@ -242,25 +238,21 @@ template <class LayoutTag>
 void testNeighborParallelReduce()
 {
     // Create the AoSoA and fill with random particle positions.
-    int num_particle = 1e3;
-    double test_radius = 2.32;
-    double box_min = -5.3 * test_radius;
-    double box_max = 4.7 * test_radius;
-    auto aosoa = createParticles( num_particle, box_min, box_max );
-    auto position = Cabana::slice<0>( aosoa );
+    NeighborListTestData test_data;
+    auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Create the neighbor list.
     using ListType = Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag,
                                         LayoutTag, Cabana::TeamOpTag>;
-    double cell_size_ratio = 0.5;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
-    ListType nlist( position, 0, aosoa.size(), test_radius, cell_size_ratio,
-                    grid_min, grid_max );
+    ListType nlist( position, 0, position.size(), test_data.test_radius,
+                    test_data.cell_size_ratio, test_data.grid_min,
+                    test_data.grid_max );
 
-    checkFirstNeighborParallelReduce( nlist, aosoa, test_radius );
+    checkFirstNeighborParallelReduce( nlist, test_data.N2_list_copy,
+                                      test_data.aosoa );
 
-    checkSecondNeighborParallelReduce( nlist, aosoa, test_radius );
+    checkSecondNeighborParallelReduce( nlist, test_data.N2_list_copy,
+                                       test_data.aosoa );
 }
 
 //---------------------------------------------------------------------------//

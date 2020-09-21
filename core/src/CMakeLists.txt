@@ -20,13 +20,13 @@ set(HEADERS_PUBLIC
   Cabana_Version.hpp
   )
 
-if(ArborX_FOUND)
+if(Cabana_ENABLE_ARBORX)
   list(APPEND HEADERS_PUBLIC
     Cabana_Experimental_NeighborList.hpp
     )
 endif()
 
-if(MPI_FOUND)
+if(Cabana_ENABLE_MPI)
   list(APPEND HEADERS_PUBLIC
     Cabana_CommunicationPlan.hpp
     Cabana_Distributor.hpp
@@ -48,11 +48,11 @@ add_library(cabanacore ${SOURCES_IMPL})
 
 target_link_libraries(cabanacore Kokkos::kokkos)
 
-if(ArborX_FOUND)
+if(Cabana_ENABLE_ARBORX)
   target_link_libraries(cabanacore ArborX::ArborX)
 endif()
 
-if(MPI_FOUND)
+if(Cabana_ENABLE_MPI)
   target_link_libraries(cabanacore MPI::MPI_CXX)
 endif()
 
