@@ -426,7 +426,7 @@ class Halo
     buildCommData( DecompositionTag decomposition_tag, const int width,
                    const int ni, const int nj, const int nk,
                    std::vector<Kokkos::View<char *, memory_space>> &buffers,
-                   std::vector<Kokkos::View<int *[6], memory_space>> &steering,
+                   std::vector<Kokkos::View<int * [6], memory_space>> &steering,
                    const ArrayTypes &... arrays )
     {
         // Number of arrays.
@@ -458,7 +458,7 @@ class Halo
             Kokkos::View<char *, memory_space>( "halo_buffer", buffer_bytes ) );
 
         // Allocate the steering vector for building the buffer.
-        steering.push_back( Kokkos::View<int *[6], memory_space>(
+        steering.push_back( Kokkos::View<int * [6], memory_space>(
             "steering", buffer_num_element ) );
 
         // Create the steering vector. For each element in the buffer it gives
@@ -520,7 +520,7 @@ class Halo
     template <class ArrayView>
     KOKKOS_INLINE_FUNCTION void
     packElement( const Kokkos::View<char *, memory_space> &buffer,
-                 const Kokkos::View<int *[6], memory_space> &steering,
+                 const Kokkos::View<int * [6], memory_space> &steering,
                  const int element_idx, const ArrayView &array_view ) const
     {
         const char *elem_ptr = reinterpret_cast<const char *>( &array_view(
@@ -537,7 +537,7 @@ class Halo
     template <class... ArrayViews>
     KOKKOS_INLINE_FUNCTION void
     packArray( const Kokkos::View<char *, memory_space> &buffer,
-               const Kokkos::View<int *[6], memory_space> &steering,
+               const Kokkos::View<int * [6], memory_space> &steering,
                const int element_idx,
                const std::integral_constant<std::size_t, 0>,
                const ParameterPack<ArrayViews...> &array_views ) const
@@ -551,7 +551,7 @@ class Halo
     template <std::size_t N, class... ArrayViews>
     KOKKOS_INLINE_FUNCTION void
     packArray( const Kokkos::View<char *, memory_space> &buffer,
-               const Kokkos::View<int *[6], memory_space> &steering,
+               const Kokkos::View<int * [6], memory_space> &steering,
                const int element_idx,
                const std::integral_constant<std::size_t, N>,
                const ParameterPack<ArrayViews...> &array_views ) const
@@ -569,7 +569,7 @@ class Halo
     template <class ExecutionSpace, class... ArrayViews>
     void packBuffer( const ExecutionSpace &exec_space,
                      const Kokkos::View<char *, memory_space> &buffer,
-                     const Kokkos::View<int *[6], memory_space> &steering,
+                     const Kokkos::View<int * [6], memory_space> &steering,
                      ArrayViews... array_views ) const
     {
         auto pp = makeParameterPack( array_views... );
@@ -627,7 +627,7 @@ class Halo
     KOKKOS_INLINE_FUNCTION void
     unpackElement( const ReduceOp &reduce_op,
                    const Kokkos::View<char *, memory_space> &buffer,
-                   const Kokkos::View<int *[6], memory_space> &steering,
+                   const Kokkos::View<int * [6], memory_space> &steering,
                    const int element_idx, const ArrayView &array_view ) const
     {
         typename ArrayView::value_type elem;
@@ -649,7 +649,7 @@ class Halo
     KOKKOS_INLINE_FUNCTION void
     unpackArray( const ReduceOp &reduce_op,
                  const Kokkos::View<char *, memory_space> &buffer,
-                 const Kokkos::View<int *[6], memory_space> &steering,
+                 const Kokkos::View<int * [6], memory_space> &steering,
                  const int element_idx,
                  const std::integral_constant<std::size_t, 0>,
                  const ParameterPack<ArrayViews...> &array_views ) const
@@ -665,7 +665,7 @@ class Halo
     KOKKOS_INLINE_FUNCTION void
     unpackArray( const ReduceOp reduce_op,
                  const Kokkos::View<char *, memory_space> &buffer,
-                 const Kokkos::View<int *[6], memory_space> &steering,
+                 const Kokkos::View<int * [6], memory_space> &steering,
                  const int element_idx,
                  const std::integral_constant<std::size_t, N>,
                  const ParameterPack<ArrayViews...> &array_views ) const
@@ -686,7 +686,7 @@ class Halo
     void unpackBuffer( const ReduceOp &reduce_op,
                        const ExecutionSpace &exec_space,
                        const Kokkos::View<char *, memory_space> &buffer,
-                       const Kokkos::View<int *[6], memory_space> &steering,
+                       const Kokkos::View<int * [6], memory_space> &steering,
                        ArrayViews... array_views ) const
     {
         auto pp = makeParameterPack( array_views... );
@@ -723,10 +723,10 @@ class Halo
     std::vector<Kokkos::View<char *, memory_space>> _ghosted_buffers;
 
     // For each neighbor, steering vector for the owned buffer.
-    std::vector<Kokkos::View<int *[6], memory_space>> _owned_steering;
+    std::vector<Kokkos::View<int * [6], memory_space>> _owned_steering;
 
     // For each neighbor, steering vector for the ghosted buffer.
-    std::vector<Kokkos::View<int *[6], memory_space>> _ghosted_steering;
+    std::vector<Kokkos::View<int * [6], memory_space>> _ghosted_steering;
 };
 
 //---------------------------------------------------------------------------//
