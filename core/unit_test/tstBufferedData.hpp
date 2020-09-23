@@ -137,22 +137,26 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
     }
 }
 
+/*
 template <class buf_t>
 class Tagfunctor_op
 {
   public:
     // TODO: this needs a constructor and to actually use the data
-    KOKKOS_INLINE_FUNCTION void operator()( const TestTag &,
-                                            buf_t buffered_aosoa, const int s,
-                                            const int a ) const
+    KOKKOS_INLINE_FUNCTION void
+    operator()( const TestTag &,
+                // buf_t buffered_aosoa, const int s,
+                const int a ) const
     {
     }
     KOKKOS_INLINE_FUNCTION void operator()(
         // const TestTag &,
-        buf_t buffered_aosoa, const int s, const int a ) const
+        // buf_t buffered_aosoa,
+        const int s, const int a ) const
     {
     }
 };
+*/
 
 /*
 void testBufferedTag()
