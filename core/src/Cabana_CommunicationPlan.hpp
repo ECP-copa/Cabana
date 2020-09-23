@@ -21,6 +21,7 @@
 
 #include <algorithm>
 #include <exception>
+#include <memory>
 #include <numeric>
 #include <type_traits>
 #include <vector>
@@ -295,20 +296,25 @@ class CommunicationPlan
     */
     CommunicationPlan( MPI_Comm comm )
     {
-        // Duplicate the communicator so this object has it's own
-        // communication space.
-        MPI_Comm_dup( comm, &_comm );
+        _comm_ptr.reset(
+            // Duplicate the communicator and store in a std::shared_ptr so that
+            // all copies point to the same object
+            [comm]() {
+                auto p = std::make_unique<MPI_Comm>();
+                MPI_Comm_dup( comm, p.get() );
+                return p.release();
+            }(),
+            // Custom deleter to mark the communicator for deallocation
+            []( MPI_Comm *p ) {
+                MPI_Comm_free( p );
+                delete p;
+            } );
     }
-
-    /*!
-      \brief Destructor.
-    */
-    virtual ~CommunicationPlan() { MPI_Comm_free( &_comm ); }
 
     /*!
       \brief Get the MPI communicator.
     */
-    MPI_Comm comm() const { return _comm; }
+    MPI_Comm comm() const { return *_comm_ptr; }
 
     /*!
       \brief Get the number of neighbor ranks that this rank will communicate
@@ -460,11 +466,11 @@ class CommunicationPlan
 
         // Get the size of this communicator.
         int comm_size = -1;
-        MPI_Comm_size( _comm, &comm_size );
+        MPI_Comm_size( comm(), &comm_size );
 
         // Get the MPI rank we are currently on.
         int my_rank = -1;
-        MPI_Comm_rank( _comm, &my_rank );
+        MPI_Comm_rank( comm(), &my_rank );
 
         // Pick an mpi tag for communication. This object has it's own
         // communication space so any mpi tag will do.
@@ -506,7 +512,7 @@ class CommunicationPlan
             {
                 requests.push_back( MPI_Request() );
                 MPI_Irecv( &_num_import[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
-                           mpi_tag, _comm, &( requests.back() ) );
+                           mpi_tag, comm(), &( requests.back() ) );
             }
             else
                 _num_import[n] = _num_export[n];
@@ -515,7 +521,7 @@ class CommunicationPlan
         for ( int n = 0; n < num_n; ++n )
             if ( my_rank != _neighbors[n] )
                 MPI_Send( &_num_export[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
-                          mpi_tag, _comm );
+                          mpi_tag, comm() );
 
         // Wait on receives.
         std::vector<MPI_Status> status( requests.size() );
@@ -531,7 +537,7 @@ class CommunicationPlan
             std::accumulate( _num_import.begin(), _num_import.end(), 0 );
 
         // Barrier before continuing to ensure synchronization.
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm() );
 
         // Return the neighbor ids.
         return counts_and_ids.second;
@@ -574,11 +580,11 @@ class CommunicationPlan
 
         // Get the size of this communicator.
         int comm_size = -1;
-        MPI_Comm_size( _comm, &comm_size );
+        MPI_Comm_size( comm(), &comm_size );
 
         // Get the MPI rank we are currently on.
         int my_rank = -1;
-        MPI_Comm_rank( _comm, &my_rank );
+        MPI_Comm_rank( comm(), &my_rank );
 
         // Pick an mpi tag for communication. This object has it's own
         // communication space so any mpi tag will do.
@@ -631,7 +637,7 @@ class CommunicationPlan
         int num_import_rank = -1;
         std::vector<int> recv_counts( comm_size, 1 );
         MPI_Reduce_scatter( neighbor_counts_host.data(), &num_import_rank,
-                            recv_counts.data(), MPI_INT, MPI_SUM, _comm );
+                            recv_counts.data(), MPI_INT, MPI_SUM, comm() );
         if ( self_send )
             --num_import_rank;
 
@@ -641,13 +647,13 @@ class CommunicationPlan
         std::vector<MPI_Request> requests( num_import_rank );
         for ( int n = 0; n < num_import_rank; ++n )
             MPI_Irecv( &import_sizes[n], 1, MPI_UNSIGNED_LONG, MPI_ANY_SOURCE,
-                       mpi_tag, _comm, &requests[n] );
+                       mpi_tag, comm(), &requests[n] );
 
         // Do blocking sends. Dont do any self sends.
         int self_offset = ( self_send ) ? 1 : 0;
         for ( int n = self_offset; n < num_export_rank; ++n )
             MPI_Send( &_num_export[n], 1, MPI_UNSIGNED_LONG, _neighbors[n],
-                      mpi_tag, _comm );
+                      mpi_tag, comm() );
 
         // Wait on non-blocking receives.
         std::vector<MPI_Status> status( requests.size() );
@@ -693,7 +699,7 @@ class CommunicationPlan
         }
 
         // Barrier before continuing to ensure synchronization.
-        MPI_Barrier( _comm );
+        MPI_Barrier( comm() );
 
         // Return the neighbor ids.
         return counts_and_ids.second;
@@ -762,7 +768,7 @@ class CommunicationPlan
 
         // Get the size of this communicator.
         int comm_size = -1;
-        MPI_Comm_size( _comm, &comm_size );
+        MPI_Comm_size( *_comm_ptr, &comm_size );
 
         // Calculate the steering offsets via exclusive prefix sum for the
         // exports.
@@ -800,7 +806,7 @@ class CommunicationPlan
     }
 
   private:
-    MPI_Comm _comm;
+    std::shared_ptr<MPI_Comm> _comm_ptr;
     std::vector<int> _neighbors;
     std::size_t _total_num_export;
     std::size_t _total_num_import;

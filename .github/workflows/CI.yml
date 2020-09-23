@@ -1,0 +1,37 @@
+name: CI
+on:
+  push:
+    branches:
+      - kokkos_develop_testing
+  schedule:
+    - cron:  '0 1 * * *'
+
+jobs:
+  CI:
+    strategy:
+      matrix:
+        backend: ["OPENMP", "SERIAL"]
+    runs-on: ubuntu-20.04
+    steps:
+      - name: Install deps
+        run: sudo apt-get install libsilo-dev openmpi-bin libopenmpi-dev
+      - name: Checkout kokkos
+        uses: actions/checkout@v2.2.0
+        with:
+          repository: kokkos/kokkos
+          ref: develop
+          path: kokkos
+      - name: Build kokkos
+        working-directory: kokkos
+        run: |
+          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/kokkos -DKokkos_CXX_STANDARD=14 -DKokkos_ENABLE_${{ matrix.backend }}=ON
+          cmake --build build --parallel 2
+          cmake --install build
+      - name: Checkout Cabana
+        uses: actions/checkout@v2.2.0
+      - name: Build Cabana
+        run: |
+          cmake -B build -DCMAKE_INSTALL_PREFIX=$HOME/Cabana -DCMAKE_PREFIX_PATH="$HOME/kokkos" -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_REQUIRE_${{ matrix.backend }}=ON
+          cmake --build build --parallel 2
+          cmake --build build --target test
+          cmake --install build

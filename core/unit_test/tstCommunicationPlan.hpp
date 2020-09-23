@@ -74,7 +74,8 @@ class CommPlanTester : public Cabana::CommunicationPlan<
 void test1( const bool use_topology )
 {
     // Make a communication plan.
-    CommPlanTester comm_plan( MPI_COMM_WORLD );
+    CommPlanTester comm_tmp( MPI_COMM_WORLD );
+    auto comm_plan = comm_tmp;
 
     // Get my rank.
     int my_rank = -1;
