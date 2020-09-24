@@ -51,6 +51,13 @@ void LayoutHilbert3DSubviewTest()
     // Create Hilbert View
     Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
         HilbertArray( "Hilbert", dim1, dim2, dim3, dim4 );
+    
+    // Duplicate Hilbert View
+    Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
+        HilbertArray2( "Hilbert", dim1, dim2, dim3, dim4 );
+    
+    // Test shallow copy and dimension methods
+    HilbertArray2 = HilbertArray;
 
     // Create Regular View
     Kokkos::View<double ****, TEST_DEVICE> RegularArray( "Regular", dim1, dim2,
