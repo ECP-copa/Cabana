@@ -340,9 +340,7 @@ void testBufferedDataCreation()
 
     Kokkos::fence();
 
-    // checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 1);
-    EXPECT_EQ( 1, 1 );
-    exit( 0 );
+    checkDataMembers( aosoa, fval, dval, ival, dim_1, dim_2, dim_3, 1);
 }
 
 //---------------------------------------------------------------------------//
