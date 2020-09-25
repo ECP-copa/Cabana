@@ -38,15 +38,15 @@ namespace Test
 void interpolationTest()
 {
     // Create the global mesh.
-    std::array<double, 3> low_corner = {-1.2, 0.1, 1.1};
-    std::array<double, 3> high_corner = {-0.3, 9.5, 2.3};
+    std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
+    std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
     double cell_size = 0.05;
     auto global_mesh =
         createUniformGlobalMesh( low_corner, high_corner, cell_size );
 
     // Create the global grid.
     UniformDimPartitioner partitioner;
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
@@ -58,7 +58,7 @@ void interpolationTest()
     // Create a point in the center of every cell.
     auto cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
-    Kokkos::View<double * [3], TEST_DEVICE> points(
+    Kokkos::View<double *[3], TEST_DEVICE> points(
         Kokkos::ViewAllocateWithoutInitializing( "points" ), num_point );
     Kokkos::parallel_for(
         "fill_points", createExecutionPolicy( cell_space, TEST_EXECSPACE() ),
@@ -68,7 +68,7 @@ void interpolationTest()
             int pk = k - halo_width;
             int pid = pi + cell_space.extent( Dim::I ) *
                                ( pj + cell_space.extent( Dim::J ) * pk );
-            int idx[3] = {i, j, k};
+            int idx[3] = { i, j, k };
             double x[3];
             local_mesh.coordinates( Cell(), idx, x );
             points( pid, Dim::I ) = x[Dim::I];
@@ -99,13 +99,13 @@ void interpolationTest()
     auto scalar_point_host = Kokkos::create_mirror_view( scalar_point_field );
 
     // Create a vector point field.
-    Kokkos::View<double * [3], TEST_DEVICE> vector_point_field(
+    Kokkos::View<double *[3], TEST_DEVICE> vector_point_field(
         Kokkos::ViewAllocateWithoutInitializing( "vector_point_field" ),
         num_point );
     auto vector_point_host = Kokkos::create_mirror_view( vector_point_field );
 
     // Create a tensor point field.
-    Kokkos::View<double * [3][3], TEST_DEVICE> tensor_point_field(
+    Kokkos::View<double *[3][3], TEST_DEVICE> tensor_point_field(
         Kokkos::ViewAllocateWithoutInitializing( "tensor_point_field" ),
         num_point );
     auto tensor_point_host = Kokkos::create_mirror_view( tensor_point_field );

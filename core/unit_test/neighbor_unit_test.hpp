@@ -525,8 +525,8 @@ struct NeighborListTestData
     double box_max = 4.7 * test_radius;
 
     double cell_size_ratio = 0.5;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
 
     Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE> aosoa;
     TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>

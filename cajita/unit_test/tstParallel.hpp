@@ -96,10 +96,11 @@ void parallelIndexSpaceTest()
     int min_i = 4;
     int max_i = 8;
     int size_i = 12;
-    IndexSpace<1> is1( {min_i}, {max_i} );
+    IndexSpace<1> is1( { min_i }, { max_i } );
     Kokkos::View<double *, TEST_DEVICE> v1( "v1", size_i );
-    grid_parallel_for( "fill_rank_1", TEST_EXECSPACE(), is1,
-                       KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
+    grid_parallel_for(
+        "fill_rank_1", TEST_EXECSPACE(), is1,
+        KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
     auto v1_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), v1 );
     for ( int i = 0; i < size_i; ++i )
@@ -141,7 +142,7 @@ void parallelIndexSpaceTest()
     int min_j = 3;
     int max_j = 9;
     int size_j = 18;
-    IndexSpace<2> is2( {min_i, min_j}, {max_i, max_j} );
+    IndexSpace<2> is2( { min_i, min_j }, { max_i, max_j } );
     Kokkos::View<double **, TEST_DEVICE> v2( "v2", size_i, size_j );
     grid_parallel_for(
         "fill_rank_2", TEST_EXECSPACE(), is2,
@@ -198,13 +199,13 @@ void parallelLocalGridTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {101, 85, 99};
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -225,12 +226,12 @@ void parallelLocalGridTest()
 
     // Assign a value to the entire the array.
     auto array_view = array->view();
-    grid_parallel_for( "fill_array", TEST_EXECSPACE(), *local_grid, Ghost(),
-                       Cell(),
-                       KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-                           for ( int l = 0; l < 4; ++l )
-                               array_view( i, j, k, l ) = 1.0;
-                       } );
+    grid_parallel_for(
+        "fill_array", TEST_EXECSPACE(), *local_grid, Ghost(), Cell(),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+            for ( int l = 0; l < 4; ++l )
+                array_view( i, j, k, l ) = 1.0;
+        } );
     auto host_view =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), array_view );
     auto ghosted_space = array->layout()->indexSpace( Ghost(), Local() );

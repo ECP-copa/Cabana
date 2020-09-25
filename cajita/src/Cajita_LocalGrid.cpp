@@ -138,10 +138,10 @@ LocalGrid<MeshType>::sharedIndexSpace( Own, Cell, const int off_i,
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
 
     // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
+    std::array<long, 3> nid = { off_i, off_j, off_k };
 
     // Get the owned local index space.
     auto owned_space = indexSpace( Own(), Cell(), Local() );
@@ -210,10 +210,10 @@ LocalGrid<MeshType>::sharedIndexSpace( Ghost, Cell, const int off_i,
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
 
     // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
+    std::array<long, 3> nid = { off_i, off_j, off_k };
 
     // Get the owned local index space.
     auto owned_space = indexSpace( Own(), Cell(), Local() );
@@ -341,10 +341,10 @@ LocalGrid<MeshType>::sharedIndexSpace( Own, Node, const int off_i,
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
 
     // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
+    std::array<long, 3> nid = { off_i, off_j, off_k };
 
     // Get the owned local index space.
     auto owned_space = indexSpace( Own(), Node(), Local() );
@@ -413,10 +413,10 @@ LocalGrid<MeshType>::sharedIndexSpace( Ghost, Node, const int off_i,
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
 
     // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
+    std::array<long, 3> nid = { off_i, off_j, off_k };
 
     // Get the owned local index space.
     auto owned_space = indexSpace( Own(), Node(), Local() );
@@ -851,10 +851,10 @@ LocalGrid<MeshType>::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
 
     // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
+    std::array<long, 3> nid = { off_i, off_j, off_k };
 
     // Get the owned local index space.
     auto owned_space = indexSpace( Own(), Face<Dir>(), Local() );
@@ -925,10 +925,10 @@ LocalGrid<MeshType>::faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
 
     // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
+    std::array<long, 3> nid = { off_i, off_j, off_k };
 
     // Get the owned local index space.
     auto owned_space = indexSpace( Own(), Face<Dir>(), Local() );
@@ -1082,10 +1082,10 @@ LocalGrid<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>, const int off_i,
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
 
     // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
+    std::array<long, 3> nid = { off_i, off_j, off_k };
 
     // Get the owned local index space.
     auto owned_space = indexSpace( Own(), Edge<Dir>(), Local() );
@@ -1156,10 +1156,10 @@ LocalGrid<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>, const int off_i,
     // Check to see if this is a valid neighbor. If not, return a shared space
     // of size 0.
     if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( {0, 0, 0}, {0, 0, 0} );
+        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
 
     // Wrap the indices.
-    std::array<long, 3> nid = {off_i, off_j, off_k};
+    std::array<long, 3> nid = { off_i, off_j, off_k };
 
     // Get the owned local index space.
     auto owned_space = indexSpace( Own(), Edge<Dir>(), Local() );

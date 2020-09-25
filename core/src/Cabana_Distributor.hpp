@@ -228,7 +228,7 @@ void distributeData(
     // Post non-blocking receives.
     std::vector<MPI_Request> requests;
     requests.reserve( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + distributor.numImport( n );
@@ -251,7 +251,7 @@ void distributeData(
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         if ( ( distributor.numExport( n ) > 0 ) &&
@@ -500,7 +500,7 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
     // Post non-blocking receives.
     std::vector<MPI_Request> requests;
     requests.reserve( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + distributor.numImport( n );
@@ -524,7 +524,7 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         if ( ( distributor.numExport( n ) > 0 ) &&

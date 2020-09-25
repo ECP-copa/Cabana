@@ -255,7 +255,7 @@ struct VerletListBuilder
         // not just the requested range. This is because all particles are
         // treated as candidates for neighbors.
         double grid_size = cell_size_ratio * neighborhood_radius;
-        PositionValueType grid_delta[3] = {grid_size, grid_size, grid_size};
+        PositionValueType grid_delta[3] = { grid_size, grid_size, grid_size };
         linked_cell_list =
             LinkedCellList<device>( position, grid_delta, grid_min, grid_max );
         bin_data_1d = linked_cell_list.binningData();

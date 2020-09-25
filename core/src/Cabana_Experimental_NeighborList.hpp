@@ -61,7 +61,7 @@ auto makePredicates(
     typename stdcxx20::remove_cvref_t<Slice>::value_type radius )
 {
     return Impl::SubsliceAndRadius<stdcxx20::remove_cvref_t<Slice>>{
-        std::forward<Slice>( slice ), first, last, radius};
+        std::forward<Slice>( slice ), first, last, radius };
 }
 } // namespace Impl
 } // namespace Experimental
@@ -78,9 +78,9 @@ struct AccessTraits<Slice, PrimitivesTag,
     static KOKKOS_FUNCTION size_type size( Slice const &x ) { return x.size(); }
     static KOKKOS_FUNCTION Point get( Slice const &x, size_type i )
     {
-        return {static_cast<float>( x( i, 0 ) ),
-                static_cast<float>( x( i, 1 ) ),
-                static_cast<float>( x( i, 2 ) )};
+        return { static_cast<float>( x( i, 0 ) ),
+                 static_cast<float>( x( i, 1 ) ),
+                 static_cast<float>( x( i, 2 ) ) };
     }
 };
 template <typename SliceLike>
@@ -98,7 +98,7 @@ struct AccessTraits<SliceLike, PredicatesTag>
         auto const point =
             AccessTraits<typename SliceLike::slice_type, PrimitivesTag>::get(
                 x.slice, x.first + i );
-        return attach( intersects( Sphere{point, x.radius} ), (int)i );
+        return attach( intersects( Sphere{ point, x.radius } ), (int)i );
     }
 };
 } // namespace ArborX
@@ -241,8 +241,8 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
         Impl::NeighborDiscriminatorCallback<Tag>{}, indices, offset,
         ArborX::Experimental::TraversalPolicy().setBufferSize( buffer_size ) );
 
-    return CrsGraph<MemorySpace, Tag>{std::move( indices ), std::move( offset ),
-                                      first, bvh.size()};
+    return CrsGraph<MemorySpace, Tag>{ std::move( indices ),
+                                       std::move( offset ), first, bvh.size() };
 }
 
 template <typename MemorySpace, typename Tag>
@@ -286,15 +286,15 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
         bvh.query(
             space, predicates,
             Impl::NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization<
-                decltype( counts ), decltype( neighbors ), Tag>{counts,
-                                                                neighbors} );
+                decltype( counts ), decltype( neighbors ), Tag>{ counts,
+                                                                 neighbors } );
     }
     else
     {
         bvh.query(
             space, predicates,
             Impl::NeighborDiscriminatorCallback2D_FirstPass<decltype( counts ),
-                                                            Tag>{counts} );
+                                                            Tag>{ counts } );
     }
 
     auto const max_neighbors = ArborX::max( space, counts );
@@ -304,7 +304,7 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
         // NOTE If buffer_size is 0, neighbors is default constructed.  This is
         // fine with the current design/implementation of NeighborList access
         // traits.
-        return Dense<MemorySpace, Tag>{counts, neighbors, first, bvh.size()};
+        return Dense<MemorySpace, Tag>{ counts, neighbors, first, bvh.size() };
     }
 
     neighbors = Kokkos::View<int **, DeviceType>(
@@ -313,10 +313,10 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
     Kokkos::deep_copy( counts, 0 ); // reset counts to zero
     bvh.query( space, predicates,
                Impl::NeighborDiscriminatorCallback2D_SecondPass<
-                   decltype( counts ), decltype( neighbors ), Tag>{counts,
-                                                                   neighbors} );
+                   decltype( counts ), decltype( neighbors ), Tag>{
+                   counts, neighbors } );
 
-    return Dense<MemorySpace, Tag>{counts, neighbors, first, bvh.size()};
+    return Dense<MemorySpace, Tag>{ counts, neighbors, first, bvh.size() };
 }
 
 } // namespace Experimental

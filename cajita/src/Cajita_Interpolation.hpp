@@ -168,7 +168,7 @@ gradient( const ViewType &view, const SplineDataType &sd,
                 typename SplineDataType::scalar_type rg[3] = {
                     sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k],
                     sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k],
-                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k]};
+                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k] };
 
                 for ( int d0 = 0; d0 < 3; ++d0 )
                 {
@@ -442,7 +442,7 @@ divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
                 typename SplineDataType::scalar_type rg[3] = {
                     sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k],
                     sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k],
-                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k]};
+                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k] };
 
                 for ( int d1 = 0; d1 < 3; ++d1 )
                 {
@@ -536,8 +536,8 @@ void g2p( const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
         "g2p", Kokkos::RangePolicy<execution_space>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
-            MeshScalar px[3] = {points( p, Dim::I ), points( p, Dim::J ),
-                                points( p, Dim::K )};
+            MeshScalar px[3] = { points( p, Dim::I ), points( p, Dim::J ),
+                                 points( p, Dim::K ) };
 
             // Create the local spline data.
             using sd_type = SplineData<MeshScalar, SplineOrder, EntityType>;
@@ -840,8 +840,8 @@ void p2g( const PointEvalFunctor &functor, const PointCoordinates &points,
         "p2g", Kokkos::RangePolicy<execution_space>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
-            MeshScalar px[3] = {points( p, Dim::I ), points( p, Dim::J ),
-                                points( p, Dim::K )};
+            MeshScalar px[3] = { points( p, Dim::I ), points( p, Dim::J ),
+                                 points( p, Dim::K ) };
 
             // Create the local spline data.
             using sd_type = SplineData<MeshScalar, SplineOrder, EntityType>;

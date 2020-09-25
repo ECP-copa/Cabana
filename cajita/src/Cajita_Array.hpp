@@ -301,8 +301,8 @@ createSubarray( const Array<Scalar, EntityType, MeshType, Params...> &array,
 
     auto space = array.layout()->indexSpace( Ghost(), Local() );
     IndexSpace<4> sub_space(
-        {space.min( 0 ), space.min( 1 ), space.min( 2 ), dof_min},
-        {space.max( 0 ), space.max( 1 ), space.max( 2 ), dof_max} );
+        { space.min( 0 ), space.min( 1 ), space.min( 2 ), dof_min },
+        { space.max( 0 ), space.max( 1 ), space.max( 2 ), dof_max } );
     auto sub_view = createSubview( array.view(), sub_space );
     auto sub_layout = createArrayLayout( array.layout()->localGrid(),
                                          dof_max - dof_min, EntityType() );

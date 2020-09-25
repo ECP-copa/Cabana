@@ -33,12 +33,12 @@ void gridTest( const std::array<bool, 3> &is_dim_periodic )
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {101, 85, 99};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -242,9 +242,9 @@ void gridTest( const std::array<bool, 3> &is_dim_periodic )
 //---------------------------------------------------------------------------//
 TEST( global_grid, grid_test )
 {
-    std::array<bool, 3> periodic = {true, true, true};
+    std::array<bool, 3> periodic = { true, true, true };
     gridTest( periodic );
-    std::array<bool, 3> not_periodic = {false, false, false};
+    std::array<bool, 3> not_periodic = { false, false, false };
     gridTest( not_periodic );
 }
 

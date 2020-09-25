@@ -78,12 +78,13 @@ class HypreStructuredSolver
             // directly use Kokkos::deep_copy to move data between Cajita arrays
             // and HYPRE data structures.
             auto global_space = layout.indexSpace( Own(), Global() );
-            _lower = {static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
-                      static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
-                      static_cast<HYPRE_Int>( global_space.min( Dim::I ) )};
-            _upper = {static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
-                      static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
-                      static_cast<HYPRE_Int>( global_space.max( Dim::I ) - 1 )};
+            _lower = { static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
+                       static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
+                       static_cast<HYPRE_Int>( global_space.min( Dim::I ) ) };
+            _upper = {
+                static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
+                static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
+                static_cast<HYPRE_Int>( global_space.max( Dim::I ) - 1 ) };
             error = HYPRE_StructGridSetExtents( _grid, _lower.data(),
                                                 _upper.data() );
             checkHypreError( error );
@@ -106,9 +107,9 @@ class HypreStructuredSolver
 
             // Allocate LHS and RHS vectors and initialize to zero. Note that we
             // are fixing the views under these vectors to layout-right.
-            IndexSpace<3> reorder_space( {global_space.extent( Dim::I ),
-                                          global_space.extent( Dim::J ),
-                                          global_space.extent( Dim::K )} );
+            IndexSpace<3> reorder_space( { global_space.extent( Dim::I ),
+                                           global_space.extent( Dim::J ),
+                                           global_space.extent( Dim::K ) } );
             auto vector_values =
                 createView<HYPRE_Complex, Kokkos::LayoutRight,
                            Kokkos::HostSpace>( "vector_values", reorder_space );
@@ -175,8 +176,8 @@ class HypreStructuredSolver
         checkHypreError( error );
         for ( unsigned n = 0; n < stencil.size(); ++n )
         {
-            HYPRE_Int offset[3] = {stencil[n][Dim::I], stencil[n][Dim::J],
-                                   stencil[n][Dim::K]};
+            HYPRE_Int offset[3] = { stencil[n][Dim::I], stencil[n][Dim::J],
+                                    stencil[n][Dim::K] };
             error = HYPRE_StructStencilSetElement( _stencil, n, offset );
             checkHypreError( error );
         }
@@ -233,8 +234,8 @@ class HypreStructuredSolver
         // layout-right.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
         IndexSpace<4> reorder_space(
-            {owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
-             owned_space.extent( Dim::K ), _stencil_size} );
+            { owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
+              owned_space.extent( Dim::K ), _stencil_size } );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "a_values", reorder_space );
@@ -340,9 +341,9 @@ class HypreStructuredSolver
 
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
-        IndexSpace<4> reorder_space( {owned_space.extent( Dim::I ),
-                                      owned_space.extent( Dim::J ),
-                                      owned_space.extent( Dim::K ), 1} );
+        IndexSpace<4> reorder_space( { owned_space.extent( Dim::I ),
+                                       owned_space.extent( Dim::J ),
+                                       owned_space.extent( Dim::K ), 1 } );
         auto vector_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
