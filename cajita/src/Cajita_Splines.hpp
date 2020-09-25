@@ -733,7 +733,7 @@ evaluateSpline( const LocalMesh<Device, UniformMesh<Scalar>> &local_mesh,
 
     // Get the low corner of the mesh.
     Scalar low_x[3];
-    int low_id[3] = {0, 0, 0};
+    int low_id[3] = { 0, 0, 0 };
     local_mesh.coordinates( EntityType(), low_id, low_x );
 
     // Compute the physical cell size.

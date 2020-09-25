@@ -38,13 +38,13 @@ void writeTest()
     // Create the global mesh.
     UniformDimPartitioner partitioner;
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {22, 19, 21};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 22, 19, 21 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 

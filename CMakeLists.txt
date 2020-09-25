@@ -69,7 +69,7 @@ Cabana_add_dependency( PACKAGE MPI )
 Cabana_add_dependency( PACKAGE ArborX )
 
 # find Clang Format
-Cabana_add_dependency( PACKAGE CLANG_FORMAT )
+find_package( CLANG_FORMAT )
 
 # find hypre
 Cabana_add_dependency( PACKAGE HYPRE )

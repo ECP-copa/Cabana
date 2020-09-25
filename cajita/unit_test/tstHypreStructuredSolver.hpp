@@ -35,9 +35,9 @@ void poissonTest( const std::string &solver_type,
 {
     // Create the global grid.
     double cell_size = 0.1;
-    std::array<bool, 3> is_dim_periodic = {false, false, false};
-    std::array<double, 3> global_low_corner = {-1.0, -2.0, -1.0};
-    std::array<double, 3> global_high_corner = {1.0, 1.0, 0.5};
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
+    std::array<double, 3> global_low_corner = { -1.0, -2.0, -1.0 };
+    std::array<double, 3> global_high_corner = { 1.0, 1.0, 0.5 };
     auto global_mesh = createUniformGlobalMesh( global_low_corner,
                                                 global_high_corner, cell_size );
 
@@ -65,8 +65,8 @@ void poissonTest( const std::string &solver_type,
 
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
-        {0, 0, 0}, {-1, 0, 0}, {1, 0, 0}, {0, -1, 0},
-        {0, 1, 0}, {0, 0, -1}, {0, 0, 1}};
+        { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
+        { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
     solver->setMatrixStencil( stencil );
 
     // Create the matrix entries. The stencil is defined over cells.
@@ -141,7 +141,7 @@ void poissonTest( const std::string &solver_type,
             matrix_view( i, j, k, 6 ) = ( gk + 1 < ncell_k ) ? 1.0 : 0.0;
         } );
 
-    std::vector<std::array<int, 3>> diag_stencil = {{0, 0, 0}};
+    std::vector<std::array<int, 3>> diag_stencil = { { 0, 0, 0 } };
     ref_solver->setPreconditionerStencil( diag_stencil );
     const auto &preconditioner_entries = ref_solver->getPreconditionerValues();
     auto preconditioner_view = preconditioner_entries.view();

@@ -30,12 +30,12 @@ GlobalGrid<MeshType>::GlobalGrid(
     std::array<int, 3> global_num_cell = {
         _global_mesh->globalNumCell( Dim::I ),
         _global_mesh->globalNumCell( Dim::J ),
-        _global_mesh->globalNumCell( Dim::K )};
+        _global_mesh->globalNumCell( Dim::K ) };
     _ranks_per_dim = partitioner.ranksPerDimension( comm, global_num_cell );
 
     // Extract the periodicity of the boundary as integers.
-    std::array<int, 3> periodic_dims = {_periodic[Dim::I], _periodic[Dim::J],
-                                        _periodic[Dim::K]};
+    std::array<int, 3> periodic_dims = { _periodic[Dim::I], _periodic[Dim::J],
+                                         _periodic[Dim::K] };
 
     // Generate a communicator with a Cartesian topology.
     int reorder_cart_ranks = 1;
@@ -58,7 +58,7 @@ GlobalGrid<MeshType>::GlobalGrid(
 
     // Compute the global cell offset and the local low corner on this rank by
     // computing the starting global cell index via exclusive scan.
-    _global_cell_offset = {0, 0, 0};
+    _global_cell_offset = { 0, 0, 0 };
     for ( int d = 0; d < 3; ++d )
     {
         for ( int r = 0; r < _cart_rank[d]; ++r )
@@ -155,7 +155,7 @@ int GlobalGrid<MeshType>::blockRank( const int i, const int j,
                                      const int k ) const
 {
     // Get the indices.
-    std::array<int, 3> cr = {i, j, k};
+    std::array<int, 3> cr = { i, j, k };
 
     // Check for invalid indices. An index is invalid if it is out of bounds
     // and the dimension is not periodic. An out of bound index in a periodic

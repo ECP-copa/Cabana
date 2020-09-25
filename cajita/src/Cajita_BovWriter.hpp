@@ -94,15 +94,15 @@ MPI_Datatype createSubarray( const Array_t &array,
     int local_start[4] = {
         static_cast<int>( global_grid.globalOffset( Dim::K ) ),
         static_cast<int>( global_grid.globalOffset( Dim::J ) ),
-        static_cast<int>( global_grid.globalOffset( Dim::I ) ), 0};
-    int local_size[4] = {static_cast<int>( owned_extents[Dim::K] ),
-                         static_cast<int>( owned_extents[Dim::J] ),
-                         static_cast<int>( owned_extents[Dim::I] ),
-                         static_cast<int>( owned_extents[3] )};
-    int global_size[4] = {static_cast<int>( global_extents[Dim::K] ),
-                          static_cast<int>( global_extents[Dim::J] ),
-                          static_cast<int>( global_extents[Dim::I] ),
-                          static_cast<int>( global_extents[3] )};
+        static_cast<int>( global_grid.globalOffset( Dim::I ) ), 0 };
+    int local_size[4] = { static_cast<int>( owned_extents[Dim::K] ),
+                          static_cast<int>( owned_extents[Dim::J] ),
+                          static_cast<int>( owned_extents[Dim::I] ),
+                          static_cast<int>( owned_extents[3] ) };
+    int global_size[4] = { static_cast<int>( global_extents[Dim::K] ),
+                           static_cast<int>( global_extents[Dim::J] ),
+                           static_cast<int>( global_extents[Dim::I] ),
+                           static_cast<int>( global_extents[3] ) };
 
     MPI_Datatype subarray;
     MPI_Type_create_subarray( 4, global_size, local_size, local_start,
@@ -144,7 +144,7 @@ void writeTimeStep( const int time_step_index, const double time,
 
     // If this is a node field, determine periodicity so we can add the last
     // node back to the visualization if needed.
-    std::array<long, 4> global_extents = {-1, -1, -1, -1};
+    std::array<long, 4> global_extents = { -1, -1, -1, -1 };
     for ( int d = 0; d < 3; ++d )
     {
         if ( std::is_same<entity_type, Cell>::value )
@@ -154,7 +154,7 @@ void writeTimeStep( const int time_step_index, const double time,
     }
     global_extents[3] = array.layout()->dofsPerEntity();
     auto owned_index_space = array.layout()->indexSpace( Own(), Local() );
-    std::array<long, 4> owned_extents = {-1, -1, -1, -1};
+    std::array<long, 4> owned_extents = { -1, -1, -1, -1 };
     for ( int d = 0; d < 3; ++d )
     {
         if ( std::is_same<entity_type, Cell>::value )
@@ -176,15 +176,15 @@ void writeTimeStep( const int time_step_index, const double time,
     // Create a contiguous array of the owned array values. Note that we
     // reorder to KJI grid ordering to conform to the BOV format.
     IndexSpace<4> local_space(
-        {owned_index_space.min( Dim::I ), owned_index_space.min( Dim::J ),
-         owned_index_space.min( Dim::K ), 0},
-        {owned_index_space.min( Dim::I ) + owned_extents[Dim::I],
-         owned_index_space.min( Dim::J ) + owned_extents[Dim::J],
-         owned_index_space.min( Dim::K ) + owned_extents[Dim::K],
-         owned_extents[3]} );
+        { owned_index_space.min( Dim::I ), owned_index_space.min( Dim::J ),
+          owned_index_space.min( Dim::K ), 0 },
+        { owned_index_space.min( Dim::I ) + owned_extents[Dim::I],
+          owned_index_space.min( Dim::J ) + owned_extents[Dim::J],
+          owned_index_space.min( Dim::K ) + owned_extents[Dim::K],
+          owned_extents[3] } );
     auto owned_subview = createSubview( array.view(), local_space );
-    IndexSpace<4> reorder_space( {owned_extents[Dim::K], owned_extents[Dim::J],
-                                  owned_extents[Dim::I], owned_extents[3]} );
+    IndexSpace<4> reorder_space( { owned_extents[Dim::K], owned_extents[Dim::J],
+                                   owned_extents[Dim::I], owned_extents[3] } );
     auto owned_view = createView<value_type, Kokkos::LayoutRight, device_type>(
         array.label(), reorder_space );
     Kokkos::parallel_for(

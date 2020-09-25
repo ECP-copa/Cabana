@@ -1,6 +1,6 @@
 language: cpp
 
-dist: bionic
+dist: focal
 
 stages:
   - canary
@@ -67,7 +67,8 @@ addons:
       - libopenmpi-dev
       - libgsl0-dev
       - libfftw3-dev
-      - python-pip
+      - python3-pip
+      - clang-format
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
@@ -80,7 +81,8 @@ script:
           -DCabana_REQUIRE_MPI=ON -DCabana_REQUIRE_ARBORX=${ARBORX}
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DDOXYGEN_WARN_AS_ERROR=ON -DDOXYGEN_GENERATE_XML=ON -DDOXYGEN_WARN_IF_UNDOCUMENTED=OFF
-          -DMPIEXEC_MAX_NUMPROCS=2
+          -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe"
+          -DCLANG_FORMAT_EXECUTABLE=/usr/bin/clang-format
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
           -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&

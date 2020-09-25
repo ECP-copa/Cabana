@@ -24,7 +24,7 @@ void sizeConstructorTest()
 {
     // Rank-1
     int s0 = 3;
-    IndexSpace<1> is1( {s0} );
+    IndexSpace<1> is1( { s0 } );
     EXPECT_EQ( is1.min( 0 ), 0 );
     EXPECT_EQ( is1.max( 0 ), s0 );
 
@@ -42,7 +42,7 @@ void sizeConstructorTest()
 
     // Rank-2
     int s1 = 5;
-    IndexSpace<2> is2( {s0, s1} );
+    IndexSpace<2> is2( { s0, s1 } );
     EXPECT_EQ( is2.min( 0 ), 0 );
     EXPECT_EQ( is2.max( 0 ), s0 );
     EXPECT_EQ( is2.min( 1 ), 0 );
@@ -68,7 +68,7 @@ void sizeConstructorTest()
 
     // Rank-3
     int s2 = 9;
-    IndexSpace<3> is3( {s0, s1, s2} );
+    IndexSpace<3> is3( { s0, s1, s2 } );
     EXPECT_EQ( is3.min( 0 ), 0 );
     EXPECT_EQ( is3.max( 0 ), s0 );
     EXPECT_EQ( is3.min( 1 ), 0 );
@@ -102,7 +102,7 @@ void sizeConstructorTest()
 
     // Rank-4
     int s3 = 4;
-    IndexSpace<4> is4( {s0, s1, s2, s3} );
+    IndexSpace<4> is4( { s0, s1, s2, s3 } );
     EXPECT_EQ( is4.min( 0 ), 0 );
     EXPECT_EQ( is4.max( 0 ), s0 );
     EXPECT_EQ( is4.min( 1 ), 0 );
@@ -148,7 +148,7 @@ void rangeConstructorTest()
 {
     // Rank-1
     int s0 = 3;
-    IndexSpace<1> is1( {0}, {s0} );
+    IndexSpace<1> is1( { 0 }, { s0 } );
     EXPECT_EQ( is1.min( 0 ), 0 );
     EXPECT_EQ( is1.max( 0 ), s0 );
 
@@ -166,7 +166,7 @@ void rangeConstructorTest()
 
     // Rank-2
     int s1 = 5;
-    IndexSpace<2> is2( {0, 0}, {s0, s1} );
+    IndexSpace<2> is2( { 0, 0 }, { s0, s1 } );
     EXPECT_EQ( is2.min( 0 ), 0 );
     EXPECT_EQ( is2.max( 0 ), s0 );
     EXPECT_EQ( is2.min( 1 ), 0 );
@@ -192,7 +192,7 @@ void rangeConstructorTest()
 
     // Rank-3
     int s2 = 9;
-    IndexSpace<3> is3( {0, 0, 0}, {s0, s1, s2} );
+    IndexSpace<3> is3( { 0, 0, 0 }, { s0, s1, s2 } );
     EXPECT_EQ( is3.min( 0 ), 0 );
     EXPECT_EQ( is3.max( 0 ), s0 );
     EXPECT_EQ( is3.min( 1 ), 0 );
@@ -226,7 +226,7 @@ void rangeConstructorTest()
 
     // Rank-4
     int s3 = 4;
-    IndexSpace<4> is4( {0, 0, 0, 0}, {s0, s1, s2, s3} );
+    IndexSpace<4> is4( { 0, 0, 0, 0 }, { s0, s1, s2, s3 } );
     EXPECT_EQ( is4.min( 0 ), 0 );
     EXPECT_EQ( is4.max( 0 ), s0 );
     EXPECT_EQ( is4.min( 1 ), 0 );
@@ -274,11 +274,11 @@ void executionTest()
     int min_i = 4;
     int max_i = 8;
     int size_i = 12;
-    IndexSpace<1> is1( {min_i}, {max_i} );
+    IndexSpace<1> is1( { min_i }, { max_i } );
     Kokkos::View<double *, TEST_DEVICE> v1( "v1", size_i );
-    Kokkos::parallel_for( "fill_rank_1",
-                          createExecutionPolicy( is1, TEST_EXECSPACE() ),
-                          KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
+    Kokkos::parallel_for(
+        "fill_rank_1", createExecutionPolicy( is1, TEST_EXECSPACE() ),
+        KOKKOS_LAMBDA( const int i ) { v1( i ) = 1.0; } );
     auto v1_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), v1 );
     for ( int i = 0; i < size_i; ++i )
@@ -293,7 +293,7 @@ void executionTest()
     int min_j = 3;
     int max_j = 9;
     int size_j = 18;
-    IndexSpace<2> is2( {min_i, min_j}, {max_i, max_j} );
+    IndexSpace<2> is2( { min_i, min_j }, { max_i, max_j } );
     Kokkos::View<double **, TEST_DEVICE> v2( "v2", size_i, size_j );
     Kokkos::parallel_for(
         "fill_rank_2", createExecutionPolicy( is2, TEST_EXECSPACE() ),
@@ -314,7 +314,7 @@ void executionTest()
     int min_k = 2;
     int max_k = 11;
     int size_k = 13;
-    IndexSpace<3> is3( {min_i, min_j, min_k}, {max_i, max_j, max_k} );
+    IndexSpace<3> is3( { min_i, min_j, min_k }, { max_i, max_j, max_k } );
     Kokkos::View<double ***, TEST_DEVICE> v3( "v3", size_i, size_j, size_k );
     Kokkos::parallel_for(
         "fill_rank_3", createExecutionPolicy( is3, TEST_EXECSPACE() ),
@@ -339,8 +339,8 @@ void executionTest()
     int min_l = 7;
     int max_l = 9;
     int size_l = 14;
-    IndexSpace<4> is4( {min_i, min_j, min_k, min_l},
-                       {max_i, max_j, max_k, max_l} );
+    IndexSpace<4> is4( { min_i, min_j, min_k, min_l },
+                       { max_i, max_j, max_k, max_l } );
     Kokkos::View<double ****, TEST_DEVICE> v4( "v4", size_i, size_j, size_k,
                                                size_l );
     Kokkos::parallel_for(
@@ -372,7 +372,7 @@ void subviewTest()
     int min_i = 4;
     int max_i = 8;
     int size_i = 12;
-    IndexSpace<1> is1( {min_i}, {max_i} );
+    IndexSpace<1> is1( { min_i }, { max_i } );
     Kokkos::View<double *, TEST_DEVICE> v1( "v1", size_i );
     auto sv1 = createSubview( v1, is1 );
     Kokkos::deep_copy( sv1, 1.0 );
@@ -390,7 +390,7 @@ void subviewTest()
     int min_j = 3;
     int max_j = 9;
     int size_j = 18;
-    IndexSpace<2> is2( {min_i, min_j}, {max_i, max_j} );
+    IndexSpace<2> is2( { min_i, min_j }, { max_i, max_j } );
     Kokkos::View<double **, TEST_DEVICE> v2( "v2", size_i, size_j );
     auto sv2 = createSubview( v2, is2 );
     Kokkos::deep_copy( sv2, 1.0 );
@@ -410,7 +410,7 @@ void subviewTest()
     int min_k = 2;
     int max_k = 11;
     int size_k = 13;
-    IndexSpace<3> is3( {min_i, min_j, min_k}, {max_i, max_j, max_k} );
+    IndexSpace<3> is3( { min_i, min_j, min_k }, { max_i, max_j, max_k } );
     Kokkos::View<double ***, TEST_DEVICE> v3( "v3", size_i, size_j, size_k );
     auto sv3 = createSubview( v3, is3 );
     Kokkos::deep_copy( sv3, 1.0 );
@@ -432,8 +432,8 @@ void subviewTest()
     int min_l = 7;
     int max_l = 9;
     int size_l = 14;
-    IndexSpace<4> is4( {min_i, min_j, min_k, min_l},
-                       {max_i, max_j, max_k, max_l} );
+    IndexSpace<4> is4( { min_i, min_j, min_k, min_l },
+                       { max_i, max_j, max_k, max_l } );
     Kokkos::View<double ****, TEST_DEVICE> v4( "v4", size_i, size_j, size_k,
                                                size_l );
     auto sv4 = createSubview( v4, is4 );
@@ -463,7 +463,7 @@ void subviewTest()
 void sizeAppendTest()
 {
     int s0 = 3;
-    IndexSpace<1> is1( {s0} );
+    IndexSpace<1> is1( { s0 } );
     int s1 = 5;
     auto is2 = appendDimension( is1, s1 );
 
@@ -495,7 +495,7 @@ void sizeAppendTest()
 void rangeAppendTest()
 {
     int s0 = 3;
-    IndexSpace<1> is1( {s0} );
+    IndexSpace<1> is1( { s0 } );
     int s1 = 5;
     auto is2 = appendDimension( is1, 0, s1 );
 
@@ -526,9 +526,9 @@ void rangeAppendTest()
 //---------------------------------------------------------------------------//
 void comparisonTest()
 {
-    IndexSpace<3> is1( {9, 2, 1}, {12, 16, 4} );
-    IndexSpace<3> is2( {9, 2, 1}, {12, 16, 4} );
-    IndexSpace<3> is3( {9, 2, 1}, {12, 16, 5} );
+    IndexSpace<3> is1( { 9, 2, 1 }, { 12, 16, 4 } );
+    IndexSpace<3> is2( { 9, 2, 1 }, { 12, 16, 4 } );
+    IndexSpace<3> is3( { 9, 2, 1 }, { 12, 16, 5 } );
     EXPECT_TRUE( is1 == is2 );
     EXPECT_FALSE( is1 != is2 );
     EXPECT_FALSE( is1 == is3 );
@@ -546,7 +546,7 @@ void defaultConstructorTest()
     EXPECT_EQ( is1.max( 1 ), -1 );
     EXPECT_EQ( is1.max( 2 ), -1 );
 
-    IndexSpace<3> is2( {9, 2, 1}, {12, 16, 4} );
+    IndexSpace<3> is2( { 9, 2, 1 }, { 12, 16, 4 } );
     is1 = is2;
     EXPECT_TRUE( is1 == is2 );
 }

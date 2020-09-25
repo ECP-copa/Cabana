@@ -127,7 +127,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
             createExecutionPolicy( cell_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 double loc[3];
-                int idx[3] = {i, j, k};
+                int idx[3] = { i, j, k };
                 local_mesh.coordinates( Cell(), idx, loc );
                 loc_x( i, j, k ) = loc[Dim::I];
                 loc_y( i, j, k ) = loc[Dim::J];
@@ -172,7 +172,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
             createExecutionPolicy( node_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 double loc[3];
-                int idx[3] = {i, j, k};
+                int idx[3] = { i, j, k };
                 local_mesh.coordinates( Node(), idx, loc );
                 loc_x( i, j, k ) = loc[Dim::I];
                 loc_y( i, j, k ) = loc[Dim::J];
@@ -215,7 +215,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
             createExecutionPolicy( face_i_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 double loc[3];
-                int idx[3] = {i, j, k};
+                int idx[3] = { i, j, k };
                 local_mesh.coordinates( Face<Dim::I>(), idx, loc );
                 loc_x( i, j, k ) = loc[Dim::I];
                 loc_y( i, j, k ) = loc[Dim::J];
@@ -261,7 +261,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
             createExecutionPolicy( face_j_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 double loc[3];
-                int idx[3] = {i, j, k};
+                int idx[3] = { i, j, k };
                 local_mesh.coordinates( Face<Dim::J>(), idx, loc );
                 loc_x( i, j, k ) = loc[Dim::I];
                 loc_y( i, j, k ) = loc[Dim::J];
@@ -307,7 +307,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
             createExecutionPolicy( face_k_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 double loc[3];
-                int idx[3] = {i, j, k};
+                int idx[3] = { i, j, k };
                 local_mesh.coordinates( Face<Dim::K>(), idx, loc );
                 loc_x( i, j, k ) = loc[Dim::I];
                 loc_y( i, j, k ) = loc[Dim::J];
@@ -353,7 +353,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
             createExecutionPolicy( edge_i_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 double loc[3];
-                int idx[3] = {i, j, k};
+                int idx[3] = { i, j, k };
                 local_mesh.coordinates( Edge<Dim::I>(), idx, loc );
                 loc_x( i, j, k ) = loc[Dim::I];
                 loc_y( i, j, k ) = loc[Dim::J];
@@ -397,7 +397,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
             createExecutionPolicy( edge_j_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 double loc[3];
-                int idx[3] = {i, j, k};
+                int idx[3] = { i, j, k };
                 local_mesh.coordinates( Edge<Dim::J>(), idx, loc );
                 loc_x( i, j, k ) = loc[Dim::I];
                 loc_y( i, j, k ) = loc[Dim::J];
@@ -441,7 +441,7 @@ void uniformLocalMeshTest( const LocalMeshType &local_mesh,
             createExecutionPolicy( edge_k_space, TEST_EXECSPACE() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 double loc[3];
-                int idx[3] = {i, j, k};
+                int idx[3] = { i, j, k };
                 local_mesh.coordinates( Edge<Dim::K>(), idx, loc );
                 loc_x( i, j, k ) = loc[Dim::I];
                 loc_y( i, j, k ) = loc[Dim::J];
@@ -477,8 +477,8 @@ void uniformTest( const std::array<int, 3> &ranks_per_dim,
                   const std::array<bool, 3> &is_dim_periodic )
 {
     // Create the global mesh.
-    std::array<double, 3> low_corner = {-1.2, 0.1, 1.1};
-    std::array<double, 3> high_corner = {-0.3, 9.5, 2.3};
+    std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
+    std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
     double cell_size = 0.05;
     auto global_mesh =
         createUniformGlobalMesh( low_corner, high_corner, cell_size );
@@ -505,9 +505,9 @@ void nonUniformTest( const std::array<int, 3> &ranks_per_dim,
                      const std::array<bool, 3> &is_dim_periodic )
 {
     // Create the global mesh.
-    std::array<double, 3> low_corner = {-1.2, 0.1, 1.1};
+    std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
     double cell_size = 0.05;
-    std::array<int, 3> num_cell = {18, 188, 24};
+    std::array<int, 3> num_cell = { 18, 188, 24 };
     std::array<std::vector<double>, 3> edges;
     for ( int d = 0; d < 3; ++d )
         for ( int n = 0; n < num_cell[d] + 1; ++n )
@@ -538,10 +538,10 @@ void irregularTest( const std::array<int, 3> &ranks_per_dim )
     // Create the global mesh using functions to build the edges. Use a cyclic
     // pattern for the cell sizes so we can easily compute cell sizes from
     // periodic wrap-around.
-    std::array<double, 3> low_corner = {3.1, 4.1, -2.8};
+    std::array<double, 3> low_corner = { 3.1, 4.1, -2.8 };
     int ncell = 20;
     double ref_cell_size = 8.0 * std::atan( 1.0 ) / ncell;
-    std::array<int, 3> num_cell = {ncell, ncell, ncell};
+    std::array<int, 3> num_cell = { ncell, ncell, ncell };
 
     auto i_func = [=]( const int i ) {
         return 0.5 * std::cos( i * ref_cell_size ) + low_corner[Dim::I];
@@ -565,7 +565,7 @@ void irregularTest( const std::array<int, 3> &ranks_per_dim )
                                                    edges[Dim::K] );
 
     // Create the global grid.
-    std::array<bool, 3> periodic = {true, true, true};
+    std::array<bool, 3> periodic = { true, true, true };
     ManualPartitioner partitioner( ranks_per_dim );
     auto global_grid =
         createGlobalGrid( MPI_COMM_WORLD, global_mesh, periodic, partitioner );
@@ -656,7 +656,7 @@ void irregularTest( const std::array<int, 3> &ranks_per_dim )
         "get_cell_data",
         createExecutionPolicy( own_cell_local_space, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            int idx[3] = {i, j, k};
+            int idx[3] = { i, j, k };
             double loc[3];
             local_mesh.coordinates( Cell(), idx, loc );
             cell_location_x( i, j, k ) = loc[Dim::I];
@@ -728,12 +728,12 @@ void irregularTest( const std::array<int, 3> &ranks_per_dim )
 //---------------------------------------------------------------------------//
 TEST( mesh, periodic_uniform_test )
 {
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
 
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = {0, 0, 0};
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
     // Test with different block configurations to make sure all the
@@ -752,12 +752,12 @@ TEST( mesh, periodic_uniform_test )
 //---------------------------------------------------------------------------//
 TEST( mesh, periodic_non_uniform_test )
 {
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
 
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = {0, 0, 0};
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
     // Test with different block configurations to make sure all the
@@ -776,12 +776,12 @@ TEST( mesh, periodic_non_uniform_test )
 //---------------------------------------------------------------------------//
 TEST( mesh, non_periodic_uniform_test )
 {
-    std::array<bool, 3> is_dim_periodic = {false, false, false};
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
 
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = {0, 0, 0};
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
     // Test with different block configurations to make sure all the
@@ -800,12 +800,12 @@ TEST( mesh, non_periodic_uniform_test )
 //---------------------------------------------------------------------------//
 TEST( mesh, non_periodic_non_uniform_test )
 {
-    std::array<bool, 3> is_dim_periodic = {false, false, false};
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
 
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = {0, 0, 0};
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
     // Test with different block configurations to make sure all the
@@ -827,7 +827,7 @@ TEST( mesh, irregular_non_uniform_test )
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = {0, 0, 0};
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
     // Test with different block configurations to make sure all the

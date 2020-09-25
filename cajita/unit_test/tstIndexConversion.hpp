@@ -39,12 +39,12 @@ void testConversion( const std::array<bool, 3> &is_dim_periodic )
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {101, 85, 99};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -124,68 +124,68 @@ void testConversion( const std::array<bool, 3> &is_dim_periodic )
 //---------------------------------------------------------------------------//
 TEST( index_conversion, node_periodic_test )
 {
-    testConversion<Node>( {{true, true, true}} );
+    testConversion<Node>( { { true, true, true } } );
 }
 TEST( index_conversion, cell_periodic_test )
 {
-    testConversion<Cell>( {{true, true, true}} );
+    testConversion<Cell>( { { true, true, true } } );
 }
 TEST( index_conversion, face_i_periodic_test )
 {
-    testConversion<Face<Dim::I>>( {{true, true, true}} );
+    testConversion<Face<Dim::I>>( { { true, true, true } } );
 }
 TEST( index_conversion, face_j_periodic_test )
 {
-    testConversion<Face<Dim::J>>( {{true, true, true}} );
+    testConversion<Face<Dim::J>>( { { true, true, true } } );
 }
 TEST( index_conversion, face_k_periodic_test )
 {
-    testConversion<Face<Dim::K>>( {{true, true, true}} );
+    testConversion<Face<Dim::K>>( { { true, true, true } } );
 }
 TEST( index_conversion, edge_i_periodic_test )
 {
-    testConversion<Edge<Dim::I>>( {{true, true, true}} );
+    testConversion<Edge<Dim::I>>( { { true, true, true } } );
 }
 TEST( index_conversion, edge_j_periodic_test )
 {
-    testConversion<Edge<Dim::J>>( {{true, true, true}} );
+    testConversion<Edge<Dim::J>>( { { true, true, true } } );
 }
 TEST( index_conversion, edge_k_periodic_test )
 {
-    testConversion<Edge<Dim::K>>( {{true, true, true}} );
+    testConversion<Edge<Dim::K>>( { { true, true, true } } );
 }
 
 TEST( index_conversion, node_not_periodic_test )
 {
-    testConversion<Node>( {{false, false, false}} );
+    testConversion<Node>( { { false, false, false } } );
 }
 TEST( index_conversion, cell_not_periodic_test )
 {
-    testConversion<Cell>( {{false, false, false}} );
+    testConversion<Cell>( { { false, false, false } } );
 }
 TEST( index_conversion, face_i_not_periodic_test )
 {
-    testConversion<Face<Dim::I>>( {{false, false, false}} );
+    testConversion<Face<Dim::I>>( { { false, false, false } } );
 }
 TEST( index_conversion, face_j_not_periodic_test )
 {
-    testConversion<Face<Dim::J>>( {{false, false, false}} );
+    testConversion<Face<Dim::J>>( { { false, false, false } } );
 }
 TEST( index_conversion, face_k_not_periodic_test )
 {
-    testConversion<Face<Dim::K>>( {{false, false, false}} );
+    testConversion<Face<Dim::K>>( { { false, false, false } } );
 }
 TEST( index_conversion, edge_i_not_periodic_test )
 {
-    testConversion<Edge<Dim::I>>( {{false, false, false}} );
+    testConversion<Edge<Dim::I>>( { { false, false, false } } );
 }
 TEST( index_conversion, edge_j_not_periodic_test )
 {
-    testConversion<Edge<Dim::J>>( {{false, false, false}} );
+    testConversion<Edge<Dim::J>>( { { false, false, false } } );
 }
 TEST( index_conversion, edge_k_not_periodic_test )
 {
-    testConversion<Edge<Dim::K>>( {{false, false, false}} );
+    testConversion<Edge<Dim::K>>( { { false, false, false } } );
 }
 
 //---------------------------------------------------------------------------//

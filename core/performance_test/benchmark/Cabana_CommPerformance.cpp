@@ -71,8 +71,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
             for ( int i = -1; i < 2; ++i )
                 if ( !( i == 0 && j == 0 && k == 0 ) )
                 {
-                    std::vector<int> ncr = {cart_rank[0] + i, cart_rank[1] + j,
-                                            cart_rank[2] + k};
+                    std::vector<int> ncr = { cart_rank[0] + i, cart_rank[1] + j,
+                                             cart_rank[2] + k };
                     int nr;
                     MPI_Cart_rank( cart_comm, ncr.data(), &nr );
                     neighbor_ranks.push_back( nr );
@@ -103,8 +103,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
     // Fraction of particles on each rank that will be communicated to the
     // neighbors. We will sweep through these fractions to get an indicator of
     // performance as a function of message size.
-    std::vector<double> comm_fraction = {0.0001, 0.001, 0.005, 0.01,
-                                         0.05,   0.10,  0.25,  0.5};
+    std::vector<double> comm_fraction = { 0.0001, 0.001, 0.005, 0.01,
+                                          0.05,   0.10,  0.25,  0.5 };
     int num_fraction = comm_fraction.size();
 
     // Number of bytes we will send to each neighbor.
