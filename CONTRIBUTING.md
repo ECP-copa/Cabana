@@ -17,3 +17,5 @@ Other coding style includes:
   * Note: there are some exceptions to match Kokkos (e.g. `Cabana::deep_copy`
     and `Cabana::neighbor_parallel_for`)
 * Lower case, underscore separated variables (`new_variable_name`)
+* Class members which are `private` are preceeded by an underscore (`_private_class_variable`)
+* Class/struct member type aliases use lower case, underscore separated names (`using integer_type = int;`)
