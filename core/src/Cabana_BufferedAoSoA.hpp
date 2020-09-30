@@ -27,6 +27,8 @@ namespace Experimental
 // TODO: Use the same tuple pattern as in Cabana::SoA using
 // std::make_index_sequence
 
+namespace Impl
+{
 /**
  * @brief Contains the value for one item in the SliceAtIndex tuple.
  *
@@ -136,6 +138,8 @@ KOKKOS_INLINE_FUNCTION
     return tuple.SliceAtIndexLeaf<AoSoA_t, i, HeadItem>::value;
 }
 
+} // namespace Impl
+
 /**
  * @brief Target_Memory_Space The memory space to buffer into
  * AoSoA_t The type of the AoSoA we're buffering from
@@ -163,8 +167,8 @@ class BufferedAoSoA
     // Cabana::AoSoA<DataTypes, TEST_MEMSPACE, vector_length>;
 
     using slice_tuple_t =
-        UnpackSliceAtIndex<target_AoSoA_t,
-                           typename target_AoSoA_t::member_types>;
+        Impl::UnpackSliceAtIndex<target_AoSoA_t,
+                                 typename target_AoSoA_t::member_types>;
 
     // Holds a collection of slices for a single buffer. Currently means we can
     // only hold slices to a single buffer at a time
@@ -183,7 +187,8 @@ class BufferedAoSoA
         typename target_AoSoA_t::template member_slice_type<i> &
         get_slice()
     {
-        return Cabana::Experimental::get<target_AoSoA_t, i>( slice_tuple );
+        return Cabana::Experimental::Impl::get<target_AoSoA_t, i>(
+            slice_tuple );
     }
 
     // Internal buffers which we use to buffer data back and forth, and also

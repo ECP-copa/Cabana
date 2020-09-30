@@ -22,7 +22,7 @@ namespace Cabana
 namespace Experimental
 {
 
-//// START KOKKOS OVERLAP/ASYNC CODE /////
+/*
 template <class ExecSpace>
 struct SpaceInstance
 {
@@ -61,7 +61,10 @@ struct SpaceInstance<Kokkos::Cuda>
 #endif
 #endif
 //// END KOKKOS OVERLAP/ASYNC CODE /////
+*/
 
+namespace Impl
+{
 template <class FunctorType, class extra_functor_arg_t, int VectorLength,
           class... ExecParameters>
 inline void custom_simd_parallel_for(
@@ -92,11 +95,14 @@ inline void custom_simd_parallel_for(
                 Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
                                            exec_policy.arrayEnd( s ) ),
                 [&]( const index_type a ) {
-                    Impl::functorTagDispatch<work_tag>( f, f_arg, s, a );
+                    Cabana::Impl::functorTagDispatch<work_tag>( f, f_arg, s,
+                                                                a );
                     // functor( f_arg, s, a);
                 } );
         } );
 }
+
+} // namespace Impl
 
 // Requirements:
 // 1) This must be user callable and seamlessly handle the data buffering
@@ -169,7 +175,7 @@ inline void buffered_parallel_for(
         // TODO: this uses a global object so will break if we go fully async
         buffered_aosoa.slice_buffer( i );
 
-        custom_simd_parallel_for( policy, functor, buffered_aosoa, str );
+        Impl::custom_simd_parallel_for( policy, functor, buffered_aosoa, str );
         // Cabana::simd_parallel_for( policy, functor, str );
         Kokkos::fence();
 
