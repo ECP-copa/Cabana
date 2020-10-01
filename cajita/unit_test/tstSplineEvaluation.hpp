@@ -147,8 +147,8 @@ void updatePointSet( const LocalMeshType& local_mesh, EntityType,
         KOKKOS_LAMBDA( const int p ) {
             // Create a spline evaluation data set. This is what we are
             // actually testing in this test.
-            scalar_type px[3] = {points( p, Dim::I ), points( p, Dim::J ),
-                                 points( p, Dim::K )};
+            scalar_type px[3] = { points( p, Dim::I ), points( p, Dim::J ),
+                                  points( p, Dim::K ) };
             sd_type sd;
             evaluateSpline( local_mesh, px, sd );
 
@@ -248,7 +248,7 @@ createPointSet(
 
     auto local_mesh = createLocalMesh<Kokkos::HostSpace>( local_grid );
 
-    int idx_low[3] = {0, 0, 0};
+    int idx_low[3] = { 0, 0, 0 };
     point_set.dx = local_mesh.measure( Edge<Dim::I>(), idx_low );
 
     point_set.rdx = 1.0 / point_set.dx;
@@ -266,15 +266,15 @@ template <class DataTags>
 void splineEvaluationTest()
 {
     // Create the global mesh.
-    std::array<double, 3> low_corner = {-1.2, 0.1, 1.1};
-    std::array<double, 3> high_corner = {-0.3, 9.5, 2.3};
+    std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
+    std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
     double cell_size = 0.05;
     auto global_mesh =
         createUniformGlobalMesh( low_corner, high_corner, cell_size );
 
     // Create the global grid.
     UniformDimPartitioner partitioner;
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
@@ -297,7 +297,7 @@ void splineEvaluationTest()
             int pid = pi + cell_space.extent( Dim::I ) *
                                ( pj + cell_space.extent( Dim::J ) * pk );
             double x[3];
-            int idx[3] = {i, j, k};
+            int idx[3] = { i, j, k };
             local_mesh.coordinates( Cell(), idx, x );
             points( pid, Dim::I ) = x[Dim::I];
             points( pid, Dim::J ) = x[Dim::J];
@@ -313,7 +313,7 @@ void splineEvaluationTest()
     EXPECT_EQ( point_set.dx, cell_size );
     EXPECT_EQ( point_set.rdx, 1.0 / cell_size );
     double xn_low[3];
-    int idx_low[3] = {0, 0, 0};
+    int idx_low[3] = { 0, 0, 0 };
     local_mesh.coordinates( Node(), idx_low, xn_low );
     for ( int d = 0; d < 3; ++d )
         EXPECT_EQ( point_set.low_corner[d], xn_low[d] );

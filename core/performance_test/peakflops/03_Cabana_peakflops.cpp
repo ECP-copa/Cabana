@@ -295,9 +295,9 @@ TEST( cabana, simple )
     auto m9 = Cabana::slice<PositionX>( x9_ );
 
     // Initialize particle data.
-    unsigned short rg[3] = {static_cast<unsigned short>( seed >> 16 ),
-                            static_cast<unsigned short>( seed >> 8 ),
-                            static_cast<unsigned short>( seed )};
+    unsigned short rg[3] = { static_cast<unsigned short>( seed >> 16 ),
+                             static_cast<unsigned short>( seed >> 8 ),
+                             static_cast<unsigned short>( seed ) };
     for ( int idx = 0; idx < num_particle; ++idx )
     {
         ma( idx ) = erand48( rg );

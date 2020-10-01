@@ -71,9 +71,9 @@ TEST( kokkos, simple )
     view_type c_( "c" );
 
     long i;
-    unsigned short rg[3] = {static_cast<unsigned short>( seed >> 16 ),
-                            static_cast<unsigned short>( seed >> 8 ),
-                            static_cast<unsigned short>( seed )};
+    unsigned short rg[3] = { static_cast<unsigned short>( seed >> 16 ),
+                             static_cast<unsigned short>( seed >> 8 ),
+                             static_cast<unsigned short>( seed ) };
 
     for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ )
     {

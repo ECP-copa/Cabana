@@ -191,7 +191,8 @@ class FastFourierTransform
         std::array<int, 3> global_num_entity = {
             global_grid.globalNumEntity( EntityType(), Dim::K ),
             global_grid.globalNumEntity( EntityType(), Dim::J ),
-            global_grid.globalNumEntity( EntityType(), Dim::I )};
+            global_grid.globalNumEntity( EntityType(), Dim::I )
+        };
 
         // Get the local dimensions of the problem.
         auto entity_space =
@@ -199,19 +200,22 @@ class FastFourierTransform
         std::array<int, 3> local_num_entity = {
             (int)entity_space.extent( Dim::K ),
             (int)entity_space.extent( Dim::J ),
-            (int)entity_space.extent( Dim::I )};
+            (int)entity_space.extent( Dim::I )
+        };
 
         // Get the low corner of the global index space on this rank.
         std::array<int, 3> global_low = {
             (int)global_grid.globalOffset( Dim::K ),
             (int)global_grid.globalOffset( Dim::J ),
-            (int)global_grid.globalOffset( Dim::I )};
+            (int)global_grid.globalOffset( Dim::I )
+        };
 
         // Get the high corner of the global index space on this rank.
         std::array<int, 3> global_high = {
             global_low[Dim::I] + local_num_entity[Dim::I] - 1,
             global_low[Dim::J] + local_num_entity[Dim::J] - 1,
-            global_low[Dim::K] + local_num_entity[Dim::K] - 1};
+            global_low[Dim::K] + local_num_entity[Dim::K] - 1
+        };
 
         // Setup the fft.
         int permute = 0;

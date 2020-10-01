@@ -67,7 +67,7 @@ class FullHaloPattern : public HaloPattern
             for ( int j = -1; j < 2; ++j )
                 for ( int k = -1; k < 2; ++k )
                     if ( !( i == 0 && j == 0 && k == 0 ) )
-                        neighbors.push_back( {i, j, k} );
+                        neighbors.push_back( { i, j, k } );
         this->setNeighbors( neighbors );
     }
 };
@@ -433,14 +433,14 @@ class Halo
         const std::size_t num_array = sizeof...( ArrayTypes );
 
         // Get the byte sizes of array value types.
-        std::array<std::size_t, num_array> value_byte_sizes = {
-            sizeof( typename ArrayTypes::value_type )...};
+        std::array<std::size_t, num_array> value_byte_sizes = { sizeof(
+            typename ArrayTypes::value_type )... };
 
         // Get the index spaces we share with this neighbor. We
         // get a shared index space for each array.
-        std::array<IndexSpace<4>, num_array> spaces = {
-            ( arrays.layout()->sharedIndexSpace( decomposition_tag, ni, nj, nk,
-                                                 width ) )...};
+        std::array<IndexSpace<4>, num_array> spaces = { (
+            arrays.layout()->sharedIndexSpace( decomposition_tag, ni, nj, nk,
+                                               width ) )... };
 
         // Compute the buffer size of this neighbor and the
         // number of elements in the buffer.
@@ -785,7 +785,7 @@ auto createHalo( const ArrayLayout<EntityType, MeshType>& layout,
 {
     LayoutAdapter<Scalar, typename Device::memory_space,
                   ArrayLayout<EntityType, MeshType>>
-        adapter{layout};
+        adapter{ layout };
     return createHalo( pattern, width, adapter );
 }
 
@@ -809,7 +809,7 @@ auto createHalo( const Array<Scalar, EntityType, MeshType, Params...>& array,
         Scalar,
         typename Array<Scalar, EntityType, MeshType, Params...>::memory_space,
         typename Array<Scalar, EntityType, MeshType, Params...>::array_layout>
-        adapter{*array.layout()};
+        adapter{ *array.layout() };
     return createHalo( pattern, width, adapter );
 }
 //---------------------------------------------------------------------------//

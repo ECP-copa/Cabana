@@ -60,7 +60,7 @@ struct LayoutCabanaSlice
                                           size_t d0 = D0, size_t d1 = D1,
                                           size_t d2 = D2, size_t d3 = D3,
                                           size_t d4 = D4, size_t d5 = D5 )
-        : dimension{num_soa, vector_length, d0, d1, d2, d3, d4, d5}
+        : dimension{ num_soa, vector_length, d0, d1, d2, d3, d4, d5 }
     {
     }
 };

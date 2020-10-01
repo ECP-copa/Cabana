@@ -63,9 +63,9 @@ void testLinkedList()
         } );
 
     // Create a grid.
-    double grid_delta[3] = {dx, dx, dx};
-    double grid_min[3] = {x_min, x_min, x_min};
-    double grid_max[3] = {x_max, x_max, x_max};
+    double grid_delta[3] = { dx, dx, dx };
+    double grid_min[3] = { x_min, x_min, x_min };
+    double grid_max[3] = { x_max, x_max, x_max };
 
     // Bin and permute the particles in the grid. First do this by only
     // operating on a subset of the particles.
@@ -284,9 +284,9 @@ void testLinkedListSlice()
         } );
 
     // Create a grid.
-    double grid_delta[3] = {dx, dx, dx};
-    double grid_min[3] = {x_min, x_min, x_min};
-    double grid_max[3] = {x_max, x_max, x_max};
+    double grid_delta[3] = { dx, dx, dx };
+    double grid_min[3] = { x_min, x_min, x_min };
+    double grid_max[3] = { x_max, x_max, x_max };
 
     // Bin the particles in the grid and permute only the position slice.
     // First do this by only operating on a subset of the particles.

@@ -161,15 +161,15 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
     }
 
     // Neighbor grid list params.
-    double grid_min[3] = {x_min, x_min, x_min};
-    double grid_max[3] = {x_max, x_max, x_max};
+    double grid_min[3] = { x_min, x_min, x_min };
+    double grid_max[3] = { x_max, x_max, x_max };
 
     // Sort the particles to make them more realistic in terms of what we
     // would expect in an MD simulation. They aren't going to be randomly
     // scattered about but rather will be periodically sorted for spatial
     // locality. Bin them in cells the size of the cutoff distance.
-    double sort_delta[3] = {interaction_cutoff, interaction_cutoff,
-                            interaction_cutoff};
+    double sort_delta[3] = { interaction_cutoff, interaction_cutoff,
+                             interaction_cutoff };
     Cabana::LinkedCellList<DeviceType> linked_cell_list(
         Cabana::slice<Position>( aosoa, "position" ), sort_delta, grid_min,
         grid_max );
