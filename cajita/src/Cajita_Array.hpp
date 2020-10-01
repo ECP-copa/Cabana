@@ -46,7 +46,7 @@ class ArrayLayout
       constructed. \param dofs_per_entity The number of degrees-of-freedom per
       grid entity.
     */
-    ArrayLayout( const std::shared_ptr<LocalGrid<MeshType>> &local_grid,
+    ArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
                  const int dofs_per_entity )
         : _local_grid( local_grid )
         , _dofs_per_entity( dofs_per_entity )
@@ -124,7 +124,7 @@ struct is_array_layout<const ArrayLayout<EntityType, MeshType>>
 */
 template <class EntityType, class MeshType>
 std::shared_ptr<ArrayLayout<EntityType, MeshType>>
-createArrayLayout( const std::shared_ptr<LocalGrid<MeshType>> &local_grid,
+createArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
                    const int dofs_per_entity, EntityType )
 {
     return std::make_shared<ArrayLayout<EntityType, MeshType>>(
@@ -141,7 +141,7 @@ createArrayLayout( const std::shared_ptr<LocalGrid<MeshType>> &local_grid,
 */
 template <class EntityType, class MeshType>
 std::shared_ptr<ArrayLayout<EntityType, MeshType>>
-createArrayLayout( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
+createArrayLayout( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
                    const int halo_cell_width, const int dofs_per_entity,
                    EntityType )
 {
@@ -169,7 +169,7 @@ class Array
     using array_layout = ArrayLayout<entity_type, mesh_type>;
 
     // View type.
-    using view_type = Kokkos::View<value_type ****, Params...>;
+    using view_type = Kokkos::View<value_type****, Params...>;
 
     // Device type.
     using device_type = typename view_type::device_type;
@@ -186,8 +186,8 @@ class Array
       \param label A label for the array.
       \param layout The array layout over which to construct the view.
     */
-    Array( const std::string &label,
-           const std::shared_ptr<array_layout> &layout )
+    Array( const std::string& label,
+           const std::shared_ptr<array_layout>& layout )
         : _layout( layout )
         , _data( createView<value_type, Params...>(
               label, layout->indexSpace( Ghost(), Local() ) ) )
@@ -200,7 +200,7 @@ class Array
       \param layout The layout of the array.
       \param view The array data.
     */
-    Array( const std::shared_ptr<array_layout> &layout, const view_type &view )
+    Array( const std::shared_ptr<array_layout>& layout, const view_type& view )
         : _layout( layout )
         , _data( view )
     {
@@ -269,8 +269,8 @@ struct is_array<const Array<Scalar, EntityType, MeshType, Params...>>
  */
 template <class Scalar, class... Params, class EntityType, class MeshType>
 std::shared_ptr<Array<Scalar, EntityType, MeshType, Params...>>
-createArray( const std::string &label,
-             const std::shared_ptr<ArrayLayout<EntityType, MeshType>> &layout )
+createArray( const std::string& label,
+             const std::shared_ptr<ArrayLayout<EntityType, MeshType>>& layout )
 {
     return std::make_shared<Array<Scalar, EntityType, MeshType, Params...>>(
         label, layout );
@@ -293,7 +293,7 @@ std::shared_ptr<Array<
     typename Array<Scalar, EntityType, MeshType, Params...>::device_type,
     typename Array<Scalar, EntityType, MeshType,
                    Params...>::subview_memory_traits>>
-createSubarray( const Array<Scalar, EntityType, MeshType, Params...> &array,
+createSubarray( const Array<Scalar, EntityType, MeshType, Params...>& array,
                 const int dof_min, const int dof_max )
 {
     if ( dof_min < 0 || dof_max > array.layout()->dofsPerEntity() )
@@ -301,8 +301,8 @@ createSubarray( const Array<Scalar, EntityType, MeshType, Params...> &array,
 
     auto space = array.layout()->indexSpace( Ghost(), Local() );
     IndexSpace<4> sub_space(
-        { space.min( 0 ), space.min( 1 ), space.min( 2 ), dof_min },
-        { space.max( 0 ), space.max( 1 ), space.max( 2 ), dof_max } );
+        {space.min( 0 ), space.min( 1 ), space.min( 2 ), dof_min},
+        {space.max( 0 ), space.max( 1 ), space.max( 2 ), dof_max} );
     auto sub_view = createSubview( array.view(), sub_space );
     auto sub_layout = createArrayLayout( array.layout()->localGrid(),
                                          dof_max - dof_min, EntityType() );
@@ -327,7 +327,7 @@ namespace ArrayOp
 */
 template <class Scalar, class... Params, class EntityType, class MeshType>
 std::shared_ptr<Array<Scalar, EntityType, MeshType, Params...>>
-clone( const Array<Scalar, EntityType, MeshType, Params...> &array )
+clone( const Array<Scalar, EntityType, MeshType, Params...>& array )
 {
     return createArray<Scalar, Params...>( array.label(), array.layout() );
 }
@@ -341,7 +341,7 @@ clone( const Array<Scalar, EntityType, MeshType, Params...> &array )
   operation.
 */
 template <class Array_t, class DecompositionTag>
-void assign( Array_t &array, const typename Array_t::value_type alpha,
+void assign( Array_t& array, const typename Array_t::value_type alpha,
              DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
@@ -359,7 +359,7 @@ void assign( Array_t &array, const typename Array_t::value_type alpha,
   operation.
 */
 template <class Array_t, class DecompositionTag>
-void scale( Array_t &array, const typename Array_t::value_type alpha,
+void scale( Array_t& array, const typename Array_t::value_type alpha,
             DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
@@ -383,8 +383,8 @@ void scale( Array_t &array, const typename Array_t::value_type alpha,
   operation.
 */
 template <class Array_t, class DecompositionTag>
-void scale( Array_t &array,
-            const std::vector<typename Array_t::value_type> &alpha,
+void scale( Array_t& array,
+            const std::vector<typename Array_t::value_type>& alpha,
             DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
@@ -392,7 +392,7 @@ void scale( Array_t &array,
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
 
-    Kokkos::View<const typename Array_t::value_type *, Kokkos::HostSpace,
+    Kokkos::View<const typename Array_t::value_type*, Kokkos::HostSpace,
                  Kokkos::MemoryUnmanaged>
         alpha_view_host( alpha.data(), alpha.size() );
     auto alpha_view = Kokkos::create_mirror_view_and_copy(
@@ -417,7 +417,7 @@ void scale( Array_t &array,
   operation.
 */
 template <class Array_t, class DecompositionTag>
-void copy( Array_t &a, const Array_t &b, DecompositionTag tag )
+void copy( Array_t& a, const Array_t& b, DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     auto a_space = a.layout()->indexSpace( tag, Local() );
@@ -436,7 +436,7 @@ void copy( Array_t &a, const Array_t &b, DecompositionTag tag )
   \param tag The tag for the decomposition over which to perform the copy.
 */
 template <class Array_t, class DecompositionTag>
-std::shared_ptr<Array_t> cloneCopy( const Array_t &array, DecompositionTag tag )
+std::shared_ptr<Array_t> cloneCopy( const Array_t& array, DecompositionTag tag )
 {
     auto cln = clone( array );
     copy( *cln, array, tag );
@@ -454,8 +454,8 @@ std::shared_ptr<Array_t> cloneCopy( const Array_t &array, DecompositionTag tag )
   operation.
  */
 template <class Array_t, class DecompositionTag>
-void update( Array_t &a, const typename Array_t::value_type alpha,
-             const Array_t &b, const typename Array_t::value_type beta,
+void update( Array_t& a, const typename Array_t::value_type alpha,
+             const Array_t& b, const typename Array_t::value_type beta,
              DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
@@ -482,7 +482,7 @@ struct DotFunctor
     ViewType _a;
     ViewType _b;
 
-    DotFunctor( const ViewType &a, const ViewType &b )
+    DotFunctor( const ViewType& a, const ViewType& b )
         : value_count( a.extent( 3 ) )
         , _a( a )
         , _b( b )
@@ -519,15 +519,15 @@ struct DotFunctor
   per entity.
 */
 template <class Array_t>
-void dot( const Array_t &a, const Array_t &b,
-          std::vector<typename Array_t::value_type> &products )
+void dot( const Array_t& a, const Array_t& b,
+          std::vector<typename Array_t::value_type>& products )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     if ( products.size() !=
          static_cast<unsigned>( a.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
 
-    for ( auto &p : products )
+    for ( auto& p : products )
         p = 0.0;
 
     DotFunctor<typename Array_t::view_type> functor( a.view(), b.view() );
@@ -552,7 +552,7 @@ struct NormInfFunctor
     size_type value_count;
     ViewType _view;
 
-    NormInfFunctor( const ViewType &view )
+    NormInfFunctor( const ViewType& view )
         : value_count( view.extent( 3 ) )
         , _view( view )
     {
@@ -589,15 +589,15 @@ struct NormInfFunctor
   should be pre-sized to the number of degrees-of-freedom per entity.
 */
 template <class Array_t>
-void normInf( const Array_t &array,
-              std::vector<typename Array_t::value_type> &norms )
+void normInf( const Array_t& array,
+              std::vector<typename Array_t::value_type>& norms )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
 
-    for ( auto &n : norms )
+    for ( auto& n : norms )
         n = 0.0;
 
     NormInfFunctor<typename Array_t::view_type> functor( array.view() );
@@ -622,7 +622,7 @@ struct Norm1Functor
     size_type value_count;
     ViewType _view;
 
-    Norm1Functor( const ViewType &view )
+    Norm1Functor( const ViewType& view )
         : value_count( view.extent( 3 ) )
         , _view( view )
     {
@@ -656,15 +656,15 @@ struct Norm1Functor
   should be pre-sized to the number of degrees-of-freedom per entity.
 */
 template <class Array_t>
-void norm1( const Array_t &array,
-            std::vector<typename Array_t::value_type> &norms )
+void norm1( const Array_t& array,
+            std::vector<typename Array_t::value_type>& norms )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
 
-    for ( auto &n : norms )
+    for ( auto& n : norms )
         n = 0.0;
 
     Norm1Functor<typename Array_t::view_type> functor( array.view() );
@@ -689,7 +689,7 @@ struct Norm2Functor
     size_type value_count;
     ViewType _view;
 
-    Norm2Functor( const ViewType &view )
+    Norm2Functor( const ViewType& view )
         : value_count( view.extent( 3 ) )
         , _view( view )
     {
@@ -723,15 +723,15 @@ struct Norm2Functor
   vector should be pre-sized to the number of degrees-of-freedom per entity.
 */
 template <class Array_t>
-void norm2( const Array_t &array,
-            std::vector<typename Array_t::value_type> &norms )
+void norm2( const Array_t& array,
+            std::vector<typename Array_t::value_type>& norms )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     if ( norms.size() !=
          static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
         throw std::runtime_error( "Incorrect vector size" );
 
-    for ( auto &n : norms )
+    for ( auto& n : norms )
         n = 0.0;
 
     Norm2Functor<typename Array_t::view_type> functor( array.view() );
@@ -745,7 +745,7 @@ void norm2( const Array_t &array,
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
                    array.layout()->localGrid()->globalGrid().comm() );
 
-    for ( auto &n : norms )
+    for ( auto& n : norms )
         n = std::sqrt( n );
 }
 

@@ -44,12 +44,12 @@ class GlobalMesh
 
     // Cell size constructor - special case where all cell dimensions are the
     // same.
-    GlobalMesh( const std::array<scalar_type, 3> &global_low_corner,
-                const std::array<scalar_type, 3> &global_high_corner,
+    GlobalMesh( const std::array<scalar_type, 3>& global_low_corner,
+                const std::array<scalar_type, 3>& global_high_corner,
                 const scalar_type cell_size )
         : _global_low_corner( global_low_corner )
         , _global_high_corner( global_high_corner )
-        , _cell_size( { cell_size, cell_size, cell_size } )
+        , _cell_size( {cell_size, cell_size, cell_size} )
     {
         // Check that the domain is evenly divisible by the cell size in each
         // dimension within round-off error.
@@ -65,9 +65,9 @@ class GlobalMesh
     }
 
     // Cell size constructor - each cell dimension can be different.
-    GlobalMesh( const std::array<scalar_type, 3> &global_low_corner,
-                const std::array<scalar_type, 3> &global_high_corner,
-                const std::array<scalar_type, 3> &cell_size )
+    GlobalMesh( const std::array<scalar_type, 3>& global_low_corner,
+                const std::array<scalar_type, 3>& global_high_corner,
+                const std::array<scalar_type, 3>& cell_size )
         : _global_low_corner( global_low_corner )
         , _global_high_corner( global_high_corner )
         , _cell_size( cell_size )
@@ -86,9 +86,9 @@ class GlobalMesh
     }
 
     // Number of global cells constructor.
-    GlobalMesh( const std::array<scalar_type, 3> &global_low_corner,
-                const std::array<scalar_type, 3> &global_high_corner,
-                const std::array<int, 3> &global_num_cell )
+    GlobalMesh( const std::array<scalar_type, 3>& global_low_corner,
+                const std::array<scalar_type, 3>& global_high_corner,
+                const std::array<int, 3>& global_num_cell )
         : _global_low_corner( global_low_corner )
         , _global_high_corner( global_high_corner )
     {
@@ -153,8 +153,8 @@ class GlobalMesh
 // Creation function for Uniform Mesh.
 template <class Scalar>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar>>>
-createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
-                         const std::array<Scalar, 3> &global_high_corner,
+createUniformGlobalMesh( const std::array<Scalar, 3>& global_low_corner,
+                         const std::array<Scalar, 3>& global_high_corner,
                          const Scalar cell_size )
 {
     return std::make_shared<GlobalMesh<UniformMesh<Scalar>>>(
@@ -163,9 +163,9 @@ createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
 
 template <class Scalar>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar>>>
-createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
-                         const std::array<Scalar, 3> &global_high_corner,
-                         const std::array<Scalar, 3> &cell_size )
+createUniformGlobalMesh( const std::array<Scalar, 3>& global_low_corner,
+                         const std::array<Scalar, 3>& global_high_corner,
+                         const std::array<Scalar, 3>& cell_size )
 {
     return std::make_shared<GlobalMesh<UniformMesh<Scalar>>>(
         global_low_corner, global_high_corner, cell_size );
@@ -173,9 +173,9 @@ createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
 
 template <class Scalar>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar>>>
-createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
-                         const std::array<Scalar, 3> &global_high_corner,
-                         const std::array<int, 3> &global_num_cell )
+createUniformGlobalMesh( const std::array<Scalar, 3>& global_low_corner,
+                         const std::array<Scalar, 3>& global_high_corner,
+                         const std::array<int, 3>& global_num_cell )
 {
     return std::make_shared<GlobalMesh<UniformMesh<Scalar>>>(
         global_low_corner, global_high_corner, global_num_cell );
@@ -184,8 +184,8 @@ createUniformGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
 // Creation functions for Sparse Mesh.
 template <class Scalar>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar>>>
-createSparseGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
-                        const std::array<Scalar, 3> &global_high_corner,
+createSparseGlobalMesh( const std::array<Scalar, 3>& global_low_corner,
+                        const std::array<Scalar, 3>& global_high_corner,
                         const Scalar cell_size )
 {
     return std::make_shared<GlobalMesh<SparseMesh<Scalar>>>(
@@ -194,9 +194,9 @@ createSparseGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
 
 template <class Scalar>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar>>>
-createSparseGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
-                        const std::array<Scalar, 3> &global_high_corner,
-                        const std::array<Scalar, 3> &cell_size )
+createSparseGlobalMesh( const std::array<Scalar, 3>& global_low_corner,
+                        const std::array<Scalar, 3>& global_high_corner,
+                        const std::array<Scalar, 3>& cell_size )
 {
     return std::make_shared<GlobalMesh<SparseMesh<Scalar>>>(
         global_low_corner, global_high_corner, cell_size );
@@ -204,9 +204,9 @@ createSparseGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
 
 template <class Scalar>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar>>>
-createSparseGlobalMesh( const std::array<Scalar, 3> &global_low_corner,
-                        const std::array<Scalar, 3> &global_high_corner,
-                        const std::array<int, 3> &global_num_cell )
+createSparseGlobalMesh( const std::array<Scalar, 3>& global_low_corner,
+                        const std::array<Scalar, 3>& global_high_corner,
+                        const std::array<int, 3>& global_num_cell )
 {
     return std::make_shared<GlobalMesh<SparseMesh<Scalar>>>(
         global_low_corner, global_high_corner, global_num_cell );
@@ -228,10 +228,10 @@ class GlobalMesh<NonUniformMesh<Scalar>>
     using scalar_type = Scalar;
 
     // Constructor.
-    GlobalMesh( const std::vector<Scalar> &i_edges,
-                const std::vector<Scalar> &j_edges,
-                const std::vector<Scalar> &k_edges )
-        : _edges( { i_edges, j_edges, k_edges } )
+    GlobalMesh( const std::vector<Scalar>& i_edges,
+                const std::vector<Scalar>& j_edges,
+                const std::vector<Scalar>& k_edges )
+        : _edges( {i_edges, j_edges, k_edges} )
     {
     }
 
@@ -255,7 +255,7 @@ class GlobalMesh<NonUniformMesh<Scalar>>
     // NON-UNIFORM MESH SPECIFIC
 
     // Get the edge array in a given dimension.
-    const std::vector<Scalar> &nonUniformEdge( const int dim ) const
+    const std::vector<Scalar>& nonUniformEdge( const int dim ) const
     {
         return _edges[dim];
     }
@@ -267,9 +267,9 @@ class GlobalMesh<NonUniformMesh<Scalar>>
 // Creation function.
 template <class Scalar>
 std::shared_ptr<GlobalMesh<NonUniformMesh<Scalar>>>
-createNonUniformGlobalMesh( const std::vector<Scalar> &i_edges,
-                            const std::vector<Scalar> &j_edges,
-                            const std::vector<Scalar> &k_edges )
+createNonUniformGlobalMesh( const std::vector<Scalar>& i_edges,
+                            const std::vector<Scalar>& j_edges,
+                            const std::vector<Scalar>& k_edges )
 {
     return std::make_shared<GlobalMesh<NonUniformMesh<Scalar>>>(
         i_edges, j_edges, k_edges );

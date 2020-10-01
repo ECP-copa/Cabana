@@ -63,9 +63,9 @@ void testLinkedList()
         } );
 
     // Create a grid.
-    double grid_delta[3] = { dx, dx, dx };
-    double grid_min[3] = { x_min, x_min, x_min };
-    double grid_max[3] = { x_max, x_max, x_max };
+    double grid_delta[3] = {dx, dx, dx};
+    double grid_min[3] = {x_min, x_min, x_min};
+    double grid_max[3] = {x_max, x_max, x_max};
 
     // Bin and permute the particles in the grid. First do this by only
     // operating on a subset of the particles.
@@ -83,11 +83,11 @@ void testLinkedList()
         EXPECT_EQ( cell_list.numBin( 2 ), nx );
 
         // Copy data to the host for testing.
-        Kokkos::View<int *[3], TEST_MEMSPACE> ids( "cell_ids", num_p );
-        Kokkos::View<size_type ***, TEST_MEMSPACE> bin_size( "bin_size", nx, nx,
-                                                             nx );
-        Kokkos::View<size_type ***, TEST_MEMSPACE> bin_offset( "bin_offset", nx,
-                                                               nx, nx );
+        Kokkos::View<int* [3], TEST_MEMSPACE> ids( "cell_ids", num_p );
+        Kokkos::View<size_type***, TEST_MEMSPACE> bin_size( "bin_size", nx, nx,
+                                                            nx );
+        Kokkos::View<size_type***, TEST_MEMSPACE> bin_offset( "bin_offset", nx,
+                                                              nx, nx );
         Kokkos::parallel_for(
             "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
             KOKKOS_LAMBDA( const int i ) {
@@ -184,11 +184,11 @@ void testLinkedList()
         Cabana::permute( cell_list, aosoa );
 
         // Copy data to the host for testing.
-        Kokkos::View<int *[3], TEST_MEMSPACE> ids( "cell_ids", num_p );
-        Kokkos::View<size_type ***, TEST_MEMSPACE> bin_size( "bin_size", nx, nx,
-                                                             nx );
-        Kokkos::View<size_type ***, TEST_MEMSPACE> bin_offset( "bin_offset", nx,
-                                                               nx, nx );
+        Kokkos::View<int* [3], TEST_MEMSPACE> ids( "cell_ids", num_p );
+        Kokkos::View<size_type***, TEST_MEMSPACE> bin_size( "bin_size", nx, nx,
+                                                            nx );
+        Kokkos::View<size_type***, TEST_MEMSPACE> bin_offset( "bin_offset", nx,
+                                                              nx, nx );
         Kokkos::parallel_for(
             "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
             KOKKOS_LAMBDA( const int i ) {
@@ -284,9 +284,9 @@ void testLinkedListSlice()
         } );
 
     // Create a grid.
-    double grid_delta[3] = { dx, dx, dx };
-    double grid_min[3] = { x_min, x_min, x_min };
-    double grid_max[3] = { x_max, x_max, x_max };
+    double grid_delta[3] = {dx, dx, dx};
+    double grid_min[3] = {x_min, x_min, x_min};
+    double grid_max[3] = {x_max, x_max, x_max};
 
     // Bin the particles in the grid and permute only the position slice.
     // First do this by only operating on a subset of the particles.
@@ -304,12 +304,12 @@ void testLinkedListSlice()
         EXPECT_EQ( cell_list.numBin( 2 ), nx );
 
         // Copy data to the host for testing.
-        Kokkos::View<int *[3], TEST_MEMSPACE> ids_view( "cell_ids", num_p );
-        Kokkos::View<double *[3], TEST_MEMSPACE> pos_view( "positions", num_p );
-        Kokkos::View<size_type ***, TEST_MEMSPACE> bin_size( "bin_size", nx, nx,
-                                                             nx );
-        Kokkos::View<size_type ***, TEST_MEMSPACE> bin_offset( "bin_offset", nx,
-                                                               nx, nx );
+        Kokkos::View<int* [3], TEST_MEMSPACE> ids_view( "cell_ids", num_p );
+        Kokkos::View<double* [3], TEST_MEMSPACE> pos_view( "positions", num_p );
+        Kokkos::View<size_type***, TEST_MEMSPACE> bin_size( "bin_size", nx, nx,
+                                                            nx );
+        Kokkos::View<size_type***, TEST_MEMSPACE> bin_offset( "bin_offset", nx,
+                                                              nx, nx );
         Kokkos::parallel_for(
             "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
             KOKKOS_LAMBDA( const int i ) {
@@ -428,12 +428,12 @@ void testLinkedListSlice()
         EXPECT_EQ( cell_list.numBin( 2 ), nx );
 
         // Copy data to the host for testing.
-        Kokkos::View<int *[3], TEST_MEMSPACE> ids_view( "cell_ids", num_p );
-        Kokkos::View<double *[3], TEST_MEMSPACE> pos_view( "positions", num_p );
-        Kokkos::View<size_type ***, TEST_MEMSPACE> bin_size( "bin_size", nx, nx,
-                                                             nx );
-        Kokkos::View<size_type ***, TEST_MEMSPACE> bin_offset( "bin_offset", nx,
-                                                               nx, nx );
+        Kokkos::View<int* [3], TEST_MEMSPACE> ids_view( "cell_ids", num_p );
+        Kokkos::View<double* [3], TEST_MEMSPACE> pos_view( "positions", num_p );
+        Kokkos::View<size_type***, TEST_MEMSPACE> bin_size( "bin_size", nx, nx,
+                                                            nx );
+        Kokkos::View<size_type***, TEST_MEMSPACE> bin_offset( "bin_offset", nx,
+                                                              nx, nx );
         Kokkos::parallel_for(
             "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, nx ),
             KOKKOS_LAMBDA( const int i ) {

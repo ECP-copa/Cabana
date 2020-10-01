@@ -30,8 +30,8 @@
 // Data device type is where the data to be communicated lives.
 // Comm device type is the device we want to use for communication.
 template <class DataDevice, class CommDevice>
-void performanceTest( std::ostream &stream, const std::size_t num_particle,
-                      const std::string &test_prefix )
+void performanceTest( std::ostream& stream, const std::size_t num_particle,
+                      const std::string& test_prefix )
 {
     // PROBLEM SETUP
     // -------------
@@ -71,8 +71,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
             for ( int i = -1; i < 2; ++i )
                 if ( !( i == 0 && j == 0 && k == 0 ) )
                 {
-                    std::vector<int> ncr = { cart_rank[0] + i, cart_rank[1] + j,
-                                             cart_rank[2] + k };
+                    std::vector<int> ncr = {cart_rank[0] + i, cart_rank[1] + j,
+                                            cart_rank[2] + k};
                     int nr;
                     MPI_Cart_rank( cart_comm, ncr.data(), &nr );
                     neighbor_ranks.push_back( nr );
@@ -103,8 +103,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
     // Fraction of particles on each rank that will be communicated to the
     // neighbors. We will sweep through these fractions to get an indicator of
     // performance as a function of message size.
-    std::vector<double> comm_fraction = { 0.0001, 0.001, 0.005, 0.01,
-                                          0.05,   0.10,  0.25,  0.5 };
+    std::vector<double> comm_fraction = {0.0001, 0.001, 0.005, 0.01,
+                                         0.05,   0.10,  0.25,  0.5};
     int num_fraction = comm_fraction.size();
 
     // Number of bytes we will send to each neighbor.
@@ -137,8 +137,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         num_send = send_per_neighbor * 26;
         int num_stay = num_particle - num_send;
         comm_bytes[fraction] = send_per_neighbor * bytes_per_particle;
-        Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host(
-            "export_ranks", num_particle );
+        Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                                 num_particle );
         for ( int p = 0; p < num_stay; ++p )
         {
             export_ranks_host( p ) = neighbor_ranks[0];
@@ -263,10 +263,10 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         int send_per_neighbor = num_send / 26;
         num_send = send_per_neighbor * 26;
         comm_bytes[fraction] = send_per_neighbor * bytes_per_particle;
-        Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host(
-            "export_ranks", num_send );
-        Kokkos::View<int *, Kokkos::HostSpace> export_ids_host( "export_ids",
-                                                                num_send );
+        Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                                 num_send );
+        Kokkos::View<int*, Kokkos::HostSpace> export_ids_host( "export_ids",
+                                                               num_send );
         for ( int n = 0; n < 26; ++n )
         {
             for ( int p = 0; p < send_per_neighbor; ++p )
@@ -376,7 +376,7 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
 
 //---------------------------------------------------------------------------//
 // main
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     // Initialize environment
     MPI_Init( &argc, &argv );

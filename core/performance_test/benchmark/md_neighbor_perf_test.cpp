@@ -133,7 +133,7 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
                 {
                     for ( int k = k_min; k < k_max; ++k )
                     {
-                        for ( auto &n : bins[bin_id( i, j, k )] )
+                        for ( auto& n : bins[bin_id( i, j, k )] )
                         {
                             double dx = x( n, 0 ) - x( p, 0 );
                             double dy = x( n, 1 ) - x( p, 1 );
@@ -161,15 +161,15 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
     }
 
     // Neighbor grid list params.
-    double grid_min[3] = { x_min, x_min, x_min };
-    double grid_max[3] = { x_max, x_max, x_max };
+    double grid_min[3] = {x_min, x_min, x_min};
+    double grid_max[3] = {x_max, x_max, x_max};
 
     // Sort the particles to make them more realistic in terms of what we
     // would expect in an MD simulation. They aren't going to be randomly
     // scattered about but rather will be periodically sorted for spatial
     // locality. Bin them in cells the size of the cutoff distance.
-    double sort_delta[3] = { interaction_cutoff, interaction_cutoff,
-                             interaction_cutoff };
+    double sort_delta[3] = {interaction_cutoff, interaction_cutoff,
+                            interaction_cutoff};
     Cabana::LinkedCellList<DeviceType> linked_cell_list(
         Cabana::slice<Position>( aosoa, "position" ), sort_delta, grid_min,
         grid_max );
@@ -185,7 +185,7 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
     Kokkos::parallel_reduce(
         "Cabana::countMinMax",
         Kokkos::RangePolicy<ExecutionSpace>( 0, num_data ),
-        Kokkos::Impl::min_max_functor<Kokkos::View<int *, DeviceType>>(
+        Kokkos::Impl::min_max_functor<Kokkos::View<int*, DeviceType>>(
             stat_list._data.counts ),
         reducer );
     Kokkos::fence();
@@ -226,14 +226,14 @@ void perfTest( const double cutoff_ratio, const std::size_t num_data,
     }
 
     double avg = 0.0;
-    for ( auto &t : times )
+    for ( auto& t : times )
         avg += t;
     avg /= num_create;
     std::cout << "Average run time: " << avg << "ms" << std::endl;
     std::cout << std::endl;
 }
 
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     // Minimum particle distance to particle interaction cutoff distance ratio.
     double cutoff_ratio = std::atof( argv[1] );

@@ -41,10 +41,10 @@ namespace Cajita
   \param functor The functor to execute.
  */
 template <class FunctorType, class ExecutionSpace, long N>
-inline void grid_parallel_for( const std::string &label,
-                               const ExecutionSpace &exec_space,
-                               const IndexSpace<N> &index_space,
-                               const FunctorType &functor )
+inline void grid_parallel_for( const std::string& label,
+                               const ExecutionSpace& exec_space,
+                               const IndexSpace<N>& index_space,
+                               const FunctorType& functor )
 {
     Kokkos::parallel_for(
         label, createExecutionPolicy( index_space, exec_space ), functor );
@@ -75,9 +75,9 @@ inline void grid_parallel_for( const std::string &label,
  */
 template <class FunctorType, class WorkTag, class ExecutionSpace, long N>
 inline void
-grid_parallel_for( const std::string &label, const ExecutionSpace &exec_space,
-                   const IndexSpace<N> &index_space, const WorkTag &work_tag,
-                   const FunctorType &functor )
+grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
+                   const IndexSpace<N>& index_space, const WorkTag& work_tag,
+                   const FunctorType& functor )
 {
     Kokkos::parallel_for(
         label, createExecutionPolicy( index_space, exec_space, work_tag ),
@@ -109,10 +109,10 @@ grid_parallel_for( const std::string &label, const ExecutionSpace &exec_space,
 template <class FunctorType, class ExecutionSpace, class MeshType,
           class DecompositionType, class EntityType>
 inline void
-grid_parallel_for( const std::string &label, const ExecutionSpace &exec_space,
-                   const LocalGrid<MeshType> &local_grid,
-                   const DecompositionType &decomposition,
-                   const EntityType &entity_type, const FunctorType &functor )
+grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
+                   const LocalGrid<MeshType>& local_grid,
+                   const DecompositionType& decomposition,
+                   const EntityType& entity_type, const FunctorType& functor )
 {
     auto index_space =
         local_grid.indexSpace( decomposition, entity_type, Local() );
@@ -146,11 +146,11 @@ grid_parallel_for( const std::string &label, const ExecutionSpace &exec_space,
 template <class FunctorType, class WorkTag, class ExecutionSpace,
           class MeshType, class DecompositionType, class EntityType>
 inline void
-grid_parallel_for( const std::string &label, const ExecutionSpace &exec_space,
-                   const LocalGrid<MeshType> &local_grid,
-                   const DecompositionType &decomposition,
-                   const EntityType &entity_type, const WorkTag &work_tag,
-                   const FunctorType &functor )
+grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
+                   const LocalGrid<MeshType>& local_grid,
+                   const DecompositionType& decomposition,
+                   const EntityType& entity_type, const WorkTag& work_tag,
+                   const FunctorType& functor )
 {
     auto index_space =
         local_grid.indexSpace( decomposition, entity_type, Local() );
@@ -183,11 +183,11 @@ grid_parallel_for( const std::string &label, const ExecutionSpace &exec_space,
   \param reducer The parallel reduce result.
  */
 template <class FunctorType, class ExecutionSpace, long N, class ReduceType>
-inline void grid_parallel_reduce( const std::string &label,
-                                  const ExecutionSpace &exec_space,
-                                  const IndexSpace<N> &index_space,
-                                  const FunctorType &functor,
-                                  ReduceType &reducer )
+inline void grid_parallel_reduce( const std::string& label,
+                                  const ExecutionSpace& exec_space,
+                                  const IndexSpace<N>& index_space,
+                                  const FunctorType& functor,
+                                  ReduceType& reducer )
 {
     Kokkos::parallel_reduce( label,
                              createExecutionPolicy( index_space, exec_space ),
@@ -224,10 +224,10 @@ inline void grid_parallel_reduce( const std::string &label,
 template <class FunctorType, class WorkTag, class ExecutionSpace, long N,
           class ReduceType>
 inline void
-grid_parallel_reduce( const std::string &label,
-                      const ExecutionSpace &exec_space,
-                      const IndexSpace<N> &index_space, const WorkTag &work_tag,
-                      const FunctorType &functor, ReduceType &reducer )
+grid_parallel_reduce( const std::string& label,
+                      const ExecutionSpace& exec_space,
+                      const IndexSpace<N>& index_space, const WorkTag& work_tag,
+                      const FunctorType& functor, ReduceType& reducer )
 {
     Kokkos::parallel_reduce(
         label, createExecutionPolicy( index_space, exec_space, work_tag ),
@@ -262,13 +262,13 @@ grid_parallel_reduce( const std::string &label,
  */
 template <class FunctorType, class ExecutionSpace, class MeshType,
           class DecompositionType, class EntityType, class ReduceType>
-inline void grid_parallel_reduce( const std::string &label,
-                                  const ExecutionSpace &exec_space,
-                                  const LocalGrid<MeshType> &local_grid,
-                                  const DecompositionType &decomposition,
-                                  const EntityType &entity_type,
-                                  const FunctorType &functor,
-                                  ReduceType &reducer )
+inline void grid_parallel_reduce( const std::string& label,
+                                  const ExecutionSpace& exec_space,
+                                  const LocalGrid<MeshType>& local_grid,
+                                  const DecompositionType& decomposition,
+                                  const EntityType& entity_type,
+                                  const FunctorType& functor,
+                                  ReduceType& reducer )
 {
     auto index_space =
         local_grid.indexSpace( decomposition, entity_type, Local() );
@@ -307,10 +307,10 @@ template <class FunctorType, class WorkTag, class ExecutionSpace,
           class MeshType, class DecompositionType, class EntityType,
           class ReduceType>
 inline void grid_parallel_reduce(
-    const std::string &label, const ExecutionSpace &exec_space,
-    const LocalGrid<MeshType> &local_grid,
-    const DecompositionType &decomposition, const EntityType &entity_type,
-    const WorkTag &work_tag, const FunctorType &functor, ReduceType &reducer )
+    const std::string& label, const ExecutionSpace& exec_space,
+    const LocalGrid<MeshType>& local_grid,
+    const DecompositionType& decomposition, const EntityType& entity_type,
+    const WorkTag& work_tag, const FunctorType& functor, ReduceType& reducer )
 {
     auto index_space =
         local_grid.indexSpace( decomposition, entity_type, Local() );

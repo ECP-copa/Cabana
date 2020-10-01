@@ -99,9 +99,9 @@ class Halo : public CommunicationPlan<DeviceType>
     */
     template <class IdViewType, class RankViewType>
     Halo( MPI_Comm comm, const std::size_t num_local,
-          const IdViewType &element_export_ids,
-          const RankViewType &element_export_ranks,
-          const std::vector<int> &neighbor_ranks )
+          const IdViewType& element_export_ids,
+          const RankViewType& element_export_ranks,
+          const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
@@ -149,8 +149,8 @@ class Halo : public CommunicationPlan<DeviceType>
     */
     template <class IdViewType, class RankViewType>
     Halo( MPI_Comm comm, const std::size_t num_local,
-          const IdViewType &element_export_ids,
-          const RankViewType &element_export_ranks )
+          const IdViewType& element_export_ids,
+          const RankViewType& element_export_ranks )
         : CommunicationPlan<DeviceType>( comm )
         , _num_local( num_local )
     {
@@ -224,17 +224,17 @@ struct is_halo : public is_halo_impl<typename std::remove_cv<T>::type>::type
   the next halo.numGhost() elements()).
 */
 template <class Halo_t, class AoSoA_t>
-void gather( const Halo_t &halo, AoSoA_t &aosoa,
+void gather( const Halo_t& halo, AoSoA_t& aosoa,
              typename std::enable_if<( is_halo<Halo_t>::value &&
                                        is_aosoa<AoSoA_t>::value ),
-                                     int>::type * = 0 )
+                                     int>::type* = 0 )
 {
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != halo.numLocal() + halo.numGhost() )
         throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
     // Allocate a send buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type *, typename Halo_t::memory_space>
+    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
         send_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
             halo.totalNumExport() );
@@ -254,7 +254,7 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa,
     Kokkos::fence();
 
     // Allocate a receive buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type *, typename Halo_t::memory_space>
+    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
         recv_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
             halo.totalNumImport() );
@@ -265,7 +265,7 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa,
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
+    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + halo.numImport( n );
@@ -281,7 +281,7 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa,
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
+    std::pair<std::size_t, std::size_t> send_range = {0, 0};
     for ( int n = 0; n < num_n; ++n )
     {
         send_range.second = send_range.first + halo.numExport( n );
@@ -345,10 +345,10 @@ void gather( const Halo_t &halo, AoSoA_t &aosoa,
   the next halo.numGhost() elements()).
 */
 template <class Halo_t, class Slice_t>
-void gather( const Halo_t &halo, Slice_t &slice,
+void gather( const Halo_t& halo, Slice_t& slice,
              typename std::enable_if<( is_halo<Halo_t>::value &&
                                        is_slice<Slice_t>::value ),
-                                     int>::type * = 0 )
+                                     int>::type* = 0 )
 {
     // Check that the Slice is the right size.
     if ( slice.size() != halo.numLocal() + halo.numGhost() )
@@ -364,7 +364,7 @@ void gather( const Halo_t &halo, Slice_t &slice,
 
     // Allocate a send buffer. Note this one is layout right so the components
     // are consecutive.
-    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
                  typename Halo_t::memory_space>
         send_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
@@ -391,7 +391,7 @@ void gather( const Halo_t &halo, Slice_t &slice,
 
     // Allocate a receive buffer. Note this one is layout right so the
     // components are consecutive.
-    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
                  typename Halo_t::memory_space>
         recv_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
@@ -403,7 +403,7 @@ void gather( const Halo_t &halo, Slice_t &slice,
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
+    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + halo.numImport( n );
@@ -420,7 +420,7 @@ void gather( const Halo_t &halo, Slice_t &slice,
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
+    std::pair<std::size_t, std::size_t> send_range = {0, 0};
     for ( int n = 0; n < num_n; ++n )
     {
         send_range.second = send_range.first + halo.numExport( n );
@@ -490,10 +490,10 @@ void gather( const Halo_t &halo, Slice_t &slice,
   the next halo.numGhost() elements()).
 */
 template <class Halo_t, class Slice_t>
-void scatter( const Halo_t &halo, Slice_t &slice,
+void scatter( const Halo_t& halo, Slice_t& slice,
               typename std::enable_if<( is_halo<Halo_t>::value &&
                                         is_slice<Slice_t>::value ),
-                                      int>::type * = 0 )
+                                      int>::type* = 0 )
 {
     // Check that the Slice is the right size.
     if ( slice.size() != halo.numLocal() + halo.numGhost() )
@@ -506,13 +506,13 @@ void scatter( const Halo_t &halo, Slice_t &slice,
 
     // Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the
     // components of each slice element.
-    Kokkos::View<typename Slice_t::value_type *, typename Slice_t::memory_space,
+    Kokkos::View<typename Slice_t::value_type*, typename Slice_t::memory_space,
                  Kokkos::MemoryTraits<Kokkos::Unmanaged>>
         slice_data( slice.data(), slice.numSoA() * slice.stride( 0 ) );
 
     // Allocate a send buffer. Note this one is layout right so the components
     // are consecutive.
-    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
                  typename Halo_t::memory_space>
         send_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
@@ -539,7 +539,7 @@ void scatter( const Halo_t &halo, Slice_t &slice,
 
     // Allocate a receive buffer. Note this one is layout right so the
     // components are consecutive.
-    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
                  typename Halo_t::memory_space>
         recv_buffer(
             Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
@@ -551,7 +551,7 @@ void scatter( const Halo_t &halo, Slice_t &slice,
     // Post non-blocking receives.
     int num_n = halo.numNeighbor();
     std::vector<MPI_Request> requests( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
+    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + halo.numExport( n );
@@ -568,7 +568,7 @@ void scatter( const Halo_t &halo, Slice_t &slice,
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
+    std::pair<std::size_t, std::size_t> send_range = {0, 0};
     for ( int n = 0; n < num_n; ++n )
     {
         send_range.second = send_range.first + halo.numImport( n );

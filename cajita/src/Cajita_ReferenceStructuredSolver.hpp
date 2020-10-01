@@ -58,7 +58,7 @@ class ReferenceStructuredSolver
       component if this is true.
     */
     virtual void
-    setMatrixStencil( const std::vector<std::array<int, 3>> &stencil,
+    setMatrixStencil( const std::vector<std::array<int, 3>>& stencil,
                       const bool is_symmetric ) = 0;
 
     /*!
@@ -70,7 +70,7 @@ class ReferenceStructuredSolver
       corresponding to stencil entries outside of the domain should be set to
       zero.
     */
-    virtual const Array_t &getMatrixValues() = 0;
+    virtual const Array_t& getMatrixValues() = 0;
 
     /*!
       \brief Set the preconditioner stencil.
@@ -81,7 +81,7 @@ class ReferenceStructuredSolver
       symmetric component if this is true.
     */
     virtual void
-    setPreconditionerStencil( const std::vector<std::array<int, 3>> &stencil,
+    setPreconditionerStencil( const std::vector<std::array<int, 3>>& stencil,
                               const bool is_symmetric ) = 0;
 
     /*!
@@ -93,7 +93,7 @@ class ReferenceStructuredSolver
       corresponding to stencil entries outside of the domain should be set to
       zero.
     */
-    virtual const Array_t &getPreconditionerValues() = 0;
+    virtual const Array_t& getPreconditionerValues() = 0;
 
     // Set convergence tolerance implementation.
     virtual void setTolerance( const double tol ) = 0;
@@ -112,7 +112,7 @@ class ReferenceStructuredSolver
       \param b The forcing term.
       \param x The solution.
     */
-    virtual void solve( const Array_t &b, Array_t &x ) = 0;
+    virtual void solve( const Array_t& b, Array_t& x ) = 0;
 
     // Get the number of iterations taken on the last solve.
     virtual int getNumIter() = 0;
@@ -142,15 +142,15 @@ class ReferenceConjugateGradient
     {
         using value_type = ScalarT;
         using memory_space = MemorySpaceT;
-        const ArrayLayoutT &array_layout;
-        const ArrayLayoutT *layout() const { return &array_layout; }
+        const ArrayLayoutT& array_layout;
+        const ArrayLayoutT* layout() const { return &array_layout; }
     };
 
     /*!
       \brief Constructor.
     */
     ReferenceConjugateGradient(
-        const ArrayLayout<EntityType, MeshType> &layout )
+        const ArrayLayout<EntityType, MeshType>& layout )
         : _tol( 1.0e-6 )
         , _max_iter( 1000 )
         , _print_level( 0 )
@@ -172,7 +172,7 @@ class ReferenceConjugateGradient
       stencil entries should only contain one entry from each symmetric
       component if this is true.
     */
-    void setMatrixStencil( const std::vector<std::array<int, 3>> &stencil,
+    void setMatrixStencil( const std::vector<std::array<int, 3>>& stencil,
                            const bool is_symmetric = false ) override
     {
         setStencil( stencil, is_symmetric, _A_stencil, _A_halo, _A );
@@ -186,7 +186,7 @@ class ReferenceConjugateGradient
       stencil definition. Note that values corresponding to stencil entries
       outside of the domain should be set to zero.
     */
-    const Array_t &getMatrixValues() override { return *_A; }
+    const Array_t& getMatrixValues() override { return *_A; }
 
     /*!
       \brief Set the preconditioner stencil.
@@ -197,7 +197,7 @@ class ReferenceConjugateGradient
       symmetric component if this is true.
     */
     void
-    setPreconditionerStencil( const std::vector<std::array<int, 3>> &stencil,
+    setPreconditionerStencil( const std::vector<std::array<int, 3>>& stencil,
                               const bool is_symmetric = false ) override
     {
         setStencil( stencil, is_symmetric, _M_stencil, _M_halo, _M );
@@ -211,7 +211,7 @@ class ReferenceConjugateGradient
       stencil definition. Note that values corresponding to stencil entries
       outside of the domain should be set to zero.
     */
-    const Array_t &getPreconditionerValues() override { return *_M; }
+    const Array_t& getPreconditionerValues() override { return *_M; }
 
     // Set convergence tolerance implementation.
     void setTolerance( const double tol ) override { _tol = tol; }
@@ -233,7 +233,7 @@ class ReferenceConjugateGradient
       \param b The forcing term.
       \param x The solution.
     */
-    void solve( const Array_t &b, Array_t &x ) override
+    void solve( const Array_t& b, Array_t& x ) override
     {
         // Get the local grid.
         auto local_grid = _vectors->layout()->localGrid();
@@ -288,7 +288,7 @@ class ReferenceConjugateGradient
             "compute_r0",
             createExecutionPolicy( entity_space, execution_space() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           Scalar &result ) {
+                           Scalar& result ) {
                 // Compute the local contribution from matrix-vector
                 // multiplication. Note that we copied x into p for this
                 // operation to easily perform the gather. Only apply the
@@ -334,7 +334,7 @@ class ReferenceConjugateGradient
             "compute_z0",
             createExecutionPolicy( entity_space, execution_space() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           Scalar &result ) {
+                           Scalar& result ) {
                 // Compute the local contribution from matrix-vector
                 // multiplication. Only apply the stencil entry if it is
                 // greater than 0.
@@ -368,7 +368,7 @@ class ReferenceConjugateGradient
             "compute_q0",
             createExecutionPolicy( entity_space, execution_space() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           Scalar &result ) {
+                           Scalar& result ) {
                 // Compute the local contribution from matrix-vector
                 // multiplication. This computes the updated p vector
                 // in-line to avoid another kernel launch. Only apply the
@@ -410,7 +410,7 @@ class ReferenceConjugateGradient
                 "cg_kernel_1",
                 createExecutionPolicy( entity_space, execution_space() ),
                 KOKKOS_LAMBDA( const int i, const int j, const int k,
-                               Scalar &result ) {
+                               Scalar& result ) {
                     // Compute the local contribution from matrix-vector
                     // multiplication. This computes the updated q vector
                     // in-line to avoid another kernel launch. Only apply the
@@ -482,7 +482,7 @@ class ReferenceConjugateGradient
                 "cg_kernel_2",
                 createExecutionPolicy( entity_space, execution_space() ),
                 KOKKOS_LAMBDA( const int i, const int j, const int k,
-                               Scalar &result ) {
+                               Scalar& result ) {
                     // Compute the local contribution from matrix-vector
                     // multiplication. This computes the updated p vector
                     // in-line to avoid another kernel launch. Only apply the
@@ -544,11 +544,11 @@ class ReferenceConjugateGradient
 
   private:
     // Set the stencil of a matrix.
-    void setStencil( const std::vector<std::array<int, 3>> &stencil,
+    void setStencil( const std::vector<std::array<int, 3>>& stencil,
                      const bool is_symmetric,
-                     Kokkos::View<int *[3], DeviceType> &device_stencil,
-                     std::shared_ptr<Halo<memory_space>> &halo,
-                     std::shared_ptr<Array_t> &matrix )
+                     Kokkos::View<int* [3], DeviceType>& device_stencil,
+                     std::shared_ptr<Halo<memory_space>>& halo,
+                     std::shared_ptr<Array_t>& matrix )
     {
         // For now we don't support symmetry.
         if ( is_symmetric )
@@ -559,7 +559,7 @@ class ReferenceConjugateGradient
         auto local_grid = _vectors->layout()->localGrid();
 
         // Copy stencil to the device.
-        device_stencil = Kokkos::View<int *[3], DeviceType>(
+        device_stencil = Kokkos::View<int* [3], DeviceType>(
             Kokkos::ViewAllocateWithoutInitializing( "stencil" ),
             stencil.size() );
         auto stencil_mirror =
@@ -611,8 +611,8 @@ class ReferenceConjugateGradient
     int _num_iter;
     Scalar _residual_norm;
     int _diag_entry;
-    Kokkos::View<int *[3], DeviceType> _A_stencil;
-    Kokkos::View<int *[3], DeviceType> _M_stencil;
+    Kokkos::View<int* [3], DeviceType> _A_stencil;
+    Kokkos::View<int* [3], DeviceType> _M_stencil;
     std::shared_ptr<Halo<memory_space>> _A_halo;
     std::shared_ptr<Halo<memory_space>> _M_halo;
     std::shared_ptr<Array_t> _A;
@@ -627,7 +627,7 @@ template <class Scalar, class DeviceType, class EntityType, class MeshType>
 std::shared_ptr<
     ReferenceConjugateGradient<Scalar, EntityType, MeshType, DeviceType>>
 createReferenceConjugateGradient(
-    const ArrayLayout<EntityType, MeshType> &layout )
+    const ArrayLayout<EntityType, MeshType>& layout )
 {
     return std::make_shared<
         ReferenceConjugateGradient<Scalar, EntityType, MeshType, DeviceType>>(

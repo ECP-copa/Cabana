@@ -38,32 +38,32 @@ class CommPlanTester : public Cabana::CommunicationPlan<
     }
 
     template <class ViewType>
-    Kokkos::View<size_type *, device_type>
-    createFromExportsAndNeighbors( const ViewType &element_export_ranks,
-                                   const std::vector<int> &neighbor_ranks )
+    Kokkos::View<size_type*, device_type>
+    createFromExportsAndNeighbors( const ViewType& element_export_ranks,
+                                   const std::vector<int>& neighbor_ranks )
     {
         return this->createFromExportsAndTopology( element_export_ranks,
                                                    neighbor_ranks );
     }
 
     template <class ViewType>
-    Kokkos::View<size_type *, device_type>
-    createFromExports( const ViewType &element_export_ranks )
+    Kokkos::View<size_type*, device_type>
+    createFromExports( const ViewType& element_export_ranks )
     {
         return this->createFromExportsOnly( element_export_ranks );
     }
 
     template <class ViewType>
-    void createSteering( Kokkos::View<size_type *, device_type> neighbor_ids,
-                         const ViewType &element_export_ranks )
+    void createSteering( Kokkos::View<size_type*, device_type> neighbor_ids,
+                         const ViewType& element_export_ranks )
     {
         this->createExportSteering( neighbor_ids, element_export_ranks );
     }
 
     template <class RankViewType, class IdViewType>
-    void createSteering( Kokkos::View<size_type *, device_type> neighbor_ids,
-                         const RankViewType &element_export_ranks,
-                         const IdViewType &element_export_ids )
+    void createSteering( Kokkos::View<size_type*, device_type> neighbor_ids,
+                         const RankViewType& element_export_ranks,
+                         const IdViewType& element_export_ids )
     {
         this->createExportSteering( neighbor_ids, element_export_ranks,
                                     element_export_ids );
@@ -83,14 +83,14 @@ void test1( const bool use_topology )
 
     // Every rank will communicate with itself and send all of its data.
     int num_data = 10;
-    Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     Kokkos::deep_copy( export_ranks, my_rank );
     std::vector<int> neighbor_ranks( 1, my_rank );
 
     // Create the plan.
     using device_type = Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>;
     using size_type = typename TEST_MEMSPACE::size_type;
-    Kokkos::View<size_type *, device_type> neighbor_ids;
+    Kokkos::View<size_type*, device_type> neighbor_ids;
     if ( use_topology )
         neighbor_ids = comm_plan.createFromExportsAndNeighbors(
             export_ranks, neighbor_ranks );
@@ -136,8 +136,8 @@ void test2( const bool use_topology )
     // Every rank will communicate with itself and send every other piece of
     // data.
     int num_data = 10;
-    Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                              num_data );
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             num_data );
     for ( int n = 0; n < num_data; ++n )
         export_ranks_host( n ) = ( 0 == n % 2 ) ? my_rank : -1;
     auto export_ranks = Kokkos::create_mirror_view_and_copy(
@@ -147,7 +147,7 @@ void test2( const bool use_topology )
     // Create the plan
     using device_type = Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>;
     using size_type = typename TEST_MEMSPACE::size_type;
-    Kokkos::View<size_type *, device_type> neighbor_ids;
+    Kokkos::View<size_type*, device_type> neighbor_ids;
     if ( use_topology )
         neighbor_ids = comm_plan.createFromExportsAndNeighbors(
             export_ranks, neighbor_ranks );
@@ -163,7 +163,7 @@ void test2( const bool use_topology )
     EXPECT_EQ( comm_plan.totalNumImport(), num_data / 2 );
 
     // Create the export steering vector.
-    Kokkos::View<std::size_t *, Kokkos::HostSpace> export_ids_host(
+    Kokkos::View<std::size_t*, Kokkos::HostSpace> export_ids_host(
         "export_ids", export_ranks.size() );
     std::iota( export_ids_host.data(),
                export_ids_host.data() + export_ranks.size(), 0 );
@@ -205,14 +205,14 @@ void test3( const bool use_topology )
 
     // Every rank will communicate with the rank that is its inverse.
     int num_data = 10;
-    Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     Kokkos::deep_copy( export_ranks, inverse_rank );
     std::vector<int> neighbor_ranks( 1, inverse_rank );
 
     // Create the plan with both export ranks and the topology.
     using device_type = Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>;
     using size_type = typename TEST_MEMSPACE::size_type;
-    Kokkos::View<size_type *, device_type> neighbor_ids;
+    Kokkos::View<size_type*, device_type> neighbor_ids;
     if ( use_topology )
         neighbor_ids = comm_plan.createFromExportsAndNeighbors(
             export_ranks, neighbor_ranks );
@@ -260,8 +260,8 @@ void test4( const bool use_topology )
 
     // Every rank will communicate with all other ranks. Interleave the sends.
     int num_data = 2 * my_size;
-    Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                              num_data );
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             num_data );
     std::vector<int> neighbor_ranks( my_size );
     for ( int n = 0; n < my_size; ++n )
     {
@@ -275,7 +275,7 @@ void test4( const bool use_topology )
     // Create the plan
     using device_type = Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>;
     using size_type = typename TEST_MEMSPACE::size_type;
-    Kokkos::View<size_type *, device_type> neighbor_ids;
+    Kokkos::View<size_type*, device_type> neighbor_ids;
     if ( use_topology )
         neighbor_ids = comm_plan.createFromExportsAndNeighbors(
             export_ranks, neighbor_ranks );
@@ -380,8 +380,8 @@ void test5( const bool use_topology )
     // Every rank will communicate with all other ranks. Interleave the sends
     // and only send every other value.
     int num_data = 2 * my_size;
-    Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                              num_data );
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             num_data );
     std::vector<int> neighbor_ranks( my_size );
     for ( int n = 0; n < my_size; ++n )
     {
@@ -395,7 +395,7 @@ void test5( const bool use_topology )
     // Create the plan
     using device_type = Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>;
     using size_type = typename TEST_MEMSPACE::size_type;
-    Kokkos::View<size_type *, device_type> neighbor_ids;
+    Kokkos::View<size_type*, device_type> neighbor_ids;
     if ( use_topology )
         neighbor_ids = comm_plan.createFromExportsAndNeighbors(
             export_ranks, neighbor_ranks );
@@ -465,7 +465,7 @@ void test6( const bool use_topology )
 
     // Every has one element and will send that element to rank 0.
     int num_data = 1;
-    Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     Kokkos::deep_copy( export_ranks, 0 );
     std::vector<int> neighbor_ranks;
     if ( 0 == my_rank )
@@ -481,7 +481,7 @@ void test6( const bool use_topology )
     // Create the plan.
     using device_type = Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>;
     using size_type = typename TEST_MEMSPACE::size_type;
-    Kokkos::View<size_type *, device_type> neighbor_ids;
+    Kokkos::View<size_type*, device_type> neighbor_ids;
     if ( use_topology )
         neighbor_ids = comm_plan.createFromExportsAndNeighbors(
             export_ranks, neighbor_ranks );
@@ -543,7 +543,7 @@ void test7( const bool use_topology )
     // Create the plan.
     using device_type = Kokkos::Device<TEST_EXECSPACE, TEST_MEMSPACE>;
     using size_type = typename TEST_MEMSPACE::size_type;
-    Kokkos::View<size_type *, device_type> neighbor_ids;
+    Kokkos::View<size_type*, device_type> neighbor_ids;
     if ( use_topology )
         neighbor_ids = comm_plan.createFromExportsAndNeighbors(
             export_ranks, neighbor_ranks );
