@@ -433,14 +433,14 @@ class Halo
         const std::size_t num_array = sizeof...( ArrayTypes );
 
         // Get the byte sizes of array value types.
-        std::array<std::size_t, num_array> value_byte_sizes = { sizeof(
-            typename ArrayTypes::value_type )... };
+        std::array<std::size_t, num_array> value_byte_sizes = {
+            sizeof( typename ArrayTypes::value_type )... };
 
         // Get the index spaces we share with this neighbor. We
         // get a shared index space for each array.
-        std::array<IndexSpace<4>, num_array> spaces = { (
-            arrays.layout()->sharedIndexSpace( decomposition_tag, ni, nj, nk,
-                                               width ) )... };
+        std::array<IndexSpace<4>, num_array> spaces = {
+            ( arrays.layout()->sharedIndexSpace( decomposition_tag, ni, nj, nk,
+                                                 width ) )... };
 
         // Compute the buffer size of this neighbor and the
         // number of elements in the buffer.

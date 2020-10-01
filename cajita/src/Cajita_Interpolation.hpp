@@ -168,8 +168,7 @@ gradient( const ViewType& view, const SplineDataType& sd,
                 typename SplineDataType::scalar_type rg[3] = {
                     sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k],
                     sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k],
-                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k]
-                };
+                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k] };
 
                 for ( int d0 = 0; d0 < 3; ++d0 )
                 {
@@ -443,8 +442,7 @@ divergence( const PointDataType point_data[3][3], const SplineDataType& sd,
                 typename SplineDataType::scalar_type rg[3] = {
                     sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k],
                     sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k],
-                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k]
-                };
+                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k] };
 
                 for ( int d1 = 0; d1 < 3; ++d1 )
                 {

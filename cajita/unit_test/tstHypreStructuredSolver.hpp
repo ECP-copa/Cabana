@@ -64,10 +64,9 @@ void poissonTest( const std::string& solver_type,
         solver_type, *vector_layout );
 
     // Create a 7-point 3d laplacian stencil.
-    std::vector<std::array<int, 3>> stencil = { { 0, 0, 0 }, { -1, 0, 0 },
-                                                { 1, 0, 0 }, { 0, -1, 0 },
-                                                { 0, 1, 0 }, { 0, 0, -1 },
-                                                { 0, 0, 1 } };
+    std::vector<std::array<int, 3>> stencil = {
+        { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
+        { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
     solver->setMatrixStencil( stencil );
 
     // Create the matrix entries. The stencil is defined over cells.

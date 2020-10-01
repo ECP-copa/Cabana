@@ -144,8 +144,7 @@ void gatherScatterTest( const ManualPartitioner& partitioner,
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]
-    };
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -346,8 +345,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]
-    };
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -373,10 +371,9 @@ void scatterReduceTest( const ReduceFunc& reduce )
     // eliminate overlap between neighbors and not need to resolve the
     // collision.
     HaloPattern pattern;
-    std::vector<std::array<int, 3>> neighbors = { { -1, -1, -1 }, { 1, -1, -1 },
-                                                  { -1, 1, -1 },  { 1, 1, -1 },
-                                                  { -1, -1, 1 },  { 1, -1, 1 },
-                                                  { -1, 1, 1 },   { 1, 1, 1 } };
+    std::vector<std::array<int, 3>> neighbors = {
+        { -1, -1, -1 }, { 1, -1, -1 }, { -1, 1, -1 }, { 1, 1, -1 },
+        { -1, -1, 1 },  { 1, -1, 1 },  { -1, 1, 1 },  { 1, 1, 1 } };
     pattern.setNeighbors( neighbors );
 
     // Create a halo.

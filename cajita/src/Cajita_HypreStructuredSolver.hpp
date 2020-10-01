@@ -81,10 +81,10 @@ class HypreStructuredSolver
             _lower = { static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
                        static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
                        static_cast<HYPRE_Int>( global_space.min( Dim::I ) ) };
-            _upper = { static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
-                       static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
-                       static_cast<HYPRE_Int>( global_space.max( Dim::I ) -
-                                               1 ) };
+            _upper = {
+                static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
+                static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
+                static_cast<HYPRE_Int>( global_space.max( Dim::I ) - 1 ) };
             error = HYPRE_StructGridSetExtents( _grid, _lower.data(),
                                                 _upper.data() );
             checkHypreError( error );

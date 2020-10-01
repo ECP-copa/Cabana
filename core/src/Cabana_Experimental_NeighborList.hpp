@@ -61,8 +61,7 @@ auto makePredicates(
     typename stdcxx20::remove_cvref_t<Slice>::value_type radius )
 {
     return Impl::SubsliceAndRadius<stdcxx20::remove_cvref_t<Slice>>{
-        std::forward<Slice>( slice ), first, last, radius
-    };
+        std::forward<Slice>( slice ), first, last, radius };
 }
 } // namespace Impl
 } // namespace Experimental

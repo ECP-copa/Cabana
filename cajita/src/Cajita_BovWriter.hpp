@@ -94,8 +94,7 @@ MPI_Datatype createSubarray( const Array_t& array,
     int local_start[4] = {
         static_cast<int>( global_grid.globalOffset( Dim::K ) ),
         static_cast<int>( global_grid.globalOffset( Dim::J ) ),
-        static_cast<int>( global_grid.globalOffset( Dim::I ) ), 0
-    };
+        static_cast<int>( global_grid.globalOffset( Dim::I ) ), 0 };
     int local_size[4] = { static_cast<int>( owned_extents[Dim::K] ),
                           static_cast<int>( owned_extents[Dim::J] ),
                           static_cast<int>( owned_extents[Dim::I] ),

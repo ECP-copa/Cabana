@@ -30,8 +30,7 @@ GlobalGrid<MeshType>::GlobalGrid(
     std::array<int, 3> global_num_cell = {
         _global_mesh->globalNumCell( Dim::I ),
         _global_mesh->globalNumCell( Dim::J ),
-        _global_mesh->globalNumCell( Dim::K )
-    };
+        _global_mesh->globalNumCell( Dim::K ) };
     _ranks_per_dim = partitioner.ranksPerDimension( comm, global_num_cell );
 
     // Extract the periodicity of the boundary as integers.
