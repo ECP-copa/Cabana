@@ -173,12 +173,17 @@ struct NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization
                                      int primitive_index ) const
     {
         int const predicate_index = getData( predicate );
+        auto &count = counts( predicate_index );
         if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
         {
-            if ( counts( predicate_index ) < (int)neighbors.extent( 1 ) )
+            if ( count < (int)neighbors.extent( 1 ) )
             {
-                neighbors( predicate_index, counts( predicate_index )++ ) =
+                neighbors( predicate_index, count++ ) =
                     primitive_index; // WARNING see below**
+            }
+            else
+            {
+                count++;
             }
         }
     }
@@ -195,10 +200,11 @@ struct NeighborDiscriminatorCallback2D_SecondPass
                                      int primitive_index ) const
     {
         int const predicate_index = getData( predicate );
+        auto &count = counts( predicate_index );
         if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
         {
-            assert( counts( predicate_index ) < (int)neighbors.extent( 1 ) );
-            neighbors( predicate_index, counts( predicate_index )++ ) =
+            assert( count < (int)neighbors.extent( 1 ) );
+            neighbors( predicate_index, count++ ) =
                 primitive_index; // WARNING see below**
         }
     }
