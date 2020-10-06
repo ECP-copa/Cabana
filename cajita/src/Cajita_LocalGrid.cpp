@@ -17,7 +17,7 @@ namespace Cajita
 // Constructor.
 template <class MeshType>
 LocalGrid<MeshType>::LocalGrid(
-    const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
+    const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
     const int halo_cell_width )
     : _global_grid( global_grid )
     , _halo_cell_width( halo_cell_width )
@@ -27,7 +27,7 @@ LocalGrid<MeshType>::LocalGrid(
 //---------------------------------------------------------------------------//
 // Get the global grid that owns the local grid.
 template <class MeshType>
-const GlobalGrid<MeshType> &LocalGrid<MeshType>::globalGrid() const
+const GlobalGrid<MeshType>& LocalGrid<MeshType>::globalGrid() const
 {
     return *_global_grid;
 }

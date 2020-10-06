@@ -56,7 +56,7 @@ struct SubsliceAndRadius
 template <typename Slice, typename = std::enable_if_t<Cabana::is_slice<
                               std::remove_reference_t<Slice>>::value>>
 auto makePredicates(
-    Slice &&slice, typename stdcxx20::remove_cvref_t<Slice>::size_type first,
+    Slice&& slice, typename stdcxx20::remove_cvref_t<Slice>::size_type first,
     typename stdcxx20::remove_cvref_t<Slice>::size_type last,
     typename stdcxx20::remove_cvref_t<Slice>::value_type radius )
 {
@@ -75,8 +75,8 @@ struct AccessTraits<Slice, PrimitivesTag,
 {
     using memory_space = typename Slice::memory_space;
     using size_type = typename Slice::size_type;
-    static KOKKOS_FUNCTION size_type size( Slice const &x ) { return x.size(); }
-    static KOKKOS_FUNCTION Point get( Slice const &x, size_type i )
+    static KOKKOS_FUNCTION size_type size( Slice const& x ) { return x.size(); }
+    static KOKKOS_FUNCTION Point get( Slice const& x, size_type i )
     {
         return { static_cast<float>( x( i, 0 ) ),
                  static_cast<float>( x( i, 1 ) ),
@@ -88,11 +88,11 @@ struct AccessTraits<SliceLike, PredicatesTag>
 {
     using memory_space = typename SliceLike::memory_space;
     using size_type = typename SliceLike::size_type;
-    static KOKKOS_FUNCTION size_type size( SliceLike const &x )
+    static KOKKOS_FUNCTION size_type size( SliceLike const& x )
     {
         return x.last - x.first;
     }
-    static KOKKOS_FUNCTION auto get( SliceLike const &x, size_type i )
+    static KOKKOS_FUNCTION auto get( SliceLike const& x, size_type i )
     {
         assert( i < size( x ) );
         auto const point =
@@ -133,9 +133,9 @@ template <typename Tag>
 struct NeighborDiscriminatorCallback
 {
     template <typename Predicate, typename OutputFunctor>
-    KOKKOS_FUNCTION void operator()( Predicate const &predicate,
+    KOKKOS_FUNCTION void operator()( Predicate const& predicate,
                                      int primitive_index,
-                                     OutputFunctor const &out ) const
+                                     OutputFunctor const& out ) const
     {
         int const predicate_index = getData( predicate );
         if ( CollisionFilter<Tag>::keep( predicate_index, primitive_index ) )
@@ -151,7 +151,7 @@ struct NeighborDiscriminatorCallback2D_FirstPass
 {
     Counts counts;
     template <typename Predicate>
-    KOKKOS_FUNCTION void operator()( Predicate const &predicate,
+    KOKKOS_FUNCTION void operator()( Predicate const& predicate,
                                      int primitive_index ) const
     {
         int const predicate_index = getData( predicate );
@@ -169,7 +169,7 @@ struct NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization
     Counts counts;
     Neighbors neighbors;
     template <typename Predicate>
-    KOKKOS_FUNCTION void operator()( Predicate const &predicate,
+    KOKKOS_FUNCTION void operator()( Predicate const& predicate,
                                      int primitive_index ) const
     {
         int const predicate_index = getData( predicate );
@@ -196,7 +196,7 @@ struct NeighborDiscriminatorCallback2D_SecondPass
     Counts counts;
     Neighbors neighbors;
     template <typename Predicate>
-    KOKKOS_FUNCTION void operator()( Predicate const &predicate,
+    KOKKOS_FUNCTION void operator()( Predicate const& predicate,
                                      int primitive_index ) const
     {
         int const predicate_index = getData( predicate );
@@ -218,14 +218,14 @@ struct NeighborDiscriminatorCallback2D_SecondPass
 template <typename MemorySpace, typename Tag>
 struct CrsGraph
 {
-    Kokkos::View<int *, MemorySpace> col_ind;
-    Kokkos::View<int *, MemorySpace> row_ptr;
+    Kokkos::View<int*, MemorySpace> col_ind;
+    Kokkos::View<int*, MemorySpace> row_ptr;
     typename MemorySpace::size_type shift;
     typename MemorySpace::size_type total;
 };
 
 template <typename DeviceType, typename Slice, typename Tag>
-auto makeNeighborList( Tag, Slice const &coordinate_slice,
+auto makeNeighborList( Tag, Slice const& coordinate_slice,
                        typename Slice::size_type first,
                        typename Slice::size_type last,
                        typename Slice::value_type radius, int buffer_size = 0 )
@@ -238,9 +238,9 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
 
     ArborX::BVH<MemorySpace> bvh( space, coordinate_slice );
 
-    Kokkos::View<int *, DeviceType> indices(
+    Kokkos::View<int*, DeviceType> indices(
         Kokkos::view_alloc( "indices", Kokkos::WithoutInitializing ), 0 );
-    Kokkos::View<int *, DeviceType> offset(
+    Kokkos::View<int*, DeviceType> offset(
         Kokkos::view_alloc( "offset", Kokkos::WithoutInitializing ), 0 );
     bvh.query(
         space, Impl::makePredicates( coordinate_slice, first, last, radius ),
@@ -254,14 +254,14 @@ auto makeNeighborList( Tag, Slice const &coordinate_slice,
 template <typename MemorySpace, typename Tag>
 struct Dense
 {
-    Kokkos::View<int *, MemorySpace> cnt;
-    Kokkos::View<int **, MemorySpace> val;
+    Kokkos::View<int*, MemorySpace> cnt;
+    Kokkos::View<int**, MemorySpace> val;
     typename MemorySpace::size_type shift;
     typename MemorySpace::size_type total;
 };
 
 template <typename DeviceType, typename Slice, typename Tag>
-auto make2DNeighborList( Tag, Slice const &coordinate_slice,
+auto make2DNeighborList( Tag, Slice const& coordinate_slice,
                          typename Slice::size_type first,
                          typename Slice::size_type last,
                          typename Slice::value_type radius,
@@ -282,11 +282,11 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
         ArborX::AccessTraits<decltype( predicates ),
                              ArborX::PredicatesTag>::size( predicates );
 
-    Kokkos::View<int **, DeviceType> neighbors;
-    Kokkos::View<int *, DeviceType> counts( "counts", n_queries );
+    Kokkos::View<int**, DeviceType> neighbors;
+    Kokkos::View<int*, DeviceType> counts( "counts", n_queries );
     if ( buffer_size > 0 )
     {
-        neighbors = Kokkos::View<int **, DeviceType>(
+        neighbors = Kokkos::View<int**, DeviceType>(
             Kokkos::view_alloc( "neighbors", Kokkos::WithoutInitializing ),
             n_queries, buffer_size );
         bvh.query(
@@ -313,7 +313,7 @@ auto make2DNeighborList( Tag, Slice const &coordinate_slice,
         return Dense<MemorySpace, Tag>{ counts, neighbors, first, bvh.size() };
     }
 
-    neighbors = Kokkos::View<int **, DeviceType>(
+    neighbors = Kokkos::View<int**, DeviceType>(
         Kokkos::view_alloc( "neighbors", Kokkos::WithoutInitializing ),
         n_queries, max_neighbors ); // realloc storage for neighbors
     Kokkos::deep_copy( counts, 0 ); // reset counts to zero
@@ -336,7 +336,7 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
   public:
     using memory_space = MemorySpace;
     static KOKKOS_FUNCTION size_type
-    numNeighbor( crs_graph_type const &crs_graph, size_type p )
+    numNeighbor( crs_graph_type const& crs_graph, size_type p )
     {
         assert( (int)p >= 0 && p < crs_graph.total );
         p -= crs_graph.shift;
@@ -345,7 +345,7 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
         return crs_graph.row_ptr( p + 1 ) - crs_graph.row_ptr( p );
     }
     static KOKKOS_FUNCTION size_type
-    getNeighbor( crs_graph_type const &crs_graph, size_type p, size_type n )
+    getNeighbor( crs_graph_type const& crs_graph, size_type p, size_type n )
     {
         assert( n < numNeighbor( crs_graph, p ) );
         p -= crs_graph.shift;
@@ -361,7 +361,7 @@ class NeighborList<Experimental::Dense<MemorySpace, Tag>>
 
   public:
     using memory_space = MemorySpace;
-    static KOKKOS_FUNCTION size_type numNeighbor( specialization_type const &d,
+    static KOKKOS_FUNCTION size_type numNeighbor( specialization_type const& d,
                                                   size_type p )
     {
         assert( (int)p >= 0 && p < d.total );
@@ -370,7 +370,7 @@ class NeighborList<Experimental::Dense<MemorySpace, Tag>>
             return 0;
         return d.cnt( p );
     }
-    static KOKKOS_FUNCTION size_type getNeighbor( specialization_type const &d,
+    static KOKKOS_FUNCTION size_type getNeighbor( specialization_type const& d,
                                                   size_type p, size_type n )
     {
         assert( n < numNeighbor( d, p ) );

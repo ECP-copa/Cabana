@@ -93,13 +93,13 @@ struct data
     float vec[CABANA_PERFORMANCE_VECLENGTH];
 };
 
-struct data *
-axpy_10( struct data *__restrict__ a, struct data *__restrict__ x0,
-         struct data *__restrict__ x1, struct data *__restrict__ x2,
-         struct data *__restrict__ x3, struct data *__restrict__ x4,
-         struct data *__restrict__ x5, struct data *__restrict__ x6,
-         struct data *__restrict__ x7, struct data *__restrict__ x8,
-         struct data *__restrict__ x9, struct data *__restrict__ c, long n )
+struct data*
+axpy_10( struct data* __restrict__ a, struct data* __restrict__ x0,
+         struct data* __restrict__ x1, struct data* __restrict__ x2,
+         struct data* __restrict__ x3, struct data* __restrict__ x4,
+         struct data* __restrict__ x5, struct data* __restrict__ x6,
+         struct data* __restrict__ x7, struct data* __restrict__ x8,
+         struct data* __restrict__ x9, struct data* __restrict__ c, long n )
 {
     long i;
     int j;
@@ -138,18 +138,18 @@ TEST( cpp, simple )
     long n = static_cast<long>( CABANA_PERFORMANCE_ITERATIONS );
     long seed = CABANA_PERFORMANCE_SEED;
 
-    data *a_ = new data();
-    data *x_ = new data();
-    data *x1_ = new data();
-    data *x2_ = new data();
-    data *x3_ = new data();
-    data *x4_ = new data();
-    data *x5_ = new data();
-    data *x6_ = new data();
-    data *x7_ = new data();
-    data *x8_ = new data();
-    data *x9_ = new data();
-    data *c_ = new data();
+    data* a_ = new data();
+    data* x_ = new data();
+    data* x1_ = new data();
+    data* x2_ = new data();
+    data* x3_ = new data();
+    data* x4_ = new data();
+    data* x5_ = new data();
+    data* x6_ = new data();
+    data* x7_ = new data();
+    data* x8_ = new data();
+    data* x9_ = new data();
+    data* c_ = new data();
 
     long i;
     unsigned short rg[3] = { static_cast<unsigned short>( seed >> 16 ),

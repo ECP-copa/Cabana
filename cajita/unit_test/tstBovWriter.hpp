@@ -116,8 +116,7 @@ void writeTest()
                       i < global_grid->globalNumEntity( Cell(), Dim::I ); ++i )
                 {
                     cell_data_file.seekg( cell_id * sizeof( double ) );
-                    cell_data_file.read( (char *)&cell_value,
-                                         sizeof( double ) );
+                    cell_data_file.read( (char*)&cell_value, sizeof( double ) );
                     EXPECT_EQ( cell_value, i + j + k );
                     ++cell_id;
                 }
@@ -146,7 +145,7 @@ void writeTest()
                             ? 0
                             : i;
                     node_data_file.seekg( node_id * sizeof( int ) );
-                    node_data_file.read( (char *)&node_value, sizeof( int ) );
+                    node_data_file.read( (char*)&node_value, sizeof( int ) );
                     EXPECT_EQ( node_value, ival );
                     ++node_id;
 
@@ -155,7 +154,7 @@ void writeTest()
                             ? 0
                             : j;
                     node_data_file.seekg( node_id * sizeof( int ) );
-                    node_data_file.read( (char *)&node_value, sizeof( int ) );
+                    node_data_file.read( (char*)&node_value, sizeof( int ) );
                     EXPECT_EQ( node_value, jval );
                     ++node_id;
 
@@ -164,7 +163,7 @@ void writeTest()
                             ? 0
                             : k;
                     node_data_file.seekg( node_id * sizeof( int ) );
-                    node_data_file.read( (char *)&node_value, sizeof( int ) );
+                    node_data_file.read( (char*)&node_value, sizeof( int ) );
                     EXPECT_EQ( node_value, kval );
                     ++node_id;
                 }

@@ -47,13 +47,13 @@ struct VerletListData<DeviceType, VerletLayoutCSR>
     using device_type = DeviceType;
 
     // Number of neighbors per particle.
-    Kokkos::View<int *, device_type> counts;
+    Kokkos::View<int*, device_type> counts;
 
     // Offsets into the neighbor list.
-    Kokkos::View<int *, device_type> offsets;
+    Kokkos::View<int*, device_type> offsets;
 
     // Neighbor list.
-    Kokkos::View<int *, device_type> neighbors;
+    Kokkos::View<int*, device_type> neighbors;
 
     // Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
@@ -71,10 +71,10 @@ struct VerletListData<DeviceType, VerletLayout2D>
     using device_type = DeviceType;
 
     // Number of neighbors per particle.
-    Kokkos::View<int *, device_type> counts;
+    Kokkos::View<int*, device_type> counts;
 
     // Neighbor list.
-    Kokkos::View<int **, device_type> neighbors;
+    Kokkos::View<int**, device_type> neighbors;
 
     // Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
@@ -164,8 +164,8 @@ struct LinkedCellStencil
 
     // Given a cell, get the index bounds of the cell stencil.
     KOKKOS_INLINE_FUNCTION
-    void getCells( const int cell, int &imin, int &imax, int &jmin, int &jmax,
-                   int &kmin, int &kmax ) const
+    void getCells( const int cell, int& imin, int& imax, int& jmin, int& jmax,
+                   int& kmin, int& kmax ) const
     {
         int i, j, k;
         grid.ijkBinIndex( cell, i, j, k );
@@ -242,7 +242,7 @@ struct VerletListBuilder
 
         // Create the count view.
         _data.counts =
-            Kokkos::View<int *, memory_space>( "num_neighbors", slice.size() );
+            Kokkos::View<int*, memory_space>( "num_neighbors", slice.size() );
 
         // Make a guess for the number of neighbors per particle for 2D lists.
         initCounts( LayoutTag() );
@@ -275,8 +275,8 @@ struct VerletListBuilder
 
     KOKKOS_INLINE_FUNCTION
     void
-    operator()( const CountNeighborsTag &,
-                const typename CountNeighborsPolicy::member_type &team ) const
+    operator()( const CountNeighborsTag&,
+                const typename CountNeighborsPolicy::member_type& team ) const
     {
         // The league rank of the team is the cardinal cell index we are
         // working on.
@@ -337,14 +337,14 @@ struct VerletListBuilder
 
     // Neighbor count team vector loop (only used for CSR lists).
     KOKKOS_INLINE_FUNCTION void
-    neighbor_reduce( const typename CountNeighborsPolicy::member_type &team,
+    neighbor_reduce( const typename CountNeighborsPolicy::member_type& team,
                      const std::size_t pid, const double x_p, const double y_p,
                      const double z_p, const int n_offset, const int num_n,
-                     int &cell_count, TeamVectorOpTag ) const
+                     int& cell_count, TeamVectorOpTag ) const
     {
         Kokkos::parallel_reduce(
             Kokkos::ThreadVectorRange( team, num_n ),
-            [&]( const int n, int &local_count ) {
+            [&]( const int n, int& local_count ) {
                 neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n, local_count );
             },
             cell_count );
@@ -355,7 +355,7 @@ struct VerletListBuilder
     void neighbor_reduce( const typename CountNeighborsPolicy::member_type,
                           const std::size_t pid, const double x_p,
                           const double y_p, const double z_p,
-                          const int n_offset, const int num_n, int &cell_count,
+                          const int n_offset, const int num_n, int& cell_count,
                           TeamOpTag ) const
     {
         for ( int n = 0; n < num_n; n++ )
@@ -366,7 +366,7 @@ struct VerletListBuilder
     KOKKOS_INLINE_FUNCTION
     void neighbor_kernel( const int pid, const double x_p, const double y_p,
                           const double z_p, const int n_offset, const int n,
-                          int &local_count ) const
+                          int& local_count ) const
     {
         //  Get the true id of the candidate  neighbor.
         std::size_t nid = linked_cell_list.permutation( n_offset + n );
@@ -399,10 +399,10 @@ struct VerletListBuilder
     struct OffsetScanOp
     {
         using kokkos_mem_space = KokkosMemorySpace;
-        Kokkos::View<int *, kokkos_mem_space> counts;
-        Kokkos::View<int *, kokkos_mem_space> offsets;
+        Kokkos::View<int*, kokkos_mem_space> counts;
+        Kokkos::View<int*, kokkos_mem_space> offsets;
         KOKKOS_INLINE_FUNCTION
-        void operator()( const int i, int &update, const bool final_pass ) const
+        void operator()( const int i, int& update, const bool final_pass ) const
         {
             if ( final_pass )
                 offsets( i ) = update;
@@ -418,7 +418,7 @@ struct VerletListBuilder
         {
             count = false;
 
-            _data.neighbors = Kokkos::View<int **, memory_space>(
+            _data.neighbors = Kokkos::View<int**, memory_space>(
                 Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
                 _data.counts.size(), max_n );
         }
@@ -427,7 +427,7 @@ struct VerletListBuilder
     void processCounts( VerletLayoutCSR )
     {
         // Allocate offsets.
-        _data.offsets = Kokkos::View<int *, memory_space>(
+        _data.offsets = Kokkos::View<int*, memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "neighbor_offsets" ),
             _data.counts.size() );
 
@@ -443,7 +443,7 @@ struct VerletListBuilder
         Kokkos::fence();
 
         // Allocate the neighbor list.
-        _data.neighbors = Kokkos::View<int *, memory_space>(
+        _data.neighbors = Kokkos::View<int*, memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
             total_num_neighbor );
 
@@ -462,7 +462,7 @@ struct VerletListBuilder
         Kokkos::parallel_reduce(
             "Cabana::VerletListBuilder::reduce_max",
             Kokkos::RangePolicy<execution_space>( 0, _data.counts.size() ),
-            KOKKOS_LAMBDA( const int i, int &value ) {
+            KOKKOS_LAMBDA( const int i, int& value ) {
                 if ( counts( i ) > value )
                     value = counts( i );
             },
@@ -475,7 +475,7 @@ struct VerletListBuilder
         {
             refill = true;
             Kokkos::deep_copy( _data.counts, 0 );
-            _data.neighbors = Kokkos::View<int **, memory_space>(
+            _data.neighbors = Kokkos::View<int**, memory_space>(
                 Kokkos::ViewAllocateWithoutInitializing( "neighbors" ),
                 _data.counts.size(), max_num_neighbor );
         }
@@ -491,8 +491,8 @@ struct VerletListBuilder
                            Kokkos::Schedule<Kokkos::Dynamic>>;
     KOKKOS_INLINE_FUNCTION
     void
-    operator()( const FillNeighborsTag &,
-                const typename FillNeighborsPolicy::member_type &team ) const
+    operator()( const FillNeighborsTag&,
+                const typename FillNeighborsPolicy::member_type& team ) const
     {
         // The league rank of the team is the cardinal cell index we are
         // working on.
@@ -545,7 +545,7 @@ struct VerletListBuilder
 
     // Neighbor fill team vector loop.
     KOKKOS_INLINE_FUNCTION void
-    neighbor_for( const typename FillNeighborsPolicy::member_type &team,
+    neighbor_for( const typename FillNeighborsPolicy::member_type& team,
                   const std::size_t pid, const double x_p, const double y_p,
                   const double z_p, const int n_offset, const int num_n,
                   TeamVectorOpTag ) const
@@ -692,7 +692,7 @@ class VerletList
                 const typename PositionSlice::value_type grid_max[3],
                 const std::size_t max_neigh = 0,
                 typename std::enable_if<( is_slice<PositionSlice>::value ),
-                                        int>::type * = 0 )
+                                        int>::type* = 0 )
     {
         // Create a builder functor.
         using builder_type =
@@ -758,14 +758,14 @@ class NeighborList<
 
     // Get the total number of neighbors (maximum size of CSR list).
     KOKKOS_INLINE_FUNCTION
-    static std::size_t maxNeighbor( const list_type &list )
+    static std::size_t maxNeighbor( const list_type& list )
     {
         return list._data.neighbors.extent( 0 );
     }
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t numNeighbor( const list_type &list,
+    static std::size_t numNeighbor( const list_type& list,
                                     const std::size_t particle_index )
     {
         return list._data.counts( particle_index );
@@ -774,7 +774,7 @@ class NeighborList<
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t getNeighbor( const list_type &list,
+    static std::size_t getNeighbor( const list_type& list,
                                     const std::size_t particle_index,
                                     const std::size_t neighbor_index )
     {
@@ -796,14 +796,14 @@ class NeighborList<
 
     // Get the maximum number of neighbors per particle.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t maxNeighbor( const list_type &list )
+    static std::size_t maxNeighbor( const list_type& list )
     {
         return list._data.neighbors.extent( 1 );
     }
 
     // Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t numNeighbor( const list_type &list,
+    static std::size_t numNeighbor( const list_type& list,
                                     const std::size_t particle_index )
     {
         return list._data.counts( particle_index );
@@ -812,7 +812,7 @@ class NeighborList<
     // Get the id for a neighbor for a given particle index and the index of
     // the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
-    static std::size_t getNeighbor( const list_type &list,
+    static std::size_t getNeighbor( const list_type& list,
                                     const std::size_t particle_index,
                                     const std::size_t neighbor_index )
     {

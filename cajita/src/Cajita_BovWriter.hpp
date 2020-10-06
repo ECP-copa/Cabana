@@ -84,12 +84,12 @@ struct BovCentering<Node>
 //---------------------------------------------------------------------------//
 // Create the MPI subarray for the given array.
 template <class Array_t>
-MPI_Datatype createSubarray( const Array_t &array,
-                             const std::array<long, 4> &owned_extents,
-                             const std::array<long, 4> &global_extents )
+MPI_Datatype createSubarray( const Array_t& array,
+                             const std::array<long, 4>& owned_extents,
+                             const std::array<long, 4>& global_extents )
 {
     using value_type = typename Array_t::value_type;
-    const auto &global_grid = array.layout()->localGrid()->globalGrid();
+    const auto& global_grid = array.layout()->localGrid()->globalGrid();
 
     int local_start[4] = {
         static_cast<int>( global_grid.globalOffset( Dim::K ) ),
@@ -125,7 +125,7 @@ MPI_Datatype createSubarray( const Array_t &array,
 */
 template <class Array_t>
 void writeTimeStep( const int time_step_index, const double time,
-                    const Array_t &array )
+                    const Array_t& array )
 {
     static_assert( isUniformMesh<typename Array_t::mesh_type>::value,
                    "ViSIT BOV writer can only be used with uniform mesh" );
@@ -137,10 +137,10 @@ void writeTimeStep( const int time_step_index, const double time,
     using execution_space = typename device_type::execution_space;
 
     // Get the global grid.
-    const auto &global_grid = array.layout()->localGrid()->globalGrid();
+    const auto& global_grid = array.layout()->localGrid()->globalGrid();
 
     // Get the global mesh.
-    const auto &global_mesh = global_grid.globalMesh();
+    const auto& global_mesh = global_grid.globalMesh();
 
     // If this is a node field, determine periodicity so we can add the last
     // node back to the visualization if needed.

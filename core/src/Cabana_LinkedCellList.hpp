@@ -35,7 +35,7 @@ class LinkedCellList
     using memory_space = typename device_type::memory_space;
     using execution_space = typename device_type::execution_space;
     using size_type = typename memory_space::size_type;
-    using OffsetView = Kokkos::View<size_type *, device_type>;
+    using OffsetView = Kokkos::View<size_type*, device_type>;
 
     /*!
       \brief Default constructor.
@@ -60,7 +60,7 @@ class LinkedCellList
         SliceType positions, const typename SliceType::value_type grid_delta[3],
         const typename SliceType::value_type grid_min[3],
         const typename SliceType::value_type grid_max[3],
-        typename std::enable_if<( is_slice<SliceType>::value ), int>::type * =
+        typename std::enable_if<( is_slice<SliceType>::value ), int>::type* =
             0 )
         : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
@@ -92,7 +92,7 @@ class LinkedCellList
         const typename SliceType::value_type grid_delta[3],
         const typename SliceType::value_type grid_min[3],
         const typename SliceType::value_type grid_max[3],
-        typename std::enable_if<( is_slice<SliceType>::value ), int>::type * =
+        typename std::enable_if<( is_slice<SliceType>::value ), int>::type* =
             0 )
         : _grid( grid_min[0], grid_min[1], grid_min[2], grid_max[0],
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
@@ -143,7 +143,7 @@ class LinkedCellList
       the slowest and the k index mvoes the fastest.
     */
     KOKKOS_INLINE_FUNCTION
-    void ijkBinIndex( const int cardinal, int &i, int &j, int &k ) const
+    void ijkBinIndex( const int cardinal, int& i, int& j, int& k ) const
     {
         _grid.ijkBinIndex( cardinal, i, j, k );
     }
@@ -214,7 +214,7 @@ class LinkedCellList
         // Allocate the binning data. Note that the permutation vector spans
         // only the length of begin-end;
         std::size_t ncell = totalBins();
-        Kokkos::View<int *, memory_space> counts(
+        Kokkos::View<int*, memory_space> counts(
             Kokkos::view_alloc( Kokkos::WithoutInitializing, "counts" ),
             ncell );
         OffsetView offsets(
@@ -247,7 +247,7 @@ class LinkedCellList
 
         // Compute offsets.
         Kokkos::RangePolicy<execution_space> cell_range( 0, ncell );
-        auto offset_scan = KOKKOS_LAMBDA( const std::size_t c, int &update,
+        auto offset_scan = KOKKOS_LAMBDA( const std::size_t c, int& update,
                                           const bool final_pass )
         {
             if ( final_pass )
@@ -318,10 +318,10 @@ struct is_linked_cell_list
  */
 template <class LinkedCellListType, class AoSoA_t>
 void permute(
-    const LinkedCellListType &linked_cell_list, AoSoA_t &aosoa,
+    const LinkedCellListType& linked_cell_list, AoSoA_t& aosoa,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
                               is_aosoa<AoSoA_t>::value ),
-                            int>::type * = 0 )
+                            int>::type* = 0 )
 {
     permute( linked_cell_list.binningData(), aosoa );
 }
@@ -340,10 +340,10 @@ void permute(
  */
 template <class LinkedCellListType, class SliceType>
 void permute(
-    const LinkedCellListType &linked_cell_list, SliceType &slice,
+    const LinkedCellListType& linked_cell_list, SliceType& slice,
     typename std::enable_if<( is_linked_cell_list<LinkedCellListType>::value &&
                               is_slice<SliceType>::value ),
-                            int>::type * = 0 )
+                            int>::type* = 0 )
 {
     permute( linked_cell_list.binningData(), slice );
 }

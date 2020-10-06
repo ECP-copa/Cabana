@@ -21,8 +21,8 @@ namespace Cajita
 // Constructor.
 template <class MeshType>
 GlobalGrid<MeshType>::GlobalGrid(
-    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>> &global_mesh,
-    const std::array<bool, 3> &periodic, const Partitioner &partitioner )
+    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+    const std::array<bool, 3>& periodic, const Partitioner& partitioner )
     : _global_mesh( global_mesh )
     , _periodic( periodic )
 {
@@ -97,7 +97,7 @@ MPI_Comm GlobalGrid<MeshType>::comm() const
 //---------------------------------------------------------------------------//
 // Get the global mesh data.
 template <class MeshType>
-const GlobalMesh<MeshType> &GlobalGrid<MeshType>::globalMesh() const
+const GlobalMesh<MeshType>& GlobalGrid<MeshType>::globalMesh() const
 {
     return *_global_mesh;
 }

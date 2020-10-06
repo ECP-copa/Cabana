@@ -16,7 +16,7 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 std::array<int, 3>
 UniformDimPartitioner::ranksPerDimension( MPI_Comm comm,
-                                          const std::array<int, 3> & ) const
+                                          const std::array<int, 3>& ) const
 {
     int comm_size;
     MPI_Comm_size( comm, &comm_size );

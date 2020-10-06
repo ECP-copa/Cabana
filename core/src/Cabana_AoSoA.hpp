@@ -58,7 +58,7 @@ struct is_aosoa : public is_aosoa_impl<typename std::remove_cv<T>::type>::type
 // Slice template helper.
 template <std::size_t M, class AoSoA_t>
 typename AoSoA_t::template member_slice_type<M>
-slice( const AoSoA_t &aosoa, const std::string &slice_label = "" )
+slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
 {
     static_assert(
         0 == sizeof( typename AoSoA_t::soa_type ) %
@@ -143,7 +143,7 @@ class AoSoA
     using soa_type = SoA<member_types, vector_length>;
 
     // Managed data view.
-    using soa_view = Kokkos::View<soa_type *, device_type, memory_traits>;
+    using soa_view = Kokkos::View<soa_type*, device_type, memory_traits>;
 
     // Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
@@ -188,7 +188,7 @@ class AoSoA
 
       The container size is zero and no memory is allocated.
     */
-    AoSoA( const std::string &label = "" )
+    AoSoA( const std::string& label = "" )
         : _size( 0 )
         , _capacity( 0 )
         , _num_soa( 0 )
@@ -227,7 +227,7 @@ class AoSoA
 
       \param n The number of tuples in the container.
     */
-    AoSoA( soa_type *ptr, const size_type num_soa, const size_type n )
+    AoSoA( soa_type* ptr, const size_type num_soa, const size_type n )
         : _size( n )
         , _capacity( num_soa * vector_length )
         , _num_soa( num_soa )
@@ -444,7 +444,7 @@ class AoSoA
       \return The SoA reference at the given index.
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    soa_type &access( const size_type s ) const { return _data( s ); }
+    soa_type& access( const size_type s ) const { return _data( s ); }
 
     /*!
       \brief Get a tuple at a given index via a deep copy.
@@ -470,7 +470,7 @@ class AoSoA
       \param tpl The tuple to get the data from.
     */
     KOKKOS_INLINE_FUNCTION
-    void setTuple( const size_type i, const tuple_type &tpl ) const
+    void setTuple( const size_type i, const tuple_type& tpl ) const
     {
         Impl::tupleCopy( _data( index_type::s( i ) ), index_type::a( i ), tpl,
                          0 );
@@ -480,7 +480,7 @@ class AoSoA
       \brief Get a typed raw pointer to the entire data block.
       \return A typed raw-pointer to the entire data block.
     */
-    soa_type *data() const { return _data.data(); }
+    soa_type* data() const { return _data.data(); }
 
   private:
     // Total number of tuples in the container.

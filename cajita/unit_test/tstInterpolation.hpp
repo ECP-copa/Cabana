@@ -58,7 +58,7 @@ void interpolationTest()
     // Create a point in the center of every cell.
     auto cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
-    Kokkos::View<double *[3], TEST_DEVICE> points(
+    Kokkos::View<double* [3], TEST_DEVICE> points(
         Kokkos::ViewAllocateWithoutInitializing( "points" ), num_point );
     Kokkos::parallel_for(
         "fill_points", createExecutionPolicy( cell_space, TEST_EXECSPACE() ),
@@ -93,19 +93,19 @@ void interpolationTest()
         Kokkos::create_mirror_view( vector_grid_field->view() );
 
     // Create a scalar point field.
-    Kokkos::View<double *, TEST_DEVICE> scalar_point_field(
+    Kokkos::View<double*, TEST_DEVICE> scalar_point_field(
         Kokkos::ViewAllocateWithoutInitializing( "scalar_point_field" ),
         num_point );
     auto scalar_point_host = Kokkos::create_mirror_view( scalar_point_field );
 
     // Create a vector point field.
-    Kokkos::View<double *[3], TEST_DEVICE> vector_point_field(
+    Kokkos::View<double* [3], TEST_DEVICE> vector_point_field(
         Kokkos::ViewAllocateWithoutInitializing( "vector_point_field" ),
         num_point );
     auto vector_point_host = Kokkos::create_mirror_view( vector_point_field );
 
     // Create a tensor point field.
-    Kokkos::View<double *[3][3], TEST_DEVICE> tensor_point_field(
+    Kokkos::View<double* [3][3], TEST_DEVICE> tensor_point_field(
         Kokkos::ViewAllocateWithoutInitializing( "tensor_point_field" ),
         num_point );
     auto tensor_point_host = Kokkos::create_mirror_view( tensor_point_field );

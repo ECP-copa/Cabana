@@ -30,8 +30,8 @@
 // Data device type is where the data to be communicated lives.
 // Comm device type is the device we want to use for communication.
 template <class DataDevice, class CommDevice>
-void performanceTest( std::ostream &stream, const std::size_t num_particle,
-                      const std::string &test_prefix )
+void performanceTest( std::ostream& stream, const std::size_t num_particle,
+                      const std::string& test_prefix )
 {
     // PROBLEM SETUP
     // -------------
@@ -137,8 +137,8 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         num_send = send_per_neighbor * 26;
         int num_stay = num_particle - num_send;
         comm_bytes[fraction] = send_per_neighbor * bytes_per_particle;
-        Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host(
-            "export_ranks", num_particle );
+        Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                                 num_particle );
         for ( int p = 0; p < num_stay; ++p )
         {
             export_ranks_host( p ) = neighbor_ranks[0];
@@ -263,10 +263,10 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
         int send_per_neighbor = num_send / 26;
         num_send = send_per_neighbor * 26;
         comm_bytes[fraction] = send_per_neighbor * bytes_per_particle;
-        Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host(
-            "export_ranks", num_send );
-        Kokkos::View<int *, Kokkos::HostSpace> export_ids_host( "export_ids",
-                                                                num_send );
+        Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                                 num_send );
+        Kokkos::View<int*, Kokkos::HostSpace> export_ids_host( "export_ids",
+                                                               num_send );
         for ( int n = 0; n < 26; ++n )
         {
             for ( int p = 0; p < send_per_neighbor; ++p )
@@ -376,7 +376,7 @@ void performanceTest( std::ostream &stream, const std::size_t num_particle,
 
 //---------------------------------------------------------------------------//
 // main
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     // Initialize environment
     MPI_Init( &argc, &argv );

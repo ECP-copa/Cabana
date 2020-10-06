@@ -85,7 +85,7 @@ class AssignmentOp
     }
 
     // tagged version that assigns only half the value..
-    KOKKOS_INLINE_FUNCTION void operator()( const HalfValueWorkTag &,
+    KOKKOS_INLINE_FUNCTION void operator()( const HalfValueWorkTag&,
                                             const int s, const int a ) const
     {
         // Member 0.
