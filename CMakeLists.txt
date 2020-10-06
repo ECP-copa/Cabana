@@ -50,14 +50,14 @@ endif()
 
 # standard dependency macro
 macro(Cabana_add_dependency)
-  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE" "" ${ARGN})
-  find_package( ${CABANA_DEPENDENCY_PACKAGE} QUIET )
+  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION" "" ${ARGN})
+  find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} QUIET )
   string(TOUPPER "${CABANA_DEPENDENCY_PACKAGE}" CABANA_DEPENDENCY_OPTION )
   option(
     Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION}
     "Require Cabana to build with ${CABANA_DEPENDENCY_PACKAGE} support" ${CABANA_DEPENDENCY_PACKAGE}_FOUND)
   if(Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION})
-    find_package( ${CABANA_DEPENDENCY_PACKAGE} REQUIRED )
+    find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} REQUIRED )
   endif()
   set(Cabana_ENABLE_${CABANA_DEPENDENCY_OPTION} ${${CABANA_DEPENDENCY_PACKAGE}_FOUND})
 endmacro()
