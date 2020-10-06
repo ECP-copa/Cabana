@@ -55,14 +55,14 @@ macro(Cajita_add_tests)
       target_link_libraries(${_target} PRIVATE Cajita cabana_cajita_gtest)
       if(CAJITA_UNIT_TEST_MPI)
         foreach(_np ${CAJITA_UNIT_TEST_MPIEXEC_NUMPROCS})
-          add_test(NAME ${_target}_${_np} COMMAND
+          add_test(NAME ${_target}_np_${_np} COMMAND
             ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
             ${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
         endforeach()
       else()
-        if(_device STREQUAL OpenMP)
+        if(_device STREQUAL PTHREAD OR _device STREQUAL OPENMP)
           foreach(_thread ${CAJITA_UNIT_TEST_NUMTHREADS})
-            add_test(NAME ${_target}_${_thread} COMMAND
+            add_test(NAME ${_target}_nt_${_thread} COMMAND
               ${_target} ${gtest_args} --kokkos-threads=${_thread})
           endforeach()
         else()
