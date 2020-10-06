@@ -80,7 +80,7 @@ if(HYPRE_FOUND)
 endif()
 
 # find heffte
-Cabana_add_dependency( PACKAGE Heffte )
+Cabana_add_dependency( PACKAGE Heffte VERSION 1.0.1 )
 
 #------------------------------------------------------------------------------#
 # Tests and Documentation

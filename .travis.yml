@@ -20,6 +20,7 @@ env:
     - BACKENDS="PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="SERIAL" WERROR=ON CMAKE_BUILD_TYPE=Release ARBORX=ON
     - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release ARBORX=ON
+    - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release HEFFTE=ON
     - BACKENDS="SERIAL OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="SERIAL PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="OPENMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
@@ -53,6 +54,16 @@ before_script:
       make -j2 VERBOSE=1 && make install &&
       popd && popd;
     fi
+  - if [[ ${HEFFTE} ]]; then
+       git clone --depth=1 --branch v1.0.1 https://bitbucket.org/icl/heffte.git &&
+       pushd heffte && mkdir build && pushd build &&
+       cmake -DCMAKE_INSTALL_PREFIX="$HOME/heffte"
+          -DCMAKE_CXX_STANDARD="11"
+          -DBUILD_SHARED_LIBS=ON
+          -DHeffte_ENABLE_FFTW=ON .. &&
+       make -j2 VERBOSE=1 && make install &&
+       popd && popd;
+    fi
   - if [[ ${COVERAGE} ]]; then
        pip install --user coverxygen &&
        mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov;
@@ -76,9 +87,10 @@ script:
   - mkdir build && pushd build &&
     cmake -DCMAKE_INSTALL_PREFIX="$HOME/cabana"
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/ArborX"
+          -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/ArborX;$HOME/heffte"
           -DCabana_REQUIRE_SERIAL=OFF ${CMAKE_OPTS[@]}
           -DCabana_REQUIRE_MPI=ON -DCabana_REQUIRE_ARBORX=${ARBORX}
+          -DCabana_REQUIRE_HEFFTE=${HEFFTE}
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DDOXYGEN_WARN_AS_ERROR=ON -DDOXYGEN_GENERATE_XML=ON -DDOXYGEN_WARN_IF_UNDOCUMENTED=OFF
           -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe"
