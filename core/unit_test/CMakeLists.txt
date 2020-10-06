@@ -72,14 +72,14 @@ macro(Cabana_add_tests)
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
           # NOTE: When moving to CMake 3.10+ make sure to use MPIEXEC_EXECUTABLE instead
-          add_test(NAME ${_target}_${_np} COMMAND
+          add_test(NAME ${_target}_np_${_np} COMMAND
             ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
             ${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
         endforeach()
       else()
-        if(_device STREQUAL THREADS OR _device STREQUAL OPENMP)
+        if(_device STREQUAL PTHREAD OR _device STREQUAL OPENMP)
           foreach(_thread ${CABANA_UNIT_TEST_NUMTHREADS})
-            add_test(NAME ${_target}_${_thread} COMMAND
+            add_test(NAME ${_target}_nt_${_thread} COMMAND
               ${NONMPI_PRECOMMAND} ${_target} ${gtest_args} --kokkos-threads=${_thread})
           endforeach()
         else()
