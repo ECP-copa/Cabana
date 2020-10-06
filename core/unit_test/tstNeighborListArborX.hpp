@@ -29,15 +29,63 @@ void testArborXListFull()
     NeighborListTestData test_data;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
-    // Create the neighbor list.
     using device_type = TEST_MEMSPACE; // sigh...
-    auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-        Cabana::FullNeighborTag{}, position, 0, position.size(),
-        test_data.test_radius );
 
-    // Check the neighbor list.
-    checkFullNeighborList( nlist, test_data.N2_list_copy,
-                           test_data.num_particle );
+    // Check CSR neighbor lists.
+    {
+        // Create the neighbor list.
+        auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
+            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            test_data.test_radius );
+
+        // Check the neighbor list.
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+    // Check CSR again, building with a large array allocation guess.
+    {
+        auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
+            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            test_data.test_radius, 100 );
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+    // Check CSR again, building with a small array allocation guess.
+    {
+        auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
+            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            test_data.test_radius, 2 );
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+
+    // Check 2D neighbor lists.
+    {
+        auto const nlist =
+            Cabana::Experimental::make2DNeighborList<device_type>(
+                Cabana::FullNeighborTag{}, position, 0, position.size(),
+                test_data.test_radius );
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+    // Check 2D again, building with a large array allocation guess.
+    {
+        auto const nlist =
+            Cabana::Experimental::make2DNeighborList<device_type>(
+                Cabana::FullNeighborTag{}, position, 0, position.size(),
+                test_data.test_radius, 100 );
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+    // Check 2D again, building with a small array allocation guess.
+    {
+        auto const nlist =
+            Cabana::Experimental::make2DNeighborList<device_type>(
+                Cabana::FullNeighborTag{}, position, 0, position.size(),
+                test_data.test_radius, 2 );
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -47,9 +95,11 @@ void testArborXListHalf()
     NeighborListTestData test_data;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
+    using device_type = TEST_MEMSPACE; // sigh...
+
+    // Check CSR neighbor lists.
     {
         // Create the neighbor list.
-        using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
             Cabana::HalfNeighborTag{}, position, 0, position.size(),
             test_data.test_radius );
@@ -58,15 +108,47 @@ void testArborXListHalf()
         checkHalfNeighborList( nlist, test_data.N2_list_copy,
                                test_data.num_particle );
     }
+    // Check CSR again, building with a large array allocation guess.
     {
-        // Create the neighbor list.
-        using device_type = TEST_MEMSPACE; // sigh...
+        auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
+            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            test_data.test_radius, 100 );
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+    // Check CSR again, building with a small array allocation guess.
+    {
+        auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
+            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            test_data.test_radius, 2 );
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+
+    // Check 2D neighbor lists.
+    {
         auto const nlist =
             Cabana::Experimental::make2DNeighborList<device_type>(
                 Cabana::HalfNeighborTag{}, position, 0, position.size(),
                 test_data.test_radius );
-
-        // Check the neighbor list.
+        checkHalfNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+    // Check 2D again, building with a large array allocation guess.
+    {
+        auto const nlist =
+            Cabana::Experimental::make2DNeighborList<device_type>(
+                Cabana::HalfNeighborTag{}, position, 0, position.size(),
+                test_data.test_radius, 100 );
+        checkHalfNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+    }
+    // Check 2D again, building with a small array allocation guess.
+    {
+        auto const nlist =
+            Cabana::Experimental::make2DNeighborList<device_type>(
+                Cabana::HalfNeighborTag{}, position, 0, position.size(),
+                test_data.test_radius, 2 );
         checkHalfNeighborList( nlist, test_data.N2_list_copy,
                                test_data.num_particle );
     }
