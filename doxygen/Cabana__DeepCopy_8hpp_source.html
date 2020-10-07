@@ -100,10 +100,10 @@ $(function() {
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Space, <span class="keyword">class</span> SrcAoSoA&gt;</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="keyword">inline</span> AoSoA&lt;typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length&gt;</div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;create_mirror(</div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">const</span> Space &amp;, <span class="keyword">const</span> SrcAoSoA &amp;src,</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;    <span class="keyword">const</span> Space&amp;, <span class="keyword">const</span> SrcAoSoA&amp; src,</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;        ( !std::is_same&lt;<span class="keyword">typename</span> SrcAoSoA::memory_space,</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                        <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type * = 0 )</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;                        <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type* = 0 )</div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;{</div>
 <div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    static_assert( is_aosoa&lt;SrcAoSoA&gt;::value,</div>
 <div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;                   <span class="stringliteral">&quot;create_mirror() requires an AoSoA&quot;</span> );</div>
@@ -115,10 +115,10 @@ $(function() {
 <div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Space, <span class="keyword">class</span> SrcAoSoA&gt;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;<span class="keyword">inline</span> SrcAoSoA create_mirror_view(</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">const</span> Space &amp;, <span class="keyword">const</span> SrcAoSoA &amp;src,</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keyword">const</span> Space&amp;, <span class="keyword">const</span> SrcAoSoA&amp; src,</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        ( std::is_same&lt;<span class="keyword">typename</span> SrcAoSoA::memory_space,</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                       <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type * = 0 )</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                       <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type* = 0 )</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;{</div>
 <div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    static_assert( is_aosoa&lt;SrcAoSoA&gt;::value,</div>
 <div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                   <span class="stringliteral">&quot;create_mirror_view() requires an AoSoA&quot;</span> );</div>
@@ -129,10 +129,10 @@ $(function() {
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Space, <span class="keyword">class</span> SrcAoSoA&gt;</div>
 <div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;<span class="keyword">inline</span> AoSoA&lt;typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length&gt;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;create_mirror_view(</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">const</span> Space &amp;space, <span class="keyword">const</span> SrcAoSoA &amp;src,</div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="keyword">const</span> Space&amp; space, <span class="keyword">const</span> SrcAoSoA&amp; src,</div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        ( !std::is_same&lt;<span class="keyword">typename</span> SrcAoSoA::memory_space,</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                        <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type * = 0 )</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;                        <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type* = 0 )</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;{</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;    static_assert( is_aosoa&lt;SrcAoSoA&gt;::value,</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;                   <span class="stringliteral">&quot;create_mirror_view() requires an AoSoA&quot;</span> );</div>
@@ -142,10 +142,10 @@ $(function() {
 <div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Space, <span class="keyword">class</span> SrcAoSoA&gt;</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keyword">inline</span> SrcAoSoA create_mirror_view_and_copy(</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">const</span> Space &amp;, <span class="keyword">const</span> SrcAoSoA &amp;src,</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <span class="keyword">const</span> Space&amp;, <span class="keyword">const</span> SrcAoSoA&amp; src,</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        ( std::is_same&lt;<span class="keyword">typename</span> SrcAoSoA::memory_space,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                       <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type * = 0 )</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;                       <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type* = 0 )</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;{</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    static_assert( is_aosoa&lt;SrcAoSoA&gt;::value,</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                   <span class="stringliteral">&quot;create_mirror_view_and_copy() requires an AoSoA&quot;</span> );</div>
@@ -156,10 +156,10 @@ $(function() {
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Space, <span class="keyword">class</span> SrcAoSoA&gt;</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;<span class="keyword">inline</span> AoSoA&lt;typename SrcAoSoA::member_types, Space, SrcAoSoA::vector_length&gt;</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;create_mirror_view_and_copy(</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keyword">const</span> Space &amp;space, <span class="keyword">const</span> SrcAoSoA &amp;src,</div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    <span class="keyword">const</span> Space&amp; space, <span class="keyword">const</span> SrcAoSoA&amp; src,</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;        ( !std::is_same&lt;<span class="keyword">typename</span> SrcAoSoA::memory_space,</div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                        <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type * = 0 )</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;                        <span class="keyword">typename</span> Space::memory_space&gt;::value )&gt;::type* = 0 )</div>
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;{</div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    static_assert( is_aosoa&lt;SrcAoSoA&gt;::value,</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;                   <span class="stringliteral">&quot;create_mirror_view_and_copy() requires an AoSoA&quot;</span> );</div>
@@ -177,9 +177,9 @@ $(function() {
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> DstAoSoA, <span class="keyword">class</span> SrcAoSoA&gt;</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;deep_copy( DstAoSoA &amp;dst, <span class="keyword">const</span> SrcAoSoA &amp;src,</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;deep_copy( DstAoSoA&amp; dst, <span class="keyword">const</span> SrcAoSoA&amp; src,</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;           <span class="keyword">typename</span> std::enable_if&lt;( is_aosoa&lt;DstAoSoA&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                                     is_aosoa&lt;SrcAoSoA&gt;::value )&gt;::type * = 0 )</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;                                     is_aosoa&lt;SrcAoSoA&gt;::value )&gt;::type* = 0 )</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;{</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;    <span class="keyword">using</span> dst_type = DstAoSoA;</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;    <span class="keyword">using</span> src_type = SrcAoSoA;</div>
@@ -202,8 +202,8 @@ $(function() {
 <div class="line"><a name="l00177"></a><span class="lineno">  177</span>&#160;    }</div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160; </div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;    <span class="comment">// Get the pointers to the beginning of the data blocks.</span></div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">void</span> *dst_data = dst.data();</div>
-<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">void</span> *src_data = src.data();</div>
+<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;    <span class="keywordtype">void</span>* dst_data = dst.data();</div>
+<div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;    <span class="keyword">const</span> <span class="keywordtype">void</span>* src_data = src.data();</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160; </div>
 <div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="comment">// Return if both pointers are null.</span></div>
 <div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;    <span class="keywordflow">if</span> ( dst_data == <span class="keyword">nullptr</span> &amp;&amp; src_data == <span class="keyword">nullptr</span> )</div>
@@ -253,8 +253,8 @@ $(function() {
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160; </div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> AoSoA_t&gt;</div>
-<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> deep_copy( AoSoA_t &amp;aosoa,</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                       <span class="keyword">const</span> <span class="keyword">typename</span> AoSoA_t::tuple_type &amp;tuple )</div>
+<div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> deep_copy( AoSoA_t&amp; aosoa,</div>
+<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;                       <span class="keyword">const</span> <span class="keyword">typename</span> AoSoA_t::tuple_type&amp; tuple )</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;{</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    static_assert( is_aosoa&lt;AoSoA_t&gt;::value,</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;                   <span class="stringliteral">&quot;Only AoSoAs can be assigned tuples&quot;</span> );</div>
@@ -271,9 +271,9 @@ $(function() {
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> DstSlice, <span class="keyword">class</span> SrcSlice&gt;</div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;deep_copy( DstSlice &amp;dst, <span class="keyword">const</span> SrcSlice &amp;src,</div>
+<div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;deep_copy( DstSlice&amp; dst, <span class="keyword">const</span> SrcSlice&amp; src,</div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;           <span class="keyword">typename</span> std::enable_if&lt;( is_slice&lt;DstSlice&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                                     is_slice&lt;SrcSlice&gt;::value )&gt;::type * = 0 )</div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;                                     is_slice&lt;SrcSlice&gt;::value )&gt;::type* = 0 )</div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;{</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;    <span class="keyword">using</span> dst_type = DstSlice;</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;    <span class="keyword">using</span> src_type = SrcSlice;</div>
@@ -333,11 +333,11 @@ $(function() {
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160; </div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    <span class="comment">// Gather the slice data in a flat view in the source space and copy it to</span></div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    <span class="comment">// the destination space.</span></div>
-<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> dst_type::value_type *,</div>
+<div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> dst_type::value_type*,</div>
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;                 <span class="keyword">typename</span> dst_type::memory_space&gt;</div>
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;        gather_dst( <span class="stringliteral">&quot;gather_dst&quot;</span>, num_comp * dst.size() );</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;    {</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        Kokkos::View&lt;<span class="keyword">typename</span> src_type::value_type *,</div>
+<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        Kokkos::View&lt;<span class="keyword">typename</span> src_type::value_type*,</div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;                     <span class="keyword">typename</span> src_type::memory_space&gt;</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;            gather_src( <span class="stringliteral">&quot;gather_src&quot;</span>, num_comp * src.size() );</div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        <span class="keyword">auto</span> gather_func = KOKKOS_LAMBDA( <span class="keyword">const</span> std::size_t i )</div>
@@ -374,7 +374,7 @@ $(function() {
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160; </div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Slice_t&gt;</div>
-<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> deep_copy( Slice_t &amp;slice,</div>
+<div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;<span class="keyword">inline</span> <span class="keywordtype">void</span> deep_copy( Slice_t&amp; slice,</div>
 <div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;                       <span class="keyword">const</span> <span class="keyword">typename</span> Slice_t::value_type scalar )</div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;{</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    static_assert( is_slice&lt;Slice_t&gt;::value,</div>

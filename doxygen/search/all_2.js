@@ -18,7 +18,7 @@ var searchData=
   ['countsendsandcreatesteeringatomic_27',['CountSendsAndCreateSteeringAtomic',['../structCabana_1_1Impl_1_1CountSendsAndCreateSteeringAtomic.html',1,'Cabana::Impl']]],
   ['countsendsandcreatesteeringduplicated_28',['CountSendsAndCreateSteeringDuplicated',['../structCabana_1_1Impl_1_1CountSendsAndCreateSteeringDuplicated.html',1,'Cabana::Impl']]],
   ['createexportsteering_29',['createExportSteering',['../classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917',1,'Cabana::CommunicationPlan::createExportSteering(const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks)'],['../classCabana_1_1CommunicationPlan.html#aa0809d8f8ef5a6594f00cf7b1ed50fec',1,'Cabana::CommunicationPlan::createExportSteering(const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks, const IdViewType &amp;element_export_ids)']]],
-  ['createfromexportsandtopology_30',['createFromExportsAndTopology',['../classCabana_1_1CommunicationPlan.html#a9c9d3ebbebe7d5362f84b31e31b83f37',1,'Cabana::CommunicationPlan']]],
-  ['createfromexportsonly_31',['createFromExportsOnly',['../classCabana_1_1CommunicationPlan.html#a68d22b721c782413f4cb9bce1af885c9',1,'Cabana::CommunicationPlan']]],
+  ['createfromexportsandtopology_30',['createFromExportsAndTopology',['../classCabana_1_1CommunicationPlan.html#a1276eca1bba9971bb3c01720bdc1ed66',1,'Cabana::CommunicationPlan']]],
+  ['createfromexportsonly_31',['createFromExportsOnly',['../classCabana_1_1CommunicationPlan.html#abe26fa589ec060f526d001f94ae90df9',1,'Cabana::CommunicationPlan']]],
   ['crsgraph_32',['CrsGraph',['../structCabana_1_1Experimental_1_1CrsGraph.html',1,'Cabana::Experimental']]]
 ];

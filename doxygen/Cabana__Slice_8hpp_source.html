@@ -121,10 +121,10 @@ $(function() {
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    <span class="keywordtype">size_t</span> dimension[ARRAY_LAYOUT_MAX_RANK];</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>( <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a> <span class="keyword">const</span> &amp; ) = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>( <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a> &amp;&amp; ) = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a> &amp;operator=( <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a> <span class="keyword">const</span> &amp; ) = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a> &amp;operator=( <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a> &amp;&amp; ) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>( <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a> <span class="keyword">const</span>&amp; ) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>( <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>&amp;&amp; ) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>&amp; operator=( <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a> <span class="keyword">const</span>&amp; ) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>&amp; operator=( <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>&amp;&amp; ) = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">explicit</span> constexpr <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">LayoutCabanaSlice</a>( <span class="keywordtype">size_t</span> num_soa = 0,</div>
@@ -168,15 +168,15 @@ $(function() {
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
 <div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <span class="comment">// rank 1</span></div>
 <div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> S&gt;</div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( S <span class="keyword">const</span> &amp;s )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( S <span class="keyword">const</span>&amp; s )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keywordflow">return</span> Stride * s;</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;    }</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160; </div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    <span class="comment">// rank 2</span></div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> S, <span class="keyword">typename</span> A&gt;</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( S <span class="keyword">const</span> &amp;s,</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                                                           A <span class="keyword">const</span> &amp;a )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( S <span class="keyword">const</span>&amp; s,</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;                                                           A <span class="keyword">const</span>&amp; a )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        <span class="keywordflow">return</span> Stride * s + a;</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;    }</div>
@@ -184,7 +184,7 @@ $(function() {
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;    <span class="comment">// rank 3</span></div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> S, <span class="keyword">typename</span> A, <span class="keyword">typename</span> I0&gt;</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    operator()( S <span class="keyword">const</span> &amp;s, A <span class="keyword">const</span> &amp;a, I0 <span class="keyword">const</span> &amp;i0 )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    operator()( S <span class="keyword">const</span>&amp; s, A <span class="keyword">const</span>&amp; a, I0 <span class="keyword">const</span>&amp; i0 )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        <span class="keywordflow">return</span> Stride * s + a + VectorLength * i0;</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;    }</div>
@@ -192,7 +192,7 @@ $(function() {
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    <span class="comment">// rank 4</span></div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> S, <span class="keyword">typename</span> A, <span class="keyword">typename</span> I0, <span class="keyword">typename</span> I1&gt;</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    operator()( S <span class="keyword">const</span> &amp;s, A <span class="keyword">const</span> &amp;a, I0 <span class="keyword">const</span> &amp;i0, I1 <span class="keyword">const</span> &amp;i1 )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;    operator()( S <span class="keyword">const</span>&amp; s, A <span class="keyword">const</span>&amp; a, I0 <span class="keyword">const</span>&amp; i0, I1 <span class="keyword">const</span>&amp; i1 )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">return</span> Stride * s + a + VectorLength * ( i1 + D1 * i0 );</div>
 <div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    }</div>
@@ -200,8 +200,8 @@ $(function() {
 <div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;    <span class="comment">// rank 5</span></div>
 <div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> S, <span class="keyword">typename</span> A, <span class="keyword">typename</span> I0, <span class="keyword">typename</span> I1, <span class="keyword">typename</span> I2&gt;</div>
 <div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    operator()( S <span class="keyword">const</span> &amp;s, A <span class="keyword">const</span> &amp;a, I0 <span class="keyword">const</span> &amp;i0, I1 <span class="keyword">const</span> &amp;i1,</div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                I2 <span class="keyword">const</span> &amp;i2 )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;    operator()( S <span class="keyword">const</span>&amp; s, A <span class="keyword">const</span>&amp; a, I0 <span class="keyword">const</span>&amp; i0, I1 <span class="keyword">const</span>&amp; i1,</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;                I2 <span class="keyword">const</span>&amp; i2 )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keywordflow">return</span> Stride * s + a + VectorLength * ( i2 + D2 * ( i1 + D1 * i0 ) );</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    }</div>
@@ -210,8 +210,8 @@ $(function() {
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> S, <span class="keyword">typename</span> A, <span class="keyword">typename</span> I0, <span class="keyword">typename</span> I1, <span class="keyword">typename</span> I2,</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;              <span class="keyword">typename</span> I3&gt;</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type</div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    operator()( S <span class="keyword">const</span> &amp;s, A <span class="keyword">const</span> &amp;a, I0 <span class="keyword">const</span> &amp;i0, I1 <span class="keyword">const</span> &amp;i1,</div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                I2 <span class="keyword">const</span> &amp;i2, I3 <span class="keyword">const</span> &amp;i3 )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;    operator()( S <span class="keyword">const</span>&amp; s, A <span class="keyword">const</span>&amp; a, I0 <span class="keyword">const</span>&amp; i0, I1 <span class="keyword">const</span>&amp; i1,</div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;                I2 <span class="keyword">const</span>&amp; i2, I3 <span class="keyword">const</span>&amp; i3 )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        <span class="keywordflow">return</span> Stride * s + a +</div>
 <div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;               VectorLength * ( i3 + D3 * i2 + D2 * ( i1 + D1 * i0 ) );</div>
@@ -221,8 +221,8 @@ $(function() {
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> S, <span class="keyword">typename</span> A, <span class="keyword">typename</span> I0, <span class="keyword">typename</span> I1, <span class="keyword">typename</span> I2,</div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;              <span class="keyword">typename</span> I3, <span class="keyword">typename</span> I4&gt;</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    operator()( S <span class="keyword">const</span> &amp;s, A <span class="keyword">const</span> &amp;a, I0 <span class="keyword">const</span> &amp;i0, I1 <span class="keyword">const</span> &amp;i1,</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                I2 <span class="keyword">const</span> &amp;i2, I3 <span class="keyword">const</span> &amp;i3, I4 <span class="keyword">const</span> &amp;i4 )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    operator()( S <span class="keyword">const</span>&amp; s, A <span class="keyword">const</span>&amp; a, I0 <span class="keyword">const</span>&amp; i0, I1 <span class="keyword">const</span>&amp; i1,</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;                I2 <span class="keyword">const</span>&amp; i2, I3 <span class="keyword">const</span>&amp; i3, I4 <span class="keyword">const</span>&amp; i4 )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        <span class="keywordflow">return</span> Stride * s + a +</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;               VectorLength *</div>
@@ -233,8 +233,8 @@ $(function() {
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> S, <span class="keyword">typename</span> A, <span class="keyword">typename</span> I0, <span class="keyword">typename</span> I1, <span class="keyword">typename</span> I2,</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;              <span class="keyword">typename</span> I3, <span class="keyword">typename</span> I4, <span class="keyword">typename</span> I5&gt;</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr size_type</div>
-<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    operator()( S <span class="keyword">const</span> &amp;s, A <span class="keyword">const</span> &amp;a, I0 <span class="keyword">const</span> &amp;i0, I1 <span class="keyword">const</span> &amp;i1,</div>
-<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                I2 <span class="keyword">const</span> &amp;i2, I3 <span class="keyword">const</span> &amp;i3, I4 <span class="keyword">const</span> &amp;i4, I5 <span class="keyword">const</span> &amp;i5 )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;    operator()( S <span class="keyword">const</span>&amp; s, A <span class="keyword">const</span>&amp; a, I0 <span class="keyword">const</span>&amp; i0, I1 <span class="keyword">const</span>&amp; i1,</div>
+<div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;                I2 <span class="keyword">const</span>&amp; i2, I3 <span class="keyword">const</span>&amp; i3, I4 <span class="keyword">const</span>&amp; i4, I5 <span class="keyword">const</span>&amp; i5 )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        <span class="keywordflow">return</span> Stride * s + a +</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;               VectorLength *</div>
@@ -338,7 +338,7 @@ $(function() {
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160; </div>
 <div class="line"><a name="l00267"></a><span class="lineno">  267</span>&#160;    <span class="comment">// Stride with [ rank ] value is the total length</span></div>
 <div class="line"><a name="l00268"></a><span class="lineno">  268</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">typename</span> iType&gt;</div>
-<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    KOKKOS_INLINE_FUNCTION <span class="keywordtype">void</span> stride( iType *<span class="keyword">const</span> s )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;    KOKKOS_INLINE_FUNCTION <span class="keywordtype">void</span> stride( iType* <span class="keyword">const</span> s )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        <span class="keywordflow">if</span> ( 0 &lt; dimension_type::rank )</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;        {</div>
@@ -378,12 +378,12 @@ $(function() {
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="comment">//----------------------------------------</span></div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    ViewOffset() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    ViewOffset( <span class="keyword">const</span> ViewOffset &amp; ) = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    ViewOffset &amp;operator=( <span class="keyword">const</span> ViewOffset &amp; ) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    ViewOffset( <span class="keyword">const</span> ViewOffset&amp; ) = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    ViewOffset&amp; operator=( <span class="keyword">const</span> ViewOffset&amp; ) = <span class="keywordflow">default</span>;</div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    constexpr ViewOffset( std::integral_constant&lt;unsigned, 0&gt; <span class="keyword">const</span> &amp;,</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                          <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice&lt;LayoutDims...&gt;</a> <span class="keyword">const</span> &amp;rhs )</div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;    constexpr ViewOffset( std::integral_constant&lt;unsigned, 0&gt; <span class="keyword">const</span>&amp;,</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                          <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice&lt;LayoutDims...&gt;</a> <span class="keyword">const</span>&amp; rhs )</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;        : m_dim( rhs.dimension[0], rhs.dimension[1], rhs.dimension[2],</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                 rhs.dimension[3], rhs.dimension[4], rhs.dimension[5],</div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                 rhs.dimension[6], rhs.dimension[7] )</div>
@@ -392,7 +392,7 @@ $(function() {
 <div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160; </div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> DimRHS, <span class="keyword">class</span> LayoutRHS&gt;</div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr ViewOffset(</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        <span class="keyword">const</span> ViewOffset&lt;DimRHS, LayoutRHS, void&gt; &amp;rhs )</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        <span class="keyword">const</span> ViewOffset&lt;DimRHS, LayoutRHS, void&gt;&amp; rhs )</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3,</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;                 rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 )</div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    {</div>
@@ -405,8 +405,8 @@ $(function() {
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160; </div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> DimRHS, <span class="keyword">class</span> LayoutRHS&gt;</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    KOKKOS_INLINE_FUNCTION constexpr ViewOffset(</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        <span class="keyword">const</span> ViewOffset&lt;DimRHS, LayoutRHS, void&gt; &amp;,</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        <span class="keyword">const</span> SubviewExtents&lt;DimRHS::rank, dimension_type::rank&gt; &amp;sub )</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;        <span class="keyword">const</span> ViewOffset&lt;DimRHS, LayoutRHS, void&gt;&amp;,</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;        <span class="keyword">const</span> SubviewExtents&lt;DimRHS::rank, dimension_type::rank&gt;&amp; sub )</div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;        : m_dim( sub.range_extent( 0 ), sub.range_extent( 1 ),</div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                 sub.range_extent( 2 ), sub.range_extent( 3 ),</div>
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;                 sub.range_extent( 4 ), sub.range_extent( 5 ),</div>
@@ -439,7 +439,7 @@ $(function() {
 <div class="line"><a name="l00367"></a><span class="lineno"><a class="line" href="structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_010_00_01VectorLength_00_01Stride_01_4.html">  367</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1Impl_1_1KokkosDataTypeImpl.html">KokkosDataTypeImpl</a>&lt;T, 0, VectorLength, Stride&gt;</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;{</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="keyword">using</span> value_type = <span class="keyword">typename</span> std::remove_all_extents&lt;T&gt;::type;</div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="keyword">using</span> data_type = value_type *[VectorLength];</div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="keyword">using</span> data_type = value_type* [VectorLength];</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    <span class="keyword">using</span> <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">cabana_layout</a> = <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice&lt;Stride, VectorLength&gt;</a>;</div>
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
 <div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;    <span class="keyword">inline</span> <span class="keyword">static</span> <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">cabana_layout</a> createLayout( <span class="keyword">const</span> std::size_t num_soa )</div>
@@ -454,7 +454,7 @@ $(function() {
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;{</div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;    <span class="keyword">using</span> value_type = <span class="keyword">typename</span> std::remove_all_extents&lt;T&gt;::type;</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    <span class="keyword">static</span> constexpr std::size_t D0 = std::extent&lt;T, 0&gt;::value;</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keyword">using</span> data_type = value_type *[VectorLength][D0];</div>
+<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;    <span class="keyword">using</span> data_type = value_type* [VectorLength][D0];</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;    <span class="keyword">using</span> <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">cabana_layout</a> = <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice&lt;Stride, VectorLength, D0&gt;</a>;</div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160; </div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;    <span class="keyword">inline</span> <span class="keyword">static</span> <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">cabana_layout</a> createLayout( <span class="keyword">const</span> std::size_t num_soa )</div>
@@ -470,7 +470,7 @@ $(function() {
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="keyword">using</span> value_type = <span class="keyword">typename</span> std::remove_all_extents&lt;T&gt;::type;</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    <span class="keyword">static</span> constexpr std::size_t D0 = std::extent&lt;T, 0&gt;::value;</div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    <span class="keyword">static</span> constexpr std::size_t D1 = std::extent&lt;T, 1&gt;::value;</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="keyword">using</span> data_type = value_type *[VectorLength][D0][D1];</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="keyword">using</span> data_type = value_type* [VectorLength][D0][D1];</div>
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    <span class="keyword">using</span> <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">cabana_layout</a> =</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice&lt;Stride, VectorLength, D0, D1&gt;</a>;</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160; </div>
@@ -488,7 +488,7 @@ $(function() {
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="keyword">static</span> constexpr std::size_t D0 = std::extent&lt;T, 0&gt;::value;</div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;    <span class="keyword">static</span> constexpr std::size_t D1 = std::extent&lt;T, 1&gt;::value;</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;    <span class="keyword">static</span> constexpr std::size_t D2 = std::extent&lt;T, 2&gt;::value;</div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    <span class="keyword">using</span> data_type = value_type *[VectorLength][D0][D1][D2];</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    <span class="keyword">using</span> data_type = value_type* [VectorLength][D0][D1][D2];</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    <span class="keyword">using</span> <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">cabana_layout</a> =</div>
 <div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;        <a class="code" href="structKokkos_1_1LayoutCabanaSlice.html">Kokkos::LayoutCabanaSlice&lt;Stride, VectorLength, D0, D1, D2&gt;</a>;</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
@@ -632,7 +632,7 @@ $(function() {
 <div class="line"><a name="l00569"></a><span class="lineno">  569</span>&#160;    }</div>
 <div class="line"><a name="l00570"></a><span class="lineno">  570</span>&#160; </div>
 <div class="line"><a name="l00578"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#a62c584101d666f3dfc5c6722df8e9f2e">  578</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#a62c584101d666f3dfc5c6722df8e9f2e">Slice</a>( <span class="keyword">const</span> pointer_type <a class="code" href="classCabana_1_1Slice.html#a7d1d9203682dd4a3156b3ff04868702c">data</a>, <span class="keyword">const</span> size_type <a class="code" href="classCabana_1_1Slice.html#a56916eee341b8184856f125ef5db0c93">size</a>,</div>
-<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;           <span class="keyword">const</span> size_type num_soa, <span class="keyword">const</span> std::string &amp;<a class="code" href="classCabana_1_1Slice.html#af22a113cd1d1795e45fe2288d16ed85d">label</a> = <span class="stringliteral">&quot;&quot;</span> )</div>
+<div class="line"><a name="l00579"></a><span class="lineno">  579</span>&#160;           <span class="keyword">const</span> size_type num_soa, <span class="keyword">const</span> std::string&amp; <a class="code" href="classCabana_1_1Slice.html#af22a113cd1d1795e45fe2288d16ed85d">label</a> = <span class="stringliteral">&quot;&quot;</span> )</div>
 <div class="line"><a name="l00580"></a><span class="lineno">  580</span>&#160;        : _view( <a class="code" href="classCabana_1_1Slice.html#a7d1d9203682dd4a3156b3ff04868702c">data</a>, <a class="code" href="structCabana_1_1Impl_1_1KokkosViewWrapper.html">view_wrapper</a>::createLayout( num_soa ) )</div>
 <div class="line"><a name="l00581"></a><span class="lineno">  581</span>&#160;        , _size( <a class="code" href="classCabana_1_1Slice.html#a56916eee341b8184856f125ef5db0c93">size</a> )</div>
 <div class="line"><a name="l00582"></a><span class="lineno">  582</span>&#160;    {</div>
@@ -640,7 +640,7 @@ $(function() {
 <div class="line"><a name="l00584"></a><span class="lineno">  584</span>&#160;    }</div>
 <div class="line"><a name="l00585"></a><span class="lineno">  585</span>&#160; </div>
 <div class="line"><a name="l00593"></a><span class="lineno">  593</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> MAT&gt;</div>
-<div class="line"><a name="l00594"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57">  594</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57">Slice</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType, DeviceType, MAT, VectorLength, Stride&gt;</a> &amp;rhs )</div>
+<div class="line"><a name="l00594"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57">  594</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57">Slice</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType, DeviceType, MAT, VectorLength, Stride&gt;</a>&amp; rhs )</div>
 <div class="line"><a name="l00595"></a><span class="lineno">  595</span>&#160;        : _view( rhs._view )</div>
 <div class="line"><a name="l00596"></a><span class="lineno">  596</span>&#160;        , _size( rhs._size )</div>
 <div class="line"><a name="l00597"></a><span class="lineno">  597</span>&#160;    {</div>
@@ -648,8 +648,8 @@ $(function() {
 <div class="line"><a name="l00599"></a><span class="lineno">  599</span>&#160;    }</div>
 <div class="line"><a name="l00600"></a><span class="lineno">  600</span>&#160; </div>
 <div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> MAT&gt;</div>
-<div class="line"><a name="l00611"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#ad9ba5c1dec7ab25323d965c86d9d55a3">  611</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html">Slice</a> &amp;<a class="code" href="classCabana_1_1Slice.html#ad9ba5c1dec7ab25323d965c86d9d55a3">operator=</a>(</div>
-<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;        <span class="keyword">const</span> <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType, DeviceType, MAT, VectorLength, Stride&gt;</a> &amp;rhs )</div>
+<div class="line"><a name="l00611"></a><span class="lineno"><a class="line" href="classCabana_1_1Slice.html#ad9ba5c1dec7ab25323d965c86d9d55a3">  611</a></span>&#160;    <a class="code" href="classCabana_1_1Slice.html">Slice</a>&amp; <a class="code" href="classCabana_1_1Slice.html#ad9ba5c1dec7ab25323d965c86d9d55a3">operator=</a>(</div>
+<div class="line"><a name="l00612"></a><span class="lineno">  612</span>&#160;        <span class="keyword">const</span> <a class="code" href="classCabana_1_1Slice.html">Slice&lt;DataType, DeviceType, MAT, VectorLength, Stride&gt;</a>&amp; rhs )</div>
 <div class="line"><a name="l00613"></a><span class="lineno">  613</span>&#160;    {</div>
 <div class="line"><a name="l00614"></a><span class="lineno">  614</span>&#160;        _view = rhs._view;</div>
 <div class="line"><a name="l00615"></a><span class="lineno">  615</span>&#160;        _size = rhs._size;</div>

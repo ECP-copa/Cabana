@@ -103,20 +103,20 @@ $(function() {
 <div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;{</div>
 <div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ViewType&gt;</div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <a class="code" href="classCabana_1_1Distributor.html#a679c99714bfe2cf3504420f853d914e3">Distributor</a>( MPI_Comm <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a>, <span class="keyword">const</span> ViewType &amp;element_export_ranks,</div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                 <span class="keyword">const</span> std::vector&lt;int&gt; &amp;neighbor_ranks )</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    <a class="code" href="classCabana_1_1Distributor.html#a679c99714bfe2cf3504420f853d914e3">Distributor</a>( MPI_Comm <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a>, <span class="keyword">const</span> ViewType&amp; element_export_ranks,</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;                 <span class="keyword">const</span> std::vector&lt;int&gt;&amp; neighbor_ranks )</div>
 <div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;        : <a class="code" href="classCabana_1_1CommunicationPlan.html#a06e29072acf141f5da2aa73c27443f94">CommunicationPlan</a>&lt;DeviceType&gt;( <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a> )</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    {</div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keyword">auto</span> neighbor_ids = this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a9c9d3ebbebe7d5362f84b31e31b83f37">createFromExportsAndTopology</a>(</div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;        <span class="keyword">auto</span> neighbor_ids = this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a1276eca1bba9971bb3c01720bdc1ed66">createFromExportsAndTopology</a>(</div>
 <div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;            element_export_ranks, neighbor_ranks );</div>
 <div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917">createExportSteering</a>( neighbor_ids, element_export_ranks );</div>
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
 <div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> ViewType&gt;</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <a class="code" href="classCabana_1_1Distributor.html#a679c99714bfe2cf3504420f853d914e3">Distributor</a>( MPI_Comm <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a>, <span class="keyword">const</span> ViewType &amp;element_export_ranks )</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;    <a class="code" href="classCabana_1_1Distributor.html#a679c99714bfe2cf3504420f853d914e3">Distributor</a>( MPI_Comm <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a>, <span class="keyword">const</span> ViewType&amp; element_export_ranks )</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        : <a class="code" href="classCabana_1_1CommunicationPlan.html#a06e29072acf141f5da2aa73c27443f94">CommunicationPlan</a>&lt;DeviceType&gt;( <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a> )</div>
 <div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;    {</div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keyword">auto</span> neighbor_ids = this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a68d22b721c782413f4cb9bce1af885c9">createFromExportsOnly</a>( element_export_ranks );</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="keyword">auto</span> neighbor_ids = this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#abe26fa589ec060f526d001f94ae90df9">createFromExportsOnly</a>( element_export_ranks );</div>
 <div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917">createExportSteering</a>( neighbor_ids, element_export_ranks );</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    }</div>
 <div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;};</div>
@@ -148,10 +148,10 @@ $(function() {
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;<span class="comment">// the forward communication plan.</span></div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> Distributor_t, <span class="keyword">class</span> AoSoA_t&gt;</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;<span class="keywordtype">void</span> distributeData(</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keyword">const</span> Distributor_t &amp;distributor, <span class="keyword">const</span> AoSoA_t &amp;src, AoSoA_t &amp;dst,</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    <span class="keyword">const</span> Distributor_t&amp; distributor, <span class="keyword">const</span> AoSoA_t&amp; src, AoSoA_t&amp; dst,</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__distributor.html">is_distributor&lt;Distributor_t&gt;::value</a> &amp;&amp;</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;                              <a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa&lt;AoSoA_t&gt;::value</a> ),</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                            <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;{</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160;    <span class="comment">// Get the MPI rank we are currently on.</span></div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;    <span class="keywordtype">int</span> my_rank = -1;</div>
@@ -170,14 +170,14 @@ $(function() {
 <div class="line"><a name="l00188"></a><span class="lineno">  188</span>&#160; </div>
 <div class="line"><a name="l00189"></a><span class="lineno">  189</span>&#160;    <span class="comment">// Allocate a send buffer.</span></div>
 <div class="line"><a name="l00190"></a><span class="lineno">  190</span>&#160;    std::size_t num_send = distributor.totalNumExport() - num_stay;</div>
-<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> AoSoA_t::tuple_type *,</div>
+<div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> AoSoA_t::tuple_type*,</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;                 <span class="keyword">typename</span> Distributor_t::memory_space&gt;</div>
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;        send_buffer( Kokkos::ViewAllocateWithoutInitializing(</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;                         <span class="stringliteral">&quot;distributor_send_buffer&quot;</span> ),</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;                     num_send );</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160; </div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;    <span class="comment">// Allocate a receive buffer.</span></div>
-<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> AoSoA_t::tuple_type *,</div>
+<div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> AoSoA_t::tuple_type*,</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;                 <span class="keyword">typename</span> Distributor_t::memory_space&gt;</div>
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;        recv_buffer( Kokkos::ViewAllocateWithoutInitializing(</div>
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160;                         <span class="stringliteral">&quot;distributor_recv_buffer&quot;</span> ),</div>
@@ -282,11 +282,11 @@ $(function() {
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Distributor_t, <span class="keyword">class</span> AoSoA_t&gt;</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t &amp;distributor, <span class="keyword">const</span> AoSoA_t &amp;src,</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;              AoSoA_t &amp;dst,</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t&amp; distributor, <span class="keyword">const</span> AoSoA_t&amp; src,</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;              AoSoA_t&amp; dst,</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( is_distributor&lt;Distributor_t&gt;::value &amp;&amp;</div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;                                        is_aosoa&lt;AoSoA_t&gt;::value ),</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;{</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="comment">// Check that src and dst are the right size.</span></div>
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="keywordflow">if</span> ( src.size() != distributor.exportSize() )</div>
@@ -301,10 +301,10 @@ $(function() {
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160; </div>
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Distributor_t, <span class="keyword">class</span> AoSoA_t&gt;</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t &amp;distributor, AoSoA_t &amp;aosoa,</div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t&amp; distributor, AoSoA_t&amp; aosoa,</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( is_distributor&lt;Distributor_t&gt;::value &amp;&amp;</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;                                        is_aosoa&lt;AoSoA_t&gt;::value ),</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;{</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="comment">// Check that the AoSoA is the right size.</span></div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    <span class="keywordflow">if</span> ( aosoa.size() != distributor.exportSize() )</div>
@@ -331,11 +331,11 @@ $(function() {
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160; </div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Distributor_t, <span class="keyword">class</span> Slice_t&gt;</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t &amp;distributor, <span class="keyword">const</span> Slice_t &amp;src,</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;              Slice_t &amp;dst,</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t&amp; distributor, <span class="keyword">const</span> Slice_t&amp; src,</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;              Slice_t&amp; dst,</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( is_distributor&lt;Distributor_t&gt;::value &amp;&amp;</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;                                        is_slice&lt;Slice_t&gt;::value ),</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;{</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    <span class="comment">// Check that src and dst are the right size.</span></div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    <span class="keywordflow">if</span> ( src.size() != distributor.exportSize() )</div>
@@ -371,7 +371,7 @@ $(function() {
 <div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    <span class="comment">// Allocate a send buffer. Note this one is layout right so the components</span></div>
 <div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    <span class="comment">// of each element are consecutive in memory.</span></div>
 <div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    std::size_t num_send = distributor.totalNumExport() - num_stay;</div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type **, Kokkos::LayoutRight,</div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type**, Kokkos::LayoutRight,</div>
 <div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;                 <span class="keyword">typename</span> Distributor_t::memory_space&gt;</div>
 <div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;        send_buffer( Kokkos::ViewAllocateWithoutInitializing(</div>
 <div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;                         <span class="stringliteral">&quot;distributor_send_buffer&quot;</span> ),</div>
@@ -379,7 +379,7 @@ $(function() {
 <div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160; </div>
 <div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;    <span class="comment">// Allocate a receive buffer. Note this one is layout right so the</span></div>
 <div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;    <span class="comment">// components of each element are consecutive in memory.</span></div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type **, Kokkos::LayoutRight,</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type**, Kokkos::LayoutRight,</div>
 <div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;                 <span class="keyword">typename</span> Distributor_t::memory_space&gt;</div>
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;        recv_buffer( Kokkos::ViewAllocateWithoutInitializing(</div>
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;                         <span class="stringliteral">&quot;distributor_recv_buffer&quot;</span> ),</div>
@@ -498,11 +498,11 @@ $(function() {
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a8a8281c28110645e3a8af293a1984917"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917">Cabana::CommunicationPlan::createExportSteering</a></div><div class="ttdeci">void createExportSteering(const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks)</div><div class="ttdoc">Create the export steering vector.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:732</div></div>
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a06e29072acf141f5da2aa73c27443f94"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a06e29072acf141f5da2aa73c27443f94">Cabana::CommunicationPlan::CommunicationPlan</a></div><div class="ttdeci">CommunicationPlan(MPI_Comm comm)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:306</div></div>
-<div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a68d22b721c782413f4cb9bce1af885c9"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a68d22b721c782413f4cb9bce1af885c9">Cabana::CommunicationPlan::createFromExportsOnly</a></div><div class="ttdeci">Kokkos::View&lt; size_type *, device_type &gt; createFromExportsOnly(const ViewType &amp;element_export_ranks)</div><div class="ttdoc">Export rank creator. Use this when you don't know who you will receiving from - only who you are send...</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:585</div></div>
-<div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a9c9d3ebbebe7d5362f84b31e31b83f37"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a9c9d3ebbebe7d5362f84b31e31b83f37">Cabana::CommunicationPlan::createFromExportsAndTopology</a></div><div class="ttdeci">Kokkos::View&lt; size_type *, device_type &gt; createFromExportsAndTopology(const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</div><div class="ttdoc">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i....</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:463</div></div>
+<div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a1276eca1bba9971bb3c01720bdc1ed66"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a1276eca1bba9971bb3c01720bdc1ed66">Cabana::CommunicationPlan::createFromExportsAndTopology</a></div><div class="ttdeci">Kokkos::View&lt; size_type *, device_type &gt; createFromExportsAndTopology(const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</div><div class="ttdoc">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i....</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:463</div></div>
 <div class="ttc" id="astructCabana_1_1is__distributor__impl_html"><div class="ttname"><a href="structCabana_1_1is__distributor__impl.html">Cabana::is_distributor_impl</a></div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:154</div></div>
 <div class="ttc" id="astructCabana_1_1is__distributor_html"><div class="ttname"><a href="structCabana_1_1is__distributor.html">Cabana::is_distributor</a></div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:164</div></div>
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a092a7b336e78855a4bf4a6e21577f8d4"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">Cabana::CommunicationPlan::comm</a></div><div class="ttdeci">MPI_Comm comm() const</div><div class="ttdoc">Get the MPI communicator.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:326</div></div>
+<div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_abe26fa589ec060f526d001f94ae90df9"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#abe26fa589ec060f526d001f94ae90df9">Cabana::CommunicationPlan::createFromExportsOnly</a></div><div class="ttdeci">Kokkos::View&lt; size_type *, device_type &gt; createFromExportsOnly(const ViewType &amp;element_export_ranks)</div><div class="ttdoc">Export rank creator. Use this when you don't know who you will receiving from - only who you are send...</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:585</div></div>
 <div class="ttc" id="astructCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:62</div></div>
 <div class="ttc" id="aclassCabana_1_1Distributor_html"><div class="ttname"><a href="classCabana_1_1Distributor.html">Cabana::Distributor</a></div><div class="ttdoc">Distributor is a communication plan for migrating data from one uniquely-owned decomposition to anoth...</div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:68</div></div>
 <div class="ttc" id="aclassCabana_1_1Distributor_html_a679c99714bfe2cf3504420f853d914e3"><div class="ttname"><a href="classCabana_1_1Distributor.html#a679c99714bfe2cf3504420f853d914e3">Cabana::Distributor::Distributor</a></div><div class="ttdeci">Distributor(MPI_Comm comm, const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</div><div class="ttdoc">Topology and export rank constructor. Use this when you already know which ranks neighbor each other ...</div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:106</div></div>

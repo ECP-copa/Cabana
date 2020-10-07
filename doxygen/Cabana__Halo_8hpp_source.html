@@ -104,16 +104,16 @@ $(function() {
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> IdViewType, <span class="keyword">class</span> RankViewType&gt;</div>
 <div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;    <a class="code" href="classCabana_1_1Halo.html#ab9bcdf50034fdd817cb41e71a08b8140">Halo</a>( MPI_Comm <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a>, <span class="keyword">const</span> std::size_t num_local,</div>
-<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;          <span class="keyword">const</span> IdViewType &amp;element_export_ids,</div>
-<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;          <span class="keyword">const</span> RankViewType &amp;element_export_ranks,</div>
-<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;          <span class="keyword">const</span> std::vector&lt;int&gt; &amp;neighbor_ranks )</div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160;          <span class="keyword">const</span> IdViewType&amp; element_export_ids,</div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;          <span class="keyword">const</span> RankViewType&amp; element_export_ranks,</div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;          <span class="keyword">const</span> std::vector&lt;int&gt;&amp; neighbor_ranks )</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        : <a class="code" href="classCabana_1_1CommunicationPlan.html#a06e29072acf141f5da2aa73c27443f94">CommunicationPlan</a>&lt;DeviceType&gt;( <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a> )</div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;        , _num_local( num_local )</div>
 <div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;    {</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        <span class="keywordflow">if</span> ( element_export_ids.size() != element_export_ranks.size() )</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error( <span class="stringliteral">&quot;Export ids and ranks different sizes!&quot;</span> );</div>
 <div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classCabana_1_1Halo.html#ab9bcdf50034fdd817cb41e71a08b8140">  110</a></span>&#160; </div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keyword">auto</span> neighbor_ids = this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a9c9d3ebbebe7d5362f84b31e31b83f37">createFromExportsAndTopology</a>(</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        <span class="keyword">auto</span> neighbor_ids = this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a1276eca1bba9971bb3c01720bdc1ed66">createFromExportsAndTopology</a>(</div>
 <div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;            element_export_ranks, neighbor_ranks );</div>
 <div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917">createExportSteering</a>( neighbor_ids, element_export_ranks,</div>
 <div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                                    element_export_ids );</div>
@@ -121,15 +121,15 @@ $(function() {
 <div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160; </div>
 <div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <span class="keyword">template</span> &lt;<span class="keyword">class</span> IdViewType, <span class="keyword">class</span> RankViewType&gt;</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <a class="code" href="classCabana_1_1Halo.html#ab9bcdf50034fdd817cb41e71a08b8140">Halo</a>( MPI_Comm <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a>, <span class="keyword">const</span> std::size_t num_local,</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;          <span class="keyword">const</span> IdViewType &amp;element_export_ids,</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;          <span class="keyword">const</span> RankViewType &amp;element_export_ranks )</div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;          <span class="keyword">const</span> IdViewType&amp; element_export_ids,</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;          <span class="keyword">const</span> RankViewType&amp; element_export_ranks )</div>
 <div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;        : <a class="code" href="classCabana_1_1CommunicationPlan.html">CommunicationPlan</a>&lt;DeviceType&gt;( <a class="code" href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">comm</a> )</div>
 <div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;        , _num_local( num_local )</div>
 <div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    {</div>
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;        <span class="keywordflow">if</span> ( element_export_ids.size() != element_export_ranks.size() )</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error( <span class="stringliteral">&quot;Export ids and ranks different sizes!&quot;</span> );</div>
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160; </div>
-<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="classCabana_1_1Halo.html#acd40df99504d9e45263036b724652b11">  160</a></span>&#160;        <span class="keyword">auto</span> neighbor_ids = this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a68d22b721c782413f4cb9bce1af885c9">createFromExportsOnly</a>( element_export_ranks );</div>
+<div class="line"><a name="l00160"></a><span class="lineno"><a class="line" href="classCabana_1_1Halo.html#acd40df99504d9e45263036b724652b11">  160</a></span>&#160;        <span class="keyword">auto</span> neighbor_ids = this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#abe26fa589ec060f526d001f94ae90df9">createFromExportsOnly</a>( element_export_ranks );</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;        this-&gt;<a class="code" href="classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917">createExportSteering</a>( neighbor_ids, element_export_ranks,</div>
 <div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;                                    element_export_ids );</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    }</div>
@@ -161,17 +161,17 @@ $(function() {
 <div class="line"><a name="l00201"></a><span class="lineno">  201</span>&#160; </div>
 <div class="line"><a name="l00202"></a><span class="lineno"><a class="line" href="structCabana_1_1is__halo__impl_3_01Halo_3_01DeviceType_01_4_01_4.html">  202</a></span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Halo_t, <span class="keyword">class</span> AoSoA_t&gt;</div>
-<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="keywordtype">void</span> gather( <span class="keyword">const</span> Halo_t &amp;halo, AoSoA_t &amp;aosoa,</div>
+<div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;<span class="keywordtype">void</span> gather( <span class="keyword">const</span> Halo_t&amp; halo, AoSoA_t&amp; aosoa,</div>
 <div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;             <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__halo.html">is_halo&lt;Halo_t&gt;::value</a> &amp;&amp;</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;                                       <a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa&lt;AoSoA_t&gt;::value</a> ),</div>
-<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                                     <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160;                                     <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;{</div>
 <div class="line"><a name="l00232"></a><span class="lineno">  232</span>&#160;    <span class="comment">// Check that the AoSoA is the right size.</span></div>
 <div class="line"><a name="l00233"></a><span class="lineno">  233</span>&#160;    <span class="keywordflow">if</span> ( aosoa.size() != halo.numLocal() + halo.numGhost() )</div>
 <div class="line"><a name="l00234"></a><span class="lineno">  234</span>&#160;        <span class="keywordflow">throw</span> std::runtime_error( <span class="stringliteral">&quot;AoSoA is the wrong size for gather!&quot;</span> );</div>
 <div class="line"><a name="l00235"></a><span class="lineno">  235</span>&#160; </div>
 <div class="line"><a name="l00236"></a><span class="lineno">  236</span>&#160;    <span class="comment">// Allocate a send buffer.</span></div>
-<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    Kokkos::View&lt;typename AoSoA_t::tuple_type *, typename Halo_t::memory_space&gt;</div>
+<div class="line"><a name="l00237"></a><span class="lineno">  237</span>&#160;    Kokkos::View&lt;typename AoSoA_t::tuple_type*, typename Halo_t::memory_space&gt;</div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;        send_buffer(</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;halo_send_buffer&quot;</span> ),</div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;            halo.totalNumExport() );</div>
@@ -191,7 +191,7 @@ $(function() {
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;    Kokkos::fence();</div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160; </div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;    <span class="comment">// Allocate a receive buffer.</span></div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    Kokkos::View&lt;typename AoSoA_t::tuple_type *, typename Halo_t::memory_space&gt;</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    Kokkos::View&lt;typename AoSoA_t::tuple_type*, typename Halo_t::memory_space&gt;</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        recv_buffer(</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;halo_recv_buffer&quot;</span> ),</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;            halo.totalNumImport() );</div>
@@ -259,10 +259,10 @@ $(function() {
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160; </div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Halo_t, <span class="keyword">class</span> Slice_t&gt;</div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;<span class="keywordtype">void</span> gather( <span class="keyword">const</span> Halo_t &amp;halo, Slice_t &amp;slice,</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;<span class="keywordtype">void</span> gather( <span class="keyword">const</span> Halo_t&amp; halo, Slice_t&amp; slice,</div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;             <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__halo.html">is_halo&lt;Halo_t&gt;::value</a> &amp;&amp;</div>
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;                                       <a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;Slice_t&gt;::value</a> ),</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                                     <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                                     <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;{</div>
 <div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    <span class="comment">// Check that the Slice is the right size.</span></div>
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    <span class="keywordflow">if</span> ( slice.size() != halo.numLocal() + halo.numGhost() )</div>
@@ -278,7 +278,7 @@ $(function() {
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160; </div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="comment">// Allocate a send buffer. Note this one is layout right so the components</span></div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    <span class="comment">// are consecutive.</span></div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type **, Kokkos::LayoutRight,</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type**, Kokkos::LayoutRight,</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                 <span class="keyword">typename</span> Halo_t::memory_space&gt;</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;        send_buffer(</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;halo_send_buffer&quot;</span> ),</div>
@@ -305,7 +305,7 @@ $(function() {
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160; </div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160;    <span class="comment">// Allocate a receive buffer. Note this one is layout right so the</span></div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;    <span class="comment">// components are consecutive.</span></div>
-<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type **, Kokkos::LayoutRight,</div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type**, Kokkos::LayoutRight,</div>
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;                 <span class="keyword">typename</span> Halo_t::memory_space&gt;</div>
 <div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;        recv_buffer(</div>
 <div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;halo_recv_buffer&quot;</span> ),</div>
@@ -381,10 +381,10 @@ $(function() {
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160; </div>
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Halo_t, <span class="keyword">class</span> Slice_t&gt;</div>
-<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;<span class="keywordtype">void</span> scatter( <span class="keyword">const</span> Halo_t &amp;halo, Slice_t &amp;slice,</div>
+<div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;<span class="keywordtype">void</span> scatter( <span class="keyword">const</span> Halo_t&amp; halo, Slice_t&amp; slice,</div>
 <div class="line"><a name="l00494"></a><span class="lineno">  494</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( is_halo&lt;Halo_t&gt;::value &amp;&amp;</div>
 <div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;                                        is_slice&lt;Slice_t&gt;::value ),</div>
-<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;{</div>
 <div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;    <span class="comment">// Check that the Slice is the right size.</span></div>
 <div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;    <span class="keywordflow">if</span> ( slice.size() != halo.numLocal() + halo.numGhost() )</div>
@@ -397,13 +397,13 @@ $(function() {
 <div class="line"><a name="l00506"></a><span class="lineno">  506</span>&#160; </div>
 <div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;    <span class="comment">// Get the raw slice data. Wrap in a 1D Kokkos View so we can unroll the</span></div>
 <div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;    <span class="comment">// components of each slice element.</span></div>
-<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type *, <span class="keyword">typename</span> Slice_t::memory_space,</div>
+<div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type*, <span class="keyword">typename</span> Slice_t::memory_space,</div>
 <div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;                 Kokkos::MemoryTraits&lt;Kokkos::Unmanaged&gt;&gt;</div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;        slice_data( slice.data(), slice.numSoA() * slice.stride( 0 ) );</div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160; </div>
 <div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="comment">// Allocate a send buffer. Note this one is layout right so the components</span></div>
 <div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;    <span class="comment">// are consecutive.</span></div>
-<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type **, Kokkos::LayoutRight,</div>
+<div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type**, Kokkos::LayoutRight,</div>
 <div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;                 <span class="keyword">typename</span> Halo_t::memory_space&gt;</div>
 <div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;        send_buffer(</div>
 <div class="line"><a name="l00518"></a><span class="lineno">  518</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;halo_send_buffer&quot;</span> ),</div>
@@ -430,7 +430,7 @@ $(function() {
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160; </div>
 <div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;    <span class="comment">// Allocate a receive buffer. Note this one is layout right so the</span></div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;    <span class="comment">// components are consecutive.</span></div>
-<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type **, Kokkos::LayoutRight,</div>
+<div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> Slice_t::value_type**, Kokkos::LayoutRight,</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;                 <span class="keyword">typename</span> Halo_t::memory_space&gt;</div>
 <div class="line"><a name="l00544"></a><span class="lineno">  544</span>&#160;        recv_buffer(</div>
 <div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;halo_recv_buffer&quot;</span> ),</div>
@@ -516,13 +516,13 @@ $(function() {
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a8a8281c28110645e3a8af293a1984917"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a8a8281c28110645e3a8af293a1984917">Cabana::CommunicationPlan::createExportSteering</a></div><div class="ttdeci">void createExportSteering(const PackViewType &amp;neighbor_ids, const RankViewType &amp;element_export_ranks)</div><div class="ttdoc">Create the export steering vector.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:732</div></div>
 <div class="ttc" id="aclassCabana_1_1Halo_html_a658af06caa6eb2ae02bcc29011e9b9f0"><div class="ttname"><a href="classCabana_1_1Halo.html#a658af06caa6eb2ae02bcc29011e9b9f0">Cabana::Halo::numGhost</a></div><div class="ttdeci">std::size_t numGhost() const</div><div class="ttdoc">Get the number of ghost elements this rank. Use this to resize a data structure for scatter/gather op...</div><div class="ttdef"><b>Definition:</b> Cabana_Halo.hpp:188</div></div>
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a06e29072acf141f5da2aa73c27443f94"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a06e29072acf141f5da2aa73c27443f94">Cabana::CommunicationPlan::CommunicationPlan</a></div><div class="ttdeci">CommunicationPlan(MPI_Comm comm)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:306</div></div>
-<div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a68d22b721c782413f4cb9bce1af885c9"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a68d22b721c782413f4cb9bce1af885c9">Cabana::CommunicationPlan::createFromExportsOnly</a></div><div class="ttdeci">Kokkos::View&lt; size_type *, device_type &gt; createFromExportsOnly(const ViewType &amp;element_export_ranks)</div><div class="ttdoc">Export rank creator. Use this when you don't know who you will receiving from - only who you are send...</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:585</div></div>
+<div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a1276eca1bba9971bb3c01720bdc1ed66"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a1276eca1bba9971bb3c01720bdc1ed66">Cabana::CommunicationPlan::createFromExportsAndTopology</a></div><div class="ttdeci">Kokkos::View&lt; size_type *, device_type &gt; createFromExportsAndTopology(const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</div><div class="ttdoc">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i....</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:463</div></div>
 <div class="ttc" id="astructCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:826</div></div>
 <div class="ttc" id="aclassCabana_1_1Halo_html"><div class="ttname"><a href="classCabana_1_1Halo.html">Cabana::Halo</a></div><div class="ttdoc">Halo communication plan for scattering and gathering of ghosted data.</div><div class="ttdef"><b>Definition:</b> Cabana_Halo.hpp:66</div></div>
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_af4453fb4235b63ed9123647755ea6e3b"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#af4453fb4235b63ed9123647755ea6e3b">Cabana::CommunicationPlan::totalNumImport</a></div><div class="ttdeci">std::size_t totalNumImport() const</div><div class="ttdoc">Get the total number of imports this rank will do.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:392</div></div>
-<div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a9c9d3ebbebe7d5362f84b31e31b83f37"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a9c9d3ebbebe7d5362f84b31e31b83f37">Cabana::CommunicationPlan::createFromExportsAndTopology</a></div><div class="ttdeci">Kokkos::View&lt; size_type *, device_type &gt; createFromExportsAndTopology(const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</div><div class="ttdoc">Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i....</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:463</div></div>
 <div class="ttc" id="aclassCabana_1_1Halo_html_a5046e216f82ee74086c8fd6f5255a3fd"><div class="ttname"><a href="classCabana_1_1Halo.html#a5046e216f82ee74086c8fd6f5255a3fd">Cabana::Halo::numLocal</a></div><div class="ttdeci">std::size_t numLocal() const</div><div class="ttdoc">Get the number of elements locally owned by this rank.</div><div class="ttdef"><b>Definition:</b> Cabana_Halo.hpp:179</div></div>
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a092a7b336e78855a4bf4a6e21577f8d4"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a092a7b336e78855a4bf4a6e21577f8d4">Cabana::CommunicationPlan::comm</a></div><div class="ttdeci">MPI_Comm comm() const</div><div class="ttdoc">Get the MPI communicator.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:326</div></div>
+<div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_abe26fa589ec060f526d001f94ae90df9"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#abe26fa589ec060f526d001f94ae90df9">Cabana::CommunicationPlan::createFromExportsOnly</a></div><div class="ttdeci">Kokkos::View&lt; size_type *, device_type &gt; createFromExportsOnly(const ViewType &amp;element_export_ranks)</div><div class="ttdoc">Export rank creator. Use this when you don't know who you will receiving from - only who you are send...</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:585</div></div>
 <div class="ttc" id="astructCabana_1_1is__halo_html"><div class="ttname"><a href="structCabana_1_1is__halo.html">Cabana::is_halo</a></div><div class="ttdef"><b>Definition:</b> Cabana_Halo.hpp:207</div></div>
 <div class="ttc" id="astructCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:62</div></div>
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html">Cabana::CommunicationPlan</a></div><div class="ttdoc">Communication plan base class.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:284</div></div>

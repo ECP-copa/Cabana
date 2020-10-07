@@ -117,13 +117,13 @@ $(function() {
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;    <span class="keyword">using</span> device_type = DeviceType;</div>
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="comment">// Number of neighbors per particle.</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="structCabana_1_1VerletListData.html">   50</a></span>&#160;    Kokkos::View&lt;int *, device_type&gt; counts;</div>
+<div class="line"><a name="l00050"></a><span class="lineno"><a class="line" href="structCabana_1_1VerletListData.html">   50</a></span>&#160;    Kokkos::View&lt;int*, device_type&gt; counts;</div>
 <div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
 <div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="comment">// Offsets into the neighbor list.</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayoutCSR_01_4.html">   53</a></span>&#160;    Kokkos::View&lt;int *, device_type&gt; offsets;</div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayoutCSR_01_4.html">   53</a></span>&#160;    Kokkos::View&lt;int*, device_type&gt; offsets;</div>
 <div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
 <div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="comment">// Neighbor list.</span></div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    Kokkos::View&lt;int *, device_type&gt; neighbors;</div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    Kokkos::View&lt;int*, device_type&gt; neighbors;</div>
 <div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160; </div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="comment">// Add a neighbor to the list.</span></div>
 <div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
@@ -141,10 +141,10 @@ $(function() {
 <div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    <span class="keyword">using</span> device_type = DeviceType;</div>
 <div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
 <div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;    <span class="comment">// Number of neighbors per particle.</span></div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    Kokkos::View&lt;int *, device_type&gt; counts;</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    Kokkos::View&lt;int*, device_type&gt; counts;</div>
 <div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160; </div>
 <div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;    <span class="comment">// Neighbor list.</span></div>
-<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayout2D_01_4.html">   77</a></span>&#160;    Kokkos::View&lt;int **, device_type&gt; neighbors;</div>
+<div class="line"><a name="l00077"></a><span class="lineno"><a class="line" href="structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayout2D_01_4.html">   77</a></span>&#160;    Kokkos::View&lt;int**, device_type&gt; neighbors;</div>
 <div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;    <span class="comment">// Add a neighbor to the list.</span></div>
 <div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
@@ -234,8 +234,8 @@ $(function() {
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160; </div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;    <span class="comment">// Given a cell, get the index bounds of the cell stencil.</span></div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordtype">void</span> getCells( <span class="keyword">const</span> <span class="keywordtype">int</span> cell, <span class="keywordtype">int</span> &amp;imin, <span class="keywordtype">int</span> &amp;imax, <span class="keywordtype">int</span> &amp;jmin, <span class="keywordtype">int</span> &amp;jmax,</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                   <span class="keywordtype">int</span> &amp;kmin, <span class="keywordtype">int</span> &amp;kmax )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;    <span class="keywordtype">void</span> getCells( <span class="keyword">const</span> <span class="keywordtype">int</span> cell, <span class="keywordtype">int</span>&amp; imin, <span class="keywordtype">int</span>&amp; imax, <span class="keywordtype">int</span>&amp; jmin, <span class="keywordtype">int</span>&amp; jmax,</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                   <span class="keywordtype">int</span>&amp; kmin, <span class="keywordtype">int</span>&amp; kmax )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;        <span class="keywordtype">int</span> i, j, k;</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;        grid.ijkBinIndex( cell, i, j, k );</div>
@@ -312,7 +312,7 @@ $(function() {
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160; </div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        <span class="comment">// Create the count view.</span></div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;        _data.counts =</div>
-<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            Kokkos::View&lt;int *, memory_space&gt;( <span class="stringliteral">&quot;num_neighbors&quot;</span>, slice.size() );</div>
+<div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;            Kokkos::View&lt;int*, memory_space&gt;( <span class="stringliteral">&quot;num_neighbors&quot;</span>, slice.size() );</div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160; </div>
 <div class="line"><a name="l00247"></a><span class="lineno">  247</span>&#160;        <span class="comment">// Make a guess for the number of neighbors per particle for 2D lists.</span></div>
 <div class="line"><a name="l00248"></a><span class="lineno">  248</span>&#160;        initCounts( LayoutTag() );</div>
@@ -345,8 +345,8 @@ $(function() {
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160; </div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
 <div class="line"><a name="l00277"></a><span class="lineno"><a class="line" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html">  277</a></span>&#160;    <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    operator()( <span class="keyword">const</span> <a class="code" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html">CountNeighborsTag</a> &amp;,</div>
-<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                <span class="keyword">const</span> <span class="keyword">typename</span> CountNeighborsPolicy::member_type &amp;team )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00278"></a><span class="lineno">  278</span>&#160;    operator()( <span class="keyword">const</span> <a class="code" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1CountNeighborsTag.html">CountNeighborsTag</a>&amp;,</div>
+<div class="line"><a name="l00279"></a><span class="lineno">  279</span>&#160;                <span class="keyword">const</span> <span class="keyword">typename</span> CountNeighborsPolicy::member_type&amp; team )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00280"></a><span class="lineno">  280</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;        <span class="comment">// The league rank of the team is the cardinal cell index we are</span></div>
 <div class="line"><a name="l00282"></a><span class="lineno">  282</span>&#160;        <span class="comment">// working on.</span></div>
@@ -407,14 +407,14 @@ $(function() {
 <div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160; </div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="comment">// Neighbor count team vector loop (only used for CSR lists).</span></div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;    KOKKOS_INLINE_FUNCTION <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    neighbor_reduce( <span class="keyword">const</span> <span class="keyword">typename</span> CountNeighborsPolicy::member_type &amp;team,</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    neighbor_reduce( <span class="keyword">const</span> <span class="keyword">typename</span> CountNeighborsPolicy::member_type&amp; team,</div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                     <span class="keyword">const</span> std::size_t pid, <span class="keyword">const</span> <span class="keywordtype">double</span> x_p, <span class="keyword">const</span> <span class="keywordtype">double</span> y_p,</div>
 <div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                     <span class="keyword">const</span> <span class="keywordtype">double</span> z_p, <span class="keyword">const</span> <span class="keywordtype">int</span> n_offset, <span class="keyword">const</span> <span class="keywordtype">int</span> num_n,</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                     <span class="keywordtype">int</span> &amp;cell_count, <a class="code" href="classCabana_1_1TeamVectorOpTag.html">TeamVectorOpTag</a> )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                     <span class="keywordtype">int</span>&amp; cell_count, <a class="code" href="classCabana_1_1TeamVectorOpTag.html">TeamVectorOpTag</a> )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;        Kokkos::parallel_reduce(</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;            Kokkos::ThreadVectorRange( team, num_n ),</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;            [&amp;]( <span class="keyword">const</span> <span class="keywordtype">int</span> n, <span class="keywordtype">int</span> &amp;local_count ) {</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;            [&amp;]( <span class="keyword">const</span> <span class="keywordtype">int</span> n, <span class="keywordtype">int</span>&amp; local_count ) {</div>
 <div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;                neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n, local_count );</div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;            },</div>
 <div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;            cell_count );</div>
@@ -425,7 +425,7 @@ $(function() {
 <div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;    <span class="keywordtype">void</span> neighbor_reduce( <span class="keyword">const</span> <span class="keyword">typename</span> CountNeighborsPolicy::member_type,</div>
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;                          <span class="keyword">const</span> std::size_t pid, <span class="keyword">const</span> <span class="keywordtype">double</span> x_p,</div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">double</span> y_p, <span class="keyword">const</span> <span class="keywordtype">double</span> z_p,</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">int</span> n_offset, <span class="keyword">const</span> <span class="keywordtype">int</span> num_n, <span class="keywordtype">int</span> &amp;cell_count,</div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">int</span> n_offset, <span class="keyword">const</span> <span class="keywordtype">int</span> num_n, <span class="keywordtype">int</span>&amp; cell_count,</div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;                          TeamOpTag )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> n = 0; n &lt; num_n; n++ )</div>
@@ -436,7 +436,7 @@ $(function() {
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    <span class="keywordtype">void</span> neighbor_kernel( <span class="keyword">const</span> <span class="keywordtype">int</span> pid, <span class="keyword">const</span> <span class="keywordtype">double</span> x_p, <span class="keyword">const</span> <span class="keywordtype">double</span> y_p,</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">double</span> z_p, <span class="keyword">const</span> <span class="keywordtype">int</span> n_offset, <span class="keyword">const</span> <span class="keywordtype">int</span> n,</div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                          <span class="keywordtype">int</span> &amp;local_count )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                          <span class="keywordtype">int</span>&amp; local_count )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;        <span class="comment">//  Get the true id of the candidate  neighbor.</span></div>
 <div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;        std::size_t nid = linked_cell_list.permutation( n_offset + n );</div>
@@ -469,10 +469,10 @@ $(function() {
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    <span class="keyword">struct </span>OffsetScanOp</div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    {</div>
 <div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        <span class="keyword">using</span> kokkos_mem_space = KokkosMemorySpace;</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;        Kokkos::View&lt;int *, kokkos_mem_space&gt; counts;</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        Kokkos::View&lt;int *, kokkos_mem_space&gt; offsets;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;        Kokkos::View&lt;int*, kokkos_mem_space&gt; counts;</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        Kokkos::View&lt;int*, kokkos_mem_space&gt; offsets;</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;        KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;        <span class="keywordtype">void</span> operator()( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keywordtype">int</span> &amp;update, <span class="keyword">const</span> <span class="keywordtype">bool</span> final_pass )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;        <span class="keywordtype">void</span> operator()( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keywordtype">int</span>&amp; update, <span class="keyword">const</span> <span class="keywordtype">bool</span> final_pass )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;<span class="keyword">        </span>{</div>
 <div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;            <span class="keywordflow">if</span> ( final_pass )</div>
 <div class="line"><a name="l00408"></a><span class="lineno"><a class="line" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1OffsetScanOp.html">  408</a></span>&#160;                offsets( i ) = update;</div>
@@ -488,7 +488,7 @@ $(function() {
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;        {</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;            count = <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160; </div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;            _data.neighbors = Kokkos::View&lt;int **, memory_space&gt;(</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;            _data.neighbors = Kokkos::View&lt;int**, memory_space&gt;(</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;                Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;neighbors&quot;</span> ),</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;                _data.counts.size(), max_n );</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;        }</div>
@@ -497,7 +497,7 @@ $(function() {
 <div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    <span class="keywordtype">void</span> processCounts( VerletLayoutCSR )</div>
 <div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    {</div>
 <div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;        <span class="comment">// Allocate offsets.</span></div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;        _data.offsets = Kokkos::View&lt;int *, memory_space&gt;(</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;        _data.offsets = Kokkos::View&lt;int*, memory_space&gt;(</div>
 <div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;neighbor_offsets&quot;</span> ),</div>
 <div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;            _data.counts.size() );</div>
 <div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160; </div>
@@ -513,7 +513,7 @@ $(function() {
 <div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;        Kokkos::fence();</div>
 <div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160; </div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;        <span class="comment">// Allocate the neighbor list.</span></div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        _data.neighbors = Kokkos::View&lt;int *, memory_space&gt;(</div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;        _data.neighbors = Kokkos::View&lt;int*, memory_space&gt;(</div>
 <div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;neighbors&quot;</span> ),</div>
 <div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;            total_num_neighbor );</div>
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160; </div>
@@ -532,7 +532,7 @@ $(function() {
 <div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;        Kokkos::parallel_reduce(</div>
 <div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;            <span class="stringliteral">&quot;Cabana::VerletListBuilder::reduce_max&quot;</span>,</div>
 <div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;            Kokkos::RangePolicy&lt;execution_space&gt;( 0, _data.counts.size() ),</div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keywordtype">int</span> &amp;value ) {</div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keywordtype">int</span>&amp; value ) {</div>
 <div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;                <span class="keywordflow">if</span> ( counts( i ) &gt; value )</div>
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;                    value = counts( i );</div>
 <div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;            },</div>
@@ -545,7 +545,7 @@ $(function() {
 <div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;        {</div>
 <div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;            refill = <span class="keyword">true</span>;</div>
 <div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;            Kokkos::deep_copy( _data.counts, 0 );</div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;            _data.neighbors = Kokkos::View&lt;int **, memory_space&gt;(</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;            _data.neighbors = Kokkos::View&lt;int**, memory_space&gt;(</div>
 <div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;                Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;neighbors&quot;</span> ),</div>
 <div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;                _data.counts.size(), max_num_neighbor );</div>
 <div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;        }</div>
@@ -561,8 +561,8 @@ $(function() {
 <div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160;                           Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;;</div>
 <div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
 <div class="line"><a name="l00493"></a><span class="lineno">  493</span>&#160;    <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00494"></a><span class="lineno"><a class="line" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1FillNeighborsTag.html">  494</a></span>&#160;    operator()( <span class="keyword">const</span> <a class="code" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1FillNeighborsTag.html">FillNeighborsTag</a> &amp;,</div>
-<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;                <span class="keyword">const</span> <span class="keyword">typename</span> FillNeighborsPolicy::member_type &amp;team )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00494"></a><span class="lineno"><a class="line" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1FillNeighborsTag.html">  494</a></span>&#160;    operator()( <span class="keyword">const</span> <a class="code" href="structCabana_1_1Impl_1_1VerletListBuilder_1_1FillNeighborsTag.html">FillNeighborsTag</a>&amp;,</div>
+<div class="line"><a name="l00495"></a><span class="lineno">  495</span>&#160;                <span class="keyword">const</span> <span class="keyword">typename</span> FillNeighborsPolicy::member_type&amp; team )<span class="keyword"> const</span></div>
 <div class="line"><a name="l00496"></a><span class="lineno">  496</span>&#160;<span class="keyword">    </span>{</div>
 <div class="line"><a name="l00497"></a><span class="lineno">  497</span>&#160;        <span class="comment">// The league rank of the team is the cardinal cell index we are</span></div>
 <div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;        <span class="comment">// working on.</span></div>
@@ -615,7 +615,7 @@ $(function() {
 <div class="line"><a name="l00545"></a><span class="lineno">  545</span>&#160; </div>
 <div class="line"><a name="l00546"></a><span class="lineno">  546</span>&#160;    <span class="comment">// Neighbor fill team vector loop.</span></div>
 <div class="line"><a name="l00547"></a><span class="lineno">  547</span>&#160;    KOKKOS_INLINE_FUNCTION <span class="keywordtype">void</span></div>
-<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    neighbor_for( <span class="keyword">const</span> <span class="keyword">typename</span> FillNeighborsPolicy::member_type &amp;team,</div>
+<div class="line"><a name="l00548"></a><span class="lineno">  548</span>&#160;    neighbor_for( <span class="keyword">const</span> <span class="keyword">typename</span> FillNeighborsPolicy::member_type&amp; team,</div>
 <div class="line"><a name="l00549"></a><span class="lineno">  549</span>&#160;                  <span class="keyword">const</span> std::size_t pid, <span class="keyword">const</span> <span class="keywordtype">double</span> x_p, <span class="keyword">const</span> <span class="keywordtype">double</span> y_p,</div>
 <div class="line"><a name="l00550"></a><span class="lineno">  550</span>&#160;                  <span class="keyword">const</span> <span class="keywordtype">double</span> z_p, <span class="keyword">const</span> <span class="keywordtype">int</span> n_offset, <span class="keyword">const</span> <span class="keywordtype">int</span> num_n,</div>
 <div class="line"><a name="l00551"></a><span class="lineno">  551</span>&#160;                  <a class="code" href="classCabana_1_1TeamVectorOpTag.html">TeamVectorOpTag</a> )<span class="keyword"> const</span></div>
@@ -706,7 +706,7 @@ $(function() {
 <div class="line"><a name="l00692"></a><span class="lineno">  692</span>&#160;                <span class="keyword">const</span> <span class="keyword">typename</span> PositionSlice::value_type grid_max[3],</div>
 <div class="line"><a name="l00693"></a><span class="lineno">  693</span>&#160;                <span class="keyword">const</span> std::size_t max_neigh = 0,</div>
 <div class="line"><a name="l00694"></a><span class="lineno">  694</span>&#160;                <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;PositionSlice&gt;::value</a> ),</div>
-<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                                        <span class="keywordtype">int</span>&gt;::type * = 0 )</div>
+<div class="line"><a name="l00695"></a><span class="lineno">  695</span>&#160;                                        <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00696"></a><span class="lineno">  696</span>&#160;    {</div>
 <div class="line"><a name="l00697"></a><span class="lineno"><a class="line" href="classCabana_1_1VerletList.html#a63f5812ca5c81dd0a885f7946b6b425b">  697</a></span>&#160;        <span class="comment">// Create a builder functor.</span></div>
 <div class="line"><a name="l00698"></a><span class="lineno">  698</span>&#160;        <span class="keyword">using</span> builder_type =</div>
@@ -772,14 +772,14 @@ $(function() {
 <div class="line"><a name="l00758"></a><span class="lineno">  758</span>&#160; </div>
 <div class="line"><a name="l00759"></a><span class="lineno">  759</span>&#160;    <span class="comment">// Get the total number of neighbors (maximum size of CSR list).</span></div>
 <div class="line"><a name="l00760"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html">  760</a></span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;    <span class="keyword">static</span> std::size_t maxNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a> &amp;list )</div>
+<div class="line"><a name="l00761"></a><span class="lineno">  761</span>&#160;    <span class="keyword">static</span> std::size_t maxNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list )</div>
 <div class="line"><a name="l00762"></a><span class="lineno">  762</span>&#160;    {</div>
 <div class="line"><a name="l00763"></a><span class="lineno">  763</span>&#160;        <span class="keywordflow">return</span> list._data.neighbors.extent( 0 );</div>
 <div class="line"><a name="l00764"></a><span class="lineno">  764</span>&#160;    }</div>
 <div class="line"><a name="l00765"></a><span class="lineno">  765</span>&#160; </div>
 <div class="line"><a name="l00766"></a><span class="lineno">  766</span>&#160;    <span class="comment">// Get the number of neighbors for a given particle index.</span></div>
 <div class="line"><a name="l00767"></a><span class="lineno">  767</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    <span class="keyword">static</span> std::size_t numNeighbor( <span class="keyword">const</span> list_type &amp;list,</div>
+<div class="line"><a name="l00768"></a><span class="lineno">  768</span>&#160;    <span class="keyword">static</span> std::size_t numNeighbor( <span class="keyword">const</span> list_type&amp; list,</div>
 <div class="line"><a name="l00769"></a><span class="lineno">  769</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index )</div>
 <div class="line"><a name="l00770"></a><span class="lineno">  770</span>&#160;    {</div>
 <div class="line"><a name="l00771"></a><span class="lineno">  771</span>&#160;        <span class="keywordflow">return</span> list._data.counts( particle_index );</div>
@@ -788,7 +788,7 @@ $(function() {
 <div class="line"><a name="l00774"></a><span class="lineno">  774</span>&#160;    <span class="comment">// Get the id for a neighbor for a given particle index and the index of</span></div>
 <div class="line"><a name="l00775"></a><span class="lineno">  775</span>&#160;    <span class="comment">// the neighbor relative to the particle.</span></div>
 <div class="line"><a name="l00776"></a><span class="lineno">  776</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;    <span class="keyword">static</span> std::size_t getNeighbor( <span class="keyword">const</span> list_type &amp;list,</div>
+<div class="line"><a name="l00777"></a><span class="lineno">  777</span>&#160;    <span class="keyword">static</span> std::size_t getNeighbor( <span class="keyword">const</span> list_type&amp; list,</div>
 <div class="line"><a name="l00778"></a><span class="lineno">  778</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index,</div>
 <div class="line"><a name="l00779"></a><span class="lineno">  779</span>&#160;                                    <span class="keyword">const</span> std::size_t neighbor_index )</div>
 <div class="line"><a name="l00780"></a><span class="lineno">  780</span>&#160;    {</div>
@@ -810,14 +810,14 @@ $(function() {
 <div class="line"><a name="l00796"></a><span class="lineno">  796</span>&#160; </div>
 <div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;    <span class="comment">// Get the maximum number of neighbors per particle.</span></div>
 <div class="line"><a name="l00798"></a><span class="lineno"><a class="line" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_00_01BuildTag_01_4_01_4.html">  798</a></span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    <span class="keyword">static</span> std::size_t maxNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a> &amp;list )</div>
+<div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;    <span class="keyword">static</span> std::size_t maxNeighbor( <span class="keyword">const</span> <a class="code" href="classCabana_1_1VerletList.html">list_type</a>&amp; list )</div>
 <div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;    {</div>
 <div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;        <span class="keywordflow">return</span> list._data.neighbors.extent( 1 );</div>
 <div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;    }</div>
 <div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160; </div>
 <div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;    <span class="comment">// Get the number of neighbors for a given particle index.</span></div>
 <div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;    <span class="keyword">static</span> std::size_t numNeighbor( <span class="keyword">const</span> list_type &amp;list,</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;    <span class="keyword">static</span> std::size_t numNeighbor( <span class="keyword">const</span> list_type&amp; list,</div>
 <div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index )</div>
 <div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;    {</div>
 <div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;        <span class="keywordflow">return</span> list._data.counts( particle_index );</div>
@@ -826,7 +826,7 @@ $(function() {
 <div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;    <span class="comment">// Get the id for a neighbor for a given particle index and the index of</span></div>
 <div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;    <span class="comment">// the neighbor relative to the particle.</span></div>
 <div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;    <span class="keyword">static</span> std::size_t getNeighbor( <span class="keyword">const</span> list_type &amp;list,</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;    <span class="keyword">static</span> std::size_t getNeighbor( <span class="keyword">const</span> list_type&amp; list,</div>
 <div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;                                    <span class="keyword">const</span> std::size_t particle_index,</div>
 <div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;                                    <span class="keyword">const</span> std::size_t neighbor_index )</div>
 <div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;    {</div>
