@@ -61,6 +61,36 @@ struct HeffteBackendTraits<Kokkos::Cuda, float>
 #endif
 #endif
 
+struct FFTScaleFull
+{
+};
+struct FFTScaleNone
+{
+};
+struct FFTScaleSymmetric
+{
+};
+
+template <class ScaleType>
+struct HeffteScalingTraits
+{
+};
+template <>
+struct HeffteScalingTraits<FFTScaleNone>
+{
+    static const auto scaling_type = heffte::scale::none;
+};
+template <>
+struct HeffteScalingTraits<FFTScaleFull>
+{
+    static const auto scaling_type = heffte::scale::full;
+};
+template <>
+struct HeffteScalingTraits<FFTScaleSymmetric>
+{
+    static const auto scaling_type = heffte::scale::symmetric;
+};
+
 // Static type checker.
 template <typename>
 struct is_cuda_complex_impl : public std::false_type
@@ -109,16 +139,6 @@ class FastFourierTransformParams
     bool getAllToAll() const { return alltoall; }
     bool getPencils() const { return pencils; }
     bool getReorder() const { return reorder; }
-};
-
-struct FFTScaleFull
-{
-};
-struct FFTScaleNone
-{
-};
-struct FFTScaleSymmetric
-{
 };
 
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
@@ -261,40 +281,20 @@ class HeffteFastFourierTransform
       \brief Do a forward FFT.
       \param in The array on which to perform the forward transform.
     */
-    template <class Array_t>
-    void forwardImpl( const Array_t& x, const FFTScaleNone )
+    template <class Array_t, class ScaleType>
+    void forwardImpl( const Array_t& x, const ScaleType )
     {
-        compute( x, 1, heffte::scale::none );
-    }
-    template <class Array_t>
-    void forwardImpl( const Array_t& x, const FFTScaleFull )
-    {
-        compute( x, 1, heffte::scale::full );
-    }
-    template <class Array_t>
-    void forwardImpl( const Array_t& x, const FFTScaleSymmetric )
-    {
-        compute( x, 1, heffte::scale::symmetric );
+        compute( x, 1, HeffteScalingTraits<ScaleType>().scaling_type );
     }
 
     /*!
      \brief Do a reverse FFT.
      \param out The array on which to perform the reverse transform.
     */
-    template <class Array_t>
-    void reverseImpl( const Array_t& x, const FFTScaleNone )
+    template <class Array_t, class ScaleType>
+    void reverseImpl( const Array_t& x, const ScaleType )
     {
-        compute( x, -1, heffte::scale::none );
-    }
-    template <class Array_t>
-    void reverseImpl( const Array_t& x, const FFTScaleFull )
-    {
-        compute( x, -1, heffte::scale::full );
-    }
-    template <class Array_t>
-    void reverseImpl( const Array_t& x, const FFTScaleSymmetric )
-    {
-        compute( x, -1, heffte::scale::symmetric );
+        compute( x, -1, HeffteScalingTraits<ScaleType>().scaling_type );
     }
 
     template <class ComplexType>
