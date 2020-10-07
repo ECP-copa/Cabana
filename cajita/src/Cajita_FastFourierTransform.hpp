@@ -121,15 +121,25 @@ struct FFTScaleSymmetric
 {
 };
 
-template <class Scalar, class EntityType, class MeshType, class DeviceType>
+template <class EntityType, class MeshType, class Scalar, class DeviceType,
+          class InterfaceType>
 class FastFourierTransform
 {
   public:
+    using entity_type = EntityType;
+    using mesh_type = MeshType;
+    using value_type = Scalar;
+    using device_type = DeviceType;
+
     std::array<int, 3> global_high;
     std::array<int, 3> global_low;
 
     FastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout )
     {
+        if ( 1 != layout.dofsPerEntity() )
+            throw std::logic_error(
+                "Only 1 complex value per entity allowed in FFT" );
+
         // Get the local dimensions of the problem.
         auto entity_space =
             layout.localGrid()->indexSpace( Own(), EntityType(), Local() );
@@ -151,17 +161,56 @@ class FastFourierTransform
                         global_low[Dim::J] + local_num_entity[Dim::J] - 1,
                         global_low[Dim::K] + local_num_entity[Dim::K] - 1 };
     }
+
+    template <class Array_t>
+    void checkArray( const Array_t& x )
+    {
+        static_assert( is_array<Array_t>::value, "Must use an array" );
+        static_assert(
+            std::is_same<typename Array_t::entity_type, entity_type>::value,
+            "Array entity type mush match transform entity type" );
+        static_assert(
+            std::is_same<typename Array_t::mesh_type, mesh_type>::value,
+            "Array mesh type mush match transform mesh type" );
+        static_assert(
+            std::is_same<typename Array_t::device_type, device_type>::value,
+            "Array device type and transform device type are different." );
+        static_assert(
+            std::is_same<typename Array_t::value_type,
+                         Kokkos::complex<value_type>>::value ||
+                std::is_same<typename Array_t::value_type, value_type>::value,
+            "Array value type and complex transform value type are "
+            "different." );
+
+        if ( 1 != x.layout()->dofsPerEntity() )
+            throw std::logic_error(
+                "Only 1 complex value per entity allowed in FFT" );
+    }
+
+    template <class Array_t, class ScaleType>
+    void forward( const Array_t& x, const ScaleType scaling )
+    {
+        checkArray( x );
+        static_cast<InterfaceType*>( this )->forwardImpl( x, scaling );
+    }
+
+    template <class Array_t, class ScaleType>
+    void reverse( const Array_t& x, const ScaleType scaling )
+    {
+        checkArray( x );
+        static_cast<InterfaceType*>( this )->reverseImpl( x, scaling );
+    }
 };
 
-template <class Scalar, class EntityType, class MeshType, class DeviceType>
+template <class EntityType, class MeshType, class Scalar, class DeviceType>
 class HeffteFastFourierTransform
-    : public FastFourierTransform<Scalar, EntityType, MeshType, DeviceType>
+    : public FastFourierTransform<
+          EntityType, MeshType, Scalar, DeviceType,
+          HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>
 {
   public:
     // Types.
     using value_type = Scalar;
-    using entity_type = EntityType;
-    using mesh_type = MeshType;
     using device_type = DeviceType;
     using exec_space = typename device_type::execution_space;
     using backend_type =
@@ -176,13 +225,11 @@ class HeffteFastFourierTransform
     */
     HeffteFastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout,
                                 const FastFourierTransformParams& params )
-        : FastFourierTransform<Scalar, EntityType, MeshType, DeviceType>(
+        : FastFourierTransform<EntityType, MeshType, Scalar, DeviceType,
+                               HeffteFastFourierTransform<EntityType, MeshType,
+                                                          Scalar, DeviceType>>(
               layout )
     {
-        if ( 1 != layout.dofsPerEntity() )
-            throw std::logic_error(
-                "Only 1 complex value per entity allowed in FFT" );
-
         heffte::box3d inbox = { this->global_low, this->global_high };
         heffte::box3d outbox = { this->global_low, this->global_high };
 
@@ -215,17 +262,17 @@ class HeffteFastFourierTransform
       \param in The array on which to perform the forward transform.
     */
     template <class Array_t>
-    void forward( const Array_t& x, const FFTScaleNone )
+    void forwardImpl( const Array_t& x, const FFTScaleNone )
     {
         compute( x, 1, heffte::scale::none );
     }
     template <class Array_t>
-    void forward( const Array_t& x, const FFTScaleFull )
+    void forwardImpl( const Array_t& x, const FFTScaleFull )
     {
         compute( x, 1, heffte::scale::full );
     }
     template <class Array_t>
-    void forward( const Array_t& x, const FFTScaleSymmetric )
+    void forwardImpl( const Array_t& x, const FFTScaleSymmetric )
     {
         compute( x, 1, heffte::scale::symmetric );
     }
@@ -235,17 +282,17 @@ class HeffteFastFourierTransform
      \param out The array on which to perform the reverse transform.
     */
     template <class Array_t>
-    void reverse( const Array_t& x, const FFTScaleNone )
+    void reverseImpl( const Array_t& x, const FFTScaleNone )
     {
         compute( x, -1, heffte::scale::none );
     }
     template <class Array_t>
-    void reverse( const Array_t& x, const FFTScaleFull )
+    void reverseImpl( const Array_t& x, const FFTScaleFull )
     {
         compute( x, -1, heffte::scale::full );
     }
     template <class Array_t>
-    void reverse( const Array_t& x, const FFTScaleSymmetric )
+    void reverseImpl( const Array_t& x, const FFTScaleSymmetric )
     {
         compute( x, -1, heffte::scale::symmetric );
     }
@@ -295,26 +342,6 @@ class HeffteFastFourierTransform
     template <class Array_t>
     void compute( const Array_t& x, const int flag, const heffte::scale scale )
     {
-        static_assert( is_array<Array_t>::value, "Must use an array" );
-        static_assert(
-            std::is_same<typename Array_t::entity_type, entity_type>::value,
-            "Array entity type mush match transform entity type" );
-        static_assert(
-            std::is_same<typename Array_t::mesh_type, mesh_type>::value,
-            "Array mesh type mush match transform mesh type" );
-        static_assert(
-            std::is_same<typename Array_t::device_type, DeviceType>::value,
-            "Array device type and transform device type are different." );
-        static_assert(
-            std::is_same<typename Array_t::value_type,
-                         Kokkos::complex<value_type>>::value ||
-                std::is_same<typename Array_t::value_type, value_type>::value,
-            "Array value type and complex transform value type are "
-            "different." );
-
-        if ( 1 != x.layout()->dofsPerEntity() )
-            throw std::logic_error(
-                "Only 1 complex value per entity allowed in FFT" );
 
         // Create a subview of the work array to write the local data into.
         auto own_space =
@@ -377,19 +404,19 @@ class HeffteFastFourierTransform
 //---------------------------------------------------------------------------//
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
 std::shared_ptr<
-    HeffteFastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>
+    HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>
 createHeffteFastFourierTransform(
     const ArrayLayout<EntityType, MeshType>& layout,
     const FastFourierTransformParams& params )
 {
     return std::make_shared<
-        HeffteFastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>(
+        HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>(
         layout, params );
 }
 
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
 std::shared_ptr<
-    HeffteFastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>
+    HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>
 createHeffteFastFourierTransform(
     const ArrayLayout<EntityType, MeshType>& layout )
 {
@@ -408,7 +435,7 @@ createHeffteFastFourierTransform(
     params.setReorder( heffte_params.use_reorder );
 
     return std::make_shared<
-        HeffteFastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>(
+        HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>(
         layout, params );
 }
 
