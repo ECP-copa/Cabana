@@ -29,89 +29,49 @@ namespace Experimental
 {
 //---------------------------------------------------------------------------//
 
-struct FFTBackendFFTW
-{
-};
-struct FFTBackendMKL
-{
-};
-struct FFTBackendDefault
-{
-};
-
-// TODO: Add HIP backend specialization when available.
-template <class ExecutionSpace, class Scalar, class BackendType>
-struct HeffteBackendTraits
-{
-};
-#ifdef Heffte_ENABLE_FFTW
-template <class ExecutionSpace, class Scalar>
-struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendFFTW>
-{
-    using backend_type = heffte::backend::fftw;
-    using complex_type = std::complex<Scalar>;
-};
-template <class ExecutionSpace, class Scalar>
-struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendDefault>
-{
-    using backend_type = heffte::backend::fftw;
-    using complex_type = std::complex<Scalar>;
-};
-#endif
-#ifdef Heffte_ENABLE_MKL
-template <class ExecutionSpace, class Scalar>
-struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendMKL>
-{
-    using backend_type = heffte::backend::mkl;
-    using complex_type = std::complex<Scalar>;
-};
-#endif
-#ifdef Heffte_ENABLE_CUDA
-#ifdef KOKKOS_ENABLE_CUDA
-template <>
-struct HeffteBackendTraits<Kokkos::Cuda, double, FFTBackendDefault>
-{
-    using backend_type = heffte::backend::cufft;
-    using complex_type = cufftDoubleComplex;
-};
-template <>
-struct HeffteBackendTraits<Kokkos::Cuda, float, FFTBackendDefault>
-{
-    using backend_type = heffte::backend::cufft;
-    using complex_type = cufftComplex;
-};
-#endif
-#endif
-
+/*!
+  \class FFTScaleFull
+  \brief Tag for full scaling of FFT.
+*/
 struct FFTScaleFull
 {
 };
+/*!
+  \class FFTScaleNone
+  \brief Tag for no scaling of FFT.
+*/
 struct FFTScaleNone
 {
 };
+/*!
+  \class FFTScaleSymmetric
+  \brief Tag for symmetric scaling of FFT.
+*/
 struct FFTScaleSymmetric
 {
 };
 
-template <class ScaleType>
-struct HeffteScalingTraits
+/*!
+  \class FFTBackendFFTW
+  \brief Tag specifying FFTW backend for FFT (host default).
+*/
+struct FFTBackendFFTW
 {
 };
-template <>
-struct HeffteScalingTraits<FFTScaleNone>
+/*!
+  \class FFTBackendMKL
+  \brief Tag specifying MKL backend for FFT.
+*/
+struct FFTBackendMKL
 {
-    static const auto scaling_type = heffte::scale::none;
 };
-template <>
-struct HeffteScalingTraits<FFTScaleFull>
+
+namespace Impl
 {
-    static const auto scaling_type = heffte::scale::full;
-};
-template <>
-struct HeffteScalingTraits<FFTScaleSymmetric>
+struct FFTBackendDefault
 {
-    static const auto scaling_type = heffte::scale::symmetric;
 };
+} // namespace Impl
 
 // Static type checker.
 template <typename>
@@ -148,6 +108,11 @@ struct is_std_complex
 {
 };
 
+//---------------------------------------------------------------------------//
+/*!
+  \class FastFourierTransformParams
+  \brief Parameters controlling details for fast Fourier transforms.
+*/
 class FastFourierTransformParams
 {
     bool alltoall = true;
@@ -155,14 +120,45 @@ class FastFourierTransformParams
     bool reorder = true;
 
   public:
+    /*!
+      \brief setAllToAll Set MPI communication.
+      \param value Use all to all MPI communication.
+    */
     void setAllToAll( bool value ) { alltoall = value; }
+    /*!
+      \brief setPencils Set data exchange type (pencil or slab).
+      \param value Use pencil (true) or slab (false) decomposition.
+    */
     void setPencils( bool value ) { pencils = value; }
+    /*!
+      \brief setReorder Set data handling (contiguous or strided memory).
+      \param value Use contiguous (true) or strided (false) memory layout.
+      Contiguous layout requires tensor transposition; strided layout does not.
+    */
     void setReorder( bool value ) { reorder = value; }
+    /*!
+      \brief getAllToAll Get MPI communication.
+      \return Using all to all MPI communication or not.
+    */
     bool getAllToAll() const { return alltoall; }
+    /*!
+      \brief getPencils Get data exchange type (pencil or slab).
+      \param value Using pencil (true) or slab (false) decomposition.
+    */
     bool getPencils() const { return pencils; }
+    /*!
+      \brief getReorder Get data handling (contiguous or strided memory).
+      \param value Using contiguous (true) or strided (false) memory layout.
+      Contiguous layout requires tensor transposition; strided layout does not.
+    */
     bool getReorder() const { return reorder; }
 };
 
+//---------------------------------------------------------------------------//
+/*!
+  \class FastFourierTransform
+  \brief 3D distributed fast Fourier transform base implementation.
+*/
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
           class InterfaceType>
 class FastFourierTransform
@@ -176,6 +172,10 @@ class FastFourierTransform
     std::array<int, 3> global_high;
     std::array<int, 3> global_low;
 
+    /*!
+      \brief Constructor
+      \param layout The array layout defining the vector space of the transform.
+    */
     FastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout )
     {
         if ( 1 != layout.dofsPerEntity() )
@@ -204,6 +204,10 @@ class FastFourierTransform
                         global_low[Dim::K] + local_num_entity[Dim::K] - 1 };
     }
 
+    /*!
+      \brief Ensure the FFT compute array matches the FFT class array layout.
+      \param x The array to compare to class data.
+    */
     template <class Array_t>
     void checkArray( const Array_t& x )
     {
@@ -229,6 +233,11 @@ class FastFourierTransform
                 "Only 1 complex value per entity allowed in FFT" );
     }
 
+    /*!
+      \brief Do a forward FFT.
+      \param x The array on which to perform the forward transform.
+      \param scaling Method of scaling data.
+    */
     template <class Array_t, class ScaleType>
     void forward( const Array_t& x, const ScaleType scaling )
     {
@@ -236,6 +245,11 @@ class FastFourierTransform
         static_cast<InterfaceType*>( this )->forwardImpl( x, scaling );
     }
 
+    /*!
+      \brief Do a reverse FFT.
+      \param x The array on which to perform the reverse transform.
+      \param scaling Method of scaling data.
+    */
     template <class Array_t, class ScaleType>
     void reverse( const Array_t& x, const ScaleType scaling )
     {
@@ -244,6 +258,82 @@ class FastFourierTransform
     }
 };
 
+//---------------------------------------------------------------------------//
+// heFFTe
+//---------------------------------------------------------------------------//
+
+namespace Impl
+{
+// TODO: Add HIP backend specialization when available.
+template <class ExecutionSpace, class Scalar, class BackendType>
+struct HeffteBackendTraits
+{
+};
+#ifdef Heffte_ENABLE_FFTW
+template <class ExecutionSpace, class Scalar>
+struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendFFTW>
+{
+    using backend_type = heffte::backend::fftw;
+    using complex_type = std::complex<Scalar>;
+};
+template <class ExecutionSpace, class Scalar>
+struct HeffteBackendTraits<ExecutionSpace, Scalar, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::fftw;
+    using complex_type = std::complex<Scalar>;
+};
+#endif
+#ifdef Heffte_ENABLE_MKL
+template <class ExecutionSpace, class Scalar>
+struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendMKL>
+{
+    using backend_type = heffte::backend::mkl;
+    using complex_type = std::complex<Scalar>;
+};
+#endif
+#ifdef Heffte_ENABLE_CUDA
+#ifdef KOKKOS_ENABLE_CUDA
+template <>
+struct HeffteBackendTraits<Kokkos::Cuda, double, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::cufft;
+    using complex_type = cufftDoubleComplex;
+};
+template <>
+struct HeffteBackendTraits<Kokkos::Cuda, float, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::cufft;
+    using complex_type = cufftComplex;
+};
+#endif
+#endif
+
+template <class ScaleType>
+struct HeffteScalingTraits
+{
+};
+template <>
+struct HeffteScalingTraits<FFTScaleNone>
+{
+    static const auto scaling_type = heffte::scale::none;
+};
+template <>
+struct HeffteScalingTraits<FFTScaleFull>
+{
+    static const auto scaling_type = heffte::scale::full;
+};
+template <>
+struct HeffteScalingTraits<FFTScaleSymmetric>
+{
+    static const auto scaling_type = heffte::scale::symmetric;
+};
+} // namespace Impl
+
+//---------------------------------------------------------------------------//
+/*!
+  \class HeffteFastFourierTransform
+  \brief Interface to heFFTe fast Fourier transform library.
+*/
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
           class BackendType>
 class HeffteFastFourierTransform
@@ -259,11 +349,11 @@ class HeffteFastFourierTransform
     using backend_type = BackendType;
     using exec_space = typename device_type::execution_space;
     using heffte_backend_type =
-        typename HeffteBackendTraits<exec_space, value_type,
-                                     backend_type>::backend_type;
+        typename Impl::HeffteBackendTraits<exec_space, value_type,
+                                           backend_type>::backend_type;
     using complex_type =
-        typename HeffteBackendTraits<exec_space, value_type,
-                                     backend_type>::complex_type;
+        typename Impl::HeffteBackendTraits<exec_space, value_type,
+                                           backend_type>::complex_type;
 
     /*!
       \brief Constructor
@@ -306,24 +396,31 @@ class HeffteFastFourierTransform
 
     /*!
       \brief Do a forward FFT.
-      \param in The array on which to perform the forward transform.
+      \param x The array on which to perform the forward transform.
+      \param ScaleType Method of scaling data.
     */
     template <class Array_t, class ScaleType>
     void forwardImpl( const Array_t& x, const ScaleType )
     {
-        compute( x, 1, HeffteScalingTraits<ScaleType>().scaling_type );
+        compute( x, 1, Impl::HeffteScalingTraits<ScaleType>().scaling_type );
     }
 
     /*!
      \brief Do a reverse FFT.
-     \param out The array on which to perform the reverse transform.
+     \param x The array on which to perform the reverse transform
+     \param ScaleType Method of scaling data.
     */
     template <class Array_t, class ScaleType>
     void reverseImpl( const Array_t& x, const ScaleType )
     {
-        compute( x, -1, HeffteScalingTraits<ScaleType>().scaling_type );
+        compute( x, -1, Impl::HeffteScalingTraits<ScaleType>().scaling_type );
     }
 
+    /*!
+     \brief Copy data from Kokkos::complex to CUDA complex.
+     \param x_view_val Kokkos::complex value.
+     \param work_view_val CUDA complex value.
+    */
     template <class ComplexType>
     KOKKOS_INLINE_FUNCTION ComplexType copyFromKokkosComplex(
         Kokkos::complex<value_type> x_view_val, ComplexType work_view_val,
@@ -334,6 +431,11 @@ class HeffteFastFourierTransform
         work_view_val.y = x_view_val.imag();
         return work_view_val;
     }
+    /*!
+     \brief Copy data from CUDA complex to Kokkos complex.
+     \param work_view_val CUDA complex value.
+     \param x_view_val Kokkos complex value.
+    */
     template <class ComplexType>
     KOKKOS_INLINE_FUNCTION Kokkos::complex<value_type> copyToKokkosComplex(
         ComplexType work_view_val, Kokkos::complex<value_type> x_view_val,
@@ -345,6 +447,11 @@ class HeffteFastFourierTransform
         return x_view_val;
     }
 
+    /*!
+     \brief Copy data from Kokkos::complex to std::complex.
+     \param x_view_val Kokkos::complex value.
+     \param work_view_val std::complex value.
+    */
     template <class ComplexType>
     ComplexType copyFromKokkosComplex(
         Kokkos::complex<value_type> x_view_val, ComplexType work_view_val,
@@ -355,6 +462,11 @@ class HeffteFastFourierTransform
         work_view_val.imag( x_view_val.imag() );
         return work_view_val;
     }
+    /*!
+     \brief Copy data from std::complex to Kokkos::complex.
+     \param work_view_val std::complex value.
+     \param x_view_val Kokkos::complex value.
+    */
     template <class ComplexType>
     Kokkos::complex<value_type> copyToKokkosComplex(
         ComplexType work_view_val, Kokkos::complex<value_type> x_view_val,
@@ -366,10 +478,15 @@ class HeffteFastFourierTransform
         return x_view_val;
     }
 
+    /*!
+     \brief Do the FFT.
+     \param x The array on which to perform the transform.
+     \param flag Flag for forward or reverse.
+     \param scale Method of scaling data.
+    */
     template <class Array_t>
     void compute( const Array_t& x, const int flag, const heffte::scale scale )
     {
-
         // Create a subview of the work array to write the local data into.
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
@@ -427,7 +544,7 @@ class HeffteFastFourierTransform
 };
 
 //---------------------------------------------------------------------------//
-// FFT creation
+// heFFTe creation
 //---------------------------------------------------------------------------//
 template <class Scalar, class DeviceType, class BackendType, class EntityType,
           class MeshType>
@@ -446,8 +563,8 @@ auto createHeffteFastFourierTransform(
     const FastFourierTransformParams& params )
 {
     return createHeffteFastFourierTransform<
-        Scalar, DeviceType, FFTBackendDefault, EntityType, MeshType>( layout,
-                                                                      params );
+        Scalar, DeviceType, Impl::FFTBackendDefault, EntityType, MeshType>(
+        layout, params );
 }
 
 template <class Scalar, class DeviceType, class BackendType, class EntityType,
@@ -460,8 +577,8 @@ auto createHeffteFastFourierTransform(
     using backend_type = BackendType;
     using exec_space = typename device_type::execution_space;
     using heffte_backend_type =
-        typename HeffteBackendTraits<exec_space, value_type,
-                                     backend_type>::backend_type;
+        typename Impl::HeffteBackendTraits<exec_space, value_type,
+                                           backend_type>::backend_type;
 
     // use default heFFTe params for this backend
     const heffte::plan_options heffte_params =
@@ -481,7 +598,8 @@ auto createHeffteFastFourierTransform(
     const ArrayLayout<EntityType, MeshType>& layout )
 {
     return createHeffteFastFourierTransform<
-        Scalar, DeviceType, FFTBackendDefault, EntityType, MeshType>( layout );
+        Scalar, DeviceType, Impl::FFTBackendDefault, EntityType, MeshType>(
+        layout );
 }
 
 //---------------------------------------------------------------------------//
