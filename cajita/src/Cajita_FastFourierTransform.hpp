@@ -29,31 +29,53 @@ namespace Experimental
 {
 //---------------------------------------------------------------------------//
 
-// TODO: enable heffte::backend::mkl, etc.
+struct FFTBackendFFTW
+{
+};
+struct FFTBackendMKL
+{
+};
+struct FFTBackendDefault
+{
+};
+
 // TODO: Add HIP backend specialization when available.
+template <class ExecutionSpace, class Scalar, class BackendType>
+struct HeffteBackendTraits
+{
+};
 #ifdef Heffte_ENABLE_FFTW
 template <class ExecutionSpace, class Scalar>
-struct HeffteBackendTraits
+struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendFFTW>
 {
     using backend_type = heffte::backend::fftw;
     using complex_type = std::complex<Scalar>;
 };
-#else
-template <class BackendType, class Scalar>
-struct HeffteBackendTraits
+template <class ExecutionSpace, class Scalar>
+struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendDefault>
 {
+    using backend_type = heffte::backend::fftw;
+    using complex_type = std::complex<Scalar>;
+};
+#endif
+#ifdef Heffte_ENABLE_MKL
+template <class ExecutionSpace, class Scalar>
+struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendMKL>
+{
+    using backend_type = heffte::backend::mkl;
+    using complex_type = std::complex<Scalar>;
 };
 #endif
 #ifdef Heffte_ENABLE_CUDA
 #ifdef KOKKOS_ENABLE_CUDA
 template <>
-struct HeffteBackendTraits<Kokkos::Cuda, double>
+struct HeffteBackendTraits<Kokkos::Cuda, double, FFTBackendDefault>
 {
     using backend_type = heffte::backend::cufft;
     using complex_type = cufftDoubleComplex;
 };
 template <>
-struct HeffteBackendTraits<Kokkos::Cuda, float>
+struct HeffteBackendTraits<Kokkos::Cuda, float, FFTBackendDefault>
 {
     using backend_type = heffte::backend::cufft;
     using complex_type = cufftComplex;
@@ -222,21 +244,26 @@ class FastFourierTransform
     }
 };
 
-template <class EntityType, class MeshType, class Scalar, class DeviceType>
+template <class EntityType, class MeshType, class Scalar, class DeviceType,
+          class BackendType>
 class HeffteFastFourierTransform
     : public FastFourierTransform<
           EntityType, MeshType, Scalar, DeviceType,
-          HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>
+          HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType,
+                                     BackendType>>
 {
   public:
     // Types.
     using value_type = Scalar;
     using device_type = DeviceType;
+    using backend_type = BackendType;
     using exec_space = typename device_type::execution_space;
-    using backend_type =
-        typename HeffteBackendTraits<exec_space, value_type>::backend_type;
+    using heffte_backend_type =
+        typename HeffteBackendTraits<exec_space, value_type,
+                                     backend_type>::backend_type;
     using complex_type =
-        typename HeffteBackendTraits<exec_space, value_type>::complex_type;
+        typename HeffteBackendTraits<exec_space, value_type,
+                                     backend_type>::complex_type;
 
     /*!
       \brief Constructor
@@ -245,22 +272,22 @@ class HeffteFastFourierTransform
     */
     HeffteFastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout,
                                 const FastFourierTransformParams& params )
-        : FastFourierTransform<EntityType, MeshType, Scalar, DeviceType,
-                               HeffteFastFourierTransform<EntityType, MeshType,
-                                                          Scalar, DeviceType>>(
-              layout )
+        : FastFourierTransform<
+              EntityType, MeshType, Scalar, DeviceType,
+              HeffteFastFourierTransform<EntityType, MeshType, Scalar,
+                                         DeviceType, BackendType>>( layout )
     {
         heffte::box3d inbox = { this->global_low, this->global_high };
         heffte::box3d outbox = { this->global_low, this->global_high };
 
         heffte::plan_options heffte_params =
-            heffte::default_options<backend_type>();
+            heffte::default_options<heffte_backend_type>();
         heffte_params.use_alltoall = params.getAllToAll();
         heffte_params.use_pencils = params.getPencils();
         heffte_params.use_reorder = params.getReorder();
 
         // Set FFT options from given parameters
-        _fft = std::make_shared<heffte::fft3d<backend_type>>(
+        _fft = std::make_shared<heffte::fft3d<heffte_backend_type>>(
             inbox, outbox, layout.localGrid()->globalGrid().comm(),
             heffte_params );
 
@@ -395,48 +422,66 @@ class HeffteFastFourierTransform
     }
 
   private:
-    std::shared_ptr<heffte::fft3d<backend_type>> _fft;
+    std::shared_ptr<heffte::fft3d<heffte_backend_type>> _fft;
     Kokkos::View<complex_type*, DeviceType> _fft_work;
 };
 
 //---------------------------------------------------------------------------//
 // FFT creation
 //---------------------------------------------------------------------------//
-template <class Scalar, class DeviceType, class EntityType, class MeshType>
-std::shared_ptr<
-    HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>
-createHeffteFastFourierTransform(
+template <class Scalar, class DeviceType, class BackendType, class EntityType,
+          class MeshType>
+auto createHeffteFastFourierTransform(
     const ArrayLayout<EntityType, MeshType>& layout,
     const FastFourierTransformParams& params )
 {
-    return std::make_shared<
-        HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>(
-        layout, params );
+    return std::make_shared<HeffteFastFourierTransform<
+        EntityType, MeshType, Scalar, DeviceType, BackendType>>( layout,
+                                                                 params );
 }
 
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
-std::shared_ptr<
-    HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>
-createHeffteFastFourierTransform(
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout,
+    const FastFourierTransformParams& params )
+{
+    return createHeffteFastFourierTransform<
+        Scalar, DeviceType, FFTBackendDefault, EntityType, MeshType>( layout,
+                                                                      params );
+}
+
+template <class Scalar, class DeviceType, class BackendType, class EntityType,
+          class MeshType>
+auto createHeffteFastFourierTransform(
     const ArrayLayout<EntityType, MeshType>& layout )
 {
     using value_type = Scalar;
     using device_type = DeviceType;
+    using backend_type = BackendType;
     using exec_space = typename device_type::execution_space;
-    using backend_type =
-        typename HeffteBackendTraits<exec_space, value_type>::backend_type;
+    using heffte_backend_type =
+        typename HeffteBackendTraits<exec_space, value_type,
+                                     backend_type>::backend_type;
 
     // use default heFFTe params for this backend
     const heffte::plan_options heffte_params =
-        heffte::default_options<backend_type>();
+        heffte::default_options<heffte_backend_type>();
     FastFourierTransformParams params;
     params.setAllToAll( heffte_params.use_alltoall );
     params.setPencils( heffte_params.use_pencils );
     params.setReorder( heffte_params.use_reorder );
 
-    return std::make_shared<
-        HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType>>(
-        layout, params );
+    return std::make_shared<HeffteFastFourierTransform<
+        EntityType, MeshType, Scalar, DeviceType, BackendType>>( layout,
+                                                                 params );
+}
+
+template <class Scalar, class DeviceType, class EntityType, class MeshType>
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout )
+{
+    return createHeffteFastFourierTransform<
+        Scalar, DeviceType, FFTBackendDefault, EntityType, MeshType>( layout );
 }
 
 //---------------------------------------------------------------------------//

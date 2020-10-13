@@ -32,7 +32,7 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
-void forwardReverseTest()
+void forwardReverseTest( std::string backend_str, bool use_params )
 {
     // Create the global mesh.
     double cell_size = 0.1;
@@ -98,15 +98,40 @@ void forwardReverseTest()
     // transposition; false uses strided data with no transposition)
     params.setReorder( true );
 
-    auto fft =
-        Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
-            *vector_layout, params );
-
-    // Forward transform
-    fft->forward( *lhs, Experimental::FFTScaleFull() );
-
-    // Reverse transform
-    fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    if ( backend_str == "default" && use_params == true )
+    {
+        auto fft =
+            Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
+                *vector_layout, params );
+        // Forward transform
+        fft->forward( *lhs, Experimental::FFTScaleFull() );
+        // Reverse transform
+        fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    }
+    else if ( backend_str == "default" && use_params == false )
+    {
+        auto fft =
+            Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
+                *vector_layout );
+        fft->forward( *lhs, Experimental::FFTScaleFull() );
+        fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    }
+    else if ( backend_str == "fftw" && use_params == true )
+    {
+        auto fft = Experimental::createHeffteFastFourierTransform<
+            double, TEST_DEVICE, Experimental::FFTBackendFFTW>( *vector_layout,
+                                                                params );
+        fft->forward( *lhs, Experimental::FFTScaleFull() );
+        fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    }
+    else if ( backend_str == "fftw" && use_params == false )
+    {
+        auto fft = Experimental::createHeffteFastFourierTransform<
+            double, TEST_DEVICE, Experimental::FFTBackendFFTW>(
+            *vector_layout );
+        fft->forward( *lhs, Experimental::FFTScaleFull() );
+        fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    }
 
     // Check the results.
     auto lhs_result =
@@ -128,7 +153,15 @@ void forwardReverseTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( fast_fourier_transform, forward_reverse_test ) { forwardReverseTest(); }
+TEST( fast_fourier_transform, forward_reverse_test )
+{
+    forwardReverseTest( "default", true );
+    forwardReverseTest( "default", false );
+#ifdef Heffte_ENABLE_FFTW
+    forwardReverseTest( "fftw", true );
+    forwardReverseTest( "fftw", false );
+#endif
+}
 
 //---------------------------------------------------------------------------//
 
