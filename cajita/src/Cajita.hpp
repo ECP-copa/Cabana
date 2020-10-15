@@ -39,7 +39,9 @@
 #endif
 
 #ifdef Cabana_ENABLE_HEFFTE
+#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
 #include <Cajita_FastFourierTransform.hpp>
+#endif
 #endif
 
 #endif // end CAJITA_HPP

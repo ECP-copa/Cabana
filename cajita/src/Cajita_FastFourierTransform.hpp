@@ -23,6 +23,10 @@
 #include <memory>
 #include <type_traits>
 
+#ifdef KOKKOS_ENABLE_HIP // FIXME_HIP
+#error FFT not supported with Kokkos::Experimental::HIP backend
+#endif
+
 namespace Cajita
 {
 namespace Experimental
@@ -264,7 +268,6 @@ class FastFourierTransform
 
 namespace Impl
 {
-// TODO: Add HIP backend specialization when available.
 template <class ExecutionSpace, class Scalar, class BackendType>
 struct HeffteBackendTraits
 {
