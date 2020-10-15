@@ -32,7 +32,8 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
-void forwardReverseTest( std::string backend_str, bool use_params )
+template <class HostBackendType>
+void forwardReverseTest( bool use_default, bool use_params )
 {
     // Create the global mesh.
     double cell_size = 0.1;
@@ -98,7 +99,7 @@ void forwardReverseTest( std::string backend_str, bool use_params )
     // transposition; false uses strided data with no transposition)
     params.setReorder( true );
 
-    if ( backend_str == "default" && use_params == true )
+    if ( use_default && use_params )
     {
         auto fft =
             Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
@@ -108,7 +109,7 @@ void forwardReverseTest( std::string backend_str, bool use_params )
         // Reverse transform
         fft->reverse( *lhs, Experimental::FFTScaleNone() );
     }
-    else if ( backend_str == "default" && use_params == false )
+    else if ( use_default )
     {
         auto fft =
             Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
@@ -116,22 +117,22 @@ void forwardReverseTest( std::string backend_str, bool use_params )
         fft->forward( *lhs, Experimental::FFTScaleFull() );
         fft->reverse( *lhs, Experimental::FFTScaleNone() );
     }
-    else if ( backend_str == "fftw" && use_params == true )
+#if !defined( KOKKOS_ENABLE_CUDA ) && !defined( KOKKOS_ENABLE_HIP )
+    else if ( use_params )
     {
         auto fft = Experimental::createHeffteFastFourierTransform<
-            double, TEST_DEVICE, Experimental::FFTBackendFFTW>( *vector_layout,
-                                                                params );
+            double, TEST_DEVICE, HostBackendType>( *vector_layout, params );
         fft->forward( *lhs, Experimental::FFTScaleFull() );
         fft->reverse( *lhs, Experimental::FFTScaleNone() );
     }
-    else if ( backend_str == "fftw" && use_params == false )
+    else
     {
         auto fft = Experimental::createHeffteFastFourierTransform<
-            double, TEST_DEVICE, Experimental::FFTBackendFFTW>(
-            *vector_layout );
+            double, TEST_DEVICE, HostBackendType>( *vector_layout );
         fft->forward( *lhs, Experimental::FFTScaleFull() );
         fft->reverse( *lhs, Experimental::FFTScaleNone() );
     }
+#endif
 
     // Check the results.
     auto lhs_result =
@@ -155,11 +156,17 @@ void forwardReverseTest( std::string backend_str, bool use_params )
 //---------------------------------------------------------------------------//
 TEST( fast_fourier_transform, forward_reverse_test )
 {
-    forwardReverseTest( "default", true );
-    forwardReverseTest( "default", false );
+    // Dummy template argument.
+    forwardReverseTest<Experimental::FFTBackendFFTW>( true, true );
+    forwardReverseTest<Experimental::FFTBackendFFTW>( true, false );
+
 #ifdef Heffte_ENABLE_FFTW
-    forwardReverseTest( "fftw", true );
-    forwardReverseTest( "fftw", false );
+    forwardReverseTest<Experimental::FFTBackendFFTW>( false, true );
+    forwardReverseTest<Experimental::FFTBackendFFTW>( false, false );
+#endif
+#ifdef Heffte_ENABLE_MKL
+    forwardReverseTest<Experimental::FFTBackendMKL>( false, true );
+    forwardReverseTest<Experimental::FFTBackendMKL>( false, false );
 #endif
 }
 
