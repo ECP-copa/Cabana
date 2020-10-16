@@ -23,10 +23,6 @@
 #include <memory>
 #include <type_traits>
 
-#ifdef KOKKOS_ENABLE_HIP // FIXME_HIP
-#error FFT not supported with Kokkos::Experimental::HIP backend
-#endif
-
 namespace Cajita
 {
 namespace Experimental
@@ -164,7 +160,7 @@ class FastFourierTransformParams
   \brief 3D distributed fast Fourier transform base implementation.
 */
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
-          class InterfaceType>
+          class Derived>
 class FastFourierTransform
 {
   public:
@@ -246,7 +242,7 @@ class FastFourierTransform
     void forward( const Array_t& x, const ScaleType scaling )
     {
         checkArray( x );
-        static_cast<InterfaceType*>( this )->forwardImpl( x, scaling );
+        static_cast<Derived*>( this )->forwardImpl( x, scaling );
     }
 
     /*!
@@ -258,7 +254,7 @@ class FastFourierTransform
     void reverse( const Array_t& x, const ScaleType scaling )
     {
         checkArray( x );
-        static_cast<InterfaceType*>( this )->reverseImpl( x, scaling );
+        static_cast<Derived*>( this )->reverseImpl( x, scaling );
     }
 };
 
@@ -309,6 +305,14 @@ struct HeffteBackendTraits<Kokkos::Cuda, float, Impl::FFTBackendDefault>
     using complex_type = cufftComplex;
 };
 #endif
+#endif
+#ifdef KOKKOS_ENABLE_HIP
+template <class Scalar>
+struct HeffteBackendTraits<Kokkos::Experimental::HIP, Scalar,
+                           Impl::FFTBackendDefault>
+{
+    static_assert( false, "FFT with HIP not supported" ); // FIXME_HIP
+};
 #endif
 
 template <class ScaleType>
@@ -456,7 +460,7 @@ class HeffteFastFourierTransform
      \param work_view_val std::complex value.
     */
     template <class ComplexType>
-    ComplexType copyFromKokkosComplex(
+    inline ComplexType copyFromKokkosComplex(
         Kokkos::complex<value_type> x_view_val, ComplexType work_view_val,
         typename std::enable_if<( is_std_complex<ComplexType>::value ),
                                 int>::type* = 0 )
@@ -471,7 +475,7 @@ class HeffteFastFourierTransform
      \param x_view_val Kokkos::complex value.
     */
     template <class ComplexType>
-    Kokkos::complex<value_type> copyToKokkosComplex(
+    inline Kokkos::complex<value_type> copyToKokkosComplex(
         ComplexType work_view_val, Kokkos::complex<value_type> x_view_val,
         typename std::enable_if<( is_std_complex<ComplexType>::value ),
                                 int>::type* = 0 )
