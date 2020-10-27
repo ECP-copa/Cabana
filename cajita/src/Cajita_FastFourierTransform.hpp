@@ -108,6 +108,50 @@ struct is_std_complex
 {
 };
 
+template <typename T, typename U, typename SFINAE = void>
+struct is_matching_complex : public std::false_type
+{
+};
+template <class T, class U>
+struct is_matching_complex<
+    T, U,
+    typename std::enable_if<
+        std::is_same<T, U>::value ||
+        std::is_same<typename Kokkos::complex<T>, U>::value ||
+        std::is_same<T, typename Kokkos::complex<U>>::value>::type>
+    : public std::true_type
+{
+};
+
+template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
+          class ArrayScalar, class Entity, class Mesh, class Device,
+          class Scalar, typename SFINAE = void>
+struct is_matching_array : public std::false_type
+{
+    static_assert( std::is_same<ArrayEntity, Entity>::value,
+                   "Array entity type mush match FFT entity type." );
+    static_assert( std::is_same<ArrayMesh, Mesh>::value,
+                   "Array mesh type mush match FFT mesh type." );
+    static_assert( std::is_same<ArrayDevice, Device>::value,
+                   "Array device type must match FFT device type." );
+    static_assert( is_matching_complex<ArrayScalar, Scalar>::value,
+                   "Array value type must match complex FFT value type." );
+};
+template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
+          class ArrayScalar, class Entity, class Mesh, class Device,
+          class Scalar>
+struct is_matching_array<
+    ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device,
+    Scalar,
+    typename std::enable_if<
+        std::is_same<ArrayEntity, Entity>::value &&
+        std::is_same<ArrayMesh, Mesh>::value &&
+        std::is_same<ArrayDevice, Device>::value &&
+        is_matching_complex<ArrayScalar, Scalar>::value>::type>
+    : public std::true_type
+{
+};
+
 //---------------------------------------------------------------------------//
 /*!
   \class FastFourierTransformParams
@@ -178,9 +222,7 @@ class FastFourierTransform
     */
     FastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout )
     {
-        if ( 1 != layout.dofsPerEntity() )
-            throw std::logic_error(
-                "Only 1 complex value per entity allowed in FFT" );
+        checkArrayDofs( layout.dofsPerEntity() );
 
         // Get the local dimensions of the problem.
         auto entity_space =
@@ -205,30 +247,12 @@ class FastFourierTransform
     }
 
     /*!
-      \brief Ensure the FFT compute array matches the FFT class array layout.
-      \param x The array to compare to class data.
+      \brief Ensure the FFT compute array has the correct DoFs.
+      \param dof Degrees of freedom of array.
     */
-    template <class Array_t>
-    void checkArray( const Array_t& x )
+    inline void checkArrayDofs( const int dof )
     {
-        static_assert( is_array<Array_t>::value, "Must use an array" );
-        static_assert(
-            std::is_same<typename Array_t::entity_type, entity_type>::value,
-            "Array entity type mush match transform entity type" );
-        static_assert(
-            std::is_same<typename Array_t::mesh_type, mesh_type>::value,
-            "Array mesh type mush match transform mesh type" );
-        static_assert(
-            std::is_same<typename Array_t::device_type, device_type>::value,
-            "Array device type and transform device type are different." );
-        static_assert(
-            std::is_same<typename Array_t::value_type,
-                         Kokkos::complex<value_type>>::value ||
-                std::is_same<typename Array_t::value_type, value_type>::value,
-            "Array value type and complex transform value type are "
-            "different." );
-
-        if ( 1 != x.layout()->dofsPerEntity() )
+        if ( 1 != dof )
             throw std::logic_error(
                 "Only 1 complex value per entity allowed in FFT" );
     }
@@ -239,9 +263,17 @@ class FastFourierTransform
       \param scaling Method of scaling data.
     */
     template <class Array_t, class ScaleType>
-    void forward( const Array_t& x, const ScaleType scaling )
+    void forward(
+        const Array_t& x, const ScaleType scaling,
+        typename std::enable_if<
+            ( is_array<Array_t>::value &&
+              is_matching_array<
+                  typename Array_t::entity_type, typename Array_t::mesh_type,
+                  typename Array_t::device_type, typename Array_t::value_type,
+                  entity_type, mesh_type, device_type, value_type>::value ),
+            int>::type* = 0 )
     {
-        checkArray( x );
+        checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->forwardImpl( x, scaling );
     }
 
@@ -251,9 +283,17 @@ class FastFourierTransform
       \param scaling Method of scaling data.
     */
     template <class Array_t, class ScaleType>
-    void reverse( const Array_t& x, const ScaleType scaling )
+    void reverse(
+        const Array_t& x, const ScaleType scaling,
+        typename std::enable_if<
+            ( is_array<Array_t>::value &&
+              is_matching_array<
+                  typename Array_t::entity_type, typename Array_t::mesh_type,
+                  typename Array_t::device_type, typename Array_t::value_type,
+                  entity_type, mesh_type, device_type, value_type>::value ),
+            int>::type* = 0 )
     {
-        checkArray( x );
+        checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->reverseImpl( x, scaling );
     }
 };
