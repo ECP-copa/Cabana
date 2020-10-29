@@ -518,10 +518,10 @@ class Halo
     // Pack an element into the buffer. Pack by bytes to avoid casting across
     // alignment boundaries.
     template <class ArrayView>
-    KOKKOS_INLINE_FUNCTION void
+    KOKKOS_INLINE_FUNCTION static void
     packElement( const Kokkos::View<char*, memory_space>& buffer,
                  const Kokkos::View<int* [6], memory_space>& steering,
-                 const int element_idx, const ArrayView& array_view ) const
+                 const int element_idx, const ArrayView& array_view )
     {
         const char* elem_ptr = reinterpret_cast<const char*>( &array_view(
             steering( element_idx, 2 ), steering( element_idx, 3 ),
@@ -535,12 +535,12 @@ class Halo
 
     // Pack an array into a buffer.
     template <class... ArrayViews>
-    KOKKOS_INLINE_FUNCTION void
+    KOKKOS_INLINE_FUNCTION static void
     packArray( const Kokkos::View<char*, memory_space>& buffer,
                const Kokkos::View<int* [6], memory_space>& steering,
                const int element_idx,
                const std::integral_constant<std::size_t, 0>,
-               const ParameterPack<ArrayViews...>& array_views ) const
+               const ParameterPack<ArrayViews...>& array_views )
     {
         // If the pack element_idx is in the current array, pack it.
         if ( 0 == steering( element_idx, 1 ) )
@@ -549,12 +549,12 @@ class Halo
 
     // Pack an array into a buffer.
     template <std::size_t N, class... ArrayViews>
-    KOKKOS_INLINE_FUNCTION void
+    KOKKOS_INLINE_FUNCTION static void
     packArray( const Kokkos::View<char*, memory_space>& buffer,
                const Kokkos::View<int* [6], memory_space>& steering,
                const int element_idx,
                const std::integral_constant<std::size_t, N>,
-               const ParameterPack<ArrayViews...>& array_views ) const
+               const ParameterPack<ArrayViews...>& array_views )
     {
         // If the pack element_idx is in the current array, pack it.
         if ( N == steering( element_idx, 1 ) )
@@ -589,16 +589,16 @@ class Halo
 
     // Reduce an element into the buffer. Sum reduction.
     template <class T>
-    KOKKOS_INLINE_FUNCTION void
-    unpackOp( ScatterReduce::Sum, const T& buffer_val, T& array_val ) const
+    KOKKOS_INLINE_FUNCTION static void
+    unpackOp( ScatterReduce::Sum, const T& buffer_val, T& array_val )
     {
         array_val += buffer_val;
     }
 
     // Reduce an element into the buffer. Min reduction.
     template <class T>
-    KOKKOS_INLINE_FUNCTION void
-    unpackOp( ScatterReduce::Min, const T& buffer_val, T& array_val ) const
+    KOKKOS_INLINE_FUNCTION static void
+    unpackOp( ScatterReduce::Min, const T& buffer_val, T& array_val )
     {
         if ( buffer_val < array_val )
             array_val = buffer_val;
@@ -606,8 +606,8 @@ class Halo
 
     // Reduce an element into the buffer. Max reduction.
     template <class T>
-    KOKKOS_INLINE_FUNCTION void
-    unpackOp( ScatterReduce::Max, const T& buffer_val, T& array_val ) const
+    KOKKOS_INLINE_FUNCTION static void
+    unpackOp( ScatterReduce::Max, const T& buffer_val, T& array_val )
     {
         if ( buffer_val > array_val )
             array_val = buffer_val;
@@ -615,8 +615,8 @@ class Halo
 
     // Reduce an element into the buffer. Replace reduction.
     template <class T>
-    KOKKOS_INLINE_FUNCTION void
-    unpackOp( ScatterReduce::Replace, const T& buffer_val, T& array_val ) const
+    KOKKOS_INLINE_FUNCTION static void
+    unpackOp( ScatterReduce::Replace, const T& buffer_val, T& array_val )
     {
         array_val = buffer_val;
     }
@@ -624,11 +624,11 @@ class Halo
     // Unpack an element from the buffer. Unpack by bytes to avoid casting
     // across alignment boundaries.
     template <class ReduceOp, class ArrayView>
-    KOKKOS_INLINE_FUNCTION void
+    KOKKOS_INLINE_FUNCTION static void
     unpackElement( const ReduceOp& reduce_op,
                    const Kokkos::View<char*, memory_space>& buffer,
                    const Kokkos::View<int* [6], memory_space>& steering,
-                   const int element_idx, const ArrayView& array_view ) const
+                   const int element_idx, const ArrayView& array_view )
     {
         typename ArrayView::value_type elem;
         char* elem_ptr = reinterpret_cast<char*>( &elem );
@@ -646,13 +646,13 @@ class Halo
 
     // Unpack an array from a buffer.
     template <class ReduceOp, class... ArrayViews>
-    KOKKOS_INLINE_FUNCTION void
+    KOKKOS_INLINE_FUNCTION static void
     unpackArray( const ReduceOp& reduce_op,
                  const Kokkos::View<char*, memory_space>& buffer,
                  const Kokkos::View<int* [6], memory_space>& steering,
                  const int element_idx,
                  const std::integral_constant<std::size_t, 0>,
-                 const ParameterPack<ArrayViews...>& array_views ) const
+                 const ParameterPack<ArrayViews...>& array_views )
     {
         // If the unpack element_idx is in the current array, unpack it.
         if ( 0 == steering( element_idx, 1 ) )
@@ -662,13 +662,13 @@ class Halo
 
     // Unpack an array from a buffer.
     template <class ReduceOp, std::size_t N, class... ArrayViews>
-    KOKKOS_INLINE_FUNCTION void
+    KOKKOS_INLINE_FUNCTION static void
     unpackArray( const ReduceOp reduce_op,
                  const Kokkos::View<char*, memory_space>& buffer,
                  const Kokkos::View<int* [6], memory_space>& steering,
                  const int element_idx,
                  const std::integral_constant<std::size_t, N>,
-                 const ParameterPack<ArrayViews...>& array_views ) const
+                 const ParameterPack<ArrayViews...>& array_views )
     {
         // If the unpack element_idx is in the current array, unpack it.
         if ( N == steering( element_idx, 1 ) )
