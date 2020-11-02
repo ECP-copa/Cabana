@@ -432,12 +432,10 @@ void checkFirstNeighborParallelReduce( const ListType& nlist,
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::FirstNeighborsTag(),
         Cabana::SerialOpTag(), serial_sum, "test_reduce_serial" );
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     double team_sum = 0;
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::FirstNeighborsTag(), Cabana::TeamOpTag(),
         team_sum, "test_reduce_team" );
-#endif
     Kokkos::fence();
 
     // Get the expected result from N^2 list in serial.
@@ -452,9 +450,7 @@ void checkFirstNeighborParallelReduce( const ListType& nlist,
 
     // Check the result.
     EXPECT_FLOAT_EQ( N2_sum, serial_sum );
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     EXPECT_FLOAT_EQ( N2_sum, team_sum );
-#endif
 }
 
 //---------------------------------------------------------------------------//
@@ -480,7 +476,6 @@ void checkSecondNeighborParallelReduce( const ListType& nlist,
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
         Cabana::SerialOpTag(), serial_sum, "test_reduce_serial" );
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     double team_sum = 0;
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
@@ -489,7 +484,6 @@ void checkSecondNeighborParallelReduce( const ListType& nlist,
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
         Cabana::TeamVectorOpTag(), vector_sum, "test_reduce_vector" );
-#endif
     Kokkos::fence();
 
     // Get the expected result from N^2 list in serial.
@@ -507,10 +501,8 @@ void checkSecondNeighborParallelReduce( const ListType& nlist,
 
     // Check the result.
     EXPECT_FLOAT_EQ( N2_sum, serial_sum );
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     EXPECT_FLOAT_EQ( N2_sum, team_sum );
     EXPECT_FLOAT_EQ( N2_sum, vector_sum );
-#endif
 }
 
 //---------------------------------------------------------------------------//
