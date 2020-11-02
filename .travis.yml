@@ -34,7 +34,7 @@ before_script:
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( -DKokkos_ENABLE_${i^^}=ON ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
-  - git clone --depth=1 --branch 3.1.00 https://github.com/kokkos/kokkos.git &&
+  - git clone --depth=1 --branch 3.2.00 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
     pushd build &&
