@@ -76,10 +76,13 @@ endmacro()
 set(SERIAL_TESTS
   GlobalMesh
   IndexSpace
-  Parallel
   ParameterPack
   Splines
   )
+
+if(NOT Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
+  list(APPEND SERIAL_TESTS Parallel)
+endif()
 
 set(MPI_TESTS
   GlobalGrid
