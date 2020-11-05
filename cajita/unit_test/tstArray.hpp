@@ -315,6 +315,7 @@ void arrayOpTest()
                     EXPECT_EQ( host_subview( i, j, k, l ),
                                3.0 * scales[l + 2] + 1.0 );
 
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     // Compute the dot product of the two arrays.
     std::vector<double> dots( dofs_per_cell );
     ArrayOp::dot( *array, *array_2, dots );
@@ -350,6 +351,7 @@ void arrayOpTest()
     ArrayOp::normInf( *array, norm_inf );
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( norm_inf[n], fabs( large_vals[n] ) );
+#endif
 
     // Check the copy.
     ArrayOp::copy( *array, *array_2, Own() );
