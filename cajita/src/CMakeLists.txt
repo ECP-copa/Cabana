@@ -23,6 +23,10 @@ set(HEADERS_PUBLIC
   Cajita_UniformDimPartitioner.hpp
   )
 
+if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
+  list(REMOVE_ITEM HEADERS_PUBLIC Cajita_Parallel.hpp)
+endif()
+
 set(SOURCES_PUBLIC
   Cajita_LocalGrid.cpp
   Cajita_GlobalGrid.cpp

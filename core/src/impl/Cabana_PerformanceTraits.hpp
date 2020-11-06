@@ -89,7 +89,7 @@ template <>
 class PerformanceTraits<Kokkos::Experimental::OpenMPTarget>
 {
   public:
-    static constexpr int vector_length = 16;
+    static constexpr int vector_length = 16; // FIXME_OPENMPTARGET
 };
 #endif
 

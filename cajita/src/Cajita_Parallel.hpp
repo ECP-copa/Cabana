@@ -17,10 +17,6 @@
 
 #include <string>
 
-#ifdef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
-#error Not supported when Kokkos::Experimental::OpenMPTarget backend enabled.
-#endif
-
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
