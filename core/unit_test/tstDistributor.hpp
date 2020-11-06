@@ -697,6 +697,59 @@ void test8( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
+void test9( const bool use_topology )
+{
+    // Make a communication plan.
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
+
+    // Edge case where all particles will be removed - nothing is kept, sent, or
+    // received.
+    int num_data = 2;
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    auto fill_ranks = KOKKOS_LAMBDA( const int i ) { export_ranks( i ) = -1; };
+
+    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
+    Kokkos::parallel_for( range_policy, fill_ranks );
+    Kokkos::fence();
+
+    // Create the plan.
+    if ( use_topology )
+    {
+        std::vector<int> neighbor_ranks;
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+    }
+    else
+    {
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, export_ranks );
+    }
+
+    // Make empty data to migrate.
+    using DataTypes = Cabana::MemberTypes<int, double[2]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t data( "data", num_data );
+    auto slice_int = Cabana::slice<0>( data );
+
+    // Create empty slice to "copy" into.
+    AoSoA_t data_copy( "copy", 0 );
+    auto slice_int_copy = Cabana::slice<0>( data_copy );
+
+    // Do empty slice migration.
+    Cabana::migrate( *distributor, slice_int, slice_int_copy );
+
+    // Check entries were removed.
+    slice_int_copy = Cabana::slice<0>( data_copy );
+    EXPECT_EQ( slice_int_copy.size(), 0 );
+
+    // Do empty in-place migration.
+    Cabana::migrate( *distributor, data );
+
+    // Check entries were removed.
+    EXPECT_EQ( data.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, distributor_test_1 ) { test1( true ); }
@@ -715,6 +768,8 @@ TEST( TEST_CATEGORY, distributor_test_7 ) { test7( true ); }
 
 TEST( TEST_CATEGORY, distributor_test_8 ) { test8( true ); }
 
+TEST( TEST_CATEGORY, distributor_test_9 ) { test9( true ); }
+
 TEST( TEST_CATEGORY, distributor_test_1_no_topo ) { test1( false ); }
 
 TEST( TEST_CATEGORY, distributor_test_2_no_topo ) { test2( false ); }
@@ -730,6 +785,8 @@ TEST( TEST_CATEGORY, distributor_test_6_no_topo ) { test6( false ); }
 TEST( TEST_CATEGORY, distributor_test_7_no_topo ) { test7( false ); }
 
 TEST( TEST_CATEGORY, distributor_test_8_no_topo ) { test8( false ); }
+
+TEST( TEST_CATEGORY, distributor_test_9_no_topo ) { test9( false ); }
 
 //---------------------------------------------------------------------------//
 
