@@ -95,6 +95,9 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     // Store offset indices - non-zero if subview
     dimension_type m_off;
 
+    // Pre-calculate 3-D Cube
+    size_t cube = orig_dim.N0 * orig_dim.N1 * orig_dim.N2;
+
     // Calculate offset if subview. If not subview = 0
     size_t offset = hilbert3d( m_off.N0, m_off.N1, m_off.N2 );
 
@@ -328,7 +331,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 4 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 * i3 ) + hilbert_index;
+        return ( cube * i3 ) + hilbert_index;
     }
 
     // rank 5
@@ -342,7 +345,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 5 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 ) *
+        return ( cube ) *
                    ( i4 + orig_dim.N4 * i3 ) +
                hilbert_index;
     }
@@ -359,7 +362,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 6 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 ) *
+        return ( cube ) *
                    ( i5 + orig_dim.N5 * ( i4 + orig_dim.N4 * i3 ) ) +
                hilbert_index;
     }
@@ -376,7 +379,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 7 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 ) *
+        return ( cube ) *
                    ( i6 +
                      orig_dim.N6 *
                          ( i5 + orig_dim.N5 * ( i4 + orig_dim.N4 * i3 ) ) ) +
@@ -395,7 +398,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 8 dimensions
-        return ( orig_dim.N0 * orig_dim.N1 * orig_dim.N2 ) *
+        return ( cube ) *
                    ( i7 +
                      orig_dim.N7 *
                          ( i6 + orig_dim.N6 *
