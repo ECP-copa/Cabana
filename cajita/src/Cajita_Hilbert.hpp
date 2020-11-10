@@ -15,7 +15,6 @@
 #include <Kokkos_Core.hpp>
 
 #include <cmath>
-#include <unistd.h>
 
 namespace Kokkos
 {
