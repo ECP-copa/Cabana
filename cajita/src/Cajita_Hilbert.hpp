@@ -281,46 +281,6 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
         return h;
     }
 
-    // Calculate 2D Hilbert index given an ( x, y ) coordinate and the size of
-    // the hilbert space ( n )
-    template <typename I0, typename I1>
-    KOKKOS_INLINE_FUNCTION size_t Hilbert3D( I0 const &i0, I1 const &i1 ) const
-    {
-        int n = ( orig_dim.N0 > orig_dim.N1 ) ? orig_dim.N0 : orig_dim.N1;
-        int rx = 0;
-        int ry = 0;
-        int s = 0;
-        int d = 0;
-
-        I0 x = i0;
-        I1 y = i1;
-
-        // Split
-        for ( s = n / 2; s > 0; s /= 2 )
-        {
-            rx = ( x & s ) > 0;
-            ry = ( y & s ) > 0;
-            d += s * s * ( ( 3 * rx ) ^ ry );
-
-            // Rotate
-            if ( ry == 0 )
-            {
-                if ( rx == 1 )
-                {
-                    x = n - 1 - x;
-                    y = n - 1 - y;
-                }
-
-                int t = x;
-                x = y;
-                y = t;
-            }
-        }
-
-        // Return hilbert index
-        return d;
-    }
-
     // rank 1
     template <typename I0>
     KOKKOS_INLINE_FUNCTION constexpr size_type operator()( I0 const &i0 ) const
