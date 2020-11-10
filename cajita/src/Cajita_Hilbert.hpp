@@ -59,12 +59,12 @@ struct LayoutHilbert3D
         : dimension{N0, N1, N2, N3, N4, N5, N6, N7}
     {
         // Force N0 and N1 to be 2^n for Square Hilbert Space
-        dimension[0] = (size_t)std::pow(
-            (double)2, (double)ceil( log( (double)N0 ) / log( 2.0 ) ) );
-        dimension[1] = (size_t)std::pow(
-            (double)2, (double)ceil( log( (double)N1 ) / log( 2.0 ) ) );
-        dimension[2] = (size_t)std::pow(
-            (double)2, (double)ceil( log( (double)N2 ) / log( 2.0 ) ) );
+        dimension[0] = static_cast<size_t>( std::pow(
+            static_cast<double>( 2 ), static_cast<double>( ceil( log( static_cast<double>( N0 ) ) / log( 2.0 ) ) ) ) );
+        dimension[1] = static_cast<size_t>( std::pow(
+            static_cast<double>( 2 ), static_cast<double>( ceil( log( static_cast<double>( N1 ) ) / log( 2.0 ) ) ) ) );
+        dimension[2] = static_cast<size_t>( std::pow(
+            static_cast<double>( 2 ), static_cast<double>( ceil( log( static_cast<double>( N2 ) ) / log( 2.0 ) ) ) ) );
     }
 };
 
