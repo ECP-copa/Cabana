@@ -686,13 +686,22 @@ TEST( layout_hilbert, layout_hilbert_gather_test )
     Cajita::ManualPartitioner partitioner( ranks_per_dim );
 
     // Test the non-periodic case
-    std::array<bool, 3> is_dim_periodic = {false, false, false};
+    std::array<bool, 3> dim_not_periodic = {false, false, false};
 
     // Gather Test
-    LayoutHilbert3DGatherTest( partitioner, is_dim_periodic );
+    LayoutHilbert3DGatherTest( partitioner, dim_not_periodic );
 
     // Scatter Test
-    LayoutHilbert3DScatterTest( partitioner, is_dim_periodic );
+    LayoutHilbert3DScatterTest( partitioner, dim_not_periodic );
+
+    // Test the periodic case
+    std::array<bool, 3> dim_periodic = {true, true, true};
+
+    // Gather Test
+    LayoutHilbert3DGatherTest( partitioner, dim_periodic );
+
+    // Scatter Test
+    LayoutHilbert3DScatterTest( partitioner, dim_periodic );
 }
 
 //---------------------------------------------------------------------------//
