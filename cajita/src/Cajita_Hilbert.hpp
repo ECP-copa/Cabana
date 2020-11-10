@@ -34,10 +34,10 @@ struct LayoutHilbert3D
     };
 
     // Defaults
-    LayoutHilbert3D( LayoutHilbert3D const & ) = default;
-    LayoutHilbert3D( LayoutHilbert3D && ) = default;
-    LayoutHilbert3D &operator=( LayoutHilbert3D const & ) = default;
-    LayoutHilbert3D &operator=( LayoutHilbert3D && ) = default;
+    LayoutHilbert3D( LayoutHilbert3D const& ) = default;
+    LayoutHilbert3D( LayoutHilbert3D&& ) = default;
+    LayoutHilbert3D& operator=( LayoutHilbert3D const& ) = default;
+    LayoutHilbert3D& operator=( LayoutHilbert3D&& ) = default;
 
     /*!
       \brief Constructor.
@@ -58,12 +58,18 @@ struct LayoutHilbert3D
         : dimension{N0, N1, N2, N3, N4, N5, N6, N7}
     {
         // Force N0 and N1 to be 2^n for Square Hilbert Space
-        dimension[0] = static_cast<size_t>( std::pow(
-            static_cast<double>( 2 ), static_cast<double>( ceil( log( static_cast<double>( N0 ) ) / log( 2.0 ) ) ) ) );
-        dimension[1] = static_cast<size_t>( std::pow(
-            static_cast<double>( 2 ), static_cast<double>( ceil( log( static_cast<double>( N1 ) ) / log( 2.0 ) ) ) ) );
-        dimension[2] = static_cast<size_t>( std::pow(
-            static_cast<double>( 2 ), static_cast<double>( ceil( log( static_cast<double>( N2 ) ) / log( 2.0 ) ) ) ) );
+        dimension[0] = static_cast<size_t>(
+            std::pow( static_cast<double>( 2 ),
+                      static_cast<double>( ceil(
+                          log( static_cast<double>( N0 ) ) / log( 2.0 ) ) ) ) );
+        dimension[1] = static_cast<size_t>(
+            std::pow( static_cast<double>( 2 ),
+                      static_cast<double>( ceil(
+                          log( static_cast<double>( N1 ) ) / log( 2.0 ) ) ) ) );
+        dimension[2] = static_cast<size_t>(
+            std::pow( static_cast<double>( 2 ),
+                      static_cast<double>( ceil(
+                          log( static_cast<double>( N2 ) ) / log( 2.0 ) ) ) ) );
     }
 };
 
@@ -105,8 +111,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     // Compact 3D Hilbert Indices, using algorithm described in
     // Compact Hilbert Indices, Dalhousie University Technical Report
     template <typename I0, typename I1, typename I2>
-    KOKKOS_INLINE_FUNCTION size_t hilbert3d( I0 const &i0, I1 const &i1,
-                                             I2 const &i2 ) const
+    KOKKOS_INLINE_FUNCTION size_t hilbert3d( I0 const& i0, I1 const& i1,
+                                             I2 const& i2 ) const
     {
         int h = 0;
         int ve = 0;
@@ -285,7 +291,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
 
     // rank 1
     template <typename I0>
-    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( I0 const &i0 ) const
+    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( I0 const& i0 ) const
     {
         // Calculate 3D hilbert index
         size_t hilbert_index = hilbert3d( i0 + m_off.N0, 0, 0 ) - offset;
@@ -296,8 +302,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
 
     // rank 2
     template <typename I0, typename I1>
-    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( I0 const &i0,
-                                                           I1 const &i1 ) const
+    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( I0 const& i0,
+                                                           I1 const& i1 ) const
     {
         // Calculate 3D hilbert index
         size_t hilbert_index =
@@ -310,7 +316,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     // rank 3
     template <typename I0, typename I1, typename I2>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( I0 const &i0, I1 const &i1, I2 const &i2 ) const
+    operator()( I0 const& i0, I1 const& i1, I2 const& i2 ) const
     {
         // Calculate 3D hilbert index
         size_t hilbert_index =
@@ -323,7 +329,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     // rank 4
     template <typename I0, typename I1, typename I2, typename I3>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3 ) const
+    operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3 ) const
     {
         // Calculate 3D hilbert index
         size_t hilbert_index =
@@ -336,33 +342,30 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     // rank 5
     template <typename I0, typename I1, typename I2, typename I3, typename I4>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3,
-                I4 const &i4 ) const
+    operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3,
+                I4 const& i4 ) const
     {
         // Calculate 3D hilbert index
         size_t hilbert_index =
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 5 dimensions
-        return ( cube ) *
-                   ( i4 + orig_dim.N4 * i3 ) +
-               hilbert_index;
+        return ( cube ) * ( i4 + orig_dim.N4 * i3 ) + hilbert_index;
     }
 
     // rank 6
     template <typename I0, typename I1, typename I2, typename I3, typename I4,
               typename I5>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3,
-                I4 const &i4, I5 const &i5 ) const
+    operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3,
+                I4 const& i4, I5 const& i5 ) const
     {
         // Calculate 3D hilbert index
         size_t hilbert_index =
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 6 dimensions
-        return ( cube ) *
-                   ( i5 + orig_dim.N5 * ( i4 + orig_dim.N4 * i3 ) ) +
+        return ( cube ) * ( i5 + orig_dim.N5 * ( i4 + orig_dim.N4 * i3 ) ) +
                hilbert_index;
     }
 
@@ -370,18 +373,17 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     template <typename I0, typename I1, typename I2, typename I3, typename I4,
               typename I5, typename I6>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3,
-                I4 const &i4, I5 const &i5, I6 const &i6 ) const
+    operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3,
+                I4 const& i4, I5 const& i5, I6 const& i6 ) const
     {
         // Calculate 3D hilbert index
         size_t hilbert_index =
             hilbert3d( i0 + m_off.N0, i1 + m_off.N1, i2 + m_off.N2 ) - offset;
 
         // Use hilbert index to map to 7 dimensions
-        return ( cube ) *
-                   ( i6 +
-                     orig_dim.N6 *
-                         ( i5 + orig_dim.N5 * ( i4 + orig_dim.N4 * i3 ) ) ) +
+        return ( cube ) * ( i6 + orig_dim.N6 *
+                                     ( i5 + orig_dim.N5 *
+                                                ( i4 + orig_dim.N4 * i3 ) ) ) +
                hilbert_index;
     }
 
@@ -389,8 +391,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     template <typename I0, typename I1, typename I2, typename I3, typename I4,
               typename I5, typename I6, typename I7>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( I0 const &i0, I1 const &i1, I2 const &i2, I3 const &i3,
-                I4 const &i4, I5 const &i5, I6 const &i6, I7 const &i7 ) const
+    operator()( I0 const& i0, I1 const& i1, I2 const& i2, I3 const& i3,
+                I4 const& i4, I5 const& i5, I6 const& i6, I7 const& i7 ) const
     {
         /// Calculate 3D hilbert index
         size_t hilbert_index =
@@ -529,7 +531,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     // Stride with [ rank ] value is the total length
     // Kept as default - not applicable to hilbert space
     template <typename iType>
-    KOKKOS_INLINE_FUNCTION void stride( iType *const s ) const
+    KOKKOS_INLINE_FUNCTION void stride( iType* const s ) const
     {
         s[0] = 1;
         if ( 0 < dimension_type::rank )
@@ -567,13 +569,13 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     }
 
     ViewOffset() = default;
-    ViewOffset( const ViewOffset & ) = default;
-    ViewOffset &operator=( const ViewOffset & ) = default;
+    ViewOffset( const ViewOffset& ) = default;
+    ViewOffset& operator=( const ViewOffset& ) = default;
 
     // Default creation
     KOKKOS_INLINE_FUNCTION
-    constexpr ViewOffset( std::integral_constant<unsigned, 0> const &,
-                          Kokkos::LayoutHilbert3D const &rhs )
+    constexpr ViewOffset( std::integral_constant<unsigned, 0> const&,
+                          Kokkos::LayoutHilbert3D const& rhs )
         : m_dim( rhs.dimension[0], rhs.dimension[1], rhs.dimension[2],
                  rhs.dimension[3], rhs.dimension[4], rhs.dimension[5],
                  rhs.dimension[6], rhs.dimension[7] )
@@ -587,7 +589,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     // Copy
     template <class DimRHS, class LayoutRHS>
     KOKKOS_INLINE_FUNCTION constexpr ViewOffset(
-        const ViewOffset<DimRHS, LayoutRHS, void> &rhs )
+        const ViewOffset<DimRHS, LayoutRHS, void>& rhs )
         : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3,
                  rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 )
         , orig_dim( rhs.dimension_0(), rhs.dimension_1(), rhs.dimension_2(),
@@ -602,8 +604,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
     // Subview
     template <class DimRHS, class LayoutRHS>
     KOKKOS_INLINE_FUNCTION constexpr ViewOffset(
-        const ViewOffset<DimRHS, LayoutRHS, void> &rhs,
-        const SubviewExtents<DimRHS::rank, dimension_type::rank> &sub )
+        const ViewOffset<DimRHS, LayoutRHS, void>& rhs,
+        const SubviewExtents<DimRHS::rank, dimension_type::rank>& sub )
         : m_dim( sub.range_extent( 0 ), sub.range_extent( 1 ),
                  sub.range_extent( 2 ), sub.range_extent( 3 ),
                  sub.range_extent( 4 ), sub.range_extent( 5 ),
@@ -764,8 +766,8 @@ struct ViewMapping<
     // However, a compatible ViewMapping is acceptable.
     template <class DstTraits>
     KOKKOS_INLINE_FUNCTION static void
-    assign( ViewMapping<DstTraits, void> &dst,
-            ViewMapping<SrcTraits, void> const &src, Args... args )
+    assign( ViewMapping<DstTraits, void>& dst,
+            ViewMapping<SrcTraits, void> const& src, Args... args )
     {
         static_assert(
             ViewMapping<DstTraits, traits_type, void>::is_assignable,

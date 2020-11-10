@@ -32,11 +32,11 @@ void LayoutHilbert3DSubviewTest()
 {
     // typedef
     typedef
-        typename Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
+        typename Kokkos::View<double****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
             view_type;
 
     // typedef
-    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
 
     // Set dimensions
     int dim1 = 45;
@@ -49,18 +49,18 @@ void LayoutHilbert3DSubviewTest()
         Cajita::IndexSpace<4>( {0, 0, 0, 0}, {dim1, dim2, dim3, dim4} );
 
     // Create Hilbert View
-    Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
+    Kokkos::View<double****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
         hilbert_array( "Hilbert", dim1, dim2, dim3, dim4 );
 
     // Duplicate Hilbert View
-    Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
+    Kokkos::View<double****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
         hilbert_array2( "Hilbert", dim1, dim2, dim3, dim4 );
 
     // Test shallow copy and dimension methods
     hilbert_array2 = hilbert_array;
 
     // Create Regular View
-    Kokkos::View<double ****, TEST_DEVICE> regular_array( "Regular", dim1, dim2,
+    Kokkos::View<double****, TEST_DEVICE> regular_array( "Regular", dim1, dim2,
                                                          dim3, dim4 );
 
     // Loop over both views and assign values ( in typical increase LayoutRight
@@ -116,7 +116,7 @@ void LayoutHilbert3DSubviewTest()
     int replace_val = 7012;
 
     // Create Small Regular View the same dimensions as the subview
-    Kokkos::View<double ****, TEST_DEVICE> regular_small(
+    Kokkos::View<double****, TEST_DEVICE> regular_small(
         "RegularSmall", space.extent( 0 ), space.extent( 1 ), space.extent( 2 ),
         space.extent( 3 ) );
 
@@ -134,9 +134,9 @@ void LayoutHilbert3DSubviewTest()
     Kokkos::deep_copy( hilbert_sub, regular_small );
 
     // Create copy on host to check
-    buff_type dev_view_new( "dev_view_new", hilbert_array.extent( 0 ),
-                            hilbert_array.extent( 1 ), hilbert_array.extent( 2 ),
-                            hilbert_array.extent( 3 ) );
+    buff_type dev_view_new(
+        "dev_view_new", hilbert_array.extent( 0 ), hilbert_array.extent( 1 ),
+        hilbert_array.extent( 2 ), hilbert_array.extent( 3 ) );
     auto host_view_hilbert_new = Kokkos::create_mirror( dev_view_new );
 
     Kokkos::deep_copy( dev_view_new, hilbert_array );
@@ -156,14 +156,14 @@ void LayoutHilbert3DSubviewTest()
                                    replace_val );
                     else
                         EXPECT_EQ( host_view_hilbert_new( i, j, k, l ),
-                                   i + dim1 * ( j + dim2 * ( k + ( dim3 ) * l ) ) );
+                                   i + dim1 * ( j + dim2 * ( k + (dim3)*l ) ) );
 }
 
 //---------------------------------------------------------------------------//
 void LayoutHilbert3DArrayOpTest()
 {
     // typedef
-    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
 
     // Let MPI compute the partitioning for this test.
     Cajita::UniformDimPartitioner partitioner;
@@ -176,7 +176,7 @@ void LayoutHilbert3DArrayOpTest()
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = Cajita::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -218,16 +218,16 @@ void LayoutHilbert3DArrayOpTest()
 }
 
 //---------------------------------------------------------------------------//
-void LayoutHilbert3DGatherTest( const Cajita::ManualPartitioner &partitioner,
-                                const std::array<bool, 3> &is_dim_periodic )
+void LayoutHilbert3DGatherTest( const Cajita::ManualPartitioner& partitioner,
+                                const std::array<bool, 3>& is_dim_periodic )
 {
     // typedef
     typedef
-        typename Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
+        typename Kokkos::View<double****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
             view_type;
 
     // typedef
-    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
 
     // Get rank
     int rank;
@@ -243,7 +243,7 @@ void LayoutHilbert3DGatherTest( const Cajita::ManualPartitioner &partitioner,
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
 
     // Create local grid
     auto global_mesh = Cajita::createUniformGlobalMesh(
@@ -274,9 +274,9 @@ void LayoutHilbert3DGatherTest( const Cajita::ManualPartitioner &partitioner,
     auto array_view = array->view();
 
     // Generate Kokkos Views to store neighbor data for later use
-    Kokkos::View<unsigned int **, TEST_DEVICE> owned_shared_spaces(
+    Kokkos::View<unsigned int**, TEST_DEVICE> owned_shared_spaces(
         "Owned_Shared_Spaces", 27, 6 );
-    Kokkos::View<unsigned int **, TEST_DEVICE> ghosted_shared_spaces(
+    Kokkos::View<unsigned int**, TEST_DEVICE> ghosted_shared_spaces(
         "Ghosted_Shared_Spaces", 27, 6 );
 
     // Create copies on host to populate
@@ -487,10 +487,10 @@ int haloPad( Cajita::Edge<D>, int d )
 // Check initial array gather. We should get 1 everywhere in the array now
 // where there was ghost overlap. Otherwise there will still be 0.
 template <class Array>
-void checkGather( const int halo_width, const Array &array )
+void checkGather( const int halo_width, const Array& array )
 {
     // typedef
-    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
 
     auto owned_space =
         array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
@@ -532,11 +532,11 @@ void checkGather( const int halo_width, const Array &array )
 // neighbors it has. Corner neighbors get 8, edge neighbors get 4, face
 // neighbors get 2, and no neighbors remain at 1.
 template <class Array>
-void checkScatter( const std::array<bool, 3> &is_dim_periodic,
-                   const int halo_width, const Array &array )
+void checkScatter( const std::array<bool, 3>& is_dim_periodic,
+                   const int halo_width, const Array& array )
 {
     // typedef
-    typedef typename Kokkos::View<double ****, TEST_DEVICE> buff_type;
+    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
 
     // Get data.
     auto owned_space =
@@ -551,7 +551,7 @@ void checkScatter( const std::array<bool, 3> &is_dim_periodic,
     Kokkos::deep_copy( dev_view, array.view() );
     Kokkos::deep_copy( host_view, dev_view );
 
-    const auto &global_grid = array.layout()->localGrid()->globalGrid();
+    const auto& global_grid = array.layout()->localGrid()->globalGrid();
 
     // This function checks if an index is in the halo of a low neighbor in
     // the given dimension
@@ -597,8 +597,8 @@ void checkScatter( const std::array<bool, 3> &is_dim_periodic,
 }
 
 //---------------------------------------------------------------------------//
-void LayoutHilbert3DScatterTest( const Cajita::ManualPartitioner &partitioner,
-                                 const std::array<bool, 3> &is_dim_periodic )
+void LayoutHilbert3DScatterTest( const Cajita::ManualPartitioner& partitioner,
+                                 const std::array<bool, 3>& is_dim_periodic )
 {
     // Create the global grid.
     double cell_size = 0.23;
@@ -607,7 +607,7 @@ void LayoutHilbert3DScatterTest( const Cajita::ManualPartitioner &partitioner,
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = Cajita::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
