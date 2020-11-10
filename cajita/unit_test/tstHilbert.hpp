@@ -695,13 +695,13 @@ TEST( layout_hilbert, layout_hilbert_gather_test )
     LayoutHilbert3DScatterTest( partitioner, dim_not_periodic );
 
     // Test the periodic case
-    std::array<bool, 3> dim_periodic = {true, true, true};
+    // std::array<bool, 3> dim_periodic = {true, true, true};
 
     // Gather Test
-    LayoutHilbert3DGatherTest( partitioner, dim_periodic );
+    // LayoutHilbert3DGatherTest( partitioner, dim_periodic );
 
     // Scatter Test
-    LayoutHilbert3DScatterTest( partitioner, dim_periodic );
+    // LayoutHilbert3DScatterTest( partitioner, dim_periodic );
 }
 
 //---------------------------------------------------------------------------//
