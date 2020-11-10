@@ -13,12 +13,12 @@ typedef Kokkos::View<float[CABANA_PERFORMANCE_VECLENGTH],
 __attribute__( ( noinline ) )
 #endif
 view_type
-axpy_10( const view_type &__restrict__ a, const view_type &__restrict__ x0,
-         const view_type &__restrict__ x1, const view_type &__restrict__ x2,
-         const view_type &__restrict__ x3, const view_type &__restrict__ x4,
-         const view_type &__restrict__ x5, const view_type &__restrict__ x6,
-         const view_type &__restrict__ x7, const view_type &__restrict__ x8,
-         const view_type &__restrict__ x9, const view_type &__restrict__ c,
+axpy_10( const view_type& __restrict__ a, const view_type& __restrict__ x0,
+         const view_type& __restrict__ x1, const view_type& __restrict__ x2,
+         const view_type& __restrict__ x3, const view_type& __restrict__ x4,
+         const view_type& __restrict__ x5, const view_type& __restrict__ x6,
+         const view_type& __restrict__ x7, const view_type& __restrict__ x8,
+         const view_type& __restrict__ x9, const view_type& __restrict__ c,
          long n )
 {
     long i;
@@ -71,9 +71,9 @@ TEST( kokkos, simple )
     view_type c_( "c" );
 
     long i;
-    unsigned short rg[3] = {static_cast<unsigned short>( seed >> 16 ),
-                            static_cast<unsigned short>( seed >> 8 ),
-                            static_cast<unsigned short>( seed )};
+    unsigned short rg[3] = { static_cast<unsigned short>( seed >> 16 ),
+                             static_cast<unsigned short>( seed >> 8 ),
+                             static_cast<unsigned short>( seed ) };
 
     for ( i = 0; i < CABANA_PERFORMANCE_VECLENGTH; i++ )
     {

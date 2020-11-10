@@ -6,6 +6,6 @@ ignore:
   - gtest/
   - cajita/unit_test/
   - core/unit_test/
-  - core/example/tutorial
   - core/performance_test/benchmark
   - core/performance_test/peakflops
+  - example/tutorial

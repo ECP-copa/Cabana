@@ -35,17 +35,17 @@ void periodicTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {101, 85, 99};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
@@ -91,9 +91,9 @@ void periodicTest()
         for ( int j = -1; j < 2; ++j )
             for ( int k = -1; k < 2; ++k )
             {
-                std::vector<int> nr = {cart_rank[Dim::I] + i,
-                                       cart_rank[Dim::J] + j,
-                                       cart_rank[Dim::K] + k};
+                std::vector<int> nr = { cart_rank[Dim::I] + i,
+                                        cart_rank[Dim::J] + j,
+                                        cart_rank[Dim::K] + k };
                 int nrank;
                 MPI_Cart_rank( grid_comm, nr.data(), &nrank );
                 EXPECT_EQ( local_grid->neighborRank( i, j, k ), nrank );
@@ -1643,13 +1643,13 @@ void notPeriodicTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {101, 85, 99};
-    std::array<bool, 3> is_dim_periodic = {false, false, false};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -1766,7 +1766,7 @@ void notPeriodicTest()
                     std::vector<int> nr = {
                         global_grid->dimBlockId( Dim::I ) + i,
                         global_grid->dimBlockId( Dim::J ) + j,
-                        global_grid->dimBlockId( Dim::K ) + k};
+                        global_grid->dimBlockId( Dim::K ) + k };
                     int nrank;
                     MPI_Cart_rank( grid_comm, nr.data(), &nrank );
                     EXPECT_EQ( local_grid->neighborRank( i, j, k ), nrank );

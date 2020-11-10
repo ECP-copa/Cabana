@@ -73,8 +73,8 @@ template <class ExportRankView>
 auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
                                   const int comm_size,
                                   CountSendsAndCreateSteeringAtomic )
-    -> std::pair<Kokkos::View<int *, typename ExportRankView::device_type>,
-                 Kokkos::View<typename ExportRankView::size_type *,
+    -> std::pair<Kokkos::View<int*, typename ExportRankView::device_type>,
+                 Kokkos::View<typename ExportRankView::size_type*,
                               typename ExportRankView::device_type>>
 {
     using device_type = typename ExportRankView::device_type;
@@ -82,9 +82,9 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
     using size_type = typename ExportRankView::size_type;
 
     // Create views.
-    Kokkos::View<int *, device_type> neighbor_counts( "neighbor_counts",
-                                                      comm_size );
-    Kokkos::View<size_type *, device_type> neighbor_ids(
+    Kokkos::View<int*, device_type> neighbor_counts( "neighbor_counts",
+                                                     comm_size );
+    Kokkos::View<size_type*, device_type> neighbor_ids(
         Kokkos::ViewAllocateWithoutInitializing( "neighbor_ids" ),
         element_export_ranks.size() );
 
@@ -108,8 +108,8 @@ template <class ExportRankView>
 auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
                                   const int comm_size,
                                   CountSendsAndCreateSteeringDuplicated )
-    -> std::pair<Kokkos::View<int *, typename ExportRankView::device_type>,
-                 Kokkos::View<typename ExportRankView::size_type *,
+    -> std::pair<Kokkos::View<int*, typename ExportRankView::device_type>,
+                 Kokkos::View<typename ExportRankView::size_type*,
                               typename ExportRankView::device_type>>
 {
     using device_type = typename ExportRankView::device_type;
@@ -122,15 +122,15 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
         unique_token;
 
     // Create views.
-    Kokkos::View<int *, device_type> neighbor_counts(
+    Kokkos::View<int*, device_type> neighbor_counts(
         Kokkos::ViewAllocateWithoutInitializing( "neighbor_counts" ),
         comm_size );
-    Kokkos::View<size_type *, device_type> neighbor_ids(
+    Kokkos::View<size_type*, device_type> neighbor_ids(
         Kokkos::ViewAllocateWithoutInitializing( "neighbor_ids" ),
         element_export_ranks.size() );
-    Kokkos::View<int **, device_type> neighbor_counts_dup(
+    Kokkos::View<int**, device_type> neighbor_counts_dup(
         "neighbor_counts", unique_token.size(), comm_size );
-    Kokkos::View<size_type **, device_type> neighbor_ids_dup(
+    Kokkos::View<size_type**, device_type> neighbor_ids_dup(
         "neighbor_ids", unique_token.size(), element_export_ranks.size() );
 
     // Compute initial duplicated sends and steering.
@@ -170,7 +170,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
     Kokkos::parallel_for(
         "Cabana::CommunicationPlan::finalCount",
         team_policy( neighbor_counts.extent( 0 ), Kokkos::AUTO ),
-        KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
+        KOKKOS_LAMBDA( const typename team_policy::member_type& team ) {
             // Get the element id.
             auto i = team.league_rank();
 
@@ -179,7 +179,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
             Kokkos::parallel_reduce(
                 Kokkos::TeamThreadRange( team,
                                          neighbor_counts_dup.extent( 0 ) ),
-                [&]( const index_type thread_id, int &result ) {
+                [&]( const index_type thread_id, int& result ) {
                     result += neighbor_counts_dup( thread_id, i );
                 },
                 thread_counts );
@@ -192,7 +192,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
     Kokkos::parallel_for(
         "Cabana::CommunicationPlan::createSteering",
         team_policy( element_export_ranks.size(), Kokkos::AUTO ),
-        KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
+        KOKKOS_LAMBDA( const typename team_policy::member_type& team ) {
             // Get the element id.
             auto i = team.league_rank();
 
@@ -206,7 +206,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
                 Kokkos::parallel_reduce(
                     Kokkos::TeamThreadRange( team,
                                              neighbor_ids_dup.extent( 0 ) ),
-                    [&]( const index_type thread_id, index_type &result ) {
+                    [&]( const index_type thread_id, index_type& result ) {
                         if ( neighbor_ids_dup( thread_id, i ) > 0 )
                             result += thread_id;
                     },
@@ -220,7 +220,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
                 size_type thread_offset = 0;
                 Kokkos::parallel_reduce(
                     Kokkos::TeamThreadRange( team, dup_thread ),
-                    [&]( const index_type thread_id, size_type &result ) {
+                    [&]( const index_type thread_id, size_type& result ) {
                         result += neighbor_counts_dup(
                             thread_id, element_export_ranks( i ) );
                     },
@@ -305,7 +305,7 @@ class CommunicationPlan
                 return p.release();
             }(),
             // Custom deleter to mark the communicator for deallocation
-            []( MPI_Comm *p ) {
+            []( MPI_Comm* p ) {
                 MPI_Comm_free( p );
                 delete p;
             } );
@@ -405,7 +405,7 @@ class CommunicationPlan
       (i.e. all elements going to neighbor with local id 0 first, then all
       elements going to neighbor with local id 1, etc.).
     */
-    Kokkos::View<std::size_t *, device_type> getExportSteering() const
+    Kokkos::View<std::size_t*, device_type> getExportSteering() const
     {
         return _export_steering;
     }
@@ -450,9 +450,9 @@ class CommunicationPlan
       will be efficiently migrated.
     */
     template <class ViewType>
-    Kokkos::View<size_type *, device_type>
-    createFromExportsAndTopology( const ViewType &element_export_ranks,
-                                  const std::vector<int> &neighbor_ranks )
+    Kokkos::View<size_type*, device_type>
+    createFromExportsAndTopology( const ViewType& element_export_ranks,
+                                  const std::vector<int>& neighbor_ranks )
     {
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
@@ -478,7 +478,7 @@ class CommunicationPlan
 
         // If we are sending to ourself put that one first in the neighbor
         // list.
-        for ( auto &n : _neighbors )
+        for ( auto& n : _neighbors )
             if ( n == my_rank )
             {
                 std::swap( n, _neighbors[0] );
@@ -572,8 +572,8 @@ class CommunicationPlan
       will be efficiently migrated.
     */
     template <class ViewType>
-    Kokkos::View<size_type *, device_type>
-    createFromExportsOnly( const ViewType &element_export_ranks )
+    Kokkos::View<size_type*, device_type>
+    createFromExportsOnly( const ViewType& element_export_ranks )
     {
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
@@ -720,8 +720,8 @@ class CommunicationPlan
       communication plan.
     */
     template <class PackViewType, class RankViewType>
-    void createExportSteering( const PackViewType &neighbor_ids,
-                               const RankViewType &element_export_ranks )
+    void createExportSteering( const PackViewType& neighbor_ids,
+                               const RankViewType& element_export_ranks )
     {
         // passing in element_export_ranks here as a dummy argument.
         createSteering( true, neighbor_ids, element_export_ranks,
@@ -748,9 +748,9 @@ class CommunicationPlan
       Cabana slice in the same memory space as the communication plan.
     */
     template <class PackViewType, class RankViewType, class IdViewType>
-    void createExportSteering( const PackViewType &neighbor_ids,
-                               const RankViewType &element_export_ranks,
-                               const IdViewType &element_export_ids )
+    void createExportSteering( const PackViewType& neighbor_ids,
+                               const RankViewType& element_export_ranks,
+                               const IdViewType& element_export_ids )
     {
         createSteering( false, neighbor_ids, element_export_ranks,
                         element_export_ids );
@@ -758,9 +758,9 @@ class CommunicationPlan
 
     // Create the export steering vector.
     template <class PackViewType, class RankViewType, class IdViewType>
-    void createSteering( const bool use_iota, const PackViewType &neighbor_ids,
-                         const RankViewType &element_export_ranks,
-                         const IdViewType &element_export_ids )
+    void createSteering( const bool use_iota, const PackViewType& neighbor_ids,
+                         const RankViewType& element_export_ranks,
+                         const IdViewType& element_export_ids )
     {
         if ( !use_iota &&
              ( element_export_ids.size() != element_export_ranks.size() ) )
@@ -778,7 +778,7 @@ class CommunicationPlan
             offsets[n] = offsets[n - 1] + _num_export[n - 1];
 
         // Map the offsets to the device.
-        Kokkos::View<std::size_t *, Kokkos::HostSpace> rank_offsets_host(
+        Kokkos::View<std::size_t*, Kokkos::HostSpace> rank_offsets_host(
             Kokkos::ViewAllocateWithoutInitializing( "rank_map" ), comm_size );
         for ( int n = 0; n < num_n; ++n )
             rank_offsets_host( _neighbors[n] ) = offsets[n];
@@ -788,11 +788,11 @@ class CommunicationPlan
         // Create the export steering vector for writing local elements into
         // the send buffer. Note we create a local, shallow copy - this is a
         // CUDA workaround for handling class private data.
-        _export_steering = Kokkos::View<std::size_t *, memory_space>(
+        _export_steering = Kokkos::View<std::size_t*, memory_space>(
             Kokkos::ViewAllocateWithoutInitializing( "export_steering" ),
             _total_num_export );
         auto steer_vec = _export_steering;
-        Kokkos::View<std::size_t *, memory_space> counts( "counts", num_n );
+        Kokkos::View<std::size_t*, memory_space> counts( "counts", num_n );
         Kokkos::parallel_for(
             "Cabana::createSteering",
             Kokkos::RangePolicy<execution_space>( 0, _num_export_element ),
@@ -813,7 +813,7 @@ class CommunicationPlan
     std::vector<std::size_t> _num_export;
     std::vector<std::size_t> _num_import;
     std::size_t _num_export_element;
-    Kokkos::View<std::size_t *, device_type> _export_steering;
+    Kokkos::View<std::size_t*, device_type> _export_steering;
 };
 
 //---------------------------------------------------------------------------//

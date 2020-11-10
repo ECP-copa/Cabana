@@ -6,9 +6,9 @@ jobs:
   edit:
     name: clang-format
     if: ${{ github.event.comment.body == 'format this please' }}
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-20.04
     env:
-      CLANG_FORMAT: clang-format-8
+      CLANG_FORMAT: clang-format-10
     steps:
       - name: Check if message comes from a PR
         uses: octokit/request-action@v2.x

@@ -42,7 +42,7 @@ class HaloPattern
     virtual ~HaloPattern() = default;
 
     // Assign the neighbors that are in the halo pattern.
-    void setNeighbors( const std::vector<std::array<int, 3>> &neighbors )
+    void setNeighbors( const std::vector<std::array<int, 3>>& neighbors )
     {
         _neighbors = neighbors;
     }
@@ -67,7 +67,7 @@ class FullHaloPattern : public HaloPattern
             for ( int j = -1; j < 2; ++j )
                 for ( int k = -1; k < 2; ++k )
                     if ( !( i == 0 && j == 0 && k == 0 ) )
-                        neighbors.push_back( {i, j, k} );
+                        neighbors.push_back( { i, j, k } );
         this->setNeighbors( neighbors );
     }
 };
@@ -132,8 +132,8 @@ class Halo
       provided in the same order
     */
     template <class... ArrayTypes>
-    Halo( const HaloPattern &pattern, const int width,
-          const ArrayTypes &... arrays )
+    Halo( const HaloPattern& pattern, const int width,
+          const ArrayTypes&... arrays )
     {
         // Get the MPI communicator. All arrays must have the same
         // communicator.
@@ -165,7 +165,7 @@ class Halo
         // allocate buffers. If any of the exchanges are self sends mark these
         // so we know which send buffers correspond to which receive buffers.
         auto neighbors = pattern.getNeighbors();
-        for ( const auto &n : neighbors )
+        for ( const auto& n : neighbors )
         {
             // Get the neighbor ids.
             auto i = n[Dim::I];
@@ -215,8 +215,8 @@ class Halo
       as the input arrays.
     */
     template <class ExecutionSpace, class... ArrayTypes>
-    void gather( const ExecutionSpace &exec_space,
-                 const ArrayTypes &... arrays ) const
+    void gather( const ExecutionSpace& exec_space,
+                 const ArrayTypes&... arrays ) const
     {
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -298,8 +298,8 @@ class Halo
       \param arrays The arrays to scatter.
     */
     template <class ExecutionSpace, class ReduceOp, class... ArrayTypes>
-    void scatter( const ExecutionSpace &exec_space, const ReduceOp &reduce_op,
-                  const ArrayTypes &... arrays ) const
+    void scatter( const ExecutionSpace& exec_space, const ReduceOp& reduce_op,
+                  const ArrayTypes&... arrays ) const
     {
         // Get the number of neighbors. Return if we have none.
         int num_n = _neighbor_ranks.size();
@@ -374,7 +374,7 @@ class Halo
   public:
     // Get the communicator and check to make sure all are the same.
     template <class Array_t>
-    void getComm( const Array_t &array )
+    void getComm( const Array_t& array )
     {
         // Duplicate the communicator so we have our own communication space.
         MPI_Comm_dup( array.layout()->localGrid()->globalGrid().comm(),
@@ -382,7 +382,7 @@ class Halo
     }
 
     template <class Array_t, class... ArrayTypes>
-    void getComm( const Array_t &array, const ArrayTypes &... arrays )
+    void getComm( const Array_t& array, const ArrayTypes&... arrays )
     {
         // Recurse.
         getComm( arrays... );
@@ -399,13 +399,13 @@ class Halo
     // Get the local grid from the arrays. Check that the grids have the same
     // halo size.
     template <class Array_t>
-    auto getLocalGrid( const Array_t &array )
+    auto getLocalGrid( const Array_t& array )
     {
         return array.layout()->localGrid();
     }
 
     template <class Array_t, class... ArrayTypes>
-    auto getLocalGrid( const Array_t &array, const ArrayTypes &... arrays )
+    auto getLocalGrid( const Array_t& array, const ArrayTypes&... arrays )
     {
         // Recurse.
         auto local_grid = getLocalGrid( arrays... );
@@ -425,22 +425,22 @@ class Halo
     void
     buildCommData( DecompositionTag decomposition_tag, const int width,
                    const int ni, const int nj, const int nk,
-                   std::vector<Kokkos::View<char *, memory_space>> &buffers,
-                   std::vector<Kokkos::View<int * [6], memory_space>> &steering,
-                   const ArrayTypes &... arrays )
+                   std::vector<Kokkos::View<char*, memory_space>>& buffers,
+                   std::vector<Kokkos::View<int* [6], memory_space>>& steering,
+                   const ArrayTypes&... arrays )
     {
         // Number of arrays.
         const std::size_t num_array = sizeof...( ArrayTypes );
 
         // Get the byte sizes of array value types.
         std::array<std::size_t, num_array> value_byte_sizes = {
-            sizeof( typename ArrayTypes::value_type )...};
+            sizeof( typename ArrayTypes::value_type )... };
 
         // Get the index spaces we share with this neighbor. We
         // get a shared index space for each array.
         std::array<IndexSpace<4>, num_array> spaces = {
             ( arrays.layout()->sharedIndexSpace( decomposition_tag, ni, nj, nk,
-                                                 width ) )...};
+                                                 width ) )... };
 
         // Compute the buffer size of this neighbor and the
         // number of elements in the buffer.
@@ -455,10 +455,10 @@ class Halo
         // Allocate the buffer of data that we share with this neighbor. All
         // arrays will be packed into a single buffer.
         buffers.push_back(
-            Kokkos::View<char *, memory_space>( "halo_buffer", buffer_bytes ) );
+            Kokkos::View<char*, memory_space>( "halo_buffer", buffer_bytes ) );
 
         // Allocate the steering vector for building the buffer.
-        steering.push_back( Kokkos::View<int * [6], memory_space>(
+        steering.push_back( Kokkos::View<int* [6], memory_space>(
             "steering", buffer_num_element ) );
 
         // Create the steering vector. For each element in the buffer it gives
@@ -519,11 +519,11 @@ class Halo
     // alignment boundaries.
     template <class ArrayView>
     KOKKOS_INLINE_FUNCTION void
-    packElement( const Kokkos::View<char *, memory_space> &buffer,
-                 const Kokkos::View<int * [6], memory_space> &steering,
-                 const int element_idx, const ArrayView &array_view ) const
+    packElement( const Kokkos::View<char*, memory_space>& buffer,
+                 const Kokkos::View<int* [6], memory_space>& steering,
+                 const int element_idx, const ArrayView& array_view ) const
     {
-        const char *elem_ptr = reinterpret_cast<const char *>( &array_view(
+        const char* elem_ptr = reinterpret_cast<const char*>( &array_view(
             steering( element_idx, 2 ), steering( element_idx, 3 ),
             steering( element_idx, 4 ), steering( element_idx, 5 ) ) );
         for ( std::size_t b = 0; b < sizeof( typename ArrayView::value_type );
@@ -536,11 +536,11 @@ class Halo
     // Pack an array into a buffer.
     template <class... ArrayViews>
     KOKKOS_INLINE_FUNCTION void
-    packArray( const Kokkos::View<char *, memory_space> &buffer,
-               const Kokkos::View<int * [6], memory_space> &steering,
+    packArray( const Kokkos::View<char*, memory_space>& buffer,
+               const Kokkos::View<int* [6], memory_space>& steering,
                const int element_idx,
                const std::integral_constant<std::size_t, 0>,
-               const ParameterPack<ArrayViews...> &array_views ) const
+               const ParameterPack<ArrayViews...>& array_views ) const
     {
         // If the pack element_idx is in the current array, pack it.
         if ( 0 == steering( element_idx, 1 ) )
@@ -550,11 +550,11 @@ class Halo
     // Pack an array into a buffer.
     template <std::size_t N, class... ArrayViews>
     KOKKOS_INLINE_FUNCTION void
-    packArray( const Kokkos::View<char *, memory_space> &buffer,
-               const Kokkos::View<int * [6], memory_space> &steering,
+    packArray( const Kokkos::View<char*, memory_space>& buffer,
+               const Kokkos::View<int* [6], memory_space>& steering,
                const int element_idx,
                const std::integral_constant<std::size_t, N>,
-               const ParameterPack<ArrayViews...> &array_views ) const
+               const ParameterPack<ArrayViews...>& array_views ) const
     {
         // If the pack element_idx is in the current array, pack it.
         if ( N == steering( element_idx, 1 ) )
@@ -567,9 +567,9 @@ class Halo
 
     // Pack arrays into a buffer.
     template <class ExecutionSpace, class... ArrayViews>
-    void packBuffer( const ExecutionSpace &exec_space,
-                     const Kokkos::View<char *, memory_space> &buffer,
-                     const Kokkos::View<int * [6], memory_space> &steering,
+    void packBuffer( const ExecutionSpace& exec_space,
+                     const Kokkos::View<char*, memory_space>& buffer,
+                     const Kokkos::View<int* [6], memory_space>& steering,
                      ArrayViews... array_views ) const
     {
         auto pp = makeParameterPack( array_views... );
@@ -590,7 +590,7 @@ class Halo
     // Reduce an element into the buffer. Sum reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION void
-    unpackOp( ScatterReduce::Sum, const T &buffer_val, T &array_val ) const
+    unpackOp( ScatterReduce::Sum, const T& buffer_val, T& array_val ) const
     {
         array_val += buffer_val;
     }
@@ -598,7 +598,7 @@ class Halo
     // Reduce an element into the buffer. Min reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION void
-    unpackOp( ScatterReduce::Min, const T &buffer_val, T &array_val ) const
+    unpackOp( ScatterReduce::Min, const T& buffer_val, T& array_val ) const
     {
         if ( buffer_val < array_val )
             array_val = buffer_val;
@@ -607,7 +607,7 @@ class Halo
     // Reduce an element into the buffer. Max reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION void
-    unpackOp( ScatterReduce::Max, const T &buffer_val, T &array_val ) const
+    unpackOp( ScatterReduce::Max, const T& buffer_val, T& array_val ) const
     {
         if ( buffer_val > array_val )
             array_val = buffer_val;
@@ -616,7 +616,7 @@ class Halo
     // Reduce an element into the buffer. Replace reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION void
-    unpackOp( ScatterReduce::Replace, const T &buffer_val, T &array_val ) const
+    unpackOp( ScatterReduce::Replace, const T& buffer_val, T& array_val ) const
     {
         array_val = buffer_val;
     }
@@ -625,13 +625,13 @@ class Halo
     // across alignment boundaries.
     template <class ReduceOp, class ArrayView>
     KOKKOS_INLINE_FUNCTION void
-    unpackElement( const ReduceOp &reduce_op,
-                   const Kokkos::View<char *, memory_space> &buffer,
-                   const Kokkos::View<int * [6], memory_space> &steering,
-                   const int element_idx, const ArrayView &array_view ) const
+    unpackElement( const ReduceOp& reduce_op,
+                   const Kokkos::View<char*, memory_space>& buffer,
+                   const Kokkos::View<int* [6], memory_space>& steering,
+                   const int element_idx, const ArrayView& array_view ) const
     {
         typename ArrayView::value_type elem;
-        char *elem_ptr = reinterpret_cast<char *>( &elem );
+        char* elem_ptr = reinterpret_cast<char*>( &elem );
         for ( std::size_t b = 0; b < sizeof( typename ArrayView::value_type );
               ++b )
         {
@@ -647,12 +647,12 @@ class Halo
     // Unpack an array from a buffer.
     template <class ReduceOp, class... ArrayViews>
     KOKKOS_INLINE_FUNCTION void
-    unpackArray( const ReduceOp &reduce_op,
-                 const Kokkos::View<char *, memory_space> &buffer,
-                 const Kokkos::View<int * [6], memory_space> &steering,
+    unpackArray( const ReduceOp& reduce_op,
+                 const Kokkos::View<char*, memory_space>& buffer,
+                 const Kokkos::View<int* [6], memory_space>& steering,
                  const int element_idx,
                  const std::integral_constant<std::size_t, 0>,
-                 const ParameterPack<ArrayViews...> &array_views ) const
+                 const ParameterPack<ArrayViews...>& array_views ) const
     {
         // If the unpack element_idx is in the current array, unpack it.
         if ( 0 == steering( element_idx, 1 ) )
@@ -664,11 +664,11 @@ class Halo
     template <class ReduceOp, std::size_t N, class... ArrayViews>
     KOKKOS_INLINE_FUNCTION void
     unpackArray( const ReduceOp reduce_op,
-                 const Kokkos::View<char *, memory_space> &buffer,
-                 const Kokkos::View<int * [6], memory_space> &steering,
+                 const Kokkos::View<char*, memory_space>& buffer,
+                 const Kokkos::View<int* [6], memory_space>& steering,
                  const int element_idx,
                  const std::integral_constant<std::size_t, N>,
-                 const ParameterPack<ArrayViews...> &array_views ) const
+                 const ParameterPack<ArrayViews...>& array_views ) const
     {
         // If the unpack element_idx is in the current array, unpack it.
         if ( N == steering( element_idx, 1 ) )
@@ -683,10 +683,10 @@ class Halo
 
     // Unpack arrays from a buffer.
     template <class ExecutionSpace, class ReduceOp, class... ArrayViews>
-    void unpackBuffer( const ReduceOp &reduce_op,
-                       const ExecutionSpace &exec_space,
-                       const Kokkos::View<char *, memory_space> &buffer,
-                       const Kokkos::View<int * [6], memory_space> &steering,
+    void unpackBuffer( const ReduceOp& reduce_op,
+                       const ExecutionSpace& exec_space,
+                       const Kokkos::View<char*, memory_space>& buffer,
+                       const Kokkos::View<int* [6], memory_space>& steering,
                        ArrayViews... array_views ) const
     {
         auto pp = makeParameterPack( array_views... );
@@ -717,16 +717,16 @@ class Halo
     std::vector<int> _receive_tags;
 
     // For each neighbor, send/receive buffers for data we own.
-    std::vector<Kokkos::View<char *, memory_space>> _owned_buffers;
+    std::vector<Kokkos::View<char*, memory_space>> _owned_buffers;
 
     // For each neighbor, send/receive buffers for data we ghost.
-    std::vector<Kokkos::View<char *, memory_space>> _ghosted_buffers;
+    std::vector<Kokkos::View<char*, memory_space>> _ghosted_buffers;
 
     // For each neighbor, steering vector for the owned buffer.
-    std::vector<Kokkos::View<int * [6], memory_space>> _owned_steering;
+    std::vector<Kokkos::View<int* [6], memory_space>> _owned_steering;
 
     // For each neighbor, steering vector for the ghosted buffer.
-    std::vector<Kokkos::View<int * [6], memory_space>> _ghosted_steering;
+    std::vector<Kokkos::View<int* [6], memory_space>> _ghosted_steering;
 };
 
 //---------------------------------------------------------------------------//
@@ -747,8 +747,8 @@ struct ArrayPackMemorySpace
   \param arrays The arrays over which to build the halo.
 */
 template <class... ArrayTypes>
-auto createHalo( const HaloPattern &pattern, const int width,
-                 const ArrayTypes &... arrays )
+auto createHalo( const HaloPattern& pattern, const int width,
+                 const ArrayTypes&... arrays )
 {
     using memory_space = typename ArrayPackMemorySpace<ArrayTypes...>::type;
     return std::make_shared<Halo<memory_space>>( pattern, width, arrays... );
@@ -764,8 +764,8 @@ struct LayoutAdapter
 {
     using value_type = Scalar;
     using memory_space = MemorySpace;
-    const ArrayLayout &array_layout;
-    const ArrayLayout *layout() const { return &array_layout; }
+    const ArrayLayout& array_layout;
+    const ArrayLayout* layout() const { return &array_layout; }
 };
 
 //---------------------------------------------------------------------------//
@@ -780,12 +780,12 @@ struct LayoutAdapter
   only compatible with arrays that have the same scalar and device type.
 */
 template <class Scalar, class Device, class EntityType, class MeshType>
-auto createHalo( const ArrayLayout<EntityType, MeshType> &layout,
-                 const HaloPattern &pattern, const int width = -1 )
+auto createHalo( const ArrayLayout<EntityType, MeshType>& layout,
+                 const HaloPattern& pattern, const int width = -1 )
 {
     LayoutAdapter<Scalar, typename Device::memory_space,
                   ArrayLayout<EntityType, MeshType>>
-        adapter{layout};
+        adapter{ layout };
     return createHalo( pattern, width, adapter );
 }
 
@@ -802,14 +802,14 @@ auto createHalo( const ArrayLayout<EntityType, MeshType> &layout,
   type as the input array.
 */
 template <class Scalar, class EntityType, class MeshType, class... Params>
-auto createHalo( const Array<Scalar, EntityType, MeshType, Params...> &array,
-                 const HaloPattern &pattern, const int width = -1 )
+auto createHalo( const Array<Scalar, EntityType, MeshType, Params...>& array,
+                 const HaloPattern& pattern, const int width = -1 )
 {
     LayoutAdapter<
         Scalar,
         typename Array<Scalar, EntityType, MeshType, Params...>::memory_space,
         typename Array<Scalar, EntityType, MeshType, Params...>::array_layout>
-        adapter{*array.layout()};
+        adapter{ *array.layout() };
     return createHalo( pattern, width, adapter );
 }
 //---------------------------------------------------------------------------//

@@ -44,9 +44,9 @@ namespace G2P
 */
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION void
-value( const ViewType &view, const SplineDataType &sd, PointDataType &result,
+value( const ViewType& view, const SplineDataType& sd, PointDataType& result,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                               void *>::type = 0 )
+                               void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::value requires spline weight values" );
@@ -73,9 +73,9 @@ value( const ViewType &view, const SplineDataType &sd, PointDataType &result,
 */
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION void
-value( const ViewType &view, const SplineDataType &sd, PointDataType result[3],
+value( const ViewType& view, const SplineDataType& sd, PointDataType result[3],
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                               void *>::type = 0 )
+                               void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::value requires spline weight values" );
@@ -103,10 +103,10 @@ value( const ViewType &view, const SplineDataType &sd, PointDataType result[3],
 */
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION void
-gradient( const ViewType &view, const SplineDataType &sd,
+gradient( const ViewType& view, const SplineDataType& sd,
           PointDataType result[3],
           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                  void *>::type = 0 )
+                                  void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::gradient requires spline weight values" );
@@ -147,10 +147,10 @@ gradient( const ViewType &view, const SplineDataType &sd,
 */
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION void
-gradient( const ViewType &view, const SplineDataType &sd,
+gradient( const ViewType& view, const SplineDataType& sd,
           PointDataType result[3][3],
           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                  void *>::type = 0 )
+                                  void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::gradient requires spline weight values" );
@@ -168,7 +168,7 @@ gradient( const ViewType &view, const SplineDataType &sd,
                 typename SplineDataType::scalar_type rg[3] = {
                     sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k],
                     sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k],
-                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k]};
+                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k] };
 
                 for ( int d0 = 0; d0 < 3; ++d0 )
                 {
@@ -191,10 +191,10 @@ gradient( const ViewType &view, const SplineDataType &sd,
 */
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION void
-divergence( const ViewType &view, const SplineDataType &sd,
-            PointDataType &result,
+divergence( const ViewType& view, const SplineDataType& sd,
+            PointDataType& result,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                    void *>::type = 0 )
+                                    void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::divergence requires spline weight values" );
@@ -273,10 +273,10 @@ struct is_scatter_view
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
-value( const PointDataType &point_data, const SplineDataType &sd,
-       const ScatterViewType &view,
+value( const PointDataType& point_data, const SplineDataType& sd,
+       const ScatterViewType& view,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                               void *>::type = 0 )
+                               void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::value requires spline weight values" );
@@ -302,10 +302,10 @@ value( const PointDataType &point_data, const SplineDataType &sd,
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
-value( const PointDataType point_data[3], const SplineDataType &sd,
-       const ScatterViewType &view,
+value( const PointDataType point_data[3], const SplineDataType& sd,
+       const ScatterViewType& view,
        typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                               void *>::type = 0 )
+                               void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::value requires spline weight values" );
@@ -335,8 +335,8 @@ value( const PointDataType point_data[3], const SplineDataType &sd,
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
-                                      const SplineDataType &sd,
-                                      const ScatterViewType &view )
+                                      const SplineDataType& sd,
+                                      const ScatterViewType& view )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::gradient requires spline weight values" );
@@ -376,10 +376,10 @@ KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION void
-divergence( const PointDataType point_data[3], const SplineDataType &sd,
-            const ScatterViewType &view,
+divergence( const PointDataType point_data[3], const SplineDataType& sd,
+            const ScatterViewType& view,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                    void *>::type = 0 )
+                                    void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::divergence requires spline weight values" );
@@ -420,10 +420,10 @@ divergence( const PointDataType point_data[3], const SplineDataType &sd,
 */
 template <class ScatterViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION void
-divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
-            const ScatterViewType &view,
+divergence( const PointDataType point_data[3][3], const SplineDataType& sd,
+            const ScatterViewType& view,
             typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                    void *>::type = 0 )
+                                    void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::divergence requires spline weight values" );
@@ -442,7 +442,7 @@ divergence( const PointDataType point_data[3][3], const SplineDataType &sd,
                 typename SplineDataType::scalar_type rg[3] = {
                     sd.g[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k],
                     sd.w[Dim::I][i] * sd.g[Dim::J][j] * sd.w[Dim::K][k],
-                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k]};
+                    sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k] };
 
                 for ( int d1 = 0; d1 < 3; ++d1 )
                 {
@@ -508,10 +508,10 @@ template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
           class MeshScalar, class EntityType, int SplineOrder, class DeviceType,
           class... ArrayParams>
 void g2p( const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
-                      ArrayParams...> &array,
-          const Halo<DeviceType> &halo, const PointCoordinates &points,
+                      ArrayParams...>& array,
+          const Halo<DeviceType>& halo, const PointCoordinates& points,
           const std::size_t num_point, Spline<SplineOrder>,
-          const PointEvalFunctor &functor )
+          const PointEvalFunctor& functor )
 {
     using array_type =
         Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>;
@@ -536,8 +536,8 @@ void g2p( const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
         "g2p", Kokkos::RangePolicy<execution_space>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
-            MeshScalar px[3] = {points( p, Dim::I ), points( p, Dim::J ),
-                                points( p, Dim::K )};
+            MeshScalar px[3] = { points( p, Dim::I ), points( p, Dim::J ),
+                                 points( p, Dim::K ) };
 
             // Create the local spline data.
             using sd_type = SplineData<MeshScalar, SplineOrder, EntityType>;
@@ -566,7 +566,7 @@ struct ScalarValueG2P
     ViewType _x;
     value_type _multiplier;
 
-    ScalarValueG2P( const ViewType &x, const value_type multiplier )
+    ScalarValueG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -574,9 +574,9 @@ struct ScalarValueG2P
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type result;
         G2P::value( view, sd, result );
@@ -586,8 +586,8 @@ struct ScalarValueG2P
 
 template <class ViewType>
 ScalarValueG2P<ViewType>
-createScalarValueG2P( const ViewType &x,
-                      const typename ViewType::value_type &multiplier )
+createScalarValueG2P( const ViewType& x,
+                      const typename ViewType::value_type& multiplier )
 {
     return ScalarValueG2P<ViewType>( x, multiplier );
 }
@@ -609,7 +609,7 @@ struct VectorValueG2P
     ViewType _x;
     value_type _multiplier;
 
-    VectorValueG2P( const ViewType &x, const value_type multiplier )
+    VectorValueG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -617,9 +617,9 @@ struct VectorValueG2P
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type result[3];
         G2P::value( view, sd, result );
@@ -630,8 +630,8 @@ struct VectorValueG2P
 
 template <class ViewType>
 VectorValueG2P<ViewType>
-createVectorValueG2P( const ViewType &x,
-                      const typename ViewType::value_type &multiplier )
+createVectorValueG2P( const ViewType& x,
+                      const typename ViewType::value_type& multiplier )
 {
     return VectorValueG2P<ViewType>( x, multiplier );
 }
@@ -653,7 +653,7 @@ struct ScalarGradientG2P
     ViewType _x;
     value_type _multiplier;
 
-    ScalarGradientG2P( const ViewType &x, const value_type multiplier )
+    ScalarGradientG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -661,9 +661,9 @@ struct ScalarGradientG2P
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type result[3];
         G2P::gradient( view, sd, result );
@@ -674,8 +674,8 @@ struct ScalarGradientG2P
 
 template <class ViewType>
 ScalarGradientG2P<ViewType>
-createScalarGradientG2P( const ViewType &x,
-                         const typename ViewType::value_type &multiplier )
+createScalarGradientG2P( const ViewType& x,
+                         const typename ViewType::value_type& multiplier )
 {
     return ScalarGradientG2P<ViewType>( x, multiplier );
 }
@@ -697,7 +697,7 @@ struct VectorGradientG2P
     ViewType _x;
     value_type _multiplier;
 
-    VectorGradientG2P( const ViewType &x, const value_type multiplier )
+    VectorGradientG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -705,9 +705,9 @@ struct VectorGradientG2P
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type result[3][3];
         G2P::gradient( view, sd, result );
@@ -719,8 +719,8 @@ struct VectorGradientG2P
 
 template <class ViewType>
 VectorGradientG2P<ViewType>
-createVectorGradientG2P( const ViewType &x,
-                         const typename ViewType::value_type &multiplier )
+createVectorGradientG2P( const ViewType& x,
+                         const typename ViewType::value_type& multiplier )
 {
     return VectorGradientG2P<ViewType>( x, multiplier );
 }
@@ -742,7 +742,7 @@ struct VectorDivergenceG2P
     ViewType _x;
     value_type _multiplier;
 
-    VectorDivergenceG2P( const ViewType &x, const value_type multiplier )
+    VectorDivergenceG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -750,9 +750,9 @@ struct VectorDivergenceG2P
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type result;
         G2P::divergence( view, sd, result );
@@ -762,8 +762,8 @@ struct VectorDivergenceG2P
 
 template <class ViewType>
 VectorDivergenceG2P<ViewType>
-createVectorDivergenceG2P( const ViewType &x,
-                           const typename ViewType::value_type &multiplier )
+createVectorDivergenceG2P( const ViewType& x,
+                           const typename ViewType::value_type& multiplier )
 {
     return VectorDivergenceG2P<ViewType>( x, multiplier );
 }
@@ -813,11 +813,11 @@ createVectorDivergenceG2P( const ViewType &x,
 template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
           class MeshScalar, class EntityType, int SplineOrder, class DeviceType,
           class... ArrayParams>
-void p2g( const PointEvalFunctor &functor, const PointCoordinates &points,
+void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
           const std::size_t num_point, Spline<SplineOrder>,
-          const Halo<DeviceType> &halo,
+          const Halo<DeviceType>& halo,
           Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
-                ArrayParams...> &array )
+                ArrayParams...>& array )
 {
     using array_type =
         Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>;
@@ -840,8 +840,8 @@ void p2g( const PointEvalFunctor &functor, const PointCoordinates &points,
         "p2g", Kokkos::RangePolicy<execution_space>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
-            MeshScalar px[3] = {points( p, Dim::I ), points( p, Dim::J ),
-                                points( p, Dim::K )};
+            MeshScalar px[3] = { points( p, Dim::I ), points( p, Dim::J ),
+                                 points( p, Dim::K ) };
 
             // Create the local spline data.
             using sd_type = SplineData<MeshScalar, SplineOrder, EntityType>;
@@ -875,7 +875,7 @@ struct ScalarValueP2G
     ViewType _x;
     value_type _multiplier;
 
-    ScalarValueP2G( const ViewType &x, const value_type multiplier )
+    ScalarValueP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -883,9 +883,9 @@ struct ScalarValueP2G
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type point_data = _x( p ) * _multiplier;
         P2G::value( point_data, sd, view );
@@ -894,8 +894,8 @@ struct ScalarValueP2G
 
 template <class ViewType>
 ScalarValueP2G<ViewType>
-createScalarValueP2G( const ViewType &x,
-                      const typename ViewType::value_type &multiplier )
+createScalarValueP2G( const ViewType& x,
+                      const typename ViewType::value_type& multiplier )
 {
     return ScalarValueP2G<ViewType>( x, multiplier );
 }
@@ -917,7 +917,7 @@ struct VectorValueP2G
     ViewType _x;
     value_type _multiplier;
 
-    VectorValueP2G( const ViewType &x, const value_type multiplier )
+    VectorValueP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -925,9 +925,9 @@ struct VectorValueP2G
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type point_data[3];
         for ( int d = 0; d < 3; ++d )
@@ -938,8 +938,8 @@ struct VectorValueP2G
 
 template <class ViewType>
 VectorValueP2G<ViewType>
-createVectorValueP2G( const ViewType &x,
-                      const typename ViewType::value_type &multiplier )
+createVectorValueP2G( const ViewType& x,
+                      const typename ViewType::value_type& multiplier )
 {
     return VectorValueP2G<ViewType>( x, multiplier );
 }
@@ -961,7 +961,7 @@ struct ScalarGradientP2G
     ViewType _x;
     value_type _multiplier;
 
-    ScalarGradientP2G( const ViewType &x, const value_type multiplier )
+    ScalarGradientP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -969,9 +969,9 @@ struct ScalarGradientP2G
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type point_data = _x( p ) * _multiplier;
         P2G::gradient( point_data, sd, view );
@@ -980,8 +980,8 @@ struct ScalarGradientP2G
 
 template <class ViewType>
 ScalarGradientP2G<ViewType>
-createScalarGradientP2G( const ViewType &x,
-                         const typename ViewType::value_type &multiplier )
+createScalarGradientP2G( const ViewType& x,
+                         const typename ViewType::value_type& multiplier )
 {
     return ScalarGradientP2G<ViewType>( x, multiplier );
 }
@@ -1003,7 +1003,7 @@ struct VectorDivergenceP2G
     ViewType _x;
     value_type _multiplier;
 
-    VectorDivergenceP2G( const ViewType &x, const value_type multiplier )
+    VectorDivergenceP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -1011,9 +1011,9 @@ struct VectorDivergenceP2G
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type point_data[3];
         for ( int d = 0; d < 3; ++d )
@@ -1024,8 +1024,8 @@ struct VectorDivergenceP2G
 
 template <class ViewType>
 VectorDivergenceP2G<ViewType>
-createVectorDivergenceP2G( const ViewType &x,
-                           const typename ViewType::value_type &multiplier )
+createVectorDivergenceP2G( const ViewType& x,
+                           const typename ViewType::value_type& multiplier )
 {
     return VectorDivergenceP2G<ViewType>( x, multiplier );
 }
@@ -1047,7 +1047,7 @@ struct TensorDivergenceP2G
     ViewType _x;
     value_type _multiplier;
 
-    TensorDivergenceP2G( const ViewType &x, const value_type multiplier )
+    TensorDivergenceP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
     {
@@ -1055,9 +1055,9 @@ struct TensorDivergenceP2G
     }
 
     template <class SplineDataType, class GridViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType &sd,
+    KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
-                                            const GridViewType &view ) const
+                                            const GridViewType& view ) const
     {
         value_type point_data[3][3];
         for ( int d0 = 0; d0 < 3; ++d0 )
@@ -1069,8 +1069,8 @@ struct TensorDivergenceP2G
 
 template <class ViewType>
 TensorDivergenceP2G<ViewType>
-createTensorDivergenceP2G( const ViewType &x,
-                           const typename ViewType::value_type &multiplier )
+createTensorDivergenceP2G( const ViewType& x,
+                           const typename ViewType::value_type& multiplier )
 {
     return TensorDivergenceP2G<ViewType>( x, multiplier );
 }

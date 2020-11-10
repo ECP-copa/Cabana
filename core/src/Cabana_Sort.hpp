@@ -37,8 +37,8 @@ class BinningData
     using memory_space = typename device_type::memory_space;
     using execution_space = typename device_type::execution_space;
     using size_type = typename memory_space::size_type;
-    using CountView = Kokkos::View<const int *, device_type>;
-    using OffsetView = Kokkos::View<size_type *, device_type>;
+    using CountView = Kokkos::View<const int*, device_type>;
+    using OffsetView = Kokkos::View<size_type*, device_type>;
 
     BinningData()
         : _nbin( 0 )
@@ -193,11 +193,11 @@ kokkosBinSort1d( KeyViewType keys, const int nbin, const bool sort_within_bins,
 //---------------------------------------------------------------------------//
 // Copy the a 1D slice into a Kokkos view.
 template <class SliceType, class DeviceType = typename SliceType::device_type>
-Kokkos::View<typename SliceType::value_type *, typename SliceType::device_type>
+Kokkos::View<typename SliceType::value_type*, typename SliceType::device_type>
 copySliceToKeys( SliceType slice )
 {
     using KeyViewType =
-        Kokkos::View<typename SliceType::value_type *, DeviceType>;
+        Kokkos::View<typename SliceType::value_type*, DeviceType>;
     KeyViewType keys( Kokkos::ViewAllocateWithoutInitializing( "slice_keys" ),
                       slice.size() );
     Kokkos::RangePolicy<typename DeviceType::execution_space> exec_policy(
@@ -242,8 +242,8 @@ template <class KeyViewType, class Comparator,
 BinningData<DeviceType> sortByKeyWithComparator(
     KeyViewType keys, Comparator comp, const std::size_t begin,
     const std::size_t end,
-    typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ), int>::type
-        * = 0 )
+    typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ),
+                            int>::type* = 0 )
 {
     auto bin_data = Impl::kokkosBinSort<KeyViewType, DeviceType>(
         keys, comp, true, begin, end );
@@ -271,8 +271,8 @@ template <class KeyViewType, class Comparator,
           class DeviceType = typename KeyViewType::device_type>
 BinningData<DeviceType> sortByKeyWithComparator(
     KeyViewType keys, Comparator comp,
-    typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ), int>::type
-        * = 0 )
+    typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ),
+                            int>::type* = 0 )
 {
     Impl::kokkosBinSort<KeyViewType, DeviceType>( keys, comp, true, 0,
                                                   keys.extent( 0 ) );
@@ -304,8 +304,8 @@ template <class KeyViewType, class Comparator,
 BinningData<DeviceType> binByKeyWithComparator(
     KeyViewType keys, Comparator comp, const std::size_t begin,
     const std::size_t end,
-    typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ), int>::type
-        * = 0 )
+    typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ),
+                            int>::type* = 0 )
 {
     return Impl::kokkosBinSort<KeyViewType, DeviceType>( keys, comp, false,
                                                          begin, end );
@@ -332,8 +332,8 @@ template <class KeyViewType, class Comparator,
           class DeviceType = typename KeyViewType::device_type>
 BinningData<DeviceType> binByKeyWithComparator(
     KeyViewType keys, Comparator comp,
-    typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ), int>::type
-        * = 0 )
+    typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ),
+                            int>::type* = 0 )
 {
     return Impl::kokkosBinSort<KeyViewType, DeviceType>( keys, comp, false, 0,
                                                          keys.extent( 0 ) );
@@ -360,7 +360,7 @@ template <class KeyViewType,
 BinningData<DeviceType>
 sortByKey( KeyViewType keys, const std::size_t begin, const std::size_t end,
            typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ),
-                                   int>::type * = 0 )
+                                   int>::type* = 0 )
 {
     int nbin = ( end - begin ) / 2;
     return Impl::kokkosBinSort1d<KeyViewType, DeviceType>( keys, nbin, true,
@@ -384,7 +384,7 @@ template <class KeyViewType,
 BinningData<DeviceType>
 sortByKey( KeyViewType keys,
            typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ),
-                                   int>::type * = 0 )
+                                   int>::type* = 0 )
 {
     return sortByKey<KeyViewType, DeviceType>( keys, 0, keys.extent( 0 ) );
 }
@@ -415,7 +415,7 @@ BinningData<DeviceType>
 binByKey( KeyViewType keys, const int nbin, const std::size_t begin,
           const std::size_t end,
           typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ),
-                                  int>::type * = 0 )
+                                  int>::type* = 0 )
 {
     return Impl::kokkosBinSort1d<KeyViewType, DeviceType>( keys, nbin, false,
                                                            begin, end );
@@ -441,7 +441,7 @@ template <class KeyViewType,
 BinningData<DeviceType>
 binByKey( KeyViewType keys, const int nbin,
           typename std::enable_if<( Kokkos::is_view<KeyViewType>::value ),
-                                  int>::type * = 0 )
+                                  int>::type* = 0 )
 {
     return Impl::kokkosBinSort1d<KeyViewType, DeviceType>( keys, nbin, false, 0,
                                                            keys.extent( 0 ) );
@@ -465,7 +465,7 @@ binByKey( KeyViewType keys, const int nbin,
 template <class SliceType, class DeviceType = typename SliceType::device_type>
 BinningData<DeviceType> sortByKey(
     SliceType slice, const std::size_t begin, const std::size_t end,
-    typename std::enable_if<( is_slice<SliceType>::value ), int>::type * = 0 )
+    typename std::enable_if<( is_slice<SliceType>::value ), int>::type* = 0 )
 {
     auto keys = Impl::copySliceToKeys<SliceType, DeviceType>( slice );
     return sortByKey<decltype( keys ), DeviceType>( keys, begin, end );
@@ -484,7 +484,7 @@ BinningData<DeviceType> sortByKey(
 template <class SliceType, class DeviceType = typename SliceType::device_type>
 BinningData<DeviceType> sortByKey(
     SliceType slice,
-    typename std::enable_if<( is_slice<SliceType>::value ), int>::type * = 0 )
+    typename std::enable_if<( is_slice<SliceType>::value ), int>::type* = 0 )
 {
     return sortByKey<SliceType, DeviceType>( slice, 0, slice.size() );
 }
@@ -511,7 +511,7 @@ template <class SliceType, class DeviceType = typename SliceType::device_type>
 BinningData<DeviceType> binByKey(
     SliceType slice, const int nbin, const std::size_t begin,
     const std::size_t end,
-    typename std::enable_if<( is_slice<SliceType>::value ), int>::type * = 0 )
+    typename std::enable_if<( is_slice<SliceType>::value ), int>::type* = 0 )
 {
     auto keys = Impl::copySliceToKeys<SliceType, DeviceType>( slice );
     return binByKey<decltype( keys ), DeviceType>( keys, nbin, begin, end );
@@ -533,7 +533,7 @@ BinningData<DeviceType> binByKey(
 template <class SliceType, class DeviceType = typename SliceType::device_type>
 BinningData<DeviceType> binByKey(
     SliceType slice, const int nbin,
-    typename std::enable_if<( is_slice<SliceType>::value ), int>::type * = 0 )
+    typename std::enable_if<( is_slice<SliceType>::value ), int>::type* = 0 )
 {
     return binByKey<SliceType, DeviceType>( slice, nbin, 0, slice.size() );
 }
@@ -553,15 +553,15 @@ BinningData<DeviceType> binByKey(
 template <class BinningDataType, class AoSoA_t,
           class DeviceType = typename BinningDataType::device_type>
 void permute(
-    const BinningDataType &binning_data, AoSoA_t &aosoa,
+    const BinningDataType& binning_data, AoSoA_t& aosoa,
     typename std::enable_if<( is_binning_data<BinningDataType>::value &&
                               is_aosoa<AoSoA_t>::value ),
-                            int>::type * = 0 )
+                            int>::type* = 0 )
 {
     auto begin = binning_data.rangeBegin();
     auto end = binning_data.rangeEnd();
 
-    Kokkos::View<typename AoSoA_t::tuple_type *, DeviceType> scratch_tuples(
+    Kokkos::View<typename AoSoA_t::tuple_type*, DeviceType> scratch_tuples(
         Kokkos::ViewAllocateWithoutInitializing( "scratch_tuples" ),
         end - begin );
 
@@ -602,10 +602,10 @@ void permute(
 template <class BinningDataType, class SliceType,
           class DeviceType = typename BinningDataType::device_type>
 void permute(
-    const BinningDataType &binning_data, SliceType &slice,
+    const BinningDataType& binning_data, SliceType& slice,
     typename std::enable_if<( is_binning_data<BinningDataType>::value &&
                               is_slice<SliceType>::value ),
-                            int>::type * = 0 )
+                            int>::type* = 0 )
 {
 
     auto begin = binning_data.rangeBegin();
@@ -619,7 +619,7 @@ void permute(
     // Get the raw slice data.
     auto slice_data = slice.data();
 
-    Kokkos::View<typename SliceType::value_type **, DeviceType> scratch_array(
+    Kokkos::View<typename SliceType::value_type**, DeviceType> scratch_array(
         Kokkos::ViewAllocateWithoutInitializing( "scratch_array" ), end - begin,
         num_comp );
 

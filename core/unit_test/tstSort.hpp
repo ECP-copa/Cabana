@@ -37,7 +37,7 @@ void testSortByKey()
     AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
-    using KeyViewType = Kokkos::View<int *, typename AoSoA_t::memory_space>;
+    using KeyViewType = Kokkos::View<int*, typename AoSoA_t::memory_space>;
     KeyViewType keys( "keys", num_data );
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
@@ -67,8 +67,8 @@ void testSortByKey()
     Cabana::permute( binning_data, aosoa );
 
     // Copy the bin data so we can check it.
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_permute( "bin_permute",
-                                                            aosoa.size() );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_permute( "bin_permute",
+                                                           aosoa.size() );
     Kokkos::parallel_for(
         "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
         KOKKOS_LAMBDA( const int p ) {
@@ -120,7 +120,7 @@ void testBinByKey()
     AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
-    using KeyViewType = Kokkos::View<int *, typename AoSoA_t::memory_space>;
+    using KeyViewType = Kokkos::View<int*, typename AoSoA_t::memory_space>;
     KeyViewType keys( "keys", num_data );
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
@@ -152,11 +152,11 @@ void testBinByKey()
     Cabana::permute( bin_data, aosoa );
 
     // Copy the bin data so we can check it.
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_permute( "bin_permute",
-                                                            aosoa.size() );
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_offset( "bin_offset",
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_permute( "bin_permute",
                                                            aosoa.size() );
-    Kokkos::View<int *, TEST_MEMSPACE> bin_size( "bin_size", aosoa.size() );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_offset( "bin_offset",
+                                                          aosoa.size() );
+    Kokkos::View<int*, TEST_MEMSPACE> bin_size( "bin_size", aosoa.size() );
     Kokkos::parallel_for(
         "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
         KOKKOS_LAMBDA( const int p ) {
@@ -242,8 +242,8 @@ void testSortBySlice()
     Cabana::permute( binning_data, aosoa );
 
     // Copy the bin data so we can check it.
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_permute( "bin_permute",
-                                                            aosoa.size() );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_permute( "bin_permute",
+                                                           aosoa.size() );
     Kokkos::parallel_for(
         "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
         KOKKOS_LAMBDA( const int p ) {
@@ -319,8 +319,8 @@ void testSortBySliceDataOnly()
     auto binning_data = Cabana::sortByKey( Cabana::slice<1>( aosoa ) );
 
     // Copy the bin data so we can check it.
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_permute( "bin_permute",
-                                                            aosoa.size() );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_permute( "bin_permute",
+                                                           aosoa.size() );
     Kokkos::parallel_for(
         "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
         KOKKOS_LAMBDA( const int p ) {
@@ -399,11 +399,11 @@ void testBinBySlice()
     Cabana::permute( bin_data, aosoa );
 
     // Copy the bin data so we can check it.
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_permute( "bin_permute",
-                                                            aosoa.size() );
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_offset( "bin_offset",
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_permute( "bin_permute",
                                                            aosoa.size() );
-    Kokkos::View<int *, TEST_MEMSPACE> bin_size( "bin_size", aosoa.size() );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_offset( "bin_offset",
+                                                          aosoa.size() );
+    Kokkos::View<int*, TEST_MEMSPACE> bin_size( "bin_size", aosoa.size() );
     Kokkos::parallel_for(
         "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
         KOKKOS_LAMBDA( const int p ) {
@@ -490,11 +490,11 @@ void testBinBySliceDataOnly()
     auto bin_data = Cabana::binByKey( Cabana::slice<1>( aosoa ), num_data - 1 );
 
     // Copy the bin data so we can check it.
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_permute( "bin_permute",
-                                                            aosoa.size() );
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_offset( "bin_offset",
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_permute( "bin_permute",
                                                            aosoa.size() );
-    Kokkos::View<int *, TEST_MEMSPACE> bin_size( "bin_size", aosoa.size() );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_offset( "bin_offset",
+                                                          aosoa.size() );
+    Kokkos::View<int*, TEST_MEMSPACE> bin_size( "bin_size", aosoa.size() );
     Kokkos::parallel_for(
         "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
         KOKKOS_LAMBDA( const int p ) {
@@ -556,7 +556,7 @@ void testSortByKeySlice()
     AoSoA_t aosoa( "aosoa", num_data );
 
     // Create a Kokkos view for the keys.
-    using KeyViewType = Kokkos::View<int *, typename AoSoA_t::memory_space>;
+    using KeyViewType = Kokkos::View<int*, typename AoSoA_t::memory_space>;
     KeyViewType keys( "keys", num_data );
 
     // Create the AoSoA data and keys. Create the data in reverse order so we
@@ -586,8 +586,8 @@ void testSortByKeySlice()
     Cabana::permute( binning_data, v0 );
 
     // Copy the bin data so we can check it.
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> bin_permute( "bin_permute",
-                                                            aosoa.size() );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> bin_permute( "bin_permute",
+                                                           aosoa.size() );
     Kokkos::parallel_for(
         "copy bin data", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.size() ),
         KOKKOS_LAMBDA( const int p ) {

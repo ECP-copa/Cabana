@@ -49,10 +49,10 @@ struct LayoutCabanaSlice
 
     size_t dimension[ARRAY_LAYOUT_MAX_RANK];
 
-    LayoutCabanaSlice( LayoutCabanaSlice const & ) = default;
-    LayoutCabanaSlice( LayoutCabanaSlice && ) = default;
-    LayoutCabanaSlice &operator=( LayoutCabanaSlice const & ) = default;
-    LayoutCabanaSlice &operator=( LayoutCabanaSlice && ) = default;
+    LayoutCabanaSlice( LayoutCabanaSlice const& ) = default;
+    LayoutCabanaSlice( LayoutCabanaSlice&& ) = default;
+    LayoutCabanaSlice& operator=( LayoutCabanaSlice const& ) = default;
+    LayoutCabanaSlice& operator=( LayoutCabanaSlice&& ) = default;
 
     KOKKOS_INLINE_FUNCTION
     explicit constexpr LayoutCabanaSlice( size_t num_soa = 0,
@@ -60,7 +60,7 @@ struct LayoutCabanaSlice
                                           size_t d0 = D0, size_t d1 = D1,
                                           size_t d2 = D2, size_t d3 = D3,
                                           size_t d4 = D4, size_t d5 = D5 )
-        : dimension{num_soa, vector_length, d0, d1, d2, d3, d4, d5}
+        : dimension{ num_soa, vector_length, d0, d1, d2, d3, d4, d5 }
     {
     }
 };
@@ -96,15 +96,15 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
 
     // rank 1
     template <typename S>
-    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( S const &s ) const
+    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( S const& s ) const
     {
         return Stride * s;
     }
 
     // rank 2
     template <typename S, typename A>
-    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( S const &s,
-                                                           A const &a ) const
+    KOKKOS_INLINE_FUNCTION constexpr size_type operator()( S const& s,
+                                                           A const& a ) const
     {
         return Stride * s + a;
     }
@@ -112,7 +112,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
     // rank 3
     template <typename S, typename A, typename I0>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( S const &s, A const &a, I0 const &i0 ) const
+    operator()( S const& s, A const& a, I0 const& i0 ) const
     {
         return Stride * s + a + VectorLength * i0;
     }
@@ -120,7 +120,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
     // rank 4
     template <typename S, typename A, typename I0, typename I1>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( S const &s, A const &a, I0 const &i0, I1 const &i1 ) const
+    operator()( S const& s, A const& a, I0 const& i0, I1 const& i1 ) const
     {
         return Stride * s + a + VectorLength * ( i1 + D1 * i0 );
     }
@@ -128,8 +128,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
     // rank 5
     template <typename S, typename A, typename I0, typename I1, typename I2>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( S const &s, A const &a, I0 const &i0, I1 const &i1,
-                I2 const &i2 ) const
+    operator()( S const& s, A const& a, I0 const& i0, I1 const& i1,
+                I2 const& i2 ) const
     {
         return Stride * s + a + VectorLength * ( i2 + D2 * ( i1 + D1 * i0 ) );
     }
@@ -138,8 +138,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
     template <typename S, typename A, typename I0, typename I1, typename I2,
               typename I3>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( S const &s, A const &a, I0 const &i0, I1 const &i1,
-                I2 const &i2, I3 const &i3 ) const
+    operator()( S const& s, A const& a, I0 const& i0, I1 const& i1,
+                I2 const& i2, I3 const& i3 ) const
     {
         return Stride * s + a +
                VectorLength * ( i3 + D3 * i2 + D2 * ( i1 + D1 * i0 ) );
@@ -149,8 +149,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
     template <typename S, typename A, typename I0, typename I1, typename I2,
               typename I3, typename I4>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( S const &s, A const &a, I0 const &i0, I1 const &i1,
-                I2 const &i2, I3 const &i3, I4 const &i4 ) const
+    operator()( S const& s, A const& a, I0 const& i0, I1 const& i1,
+                I2 const& i2, I3 const& i3, I4 const& i4 ) const
     {
         return Stride * s + a +
                VectorLength *
@@ -161,8 +161,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
     template <typename S, typename A, typename I0, typename I1, typename I2,
               typename I3, typename I4, typename I5>
     KOKKOS_INLINE_FUNCTION constexpr size_type
-    operator()( S const &s, A const &a, I0 const &i0, I1 const &i1,
-                I2 const &i2, I3 const &i3, I4 const &i4, I5 const &i5 ) const
+    operator()( S const& s, A const& a, I0 const& i0, I1 const& i1,
+                I2 const& i2, I3 const& i3, I4 const& i4, I5 const& i5 ) const
     {
         return Stride * s + a +
                VectorLength *
@@ -266,7 +266,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
 
     // Stride with [ rank ] value is the total length
     template <typename iType>
-    KOKKOS_INLINE_FUNCTION void stride( iType *const s ) const
+    KOKKOS_INLINE_FUNCTION void stride( iType* const s ) const
     {
         if ( 0 < dimension_type::rank )
         {
@@ -306,12 +306,12 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
     //----------------------------------------
 
     ViewOffset() = default;
-    ViewOffset( const ViewOffset & ) = default;
-    ViewOffset &operator=( const ViewOffset & ) = default;
+    ViewOffset( const ViewOffset& ) = default;
+    ViewOffset& operator=( const ViewOffset& ) = default;
 
     KOKKOS_INLINE_FUNCTION
-    constexpr ViewOffset( std::integral_constant<unsigned, 0> const &,
-                          Kokkos::LayoutCabanaSlice<LayoutDims...> const &rhs )
+    constexpr ViewOffset( std::integral_constant<unsigned, 0> const&,
+                          Kokkos::LayoutCabanaSlice<LayoutDims...> const& rhs )
         : m_dim( rhs.dimension[0], rhs.dimension[1], rhs.dimension[2],
                  rhs.dimension[3], rhs.dimension[4], rhs.dimension[5],
                  rhs.dimension[6], rhs.dimension[7] )
@@ -320,7 +320,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
 
     template <class DimRHS, class LayoutRHS>
     KOKKOS_INLINE_FUNCTION constexpr ViewOffset(
-        const ViewOffset<DimRHS, LayoutRHS, void> &rhs )
+        const ViewOffset<DimRHS, LayoutRHS, void>& rhs )
         : m_dim( rhs.m_dim.N0, rhs.m_dim.N1, rhs.m_dim.N2, rhs.m_dim.N3,
                  rhs.m_dim.N4, rhs.m_dim.N5, rhs.m_dim.N6, rhs.m_dim.N7 )
     {
@@ -333,8 +333,8 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
 
     template <class DimRHS, class LayoutRHS>
     KOKKOS_INLINE_FUNCTION constexpr ViewOffset(
-        const ViewOffset<DimRHS, LayoutRHS, void> &,
-        const SubviewExtents<DimRHS::rank, dimension_type::rank> &sub )
+        const ViewOffset<DimRHS, LayoutRHS, void>&,
+        const SubviewExtents<DimRHS::rank, dimension_type::rank>& sub )
         : m_dim( sub.range_extent( 0 ), sub.range_extent( 1 ),
                  sub.range_extent( 2 ), sub.range_extent( 3 ),
                  sub.range_extent( 4 ), sub.range_extent( 5 ),
@@ -367,7 +367,7 @@ template <typename T, int VectorLength, int Stride>
 struct KokkosDataTypeImpl<T, 0, VectorLength, Stride>
 {
     using value_type = typename std::remove_all_extents<T>::type;
-    using data_type = value_type * [VectorLength];
+    using data_type = value_type* [VectorLength];
     using cabana_layout = Kokkos::LayoutCabanaSlice<Stride, VectorLength>;
 
     inline static cabana_layout createLayout( const std::size_t num_soa )
@@ -382,7 +382,7 @@ struct KokkosDataTypeImpl<T, 1, VectorLength, Stride>
 {
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
-    using data_type = value_type * [VectorLength][D0];
+    using data_type = value_type* [VectorLength][D0];
     using cabana_layout = Kokkos::LayoutCabanaSlice<Stride, VectorLength, D0>;
 
     inline static cabana_layout createLayout( const std::size_t num_soa )
@@ -398,7 +398,7 @@ struct KokkosDataTypeImpl<T, 2, VectorLength, Stride>
     using value_type = typename std::remove_all_extents<T>::type;
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
     static constexpr std::size_t D1 = std::extent<T, 1>::value;
-    using data_type = value_type * [VectorLength][D0][D1];
+    using data_type = value_type* [VectorLength][D0][D1];
     using cabana_layout =
         Kokkos::LayoutCabanaSlice<Stride, VectorLength, D0, D1>;
 
@@ -416,7 +416,7 @@ struct KokkosDataTypeImpl<T, 3, VectorLength, Stride>
     static constexpr std::size_t D0 = std::extent<T, 0>::value;
     static constexpr std::size_t D1 = std::extent<T, 1>::value;
     static constexpr std::size_t D2 = std::extent<T, 2>::value;
-    using data_type = value_type * [VectorLength][D0][D1][D2];
+    using data_type = value_type* [VectorLength][D0][D1][D2];
     using cabana_layout =
         Kokkos::LayoutCabanaSlice<Stride, VectorLength, D0, D1, D2>;
 
@@ -576,7 +576,7 @@ class Slice
       \param label An optional label for the slice.
     */
     Slice( const pointer_type data, const size_type size,
-           const size_type num_soa, const std::string &label = "" )
+           const size_type num_soa, const std::string& label = "" )
         : _view( data, view_wrapper::createLayout( num_soa ) )
         , _size( size )
     {
@@ -591,7 +591,7 @@ class Slice
       space.
     */
     template <class MAT>
-    Slice( const Slice<DataType, DeviceType, MAT, VectorLength, Stride> &rhs )
+    Slice( const Slice<DataType, DeviceType, MAT, VectorLength, Stride>& rhs )
         : _view( rhs._view )
         , _size( rhs._size )
     {
@@ -608,8 +608,8 @@ class Slice
       space.
      */
     template <class MAT>
-    Slice &operator=(
-        const Slice<DataType, DeviceType, MAT, VectorLength, Stride> &rhs )
+    Slice& operator=(
+        const Slice<DataType, DeviceType, MAT, VectorLength, Stride>& rhs )
     {
         _view = rhs._view;
         _size = rhs._size;

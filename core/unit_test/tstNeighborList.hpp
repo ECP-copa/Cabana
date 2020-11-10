@@ -28,8 +28,8 @@ void testLinkedCellStencil()
 {
     // Point in the middle
     {
-        double min[3] = {0.0, 0.0, 0.0};
-        double max[3] = {10.0, 10.0, 10.0};
+        double min[3] = { 0.0, 0.0, 0.0 };
+        double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
         Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
@@ -53,8 +53,8 @@ void testLinkedCellStencil()
 
     // Point in the lower right corner
     {
-        double min[3] = {0.0, 0.0, 0.0};
-        double max[3] = {10.0, 10.0, 10.0};
+        double min[3] = { 0.0, 0.0, 0.0 };
+        double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
         Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
@@ -78,8 +78,8 @@ void testLinkedCellStencil()
 
     // Point in the upper left corner
     {
-        double min[3] = {0.0, 0.0, 0.0};
-        double max[3] = {10.0, 10.0, 10.0};
+        double min[3] = { 0.0, 0.0, 0.0 };
+        double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
         Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,

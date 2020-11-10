@@ -38,7 +38,7 @@ void memoryTest()
     fft_mem.memory_type = mtype;
     int size = 12;
     int nbytes = size * sizeof( double );
-    double *ptr = (double *)fft_mem.smalloc( nbytes, mtype );
+    double* ptr = (double*)fft_mem.smalloc( nbytes, mtype );
     EXPECT_NE( ptr, nullptr );
     fft_mem.sfree( ptr, mtype );
 }
@@ -48,9 +48,9 @@ void forwardReverseTest()
 {
     // Create the global mesh.
     double cell_size = 0.1;
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
-    std::array<double, 3> global_low_corner = {-1.0, -2.0, -1.0};
-    std::array<double, 3> global_high_corner = {1.0, 1.0, 0.5};
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    std::array<double, 3> global_low_corner = { -1.0, -2.0, -1.0 };
+    std::array<double, 3> global_high_corner = { 1.0, 1.0, 0.5 };
     auto global_mesh = createUniformGlobalMesh( global_low_corner,
                                                 global_high_corner, cell_size );
 

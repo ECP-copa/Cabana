@@ -94,8 +94,8 @@ class Distributor : public CommunicationPlan<DeviceType>
       will be efficiently migrated.
     */
     template <class ViewType>
-    Distributor( MPI_Comm comm, const ViewType &element_export_ranks,
-                 const std::vector<int> &neighbor_ranks )
+    Distributor( MPI_Comm comm, const ViewType& element_export_ranks,
+                 const std::vector<int>& neighbor_ranks )
         : CommunicationPlan<DeviceType>( comm )
     {
         auto neighbor_ids = this->createFromExportsAndTopology(
@@ -131,7 +131,7 @@ class Distributor : public CommunicationPlan<DeviceType>
       will be efficiently migrated.
     */
     template <class ViewType>
-    Distributor( MPI_Comm comm, const ViewType &element_export_ranks )
+    Distributor( MPI_Comm comm, const ViewType& element_export_ranks )
         : CommunicationPlan<DeviceType>( comm )
     {
         auto neighbor_ids = this->createFromExportsOnly( element_export_ranks );
@@ -166,10 +166,10 @@ namespace Impl
 // the forward communication plan.
 template <class Distributor_t, class AoSoA_t>
 void distributeData(
-    const Distributor_t &distributor, const AoSoA_t &src, AoSoA_t &dst,
+    const Distributor_t& distributor, const AoSoA_t& src, AoSoA_t& dst,
     typename std::enable_if<( is_distributor<Distributor_t>::value &&
                               is_aosoa<AoSoA_t>::value ),
-                            int>::type * = 0 )
+                            int>::type* = 0 )
 {
     // Get the MPI rank we are currently on.
     int my_rank = -1;
@@ -188,14 +188,14 @@ void distributeData(
 
     // Allocate a send buffer.
     std::size_t num_send = distributor.totalNumExport() - num_stay;
-    Kokkos::View<typename AoSoA_t::tuple_type *,
+    Kokkos::View<typename AoSoA_t::tuple_type*,
                  typename Distributor_t::memory_space>
         send_buffer( Kokkos::ViewAllocateWithoutInitializing(
                          "distributor_send_buffer" ),
                      num_send );
 
     // Allocate a receive buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type *,
+    Kokkos::View<typename AoSoA_t::tuple_type*,
                  typename Distributor_t::memory_space>
         recv_buffer( Kokkos::ViewAllocateWithoutInitializing(
                          "distributor_recv_buffer" ),
@@ -228,7 +228,7 @@ void distributeData(
     // Post non-blocking receives.
     std::vector<MPI_Request> requests;
     requests.reserve( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + distributor.numImport( n );
@@ -251,7 +251,7 @@ void distributeData(
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         if ( ( distributor.numExport( n ) > 0 ) &&
@@ -320,11 +320,11 @@ void distributeData(
   rank. Call totalNumImport() on the distributor to get this size value.
 */
 template <class Distributor_t, class AoSoA_t>
-void migrate( const Distributor_t &distributor, const AoSoA_t &src,
-              AoSoA_t &dst,
+void migrate( const Distributor_t& distributor, const AoSoA_t& src,
+              AoSoA_t& dst,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
-                                      int>::type * = 0 )
+                                      int>::type* = 0 )
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
@@ -362,10 +362,10 @@ void migrate( const Distributor_t &distributor, const AoSoA_t &src,
   reallocating is not necessary.
 */
 template <class Distributor_t, class AoSoA_t>
-void migrate( const Distributor_t &distributor, AoSoA_t &aosoa,
+void migrate( const Distributor_t& distributor, AoSoA_t& aosoa,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_aosoa<AoSoA_t>::value ),
-                                      int>::type * = 0 )
+                                      int>::type* = 0 )
 {
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != distributor.exportSize() )
@@ -414,11 +414,11 @@ void migrate( const Distributor_t &distributor, AoSoA_t &aosoa,
   rank. Call totalNumImport() on the distributor to get this size value.
 */
 template <class Distributor_t, class Slice_t>
-void migrate( const Distributor_t &distributor, const Slice_t &src,
-              Slice_t &dst,
+void migrate( const Distributor_t& distributor, const Slice_t& src,
+              Slice_t& dst,
               typename std::enable_if<( is_distributor<Distributor_t>::value &&
                                         is_slice<Slice_t>::value ),
-                                      int>::type * = 0 )
+                                      int>::type* = 0 )
 {
     // Check that src and dst are the right size.
     if ( src.size() != distributor.exportSize() )
@@ -454,7 +454,7 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
     // Allocate a send buffer. Note this one is layout right so the components
     // of each element are consecutive in memory.
     std::size_t num_send = distributor.totalNumExport() - num_stay;
-    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
                  typename Distributor_t::memory_space>
         send_buffer( Kokkos::ViewAllocateWithoutInitializing(
                          "distributor_send_buffer" ),
@@ -462,7 +462,7 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
 
     // Allocate a receive buffer. Note this one is layout right so the
     // components of each element are consecutive in memory.
-    Kokkos::View<typename Slice_t::value_type **, Kokkos::LayoutRight,
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
                  typename Distributor_t::memory_space>
         recv_buffer( Kokkos::ViewAllocateWithoutInitializing(
                          "distributor_recv_buffer" ),
@@ -500,7 +500,7 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
     // Post non-blocking receives.
     std::vector<MPI_Request> requests;
     requests.reserve( num_n );
-    std::pair<std::size_t, std::size_t> recv_range = {0, 0};
+    std::pair<std::size_t, std::size_t> recv_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         recv_range.second = recv_range.first + distributor.numImport( n );
@@ -524,7 +524,7 @@ void migrate( const Distributor_t &distributor, const Slice_t &src,
     }
 
     // Do blocking sends.
-    std::pair<std::size_t, std::size_t> send_range = {0, 0};
+    std::pair<std::size_t, std::size_t> send_range = { 0, 0 };
     for ( int n = 0; n < num_n; ++n )
     {
         if ( ( distributor.numExport( n ) > 0 ) &&
