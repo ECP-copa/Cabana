@@ -9,16 +9,12 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef HILBERT_HPP
-#define HILBERT_HPP
-
-#ifndef DEBUG
-#define DEBUG 0
-#endif
+#ifndef CABANA_HILBERT_HPP
+#define CABANA_HILBERT_HPP
 
 #include <Kokkos_Core.hpp>
 
-#include <math.h>
+#include <cmath>
 #include <unistd.h>
 
 namespace Kokkos

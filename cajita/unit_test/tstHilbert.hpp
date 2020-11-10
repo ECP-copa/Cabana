@@ -50,17 +50,17 @@ void LayoutHilbert3DSubviewTest()
 
     // Create Hilbert View
     Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
-        HilbertArray( "Hilbert", dim1, dim2, dim3, dim4 );
+        hilbert_array( "Hilbert", dim1, dim2, dim3, dim4 );
 
     // Duplicate Hilbert View
     Kokkos::View<double ****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
-        HilbertArray2( "Hilbert", dim1, dim2, dim3, dim4 );
+        hilbert_array2( "Hilbert", dim1, dim2, dim3, dim4 );
 
     // Test shallow copy and dimension methods
-    HilbertArray2 = HilbertArray;
+    hilbert_array2 = hilbert_array;
 
     // Create Regular View
-    Kokkos::View<double ****, TEST_DEVICE> RegularArray( "Regular", dim1, dim2,
+    Kokkos::View<double ****, TEST_DEVICE> regular_array( "Regular", dim1, dim2,
                                                          dim3, dim4 );
 
     // Loop over both views and assign values ( in typical increase LayoutRight
@@ -70,24 +70,24 @@ void LayoutHilbert3DSubviewTest()
         Cajita::createExecutionPolicy( view_space,
                                        view_type::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
-            HilbertArray( i, j, k, l ) =
+            hilbert_array( i, j, k, l ) =
                 i + dim1 * ( j + dim2 * ( k + (dim3)*l ) );
-            RegularArray( i, j, k, l ) =
+            regular_array( i, j, k, l ) =
                 i + dim1 * ( j + dim2 * ( k + (dim3)*l ) );
         } );
     view_type::execution_space().fence();
 
     // Create copies on host to check
-    buff_type dev_view( "dev_view", HilbertArray.extent( 0 ),
-                        HilbertArray.extent( 1 ), HilbertArray.extent( 2 ),
-                        HilbertArray.extent( 3 ) );
+    buff_type dev_view( "dev_view", hilbert_array.extent( 0 ),
+                        hilbert_array.extent( 1 ), hilbert_array.extent( 2 ),
+                        hilbert_array.extent( 3 ) );
     auto host_view_hilbert = Kokkos::create_mirror( dev_view );
 
-    Kokkos::deep_copy( dev_view, HilbertArray );
+    Kokkos::deep_copy( dev_view, hilbert_array );
     Kokkos::deep_copy( host_view_hilbert, dev_view );
 
     auto host_view_regular = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), RegularArray );
+        Kokkos::HostSpace(), regular_array );
 
     // Check that the Hilbert View has been assigned consistently with the
     // Regular Array
@@ -103,20 +103,20 @@ void LayoutHilbert3DSubviewTest()
     space = Cajita::IndexSpace<4>( {0, 0, 0, 0}, {2, dim2, dim3, dim4} );
 
     // Create Hilbert subview from Hilbert View
-    auto HilbertSub =
-        Kokkos::subview( HilbertArray, space.range( 0 ), space.range( 1 ),
+    auto hilbert_sub =
+        Kokkos::subview( hilbert_array, space.range( 0 ), space.range( 1 ),
                          space.range( 2 ), space.range( 3 ) );
 
     // Create Regular subview from Regular View
-    auto RegularSub =
-        Kokkos::subview( RegularArray, space.range( 0 ), space.range( 1 ),
+    auto regular_sub =
+        Kokkos::subview( regular_array, space.range( 0 ), space.range( 1 ),
                          space.range( 2 ), space.range( 3 ) );
 
     // Set replacement value
-    int replaceVal = 7012;
+    int replace_val = 7012;
 
     // Create Small Regular View the same dimensions as the subview
-    Kokkos::View<double ****, TEST_DEVICE> RegularSmall(
+    Kokkos::View<double ****, TEST_DEVICE> regular_small(
         "RegularSmall", space.extent( 0 ), space.extent( 1 ), space.extent( 2 ),
         space.extent( 3 ) );
 
@@ -126,20 +126,20 @@ void LayoutHilbert3DSubviewTest()
         "SmallInitialize",
         Cajita::createExecutionPolicy( space, view_type::execution_space() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
-            RegularSmall( i, j, k, l ) = replaceVal;
+            regular_small( i, j, k, l ) = replace_val;
         } );
     view_type::execution_space().fence();
 
     // Deep copy Small Regular View over to the Hilbert Subview
-    Kokkos::deep_copy( HilbertSub, RegularSmall );
+    Kokkos::deep_copy( hilbert_sub, regular_small );
 
     // Create copy on host to check
-    buff_type dev_view_new( "dev_view_new", HilbertArray.extent( 0 ),
-                            HilbertArray.extent( 1 ), HilbertArray.extent( 2 ),
-                            HilbertArray.extent( 3 ) );
+    buff_type dev_view_new( "dev_view_new", hilbert_array.extent( 0 ),
+                            hilbert_array.extent( 1 ), hilbert_array.extent( 2 ),
+                            hilbert_array.extent( 3 ) );
     auto host_view_hilbert_new = Kokkos::create_mirror( dev_view_new );
 
-    Kokkos::deep_copy( dev_view_new, HilbertArray );
+    Kokkos::deep_copy( dev_view_new, hilbert_array );
     Kokkos::deep_copy( host_view_hilbert_new, dev_view_new );
 
     // Check that the replacement value got copied over correctly from the Small
@@ -153,10 +153,10 @@ void LayoutHilbert3DSubviewTest()
                          k >= space.min( 2 ) && k < space.max( 2 ) &&
                          l >= space.min( 3 ) && l < space.max( 3 ) )
                         EXPECT_EQ( host_view_hilbert_new( i, j, k, l ),
-                                   replaceVal );
+                                   replace_val );
                     else
                         EXPECT_EQ( host_view_hilbert_new( i, j, k, l ),
-                                   i + dim1 * ( j + dim2 * ( k + (dim3)*l ) ) );
+                                   i + dim1 * ( j + dim2 * ( k + ( dim3 ) * l ) ) );
 }
 
 //---------------------------------------------------------------------------//
