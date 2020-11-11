@@ -56,7 +56,7 @@ RUN OPENMPI_VERSION=4.0.2 && \
 ENV PATH=${OPENMPI_DIR}/bin:$PATH
 
 # Install Kokkos
-ARG KOKKOS_VERSION=3.1.00
+ARG KOKKOS_VERSION=3.2.00
 ENV KOKKOS_DIR=/opt/kokkos
 RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \
     KOKKOS_ARCHIVE=kokkos-${KOKKOS_VERSION}.tar.gz && \

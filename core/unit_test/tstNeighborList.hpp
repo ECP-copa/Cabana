@@ -266,10 +266,8 @@ TEST( TEST_CATEGORY, verlet_list_full_test )
     testVerletListFull<Cabana::VerletLayoutCSR, Cabana::TeamOpTag>();
     testVerletListFull<Cabana::VerletLayout2D, Cabana::TeamOpTag>();
 
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     testVerletListFull<Cabana::VerletLayoutCSR, Cabana::TeamVectorOpTag>();
     testVerletListFull<Cabana::VerletLayout2D, Cabana::TeamVectorOpTag>();
-#endif
 }
 
 //---------------------------------------------------------------------------//
@@ -278,10 +276,8 @@ TEST( TEST_CATEGORY, verlet_list_half_test )
     testVerletListHalf<Cabana::VerletLayoutCSR, Cabana::TeamOpTag>();
     testVerletListHalf<Cabana::VerletLayout2D, Cabana::TeamOpTag>();
 
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     testVerletListHalf<Cabana::VerletLayoutCSR, Cabana::TeamVectorOpTag>();
     testVerletListHalf<Cabana::VerletLayout2D, Cabana::TeamVectorOpTag>();
-#endif
 }
 
 //---------------------------------------------------------------------------//
@@ -291,12 +287,10 @@ TEST( TEST_CATEGORY, verlet_list_full_range_test )
                                    Cabana::TeamOpTag>();
     testVerletListFullPartialRange<Cabana::VerletLayout2D, Cabana::TeamOpTag>();
 
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     testVerletListFullPartialRange<Cabana::VerletLayoutCSR,
                                    Cabana::TeamVectorOpTag>();
     testVerletListFullPartialRange<Cabana::VerletLayout2D,
                                    Cabana::TeamVectorOpTag>();
-#endif
 }
 
 //---------------------------------------------------------------------------//
