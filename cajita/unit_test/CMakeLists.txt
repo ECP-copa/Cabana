@@ -81,6 +81,10 @@ set(SERIAL_TESTS
   Splines
   )
 
+if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
+  list(REMOVE_ITEM SERIAL_TESTS Parallel)
+endif()
+
 set(MPI_TESTS
   GlobalGrid
   LocalGrid

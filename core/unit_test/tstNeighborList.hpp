@@ -263,32 +263,44 @@ TEST( TEST_CATEGORY, linked_cell_stencil_test ) { testLinkedCellStencil(); }
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, verlet_list_full_test )
 {
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListFull<Cabana::VerletLayoutCSR, Cabana::TeamOpTag>();
+#endif
     testVerletListFull<Cabana::VerletLayout2D, Cabana::TeamOpTag>();
 
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListFull<Cabana::VerletLayoutCSR, Cabana::TeamVectorOpTag>();
+#endif
     testVerletListFull<Cabana::VerletLayout2D, Cabana::TeamVectorOpTag>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, verlet_list_half_test )
 {
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListHalf<Cabana::VerletLayoutCSR, Cabana::TeamOpTag>();
+#endif
     testVerletListHalf<Cabana::VerletLayout2D, Cabana::TeamOpTag>();
 
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListHalf<Cabana::VerletLayoutCSR, Cabana::TeamVectorOpTag>();
+#endif
     testVerletListHalf<Cabana::VerletLayout2D, Cabana::TeamVectorOpTag>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, verlet_list_full_range_test )
 {
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListFullPartialRange<Cabana::VerletLayoutCSR,
                                    Cabana::TeamOpTag>();
+#endif
     testVerletListFullPartialRange<Cabana::VerletLayout2D, Cabana::TeamOpTag>();
 
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testVerletListFullPartialRange<Cabana::VerletLayoutCSR,
                                    Cabana::TeamVectorOpTag>();
+#endif
     testVerletListFullPartialRange<Cabana::VerletLayout2D,
                                    Cabana::TeamVectorOpTag>();
 }
@@ -296,14 +308,18 @@ TEST( TEST_CATEGORY, verlet_list_full_range_test )
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, parallel_for_test )
 {
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testNeighborParallelFor<Cabana::VerletLayoutCSR>();
+#endif
     testNeighborParallelFor<Cabana::VerletLayout2D>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, parallel_reduce_test )
 {
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testNeighborParallelReduce<Cabana::VerletLayoutCSR>();
+#endif
     testNeighborParallelReduce<Cabana::VerletLayout2D>();
 }
 //---------------------------------------------------------------------------//

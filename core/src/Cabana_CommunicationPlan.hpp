@@ -59,6 +59,13 @@ struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Experimental::HIP>
     using type = CountSendsAndCreateSteeringAtomic;
 };
 #endif // end KOKKOS_ENABLE_HIP
+#ifdef KOKKOS_ENABLE_OPENMPTARGET
+template <>
+struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Experimental::OpenMPTarget>
+{
+    using type = CountSendsAndCreateSteeringAtomic;
+};
+#endif // end KOKKOS_ENABLE_OPENMPTARGET
 
 // The default is to use duplication.
 template <class ExecutionSpace>
