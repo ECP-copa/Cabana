@@ -46,7 +46,7 @@ void LayoutHilbert3DSubviewTest()
 
     // View Index Space
     auto view_space =
-        Cajita::IndexSpace<4>( {0, 0, 0, 0}, {dim1, dim2, dim3, dim4} );
+        Cajita::IndexSpace<4>( { 0, 0, 0, 0 }, { dim1, dim2, dim3, dim4 } );
 
     // Create Hilbert View
     Kokkos::View<double****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
@@ -100,7 +100,7 @@ void LayoutHilbert3DSubviewTest()
 
     // Create subview index space - mimicking a halo subview of width 2
     Cajita::IndexSpace<4> space;
-    space = Cajita::IndexSpace<4>( {0, 0, 0, 0}, {2, dim2, dim3, dim4} );
+    space = Cajita::IndexSpace<4>( { 0, 0, 0, 0 }, { 2, dim2, dim3, dim4 } );
 
     // Create Hilbert subview from Hilbert View
     auto hilbert_sub =
@@ -170,9 +170,9 @@ void LayoutHilbert3DArrayOpTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {101, 85, 99};
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
@@ -238,8 +238,8 @@ void LayoutHilbert3DGatherTest( const Cajita::ManualPartitioner& partitioner,
     int halo_width = 2;
 
     // Set grid information
-    std::array<int, 3> global_num_cell = {104, 104, 1};
-    std::array<double, 3> global_low_corner = {0.0, 0.0, 0.0};
+    std::array<int, 3> global_num_cell = { 104, 104, 1 };
+    std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
@@ -602,8 +602,8 @@ void LayoutHilbert3DScatterTest( const Cajita::ManualPartitioner& partitioner,
 {
     // Create the global grid.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {32, 23, 41};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 32, 23, 41 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
@@ -680,13 +680,13 @@ TEST( layout_hilbert, layout_hilbert_gather_test )
         x_ranks /= 2;
     }
     int y_ranks = comm_size / x_ranks;
-    std::array<int, 3> ranks_per_dim = {x_ranks, y_ranks, 1};
+    std::array<int, 3> ranks_per_dim = { x_ranks, y_ranks, 1 };
 
     // Create 2-D partitioner
     Cajita::ManualPartitioner partitioner( ranks_per_dim );
 
     // Test the non-periodic case
-    std::array<bool, 3> dim_not_periodic = {false, false, false};
+    std::array<bool, 3> dim_not_periodic = { false, false, false };
 
     // Gather Test
     LayoutHilbert3DGatherTest( partitioner, dim_not_periodic );

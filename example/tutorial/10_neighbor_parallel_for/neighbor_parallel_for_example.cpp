@@ -68,9 +68,9 @@ void neighborParallelForExample()
       the previous VerletList example exactly (and is described in detail
       there).
     */
-    double grid_min[3] = {0.0, 0.0, 0.0};
-    double grid_max[3] = {3.0, 3.0, 3.0};
-    double grid_delta[3] = {1.0, 1.0, 1.0};
+    double grid_min[3] = { 0.0, 0.0, 0.0 };
+    double grid_max[3] = { 3.0, 3.0, 3.0 };
+    double grid_delta[3] = { 1.0, 1.0, 1.0 };
 
     /*
     One might consider using a parallel_for loop in this case - especially when
@@ -276,7 +276,7 @@ void neighborParallelForExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
