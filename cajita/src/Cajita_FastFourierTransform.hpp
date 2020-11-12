@@ -28,170 +28,201 @@ namespace Cajita
 namespace Experimental
 {
 //---------------------------------------------------------------------------//
-template <class MemorySpace>
-struct HeffteMemoryTraits;
 
+/*!
+  \class FFTScaleFull
+  \brief Tag for full scaling of FFT.
+*/
+struct FFTScaleFull
+{
+};
+/*!
+  \class FFTScaleNone
+  \brief Tag for no scaling of FFT.
+*/
+struct FFTScaleNone
+{
+};
+/*!
+  \class FFTScaleSymmetric
+  \brief Tag for symmetric scaling of FFT.
+*/
+struct FFTScaleSymmetric
+{
+};
+
+/*!
+  \class FFTBackendFFTW
+  \brief Tag specifying FFTW backend for FFT (host default).
+*/
+struct FFTBackendFFTW
+{
+};
+/*!
+  \class FFTBackendMKL
+  \brief Tag specifying MKL backend for FFT.
+*/
+struct FFTBackendMKL
+{
+};
+
+namespace Impl
+{
+struct FFTBackendDefault
+{
+};
+} // namespace Impl
+
+// Static type checker.
+template <typename>
+struct is_cuda_complex_impl : public std::false_type
+{
+};
 #ifdef KOKKOS_ENABLE_CUDA
 template <>
-struct HeffteMemoryTraits<Kokkos::CudaSpace>
+struct is_cuda_complex_impl<cufftComplex> : public std::true_type
 {
-    static constexpr heffte_memory_type_t value = HEFFTE_MEM_GPU;
 };
-
 template <>
-struct HeffteMemoryTraits<Kokkos::CudaUVMSpace>
+struct is_cuda_complex_impl<cufftDoubleComplex> : public std::true_type
 {
-    static constexpr heffte_memory_type_t value = HEFFTE_MEM_MANAGED;
 };
 #endif
-
-template <>
-struct HeffteMemoryTraits<Kokkos::HostSpace>
+template <class T>
+struct is_cuda_complex
+    : public is_cuda_complex_impl<typename std::remove_cv<T>::type>::type
 {
-    static constexpr heffte_memory_type_t value = HEFFTE_MEM_CPU;
+};
+
+template <typename>
+struct is_std_complex_impl : public std::false_type
+{
+};
+template <class Scalar>
+struct is_std_complex_impl<std::complex<Scalar>> : public std::true_type
+{
+};
+template <class T>
+struct is_std_complex
+    : public is_std_complex_impl<typename std::remove_cv<T>::type>::type
+{
+};
+
+template <typename T, typename U, typename SFINAE = void>
+struct is_matching_complex : public std::false_type
+{
+};
+template <class T, class U>
+struct is_matching_complex<
+    T, U,
+    typename std::enable_if<
+        std::is_same<T, U>::value ||
+        std::is_same<typename Kokkos::complex<T>, U>::value ||
+        std::is_same<T, typename Kokkos::complex<U>>::value>::type>
+    : public std::true_type
+{
+};
+
+template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
+          class ArrayScalar, class Entity, class Mesh, class Device,
+          class Scalar, typename SFINAE = void>
+struct is_matching_array : public std::false_type
+{
+    static_assert( std::is_same<ArrayEntity, Entity>::value,
+                   "Array entity type mush match FFT entity type." );
+    static_assert( std::is_same<ArrayMesh, Mesh>::value,
+                   "Array mesh type mush match FFT mesh type." );
+    static_assert( std::is_same<ArrayDevice, Device>::value,
+                   "Array device type must match FFT device type." );
+    static_assert( is_matching_complex<ArrayScalar, Scalar>::value,
+                   "Array value type must match complex FFT value type." );
+};
+template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
+          class ArrayScalar, class Entity, class Mesh, class Device,
+          class Scalar>
+struct is_matching_array<
+    ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device,
+    Scalar,
+    typename std::enable_if<
+        std::is_same<ArrayEntity, Entity>::value &&
+        std::is_same<ArrayMesh, Mesh>::value &&
+        std::is_same<ArrayDevice, Device>::value &&
+        is_matching_complex<ArrayScalar, Scalar>::value>::type>
+    : public std::true_type
+{
 };
 
 //---------------------------------------------------------------------------//
+/*!
+  \class FastFourierTransformParams
+  \brief Parameters controlling details for fast Fourier transforms.
+*/
 class FastFourierTransformParams
 {
+    bool alltoall = true;
+    bool pencils = true;
+    bool reorder = true;
+
   public:
     /*!
-      \brief Default constructor to disable aggregate initialization.
+      \brief setAllToAll Set MPI communication.
+      \param value Use all to all MPI communication.
     */
-    FastFourierTransformParams()
-        : collective( 2 )
-        , exchange( 0 )
-        , packflag( 2 )
-        , scaled( 1 )
-    {
-    }
-
+    void setAllToAll( bool value ) { alltoall = value; }
     /*!
-      \brief Set the collective type.
-      \param type Collective type.
-
-      0: point-to-point
-      1: all-to-all
-      2: combination
-
-      If this function is not used to set the type then 2 is used as the
-      default.
+      \brief setPencils Set data exchange type (pencil or slab).
+      \param value Use pencil (true) or slab (false) decomposition.
     */
-    FastFourierTransformParams& setCollectiveType( const int type )
-    {
-        collective = type;
-        return *this;
-    }
-
+    void setPencils( bool value ) { pencils = value; }
     /*!
-      \brief Set the exchange type.
-      \param type Exchange type.
-
-      0: reshape direct from pencil to pencil
-      1: two reshapes from pencil to brick, then brick to pencil
-
-      If this function is not used to set the type then 0 is used as the
-      default.
+      \brief setReorder Set data handling (contiguous or strided memory).
+      \param value Use contiguous (true) or strided (false) memory layout.
+      Contiguous layout requires tensor transposition; strided layout does not.
     */
-    FastFourierTransformParams& setExchangeType( const int type )
-    {
-        exchange = type;
-        return *this;
-    }
-
+    void setReorder( bool value ) { reorder = value; }
     /*!
-      \brief Set the pack type.
-      \param type Pack type.
-
-      0: array
-      1: pointer
-      2: memcpy
-
-      If this function is not used to set the type then 2 is used as the
-      default.
+      \brief getAllToAll Get MPI communication.
+      \return Using all to all MPI communication or not.
     */
-    FastFourierTransformParams& setPackType( const int type )
-    {
-        packflag = type;
-        return *this;
-    }
-
+    bool getAllToAll() const { return alltoall; }
     /*!
-      \brief Set the scaling type.
-      \param type Scaling type.
-
-      0: Not scaling after forward
-      1: Scaling after forward
-
-      If this function is not used to set the type then 1 is used as the
-      default.
+      \brief getPencils Get data exchange type (pencil or slab).
+      \param value Using pencil (true) or slab (false) decomposition.
     */
-    FastFourierTransformParams& setScalingType( const int type )
-    {
-        scaled = type;
-        return *this;
-    }
-
-    // Collective communication type.
-    int collective;
-
-    // Parallel decomposition exchange type.
-    int exchange;
-
-    // Buffer packing type.
-    int packflag;
-
-    // Forward scaling option.
-    int scaled;
+    bool getPencils() const { return pencils; }
+    /*!
+      \brief getReorder Get data handling (contiguous or strided memory).
+      \param value Using contiguous (true) or strided (false) memory layout.
+      Contiguous layout requires tensor transposition; strided layout does not.
+    */
+    bool getReorder() const { return reorder; }
 };
 
 //---------------------------------------------------------------------------//
-template <class Scalar, class EntityType, class MeshType, class DeviceType>
+/*!
+  \class FastFourierTransform
+  \brief 3D distributed fast Fourier transform base implementation.
+*/
+template <class EntityType, class MeshType, class Scalar, class DeviceType,
+          class Derived>
 class FastFourierTransform
 {
   public:
-    // Types.
-    using value_type = Scalar;
     using entity_type = EntityType;
     using mesh_type = MeshType;
+    using value_type = Scalar;
     using device_type = DeviceType;
+
+    std::array<int, 3> global_high;
+    std::array<int, 3> global_low;
 
     /*!
       \brief Constructor
-      \param layout The array layout defining the vector space of the
-      transform.
-      \param params Parameters for the 3D FFT.
+      \param layout The array layout defining the vector space of the transform.
     */
-    FastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout,
-                          const FastFourierTransformParams& params )
-        : _fft( layout.localGrid()->globalGrid().comm() )
+    FastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout )
     {
-        if ( 1 != layout.dofsPerEntity() )
-            throw std::logic_error(
-                "Only 1 complex value per entity allowed in FFT" );
-
-        // Set the memory type. For now we will just do FFTs on the host until
-        // we find the HEFFTE GPU memory bug.
-        _fft.mem_type = HEFFTE_MEM_CPU;
-
-        // Let the fft allocate its own send/receive buffers.
-        _fft.memoryflag = 1;
-
-        // Set parameters.
-        _fft.collective = params.collective;
-        _fft.exchange = params.exchange;
-        _fft.packflag = params.packflag;
-        _fft.scaled = params.scaled;
-
-        // Get the global grid.
-        const auto& global_grid = layout.localGrid()->globalGrid();
-
-        // Get the global dimensions of the problem. K indices move the
-        // fastest because we fix the work array to be layout right.
-        std::array<int, 3> global_num_entity = {
-            global_grid.globalNumEntity( EntityType(), Dim::K ),
-            global_grid.globalNumEntity( EntityType(), Dim::J ),
-            global_grid.globalNumEntity( EntityType(), Dim::I ) };
+        checkArrayDofs( layout.dofsPerEntity() );
 
         // Get the local dimensions of the problem.
         auto entity_space =
@@ -201,113 +232,344 @@ class FastFourierTransform
             (int)entity_space.extent( Dim::J ),
             (int)entity_space.extent( Dim::I ) };
 
+        // Get the global grid.
+        const auto& global_grid = layout.localGrid()->globalGrid();
+
         // Get the low corner of the global index space on this rank.
-        std::array<int, 3> global_low = {
-            (int)global_grid.globalOffset( Dim::K ),
-            (int)global_grid.globalOffset( Dim::J ),
-            (int)global_grid.globalOffset( Dim::I ) };
+        global_low = { (int)global_grid.globalOffset( Dim::K ),
+                       (int)global_grid.globalOffset( Dim::J ),
+                       (int)global_grid.globalOffset( Dim::I ) };
 
         // Get the high corner of the global index space on this rank.
-        std::array<int, 3> global_high = {
-            global_low[Dim::I] + local_num_entity[Dim::I] - 1,
-            global_low[Dim::J] + local_num_entity[Dim::J] - 1,
-            global_low[Dim::K] + local_num_entity[Dim::K] - 1 };
+        global_high = { global_low[Dim::I] + local_num_entity[Dim::I] - 1,
+                        global_low[Dim::J] + local_num_entity[Dim::J] - 1,
+                        global_low[Dim::K] + local_num_entity[Dim::K] - 1 };
+    }
 
-        // Setup the fft.
-        int permute = 0;
-        int fftsize, sendsize, recvsize;
-        _fft.setup( global_num_entity.data(), global_low.data(),
-                    global_high.data(), global_low.data(), global_high.data(),
-                    permute, fftsize, sendsize, recvsize );
-
-        // Check the size.
-        if ( fftsize < (int)entity_space.size() )
-            throw std::logic_error( "HEFFTE expected allocation size smaller "
-                                    "than local grid size" );
-
-        // Allocate the work array.
-        _fft_work = Kokkos::View<Scalar*, DeviceType>(
-            Kokkos::ViewAllocateWithoutInitializing( "fft_work" ),
-            2 * fftsize );
+    /*!
+      \brief Ensure the FFT compute array has the correct DoFs.
+      \param dof Degrees of freedom of array.
+    */
+    inline void checkArrayDofs( const int dof )
+    {
+        if ( 1 != dof )
+            throw std::logic_error(
+                "Only 1 complex value per entity allowed in FFT" );
     }
 
     /*!
       \brief Do a forward FFT.
-      \param in The array on which to perform the forward transform.
+      \param x The array on which to perform the forward transform.
+      \param scaling Method of scaling data.
     */
-    template <class Array_t>
-    void forward( const Array_t& x )
+    template <class Array_t, class ScaleType>
+    void forward(
+        const Array_t& x, const ScaleType scaling,
+        typename std::enable_if<
+            ( is_array<Array_t>::value &&
+              is_matching_array<
+                  typename Array_t::entity_type, typename Array_t::mesh_type,
+                  typename Array_t::device_type, typename Array_t::value_type,
+                  entity_type, mesh_type, device_type, value_type>::value ),
+            int>::type* = 0 )
     {
-        compute( x, 1 );
+        checkArrayDofs( x.layout()->dofsPerEntity() );
+        static_cast<Derived*>( this )->forwardImpl( x, scaling );
+    }
+
+    /*!
+      \brief Do a reverse FFT.
+      \param x The array on which to perform the reverse transform.
+      \param scaling Method of scaling data.
+    */
+    template <class Array_t, class ScaleType>
+    void reverse(
+        const Array_t& x, const ScaleType scaling,
+        typename std::enable_if<
+            ( is_array<Array_t>::value &&
+              is_matching_array<
+                  typename Array_t::entity_type, typename Array_t::mesh_type,
+                  typename Array_t::device_type, typename Array_t::value_type,
+                  entity_type, mesh_type, device_type, value_type>::value ),
+            int>::type* = 0 )
+    {
+        checkArrayDofs( x.layout()->dofsPerEntity() );
+        static_cast<Derived*>( this )->reverseImpl( x, scaling );
+    }
+};
+
+//---------------------------------------------------------------------------//
+// heFFTe
+//---------------------------------------------------------------------------//
+
+namespace Impl
+{
+template <class ExecutionSpace, class Scalar, class BackendType>
+struct HeffteBackendTraits
+{
+};
+#ifdef Heffte_ENABLE_FFTW
+template <class ExecutionSpace, class Scalar>
+struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendFFTW>
+{
+    using backend_type = heffte::backend::fftw;
+    using complex_type = std::complex<Scalar>;
+};
+template <class ExecutionSpace, class Scalar>
+struct HeffteBackendTraits<ExecutionSpace, Scalar, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::fftw;
+    using complex_type = std::complex<Scalar>;
+};
+#endif
+#ifdef Heffte_ENABLE_MKL
+template <class ExecutionSpace, class Scalar>
+struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendMKL>
+{
+    using backend_type = heffte::backend::mkl;
+    using complex_type = std::complex<Scalar>;
+};
+#endif
+#ifdef Heffte_ENABLE_CUDA
+#ifdef KOKKOS_ENABLE_CUDA
+template <>
+struct HeffteBackendTraits<Kokkos::Cuda, double, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::cufft;
+    using complex_type = cufftDoubleComplex;
+};
+template <>
+struct HeffteBackendTraits<Kokkos::Cuda, float, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::cufft;
+    using complex_type = cufftComplex;
+};
+#endif
+#endif
+#ifdef KOKKOS_ENABLE_HIP
+template <class Scalar>
+struct HeffteBackendTraits<Kokkos::Experimental::HIP, Scalar,
+                           Impl::FFTBackendDefault>
+{
+    static_assert( false, "FFT with HIP not supported" ); // FIXME_HIP
+};
+#endif
+
+template <class ScaleType>
+struct HeffteScalingTraits
+{
+};
+template <>
+struct HeffteScalingTraits<FFTScaleNone>
+{
+    static const auto scaling_type = heffte::scale::none;
+};
+template <>
+struct HeffteScalingTraits<FFTScaleFull>
+{
+    static const auto scaling_type = heffte::scale::full;
+};
+template <>
+struct HeffteScalingTraits<FFTScaleSymmetric>
+{
+    static const auto scaling_type = heffte::scale::symmetric;
+};
+} // namespace Impl
+
+//---------------------------------------------------------------------------//
+/*!
+  \class HeffteFastFourierTransform
+  \brief Interface to heFFTe fast Fourier transform library.
+*/
+template <class EntityType, class MeshType, class Scalar, class DeviceType,
+          class BackendType>
+class HeffteFastFourierTransform
+    : public FastFourierTransform<
+          EntityType, MeshType, Scalar, DeviceType,
+          HeffteFastFourierTransform<EntityType, MeshType, Scalar, DeviceType,
+                                     BackendType>>
+{
+  public:
+    // Types.
+    using value_type = Scalar;
+    using device_type = DeviceType;
+    using backend_type = BackendType;
+    using exec_space = typename device_type::execution_space;
+    using heffte_backend_type =
+        typename Impl::HeffteBackendTraits<exec_space, value_type,
+                                           backend_type>::backend_type;
+    using complex_type =
+        typename Impl::HeffteBackendTraits<exec_space, value_type,
+                                           backend_type>::complex_type;
+
+    /*!
+      \brief Constructor
+      \param layout The array layout defining the vector space of the transform.
+      \param params Parameters for the 3D FFT.
+    */
+    HeffteFastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout,
+                                const FastFourierTransformParams& params )
+        : FastFourierTransform<
+              EntityType, MeshType, Scalar, DeviceType,
+              HeffteFastFourierTransform<EntityType, MeshType, Scalar,
+                                         DeviceType, BackendType>>( layout )
+    {
+        heffte::box3d inbox = { this->global_low, this->global_high };
+        heffte::box3d outbox = { this->global_low, this->global_high };
+
+        heffte::plan_options heffte_params =
+            heffte::default_options<heffte_backend_type>();
+        heffte_params.use_alltoall = params.getAllToAll();
+        heffte_params.use_pencils = params.getPencils();
+        heffte_params.use_reorder = params.getReorder();
+
+        // Set FFT options from given parameters
+        _fft = std::make_shared<heffte::fft3d<heffte_backend_type>>(
+            inbox, outbox, layout.localGrid()->globalGrid().comm(),
+            heffte_params );
+
+        int fftsize = std::max( _fft->size_outbox(), _fft->size_inbox() );
+
+        // Check the size.
+        auto entity_space =
+            layout.localGrid()->indexSpace( Own(), EntityType(), Local() );
+        if ( fftsize < (int)entity_space.size() )
+            throw std::logic_error( "Expected FFT allocation size smaller "
+                                    "than local grid size" );
+
+        _fft_work = Kokkos::View<complex_type*, DeviceType>(
+            Kokkos::ViewAllocateWithoutInitializing( "fft_work" ), fftsize );
+    }
+
+    /*!
+      \brief Do a forward FFT.
+      \param x The array on which to perform the forward transform.
+      \param ScaleType Method of scaling data.
+    */
+    template <class Array_t, class ScaleType>
+    void forwardImpl( const Array_t& x, const ScaleType )
+    {
+        compute( x, 1, Impl::HeffteScalingTraits<ScaleType>().scaling_type );
     }
 
     /*!
      \brief Do a reverse FFT.
-     \param out The array on which to perform the reverse transform.
+     \param x The array on which to perform the reverse transform
+     \param ScaleType Method of scaling data.
     */
-    template <class Array_t>
-    void reverse( const Array_t& x )
+    template <class Array_t, class ScaleType>
+    void reverseImpl( const Array_t& x, const ScaleType )
     {
-        compute( x, -1 );
+        compute( x, -1, Impl::HeffteScalingTraits<ScaleType>().scaling_type );
     }
 
-  public:
-    template <class Array_t>
-    void compute( const Array_t& x, const int flag )
+    /*!
+     \brief Copy data from Kokkos::complex to CUDA complex.
+     \param x_view_val Kokkos::complex value.
+     \param work_view_val CUDA complex value.
+    */
+    template <class ComplexType>
+    KOKKOS_INLINE_FUNCTION ComplexType copyFromKokkosComplex(
+        Kokkos::complex<value_type> x_view_val, ComplexType work_view_val,
+        typename std::enable_if<( is_cuda_complex<ComplexType>::value ),
+                                int>::type* = 0 )
     {
-        static_assert( is_array<Array_t>::value, "Must use an array" );
-        static_assert(
-            std::is_same<typename Array_t::entity_type, entity_type>::value,
-            "Array entity type mush match transform entity type" );
-        static_assert(
-            std::is_same<typename Array_t::mesh_type, mesh_type>::value,
-            "Array mesh type mush match transform mesh type" );
-        static_assert(
-            std::is_same<typename Array_t::device_type, DeviceType>::value,
-            "Array device type and transform device type are different." );
-        static_assert(
-            std::is_same<typename Array_t::value_type,
-                         Kokkos::complex<value_type>>::value ||
-                std::is_same<typename Array_t::value_type, value_type>::value,
-            "Array value type and complex transform value type are "
-            "different." );
+        work_view_val.x = x_view_val.real();
+        work_view_val.y = x_view_val.imag();
+        return work_view_val;
+    }
+    /*!
+     \brief Copy data from CUDA complex to Kokkos complex.
+     \param work_view_val CUDA complex value.
+     \param x_view_val Kokkos complex value.
+    */
+    template <class ComplexType>
+    KOKKOS_INLINE_FUNCTION Kokkos::complex<value_type> copyToKokkosComplex(
+        ComplexType work_view_val, Kokkos::complex<value_type> x_view_val,
+        typename std::enable_if<( is_cuda_complex<ComplexType>::value ),
+                                int>::type* = 0 )
+    {
+        x_view_val.real() = work_view_val.x;
+        x_view_val.imag() = work_view_val.y;
+        return x_view_val;
+    }
 
-        if ( 1 != x.layout()->dofsPerEntity() )
-            throw std::logic_error(
-                "Only 1 complex value per entity allowed in FFT" );
+    /*!
+     \brief Copy data from Kokkos::complex to std::complex.
+     \param x_view_val Kokkos::complex value.
+     \param work_view_val std::complex value.
+    */
+    template <class ComplexType>
+    inline ComplexType copyFromKokkosComplex(
+        Kokkos::complex<value_type> x_view_val, ComplexType work_view_val,
+        typename std::enable_if<( is_std_complex<ComplexType>::value ),
+                                int>::type* = 0 )
+    {
+        work_view_val.real( x_view_val.real() );
+        work_view_val.imag( x_view_val.imag() );
+        return work_view_val;
+    }
+    /*!
+     \brief Copy data from std::complex to Kokkos::complex.
+     \param work_view_val std::complex value.
+     \param x_view_val Kokkos::complex value.
+    */
+    template <class ComplexType>
+    inline Kokkos::complex<value_type> copyToKokkosComplex(
+        ComplexType work_view_val, Kokkos::complex<value_type> x_view_val,
+        typename std::enable_if<( is_std_complex<ComplexType>::value ),
+                                int>::type* = 0 )
+    {
+        x_view_val.real() = work_view_val.real();
+        x_view_val.imag() = work_view_val.imag();
+        return x_view_val;
+    }
 
+    /*!
+     \brief Do the FFT.
+     \param x The array on which to perform the transform.
+     \param flag Flag for forward or reverse.
+     \param scale Method of scaling data.
+    */
+    template <class Array_t>
+    void compute( const Array_t& x, const int flag, const heffte::scale scale )
+    {
         // Create a subview of the work array to write the local data into.
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
-        auto work_view_space = appendDimension( own_space, 2 );
-        auto work_view = createView<Scalar, Kokkos::LayoutRight, DeviceType>(
-            work_view_space, _fft_work.data() );
 
+        auto work_view =
+            createView<complex_type, Kokkos::LayoutRight, DeviceType>(
+                own_space, _fft_work.data() );
+
+        // TODO: pull this out to template function
         // Copy to the work array. The work array only contains owned data.
         auto x_view = x.view();
+
         Kokkos::parallel_for(
-            "fft_copy_x_to_work",
-            createExecutionPolicy( own_space,
-                                   typename DeviceType::execution_space() ),
+            "fft_copy_x_to_cufft_work",
+            createExecutionPolicy( own_space, exec_space() ),
             KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
                 auto kw = k - own_space.min( Dim::K );
-                work_view( iw, jw, kw, 0 ) = x_view( i, j, k, 0 ).real();
-                work_view( iw, jw, kw, 1 ) = x_view( i, j, k, 0 ).imag();
+                work_view( iw, jw, kw ) = copyFromKokkosComplex(
+                    x_view( i, j, k, 0 ), work_view( iw, jw, kw ) );
             } );
 
-        // Copy to the host. Once we fix the HEFFTE GPU memory bug we wont
-        // need this.
-        auto fft_work_mirror = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), _fft_work );
-
-        // Perform FFT.
-        _fft.compute( fft_work_mirror.data(), fft_work_mirror.data(), flag );
-
-        // Copy back to the work array. Once we fix the HEFFTE GPU memory bug
-        // we wont need this.
-        Kokkos::deep_copy( _fft_work, fft_work_mirror );
+        if ( flag == 1 )
+        {
+            _fft->forward( _fft_work.data(), _fft_work.data(), scale );
+        }
+        else if ( flag == -1 )
+        {
+            _fft->backward( _fft_work.data(), _fft_work.data(), scale );
+        }
+        else
+        {
+            throw std::logic_error(
+                "Only 1:forward and -1:backward are allowed as compute flag" );
+        }
 
         // Copy back to output array.
         Kokkos::parallel_for(
@@ -318,27 +580,73 @@ class FastFourierTransform
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
                 auto kw = k - own_space.min( Dim::K );
-                x_view( i, j, k, 0 ).real() = work_view( iw, jw, kw, 0 );
-                x_view( i, j, k, 0 ).imag() = work_view( iw, jw, kw, 1 );
+                x_view( i, j, k, 0 ) = copyToKokkosComplex(
+                    work_view( iw, jw, kw ), x_view( i, j, k, 0 ) );
             } );
     }
 
   private:
-    HEFFTE::FFT3d<Scalar> _fft;
-    Kokkos::View<Scalar*, DeviceType> _fft_work;
+    std::shared_ptr<heffte::fft3d<heffte_backend_type>> _fft;
+    Kokkos::View<complex_type*, DeviceType> _fft_work;
 };
 
 //---------------------------------------------------------------------------//
-// FFT creation
+// heFFTe creation
 //---------------------------------------------------------------------------//
-template <class Scalar, class DeviceType, class EntityType, class MeshType>
-std::shared_ptr<FastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>
-createFastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout,
-                            const FastFourierTransformParams& params )
+template <class Scalar, class DeviceType, class BackendType, class EntityType,
+          class MeshType>
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout,
+    const FastFourierTransformParams& params )
 {
-    return std::make_shared<
-        FastFourierTransform<Scalar, EntityType, MeshType, DeviceType>>(
+    return std::make_shared<HeffteFastFourierTransform<
+        EntityType, MeshType, Scalar, DeviceType, BackendType>>( layout,
+                                                                 params );
+}
+
+template <class Scalar, class DeviceType, class EntityType, class MeshType>
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout,
+    const FastFourierTransformParams& params )
+{
+    return createHeffteFastFourierTransform<
+        Scalar, DeviceType, Impl::FFTBackendDefault, EntityType, MeshType>(
         layout, params );
+}
+
+template <class Scalar, class DeviceType, class BackendType, class EntityType,
+          class MeshType>
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout )
+{
+    using value_type = Scalar;
+    using device_type = DeviceType;
+    using backend_type = BackendType;
+    using exec_space = typename device_type::execution_space;
+    using heffte_backend_type =
+        typename Impl::HeffteBackendTraits<exec_space, value_type,
+                                           backend_type>::backend_type;
+
+    // use default heFFTe params for this backend
+    const heffte::plan_options heffte_params =
+        heffte::default_options<heffte_backend_type>();
+    FastFourierTransformParams params;
+    params.setAllToAll( heffte_params.use_alltoall );
+    params.setPencils( heffte_params.use_pencils );
+    params.setReorder( heffte_params.use_reorder );
+
+    return std::make_shared<HeffteFastFourierTransform<
+        EntityType, MeshType, Scalar, DeviceType, BackendType>>( layout,
+                                                                 params );
+}
+
+template <class Scalar, class DeviceType, class EntityType, class MeshType>
+auto createHeffteFastFourierTransform(
+    const ArrayLayout<EntityType, MeshType>& layout )
+{
+    return createHeffteFastFourierTransform<
+        Scalar, DeviceType, Impl::FFTBackendDefault, EntityType, MeshType>(
+        layout );
 }
 
 //---------------------------------------------------------------------------//

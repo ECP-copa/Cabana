@@ -30,21 +30,10 @@ using namespace Cajita;
 
 namespace Test
 {
-//---------------------------------------------------------------------------//
-void memoryTest()
-{
-    auto mtype = Experimental::HeffteMemoryTraits<TEST_MEMSPACE>::value;
-    HEFFTE::Memory fft_mem;
-    fft_mem.memory_type = mtype;
-    int size = 12;
-    int nbytes = size * sizeof( double );
-    double* ptr = (double*)fft_mem.smalloc( nbytes, mtype );
-    EXPECT_NE( ptr, nullptr );
-    fft_mem.sfree( ptr, mtype );
-}
 
 //---------------------------------------------------------------------------//
-void forwardReverseTest()
+template <class HostBackendType>
+void forwardReverseTest( bool use_default, bool use_params )
 {
     // Create the global mesh.
     double cell_size = 0.1;
@@ -97,19 +86,53 @@ void forwardReverseTest()
     // Copy to the device.
     Kokkos::deep_copy( lhs_view, lhs_host_view );
 
-    // Create an FFT
-    auto fft = Experimental::createFastFourierTransform<double, TEST_DEVICE>(
-        *vector_layout, Experimental::FastFourierTransformParams{}
-                            .setCollectiveType( 2 )
-                            .setExchangeType( 0 )
-                            .setPackType( 2 )
-                            .setScalingType( 1 ) );
+    // Create FFT options
+    Experimental::FastFourierTransformParams params;
 
-    // Forward transform
-    fft->forward( *lhs );
+    // Set MPI communication
+    params.setAllToAll( true );
 
-    // Reverse transform
-    fft->reverse( *lhs );
+    // Set data exchange type (false uses slab decomposition)
+    params.setPencils( true );
+
+    // Set data handling (true uses contiguous memory and requires tensor
+    // transposition; false uses strided data with no transposition)
+    params.setReorder( true );
+
+    if ( use_default && use_params )
+    {
+        auto fft =
+            Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
+                *vector_layout, params );
+        // Forward transform
+        fft->forward( *lhs, Experimental::FFTScaleFull() );
+        // Reverse transform
+        fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    }
+    else if ( use_default )
+    {
+        auto fft =
+            Experimental::createHeffteFastFourierTransform<double, TEST_DEVICE>(
+                *vector_layout );
+        fft->forward( *lhs, Experimental::FFTScaleFull() );
+        fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    }
+#if !defined( KOKKOS_ENABLE_CUDA ) && !defined( KOKKOS_ENABLE_HIP )
+    else if ( use_params )
+    {
+        auto fft = Experimental::createHeffteFastFourierTransform<
+            double, TEST_DEVICE, HostBackendType>( *vector_layout, params );
+        fft->forward( *lhs, Experimental::FFTScaleFull() );
+        fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    }
+    else
+    {
+        auto fft = Experimental::createHeffteFastFourierTransform<
+            double, TEST_DEVICE, HostBackendType>( *vector_layout );
+        fft->forward( *lhs, Experimental::FFTScaleFull() );
+        fft->reverse( *lhs, Experimental::FFTScaleNone() );
+    }
+#endif
 
     // Check the results.
     auto lhs_result =
@@ -131,15 +154,21 @@ void forwardReverseTest()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-// NOTE: This test exposes the GPU FFT memory bug in HEFFTE. Re-enable this
-// when we enable GPU FFTs to test the bug.
-// TEST( fast_fourier_transform, memory_test )
-// {
-//     memoryTest();
-// }
+TEST( fast_fourier_transform, forward_reverse_test )
+{
+    // Dummy template argument.
+    forwardReverseTest<Experimental::FFTBackendFFTW>( true, true );
+    forwardReverseTest<Experimental::FFTBackendFFTW>( true, false );
 
-//---------------------------------------------------------------------------//
-TEST( fast_fourier_transform, forward_reverse_test ) { forwardReverseTest(); }
+#ifdef Heffte_ENABLE_FFTW
+    forwardReverseTest<Experimental::FFTBackendFFTW>( false, true );
+    forwardReverseTest<Experimental::FFTBackendFFTW>( false, false );
+#endif
+#ifdef Heffte_ENABLE_MKL
+    forwardReverseTest<Experimental::FFTBackendMKL>( false, true );
+    forwardReverseTest<Experimental::FFTBackendMKL>( false, false );
+#endif
+}
 
 //---------------------------------------------------------------------------//
 
