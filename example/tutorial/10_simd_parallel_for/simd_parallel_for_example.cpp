@@ -196,7 +196,7 @@ void simdParallelForExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
