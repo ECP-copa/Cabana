@@ -59,7 +59,7 @@ void sortingExample()
     int reverse_index_counter = 100;
     for ( std::size_t s = 0; s < aosoa.numSoA(); ++s )
     {
-        auto &soa = aosoa.access( s );
+        auto& soa = aosoa.access( s );
 
         // ASCENDING ORDER!
         for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a )
@@ -206,7 +206,7 @@ void sortingExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 

@@ -108,9 +108,9 @@ void haloExchangeExample()
       Build a halo where the last 10 elements are sent to the next rank.
     */
     int local_num_send = 10;
-    Kokkos::View<int *, DeviceType> export_ranks( "export_ranks",
-                                                  local_num_send );
-    Kokkos::View<int *, DeviceType> export_ids( "export_ids", local_num_send );
+    Kokkos::View<int*, DeviceType> export_ranks( "export_ranks",
+                                                 local_num_send );
+    Kokkos::View<int*, DeviceType> export_ids( "export_ids", local_num_send );
 
     // Last 10 elements (elements 90-99) go to the next rank. Note that this
     // view will most often be filled within a parallel_for but we do so in
@@ -135,7 +135,7 @@ void haloExchangeExample()
       communication plan. If this neighbor data were not supplied, extra
       global communication would be needed to generate a list of neighbors.
      */
-    std::vector<int> neighbors = {previous_rank, comm_rank, next_rank};
+    std::vector<int> neighbors = { previous_rank, comm_rank, next_rank };
     std::sort( neighbors.begin(), neighbors.end() );
     auto unique_end = std::unique( neighbors.begin(), neighbors.end() );
     neighbors.resize( std::distance( neighbors.begin(), unique_end ) );
@@ -230,7 +230,7 @@ void haloExchangeExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
 

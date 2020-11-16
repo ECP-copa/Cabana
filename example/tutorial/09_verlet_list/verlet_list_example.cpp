@@ -54,9 +54,9 @@ void verletListExample()
       particles. This is a simple 3x3x3 uniform grid on [0,3] in each
       direction. Each grid cell has a size of 1 in each dimension.
      */
-    double grid_min[3] = {0.0, 0.0, 0.0};
-    double grid_max[3] = {3.0, 3.0, 3.0};
-    double grid_delta[3] = {1.0, 1.0, 1.0};
+    double grid_min[3] = { 0.0, 0.0, 0.0 };
+    double grid_max[3] = { 3.0, 3.0, 3.0 };
+    double grid_delta[3] = { 1.0, 1.0, 1.0 };
 
     /*
       Create the particle ids.
@@ -158,7 +158,7 @@ void verletListExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 
