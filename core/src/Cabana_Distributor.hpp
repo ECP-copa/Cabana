@@ -182,9 +182,10 @@ void distributeData(
     // therefore can be directly copied. If any of the neighbor ranks are this
     // rank it will be stored in first position (i.e. the first neighbor in
     // the local list is always yourself if you are sending to yourself).
-    std::size_t num_stay = ( distributor.neighborRank( 0 ) == my_rank )
-                               ? distributor.numExport( 0 )
-                               : 0;
+    std::size_t num_stay =
+        ( num_n > 0 && distributor.neighborRank( 0 ) == my_rank )
+            ? distributor.numExport( 0 )
+            : 0;
 
     // Allocate a send buffer.
     std::size_t num_send = distributor.totalNumExport() - num_stay;
@@ -447,9 +448,10 @@ void migrate( const Distributor_t& distributor, const Slice_t& src,
     // therefore can be directly copied. If any of the neighbor ranks are this
     // rank it will be stored in first position (i.e. the first neighbor in
     // the local list is always yourself if you are sending to yourself).
-    std::size_t num_stay = ( distributor.neighborRank( 0 ) == my_rank )
-                               ? distributor.numExport( 0 )
-                               : 0;
+    std::size_t num_stay =
+        ( num_n > 0 && distributor.neighborRank( 0 ) == my_rank )
+            ? distributor.numExport( 0 )
+            : 0;
 
     // Allocate a send buffer. Note this one is layout right so the components
     // of each element are consecutive in memory.

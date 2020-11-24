@@ -799,7 +799,6 @@ class CommunicationPlan
             Kokkos::ViewAllocateWithoutInitializing( "export_steering" ),
             _total_num_export );
         auto steer_vec = _export_steering;
-        Kokkos::View<std::size_t*, memory_space> counts( "counts", num_n );
         Kokkos::parallel_for(
             "Cabana::createSteering",
             Kokkos::RangePolicy<execution_space>( 0, _num_export_element ),
