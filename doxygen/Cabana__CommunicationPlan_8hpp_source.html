@@ -672,35 +672,34 @@ $(function() {
 <div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;            Kokkos::ViewAllocateWithoutInitializing( <span class="stringliteral">&quot;export_steering&quot;</span> ),</div>
 <div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;            _total_num_export );</div>
 <div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;        <span class="keyword">auto</span> steer_vec = _export_steering;</div>
-<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;        Kokkos::View&lt;std::size_t*, memory_space&gt; counts( <span class="stringliteral">&quot;counts&quot;</span>, num_n );</div>
-<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;        Kokkos::parallel_for(</div>
-<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;            <span class="stringliteral">&quot;Cabana::createSteering&quot;</span>,</div>
-<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;            Kokkos::RangePolicy&lt;execution_space&gt;( 0, _num_export_element ),</div>
-<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>
-<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;                <span class="keywordflow">if</span> ( element_export_ranks( i ) &gt;= 0 )</div>
-<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;                    steer_vec( rank_offsets( element_export_ranks( i ) ) +</div>
-<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;                               neighbor_ids( i ) ) =</div>
-<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;                        ( use_iota ) ? i : element_export_ids( i );</div>
-<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;            } );</div>
-<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;        Kokkos::fence();</div>
-<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160;    }</div>
-<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160; </div>
-<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;    std::shared_ptr&lt;MPI_Comm&gt; _comm_ptr;</div>
-<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;    std::vector&lt;int&gt; _neighbors;</div>
-<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;    std::size_t _total_num_export;</div>
-<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;    std::size_t _total_num_import;</div>
-<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;    std::vector&lt;std::size_t&gt; _num_export;</div>
-<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;    std::vector&lt;std::size_t&gt; _num_import;</div>
-<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;    std::size_t _num_export_element;</div>
-<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;    Kokkos::View&lt;std::size_t*, device_type&gt; _export_steering;</div>
-<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160;};</div>
-<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160; </div>
-<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160; </div>
-<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160; </div>
-<div class="line"><a name="l00830"></a><span class="lineno">  830</span>&#160;<span class="preprocessor">#endif // end CABANA_COMMUNICATIONPLAN_HPP</span></div>
+<div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;        Kokkos::parallel_for(</div>
+<div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160;            <span class="stringliteral">&quot;Cabana::createSteering&quot;</span>,</div>
+<div class="line"><a name="l00804"></a><span class="lineno">  804</span>&#160;            Kokkos::RangePolicy&lt;execution_space&gt;( 0, _num_export_element ),</div>
+<div class="line"><a name="l00805"></a><span class="lineno">  805</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>
+<div class="line"><a name="l00806"></a><span class="lineno">  806</span>&#160;                <span class="keywordflow">if</span> ( element_export_ranks( i ) &gt;= 0 )</div>
+<div class="line"><a name="l00807"></a><span class="lineno">  807</span>&#160;                    steer_vec( rank_offsets( element_export_ranks( i ) ) +</div>
+<div class="line"><a name="l00808"></a><span class="lineno">  808</span>&#160;                               neighbor_ids( i ) ) =</div>
+<div class="line"><a name="l00809"></a><span class="lineno">  809</span>&#160;                        ( use_iota ) ? i : element_export_ids( i );</div>
+<div class="line"><a name="l00810"></a><span class="lineno">  810</span>&#160;            } );</div>
+<div class="line"><a name="l00811"></a><span class="lineno">  811</span>&#160;        Kokkos::fence();</div>
+<div class="line"><a name="l00812"></a><span class="lineno">  812</span>&#160;    }</div>
+<div class="line"><a name="l00813"></a><span class="lineno">  813</span>&#160; </div>
+<div class="line"><a name="l00814"></a><span class="lineno">  814</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00815"></a><span class="lineno">  815</span>&#160;    std::shared_ptr&lt;MPI_Comm&gt; _comm_ptr;</div>
+<div class="line"><a name="l00816"></a><span class="lineno">  816</span>&#160;    std::vector&lt;int&gt; _neighbors;</div>
+<div class="line"><a name="l00817"></a><span class="lineno">  817</span>&#160;    std::size_t _total_num_export;</div>
+<div class="line"><a name="l00818"></a><span class="lineno">  818</span>&#160;    std::size_t _total_num_import;</div>
+<div class="line"><a name="l00819"></a><span class="lineno">  819</span>&#160;    std::vector&lt;std::size_t&gt; _num_export;</div>
+<div class="line"><a name="l00820"></a><span class="lineno">  820</span>&#160;    std::vector&lt;std::size_t&gt; _num_import;</div>
+<div class="line"><a name="l00821"></a><span class="lineno">  821</span>&#160;    std::size_t _num_export_element;</div>
+<div class="line"><a name="l00822"></a><span class="lineno">  822</span>&#160;    Kokkos::View&lt;std::size_t*, device_type&gt; _export_steering;</div>
+<div class="line"><a name="l00823"></a><span class="lineno">  823</span>&#160;};</div>
+<div class="line"><a name="l00824"></a><span class="lineno">  824</span>&#160; </div>
+<div class="line"><a name="l00825"></a><span class="lineno">  825</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00826"></a><span class="lineno">  826</span>&#160; </div>
+<div class="line"><a name="l00827"></a><span class="lineno">  827</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00828"></a><span class="lineno">  828</span>&#160; </div>
+<div class="line"><a name="l00829"></a><span class="lineno">  829</span>&#160;<span class="preprocessor">#endif // end CABANA_COMMUNICATIONPLAN_HPP</span></div>
 </div><!-- fragment --></div><!-- contents -->
 <div class="ttc" id="astructCabana_1_1Impl_1_1CountSendsAndCreateSteeringAtomic_html"><div class="ttname"><a href="structCabana_1_1Impl_1_1CountSendsAndCreateSteeringAtomic.html">Cabana::Impl::CountSendsAndCreateSteeringAtomic</a></div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:56</div></div>
 <div class="ttc" id="aclassCabana_1_1CommunicationPlan_html_a73f40f145fa90fdb2ae2049549675dd0"><div class="ttname"><a href="classCabana_1_1CommunicationPlan.html#a73f40f145fa90fdb2ae2049549675dd0">Cabana::CommunicationPlan::exportSize</a></div><div class="ttdeci">std::size_t exportSize() const</div><div class="ttdoc">Get the number of export elements.</div><div class="ttdef"><b>Definition:</b> Cabana_CommunicationPlan.hpp:412</div></div>
