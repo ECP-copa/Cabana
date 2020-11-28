@@ -81,7 +81,7 @@ jobs:
             -DCMAKE_EXE_LINKER_FLAGS='--coverage' \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
           cmake --build build --parallel 2
-          cmake --build build --target test
+          CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
       - name: Upload Report to codecov.io
         uses: codecov/codecov-action@v1
