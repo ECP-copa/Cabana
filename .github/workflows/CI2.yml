@@ -11,7 +11,7 @@ on:
 
 jobs:
   CI:
-    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:rawhide' }} 
+    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:rawhide' || matrix.distro == 'opensuse:latest' || matrix.distro == 'ubuntu:devel' }} 
     strategy:
       matrix:
         distro: ['fedora:latest', 'fedora:rawhide', 'opensuse:latest', 'ubuntu:latest', 'ubuntu:devel', 'ubuntu:rolling']
