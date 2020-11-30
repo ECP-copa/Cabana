@@ -188,6 +188,69 @@ void testBufferedTag()
 }
 */
 
+template <class buf_t>
+class TestOp
+{
+    public:
+        // TODO: populate
+        TestOp()
+        {
+        }
+
+        KOKKOS_INLINE_FUNCTION void operator()(const buf_t& buffered_aosoa, const int s, const int a ) const
+        {
+            /*
+            // We have to call access and slice in the loop
+
+            // We have to be really careful about how this access is
+            // captured in the loop on GPU, and follow how ScatterView does
+            // it safely. The `buffered_aosoa` may get captured by
+            // reference, and then not be valid in a GPU context
+            // auto buffered_access = buffered_aosoa.access();
+            // auto buffered_access = buffered_aosoa.access();
+
+            const auto slice_0 = buffered_aosoa.get_slice<0>();
+            const auto slice_1 = buffered_aosoa.get_slice<1>();
+            const auto slice_2 = buffered_aosoa.get_slice<2>();
+            const auto slice_3 = buffered_aosoa.get_slice<3>();
+
+            // Member 0.
+
+            for ( int i = 0; i < dim_1; ++i )
+            {
+                for ( int j = 0; j < dim_2; ++j )
+                {
+                    for ( int k = 0; k < dim_3; ++k )
+                    {
+                        slice_0.access( s, a, i, j, k ) = fval * ( i + j + k );
+                    }
+                }
+            }
+
+            // Member 1.
+            slice_1.access( s, a ) = ival;
+
+            // Member 2.
+            for ( int i = 0; i < dim_1; ++i )
+            {
+                slice_2.access( s, a, i ) = dval * i;
+            }
+
+            // Member 3.
+            for ( int i = 0; i < dim_1; ++i )
+            {
+                for ( int j = 0; j < dim_2; ++j )
+                {
+                    slice_3.access( s, a, i, j ) = dval * ( i + j );
+                }
+            }
+            */
+        }
+    private:
+        //TODO: do I want the buffered_aosoa here?
+
+};
+
 void testBufferedDataCreation()
 {
     // We want this to match the target space so we can do a fast async
@@ -287,55 +350,12 @@ void testBufferedDataCreation()
     dval = 2.23;
     ival = 2;
 
+    TestOp<buf_t> buffer_op;
+
     Cabana::Experimental::buffered_parallel_for(
         Kokkos::RangePolicy<target_exec_space>( 0, aosoa.size() ),
         buffered_aosoa_in,
-        KOKKOS_LAMBDA( buf_t buffered_aosoa, const int s, const int a ) {
-            // We have to call access and slice in the loop
-
-            // We have to be really careful about how this access is
-            // captured in the loop on GPU, and follow how ScatterView does
-            // it safely. The `buffered_aosoa` may get captured by
-            // reference, and then not be valid in a GPU context
-            // auto buffered_access = buffered_aosoa.access();
-            // auto buffered_access = buffered_aosoa.access();
-
-            const auto slice_0 = buffered_aosoa.get_slice<0>();
-            const auto slice_1 = buffered_aosoa.get_slice<1>();
-            const auto slice_2 = buffered_aosoa.get_slice<2>();
-            const auto slice_3 = buffered_aosoa.get_slice<3>();
-
-            // Member 0.
-
-            for ( int i = 0; i < dim_1; ++i )
-            {
-                for ( int j = 0; j < dim_2; ++j )
-                {
-                    for ( int k = 0; k < dim_3; ++k )
-                    {
-                        slice_0.access( s, a, i, j, k ) = fval * ( i + j + k );
-                    }
-                }
-            }
-
-            // Member 1.
-            slice_1.access( s, a ) = ival;
-
-            // Member 2.
-            for ( int i = 0; i < dim_1; ++i )
-            {
-                slice_2.access( s, a, i ) = dval * i;
-            }
-
-            // Member 3.
-            for ( int i = 0; i < dim_1; ++i )
-            {
-                for ( int j = 0; j < dim_2; ++j )
-                {
-                    slice_3.access( s, a, i, j ) = dval * ( i + j );
-                }
-            }
-        },
+        buffer_op,
         "test buffered for" );
 
     Kokkos::fence();

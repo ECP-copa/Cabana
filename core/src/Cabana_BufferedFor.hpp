@@ -82,11 +82,6 @@ inline void custom_simd_parallel_for(
 
     using index_type = typename team_policy::index_type;
 
-    auto f = KOKKOS_LAMBDA( extra_functor_arg_t buffered_aosoa, int s, int i )
-    {
-        functor( buffered_aosoa, s, i );
-    };
-
     Kokkos::parallel_for(
         str, dynamic_cast<const team_policy &>( exec_policy ),
         KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
@@ -95,9 +90,10 @@ inline void custom_simd_parallel_for(
                 Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
                                            exec_policy.arrayEnd( s ) ),
                 [&]( const index_type a ) {
-                    Cabana::Impl::functorTagDispatch<work_tag>( f, f_arg, s,
-                                                                a );
-                    // functor( f_arg, s, a);
+                    Cabana::Impl::functorTagDispatch<work_tag>( functor, f_arg,
+                            s, a );
+                            //functor(f_arg, s, a);
+                            //functor(s, a);
                 } );
         } );
 }
