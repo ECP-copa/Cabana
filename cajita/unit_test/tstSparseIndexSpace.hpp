@@ -115,7 +115,7 @@ void testTileSpace()
     // size 4x4x4
     constexpr int size_bit = SizeBit;
     constexpr int size = Size;
-    using TIS = TileIndexSpace<size_bit, size, size * size>;
+    using TIS = TileMap<size_bit, size, size * size>;
     Kokkos::View<int[size][size][size], TEST_DEVICE> offset_res( "offset" );
     Kokkos::View<int[size][size][size], TEST_DEVICE> i_res( "i" );
     Kokkos::View<int[size][size][size], TEST_DEVICE> j_res( "j" );
@@ -167,9 +167,8 @@ void testBlockSpace()
     using value_type = uint32_t;
     constexpr int size = 64;
     int capacity = size * size;
-    BlockIndexSpace<TEST_MEMSPACE, cell_bits_per_tile_dim,
-                    cell_num_per_tile_dim, cell_num_per_tile, HashType,
-                    key_type, value_type>
+    BlockMap<TEST_MEMSPACE, cell_bits_per_tile_dim, cell_num_per_tile_dim,
+             cell_num_per_tile, HashType, key_type, value_type>
         bis( size, size, size, capacity );
 
     Kokkos::View<int[size][size][size], TEST_DEVICE> i_res( "i" );
@@ -237,7 +236,7 @@ void testBlockSpace()
             }
 }
 
-void testSparseIndexSpaceFullInsert()
+void testSparseMapFullInsert()
 {
     constexpr int dim_n = 3;
     constexpr int size_tile_per_dim = 16;
@@ -245,7 +244,7 @@ void testSparseIndexSpaceFullInsert()
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
     int capacity = size_per_dim * size_per_dim;
-    SparseIndexSpace<TEST_EXECSPACE> sis( size, capacity );
+    SparseMap<TEST_EXECSPACE> sis( size, capacity );
 
     auto cbd = sis.cell_bits_per_tile_dim;
     EXPECT_EQ( cbd, 2 );
@@ -325,7 +324,7 @@ void testSparseIndexSpaceFullInsert()
     EXPECT_EQ( new_s, total_tile_num );
 }
 
-void testSparseIndexSpaceSparseInsert()
+void testSparseMapSparseInsert()
 {
     constexpr int dim_n = 3;
     constexpr int size_tile_per_dim = 16;
@@ -334,7 +333,7 @@ void testSparseIndexSpaceSparseInsert()
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
     int capacity = size_per_dim * size_per_dim;
-    SparseIndexSpace<TEST_EXECSPACE> sis( size, capacity );
+    SparseMap<TEST_EXECSPACE> sis( size, capacity );
 
     auto cbd = sis.cell_bits_per_tile_dim;
     EXPECT_EQ( cbd, 2 );
@@ -436,7 +435,7 @@ void testSparseIndexSpaceSparseInsert()
     EXPECT_EQ( new_s, valid_cell_num );
 }
 
-void testSparseIndexSpaceReinsert()
+void testSparseMapReinsert()
 {
     constexpr int dim_n = 3;
     constexpr int size_tile_per_dim = 16;
@@ -445,7 +444,7 @@ void testSparseIndexSpaceReinsert()
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
     int capacity = size_per_dim * size_per_dim;
-    SparseIndexSpace<TEST_EXECSPACE> sis( size, capacity );
+    SparseMap<TEST_EXECSPACE> sis( size, capacity );
 
     constexpr int insert_cell_num = 50;
     Kokkos::View<int*, TEST_DEVICE> qid_res( "query_id", insert_cell_num );
@@ -599,9 +598,9 @@ TEST( sparse_grid, sparse_index_space_test )
     testTileSpace<3, 8>(); // tile size 8x8x8
     testBlockSpace<HashTypes::Naive>();
     testBlockSpace<HashTypes::Morton>();
-    testSparseIndexSpaceFullInsert();
-    testSparseIndexSpaceSparseInsert();
-    testSparseIndexSpaceReinsert();
+    testSparseMapFullInsert();
+    testSparseMapSparseInsert();
+    testSparseMapReinsert();
 }
 
 //---------------------------------------------------------------------------//
