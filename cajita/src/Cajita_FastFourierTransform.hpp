@@ -23,6 +23,21 @@
 #include <memory>
 #include <type_traits>
 
+// define double2 and float2 as complex types for heffte+HIP
+#ifdef KOKKOS_ENABLE_HIP
+namespace heffte
+{
+template <>
+struct is_ccomplex<float2> : std::true_type
+{
+};
+template <>
+struct is_zcomplex<double2> : std::true_type
+{
+};
+} // namespace heffte
+#endif
+
 namespace Cajita
 {
 namespace Experimental
@@ -93,7 +108,25 @@ struct is_cuda_complex
     : public is_cuda_complex_impl<typename std::remove_cv<T>::type>::type
 {
 };
-
+template <typename>
+struct is_HIP_tuple_impl : public std::false_type
+{
+};
+#ifdef KOKKOS_ENABLE_HIP
+template <>
+struct is_HIP_tuple_impl<float2> : public std::true_type
+{
+};
+template <>
+struct is_HIP_tuple_impl<double2> : public std::true_type
+{
+};
+#endif
+template <class T>
+struct is_HIP_tuple
+    : public is_HIP_tuple_impl<typename std::remove_cv<T>::type>::type
+{
+};
 template <typename>
 struct is_std_complex_impl : public std::false_type
 {
@@ -347,11 +380,19 @@ struct HeffteBackendTraits<Kokkos::Cuda, float, Impl::FFTBackendDefault>
 #endif
 #endif
 #ifdef KOKKOS_ENABLE_HIP
-template <class Scalar>
-struct HeffteBackendTraits<Kokkos::Experimental::HIP, Scalar,
+template <>
+struct HeffteBackendTraits<Kokkos::Experimental::HIP, double,
                            Impl::FFTBackendDefault>
 {
-    static_assert( false, "FFT with HIP not supported" ); // FIXME_HIP
+    using backend_type = heffte::backend::rocfft;
+    using complex_type = double2;
+};
+template <>
+struct HeffteBackendTraits<Kokkos::Experimental::HIP, float,
+                           Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::rocfft;
+    using complex_type = float2;
 };
 #endif
 
@@ -523,6 +564,36 @@ class HeffteFastFourierTransform
         x_view_val.real() = work_view_val.real();
         x_view_val.imag() = work_view_val.imag();
         return x_view_val;
+    }
+    /*!
+     \brief Copy data from double2 or float2 to Kokkos::complex.
+     \param work_view_val double2 or float2 value.
+     \param x_view_val Kokkos::complex value.
+    */
+    template <class ComplexType>
+    KOKKOS_INLINE_FUNCTION Kokkos::complex<value_type> copyToKokkosComplex(
+        ComplexType work_view_val, Kokkos::complex<value_type> x_view_val,
+        typename std::enable_if<( is_HIP_tuple<ComplexType>::value ),
+                                int>::type* = 0 )
+    {
+        x_view_val.real() = work_view_val.x;
+        x_view_val.imag() = work_view_val.y;
+        return x_view_val;
+    }
+    /*!
+     \brief Copy data from Kokkos::complex to double2 or float2.
+     \param x_view_val Kokkos::complex value.
+     \param work_view_val double2 or float2 value.
+    */
+    template <class ComplexType>
+    KOKKOS_INLINE_FUNCTION ComplexType copyFromKokkosComplex(
+        Kokkos::complex<value_type> x_view_val, ComplexType work_view_val,
+        typename std::enable_if<( is_HIP_tuple<ComplexType>::value ),
+                                int>::type* = 0 )
+    {
+        work_view_val.x = x_view_val.real();
+        work_view_val.y = x_view_val.imag();
+        return work_view_val;
     }
 
     /*!
