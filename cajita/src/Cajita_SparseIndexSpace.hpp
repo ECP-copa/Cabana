@@ -516,7 +516,7 @@ class SparseMap
 
 //---------------------------------------------------------------------------//
 // Creation function for SparseMap from GlobalMesh<SparseMesh>
-template <class Scalar, typename MemorySpace,
+template <typename MemorySpace, class Scalar,
           unsigned long long CellPerTileDim = 4,
           HashTypes Hash = HashTypes::Naive, typename Key = uint64_t,
           typename Value = uint64_t>

@@ -257,8 +257,7 @@ void testSparseMapFullInsert()
 
     // Create Sparse Map
     // SparseMap<TEST_EXECSPACE> sis( size, pre_alloc_size );
-    auto sis =
-        createSparseMap<double, TEST_EXECSPACE>( global_mesh, pre_alloc_size );
+    auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
 
     auto cbd = sis.cell_bits_per_tile_dim;
     EXPECT_EQ( cbd, 2 );
@@ -358,8 +357,7 @@ void testSparseMapSparseInsert()
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
     // Create Sparse Map
-    auto sis =
-        createSparseMap<double, TEST_EXECSPACE>( global_mesh, pre_alloc_size );
+    auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
 
     auto cbd = sis.cell_bits_per_tile_dim;
     EXPECT_EQ( cbd, 2 );
@@ -481,8 +479,7 @@ void testSparseMapReinsert()
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
     // Create Sparse Map
-    auto sis =
-        createSparseMap<double, TEST_EXECSPACE>( global_mesh, pre_alloc_size );
+    auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
 
     constexpr int insert_cell_num = 50;
     Kokkos::View<int*, TEST_DEVICE> qid_res( "query_id", insert_cell_num );
