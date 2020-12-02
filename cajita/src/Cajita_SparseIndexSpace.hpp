@@ -1,10 +1,12 @@
 #ifndef CAJITA_SPARSE_INDEXSPACE_HPP
 #define CAJITA_SPARSE_INDEXSPACE_HPP
 
+#include <Cajita_GlobalMesh.hpp>
 #include <Kokkos_Core.hpp>
 #include <Kokkos_UnorderedMap.hpp>
 
 #include <array>
+#include <memory>
 #include <string>
 
 //---------------------------------------------------------------------------//
@@ -427,8 +429,8 @@ class SparseMap
 
     /*!
       \brief (Device) Insert a tile (to hash table); Note that the tile ijk
-      should be global 
-      \param tile_i tile id in dim-x 
+      should be global
+      \param tile_i tile id in dim-x
       \param tile_j tile id in
       dim-y \param tile_k tile id in dim-z
     */
@@ -510,6 +512,23 @@ class SparseMap
     Kokkos::Array<int, rank> _min;
     Kokkos::Array<int, rank> _max;
 };
+
+//---------------------------------------------------------------------------//
+// Creation function for SparseMap from GlobalMesh<SparseMesh>
+template <class Scalar, typename MemorySpace,
+          unsigned long long CellPerTileDim = 4,
+          HashTypes Hash = HashTypes::Naive, typename Key = uint64_t,
+          typename Value = uint64_t>
+SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value> createSparseMap(
+    const std::shared_ptr<GlobalMesh<SparseMesh<Scalar>>>& global_mesh,
+    int pre_alloc_size )
+{
+    return SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value>(
+        { global_mesh->globalNumCell( Dim::I ),
+          global_mesh->globalNumCell( Dim::J ),
+          global_mesh->globalNumCell( Dim::K ) },
+        pre_alloc_size );
+}
 
 //---------------------------------------------------------------------------//
 /*!

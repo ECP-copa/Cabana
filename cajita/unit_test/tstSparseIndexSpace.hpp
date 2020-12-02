@@ -244,7 +244,20 @@ void testSparseMapFullInsert()
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
     int capacity = size_per_dim * size_per_dim;
-    SparseMap<TEST_EXECSPACE> sis( size, capacity );
+    // Create the global mesh
+    double cell_size = 0.1;
+    std::array<int, 3> global_num_cell = size;
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = createSparseGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+
+    // Create Sparse Map
+    // SparseMap<TEST_EXECSPACE> sis( size, capacity );
+    auto sis = createSparseMap<double, TEST_EXECSPACE>( global_mesh, capacity );
 
     auto cbd = sis.cell_bits_per_tile_dim;
     EXPECT_EQ( cbd, 2 );
@@ -333,7 +346,18 @@ void testSparseMapSparseInsert()
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
     int capacity = size_per_dim * size_per_dim;
-    SparseMap<TEST_EXECSPACE> sis( size, capacity );
+    // Create the global mesh
+    double cell_size = 0.1;
+    std::array<int, 3> global_num_cell = size;
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = createSparseGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+    // Create Sparse Map
+    auto sis = createSparseMap<double, TEST_EXECSPACE>( global_mesh, capacity );
 
     auto cbd = sis.cell_bits_per_tile_dim;
     EXPECT_EQ( cbd, 2 );
@@ -444,7 +468,18 @@ void testSparseMapReinsert()
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
     int capacity = size_per_dim * size_per_dim;
-    SparseMap<TEST_EXECSPACE> sis( size, capacity );
+    // Create the global mesh
+    double cell_size = 0.1;
+    std::array<int, 3> global_num_cell = size;
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = createSparseGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+    // Create Sparse Map
+    auto sis = createSparseMap<double, TEST_EXECSPACE>( global_mesh, capacity );
 
     constexpr int insert_cell_num = 50;
     Kokkos::View<int*, TEST_DEVICE> qid_res( "query_id", insert_cell_num );
