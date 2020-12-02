@@ -432,8 +432,8 @@ class SparseMap
       \brief (Device) Insert a tile (to hash table); Note that the tile ijk
       should be global
       \param tile_i tile id in dim-x
-      \param tile_j tile id in
-      dim-y \param tile_k tile id in dim-z
+      \param tile_j tile id in dim-y
+      \param tile_k tile id in dim-z
     */
     KOKKOS_INLINE_FUNCTION
     void insertTile( int tile_i, int tile_j, int tile_k ) const
