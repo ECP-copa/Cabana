@@ -39,12 +39,12 @@ pipeline {
                         '''
                     }
                 }
-                stage('ROCM-3.5-HIPCC-DEBUG') {
+                stage('ROCM-4.0-HIPCC-DEBUG') {
                     agent {
                         dockerfile {
                             filename 'Dockerfile.hipcc'
                             dir 'docker'
-                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-18.04:3.5'
+                            additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-18.04:4.0-complete'
                             args '-v /tmp/ccache.kokkos:/tmp/ccache --device=/dev/kfd --device=/dev/dri --security-opt seccomp=unconfined --group-add video --env HIP_VISIBLE_DEVICES=$HIP_VISIBLE_DEVICES'
                             label 'rocm-docker && vega'
                         }
@@ -55,12 +55,14 @@ pipeline {
                             cmake \
                               -D CMAKE_BUILD_TYPE=Debug \
                               -D CMAKE_CXX_COMPILER=hipcc \
+                              -D CMAKE_CXX_STANDARD=14 \
                               -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -DNDEBUG" \
                               -D MPIEXEC_MAX_NUMPROCS=1 \
                               -D MPIEXEC_PREFLAGS="--allow-run-as-root" \
-                              -D CMAKE_PREFIX_PATH="$KOKKOS_DIR;$ARBORX_DIR" \
+                              -D CMAKE_PREFIX_PATH="$KOKKOS_DIR;$ARBORX_DIR;$HEFFTE_DIR" \
                               -D Cabana_REQUIRE_MPI=ON \
                               -D Cabana_REQUIRE_ARBORX=ON \
+                              -D Cabana_REQUIRE_HEFFTE=ON \
                               -D Cabana_REQUIRE_HIP=ON \
                               -D Cabana_ENABLE_TESTING=ON \
                               -D Cabana_ENABLE_EXAMPLES=ON \
