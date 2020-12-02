@@ -166,10 +166,10 @@ void testBlockSpace()
     using key_type = uint64_t;
     using value_type = uint32_t;
     constexpr int size = 64;
-    int capacity = size * size;
+    int pre_alloc_size = size * size;
     BlockMap<TEST_MEMSPACE, cell_bits_per_tile_dim, cell_num_per_tile_dim,
              cell_num_per_tile, HashType, key_type, value_type>
-        bis( size, size, size, capacity );
+        bis( size, size, size, pre_alloc_size );
 
     Kokkos::View<int[size][size][size], TEST_DEVICE> i_res( "i" );
     Kokkos::View<int[size][size][size], TEST_DEVICE> j_res( "j" );
@@ -243,7 +243,7 @@ void testSparseMapFullInsert()
     constexpr int size_per_dim = size_tile_per_dim * 4;
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
-    int capacity = size_per_dim * size_per_dim;
+    int pre_alloc_size = size_per_dim * size_per_dim;
     // Create the global mesh
     double cell_size = 0.1;
     std::array<int, 3> global_num_cell = size;
@@ -256,8 +256,9 @@ void testSparseMapFullInsert()
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create Sparse Map
-    // SparseMap<TEST_EXECSPACE> sis( size, capacity );
-    auto sis = createSparseMap<double, TEST_EXECSPACE>( global_mesh, capacity );
+    // SparseMap<TEST_EXECSPACE> sis( size, pre_alloc_size );
+    auto sis =
+        createSparseMap<double, TEST_EXECSPACE>( global_mesh, pre_alloc_size );
 
     auto cbd = sis.cell_bits_per_tile_dim;
     EXPECT_EQ( cbd, 2 );
@@ -345,7 +346,7 @@ void testSparseMapSparseInsert()
     constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
-    int capacity = size_per_dim * size_per_dim;
+    int pre_alloc_size = size_per_dim * size_per_dim;
     // Create the global mesh
     double cell_size = 0.1;
     std::array<int, 3> global_num_cell = size;
@@ -357,7 +358,8 @@ void testSparseMapSparseInsert()
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
     // Create Sparse Map
-    auto sis = createSparseMap<double, TEST_EXECSPACE>( global_mesh, capacity );
+    auto sis =
+        createSparseMap<double, TEST_EXECSPACE>( global_mesh, pre_alloc_size );
 
     auto cbd = sis.cell_bits_per_tile_dim;
     EXPECT_EQ( cbd, 2 );
@@ -467,7 +469,7 @@ void testSparseMapReinsert()
     constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
-    int capacity = size_per_dim * size_per_dim;
+    int pre_alloc_size = size_per_dim * size_per_dim;
     // Create the global mesh
     double cell_size = 0.1;
     std::array<int, 3> global_num_cell = size;
@@ -479,7 +481,8 @@ void testSparseMapReinsert()
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
     // Create Sparse Map
-    auto sis = createSparseMap<double, TEST_EXECSPACE>( global_mesh, capacity );
+    auto sis =
+        createSparseMap<double, TEST_EXECSPACE>( global_mesh, pre_alloc_size );
 
     constexpr int insert_cell_num = 50;
     Kokkos::View<int*, TEST_DEVICE> qid_res( "query_id", insert_cell_num );

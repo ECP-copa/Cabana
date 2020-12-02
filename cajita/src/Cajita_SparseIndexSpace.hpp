@@ -399,14 +399,15 @@ class SparseMap
     /*!
       \brief (Host) Constructor
       \param size The size of the block (MPI rank) (Unit: cell)
-      \param capacity Expected capacity of the allocator to store the tiles
-      when tile nums exceed the capacity
+      \param pre_alloc_size Expected capacity of the allocator to store the
+      tiles when tile nums exceed the capacity
     */
-    SparseMap( const std::array<int, rank> size, const unsigned int capacity )
+    SparseMap( const std::array<int, rank> size,
+               const unsigned int pre_alloc_size )
         : _block_id_space( size[0] >> cell_bits_per_tile_dim,
                            size[1] >> cell_bits_per_tile_dim,
                            size[2] >> cell_bits_per_tile_dim,
-                           1 << bitCount( capacity ) )
+                           1 << bitCount( pre_alloc_size ) )
     {
         std::fill( _min.data(), _min.data() + rank, 0 );
         std::copy( size.begin(), size.end(), _max.data() );
@@ -573,11 +574,11 @@ class BlockMap
       \param size_x The size of the block (MPI rank) in dim-x (Unit: tile)
       \param size_y The size of the block (MPI rank) in dim-y (Unit: tile)
       \param size_z The size of the block (MPI rank) in dim-z (Unit: tile)
-      \param capacity Expected capacity of the allocator to store the tiles
-      when tile nums exceed the capcity
+      \param pre_alloc_size Expected capacity of the allocator to store the
+      tiles when tile nums exceed the capcity
     */
     BlockMap( const int size_x, const int size_y, const int size_z,
-              const value_type capacity )
+              const value_type pre_alloc_size )
         : _tile_table_info( "hash_table_info" )
         , _tile_table( size_x * size_y * size_z )
         , _op_ijk2key( size_x, size_y, size_z )
@@ -587,7 +588,7 @@ class BlockMap
         auto tile_table_info_mirror =
             Kokkos::create_mirror_view( Kokkos::HostSpace(), _tile_table_info );
         tile_table_info_mirror( 0 ) = 0;
-        tile_table_info_mirror( 1 ) = capacity;
+        tile_table_info_mirror( 1 ) = pre_alloc_size;
         Kokkos::deep_copy( _tile_table_info, tile_table_info_mirror );
 
         // size related init
