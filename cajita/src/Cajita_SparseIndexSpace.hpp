@@ -1,10 +1,12 @@
 #ifndef CAJITA_SPARSE_INDEXSPACE_HPP
 #define CAJITA_SPARSE_INDEXSPACE_HPP
 
+#include <Cajita_GlobalMesh.hpp>
 #include <Kokkos_Core.hpp>
 #include <Kokkos_UnorderedMap.hpp>
 
 #include <array>
+#include <memory>
 #include <string>
 
 //---------------------------------------------------------------------------//
@@ -337,27 +339,27 @@ struct HashKey2TileID<Key, HashTypes::Morton>
 
 //---------------------------------------------------------------------------//
 // Hierarchical index spaces
-// SparseIndexSpace <- BlockIndexSpace <- TileIndexSpace
+// SparseMap <- BlockMap <- TileMap
 // Naming:
 //      Block = MPI Rank
 //      Tile = Sub-block with several cells
 //      Cell = Basic grid unit
 //---------------------------------------------------------------------------//
 
-//! Declaration of BlockIndexSpace
+//! Declaration of BlockMap
 template <typename MemorySpace, unsigned long long CBits,
           unsigned long long CNumPerDim, unsigned long long CNumPerTile,
           HashTypes Hash, typename Key, typename Value>
-class BlockIndexSpace;
+class BlockMap;
 
-//! Declaration of TileIndexSpace
+//! Declaration of TileMap
 template <int CBits, int CNumPerDim, int CNumPerTile>
-class TileIndexSpace;
+class TileMap;
 
 /*!
-  \class SparseIndexSpace
+  \class SparseMap
   \brief Sparse index space, with a hierarchical structure (cell->tile->block)
-  \tparam MemorySpace Memory space to store the IndexSpace(Hash Table)
+  \tparam MemorySpace Memory space to store the Map(Hash Table)
   \tparam CellPerTileDim Cell number inside each tile per dimension
   \tparam Hash Hash type (lexicographical or morton)
   \tparam Key Type of the tile/cell hash key
@@ -366,7 +368,7 @@ class TileIndexSpace;
 template <typename MemorySpace, unsigned long long CellPerTileDim = 4,
           HashTypes Hash = HashTypes::Naive, typename Key = uint64_t,
           typename Value = uint64_t>
-class SparseIndexSpace
+class SparseMap
 {
   public:
     //! Number of dimensions, 3 = ijk
@@ -397,15 +399,15 @@ class SparseIndexSpace
     /*!
       \brief (Host) Constructor
       \param size The size of the block (MPI rank) (Unit: cell)
-      \param capacity Expected capacity of the allocator to store the tiles
-      when tile nums exceed the capacity
+      \param pre_alloc_size Expected capacity of the allocator to store the
+      tiles when tile nums exceed the capacity
     */
-    SparseIndexSpace( const std::array<int, rank> size,
-                      const unsigned int capacity )
+    SparseMap( const std::array<int, rank> size,
+               const unsigned int pre_alloc_size )
         : _block_id_space( size[0] >> cell_bits_per_tile_dim,
                            size[1] >> cell_bits_per_tile_dim,
                            size[2] >> cell_bits_per_tile_dim,
-                           1 << bitCount( capacity ) )
+                           1 << bitCount( pre_alloc_size ) )
     {
         std::fill( _min.data(), _min.data() + rank, 0 );
         std::copy( size.begin(), size.end(), _max.data() );
@@ -413,7 +415,7 @@ class SparseIndexSpace
 
     /*!
       \brief (Device) Insert a cell (given a cell ijk, insert the tile where the
-      cell reside in to hash table)
+      cell reside in to hash table; Note that the ijk should be global)
       \param cell_i cell id in dim-x
       \param cell_j cell id in dim-y
       \param cell_k cell id in dim-z
@@ -427,7 +429,8 @@ class SparseIndexSpace
     }
 
     /*!
-      \brief (Device) Insert a tile (to hash table)
+      \brief (Device) Insert a tile (to hash table); Note that the tile ijk
+      should be global
       \param tile_i tile id in dim-x
       \param tile_j tile id in dim-y
       \param tile_k tile id in dim-z
@@ -500,12 +503,11 @@ class SparseIndexSpace
 
   private:
     //! block index space, map tile ijk to tile
-    BlockIndexSpace<MemorySpace, cell_bits_per_tile_dim, cell_num_per_tile_dim,
-                    cell_num_per_tile, hash_type, key_type, value_type>
+    BlockMap<MemorySpace, cell_bits_per_tile_dim, cell_num_per_tile_dim,
+             cell_num_per_tile, hash_type, key_type, value_type>
         _block_id_space;
     //! tile index space, map cell ijk to cell local No inside a tile
-    TileIndexSpace<cell_bits_per_tile_dim, cell_num_per_tile_dim,
-                   cell_num_per_tile>
+    TileMap<cell_bits_per_tile_dim, cell_num_per_tile_dim, cell_num_per_tile>
         _tile_id_space;
     //! space size (global), channel size
     Kokkos::Array<int, rank> _min;
@@ -513,10 +515,27 @@ class SparseIndexSpace
 };
 
 //---------------------------------------------------------------------------//
+// Creation function for SparseMap from GlobalMesh<SparseMesh>
+template <typename MemorySpace, class Scalar,
+          unsigned long long CellPerTileDim = 4,
+          HashTypes Hash = HashTypes::Naive, typename Key = uint64_t,
+          typename Value = uint64_t>
+SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value> createSparseMap(
+    const std::shared_ptr<GlobalMesh<SparseMesh<Scalar>>>& global_mesh,
+    int pre_alloc_size )
+{
+    return SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value>(
+        { global_mesh->globalNumCell( Dim::I ),
+          global_mesh->globalNumCell( Dim::J ),
+          global_mesh->globalNumCell( Dim::K ) },
+        pre_alloc_size );
+}
+
+//---------------------------------------------------------------------------//
 /*!
-  \class BlockIndexSpace
+  \class BlockMap
   \brief Block index space, mapping tile ijks to tile No. through a hash table
-  (Kokkos unordered map)
+  (Kokkos unordered map), note that the ijks should be global
   \tparam CBits Bits number (per dimension) neded to
   index cells inside each tile
   \tparam CNumPerDim Cell number (per dimension)
@@ -533,7 +552,7 @@ class SparseIndexSpace
 template <typename MemorySpace, unsigned long long CBits,
           unsigned long long CNumPerDim, unsigned long long CNumPerTile,
           HashTypes Hash, typename Key, typename Value>
-class BlockIndexSpace
+class BlockMap
 {
   public:
     //! Number of bits (per dimension) needed to index the cells inside a tile
@@ -546,20 +565,20 @@ class BlockIndexSpace
     using key_type = Key;                        // tile hash key
     using value_type = Value;                    // tile No.
     static constexpr HashTypes hash_type = Hash; // hash table
-    using bis_Type = BlockIndexSpace<MemorySpace, cell_bits_per_tile_dim,
-                                     cell_num_per_tile_dim, cell_num_per_tile,
-                                     hash_type, key_type, value_type>; // itself
+    using bis_Type =
+        BlockMap<MemorySpace, cell_bits_per_tile_dim, cell_num_per_tile_dim,
+                 cell_num_per_tile, hash_type, key_type, value_type>; // itself
 
     /*!
       \brief (Host) Constructor
       \param size_x The size of the block (MPI rank) in dim-x (Unit: tile)
       \param size_y The size of the block (MPI rank) in dim-y (Unit: tile)
       \param size_z The size of the block (MPI rank) in dim-z (Unit: tile)
-      \param capacity Expected capacity of the allocator to store the tiles
-      when tile nums exceed the capcity
+      \param pre_alloc_size Expected capacity of the allocator to store the
+      tiles when tile nums exceed the capcity
     */
-    BlockIndexSpace( const int size_x, const int size_y, const int size_z,
-                     const value_type capacity )
+    BlockMap( const int size_x, const int size_y, const int size_z,
+              const value_type pre_alloc_size )
         : _tile_table_info( "hash_table_info" )
         , _tile_table( size_x * size_y * size_z )
         , _op_ijk2key( size_x, size_y, size_z )
@@ -569,7 +588,7 @@ class BlockIndexSpace
         auto tile_table_info_mirror =
             Kokkos::create_mirror_view( Kokkos::HostSpace(), _tile_table_info );
         tile_table_info_mirror( 0 ) = 0;
-        tile_table_info_mirror( 1 ) = capacity;
+        tile_table_info_mirror( 1 ) = pre_alloc_size;
         Kokkos::deep_copy( _tile_table_info, tile_table_info_mirror );
 
         // size related init
@@ -702,7 +721,7 @@ class BlockIndexSpace
 
 //---------------------------------------------------------------------------//
 /*!
-  \class TileIndexSpace
+  \class TileMap
   \brief Tile index space, inside each local tile, mapping cell ijks to cell
   No.(Lexicographical Order) \tparam CBits Bits number (per dimension) neded to
   index cells inside each tile
@@ -711,7 +730,7 @@ class BlockIndexSpace
   CNumPerTile Cel number (total) inside each tile
 */
 template <int CBits, int CNumPerDim, int CNumPerTile>
-class TileIndexSpace
+class TileMap
 {
   public:
     //! Number of bits (per dimension) needed to index the cells inside a tile
