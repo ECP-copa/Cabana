@@ -71,6 +71,7 @@ jobs:
         run: |
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
+            -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
             -DCMAKE_PREFIX_PATH="$HOME/kokkos" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_FLAGS='-Wall -pedantic --coverage' \
