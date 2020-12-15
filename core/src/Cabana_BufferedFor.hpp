@@ -90,7 +90,8 @@ inline void custom_simd_parallel_for(
                 Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
                                            exec_policy.arrayEnd( s ) ),
                 [&]( const index_type a ) {
-                    Cabana::Impl::functorTagDispatch<work_tag>( functor, f_arg,
+                    Cabana::Impl::functorTagDispatch<work_tag>( functor,
+                            //f_arg
                             s, a );
                             //functor(f_arg, s, a);
                             //functor(s, a);
@@ -171,8 +172,8 @@ inline void buffered_parallel_for(
         // TODO: this uses a global object so will break if we go fully async
         buffered_aosoa.slice_buffer( i );
 
-        Impl::custom_simd_parallel_for( policy, functor, buffered_aosoa, str );
-        // Cabana::simd_parallel_for( policy, functor, str );
+        //Impl::custom_simd_parallel_for( policy, functor, buffered_aosoa, str );
+        //Cabana::simd_parallel_for( policy, functor, str );
         Kokkos::fence();
 
         auto s = Cabana::slice<0>( buffered_aosoa.internal_buffers[0] );

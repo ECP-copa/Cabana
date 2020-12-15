@@ -193,11 +193,12 @@ class TestOp
 {
     public:
         // TODO: populate
-        TestOp()
+        TestOp(buf_t buffered_aosoa_in) :  buffered_aosoa(buffered_aosoa_in)
         {
+
         }
 
-        KOKKOS_INLINE_FUNCTION void operator()(const buf_t& buffered_aosoa, const int s, const int a ) const
+        KOKKOS_INLINE_FUNCTION void operator()( const int s, const int a ) const
         {
             /*
             // We have to call access and slice in the loop
@@ -248,6 +249,7 @@ class TestOp
         }
     private:
         //TODO: do I want the buffered_aosoa here?
+        buf_t buffered_aosoa;
 
 };
 
@@ -350,7 +352,7 @@ void testBufferedDataCreation()
     dval = 2.23;
     ival = 2;
 
-    TestOp<buf_t> buffer_op;
+    TestOp<buf_t> buffer_op(buffered_aosoa_in);
 
     Cabana::Experimental::buffered_parallel_for(
         Kokkos::RangePolicy<target_exec_space>( 0, aosoa.size() ),
