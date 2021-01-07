@@ -55,61 +55,6 @@ auto getTopology( const LocalGridType& local_grid )
 
 //---------------------------------------------------------------------------//
 /*!
-\brief Wrap particles through periodic bounds according to Cajita grid global
-bounds.
-
-\tparam LocalGridType Cajita LocalGrid type.
-
-\tparam PositionSliceType Particle position type.
-
-\param local_grid The local grid containing periodicity and system bound
-information.
-
-\param positions The particle position container, either Slice or View.
-*/
-template <class LocalGridType, class PositionSliceType>
-void periodicWrap( const LocalGridType& local_grid,
-                   PositionSliceType& positions )
-{
-    using execution_space = typename PositionSliceType::execution_space;
-
-    const auto& global_grid = local_grid.globalGrid();
-    const auto& global_mesh = global_grid.globalMesh();
-    const Kokkos::Array<bool, 3> periodic = {
-        global_grid.isPeriodic( Cajita::Dim::I ),
-        global_grid.isPeriodic( Cajita::Dim::J ),
-        global_grid.isPeriodic( Cajita::Dim::K ) };
-    const Kokkos::Array<double, 3> global_low = {
-        global_mesh.lowCorner( Cajita::Dim::I ),
-        global_mesh.lowCorner( Cajita::Dim::J ),
-        global_mesh.lowCorner( Cajita::Dim::K ) };
-    const Kokkos::Array<double, 3> global_high = {
-        global_mesh.highCorner( Cajita::Dim::I ),
-        global_mesh.highCorner( Cajita::Dim::J ),
-        global_mesh.highCorner( Cajita::Dim::K ) };
-    const Kokkos::Array<double, 3> global_extent = {
-        global_mesh.extent( Cajita::Dim::I ),
-        global_mesh.extent( Cajita::Dim::J ),
-        global_mesh.extent( Cajita::Dim::K ) };
-    Kokkos::parallel_for(
-        "periodic_wrap",
-        Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
-        KOKKOS_LAMBDA( const int p ) {
-            for ( int d = 0; d < 3; ++d )
-            {
-                if ( periodic[d] )
-                {
-                    if ( positions( p, d ) > global_high[d] )
-                        positions( p, d ) -= global_extent[d];
-                    else if ( positions( p, d ) < global_low[d] )
-                        positions( p, d ) += global_extent[d];
-                }
-            }
-        } );
-}
-
-//---------------------------------------------------------------------------//
-/*!
 \brief Check for the number of particles that must be communicated
 
 \tparam LocalGridType Cajita LocalGrid type.
@@ -200,6 +145,26 @@ void getMigrateDestinations( const LocalGridType& local_grid,
         local_mesh.highCorner( Cajita::Own(), Cajita::Dim::J ),
         local_mesh.highCorner( Cajita::Own(), Cajita::Dim::K ) };
 
+    // Use global domain for periodicity.
+    const auto& global_grid = local_grid.globalGrid();
+    const auto& global_mesh = global_grid.globalMesh();
+    const Kokkos::Array<bool, 3> periodic = {
+        global_grid.isPeriodic( Cajita::Dim::I ),
+        global_grid.isPeriodic( Cajita::Dim::J ),
+        global_grid.isPeriodic( Cajita::Dim::K ) };
+    const Kokkos::Array<double, 3> global_low = {
+        global_mesh.lowCorner( Cajita::Dim::I ),
+        global_mesh.lowCorner( Cajita::Dim::J ),
+        global_mesh.lowCorner( Cajita::Dim::K ) };
+    const Kokkos::Array<double, 3> global_high = {
+        global_mesh.highCorner( Cajita::Dim::I ),
+        global_mesh.highCorner( Cajita::Dim::J ),
+        global_mesh.highCorner( Cajita::Dim::K ) };
+    const Kokkos::Array<double, 3> global_extent = {
+        global_mesh.extent( Cajita::Dim::I ),
+        global_mesh.extent( Cajita::Dim::J ),
+        global_mesh.extent( Cajita::Dim::K ) };
+
     Kokkos::parallel_for(
         "get_migrate_destinations",
         Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
@@ -218,9 +183,19 @@ void getMigrateDestinations( const LocalGridType& local_grid,
             destinations( p ) = neighbor_ranks(
                 nid[Cajita::Dim::I] +
                 3 * ( nid[Cajita::Dim::J] + 3 * nid[Cajita::Dim::K] ) );
+
+            // Shift periodic coordinates if needed.
+            for ( int d = 0; d < 3; ++d )
+            {
+                if ( periodic[d] )
+                {
+                    if ( positions( p, d ) > global_high[d] )
+                        positions( p, d ) -= global_extent[d];
+                    else if ( positions( p, d ) < global_low[d] )
+                        positions( p, d ) += global_extent[d];
+                }
+            }
         } );
-    // TODO: fuse kernels
-    periodicWrap( local_grid, positions );
 }
 
 } // namespace Impl
