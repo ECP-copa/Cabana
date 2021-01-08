@@ -139,7 +139,7 @@ void testMigrate( const int halo_width, const int test_halo_width,
         data_host.resize( data_dst.size() );
         Cabana::deep_copy( data_host, data_dst );
     }
-    // Do the migration with separate slices (need to use gridDistributor
+    // Do the migration with separate slices (need to use createGridDistributor
     // directly since slices can't be resized).
     else if ( test_type == 2 )
     {
@@ -153,7 +153,8 @@ void testMigrate( const int halo_width, const int test_halo_width,
 
         if ( force_comm || comm_count > 0 )
         {
-            auto distributor = Cabana::gridDistributor( *local_grid, pos_src );
+            auto distributor =
+                Cabana::createGridDistributor( *local_grid, pos_src );
             Cabana::AoSoA<DataTypes, TEST_MEMSPACE> data_dst(
                 "data_dst", distributor.totalNumImport() );
             auto pos_dst = Cabana::slice<pos_index>( data_dst );
@@ -226,7 +227,7 @@ void testMigrate( const int halo_width, const int test_halo_width,
 }
 
 //---------------------------------------------------------------------------//
-void testHalo( const int halo_width, const int test_type )
+void testGather( const int halo_width, const int test_type )
 {
     // Create the MPI partitions.
     Cajita::UniformDimPartitioner partitioner;
@@ -313,10 +314,10 @@ void testHalo( const int halo_width, const int test_type )
     if ( test_type == 0 )
     {
         // Do the gather with the AoSoA.
-        auto pair = gridHalo( *local_grid, data_src,
-                              std::integral_constant<std::size_t, pos_index>(),
-                              halo_width );
-        gridGather( pair.first, pair.second, data_src );
+        auto grid_halo = Cabana::createGridHalo(
+            *local_grid, data_src,
+            std::integral_constant<std::size_t, pos_index>(), halo_width );
+        gridGather( grid_halo, data_src );
 
         data_host.resize( data_src.size() );
         Cabana::deep_copy( data_host, data_src );
@@ -438,7 +439,7 @@ TEST( TEST_CATEGORY, periodic_test_migrate_slice )
 TEST( TEST_CATEGORY, periodic_test_gather_inplace )
 {
     for ( int i = 1; i < 2; i++ )
-        testHalo( i, 0 );
+        testGather( i, 0 );
 }
 //---------------------------------------------------------------------------//
 

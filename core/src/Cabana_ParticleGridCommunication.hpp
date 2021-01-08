@@ -219,7 +219,8 @@ void getMigrateDestinations( const LocalGridType& local_grid,
 */
 template <class LocalGridType, class PositionSliceType>
 Distributor<typename PositionSliceType::device_type>
-gridDistributor( const LocalGridType& local_grid, PositionSliceType& positions )
+createGridDistributor( const LocalGridType& local_grid,
+                       PositionSliceType& positions )
 {
     using device_type = typename PositionSliceType::device_type;
 
@@ -293,7 +294,7 @@ void gridMigrate( const LocalGridType& local_grid, ParticleContainer& particles,
             return;
     }
 
-    auto distributor = gridDistributor( local_grid, positions );
+    auto distributor = createGridDistributor( local_grid, positions );
 
     // Redistribute the particles.
     migrate( distributor, particles );
@@ -355,7 +356,7 @@ void gridMigrate( const LocalGridType& local_grid,
         }
     }
 
-    auto distributor = gridDistributor( local_grid, positions );
+    auto distributor = createGridDistributor( local_grid, positions );
 
     // Resize as needed.
     dst_particles.resize( distributor.totalNumImport() );
@@ -622,6 +623,24 @@ struct PeriodicShift
     }
 };
 
+template <class HaloType, class ShiftType>
+class GridHalo
+{
+    const HaloType _halo;
+    const ShiftType _shifts;
+
+  public:
+    GridHalo( const HaloType& halo, const ShiftType& shifts )
+        : _halo( halo )
+        , _shifts( shifts )
+    {
+    }
+
+    HaloType getHalo() const { return _halo; }
+
+    ShiftType getShifts() const { return _shifts; }
+};
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Determine which data should be ghosted on another decomposition, using
@@ -644,11 +663,11 @@ struct PeriodicShift
   \param max_export_guess The allocation size for halo export ranks, IDs, and
   periodic shifts
 
-  \return Pair containing the Halo and PeriodicShift.
+  \return GridHalo containing Halo and PeriodicShift.
 */
 template <class LocalGridType, class PositionSliceType,
           std::size_t PositionIndex>
-auto gridHalo(
+auto createGridHalo(
     const LocalGridType& local_grid, const PositionSliceType& positions,
     std::integral_constant<std::size_t, PositionIndex>,
     const int min_halo_width, const int max_export_guess = 0,
@@ -691,7 +710,10 @@ auto gridHalo(
     // Create the Shifts.
     auto periodic_shift = PeriodicShift<device_type, PositionIndex>( shifts );
 
-    return std::make_pair( halo, periodic_shift );
+    // Return Halo and PeriodicShifts together.
+    GridHalo<Halo<device_type>, PeriodicShift<device_type, PositionIndex>>
+        grid_halo( halo, periodic_shift );
+    return grid_halo;
 }
 
 //---------------------------------------------------------------------------//
@@ -714,11 +736,11 @@ auto gridHalo(
   \param max_export_guess The allocation size for halo export ranks, IDs, and
   periodic shifts.
 
-  \return Pair containing the Halo and PeriodicShift.
+  \return GridHalo containing Halo and PeriodicShift.
 */
 template <class LocalGridType, class ParticleContainer,
           std::size_t PositionIndex>
-auto gridHalo(
+auto createGridHalo(
     const LocalGridType& local_grid, const ParticleContainer& particles,
     std::integral_constant<std::size_t, PositionIndex>,
     const int min_halo_width, const int max_export_guess = 0,
@@ -726,9 +748,9 @@ auto gridHalo(
         0 )
 {
     auto positions = slice<PositionIndex>( particles );
-    return gridHalo( local_grid, positions,
-                     std::integral_constant<std::size_t, PositionIndex>(),
-                     min_halo_width, max_export_guess );
+    return createGridHalo( local_grid, positions,
+                           std::integral_constant<std::size_t, PositionIndex>(),
+                           min_halo_width, max_export_guess );
 }
 
 //---------------------------------------------------------------------------//
@@ -749,13 +771,14 @@ auto gridHalo(
 
   \param particles The particle AoSoA, containing positions.
 */
-template <class HaloType, class PeriodicShiftType, class ParticleContainer>
-void gridGather( const HaloType& halo, const PeriodicShiftType& shift,
-                 ParticleContainer& particles )
+template <class GridHaloType, class ParticleContainer>
+void gridGather( const GridHaloType grid_halo, ParticleContainer& particles )
 {
+    auto halo = grid_halo.getHalo();
+    auto shifts = grid_halo.getShifts();
     particles.resize( halo.numLocal() + halo.numGhost() );
 
-    gather( halo, particles, shift );
+    gather( halo, particles, shifts );
 }
 
 // TODO: slice version
