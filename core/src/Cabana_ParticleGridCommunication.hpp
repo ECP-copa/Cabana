@@ -55,18 +55,18 @@ auto getTopology( const LocalGridType& local_grid )
 
 //---------------------------------------------------------------------------//
 /*!
-\brief Check for the number of particles that must be communicated
+  \brief Check for the number of particles that must be communicated
 
-\tparam LocalGridType Cajita LocalGrid type.
+  \tparam LocalGridType Cajita LocalGrid type.
 
-\tparam PositionSliceType Particle position type.
+  \tparam PositionSliceType Particle position type.
 
-\param local_grid The local grid containing periodicity and system bound
-information.
+  \param local_grid The local grid containing periodicity and system bound
+  information.
 
-\param positions The particle position container, either Slice or View.
+  \param positions The particle position container, either Slice or View.
 
-\param minimum_halo_width Number of halo mesh widths to include for ghosting.
+  \param minimum_halo_width Number of halo mesh widths to include for ghosting.
 */
 template <class LocalGridType, class PositionSliceType>
 int migrateCount( const LocalGridType& local_grid,
@@ -372,6 +372,7 @@ void gridMigrate( const LocalGridType& local_grid,
 namespace Impl
 {
 
+// Functor to determine which particles should be ghosted with Cajita grid.
 template <class LocalGridType, class PositionSliceType, class CountView,
           class DestinationRankView, class ShiftViewType>
 struct HaloIds
@@ -569,108 +570,14 @@ struct HaloIds
         }
     }
 };
-} // namespace Impl
 
 //---------------------------------------------------------------------------//
-/*!
-  \class PeriodicShift
-
-  \brief Store and apply periodic shifts for halo communication.
-
-  \tparam DeviceType Device type for which the data for this class will be
-  allocated and where parallel execution occurs.
-
-  \tparam PositionIndex Particle position index within the AoSoA.
-
-  Ideally this would inherit from Halo (PeriodicHalo), combining the periodic
-  shift and halo together. This is not currently done because the
-  CommunicationPlan contains std member variables that would be captured on the
-  device (warnings with NVCC).
-*/
-template <class DeviceType, std::size_t PositionIndex>
-struct PeriodicShift
-{
-    Kokkos::View<double**, DeviceType> _shifts;
-
-    /*!
-      \brief Constructor
-
-      \tparam ShiftViewType The periodic shift Kokkos View type.
-
-      \param shifts The periodic shifts for each element being sent.
-    */
-    template <class ShiftViewType>
-    PeriodicShift( const ShiftViewType shifts )
-        : _shifts( shifts )
-    {
-    }
-
-    /*!
-      \brief Modify the send buffer with periodic shifts.
-
-      \tparam ViewType The container type for the send buffer.
-
-      \param send_buffer Send buffer of positions being ghosted.
-
-      \param i Particle index.
-     */
-    template <class ViewType>
-    KOKKOS_INLINE_FUNCTION void operator()( ViewType& send_buffer,
-                                            const int i ) const
-    {
-        for ( int d = 0; d < 3; ++d )
-            get<PositionIndex>( send_buffer( i ), d ) += _shifts( i, d );
-    }
-};
-
-template <class HaloType, class ShiftType>
-class GridHalo
-{
-    const HaloType _halo;
-    const ShiftType _shifts;
-
-  public:
-    GridHalo( const HaloType& halo, const ShiftType& shifts )
-        : _halo( halo )
-        , _shifts( shifts )
-    {
-    }
-
-    HaloType getHalo() const { return _halo; }
-
-    ShiftType getShifts() const { return _shifts; }
-};
-
-//---------------------------------------------------------------------------//
-/*!
-  \brief Determine which data should be ghosted on another decomposition, using
-  bounds of a Cajita grid and taking periodic boundaries into account. Slice
-  variant.
-
-  \tparam LocalGridType Cajita LocalGrid type.
-
-  \tparam PositionSliceType Slice/View type.
-
-  \param local_grid The local grid containing periodicity and system bound
-  information.
-
-  \param positions The particle positions.
-
-  \param PositionIndex Particle position index within the AoSoA.
-
-  \param min_halo_width Number of halo mesh widths to include for ghosting.
-
-  \param max_export_guess The allocation size for halo export ranks, IDs, and
-  periodic shifts
-
-  \return GridHalo containing Halo and PeriodicShift.
-*/
-template <class LocalGridType, class PositionSliceType,
-          std::size_t PositionIndex>
-auto createGridHalo(
+// Determine which particles should be ghosted, reallocating and recounting if
+// needed.
+template <class LocalGridType, class PositionSliceType>
+auto getHaloIDs(
     const LocalGridType& local_grid, const PositionSliceType& positions,
-    std::integral_constant<std::size_t, PositionIndex>,
-    const int min_halo_width, const int max_export_guess = 0,
+    const int min_halo_width, const int max_export_guess,
     typename std::enable_if<is_slice<PositionSliceType>::value, int>::type* =
         0 )
 {
@@ -706,15 +613,156 @@ auto createGridHalo(
     auto halo =
         Halo<device_type>( local_grid.globalGrid().comm(), positions.size(),
                            ids, destinations, topology );
-
-    // Create the Shifts.
-    auto periodic_shift = PeriodicShift<device_type, PositionIndex>( shifts );
-
-    // Return Halo and PeriodicShifts together.
-    GridHalo<Halo<device_type>, PeriodicShift<device_type, PositionIndex>>
-        grid_halo( halo, periodic_shift );
-    return grid_halo;
+    return std::make_pair( halo, shifts );
 }
+
+} // namespace Impl
+
+//---------------------------------------------------------------------------//
+/*!
+  \class PeriodicShift
+
+  \brief Store periodic shifts for halo communication.
+
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel execution occurs.
+
+  Ideally this would inherit from Halo (PeriodicHalo), combining the periodic
+  shift and halo together. This is not currently done because the
+  CommunicationPlan contains std member variables that would be captured on the
+  device (warnings with NVCC).
+*/
+template <class DeviceType>
+struct PeriodicShift
+{
+    Kokkos::View<double**, DeviceType> _shifts;
+
+    /*!
+      \brief Constructor
+
+      \tparam ShiftViewType The periodic shift Kokkos View type.
+
+      \param shifts The periodic shifts for each element being sent.
+    */
+    template <class ShiftViewType>
+    PeriodicShift( const ShiftViewType shifts )
+        : _shifts( shifts )
+    {
+    }
+};
+
+/*!
+  \class PeriodicModifyAoSoA
+
+  \brief Modify AoSoA buffer with periodic shifts during gather.
+
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel execution occurs.
+
+  \tparam PositionIndex Particle position index within the AoSoA.
+*/
+template <class DeviceType, std::size_t PositionIndex>
+struct PeriodicModifyAoSoA : PeriodicShift<DeviceType>
+{
+    using PeriodicShift<DeviceType>::PeriodicShift;
+    using PeriodicShift<DeviceType>::_shifts;
+
+    std::size_t dim = _shifts.extent( 1 );
+
+    /*!
+      \brief Modify the send buffer with periodic shifts.
+
+      \tparam ViewType The container type for the send buffer.
+
+      \param send_buffer Send buffer of positions being ghosted.
+
+      \param i Particle index.
+     */
+    template <class ViewType>
+    KOKKOS_INLINE_FUNCTION void operator()( ViewType& send_buffer,
+                                            const int i ) const
+    {
+        for ( std::size_t d = 0; d < dim; ++d )
+            get<PositionIndex>( send_buffer( i ), d ) += _shifts( i, d );
+    }
+};
+
+/*!
+  \class PeriodicModifySlice
+
+  \brief Modify slice buffer with periodic shifts during gather.
+
+  \tparam DeviceType Device type for which the data for this class will be
+  allocated and where parallel execution occurs.
+*/
+template <class DeviceType>
+struct PeriodicModifySlice : PeriodicShift<DeviceType>
+{
+    using PeriodicShift<DeviceType>::PeriodicShift;
+    using PeriodicShift<DeviceType>::_shifts;
+
+    /*!
+      \brief Modify the send buffer with periodic shifts.
+
+      \tparam ViewType The container type for the send buffer.
+
+      \param send_buffer Send buffer of positions being ghosted.
+
+      \param i Particle index.
+
+      \param d Dimension index.
+    */
+    template <class ViewType>
+    KOKKOS_INLINE_FUNCTION void operator()( ViewType& send_buffer, const int i,
+                                            const int d ) const
+    {
+        send_buffer( i, d ) += _shifts( i, d );
+    }
+};
+
+//---------------------------------------------------------------------------//
+/*!
+  \class GridHalo
+
+  \brief Store communication Halo and Modify functor.
+
+  \tparam HaloType Halo type.
+
+  \tparam ModifyType Modification functor type.
+*/
+template <class HaloType, class ModifyType>
+class GridHalo
+{
+    const HaloType _halo;
+    const ModifyType _modify;
+
+  public:
+    /*
+      \brief Constructor
+
+      \param halo Halo for gather/scatter.
+
+      \param modify Store and apply buffer modifications.
+     */
+    GridHalo( const HaloType& halo, const ModifyType& modify )
+        : _halo( halo )
+        , _modify( modify )
+    {
+    }
+
+    /*
+      \brief Return stored halo
+
+      \return Halo for gather/scatter.
+    */
+    HaloType getHalo() const { return _halo; }
+    /*
+      \brief Return stored modification functor.
+
+      \return Modify object to access or apply buffer modifications.
+    */
+    ModifyType getModify() const { return _modify; }
+};
 
 //---------------------------------------------------------------------------//
 /*!
@@ -736,7 +784,7 @@ auto createGridHalo(
   \param max_export_guess The allocation size for halo export ranks, IDs, and
   periodic shifts.
 
-  \return GridHalo containing Halo and PeriodicShift.
+  \return GridHalo containing Halo and PeriodicModify.
 */
 template <class LocalGridType, class ParticleContainer,
           std::size_t PositionIndex>
@@ -747,10 +795,67 @@ auto createGridHalo(
     typename std::enable_if<is_aosoa<ParticleContainer>::value, int>::type* =
         0 )
 {
+    using device_type = typename ParticleContainer::device_type;
+
     auto positions = slice<PositionIndex>( particles );
-    return createGridHalo( local_grid, positions,
-                           std::integral_constant<std::size_t, PositionIndex>(),
-                           min_halo_width, max_export_guess );
+    auto pair = Impl::getHaloIDs( local_grid, positions, min_halo_width,
+                                  max_export_guess );
+    using halo_type = Halo<device_type>;
+    halo_type halo = pair.first;
+    auto shifts = pair.second;
+
+    // Create the functor for modifying the buffer.
+    using modify_type = PeriodicModifyAoSoA<device_type, PositionIndex>;
+    auto periodic_modify = modify_type( shifts );
+
+    // Return Halo and PeriodicModify together.
+    GridHalo<halo_type, modify_type> grid_halo( halo, periodic_modify );
+    return grid_halo;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Determine which data should be ghosted on another decomposition, using
+  bounds of a Cajita grid and taking periodic boundaries into account. Slice
+  variant.
+
+  \tparam LocalGridType Cajita LocalGrid type.
+
+  \tparam PositionSliceType Slice type.
+
+  \param local_grid The local grid for creating halo and periodicity.
+
+  \param positions The position slice.
+
+  \param min_halo_width Number of halo mesh widths to include for ghosting.
+
+  \param max_export_guess The allocation size for halo export ranks, IDs, and
+  periodic shifts.
+
+  \return GridHalo containing Halo and PeriodicModify.
+*/
+template <class LocalGridType, class PositionSliceType>
+auto createGridHalo(
+    const LocalGridType& local_grid, const PositionSliceType& positions,
+    const int min_halo_width, const int max_export_guess = 0,
+    typename std::enable_if<is_slice<PositionSliceType>::value, int>::type* =
+        0 )
+{
+    using device_type = typename PositionSliceType::device_type;
+
+    auto pair = Impl::getHaloIDs( local_grid, positions, min_halo_width,
+                                  max_export_guess );
+    using halo_type = Halo<device_type>;
+    halo_type halo = pair.first;
+    auto shifts = pair.second;
+
+    // Create the functor for modifying the buffer.
+    using modify_type = PeriodicModifySlice<device_type>;
+    auto periodic_modify = modify_type( shifts );
+
+    // Return Halo and PeriodicModify together.
+    GridHalo<halo_type, modify_type> grid_halo( halo, periodic_modify );
+    return grid_halo;
 }
 
 //---------------------------------------------------------------------------//
@@ -759,29 +864,55 @@ auto createGridHalo(
   using the bounds and periodicity of a Cajita grid to determine which particles
   should be copied. AoSoA variant.
 
-  \tparam HaloType Halo type.
-
-  \tparam PeriodicShiftType Periodic shift type.
+  \tparam GridHaloType GridHalo type - contained ModifyType must have an
+  AoSoA-compatible functor to modify the buffer.
 
   \tparam ParticleContainer AoSoA type.
 
-  \param halo The communication halo.
-
-  \param shift Periodic shift functor.
+  \param grid_halo The communication halo taking into account periodic
+  boundaries.
 
   \param particles The particle AoSoA, containing positions.
 */
 template <class GridHaloType, class ParticleContainer>
-void gridGather( const GridHaloType grid_halo, ParticleContainer& particles )
+void gridGather( const GridHaloType grid_halo, ParticleContainer& particles,
+                 typename std::enable_if<is_aosoa<ParticleContainer>::value,
+                                         int>::type* = 0 )
 {
     auto halo = grid_halo.getHalo();
-    auto shifts = grid_halo.getShifts();
+    auto modify = grid_halo.getModify();
     particles.resize( halo.numLocal() + halo.numGhost() );
 
-    gather( halo, particles, shifts );
+    gather( halo, particles, modify );
 }
 
-// TODO: slice version
+//---------------------------------------------------------------------------//
+/*!
+  \brief Gather data from one decomposition and ghosts on another decomposition,
+  using the bounds and periodicity of a Cajita grid to determine which particles
+  should be copied. Slice variant.
+
+  \tparam GridHaloType GridHalo type - contained ModifyType must have a
+  slice-compatible functor to modify the buffer.
+
+  \tparam PositionSliceType Slice type.
+
+  \param grid_halo The communication halo taking into account periodic
+  boundaries.
+
+  \param positions The position slice.
+*/
+template <class GridHaloType, class PositionSliceType>
+void gridGather( const GridHaloType grid_halo, PositionSliceType& positions,
+                 typename std::enable_if<is_slice<PositionSliceType>::value,
+                                         int>::type* = 0 )
+{
+    auto halo = grid_halo.getHalo();
+    auto modify = grid_halo.getModify();
+
+    // Must be resized to match local/ghost externally.
+    gather( halo, positions, modify );
+}
 
 } // namespace Cabana
 
