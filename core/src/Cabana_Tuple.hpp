@@ -59,7 +59,7 @@ get( Tuple_t& tp )
 
 // Rank-0 const
 template <std::size_t M, class Tuple_t>
-KOKKOS_FORCEINLINE_FUNCTION typename Tuple_t::template member_value_type<M>
+KOKKOS_FORCEINLINE_FUNCTION typename Tuple_t::template member_const_reference_type<M>
 get( const Tuple_t& tp )
 {
     return get<M>( static_cast<const typename Tuple_t::base&>( tp ), 0 );
@@ -79,7 +79,7 @@ get( Tuple_t& tp, const std::size_t d0 )
 template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
-    typename Tuple_t::template member_value_type<M>>::type
+    typename Tuple_t::template member_const_reference_type<M>>::type
 get( const Tuple_t& tp, const std::size_t d0 )
 {
     return get<M>( static_cast<const typename Tuple_t::base&>( tp ), 0, d0 );
@@ -99,7 +99,7 @@ get( Tuple_t& tp, const std::size_t d0, const std::size_t d1 )
 template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
-    typename Tuple_t::template member_value_type<M>>::type
+    typename Tuple_t::template member_const_reference_type<M>>::type
 get( const Tuple_t& tp, const std::size_t d0, const std::size_t d1 )
 {
     return get<M>( static_cast<const typename Tuple_t::base&>( tp ), 0, d0,
@@ -121,7 +121,7 @@ get( Tuple_t& tp, const std::size_t d0, const std::size_t d1,
 template <std::size_t M, class Tuple_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_tuple<Tuple_t>::value,
-    typename Tuple_t::template member_value_type<M>>::type
+    typename Tuple_t::template member_const_reference_type<M>>::type
 get( const Tuple_t& tp, const std::size_t d0, const std::size_t d1,
      const std::size_t d2 )
 {

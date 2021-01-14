@@ -177,7 +177,7 @@ get( SoA_t& soa, const std::size_t a )
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<is_soa<SoA_t>::value,
-                            typename SoA_t::template member_value_type<M>>::type
+                            typename SoA_t::template member_const_reference_type<M>>::type
     get( const SoA_t& soa, const std::size_t a )
 {
     return Impl::soaMemberCast<M>( soa )._data[a];
@@ -197,7 +197,7 @@ get( SoA_t& soa, const std::size_t a, const std::size_t d0 )
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<is_soa<SoA_t>::value,
-                            typename SoA_t::template member_value_type<M>>::type
+                            typename SoA_t::template member_const_reference_type<M>>::type
     get( const SoA_t& soa, const std::size_t a, const std::size_t d0 )
 {
     return Impl::soaMemberCast<M>( soa )._data[d0][a];
@@ -218,7 +218,7 @@ get( SoA_t& soa, const std::size_t a, const std::size_t d0,
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<is_soa<SoA_t>::value,
-                            typename SoA_t::template member_value_type<M>>::type
+                            typename SoA_t::template member_const_reference_type<M>>::type
     get( const SoA_t& soa, const std::size_t a, const std::size_t d0,
          const std::size_t d1 )
 {
@@ -240,7 +240,7 @@ get( SoA_t& soa, const std::size_t a, const std::size_t d0,
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<is_soa<SoA_t>::value,
-                            typename SoA_t::template member_value_type<M>>::type
+                            typename SoA_t::template member_const_reference_type<M>>::type
     get( const SoA_t& soa, const std::size_t a, const std::size_t d0,
          const std::size_t d1, const std::size_t d2 )
 {
@@ -285,8 +285,11 @@ struct SoA<MemberTypes<Types...>, VectorLength>
 
     // Reference type at a given index M.
     template <std::size_t M>
-    using member_reference_type =
-        typename std::add_lvalue_reference<member_value_type<M>>::type;
+    using member_reference_type = member_value_type<M>&;
+
+    // Const reference type at a given index M.
+    template <std::size_t M>
+    using member_const_reference_type = member_value_type<M> const&;
 
     // Pointer type at a given index M.
     template <std::size_t M>
