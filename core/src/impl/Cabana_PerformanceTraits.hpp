@@ -84,6 +84,16 @@ class PerformanceTraits<Kokkos::Experimental::HIP>
 #endif
 
 //---------------------------------------------------------------------------//
+#if defined( KOKKOS_ENABLE_SYCL )
+template <>
+class PerformanceTraits<Kokkos::Experimental::SYCL>
+{
+  public:
+    static constexpr int vector_length = 16; // FIXME_SYCL
+};
+#endif
+
+//---------------------------------------------------------------------------//
 #if defined( KOKKOS_ENABLE_OPENMPTARGET )
 template <>
 class PerformanceTraits<Kokkos::Experimental::OpenMPTarget>
