@@ -59,8 +59,9 @@ get( Tuple_t& tp )
 
 // Rank-0 const
 template <std::size_t M, class Tuple_t>
-KOKKOS_FORCEINLINE_FUNCTION typename Tuple_t::template member_const_reference_type<M>
-get( const Tuple_t& tp )
+KOKKOS_FORCEINLINE_FUNCTION
+    typename Tuple_t::template member_const_reference_type<M>
+    get( const Tuple_t& tp )
 {
     return get<M>( static_cast<const typename Tuple_t::base&>( tp ), 0 );
 }
