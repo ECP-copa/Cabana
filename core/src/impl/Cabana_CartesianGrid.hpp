@@ -104,11 +104,11 @@ class CartesianGrid
         // Since we use a floor function a point on the outer boundary
         // will be found in the next cell, causing an out of bounds error
         ic = cellsBetween( xp, _min_x, _rdx );
-        ic = (ic == _nx) ? ic - 1 : ic;
+        ic = ( ic == _nx ) ? ic - 1 : ic;
         jc = cellsBetween( yp, _min_y, _rdy );
-        jc = (jc == _ny) ? jc - 1 : jc;
+        jc = ( jc == _ny ) ? jc - 1 : jc;
         kc = cellsBetween( zp, _min_z, _rdz );
-        kc = (kc == _nz) ? kc - 1 : kc;
+        kc = ( kc == _nz ) ? kc - 1 : kc;
     }
 
     // Given a position and a cell index get square of the minimum distance to
