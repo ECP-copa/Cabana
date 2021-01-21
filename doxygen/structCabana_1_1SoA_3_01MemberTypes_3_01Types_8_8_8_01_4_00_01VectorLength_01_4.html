@@ -103,10 +103,14 @@ template&lt;std::size_t M&gt; </td></tr>
 template&lt;std::size_t M&gt; </td></tr>
 <tr class="memitem:a608be52850c443d8ea59832f567bf72b"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_value_type</b> = typename std::remove_all_extents&lt; member_data_type&lt; M &gt; &gt;::type</td></tr>
 <tr class="separator:a608be52850c443d8ea59832f567bf72b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a77654d7c1100341c03ee34eac516d1c2"><td class="memTemplParams" colspan="2"><a id="a77654d7c1100341c03ee34eac516d1c2"></a>
+<tr class="memitem:a64dc7098e7badde5b020fc57658d766d"><td class="memTemplParams" colspan="2"><a id="a64dc7098e7badde5b020fc57658d766d"></a>
 template&lt;std::size_t M&gt; </td></tr>
-<tr class="memitem:a77654d7c1100341c03ee34eac516d1c2"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_reference_type</b> = typename std::add_lvalue_reference&lt; member_value_type&lt; M &gt; &gt;::type</td></tr>
-<tr class="separator:a77654d7c1100341c03ee34eac516d1c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a64dc7098e7badde5b020fc57658d766d"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_reference_type</b> = member_value_type&lt; M &gt; &amp;</td></tr>
+<tr class="separator:a64dc7098e7badde5b020fc57658d766d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a43f7d035571939c8ce700fec0cac6346"><td class="memTemplParams" colspan="2"><a id="a43f7d035571939c8ce700fec0cac6346"></a>
+template&lt;std::size_t M&gt; </td></tr>
+<tr class="memitem:a43f7d035571939c8ce700fec0cac6346"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_const_reference_type</b> = member_value_type&lt; M &gt; const  &amp;</td></tr>
+<tr class="separator:a43f7d035571939c8ce700fec0cac6346"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af0df2e0fe2e7e5308f510da9910e1cd4"><td class="memTemplParams" colspan="2"><a id="af0df2e0fe2e7e5308f510da9910e1cd4"></a>
 template&lt;std::size_t M&gt; </td></tr>
 <tr class="memitem:af0df2e0fe2e7e5308f510da9910e1cd4"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>member_pointer_type</b> = typename std::add_pointer&lt; member_value_type&lt; M &gt; &gt;::type</td></tr>
