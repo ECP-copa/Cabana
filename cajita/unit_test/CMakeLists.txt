@@ -105,12 +105,8 @@ if(Cabana_ENABLE_HYPRE)
 endif()
 
 if(Cabana_ENABLE_HEFFTE)
-  # FIXME_HIP
-  if(NOT Kokkos_ENABLE_HIP)
     list(APPEND MPI_TESTS
-      FastFourierTransform
-      )
-  endif()
+      FastFourierTransform)
 endif()
 
 Cajita_add_tests(NAMES ${SERIAL_TESTS})

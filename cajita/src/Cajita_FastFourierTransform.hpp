@@ -73,56 +73,6 @@ struct FFTBackendDefault
 };
 } // namespace Impl
 
-// Static type checker.
-template <typename>
-struct is_cuda_complex_impl : public std::false_type
-{
-};
-#ifdef KOKKOS_ENABLE_CUDA
-template <>
-struct is_cuda_complex_impl<cufftComplex> : public std::true_type
-{
-};
-template <>
-struct is_cuda_complex_impl<cufftDoubleComplex> : public std::true_type
-{
-};
-#endif
-template <class T>
-struct is_cuda_complex
-    : public is_cuda_complex_impl<typename std::remove_cv<T>::type>::type
-{
-};
-
-template <typename>
-struct is_std_complex_impl : public std::false_type
-{
-};
-template <class Scalar>
-struct is_std_complex_impl<std::complex<Scalar>> : public std::true_type
-{
-};
-template <class T>
-struct is_std_complex
-    : public is_std_complex_impl<typename std::remove_cv<T>::type>::type
-{
-};
-
-template <typename T, typename U, typename SFINAE = void>
-struct is_matching_complex : public std::false_type
-{
-};
-template <class T, class U>
-struct is_matching_complex<
-    T, U,
-    typename std::enable_if<
-        std::is_same<T, U>::value ||
-        std::is_same<typename Kokkos::complex<T>, U>::value ||
-        std::is_same<T, typename Kokkos::complex<U>>::value>::type>
-    : public std::true_type
-{
-};
-
 template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
           class ArrayScalar, class Entity, class Mesh, class Device,
           class Scalar, typename SFINAE = void>
@@ -134,8 +84,6 @@ struct is_matching_array : public std::false_type
                    "Array mesh type mush match FFT mesh type." );
     static_assert( std::is_same<ArrayDevice, Device>::value,
                    "Array device type must match FFT device type." );
-    static_assert( is_matching_complex<ArrayScalar, Scalar>::value,
-                   "Array value type must match complex FFT value type." );
 };
 template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
           class ArrayScalar, class Entity, class Mesh, class Device,
@@ -143,11 +91,9 @@ template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
 struct is_matching_array<
     ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device,
     Scalar,
-    typename std::enable_if<
-        std::is_same<ArrayEntity, Entity>::value &&
-        std::is_same<ArrayMesh, Mesh>::value &&
-        std::is_same<ArrayDevice, Device>::value &&
-        is_matching_complex<ArrayScalar, Scalar>::value>::type>
+    typename std::enable_if<std::is_same<ArrayEntity, Entity>::value &&
+                            std::is_same<ArrayMesh, Mesh>::value &&
+                            std::is_same<ArrayDevice, Device>::value>::type>
     : public std::true_type
 {
 };
@@ -252,9 +198,9 @@ class FastFourierTransform
     */
     inline void checkArrayDofs( const int dof )
     {
-        if ( 1 != dof )
+        if ( 2 != dof )
             throw std::logic_error(
-                "Only 1 complex value per entity allowed in FFT" );
+                "Only 2 float or double values per entity allowed in FFT" );
     }
 
     /*!
@@ -301,7 +247,7 @@ class FastFourierTransform
 //---------------------------------------------------------------------------//
 // heFFTe
 //---------------------------------------------------------------------------//
-
+// TODO: dont think need Scalar as template param for these
 namespace Impl
 {
 template <class ExecutionSpace, class Scalar, class BackendType>
@@ -313,13 +259,11 @@ template <class ExecutionSpace, class Scalar>
 struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendFFTW>
 {
     using backend_type = heffte::backend::fftw;
-    using complex_type = std::complex<Scalar>;
 };
 template <class ExecutionSpace, class Scalar>
 struct HeffteBackendTraits<ExecutionSpace, Scalar, Impl::FFTBackendDefault>
 {
     using backend_type = heffte::backend::fftw;
-    using complex_type = std::complex<Scalar>;
 };
 #endif
 #ifdef Heffte_ENABLE_MKL
@@ -327,7 +271,6 @@ template <class ExecutionSpace, class Scalar>
 struct HeffteBackendTraits<ExecutionSpace, Scalar, FFTBackendMKL>
 {
     using backend_type = heffte::backend::mkl;
-    using complex_type = std::complex<Scalar>;
 };
 #endif
 #ifdef Heffte_ENABLE_CUDA
@@ -336,13 +279,11 @@ template <>
 struct HeffteBackendTraits<Kokkos::Cuda, double, Impl::FFTBackendDefault>
 {
     using backend_type = heffte::backend::cufft;
-    using complex_type = cufftDoubleComplex;
 };
 template <>
 struct HeffteBackendTraits<Kokkos::Cuda, float, Impl::FFTBackendDefault>
 {
     using backend_type = heffte::backend::cufft;
-    using complex_type = cufftComplex;
 };
 #endif
 #endif
@@ -351,7 +292,7 @@ template <class Scalar>
 struct HeffteBackendTraits<Kokkos::Experimental::HIP, Scalar,
                            Impl::FFTBackendDefault>
 {
-    static_assert( false, "FFT with HIP not supported" ); // FIXME_HIP
+    using backend_type = heffte::backend::rocfft;
 };
 #endif
 
@@ -395,12 +336,10 @@ class HeffteFastFourierTransform
     using device_type = DeviceType;
     using backend_type = BackendType;
     using exec_space = typename device_type::execution_space;
+    using complex_type = std::complex<value_type>;
     using heffte_backend_type =
         typename Impl::HeffteBackendTraits<exec_space, value_type,
                                            backend_type>::backend_type;
-    using complex_type =
-        typename Impl::HeffteBackendTraits<exec_space, value_type,
-                                           backend_type>::complex_type;
 
     /*!
       \brief Constructor
@@ -464,68 +403,6 @@ class HeffteFastFourierTransform
     }
 
     /*!
-     \brief Copy data from Kokkos::complex to CUDA complex.
-     \param x_view_val Kokkos::complex value.
-     \param work_view_val CUDA complex value.
-    */
-    template <class ComplexType>
-    KOKKOS_INLINE_FUNCTION ComplexType copyFromKokkosComplex(
-        Kokkos::complex<value_type> x_view_val, ComplexType work_view_val,
-        typename std::enable_if<( is_cuda_complex<ComplexType>::value ),
-                                int>::type* = 0 )
-    {
-        work_view_val.x = x_view_val.real();
-        work_view_val.y = x_view_val.imag();
-        return work_view_val;
-    }
-    /*!
-     \brief Copy data from CUDA complex to Kokkos complex.
-     \param work_view_val CUDA complex value.
-     \param x_view_val Kokkos complex value.
-    */
-    template <class ComplexType>
-    KOKKOS_INLINE_FUNCTION Kokkos::complex<value_type> copyToKokkosComplex(
-        ComplexType work_view_val, Kokkos::complex<value_type> x_view_val,
-        typename std::enable_if<( is_cuda_complex<ComplexType>::value ),
-                                int>::type* = 0 )
-    {
-        x_view_val.real() = work_view_val.x;
-        x_view_val.imag() = work_view_val.y;
-        return x_view_val;
-    }
-
-    /*!
-     \brief Copy data from Kokkos::complex to std::complex.
-     \param x_view_val Kokkos::complex value.
-     \param work_view_val std::complex value.
-    */
-    template <class ComplexType>
-    inline ComplexType copyFromKokkosComplex(
-        Kokkos::complex<value_type> x_view_val, ComplexType work_view_val,
-        typename std::enable_if<( is_std_complex<ComplexType>::value ),
-                                int>::type* = 0 )
-    {
-        work_view_val.real( x_view_val.real() );
-        work_view_val.imag( x_view_val.imag() );
-        return work_view_val;
-    }
-    /*!
-     \brief Copy data from std::complex to Kokkos::complex.
-     \param work_view_val std::complex value.
-     \param x_view_val Kokkos::complex value.
-    */
-    template <class ComplexType>
-    inline Kokkos::complex<value_type> copyToKokkosComplex(
-        ComplexType work_view_val, Kokkos::complex<value_type> x_view_val,
-        typename std::enable_if<( is_std_complex<ComplexType>::value ),
-                                int>::type* = 0 )
-    {
-        x_view_val.real() = work_view_val.real();
-        x_view_val.imag() = work_view_val.imag();
-        return x_view_val;
-    }
-
-    /*!
      \brief Do the FFT.
      \param x The array on which to perform the transform.
      \param flag Flag for forward or reverse.
@@ -537,7 +414,6 @@ class HeffteFastFourierTransform
         // Create a subview of the work array to write the local data into.
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
-
         auto work_view =
             createView<complex_type, Kokkos::LayoutRight, DeviceType>(
                 own_space, _fft_work.data() );
@@ -553,8 +429,8 @@ class HeffteFastFourierTransform
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
                 auto kw = k - own_space.min( Dim::K );
-                work_view( iw, jw, kw ) = copyFromKokkosComplex(
-                    x_view( i, j, k, 0 ), work_view( iw, jw, kw ) );
+                work_view( iw, jw, kw ).real( x_view( i, j, k, 0 ) );
+                work_view( iw, jw, kw ).imag( x_view( i, j, k, 1 ) );
             } );
 
         if ( flag == 1 )
@@ -580,8 +456,10 @@ class HeffteFastFourierTransform
                 auto iw = i - own_space.min( Dim::I );
                 auto jw = j - own_space.min( Dim::J );
                 auto kw = k - own_space.min( Dim::K );
-                x_view( i, j, k, 0 ) = copyToKokkosComplex(
-                    work_view( iw, jw, kw ), x_view( i, j, k, 0 ) );
+                // x_view( i, j, k, 0 ) = work_view( iw, jw, kw, 0 );
+                // x_view( i, j, k, 1 ) = work_view( iw, jw, kw, 1 );
+                x_view( i, j, k, 0 ) = work_view( iw, jw, kw ).real();
+                x_view( i, j, k, 1 ) = work_view( iw, jw, kw ).imag();
             } );
     }
 
