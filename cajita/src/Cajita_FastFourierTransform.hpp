@@ -200,7 +200,7 @@ class FastFourierTransform
     {
         if ( 2 != dof )
             throw std::logic_error(
-                "Only 2 float or double values per entity allowed in FFT" );
+                "Only 1 complex value per entity allowed in FFT" );
     }
 
     /*!
@@ -375,9 +375,8 @@ class HeffteFastFourierTransform
             throw std::logic_error( "Expected FFT allocation size smaller "
                                     "than local grid size" );
 
-        _fft_work = Kokkos::View<Scalar*, DeviceType>(
-            Kokkos::ViewAllocateWithoutInitializing( "fft_work" ),
-            2 * fftsize );
+        _fft_work = Kokkos::View<Scalar**, DeviceType>(
+            Kokkos::ViewAllocateWithoutInitializing( "fft_work" ), fftsize );
     }
 
     /*!
@@ -414,7 +413,15 @@ class HeffteFastFourierTransform
         // Create a subview of the work array to write the local data into.
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
-        auto work_view_space = appendDimension( own_space, 2 );
+        // auto work_view_space = appendDimension(own_space, 2);
+        // auto work_view =
+        //    createView<Scalar, Kokkos::LayoutRight, DeviceType>(
+        //        work_view_space, _fft_work.data() );
+        // auto work_view =
+        //    Kokkos::View<std::complex<Scalar>*, Kokkos::LayoutRight,
+        //    DeviceType>(
+        //        own_space, _fft_work.data() );
+        auto work_view_space = appendDimension(own_space, 2);
         auto work_view =
             createView<Scalar, Kokkos::LayoutRight, DeviceType>(
                 work_view_space, _fft_work.data() );
@@ -436,11 +443,13 @@ class HeffteFastFourierTransform
 
         if ( flag == 1 )
         {
-            _fft->forward( _fft_work.data(), _fft_work.data(), scale );
+            _fft->forward( reinterpret_cast<std::complex<Scalar>*>( _fft_work.data() ), reinterpret_cast<std::complex<Scalar>*>( _fft_work.data() ), scale );
+            // _fft->forward( _fft_work.data(), _fft_work.data(), scale );
         }
         else if ( flag == -1 )
         {
-            _fft->backward( _fft_work.data(), _fft_work.data(), scale );
+            _fft->backward( reinterpret_cast<std::complex<Scalar>*>( _fft_work.data() ), reinterpret_cast<std::complex<Scalar>*>( _fft_work.data() ), scale );
+            // _fft->backward( _fft_work.data(), _fft_work.data(), scale );
         }
         else
         {
@@ -464,7 +473,7 @@ class HeffteFastFourierTransform
 
   private:
     std::shared_ptr<heffte::fft3d<heffte_backend_type>> _fft;
-    Kokkos::View<Scalar*, DeviceType> _fft_work;
+    Kokkos::View<Scalar**, DeviceType> _fft_work;
 };
 
 //---------------------------------------------------------------------------//
