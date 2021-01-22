@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -63,7 +63,7 @@ void unmanagedAoAoAExample()
     // We use `new` here to represent an arbitrary pointer, in a typical
     // example this will be passed in from a users existing code/memory
     // allocation (possibly from Fortran)
-    Data *local_data = new Data[num_tuple];
+    Data* local_data = new Data[num_tuple];
 
     // This is equivalent to a Cabana AoSoA of:
     // using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
@@ -92,7 +92,7 @@ void unmanagedAoAoAExample()
                                   Kokkos::MemoryUnmanaged>;
 
     // Do convert
-    auto ptr = reinterpret_cast<typename AoSoA_t::soa_type *>( local_data );
+    auto ptr = reinterpret_cast<typename AoSoA_t::soa_type*>( local_data );
     AoSoA_t aosoa( ptr, num_soa, num_tuple );
 
     /*
@@ -140,7 +140,7 @@ void unmanagedAoAoAExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 

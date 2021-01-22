@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -38,13 +38,13 @@ void writeTest()
     // Create the global mesh.
     UniformDimPartitioner partitioner;
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {22, 19, 21};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 22, 19, 21 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -116,8 +116,7 @@ void writeTest()
                       i < global_grid->globalNumEntity( Cell(), Dim::I ); ++i )
                 {
                     cell_data_file.seekg( cell_id * sizeof( double ) );
-                    cell_data_file.read( (char *)&cell_value,
-                                         sizeof( double ) );
+                    cell_data_file.read( (char*)&cell_value, sizeof( double ) );
                     EXPECT_EQ( cell_value, i + j + k );
                     ++cell_id;
                 }
@@ -146,7 +145,7 @@ void writeTest()
                             ? 0
                             : i;
                     node_data_file.seekg( node_id * sizeof( int ) );
-                    node_data_file.read( (char *)&node_value, sizeof( int ) );
+                    node_data_file.read( (char*)&node_value, sizeof( int ) );
                     EXPECT_EQ( node_value, ival );
                     ++node_id;
 
@@ -155,7 +154,7 @@ void writeTest()
                             ? 0
                             : j;
                     node_data_file.seekg( node_id * sizeof( int ) );
-                    node_data_file.read( (char *)&node_value, sizeof( int ) );
+                    node_data_file.read( (char*)&node_value, sizeof( int ) );
                     EXPECT_EQ( node_value, jval );
                     ++node_id;
 
@@ -164,7 +163,7 @@ void writeTest()
                             ? 0
                             : k;
                     node_data_file.seekg( node_id * sizeof( int ) );
-                    node_data_file.read( (char *)&node_value, sizeof( int ) );
+                    node_data_file.read( (char*)&node_value, sizeof( int ) );
                     EXPECT_EQ( node_value, kval );
                     ++node_id;
                 }

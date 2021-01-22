@@ -12,9 +12,9 @@ pipeline {
                         dockerfile {
                             filename 'Dockerfile'
                             dir 'docker'
-                            additionalBuildArgs '--pull --build-arg BASE=nvidia/cuda:10.2-devel'
+                            additionalBuildArgs '--build-arg BASE=nvidia/cuda:10.2-devel'
                             label 'nvidia-docker && volta'
-                            args '-v /tmp/ccache.kokkos:/tmp/ccache'
+                            args '-v /tmp/ccache.kokkos:/tmp/ccache --env NVIDIA_VISIBLE_DEVICES=$NVIDIA_VISIBLE_DEVICES'
                         }
                     }
                     steps {
@@ -24,10 +24,12 @@ pipeline {
                               -D CMAKE_BUILD_TYPE=Debug \
                               -D CMAKE_CXX_COMPILER=$KOKKOS_DIR/bin/nvcc_wrapper \
                               -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic" \
-                              -D CMAKE_PREFIX_PATH=$KOKKOS_DIR \
+                              -D CMAKE_PREFIX_PATH="$KOKKOS_DIR;$ARBORX_DIR;$HEFFTE_DIR" \
+                              -D MPIEXEC_MAX_NUMPROCS=1 \
                               -D MPIEXEC_PREFLAGS="--allow-run-as-root;--mca;btl_smcuda_use_cuda_ipc;0" \
                               -D Cabana_REQUIRE_MPI=ON \
                               -D Cabana_REQUIRE_ARBORX=ON \
+                              -D Cabana_REQUIRE_HEFFTE=ON \
                               -D Cabana_REQUIRE_CUDA=ON \
                               -D Cabana_ENABLE_TESTING=ON \
                               -D Cabana_ENABLE_EXAMPLES=ON \
@@ -43,7 +45,7 @@ pipeline {
                             filename 'Dockerfile.hipcc'
                             dir 'docker'
                             additionalBuildArgs '--build-arg BASE=rocm/dev-ubuntu-18.04:3.5'
-                            args '-v /tmp/ccache.kokkos:/tmp/ccache --device=/dev/kfd --device=/dev/dri --security-opt seccomp=unconfined --group-add video'
+                            args '-v /tmp/ccache.kokkos:/tmp/ccache --device=/dev/kfd --device=/dev/dri --security-opt seccomp=unconfined --group-add video --env HIP_VISIBLE_DEVICES=$HIP_VISIBLE_DEVICES'
                             label 'rocm-docker && vega'
                         }
                     }
@@ -54,6 +56,7 @@ pipeline {
                               -D CMAKE_BUILD_TYPE=Debug \
                               -D CMAKE_CXX_COMPILER=hipcc \
                               -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -DNDEBUG" \
+                              -D MPIEXEC_MAX_NUMPROCS=1 \
                               -D MPIEXEC_PREFLAGS="--allow-run-as-root" \
                               -D CMAKE_PREFIX_PATH="$KOKKOS_DIR;$ARBORX_DIR" \
                               -D Cabana_REQUIRE_MPI=ON \

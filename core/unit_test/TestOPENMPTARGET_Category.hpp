@@ -9,12 +9,14 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_TEST_CUDA_CATEGORY_HPP
-#define CABANA_TEST_CUDA_CATEGORY_HPP
+#ifndef CABANA_TEST_OPENMPTARGET_CATEGORY_HPP
+#define CABANA_TEST_OPENMPTARGET_CATEGORY_HPP
 
-#define TEST_CATEGORY cuda
-#define TEST_EXECSPACE Kokkos::Cuda
-#define TEST_MEMSPACE Kokkos::CudaSpace
-#define TEST_DEVICE Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>
+#define TEST_CATEGORY openmptarget
+#define TEST_EXECSPACE Kokkos::Experimental::OpenMPTarget
+#define TEST_MEMSPACE Kokkos::Experimental::OpenMPTargetSpace
+#define TEST_DEVICE                                                            \
+    Kokkos::Device<Kokkos::Experimental::OpenMPTarget,                         \
+                   Kokkos::Experimental::OpenMPTargetSpace>
 
-#endif // end CABANA_TEST_CUDA_CATEGORY_HPP
+#endif // end CABANA_TEST_OPENMP_CATEGORY_HPP

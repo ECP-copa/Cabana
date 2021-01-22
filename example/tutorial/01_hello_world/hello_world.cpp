@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -16,7 +16,7 @@
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     /* The Kokkos runtime used by Cabana must be initialized and finalized.
        Kokkos::ScopeGuard inializes Kokkos and guarantees it is finalized,

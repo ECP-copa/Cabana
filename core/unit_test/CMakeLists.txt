@@ -1,3 +1,14 @@
+############################################################################
+# Copyright (c) 2018-2021 by the Cabana authors                            #
+# All rights reserved.                                                     #
+#                                                                          #
+# This file is part of the Cabana library. Cabana is distributed under a   #
+# BSD 3-clause license. For the licensing terms see the LICENSE file in    #
+# the top-level directory.                                                 #
+#                                                                          #
+# SPDX-License-Identifier: BSD-3-Clause                                    #
+############################################################################
+
 set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
@@ -36,10 +47,20 @@ endforeach()
 macro(Cabana_add_tests)
   cmake_parse_arguments(CABANA_UNIT_TEST "MPI" "" "NAMES" ${ARGN})
   set(CABANA_UNIT_TEST_MPIEXEC_NUMPROCS 1)
-  if(MPIEXEC_MAX_NUMPROCS GREATER 1)
+  foreach( _np 2 4 )
+    if(MPIEXEC_MAX_NUMPROCS GREATER_EQUAL ${_np})
+      list(APPEND CABANA_UNIT_TEST_MPIEXEC_NUMPROCS ${_np})
+    endif()
+  endforeach()
+  if(MPIEXEC_MAX_NUMPROCS GREATER 4)
     list(APPEND CABANA_UNIT_TEST_MPIEXEC_NUMPROCS ${MPIEXEC_MAX_NUMPROCS})
   endif()
-  set(CABANA_UNIT_TEST_NUMTHREADS 1 2)
+  set(CABANA_UNIT_TEST_NUMTHREADS 1)
+  foreach( _nt 2 4 )
+    if(MPIEXEC_MAX_NUMPROCS GREATER_EQUAL ${_nt})
+      list(APPEND CABANA_UNIT_TEST_NUMTHREADS ${_nt})
+    endif()
+  endforeach()
   if(CABANA_UNIT_TEST_MPI)
     set(CABANA_UNIT_TEST_MAIN mpi_unit_test_main.cpp)
   else()
@@ -62,14 +83,14 @@ macro(Cabana_add_tests)
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
           # NOTE: When moving to CMake 3.10+ make sure to use MPIEXEC_EXECUTABLE instead
-          add_test(NAME ${_target}_${_np} COMMAND
+          add_test(NAME ${_target}_np_${_np} COMMAND
             ${MPIEXEC} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
             ${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
         endforeach()
       else()
-        if(_device STREQUAL THREADS OR _device STREQUAL OPENMP)
+        if(_device STREQUAL PTHREAD OR _device STREQUAL OPENMP)
           foreach(_thread ${CABANA_UNIT_TEST_NUMTHREADS})
-            add_test(NAME ${_target}_${_thread} COMMAND
+            add_test(NAME ${_target}_nt_${_thread} COMMAND
               ${NONMPI_PRECOMMAND} ${_target} ${gtest_args} --kokkos-threads=${_thread})
           endforeach()
         else()

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -75,7 +75,7 @@ class CartesianGrid
 
     // Get the number of cells in each direction.
     KOKKOS_INLINE_FUNCTION
-    void numCells( int &num_x, int &num_y, int &num_z )
+    void numCells( int& num_x, int& num_y, int& num_z )
     {
         num_x = _nx;
         num_y = _ny;
@@ -98,12 +98,17 @@ class CartesianGrid
 
     // Given a position get the ijk indices of the cell in which
     KOKKOS_INLINE_FUNCTION
-    void locatePoint( const Real xp, const Real yp, const Real zp, int &ic,
-                      int &jc, int &kc ) const
+    void locatePoint( const Real xp, const Real yp, const Real zp, int& ic,
+                      int& jc, int& kc ) const
     {
+        // Since we use a floor function a point on the outer boundary
+        // will be found in the next cell, causing an out of bounds error
         ic = cellsBetween( xp, _min_x, _rdx );
+        ic = ( ic == _nx ) ? ic - 1 : ic;
         jc = cellsBetween( yp, _min_y, _rdy );
+        jc = ( jc == _ny ) ? jc - 1 : jc;
         kc = cellsBetween( zp, _min_z, _rdz );
+        kc = ( kc == _nz ) ? kc - 1 : kc;
     }
 
     // Given a position and a cell index get square of the minimum distance to
@@ -136,7 +141,7 @@ class CartesianGrid
     }
 
     KOKKOS_INLINE_FUNCTION
-    void ijkBinIndex( const int cardinal, int &i, int &j, int &k ) const
+    void ijkBinIndex( const int cardinal, int& i, int& j, int& k ) const
     {
         i = cardinal / ( _ny * _nz );
         j = ( cardinal / _nz ) % _ny;

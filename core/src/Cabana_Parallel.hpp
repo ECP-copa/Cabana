@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -31,7 +31,7 @@ namespace Impl
 template <class WorkTag, class FunctorType, class... IndexTypes>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor, IndexTypes &&... indices )
+    functorTagDispatch( const FunctorType& functor, IndexTypes&&... indices )
 {
     functor( std::forward<IndexTypes>( indices )... );
 }
@@ -40,7 +40,7 @@ KOKKOS_FORCEINLINE_FUNCTION
 template <class WorkTag, class FunctorType, class... IndexTypes>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor, IndexTypes &&... indices )
+    functorTagDispatch( const FunctorType& functor, IndexTypes&&... indices )
 {
     const WorkTag t{};
     functor( t, std::forward<IndexTypes>( indices )... );
@@ -51,8 +51,8 @@ template <class WorkTag, class FunctorType, class... IndexTypes,
           class ReduceType>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor, IndexTypes &&... indices,
-                        ReduceType &reduce_val )
+    functorTagDispatch( const FunctorType& functor, IndexTypes&&... indices,
+                        ReduceType& reduce_val )
 {
     functor( std::forward<IndexTypes>( indices )..., reduce_val );
 }
@@ -62,8 +62,8 @@ template <class WorkTag, class FunctorType, class... IndexTypes,
           class ReduceType>
 KOKKOS_FORCEINLINE_FUNCTION
     typename std::enable_if<!std::is_same<WorkTag, void>::value>::type
-    functorTagDispatch( const FunctorType &functor, IndexTypes &&... indices,
-                        ReduceType &reduce_val )
+    functorTagDispatch( const FunctorType& functor, IndexTypes&&... indices,
+                        ReduceType& reduce_val )
 {
     const WorkTag t{};
     functor( t, std::forward<IndexTypes>( indices )..., reduce_val );
@@ -116,8 +116,8 @@ KOKKOS_FORCEINLINE_FUNCTION
 */
 template <class FunctorType, int VectorLength, class... ExecParameters>
 inline void simd_parallel_for(
-    const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
-    const FunctorType &functor, const std::string &str = "" )
+    const SimdPolicy<VectorLength, ExecParameters...>& exec_policy,
+    const FunctorType& functor, const std::string& str = "" )
 {
     using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
 
@@ -128,7 +128,7 @@ inline void simd_parallel_for(
     using index_type = typename team_policy::index_type;
 
     auto simd_func =
-        KOKKOS_LAMBDA( const typename team_policy::member_type &team )
+        KOKKOS_LAMBDA( const typename team_policy::member_type& team )
     {
         index_type s = team.league_rank() + exec_policy.structBegin();
         Kokkos::parallel_for(
@@ -139,11 +139,11 @@ inline void simd_parallel_for(
             } );
     };
     if ( str.empty() )
-        Kokkos::parallel_for( dynamic_cast<const team_policy &>( exec_policy ),
+        Kokkos::parallel_for( dynamic_cast<const team_policy&>( exec_policy ),
                               simd_func );
     else
         Kokkos::parallel_for(
-            str, dynamic_cast<const team_policy &>( exec_policy ), simd_func );
+            str, dynamic_cast<const team_policy&>( exec_policy ), simd_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -222,9 +222,9 @@ class TeamVectorOpTag
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const FirstNeighborsTag, const SerialOpTag, const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const FirstNeighborsTag, const SerialOpTag, const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -283,9 +283,9 @@ inline void neighbor_parallel_for(
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const SecondNeighborsTag, const SerialOpTag, const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const SecondNeighborsTag, const SerialOpTag, const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -370,9 +370,9 @@ inline void neighbor_parallel_for(
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const FirstNeighborsTag, const TeamOpTag, const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const FirstNeighborsTag, const TeamOpTag, const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -395,7 +395,7 @@ inline void neighbor_parallel_for(
     const auto range_begin = exec_policy.begin();
 
     auto neigh_func =
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
     {
         index_type i = team.league_rank() + range_begin;
         Kokkos::parallel_for(
@@ -444,9 +444,9 @@ inline void neighbor_parallel_for(
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const SecondNeighborsTag, const TeamOpTag, const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const SecondNeighborsTag, const TeamOpTag, const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -469,7 +469,7 @@ inline void neighbor_parallel_for(
     const auto range_begin = exec_policy.begin();
 
     auto neigh_func =
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
     {
         index_type i = team.league_rank() + range_begin;
 
@@ -523,10 +523,10 @@ inline void neighbor_parallel_for(
 */
 template <class FunctorType, class NeighborListType, class... ExecParameters>
 inline void neighbor_parallel_for(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
     const SecondNeighborsTag, const TeamVectorOpTag,
-    const std::string &str = "" )
+    const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -549,7 +549,7 @@ inline void neighbor_parallel_for(
     const auto range_begin = exec_policy.begin();
 
     auto neigh_func =
-        KOKKOS_LAMBDA( const typename kokkos_policy::member_type &team )
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
     {
         index_type i = team.league_rank() + range_begin;
 
@@ -610,10 +610,10 @@ inline void neighbor_parallel_for(
 template <class FunctorType, class NeighborListType, class ReduceType,
           class... ExecParameters>
 inline void neighbor_parallel_reduce(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const FirstNeighborsTag, const SerialOpTag, ReduceType &reduce_val,
-    const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const FirstNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
+    const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -629,7 +629,7 @@ inline void neighbor_parallel_reduce(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    auto neigh_reduce = KOKKOS_LAMBDA( const index_type i, ReduceType &ival )
+    auto neigh_reduce = KOKKOS_LAMBDA( const index_type i, ReduceType& ival )
     {
         for ( index_type n = 0;
               n < neighbor_list_traits::numNeighbor( list, i ); ++n )
@@ -680,10 +680,10 @@ inline void neighbor_parallel_reduce(
 template <class FunctorType, class NeighborListType, class ReduceType,
           class... ExecParameters>
 inline void neighbor_parallel_reduce(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const SecondNeighborsTag, const SerialOpTag, ReduceType &reduce_val,
-    const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const SecondNeighborsTag, const SerialOpTag, ReduceType& reduce_val,
+    const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -699,7 +699,7 @@ inline void neighbor_parallel_reduce(
 
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
-    auto neigh_reduce = KOKKOS_LAMBDA( const index_type i, ReduceType &ival )
+    auto neigh_reduce = KOKKOS_LAMBDA( const index_type i, ReduceType& ival )
     {
         const index_type nn = neighbor_list_traits::numNeighbor( list, i );
 
@@ -756,10 +756,10 @@ inline void neighbor_parallel_reduce(
 template <class FunctorType, class NeighborListType, class ReduceType,
           class... ExecParameters>
 inline void neighbor_parallel_reduce(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const FirstNeighborsTag, const TeamOpTag, ReduceType &reduce_val,
-    const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const FirstNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
+    const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -782,7 +782,7 @@ inline void neighbor_parallel_reduce(
     const auto range_begin = exec_policy.begin();
 
     auto neigh_reduce = KOKKOS_LAMBDA(
-        const typename kokkos_policy::member_type &team, ReduceType &ival )
+        const typename kokkos_policy::member_type& team, ReduceType& ival )
     {
         index_type i = team.league_rank() + range_begin;
         ReduceType reduce_n = 0;
@@ -790,7 +790,7 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce(
             Kokkos::TeamThreadRange(
                 team, neighbor_list_traits::numNeighbor( list, i ) ),
-            [&]( const index_type n, ReduceType &nval ) {
+            [&]( const index_type n, ReduceType& nval ) {
                 Impl::functorTagDispatch<work_tag>(
                     functor, i,
                     static_cast<index_type>(
@@ -841,10 +841,10 @@ inline void neighbor_parallel_reduce(
 template <class FunctorType, class NeighborListType, class ReduceType,
           class... ExecParameters>
 inline void neighbor_parallel_reduce(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const SecondNeighborsTag, const TeamOpTag, ReduceType &reduce_val,
-    const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const SecondNeighborsTag, const TeamOpTag, ReduceType& reduce_val,
+    const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -867,7 +867,7 @@ inline void neighbor_parallel_reduce(
     const auto range_begin = exec_policy.begin();
 
     auto neigh_reduce = KOKKOS_LAMBDA(
-        const typename kokkos_policy::member_type &team, ReduceType &ival )
+        const typename kokkos_policy::member_type& team, ReduceType& ival )
     {
         index_type i = team.league_rank() + range_begin;
         ReduceType reduce_n = 0;
@@ -875,7 +875,7 @@ inline void neighbor_parallel_reduce(
         const index_type nn = neighbor_list_traits::numNeighbor( list, i );
         Kokkos::parallel_reduce(
             Kokkos::TeamThreadRange( team, nn ),
-            [&]( const index_type n, ReduceType &nval ) {
+            [&]( const index_type n, ReduceType& nval ) {
                 const index_type j =
                     neighbor_list_traits::getNeighbor( list, i, n );
 
@@ -931,10 +931,10 @@ inline void neighbor_parallel_reduce(
 template <class FunctorType, class NeighborListType, class ReduceType,
           class... ExecParameters>
 inline void neighbor_parallel_reduce(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    const FunctorType &functor, const NeighborListType &list,
-    const SecondNeighborsTag, const TeamVectorOpTag, ReduceType &reduce_val,
-    const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const NeighborListType& list,
+    const SecondNeighborsTag, const TeamVectorOpTag, ReduceType& reduce_val,
+    const std::string& str = "" )
 {
     using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
 
@@ -957,7 +957,7 @@ inline void neighbor_parallel_reduce(
     const auto range_begin = exec_policy.begin();
 
     auto neigh_reduce = KOKKOS_LAMBDA(
-        const typename kokkos_policy::member_type &team, ReduceType &ival )
+        const typename kokkos_policy::member_type& team, ReduceType& ival )
     {
         index_type i = team.league_rank() + range_begin;
         ReduceType reduce_n = 0;
@@ -965,14 +965,14 @@ inline void neighbor_parallel_reduce(
         const index_type nn = neighbor_list_traits::numNeighbor( list, i );
         Kokkos::parallel_reduce(
             Kokkos::TeamThreadRange( team, nn ),
-            [&]( const index_type n, ReduceType &nval ) {
+            [&]( const index_type n, ReduceType& nval ) {
                 const index_type j =
                     neighbor_list_traits::getNeighbor( list, i, n );
                 ReduceType reduce_a = 0;
 
                 Kokkos::parallel_reduce(
                     Kokkos::ThreadVectorRange( team, n + 1, nn ),
-                    [&]( const index_type a, ReduceType &aval ) {
+                    [&]( const index_type a, ReduceType& aval ) {
                         const index_type k =
                             neighbor_list_traits::getNeighbor( list, i, a );
                         Impl::functorTagDispatch<work_tag>( functor, i, j, k,

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -38,11 +38,11 @@ class LocalGrid
       \param halo_cell_width The number of halo cells surrounding the locally
       owned cells.
     */
-    LocalGrid( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
+    LocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
                const int halo_cell_width );
 
     // Get the global grid that owns the local grid.
-    const GlobalGrid<MeshType> &globalGrid() const;
+    const GlobalGrid<MeshType>& globalGrid() const;
 
     // Get the number of cells in the halo.
     int haloCellWidth() const;
@@ -237,7 +237,7 @@ class LocalGrid
 */
 template <class MeshType>
 std::shared_ptr<LocalGrid<MeshType>>
-createLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>> &global_grid,
+createLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
                  const int halo_cell_width )
 {
     return std::make_shared<LocalGrid<MeshType>>( global_grid,

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -104,7 +104,7 @@ void aosoaExample()
            the data structure. We use auto here for simplicity but the return
            type is Cabana::SoA<MemberTypes,VectorLength>&.
         */
-        auto &soa = aosoa.access( s );
+        auto& soa = aosoa.access( s );
 
         /*
           Next loop over the values in the vector index of each tuple - this
@@ -204,7 +204,7 @@ void aosoaExample()
 //---------------------------------------------------------------------------//
 // Main.
 //---------------------------------------------------------------------------//
-int main( int argc, char *argv[] )
+int main( int argc, char* argv[] )
 {
     Kokkos::ScopeGuard scope_guard( argc, argv );
 

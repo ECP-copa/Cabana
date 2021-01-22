@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -312,9 +312,9 @@ void atomicAccessTest()
     auto slice = Cabana::slice<0>( aosoa );
 
     // Set to 0.
-    Kokkos::parallel_for( "assign",
-                          Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_data ),
-                          KOKKOS_LAMBDA( const int i ) { slice( i ) = 0; } );
+    Kokkos::parallel_for(
+        "assign", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_data ),
+        KOKKOS_LAMBDA( const int i ) { slice( i ) = 0; } );
 
     // Get an atomic slice of the data.
     decltype( slice )::atomic_access_slice atomic_slice = slice;

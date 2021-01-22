@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -45,10 +45,10 @@ void test1( const bool use_topology )
     // each rank including yourself. Interleave the sends. The resulting
     // communication plan has ghosts that have one unique destination.
     int num_local = 2 * my_size;
-    Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                              my_size );
-    Kokkos::View<std::size_t *, Kokkos::HostSpace> export_ids_host(
-        "export_ids", my_size );
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             my_size );
+    Kokkos::View<std::size_t*, Kokkos::HostSpace> export_ids_host( "export_ids",
+                                                                   my_size );
     std::vector<int> neighbors( my_size );
     for ( int n = 0; n < my_size; ++n )
     {
@@ -244,10 +244,10 @@ void test2( const bool use_topology )
     // ranks. This will create collisions in the scatter as every rank will
     // have data for this rank in the summation.
     int num_local = 1;
-    Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                              my_size );
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> export_ids( "export_ids",
-                                                           my_size );
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             my_size );
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> export_ids( "export_ids",
+                                                          my_size );
     Kokkos::deep_copy( export_ids, 0 );
     std::vector<int> neighbors( my_size );
     for ( int n = 0; n < my_size; ++n )

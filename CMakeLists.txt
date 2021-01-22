@@ -1,3 +1,14 @@
+############################################################################
+# Copyright (c) 2018-2021 by the Cabana authors                            #
+# All rights reserved.                                                     #
+#                                                                          #
+# This file is part of the Cabana library. Cabana is distributed under a   #
+# BSD 3-clause license. For the licensing terms see the LICENSE file in    #
+# the top-level directory.                                                 #
+#                                                                          #
+# SPDX-License-Identifier: BSD-3-Clause                                    #
+############################################################################
+
 #------------------------------------------------------------------------------#
 # Project settings
 #------------------------------------------------------------------------------#
@@ -31,10 +42,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # Dependencies
 #------------------------------------------------------------------------------#
 # find kokkos
-find_package(Kokkos 3.1 REQUIRED)
+find_package(Kokkos 3.2 REQUIRED)
 
 # set supported kokkos devices
-set(CABANA_SUPPORTED_DEVICES SERIAL PTHREAD OPENMP CUDA HIP)
+set(CABANA_SUPPORTED_DEVICES SERIAL PTHREAD OPENMP CUDA HIP OPENMPTARGET)
 
 # check user required kokkos device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
@@ -51,14 +62,14 @@ endif()
 
 # standard dependency macro
 macro(Cabana_add_dependency)
-  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE" "" ${ARGN})
-  find_package( ${CABANA_DEPENDENCY_PACKAGE} QUIET )
+  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION" "" ${ARGN})
+  find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} QUIET )
   string(TOUPPER "${CABANA_DEPENDENCY_PACKAGE}" CABANA_DEPENDENCY_OPTION )
   option(
     Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION}
     "Require Cabana to build with ${CABANA_DEPENDENCY_PACKAGE} support" ${CABANA_DEPENDENCY_PACKAGE}_FOUND)
   if(Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION})
-    find_package( ${CABANA_DEPENDENCY_PACKAGE} REQUIRED )
+    find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} REQUIRED )
   endif()
   set(Cabana_ENABLE_${CABANA_DEPENDENCY_OPTION} ${${CABANA_DEPENDENCY_PACKAGE}_FOUND})
 endmacro()
@@ -70,7 +81,7 @@ Cabana_add_dependency( PACKAGE MPI )
 Cabana_add_dependency( PACKAGE ArborX )
 
 # find Clang Format
-Cabana_add_dependency( PACKAGE CLANG_FORMAT )
+find_package( CLANG_FORMAT 10)
 
 # find hypre
 Cabana_add_dependency( PACKAGE HYPRE )
@@ -81,7 +92,7 @@ if(HYPRE_FOUND)
 endif()
 
 # find heffte
-Cabana_add_dependency( PACKAGE Heffte )
+Cabana_add_dependency( PACKAGE Heffte VERSION 1.0.1 )
 
 #------------------------------------------------------------------------------#
 # Tests and Documentation
@@ -193,7 +204,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp)
   add_custom_target(format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})

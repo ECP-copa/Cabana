@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -85,7 +85,7 @@ class AssignmentOp
     }
 
     // tagged version that assigns only half the value..
-    KOKKOS_INLINE_FUNCTION void operator()( const HalfValueWorkTag &,
+    KOKKOS_INLINE_FUNCTION void operator()( const HalfValueWorkTag&,
                                             const int s, const int a ) const
     {
         // Member 0.

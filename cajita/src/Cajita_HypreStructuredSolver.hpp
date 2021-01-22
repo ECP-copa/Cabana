@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -50,7 +50,7 @@ class HypreStructuredSolver
       a preconditioner.
     */
     template <class ArrayLayout_t>
-    HypreStructuredSolver( const ArrayLayout_t &layout,
+    HypreStructuredSolver( const ArrayLayout_t& layout,
                            const bool is_preconditioner = false )
         : _comm( layout.localGrid()->globalGrid().comm() )
         , _is_preconditioner( is_preconditioner )
@@ -78,18 +78,19 @@ class HypreStructuredSolver
             // directly use Kokkos::deep_copy to move data between Cajita arrays
             // and HYPRE data structures.
             auto global_space = layout.indexSpace( Own(), Global() );
-            _lower = {static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
-                      static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
-                      static_cast<HYPRE_Int>( global_space.min( Dim::I ) )};
-            _upper = {static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
-                      static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
-                      static_cast<HYPRE_Int>( global_space.max( Dim::I ) - 1 )};
+            _lower = { static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
+                       static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
+                       static_cast<HYPRE_Int>( global_space.min( Dim::I ) ) };
+            _upper = {
+                static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
+                static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
+                static_cast<HYPRE_Int>( global_space.max( Dim::I ) - 1 ) };
             error = HYPRE_StructGridSetExtents( _grid, _lower.data(),
                                                 _upper.data() );
             checkHypreError( error );
 
             // Get periodicity. Note we invert the order of this to KJI as well.
-            const auto &global_grid = layout.localGrid()->globalGrid();
+            const auto& global_grid = layout.localGrid()->globalGrid();
             HYPRE_Int periodic[3];
             for ( int d = 0; d < 3; ++d )
                 periodic[2 - d] =
@@ -106,9 +107,9 @@ class HypreStructuredSolver
 
             // Allocate LHS and RHS vectors and initialize to zero. Note that we
             // are fixing the views under these vectors to layout-right.
-            IndexSpace<3> reorder_space( {global_space.extent( Dim::I ),
-                                          global_space.extent( Dim::J ),
-                                          global_space.extent( Dim::K )} );
+            IndexSpace<3> reorder_space( { global_space.extent( Dim::I ),
+                                           global_space.extent( Dim::J ),
+                                           global_space.extent( Dim::K ) } );
             auto vector_values =
                 createView<HYPRE_Complex, Kokkos::LayoutRight,
                            Kokkos::HostSpace>( "vector_values", reorder_space );
@@ -161,7 +162,7 @@ class HypreStructuredSolver
       stencil entries should only contain one entry from each symmetric
       component if this is true.
     */
-    void setMatrixStencil( const std::vector<std::array<int, 3>> &stencil,
+    void setMatrixStencil( const std::vector<std::array<int, 3>>& stencil,
                            const bool is_symmetric = false )
     {
         // This function is only valid for non-preconditioners.
@@ -175,8 +176,8 @@ class HypreStructuredSolver
         checkHypreError( error );
         for ( unsigned n = 0; n < stencil.size(); ++n )
         {
-            HYPRE_Int offset[3] = {stencil[n][Dim::I], stencil[n][Dim::J],
-                                   stencil[n][Dim::K]};
+            HYPRE_Int offset[3] = { stencil[n][Dim::I], stencil[n][Dim::J],
+                                    stencil[n][Dim::K] };
             error = HYPRE_StructStencilSetElement( _stencil, n, offset );
             checkHypreError( error );
         }
@@ -197,7 +198,7 @@ class HypreStructuredSolver
       outside of the domain should be set to zero.
     */
     template <class Array_t>
-    void setMatrixValues( const Array_t &values )
+    void setMatrixValues( const Array_t& values )
     {
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
@@ -233,8 +234,8 @@ class HypreStructuredSolver
         // layout-right.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
         IndexSpace<4> reorder_space(
-            {owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
-             owned_space.extent( Dim::K ), _stencil_size} );
+            { owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
+              owned_space.extent( Dim::K ), _stencil_size } );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "a_values", reorder_space );
@@ -276,7 +277,7 @@ class HypreStructuredSolver
     // Set a preconditioner.
     void
     setPreconditioner( const std::shared_ptr<HypreStructuredSolver<
-                           Scalar, EntityType, DeviceType>> &preconditioner )
+                           Scalar, EntityType, DeviceType>>& preconditioner )
     {
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
@@ -307,7 +308,7 @@ class HypreStructuredSolver
       \param x The solution.
     */
     template <class Array_t>
-    void solve( const Array_t &b, Array_t &x )
+    void solve( const Array_t& b, Array_t& x )
     {
         static_assert( is_array<Array_t>::value, "Must use an array" );
         static_assert(
@@ -340,9 +341,9 @@ class HypreStructuredSolver
 
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
-        IndexSpace<4> reorder_space( {owned_space.extent( Dim::I ),
-                                      owned_space.extent( Dim::J ),
-                                      owned_space.extent( Dim::K ), 1} );
+        IndexSpace<4> reorder_space( { owned_space.extent( Dim::I ),
+                                       owned_space.extent( Dim::J ),
+                                       owned_space.extent( Dim::K ), 1 } );
         auto vector_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
@@ -434,8 +435,8 @@ class HypreStructuredSolver
 
     // Set a preconditioner.
     virtual void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
-            &preconditioner ) = 0;
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>&
+            preconditioner ) = 0;
 
     // Check a hypre error.
     void checkHypreError( const int error ) const
@@ -474,7 +475,7 @@ class HypreStructPCG
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
-    HypreStructPCG( const ArrayLayout_t &layout,
+    HypreStructPCG( const ArrayLayout_t& layout,
                     const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -576,8 +577,8 @@ class HypreStructPCG
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
-            &preconditioner ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>&
+            preconditioner ) override
     {
         auto error = HYPRE_StructPCGSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -600,7 +601,7 @@ class HypreStructGMRES
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
-    HypreStructGMRES( const ArrayLayout_t &layout,
+    HypreStructGMRES( const ArrayLayout_t& layout,
                       const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -699,8 +700,8 @@ class HypreStructGMRES
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
-            &preconditioner ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>&
+            preconditioner ) override
     {
         auto error = HYPRE_StructGMRESSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -723,7 +724,7 @@ class HypreStructBiCGSTAB
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
-    HypreStructBiCGSTAB( const ArrayLayout_t &layout,
+    HypreStructBiCGSTAB( const ArrayLayout_t& layout,
                          const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -815,8 +816,8 @@ class HypreStructBiCGSTAB
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType>
-            &preconditioner ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>&
+            preconditioner ) override
     {
         auto error = HYPRE_StructBiCGSTABSetPrecond(
             _solver, preconditioner.getHypreSolveFunction(),
@@ -839,7 +840,7 @@ class HypreStructPFMG
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
-    HypreStructPFMG( const ArrayLayout_t &layout,
+    HypreStructPFMG( const ArrayLayout_t& layout,
                      const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -998,7 +999,7 @@ class HypreStructPFMG
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType> & ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>& ) override
     {
         throw std::logic_error(
             "HYPRE PFMG solver does not support preconditioning." );
@@ -1018,7 +1019,7 @@ class HypreStructSMG
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
-    HypreStructSMG( const ArrayLayout_t &layout,
+    HypreStructSMG( const ArrayLayout_t& layout,
                     const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -1127,7 +1128,7 @@ class HypreStructSMG
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType> & ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>& ) override
     {
         throw std::logic_error(
             "HYPRE SMG solver does not support preconditioning." );
@@ -1147,7 +1148,7 @@ class HypreStructJacobi
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
-    HypreStructJacobi( const ArrayLayout_t &layout,
+    HypreStructJacobi( const ArrayLayout_t& layout,
                        const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -1224,7 +1225,7 @@ class HypreStructJacobi
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType> & ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>& ) override
     {
         throw std::logic_error(
             "HYPRE Jacobi solver does not support preconditioning." );
@@ -1244,7 +1245,7 @@ class HypreStructDiagonal
     using Base = HypreStructuredSolver<Scalar, EntityType, DeviceType>;
 
     template <class ArrayLayout_t>
-    HypreStructDiagonal( const ArrayLayout_t &layout,
+    HypreStructDiagonal( const ArrayLayout_t& layout,
                          const bool is_preconditioner = false )
         : Base( layout, is_preconditioner )
     {
@@ -1309,7 +1310,7 @@ class HypreStructDiagonal
     }
 
     void setPreconditionerImpl(
-        const HypreStructuredSolver<Scalar, EntityType, DeviceType> & ) override
+        const HypreStructuredSolver<Scalar, EntityType, DeviceType>& ) override
     {
         throw std::logic_error(
             "Diagonal preconditioner does not support preconditioning." );
@@ -1322,7 +1323,7 @@ class HypreStructDiagonal
 template <class Scalar, class DeviceType, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructPCG<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
-createHypreStructPCG( const ArrayLayout_t &layout,
+createHypreStructPCG( const ArrayLayout_t& layout,
                       const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
@@ -1335,7 +1336,7 @@ createHypreStructPCG( const ArrayLayout_t &layout,
 template <class Scalar, class DeviceType, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructGMRES<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
-createHypreStructGMRES( const ArrayLayout_t &layout,
+createHypreStructGMRES( const ArrayLayout_t& layout,
                         const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
@@ -1348,7 +1349,7 @@ createHypreStructGMRES( const ArrayLayout_t &layout,
 template <class Scalar, class DeviceType, class ArrayLayout_t>
 std::shared_ptr<HypreStructBiCGSTAB<Scalar, typename ArrayLayout_t::entity_type,
                                     DeviceType>>
-createHypreStructBiCGSTAB( const ArrayLayout_t &layout,
+createHypreStructBiCGSTAB( const ArrayLayout_t& layout,
                            const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
@@ -1361,7 +1362,7 @@ createHypreStructBiCGSTAB( const ArrayLayout_t &layout,
 template <class Scalar, class DeviceType, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructPFMG<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
-createHypreStructPFMG( const ArrayLayout_t &layout,
+createHypreStructPFMG( const ArrayLayout_t& layout,
                        const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
@@ -1374,7 +1375,7 @@ createHypreStructPFMG( const ArrayLayout_t &layout,
 template <class Scalar, class DeviceType, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructSMG<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
-createHypreStructSMG( const ArrayLayout_t &layout,
+createHypreStructSMG( const ArrayLayout_t& layout,
                       const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
@@ -1387,7 +1388,7 @@ createHypreStructSMG( const ArrayLayout_t &layout,
 template <class Scalar, class DeviceType, class ArrayLayout_t>
 std::shared_ptr<
     HypreStructJacobi<Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
-createHypreStructJacobi( const ArrayLayout_t &layout,
+createHypreStructJacobi( const ArrayLayout_t& layout,
                          const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
@@ -1400,7 +1401,7 @@ createHypreStructJacobi( const ArrayLayout_t &layout,
 template <class Scalar, class DeviceType, class ArrayLayout_t>
 std::shared_ptr<HypreStructDiagonal<Scalar, typename ArrayLayout_t::entity_type,
                                     DeviceType>>
-createHypreStructDiagonal( const ArrayLayout_t &layout,
+createHypreStructDiagonal( const ArrayLayout_t& layout,
                            const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,
@@ -1416,8 +1417,8 @@ createHypreStructDiagonal( const ArrayLayout_t &layout,
 template <class Scalar, class DeviceType, class ArrayLayout_t>
 std::shared_ptr<HypreStructuredSolver<
     Scalar, typename ArrayLayout_t::entity_type, DeviceType>>
-createHypreStructuredSolver( const std::string &solver_type,
-                             const ArrayLayout_t &layout,
+createHypreStructuredSolver( const std::string& solver_type,
+                             const ArrayLayout_t& layout,
                              const bool is_preconditioner = false )
 {
     static_assert( is_array_layout<ArrayLayout_t>::value,

@@ -1,3 +1,14 @@
+############################################################################
+# Copyright (c) 2018-2021 by the Cabana authors                            #
+# All rights reserved.                                                     #
+#                                                                          #
+# This file is part of the Cabana library. Cabana is distributed under a   #
+# BSD 3-clause license. For the licensing terms see the LICENSE file in    #
+# the top-level directory.                                                 #
+#                                                                          #
+# SPDX-License-Identifier: BSD-3-Clause                                    #
+############################################################################
+
 configure_file(Cajita_Config.hpp.in Cajita_Config.hpp)
 
 set(HEADERS_PUBLIC
@@ -10,6 +21,7 @@ set(HEADERS_PUBLIC
   Cajita_Halo.hpp
   Cajita_IndexConversion.hpp
   Cajita_IndexSpace.hpp
+  Cajita_SparseIndexSpace.hpp
   Cajita_Interpolation.hpp
   Cajita_LocalMesh.hpp
   Cajita_ManualPartitioner.hpp
@@ -22,6 +34,10 @@ set(HEADERS_PUBLIC
   Cajita_Types.hpp
   Cajita_UniformDimPartitioner.hpp
   )
+
+if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
+  list(REMOVE_ITEM HEADERS_PUBLIC Cajita_Parallel.hpp)
+endif()
 
 set(SOURCES_PUBLIC
   Cajita_LocalGrid.cpp

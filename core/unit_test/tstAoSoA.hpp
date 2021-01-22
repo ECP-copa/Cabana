@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -267,11 +267,11 @@ void testRawData()
 
     // Get raw pointers to the data as one would in a C interface (no
     // templates).
-    float *p0 = slice_0.data();
-    int *p1 = slice_1.data();
-    double *p2 = slice_2.data();
-    int *p3 = slice_3.data();
-    double *p4 = slice_4.data();
+    float* p0 = slice_0.data();
+    int* p1 = slice_1.data();
+    double* p2 = slice_2.data();
+    int* p3 = slice_3.data();
+    double* p4 = slice_4.data();
 
     // Get the strides between the member arrays.
     int st0 = slice_0.stride( 0 );
@@ -365,8 +365,8 @@ void testTuple()
     AoSoA_t aosoa( "label", num_data );
 
     // Create a slice of tuples with the same data types.
-    Kokkos::View<Tuple_t *, typename AoSoA_t::memory_space> tuples( "tuples",
-                                                                    num_data );
+    Kokkos::View<Tuple_t*, typename AoSoA_t::memory_space> tuples( "tuples",
+                                                                   num_data );
 
     // Initialize aosoa data.
     auto slice_0 = Cabana::slice<0>( aosoa );
@@ -480,7 +480,7 @@ void testAccess()
     Kokkos::parallel_for(
         "data_fill", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, aosoa.numSoA() ),
         KOKKOS_LAMBDA( const int s ) {
-            auto &soa = aosoa.access( s );
+            auto& soa = aosoa.access( s );
 
             for ( std::size_t a = 0; a < aosoa.arraySize( s ); ++a )
             {
@@ -540,7 +540,7 @@ void testUnmanaged()
     using soa_type = MySoA<vector_length, dim_1, dim_2, dim_3>;
     int num_soa = 3;
     int size = 35;
-    Kokkos::View<soa_type *, TEST_MEMSPACE> user_data( "user_aosoa", 3 );
+    Kokkos::View<soa_type*, TEST_MEMSPACE> user_data( "user_aosoa", 3 );
 
     // Declare the AoSoA type.
     using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE, vector_length,
@@ -548,7 +548,7 @@ void testUnmanaged()
 
     // Create an AoSoA.
     auto user_ptr =
-        reinterpret_cast<typename AoSoA_t::soa_type *>( user_data.data() );
+        reinterpret_cast<typename AoSoA_t::soa_type*>( user_data.data() );
     AoSoA_t aosoa( user_ptr, num_soa, size );
 
     // Check sizes.

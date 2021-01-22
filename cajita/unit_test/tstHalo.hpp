@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -52,7 +52,7 @@ int haloPad( Edge<D>, int d )
 // Check initial array gather. We should get 1 everywhere in the array now
 // where there was ghost overlap. Otherwise there will still be 0.
 template <class Array>
-void checkGather( const int halo_width, const Array &array )
+void checkGather( const int halo_width, const Array& array )
 {
     auto owned_space = array.layout()->indexSpace( Own(), Local() );
     auto ghosted_space = array.layout()->indexSpace( Ghost(), Local() );
@@ -81,14 +81,14 @@ void checkGather( const int halo_width, const Array &array )
 // neighbors it has. Corner neighbors get 8, edge neighbors get 4, face
 // neighbors get 2, and no neighbors remain at 1.
 template <class Array>
-void checkScatter( const std::array<bool, 3> &is_dim_periodic,
-                   const int halo_width, const Array &array )
+void checkScatter( const std::array<bool, 3>& is_dim_periodic,
+                   const int halo_width, const Array& array )
 {
     // Get data.
     auto owned_space = array.layout()->indexSpace( Own(), Local() );
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                           array.view() );
-    const auto &global_grid = array.layout()->localGrid()->globalGrid();
+    const auto& global_grid = array.layout()->localGrid()->globalGrid();
 
     // This function checks if an index is in the halo of a low neighbor in
     // the given dimension
@@ -134,17 +134,17 @@ void checkScatter( const std::array<bool, 3> &is_dim_periodic,
 }
 
 //---------------------------------------------------------------------------//
-void gatherScatterTest( const ManualPartitioner &partitioner,
-                        const std::array<bool, 3> &is_dim_periodic )
+void gatherScatterTest( const ManualPartitioner& partitioner,
+                        const std::array<bool, 3>& is_dim_periodic )
 {
     // Create the global grid.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {32, 23, 41};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 32, 23, 41 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -336,21 +336,21 @@ struct TestHaloReduce<ScatterReduce::Replace>
 };
 
 template <class ReduceFunc>
-void scatterReduceTest( const ReduceFunc &reduce )
+void scatterReduceTest( const ReduceFunc& reduce )
 {
     // Create the global grid.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = {32, 23, 41};
-    std::array<double, 3> global_low_corner = {1.2, 3.3, -2.8};
+    std::array<int, 3> global_num_cell = { 32, 23, 41 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2]};
+        global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     // Create the global grid.
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_grid =
         createGlobalGrid( MPI_COMM_WORLD, global_mesh, is_dim_periodic,
                           Cajita::UniformDimPartitioner() );
@@ -372,8 +372,8 @@ void scatterReduceTest( const ReduceFunc &reduce )
     // collision.
     HaloPattern pattern;
     std::vector<std::array<int, 3>> neighbors = {
-        {-1, -1, -1}, {1, -1, -1}, {-1, 1, -1}, {1, 1, -1},
-        {-1, -1, 1},  {1, -1, 1},  {-1, 1, 1},  {1, 1, 1}};
+        { -1, -1, -1 }, { 1, -1, -1 }, { -1, 1, -1 }, { 1, 1, -1 },
+        { -1, -1, 1 },  { 1, -1, 1 },  { -1, 1, 1 },  { 1, 1, 1 } };
     pattern.setNeighbors( neighbors );
 
     // Create a halo.
@@ -385,7 +385,7 @@ void scatterReduceTest( const ReduceFunc &reduce )
     // Check the reduction.
     auto host_array = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
                                                            array->view() );
-    for ( const auto &n : neighbors )
+    for ( const auto& n : neighbors )
     {
         auto neighbor_rank =
             cell_layout->localGrid()->neighborRank( n[0], n[1], n[2] );
@@ -413,12 +413,12 @@ TEST( TEST_CATEGORY, not_periodic_test )
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = {0, 0, 0};
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
     ManualPartitioner partitioner( ranks_per_dim );
 
     // Boundaries are not periodic.
-    std::array<bool, 3> is_dim_periodic = {false, false, false};
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
@@ -443,12 +443,12 @@ TEST( TEST_CATEGORY, periodic_test )
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = {0, 0, 0};
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
     ManualPartitioner partitioner( ranks_per_dim );
 
     // Every boundary is periodic
-    std::array<bool, 3> is_dim_periodic = {true, true, true};
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.

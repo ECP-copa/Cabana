@@ -1,6 +1,6 @@
 language: cpp
 
-dist: bionic
+dist: focal
 
 stages:
   - canary
@@ -20,6 +20,7 @@ env:
     - BACKENDS="PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="SERIAL" WERROR=ON CMAKE_BUILD_TYPE=Release ARBORX=ON
     - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release ARBORX=ON
+    - BACKENDS="OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release HEFFTE=ON
     - BACKENDS="SERIAL OPENMP" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="SERIAL PTHREAD" WERROR=ON CMAKE_BUILD_TYPE=Release
     - BACKENDS="OPENMP" COVERAGE=ON CMAKE_BUILD_TYPE=Debug
@@ -34,7 +35,7 @@ before_script:
   - for i in ${BACKENDS}; do KOKKOS_OPTS+=( -DKokkos_ENABLE_${i^^}=ON ); done
     # LD_LIBRARY_PATH workaround for libomp: https://github.com/travis-ci/travis-ci/issues/8613
   - if [[ ${CC} = clang ]]; then export LD_LIBRARY_PATH=/usr/local/clang/lib:$LD_LIBRARY_PATH; fi
-  - git clone --depth=1 --branch 3.1.00 https://github.com/kokkos/kokkos.git &&
+  - git clone --depth=1 --branch 3.2.00 https://github.com/kokkos/kokkos.git &&
     pushd kokkos &&
     mkdir build &&
     pushd build &&
@@ -53,6 +54,16 @@ before_script:
       make -j2 VERBOSE=1 && make install &&
       popd && popd;
     fi
+  - if [[ ${HEFFTE} ]]; then
+       git clone --depth=1 --branch v1.0.1 https://bitbucket.org/icl/heffte.git &&
+       pushd heffte && mkdir build && pushd build &&
+       cmake -DCMAKE_INSTALL_PREFIX="$HOME/heffte"
+          -DCMAKE_CXX_STANDARD="11"
+          -DBUILD_SHARED_LIBS=ON
+          -DHeffte_ENABLE_FFTW=ON .. &&
+       make -j2 VERBOSE=1 && make install &&
+       popd && popd;
+    fi
   - if [[ ${COVERAGE} ]]; then
        pip install --user coverxygen &&
        mkdir -p $HOME/.local/bin && wget -O $HOME/.local/bin/codecov https://codecov.io/bash && chmod +x $HOME/.local/bin/codecov;
@@ -67,7 +78,8 @@ addons:
       - libopenmpi-dev
       - libgsl0-dev
       - libfftw3-dev
-      - python-pip
+      - python3-pip
+      - clang-format
 
 script:
   - export CXXFLAGS="-Wall -Wextra -pedantic ${WERROR:+-Werror}"
@@ -75,11 +87,14 @@ script:
   - mkdir build && pushd build &&
     cmake -DCMAKE_INSTALL_PREFIX="$HOME/cabana"
           -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/ArborX"
+          -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/ArborX;$HOME/heffte"
           -DCabana_REQUIRE_SERIAL=OFF ${CMAKE_OPTS[@]}
           -DCabana_REQUIRE_MPI=ON -DCabana_REQUIRE_ARBORX=${ARBORX}
+          -DCabana_REQUIRE_HEFFTE=${HEFFTE}
           -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON
           -DDOXYGEN_WARN_AS_ERROR=ON -DDOXYGEN_GENERATE_XML=ON -DDOXYGEN_WARN_IF_UNDOCUMENTED=OFF
+          -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe"
+          -DCLANG_FORMAT_EXECUTABLE=/usr/bin/clang-format
           ${CMAKE_BUILD_TYPE:+-DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}}
           -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0
           ${COVERAGE:+-DCabana_ENABLE_COVERAGE_BUILD=ON -DCOMPILER_SUPPORTS_MARCH=OFF} .. &&
@@ -106,10 +121,6 @@ after_success:
        codecov -x "llvm-cov gcov" -F "${CC}";
      else
        codecov -x gcov-6 -F "${CC}";
-     fi &&
-     if [[ $(doxygen --version) != 1.8.16 ]]; then
-       echo "Patching Doxygen files (see doxygen/doxygen#6892)" &&
-       sed -e '/enable_if</s/&/\&amp;/g' -e '/enable_if/s/<\([^a-z/]\)/\&lt;\1/g' -e '/enable_if/s/ >/ \&gt;/g' -i xml/*.xml;
      fi &&
      python -m coverxygen --src-dir .. --xml-dir xml/ --output doxygen.coverage.info && codecov -F doxygen -X gcov -f doxygen.coverage.info &&
      popd;

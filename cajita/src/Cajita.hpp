@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -26,10 +26,15 @@
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_MpiTraits.hpp>
+
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 #include <Cajita_Parallel.hpp>
+#endif
+
 #include <Cajita_ParameterPack.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
+#include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
@@ -39,7 +44,9 @@
 #endif
 
 #ifdef Cabana_ENABLE_HEFFTE
+#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
 #include <Cajita_FastFourierTransform.hpp>
+#endif
 #endif
 
 #endif // end CAJITA_HPP

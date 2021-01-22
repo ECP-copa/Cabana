@@ -1,0 +1,47 @@
+name: Format
+on:
+  issue_comment:
+    types: [created]
+jobs:
+  edit:
+    name: clang-format
+    if: ${{ github.event.comment.body == 'format this please' }}
+    runs-on: ubuntu-20.04
+    env:
+      CLANG_FORMAT: clang-format-10
+    steps:
+      - name: Check if message comes from a PR
+        uses: octokit/request-action@v2.x
+        id: issue_info
+        with:
+          route: GET /repos/:repository/issues/:pull_number
+          repository: ${{ github.repository }}
+          pull_number: ${{ github.event.issue.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Get PR info
+        if: ${{ fromJSON(steps.issue_info.outputs.data).pull_request }}
+        uses: octokit/request-action@v2.x
+        id: pr_info
+        with:
+          route: GET /repos/:repository/pulls/:pull_number
+          repository: ${{ github.repository }}
+          pull_number: ${{ github.event.issue.number }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout head branch from PR
+        if: ${{ fromJSON(steps.issue_info.outputs.data).pull_request }}
+        uses: actions/checkout@master
+        with:
+          repository: ${{ fromJSON(steps.pr_info.outputs.data).head.repo.full_name }}
+          ref: ${{ fromJSON(steps.pr_info.outputs.data).head.ref }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Run clang-format
+        if: ${{ fromJSON(steps.issue_info.outputs.data).pull_request }}
+        run: find . -type f -regex ".*\.\(c\|h\|cc\|cpp\|hpp\)" -not -path "./gtest/*" -print0 | xargs -0 ${CLANG_FORMAT} -i -style=file
+      - name: Commit and push
+        if: ${{ fromJSON(steps.issue_info.outputs.data).pull_request }}
+        run: |
+          git config --global user.name "GitHub Action"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          git commit -m "Format code using $(${CLANG_FORMAT} --version)" || true
+          git push

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -32,7 +32,7 @@ class Partitioner
     */
     virtual std::array<int, 3> ranksPerDimension(
         MPI_Comm comm,
-        const std::array<int, 3> &global_cells_per_dim ) const = 0;
+        const std::array<int, 3>& global_cells_per_dim ) const = 0;
 };
 
 //---------------------------------------------------------------------------//

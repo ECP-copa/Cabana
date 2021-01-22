@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -130,28 +130,28 @@ struct SoAImpl<VectorLength, std::index_sequence<Indices...>, Types...>
 //---------------------------------------------------------------------------//
 // Given an SoA cast it to to one of its member types.
 template <std::size_t M, class SoA_t>
-KOKKOS_FORCEINLINE_FUNCTION const typename SoA_t::template base<M> &
-soaMemberCast( const SoA_t &soa )
+KOKKOS_FORCEINLINE_FUNCTION const typename SoA_t::template base<M>&
+soaMemberCast( const SoA_t& soa )
 {
     static_assert( is_soa<SoA_t>::value, "soaMemberCast only for SoAs" );
-    return static_cast<const typename SoA_t::template base<M> &>( soa );
+    return static_cast<const typename SoA_t::template base<M>&>( soa );
 }
 
 template <std::size_t M, class SoA_t>
-KOKKOS_FORCEINLINE_FUNCTION typename SoA_t::template base<M> &
-soaMemberCast( SoA_t &soa )
+KOKKOS_FORCEINLINE_FUNCTION typename SoA_t::template base<M>&
+soaMemberCast( SoA_t& soa )
 {
     static_assert( is_soa<SoA_t>::value, "soaMemberCast only for SoAs" );
-    return static_cast<typename SoA_t::template base<M> &>( soa );
+    return static_cast<typename SoA_t::template base<M>&>( soa );
 }
 
 //---------------------------------------------------------------------------//
 // Get a pointer to the first element of a member in a given SoA.
 template <std::size_t M, class SoA_t>
-typename SoA_t::template member_pointer_type<M> soaMemberPtr( SoA_t *p )
+typename SoA_t::template member_pointer_type<M> soaMemberPtr( SoA_t* p )
 {
     static_assert( is_soa<SoA_t>::value, "soaMemberPtr only for SoAs" );
-    void *member = static_cast<typename SoA_t::template base<M> *>( p );
+    void* member = static_cast<typename SoA_t::template base<M>*>( p );
     return static_cast<typename SoA_t::template member_pointer_type<M>>(
         member );
 }
@@ -168,17 +168,17 @@ template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M>>::type
-get( SoA_t &soa, const std::size_t a )
+get( SoA_t& soa, const std::size_t a )
 {
     return Impl::soaMemberCast<M>( soa )._data[a];
 }
 
 // Rank-0 const
 template <std::size_t M, class SoA_t>
-KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<is_soa<SoA_t>::value,
-                            typename SoA_t::template member_value_type<M>>::type
-    get( const SoA_t &soa, const std::size_t a )
+KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_const_reference_type<M>>::type
+get( const SoA_t& soa, const std::size_t a )
 {
     return Impl::soaMemberCast<M>( soa )._data[a];
 }
@@ -188,17 +188,17 @@ template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M>>::type
-get( SoA_t &soa, const std::size_t a, const std::size_t d0 )
+get( SoA_t& soa, const std::size_t a, const std::size_t d0 )
 {
     return Impl::soaMemberCast<M>( soa )._data[d0][a];
 }
 
 // Rank-1 const
 template <std::size_t M, class SoA_t>
-KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<is_soa<SoA_t>::value,
-                            typename SoA_t::template member_value_type<M>>::type
-    get( const SoA_t &soa, const std::size_t a, const std::size_t d0 )
+KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_const_reference_type<M>>::type
+get( const SoA_t& soa, const std::size_t a, const std::size_t d0 )
 {
     return Impl::soaMemberCast<M>( soa )._data[d0][a];
 }
@@ -208,7 +208,7 @@ template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M>>::type
-get( SoA_t &soa, const std::size_t a, const std::size_t d0,
+get( SoA_t& soa, const std::size_t a, const std::size_t d0,
      const std::size_t d1 )
 {
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][a];
@@ -216,11 +216,11 @@ get( SoA_t &soa, const std::size_t a, const std::size_t d0,
 
 // Rank-2 const
 template <std::size_t M, class SoA_t>
-KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<is_soa<SoA_t>::value,
-                            typename SoA_t::template member_value_type<M>>::type
-    get( const SoA_t &soa, const std::size_t a, const std::size_t d0,
-         const std::size_t d1 )
+KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_const_reference_type<M>>::type
+get( const SoA_t& soa, const std::size_t a, const std::size_t d0,
+     const std::size_t d1 )
 {
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][a];
 }
@@ -230,7 +230,7 @@ template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
     typename SoA_t::template member_reference_type<M>>::type
-get( SoA_t &soa, const std::size_t a, const std::size_t d0,
+get( SoA_t& soa, const std::size_t a, const std::size_t d0,
      const std::size_t d1, const std::size_t d2 )
 {
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][d2][a];
@@ -238,11 +238,11 @@ get( SoA_t &soa, const std::size_t a, const std::size_t d0,
 
 // Rank-3 const
 template <std::size_t M, class SoA_t>
-KOKKOS_FORCEINLINE_FUNCTION
-    typename std::enable_if<is_soa<SoA_t>::value,
-                            typename SoA_t::template member_value_type<M>>::type
-    get( const SoA_t &soa, const std::size_t a, const std::size_t d0,
-         const std::size_t d1, const std::size_t d2 )
+KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
+    is_soa<SoA_t>::value,
+    typename SoA_t::template member_const_reference_type<M>>::type
+get( const SoA_t& soa, const std::size_t a, const std::size_t d0,
+     const std::size_t d1, const std::size_t d2 )
 {
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][d2][a];
 }
@@ -285,8 +285,11 @@ struct SoA<MemberTypes<Types...>, VectorLength>
 
     // Reference type at a given index M.
     template <std::size_t M>
-    using member_reference_type =
-        typename std::add_lvalue_reference<member_value_type<M>>::type;
+    using member_reference_type = member_value_type<M>&;
+
+    // Const reference type at a given index M.
+    template <std::size_t M>
+    using member_const_reference_type = member_value_type<M> const&;
 
     // Pointer type at a given index M.
     template <std::size_t M>
@@ -346,9 +349,9 @@ KOKKOS_INLINE_FUNCTION typename std::enable_if<
     ( 0 == std::rank<typename MemberTypeAtIndex<
                M, MemberTypes<Types...>>::type>::value ),
     void>::type
-soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
+soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength>& dst,
                       const std::size_t dst_idx,
-                      const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
+                      const SoA<MemberTypes<Types...>, SrcVectorLength>& src,
                       const std::size_t src_idx )
 {
     get<M>( dst, dst_idx ) = get<M>( src, src_idx );
@@ -361,9 +364,9 @@ KOKKOS_INLINE_FUNCTION typename std::enable_if<
     ( 1 == std::rank<typename MemberTypeAtIndex<
                M, MemberTypes<Types...>>::type>::value ),
     void>::type
-soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
+soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength>& dst,
                       const std::size_t dst_idx,
-                      const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
+                      const SoA<MemberTypes<Types...>, SrcVectorLength>& src,
                       const std::size_t src_idx )
 {
     for ( std::size_t i0 = 0; i0 < dst.template extent<M, 0>(); ++i0 )
@@ -377,9 +380,9 @@ KOKKOS_INLINE_FUNCTION typename std::enable_if<
     ( 2 == std::rank<typename MemberTypeAtIndex<
                M, MemberTypes<Types...>>::type>::value ),
     void>::type
-soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
+soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength>& dst,
                       const std::size_t dst_idx,
-                      const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
+                      const SoA<MemberTypes<Types...>, SrcVectorLength>& src,
                       const std::size_t src_idx )
 {
     for ( std::size_t i0 = 0; i0 < dst.template extent<M, 0>(); ++i0 )
@@ -394,9 +397,9 @@ KOKKOS_INLINE_FUNCTION typename std::enable_if<
     ( 3 == std::rank<typename MemberTypeAtIndex<
                M, MemberTypes<Types...>>::type>::value ),
     void>::type
-soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
+soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength>& dst,
                       const std::size_t dst_idx,
-                      const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
+                      const SoA<MemberTypes<Types...>, SrcVectorLength>& src,
                       const std::size_t src_idx )
 {
     for ( std::size_t i0 = 0; i0 < dst.template extent<M, 0>(); ++i0 )
@@ -411,8 +414,8 @@ soaElementMemberCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
 template <std::size_t M, int DstVectorLength, int SrcVectorLength,
           typename... Types>
 KOKKOS_INLINE_FUNCTION void soaElementCopy(
-    SoA<MemberTypes<Types...>, DstVectorLength> &dst, const std::size_t dst_idx,
-    const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
+    SoA<MemberTypes<Types...>, DstVectorLength>& dst, const std::size_t dst_idx,
+    const SoA<MemberTypes<Types...>, SrcVectorLength>& src,
     const std::size_t src_idx, std::integral_constant<std::size_t, M> )
 {
     soaElementMemberCopy<M>( dst, dst_idx, src, src_idx );
@@ -422,8 +425,8 @@ KOKKOS_INLINE_FUNCTION void soaElementCopy(
 
 template <int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION void soaElementCopy(
-    SoA<MemberTypes<Types...>, DstVectorLength> &dst, const std::size_t dst_idx,
-    const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
+    SoA<MemberTypes<Types...>, DstVectorLength>& dst, const std::size_t dst_idx,
+    const SoA<MemberTypes<Types...>, SrcVectorLength>& src,
     const std::size_t src_idx, std::integral_constant<std::size_t, 0> )
 {
     soaElementMemberCopy<0>( dst, dst_idx, src, src_idx );
@@ -432,9 +435,9 @@ KOKKOS_INLINE_FUNCTION void soaElementCopy(
 // Copy the data from one struct at a given index to another.
 template <int DstVectorLength, int SrcVectorLength, typename... Types>
 KOKKOS_INLINE_FUNCTION void
-tupleCopy( SoA<MemberTypes<Types...>, DstVectorLength> &dst,
+tupleCopy( SoA<MemberTypes<Types...>, DstVectorLength>& dst,
            const std::size_t dst_idx,
-           const SoA<MemberTypes<Types...>, SrcVectorLength> &src,
+           const SoA<MemberTypes<Types...>, SrcVectorLength>& src,
            const std::size_t src_idx )
 {
     soaElementCopy(

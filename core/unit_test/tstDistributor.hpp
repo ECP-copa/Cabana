@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -39,7 +39,7 @@ void test1( const bool use_topology )
 
     // Every rank will communicate with itself and send all of its data.
     int num_data = 10;
-    Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     Kokkos::deep_copy( export_ranks, my_rank );
     std::vector<int> neighbor_ranks( 1, my_rank );
 
@@ -108,8 +108,8 @@ void test2( const bool use_topology )
     // Every rank will communicate with itself and send every other piece of
     // data.
     int num_data = 10;
-    Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                              num_data );
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             num_data );
     for ( int n = 0; n < num_data; ++n )
         export_ranks_host( n ) = ( 0 == n % 2 ) ? my_rank : -1;
     auto export_ranks = Kokkos::create_mirror_view_and_copy(
@@ -185,7 +185,7 @@ void test3( const bool use_topology )
 
     // Every rank will communicate with the rank that is its inverse.
     int num_data = 10;
-    Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     Kokkos::deep_copy( export_ranks, inverse_rank );
     std::vector<int> neighbor_ranks( 1, inverse_rank );
 
@@ -228,7 +228,7 @@ void test3( const bool use_topology )
     // they sent us stuff in. We thread the creation of the steering vector so
     // its order is not deterministic.
     auto my_steering = distributor->getExportSteering();
-    Kokkos::View<std::size_t *, TEST_MEMSPACE> inverse_steering(
+    Kokkos::View<std::size_t*, TEST_MEMSPACE> inverse_steering(
         "inv_steering", distributor->totalNumImport() );
     int mpi_tag = 1030;
     MPI_Request request;
@@ -274,8 +274,8 @@ void test4( const bool use_topology )
 
     // Every rank will communicate with all other ranks. Interleave the sends.
     int num_data = 2 * my_size;
-    Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                              num_data );
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             num_data );
     std::vector<int> neighbor_ranks( my_size );
     for ( int n = 0; n < my_size; ++n )
     {
@@ -379,8 +379,8 @@ void test5( const bool use_topology )
     // Every rank will communicate with all other ranks. Interleave the sends
     // and only send every other value.
     int num_data = 2 * my_size;
-    Kokkos::View<int *, Kokkos::HostSpace> export_ranks_host( "export_ranks",
-                                                              num_data );
+    Kokkos::View<int*, Kokkos::HostSpace> export_ranks_host( "export_ranks",
+                                                             num_data );
     std::vector<int> neighbor_ranks( my_size );
     for ( int n = 0; n < my_size; ++n )
     {
@@ -472,7 +472,7 @@ void test6( const bool use_topology )
 
     // Every has one element and will send that element to rank 0.
     int num_data = 1;
-    Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     Kokkos::deep_copy( export_ranks, 0 );
     std::vector<int> neighbor_ranks;
     if ( 0 == my_rank )
@@ -554,7 +554,7 @@ void test7( const bool use_topology )
 
     // Rank 0 starts with all the data and sends one element to every rank.
     int num_data = ( 0 == my_rank ) ? my_size : 0;
-    Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     auto fill_ranks = KOKKOS_LAMBDA( const int i ) { export_ranks( i ) = i; };
     Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
     Kokkos::parallel_for( range_policy, fill_ranks );
@@ -633,7 +633,7 @@ void test8( const bool use_topology )
     // where rank 0 receives from rank with id (my_size-1) but does not send
     // data to that rank.
     int num_data = 2;
-    Kokkos::View<int *, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
     auto fill_ranks = KOKKOS_LAMBDA( const int )
     {
         export_ranks( 0 ) = ( my_rank == 0 ) ? 0 : my_rank - 1;
@@ -697,6 +697,59 @@ void test8( const bool use_topology )
 }
 
 //---------------------------------------------------------------------------//
+void test9( const bool use_topology )
+{
+    // Make a communication plan.
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
+
+    // Edge case where all particles will be removed - nothing is kept, sent, or
+    // received.
+    int num_data = 2;
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    auto fill_ranks = KOKKOS_LAMBDA( const int i ) { export_ranks( i ) = -1; };
+
+    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
+    Kokkos::parallel_for( range_policy, fill_ranks );
+    Kokkos::fence();
+
+    // Create the plan.
+    if ( use_topology )
+    {
+        std::vector<int> neighbor_ranks;
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+    }
+    else
+    {
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, export_ranks );
+    }
+
+    // Make empty data to migrate.
+    using DataTypes = Cabana::MemberTypes<int, double[2]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t data( "data", num_data );
+    auto slice_int = Cabana::slice<0>( data );
+
+    // Create empty slice to "copy" into.
+    AoSoA_t data_copy( "copy", 0 );
+    auto slice_int_copy = Cabana::slice<0>( data_copy );
+
+    // Do empty slice migration.
+    Cabana::migrate( *distributor, slice_int, slice_int_copy );
+
+    // Check entries were removed.
+    slice_int_copy = Cabana::slice<0>( data_copy );
+    EXPECT_EQ( slice_int_copy.size(), 0 );
+
+    // Do empty in-place migration.
+    Cabana::migrate( *distributor, data );
+
+    // Check entries were removed.
+    EXPECT_EQ( data.size(), 0 );
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, distributor_test_1 ) { test1( true ); }
@@ -715,6 +768,8 @@ TEST( TEST_CATEGORY, distributor_test_7 ) { test7( true ); }
 
 TEST( TEST_CATEGORY, distributor_test_8 ) { test8( true ); }
 
+TEST( TEST_CATEGORY, distributor_test_9 ) { test9( true ); }
+
 TEST( TEST_CATEGORY, distributor_test_1_no_topo ) { test1( false ); }
 
 TEST( TEST_CATEGORY, distributor_test_2_no_topo ) { test2( false ); }
@@ -730,6 +785,8 @@ TEST( TEST_CATEGORY, distributor_test_6_no_topo ) { test6( false ); }
 TEST( TEST_CATEGORY, distributor_test_7_no_topo ) { test7( false ); }
 
 TEST( TEST_CATEGORY, distributor_test_8_no_topo ) { test8( false ); }
+
+TEST( TEST_CATEGORY, distributor_test_9_no_topo ) { test9( false ); }
 
 //---------------------------------------------------------------------------//
 

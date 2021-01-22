@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -29,13 +29,13 @@ namespace Test
 template <class... Params>
 struct TestNeighborList
 {
-    Kokkos::View<int *, Params...> counts;
-    Kokkos::View<int **, Params...> neighbors;
+    Kokkos::View<int*, Params...> counts;
+    Kokkos::View<int**, Params...> neighbors;
 };
 
 template <class KokkosMemorySpace>
 TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>
-createTestListHostCopy( const TestNeighborList<KokkosMemorySpace> &test_list )
+createTestListHostCopy( const TestNeighborList<KokkosMemorySpace>& test_list )
 {
     using data_layout = typename decltype( test_list.counts )::array_layout;
     TestNeighborList<data_layout, Kokkos::HostSpace> list_copy;
@@ -50,13 +50,13 @@ createTestListHostCopy( const TestNeighborList<KokkosMemorySpace> &test_list )
 // Create a host copy of a list that implements the neighbor list interface.
 template <class ListType>
 TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>
-copyListToHost( const ListType &list, const int num_particle, const int max_n )
+copyListToHost( const ListType& list, const int num_particle, const int max_n )
 {
     TestNeighborList<TEST_MEMSPACE> list_copy;
     list_copy.counts =
-        Kokkos::View<int *, TEST_MEMSPACE>( "counts", num_particle );
+        Kokkos::View<int*, TEST_MEMSPACE>( "counts", num_particle );
     list_copy.neighbors =
-        Kokkos::View<int **, TEST_MEMSPACE>( "neighbors", num_particle, max_n );
+        Kokkos::View<int**, TEST_MEMSPACE>( "neighbors", num_particle, max_n );
     Kokkos::parallel_for(
         "copy list", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, num_particle ),
         KOKKOS_LAMBDA( const int p ) {
@@ -76,13 +76,21 @@ Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE>
 createParticles( const int num_particle, const double box_min,
                  const double box_max )
 {
-    using DataTypes = Cabana::MemberTypes<double[3]>;
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t aosoa( "aosoa", num_particle );
+#ifdef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
+    using RandomMemSpace = Kokkos::HostSpace;
+    using RandomExecSpace = Kokkos::DefaultHostExecutionSpace;
+#else
+    using RandomMemSpace = TEST_MEMSPACE;
+    using RandomExecSpace = TEST_EXECSPACE;
+#endif
 
-    auto position = Cabana::slice<0>( aosoa );
-    using PoolType = Kokkos::Random_XorShift64_Pool<TEST_EXECSPACE>;
-    using RandomType = Kokkos::Random_XorShift64<TEST_EXECSPACE>;
+    using DataTypes = Cabana::MemberTypes<double[3]>;
+    using AoSoA_t_r = Cabana::AoSoA<DataTypes, RandomMemSpace>;
+    AoSoA_t_r aosoa_random( "random", num_particle );
+
+    auto position = Cabana::slice<0>( aosoa_random );
+    using PoolType = Kokkos::Random_XorShift64_Pool<RandomExecSpace>;
+    using RandomType = Kokkos::Random_XorShift64<RandomExecSpace>;
     PoolType pool( 342343901 );
     auto random_coord_op = KOKKOS_LAMBDA( const int p )
     {
@@ -92,16 +100,20 @@ createParticles( const int num_particle, const double box_min,
                 Kokkos::rand<RandomType, double>::draw( gen, box_min, box_max );
         pool.free_state( gen );
     };
-    Kokkos::RangePolicy<TEST_EXECSPACE> exec_policy( 0, num_particle );
+    Kokkos::RangePolicy<RandomExecSpace> exec_policy( 0, num_particle );
     Kokkos::parallel_for( exec_policy, random_coord_op );
     Kokkos::fence();
+
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t aosoa( "aosoa", num_particle );
+    Cabana::deep_copy( aosoa, aosoa_random );
     return aosoa;
 }
 
 //---------------------------------------------------------------------------//
 template <class PositionSlice>
 TestNeighborList<TEST_MEMSPACE>
-computeFullNeighborList( const PositionSlice &position,
+computeFullNeighborList( const PositionSlice& position,
                          const double neighborhood_radius )
 {
     // Build a neighbor list with a brute force n^2 implementation. Count
@@ -109,8 +121,8 @@ computeFullNeighborList( const PositionSlice &position,
     TestNeighborList<TEST_MEMSPACE> list;
     int num_particle = position.size();
     double rsqr = neighborhood_radius * neighborhood_radius;
-    list.counts = Kokkos::View<int *, TEST_MEMSPACE>( "test_neighbor_count",
-                                                      num_particle );
+    list.counts = Kokkos::View<int*, TEST_MEMSPACE>( "test_neighbor_count",
+                                                     num_particle );
     Kokkos::deep_copy( list.counts, 0 );
     auto count_op = KOKKOS_LAMBDA( const int i )
     {
@@ -132,7 +144,7 @@ computeFullNeighborList( const PositionSlice &position,
     Kokkos::fence();
 
     // Allocate.
-    auto max_op = KOKKOS_LAMBDA( const int i, int &max_val )
+    auto max_op = KOKKOS_LAMBDA( const int i, int& max_val )
     {
         if ( max_val < list.counts( i ) )
             max_val = list.counts( i );
@@ -140,8 +152,8 @@ computeFullNeighborList( const PositionSlice &position,
     int max_n;
     Kokkos::parallel_reduce( exec_policy, max_op, Kokkos::Max<int>( max_n ) );
     Kokkos::fence();
-    list.neighbors = Kokkos::View<int **, TEST_MEMSPACE>( "test_neighbors",
-                                                          num_particle, max_n );
+    list.neighbors = Kokkos::View<int**, TEST_MEMSPACE>( "test_neighbors",
+                                                         num_particle, max_n );
 
     // Fill.
     auto fill_op = KOKKOS_LAMBDA( const int i )
@@ -171,8 +183,8 @@ computeFullNeighborList( const PositionSlice &position,
 
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType>
-void checkFullNeighborList( const ListType &nlist,
-                            const TestListType &N2_list_copy,
+void checkFullNeighborList( const ListType& nlist,
+                            const TestListType& N2_list_copy,
                             const int num_particle )
 {
     // Create host neighbor list copy.
@@ -207,8 +219,8 @@ void checkFullNeighborList( const ListType &nlist,
 
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType>
-void checkHalfNeighborList( const ListType &nlist,
-                            const TestListType &N2_list_copy,
+void checkHalfNeighborList( const ListType& nlist,
+                            const TestListType& N2_list_copy,
                             const int num_particle )
 {
     // Create host neighbor list copy.
@@ -248,7 +260,7 @@ void checkHalfNeighborList( const ListType &nlist,
 
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType>
-void checkFullNeighborListPartialRange( const ListType &nlist,
+void checkFullNeighborListPartialRange( const ListType& nlist,
                                         const TestListType N2_list_copy,
                                         const int num_particle,
                                         const int num_ignore )
@@ -292,18 +304,17 @@ void checkFullNeighborListPartialRange( const ListType &nlist,
 
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType>
-void checkFirstNeighborParallelFor( const ListType &nlist,
-                                    const TestListType &N2_list_copy,
+void checkFirstNeighborParallelFor( const ListType& nlist,
+                                    const TestListType& N2_list_copy,
                                     const int num_particle )
 {
     // Create Kokkos views for the write operation.
     using memory_space = typename TEST_MEMSPACE::memory_space;
-    Kokkos::View<int *, Kokkos::HostSpace> N2_result( "N2_result",
-                                                      num_particle );
-    Kokkos::View<int *, memory_space> serial_result( "serial_result",
+    Kokkos::View<int*, Kokkos::HostSpace> N2_result( "N2_result",
                                                      num_particle );
-    Kokkos::View<int *, memory_space> team_result( "team_result",
-                                                   num_particle );
+    Kokkos::View<int*, memory_space> serial_result( "serial_result",
+                                                    num_particle );
+    Kokkos::View<int*, memory_space> team_result( "team_result", num_particle );
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
@@ -343,20 +354,19 @@ void checkFirstNeighborParallelFor( const ListType &nlist,
 
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType>
-void checkSecondNeighborParallelFor( const ListType &nlist,
-                                     const TestListType &N2_list_copy,
+void checkSecondNeighborParallelFor( const ListType& nlist,
+                                     const TestListType& N2_list_copy,
                                      const int num_particle )
 {
     // Create Kokkos views for the write operation.
     using memory_space = typename TEST_MEMSPACE::memory_space;
-    Kokkos::View<int *, Kokkos::HostSpace> N2_result( "N2_result",
-                                                      num_particle );
-    Kokkos::View<int *, memory_space> serial_result( "serial_result",
+    Kokkos::View<int*, Kokkos::HostSpace> N2_result( "N2_result",
                                                      num_particle );
-    Kokkos::View<int *, memory_space> team_result( "team_result",
-                                                   num_particle );
-    Kokkos::View<int *, memory_space> vector_result( "vector_result",
-                                                     num_particle );
+    Kokkos::View<int*, memory_space> serial_result( "serial_result",
+                                                    num_particle );
+    Kokkos::View<int*, memory_space> team_result( "team_result", num_particle );
+    Kokkos::View<int*, memory_space> vector_result( "vector_result",
+                                                    num_particle );
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
@@ -414,14 +424,14 @@ void checkSecondNeighborParallelFor( const ListType &nlist,
 }
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType, class AoSoAType>
-void checkFirstNeighborParallelReduce( const ListType &nlist,
-                                       const TestListType &N2_list_copy,
-                                       const AoSoAType &aosoa )
+void checkFirstNeighborParallelReduce( const ListType& nlist,
+                                       const TestListType& N2_list_copy,
+                                       const AoSoAType& aosoa )
 {
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
     auto position = Cabana::slice<0>( aosoa );
-    auto sum_op = KOKKOS_LAMBDA( const int i, const int n, double &sum )
+    auto sum_op = KOKKOS_LAMBDA( const int i, const int n, double& sum )
     {
         sum += position( i, 0 ) + position( n, 0 );
     };
@@ -434,12 +444,10 @@ void checkFirstNeighborParallelReduce( const ListType &nlist,
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::FirstNeighborsTag(),
         Cabana::SerialOpTag(), serial_sum, "test_reduce_serial" );
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     double team_sum = 0;
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::FirstNeighborsTag(), Cabana::TeamOpTag(),
         team_sum, "test_reduce_team" );
-#endif
     Kokkos::fence();
 
     // Get the expected result from N^2 list in serial.
@@ -454,22 +462,20 @@ void checkFirstNeighborParallelReduce( const ListType &nlist,
 
     // Check the result.
     EXPECT_FLOAT_EQ( N2_sum, serial_sum );
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     EXPECT_FLOAT_EQ( N2_sum, team_sum );
-#endif
 }
 
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType, class AoSoAType>
-void checkSecondNeighborParallelReduce( const ListType &nlist,
-                                        const TestListType &N2_list_copy,
-                                        const AoSoAType &aosoa )
+void checkSecondNeighborParallelReduce( const ListType& nlist,
+                                        const TestListType& N2_list_copy,
+                                        const AoSoAType& aosoa )
 {
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
     auto position = Cabana::slice<0>( aosoa );
     auto sum_op =
-        KOKKOS_LAMBDA( const int i, const int n, const int a, double &sum )
+        KOKKOS_LAMBDA( const int i, const int n, const int a, double& sum )
     {
         sum += position( i, 0 ) + position( n, 0 ) + position( a, 0 );
     };
@@ -482,7 +488,6 @@ void checkSecondNeighborParallelReduce( const ListType &nlist,
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
         Cabana::SerialOpTag(), serial_sum, "test_reduce_serial" );
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     double team_sum = 0;
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
@@ -491,7 +496,6 @@ void checkSecondNeighborParallelReduce( const ListType &nlist,
     Cabana::neighbor_parallel_reduce(
         policy, sum_op, nlist, Cabana::SecondNeighborsTag(),
         Cabana::TeamVectorOpTag(), vector_sum, "test_reduce_vector" );
-#endif
     Kokkos::fence();
 
     // Get the expected result from N^2 list in serial.
@@ -509,10 +513,8 @@ void checkSecondNeighborParallelReduce( const ListType &nlist,
 
     // Check the result.
     EXPECT_FLOAT_EQ( N2_sum, serial_sum );
-#ifndef KOKKOS_ENABLE_HIP // FIXME_HIP
     EXPECT_FLOAT_EQ( N2_sum, team_sum );
     EXPECT_FLOAT_EQ( N2_sum, vector_sum );
-#endif
 }
 
 //---------------------------------------------------------------------------//
@@ -525,8 +527,8 @@ struct NeighborListTestData
     double box_max = 4.7 * test_radius;
 
     double cell_size_ratio = 0.5;
-    double grid_min[3] = {box_min, box_min, box_min};
-    double grid_max[3] = {box_max, box_max, box_max};
+    double grid_min[3] = { box_min, box_min, box_min };
+    double grid_max[3] = { box_max, box_max, box_max };
 
     Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE> aosoa;
     TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>

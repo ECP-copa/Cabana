@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -80,6 +80,16 @@ class PerformanceTraits<Kokkos::Experimental::HIP>
   public:
     static constexpr int vector_length =
         Kokkos::Experimental::Impl::HIPTraits::WarpSize;
+};
+#endif
+
+//---------------------------------------------------------------------------//
+#if defined( KOKKOS_ENABLE_OPENMPTARGET )
+template <>
+class PerformanceTraits<Kokkos::Experimental::OpenMPTarget>
+{
+  public:
+    static constexpr int vector_length = 16; // FIXME_OPENMPTARGET
 };
 #endif
 

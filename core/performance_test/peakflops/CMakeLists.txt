@@ -1,3 +1,14 @@
+############################################################################
+# Copyright (c) 2018-2021 by the Cabana authors                            #
+# All rights reserved.                                                     #
+#                                                                          #
+# This file is part of the Cabana library. Cabana is distributed under a   #
+# BSD 3-clause license. For the licensing terms see the LICENSE file in    #
+# the top-level directory.                                                 #
+#                                                                          #
+# SPDX-License-Identifier: BSD-3-Clause                                    #
+############################################################################
+
 # It only makes sense to run this if testing is enabled, as we depend on gtest
 if(NOT Cabana_ENABLE_TESTING)
   message(WARNING "Cabana_ENABLE_TESTING disabled, skipping performance tests")
