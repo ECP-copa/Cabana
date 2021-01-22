@@ -376,7 +376,8 @@ class HeffteFastFourierTransform
                                     "than local grid size" );
 
         _fft_work = Kokkos::View<Scalar*, DeviceType>(
-            Kokkos::ViewAllocateWithoutInitializing( "fft_work" ), fftsize );
+            Kokkos::ViewAllocateWithoutInitializing( "fft_work" ),
+            2 * fftsize );
     }
 
     /*!
@@ -413,14 +414,6 @@ class HeffteFastFourierTransform
         // Create a subview of the work array to write the local data into.
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
-        // auto work_view_space = appendDimension(own_space, 2);
-        // auto work_view =
-        //    createView<Scalar, Kokkos::LayoutRight, DeviceType>(
-        //        work_view_space, _fft_work.data() );
-        // auto work_view =
-        //    Kokkos::View<std::complex<Scalar>*, Kokkos::LayoutRight,
-        //    DeviceType>(
-        //        own_space, _fft_work.data() );
         auto work_view_space = appendDimension(own_space, 2);
         auto work_view =
             createView<Scalar, Kokkos::LayoutRight, DeviceType>(
