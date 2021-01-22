@@ -375,7 +375,7 @@ class HeffteFastFourierTransform
             throw std::logic_error( "Expected FFT allocation size smaller "
                                     "than local grid size" );
 
-        _fft_work = Kokkos::View<Scalar**, DeviceType>(
+        _fft_work = Kokkos::View<Scalar*, DeviceType>(
             Kokkos::ViewAllocateWithoutInitializing( "fft_work" ), fftsize );
     }
 
@@ -473,7 +473,7 @@ class HeffteFastFourierTransform
 
   private:
     std::shared_ptr<heffte::fft3d<heffte_backend_type>> _fft;
-    Kokkos::View<Scalar**, DeviceType> _fft_work;
+    Kokkos::View<Scalar*, DeviceType> _fft_work;
 };
 
 //---------------------------------------------------------------------------//
