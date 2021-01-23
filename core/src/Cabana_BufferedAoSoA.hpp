@@ -28,14 +28,14 @@ namespace Experimental
 {
 
 template <class AoSoA, std::size_t... Indicies>
-auto makeSliceParameterPackImpl( const AoSoA &aosoa,
+auto makeSliceParameterPackImpl( const AoSoA& aosoa,
                                  std::index_sequence<Indicies...> )
 {
     return Cajita::makeParameterPack( Cabana::slice<Indicies>( aosoa )... );
 }
 
 template <class AoSoA>
-auto makeSliceParameterPack( const AoSoA &aosoa )
+auto makeSliceParameterPack( const AoSoA& aosoa )
 {
     return makeSliceParameterPackImpl(
         aosoa, std::make_index_sequence<AoSoA::number_of_members>() );
@@ -83,7 +83,7 @@ class BufferedAoSoA
      */
     template <std::size_t i>
     KOKKOS_INLINE_FUNCTION const typename target_AoSoA_t::
-        template member_slice_type<i> &
+        template member_slice_type<i>&
         get_slice()
     {
         return Cajita::get<i>( cajita_tuple );

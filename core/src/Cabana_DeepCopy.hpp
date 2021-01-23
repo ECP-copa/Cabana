@@ -415,12 +415,12 @@ inline void deep_copy( Slice_t& slice,
  */
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_src(
-    DstAoSoA &dst, const SrcAoSoA &src,
+    DstAoSoA& dst, const SrcAoSoA& src,
     // const int to_index,
     // TODO: the order of these params is questionable
     const int from_index, const int count,
     typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
-                              is_aosoa<SrcAoSoA>::value )>::type * = 0 )
+                              is_aosoa<SrcAoSoA>::value )>::type* = 0 )
 {
     // TODO: this assumes you're trying to cross exec spaces (i.e partial copy
     // from CPU to GPU). You can likely do this faster and avoid data
@@ -488,7 +488,7 @@ inline void deep_copy_partial_src(
 
     assert( from_index % SrcAoSoA::vector_length == 0 );
 
-    auto *src_pointer = src.data();
+    auto* src_pointer = src.data();
     // Move it along in chunks of SoAs
     src_pointer += ( from_index / SrcAoSoA::vector_length );
 
@@ -518,7 +518,7 @@ inline void deep_copy_partial_dst(
     // const int from_index, // TODO: not honored
     const int count,
     typename std::enable_if<( is_aosoa<DstAoSoA>::value &&
-                              is_aosoa<SrcAoSoA>::value )>::type * = 0 )
+                              is_aosoa<SrcAoSoA>::value )>::type* = 0 )
 {
     std::cout << "About to do deep copy back to " << to_index << " .. "
               << count + to_index << std::endl;
@@ -556,7 +556,7 @@ inline void deep_copy_partial_dst(
     using src_memory_space = typename SrcAoSoA::memory_space;
     using src_soa_type = typename DstAoSoA::soa_type;
 
-    auto *dst_pointer = dst.data();
+    auto* dst_pointer = dst.data();
 
     assert( to_index % DstAoSoA::vector_length == 0 );
     // Move it along in chunks of SoAs

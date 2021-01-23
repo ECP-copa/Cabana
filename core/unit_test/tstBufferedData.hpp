@@ -285,12 +285,12 @@ void testBufferedDataCreation()
 
     // TODO: for some reason CudaHostPinnedSpace breaks correctness. I guess I
     // must be missing a fence somehow?
-//#ifdef __CUDA_ARCH__
-    //using AoSoA_t =
-        //Cabana::AoSoA<DataTypes, Kokkos::CudaHostPinnedSpace, vector_length>;
-//#else
+    //#ifdef __CUDA_ARCH__
+    // using AoSoA_t =
+    // Cabana::AoSoA<DataTypes, Kokkos::CudaHostPinnedSpace, vector_length>;
+    //#else
     using AoSoA_t = Cabana::AoSoA<DataTypes, Kokkos::HostSpace, vector_length>;
-//#endif
+    //#endif
 
     std::string label = "sample_aosoa";
 

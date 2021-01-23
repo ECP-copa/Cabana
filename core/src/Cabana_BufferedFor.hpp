@@ -68,9 +68,9 @@ namespace Impl
 template <class FunctorType, class extra_functor_arg_t, int VectorLength,
           class... ExecParameters>
 inline void custom_simd_parallel_for(
-    const SimdPolicy<VectorLength, ExecParameters...> &exec_policy,
-    const FunctorType &functor, const extra_functor_arg_t &f_arg,
-    const std::string &str = ""
+    const SimdPolicy<VectorLength, ExecParameters...>& exec_policy,
+    const FunctorType& functor, const extra_functor_arg_t& f_arg,
+    const std::string& str = ""
     // typename std::enable_if<!std::is_same<typename SimdPolicy<VectorLength,
     // ExecParameters...>::work_tag, void>::value>::type = 0
 )
@@ -83,8 +83,8 @@ inline void custom_simd_parallel_for(
     using index_type = typename team_policy::index_type;
 
     Kokkos::parallel_for(
-        str, dynamic_cast<const team_policy &>( exec_policy ),
-        KOKKOS_LAMBDA( const typename team_policy::member_type &team ) {
+        str, dynamic_cast<const team_policy&>( exec_policy ),
+        KOKKOS_LAMBDA( const typename team_policy::member_type& team ) {
             index_type s = team.league_rank() + exec_policy.structBegin();
             Kokkos::parallel_for(
                 Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
@@ -120,9 +120,9 @@ inline void custom_simd_parallel_for(
  */
 template <class BufferedAoSoA_t, class FunctorType, class... ExecParameters>
 inline void buffered_parallel_for(
-    const Kokkos::RangePolicy<ExecParameters...> &exec_policy,
-    BufferedAoSoA_t &buffered_aosoa, const FunctorType &functor,
-    const std::string &str = "" )
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    BufferedAoSoA_t& buffered_aosoa, const FunctorType& functor,
+    const std::string& str = "" )
 {
     // TODO: passing a kokkos range policy and then building a simd policy
     // doesn't make a whole lot of sense?
