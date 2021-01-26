@@ -9,31 +9,12 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_CORE_HPP
-#define CABANA_CORE_HPP
+#ifndef CABANA_UTILS_HPP
+#define CABANA_UTILS_HPP
 
-#include <Cabana_Utils.hpp>
+#include <Cabana_config.hpp>
 
-#include <Cabana_AoSoA.hpp>
-#include <Cabana_DeepCopy.hpp>
-#include <Cabana_LinkedCellList.hpp>
-#include <Cabana_MemberTypes.hpp>
-#include <Cabana_NeighborList.hpp>
-#include <Cabana_Parallel.hpp>
-#include <Cabana_Slice.hpp>
-#include <Cabana_SoA.hpp>
-#include <Cabana_Sort.hpp>
-#include <Cabana_Tuple.hpp>
-#include <Cabana_Types.hpp>
-#include <Cabana_VerletList.hpp>
+#include <Cabana_ParameterPack.hpp>
+#include <Cabana_Version.hpp>
 
-#ifdef Cabana_ENABLE_MPI
-#include <Cabana_Distributor.hpp>
-#include <Cabana_Halo.hpp>
-#endif
-
-#ifdef Cabana_ENABLE_ARBORX
-#include <Cabana_Experimental_NeighborList.hpp>
-#endif
-
-#endif // end CABANA_CORE_HPP
+#endif // end CABANA_UTILS_HPP

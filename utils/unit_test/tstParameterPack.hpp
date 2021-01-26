@@ -9,13 +9,11 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_ParameterPack.hpp>
+#include <Cabana_ParameterPack.hpp>
 
 #include <Kokkos_Core.hpp>
 
 #include <gtest/gtest.h>
-
-using namespace Cajita;
 
 namespace Test
 {
@@ -28,14 +26,14 @@ void captureTest()
     Kokkos::View<int[1][1], TEST_MEMSPACE> int_view( "int_view" );
 
     // Make a parameter pack so we can capture them as a group.
-    auto pack = makeParameterPack( dbl_view, int_view );
+    auto pack = Cabana::makeParameterPack( dbl_view, int_view );
 
     // Update the pack in a kernel
     Kokkos::parallel_for(
         "fill_pack", Kokkos::RangePolicy<TEST_EXECSPACE>( 0, 1 ),
         KOKKOS_LAMBDA( const int ) {
-            auto dv = get<0>( pack );
-            auto iv = get<1>( pack );
+            auto dv = Cabana::get<0>( pack );
+            auto iv = Cabana::get<1>( pack );
 
             dv( 0 ) = 3.14;
             iv( 0, 0 ) = 12;
@@ -52,7 +50,7 @@ void captureTest()
 }
 
 //---------------------------------------------------------------------------//
-void emptyTest() { std::ignore = makeParameterPack(); }
+void emptyTest() { std::ignore = Cabana::makeParameterPack(); }
 
 //---------------------------------------------------------------------------//
 // RUN TESTS

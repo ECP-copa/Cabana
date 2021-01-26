@@ -9,20 +9,17 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CABANA_VERSION_HPP
-#define CABANA_VERSION_HPP
+#ifndef CABANA_CONFIG_HPP
+#define CABANA_CONFIG_HPP
 
-#include <CabanaCore_config.hpp>
+#define Cabana_VERSION_STRING "@PROJECT_VERSION@"
 
-#include <string>
+#define Cabana_GIT_COMMIT_HASH "@Cabana_GIT_COMMIT_HASH@"
 
-namespace Cabana
-{
+#cmakedefine Cabana_ENABLE_CAJITA
 
-std::string version();
+#cmakedefine Cabana_ENABLE_MPI
 
-std::string git_commit_hash();
+#cmakedefine Cabana_ENABLE_ARBORX
 
-} // end namespace Cabana
-
-#endif // end CABANA_VERSION_HPP
+#endif // CABANA_CONFIG_HPP

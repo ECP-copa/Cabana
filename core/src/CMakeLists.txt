@@ -9,8 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-configure_file(CabanaCore_config.hpp.cmakein CabanaCore_config.hpp)
-
 set(HEADERS_PUBLIC
   Cabana_AoSoA.hpp
   Cabana_Core.hpp
@@ -26,7 +24,6 @@ set(HEADERS_PUBLIC
   Cabana_Tuple.hpp
   Cabana_Types.hpp
   Cabana_VerletList.hpp
-  Cabana_Version.hpp
   )
 
 if(Cabana_ENABLE_ARBORX)
@@ -49,43 +46,39 @@ set(HEADERS_IMPL
   impl/Cabana_PerformanceTraits.hpp
   impl/Cabana_TypeTraits.hpp
   )
-set(SOURCES_IMPL
-  impl/Cabana_Version.cpp
-  )
 
-add_library(cabanacore ${SOURCES_IMPL})
+add_library(cabanacore INTERFACE)
+target_link_libraries(cabanacore INTERFACE utils)
 
-target_link_libraries(cabanacore Kokkos::kokkos)
+target_link_libraries(cabanacore INTERFACE Kokkos::kokkos)
 
 if(Cabana_ENABLE_ARBORX)
-  target_link_libraries(cabanacore ArborX::ArborX)
+  target_link_libraries(cabanacore INTERFACE ArborX::ArborX)
 endif()
 
 if(Cabana_ENABLE_MPI)
-  target_link_libraries(cabanacore MPI::MPI_CXX)
+  target_link_libraries(cabanacore INTERFACE MPI::MPI_CXX)
 endif()
 
 target_include_directories(cabanacore
-  PUBLIC
+  INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
 
 install(TARGETS cabanacore
-  EXPORT Cabana_Targets
+  EXPORT CabanaCoreTargets
   LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
   ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR})
 
-install(EXPORT Cabana_Targets
-  FILE Cabana_Targets.cmake
+install(EXPORT CabanaCoreTargets
+  FILE CabanaCoreTargets.cmake
   NAMESPACE Cabana::
   DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana)
 
 install(FILES ${HEADERS_PUBLIC} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 install(FILES ${HEADERS_IMPL} DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}/impl/)
-
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/CabanaCore_config.hpp DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 include(CMakePackageConfigHelpers)
 

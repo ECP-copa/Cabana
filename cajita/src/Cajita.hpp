@@ -12,6 +12,8 @@
 #ifndef CAJITA_HPP
 #define CAJITA_HPP
 
+#include <Cabana_Utils.hpp>
+
 #include <Cajita_Config.hpp>
 
 #include <Cajita_Array.hpp>

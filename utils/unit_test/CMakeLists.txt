@@ -13,8 +13,8 @@ set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
 include_directories(${GTEST_SOURCE_DIR})
-add_library(cabana_core_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
-set_target_properties(cabana_core_gtest PROPERTIES
+add_library(cabana_utils_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
+set_target_properties(cabana_utils_gtest PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
@@ -24,10 +24,10 @@ set(gtest_args --gtest_color=yes)
 ##--------------------------------------------------------------------------##
 ## General tests.
 ##--------------------------------------------------------------------------##
-foreach(_test Index CartesianGrid SoA)
+foreach(_test Version)
   set(_target Cabana_${_test}_test)
-  add_executable(${_target} tst${_test}.cpp ../../utils/unit_test/unit_test_main.cpp)
-  target_link_libraries(${_target} cabanacore cabana_core_gtest)
+  add_executable(${_target} tst${_test}.cpp unit_test_main.cpp)
+  target_link_libraries(${_target} utils cabana_utils_gtest)
   add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
 endforeach()
 
@@ -62,9 +62,9 @@ macro(Cabana_add_tests)
     endif()
   endforeach()
   if(CABANA_UNIT_TEST_MPI)
-    set(CABANA_UNIT_TEST_MAIN ../../utils/unit_test/mpi_unit_test_main.cpp)
+    set(CABANA_UNIT_TEST_MAIN mpi_unit_test_main.cpp)
   else()
-    set(CABANA_UNIT_TEST_MAIN ../../utils/unit_test/unit_test_main.cpp)
+    set(CABANA_UNIT_TEST_MAIN unit_test_main.cpp)
   endif()
   foreach(_device ${CABANA_TEST_DEVICES})
     set(_dir ${CMAKE_CURRENT_BINARY_DIR}/${_device})
@@ -78,8 +78,8 @@ macro(Cabana_add_tests)
       set(_target Cabana_${_test}_test_${_device})
       add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
       target_include_directories(${_target} PRIVATE ${_dir}
-        ${CMAKE_CURRENT_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/../../utils/unit_test)
-      target_link_libraries(${_target} cabanacore cabana_core_gtest)
+        ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+      target_link_libraries(${_target} utils cabana_utils_gtest)
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
           # NOTE: When moving to CMake 3.10+ make sure to use MPIEXEC_EXECUTABLE instead
@@ -101,10 +101,4 @@ macro(Cabana_add_tests)
   endforeach()
 endmacro()
 
-Cabana_add_tests(NAMES AoSoA Slice DeepCopy Tuple Sort LinkedCellList NeighborList Parallel)
-if(Cabana_ENABLE_ARBORX)
-  Cabana_add_tests(NAMES NeighborListArborX)
-endif()
-if(Cabana_ENABLE_MPI)
-  Cabana_add_tests(MPI NAMES CommunicationPlan Distributor Halo)
-endif()
+Cabana_add_tests(NAMES ParameterPack)

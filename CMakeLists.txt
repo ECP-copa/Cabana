@@ -108,7 +108,7 @@ option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
 # enable doxygen
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core/src cajita/src)
+  doxygen_add_docs(doxygen core/src cajita/src utils/src)
 endif()
 
 #------------------------------------------------------------------------------#
@@ -165,7 +165,9 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 ##---------------------------------------------------------------------------##
 ## Libraries and Examples
 ##---------------------------------------------------------------------------##
-option(Cabana_ENABLE_CAJITA "Build Cajita" ON)
+add_subdirectory(utils)
+
+option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ON)
 if(Cabana_ENABLE_CAJITA)
   if(MPI_FOUND)
     add_subdirectory(cajita)
@@ -174,7 +176,7 @@ if(Cabana_ENABLE_CAJITA)
   endif()
 endif()
 
-option(Cabana_ENABLE_CORE "Build Core" ON)
+option(Cabana_ENABLE_CORE "Build Core (particles)" ON)
 if(Cabana_ENABLE_CORE)
   add_subdirectory(core)
 endif()
@@ -203,7 +205,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp utils/*.cpp utils/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp)
   add_custom_target(format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})

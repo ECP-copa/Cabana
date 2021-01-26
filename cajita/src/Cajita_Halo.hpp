@@ -12,9 +12,10 @@
 #ifndef CAJITA_HALO_HPP
 #define CAJITA_HALO_HPP
 
+#include <Cabana_Utils.hpp>
+
 #include <Cajita_Array.hpp>
 #include <Cajita_IndexSpace.hpp>
-#include <Cajita_ParameterPack.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -540,11 +541,12 @@ class Halo
                const Kokkos::View<int* [6], memory_space>& steering,
                const int element_idx,
                const std::integral_constant<std::size_t, 0>,
-               const ParameterPack<ArrayViews...>& array_views )
+               const Cabana::ParameterPack<ArrayViews...>& array_views )
     {
         // If the pack element_idx is in the current array, pack it.
         if ( 0 == steering( element_idx, 1 ) )
-            packElement( buffer, steering, element_idx, get<0>( array_views ) );
+            packElement( buffer, steering, element_idx,
+                         Cabana::get<0>( array_views ) );
     }
 
     // Pack an array into a buffer.
@@ -554,11 +556,12 @@ class Halo
                const Kokkos::View<int* [6], memory_space>& steering,
                const int element_idx,
                const std::integral_constant<std::size_t, N>,
-               const ParameterPack<ArrayViews...>& array_views )
+               const Cabana::ParameterPack<ArrayViews...>& array_views )
     {
         // If the pack element_idx is in the current array, pack it.
         if ( N == steering( element_idx, 1 ) )
-            packElement( buffer, steering, element_idx, get<N>( array_views ) );
+            packElement( buffer, steering, element_idx,
+                         Cabana::get<N>( array_views ) );
 
         // Recurse.
         packArray( buffer, steering, element_idx,
@@ -572,7 +575,7 @@ class Halo
                      const Kokkos::View<int* [6], memory_space>& steering,
                      ArrayViews... array_views ) const
     {
-        auto pp = makeParameterPack( array_views... );
+        auto pp = Cabana::makeParameterPack( array_views... );
         Kokkos::parallel_for(
             "pack_buffer",
             Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0,
@@ -652,12 +655,12 @@ class Halo
                  const Kokkos::View<int* [6], memory_space>& steering,
                  const int element_idx,
                  const std::integral_constant<std::size_t, 0>,
-                 const ParameterPack<ArrayViews...>& array_views )
+                 const Cabana::ParameterPack<ArrayViews...>& array_views )
     {
         // If the unpack element_idx is in the current array, unpack it.
         if ( 0 == steering( element_idx, 1 ) )
             unpackElement( reduce_op, buffer, steering, element_idx,
-                           get<0>( array_views ) );
+                           Cabana::get<0>( array_views ) );
     }
 
     // Unpack an array from a buffer.
@@ -668,12 +671,12 @@ class Halo
                  const Kokkos::View<int* [6], memory_space>& steering,
                  const int element_idx,
                  const std::integral_constant<std::size_t, N>,
-                 const ParameterPack<ArrayViews...>& array_views )
+                 const Cabana::ParameterPack<ArrayViews...>& array_views )
     {
         // If the unpack element_idx is in the current array, unpack it.
         if ( N == steering( element_idx, 1 ) )
             unpackElement( reduce_op, buffer, steering, element_idx,
-                           get<N>( array_views ) );
+                           Cabana::get<N>( array_views ) );
 
         // Recurse.
         unpackArray( reduce_op, buffer, steering, element_idx,
@@ -689,7 +692,7 @@ class Halo
                        const Kokkos::View<int* [6], memory_space>& steering,
                        ArrayViews... array_views ) const
     {
-        auto pp = makeParameterPack( array_views... );
+        auto pp = Cabana::makeParameterPack( array_views... );
         Kokkos::parallel_for(
             "unpack_buffer",
             Kokkos::RangePolicy<ExecutionSpace>( exec_space, 0,

@@ -58,6 +58,7 @@ if(Cabana_ENABLE_HEFFTE)
 endif()
 
 add_library(Cajita ${SOURCES_PUBLIC})
+target_link_libraries(Cajita PUBLIC utils)
 
 target_link_libraries(Cajita PUBLIC
   Kokkos::kokkos
