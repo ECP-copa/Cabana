@@ -108,7 +108,7 @@ option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
 # enable doxygen
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core/src)
+  doxygen_add_docs(doxygen core/src cajita/src)
 endif()
 
 #------------------------------------------------------------------------------#
