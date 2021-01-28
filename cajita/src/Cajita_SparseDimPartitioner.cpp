@@ -3,7 +3,17 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-SparseDimPartitioner::SparseDimPartitioner( MPI_Comm comm )
+template <typename MemorySpace>
+SparseDimPartitioner::SparseDimPartitioner( MPI_Comm comm, 
+                                            const std::array<int, 3>& global_cells_per_dim )
+    : _workload_prefix_sum {Kokkos::View<int***, MemorySpace>( "rectangle_partition", 
+                                          global_cells_per_dim[0], 
+                                          global_cells_per_dim[1], 
+                                          global_cells_per_dim[2])},
+      _workload_per_cell {Kokkos::View<>( "workload", 
+                                         global_cells_per_dim[0], 
+                                         global_cells_per_dim[1], 
+                                         global_cells_per_dim[2])}
 { 
   // compute the available rank number (in each dimension)
   ranksPerDimension(comm);
@@ -11,15 +21,25 @@ SparseDimPartitioner::SparseDimPartitioner( MPI_Comm comm )
 
 }
 
-SparseDimPartitioner::SparseDimPartitioner( const std::array<int, 4>& ranks_per_dim )
-    : _ranks_per_dim( ranks_per_dim )
+template <typename MemorySpace>
+SparseDimPartitioner::SparseDimPartitioner( const std::array<int, 4>& ranks_per_dim, 
+                                            const std::array<int, 3>& global_cells_per_dim )
+    : _ranks_per_dim( ranks_per_dim ),
+      _workload_prefix_sum {Kokkos::View( "rectangle_partition", 
+                                          global_cells_per_dim[0], 
+                                          global_cells_per_dim[1], 
+                                          global_cells_per_dim[2])},
+      _workload_per_cell {Kokkos::View( "workload", 
+                                         global_cells_per_dim[0], 
+                                         global_cells_per_dim[1], 
+                                         global_cells_per_dim[2])}
 { 
   // init partitioner
 }
 
 //---------------------------------------------------------------------------//
 std::array<int, 3>
-SparseDimPartitioner::ranksPerDimension( MPI_Comm comm) const
+SparseDimPartitioner::ranksPerDimension( MPI_Comm comm ) const
 {
     int comm_size;
     MPI_Comm_size( comm, &comm_size );
@@ -30,7 +50,7 @@ SparseDimPartitioner::ranksPerDimension( MPI_Comm comm) const
 
 //---------------------------------------------------------------------------//
 std::array<int,3>
-UniformDimPartitioner::ownedCellsPerDimension(
+SparseDimPartitioner::ownedCellsPerDimension(
     MPI_Comm cart_comm,
     const std::array<int, 3>& ) const
 {
@@ -49,5 +69,17 @@ UniformDimPartitioner::ownedCellsPerDimension(
 }
 
 //---------------------------------------------------------------------------//
+template <template ExecSpace, class ParticlePosViewType, template CellUnit>
+void SparseDimPartitioner::computeLocalWorkLoad(ParticlePosViewType &view, int particle_num, CellUnit dx);
+{
+    Kokkos::parallel_for(
+      Kokkos::RangePolicy<ExecSpace>(0, particle_num),
+      KOKKOS_LAMBDA(cosnt int i){
+        int cell_i = static_cast<int>(view(i, 0) / dx - 0.5);
+        int cell_j = static_cast<int>(view(i, 1) / dx - 0.5);
+        int cell_k = static_cast<int>(view(i, 2) / dx - 0.5);
+        atomic_increment(&_workload_per_cell(cell_i, cell_j, cell_k)); 
+      });
+}
 
 } // end namespace Cajita

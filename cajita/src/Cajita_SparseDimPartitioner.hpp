@@ -12,11 +12,13 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
+template<typename MemorySpace>
 class SparseDimPartitioner : public Partitioner
 {
   public: 
-    SparseDimPartitioner( MPI_Comm comm );
-    SparseDimPartitioner( const std::array<int, 3>& ranks_per_dim );
+    SparseDimPartitioner( MPI_Comm comm, const std::array<int, 3>& global_cells_per_dim );
+    SparseDimPartitioner( const std::array<int, 3>& ranks_per_dim, 
+                          const std::array<int, 3>& global_cells_per_dim );
 
     std::array<int, 3> ranksPerDimension(
         MPI_Comm comm ) const override;
@@ -24,6 +26,15 @@ class SparseDimPartitioner : public Partitioner
     std::array<int,3> ownedCellsPerDimension(
         MPI_Comm cart_comm,
         const std::array<int, 3>& global_cells_per_dim ) const override;
+
+    template <class ParticlePosViewType>
+    void computeLocalWorkload(ParticlePosViewType &pos_view);
+
+    void computeFullPredixSum();
+
+    void optimizePartition();
+
+    void greedyPartition();
 
   private:
     //! represent the rectangle partition in each dimension 
@@ -33,6 +44,7 @@ class SparseDimPartitioner : public Partitioner
     //! 3d prefix sum of the workload of each cell on current 
     //! [TODO] remove to corresponding implementation?
     Kokkos::View<int***, MemorySpace> _workload_prefix_sum;
+    Kokkos::View<int***, MemorySpace> _workload_per_cell;
     //! ranks per dimension
     std::array<int, 3> _ranks_per_dim;
     //! workload_threshold_coeff
