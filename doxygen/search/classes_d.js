@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['randomaccessmemory_287',['RandomAccessMemory',['../structCabana_1_1RandomAccessMemory.html',1,'Cabana']]],
-  ['remove_5fcvref_288',['remove_cvref',['../structCabana_1_1Experimental_1_1stdcxx20_1_1remove__cvref.html',1,'Cabana::Experimental::stdcxx20']]]
+  ['offsetscanop_667',['OffsetScanOp',['../structCabana_1_1Impl_1_1VerletListBuilder_1_1OffsetScanOp.html',1,'Cabana::Impl::VerletListBuilder']]],
+  ['own_668',['Own',['../structCajita_1_1Own.html',1,'Cajita']]]
 ];

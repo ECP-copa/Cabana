@@ -1,15 +1,18 @@
 var searchData=
 [
-  ['neighbordiscriminator_273',['NeighborDiscriminator',['../classCabana_1_1Impl_1_1NeighborDiscriminator.html',1,'Cabana::Impl']]],
-  ['neighbordiscriminator_3c_20fullneighbortag_20_3e_274',['NeighborDiscriminator&lt; FullNeighborTag &gt;',['../classCabana_1_1Impl_1_1NeighborDiscriminator_3_01FullNeighborTag_01_4.html',1,'Cabana::Impl']]],
-  ['neighbordiscriminator_3c_20halfneighbortag_20_3e_275',['NeighborDiscriminator&lt; HalfNeighborTag &gt;',['../classCabana_1_1Impl_1_1NeighborDiscriminator_3_01HalfNeighborTag_01_4.html',1,'Cabana::Impl']]],
-  ['neighbordiscriminatorcallback_276',['NeighborDiscriminatorCallback',['../structCabana_1_1Experimental_1_1Impl_1_1NeighborDiscriminatorCallback.html',1,'Cabana::Experimental::Impl']]],
-  ['neighbordiscriminatorcallback2d_5ffirstpass_277',['NeighborDiscriminatorCallback2D_FirstPass',['../structCabana_1_1Experimental_1_1Impl_1_1NeighborDiscriminatorCallback2D__FirstPass.html',1,'Cabana::Experimental::Impl']]],
-  ['neighbordiscriminatorcallback2d_5ffirstpass_5fbufferoptimization_278',['NeighborDiscriminatorCallback2D_FirstPass_BufferOptimization',['../structCabana_1_1Experimental_1_1Impl_1_1NeighborDiscriminatorCallback2D__FirstPass__BufferOptimization.html',1,'Cabana::Experimental::Impl']]],
-  ['neighbordiscriminatorcallback2d_5fsecondpass_279',['NeighborDiscriminatorCallback2D_SecondPass',['../structCabana_1_1Experimental_1_1Impl_1_1NeighborDiscriminatorCallback2D__SecondPass.html',1,'Cabana::Experimental::Impl']]],
-  ['neighborlist_280',['NeighborList',['../classCabana_1_1NeighborList.html',1,'Cabana']]],
-  ['neighborlist_3c_20experimental_3a_3acrsgraph_3c_20memoryspace_2c_20tag_20_3e_20_3e_281',['NeighborList&lt; Experimental::CrsGraph&lt; MemorySpace, Tag &gt; &gt;',['../classCabana_1_1NeighborList_3_01Experimental_1_1CrsGraph_3_01MemorySpace_00_01Tag_01_4_01_4.html',1,'Cabana']]],
-  ['neighborlist_3c_20experimental_3a_3adense_3c_20memoryspace_2c_20tag_20_3e_20_3e_282',['NeighborList&lt; Experimental::Dense&lt; MemorySpace, Tag &gt; &gt;',['../classCabana_1_1NeighborList_3_01Experimental_1_1Dense_3_01MemorySpace_00_01Tag_01_4_01_4.html',1,'Cabana']]],
-  ['neighborlist_3c_20verletlist_3c_20memoryspace_2c_20algorithmtag_2c_20verletlayout2d_2c_20buildtag_20_3e_20_3e_283',['NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag &gt; &gt;',['../classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayout2D_00_01BuildTag_01_4_01_4.html',1,'Cabana']]],
-  ['neighborlist_3c_20verletlist_3c_20memoryspace_2c_20algorithmtag_2c_20verletlayoutcsr_2c_20buildtag_20_3e_20_3e_284',['NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag &gt; &gt;',['../classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html',1,'Cabana']]]
+  ['l2g_621',['L2G',['../structCajita_1_1IndexConversion_1_1L2G.html',1,'Cajita::IndexConversion']]],
+  ['layoutadapter_622',['LayoutAdapter',['../structCajita_1_1LayoutAdapter.html',1,'Cajita']]],
+  ['layoutcabanaslice_623',['LayoutCabanaSlice',['../structKokkos_1_1LayoutCabanaSlice.html',1,'Kokkos']]],
+  ['layoutcontainer_624',['LayoutContainer',['../structCajita_1_1ReferenceConjugateGradient_1_1LayoutContainer.html',1,'Cajita::ReferenceConjugateGradient']]],
+  ['linkedcelllist_625',['LinkedCellList',['../classCabana_1_1LinkedCellList.html',1,'Cabana']]],
+  ['linkedcelllist_3c_20device_20_3e_626',['LinkedCellList&lt; device &gt;',['../classCabana_1_1LinkedCellList.html',1,'Cabana']]],
+  ['linkedcellstencil_627',['LinkedCellStencil',['../structCabana_1_1Impl_1_1LinkedCellStencil.html',1,'Cabana::Impl']]],
+  ['linkedcellstencil_3c_20positionvaluetype_20_3e_628',['LinkedCellStencil&lt; PositionValueType &gt;',['../structCabana_1_1Impl_1_1LinkedCellStencil.html',1,'Cabana::Impl']]],
+  ['local_629',['Local',['../structCajita_1_1Local.html',1,'Cajita']]],
+  ['localgrid_630',['LocalGrid',['../classCajita_1_1LocalGrid.html',1,'Cajita']]],
+  ['localmesh_631',['LocalMesh',['../classCajita_1_1LocalMesh.html',1,'Cajita']]],
+  ['localmesh_3c_20device_2c_20nonuniformmesh_3c_20scalar_20_3e_20_3e_632',['LocalMesh&lt; Device, NonUniformMesh&lt; Scalar &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_01_4_01_4.html',1,'Cajita']]],
+  ['localmesh_3c_20device_2c_20uniformmesh_3c_20scalar_20_3e_20_3e_633',['LocalMesh&lt; Device, UniformMesh&lt; Scalar &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_01_4_01_4.html',1,'Cajita']]],
+  ['logbase2_634',['LogBase2',['../structCabana_1_1Impl_1_1LogBase2.html',1,'Cabana::Impl']]],
+  ['logbase2_3c_201_20_3e_635',['LogBase2&lt; 1 &gt;',['../structCabana_1_1Impl_1_1LogBase2_3_011_01_4.html',1,'Cabana::Impl']]]
 ];

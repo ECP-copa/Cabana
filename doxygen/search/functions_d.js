@@ -1,12 +1,8 @@
 var searchData=
 [
-  ['s_359',['s',['../classCabana_1_1Impl_1_1Index.html#a40dfbcd0c1dc68facc73b301b0709cef',1,'Cabana::Impl::Index']]],
-  ['settuple_360',['setTuple',['../classCabana_1_1AoSoA.html#ac16f0019541fc03c76ff31ca767b05f6',1,'Cabana::AoSoA']]],
-  ['shrinktofit_361',['shrinkToFit',['../classCabana_1_1AoSoA.html#acd651a76da12be46970083a7c1bafe2d',1,'Cabana::AoSoA']]],
-  ['simdpolicy_362',['SimdPolicy',['../classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21',1,'Cabana::SimdPolicy']]],
-  ['size_363',['size',['../classCabana_1_1AoSoA.html#a257fd7fbab685c890d2c59c5ff0e6edc',1,'Cabana::AoSoA::size()'],['../classCabana_1_1Slice.html#a56916eee341b8184856f125ef5db0c93',1,'Cabana::Slice::size()']]],
-  ['slice_364',['Slice',['../classCabana_1_1Slice.html#a93a0064084e2b05c030e63ecc688734b',1,'Cabana::Slice::Slice()'],['../classCabana_1_1Slice.html#a62c584101d666f3dfc5c6722df8e9f2e',1,'Cabana::Slice::Slice(const pointer_type data, const size_type size, const size_type num_soa, const std::string &amp;label=&quot;&quot;)'],['../classCabana_1_1Slice.html#ae615b44282c747d966f9503f5f49fb57',1,'Cabana::Slice::Slice(const Slice&lt; DataType, DeviceType, MAT, VectorLength, Stride &gt; &amp;rhs)']]],
-  ['stride_365',['stride',['../classCabana_1_1Slice.html#a4e622bc6e130f088adbf054e6bbca7ea',1,'Cabana::Slice']]],
-  ['structbegin_366',['structBegin',['../classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511',1,'Cabana::SimdPolicy']]],
-  ['structend_367',['structEnd',['../classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c',1,'Cabana::SimdPolicy']]]
+  ['offsettocoord_827',['offsetToCoord',['../classCajita_1_1TileMap.html#aad0cfe6a1f241b25b89b1b4c9aece627',1,'Cajita::TileMap']]],
+  ['operator_21_3d_828',['operator!=',['../classCajita_1_1IndexSpace.html#ae6a46d04379849fd6b2408df0a002d51',1,'Cajita::IndexSpace']]],
+  ['operator_28_29_829',['operator()',['../structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Naive_01_4.html#af1504447565a40371a89bb517f0b7f41',1,'Cajita::TileID2HashKey&lt; Key, HashTypes::Naive &gt;::operator()()'],['../structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#a86370cb5828dbfb7efe3e9135e104687',1,'Cajita::TileID2HashKey&lt; Key, HashTypes::Morton &gt;::operator()()'],['../structCajita_1_1HashKey2TileID_3_01Key_00_01HashTypes_1_1Naive_01_4.html#aca0d451e7ef5ad2edd24d27fe92b245f',1,'Cajita::HashKey2TileID&lt; Key, HashTypes::Naive &gt;::operator()()'],['../structCajita_1_1HashKey2TileID_3_01Key_00_01HashTypes_1_1Morton_01_4.html#ac4ad88cfaef8c75f14789d6e1ab3f99b',1,'Cajita::HashKey2TileID&lt; Key, HashTypes::Morton &gt;::operator()()']]],
+  ['operator_3d_830',['operator=',['../classCabana_1_1Slice.html#ad9ba5c1dec7ab25323d965c86d9d55a3',1,'Cabana::Slice']]],
+  ['operator_3d_3d_831',['operator==',['../classCajita_1_1IndexSpace.html#a1854edb25a93d049285694d976a99d90',1,'Cajita::IndexSpace']]]
 ];
