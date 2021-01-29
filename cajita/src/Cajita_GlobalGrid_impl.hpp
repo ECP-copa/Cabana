@@ -9,7 +9,8 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_GlobalGrid.hpp>
+#ifndef CAJITA_GLOBALGRID_IMPL_HPP
+#define CAJITA_GLOBALGRID_IMPL_HPP
 
 #include <algorithm>
 #include <cmath>
@@ -263,14 +264,7 @@ int GlobalGrid<MeshType>::globalOffset( const int dim ) const
 }
 
 //---------------------------------------------------------------------------//
-// Class explicit instantiations.
-
-template class GlobalGrid<UniformMesh<float>>;
-template class GlobalGrid<UniformMesh<double>>;
-
-template class GlobalGrid<NonUniformMesh<float>>;
-template class GlobalGrid<NonUniformMesh<double>>;
-
-//---------------------------------------------------------------------------//
 
 } // end namespace Cajita
+
+#endif // end CAJITA_GLOBALGRID_IMPL_HPP

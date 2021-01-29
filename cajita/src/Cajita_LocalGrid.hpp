@@ -248,4 +248,12 @@ createLocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 
 } // end namespace Cajita
 
+//---------------------------------------------------------------------------//
+// Template implementations
+//---------------------------------------------------------------------------//
+
+#include <Cajita_LocalGrid_impl.hpp>
+
+//---------------------------------------------------------------------------//
+
 #endif // end CAJITA_LOCALGRID_HPP

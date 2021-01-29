@@ -14,13 +14,18 @@
 namespace Cajita
 {
 
-template class GlobalMesh<UniformMesh<float>>;
-template class GlobalMesh<UniformMesh<double>>;
+#define CAJITA_INST_GLOBALMESH( MESH, FP, NSD )                                \
+    template class GlobalMesh<MESH<FP, NSD>>;
 
-template class GlobalMesh<NonUniformMesh<float>>;
-template class GlobalMesh<NonUniformMesh<double>>;
+#define CAJITA_INST_GLOBALMESH_NSD( MESH, FP )                                 \
+    CAJITA_INST_GLOBALMESH( MESH, FP, 3 )
 
-template class GlobalMesh<SparseMesh<float>>;
-template class GlobalMesh<SparseMesh<double>>;
+#define CAJITA_INST_GLOBALMESH_FP( MESH )                                      \
+    CAJITA_INST_GLOBALMESH_NSD( MESH, float )                                  \
+    CAJITA_INST_GLOBALMESH_NSD( MESH, double )
+
+CAJITA_INST_GLOBALMESH_FP( UniformMesh )
+CAJITA_INST_GLOBALMESH_FP( NonUniformMesh )
+CAJITA_INST_GLOBALMESH_FP( SparseMesh )
 
 } // end namespace Cajita
