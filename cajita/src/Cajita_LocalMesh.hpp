@@ -26,15 +26,18 @@ class LocalMesh;
 
 //---------------------------------------------------------------------------//
 // Local mesh partial specialization for uniform mesh.
-template <class Scalar, class Device>
-class LocalMesh<Device, UniformMesh<Scalar>>
+template <class Scalar, class Device, std::size_t NumSpaceDim>
+class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
 {
   public:
     // Mesh type.
-    using mesh_type = UniformMesh<Scalar>;
+    using mesh_type = UniformMesh<Scalar, NumSpaceDim>;
 
     // Scalar type for geometric operations.
     using scalar_type = Scalar;
+
+    // Spatial dimension.
+    static constexpr int num_space_dim = NumSpaceDim;
 
     // Device type.
     using device_type = Device;
@@ -42,7 +45,7 @@ class LocalMesh<Device, UniformMesh<Scalar>>
     using execution_space = typename Device::execution_space;
 
     // Constructor.
-    LocalMesh( const LocalGrid<UniformMesh<Scalar>>& local_grid )
+    LocalMesh( const LocalGrid<UniformMesh<Scalar, NumSpaceDim>>& local_grid )
     {
         const auto& global_grid = local_grid.globalGrid();
         const auto& global_mesh = global_grid.globalMesh();
@@ -206,15 +209,18 @@ class LocalMesh<Device, UniformMesh<Scalar>>
 
 //---------------------------------------------------------------------------//
 // Global mesh partial specialization for non-uniform mesh.
-template <class Scalar, class Device>
-class LocalMesh<Device, NonUniformMesh<Scalar>>
+template <class Scalar, class Device, std::size_t NumSpaceDim>
+class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
 {
   public:
     // Mesh type.
-    using mesh_type = NonUniformMesh<Scalar>;
+    using mesh_type = NonUniformMesh<Scalar, NumSpaceDim>;
 
     // Scalar type for geometric operations.
     using scalar_type = Scalar;
+
+    // Spatial dimension.
+    static constexpr int num_space_dim = NumSpaceDim;
 
     // Device type.
     using device_type = Device;
@@ -222,7 +228,8 @@ class LocalMesh<Device, NonUniformMesh<Scalar>>
     using execution_space = typename Device::execution_space;
 
     // Constructor.
-    LocalMesh( const LocalGrid<NonUniformMesh<Scalar>>& local_grid )
+    LocalMesh(
+        const LocalGrid<NonUniformMesh<Scalar, NumSpaceDim>>& local_grid )
     {
         const auto& global_grid = local_grid.globalGrid();
         const auto& global_mesh = global_grid.globalMesh();
