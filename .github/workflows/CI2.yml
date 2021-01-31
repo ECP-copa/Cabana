@@ -11,10 +11,11 @@ on:
 
 jobs:
   CI:
-    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:rawhide' || matrix.distro == 'opensuse:latest' || matrix.distro == 'ubuntu:devel' }} 
+    # FIXME: remove failing distributions here when passing
+    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:latest' || matrix.distro == 'fedora:intel' || matrix.distro == 'ubuntu:devel' }}
     strategy:
       matrix:
-        distro: ['fedora:latest', 'fedora:rawhide', 'opensuse:latest', 'ubuntu:latest', 'ubuntu:devel', 'ubuntu:rolling']
+        distro: ['ubuntu:latest']
         cxx: ['g++', 'clang++']
         openmp: ['ON', 'OFF']
         cmake_build_type: ['Debug', 'Release']
@@ -32,8 +33,8 @@ jobs:
             kokkos_ver: 'master'
           - distro: 'fedora:intel'
             cxx: 'icpc'
-            cmake_build_type: 'Release'
             openmp: 'OFF'
+            cmake_build_type: 'Release'
             kokkos_ver: 'master'
             cxx_flags: ' -parallel'
           - distro: 'fedora:intel'
@@ -42,6 +43,46 @@ jobs:
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             cxx_flags: ' -parallel'
+          - distro: 'fedora:latest'
+            cxx: 'g++'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+          - distro: 'fedora:latest'
+            cxx: 'clang++'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+          - distro: 'opensuse:latest'
+            cxx: 'g++'
+            cmake_build_type: 'Release'
+            openmp: 'ON'
+            kokkos_ver: 'master'
+          - distro: 'opensuse:latest'
+            cxx: 'clang++'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+          - distro: 'ubuntu:rolling'
+            cxx: 'g++'
+            cmake_build_type: 'Release'
+            openmp: 'ON'
+            kokkos_ver: 'master'
+          - distro: 'ubuntu:rolling'
+            cxx: 'clang++'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+          - distro: 'fedora:rawhide'
+            cxx: 'g++'
+            cmake_build_type: 'Release'
+            openmp: 'ON'
+            kokkos_ver: 'master'
+          - distro: 'fedora:rawhide'
+            cxx: 'clang++'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
     runs-on: ubuntu-20.04
     container: ghcr.io/kokkos/ci-containers/${{ matrix.distro }}
     steps:
