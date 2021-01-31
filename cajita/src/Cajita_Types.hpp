@@ -188,27 +188,36 @@ struct Global
 //---------------------------------------------------------------------------//
 
 // Uniform mesh tag.
-template <class Scalar>
+template <class Scalar, std::size_t NumSpaceDim = 3>
 struct UniformMesh
 {
     // Scalar type for mesh floating point operations.
     using scalar_type = Scalar;
+
+    // Number of spatial dimensions.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 };
 
 // Non-uniform mesh tag.
-template <class Scalar>
+template <class Scalar, std::size_t NumSpaceDim = 3>
 struct NonUniformMesh
 {
     // Scalar type for mesh floating point operations.
     using scalar_type = Scalar;
+
+    // Number of spatial dimensions.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 };
 
 // Sparse mesh tag
-template <class Scalar>
+template <class Scalar, std::size_t NumSpaceDim = 3>
 struct SparseMesh
 {
     // Scalar type for mesh floating point operations.
     using scalar_type = Scalar;
+
+    // Number of spatial dimensions.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 };
 
 // Type checker.
@@ -217,33 +226,35 @@ struct isMeshType : public std::false_type
 {
 };
 
-template <class Scalar>
-struct isMeshType<UniformMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isMeshType<UniformMesh<Scalar, NumSpaceDim>> : public std::true_type
 {
 };
 
-template <class Scalar>
-struct isMeshType<const UniformMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isMeshType<const UniformMesh<Scalar, NumSpaceDim>>
+    : public std::true_type
 {
 };
 
-template <class Scalar>
-struct isMeshType<NonUniformMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isMeshType<NonUniformMesh<Scalar, NumSpaceDim>> : public std::true_type
 {
 };
 
-template <class Scalar>
-struct isMeshType<const NonUniformMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isMeshType<const NonUniformMesh<Scalar, NumSpaceDim>>
+    : public std::true_type
 {
 };
 
-template <class Scalar>
-struct isMeshType<SparseMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isMeshType<SparseMesh<Scalar, NumSpaceDim>> : public std::true_type
 {
 };
 
-template <class Scalar>
-struct isMeshType<const SparseMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isMeshType<const SparseMesh<Scalar, NumSpaceDim>> : public std::true_type
 {
 };
 
@@ -253,13 +264,14 @@ struct isUniformMesh : public std::false_type
 {
 };
 
-template <class Scalar>
-struct isUniformMesh<UniformMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isUniformMesh<UniformMesh<Scalar, NumSpaceDim>> : public std::true_type
 {
 };
 
-template <class Scalar>
-struct isUniformMesh<const UniformMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isUniformMesh<const UniformMesh<Scalar, NumSpaceDim>>
+    : public std::true_type
 {
 };
 
@@ -269,13 +281,15 @@ struct isNonUniformMesh : public std::false_type
 {
 };
 
-template <class Scalar>
-struct isNonUniformMesh<NonUniformMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isNonUniformMesh<NonUniformMesh<Scalar, NumSpaceDim>>
+    : public std::true_type
 {
 };
 
-template <class Scalar>
-struct isNonUniformMesh<const NonUniformMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isNonUniformMesh<const NonUniformMesh<Scalar, NumSpaceDim>>
+    : public std::true_type
 {
 };
 
@@ -285,13 +299,14 @@ struct isSparseMesh : public std::false_type
 {
 };
 
-template <class Scalar>
-struct isSparseMesh<SparseMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isSparseMesh<SparseMesh<Scalar, NumSpaceDim>> : public std::true_type
 {
 };
 
-template <class Scalar>
-struct isSparseMesh<const SparseMesh<Scalar>> : public std::true_type
+template <class Scalar, std::size_t NumSpaceDim>
+struct isSparseMesh<const SparseMesh<Scalar, NumSpaceDim>>
+    : public std::true_type
 {
 };
 //---------------------------------------------------------------------------//

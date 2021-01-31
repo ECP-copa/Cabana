@@ -125,4 +125,12 @@ std::shared_ptr<GlobalGrid<MeshType>> createGlobalGrid(
 
 } // end namespace Cajita
 
+//---------------------------------------------------------------------------//
+// Template implementation
+//---------------------------------------------------------------------------//
+
+#include <Cajita_GlobalGrid_impl.hpp>
+
+//---------------------------------------------------------------------------//
+
 #endif // end CAJITA_GLOBALGRID_HPP
