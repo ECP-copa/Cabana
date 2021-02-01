@@ -99,6 +99,8 @@ Cabana_add_dependency( PACKAGE Heffte VERSION 2.0.0 )
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
+  set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
+  add_subdirectory(cmake/test_harness)
   enable_testing()
 endif()
 
