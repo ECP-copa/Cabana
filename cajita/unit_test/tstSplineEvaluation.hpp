@@ -273,7 +273,7 @@ void splineEvaluationTest()
         createUniformGlobalMesh( low_corner, high_corner, cell_size );
 
     // Create the global grid.
-    UniformDimPartitioner partitioner;
+    UniformDimPartitioner<3> partitioner;
     std::array<bool, 3> is_dim_periodic = { true, true, true };
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );

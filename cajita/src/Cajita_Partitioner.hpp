@@ -19,9 +19,12 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
+template <std::size_t NumSpaceDim>
 class Partitioner
 {
   public:
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+
     ~Partitioner() = default;
 
     /*!
@@ -30,9 +33,9 @@ class Partitioner
       \param global_cells_per_dim The number of global cells in each dimension.
       \return The number of MPI ranks in each dimension of the grid.
     */
-    virtual std::array<int, 3> ranksPerDimension(
+    virtual std::array<int, NumSpaceDim> ranksPerDimension(
         MPI_Comm comm,
-        const std::array<int, 3>& global_cells_per_dim ) const = 0;
+        const std::array<int, NumSpaceDim>& global_cells_per_dim ) const = 0;
 };
 
 //---------------------------------------------------------------------------//

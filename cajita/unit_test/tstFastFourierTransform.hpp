@@ -44,7 +44,7 @@ void forwardReverseTest( bool use_default, bool use_params )
                                                 global_high_corner, cell_size );
 
     // Create the global grid.
-    UniformDimPartitioner partitioner;
+    UniformDimPartitioner<3> partitioner;
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 

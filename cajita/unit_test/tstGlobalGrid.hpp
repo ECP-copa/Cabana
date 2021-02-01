@@ -29,7 +29,7 @@ namespace Test
 void gridTest( const std::array<bool, 3>& is_dim_periodic )
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
+    UniformDimPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
