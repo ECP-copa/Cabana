@@ -54,6 +54,8 @@ int haloPad( Edge<D>, int d )
 template <class Array>
 void checkGather( const int halo_width, const Array& array )
 {
+    // FIXME Change back to fine grained EXPECT_EQ when passing on all distros
+    int pass_gather_test = 1;
     auto owned_space = array.layout()->indexSpace( Own(), Local() );
     auto ghosted_space = array.layout()->indexSpace( Ghost(), Local() );
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -71,9 +73,16 @@ void checkGather( const int halo_width, const Array& array )
                          j >= owned_space.max( Dim::J ) + halo_width + pad_j ||
                          k < owned_space.min( Dim::K ) - halo_width ||
                          k >= owned_space.max( Dim::K ) + halo_width + pad_k )
-                        EXPECT_EQ( host_view( i, j, k, l ), 0.0 );
+                    {
+                        if ( host_view( i, j, k, l ) != 0.0 )
+                            pass_gather_test = 0;
+                    }
                     else
-                        EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
+                    {
+                        if ( host_view( i, j, k, l ) != 1.0 )
+                            pass_gather_test = 0;
+                    }
+    EXPECT_EQ( pass_gather_test, 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -84,6 +93,9 @@ template <class Array>
 void checkScatter( const std::array<bool, 3>& is_dim_periodic,
                    const int halo_width, const Array& array )
 {
+    // FIXME Change back to fine grained EXPECT_EQ when passing on all distros
+    int pass_scatter_test = 1;
+
     // Get data.
     auto owned_space = array.layout()->indexSpace( Own(), Local() );
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -129,8 +141,12 @@ void checkScatter( const std::array<bool, 3>& is_dim_periodic,
                     ++num_n;
                 double scatter_val = std::pow( 2.0, num_n );
                 for ( unsigned l = 0; l < owned_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), scatter_val );
+                {
+                    if ( host_view( i, j, k, l ) != scatter_val )
+                        pass_scatter_test = 0;
+                }
             }
+    EXPECT_EQ( pass_scatter_test, 1 );
 }
 
 //---------------------------------------------------------------------------//
