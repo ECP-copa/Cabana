@@ -9,9 +9,13 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_subdirectory(src)
+set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
-if(Cabana_ENABLE_TESTING)
-  add_subdirectory(test_harness)
-  add_subdirectory(unit_test)
-endif()
+include_directories(${GTEST_SOURCE_DIR})
+add_library(cabana_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
+set_target_properties(cabana_gtest PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+    )
