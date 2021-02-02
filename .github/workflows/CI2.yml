@@ -128,6 +128,7 @@ jobs:
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
       - name: Format Cabana
+        if: ${{ matrix.distro == 'ubuntu:latest' }}
         run: |
              cd build
              make format
