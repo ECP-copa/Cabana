@@ -45,7 +45,7 @@ class GlobalGrid
     */
     GlobalGrid( MPI_Comm comm,
                 const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-                const std::array<bool, 3>& periodic,
+                const std::array<bool, num_space_dim>& periodic,
                 const BlockPartitioner<num_space_dim>& partitioner );
 
     // Destructor.
@@ -76,17 +76,33 @@ class GlobalGrid
     // Get the MPI rank of a block with the given indices. If the rank is out
     // of bounds and the boundary is not periodic, return -1 to indicate an
     // invalid rank.
-    int blockRank( const int i, const int j, const int k ) const;
+    int blockRank( const std::array<int, num_space_dim>& ijk ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> blockRank( const int i, const int j,
+                                               const int k ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<2 == NSD, int> blockRank( const int i, const int j ) const;
 
     // Get the global number of entities in a given dimension.
     int globalNumEntity( Cell, const int dim ) const;
     int globalNumEntity( Node, const int dim ) const;
     int globalNumEntity( Face<Dim::I>, const int dim ) const;
     int globalNumEntity( Face<Dim::J>, const int dim ) const;
-    int globalNumEntity( Face<Dim::K>, const int dim ) const;
-    int globalNumEntity( Edge<Dim::I>, const int dim ) const;
-    int globalNumEntity( Edge<Dim::J>, const int dim ) const;
-    int globalNumEntity( Edge<Dim::K>, const int dim ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> globalNumEntity( Face<Dim::K>,
+                                                     const int dim ) const;
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> globalNumEntity( Edge<Dim::I>,
+                                                     const int dim ) const;
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> globalNumEntity( Edge<Dim::J>,
+                                                     const int dim ) const;
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> globalNumEntity( Edge<Dim::K>,
+                                                     const int dim ) const;
 
     // Get the owned number of cells in a given dimension of this block.
     int ownedNumCell( const int dim ) const;
@@ -98,11 +114,11 @@ class GlobalGrid
   private:
     MPI_Comm _cart_comm;
     std::shared_ptr<GlobalMesh<MeshType>> _global_mesh;
-    std::array<bool, 3> _periodic;
-    std::array<int, 3> _ranks_per_dim;
-    std::array<int, 3> _cart_rank;
-    std::array<int, 3> _owned_num_cell;
-    std::array<int, 3> _global_cell_offset;
+    std::array<bool, num_space_dim> _periodic;
+    std::array<int, num_space_dim> _ranks_per_dim;
+    std::array<int, num_space_dim> _cart_rank;
+    std::array<int, num_space_dim> _owned_num_cell;
+    std::array<int, num_space_dim> _global_cell_offset;
 };
 
 //---------------------------------------------------------------------------//
@@ -116,10 +132,11 @@ class GlobalGrid
   \param partitioner The grid partitioner.
 */
 template <class MeshType>
-std::shared_ptr<GlobalGrid<MeshType>> createGlobalGrid(
-    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-    const std::array<bool, 3>& periodic,
-    const BlockPartitioner<GlobalGrid<MeshType>::num_space_dim>& partitioner )
+std::shared_ptr<GlobalGrid<MeshType>>
+createGlobalGrid( MPI_Comm comm,
+                  const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+                  const std::array<bool, MeshType::num_space_dim>& periodic,
+                  const BlockPartitioner<MeshType::num_space_dim>& partitioner )
 {
     return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
                                                    partitioner );

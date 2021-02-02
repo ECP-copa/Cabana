@@ -26,7 +26,7 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
-void gridTest( const std::array<bool, 3>& is_dim_periodic )
+void gridTest3d( const std::array<bool, 3>& is_dim_periodic )
 {
     // Let MPI compute the partitioning for this test.
     UniformDimPartitioner partitioner;
@@ -238,14 +238,153 @@ void gridTest( const std::array<bool, 3>& is_dim_periodic )
 }
 
 //---------------------------------------------------------------------------//
+void gridTest2d( const std::array<bool, 2>& is_dim_periodic )
+{
+    // Let MPI compute the partitioning for this test.
+    DimBlockPartitioner<2> partitioner;
+
+    // Create the global mesh.
+    double cell_size = 0.23;
+    std::array<int, 2> global_num_cell = { 101, 85 };
+    std::array<double, 2> global_low_corner = { 1.2, 3.3 };
+    std::array<double, 2> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1] };
+    auto global_mesh = createUniformGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+
+    // Create the global grid.
+    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                         is_dim_periodic, partitioner );
+
+    // Check the number of entities.
+    for ( int d = 0; d < 2; ++d )
+    {
+        EXPECT_EQ( global_num_cell[d],
+                   global_grid->globalNumEntity( Cell(), d ) );
+        if ( is_dim_periodic[d] )
+            EXPECT_EQ( global_num_cell[d],
+                       global_grid->globalNumEntity( Node(), d ) );
+        else
+            EXPECT_EQ( global_num_cell[d] + 1,
+                       global_grid->globalNumEntity( Node(), d ) );
+    }
+
+    // Number of I faces
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::I>(), Dim::I ),
+                   global_num_cell[Dim::I] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::I>(), Dim::I ),
+                   global_num_cell[Dim::I] + 1 );
+    EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::I>(), Dim::J ),
+               global_num_cell[Dim::J] );
+
+    // Number of J faces.
+    EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::J>(), Dim::I ),
+               global_num_cell[Dim::I] );
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::J>(), Dim::J ),
+                   global_num_cell[Dim::J] );
+    else
+        EXPECT_EQ( global_grid->globalNumEntity( Face<Dim::J>(), Dim::J ),
+                   global_num_cell[Dim::J] + 1 );
+
+    // Check the partitioning. The grid communicator has a Cartesian topology.
+    int comm_size;
+    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
+    auto grid_comm = global_grid->comm();
+    int grid_comm_size;
+    MPI_Comm_size( grid_comm, &grid_comm_size );
+    int grid_comm_rank;
+    MPI_Comm_rank( grid_comm, &grid_comm_rank );
+    EXPECT_EQ( grid_comm_size, comm_size );
+    EXPECT_EQ( global_grid->totalNumBlock(), grid_comm_size );
+    EXPECT_EQ( global_grid->blockId(), grid_comm_rank );
+
+    auto ranks_per_dim =
+        partitioner.ranksPerDimension( MPI_COMM_WORLD, global_num_cell );
+    std::vector<int> cart_dims( 2 );
+    std::vector<int> cart_period( 2 );
+    std::vector<int> cart_rank( 2 );
+    MPI_Cart_get( grid_comm, 2, cart_dims.data(), cart_period.data(),
+                  cart_rank.data() );
+    for ( int d = 0; d < 2; ++d )
+    {
+        EXPECT_EQ( cart_period[d], is_dim_periodic[d] );
+        EXPECT_EQ( global_grid->dimBlockId( d ), cart_rank[d] );
+        EXPECT_EQ( global_grid->dimNumBlock( d ), ranks_per_dim[d] );
+    }
+
+    for ( int d = 0; d < 2; ++d )
+    {
+        std::vector<int> dim_cells_per_rank( global_grid->dimNumBlock( d ), 0 );
+        dim_cells_per_rank[global_grid->dimBlockId( d )] =
+            global_grid->ownedNumCell( d );
+        MPI_Allreduce( MPI_IN_PLACE, dim_cells_per_rank.data(),
+                       dim_cells_per_rank.size(), MPI_INT, MPI_MAX,
+                       MPI_COMM_WORLD );
+        int dim_offset = 0;
+        for ( int n = 0; n < global_grid->dimBlockId( d ); ++n )
+            dim_offset += dim_cells_per_rank[n];
+        int dim_sum = 0;
+        for ( int n = 0; n < global_grid->dimNumBlock( d ); ++n )
+            dim_sum += dim_cells_per_rank[n];
+        EXPECT_EQ( global_grid->globalOffset( d ), dim_offset );
+        EXPECT_EQ( global_grid->globalNumEntity( Cell(), d ), dim_sum );
+    }
+
+    // Check block ranks
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ( global_grid->blockRank( -1, 0 ),
+                   global_grid->blockRank(
+                       global_grid->dimNumBlock( Dim::I ) - 1, 0 ) );
+    else
+        EXPECT_EQ( global_grid->blockRank( -1, 0 ), -1 );
+
+    if ( is_dim_periodic[Dim::I] )
+        EXPECT_EQ(
+            global_grid->blockRank( global_grid->dimNumBlock( Dim::I ), 0 ),
+            global_grid->blockRank( 0, 0 ) );
+    else
+        EXPECT_EQ(
+            global_grid->blockRank( global_grid->dimNumBlock( Dim::I ), 0 ),
+            -1 );
+
+    if ( is_dim_periodic[Dim::J] )
+        EXPECT_EQ( global_grid->blockRank( 0, -1 ),
+                   global_grid->blockRank(
+                       0, global_grid->dimNumBlock( Dim::J ) - 1 ) );
+    else
+        EXPECT_EQ( global_grid->blockRank( 0, -1 ), -1 );
+
+    if ( is_dim_periodic[Dim::J] )
+        EXPECT_EQ(
+            global_grid->blockRank( 0, global_grid->dimNumBlock( Dim::J ) ),
+            global_grid->blockRank( 0, 0 ) );
+    else
+        EXPECT_EQ(
+            global_grid->blockRank( 0, global_grid->dimNumBlock( Dim::J ) ),
+            -1 );
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( global_grid, grid_test )
+TEST( global_grid, 3d_grid_test )
 {
     std::array<bool, 3> periodic = { true, true, true };
-    gridTest( periodic );
+    gridTest3d( periodic );
     std::array<bool, 3> not_periodic = { false, false, false };
-    gridTest( not_periodic );
+    gridTest3d( not_periodic );
+}
+
+TEST( global_grid, 2d_grid_test )
+{
+    std::array<bool, 2> periodic = { true, true };
+    gridTest2d( periodic );
+    std::array<bool, 2> not_periodic = { false, false };
+    gridTest2d( not_periodic );
 }
 
 //---------------------------------------------------------------------------//

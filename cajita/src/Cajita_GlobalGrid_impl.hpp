@@ -23,36 +23,37 @@ namespace Cajita
 template <class MeshType>
 GlobalGrid<MeshType>::GlobalGrid(
     MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-    const std::array<bool, 3>& periodic,
+    const std::array<bool, num_space_dim>& periodic,
     const BlockPartitioner<num_space_dim>& partitioner )
     : _global_mesh( global_mesh )
     , _periodic( periodic )
 {
     // Partition the problem.
-    std::array<int, 3> global_num_cell = {
-        _global_mesh->globalNumCell( Dim::I ),
-        _global_mesh->globalNumCell( Dim::J ),
-        _global_mesh->globalNumCell( Dim::K ) };
+    std::array<int, num_space_dim> global_num_cell;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        global_num_cell[d] = _global_mesh->globalNumCell( d );
     _ranks_per_dim = partitioner.ranksPerDimension( comm, global_num_cell );
 
     // Extract the periodicity of the boundary as integers.
-    std::array<int, 3> periodic_dims = { _periodic[Dim::I], _periodic[Dim::J],
-                                         _periodic[Dim::K] };
+    std::array<int, num_space_dim> periodic_dims;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        periodic_dims[d] = _periodic[d];
 
     // Generate a communicator with a Cartesian topology.
     int reorder_cart_ranks = 1;
-    MPI_Cart_create( comm, 3, _ranks_per_dim.data(), periodic_dims.data(),
-                     reorder_cart_ranks, &_cart_comm );
+    MPI_Cart_create( comm, num_space_dim, _ranks_per_dim.data(),
+                     periodic_dims.data(), reorder_cart_ranks, &_cart_comm );
 
     // Get the Cartesian topology index of this rank.
     int linear_rank;
     MPI_Comm_rank( _cart_comm, &linear_rank );
-    MPI_Cart_coords( _cart_comm, linear_rank, 3, _cart_rank.data() );
+    MPI_Cart_coords( _cart_comm, linear_rank, num_space_dim,
+                     _cart_rank.data() );
 
     // Get the cells per dimension and the remainder.
-    std::array<int, 3> cells_per_dim;
-    std::array<int, 3> dim_remainder;
-    for ( int d = 0; d < 3; ++d )
+    std::array<int, num_space_dim> cells_per_dim;
+    std::array<int, num_space_dim> dim_remainder;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         cells_per_dim[d] = global_num_cell[d] / _ranks_per_dim[d];
         dim_remainder[d] = global_num_cell[d] % _ranks_per_dim[d];
@@ -60,9 +61,9 @@ GlobalGrid<MeshType>::GlobalGrid(
 
     // Compute the global cell offset and the local low corner on this rank by
     // computing the starting global cell index via exclusive scan.
-    _global_cell_offset = { 0, 0, 0 };
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
+        _global_cell_offset[d] = 0;
         for ( int r = 0; r < _cart_rank[d]; ++r )
         {
             _global_cell_offset[d] += cells_per_dim[d];
@@ -72,7 +73,7 @@ GlobalGrid<MeshType>::GlobalGrid(
     }
 
     // Compute the number of local cells in this rank in each dimension.
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         _owned_num_cell[d] = cells_per_dim[d];
         if ( dim_remainder[d] > _cart_rank[d] )
@@ -153,23 +154,46 @@ int GlobalGrid<MeshType>::blockId() const
 // of bounds and the boundary is not periodic, return -1 to indicate an
 // invalid rank.
 template <class MeshType>
-int GlobalGrid<MeshType>::blockRank( const int i, const int j,
-                                     const int k ) const
+int GlobalGrid<MeshType>::blockRank(
+    const std::array<int, num_space_dim>& ijk ) const
 {
-    // Get the indices.
-    std::array<int, 3> cr = { i, j, k };
-
     // Check for invalid indices. An index is invalid if it is out of bounds
     // and the dimension is not periodic. An out of bound index in a periodic
     // dimension is valid because it will wrap around to a valid index.
-    for ( int d = 0; d < 3; ++d )
-        if ( !_periodic[d] && ( cr[d] < 0 || _ranks_per_dim[d] <= cr[d] ) )
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        if ( !_periodic[d] && ( ijk[d] < 0 || _ranks_per_dim[d] <= ijk[d] ) )
             return -1;
 
     // If we have indices get their rank.
     int lr;
-    MPI_Cart_rank( _cart_comm, cr.data(), &lr );
+    MPI_Cart_rank( _cart_comm, ijk.data(), &lr );
     return lr;
+}
+
+//---------------------------------------------------------------------------//
+// Get the MPI rank of a block with the given indices. If the rank is out
+// of bounds and the boundary is not periodic, return -1 to indicate an
+// invalid rank.
+template <class MeshType>
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, int>
+GlobalGrid<MeshType>::blockRank( const int i, const int j, const int k ) const
+{
+    std::array<int, 3> cr = { i, j, k };
+    return blockRank( cr );
+}
+
+//---------------------------------------------------------------------------//
+// Get the MPI rank of a block with the given indices. If the rank is out
+// of bounds and the boundary is not periodic, return -1 to indicate an
+// invalid rank.
+template <class MeshType>
+template <std::size_t NSD>
+std::enable_if_t<2 == NSD, int>
+GlobalGrid<MeshType>::blockRank( const int i, const int j ) const
+{
+    std::array<int, 2> cr = { i, j };
+    return blockRank( cr );
 }
 
 //---------------------------------------------------------------------------//
@@ -214,7 +238,9 @@ int GlobalGrid<MeshType>::globalNumEntity( Face<Dim::J>, const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the global number of K-faces in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::globalNumEntity( Face<Dim::K>, const int dim ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, int>
+GlobalGrid<MeshType>::globalNumEntity( Face<Dim::K>, const int dim ) const
 {
     return ( Dim::K == dim ) ? globalNumEntity( Node(), dim )
                              : globalNumEntity( Cell(), dim );
@@ -223,7 +249,9 @@ int GlobalGrid<MeshType>::globalNumEntity( Face<Dim::K>, const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the global number of I-edges in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::I>, const int dim ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, int>
+GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::I>, const int dim ) const
 {
     return ( Dim::I == dim ) ? globalNumEntity( Cell(), dim )
                              : globalNumEntity( Node(), dim );
@@ -232,7 +260,9 @@ int GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::I>, const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the global number of J-edges in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::J>, const int dim ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, int>
+GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::J>, const int dim ) const
 {
     return ( Dim::J == dim ) ? globalNumEntity( Cell(), dim )
                              : globalNumEntity( Node(), dim );
@@ -241,7 +271,9 @@ int GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::J>, const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the global number of K-edges in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::K>, const int dim ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, int>
+GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::K>, const int dim ) const
 {
     return ( Dim::K == dim ) ? globalNumEntity( Cell(), dim )
                              : globalNumEntity( Node(), dim );
