@@ -48,44 +48,139 @@ int LocalGrid<MeshType>::haloCellWidth() const
 // indices are allowed as the indices will be wrapped around the periodic
 // boundary.
 template <class MeshType>
-int LocalGrid<MeshType>::neighborRank( const int off_i, const int off_j,
-                                       const int off_k ) const
+int LocalGrid<MeshType>::neighborRank(
+    const std::array<int, num_space_dim>& off_ijk ) const
 {
-    return _global_grid->blockRank( _global_grid->dimBlockId( Dim::I ) + off_i,
-                                    _global_grid->dimBlockId( Dim::J ) + off_j,
-                                    _global_grid->dimBlockId( Dim::K ) +
-                                        off_k );
+    std::array<int, num_space_dim> nijk;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        nijk[d] = _global_grid->dimBlockId( d ) + off_ijk[d];
+    return _global_grid->blockRank( nijk );
+}
+
+template <class MeshType>
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, int>
+LocalGrid<MeshType>::neighborRank( const int off_i, const int off_j,
+                                   const int off_k ) const
+{
+    std::array<int, num_space_dim> off_ijk = { off_i, off_j, off_k };
+    return neighborRank( off_ijk );
+}
+
+template <class MeshType>
+template <std::size_t NSD>
+std::enable_if_t<2 == NSD, int>
+LocalGrid<MeshType>::neighborRank( const int off_i, const int off_j ) const
+{
+    std::array<int, num_space_dim> off_ijk = { off_i, off_j };
+    return neighborRank( off_ijk );
+}
+
+//---------------------------------------------------------------------------//
+// Get the index space for a given combination of decomposition, entity, and
+// index types.
+template <class MeshType>
+template <class DecompositionTag, class EntityType, class IndexType>
+auto LocalGrid<MeshType>::indexSpace( DecompositionTag t1, EntityType t2,
+                                      IndexType t3 ) const
+    -> IndexSpace<num_space_dim>
+{
+    return indexSpaceImpl( t1, t2, t3 );
+}
+
+//---------------------------------------------------------------------------//
+// Given a relative set of indices of a neighbor get the set of local entity
+// indices shared with that neighbor in the given decomposition. Optionally
+// provide a halo width for the shared space. This halo width must be less
+// than or equal to the halo width of the local grid. The default behavior is
+// to use the halo width of the local grid.
+template <class MeshType>
+template <class DecompositionTag, class EntityType>
+auto LocalGrid<MeshType>::sharedIndexSpace(
+    DecompositionTag t1, EntityType t2,
+    const std::array<int, num_space_dim>& off_ijk, const int halo_width ) const
+    -> IndexSpace<num_space_dim>
+{
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
+    // Check that the offsets are valid.
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        if ( off_ijk[d] < -1 || 1 < off_ijk[d] )
+            throw std::logic_error( "Neighbor indices out of bounds" );
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
+
+    // Check to see if this is a valid neighbor. If not, return a shared space
+    // of size 0.
+    if ( neighborRank( off_ijk ) < 0 )
+    {
+        std::array<long, num_space_dim> zero_size;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            zero_size[d] = 0;
+        return IndexSpace<num_space_dim>( zero_size, zero_size );
+    }
+
+    // Call the underlying implementation.
+    return sharedIndexSpaceImpl( t1, t2, off_ijk, hw );
+}
+
+template <class MeshType>
+template <class DecompositionTag, class EntityType, std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>> LocalGrid<MeshType>::sharedIndexSpace(
+    DecompositionTag t1, EntityType t2, const int off_i, const int off_j,
+    const int off_k, const int halo_width ) const
+{
+    std::array<int, 3> off_ijk = { off_i, off_j, off_k };
+    return sharedIndexSpace( t1, t2, off_ijk, halo_width );
+}
+
+template <class MeshType>
+template <class DecompositionTag, class EntityType, std::size_t NSD>
+std::enable_if_t<2 == NSD, IndexSpace<2>>
+LocalGrid<MeshType>::sharedIndexSpace( DecompositionTag t1, EntityType t2,
+                                       const int off_i, const int off_j,
+                                       const int halo_width ) const
+{
+    std::array<int, 2> off_ijk = { off_i, off_j };
+    return sharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned cells.
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own, Cell, Local ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Own, Cell, Local ) const
+    -> IndexSpace<num_space_dim>
 {
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
         min[d] = ( _global_grid->isPeriodic( d ) ||
                    _global_grid->dimBlockId( d ) > 0 )
                      ? _halo_cell_width
                      : 0;
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
         max[d] = min[d] + _global_grid->ownedNumCell( d );
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned and ghosted cells.
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost, Cell, Local ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Ghost, Cell, Local ) const
+    -> IndexSpace<num_space_dim>
 {
     // Compute the size.
-    std::array<long, 3> size;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> size;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Start with the local number of cells.
         size[d] = _global_grid->ownedNumCell( d );
@@ -102,13 +197,14 @@ IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost, Cell, Local ) const
             size[d] += _halo_cell_width;
     }
 
-    return IndexSpace<3>( size );
+    return IndexSpace<num_space_dim>( size );
 }
 
 //---------------------------------------------------------------------------//
 // Get the global index space of the owned cells.
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Cell t2, Global ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Own t1, Cell t2, Global ) const
+    -> IndexSpace<num_space_dim>
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -117,71 +213,48 @@ IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Cell t2, Global ) const
 // Given a relative set of indices of a neighbor get the set of local cell
 // indices we own that we share with that neighbor to use as ghosts.
 template <class MeshType>
-IndexSpace<3>
-LocalGrid<MeshType>::sharedIndexSpace( Own, Cell, const int off_i,
-                                       const int off_j, const int off_k,
-                                       const int halo_width ) const
+auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
+    Own, Cell, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = { off_i, off_j, off_k };
-
     // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), Cell(), Local() );
+    auto owned_space = indexSpaceImpl( Own(), Cell(), Local() );
 
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
+        if ( -1 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Middle neighbor.
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
-            min[d] = owned_space.max( d ) - hw;
+        else if ( 1 == off_ijk[d] )
+            min[d] = owned_space.max( d ) - halo_width;
     }
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
-            max[d] = owned_space.min( d ) + hw;
+        if ( -1 == off_ijk[d] )
+            max[d] = owned_space.min( d ) + halo_width;
 
         // Middle neighbor.
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             max[d] = owned_space.max( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
+        else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d );
     }
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
@@ -189,106 +262,85 @@ LocalGrid<MeshType>::sharedIndexSpace( Own, Cell, const int off_i,
 // indices owned by that neighbor that are shared with us to use as
 // ghosts.
 template <class MeshType>
-IndexSpace<3>
-LocalGrid<MeshType>::sharedIndexSpace( Ghost, Cell, const int off_i,
-                                       const int off_j, const int off_k,
-                                       const int halo_width ) const
+auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
+    Ghost, Cell, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = { off_i, off_j, off_k };
-
     // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), Cell(), Local() );
+    auto owned_space = indexSpaceImpl( Own(), Cell(), Local() );
 
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
-            min[d] = owned_space.min( d ) - hw;
+        if ( -1 == off_ijk[d] )
+            min[d] = owned_space.min( d ) - halo_width;
 
         // Middle neighbor
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
+        else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d );
     }
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
+        if ( -1 == off_ijk[d] )
             max[d] = owned_space.min( d );
 
         // Middle neighbor
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             max[d] = owned_space.max( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
-            max[d] = owned_space.max( d ) + hw;
+        else if ( 1 == off_ijk[d] )
+            max[d] = owned_space.max( d ) + halo_width;
     }
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned nodes.
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own, Node, Local ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Own, Node, Local ) const
+    -> IndexSpace<num_space_dim>
 {
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
         min[d] = ( _global_grid->isPeriodic( d ) ||
                    _global_grid->dimBlockId( d ) > 0 )
                      ? _halo_cell_width
                      : 0;
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
         max[d] = ( _global_grid->isPeriodic( d ) ||
                    _global_grid->dimBlockId( d ) <
                        _global_grid->dimNumBlock( d ) - 1 )
                      ? min[d] + _global_grid->ownedNumCell( d )
                      : min[d] + _global_grid->ownedNumCell( d ) + 1;
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned and ghosted nodes.
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost, Node, Local ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Ghost, Node, Local ) const
+    -> IndexSpace<num_space_dim>
 {
     // Compute the size.
-    std::array<long, 3> size;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> size;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Start with the local number of nodes.
         size[d] = _global_grid->ownedNumCell( d ) + 1;
@@ -305,13 +357,14 @@ IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost, Node, Local ) const
             size[d] += _halo_cell_width;
     }
 
-    return IndexSpace<3>( size );
+    return IndexSpace<num_space_dim>( size );
 }
 
 //---------------------------------------------------------------------------//
 // Get the global index space of the owned nodes.
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Node t2, Global ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Own t1, Node t2, Global ) const
+    -> IndexSpace<num_space_dim>
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -320,71 +373,48 @@ IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Node t2, Global ) const
 // Given a relative set of indices of a neighbor get the set of local node
 // indices we own that we share with that neighbor to use as ghosts.
 template <class MeshType>
-IndexSpace<3>
-LocalGrid<MeshType>::sharedIndexSpace( Own, Node, const int off_i,
-                                       const int off_j, const int off_k,
-                                       const int halo_width ) const
+auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
+    Own, Node, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = { off_i, off_j, off_k };
-
     // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), Node(), Local() );
+    auto owned_space = indexSpaceImpl( Own(), Node(), Local() );
 
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
+        if ( -1 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Middle neighbor.
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
-            min[d] = owned_space.max( d ) - hw;
+        else if ( 1 == off_ijk[d] )
+            min[d] = owned_space.max( d ) - halo_width;
     }
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
-            max[d] = owned_space.min( d ) + hw + 1;
+        if ( -1 == off_ijk[d] )
+            max[d] = owned_space.min( d ) + halo_width + 1;
 
         // Middle neighbor.
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             max[d] = owned_space.max( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
+        else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d );
     }
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
@@ -392,372 +422,375 @@ LocalGrid<MeshType>::sharedIndexSpace( Own, Node, const int off_i,
 // indices owned by that neighbor that are shared with us to use as
 // ghosts.
 template <class MeshType>
-IndexSpace<3>
-LocalGrid<MeshType>::sharedIndexSpace( Ghost, Node, const int off_i,
-                                       const int off_j, const int off_k,
-                                       const int halo_width ) const
+auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
+    Ghost, Node, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = { off_i, off_j, off_k };
-
     // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), Node(), Local() );
+    auto owned_space = indexSpaceImpl( Own(), Node(), Local() );
 
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
-            min[d] = owned_space.min( d ) - hw;
+        if ( -1 == off_ijk[d] )
+            min[d] = owned_space.min( d ) - halo_width;
 
         // Middle neighbor
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
+        else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d );
     }
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
+        if ( -1 == off_ijk[d] )
             max[d] = owned_space.min( d );
 
         // Middle neighbor
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             max[d] = owned_space.max( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
-            max[d] = owned_space.max( d ) + hw + 1;
+        else if ( 1 == off_ijk[d] )
+            max[d] = owned_space.max( d ) + halo_width + 1;
     }
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::I> t2,
-                                               Local t3 ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Own t1, Face<Dim::I> t2,
+                                          Local t3 ) const
+    -> IndexSpace<num_space_dim>
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::I> t2,
-                                               Local t3 ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Ghost t1, Face<Dim::I> t2,
+                                          Local t3 ) const
+    -> IndexSpace<num_space_dim>
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::I> t2,
-                                               Global t3 ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Own t1, Face<Dim::I> t2,
+                                          Global t3 ) const
+    -> IndexSpace<num_space_dim>
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Face<Dim::I> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
+    Own t1, Face<Dim::I> t2, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
+    return faceSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::I> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
+    Ghost t1, Face<Dim::I> t2, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
+    return faceSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::J> t2,
-                                               Local t3 ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Own t1, Face<Dim::J> t2,
+                                          Local t3 ) const
+    -> IndexSpace<num_space_dim>
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::J> t2,
-                                               Local t3 ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Ghost t1, Face<Dim::J> t2,
+                                          Local t3 ) const
+    -> IndexSpace<num_space_dim>
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::J> t2,
-                                               Global t3 ) const
+auto LocalGrid<MeshType>::indexSpaceImpl( Own t1, Face<Dim::J> t2,
+                                          Global t3 ) const
+    -> IndexSpace<num_space_dim>
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Face<Dim::J> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
+    Own t1, Face<Dim::J> t2, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
+    return faceSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::J> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
+    Ghost t1, Face<Dim::J> t2, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
+    return faceSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::K> t2,
-                                               Local t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Own t1, Face<Dim::K> t2, Local t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Face<Dim::K> t2,
-                                               Local t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Ghost t1, Face<Dim::K> t2, Local t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Face<Dim::K> t2,
-                                               Global t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Own t1, Face<Dim::K> t2, Global t3 ) const
 {
     return faceIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Face<Dim::K> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::sharedIndexSpaceImpl( Own t1, Face<Dim::K> t2,
+                                           const std::array<int, 3>& off_ijk,
+                                           const int halo_width ) const
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
+    return faceSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Face<Dim::K> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::sharedIndexSpaceImpl( Ghost t1, Face<Dim::K> t2,
+                                           const std::array<int, 3>& off_ijk,
+                                           const int halo_width ) const
 {
-    return faceSharedIndexSpace( t1, t2, i, j, k, hw );
+    return faceSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::I> t2,
-                                               Local t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Own t1, Edge<Dim::I> t2, Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::I> t2,
-                                               Local t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Ghost t1, Edge<Dim::I> t2, Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::I> t2,
-                                               Global t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Own t1, Edge<Dim::I> t2, Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::I> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::sharedIndexSpaceImpl( Own t1, Edge<Dim::I> t2,
+                                           const std::array<int, 3>& off_ijk,
+                                           const int halo_width ) const
 {
-    return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
+    return edgeSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::I> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::sharedIndexSpaceImpl( Ghost t1, Edge<Dim::I> t2,
+                                           const std::array<int, 3>& off_ijk,
+                                           const int halo_width ) const
 {
-    return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
+    return edgeSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::J> t2,
-                                               Local t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Own t1, Edge<Dim::J> t2, Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::J> t2,
-                                               Local t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Ghost t1, Edge<Dim::J> t2, Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::J> t2,
-                                               Global t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Own t1, Edge<Dim::J> t2, Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::J> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::sharedIndexSpaceImpl( Own t1, Edge<Dim::J> t2,
+                                           const std::array<int, 3>& off_ijk,
+                                           const int halo_width ) const
 {
-    return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
+    return edgeSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::J> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::sharedIndexSpaceImpl( Ghost t1, Edge<Dim::J> t2,
+                                           const std::array<int, 3>& off_ijk,
+                                           const int halo_width ) const
 {
-    return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
+    return edgeSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::K> t2,
-                                               Local t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Own t1, Edge<Dim::K> t2, Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Ghost t1, Edge<Dim::K> t2,
-                                               Local t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Ghost t1, Edge<Dim::K> t2, Local t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::indexSpace( Own t1, Edge<Dim::K> t2,
-                                               Global t3 ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::indexSpaceImpl( Own t1, Edge<Dim::K> t2, Global t3 ) const
 {
     return edgeIndexSpace( t1, t2, t3 );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Own t1, Edge<Dim::K> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::sharedIndexSpaceImpl( Own t1, Edge<Dim::K> t2,
+                                           const std::array<int, 3>& off_ijk,
+                                           const int halo_width ) const
 {
-    return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
+    return edgeSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 template <class MeshType>
-IndexSpace<3> LocalGrid<MeshType>::sharedIndexSpace( Ghost t1, Edge<Dim::K> t2,
-                                                     const int i, const int j,
-                                                     const int k,
-                                                     const int hw ) const
+template <std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::sharedIndexSpaceImpl( Ghost t1, Edge<Dim::K> t2,
+                                           const std::array<int, 3>& off_ijk,
+                                           const int halo_width ) const
 {
-    return edgeSharedIndexSpace( t1, t2, i, j, k, hw );
+    return edgeSharedIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
 // Get the global index space of the owned entities.
 template <class MeshType>
 template <class EntityType>
-IndexSpace<3> LocalGrid<MeshType>::globalIndexSpace( Own, EntityType ) const
+auto LocalGrid<MeshType>::globalIndexSpace( Own, EntityType ) const
+    -> IndexSpace<num_space_dim>
 {
-    auto local_space = indexSpace( Own(), EntityType(), Local() );
-    std::array<long, 3> min;
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    auto local_space = indexSpaceImpl( Own(), EntityType(), Local() );
+    std::array<long, num_space_dim> min;
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         min[d] = _global_grid->globalOffset( d );
         max[d] = min[d] + local_space.extent( d );
     }
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned Dir-direction faces.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Own, Face<Dir>, Local ) const
+auto LocalGrid<MeshType>::faceIndexSpace( Own, Face<Dir>, Local ) const
+    -> IndexSpace<num_space_dim>
 {
+    static_assert( Dir < num_space_dim, "Spatial dimension out of bounds" );
+
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
         min[d] = ( _global_grid->isPeriodic( d ) ||
                    _global_grid->dimBlockId( d ) > 0 )
                      ? _halo_cell_width
                      : 0;
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         if ( Dir == d )
         {
@@ -773,19 +806,21 @@ IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Own, Face<Dir>, Local ) const
         }
     }
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned and ghosted Dir-direction faces.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Ghost, Face<Dir>,
-                                                   Local ) const
+auto LocalGrid<MeshType>::faceIndexSpace( Ghost, Face<Dir>, Local ) const
+    -> IndexSpace<num_space_dim>
 {
+    static_assert( Dir < num_space_dim, "Spatial dimension out of bounds" );
+
     // Compute the size.
-    std::array<long, 3> size;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> size;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         if ( Dir == d )
         {
@@ -797,7 +832,7 @@ IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Ghost, Face<Dir>,
         }
     }
 
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Add the lower halo.
         if ( _global_grid->isPeriodic( d ) ||
@@ -811,16 +846,17 @@ IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Ghost, Face<Dir>,
             size[d] += _halo_cell_width;
     }
 
-    return IndexSpace<3>( size );
+    return IndexSpace<num_space_dim>( size );
 }
 
 //---------------------------------------------------------------------------//
-// Get the global index space of the owned nodes.
+// Get the global index space of the owned Dir-direction faces.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Own t1, Face<Dir> t2,
-                                                   Global ) const
+auto LocalGrid<MeshType>::faceIndexSpace( Own t1, Face<Dir> t2, Global ) const
+    -> IndexSpace<num_space_dim>
 {
+    static_assert( Dir < num_space_dim, "Spatial dimension out of bounds" );
     return globalIndexSpace( t1, t2 );
 }
 
@@ -830,72 +866,51 @@ IndexSpace<3> LocalGrid<MeshType>::faceIndexSpace( Own t1, Face<Dir> t2,
 // as ghosts.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3>
-LocalGrid<MeshType>::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
-                                           const int off_j, const int off_k,
-                                           const int halo_width ) const
+auto LocalGrid<MeshType>::faceSharedIndexSpace(
+    Own, Face<Dir>, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = { off_i, off_j, off_k };
+    static_assert( Dir < num_space_dim, "Spatial dimension out of bounds" );
 
     // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), Face<Dir>(), Local() );
+    auto owned_space = indexSpaceImpl( Own(), Face<Dir>(), Local() );
 
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
+        if ( -1 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Middle neighbor.
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
-            min[d] = owned_space.max( d ) - hw;
+        else if ( 1 == off_ijk[d] )
+            min[d] = owned_space.max( d ) - halo_width;
     }
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
-            max[d] = ( Dir == d ) ? owned_space.min( d ) + hw + 1
-                                  : owned_space.min( d ) + hw;
+        if ( -1 == off_ijk[d] )
+            max[d] = ( Dir == d ) ? owned_space.min( d ) + halo_width + 1
+                                  : owned_space.min( d ) + halo_width;
 
         // Middle neighbor.
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             max[d] = owned_space.max( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
+        else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d );
     }
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
@@ -904,83 +919,63 @@ LocalGrid<MeshType>::faceSharedIndexSpace( Own, Face<Dir>, const int off_i,
 // to use as ghosts.
 template <class MeshType>
 template <int Dir>
-IndexSpace<3>
-LocalGrid<MeshType>::faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
-                                           const int off_j, const int off_k,
-                                           const int halo_width ) const
+auto LocalGrid<MeshType>::faceSharedIndexSpace(
+    Ghost, Face<Dir>, const std::array<int, num_space_dim>& off_ijk,
+    const int halo_width ) const -> IndexSpace<num_space_dim>
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = { off_i, off_j, off_k };
+    static_assert( Dir < num_space_dim, "Spatial dimension out of bounds" );
 
     // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), Face<Dir>(), Local() );
+    auto owned_space = indexSpaceImpl( Own(), Face<Dir>(), Local() );
 
     // Compute the lower bound.
-    std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> min;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
-            min[d] = owned_space.min( d ) - hw;
+        if ( -1 == off_ijk[d] )
+            min[d] = owned_space.min( d ) - halo_width;
 
         // Middle neighbor
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
+        else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d );
     }
 
     // Compute the upper bound.
-    std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim> max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
+        if ( -1 == off_ijk[d] )
             max[d] = owned_space.min( d );
 
         // Middle neighbor
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             max[d] = owned_space.max( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
-            max[d] = ( Dir == d ) ? owned_space.max( d ) + hw + 1
-                                  : owned_space.max( d ) + hw;
+        else if ( 1 == off_ijk[d] )
+            max[d] = ( Dir == d ) ? owned_space.max( d ) + halo_width + 1
+                                  : owned_space.max( d ) + halo_width;
     }
 
-    return IndexSpace<3>( min, max );
+    return IndexSpace<num_space_dim>( min, max );
 }
 
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned Dir-direction edges.
 template <class MeshType>
-template <int Dir>
-IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
+template <int Dir, std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+    LocalGrid<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
 {
     // Compute the lower bound.
     std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < 3; ++d )
         min[d] = ( _global_grid->isPeriodic( d ) ||
                    _global_grid->dimBlockId( d ) > 0 )
                      ? _halo_cell_width
@@ -988,7 +983,7 @@ IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
 
     // Compute the upper bound.
     std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < 3; ++d )
     {
         if ( Dir == d )
         {
@@ -1010,13 +1005,13 @@ IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
 //---------------------------------------------------------------------------//
 // Get the local index space of the owned and ghosted Dir-direction edges.
 template <class MeshType>
-template <int Dir>
-IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>,
-                                                   Local ) const
+template <int Dir, std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+    LocalGrid<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>, Local ) const
 {
     // Compute the size.
     std::array<long, 3> size;
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < 3; ++d )
     {
         if ( Dir == d )
         {
@@ -1028,7 +1023,7 @@ IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>,
         }
     }
 
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < 3; ++d )
     {
         // Add the lower halo.
         if ( _global_grid->isPeriodic( d ) ||
@@ -1048,9 +1043,9 @@ IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>,
 //---------------------------------------------------------------------------//
 // Get the global index space of the owned nodes.
 template <class MeshType>
-template <int Dir>
-IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Own t1, Edge<Dir> t2,
-                                                   Global ) const
+template <int Dir, std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::edgeIndexSpace( Own t1, Edge<Dir> t2, Global ) const
 {
     return globalIndexSpace( t1, t2 );
 }
@@ -1060,69 +1055,47 @@ IndexSpace<3> LocalGrid<MeshType>::edgeIndexSpace( Own t1, Edge<Dir> t2,
 // Dir-direction edge indices we own that we share with that neighbor to use
 // as ghosts.
 template <class MeshType>
-template <int Dir>
-IndexSpace<3>
-LocalGrid<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>, const int off_i,
-                                           const int off_j, const int off_k,
+template <int Dir, std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>,
+                                           const std::array<int, 3>& off_ijk,
                                            const int halo_width ) const
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = { off_i, off_j, off_k };
-
     // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), Edge<Dir>(), Local() );
+    auto owned_space = indexSpaceImpl( Own(), Edge<Dir>(), Local() );
 
     // Compute the lower bound.
     std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < 3; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
+        if ( -1 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Middle neighbor.
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
-            min[d] = owned_space.max( d ) - hw;
+        else if ( 1 == off_ijk[d] )
+            min[d] = owned_space.max( d ) - halo_width;
     }
 
     // Compute the upper bound.
     std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < 3; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
-            max[d] = ( Dir == d ) ? owned_space.min( d ) + hw
-                                  : owned_space.min( d ) + hw + 1;
+        if ( -1 == off_ijk[d] )
+            max[d] = ( Dir == d ) ? owned_space.min( d ) + halo_width
+                                  : owned_space.min( d ) + halo_width + 1;
 
         // Middle neighbor.
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             max[d] = owned_space.max( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
+        else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d );
     }
 
@@ -1134,70 +1107,48 @@ LocalGrid<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>, const int off_i,
 // Dir-direction edge indices owned by that neighbor that are shared with us
 // to use as ghosts.
 template <class MeshType>
-template <int Dir>
-IndexSpace<3>
-LocalGrid<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>, const int off_i,
-                                           const int off_j, const int off_k,
+template <int Dir, std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>,
+                                           const std::array<int, 3>& off_ijk,
                                            const int halo_width ) const
 {
-    // If we got the default halo width of -1 this means we want to use the
-    // default of the entire halo.
-    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
-
-    // Check that the offsets are valid.
-    if ( off_i < -1 || 1 < off_i || off_j < -1 || 1 < off_j || off_k < -1 ||
-         1 < off_k )
-        throw std::logic_error( "Neighbor indices out of bounds" );
-
-    // Check that the requested halo width is valid.
-    if ( hw > _halo_cell_width )
-        throw std::logic_error(
-            "Requested halo width larger than local grid halo" );
-
-    // Check to see if this is a valid neighbor. If not, return a shared space
-    // of size 0.
-    if ( neighborRank( off_i, off_j, off_k ) < 0 )
-        return IndexSpace<3>( { 0, 0, 0 }, { 0, 0, 0 } );
-
-    // Wrap the indices.
-    std::array<long, 3> nid = { off_i, off_j, off_k };
-
     // Get the owned local index space.
-    auto owned_space = indexSpace( Own(), Edge<Dir>(), Local() );
+    auto owned_space = indexSpaceImpl( Own(), Edge<Dir>(), Local() );
 
     // Compute the lower bound.
     std::array<long, 3> min;
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < 3; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
-            min[d] = owned_space.min( d ) - hw;
+        if ( -1 == off_ijk[d] )
+            min[d] = owned_space.min( d ) - halo_width;
 
         // Middle neighbor
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             min[d] = owned_space.min( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
+        else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d );
     }
 
     // Compute the upper bound.
     std::array<long, 3> max;
-    for ( int d = 0; d < 3; ++d )
+    for ( std::size_t d = 0; d < 3; ++d )
     {
         // Lower neighbor.
-        if ( -1 == nid[d] )
+        if ( -1 == off_ijk[d] )
             max[d] = owned_space.min( d );
 
         // Middle neighbor
-        else if ( 0 == nid[d] )
+        else if ( 0 == off_ijk[d] )
             max[d] = owned_space.max( d );
 
         // Upper neighbor.
-        else if ( 1 == nid[d] )
-            max[d] = ( Dir == d ) ? owned_space.max( d ) + hw
-                                  : owned_space.max( d ) + hw + 1;
+        else if ( 1 == off_ijk[d] )
+            max[d] = ( Dir == d ) ? owned_space.max( d ) + halo_width
+                                  : owned_space.max( d ) + halo_width + 1;
     }
 
     return IndexSpace<3>( min, max );

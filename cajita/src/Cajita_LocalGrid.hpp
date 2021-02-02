@@ -16,7 +16,9 @@
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_Types.hpp>
 
+#include <array>
 #include <memory>
+#include <type_traits>
 #include <vector>
 
 namespace Cajita
@@ -30,6 +32,9 @@ class LocalGrid
   public:
     // Mesh type.
     using mesh_type = MeshType;
+
+    // Spatial dimension.
+    static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
     /*!
       \brief Constructor.
@@ -52,173 +57,254 @@ class LocalGrid
     // bounds return -1. Note that in the case of periodic boundaries out of
     // bounds indices are allowed as the indices will be wrapped around the
     // periodic boundary.
-    int neighborRank( const int off_i, const int off_j, const int off_k ) const;
+    int neighborRank( const std::array<int, num_space_dim>& off_ijk ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int>
+    neighborRank( const int off_i, const int off_j, const int off_k ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<2 == NSD, int> neighborRank( const int off_i,
+                                                  const int off_j ) const;
+
+    // Get the index space for a given combination of decomposition, entity,
+    // and index types.
+    template <class DecompositionTag, class EntityType, class IndexType>
+    IndexSpace<num_space_dim> indexSpace( DecompositionTag, EntityType,
+                                          IndexType ) const;
 
     /*
-       Get the index space of the local grid.
-
-       Interface has the same structure as:
-
-       template<class DecompositionTag, class EntityType, class IndexType>
-       IndexSpace<3>
-       indexSpace( DecompositionTag, EntityType, IndexType ) const;
+       Given the relative offsets of a neighbor rank relative to this local
+       grid's indices get the set of local entity indices shared with that
+       neighbor in the given decomposition. Optionally provide a halo width
+       for the shared space. This halo width must be less than or equal to the
+       halo width of the local grid. The default behavior is to use the halo
+       width of the local grid.
     */
+    template <class DecompositionTag, class EntityType>
+    IndexSpace<num_space_dim>
+    sharedIndexSpace( DecompositionTag, EntityType,
+                      const std::array<int, num_space_dim>& off_ijk,
+                      const int halo_width = -1 ) const;
 
-    IndexSpace<3> indexSpace( Own, Cell, Local ) const;
-    IndexSpace<3> indexSpace( Ghost, Cell, Local ) const;
-    IndexSpace<3> indexSpace( Own, Cell, Global ) const;
+    template <class DecompositionTag, class EntityType,
+              std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpace( DecompositionTag, EntityType, const int off_i,
+                      const int off_j, const int off_k,
+                      const int halo_width = -1 ) const;
 
-    IndexSpace<3> indexSpace( Own, Node, Local ) const;
-    IndexSpace<3> indexSpace( Ghost, Node, Local ) const;
-    IndexSpace<3> indexSpace( Own, Node, Global ) const;
-
-    IndexSpace<3> indexSpace( Own, Face<Dim::I>, Local ) const;
-    IndexSpace<3> indexSpace( Ghost, Face<Dim::I>, Local ) const;
-    IndexSpace<3> indexSpace( Own, Face<Dim::I>, Global ) const;
-
-    IndexSpace<3> indexSpace( Own, Face<Dim::J>, Local ) const;
-    IndexSpace<3> indexSpace( Ghost, Face<Dim::J>, Local ) const;
-    IndexSpace<3> indexSpace( Own, Face<Dim::J>, Global ) const;
-
-    IndexSpace<3> indexSpace( Own, Face<Dim::K>, Local ) const;
-    IndexSpace<3> indexSpace( Ghost, Face<Dim::K>, Local ) const;
-    IndexSpace<3> indexSpace( Own, Face<Dim::K>, Global ) const;
-
-    IndexSpace<3> indexSpace( Own, Edge<Dim::I>, Local ) const;
-    IndexSpace<3> indexSpace( Ghost, Edge<Dim::I>, Local ) const;
-    IndexSpace<3> indexSpace( Own, Edge<Dim::I>, Global ) const;
-
-    IndexSpace<3> indexSpace( Own, Edge<Dim::J>, Local ) const;
-    IndexSpace<3> indexSpace( Ghost, Edge<Dim::J>, Local ) const;
-    IndexSpace<3> indexSpace( Own, Edge<Dim::J>, Global ) const;
-
-    IndexSpace<3> indexSpace( Own, Edge<Dim::K>, Local ) const;
-    IndexSpace<3> indexSpace( Ghost, Edge<Dim::K>, Local ) const;
-    IndexSpace<3> indexSpace( Own, Edge<Dim::K>, Global ) const;
-
-    /*
-       Given a relative set of indices of a neighbor get the set of local
-       entity indices shared with that neighbor in the given
-       decomposition. Optionally provide a halo width for the shared
-       space. This halo width must be less than or equal to the halo width of
-       the local grid. The default behavior is to use the halo width of the
-       local grid.
-
-       Interface has the same structure as:
-
-       template<class DecompositionTag, class EntityType, class IndexType>
-       IndexSpace<3> sharedIndexSpace( DecompositionTag, EntityType,
-                                       const int off_i, const int off_j,
-                                       const int off_k,
-                                       const int halo_width = -1 ) const;
-    */
-
-    IndexSpace<3> sharedIndexSpace( Own, Cell, const int off_i, const int off_j,
-                                    const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Ghost, Cell, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Own, Node, const int off_i, const int off_j,
-                                    const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Ghost, Node, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Own, Face<Dim::I>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Ghost, Face<Dim::I>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Own, Face<Dim::J>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Ghost, Face<Dim::J>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Own, Face<Dim::K>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Ghost, Face<Dim::K>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Own, Edge<Dim::I>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Ghost, Edge<Dim::I>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Own, Edge<Dim::J>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Ghost, Edge<Dim::J>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Own, Edge<Dim::K>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
-
-    IndexSpace<3> sharedIndexSpace( Ghost, Edge<Dim::K>, const int off_i,
-                                    const int off_j, const int off_k,
-                                    const int halo_width = -1 ) const;
+    template <class DecompositionTag, class EntityType,
+              std::size_t NSD = num_space_dim>
+    std::enable_if_t<2 == NSD, IndexSpace<2>>
+    sharedIndexSpace( DecompositionTag, EntityType, const int off_i,
+                      const int off_j, const int halo_width = -1 ) const;
 
   private:
+    // 3D and 2D entity types
+    IndexSpace<num_space_dim> indexSpaceImpl( Own, Cell, Local ) const;
+    IndexSpace<num_space_dim> indexSpaceImpl( Ghost, Cell, Local ) const;
+    IndexSpace<num_space_dim> indexSpaceImpl( Own, Cell, Global ) const;
+
+    IndexSpace<num_space_dim> indexSpaceImpl( Own, Node, Local ) const;
+    IndexSpace<num_space_dim> indexSpaceImpl( Ghost, Node, Local ) const;
+    IndexSpace<num_space_dim> indexSpaceImpl( Own, Node, Global ) const;
+
+    IndexSpace<num_space_dim> indexSpaceImpl( Own, Face<Dim::I>, Local ) const;
+    IndexSpace<num_space_dim> indexSpaceImpl( Ghost, Face<Dim::I>,
+                                              Local ) const;
+    IndexSpace<num_space_dim> indexSpaceImpl( Own, Face<Dim::I>, Global ) const;
+
+    IndexSpace<num_space_dim> indexSpaceImpl( Own, Face<Dim::J>, Local ) const;
+    IndexSpace<num_space_dim> indexSpaceImpl( Ghost, Face<Dim::J>,
+                                              Local ) const;
+    IndexSpace<num_space_dim> indexSpaceImpl( Own, Face<Dim::J>, Global ) const;
+
+    // 3D-only entity types.
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> indexSpaceImpl( Own, Face<Dim::K>,
+                                                              Local ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+        indexSpaceImpl( Ghost, Face<Dim::K>, Local ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> indexSpaceImpl( Own, Face<Dim::K>,
+                                                              Global ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> indexSpaceImpl( Own, Edge<Dim::I>,
+                                                              Local ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+        indexSpaceImpl( Ghost, Edge<Dim::I>, Local ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> indexSpaceImpl( Own, Edge<Dim::I>,
+                                                              Global ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> indexSpaceImpl( Own, Edge<Dim::J>,
+                                                              Local ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+        indexSpaceImpl( Ghost, Edge<Dim::J>, Local ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> indexSpaceImpl( Own, Edge<Dim::J>,
+                                                              Global ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> indexSpaceImpl( Own, Edge<Dim::K>,
+                                                              Local ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+        indexSpaceImpl( Ghost, Edge<Dim::K>, Local ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> indexSpaceImpl( Own, Edge<Dim::K>,
+                                                              Global ) const;
+
+    // 3D and 2D entity types.
+    IndexSpace<num_space_dim>
+    sharedIndexSpaceImpl( Own, Cell,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    sharedIndexSpaceImpl( Ghost, Cell,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    sharedIndexSpaceImpl( Own, Node,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    sharedIndexSpaceImpl( Ghost, Node,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    sharedIndexSpaceImpl( Own, Face<Dim::I>,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    sharedIndexSpaceImpl( Ghost, Face<Dim::I>,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    sharedIndexSpaceImpl( Own, Face<Dim::J>,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    IndexSpace<num_space_dim>
+    sharedIndexSpaceImpl( Ghost, Face<Dim::J>,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    // 3D-only entity types
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpaceImpl( Own, Face<Dim::K>, const std::array<int, 3>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpaceImpl( Ghost, Face<Dim::K>,
+                          const std::array<int, 3>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpaceImpl( Own, Edge<Dim::I>, const std::array<int, 3>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpaceImpl( Ghost, Edge<Dim::I>,
+                          const std::array<int, 3>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpaceImpl( Own, Edge<Dim::J>, const std::array<int, 3>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpaceImpl( Ghost, Edge<Dim::J>,
+                          const std::array<int, 3>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpaceImpl( Own, Edge<Dim::K>, const std::array<int, 3>& off_ijk,
+                          const int halo_width = -1 ) const;
+
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    sharedIndexSpaceImpl( Ghost, Edge<Dim::K>,
+                          const std::array<int, 3>& off_ijk,
+                          const int halo_width = -1 ) const;
+
     // Get the global index space of the local grid.
     template <class EntityType>
-    IndexSpace<3> globalIndexSpace( Own, EntityType ) const;
+    IndexSpace<num_space_dim> globalIndexSpace( Own, EntityType ) const;
 
     // Get the face index space of the local grid.
     template <int Dir>
-    IndexSpace<3> faceIndexSpace( Own, Face<Dir>, Local ) const;
+    IndexSpace<num_space_dim> faceIndexSpace( Own, Face<Dir>, Local ) const;
     template <int Dir>
-    IndexSpace<3> faceIndexSpace( Own, Face<Dir>, Global ) const;
+    IndexSpace<num_space_dim> faceIndexSpace( Own, Face<Dir>, Global ) const;
     template <int Dir>
-    IndexSpace<3> faceIndexSpace( Ghost, Face<Dir>, Local ) const;
+    IndexSpace<num_space_dim> faceIndexSpace( Ghost, Face<Dir>, Local ) const;
 
     // Given a relative set of indices of a neighbor get the set of local
     // face indices shared with that neighbor in the given decomposition.
     template <int Dir>
-    IndexSpace<3> faceSharedIndexSpace( Own, Face<Dir>, const int off_,
-                                        const int off_j, const int off_k,
-                                        const int halo_width ) const;
+    IndexSpace<num_space_dim>
+    faceSharedIndexSpace( Own, Face<Dir>,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width ) const;
+
     template <int Dir>
-    IndexSpace<3> faceSharedIndexSpace( Ghost, Face<Dir>, const int off_i,
-                                        const int off_j, const int off_k,
-                                        const int halo_width ) const;
+    IndexSpace<num_space_dim>
+    faceSharedIndexSpace( Ghost, Face<Dir>,
+                          const std::array<int, num_space_dim>& off_ijk,
+                          const int halo_width ) const;
 
     // Get the edge index space of the local grid.
-    template <int Dir>
-    IndexSpace<3> edgeIndexSpace( Own, Edge<Dir>, Local ) const;
-    template <int Dir>
-    IndexSpace<3> edgeIndexSpace( Own, Edge<Dir>, Global ) const;
-    template <int Dir>
-    IndexSpace<3> edgeIndexSpace( Ghost, Edge<Dir>, Local ) const;
+    template <int Dir, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> edgeIndexSpace( Own, Edge<Dir>,
+                                                              Local ) const;
+
+    template <int Dir, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> edgeIndexSpace( Own, Edge<Dir>,
+                                                              Global ) const;
+
+    template <int Dir, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>> edgeIndexSpace( Ghost, Edge<Dir>,
+                                                              Local ) const;
 
     // Given a relative set of indices of a neighbor get the set of local
     // edge indices shared with that neighbor in the given decomposition.
-    template <int Dir>
-    IndexSpace<3> edgeSharedIndexSpace( Own, Edge<Dir>, const int off_,
-                                        const int off_j, const int off_k,
-                                        const int halo_width ) const;
-    template <int Dir>
-    IndexSpace<3> edgeSharedIndexSpace( Ghost, Edge<Dir>, const int off_i,
-                                        const int off_j, const int off_k,
-                                        const int halo_width ) const;
+    template <int Dir, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    edgeSharedIndexSpace( Own, Edge<Dir>, const std::array<int, 3>& off_ijk,
+                          const int halo_width ) const;
+
+    template <int Dir, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    edgeSharedIndexSpace( Ghost, Edge<Dir>, const std::array<int, 3>& off_ijk,
+                          const int halo_width ) const;
 
   private:
     std::shared_ptr<GlobalGrid<MeshType>> _global_grid;
