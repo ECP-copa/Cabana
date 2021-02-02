@@ -106,6 +106,8 @@ void testConversion( const std::array<bool, 3>& is_dim_periodic )
         } );
 
     // Compare the results.
+    // FIXME Change back to fine grained EXPECT_EQ when passing on all distros
+    int pass_index_conversion_test = 1;
     auto index_view_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), index_view );
     auto l2g_view_host =
@@ -117,8 +119,10 @@ void testConversion( const std::array<bool, 3>& is_dim_periodic )
             for ( int k = ghost_local_space.min( Dim::K );
                   k < ghost_local_space.max( Dim::K ); ++k )
                 for ( int d = 0; d < 3; ++d )
-                    EXPECT_EQ( l2g_view_host( i, j, k, d ),
-                               index_view_host( i, j, k, d ) );
+                    if ( l2g_view_host( i, j, k, d ) !=
+                         index_view_host( i, j, k, d ) )
+                        pass_index_conversion_test = 0;
+    EXPECT_EQ( pass_index_conversion_test, 1 );
 }
 
 //---------------------------------------------------------------------------//
