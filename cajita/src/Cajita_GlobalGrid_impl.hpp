@@ -24,7 +24,7 @@ template <class MeshType>
 GlobalGrid<MeshType>::GlobalGrid(
     MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
     const std::array<bool, 3>& periodic,
-    const Partitioner<num_space_dim>& partitioner )
+    const BlockPartitioner<num_space_dim>& partitioner )
     : _global_mesh( global_mesh )
     , _periodic( periodic )
 {

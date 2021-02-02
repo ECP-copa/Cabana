@@ -21,26 +21,9 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-template <std::size_t NumSpaceDim>
-class UniformDimPartitioner : public Partitioner<NumSpaceDim>
+// Backwards compatibility wrapper
+class UniformDimPartitioner : public DimBlockPartitioner<3>
 {
-  public:
-    static constexpr std::size_t num_space_dim = NumSpaceDim;
-
-    std::array<int, NumSpaceDim>
-    ranksPerDimension( MPI_Comm comm,
-                       const std::array<int, NumSpaceDim>& ) const override
-    {
-        int comm_size;
-        MPI_Comm_size( comm, &comm_size );
-
-        std::array<int, NumSpaceDim> ranks_per_dim;
-        for ( std::size_t d = 0; d < NumSpaceDim; ++d )
-            ranks_per_dim[d] = 0;
-        MPI_Dims_create( comm_size, NumSpaceDim, ranks_per_dim.data() );
-
-        return ranks_per_dim;
-    }
 };
 
 //---------------------------------------------------------------------------//

@@ -195,7 +195,7 @@ void parallelIndexSpaceTest()
 void parallelLocalGridTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner<3> partitioner;
+    UniformDimPartitioner partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;

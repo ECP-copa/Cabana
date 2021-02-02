@@ -34,7 +34,7 @@ namespace Test
 void layoutTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner<3> partitioner;
+    UniformDimPartitioner partitioner;
 
     // Create the global .
     double cell_size = 0.23;
@@ -184,7 +184,7 @@ void layoutTest()
 void arrayTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner<3> partitioner;
+    UniformDimPartitioner partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -226,7 +226,7 @@ void arrayTest()
 void arrayOpTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner<3> partitioner;
+    UniformDimPartitioner partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;

@@ -19,13 +19,16 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
+// Block partitioner base class.
+// Given global mesh parameters, the block partitioner computes how many MPI
+// ranks are assigned to each logical dimension.
 template <std::size_t NumSpaceDim>
-class Partitioner
+class BlockPartitioner
 {
   public:
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 
-    ~Partitioner() = default;
+    ~BlockPartitioner() = default;
 
     /*!
       \brief Get the number of MPI ranks in each dimension of the grid.
@@ -36,6 +39,72 @@ class Partitioner
     virtual std::array<int, NumSpaceDim> ranksPerDimension(
         MPI_Comm comm,
         const std::array<int, NumSpaceDim>& global_cells_per_dim ) const = 0;
+};
+
+//---------------------------------------------------------------------------//
+// Manual block partitioner.
+//
+// Assign MPI blocks from a fixed user input.
+template <std::size_t NumSpaceDim>
+class ManualBlockPartitioner : public BlockPartitioner<NumSpaceDim>
+{
+  public:
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+
+    ManualBlockPartitioner( const std::array<int, NumSpaceDim>& ranks_per_dim )
+        : _ranks_per_dim( ranks_per_dim )
+    {
+    }
+
+    std::array<int, NumSpaceDim>
+    ranksPerDimension( MPI_Comm comm,
+                       const std::array<int, NumSpaceDim>& ) const override
+    {
+        int comm_size;
+        MPI_Comm_size( comm, &comm_size );
+        int nrank = 1;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            nrank *= _ranks_per_dim[d];
+        if ( comm_size != nrank )
+            throw std::runtime_error(
+                "ManualPartitioner ranks do not match comm size" );
+        return _ranks_per_dim;
+    }
+
+  private:
+    std::array<int, NumSpaceDim> _ranks_per_dim;
+};
+
+//---------------------------------------------------------------------------//
+// Dimension-only partitioner.
+//
+// Use MPI to compute the most uniform block distribution possible (i.e. the
+// one that has the minimal number of neighbor communication messages in halo
+// exchange). This distribution is independent of mesh parameters - only the
+// size of the communicator is considered. Depending on the problem, this may
+// not be the optimal partitioning depending on cell-counts and workloads as
+// the reduced number of MPI messages may be overshadowed by the load
+// imbalance during computation.
+template <std::size_t NumSpaceDim>
+class DimBlockPartitioner : public BlockPartitioner<NumSpaceDim>
+{
+  public:
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+
+    std::array<int, NumSpaceDim>
+    ranksPerDimension( MPI_Comm comm,
+                       const std::array<int, NumSpaceDim>& ) const override
+    {
+        int comm_size;
+        MPI_Comm_size( comm, &comm_size );
+
+        std::array<int, NumSpaceDim> ranks_per_dim;
+        for ( std::size_t d = 0; d < NumSpaceDim; ++d )
+            ranks_per_dim[d] = 0;
+        MPI_Dims_create( comm_size, NumSpaceDim, ranks_per_dim.data() );
+
+        return ranks_per_dim;
+    }
 };
 
 //---------------------------------------------------------------------------//

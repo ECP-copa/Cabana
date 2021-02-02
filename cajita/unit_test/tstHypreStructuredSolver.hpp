@@ -42,7 +42,7 @@ void poissonTest( const std::string& solver_type,
                                                 global_high_corner, cell_size );
 
     // Create the global grid.
-    UniformDimPartitioner<3> partitioner;
+    UniformDimPartitioner partitioner;
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 

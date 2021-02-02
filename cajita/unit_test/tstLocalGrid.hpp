@@ -31,7 +31,7 @@ namespace Test
 void periodicTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner<3> partitioner;
+    UniformDimPartitioner partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -1639,7 +1639,7 @@ void notPeriodicTest()
     MPI_Comm_split( MPI_COMM_WORLD, comm_rank, 0, &serial_comm );
 
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner<3> partitioner;
+    UniformDimPartitioner partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;

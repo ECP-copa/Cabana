@@ -484,7 +484,7 @@ void uniformTest( const std::array<int, 3>& ranks_per_dim,
         createUniformGlobalMesh( low_corner, high_corner, cell_size );
 
     // Create the global grid.
-    ManualPartitioner<3> partitioner( ranks_per_dim );
+    ManualPartitioner partitioner( ranks_per_dim );
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
@@ -516,7 +516,7 @@ void nonUniformTest( const std::array<int, 3>& ranks_per_dim,
                                                    edges[Dim::K] );
 
     // Create the global grid.
-    ManualPartitioner<3> partitioner( ranks_per_dim );
+    ManualPartitioner partitioner( ranks_per_dim );
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
@@ -566,7 +566,7 @@ void irregularTest( const std::array<int, 3>& ranks_per_dim )
 
     // Create the global grid.
     std::array<bool, 3> periodic = { true, true, true };
-    ManualPartitioner<3> partitioner( ranks_per_dim );
+    ManualPartitioner partitioner( ranks_per_dim );
     auto global_grid =
         createGlobalGrid( MPI_COMM_WORLD, global_mesh, periodic, partitioner );
 
