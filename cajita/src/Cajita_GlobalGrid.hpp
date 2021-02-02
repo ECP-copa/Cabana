@@ -33,6 +33,9 @@ class GlobalGrid
     // Mesh type.
     using mesh_type = MeshType;
 
+    // Spatial dimension.
+    static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
+
     /*!
      \brief Constructor.
      \param comm The communicator over which to define the grid.
@@ -43,7 +46,7 @@ class GlobalGrid
     GlobalGrid( MPI_Comm comm,
                 const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
                 const std::array<bool, 3>& periodic,
-                const Partitioner& partitioner );
+                const BlockPartitioner<num_space_dim>& partitioner );
 
     // Destructor.
     ~GlobalGrid();
@@ -115,7 +118,8 @@ class GlobalGrid
 template <class MeshType>
 std::shared_ptr<GlobalGrid<MeshType>> createGlobalGrid(
     MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-    const std::array<bool, 3>& periodic, const Partitioner& partitioner )
+    const std::array<bool, 3>& periodic,
+    const BlockPartitioner<GlobalGrid<MeshType>::num_space_dim>& partitioner )
 {
     return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
                                                    partitioner );

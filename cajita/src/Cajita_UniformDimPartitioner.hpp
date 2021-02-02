@@ -21,12 +21,9 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-class UniformDimPartitioner : public Partitioner
+// Backwards compatibility wrapper
+class UniformDimPartitioner : public DimBlockPartitioner<3>
 {
-  public:
-    std::array<int, 3> ranksPerDimension(
-        MPI_Comm comm,
-        const std::array<int, 3>& global_cells_per_dim ) const override;
 };
 
 //---------------------------------------------------------------------------//

@@ -43,8 +43,6 @@ endif()
 
 set(SOURCES_PUBLIC
   Cajita_IndexSpace.cpp
-  Cajita_ManualPartitioner.cpp
-  Cajita_UniformDimPartitioner.cpp
   )
 
 if(Cabana_ENABLE_HYPRE)
