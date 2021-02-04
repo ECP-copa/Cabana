@@ -37,7 +37,7 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     using scalar_type = Scalar;
 
     // Spatial dimension.
-    static constexpr int num_space_dim = NumSpaceDim;
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 
     // Device type.
     using device_type = Device;
@@ -45,38 +45,47 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     using execution_space = typename Device::execution_space;
 
     // Constructor.
-    LocalMesh( const LocalGrid<UniformMesh<Scalar, NumSpaceDim>>& local_grid )
+    LocalMesh( const LocalGrid<UniformMesh<Scalar, num_space_dim>>& local_grid )
     {
         const auto& global_grid = local_grid.globalGrid();
         const auto& global_mesh = global_grid.globalMesh();
 
         // Get the cell size.
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             _cell_size[d] = global_mesh.cellSize( d );
 
         // Compute face area.
-        _face_area[Dim::I] = _cell_size[Dim::J] * _cell_size[Dim::K];
-        _face_area[Dim::J] = _cell_size[Dim::I] * _cell_size[Dim::K];
-        _face_area[Dim::K] = _cell_size[Dim::I] * _cell_size[Dim::J];
+        if ( 3 == num_space_dim )
+        {
+            _face_area[Dim::I] = _cell_size[Dim::J] * _cell_size[Dim::K];
+            _face_area[Dim::J] = _cell_size[Dim::I] * _cell_size[Dim::K];
+            _face_area[Dim::K] = _cell_size[Dim::I] * _cell_size[Dim::J];
+        }
+        else if ( 2 == num_space_dim )
+        {
+            _face_area[Dim::I] = _cell_size[Dim::J];
+            _face_area[Dim::J] = _cell_size[Dim::I];
+        }
 
         // Compute cell volume.
-        _cell_volume =
-            _cell_size[Dim::I] * _cell_size[Dim::J] * _cell_size[Dim::K];
+        _cell_volume = 1.0;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            _cell_volume *= _cell_size[d];
 
         // Compute the owned low corner
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             _own_low_corner[d] = global_mesh.lowCorner( d ) +
                                  _cell_size[d] * global_grid.globalOffset( d );
 
         // Compute the owned high corner
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             _own_high_corner[d] =
                 global_mesh.lowCorner( d ) +
                 _cell_size[d] * ( global_grid.globalOffset( d ) +
                                   global_grid.ownedNumCell( d ) );
 
         // Compute the ghosted low corner
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             _ghost_low_corner[d] =
                 ( global_grid.isPeriodic( d ) ||
                   global_grid.dimBlockId( d ) > 0 )
@@ -85,7 +94,7 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
                     : lowCorner( Own(), d );
 
         // Compute the ghosted high corner
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             _ghost_high_corner[d] =
                 ( global_grid.isPeriodic( d ) ||
                   global_grid.dimBlockId( d ) <
@@ -135,25 +144,29 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     // relative to the ghosted decomposition of the mesh block and correlates
     // directly to local index spaces associated with the block.
     KOKKOS_INLINE_FUNCTION
-    void coordinates( Cell, const int index[3], Scalar x[3] ) const
+    void coordinates( Cell, const int index[num_space_dim],
+                      Scalar x[num_space_dim] ) const
     {
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             x[d] = _ghost_low_corner[d] +
                    ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size[d];
     }
 
     KOKKOS_INLINE_FUNCTION
-    void coordinates( Node, const int index[3], Scalar x[3] ) const
+    void coordinates( Node, const int index[num_space_dim],
+                      Scalar x[num_space_dim] ) const
     {
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             x[d] = _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size[d];
     }
 
     template <int Dir>
-    KOKKOS_INLINE_FUNCTION void coordinates( Face<Dir>, const int index[3],
-                                             Scalar x[3] ) const
+    KOKKOS_INLINE_FUNCTION void coordinates( Face<Dir>,
+                                             const int index[num_space_dim],
+                                             Scalar x[num_space_dim] ) const
     {
-        for ( int d = 0; d < 3; ++d )
+        static_assert( Dir < num_space_dim, "Face dimension out of bounds" );
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             if ( Dir == d )
                 x[d] =
                     _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size[d];
@@ -162,11 +175,11 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
                        ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size[d];
     }
 
-    template <int Dir>
-    KOKKOS_INLINE_FUNCTION void coordinates( Edge<Dir>, const int index[3],
-                                             Scalar x[3] ) const
+    template <int Dir, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    coordinates( Edge<Dir>, const int index[3], Scalar x[3] ) const
     {
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < 3; ++d )
             if ( Dir == d )
                 x[d] = _ghost_low_corner[d] +
                        ( Scalar( index[d] ) + Scalar( 0.5 ) ) * _cell_size[d];
@@ -180,31 +193,37 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     // block and correlates directly to local index spaces associated with the
     // block.
     KOKKOS_INLINE_FUNCTION
-    Scalar measure( Node, const int[3] ) const { return 0.0; }
+    Scalar measure( Node, const int[num_space_dim] ) const { return 0.0; }
 
-    template <int Dir>
-    KOKKOS_INLINE_FUNCTION Scalar measure( Edge<Dir>, const int[3] ) const
+    template <int Dir, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
+    measure( Edge<Dir>, const int[3] ) const
     {
         return _cell_size[Dir];
     }
 
     template <int Dir>
-    KOKKOS_INLINE_FUNCTION Scalar measure( Face<Dir>, const int[3] ) const
+    KOKKOS_INLINE_FUNCTION Scalar measure( Face<Dir>,
+                                           const int[num_space_dim] ) const
     {
+        static_assert( Dir < num_space_dim, "Face dimension out of bounds" );
         return _face_area[Dir];
     }
 
     KOKKOS_INLINE_FUNCTION
-    Scalar measure( Cell, const int[3] ) const { return _cell_volume; }
+    Scalar measure( Cell, const int[num_space_dim] ) const
+    {
+        return _cell_volume;
+    }
 
   private:
-    Kokkos::Array<Scalar, 3> _cell_size;
-    Kokkos::Array<Scalar, 3> _face_area;
+    Kokkos::Array<Scalar, num_space_dim> _cell_size;
+    Kokkos::Array<Scalar, num_space_dim> _face_area;
     Scalar _cell_volume;
-    Kokkos::Array<Scalar, 3> _own_low_corner;
-    Kokkos::Array<Scalar, 3> _own_high_corner;
-    Kokkos::Array<Scalar, 3> _ghost_low_corner;
-    Kokkos::Array<Scalar, 3> _ghost_high_corner;
+    Kokkos::Array<Scalar, num_space_dim> _own_low_corner;
+    Kokkos::Array<Scalar, num_space_dim> _own_high_corner;
+    Kokkos::Array<Scalar, num_space_dim> _ghost_low_corner;
+    Kokkos::Array<Scalar, num_space_dim> _ghost_high_corner;
 };
 
 //---------------------------------------------------------------------------//
@@ -220,7 +239,7 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
     using scalar_type = Scalar;
 
     // Spatial dimension.
-    static constexpr int num_space_dim = NumSpaceDim;
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
 
     // Device type.
     using device_type = Device;
@@ -229,24 +248,24 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
 
     // Constructor.
     LocalMesh(
-        const LocalGrid<NonUniformMesh<Scalar, NumSpaceDim>>& local_grid )
+        const LocalGrid<NonUniformMesh<Scalar, num_space_dim>>& local_grid )
     {
         const auto& global_grid = local_grid.globalGrid();
         const auto& global_mesh = global_grid.globalMesh();
 
         // Compute the owned low corner.
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             _own_low_corner[d] =
                 global_mesh.nonUniformEdge( d )[global_grid.globalOffset( d )];
 
         // Compute the owned high corner
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             _own_high_corner[d] =
                 global_mesh.nonUniformEdge( d )[global_grid.globalOffset( d ) +
                                                 global_grid.ownedNumCell( d )];
 
         // Compute the ghosted low corner
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
         {
             if ( global_grid.dimBlockId( d ) > 0 )
             {
@@ -270,7 +289,7 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
         }
 
         // Compute the ghosted high corner
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
         {
             if ( global_grid.dimBlockId( d ) <
                  global_grid.dimNumBlock( d ) - 1 )
@@ -301,7 +320,7 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
             local_grid.indexSpace( Ghost(), Node(), Local() );
         auto owned_nodes_global =
             local_grid.indexSpace( Own(), Node(), Global() );
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
         {
             // Allocate edges on the device for this dimension.
             const auto& global_edge = global_mesh.nonUniformEdge( d );
@@ -394,26 +413,31 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
     // ghosted decomposition of the mesh block and correlates directly to
     // local index spaces associated with the block.
     KOKKOS_INLINE_FUNCTION
-    void coordinates( Cell, const int index[3], Scalar x[3] ) const
+    void coordinates( Cell, const int index[num_space_dim],
+                      Scalar x[num_space_dim] ) const
     {
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             x[d] = ( _local_edges[d]( index[d] + 1 ) +
                      _local_edges[d]( index[d] ) ) /
                    Scalar( 2.0 );
     }
 
     KOKKOS_INLINE_FUNCTION
-    void coordinates( Node, const int index[3], Scalar x[3] ) const
+    void coordinates( Node, const int index[num_space_dim],
+                      Scalar x[num_space_dim] ) const
     {
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             x[d] = _local_edges[d]( index[d] );
     }
 
     template <int Dir>
-    KOKKOS_INLINE_FUNCTION void coordinates( Face<Dir>, const int index[3],
-                                             Scalar x[3] ) const
+    KOKKOS_INLINE_FUNCTION void coordinates( Face<Dir>,
+                                             const int index[num_space_dim],
+                                             Scalar x[num_space_dim] ) const
     {
-        for ( int d = 0; d < 3; ++d )
+        static_assert( Dir < num_space_dim, "Face dimension out of bounds" );
+
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             if ( Dir == d )
                 x[d] = _local_edges[d]( index[d] );
             else
@@ -422,11 +446,11 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
                        Scalar( 2.0 );
     }
 
-    template <int Dir>
-    KOKKOS_INLINE_FUNCTION void coordinates( Edge<Dir>, const int index[3],
-                                             Scalar x[3] ) const
+    template <int Dir, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    coordinates( Edge<Dir>, const int index[3], Scalar x[3] ) const
     {
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < 3; ++d )
             if ( Dir == d )
                 x[d] = ( _local_edges[d]( index[d] + 1 ) +
                          _local_edges[d]( index[d] ) ) /
@@ -440,50 +464,71 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
     // local grid and correlates directly to local index spaces associated with
     // the local grid.
     KOKKOS_INLINE_FUNCTION
-    Scalar measure( Node, const int[3] ) const { return 0.0; }
+    Scalar measure( Node, const int[num_space_dim] ) const { return 0.0; }
 
-    template <int Dir>
-    KOKKOS_INLINE_FUNCTION Scalar measure( Edge<Dir>, const int index[3] ) const
+    template <int Dir, std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
+    measure( Edge<Dir>, const int index[3] ) const
     {
         return _local_edges[Dir][index[Dir] + 1] -
                _local_edges[Dir][index[Dir]];
     }
 
-    KOKKOS_INLINE_FUNCTION
-    Scalar measure( Face<Dim::I>, const int index[3] ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
+    measure( Face<Dim::I>, const int index[3] ) const
     {
         return measure( Edge<Dim::J>(), index ) *
                measure( Edge<Dim::K>(), index );
     }
 
-    KOKKOS_INLINE_FUNCTION
-    Scalar measure( Face<Dim::J>, const int index[3] ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
+    measure( Face<Dim::J>, const int index[3] ) const
     {
         return measure( Edge<Dim::I>(), index ) *
                measure( Edge<Dim::K>(), index );
     }
 
-    KOKKOS_INLINE_FUNCTION
-    Scalar measure( Face<Dim::K>, const int index[3] ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
+    measure( Face<Dim::K>, const int index[3] ) const
     {
         return measure( Edge<Dim::I>(), index ) *
                measure( Edge<Dim::J>(), index );
     }
 
-    KOKKOS_INLINE_FUNCTION
-    Scalar measure( Cell, const int index[3] ) const
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, Scalar>
+    measure( Face<Dim::I>, const int index[2] ) const
     {
-        return measure( Edge<Dim::I>(), index ) *
-               measure( Edge<Dim::J>(), index ) *
-               measure( Edge<Dim::K>(), index );
+        return _local_edges[Dim::J][index[Dim::J] + 1] -
+               _local_edges[Dim::J][index[Dim::J]];
+    }
+
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, Scalar>
+    measure( Face<Dim::J>, const int index[2] ) const
+    {
+        return _local_edges[Dim::I][index[Dim::I] + 1] -
+               _local_edges[Dim::I][index[Dim::I]];
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    Scalar measure( Cell, const int index[num_space_dim] ) const
+    {
+        Scalar m = 1.0;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            m *= _local_edges[d][index[d] + 1] - _local_edges[d][index[d]];
+        return m;
     }
 
   private:
-    Kokkos::Array<Scalar, 3> _own_low_corner;
-    Kokkos::Array<Scalar, 3> _own_high_corner;
-    Kokkos::Array<Scalar, 3> _ghost_low_corner;
-    Kokkos::Array<Scalar, 3> _ghost_high_corner;
-    Kokkos::Array<Kokkos::View<Scalar*, Device>, 3> _local_edges;
+    Kokkos::Array<Scalar, num_space_dim> _own_low_corner;
+    Kokkos::Array<Scalar, num_space_dim> _own_high_corner;
+    Kokkos::Array<Scalar, num_space_dim> _ghost_low_corner;
+    Kokkos::Array<Scalar, num_space_dim> _ghost_high_corner;
+    Kokkos::Array<Kokkos::View<Scalar*, Device>, num_space_dim> _local_edges;
 };
 
 //---------------------------------------------------------------------------//

@@ -33,10 +33,10 @@ namespace Test
 
 //---------------------------------------------------------------------------//
 template <class LocalMeshType, class LocalGridType>
-void uniformLocalMeshTest( const LocalMeshType& local_mesh,
-                           const LocalGridType& local_grid,
-                           const std::array<double, 3>& low_corner,
-                           const double cell_size, const int halo_width )
+void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
+                             const LocalGridType& local_grid,
+                             const std::array<double, 3>& low_corner,
+                             const double cell_size, const int halo_width )
 {
     // Get the global grid.
     const auto& global_grid = local_grid.globalGrid();
@@ -473,8 +473,8 @@ void uniformLocalMeshTest( const LocalMeshType& local_mesh,
 }
 
 //---------------------------------------------------------------------------//
-void uniformTest( const std::array<int, 3>& ranks_per_dim,
-                  const std::array<bool, 3>& is_dim_periodic )
+void uniformTest3d( const std::array<int, 3>& ranks_per_dim,
+                    const std::array<bool, 3>& is_dim_periodic )
 {
     // Create the global mesh.
     std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
@@ -496,13 +496,13 @@ void uniformTest( const std::array<int, 3>& ranks_per_dim,
     auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
 
     // Test the local mesh.
-    uniformLocalMeshTest( local_mesh, *local_grid, low_corner, cell_size,
-                          halo_width );
+    uniformLocalMeshTest3d( local_mesh, *local_grid, low_corner, cell_size,
+                            halo_width );
 }
 
 //---------------------------------------------------------------------------//
-void nonUniformTest( const std::array<int, 3>& ranks_per_dim,
-                     const std::array<bool, 3>& is_dim_periodic )
+void nonUniformTest3d( const std::array<int, 3>& ranks_per_dim,
+                       const std::array<bool, 3>& is_dim_periodic )
 {
     // Create the global mesh.
     std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
@@ -528,12 +528,12 @@ void nonUniformTest( const std::array<int, 3>& ranks_per_dim,
     auto local_mesh = createLocalMesh<TEST_DEVICE>( *local_grid );
 
     // Test the local mesh.
-    uniformLocalMeshTest( local_mesh, *local_grid, low_corner, cell_size,
-                          halo_width );
+    uniformLocalMeshTest3d( local_mesh, *local_grid, low_corner, cell_size,
+                            halo_width );
 }
 
 //---------------------------------------------------------------------------//
-void irregularTest( const std::array<int, 3>& ranks_per_dim )
+void irregularTest3d( const std::array<int, 3>& ranks_per_dim )
 {
     // Create the global mesh using functions to build the edges. Use a cyclic
     // pattern for the cell sizes so we can easily compute cell sizes from
@@ -738,15 +738,15 @@ TEST( mesh, periodic_uniform_test )
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
 }
 
 //---------------------------------------------------------------------------//
@@ -762,15 +762,15 @@ TEST( mesh, periodic_non_uniform_test )
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
 }
 
 //---------------------------------------------------------------------------//
@@ -786,15 +786,15 @@ TEST( mesh, non_periodic_uniform_test )
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    uniformTest( ranks_per_dim, is_dim_periodic );
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
 }
 
 //---------------------------------------------------------------------------//
@@ -810,15 +810,15 @@ TEST( mesh, non_periodic_non_uniform_test )
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    nonUniformTest( ranks_per_dim, is_dim_periodic );
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
 }
 
 //---------------------------------------------------------------------------//
@@ -832,15 +832,15 @@ TEST( mesh, irregular_non_uniform_test )
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    irregularTest( ranks_per_dim );
+    irregularTest3d( ranks_per_dim );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    irregularTest( ranks_per_dim );
+    irregularTest3d( ranks_per_dim );
     std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    irregularTest( ranks_per_dim );
+    irregularTest3d( ranks_per_dim );
     std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    irregularTest( ranks_per_dim );
+    irregularTest3d( ranks_per_dim );
     std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    irregularTest( ranks_per_dim );
+    irregularTest3d( ranks_per_dim );
 }
 
 //---------------------------------------------------------------------------//
