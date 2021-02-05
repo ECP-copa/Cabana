@@ -12,8 +12,8 @@
 #include <Cajita_Array.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
+#include <Cajita_Partitioner.hpp>
 #include <Cajita_Types.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -34,7 +34,7 @@ namespace Test
 void layoutTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
+    DimBlockPartitioner<3> partitioner;
 
     // Create the global .
     double cell_size = 0.23;
@@ -184,7 +184,7 @@ void layoutTest()
 void arrayTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
+    DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -226,7 +226,7 @@ void arrayTest()
 void arrayOpTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
+    DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -319,12 +319,12 @@ void arrayOpTest()
     // Compute the dot product of the two arrays.
     std::vector<double> dots( dofs_per_cell );
     ArrayOp::dot( *array, *array_2, dots );
-    int total_num_node = global_grid->globalNumEntity( Node(), Dim::I ) *
-                         global_grid->globalNumEntity( Node(), Dim::J ) *
-                         global_grid->globalNumEntity( Node(), Dim::K );
+    int total_num_cell = global_grid->globalNumEntity( Cell(), Dim::I ) *
+                         global_grid->globalNumEntity( Cell(), Dim::J ) *
+                         global_grid->globalNumEntity( Cell(), Dim::K );
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( dots[n],
-                         ( 3.0 * scales[n] + 1.0 ) * 0.5 * total_num_node );
+                         ( 3.0 * scales[n] + 1.0 ) * 0.5 * total_num_cell );
 
     // Compute the two-norm of the array components
     std::vector<double> norm_2( dofs_per_cell );
@@ -332,14 +332,14 @@ void arrayOpTest()
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( norm_2[n],
                          std::sqrt( std::pow( 3.0 * scales[n] + 1.0, 2.0 ) *
-                                    total_num_node ) );
+                                    total_num_cell ) );
 
     // Compute the one-norm of the array components
     std::vector<double> norm_1( dofs_per_cell );
     ArrayOp::norm1( *array, norm_1 );
     for ( int n = 0; n < dofs_per_cell; ++n )
         EXPECT_FLOAT_EQ( norm_1[n],
-                         fabs( 3.0 * scales[n] + 1.0 ) * total_num_node );
+                         fabs( 3.0 * scales[n] + 1.0 ) * total_num_cell );
 
     // Compute the infinity-norm of the array components
     std::vector<double> large_vals = { -1939304932.2, 20399994.532,

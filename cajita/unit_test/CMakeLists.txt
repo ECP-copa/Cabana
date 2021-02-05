@@ -103,7 +103,8 @@ set(MPI_TESTS
   IndexConversion
   LocalMesh3d
   LocalMesh2d
-  Array
+  Array3d
+  Array2d
   Halo
   SplineEvaluation
   Interpolation
