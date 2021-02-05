@@ -147,7 +147,7 @@ class FastFourierTransformParams
 //---------------------------------------------------------------------------//
 /*!
   \class FastFourierTransform
-  \brief 3D distributed fast Fourier transform base implementation.
+  \brief 2D/3D distributed fast Fourier transform base implementation.
 */
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
           class Derived>
@@ -158,9 +158,13 @@ class FastFourierTransform
     using mesh_type = MeshType;
     using value_type = Scalar;
     using device_type = DeviceType;
+    using exec_space = typename device_type::execution_space;
 
-    std::array<int, 3> global_high;
-    std::array<int, 3> global_low;
+    // Spatial dimension.
+    static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
+
+    std::array<int, num_space_dim> global_high;
+    std::array<int, num_space_dim> global_low;
 
     /*!
       \brief Constructor
@@ -173,23 +177,20 @@ class FastFourierTransform
         // Get the local dimensions of the problem.
         auto entity_space =
             layout.localGrid()->indexSpace( Own(), EntityType(), Local() );
-        std::array<int, 3> local_num_entity = {
-            (int)entity_space.extent( Dim::K ),
-            (int)entity_space.extent( Dim::J ),
-            (int)entity_space.extent( Dim::I ) };
-
         // Get the global grid.
         const auto& global_grid = layout.localGrid()->globalGrid();
 
-        // Get the low corner of the global index space on this rank.
-        global_low = { (int)global_grid.globalOffset( Dim::K ),
-                       (int)global_grid.globalOffset( Dim::J ),
-                       (int)global_grid.globalOffset( Dim::I ) };
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            // Get the low corner of the global index space on this rank.
+            global_low[d] =
+                (int)global_grid.globalOffset( num_space_dim - d - 1 );
 
-        // Get the high corner of the global index space on this rank.
-        global_high = { global_low[Dim::I] + local_num_entity[Dim::I] - 1,
-                        global_low[Dim::J] + local_num_entity[Dim::J] - 1,
-                        global_low[Dim::K] + local_num_entity[Dim::K] - 1 };
+            // Get the high corner of the global index space on this rank.
+            int local_num_entity =
+                (int)entity_space.extent( num_space_dim - d - 1 );
+            global_high[d] = global_low[d] + local_num_entity - 1;
+        }
     }
 
     /*!
@@ -241,6 +242,76 @@ class FastFourierTransform
     {
         checkArrayDofs( x.layout()->dofsPerEntity() );
         static_cast<Derived*>( this )->reverseImpl( x, scaling );
+    }
+
+    template <class IndexSpaceType, class LViewType, class LGViewType,
+              std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    copyToLocal( const IndexSpaceType own_space, LViewType& l_view,
+                 const LGViewType lg_view )
+    {
+        Kokkos::parallel_for(
+            "fft_copy_to_work",
+            createExecutionPolicy( own_space, exec_space() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+                auto iw = i - own_space.min( Dim::I );
+                auto jw = j - own_space.min( Dim::J );
+                auto kw = k - own_space.min( Dim::K );
+                l_view( iw, jw, kw, 0 ) = lg_view( i, j, k, 0 );
+                l_view( iw, jw, kw, 1 ) = lg_view( i, j, k, 1 );
+            } );
+    }
+
+    template <class IndexSpaceType, class LViewType, class LGViewType,
+              std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    copyToLocal( const IndexSpaceType own_space, LViewType& l_view,
+                 const LGViewType lg_view )
+    {
+        Kokkos::parallel_for(
+            "fft_copy_to_work",
+            createExecutionPolicy( own_space, exec_space() ),
+            KOKKOS_LAMBDA( const int i, const int j ) {
+                auto iw = i - own_space.min( Dim::I );
+                auto jw = j - own_space.min( Dim::J );
+                l_view( iw, jw, 0 ) = lg_view( i, j, 0 );
+                l_view( iw, jw, 1 ) = lg_view( i, j, 1 );
+            } );
+    }
+
+    template <class IndexSpaceType, class LViewType, class LGViewType,
+              std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    copyFromLocal( const IndexSpaceType own_space, const LViewType l_view,
+                   LGViewType& lg_view )
+    {
+        Kokkos::parallel_for(
+            "fft_copy_from_work",
+            createExecutionPolicy( own_space, exec_space() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+                auto iw = i - own_space.min( Dim::I );
+                auto jw = j - own_space.min( Dim::J );
+                auto kw = k - own_space.min( Dim::K );
+                lg_view( i, j, k, 0 ) = l_view( iw, jw, kw, 0 );
+                lg_view( i, j, k, 1 ) = l_view( iw, jw, kw, 1 );
+            } );
+    }
+
+    template <class IndexSpaceType, class LViewType, class LGViewType,
+              std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    copyFromLocal( const IndexSpaceType own_space, const LViewType l_view,
+                   LGViewType& lg_view )
+    {
+        Kokkos::parallel_for(
+            "fft_copy_from_work",
+            createExecutionPolicy( own_space, exec_space() ),
+            KOKKOS_LAMBDA( const int i, const int j ) {
+                auto iw = i - own_space.min( Dim::I );
+                auto jw = j - own_space.min( Dim::J );
+                lg_view( i, j, 0 ) = l_view( iw, jw, 0 );
+                lg_view( i, j, 1 ) = l_view( iw, jw, 1 );
+            } );
     }
 };
 
@@ -329,14 +400,24 @@ class HeffteFastFourierTransform
     using device_type = DeviceType;
     using backend_type = BackendType;
     using exec_space = typename device_type::execution_space;
+    using mesh_type = MeshType;
+    static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
+
     using heffte_backend_type =
         typename Impl::HeffteBackendTraits<exec_space,
                                            backend_type>::backend_type;
+    using heffte_fft_type = std::conditional_t<
+        3 == num_space_dim, heffte::fft3d<heffte_backend_type>,
+        std::conditional_t<2 == num_space_dim,
+                           heffte::fft2d<heffte_backend_type>, void>>;
+    using heffte_box_type = std::conditional_t<
+        3 == num_space_dim, heffte::box3d,
+        std::conditional_t<2 == num_space_dim, heffte::box2d, void>>;
 
     /*!
       \brief Constructor
       \param layout The array layout defining the vector space of the transform.
-      \param params Parameters for the 3D FFT.
+      \param params Parameters for the FFT.
     */
     HeffteFastFourierTransform( const ArrayLayout<EntityType, MeshType>& layout,
                                 const FastFourierTransformParams& params )
@@ -345,8 +426,8 @@ class HeffteFastFourierTransform
               HeffteFastFourierTransform<EntityType, MeshType, Scalar,
                                          DeviceType, BackendType>>( layout )
     {
-        heffte::box3d inbox = { this->global_low, this->global_high };
-        heffte::box3d outbox = { this->global_low, this->global_high };
+        heffte_box_type inbox = { this->global_low, this->global_high };
+        heffte_box_type outbox = { this->global_low, this->global_high };
 
         heffte::plan_options heffte_params =
             heffte::default_options<heffte_backend_type>();
@@ -355,7 +436,7 @@ class HeffteFastFourierTransform
         heffte_params.use_reorder = params.getReorder();
 
         // Set FFT options from given parameters
-        _fft = std::make_shared<heffte::fft3d<heffte_backend_type>>(
+        _fft = std::make_shared<heffte_fft_type>(
             inbox, outbox, layout.localGrid()->globalGrid().comm(),
             heffte_params );
 
@@ -407,24 +488,15 @@ class HeffteFastFourierTransform
         // Create a subview of the work array to write the local data into.
         auto own_space =
             x.layout()->localGrid()->indexSpace( Own(), EntityType(), Local() );
-        auto work_view_space = appendDimension( own_space, 2 );
-        auto work_view = createView<Scalar, Kokkos::LayoutRight, DeviceType>(
-            work_view_space, _fft_work.data() );
+        auto local_view_space = appendDimension( own_space, 2 );
+        auto local_view = createView<Scalar, Kokkos::LayoutRight, DeviceType>(
+            local_view_space, _fft_work.data() );
 
         // TODO: pull this out to template function
         // Copy to the work array. The work array only contains owned data.
-        auto x_view = x.view();
+        auto localghost_view = x.view();
 
-        Kokkos::parallel_for(
-            "fft_copy_x_to_cufft_work",
-            createExecutionPolicy( own_space, exec_space() ),
-            KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-                auto iw = i - own_space.min( Dim::I );
-                auto jw = j - own_space.min( Dim::J );
-                auto kw = k - own_space.min( Dim::K );
-                work_view( iw, jw, kw, 0 ) = x_view( i, j, k, 0 );
-                work_view( iw, jw, kw, 1 ) = x_view( i, j, k, 1 );
-            } );
+        this->copyToLocal( own_space, local_view, localghost_view );
 
         if ( flag == 1 )
         {
@@ -447,21 +519,11 @@ class HeffteFastFourierTransform
         }
 
         // Copy back to output array.
-        Kokkos::parallel_for(
-            "fft_copy_work_to_x",
-            createExecutionPolicy( own_space,
-                                   typename DeviceType::execution_space() ),
-            KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-                auto iw = i - own_space.min( Dim::I );
-                auto jw = j - own_space.min( Dim::J );
-                auto kw = k - own_space.min( Dim::K );
-                x_view( i, j, k, 0 ) = work_view( iw, jw, kw, 0 );
-                x_view( i, j, k, 1 ) = work_view( iw, jw, kw, 1 );
-            } );
+        this->copyFromLocal( own_space, local_view, localghost_view );
     }
 
   private:
-    std::shared_ptr<heffte::fft3d<heffte_backend_type>> _fft;
+    std::shared_ptr<heffte_fft_type> _fft;
     Kokkos::View<Scalar*, DeviceType> _fft_work;
 };
 
