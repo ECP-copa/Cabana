@@ -101,7 +101,8 @@ set(MPI_TESTS
   GlobalGrid
   LocalGrid
   IndexConversion
-  LocalMesh
+  LocalMesh3d
+  LocalMesh2d
   Array
   Halo
   SplineEvaluation
@@ -116,9 +117,9 @@ if(Cabana_ENABLE_HYPRE)
 endif()
 
 if(Cabana_ENABLE_HEFFTE)
-    list(APPEND MPI_TESTS
-      FastFourierTransform
-      )
+  list(APPEND MPI_TESTS
+    FastFourierTransform
+    )
 endif()
 
 Cajita_add_tests(NAMES ${SERIAL_TESTS})
