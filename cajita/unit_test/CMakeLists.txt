@@ -105,7 +105,8 @@ set(MPI_TESTS
   LocalMesh2d
   Array3d
   Array2d
-  Halo
+  Halo3d
+  Halo2d
   SplineEvaluation
   Interpolation
 # BovWriter

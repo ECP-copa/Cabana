@@ -592,7 +592,7 @@ class ReferenceConjugateGradient
         // Build the halo. We put 2 entries as each operator application will
         // gather 2 vectors with fused kernels.
         auto halo_layout = createArrayLayout( local_grid, 2, EntityType() );
-        HaloPattern pattern;
+        HaloPattern<3> pattern;
         pattern.setNeighbors( halo_neighbors );
         halo = createHalo<Scalar, DeviceType>( *halo_layout, pattern, width );
 
