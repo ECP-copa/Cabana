@@ -127,7 +127,7 @@ jobs:
         working-directory: arborx
         run: |
           cmake -B build \
-            -DCMAKE_PREFIX_PATH=${HOME}/kokkos
+            -DCMAKE_PREFIX_PATH=${HOME}/kokkos \
             -DCMAKE_INSTALL_PREFIX=$HOME/arborx \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
