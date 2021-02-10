@@ -17,6 +17,8 @@
 
 #include <Kokkos_Core.hpp>
 
+#include <type_traits>
+
 namespace Cajita
 {
 namespace IndexConversion
@@ -29,29 +31,32 @@ struct L2G
     // Mesh type
     using mesh_type = MeshType;
 
+    // Spatial dimension.
+    static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
+
     // Entity type.
     using entity_type = EntityType;
 
     // Owned local indices minimum.
-    Kokkos::Array<int, 3> local_own_min;
+    Kokkos::Array<int, num_space_dim> local_own_min;
 
     // Owned local indices maximum.
-    Kokkos::Array<int, 3> local_own_max;
+    Kokkos::Array<int, num_space_dim> local_own_max;
 
     // Owned global indices minimum.
-    Kokkos::Array<int, 3> global_own_min;
+    Kokkos::Array<int, num_space_dim> global_own_min;
 
     // Global number of entities.
-    Kokkos::Array<int, 3> global_num_entity;
+    Kokkos::Array<int, num_space_dim> global_num_entity;
 
     // Periodicity.
-    Kokkos::Array<bool, 3> periodic;
+    Kokkos::Array<bool, num_space_dim> periodic;
 
     // True if block is on low boundary.
-    Kokkos::Array<bool, 3> boundary_lo;
+    Kokkos::Array<bool, num_space_dim> boundary_lo;
 
     // True if block is on high boundary.
-    Kokkos::Array<bool, 3> boundary_hi;
+    Kokkos::Array<bool, num_space_dim> boundary_hi;
 
     // Constructor.
     L2G( const LocalGrid<MeshType>& local_grid )
@@ -61,11 +66,11 @@ struct L2G
             local_grid.indexSpace( Own(), EntityType(), Local() );
 
         // Get the local owned min.
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             local_own_min[d] = local_own_space.min( d );
 
         // Get the local owned max.
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             local_own_max[d] = local_own_space.max( d );
 
         // Global index set of owned entities.
@@ -73,23 +78,23 @@ struct L2G
             local_grid.indexSpace( Own(), EntityType(), Global() );
 
         // Get the global owned min.
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             global_own_min[d] = global_own_space.min( d );
 
         // Get the global grid.
         const auto& global_grid = local_grid.globalGrid();
 
         // Global number of entities.
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             global_num_entity[d] =
                 global_grid.globalNumEntity( EntityType(), d );
 
         // Periodicity
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
             periodic[d] = global_grid.isPeriodic( d );
 
         // Determine if a block is on the low or high boundaries.
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
         {
             auto block = global_grid.dimBlockId( d );
             boundary_lo[d] = ( 0 == block );
@@ -97,73 +102,58 @@ struct L2G
         }
     }
 
-    // Convert local indices to global indices.
+    // Convert local indices to global indices - general form.
     KOKKOS_INLINE_FUNCTION
-    void operator()( const int li, const int lj, const int lk, int& gi, int& gj,
-                     int& gk ) const
+    void operator()( const int lijk[num_space_dim],
+                     int gijk[num_space_dim] ) const
     {
-        // I
-        // Compute periodic wrap-around on low I boundary.
-        if ( periodic[Dim::I] && li < local_own_min[Dim::I] &&
-             boundary_lo[Dim::I] )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
         {
-            gi = global_num_entity[Dim::I] - local_own_min[Dim::I] + li;
-        }
+            // Compute periodic wrap-around on low boundary.
+            if ( periodic[d] && lijk[d] < local_own_min[d] && boundary_lo[d] )
+            {
+                gijk[d] = global_num_entity[d] - local_own_min[d] + lijk[d];
+            }
 
-        // Compute periodic wrap-around on high I boundary.
-        else if ( periodic[Dim::I] && local_own_max[Dim::I] <= li &&
-                  boundary_hi[Dim::I] )
-        {
-            gi = li - local_own_max[Dim::I];
-        }
+            // Compute periodic wrap-around on high boundary.
+            else if ( periodic[d] && local_own_max[d] <= lijk[d] &&
+                      boundary_hi[d] )
+            {
+                gijk[d] = lijk[d] - local_own_max[d];
+            }
 
-        // Otherwise compute I indices as normal.
-        else
-        {
-            gi = li - local_own_min[Dim::I] + global_own_min[Dim::I];
+            // Otherwise compute I indices as normal.
+            else
+            {
+                gijk[d] = lijk[d] - local_own_min[d] + global_own_min[d];
+            }
         }
+    }
 
-        // J
-        // Compute periodic wrap-around on low J boundary.
-        if ( periodic[Dim::J] && lj < local_own_min[Dim::J] &&
-             boundary_lo[Dim::J] )
-        {
-            gj = global_num_entity[Dim::J] - local_own_min[Dim::J] + lj;
-        }
+    // Convert local indices to global indices - 3D.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    operator()( const int li, const int lj, const int lk, int& gi, int& gj,
+                int& gk ) const
+    {
+        int lijk[num_space_dim] = { li, lj, lk };
+        int gijk[num_space_dim];
+        this->operator()( lijk, gijk );
+        gi = gijk[0];
+        gj = gijk[1];
+        gk = gijk[2];
+    }
 
-        // Compute periodic wrap-around on high J boundary.
-        else if ( periodic[Dim::J] && local_own_max[Dim::J] <= lj &&
-                  boundary_hi[Dim::J] )
-        {
-            gj = lj - local_own_max[Dim::J];
-        }
-
-        // Otherwise compute J indices as normal.
-        else
-        {
-            gj = lj - local_own_min[Dim::J] + global_own_min[Dim::J];
-        }
-
-        // K
-        // Compute periodic wrap-around on low K boundary.
-        if ( periodic[Dim::K] && lk < local_own_min[Dim::K] &&
-             boundary_lo[Dim::K] )
-        {
-            gk = global_num_entity[Dim::K] - local_own_min[Dim::K] + lk;
-        }
-
-        // Compute periodic wrap-around on high K boundary.
-        else if ( periodic[Dim::K] && local_own_max[Dim::K] <= lk &&
-                  boundary_hi[Dim::K] )
-        {
-            gk = lk - local_own_max[Dim::K];
-        }
-
-        // Otherwise compute K indices as normal.
-        else
-        {
-            gk = lk - local_own_min[Dim::K] + global_own_min[Dim::K];
-        }
+    // Convert local indices to global indices - 3D.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    operator()( const int li, const int lj, int& gi, int& gj ) const
+    {
+        int lijk[num_space_dim] = { li, lj };
+        int gijk[num_space_dim];
+        this->operator()( lijk, gijk );
+        gi = gijk[0];
+        gj = gijk[1];
     }
 };
 
