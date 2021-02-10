@@ -20,6 +20,7 @@ jobs:
         openmp: ['ON', 'OFF']
         cmake_build_type: ['Debug', 'Release']
         kokkos_ver: ['3.2.01', 'master', 'develop']
+        arborx: [false]
         include:
           - distro: 'fedora:intel'
             cxx: 'icpc'
