@@ -83,6 +83,12 @@ jobs:
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
+          - distro: 'fedora:latest'
+            cxx: 'g++'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+            arborx: true
     runs-on: ubuntu-20.04
     container: ghcr.io/kokkos/ci-containers/${{ matrix.distro }}
     steps:
@@ -108,6 +114,24 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout arborx
+        if: ${{ martix.arborx }}
+        uses: actions/checkout@v2.2.0
+        with:
+          repository: arborx/ArborX
+          ref: master
+          path: arborx
+      - name: Build arborx
+        if: ${{ martix.arborx }}
+        working-directory: arborx
+        run: |
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH=${HOME}/kokkos
+            -DCMAKE_INSTALL_PREFIX=$HOME/arborx \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
@@ -115,7 +139,7 @@ jobs:
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
-            -DCMAKE_PREFIX_PATH="$HOME/kokkos" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_FLAGS="-Wall -pedantic --coverage ${{ matrix.cxx_flags }}" \
             -DCabana_ENABLE_TESTING=ON \
