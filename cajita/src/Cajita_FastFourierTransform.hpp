@@ -406,13 +406,6 @@ class HeffteFastFourierTransform
     using heffte_backend_type =
         typename Impl::HeffteBackendTraits<exec_space,
                                            backend_type>::backend_type;
-    using heffte_fft_type = std::conditional_t<
-        3 == num_space_dim, heffte::fft3d<heffte_backend_type>,
-        std::conditional_t<2 == num_space_dim,
-                           heffte::fft2d<heffte_backend_type>, void>>;
-    using heffte_box_type = std::conditional_t<
-        3 == num_space_dim, heffte::box3d,
-        std::conditional_t<2 == num_space_dim, heffte::box2d, void>>;
 
     /*!
       \brief Constructor
@@ -426,8 +419,9 @@ class HeffteFastFourierTransform
               HeffteFastFourierTransform<EntityType, MeshType, Scalar,
                                          DeviceType, BackendType>>( layout )
     {
-        heffte_box_type inbox = { this->global_low, this->global_high };
-        heffte_box_type outbox = { this->global_low, this->global_high };
+        // heFFTe correctly handles 2D or 3D domains within "box3d"
+        heffte::box3d inbox = { this->global_low, this->global_high };
+        heffte::box3d outbox = { this->global_low, this->global_high };
 
         heffte::plan_options heffte_params =
             heffte::default_options<heffte_backend_type>();
@@ -436,7 +430,8 @@ class HeffteFastFourierTransform
         heffte_params.use_reorder = params.getReorder();
 
         // Set FFT options from given parameters
-        _fft = std::make_shared<heffte_fft_type>(
+        // heFFTe correctly handles 2D or 3D FFTs within "fft3d"
+        _fft = std::make_shared<heffte::fft3d<heffte_backend_type>>(
             inbox, outbox, layout.localGrid()->globalGrid().comm(),
             heffte_params );
 
@@ -523,7 +518,8 @@ class HeffteFastFourierTransform
     }
 
   private:
-    std::shared_ptr<heffte_fft_type> _fft;
+    // heFFTe correctly handles 2D or 3D FFTs within "fft3d"
+    std::shared_ptr<heffte::fft3d<heffte_backend_type>> _fft;
     Kokkos::View<Scalar*, DeviceType> _fft_work;
 };
 
