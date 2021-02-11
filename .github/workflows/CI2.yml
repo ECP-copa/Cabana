@@ -116,14 +116,14 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
-        if: ${{ matrix.arborx == "ArboX" }}
+        if: ${{ matrix.arborx == 'ArboX' }}
         uses: actions/checkout@v2.2.0
         with:
           repository: arborx/ArborX
           ref: master
           path: arborx
       - name: Build arborx
-        if: ${{ matrix.arborx == "ArboX" }}
+        if: ${{ matrix.arborx == 'ArboX' }}
         working-directory: arborx
         run: |
           cmake -B build \
