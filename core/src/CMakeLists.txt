@@ -43,6 +43,12 @@ if(Cabana_ENABLE_MPI)
     )
 endif()
 
+if(Cabana_ENABLE_CAJITA)
+  list(APPEND HEADERS_PUBLIC
+    Cabana_ParticleGridCommunication.hpp
+    )
+endif()
+
 set(HEADERS_IMPL
   impl/Cabana_CartesianGrid.hpp
   impl/Cabana_Index.hpp
@@ -63,6 +69,10 @@ endif()
 
 if(Cabana_ENABLE_MPI)
   target_link_libraries(cabanacore MPI::MPI_CXX)
+endif()
+
+if(Cabana_ENABLE_CAJITA)
+  target_link_libraries(cabanacore Cajita)
 endif()
 
 target_include_directories(cabanacore

@@ -33,6 +33,10 @@
 #include <Cabana_Halo.hpp>
 #endif
 
+#ifdef Cabana_ENABLE_CAJITA
+#include <Cabana_ParticleGridCommunication.hpp>
+#endif
+
 #ifdef Cabana_ENABLE_ARBORX
 #include <Cabana_Experimental_NeighborList.hpp>
 #endif
