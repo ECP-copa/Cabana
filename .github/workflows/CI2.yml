@@ -101,7 +101,7 @@ jobs:
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: 'ArboX'
+            arborx: 'ArborX'
     runs-on: ubuntu-20.04
     container: ghcr.io/kokkos/ci-containers/${{ matrix.distro }}
     steps:
@@ -128,14 +128,14 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
-        if: ${{ matrix.arborx == 'ArboX' }}
+        if: ${{ matrix.arborx == 'ArborX' }}
         uses: actions/checkout@v2.2.0
         with:
           repository: arborx/ArborX
           ref: master
           path: arborx
       - name: Build arborx
-        if: ${{ matrix.arborx == 'ArboX' }}
+        if: ${{ matrix.arborx == 'ArborX' }}
         working-directory: arborx
         run: |
           cmake -B build \
