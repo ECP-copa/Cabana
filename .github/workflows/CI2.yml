@@ -84,7 +84,7 @@ jobs:
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-          - distro: 'fedora:latest'
+          - distro: 'ubuntu:latest'
             cxx: 'g++'
             openmp: 'ON'
             cmake_build_type: 'Release'
