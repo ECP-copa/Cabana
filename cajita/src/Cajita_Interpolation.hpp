@@ -478,6 +478,8 @@ divergence( const PointDataType point_data[3][3], const SplineDataType& sd,
 
   \tparam MeshScalar The scalar type used for the geometry/interpolation data.
 
+  \tparam NumSpaceDim The spatial dimension of the mesh.
+
   \tparam EntityType The entitytype to which the points will interpolate.
 
   \tparam SplineOrder The order of spline interpolation to use.
@@ -505,16 +507,18 @@ divergence( const PointDataType point_data[3][3], const SplineDataType& sd,
   point.
 */
 template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
-          class MeshScalar, class EntityType, int SplineOrder, class DeviceType,
-          class... ArrayParams>
-void g2p( const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
-                      ArrayParams...>& array,
-          const Halo<DeviceType>& halo, const PointCoordinates& points,
-          const std::size_t num_point, Spline<SplineOrder>,
-          const PointEvalFunctor& functor )
+          class MeshScalar, class EntityType, int SplineOrder,
+          std::size_t NumSpaceDim, class DeviceType, class... ArrayParams>
+void g2p(
+    const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
+                ArrayParams...>& array,
+    const Halo<DeviceType>& halo, const PointCoordinates& points,
+    const std::size_t num_point, Spline<SplineOrder>,
+    const PointEvalFunctor& functor )
 {
     using array_type =
-        Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>;
+        Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
+              ArrayParams...>;
     static_assert( std::is_same<typename Halo<DeviceType>::memory_space,
                                 typename array_type::memory_space>::value,
                    "Mismatching points/array memory space." );
@@ -536,11 +540,15 @@ void g2p( const Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
         "g2p", Kokkos::RangePolicy<execution_space>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
-            MeshScalar px[3] = { points( p, Dim::I ), points( p, Dim::J ),
-                                 points( p, Dim::K ) };
+            MeshScalar px[NumSpaceDim];
+            for ( std::size_t d = 0; d < NumSpaceDim; ++d )
+            {
+                px[d] = points( p, d );
+            }
 
             // Create the local spline data.
-            using sd_type = SplineData<MeshScalar, SplineOrder, EntityType>;
+            using sd_type =
+                SplineData<MeshScalar, SplineOrder, NumSpaceDim, EntityType>;
             sd_type sd;
             evaluateSpline( local_mesh, px, sd );
 
@@ -784,6 +792,8 @@ createVectorDivergenceG2P( const ViewType& x,
 
   \tparam MeshScalar The scalar type used for the geometry/interpolation data.
 
+  \tparam NumSpaceDim The spatial dimension of the mesh.
+
   \tparam EntityType The entitytype to which the points will interpolate.
 
   \tparam SplineOrder The order of spline interpolation to use.
@@ -811,16 +821,17 @@ createVectorDivergenceG2P( const ViewType& x,
   \param array The grid array to which the point data will be interpolated.
 */
 template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
-          class MeshScalar, class EntityType, int SplineOrder, class DeviceType,
-          class... ArrayParams>
+          class MeshScalar, std::size_t NumSpaceDim, class EntityType,
+          int SplineOrder, class DeviceType, class... ArrayParams>
 void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
           const std::size_t num_point, Spline<SplineOrder>,
           const Halo<DeviceType>& halo,
-          Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>,
+          Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
                 ArrayParams...>& array )
 {
     using array_type =
-        Array<ArrayScalar, EntityType, UniformMesh<MeshScalar>, ArrayParams...>;
+        Array<ArrayScalar, EntityType, UniformMesh<MeshScalar, NumSpaceDim>,
+              ArrayParams...>;
     static_assert( std::is_same<typename Halo<DeviceType>::memory_space,
                                 typename array_type::memory_space>::value,
                    "Mismatching points/array memory space." );
@@ -840,11 +851,15 @@ void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
         "p2g", Kokkos::RangePolicy<execution_space>( 0, num_point ),
         KOKKOS_LAMBDA( const int p ) {
             // Get the point coordinates.
-            MeshScalar px[3] = { points( p, Dim::I ), points( p, Dim::J ),
-                                 points( p, Dim::K ) };
+            MeshScalar px[NumSpaceDim];
+            for ( std::size_t d = 0; d < NumSpaceDim; ++d )
+            {
+                px[d] = points( p, d );
+            }
 
             // Create the local spline data.
-            using sd_type = SplineData<MeshScalar, SplineOrder, EntityType>;
+            using sd_type =
+                SplineData<MeshScalar, SplineOrder, NumSpaceDim, EntityType>;
             sd_type sd;
             evaluateSpline( local_mesh, px, sd );
 
