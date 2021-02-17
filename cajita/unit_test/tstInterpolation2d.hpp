@@ -17,9 +17,9 @@
 #include <Cajita_Interpolation.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
+#include <Cajita_Partitioner.hpp>
 #include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
 
 #include <gtest/gtest.h>
 
@@ -38,15 +38,15 @@ namespace Test
 void interpolationTest()
 {
     // Create the global mesh.
-    std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
-    std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
+    std::array<double, 2> low_corner = { -1.2, 0.1 };
+    std::array<double, 2> high_corner = { -0.2, 9.5 };
     double cell_size = 0.05;
     auto global_mesh =
         createUniformGlobalMesh( low_corner, high_corner, cell_size );
 
     // Create the global grid.
-    UniformDimPartitioner partitioner;
-    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    DimBlockPartitioner<2> partitioner;
+    std::array<bool, 2> is_dim_periodic = { true, true };
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
@@ -58,37 +58,34 @@ void interpolationTest()
     // Create a point in the center of every cell.
     auto cell_space = local_grid->indexSpace( Own(), Cell(), Local() );
     int num_point = cell_space.size();
-    Kokkos::View<double* [3], TEST_DEVICE> points(
+    Kokkos::View<double* [2], TEST_DEVICE> points(
         Kokkos::ViewAllocateWithoutInitializing( "points" ), num_point );
     Kokkos::parallel_for(
         "fill_points", createExecutionPolicy( cell_space, TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+        KOKKOS_LAMBDA( const int i, const int j ) {
             int pi = i - halo_width;
             int pj = j - halo_width;
-            int pk = k - halo_width;
-            int pid = pi + cell_space.extent( Dim::I ) *
-                               ( pj + cell_space.extent( Dim::J ) * pk );
-            int idx[3] = { i, j, k };
-            double x[3];
+            int pid = pi + cell_space.extent( Dim::I ) * pj;
+            int idx[2] = { i, j };
+            double x[2];
             local_mesh.coordinates( Cell(), idx, x );
             points( pid, Dim::I ) = x[Dim::I];
             points( pid, Dim::J ) = x[Dim::J];
-            points( pid, Dim::K ) = x[Dim::K];
         } );
 
     // Create a scalar field on the grid.
     auto scalar_layout = createArrayLayout( local_grid, 1, Node() );
     auto scalar_grid_field =
         createArray<double, TEST_DEVICE>( "scalar_grid_field", scalar_layout );
-    auto scalar_halo = createHalo( *scalar_grid_field, FullHaloPattern() );
+    auto scalar_halo = createHalo( *scalar_grid_field, NodeHaloPattern<2>() );
     auto scalar_grid_host =
         Kokkos::create_mirror_view( scalar_grid_field->view() );
 
     // Create a vector field on the grid.
-    auto vector_layout = createArrayLayout( local_grid, 3, Node() );
+    auto vector_layout = createArrayLayout( local_grid, 2, Node() );
     auto vector_grid_field =
         createArray<double, TEST_DEVICE>( "vector_grid_field", vector_layout );
-    auto vector_halo = createHalo( *vector_grid_field, FullHaloPattern() );
+    auto vector_halo = createHalo( *vector_grid_field, NodeHaloPattern<2>() );
     auto vector_grid_host =
         Kokkos::create_mirror_view( vector_grid_field->view() );
 
@@ -99,13 +96,13 @@ void interpolationTest()
     auto scalar_point_host = Kokkos::create_mirror_view( scalar_point_field );
 
     // Create a vector point field.
-    Kokkos::View<double* [3], TEST_DEVICE> vector_point_field(
+    Kokkos::View<double* [2], TEST_DEVICE> vector_point_field(
         Kokkos::ViewAllocateWithoutInitializing( "vector_point_field" ),
         num_point );
     auto vector_point_host = Kokkos::create_mirror_view( vector_point_field );
 
     // Create a tensor point field.
-    Kokkos::View<double* [3][3], TEST_DEVICE> tensor_point_field(
+    Kokkos::View<double* [2][2], TEST_DEVICE> tensor_point_field(
         Kokkos::ViewAllocateWithoutInitializing( "tensor_point_field" ),
         num_point );
     auto tensor_point_host = Kokkos::create_mirror_view( tensor_point_field );
@@ -126,9 +123,7 @@ void interpolationTest()
     for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
         for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
-                EXPECT_FLOAT_EQ( scalar_grid_host( i, j, k, 0 ), -1.75 );
+            EXPECT_FLOAT_EQ( scalar_grid_host( i, j, 0 ), -1.75 );
 
     // Interpolate a vector point value to the grid.
     ArrayOp::assign( *vector_grid_field, 0.0, Ghost() );
@@ -139,10 +134,8 @@ void interpolationTest()
     for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
         for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
-                for ( int d = 0; d < 3; ++d )
-                    EXPECT_FLOAT_EQ( vector_grid_host( i, j, k, d ), -1.75 );
+            for ( int d = 0; d < 2; ++d )
+                EXPECT_FLOAT_EQ( vector_grid_host( i, j, d ), -1.75 );
 
     // Interpolate a scalar point gradient value to the grid.
     ArrayOp::assign( *vector_grid_field, 0.0, Ghost() );
@@ -153,11 +146,8 @@ void interpolationTest()
     for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
         for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
-                for ( int d = 0; d < 3; ++d )
-                    EXPECT_FLOAT_EQ( vector_grid_host( i, j, k, d ) + 1.0,
-                                     1.0 );
+            for ( int d = 0; d < 2; ++d )
+                EXPECT_FLOAT_EQ( vector_grid_host( i, j, d ) + 1.0, 1.0 );
 
     // Interpolate a vector point divergence value to the grid.
     ArrayOp::assign( *scalar_grid_field, 0.0, Ghost() );
@@ -168,9 +158,7 @@ void interpolationTest()
     for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
         for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
-                EXPECT_FLOAT_EQ( scalar_grid_host( i, j, k, 0 ) + 1.0, 1.0 );
+            EXPECT_FLOAT_EQ( scalar_grid_host( i, j, 0 ) + 1.0, 1.0 );
 
     // Interpolate a tensor point divergence value to the grid.
     ArrayOp::assign( *vector_grid_field, 0.0, Ghost() );
@@ -181,11 +169,8 @@ void interpolationTest()
     for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
         for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
-                for ( int d = 0; d < 3; ++d )
-                    EXPECT_FLOAT_EQ( vector_grid_host( i, j, k, d ) + 1.0,
-                                     1.0 );
+            for ( int d = 0; d < 2; ++d )
+                EXPECT_FLOAT_EQ( vector_grid_host( i, j, d ) + 1.0, 1.0 );
 
     // G2P
     // ---
@@ -209,7 +194,7 @@ void interpolationTest()
          vector_value_g2p );
     Kokkos::deep_copy( vector_point_host, vector_point_field );
     for ( int p = 0; p < num_point; ++p )
-        for ( int d = 0; d < 3; ++d )
+        for ( int d = 0; d < 2; ++d )
             EXPECT_FLOAT_EQ( vector_point_host( p, d ), -1.75 );
 
     // Interpolate a scalar grid gradient to the points.
@@ -220,7 +205,7 @@ void interpolationTest()
          scalar_gradient_g2p );
     Kokkos::deep_copy( vector_point_host, vector_point_field );
     for ( int p = 0; p < num_point; ++p )
-        for ( int d = 0; d < 3; ++d )
+        for ( int d = 0; d < 2; ++d )
             EXPECT_FLOAT_EQ( vector_point_host( p, d ) + 1.0, 1.0 );
 
     // Interpolate a vector grid gradient to the points.
@@ -231,8 +216,8 @@ void interpolationTest()
          vector_gradient_g2p );
     Kokkos::deep_copy( tensor_point_host, tensor_point_field );
     for ( int p = 0; p < num_point; ++p )
-        for ( int i = 0; i < 3; ++i )
-            for ( int j = 0; j < 3; ++j )
+        for ( int i = 0; i < 2; ++i )
+            for ( int j = 0; j < 2; ++j )
                 EXPECT_FLOAT_EQ( tensor_point_host( p, i, j ) + 1.0, 1.0 );
 
     // Interpolate a vector grid divergence to the points.

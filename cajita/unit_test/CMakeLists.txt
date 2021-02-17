@@ -109,7 +109,8 @@ set(MPI_TESTS
   Halo2d
   SplineEvaluation3d
   SplineEvaluation2d
-  Interpolation
+  Interpolation3d
+  Interpolation2d
 # BovWriter
   )
 
