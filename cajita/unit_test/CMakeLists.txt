@@ -14,7 +14,6 @@ include(${TEST_HARNESS_DIR}/test_harness.cmake)
 set(SERIAL_TESTS
   GlobalMesh
   IndexSpace
-  ParameterPack
   SparseIndexSpace
   Splines
   )

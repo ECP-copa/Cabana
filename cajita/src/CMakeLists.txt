@@ -52,6 +52,7 @@ endif()
 add_library(Cajita INTERFACE)
 
 target_link_libraries(Cajita INTERFACE
+  Cabana::cabanacore
   Kokkos::kokkos
   MPI::MPI_CXX
   )
