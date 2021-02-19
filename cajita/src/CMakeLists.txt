@@ -41,10 +41,6 @@ if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
   list(REMOVE_ITEM HEADERS_PUBLIC Cajita_Parallel.hpp)
 endif()
 
-set(SOURCES_PUBLIC
-  Cajita_IndexSpace.cpp
-  )
-
 if(Cabana_ENABLE_HYPRE)
   list(APPEND HEADERS_PUBLIC
     Cajita_HypreStructuredSolver.hpp
@@ -57,23 +53,23 @@ if(Cabana_ENABLE_HEFFTE)
     )
 endif()
 
-add_library(Cajita ${SOURCES_PUBLIC})
+add_library(Cajita INTERFACE)
 
-target_link_libraries(Cajita PUBLIC
+target_link_libraries(Cajita INTERFACE
   Kokkos::kokkos
   MPI::MPI_CXX
   )
 
 if(Cabana_ENABLE_HYPRE)
-  target_link_libraries(Cajita PUBLIC HYPRE::hypre)
+  target_link_libraries(Cajita INTERFACE HYPRE::hypre)
 endif()
 
 if(Cabana_ENABLE_HEFFTE)
-  target_link_libraries(Cajita PUBLIC Heffte::Heffte)
+  target_link_libraries(Cajita INTERFACE Heffte::Heffte)
 endif()
 
 target_include_directories(Cajita
-  PUBLIC
+  INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)
