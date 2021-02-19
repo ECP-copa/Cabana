@@ -111,7 +111,7 @@ set(MPI_TESTS
   SplineEvaluation2d
   Interpolation3d
   Interpolation2d
-# BovWriter
+  BovWriter
   )
 
 if(Cabana_ENABLE_HYPRE)
