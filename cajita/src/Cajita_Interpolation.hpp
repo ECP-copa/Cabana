@@ -22,6 +22,7 @@
 #include <Kokkos_ScatterView.hpp>
 
 #include <memory>
+#include <type_traits>
 
 namespace Cajita
 {
@@ -43,10 +44,12 @@ namespace G2P
   \param result The scalar value at the point.
 */
 template <class ViewType, class SplineDataType, class PointDataType>
-KOKKOS_INLINE_FUNCTION void
-value( const ViewType& view, const SplineDataType& sd, PointDataType& result,
-       typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                               void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    value( const ViewType& view, const SplineDataType& sd,
+           PointDataType& result,
+           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                   void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::value requires spline weight values" );
@@ -61,6 +64,25 @@ value( const ViewType& view, const SplineDataType& sd, PointDataType& result,
                           sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k];
 }
 
+template <class ViewType, class SplineDataType, class PointDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    value( const ViewType& view, const SplineDataType& sd,
+           PointDataType& result,
+           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                   void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "G2P::value requires spline weight values" );
+
+    result = 0.0;
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+            result += view( sd.s[Dim::I][i], sd.s[Dim::J][j], 0 ) *
+                      sd.w[Dim::I][i] * sd.w[Dim::J][j];
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a vector value to a point.
@@ -72,10 +94,12 @@ value( const ViewType& view, const SplineDataType& sd, PointDataType& result,
   \param result The vector value at the point.
 */
 template <class ViewType, class SplineDataType, class PointDataType>
-KOKKOS_INLINE_FUNCTION void
-value( const ViewType& view, const SplineDataType& sd, PointDataType result[3],
-       typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                               void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    value( const ViewType& view, const SplineDataType& sd,
+           PointDataType result[3],
+           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                   void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::value requires spline weight values" );
@@ -93,6 +117,27 @@ value( const ViewType& view, const SplineDataType& sd, PointDataType result[3],
                                  sd.w[Dim::K][k];
 }
 
+template <class ViewType, class SplineDataType, class PointDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    value( const ViewType& view, const SplineDataType& sd,
+           PointDataType result[2],
+           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                   void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "G2P::value requires spline weight values" );
+
+    for ( int d = 0; d < 2; ++d )
+        result[d] = 0.0;
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+            for ( int d = 0; d < 2; ++d )
+                result[d] += view( sd.s[Dim::I][i], sd.s[Dim::J][j], d ) *
+                             sd.w[Dim::I][i] * sd.w[Dim::J][j];
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a scalar gradient to a point.
@@ -102,11 +147,12 @@ value( const ViewType& view, const SplineDataType& sd, PointDataType result[3],
   \param result The scalar gradient at the point.
 */
 template <class ViewType, class SplineDataType, class PointDataType>
-KOKKOS_INLINE_FUNCTION void
-gradient( const ViewType& view, const SplineDataType& sd,
-          PointDataType result[3],
-          typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                  void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    gradient( const ViewType& view, const SplineDataType& sd,
+              PointDataType result[3],
+              typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                      void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::gradient requires spline weight values" );
@@ -137,6 +183,33 @@ gradient( const ViewType& view, const SplineDataType& sd,
             }
 }
 
+template <class ViewType, class SplineDataType, class PointDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    gradient( const ViewType& view, const SplineDataType& sd,
+              PointDataType result[2],
+              typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                      void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "G2P::gradient requires spline weight values" );
+    static_assert( SplineDataType::has_weight_physical_gradients,
+                   "G2P::gradient requires spline weight physical gradients" );
+
+    for ( int d = 0; d < 2; ++d )
+        result[d] = 0.0;
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+        {
+            result[Dim::I] += view( sd.s[Dim::I][i], sd.s[Dim::J][j], 0 ) *
+                              sd.g[Dim::I][i] * sd.w[Dim::J][j];
+
+            result[Dim::J] += view( sd.s[Dim::I][i], sd.s[Dim::J][j], 0 ) *
+                              sd.w[Dim::I][i] * sd.g[Dim::J][j];
+        }
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a vector gradient to a point.
@@ -146,11 +219,12 @@ gradient( const ViewType& view, const SplineDataType& sd,
   \param result The vector gradient at the point.
 */
 template <class ViewType, class SplineDataType, class PointDataType>
-KOKKOS_INLINE_FUNCTION void
-gradient( const ViewType& view, const SplineDataType& sd,
-          PointDataType result[3][3],
-          typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                  void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    gradient( const ViewType& view, const SplineDataType& sd,
+              PointDataType result[3][3],
+              typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                      void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::gradient requires spline weight values" );
@@ -181,6 +255,40 @@ gradient( const ViewType& view, const SplineDataType& sd,
             }
 }
 
+template <class ViewType, class SplineDataType, class PointDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    gradient( const ViewType& view, const SplineDataType& sd,
+              PointDataType result[2][2],
+              typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                      void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "G2P::gradient requires spline weight values" );
+    static_assert( SplineDataType::has_weight_physical_gradients,
+                   "G2P::gradient requires spline weight physical gradients" );
+
+    for ( int d0 = 0; d0 < 2; ++d0 )
+        for ( int d1 = 0; d1 < 2; ++d1 )
+            result[d0][d1] = 0.0;
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+        {
+            typename SplineDataType::scalar_type rg[2] = {
+                sd.g[Dim::I][i] * sd.w[Dim::J][j],
+                sd.w[Dim::I][i] * sd.g[Dim::J][j] };
+
+            for ( int d0 = 0; d0 < 2; ++d0 )
+            {
+                typename ViewType::value_type mg = rg[d0];
+                for ( int d1 = 0; d1 < 2; ++d1 )
+                    result[d0][d1] +=
+                        mg * view( sd.s[Dim::I][i], sd.s[Dim::J][j], d1 );
+            }
+        }
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a vector divergence to a point.
@@ -190,11 +298,12 @@ gradient( const ViewType& view, const SplineDataType& sd,
   \param result The vector divergence at the point.
 */
 template <class ViewType, class SplineDataType, class PointDataType>
-KOKKOS_INLINE_FUNCTION void
-divergence( const ViewType& view, const SplineDataType& sd,
-            PointDataType& result,
-            typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                    void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    divergence( const ViewType& view, const SplineDataType& sd,
+                PointDataType& result,
+                typename std::enable_if<
+                    ( std::rank<PointDataType>::value == 0 ), void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "G2P::divergence requires spline weight values" );
@@ -219,6 +328,31 @@ divergence( const ViewType& view, const SplineDataType& sd,
                     view( sd.s[Dim::I][i], sd.s[Dim::J][j], sd.s[Dim::K][k],
                           Dim::K ) *
                         sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k];
+}
+
+template <class ViewType, class SplineDataType, class PointDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    divergence( const ViewType& view, const SplineDataType& sd,
+                PointDataType& result,
+                typename std::enable_if<
+                    ( std::rank<PointDataType>::value == 0 ), void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "G2P::divergence requires spline weight values" );
+    static_assert(
+        SplineDataType::has_weight_physical_gradients,
+        "G2P::divergence requires spline weight physical gradients" );
+
+    result = 0.0;
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+            result += view( sd.s[Dim::I][i], sd.s[Dim::J][j], Dim::I ) *
+                          sd.g[Dim::I][i] * sd.w[Dim::J][j] +
+
+                      view( sd.s[Dim::I][i], sd.s[Dim::J][j], Dim::J ) *
+                          sd.w[Dim::I][i] * sd.g[Dim::J][j];
 }
 
 //---------------------------------------------------------------------------//
@@ -272,11 +406,12 @@ struct is_scatter_view
   \param view The scatter view of scalar grid data to interpolate to.
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
-KOKKOS_INLINE_FUNCTION void
-value( const PointDataType& point_data, const SplineDataType& sd,
-       const ScatterViewType& view,
-       typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                               void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    value( const PointDataType& point_data, const SplineDataType& sd,
+           const ScatterViewType& view,
+           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                   void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::value requires spline weight values" );
@@ -293,6 +428,27 @@ value( const PointDataType& point_data, const SplineDataType& sd,
                                     sd.w[Dim::J][j] * sd.w[Dim::K][k];
 }
 
+template <class PointDataType, class ScatterViewType, class SplineDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    value( const PointDataType& point_data, const SplineDataType& sd,
+           const ScatterViewType& view,
+           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                   void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "P2G::value requires spline weight values" );
+
+    static_assert( is_scatter_view<ScatterViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+            view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], 0 ) +=
+                point_data * sd.w[Dim::I][i] * sd.w[Dim::J][j];
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate a vector value to the grid.
@@ -301,11 +457,12 @@ value( const PointDataType& point_data, const SplineDataType& sd,
   \param view The scatter view of vector grid data to interpolate to.
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
-KOKKOS_INLINE_FUNCTION void
-value( const PointDataType point_data[3], const SplineDataType& sd,
-       const ScatterViewType& view,
-       typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                               void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    value( const PointDataType point_data[3], const SplineDataType& sd,
+           const ScatterViewType& view,
+           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                   void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::value requires spline weight values" );
@@ -324,6 +481,28 @@ value( const PointDataType point_data[3], const SplineDataType& sd,
                         sd.w[Dim::K][k];
 }
 
+template <class PointDataType, class ScatterViewType, class SplineDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    value( const PointDataType point_data[2], const SplineDataType& sd,
+           const ScatterViewType& view,
+           typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
+                                   void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "P2G::value requires spline weight values" );
+
+    static_assert( is_scatter_view<ScatterViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+            for ( int d = 0; d < 2; ++d )
+                view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], d ) +=
+                    point_data[d] * sd.w[Dim::I][i] * sd.w[Dim::J][j];
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate the gradient of a scalar to the grid.
@@ -334,9 +513,10 @@ value( const PointDataType point_data[3], const SplineDataType& sd,
   to.
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
-KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
-                                      const SplineDataType& sd,
-                                      const ScatterViewType& view )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    gradient( const PointDataType point_data, const SplineDataType& sd,
+              const ScatterViewType& view )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::gradient requires spline weight values" );
@@ -365,6 +545,32 @@ KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
             }
 }
 
+template <class PointDataType, class ScatterViewType, class SplineDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    gradient( const PointDataType point_data, const SplineDataType& sd,
+              const ScatterViewType& view )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "P2G::gradient requires spline weight values" );
+    static_assert( SplineDataType::has_weight_physical_gradients,
+                   "P2G::gradient requires spline weight physical gradients" );
+
+    static_assert( is_scatter_view<ScatterViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+        {
+            view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], Dim::I ) +=
+                point_data * sd.g[Dim::I][i] * sd.w[Dim::J][j];
+
+            view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], Dim::J ) +=
+                point_data * sd.w[Dim::I][i] * sd.g[Dim::J][j];
+        }
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate the divergence of a vector to the grid.
@@ -375,11 +581,12 @@ KOKKOS_INLINE_FUNCTION void gradient( const PointDataType point_data,
   to.
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
-KOKKOS_INLINE_FUNCTION void
-divergence( const PointDataType point_data[3], const SplineDataType& sd,
-            const ScatterViewType& view,
-            typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                    void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    divergence( const PointDataType point_data[3], const SplineDataType& sd,
+                const ScatterViewType& view,
+                typename std::enable_if<
+                    ( std::rank<PointDataType>::value == 0 ), void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::divergence requires spline weight values" );
@@ -409,6 +616,36 @@ divergence( const PointDataType point_data[3], const SplineDataType& sd,
             }
 }
 
+template <class PointDataType, class ScatterViewType, class SplineDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    divergence( const PointDataType point_data[2], const SplineDataType& sd,
+                const ScatterViewType& view,
+                typename std::enable_if<
+                    ( std::rank<PointDataType>::value == 0 ), void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "P2G::divergence requires spline weight values" );
+    static_assert(
+        SplineDataType::has_weight_physical_gradients,
+        "P2G::divergence requires spline weight physical gradients" );
+
+    static_assert( is_scatter_view<ScatterViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+        {
+            PointDataType result =
+                point_data[Dim::I] * sd.g[Dim::I][i] * sd.w[Dim::J][j] +
+
+                point_data[Dim::J] * sd.w[Dim::I][i] * sd.g[Dim::J][j];
+
+            view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], 0 ) += result;
+        }
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Interpolate the divergence of a tensor to the grid.
@@ -419,11 +656,12 @@ divergence( const PointDataType point_data[3], const SplineDataType& sd,
   to.
 */
 template <class ScatterViewType, class SplineDataType, class PointDataType>
-KOKKOS_INLINE_FUNCTION void
-divergence( const PointDataType point_data[3][3], const SplineDataType& sd,
-            const ScatterViewType& view,
-            typename std::enable_if<( std::rank<PointDataType>::value == 0 ),
-                                    void*>::type = 0 )
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<3 == SplineDataType::num_space_dim, void>
+    divergence( const PointDataType point_data[3][3], const SplineDataType& sd,
+                const ScatterViewType& view,
+                typename std::enable_if<
+                    ( std::rank<PointDataType>::value == 0 ), void*>::type = 0 )
 {
     static_assert( SplineDataType::has_weight_values,
                    "P2G::divergence requires spline weight values" );
@@ -454,6 +692,40 @@ divergence( const PointDataType point_data[3][3], const SplineDataType& sd,
             }
 }
 
+template <class ScatterViewType, class SplineDataType, class PointDataType>
+KOKKOS_INLINE_FUNCTION
+    std::enable_if_t<2 == SplineDataType::num_space_dim, void>
+    divergence( const PointDataType point_data[2][2], const SplineDataType& sd,
+                const ScatterViewType& view,
+                typename std::enable_if<
+                    ( std::rank<PointDataType>::value == 0 ), void*>::type = 0 )
+{
+    static_assert( SplineDataType::has_weight_values,
+                   "P2G::divergence requires spline weight values" );
+    static_assert(
+        SplineDataType::has_weight_physical_gradients,
+        "P2G::divergence requires spline weight physical gradients" );
+
+    static_assert( is_scatter_view<ScatterViewType>::value,
+                   "P2G requires a Kokkos::ScatterView" );
+    auto view_access = view.access();
+
+    for ( int i = 0; i < SplineDataType::num_knot; ++i )
+        for ( int j = 0; j < SplineDataType::num_knot; ++j )
+        {
+            typename SplineDataType::scalar_type rg[2] = {
+                sd.g[Dim::I][i] * sd.w[Dim::J][j],
+                sd.w[Dim::I][i] * sd.g[Dim::J][j] };
+
+            for ( int d1 = 0; d1 < 2; ++d1 )
+            {
+                for ( int d0 = 0; d0 < 2; ++d0 )
+                    view_access( sd.s[Dim::I][i], sd.s[Dim::J][j], d0 ) +=
+                        rg[d1] * point_data[d0][d1];
+            }
+        }
+}
+
 //---------------------------------------------------------------------------//
 
 } // end namespace P2G
@@ -471,7 +743,7 @@ divergence( const PointDataType point_data[3][3], const SplineDataType& sd,
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
   for a given point at a given entity.
 
-  \tparam PointCoordinates Container type with view traits containing the 3-d
+  \tparam PointCoordinates Container type with view traits containing the
   point coordinates. Will be indexed as (point,dim).
 
   \tparam ArrayScalar The scalar type used for the interpolated data.
@@ -629,9 +901,9 @@ struct VectorValueG2P
                                             const int p,
                                             const GridViewType& view ) const
     {
-        value_type result[3];
+        value_type result[SplineDataType::num_space_dim];
         G2P::value( view, sd, result );
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < SplineDataType::num_space_dim; ++d )
             _x( p, d ) += _multiplier * result[d];
     }
 };
@@ -673,9 +945,9 @@ struct ScalarGradientG2P
                                             const int p,
                                             const GridViewType& view ) const
     {
-        value_type result[3];
+        value_type result[SplineDataType::num_space_dim];
         G2P::gradient( view, sd, result );
-        for ( int d = 0; d < 3; ++d )
+        for ( std::size_t d = 0; d < SplineDataType::num_space_dim; ++d )
             _x( p, d ) += _multiplier * result[d];
     }
 };
@@ -717,10 +989,11 @@ struct VectorGradientG2P
                                             const int p,
                                             const GridViewType& view ) const
     {
-        value_type result[3][3];
+        value_type result[SplineDataType::num_space_dim]
+                         [SplineDataType::num_space_dim];
         G2P::gradient( view, sd, result );
-        for ( int d0 = 0; d0 < 3; ++d0 )
-            for ( int d1 = 0; d1 < 3; ++d1 )
+        for ( std::size_t d0 = 0; d0 < SplineDataType::num_space_dim; ++d0 )
+            for ( std::size_t d1 = 0; d1 < SplineDataType::num_space_dim; ++d1 )
                 _x( p, d0, d1 ) += _multiplier * result[d0][d1];
     }
 };
@@ -785,7 +1058,7 @@ createVectorDivergenceG2P( const ViewType& x,
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
   for a given point at a given entity.
 
-  \tparam PointCoordinates Container type with view traits containing the 3-d
+  \tparam PointCoordinates Container type with view traits containing the
   point coordinates. Will be indexed as (point,dim).
 
   \tparam ArrayScalar The scalar type used for the interpolated data.
@@ -944,8 +1217,8 @@ struct VectorValueP2G
                                             const int p,
                                             const GridViewType& view ) const
     {
-        value_type point_data[3];
-        for ( int d = 0; d < 3; ++d )
+        value_type point_data[SplineDataType::num_space_dim];
+        for ( std::size_t d = 0; d < SplineDataType::num_space_dim; ++d )
             point_data[d] = _multiplier * _x( p, d );
         P2G::value( point_data, sd, view );
     }
@@ -1030,8 +1303,8 @@ struct VectorDivergenceP2G
                                             const int p,
                                             const GridViewType& view ) const
     {
-        value_type point_data[3];
-        for ( int d = 0; d < 3; ++d )
+        value_type point_data[SplineDataType::num_space_dim];
+        for ( std::size_t d = 0; d < SplineDataType::num_space_dim; ++d )
             point_data[d] = _multiplier * _x( p, d );
         P2G::divergence( point_data, sd, view );
     }
@@ -1074,9 +1347,10 @@ struct TensorDivergenceP2G
                                             const int p,
                                             const GridViewType& view ) const
     {
-        value_type point_data[3][3];
-        for ( int d0 = 0; d0 < 3; ++d0 )
-            for ( int d1 = 0; d1 < 3; ++d1 )
+        value_type point_data[SplineDataType::num_space_dim]
+                             [SplineDataType::num_space_dim];
+        for ( std::size_t d0 = 0; d0 < SplineDataType::num_space_dim; ++d0 )
+            for ( std::size_t d1 = 0; d1 < SplineDataType::num_space_dim; ++d1 )
                 point_data[d0][d1] = _multiplier * _x( p, d0, d1 );
         P2G::divergence( point_data, sd, view );
     }
