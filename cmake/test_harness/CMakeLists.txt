@@ -10,12 +10,12 @@
 ############################################################################
 
 set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness/gtest)
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -DGTEST_HAS_PTHREAD=0")
 
-include_directories(${GTEST_SOURCE_DIR})
 add_library(cabana_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
 set_target_properties(cabana_gtest PROPERTIES
     CXX_STANDARD 11
     CXX_STANDARD_REQUIRED YES
     CXX_EXTENSIONS NO
+    COMPILE_DEFINITIONS GTEST_HAS_PTHREAD=0
+    INCLUDE_DIRECTORIES ${GTEST_SOURCE_DIR}
     )
