@@ -15,6 +15,7 @@
 #include <string.h>
 
 #include <gtest/gtest.h>
+
 /*
 For skylake
 Model name:            Intel(R) Xeon(R) Gold 6152 CPU @ 2.10GHz

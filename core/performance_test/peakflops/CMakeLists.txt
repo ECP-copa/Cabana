@@ -69,7 +69,7 @@ endif()
 foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
   set(test "${_test}_performance_test")
   add_executable(${test} ${_test}.cpp ${TEST_HARNESS_DIR}/unit_test_main.cpp)
-  target_include_directories(${test} PRIVATE ${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  target_include_directories(${test} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
   target_compile_definitions(${test} PRIVATE
     CABANA_PERFORMANCE_EXPECTED_FLOPS=${Cabana_PERFORMANCE_EXPECTED_FLOPS}
     CABANA_PERFORMANCE_ERROR_MARGIN=${Cabana_PERFORMANCE_ERROR_MARGIN}
@@ -77,7 +77,7 @@ foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
     CABANA_PERFORMANCE_ITERATIONS=${Cabana_PERFORMANCE_ITERATIONS}
     CABANA_PERFORMANCE_SEED=${Cabana_PERFORMANCE_SEED}
     )
-  target_link_libraries(${test} cabanacore cabana_gtest)
+  target_link_libraries(${test} cabanacore gtest)
   target_compile_options(${test} PRIVATE "-fopenmp")
   add_test(NAME ${test} COMMAND ${test})
   set_tests_properties(${test} PROPERTIES LABELS "PERFORMANCE" )

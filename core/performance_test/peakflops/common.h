@@ -18,8 +18,6 @@
 #ifndef PEAKFLOPS_COMMON_H
 #define PEAKFLOPS_COMMON_H
 
-#include <gtest/gtest.h>
-
 static inline unsigned long long rdtscp()
 {
     unsigned long long u;

@@ -9,9 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness/gtest)
-set(gtest_args --gtest_color=yes)
-
 ##--------------------------------------------------------------------------##
 ## General tests.
 ##--------------------------------------------------------------------------##
@@ -20,8 +17,7 @@ macro(Cabana_add_tests_nobackend)
   foreach(_test ${CABANA_UNIT_TEST_NAMES})
     set(_target Cabana_${_test}_test)
     add_executable(${_target} tst${_test}.cpp ${TEST_HARNESS_DIR}/unit_test_main.cpp)
-    target_include_directories(${_target} PRIVATE ${GTEST_SOURCE_DIR})
-    target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} cabana_gtest)
+    target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} gtest)
     add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
   endforeach()
 endmacro()
@@ -76,9 +72,9 @@ macro(Cabana_add_tests)
         set(_target Cabana_${_test}_test_${_device})
       endif()
       add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
-      target_include_directories(${_target} PRIVATE ${_dir} ${GTEST_SOURCE_DIR}
+      target_include_directories(${_target} PRIVATE ${_dir}
         ${TEST_HARNESS_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-      target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} cabana_gtest)
+      target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} gtest)
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
           # NOTE: When moving to CMake 3.10+ make sure to use MPIEXEC_EXECUTABLE instead
