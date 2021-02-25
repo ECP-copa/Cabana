@@ -35,6 +35,9 @@ class SparseDimPartitioner : public Partitioner
     std::array<int, 3> ranksPerDimension( MPI_Comm comm ) const override;
     std::array<int, 3> ranksPerDimension() const override;
 
+    std::array<int, 3>
+    ownedTilesPerDimension( MPI_Comm cart_comm,
+                            const std::array<int, 3>& global_cells_per_dim );
     std::array<int, 3> ownedCellsPerDimension(
         MPI_Comm cart_comm,
         const std::array<int, 3>& global_cells_per_dim ) const override;
@@ -50,20 +53,19 @@ class SparseDimPartitioner : public Partitioner
 
     // to compute the tileweight, assume tile_weight = 1 at the first place
     template <template ExecSpace, class ParticlePosViewType, template CellUnit>
-    void SparseDimPartitioner::computeLocalWorkLoad( ParticlePosViewType& view,
-                                                     int particle_num,
-                                                     CellUnit dx );
-    template <class ParticlePosViewType>
+    void computeLocalWorkLoad( ParticlePosViewType& view, int particle_num,
+                               CellUnit dx );
+    template <template ExecSpace, class TileWeightViewType>
     void computeLocalWorkload( TileWeightViewType& tile_weight,
                                SparseMapType& sparseMap );
-    // template <class ParticlePosViewType>
-    // void computeLocalWorkload( ParticlePosViewType& local_pos_view );
 
-    void computeFullPrefixSum();
+    template <typename MemorySpace>
+    void computeFullPrefixSum( MPI_Comm comm );
 
+    template <typename MemorySpace, typename ExecSpace>
     void optimiazePartition();
 
-    void greedyPartition();
+    // void greedyPartition();
 
     bool adaptive_load_balance();
 
@@ -77,7 +79,8 @@ class SparseDimPartitioner : public Partitioner
     //! represent the rectangle partition in each dimension
     //! with form [0, p_1, ..., p_n, cell_num], n =
     //! rank-num-in-current-dimension partition in this dimension would be [0,
-    //! p_1), [p_1, p_2) ... [p_n, cellNum]
+    //! p_1), [p_1, p_2) ... [p_n, cellNum] (unit: tile)
+    // [TODO] should be changed to Kokkos view
     std::array<std::vector<int>, 3> _rectangle_partition;
     //! 3d prefix sum of the workload of each cell on current
     //! [TODO] remove to corresponding implementation?
@@ -87,9 +90,10 @@ class SparseDimPartitioner : public Partitioner
     // current pre-set size: global_tile_per_dim * global_tile_per_dim*
     // global_tile_per_dim
     //! [TODO] rm, use _workload_perfix_sum only
-    Kokkos::View<int***, MemorySpace> _workload_per_cell;
+    Kokkos::View<int***, MemorySpace> _workload_per_tile;
     // std::array<Kokkos::View<int***, MemorySpace>> _workload_buffer;
     //! ranks per dimension
+    // [TODO] should be changed to kokkos array
     std::array<int, 3> _ranks_per_dim;
 };
 } // end namespace Cajita
