@@ -44,6 +44,13 @@ SparseDimPartitioner::SparseDimPartitioner(
           global_cells_per_dim[1] >> cell_bits_per_tile_dim,
           global_cells_per_dim[2] >> cell_bits_per_tile_dim ) }
 {
+    auto rank_mirror =
+        Kokkos::create_mirror_view( Kokkos::HostSpace, _ranks_per_dim_dev );
+    for ( int d = 0; d < 3; ++d )
+    {
+        rank_mirror( d ) = _ranks_per_dim[d];
+    }
+    Kokkos::deep_copy( _ranks_per_dim_dev, rank_mirror );
 }
 
 //---------------------------------------------------------------------------//
@@ -58,6 +65,14 @@ SparseDimPartitioner::ranksPerDimension( MPI_Comm comm ) const
     int comm_size;
     MPI_Comm_size( comm, &comm_size );
     MPI_Dims_create( comm_size, 3, _ranks_per_dim.data() );
+
+    auto rank_mirror =
+        Kokkos::create_mirror_view( Kokkos::HostSpace, _ranks_per_dim_dev );
+    for ( int d = 0; d < 3; ++d )
+    {
+        rank_mirror( d ) = _ranks_per_dim[d];
+    }
+    Kokkos::deep_copy( _ranks_per_dim_dev, rank_mirror );
 
     return _ranks_per_dim;
 }
@@ -104,6 +119,22 @@ void SparseDimPartitioner::initialize_rec_partition(
     _rectangle_partition[0] = rec_partition_i;
     _rectangle_partition[1] = rec_partition_j;
     _rectangle_partition[2] = rec_partition_k;
+
+    int max_size = 0;
+    for ( int d = 0; d < 3; ++d )
+    {
+        max_size = max_size < _ranks_per_dim[d] ? _ranks_per_dim[d] : max_size;
+    }
+    _rectangle_partiton_dev = Kokkos::View<int* [3], MemorySpace>(
+        "_rectangle_partiton_dev", max_size );
+    auto rec_mirror = Kokkos::create_mirror_view( Kokkos::HostSpace,
+                                                  _rectangle_partition_dev );
+    for ( int d = 0; d < 3; ++d )
+    {
+        for ( int id = 0; id < _ranks_per_dim[d]; ++id )
+            rec_mirror( id, d ) = _rectangle_partition[d][id];
+    }
+    Kokkos::deep_copy( _rectangle_partition_dev, rec_mirror );
 }
 
 //---------------------------------------------------------------------------//
@@ -205,13 +236,13 @@ void SparseDimPartitioner::compute_sub_workload( int dim_j, int j, int dim_k,
     {
         dim_i = ( dim_i + 1 ) % 3;
     }
-    end[dim_i] = _ranks_per_dim[dim_i];
-    end[dim_j] = _rectangle_partition( dim_j, j );
-    end[dim_k] = _rectangle_partition( dim_k, k );
+    end[dim_i] = _ranks_per_dim_dev[dim_i];
+    end[dim_j] = _rectangle_partition_dev( j, dim_j );
+    end[dim_k] = _rectangle_partition_dev( k, dim_k );
 
-    start[dim_i] = _ranks_per_dim[dim_i];
-    start[dim_j] = ( j > 0 ) ? _rectangle_partition( dim_j, j - 1 ) : 0;
-    start[dim_k] = ( k > 0 ) ? _rectangle_partition( dim_k, k - 1 ) : 0;
+    start[dim_i] = _ranks_per_dim_dev[dim_i];
+    start[dim_j] = ( j > 0 ) ? _rectangle_partition_dev( j - 1, dim_j ) : 0;
+    start[dim_k] = ( k > 0 ) ? _rectangle_partition_dev( k - 1, dim_k ) : 0;
 
     // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] - S[i-1][j-1][k]
     // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
@@ -235,13 +266,13 @@ void SparseDimPartitioner::compute_sub_workload( int dim_i, int i, int dim_j,
                                                  int j, int dim_k, int k )
 {
     Kokkos::array<int, 3> end, start;
-    end[dim_i] = _rectangle_partition( dim_i, i );
-    end[dim_j] = _rectangle_partition( dim_j, j );
-    end[dim_k] = _rectangle_partition( dim_k, k );
+    end[dim_i] = _rectangle_partition_dev( i, dim_i );
+    end[dim_j] = _rectangle_partition_dev( j, dim_j );
+    end[dim_k] = _rectangle_partition_dev( k, dim_k );
 
-    start[dim_i] = ( i > 0 ) ? _rectangle_partition( dim_i, i - 1 ) : 0;
-    start[dim_j] = ( j > 0 ) ? _rectangle_partition( dim_j, j - 1 ) : 0;
-    start[dim_k] = ( k > 0 ) ? _rectangle_partition( dim_k, k - 1 ) : 0;
+    start[dim_i] = ( i > 0 ) ? _rectangle_partition_dev( i - 1, dim_i ) : 0;
+    start[dim_j] = ( j > 0 ) ? _rectangle_partition_dev( j - 1, dim_j ) : 0;
+    start[dim_k] = ( k > 0 ) ? _rectangle_partition_dev( k - 1, dim_k ) : 0;
 
     // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] - S[i-1][j-1][k]
     // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
@@ -270,19 +301,19 @@ void SparseDimPartitioner::optimizePartition()
         int dj = ( di + 1 ) % 3;
         int dk = ( di + 2 ) % 3;
         Kokkos::view<int*, MemorySpace> ave_workload(
-            "ave_workload", _rank_per_dim[dj] * _rank_per_dim[dk] );
+            "ave_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
         Kokkos::parallel_for(
-            Kokkos::RangePolicy<TEST_EXECSPACE>( 0, _rank_per_dim[dj] *
-                                                        _rank_per_dim[dk] ),
+            Kokkos::RangePolicy<TEST_EXECSPACE>( 0, _ranks_per_dim[dj] *
+                                                        _ranks_per_dim[dk] ),
             KOKKOS_LAMBDA( uint32_t jnk ) {
-                int j = static_cast<int>( jnk / _rank_per_dim[dk] );
-                int k = static_cast<int>( jnk % _rank_per_dim[dk] )
+                int j = static_cast<int>( jnk / _ranks_per_dim_dev[dk] );
+                int k = static_cast<int>( jnk % _ranks_per_dim_dev[dk] )
                     ave_workload( jnk ) =
                         compute_sub_workload( dj, j, dk, k ) / rank;
             } );
         int sum_ave_workload = 0;
         Kokkos::parallel_reduce(
-            "Reduction", _rank_per_dim[dj] * _rank_per_dim[dk],
+            "Reduction", _ranks_per_dim[dj] * _ranks_per_dim[dk],
             KOKKOS_LAMBDA( const int idx, int& update ) {
                 update += ave_workload( i );
             },
@@ -290,7 +321,7 @@ void SparseDimPartitioner::optimizePartition()
 
         int point_i = 1;
         Kokkos::view<int*, MemorySpace> current_workload(
-            "current_workload", _rank_per_dim[dj] * _rank_per_dim[dk] );
+            "current_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
         for ( int current_rank = 0; current_rank < rank - 1; current_rank++ )
         {
             int last_diff = __INT_MAX__;
@@ -298,17 +329,19 @@ void SparseDimPartitioner::optimizePartition()
             {
                 Kokkos::parallel_for(
                     Kokkos::RangePolicy<TEST_EXECSPACE>(
-                        0, _rank_per_dim[dj] * _rank_per_dim[dk] ),
+                        0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                     KOKKOS_LAMBDA( uint32_t jnk ) {
-                        int j = static_cast<int>( jnk / _rank_per_dim[dk] );
-                        int k = static_cast<int>(
-                            jnk % _rank_per_dim[dk] ) current_workload( jnk ) =
+                        int j =
+                            static_cast<int>( jnk / _ranks_per_dim_dev[dk] );
+                        int k =
+                            static_cast<int>( jnk % _ranks_per_dim_dev[dk] );
+                        current_workload( jnk ) =
                             compute_sub_workload( di, point_i, dj, j, dk, k ) /
                             rank;
                     } );
                 int sum_current_workload;
                 Kokkos::parallel_reduce(
-                    "Reduction", _rank_per_dim[dj] * _rank_per_dim[dk],
+                    "Reduction", _ranks_per_dim[dj] * _ranks_per_dim[dk],
                     KOKKOS_LAMBDA( const int idx, int& update ) {
                         update += current_workload( i );
                     },
@@ -321,7 +354,7 @@ void SparseDimPartitioner::optimizePartition()
                 }
                 else
                 {
-                    _rectangle_partition( di, current_rank ) = point_i - 1;
+                    _rectangle_partition_dev( current_rank, di ) = point_i - 1;
                     break;
                 }
             }
@@ -338,7 +371,7 @@ void SparseDimPartitioner::optimizePartition()
 //---------------------------------------------------------------------------//
 bool SparseDimPartitioner::adaptive_load_balance()
 {
-    //pass
+    // pass
 }
 
 } // end namespace Cajita

@@ -82,6 +82,7 @@ class SparseDimPartitioner : public Partitioner
     //! p_1), [p_1, p_2) ... [p_n, cellNum] (unit: tile)
     // [TODO] should be changed to Kokkos view
     std::array<std::vector<int>, 3> _rectangle_partition;
+    Kokkos::View<int*[3], MemorySpace> _rectangle_partition_dev;
     //! 3d prefix sum of the workload of each cell on current
     //! [TODO] remove to corresponding implementation?
     // current pre-set size: global_tile_per_dim * global_tile_per_dim*
@@ -95,6 +96,7 @@ class SparseDimPartitioner : public Partitioner
     //! ranks per dimension
     // [TODO] should be changed to kokkos array
     std::array<int, 3> _ranks_per_dim;
+    Kokkos::View<int[3]> _ranks_per_dim_dev;
 };
 } // end namespace Cajita
 
