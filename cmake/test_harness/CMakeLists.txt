@@ -12,12 +12,16 @@
 ##---------------------------------------------------------------------------##
 # Download and unpack googletest
 ##---------------------------------------------------------------------------##
+set(GTEST_URL "https://github.com/google/googletest/archive/release-1.10.0.tar.gz" CACHE STRING "URL for GTest tarball")
+mark_as_advanced(GTEST_URL)
+
 include(FetchContent)
 FetchContent_Declare(
   googletest
-  GIT_REPOSITORY https://github.com/google/googletest.git
-  GIT_TAG        release-1.10.0
-)
+  URL ${GTEST_URL}
+  URL_MD5         ecd1fa65e7de707cd5c00bdac56022cd
+  )
+
 FetchContent_GetProperties(googletest)
 if(NOT googletest_POPULATED)
   FetchContent_Populate(googletest)
