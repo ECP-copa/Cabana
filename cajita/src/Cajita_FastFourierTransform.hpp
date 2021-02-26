@@ -246,7 +246,7 @@ class FastFourierTransform
 
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
-    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    std::enable_if_t<3 == NSD, void>
     copyToLocal( const IndexSpaceType own_space, LViewType& l_view,
                  const LGViewType lg_view )
     {
@@ -264,7 +264,7 @@ class FastFourierTransform
 
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
-    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    std::enable_if_t<2 == NSD, void>
     copyToLocal( const IndexSpaceType own_space, LViewType& l_view,
                  const LGViewType lg_view )
     {
@@ -281,7 +281,7 @@ class FastFourierTransform
 
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
-    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    std::enable_if_t<3 == NSD, void>
     copyFromLocal( const IndexSpaceType own_space, const LViewType l_view,
                    LGViewType& lg_view )
     {
@@ -299,7 +299,7 @@ class FastFourierTransform
 
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
-    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    std::enable_if_t<2 == NSD, void>
     copyFromLocal( const IndexSpaceType own_space, const LViewType l_view,
                    LGViewType& lg_view )
     {
