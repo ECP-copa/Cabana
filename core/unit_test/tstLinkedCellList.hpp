@@ -148,6 +148,9 @@ void checkBins( const LCLTestData test_data,
     EXPECT_EQ( cell_list.numBin( 2 ), nx );
 }
 
+// Check LinkedCell data, where either a subset (begin->end) or all data is
+// sorted and where the IDs are sorted or not based on whether the entire AoSoA
+// or only the position slice was permuted.
 void checkLinkedCell( const LCLTestData test_data,
                       const std::size_t check_begin,
                       const std::size_t check_end, const bool sorted_ids )
@@ -297,6 +300,15 @@ void testLinkedListSlice()
     {
         Cabana::LinkedCellList<TEST_MEMSPACE> cell_list( pos, grid_delta,
                                                          grid_min, grid_max );
+        Cabana::permute( cell_list, pos );
+
+        copyListToHost( test_data, cell_list );
+
+        checkBins( test_data, cell_list );
+        checkLinkedCell( test_data, 0, test_data.num_p, false );
+
+        // Rebuild and make sure nothing changed.
+        cell_list.build( pos );
         Cabana::permute( cell_list, pos );
 
         copyListToHost( test_data, cell_list );

@@ -105,7 +105,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
             {
                 // Build the linked cell list.
                 create_timer.start( p );
-                linked_cell_list.build( x, 0, x.size() );
+                linked_cell_list.build( x );
                 create_timer.stop( p );
 
                 // Sort the particles.
