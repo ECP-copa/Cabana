@@ -62,11 +62,14 @@ class HypreStructuredSolver
                          entity_type>::value,
             "Array layout entity type mush match solver entity type" );
 
+        // Spatial dimension.
+        const std::size_t num_space_dim = ArrayLayout_t::num_space_dim;
+
         // Only create data structures if this is not a preconditioner.
         if ( !_is_preconditioner )
         {
             // Create the grid.
-            auto error = HYPRE_StructGridCreate( _comm, 3, &_grid );
+            auto error = HYPRE_StructGridCreate( _comm, num_space_dim, &_grid );
             checkHypreError( error );
 
             // Get the global index space spanned by the local grid on this
@@ -78,22 +81,24 @@ class HypreStructuredSolver
             // directly use Kokkos::deep_copy to move data between Cajita arrays
             // and HYPRE data structures.
             auto global_space = layout.indexSpace( Own(), Global() );
-            _lower = { static_cast<HYPRE_Int>( global_space.min( Dim::K ) ),
-                       static_cast<HYPRE_Int>( global_space.min( Dim::J ) ),
-                       static_cast<HYPRE_Int>( global_space.min( Dim::I ) ) };
-            _upper = {
-                static_cast<HYPRE_Int>( global_space.max( Dim::K ) - 1 ),
-                static_cast<HYPRE_Int>( global_space.max( Dim::J ) - 1 ),
-                static_cast<HYPRE_Int>( global_space.max( Dim::I ) - 1 ) };
+            _lower.resize( num_space_dim );
+            _upper.resize( num_space_dim );
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+            {
+                _lower[d] = static_cast<HYPRE_Int>(
+                    global_space.min( num_space_dim - d - 1 ) );
+                _upper[d] = static_cast<HYPRE_Int>(
+                    global_space.max( num_space_dim - d - 1 ) - 1 );
+            }
             error = HYPRE_StructGridSetExtents( _grid, _lower.data(),
                                                 _upper.data() );
             checkHypreError( error );
 
             // Get periodicity. Note we invert the order of this to KJI as well.
             const auto& global_grid = layout.localGrid()->globalGrid();
-            HYPRE_Int periodic[3];
-            for ( int d = 0; d < 3; ++d )
-                periodic[2 - d] =
+            HYPRE_Int periodic[num_space_dim];
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+                periodic[num_space_dim - 1 - d] =
                     global_grid.isPeriodic( d )
                         ? layout.localGrid()->globalGrid().globalNumEntity(
                               EntityType(), d )
@@ -107,9 +112,12 @@ class HypreStructuredSolver
 
             // Allocate LHS and RHS vectors and initialize to zero. Note that we
             // are fixing the views under these vectors to layout-right.
-            IndexSpace<3> reorder_space( { global_space.extent( Dim::I ),
-                                           global_space.extent( Dim::J ),
-                                           global_space.extent( Dim::K ) } );
+            std::array<long, num_space_dim> reorder_size;
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+            {
+                reorder_size[d] = global_space.extent( d );
+            }
+            IndexSpace<num_space_dim> reorder_space( reorder_size );
             auto vector_values =
                 createView<HYPRE_Complex, Kokkos::LayoutRight,
                            Kokkos::HostSpace>( "vector_values", reorder_space );
@@ -162,8 +170,10 @@ class HypreStructuredSolver
       stencil entries should only contain one entry from each symmetric
       component if this is true.
     */
-    void setMatrixStencil( const std::vector<std::array<int, 3>>& stencil,
-                           const bool is_symmetric = false )
+    template <std::size_t NumSpaceDim>
+    void
+    setMatrixStencil( const std::vector<std::array<int, NumSpaceDim>>& stencil,
+                      const bool is_symmetric = false )
     {
         // This function is only valid for non-preconditioners.
         if ( _is_preconditioner )
@@ -172,13 +182,15 @@ class HypreStructuredSolver
 
         // Create the stencil.
         _stencil_size = stencil.size();
-        auto error = HYPRE_StructStencilCreate( 3, _stencil_size, &_stencil );
+        auto error =
+            HYPRE_StructStencilCreate( NumSpaceDim, _stencil_size, &_stencil );
         checkHypreError( error );
+        std::array<HYPRE_Int, NumSpaceDim> offset;
         for ( unsigned n = 0; n < stencil.size(); ++n )
         {
-            HYPRE_Int offset[3] = { stencil[n][Dim::I], stencil[n][Dim::J],
-                                    stencil[n][Dim::K] };
-            error = HYPRE_StructStencilSetElement( _stencil, n, offset );
+            for ( std::size_t d = 0; d < NumSpaceDim; ++d )
+                offset[d] = stencil[n][d];
+            error = HYPRE_StructStencilSetElement( _stencil, n, offset.data() );
             checkHypreError( error );
         }
 
@@ -222,6 +234,9 @@ class HypreStructuredSolver
             throw std::runtime_error(
                 "Number of matrix values does not match stencil size" );
 
+        // Spatial dimension.
+        const std::size_t num_space_dim = Array_t::num_space_dim;
+
         // Intialize the matrix for setting values.
         auto error = HYPRE_StructMatrixInitialize( _A );
         checkHypreError( error );
@@ -233,23 +248,18 @@ class HypreStructuredSolver
         // Copy the matrix entries into HYPRE. The HYPRE layout is fixed as
         // layout-right.
         auto owned_space = values.layout()->indexSpace( Own(), Local() );
-        IndexSpace<4> reorder_space(
-            { owned_space.extent( Dim::I ), owned_space.extent( Dim::J ),
-              owned_space.extent( Dim::K ), _stencil_size } );
+        std::array<long, num_space_dim + 1> reorder_size;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            reorder_size[d] = owned_space.extent( d );
+        }
+        reorder_size.back() = _stencil_size;
+        IndexSpace<num_space_dim + 1> reorder_space( reorder_size );
         auto a_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "a_values", reorder_space );
-        Kokkos::parallel_for(
-            "a_copy",
-            createExecutionPolicy( owned_space,
-                                   Kokkos::HostSpace::execution_space() ),
-            KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           const int n ) {
-                a_values( i - owned_space.min( Dim::I ),
-                          j - owned_space.min( Dim::J ),
-                          k - owned_space.min( Dim::K ), n ) =
-                    values_mirror( i, j, k, n );
-            } );
+        auto values_mirror_subv = createSubview( values_mirror, owned_space );
+        Kokkos::deep_copy( a_values, values_mirror_subv );
 
         // Insert values into the HYPRE matrix.
         std::vector<HYPRE_Int> indices( _stencil_size );
@@ -331,6 +341,9 @@ class HypreStructuredSolver
             throw std::runtime_error(
                 "Structured solver only for scalar fields" );
 
+        // Spatial dimension.
+        const std::size_t num_space_dim = Array_t::num_space_dim;
+
         // Initialize the RHS.
         auto error = HYPRE_StructVectorInitialize( _b );
         checkHypreError( error );
@@ -341,23 +354,18 @@ class HypreStructuredSolver
 
         // Copy the RHS into HYPRE. The HYPRE layout is fixed as layout-right.
         auto owned_space = b.layout()->indexSpace( Own(), Local() );
-        IndexSpace<4> reorder_space( { owned_space.extent( Dim::I ),
-                                       owned_space.extent( Dim::J ),
-                                       owned_space.extent( Dim::K ), 1 } );
+        std::array<long, num_space_dim + 1> reorder_size;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            reorder_size[d] = owned_space.extent( d );
+        }
+        reorder_size.back() = 1;
+        IndexSpace<num_space_dim + 1> reorder_space( reorder_size );
         auto vector_values =
             createView<HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace>(
                 "vector_values", reorder_space );
-        Kokkos::parallel_for(
-            "b_copy",
-            createExecutionPolicy( owned_space,
-                                   Kokkos::HostSpace::execution_space() ),
-            KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           const int n ) {
-                vector_values( i - owned_space.min( Dim::I ),
-                               j - owned_space.min( Dim::J ),
-                               k - owned_space.min( Dim::K ), n ) =
-                    b_mirror( i, j, k, n );
-            } );
+        auto b_mirror_subv = createSubview( b_mirror, owned_space );
+        Kokkos::deep_copy( vector_values, b_mirror_subv );
 
         // Insert b values into the HYPRE vector.
         error = HYPRE_StructVectorSetBoxValues(
@@ -379,17 +387,8 @@ class HypreStructuredSolver
             Kokkos::create_mirror_view( Kokkos::HostSpace(), x.view() );
 
         // Copy the HYPRE solution to the LHS.
-        Kokkos::parallel_for(
-            "x_copy",
-            createExecutionPolicy( owned_space,
-                                   Kokkos::HostSpace::execution_space() ),
-            KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           const int n ) {
-                x_mirror( i, j, k, n ) =
-                    vector_values( i - owned_space.min( Dim::I ),
-                                   j - owned_space.min( Dim::J ),
-                                   k - owned_space.min( Dim::K ), n );
-            } );
+        auto x_mirror_subv = createSubview( x_mirror, owned_space );
+        Kokkos::deep_copy( x_mirror_subv, vector_values );
 
         // Copy back to the device.
         Kokkos::deep_copy( x.view(), x_mirror );
@@ -454,8 +453,8 @@ class HypreStructuredSolver
     MPI_Comm _comm;
     bool _is_preconditioner;
     HYPRE_StructGrid _grid;
-    std::array<HYPRE_Int, 3> _lower;
-    std::array<HYPRE_Int, 3> _upper;
+    std::vector<HYPRE_Int> _lower;
+    std::vector<HYPRE_Int> _upper;
     HYPRE_StructStencil _stencil;
     unsigned _stencil_size;
     HYPRE_StructMatrix _A;

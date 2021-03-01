@@ -116,7 +116,8 @@ set(MPI_TESTS
 
 if(Cabana_ENABLE_HYPRE)
   list(APPEND MPI_TESTS
-    HypreStructuredSolver
+    HypreStructuredSolver3d
+    HypreStructuredSolver2d
     )
 endif()
 
