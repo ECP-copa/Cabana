@@ -9,13 +9,25 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness/gtest)
+##---------------------------------------------------------------------------##
+# Download and unpack googletest
+##---------------------------------------------------------------------------##
+set(GTEST_URL "https://github.com/google/googletest/archive/release-1.10.0.tar.gz" CACHE STRING "URL for GTest tarball")
+mark_as_advanced(GTEST_URL)
 
-add_library(cabana_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
-set_target_properties(cabana_gtest PROPERTIES
-    CXX_STANDARD 11
-    CXX_STANDARD_REQUIRED YES
-    CXX_EXTENSIONS NO
-    COMPILE_DEFINITIONS GTEST_HAS_PTHREAD=0
-    INCLUDE_DIRECTORIES ${GTEST_SOURCE_DIR}
-    )
+include(FetchContent)
+FetchContent_Declare(
+  googletest
+  URL ${GTEST_URL}
+  URL_MD5         ecd1fa65e7de707cd5c00bdac56022cd
+  )
+
+FetchContent_GetProperties(googletest)
+if(NOT googletest_POPULATED)
+  FetchContent_Populate(googletest)
+  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+endif()
+
+# Prevent GoogleTest from overriding our compiler/linker options
+# when building with Visual Studio
+set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
