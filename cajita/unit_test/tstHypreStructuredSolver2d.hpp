@@ -13,9 +13,9 @@
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_HypreStructuredSolver.hpp>
+#include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
 #include <Cajita_Types.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -35,14 +35,14 @@ void poissonTest( const std::string& solver_type,
 {
     // Create the global grid.
     double cell_size = 0.1;
-    std::array<bool, 3> is_dim_periodic = { false, false, false };
-    std::array<double, 3> global_low_corner = { -1.0, -2.0, -1.0 };
-    std::array<double, 3> global_high_corner = { 1.0, 1.0, 0.5 };
+    std::array<bool, 2> is_dim_periodic = { false, false };
+    std::array<double, 2> global_low_corner = { -1.0, -2.0 };
+    std::array<double, 2> global_high_corner = { 1.0, 1.0 };
     auto global_mesh = createUniformGlobalMesh( global_low_corner,
                                                 global_high_corner, cell_size );
 
     // Create the global grid.
-    UniformDimPartitioner partitioner;
+    DimBlockPartitioner<2> partitioner;
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
@@ -63,28 +63,25 @@ void poissonTest( const std::string& solver_type,
     auto solver = createHypreStructuredSolver<double, TEST_DEVICE>(
         solver_type, *vector_layout );
 
-    // Create a 7-point 3d laplacian stencil.
-    std::vector<std::array<int, 3>> stencil = {
-        { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
-        { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
+    // Create a 5-point 2d laplacian stencil.
+    std::vector<std::array<int, 2>> stencil = {
+        { 0, 0 }, { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
     solver->setMatrixStencil( stencil );
 
     // Create the matrix entries. The stencil is defined over cells.
-    auto matrix_entry_layout = createArrayLayout( local_mesh, 7, Cell() );
+    auto matrix_entry_layout = createArrayLayout( local_mesh, 5, Cell() );
     auto matrix_entries = createArray<double, TEST_DEVICE>(
         "matrix_entries", matrix_entry_layout );
     auto entry_view = matrix_entries->view();
     Kokkos::parallel_for(
         "fill_matrix_entries",
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            entry_view( i, j, k, 0 ) = -6.0;
-            entry_view( i, j, k, 1 ) = 1.0;
-            entry_view( i, j, k, 2 ) = 1.0;
-            entry_view( i, j, k, 3 ) = 1.0;
-            entry_view( i, j, k, 4 ) = 1.0;
-            entry_view( i, j, k, 5 ) = 1.0;
-            entry_view( i, j, k, 6 ) = 1.0;
+        KOKKOS_LAMBDA( const int i, const int j ) {
+            entry_view( i, j, 0 ) = -4.0;
+            entry_view( i, j, 1 ) = 1.0;
+            entry_view( i, j, 2 ) = 1.0;
+            entry_view( i, j, 3 ) = 1.0;
+            entry_view( i, j, 4 ) = 1.0;
         } );
 
     solver->setMatrixValues( *matrix_entries );
@@ -124,32 +121,28 @@ void poissonTest( const std::string& solver_type,
     auto global_space = local_mesh->indexSpace( Own(), Cell(), Global() );
     int ncell_i = global_grid->globalNumEntity( Cell(), Dim::I );
     int ncell_j = global_grid->globalNumEntity( Cell(), Dim::J );
-    int ncell_k = global_grid->globalNumEntity( Cell(), Dim::K );
     Kokkos::parallel_for(
         "fill_ref_entries",
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+        KOKKOS_LAMBDA( const int i, const int j ) {
             int gi = i + global_space.min( Dim::I ) - owned_space.min( Dim::I );
             int gj = j + global_space.min( Dim::J ) - owned_space.min( Dim::J );
-            int gk = k + global_space.min( Dim::K ) - owned_space.min( Dim::K );
-            matrix_view( i, j, k, 0 ) = -6.0;
-            matrix_view( i, j, k, 1 ) = ( gi - 1 >= 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 2 ) = ( gi + 1 < ncell_i ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 3 ) = ( gj - 1 >= 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 4 ) = ( gj + 1 < ncell_j ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 5 ) = ( gk - 1 >= 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 6 ) = ( gk + 1 < ncell_k ) ? 1.0 : 0.0;
+            matrix_view( i, j, 0 ) = -4.0;
+            matrix_view( i, j, 1 ) = ( gi - 1 >= 0 ) ? 1.0 : 0.0;
+            matrix_view( i, j, 2 ) = ( gi + 1 < ncell_i ) ? 1.0 : 0.0;
+            matrix_view( i, j, 3 ) = ( gj - 1 >= 0 ) ? 1.0 : 0.0;
+            matrix_view( i, j, 4 ) = ( gj + 1 < ncell_j ) ? 1.0 : 0.0;
         } );
 
-    std::vector<std::array<int, 3>> diag_stencil = { { 0, 0, 0 } };
+    std::vector<std::array<int, 2>> diag_stencil = { { 0, 0 } };
     ref_solver->setPreconditionerStencil( diag_stencil );
     const auto& preconditioner_entries = ref_solver->getPreconditionerValues();
     auto preconditioner_view = preconditioner_entries.view();
     Kokkos::parallel_for(
         "fill_preconditioner_entries",
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            preconditioner_view( i, j, k, 0 ) = -1.0 / 6.0;
+        KOKKOS_LAMBDA( const int i, const int j ) {
+            preconditioner_view( i, j, 0 ) = -1.0 / 4.0;
         } );
 
     ref_solver->setTolerance( 1.0e-11 );
@@ -166,10 +159,7 @@ void poissonTest( const std::string& solver_type,
           ++i )
         for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
               ++j )
-            for ( int k = owned_space.min( Dim::K );
-                  k < owned_space.max( Dim::K ); ++k )
-                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
-                                 lhs_ref_host( i, j, k, 0 ) );
+            EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
 
     // Setup the problem again. We would need to do this if we changed the
     // matrix entries.
@@ -193,10 +183,7 @@ void poissonTest( const std::string& solver_type,
           ++i )
         for ( int j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
               ++j )
-            for ( int k = owned_space.min( Dim::K );
-                  k < owned_space.max( Dim::K ); ++k )
-                EXPECT_FLOAT_EQ( lhs_host( i, j, k, 0 ),
-                                 lhs_ref_host( i, j, k, 0 ) );
+            EXPECT_FLOAT_EQ( lhs_host( i, j, 0 ), lhs_ref_host( i, j, 0 ) );
 }
 
 //---------------------------------------------------------------------------//
