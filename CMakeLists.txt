@@ -99,6 +99,8 @@ Cabana_add_dependency( PACKAGE Heffte VERSION 2.0.0 )
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
+  set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
+  add_subdirectory(cmake/test_harness)
   enable_testing()
 endif()
 
@@ -203,7 +205,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp)
   add_custom_target(format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})

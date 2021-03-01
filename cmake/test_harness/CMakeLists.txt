@@ -9,40 +9,13 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-include(${TEST_HARNESS_DIR}/test_harness.cmake)
+set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness/gtest)
 
-set(NOBACKEND_TESTS
-  Version
-  Index
-  CartesianGrid
-  SoA
-  )
-
-set(SERIAL_TESTS
-  AoSoA
-  DeepCopy
-  LinkedCellList
-  NeighborList
-  Parallel
-  Slice
-  Sort
-  Tuple
-  )
-
-if(Cabana_ENABLE_ARBORX)
-  list(APPEND SERIAL_TESTS NeighborListArborX)
-endif()
-
-set(MPI_TESTS
-  CommunicationPlan
-  Distributor
-  Halo
-  )
-
-Cabana_add_tests_nobackend(PACKAGE cabanacore NAMES ${NOBACKEND_TESTS})
-
-Cabana_add_tests(PACKAGE cabanacore NAMES ${SERIAL_TESTS})
-
-if(Cabana_ENABLE_MPI)
-  Cabana_add_tests(MPI PACKAGE cabanacore NAMES ${MPI_TESTS})
-endif()
+add_library(cabana_gtest ${GTEST_SOURCE_DIR}/gtest/gtest-all.cc)
+set_target_properties(cabana_gtest PROPERTIES
+    CXX_STANDARD 11
+    CXX_STANDARD_REQUIRED YES
+    CXX_EXTENSIONS NO
+    COMPILE_DEFINITIONS GTEST_HAS_PTHREAD=0
+    INCLUDE_DIRECTORIES ${GTEST_SOURCE_DIR}
+    )
