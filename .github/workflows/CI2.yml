@@ -21,6 +21,7 @@ jobs:
         cmake_build_type: ['Debug', 'Release']
         kokkos_ver: ['3.2.01', 'master', 'develop']
         arborx: ['NoArborX']
+        heffte: ['NoheFFTe' ]
         coverage: ['OFF']
         include:
           - distro: 'fedora:intel'
@@ -28,21 +29,24 @@ jobs:
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
             openmp: 'ON'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
             openmp: 'OFF'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
             cxx_flags: ' -parallel'
           - distro: 'fedora:intel'
@@ -50,7 +54,8 @@ jobs:
             openmp: 'OFF'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
             cxx_flags: ' -parallel'
           - distro: 'fedora:latest'
@@ -58,56 +63,64 @@ jobs:
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'clang++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'g++'
             cmake_build_type: 'Release'
             openmp: 'ON'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'clang++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'g++'
             cmake_build_type: 'Release'
             openmp: 'ON'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'clang++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:rawhide'
             cxx: 'g++'
             cmake_build_type: 'Release'
             openmp: 'ON'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:rawhide'
             cxx: 'clang++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
@@ -115,6 +128,15 @@ jobs:
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'ArborX'
+            heffte: 'NoheFFTe'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'heFFTe'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
@@ -122,6 +144,7 @@ jobs:
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'ArborX'
+            heffte: 'heFFTe'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container: ghcr.io/kokkos/ci-containers/${{ matrix.distro }}
@@ -166,6 +189,26 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout heffte
+        if: ${{ matrix.heffte == 'heFFTe' }}
+        uses: actions/checkout@v2.2.0
+        with:
+          repository: https://bitbucket.org/icl/heffte.git
+          ref: v2.0.0
+          path: heffte
+      - name: Build heffte
+        if: ${{ matrix.heffte == 'heFFTe' }}
+        working-directory: heffte
+        run: |
+          cmake -B build \
+            -DCMAKE_CXX_STANDARD="11" \
+            -DBUILD_SHARED_LIBS=ON \
+            -DHeffte_ENABLE_FFTW=ON \
+            -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
@@ -173,7 +216,7 @@ jobs:
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
-            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_FLAGS="-Wall -pedantic ${{ matrix.cxx_flags }}" \
             -DCabana_ENABLE_TESTING=ON \
