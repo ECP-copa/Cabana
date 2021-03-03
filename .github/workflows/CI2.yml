@@ -191,11 +191,9 @@ jobs:
           cmake --install build
       - name: Checkout heffte
         if: ${{ matrix.heffte == 'heFFTe' }}
-        uses: actions/checkout@v2.2.0
-        with:
-          repository: https://bitbucket.org/icl/heffte.git
-          ref: v2.0.0
-          path: heffte
+        # actions/checkout doesn't work for external repos yet
+        run: |
+          git clone --depth 1 --branch v2.0.0 https://bitbucket.org/icl/heffte.git heffte
       - name: Build heffte
         if: ${{ matrix.heffte == 'heFFTe' }}
         working-directory: heffte
