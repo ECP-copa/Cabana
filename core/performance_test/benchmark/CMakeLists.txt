@@ -13,8 +13,13 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP)
   add_executable(BinSortPerformance Cabana_BinSortPerformance.cpp)
   target_link_libraries(BinSortPerformance cabanacore)
 
-  add_executable(NeighborPerformance Cabana_NeighborPerformance.cpp)
-  target_link_libraries(NeighborPerformance cabanacore)
+  add_executable(NeighborVerletPerformance Cabana_NeighborVerletPerformance.cpp)
+  target_link_libraries(NeighborVerletPerformance cabanacore)
+
+  if(Cabana_ENABLE_ARBORX)
+    add_executable(NeighborArborXPerformance Cabana_NeighborArborXPerformance.cpp)
+    target_link_libraries(NeighborArborXPerformance cabanacore)
+  endif()
 
   add_executable(LinkedCellPerformance Cabana_LinkedCellPerformance.cpp)
   target_link_libraries(LinkedCellPerformance cabanacore)

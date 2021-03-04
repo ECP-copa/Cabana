@@ -33,8 +33,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
 
     // Declare the neighbor list type.
     using ListTag = Cabana::FullNeighborTag;
-    using LayoutTag = Cabana::VerletLayout2D;
-    using BuildTag = Cabana::TeamVectorOpTag;
     using IterTag = Cabana::SerialOpTag;
 
     // Declare problem sizes.
@@ -46,11 +44,8 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
 
     // Declare the number of cutoff ratios (directly related to neighbors per
     // atom) to generate.
-    std::vector<double> cutoff_ratios = { 4.0, 8.0 };
+    std::vector<double> cutoff_ratios = { 4.0, 6.0 };
     int cutoff_ratios_size = cutoff_ratios.size();
-
-    // Declare the number of cell ratios (only used for Verlet) to generate.
-    std::vector<double> cell_ratios = { 1.0 };
 
     // Number of runs in the test loops.
     int num_run = 10;
@@ -112,10 +107,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
             // Track the problem size.
             psizes.push_back( problem_sizes[p] );
 
-            // Setup for Verlet list.
-            double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
-            double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
-
             // Setup for neighbor iteration.
             Kokkos::View<int*, memory_space> per_particle_result( "result",
                                                                   num_p );
@@ -131,16 +122,10 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
                 // Create the neighbor list.
                 double cutoff = cutoff_ratios[c] * min_dist;
                 create_timer.start( pid );
-#if defined( Cabana_ENABLE_ARBORX )
                 auto const nlist =
                     Cabana::Experimental::make2DNeighborList<Device>(
                         ListTag{}, Cabana::slice<0>( aosoas[p], "position" ), 0,
                         num_p, cutoff );
-#else
-                Cabana::VerletList<memory_space, ListTag, LayoutTag, BuildTag>
-                    nlist( Cabana::slice<0>( aosoas[p], "position" ), 0, num_p,
-                           cutoff, cell_ratios.back(), grid_min, grid_max );
-#endif
                 create_timer.stop( pid );
 
                 // Iterate through the neighbor list.
@@ -150,34 +135,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
                                                IterTag(), "test_iteration" );
                 Kokkos::fence();
                 iteration_timer.stop( pid );
-
-                // Print neighbor statistics once per system.
-                if ( t == 0 )
-                {
-                    Kokkos::MinMaxScalar<int> min_max;
-                    Kokkos::MinMax<int> reducer( min_max );
-                    Kokkos::parallel_reduce(
-                        "Cabana::countMinMax", policy,
-                        Kokkos::Impl::min_max_functor<
-                            Kokkos::View<int*, Device>>( nlist._data.counts ),
-                        reducer );
-                    Kokkos::fence();
-                    std::cout << "List min neighbors: " << min_max.min_val
-                              << std::endl;
-                    std::cout << "List max neighbors: " << min_max.max_val
-                              << std::endl;
-                    int total_neigh = 0;
-                    Kokkos::parallel_reduce(
-                        "Cabana::countSum", policy,
-                        KOKKOS_LAMBDA( const int p, int& nsum ) {
-                            nsum += nlist._data.counts( p );
-                        },
-                        total_neigh );
-                    Kokkos::fence();
-                    std::cout << "List avg neighbors: " << total_neigh / num_p
-                              << std::endl;
-                    std::cout << std::endl;
-                }
             }
 
             // Increment the problem id.
@@ -203,7 +160,7 @@ int main( int argc, char* argv[] )
              First argument -  file name for output \n \
              \n \
              Example: \n \
-             $/: ./NeighborPerformance test_results.txt\n" );
+             $/: ./NeighborArborXPerformance test_results.txt\n" );
 
     // Get the name of the output file.
     std::string filename = argv[1];
