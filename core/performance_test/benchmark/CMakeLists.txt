@@ -15,6 +15,9 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP)
 
   add_executable(NeighborPerformance Cabana_NeighborPerformance.cpp)
   target_link_libraries(NeighborPerformance cabanacore)
+
+  add_executable(LinkedCellPerformance Cabana_LinkedCellPerformance.cpp)
+  target_link_libraries(LinkedCellPerformance cabanacore)
 endif()
 
 if(Cabana_ENABLE_MPI AND Kokkos_ENABLE_CUDA AND Kokkos_ENABLE_OPENMP)

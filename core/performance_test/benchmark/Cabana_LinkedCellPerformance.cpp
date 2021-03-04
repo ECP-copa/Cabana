@@ -28,15 +28,6 @@
 template <class Device>
 void performanceTest( std::ostream& stream, const std::string& test_prefix )
 {
-    using exec_space = typename Device::execution_space;
-    using memory_space = typename Device::memory_space;
-
-    // Declare the neighbor list type.
-    using ListTag = Cabana::FullNeighborTag;
-    using LayoutTag = Cabana::VerletLayout2D;
-    using BuildTag = Cabana::TeamVectorOpTag;
-    using IterTag = Cabana::SerialOpTag;
-
     // Declare problem sizes.
     double min_dist = 1.0;
     std::vector<int> problem_sizes = { 1000, 10000, 100000, 1000000 };
@@ -70,18 +61,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
         aosoas[p].resize( num_p );
         auto x = Cabana::slice<0>( aosoas[p], "position" );
         Cabana::Benchmark::createParticles( x, x_min[p], x_max[p], min_dist );
-
-        // Sort the particles to make them more realistic, e.g. in an MD
-        // simulation. They likely won't be randomly scattered about, but rather
-        // will be periodically sorted for spatial locality. Bin them in cells
-        // the size of the smallest cutoff distance.
-        double cutoff = cutoff_ratios.front() * min_dist;
-        double sort_delta[3] = { cutoff, cutoff, cutoff };
-        double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
-        double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
-        Cabana::LinkedCellList<Device> linked_cell_list( x, sort_delta,
-                                                         grid_min, grid_max );
-        Cabana::permute( linked_cell_list, aosoas[p] );
     }
 
     // Loop over number of ratios (neighbors per particle).
@@ -91,17 +70,16 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
 
         // Create timers.
         std::stringstream create_time_name;
-        create_time_name << test_prefix << "neigh_create_" << cutoff_ratios[c];
+        create_time_name << test_prefix << "linkedcell_create_"
+                         << cutoff_ratios[c];
         Cabana::Benchmark::Timer create_timer( create_time_name.str(),
                                                num_problem_size );
-        std::stringstream iteration_time_name;
-        iteration_time_name << test_prefix << "neigh_iteration_"
-                            << cutoff_ratios[c];
-        Cabana::Benchmark::Timer iteration_timer( iteration_time_name.str(),
-                                                  num_problem_size );
+        std::stringstream sort_time_name;
+        sort_time_name << test_prefix << "linkedcell_sort_" << cutoff_ratios[c];
+        Cabana::Benchmark::Timer sort_timer( sort_time_name.str(),
+                                             num_problem_size );
 
         // Loop over the problem sizes.
-        int pid = 0;
         std::vector<int> psizes;
         for ( int p = 0; p < num_problem_size; ++p )
         {
@@ -112,81 +90,33 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
             // Track the problem size.
             psizes.push_back( problem_sizes[p] );
 
-            // Setup for Verlet list.
+            // Create the linked cell list.
+            auto x = Cabana::slice<0>( aosoas[p], "position" );
+            double cutoff = cutoff_ratios[c] * min_dist;
+            double sort_delta[3] = { cutoff, cutoff, cutoff };
             double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
             double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
-
-            // Setup for neighbor iteration.
-            Kokkos::View<int*, memory_space> per_particle_result( "result",
-                                                                  num_p );
-            auto count_op = KOKKOS_LAMBDA( const int i, const int n )
-            {
-                Kokkos::atomic_add( &per_particle_result( i ), n );
-            };
-            Kokkos::RangePolicy<exec_space> policy( 0, num_p );
+            Cabana::LinkedCellList<Device> linked_cell_list(
+                x, sort_delta, grid_min, grid_max );
 
             // Run tests and time the ensemble
             for ( int t = 0; t < num_run; ++t )
             {
-                // Create the neighbor list.
-                double cutoff = cutoff_ratios[c] * min_dist;
-                create_timer.start( pid );
-#if defined( Cabana_ENABLE_ARBORX )
-                auto const nlist =
-                    Cabana::Experimental::make2DNeighborList<Device>(
-                        ListTag{}, Cabana::slice<0>( aosoas[p], "position" ), 0,
-                        num_p, cutoff );
-#else
-                Cabana::VerletList<memory_space, ListTag, LayoutTag, BuildTag>
-                    nlist( Cabana::slice<0>( aosoas[p], "position" ), 0, num_p,
-                           cutoff, cell_ratios.back(), grid_min, grid_max );
-#endif
-                create_timer.stop( pid );
+                // Build the linked cell list.
+                create_timer.start( p );
+                linked_cell_list.build( x, 0, x.size() );
+                create_timer.stop( p );
 
-                // Iterate through the neighbor list.
-                iteration_timer.start( pid );
-                Cabana::neighbor_parallel_for( policy, count_op, nlist,
-                                               Cabana::FirstNeighborsTag(),
-                                               IterTag(), "test_iteration" );
-                Kokkos::fence();
-                iteration_timer.stop( pid );
-
-                // Print neighbor statistics once per system.
-                if ( t == 0 )
-                {
-                    Kokkos::MinMaxScalar<int> min_max;
-                    Kokkos::MinMax<int> reducer( min_max );
-                    Kokkos::parallel_reduce(
-                        "Cabana::countMinMax", policy,
-                        Kokkos::Impl::min_max_functor<
-                            Kokkos::View<int*, Device>>( nlist._data.counts ),
-                        reducer );
-                    Kokkos::fence();
-                    std::cout << "List min neighbors: " << min_max.min_val
-                              << std::endl;
-                    std::cout << "List max neighbors: " << min_max.max_val
-                              << std::endl;
-                    int total_neigh = 0;
-                    Kokkos::parallel_reduce(
-                        "Cabana::countSum", policy,
-                        KOKKOS_LAMBDA( const int p, int& nsum ) {
-                            nsum += nlist._data.counts( p );
-                        },
-                        total_neigh );
-                    Kokkos::fence();
-                    std::cout << "List avg neighbors: " << total_neigh / num_p
-                              << std::endl;
-                    std::cout << std::endl;
-                }
+                // Sort the particles.
+                sort_timer.start( p );
+                Cabana::permute( linked_cell_list, aosoas[p] );
+                sort_timer.stop( p );
             }
-
-            // Increment the problem id.
-            ++pid;
         }
 
         // Output results.
         outputResults( stream, "problem_size", psizes, create_timer );
-        outputResults( stream, "problem_size", psizes, iteration_timer );
+        outputResults( stream, "problem_size", psizes, sort_timer );
     }
 }
 
@@ -203,7 +133,7 @@ int main( int argc, char* argv[] )
              First argument -  file name for output \n \
              \n \
              Example: \n \
-             $/: ./NeighborPerformance test_results.txt\n" );
+             $/: ./LinkedCellPerformance test_results.txt\n" );
 
     // Get the name of the output file.
     std::string filename = argv[1];
