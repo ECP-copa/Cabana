@@ -33,7 +33,6 @@ SparseDimPartitioner::SparseDimPartitioner(
     : _workload_threshold(
           static_assert<int>( max_workload_coeff * particle_num ) )
     , _num_step_rebalance( num_step_rebalance )
-    , _ranks_per_dim( ranks_per_dim )
     , _workload_prefix_sum{ Kokkos::View(
           "workload_prefix_sum",
           global_cells_per_dim[0] >> cell_bits_per_tile_dim,
@@ -44,19 +43,16 @@ SparseDimPartitioner::SparseDimPartitioner(
           global_cells_per_dim[1] >> cell_bits_per_tile_dim,
           global_cells_per_dim[2] >> cell_bits_per_tile_dim ) }
 {
-    auto rank_mirror =
-        Kokkos::create_mirror_view( Kokkos::HostSpace, _ranks_per_dim_dev );
-    for ( int d = 0; d < 3; ++d )
-    {
-        rank_mirror( d ) = _ranks_per_dim[d];
-    }
-    Kokkos::deep_copy( _ranks_per_dim_dev, rank_mirror );
+    std::copy( ranks_per_dim.begin(), ranks_per_dim.end(),
+               _ranks_per_dim.data() );
 }
 
 //---------------------------------------------------------------------------//
 std::array<int, 3> SparseDimPartitioner::ranksPerDimension() const
 {
-    return _ranks_per_dim;
+    std::array<int, 3> ranks_per_dim = { _ranks_per_dim[0], _ranks_per_dim[1],
+                                         _ranks_per_dim[2] };
+    return ranks_per_dim;
 }
 //---------------------------------------------------------------------------//
 std::array<int, 3>
@@ -66,15 +62,9 @@ SparseDimPartitioner::ranksPerDimension( MPI_Comm comm ) const
     MPI_Comm_size( comm, &comm_size );
     MPI_Dims_create( comm_size, 3, _ranks_per_dim.data() );
 
-    auto rank_mirror =
-        Kokkos::create_mirror_view( Kokkos::HostSpace, _ranks_per_dim_dev );
-    for ( int d = 0; d < 3; ++d )
-    {
-        rank_mirror( d ) = _ranks_per_dim[d];
-    }
-    Kokkos::deep_copy( _ranks_per_dim_dev, rank_mirror );
-
-    return _ranks_per_dim;
+    std::array<int, 3> ranks_per_dim = { _ranks_per_dim[0], _ranks_per_dim[1],
+                                         _ranks_per_dim[2] };
+    return ranks_per_dim;
 }
 
 //---------------------------------------------------------------------------//
@@ -90,10 +80,11 @@ SparseDimPartitioner::ownedTilesPerDimension( MPI_Comm cart_comm,
 
     // Get the tiles per dimension and the remainder.
     std::array<int, 3> tiles_per_dim;
+    auto rec_mirror = Kokkos::create_mirror_view( Kokkos::HostSpace,
+                                                  _rectangle_partition_dev );
     for ( int d = 0; d < 3; ++d )
-        tiles_per_dim[d] = _rectangle_partition[d][cart_rank[d] + 1] -
-                           _rectangle_partition[d][cart_rank[d]];
-
+        tiles_per_dim[d] =
+            rec_mirror( cart_rank[d] + 1, d ) - rec_mirror( cart_rank[d], d );
     return tiles_per_dim;
 }
 
@@ -116,23 +107,20 @@ void SparseDimPartitioner::initialize_rec_partition(
     std::vector<int>& rec_partition_i, std::vector<int>& rec_partition_j,
     std::vector<int>& rec_partition_k )
 {
-    _rectangle_partition[0] = rec_partition_i;
-    _rectangle_partition[1] = rec_partition_j;
-    _rectangle_partition[2] = rec_partition_k;
-
     int max_size = 0;
     for ( int d = 0; d < 3; ++d )
     {
         max_size = max_size < _ranks_per_dim[d] ? _ranks_per_dim[d] : max_size;
     }
-    _rectangle_partiton_dev = Kokkos::View<int* [3], MemorySpace>(
-        "_rectangle_partiton_dev", max_size );
+    _rectangle_partition_dev = Kokkos::View<int* [3], MemorySpace>(
+        "_rectangle_partition_dev", max_size );
     auto rec_mirror = Kokkos::create_mirror_view( Kokkos::HostSpace,
                                                   _rectangle_partition_dev );
-    for ( int d = 0; d < 3; ++d )
+    for ( int id = 0; id < _ranks_per_dim[d]; ++id )
     {
-        for ( int id = 0; id < _ranks_per_dim[d]; ++id )
-            rec_mirror( id, d ) = _rectangle_partition[d][id];
+        rec_mirror( id, 0 ) = rec_partition_i[id];
+        rec_mirror( id, 1 ) = rec_partition_j[id];
+        rec_mirror( id, 2 ) = rec_partition_k[id];
     }
     Kokkos::deep_copy( _rectangle_partition_dev, rec_mirror );
 }
@@ -151,7 +139,7 @@ void SparseDimPartitioner::computeLocalWorkLoad( ParticlePosViewType& view,
                      cell_bits_per_tile_dim;
             int tz = static_cast<int>( view( i, 2 ) / dx - 0.5 ) >>
                      cell_bits_per_tile_dim;
-            atomic_increment( &_workload_per_tile( ti, tj, tz ) );
+            Kokkos::atomic_increment( &_workload_per_tile( ti, tj, tz ) );
         } );
 }
 
@@ -168,7 +156,7 @@ void SparseDimPartitioner::computeLocalWorkload(
                 auto key = sparseMap.key_at( i );
                 int ti, tj, tk;
                 sparseMap.key2ijk( key, ti, tj, tk );
-                atomic_increment( &_workload_per_tile( ti, tj, tz ) );
+                Kokkos::atomic_increment( &_workload_per_tile( ti, tj, tz ) );
             }
         } );
 }
@@ -181,7 +169,7 @@ void SparseDimPartitioner::computeFullPrefixSum( MPI_Comm comm )
     int total_size = _workload_per_tile.extend_0() *
                      _workload_per_tile.extend_1() *
                      _workload_per_tile.extend_2();
-    MPI_ALLreduce( _workload_per_tile, _workload_prefix_sum, total_size,
+    MPI_Allreduce( _workload_per_tile, _workload_prefix_sum, total_size,
                    MPI_INT, MPI_SUM, comm );
 
     // compute the prefix sum
@@ -236,11 +224,11 @@ void SparseDimPartitioner::compute_sub_workload( int dim_j, int j, int dim_k,
     {
         dim_i = ( dim_i + 1 ) % 3;
     }
-    end[dim_i] = _ranks_per_dim_dev[dim_i];
+    end[dim_i] = _ranks_per_dim[dim_i];
     end[dim_j] = _rectangle_partition_dev( j, dim_j );
     end[dim_k] = _rectangle_partition_dev( k, dim_k );
 
-    start[dim_i] = _ranks_per_dim_dev[dim_i];
+    start[dim_i] = _ranks_per_dim[dim_i];
     start[dim_j] = ( j > 0 ) ? _rectangle_partition_dev( j - 1, dim_j ) : 0;
     start[dim_k] = ( k > 0 ) ? _rectangle_partition_dev( k - 1, dim_k ) : 0;
 
@@ -306,8 +294,8 @@ void SparseDimPartitioner::optimizePartition()
             Kokkos::RangePolicy<TEST_EXECSPACE>( 0, _ranks_per_dim[dj] *
                                                         _ranks_per_dim[dk] ),
             KOKKOS_LAMBDA( uint32_t jnk ) {
-                int j = static_cast<int>( jnk / _ranks_per_dim_dev[dk] );
-                int k = static_cast<int>( jnk % _ranks_per_dim_dev[dk] )
+                int j = static_cast<int>( jnk / _ranks_per_dim[dk] );
+                int k = static_cast<int>( jnk % _ranks_per_dim[dk] )
                     ave_workload( jnk ) =
                         compute_sub_workload( dj, j, dk, k ) / rank;
             } );
@@ -331,10 +319,8 @@ void SparseDimPartitioner::optimizePartition()
                     Kokkos::RangePolicy<TEST_EXECSPACE>(
                         0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                     KOKKOS_LAMBDA( uint32_t jnk ) {
-                        int j =
-                            static_cast<int>( jnk / _ranks_per_dim_dev[dk] );
-                        int k =
-                            static_cast<int>( jnk % _ranks_per_dim_dev[dk] );
+                        int j = static_cast<int>( jnk / _ranks_per_dim[dk] );
+                        int k = static_cast<int>( jnk % _ranks_per_dim[dk] );
                         current_workload( jnk ) =
                             compute_sub_workload( di, point_i, dj, j, dk, k ) /
                             rank;
