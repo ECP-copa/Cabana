@@ -49,18 +49,22 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
     // Define the aosoa.
     using member_types = Cabana::MemberTypes<double[3]>;
     using aosoa_type = Cabana::AoSoA<member_types, Device>;
+    using aosoa_host_type = Cabana::AoSoA<member_types, Kokkos::HostSpace>;
     std::vector<aosoa_type> aosoas( num_problem_size );
 
     // Create aosoas.
     for ( int p = 0; p < num_problem_size; ++p )
     {
         int num_p = problem_sizes[p];
+        aosoa_host_type create_aosoa( "host_aosoa", num_p );
+
         // Define problem grid.
         x_min[p] = 0.0;
         x_max[p] = 1.3 * min_dist * std::pow( num_p, 1.0 / 3.0 );
         aosoas[p].resize( num_p );
-        auto x = Cabana::slice<0>( aosoas[p], "position" );
+        auto x = Cabana::slice<0>( create_aosoa, "position" );
         Cabana::Benchmark::createParticles( x, x_min[p], x_max[p], min_dist );
+        Cabana::deep_copy( aosoas[p], create_aosoa );
     }
 
     // Loop over number of ratios (neighbors per particle).
