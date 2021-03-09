@@ -96,14 +96,110 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
         element_export_ranks.size() );
 
     // Count the sends and create the steering vector.
-    Kokkos::parallel_for(
-        "Cabana::CommunicationPlan::countSendsAndCreateSteering",
-        Kokkos::RangePolicy<execution_space>( 0, element_export_ranks.size() ),
-        KOKKOS_LAMBDA( const size_type i ) {
-            if ( element_export_ranks( i ) >= 0 )
-                neighbor_ids( i ) = Kokkos::atomic_fetch_add(
-                    &neighbor_counts( element_export_ranks( i ) ), 1 );
-        } );
+
+    // For smaller values of comm_size, use the optimized scratch memory path
+    // Value of 64 is arbitrary, should be at least 27 to cover 3-d halos?
+    if ( comm_size <= 64 )
+    {
+        constexpr int team_size = 256;
+        Kokkos::TeamPolicy<execution_space> team_policy(
+            ( element_export_ranks.size() + team_size - 1 ) / team_size,
+            team_size );
+        team_policy = team_policy.set_scratch_size(
+            0,
+            Kokkos::PerTeam( sizeof( int ) * ( team_size + 2 * comm_size ) ) );
+        Kokkos::parallel_for(
+            "Cabana::CommunicationPlan::countSendsAndCreateSteeringShared",
+            team_policy,
+            KOKKOS_LAMBDA(
+                const typename Kokkos::TeamPolicy<execution_space>::member_type&
+                    team ) {
+                // local neighbor_ids, gives the local offset relative to
+                // calculated global offset
+                int* local_neighbor_ids = (int*)team.team_shmem().get_shmem(
+                    team.team_size() * sizeof( int ), 0 );
+
+                // local histogram, `comm_size` in size
+                int* histo = (int*)team.team_shmem().get_shmem(
+                    comm_size * sizeof( int ), 0 );
+
+                // offset into global array, `comm_size` in size
+                int* global_offset = (int*)team.team_shmem().get_shmem(
+                    comm_size * sizeof( int ), 0 );
+
+                // overall element `tid`
+                const size_type tid =
+                    team.team_rank() + team.league_rank() * team.team_size();
+
+                // local element
+                const int local_id = team.team_rank();
+
+                // total number of elements, for convenience
+                const size_type num_elements = element_export_ranks.size();
+
+                // my element export rank
+                const auto my_element_export_rank =
+                    ( tid < num_elements ? element_export_ranks( tid ) : -1 );
+
+                // cannot outright terminate early b/c threads share work
+                // if (tid >= num_elements) return;
+                const bool in_bounds =
+                    tid < num_elements && my_element_export_rank >= 0;
+
+                Kokkos::parallel_for(
+                    Kokkos::TeamThreadRange( team, comm_size ),
+                    [&]( const int i ) { histo[i] = 0; } );
+
+                // synchronize zeroing
+                team.team_barrier();
+
+                // build local histogram, need to encode num_elements check here
+                if ( in_bounds )
+                {
+                    // shared memory atomic add, accumulate into local offset
+                    local_neighbor_ids[local_id] = Kokkos::atomic_fetch_add(
+                        &histo[my_element_export_rank], 1 );
+                }
+
+                // synchronize local histogram build
+                team.team_barrier();
+
+                // reserve space in global array via a loop over neighbor counts
+                Kokkos::parallel_for(
+                    Kokkos::TeamThreadRange( team, comm_size ),
+                    [&]( const int i ) {
+                        // global memory atomic add, reserves space
+                        global_offset[i] = Kokkos::atomic_fetch_add(
+                            &neighbor_counts( i ), histo[i] );
+                    } );
+
+                // synchronize block-stride loop
+                team.team_barrier();
+
+                // and now store to my location
+                if ( in_bounds )
+                {
+                    neighbor_ids( tid ) =
+                        global_offset[my_element_export_rank] +
+                        local_neighbor_ids[local_id];
+                }
+            } );
+    }
+    else
+    {
+        // For larger numbers of export ranks (for ex, migration) we use the
+        // global memory version, though this is a point of future optimization
+
+        Kokkos::parallel_for(
+            "Cabana::CommunicationPlan::countSendsAndCreateSteering",
+            Kokkos::RangePolicy<execution_space>( 0,
+                                                  element_export_ranks.size() ),
+            KOKKOS_LAMBDA( const size_type i ) {
+                if ( element_export_ranks( i ) >= 0 )
+                    neighbor_ids( i ) = Kokkos::atomic_fetch_add(
+                        &neighbor_counts( element_export_ranks( i ) ), 1 );
+            } );
+    }
     Kokkos::fence();
 
     // Return the counts and ids.
