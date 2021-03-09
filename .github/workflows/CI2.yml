@@ -58,6 +58,22 @@ jobs:
             heffte: 'NoheFFTe'
             coverage: 'OFF'
             cxx_flags: ' -parallel'
+          - distro: 'fedora:intel'
+            cxx: 'icpc'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'heFFTe_MKL'
+            coverage: 'OFF'
+          - distro: 'fedora:intel'
+            cxx: 'icpc'
+            openmp: 'OFF'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'heFFTe_MKL'
+            coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'g++'
             openmp: 'ON'
@@ -136,7 +152,7 @@ jobs:
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
-            heffte: 'heFFTe'
+            heffte: 'heFFTe_FFTW'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
@@ -144,7 +160,7 @@ jobs:
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'ArborX'
-            heffte: 'heFFTe'
+            heffte: 'heFFTe_FFTW'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
@@ -190,21 +206,24 @@ jobs:
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout heffte
-        if: ${{ matrix.heffte == 'heFFTe' }}
+        if: ${{ matrix.heffte != 'NoheFFTe' }}
         # actions/checkout doesn't work for external repos yet
         run: |
           git clone --depth 1 --branch v2.0.0 https://bitbucket.org/icl/heffte.git heffte
       - name: Build heffte
-        if: ${{ matrix.heffte == 'heFFTe' }}
+        if: ${{ matrix.heffte != 'NoheFFTe' }}
         working-directory: heffte
         run: |
+          [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=-DHeffte_ENABLE_FFTW=ON
+          [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=-DHeffte_ENABLE_MKL=ON
           cmake -B build \
             -DCMAKE_CXX_STANDARD="11" \
             -DBUILD_SHARED_LIBS=ON \
-            -DHeffte_ENABLE_FFTW=ON \
+            -DMKL_ROOT=/opt/intel/mkl \
             -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
-            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            ${heffte_cmake_opts}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout Cabana
