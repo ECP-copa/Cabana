@@ -13,6 +13,9 @@ jobs:
   CI:
     # FIXME: remove failing distributions here when passing
     continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:latest' || matrix.distro == 'fedora:intel' || matrix.distro == 'ubuntu:devel' }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       matrix:
         distro: ['ubuntu:latest']
@@ -214,8 +217,8 @@ jobs:
         if: ${{ matrix.heffte != 'NoheFFTe' }}
         working-directory: heffte
         run: |
-          [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=-DHeffte_ENABLE_FFTW=ON
-          [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=-DHeffte_ENABLE_MKL=ON
+          [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
+          [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
           cmake -B build \
             -DCMAKE_CXX_STANDARD="11" \
             -DBUILD_SHARED_LIBS=ON \
