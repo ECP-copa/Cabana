@@ -16,6 +16,7 @@
 #include <Cajita_IndexConversion.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
+#include <Cajita_LocalMesh.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_Types.hpp>
 
@@ -112,16 +113,23 @@ void testConversion3d( const std::array<bool, 3>& is_dim_periodic )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), index_view );
     auto l2g_view_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), l2g_view );
-    for ( int i = ghost_local_space.min( Dim::I );
-          i < ghost_local_space.max( Dim::I ); ++i )
-        for ( int j = ghost_local_space.min( Dim::J );
-              j < ghost_local_space.max( Dim::J ); ++j )
-            for ( int k = ghost_local_space.min( Dim::K );
-                  k < ghost_local_space.max( Dim::K ); ++k )
-                for ( int d = 0; d < 3; ++d )
-                    if ( l2g_view_host( i, j, k, d ) !=
-                         index_view_host( i, j, k, d ) )
-                        pass_index_conversion_test = 0;
+    auto check_results = [&]( const IndexSpace<3>& space ) {
+        for ( int i = space.min( Dim::I ); i < space.max( Dim::I ); ++i )
+            for ( int j = space.min( Dim::J ); j < space.max( Dim::J ); ++j )
+                for ( int k = space.min( Dim::K ); k < space.max( Dim::K );
+                      ++k )
+                    for ( int d = 0; d < 3; ++d )
+                        if ( l2g_view_host( i, j, k, d ) !=
+                             index_view_host( i, j, k, d ) )
+                            pass_index_conversion_test = 0;
+    };
+    check_results( own_local_space );
+    for ( int i = -1; i < 2; ++i )
+        for ( int j = -1; j < 2; ++j )
+            for ( int k = -1; k < 2; ++k )
+                if ( local_grid->neighborRank( i, j, k ) >= 0 )
+                    check_results( local_grid->sharedIndexSpace(
+                        Ghost(), EntityType(), i, j, k ) );
     EXPECT_EQ( pass_index_conversion_test, 1 );
 }
 
@@ -202,13 +210,20 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), index_view );
     auto l2g_view_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), l2g_view );
-    for ( int i = ghost_local_space.min( Dim::I );
-          i < ghost_local_space.max( Dim::I ); ++i )
-        for ( int j = ghost_local_space.min( Dim::J );
-              j < ghost_local_space.max( Dim::J ); ++j )
-            for ( int d = 0; d < 2; ++d )
-                if ( l2g_view_host( i, j, d ) != index_view_host( i, j, d ) )
-                    pass_index_conversion_test = 0;
+    auto check_results = [&]( const IndexSpace<2>& space ) {
+        for ( int i = space.min( Dim::I ); i < space.max( Dim::I ); ++i )
+            for ( int j = space.min( Dim::J ); j < space.max( Dim::J ); ++j )
+                for ( int d = 0; d < 2; ++d )
+                    if ( l2g_view_host( i, j, d ) !=
+                         index_view_host( i, j, d ) )
+                        pass_index_conversion_test = 0;
+    };
+    check_results( own_local_space );
+    for ( int i = -1; i < 2; ++i )
+        for ( int j = -1; j < 2; ++j )
+            if ( local_grid->neighborRank( i, j ) >= 0 )
+                check_results( local_grid->sharedIndexSpace(
+                    Ghost(), EntityType(), i, j ) );
     EXPECT_EQ( pass_index_conversion_test, 1 );
 }
 

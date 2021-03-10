@@ -1674,7 +1674,8 @@ void notPeriodicTest3d()
     auto ghosted_cell_space =
         local_grid->indexSpace( Ghost(), Cell(), Local() );
     for ( int d = 0; d < 3; ++d )
-        EXPECT_EQ( ghosted_cell_space.extent( d ), global_num_cell[d] );
+        EXPECT_EQ( ghosted_cell_space.extent( d ),
+                   global_num_cell[d] + 2 * halo_width );
 
     // Get the owned number of nodes.
     auto owned_node_space = local_grid->indexSpace( Own(), Node(), Local() );
@@ -1685,7 +1686,8 @@ void notPeriodicTest3d()
     auto ghosted_node_space =
         local_grid->indexSpace( Ghost(), Node(), Local() );
     for ( int d = 0; d < 3; ++d )
-        EXPECT_EQ( ghosted_node_space.extent( d ), global_num_cell[d] + 1 );
+        EXPECT_EQ( ghosted_node_space.extent( d ),
+                   global_num_cell[d] + 1 + 2 * halo_width );
 
     // Get the owned number of I-faces.
     auto owned_i_face_space =
@@ -1705,9 +1707,10 @@ void notPeriodicTest3d()
     {
         if ( Dim::I == d )
             EXPECT_EQ( ghosted_i_face_space.extent( d ),
-                       global_num_cell[d] + 1 );
+                       global_num_cell[d] + 1 + 2 * halo_width );
         else
-            EXPECT_EQ( ghosted_i_face_space.extent( d ), global_num_cell[d] );
+            EXPECT_EQ( ghosted_i_face_space.extent( d ),
+                       global_num_cell[d] + 2 * halo_width );
     }
 
     // Get the owned number of J-faces.
@@ -1728,9 +1731,10 @@ void notPeriodicTest3d()
     {
         if ( Dim::J == d )
             EXPECT_EQ( ghosted_j_face_space.extent( d ),
-                       global_num_cell[d] + 1 );
+                       global_num_cell[d] + 1 + 2 * halo_width );
         else
-            EXPECT_EQ( ghosted_j_face_space.extent( d ), global_num_cell[d] );
+            EXPECT_EQ( ghosted_j_face_space.extent( d ),
+                       global_num_cell[d] + 2 * halo_width );
     }
 
     // Get the owned number of K-faces.
@@ -1751,9 +1755,10 @@ void notPeriodicTest3d()
     {
         if ( Dim::K == d )
             EXPECT_EQ( ghosted_k_face_space.extent( d ),
-                       global_num_cell[d] + 1 );
+                       global_num_cell[d] + 1 + 2 * halo_width );
         else
-            EXPECT_EQ( ghosted_k_face_space.extent( d ), global_num_cell[d] );
+            EXPECT_EQ( ghosted_k_face_space.extent( d ),
+                       global_num_cell[d] + 2 * halo_width );
     }
 
     // Check neighbor ranks and shared spaces.
@@ -2598,7 +2603,8 @@ void notPeriodicTest2d()
     auto ghosted_cell_space =
         local_grid->indexSpace( Ghost(), Cell(), Local() );
     for ( int d = 0; d < 2; ++d )
-        EXPECT_EQ( ghosted_cell_space.extent( d ), global_num_cell[d] );
+        EXPECT_EQ( ghosted_cell_space.extent( d ),
+                   global_num_cell[d] + 2 * halo_width );
 
     // Get the owned number of nodes.
     auto owned_node_space = local_grid->indexSpace( Own(), Node(), Local() );
@@ -2609,7 +2615,8 @@ void notPeriodicTest2d()
     auto ghosted_node_space =
         local_grid->indexSpace( Ghost(), Node(), Local() );
     for ( int d = 0; d < 2; ++d )
-        EXPECT_EQ( ghosted_node_space.extent( d ), global_num_cell[d] + 1 );
+        EXPECT_EQ( ghosted_node_space.extent( d ),
+                   global_num_cell[d] + 1 + 2 * halo_width );
 
     // Get the owned number of I-faces.
     auto owned_i_face_space =
@@ -2629,9 +2636,10 @@ void notPeriodicTest2d()
     {
         if ( Dim::I == d )
             EXPECT_EQ( ghosted_i_face_space.extent( d ),
-                       global_num_cell[d] + 1 );
+                       global_num_cell[d] + 1 + 2 * halo_width );
         else
-            EXPECT_EQ( ghosted_i_face_space.extent( d ), global_num_cell[d] );
+            EXPECT_EQ( ghosted_i_face_space.extent( d ),
+                       global_num_cell[d] + 2 * halo_width );
     }
 
     // Get the owned number of J-faces.
@@ -2652,9 +2660,10 @@ void notPeriodicTest2d()
     {
         if ( Dim::J == d )
             EXPECT_EQ( ghosted_j_face_space.extent( d ),
-                       global_num_cell[d] + 1 );
+                       global_num_cell[d] + 1 + 2 * halo_width );
         else
-            EXPECT_EQ( ghosted_j_face_space.extent( d ), global_num_cell[d] );
+            EXPECT_EQ( ghosted_j_face_space.extent( d ),
+                       global_num_cell[d] + 2 * halo_width );
     }
     // Check neighbor ranks and shared spaces.
     for ( int i = -1; i < 2; ++i )

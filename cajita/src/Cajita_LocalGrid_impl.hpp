@@ -42,6 +42,14 @@ int LocalGrid<MeshType>::haloCellWidth() const
 }
 
 //---------------------------------------------------------------------------//
+// Get the total number of local cells in a given dimension (owned + halo).
+template <class MeshType>
+int LocalGrid<MeshType>::totalNumCell( const int d ) const
+{
+    return _global_grid->ownedNumCell( d ) + 2 * _halo_cell_width;
+}
+
+//---------------------------------------------------------------------------//
 // Given the relative offsets of a neighbor rank relative to this local grid's
 // indices get the of the neighbor. If the neighbor rank is out of bounds
 // return -1. Note that in the case of periodic boundaries out of bounds
@@ -159,10 +167,7 @@ auto LocalGrid<MeshType>::indexSpaceImpl( Own, Cell, Local ) const
     // Compute the lower bound.
     std::array<long, num_space_dim> min;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
-        min[d] = ( _global_grid->isPeriodic( d ) ||
-                   _global_grid->dimBlockId( d ) > 0 )
-                     ? _halo_cell_width
-                     : 0;
+        min[d] = _halo_cell_width;
 
     // Compute the upper bound.
     std::array<long, num_space_dim> max;
@@ -182,19 +187,7 @@ auto LocalGrid<MeshType>::indexSpaceImpl( Ghost, Cell, Local ) const
     std::array<long, num_space_dim> size;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
-        // Start with the local number of cells.
-        size[d] = _global_grid->ownedNumCell( d );
-
-        // Add the lower halo.
-        if ( _global_grid->isPeriodic( d ) ||
-             _global_grid->dimBlockId( d ) > 0 )
-            size[d] += _halo_cell_width;
-
-        // Add the upper halo.
-        if ( _global_grid->isPeriodic( d ) ||
-             _global_grid->dimBlockId( d ) <
-                 _global_grid->dimNumBlock( d ) - 1 )
-            size[d] += _halo_cell_width;
+        size[d] = totalNumCell( d );
     }
 
     return IndexSpace<num_space_dim>( size );
@@ -315,12 +308,10 @@ auto LocalGrid<MeshType>::indexSpaceImpl( Own, Node, Local ) const
     // Compute the lower bound.
     std::array<long, num_space_dim> min;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
-        min[d] = ( _global_grid->isPeriodic( d ) ||
-                   _global_grid->dimBlockId( d ) > 0 )
-                     ? _halo_cell_width
-                     : 0;
+        min[d] = _halo_cell_width;
 
-    // Compute the upper bound.
+    // Compute the upper bound. Resolve the shared node if the dimension is
+    // periodic.
     std::array<long, num_space_dim> max;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
         max[d] = ( _global_grid->isPeriodic( d ) ||
@@ -342,19 +333,7 @@ auto LocalGrid<MeshType>::indexSpaceImpl( Ghost, Node, Local ) const
     std::array<long, num_space_dim> size;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
-        // Start with the local number of nodes.
-        size[d] = _global_grid->ownedNumCell( d ) + 1;
-
-        // Add the lower halo.
-        if ( _global_grid->isPeriodic( d ) ||
-             _global_grid->dimBlockId( d ) > 0 )
-            size[d] += _halo_cell_width;
-
-        // Add the upper halo.
-        if ( _global_grid->isPeriodic( d ) ||
-             _global_grid->dimBlockId( d ) <
-                 _global_grid->dimNumBlock( d ) - 1 )
-            size[d] += _halo_cell_width;
+        size[d] = totalNumCell( d ) + 1;
     }
 
     return IndexSpace<num_space_dim>( size );
@@ -783,10 +762,7 @@ auto LocalGrid<MeshType>::faceIndexSpace( Own, Face<Dir>, Local ) const
     // Compute the lower bound.
     std::array<long, num_space_dim> min;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
-        min[d] = ( _global_grid->isPeriodic( d ) ||
-                   _global_grid->dimBlockId( d ) > 0 )
-                     ? _halo_cell_width
-                     : 0;
+        min[d] = _halo_cell_width;
 
     // Compute the upper bound.
     std::array<long, num_space_dim> max;
@@ -824,26 +800,12 @@ auto LocalGrid<MeshType>::faceIndexSpace( Ghost, Face<Dir>, Local ) const
     {
         if ( Dir == d )
         {
-            size[d] = _global_grid->ownedNumCell( d ) + 1;
+            size[d] = totalNumCell( d ) + 1;
         }
         else
         {
-            size[d] = _global_grid->ownedNumCell( d );
+            size[d] = totalNumCell( d );
         }
-    }
-
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-    {
-        // Add the lower halo.
-        if ( _global_grid->isPeriodic( d ) ||
-             _global_grid->dimBlockId( d ) > 0 )
-            size[d] += _halo_cell_width;
-
-        // Add the upper halo.
-        if ( _global_grid->isPeriodic( d ) ||
-             _global_grid->dimBlockId( d ) <
-                 _global_grid->dimNumBlock( d ) - 1 )
-            size[d] += _halo_cell_width;
     }
 
     return IndexSpace<num_space_dim>( size );
@@ -976,10 +938,7 @@ std::enable_if_t<3 == NSD, IndexSpace<3>>
     // Compute the lower bound.
     std::array<long, 3> min;
     for ( std::size_t d = 0; d < 3; ++d )
-        min[d] = ( _global_grid->isPeriodic( d ) ||
-                   _global_grid->dimBlockId( d ) > 0 )
-                     ? _halo_cell_width
-                     : 0;
+        min[d] = _halo_cell_width;
 
     // Compute the upper bound.
     std::array<long, 3> max;
@@ -1015,26 +974,12 @@ std::enable_if_t<3 == NSD, IndexSpace<3>>
     {
         if ( Dir == d )
         {
-            size[d] = _global_grid->ownedNumCell( d );
+            size[d] = totalNumCell( d );
         }
         else
         {
-            size[d] = _global_grid->ownedNumCell( d ) + 1;
+            size[d] = totalNumCell( d ) + 1;
         }
-    }
-
-    for ( std::size_t d = 0; d < 3; ++d )
-    {
-        // Add the lower halo.
-        if ( _global_grid->isPeriodic( d ) ||
-             _global_grid->dimBlockId( d ) > 0 )
-            size[d] += _halo_cell_width;
-
-        // Add the upper halo.
-        if ( _global_grid->isPeriodic( d ) ||
-             _global_grid->dimBlockId( d ) <
-                 _global_grid->dimNumBlock( d ) - 1 )
-            size[d] += _halo_cell_width;
     }
 
     return IndexSpace<3>( size );

@@ -45,7 +45,8 @@ int haloPad( Face<D>, int d )
 // Check initial array gather. We should get 1 everywhere in the array now
 // where there was ghost overlap. Otherwise there will still be 0.
 template <class Array>
-void checkGather( const int halo_width, const Array& array )
+void checkGather( const std::array<bool, 2>& is_dim_periodic,
+                  const int halo_width, const Array& array )
 {
     // FIXME Change back to fine grained EXPECT_EQ when passing on all distros
     int pass_gather_test = 1;
@@ -55,21 +56,56 @@ void checkGather( const int halo_width, const Array& array )
                                                           array.view() );
     auto pad_i = haloPad( typename Array::entity_type(), Dim::I );
     auto pad_j = haloPad( typename Array::entity_type(), Dim::J );
+    const auto& global_grid = array.layout()->localGrid()->globalGrid();
+
+    // This function checks if an index is in the low boundary halo in the
+    // given dimension
+    auto in_boundary_min_halo = [&]( const int i, const int dim ) {
+        if ( is_dim_periodic[dim] || !global_grid.onLowBoundary( dim ) )
+            return false;
+        else
+            return ( i < owned_space.min( dim ) );
+    };
+
+    // This function checks if an index is in the high boundary halo of in the
+    // given dimension
+    auto in_boundary_max_halo = [&]( const int i, const int dim ) {
+        if ( is_dim_periodic[dim] || !global_grid.onHighBoundary( dim ) )
+            return false;
+        else
+            return ( i >= owned_space.max( dim ) );
+    };
+
+    // Check the gather.
     for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
         for ( unsigned j = 0; j < ghosted_space.extent( 1 ); ++j )
             for ( unsigned l = 0; l < ghosted_space.extent( 2 ); ++l )
-                if ( i < owned_space.min( Dim::I ) - halo_width ||
-                     i >= owned_space.max( Dim::I ) + halo_width + pad_i ||
-                     j < owned_space.min( Dim::J ) - halo_width ||
-                     j >= owned_space.max( Dim::J ) + halo_width + pad_j )
+                if ( in_boundary_min_halo( i, Dim::I ) ||
+                     in_boundary_min_halo( j, Dim::J ) ||
+                     in_boundary_max_halo( i, Dim::I ) ||
+                     in_boundary_max_halo( j, Dim::J ) )
                 {
                     if ( host_view( i, j, l ) != 0.0 )
+                    {
                         pass_gather_test = 0;
+                    }
+                }
+                else if ( i < owned_space.min( Dim::I ) - halo_width ||
+                          i >= owned_space.max( Dim::I ) + halo_width + pad_i ||
+                          j < owned_space.min( Dim::J ) - halo_width ||
+                          j >= owned_space.max( Dim::J ) + halo_width + pad_j )
+                {
+                    if ( host_view( i, j, l ) != 0.0 )
+                    {
+                        pass_gather_test = 0;
+                    }
                 }
                 else
                 {
                     if ( host_view( i, j, l ) != 1.0 )
+                    {
                         pass_gather_test = 0;
+                    }
                 }
     EXPECT_EQ( pass_gather_test, 1 );
 }
@@ -165,7 +201,7 @@ void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
         halo->gather( TEST_EXECSPACE(), *array );
 
         // Check the gather.
-        checkGather( halo_width, *array );
+        checkGather( is_dim_periodic, halo_width, *array );
 
         // Scatter from the ghosts back to owned.
         halo->scatter( TEST_EXECSPACE(), ScatterReduce::Sum(), *array );
@@ -221,10 +257,10 @@ void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
                       *face_j_array );
 
         // Check the gather.
-        checkGather( halo_width, *cell_array );
-        checkGather( halo_width, *node_array );
-        checkGather( halo_width, *face_i_array );
-        checkGather( halo_width, *face_j_array );
+        checkGather( is_dim_periodic, halo_width, *cell_array );
+        checkGather( is_dim_periodic, halo_width, *node_array );
+        checkGather( is_dim_periodic, halo_width, *face_i_array );
+        checkGather( is_dim_periodic, halo_width, *face_j_array );
 
         // Scatter from the ghosts back to owned.
         halo->scatter( TEST_EXECSPACE(), ScatterReduce::Sum(), *cell_array,

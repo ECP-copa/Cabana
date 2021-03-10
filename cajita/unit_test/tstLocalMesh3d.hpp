@@ -90,29 +90,20 @@ void uniformLocalMeshTest3d( const LocalMeshType& local_mesh,
 
     for ( int d = 0; d < 3; ++d )
     {
-        int ghost_lc_offset =
-            ( global_grid.isPeriodic( d ) || global_grid.dimBlockId( d ) > 0 )
-                ? halo_width
-                : 0;
-        EXPECT_FLOAT_EQ( ghost_lc_m( d ),
-                         low_corner[d] +
-                             cell_size * ( global_grid.globalOffset( d ) -
-                                           ghost_lc_offset ) );
+        EXPECT_FLOAT_EQ(
+            ghost_lc_m( d ),
+            low_corner[d] +
+                cell_size * ( global_grid.globalOffset( d ) - halo_width ) );
 
-        int ghost_hc_offset =
-            ( global_grid.isPeriodic( d ) ||
-              global_grid.dimBlockId( d ) < global_grid.dimNumBlock( d ) - 1 )
-                ? local_grid.haloCellWidth()
-                : 0;
         EXPECT_FLOAT_EQ( ghost_hc_m( d ),
                          low_corner[d] +
                              cell_size * ( global_grid.globalOffset( d ) +
-                                           ghost_hc_offset +
-                                           global_grid.ownedNumCell( d ) ) );
+                                           global_grid.ownedNumCell( d ) +
+                                           halo_width ) );
 
-        EXPECT_FLOAT_EQ( ghost_ext_m( d ),
-                         cell_size * ( global_grid.ownedNumCell( d ) +
-                                       ghost_hc_offset + ghost_lc_offset ) );
+        EXPECT_FLOAT_EQ(
+            ghost_ext_m( d ),
+            cell_size * ( global_grid.ownedNumCell( d ) + 2 * halo_width ) );
     }
 
     // Check the cell locations and measures.
