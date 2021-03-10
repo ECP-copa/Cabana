@@ -9,5 +9,8 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_subdirectory(peakflops)
+if(Kokkos_ENABLE_OPENMP)
+  add_subdirectory(peakflops)
+endif()
+
 add_subdirectory(benchmark)
