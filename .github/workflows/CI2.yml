@@ -44,7 +44,6 @@ jobs:
             kokkos_ver: 'master'
             arborx: ['NoArborX']
             coverage: 'OFF'
-            cxx_flags: ' -parallel'
           - distro: 'fedora:intel'
             cxx: 'icpc'
             openmp: 'OFF'
@@ -52,7 +51,6 @@ jobs:
             kokkos_ver: 'master'
             arborx: ['NoArborX']
             coverage: 'OFF'
-            cxx_flags: ' -parallel'
           - distro: 'fedora:latest'
             cxx: 'g++'
             openmp: 'ON'
@@ -175,7 +173,7 @@ jobs:
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
             -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
-            -DCMAKE_CXX_FLAGS="-Wall -pedantic ${{ matrix.cxx_flags }}" \
+            -DCMAKE_CXX_FLAGS="-Wall -pedantic" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
