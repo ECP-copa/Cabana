@@ -34,13 +34,14 @@ class SparseDimPartitioner : public Partitioner
         , _num_step_rebalance( num_step_rebalance )
         , _workload_prefix_sum( Kokkos::View<int***, MemorySpace>(
               "workload_prefix_sum",
-              global_cells_per_dim[0] >> cell_bits_per_tile_dim,
-              global_cells_per_dim[1] >> cell_bits_per_tile_dim,
-              global_cells_per_dim[2] >> cell_bits_per_tile_dim ) )
+              ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
+              ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
+              ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 ) )
         , _workload_per_tile( Kokkos::View<int***, MemorySpace>(
-              "workload", global_cells_per_dim[0] >> cell_bits_per_tile_dim,
-              global_cells_per_dim[1] >> cell_bits_per_tile_dim,
-              global_cells_per_dim[2] >> cell_bits_per_tile_dim ) )
+              "workload",
+              ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
+              ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
+              ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 ) )
     {
         // compute the available rank number (in each dimension)
         ranksPerDimension( comm );
@@ -55,13 +56,14 @@ class SparseDimPartitioner : public Partitioner
         , _num_step_rebalance( num_step_rebalance )
         , _workload_prefix_sum( Kokkos::View<int***, MemorySpace>(
               "workload_prefix_sum",
-              global_cells_per_dim[0] >> cell_bits_per_tile_dim,
-              global_cells_per_dim[1] >> cell_bits_per_tile_dim,
-              global_cells_per_dim[2] >> cell_bits_per_tile_dim ) )
+              ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
+              ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
+              ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 ) )
         , _workload_per_tile( Kokkos::View<int***, MemorySpace>(
-              "workload", global_cells_per_dim[0] >> cell_bits_per_tile_dim,
-              global_cells_per_dim[1] >> cell_bits_per_tile_dim,
-              global_cells_per_dim[2] >> cell_bits_per_tile_dim ) )
+              "workload",
+              ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
+              ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
+              ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 ) )
     {
         std::copy( ranks_per_dim.begin(), ranks_per_dim.end(),
                    _ranks_per_dim.data() );
@@ -103,7 +105,7 @@ class SparseDimPartitioner : public Partitioner
 
         // Get the tiles per dimension and the remainder.
         std::array<int, 3> tiles_per_dim;
-        auto rec_mirror = Kokkos::create_mirror_view(
+        auto rec_mirror = Kokkos::create_mirror_view_and_copy(
             Kokkos::HostSpace(), _rectangle_partition_dev );
         for ( int d = 0; d < 3; ++d )
             tiles_per_dim[d] = rec_mirror( cart_rank[d] + 1, d ) -
@@ -111,15 +113,15 @@ class SparseDimPartitioner : public Partitioner
         return tiles_per_dim;
     }
 
-    std::array<int, 3> ownedCellsPerDimension(
-        MPI_Comm cart_comm,
-        const std::array<int, 3>& ) const override
-    
+    std::array<int, 3>
+    ownedCellsPerDimension( MPI_Comm cart_comm,
+                            const std::array<int, 3>& ) const override
+    {
         auto tiles_per_dim = ownedTilesPerDimension( cart_comm );
         for ( int i = 0; i < 3; ++i )
         {
             // compute cells_per_dim from tiles_per_dim
-            tiles_per_dim[i] <<= cell_bits_per_tile_dim;
+            tiles_per_dim[i] <<= cell_bits_per_tile_dim * 3;
         }
         return tiles_per_dim;
     }
@@ -134,19 +136,35 @@ class SparseDimPartitioner : public Partitioner
                 max_size < _ranks_per_dim[d] ? _ranks_per_dim[d] : max_size;
 
         _rectangle_partition_dev = Kokkos::View<int* [3], MemorySpace>(
-            "_rectangle_partition_dev", max_size );
+            "_rectangle_partition_dev", max_size + 1 );
         auto rec_mirror = Kokkos::create_mirror_view(
             Kokkos::HostSpace(), _rectangle_partition_dev );
-        for ( int id = 0; id < _ranks_per_dim[0]; ++id )
+        for ( int id = 0; id < _ranks_per_dim[0] + 1; ++id )
             rec_mirror( id, 0 ) = rec_partition_i[id];
 
-        for ( int id = 0; id < _ranks_per_dim[1]; ++id )
+        for ( int id = 0; id < _ranks_per_dim[1] + 1; ++id )
             rec_mirror( id, 1 ) = rec_partition_j[id];
 
-        for ( int id = 0; id < _ranks_per_dim[2]; ++id )
+        for ( int id = 0; id < _ranks_per_dim[2] + 1; ++id )
             rec_mirror( id, 2 ) = rec_partition_k[id];
 
         Kokkos::deep_copy( _rectangle_partition_dev, rec_mirror );
+    }
+
+    std::array<std::vector<int>, 3> get_current_partition()
+    {
+        std::array<std::vector<int>, 3> rec_part;
+        auto rec_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _rectangle_partition_dev );
+        for ( int d = 0; d < 3; ++d )
+        {
+            rec_part[d].resize( _ranks_per_dim[d] );
+            for ( int id = 0; id < _ranks_per_dim[d] + 1; ++id )
+            {
+                rec_part[d][id] = rec_mirror( id, d );
+            }
+        }
+        return rec_part;
     }
 
     // sparse_map (where there are particles), Kokkos_array weight - tile =>
@@ -168,7 +186,8 @@ class SparseDimPartitioner : public Partitioner
                          cell_bits_per_tile_dim;
                 int tz = static_cast<int>( view( i, 2 ) / dx - 0.5 ) >>
                          cell_bits_per_tile_dim;
-                Kokkos::atomic_increment( &_workload_per_tile( ti, tj, tz ) );
+                Kokkos::atomic_increment(
+                    &_workload_per_tile( ti + 1, tj + 1, tz + 1 ) );
             } );
     }
 
@@ -187,7 +206,7 @@ class SparseDimPartitioner : public Partitioner
                     int ti, tj, tk;
                     sparseMap.key2ijk( key, ti, tj, tk );
                     Kokkos::atomic_increment(
-                        &_workload_per_tile( ti, tj, tk ) );
+                        &_workload_per_tile( ti + 1, tj + 1, tk + 1 ) );
                 }
             } );
     }
@@ -198,14 +217,28 @@ class SparseDimPartitioner : public Partitioner
         int total_size = _workload_per_tile.extent( 0 ) *
                          _workload_per_tile.extent( 1 ) *
                          _workload_per_tile.extent( 2 );
+        printf( "total_size = %d\n", total_size );
         MPI_Allreduce( _workload_per_tile.data(), _workload_prefix_sum.data(),
                        total_size, MPI_INT, MPI_SUM, comm );
+        printf( "finish allreduce\n" );
+
+        // for ( int i = 0; i < _workload_per_tile.extent( 0 ); ++i )
+        //     for ( int j = 0; j < _workload_per_tile.extent( 1 ); ++j )
+        //         for ( int k = 0; k < _workload_per_tile.extent( 2 ); ++k )
+        //         {
+        //             printf( "i = %d, j = %d, k = %d, _workload_per_tile =
+        //             %d,"
+        //                     "_workload_prefix_sum = %d\n",
+        //                     i, j, k, _workload_per_tile( i, j, k ),
+        //                     _workload_prefix_sum( i, j, k ) );
+        //         }
 
         // compute the prefix sum
         for ( int j = 0; j < _workload_prefix_sum.extent( 1 ); ++j )
             for ( int k = 0; k < _workload_prefix_sum.extent( 2 ); ++k )
                 Kokkos::parallel_scan(
-                    _workload_prefix_sum.extent( 0 ),
+                    Kokkos::RangePolicy<ExecSpace>(
+                        0, _workload_prefix_sum.extent( 0 ) ),
                     KOKKOS_LAMBDA( const int i, int& update,
                                    const bool final ) {
                         const float val_i = _workload_prefix_sum( i, j, k );
@@ -219,7 +252,8 @@ class SparseDimPartitioner : public Partitioner
         for ( int i = 0; i < _workload_prefix_sum.extent( 0 ); ++i )
             for ( int k = 0; k < _workload_prefix_sum.extent( 2 ); ++k )
                 Kokkos::parallel_scan(
-                    _workload_prefix_sum.extent( 1 ),
+                    Kokkos::RangePolicy<ExecSpace>(
+                        0, _workload_prefix_sum.extent( 1 ) ),
                     KOKKOS_LAMBDA( const int j, int& update,
                                    const bool final ) {
                         const float val_i = _workload_prefix_sum( i, j, k );
@@ -233,7 +267,8 @@ class SparseDimPartitioner : public Partitioner
         for ( int i = 0; i < _workload_prefix_sum.extent( 0 ); ++i )
             for ( int j = 0; j < _workload_prefix_sum.extent( 1 ); ++j )
                 Kokkos::parallel_scan(
-                    _workload_prefix_sum.extent( 2 ),
+                    Kokkos::RangePolicy<ExecSpace>(
+                        0, _workload_prefix_sum.extent( 2 ) ),
                     KOKKOS_LAMBDA( const int k, int& update,
                                    const bool final ) {
                         const float val_i = _workload_prefix_sum( i, j, k );
@@ -243,6 +278,17 @@ class SparseDimPartitioner : public Partitioner
                             _workload_prefix_sum( i, j, k ) = update;
                         }
                     } );
+
+        // for ( int i = 0; i < _workload_per_tile.extent( 0 ); ++i )
+        //     for ( int j = 0; j < _workload_per_tile.extent( 1 ); ++j )
+        //         for ( int k = 0; k < _workload_per_tile.extent( 2 ); ++k )
+        //         {
+        //             printf( "i = %d, j = %d, k = %d, _workload_per_tile =
+        //             %d,"
+        //                     "_workload_prefix_sum = %d\n",
+        //                     i, j, k, _workload_per_tile( i, j, k ),
+        //                     _workload_prefix_sum( i, j, k ) );
+        //         }
     }
 
     void optimizePartition()
@@ -265,21 +311,25 @@ class SparseDimPartitioner : public Partitioner
                     int k = static_cast<int>( jnk % _ranks_per_dim[dk] );
                     ave_workload( jnk ) =
                         compute_sub_workload( dj, j, dk, k ) / rank;
+                    printf( "ave_workload(%d) = %d\n", jnk,
+                            ave_workload( jnk ) );
                 } );
 
             int sum_ave_workload = 0;
             Kokkos::parallel_reduce(
-                "Reduction", _ranks_per_dim[dj] * _ranks_per_dim[dk],
+                Kokkos::RangePolicy<ExecSpace>( 0, _ranks_per_dim[dj] *
+                                                       _ranks_per_dim[dk] ),
                 KOKKOS_LAMBDA( const int idx, int& update ) {
                     update += ave_workload( idx );
                 },
                 sum_ave_workload );
+            printf( "sum_ave_workload = %d\n", sum_ave_workload );
 
             int point_i = 1;
+            int last_point = 0;
             Kokkos::View<int*, MemorySpace> current_workload(
                 "current_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
-            for ( int current_rank = 0; current_rank < rank - 1;
-                  current_rank++ )
+            for ( int current_rank = 1; current_rank < rank; current_rank++ )
             {
                 int last_diff = __INT_MAX__;
                 while ( true )
@@ -292,29 +342,48 @@ class SparseDimPartitioner : public Partitioner
                                 static_cast<int>( jnk / _ranks_per_dim[dk] );
                             int k =
                                 static_cast<int>( jnk % _ranks_per_dim[dk] );
-                            current_workload( jnk ) =
-                                compute_sub_workload( di, point_i, dj, j, dk,
-                                                      k ) /
-                                rank;
+                            current_workload( jnk ) = compute_sub_workload(
+                                di, last_point, point_i, dj, j, dk, k );
+                            printf( "point_i = %d, last_point = %d, "
+                                    "cur_workload(%d) = %d\n",
+                                    point_i, last_point, jnk,
+                                    current_workload( jnk ) );
                         } );
                     int sum_current_workload;
                     Kokkos::parallel_reduce(
-                        "Reduction", _ranks_per_dim[dj] * _ranks_per_dim[dk],
+                        Kokkos::RangePolicy<ExecSpace>(
+                            0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                         KOKKOS_LAMBDA( const int idx, int& update ) {
                             update += current_workload( idx );
                         },
                         sum_current_workload );
+                    printf( "point_i = %d, last_point = %d, "
+                            "sum_current_workload= %d\n",
+                            point_i, last_point, sum_current_workload );
                     auto diff =
                         std::abs( sum_current_workload - sum_ave_workload );
                     if ( diff < last_diff )
                     {
+                        printf( "new optimal: last_diff = %d, diff = %d, "
+                                "point_i = %d, rank = %d\n",
+                                last_diff, diff, point_i, rank );
+                        if ( point_i == _rectangle_partition_dev( rank, di ) )
+                        {
+                            _rectangle_partition_dev( current_rank, di ) =
+                                point_i;
+                            break;
+                        }
                         last_diff = diff;
                         point_i++;
                     }
                     else
                     {
+                        printf( "find optimal(+1): last_diff = %d, diff = %d, "
+                                "point_i = %d, rank = %d\n",
+                                last_diff, diff, point_i, rank );
                         _rectangle_partition_dev( current_rank, di ) =
                             point_i - 1;
+                        last_point = point_i;
                         break;
                     }
                 }
@@ -336,25 +405,38 @@ class SparseDimPartitioner : public Partitioner
         {
             dim_i = ( dim_i + 1 ) % 3;
         }
-        end[dim_i] = _ranks_per_dim[dim_i];
-        end[dim_j] = _rectangle_partition_dev( j, dim_j );
-        end[dim_k] = _rectangle_partition_dev( k, dim_k );
+        end[dim_i] = _rectangle_partition_dev( _ranks_per_dim[dim_i], dim_i );
+        end[dim_j] = _rectangle_partition_dev( j + 1, dim_j );
+        end[dim_k] = _rectangle_partition_dev( k + 1, dim_k );
 
-        start[dim_i] = _ranks_per_dim[dim_i];
-        start[dim_j] = ( j > 0 ) ? _rectangle_partition_dev( j - 1, dim_j ) : 0;
-        start[dim_k] = ( k > 0 ) ? _rectangle_partition_dev( k - 1, dim_k ) : 0;
+        start[dim_i] = 0;
+        start[dim_j] = _rectangle_partition_dev( j, dim_j );
+        start[dim_k] = _rectangle_partition_dev( k, dim_k );
 
         // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] -
         // S[i-1][j-1][k]
         // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
+        printf(
+            "1 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d, %d], "
+            "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n",
+            dim_j, j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
+            end[dim_i], end[dim_j], end[dim_k],
+            _workload_prefix_sum( end[0], end[1], end[2] ),
+            _workload_prefix_sum( start[0], end[1], end[2] ),
+            _workload_prefix_sum( end[0], start[1], end[2] ),
+            _workload_prefix_sum( end[0], end[1], start[2] ),
+            _workload_prefix_sum( start[0], start[1], end[2] ),
+            _workload_prefix_sum( end[0], start[1], start[2] ),
+            _workload_prefix_sum( start[0], end[1], start[2] ),
+            _workload_prefix_sum( start[0], start[1], start[2] ) );
 
-        return _workload_prefix_sum( end[0], end[1], end[2] ) // S[i][j][k]
+        return _workload_prefix_sum( end[0], end[1], end[2] ) //    S[i][j][k]
                -
-               _workload_prefix_sum( start[0], end[1], end[2] ) // S[i-1][j][k]
+               _workload_prefix_sum( start[0], end[1], end[2] ) //  S[i-1][j][k]
                -
-               _workload_prefix_sum( end[0], start[1], end[2] ) // S[i][j-1][k]
+               _workload_prefix_sum( end[0], start[1], end[2] ) //  S[i][j-1][k]
                -
-               _workload_prefix_sum( end[0], end[1], start[2] ) // S[i][j][k-1]
+               _workload_prefix_sum( end[0], end[1], start[2] ) //  S[i][j][k-1]
                + _workload_prefix_sum( start[0], start[1],
                                        end[2] ) // S[i-1][j-1][k]
                + _workload_prefix_sum( end[0], start[1],
@@ -363,24 +445,39 @@ class SparseDimPartitioner : public Partitioner
                                        start[2] ) // S[i-1][j][k-1]
                - _workload_prefix_sum( start[0], start[1],
                                        start[2] ); // S[i-1][j-1][k-1]
+        // return _workload_prefix_sum( end[0], end[1], end[2] );
     }
 
-    KOKKOS_INLINE_FUNCTION int
-    compute_sub_workload( int dim_i, int i, int dim_j, int j, int dim_k, int k )
+    KOKKOS_INLINE_FUNCTION int compute_sub_workload( int dim_i, int i_start,
+                                                     int i_end, int dim_j,
+                                                     int j, int dim_k, int k )
     {
         Kokkos::Array<int, 3> end, start;
-        end[dim_i] = _rectangle_partition_dev( i, dim_i );
-        end[dim_j] = _rectangle_partition_dev( j, dim_j );
-        end[dim_k] = _rectangle_partition_dev( k, dim_k );
+        end[dim_i] = i_end;
+        end[dim_j] = _rectangle_partition_dev( j + 1, dim_j );
+        end[dim_k] = _rectangle_partition_dev( k + 1, dim_k );
 
-        start[dim_i] = ( i > 0 ) ? _rectangle_partition_dev( i - 1, dim_i ) : 0;
-        start[dim_j] = ( j > 0 ) ? _rectangle_partition_dev( j - 1, dim_j ) : 0;
-        start[dim_k] = ( k > 0 ) ? _rectangle_partition_dev( k - 1, dim_k ) : 0;
+        start[dim_i] = i_start;
+        start[dim_j] = _rectangle_partition_dev( j, dim_j );
+        start[dim_k] = _rectangle_partition_dev( k, dim_k );
 
         // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] -
         // S[i-1][j-1][k]
         // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
 
+        printf(
+            "2 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d, %d], "
+            "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n",
+            dim_j, j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
+            end[dim_i], end[dim_j], end[dim_k],
+            _workload_prefix_sum( end[0], end[1], end[2] ),
+            _workload_prefix_sum( start[0], end[1], end[2] ),
+            _workload_prefix_sum( end[0], start[1], end[2] ),
+            _workload_prefix_sum( end[0], end[1], start[2] ),
+            _workload_prefix_sum( start[0], start[1], end[2] ),
+            _workload_prefix_sum( end[0], start[1], start[2] ),
+            _workload_prefix_sum( start[0], end[1], start[2] ),
+            _workload_prefix_sum( start[0], start[1], start[2] ) );
         return _workload_prefix_sum( end[0], end[1], end[2] ) // S[i][j][k]
                -
                _workload_prefix_sum( start[0], end[1], end[2] ) // S[i-1][j][k]

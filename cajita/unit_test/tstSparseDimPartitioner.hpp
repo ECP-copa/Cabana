@@ -58,20 +58,37 @@ void uniform_distribution_automatic_rank()
     partitioner.initialize_rec_partition( rec_partitions[0], rec_partitions[1],
                                           rec_partitions[2] );
 
+    // test getCurrentPartition
+    {
+        auto part = partitioner.get_current_partition();
+        for ( int d = 0; d < 3; ++d )
+            for ( int id = 0; id < ranks_per_dim[d] + 1; id++ )
+                EXPECT_EQ( part[d][id], rec_partitions[d][id] );
+    }
+
     // test ownedCellsPerDimension
-    auto owned_cells_per_dim = partitioner.ownedCellsPerDimension(
-        MPI_COMM_WORLD, global_cells_per_dim );
     std::array<int, 3> cart_rank;
+    std::array<int, 3> periodic_dims = { 0, 0, 0 };
+    int reordered_cart_ranks = 1;
+    MPI_Comm cart_comm;
+    MPI_Cart_create( MPI_COMM_WORLD, 3, ranks_per_dim.data(),
+                     periodic_dims.data(), reordered_cart_ranks, &cart_comm );
     int linear_rank;
-    MPI_Comm_rank( MPI_COMM_WORLD, &linear_rank );
-    //make a new communicater with MPI_Cart_create
-    MPI_Cart_coords( MPI_COMM_WORLD, linear_rank, 3, cart_rank.data() );
+    MPI_Comm_rank( cart_comm, &linear_rank );
+    // make a new communicater with MPI_Cart_create
+    MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
+
+    auto owned_cells_per_dim =
+        partitioner.ownedCellsPerDimension( cart_comm, global_cells_per_dim );
+    auto owned_tiles_per_dim = partitioner.ownedTilesPerDimension( cart_comm );
     for ( int d = 0; d < 3; ++d )
     {
         auto gt_tile = rec_partitions[d][cart_rank[d] + 1] -
                        rec_partitions[d][cart_rank[d]];
-
-        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim );
+        EXPECT_EQ( owned_tiles_per_dim[d], gt_tile );
+        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim *
+                                               cell_per_tile_dim *
+                                               cell_per_tile_dim );
     }
 
     // init sparseMap
@@ -101,14 +118,16 @@ void uniform_distribution_automatic_rank()
     partitioner.optimizePartition();
 
     // check results
-    owned_cells_per_dim = partitioner.ownedCellsPerDimension(
-        MPI_COMM_WORLD, global_cells_per_dim );
+    owned_cells_per_dim =
+        partitioner.ownedCellsPerDimension( cart_comm, global_cells_per_dim );
     for ( int d = 0; d < 3; ++d )
     {
         auto gt_tile = rec_partitions[d][cart_rank[d] + 1] -
                        rec_partitions[d][cart_rank[d]];
 
-        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim );
+        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim *
+                                               cell_per_tile_dim *
+                                               cell_per_tile_dim );
     }
 }
 
