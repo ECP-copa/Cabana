@@ -15,6 +15,7 @@ set(SERIAL_TESTS
   GlobalMesh
   IndexSpace
   SparseIndexSpace
+  SparseDimPartitioner
   Splines
   )
 
