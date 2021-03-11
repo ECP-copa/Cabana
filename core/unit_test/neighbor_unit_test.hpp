@@ -422,6 +422,87 @@ void checkSecondNeighborParallelFor( const ListType& nlist,
         EXPECT_EQ( N2_result( p ), vector_mirror( p ) );
     }
 }
+
+//---------------------------------------------------------------------------//
+template <class ListType, class TestListType>
+void checkSplitFirstNeighborParallelFor( const ListType& nlist,
+                                         const TestListType& N2_list_copy,
+                                         const int num_particle )
+{
+    // Create Kokkos views for the write operation.
+    using memory_space = typename TEST_MEMSPACE::memory_space;
+    Kokkos::View<int*, Kokkos::HostSpace> N2_result( "N2_result",
+                                                     num_particle );
+    Kokkos::View<int*, memory_space> serial_result( "serial_result",
+                                                    num_particle );
+    Kokkos::View<int*, memory_space> team_result( "team_result", num_particle );
+
+    Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
+    const auto range_begin = policy.begin();
+    using team_policy_type =
+        Kokkos::TeamPolicy<TEST_EXECSPACE, Kokkos::Schedule<Kokkos::Dynamic>>;
+    team_policy_type team_policy( policy.end() - policy.begin(), Kokkos::AUTO );
+
+    // Add the number of neighbors to the per particle counts.
+    auto serial_neigh_op = KOKKOS_LAMBDA( const int i, const int n )
+    {
+        Kokkos::atomic_add( &serial_result( i ), n );
+    };
+    auto team_neigh_op = KOKKOS_LAMBDA( const int i, const int n )
+    {
+        Kokkos::atomic_add( &team_result( i ), n );
+    };
+
+    // Test the split neighbor iteration by adding a value from each central
+    // particle and each neighbor (separately) and compare to N^2 counts.
+    auto serial_central_op = KOKKOS_LAMBDA( const int i )
+    {
+        Kokkos::atomic_add( &serial_result( i ), i );
+
+        Cabana::for_each_neighbor( i, serial_neigh_op, nlist,
+                                   Cabana::FirstNeighborsTag() );
+    };
+    auto team_central_op =
+        KOKKOS_LAMBDA( const typename team_policy_type::member_type& team )
+    {
+        const int i = team.league_rank() + range_begin;
+
+        // Restrict central particle updates to once per team.
+        Kokkos::single( Kokkos::PerTeam( team ),
+                        [=]() { Kokkos::atomic_add( &team_result( i ), i ); } );
+
+        Cabana::for_each_neighbor( i, team, team_neigh_op, nlist,
+                                   Cabana::FirstNeighborsTag() );
+    };
+
+    Kokkos::parallel_for( "test_embedded_1st_serial", policy,
+                          serial_central_op );
+    Kokkos::parallel_for( "test_embedded_1st_team", team_policy,
+                          team_central_op );
+    Kokkos::fence();
+
+    // Use a full N^2 neighbor list to check against.
+    for ( int p = 0; p < num_particle; ++p )
+    {
+        N2_result( p ) += p;
+        for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
+        {
+            N2_result( p ) += N2_list_copy.neighbors( p, n );
+        }
+    }
+
+    // Check the result.
+    auto serial_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), serial_result );
+    auto team_mirror =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), team_result );
+    for ( int p = 0; p < num_particle; ++p )
+    {
+        EXPECT_EQ( N2_result( p ), serial_mirror( p ) );
+        EXPECT_EQ( N2_result( p ), team_mirror( p ) );
+    }
+}
+
 //---------------------------------------------------------------------------//
 template <class ListType, class TestListType, class AoSoAType>
 void checkFirstNeighborParallelReduce( const ListType& nlist,

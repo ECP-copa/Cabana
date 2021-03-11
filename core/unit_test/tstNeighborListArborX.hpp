@@ -206,6 +206,9 @@ void testNeighborArborXParallelFor()
 
         checkSecondNeighborParallelFor( nlist, test_data.N2_list_copy,
                                         test_data.num_particle );
+
+        checkSplitFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                            test_data.num_particle );
     }
     {
         // Create the neighbor list.

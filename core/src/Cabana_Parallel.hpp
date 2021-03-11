@@ -260,11 +260,11 @@ inline void neighbor_parallel_for(
   \brief Execute \c functor in parallel according to the execution \c policy
   with thread-local serial loops over particle first and second neighbors.
 
-  \tparam ExecutionSpace The execution space in which to execute the functor.
-
   \tparam FunctorType The functor type to execute.
 
   \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParameters The Kokkos execution policy parameters.
 
   \param exec_policy The policy over which to execute the functor.
 
@@ -329,11 +329,11 @@ inline void neighbor_parallel_for(
   \brief Execute \c functor in parallel according to the execution \c policy
   with team parallelism over particle first neighbors.
 
-  \tparam ExecutionSpace The execution space in which to execute the functor.
-
   \tparam FunctorType The functor type to execute.
 
   \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParameters The Kokkos execution policy parameters.
 
   \param exec_policy The policy over which to execute the functor.
 
@@ -420,11 +420,11 @@ inline void neighbor_parallel_for(
   with team parallelism over particle first neighbors and serial loop over
   second neighbors.
 
-  \tparam ExecutionSpace The execution space in which to execute the functor.
-
   \tparam FunctorType The functor type to execute.
 
   \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParameters The Kokkos execution policy parameters.
 
   \param exec_policy The policy over which to execute the functor.
 
@@ -499,11 +499,11 @@ inline void neighbor_parallel_for(
   with team parallelism over particle first neighbors and vector loop
   parallelism over second neighbors.
 
-  \tparam ExecutionSpace The execution space in which to execute the functor.
-
   \tparam FunctorType The functor type to execute.
 
   \tparam NeighborListType The neighbor list type.
+
+  \tparam ExecParameters The Kokkos execution policy parameters.
 
   \param exec_policy The policy over which to execute the functor.
 
@@ -988,6 +988,78 @@ inline void neighbor_parallel_reduce(
         Kokkos::parallel_reduce( team_policy, neigh_reduce, reduce_val );
     else
         Kokkos::parallel_reduce( str, team_policy, neigh_reduce, reduce_val );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute \c functor in serial within existing parallel kernel over
+  particle first neighbors.
+
+  \tparam IndexType The particle index type.
+
+  \tparam FunctorType The neighbor functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \param neigh_functor The neighbor functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param neighborstag Iteration tag indicating operations over particle first
+  neighbors.
+*/
+template <class IndexType, class FunctorType, class NeighborListType>
+KOKKOS_INLINE_FUNCTION void
+for_each_neighbor( const IndexType i, const FunctorType& neighbor_functor,
+                   const NeighborListType& list, const FirstNeighborsTag )
+{
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    for ( IndexType n = 0;
+          n < static_cast<IndexType>(
+                  neighbor_list_traits::numNeighbor( list, i ) );
+          ++n )
+        neighbor_functor(
+            i, static_cast<IndexType>(
+                   neighbor_list_traits::getNeighbor( list, i, n ) ) );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute team parallel \c functor within existing parallel kernel over
+  particle first neighbors.
+
+  \tparam IndexType The particle index type.
+
+  \tparam FunctorType The neighbor functor type to execute.
+
+  \tparam NeighborListType The neighbor list type.
+
+  \param neigh_functor The neighbor functor to execute in parallel
+
+  \param list The neighbor list over which to execute the neighbor operations.
+
+  \param neighborstag Iteration tag indicating operations over particle first
+  neighbors.
+*/
+template <class IndexType, class FunctorType, class NeighborListType,
+          class TeamMemberType>
+KOKKOS_INLINE_FUNCTION void
+for_each_neighbor( const IndexType i, const TeamMemberType team,
+                   const FunctorType& neighbor_functor,
+                   const NeighborListType& list, const FirstNeighborsTag )
+{
+    using neighbor_list_traits = NeighborList<NeighborListType>;
+
+    Kokkos::parallel_for(
+        Kokkos::TeamThreadRange( team,
+                                 neighbor_list_traits::numNeighbor( list, i ) ),
+        [&]( const IndexType n ) {
+            Impl::functorTagDispatch<void>(
+                neighbor_functor, i,
+                static_cast<IndexType>(
+                    neighbor_list_traits::getNeighbor( list, i, n ) ) );
+        } );
 }
 
 } // end namespace Cabana
