@@ -64,53 +64,60 @@ void writeTest3d()
 
     // Field data values.
     double pi2 = 8.0 * atan( 1.0 );
+    {
+        // Create a scalar cell field and fill it with data.
+        auto cell_layout = createArrayLayout( global_grid, 0, 1, Cell() );
+        auto cell_field =
+            createArray<double, TEST_DEVICE>( "cell_field_3d", cell_layout );
+        auto cell_data = cell_field->view();
 
-    // Create a scalar cell field and fill it with data.
-    auto cell_layout = createArrayLayout( global_grid, 0, 1, Cell() );
-    auto cell_field =
-        createArray<double, TEST_DEVICE>( "cell_field_3d", cell_layout );
-    auto cell_data = cell_field->view();
-    Kokkos::parallel_for(
-        "fill_cell_field",
-        createExecutionPolicy(
-            cell_layout->localGrid()->indexSpace( Own(), Cell(), Local() ),
-            TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            double xarg = double( off_i + i ) / num_cell_dev[0];
-            double yarg = double( off_j + j ) / num_cell_dev[1];
-            double zarg = double( off_k + k ) / num_cell_dev[2];
-            cell_data( i, j, k, 0 ) =
-                1.0 + fabs( cos( pi2 * xarg ) * cos( pi2 * yarg ) *
-                            cos( pi2 * zarg ) );
-        } );
+        // FIXME_SYCL (remove ifdef when newest Kokkos is required)
+#if ( defined __SYCL_DEVICE_ONLY__ )
+        using Kokkos::Experimental::cos;
+        using Kokkos::Experimental::fabs;
+#endif
 
-    // Create a vector node field and fill it with data.
-    auto node_layout = createArrayLayout( global_grid, 0, 3, Node() );
-    auto node_field =
-        createArray<double, TEST_DEVICE>( "node_field_3d", node_layout );
-    auto node_data = node_field->view();
-    Kokkos::parallel_for(
-        "fill_node_field",
-        createExecutionPolicy(
-            node_layout->localGrid()->indexSpace( Own(), Node(), Local() ),
-            TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            double xarg = double( off_i + i ) / num_cell_dev[0];
-            double yarg = double( off_j + j ) / num_cell_dev[1];
-            double zarg = double( off_k + k ) / num_cell_dev[2];
-            node_data( i, j, k, Dim::I ) = 1.0 + fabs( cos( pi2 * xarg ) );
-            node_data( i, j, k, Dim::J ) = 1.0 + fabs( cos( pi2 * yarg ) );
-            node_data( i, j, k, Dim::K ) = 1.0 + fabs( cos( pi2 * zarg ) );
-        } );
+        Kokkos::parallel_for(
+            "fill_cell_field",
+            createExecutionPolicy(
+                cell_layout->localGrid()->indexSpace( Own(), Cell(), Local() ),
+                TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+                double xarg = double( off_i + i ) / num_cell_dev[0];
+                double yarg = double( off_j + j ) / num_cell_dev[1];
+                double zarg = double( off_k + k ) / num_cell_dev[2];
+                cell_data( i, j, k, 0 ) =
+                    1.0 + fabs( cos( pi2 * xarg ) * cos( pi2 * yarg ) *
+                                cos( pi2 * zarg ) );
+            } );
 
-    // Gather the node data.
-    auto node_halo = createHalo( NodeHaloPattern<3>(), 0, *node_field );
-    node_halo->gather( TEST_EXECSPACE(), *node_field );
+        // Create a vector node field and fill it with data.
+        auto node_layout = createArrayLayout( global_grid, 0, 3, Node() );
+        auto node_field =
+            createArray<double, TEST_DEVICE>( "node_field_3d", node_layout );
+        auto node_data = node_field->view();
+        Kokkos::parallel_for(
+            "fill_node_field",
+            createExecutionPolicy(
+                node_layout->localGrid()->indexSpace( Own(), Node(), Local() ),
+                TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+                double xarg = double( off_i + i ) / num_cell_dev[0];
+                double yarg = double( off_j + j ) / num_cell_dev[1];
+                double zarg = double( off_k + k ) / num_cell_dev[2];
+                node_data( i, j, k, Dim::I ) = 1.0 + fabs( cos( pi2 * xarg ) );
+                node_data( i, j, k, Dim::J ) = 1.0 + fabs( cos( pi2 * yarg ) );
+                node_data( i, j, k, Dim::K ) = 1.0 + fabs( cos( pi2 * zarg ) );
+            } );
 
-    // Write the fields to a file.
-    Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
-    Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+        // Gather the node data.
+        auto node_halo = createHalo( NodeHaloPattern<3>(), 0, *node_field );
+        node_halo->gather( TEST_EXECSPACE(), *node_field );
 
+        // Write the fields to a file.
+        Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
+        Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+    }
     // Read the data back in on rank 0 and make sure it is OK.
     int rank;
     MPI_Comm_rank( MPI_COMM_WORLD, &rank );
@@ -222,48 +229,55 @@ void writeTest2d()
     // Field data values.
     double pi2 = 8.0 * atan( 1.0 );
 
-    // Create a scalar cell field and fill it with data.
-    auto cell_layout = createArrayLayout( global_grid, 0, 1, Cell() );
-    auto cell_field =
-        createArray<double, TEST_DEVICE>( "cell_field_2d", cell_layout );
-    auto cell_data = cell_field->view();
-    Kokkos::parallel_for(
-        "fill_cell_field",
-        createExecutionPolicy(
-            cell_layout->localGrid()->indexSpace( Own(), Cell(), Local() ),
-            TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j ) {
-            double xarg = double( off_i + i ) / num_cell_dev[0];
-            double yarg = double( off_j + j ) / num_cell_dev[1];
-            cell_data( i, j, 0 ) =
-                1.0 + fabs( cos( pi2 * xarg ) * cos( pi2 * yarg ) );
-        } );
+    {
+        // Create a scalar cell field and fill it with data.
+        auto cell_layout = createArrayLayout( global_grid, 0, 1, Cell() );
+        auto cell_field =
+            createArray<double, TEST_DEVICE>( "cell_field_2d", cell_layout );
+        auto cell_data = cell_field->view();
 
-    // Create a vector node field and fill it with data.
-    auto node_layout = createArrayLayout( global_grid, 0, 2, Node() );
-    auto node_field =
-        createArray<double, TEST_DEVICE>( "node_field_2d", node_layout );
-    auto node_data = node_field->view();
-    Kokkos::parallel_for(
-        "fill_node_field",
-        createExecutionPolicy(
-            node_layout->localGrid()->indexSpace( Own(), Node(), Local() ),
-            TEST_EXECSPACE() ),
-        KOKKOS_LAMBDA( const int i, const int j ) {
-            double xarg = double( off_i + i ) / num_cell_dev[0];
-            double yarg = double( off_j + j ) / num_cell_dev[1];
-            node_data( i, j, Dim::I ) = 1.0 + fabs( cos( pi2 * xarg ) );
-            node_data( i, j, Dim::J ) = 1.0 + fabs( cos( pi2 * yarg ) );
-        } );
+        // FIXME_SYCL (remove ifdef when newest Kokkos is required)
+#if ( defined __SYCL_DEVICE_ONLY__ )
+        using Kokkos::Experimental::cos;
+        using Kokkos::Experimental::fabs;
+#endif
+        Kokkos::parallel_for(
+            "fill_cell_field",
+            createExecutionPolicy(
+                cell_layout->localGrid()->indexSpace( Own(), Cell(), Local() ),
+                TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j ) {
+                double xarg = double( off_i + i ) / num_cell_dev[0];
+                double yarg = double( off_j + j ) / num_cell_dev[1];
+                cell_data( i, j, 0 ) =
+                    1.0 + fabs( cos( pi2 * xarg ) * cos( pi2 * yarg ) );
+            } );
 
-    // Gather the node data.
-    auto node_halo = createHalo( NodeHaloPattern<2>(), 0, *node_field );
-    node_halo->gather( TEST_EXECSPACE(), *node_field );
+        // Create a vector node field and fill it with data.
+        auto node_layout = createArrayLayout( global_grid, 0, 2, Node() );
+        auto node_field =
+            createArray<double, TEST_DEVICE>( "node_field_2d", node_layout );
+        auto node_data = node_field->view();
+        Kokkos::parallel_for(
+            "fill_node_field",
+            createExecutionPolicy(
+                node_layout->localGrid()->indexSpace( Own(), Node(), Local() ),
+                TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j ) {
+                double xarg = double( off_i + i ) / num_cell_dev[0];
+                double yarg = double( off_j + j ) / num_cell_dev[1];
+                node_data( i, j, Dim::I ) = 1.0 + fabs( cos( pi2 * xarg ) );
+                node_data( i, j, Dim::J ) = 1.0 + fabs( cos( pi2 * yarg ) );
+            } );
 
-    // Write the fields to a file.
-    Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
-    Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+        // Gather the node data.
+        auto node_halo = createHalo( NodeHaloPattern<2>(), 0, *node_field );
+        node_halo->gather( TEST_EXECSPACE(), *node_field );
 
+        // Write the fields to a file.
+        Experimental::BovWriter::writeTimeStep( 302, 3.43, *cell_field );
+        Experimental::BovWriter::writeTimeStep( 1972, 12.457, *node_field );
+    }
     // Read the data back in on rank 0 and make sure it is OK.
     int rank;
     MPI_Comm_rank( MPI_COMM_WORLD, &rank );
