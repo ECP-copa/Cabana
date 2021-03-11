@@ -13,6 +13,9 @@ jobs:
   CI:
     # FIXME: remove failing distributions here when passing
     continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:latest' || matrix.distro == 'fedora:intel' || matrix.distro == 'ubuntu:devel' }}
+    defaults:
+      run:
+        shell: bash
     strategy:
       matrix:
         distro: ['ubuntu:latest']
@@ -21,6 +24,7 @@ jobs:
         cmake_build_type: ['Debug', 'Release']
         kokkos_ver: ['3.2.01', 'master', 'develop']
         arborx: ['NoArborX']
+        heffte: ['NoheFFTe' ]
         coverage: ['OFF']
         include:
           - distro: 'fedora:intel'
@@ -28,84 +32,96 @@ jobs:
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
             openmp: 'ON'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
             openmp: 'OFF'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
             openmp: 'OFF'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'g++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'clang++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'g++'
             cmake_build_type: 'Release'
             openmp: 'ON'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'clang++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'g++'
             cmake_build_type: 'Release'
             openmp: 'ON'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'clang++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:rawhide'
             cxx: 'g++'
             cmake_build_type: 'Release'
             openmp: 'ON'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'fedora:rawhide'
             cxx: 'clang++'
             openmp: 'ON'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
-            arborx: ['NoArborX']
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
@@ -113,6 +129,15 @@ jobs:
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'ArborX'
+            heffte: 'NoheFFTe'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'heFFTe_FFTW'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
@@ -120,6 +145,7 @@ jobs:
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'ArborX'
+            heffte: 'heFFTe_FFTW'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
@@ -164,6 +190,27 @@ jobs:
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout heffte
+        if: ${{ matrix.heffte != 'NoheFFTe' }}
+        # actions/checkout doesn't work for external repos yet
+        run: |
+          git clone --depth 1 --branch v2.0.0 https://bitbucket.org/icl/heffte.git heffte
+      - name: Build heffte
+        if: ${{ matrix.heffte != 'NoheFFTe' }}
+        working-directory: heffte
+        run: |
+          [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
+          [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
+          cmake -B build \
+            -DCMAKE_CXX_STANDARD="11" \
+            -DBUILD_SHARED_LIBS=ON \
+            -DMKL_ROOT=/opt/intel/mkl \
+            -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            ${heffte_cmake_opts}
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
@@ -171,7 +218,7 @@ jobs:
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
-            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_FLAGS="-Wall -pedantic" \
             -DCabana_ENABLE_TESTING=ON \
