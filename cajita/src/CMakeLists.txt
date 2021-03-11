@@ -37,10 +37,6 @@ set(HEADERS_PUBLIC
   Cajita_UniformDimPartitioner.hpp
   )
 
-if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
-  list(REMOVE_ITEM HEADERS_PUBLIC Cajita_Parallel.hpp)
-endif()
-
 if(Cabana_ENABLE_HYPRE)
   list(APPEND HEADERS_PUBLIC
     Cajita_HypreStructuredSolver.hpp
