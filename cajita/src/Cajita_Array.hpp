@@ -620,7 +620,6 @@ struct DotFunctor
   array. This vector should be pre-sized to the number of degrees-of-freedom
   per entity.
 */
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 template <class Array_t>
 void dot( const Array_t& a, const Array_t& b,
           std::vector<typename Array_t::value_type>& products )
@@ -645,7 +644,6 @@ void dot( const Array_t& a, const Array_t& b,
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
                    a.layout()->localGrid()->globalGrid().comm() );
 }
-#endif
 
 //---------------------------------------------------------------------------//
 // Infinity norm
@@ -705,7 +703,6 @@ struct NormInfFunctor
   \param norms The norms for each degree-of-freedom in the array. This vector
   should be pre-sized to the number of degrees-of-freedom per entity.
 */
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 template <class Array_t>
 void normInf( const Array_t& array,
               std::vector<typename Array_t::value_type>& norms )
@@ -730,7 +727,6 @@ void normInf( const Array_t& array,
                    MpiTraits<typename Array_t::value_type>::type(), MPI_MAX,
                    array.layout()->localGrid()->globalGrid().comm() );
 }
-#endif
 
 //---------------------------------------------------------------------------//
 // One norm
@@ -785,7 +781,6 @@ struct Norm1Functor
   \param norms The norms for each degree-of-freedom in the array. This vector
   should be pre-sized to the number of degrees-of-freedom per entity.
 */
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 template <class Array_t>
 void norm1( const Array_t& array,
             std::vector<typename Array_t::value_type>& norms )
@@ -810,7 +805,6 @@ void norm1( const Array_t& array,
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
                    array.layout()->localGrid()->globalGrid().comm() );
 }
-#endif
 
 //---------------------------------------------------------------------------//
 // Two norm
@@ -865,7 +859,6 @@ struct Norm2Functor
   \param norms The norms for each entity degree-of-freedom in the array. This
   vector should be pre-sized to the number of degrees-of-freedom per entity.
 */
-#ifndef KOKKOS_ENABLE_OPENMPTARGET
 template <class Array_t>
 void norm2( const Array_t& array,
             std::vector<typename Array_t::value_type>& norms )
@@ -893,7 +886,6 @@ void norm2( const Array_t& array,
     for ( auto& n : norms )
         n = std::sqrt( n );
 }
-#endif
 //---------------------------------------------------------------------------//
 
 } // end namespace ArrayOp

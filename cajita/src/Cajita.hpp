@@ -26,11 +26,7 @@
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_MpiTraits.hpp>
-
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 #include <Cajita_Parallel.hpp>
-#endif
-
 #include <Cajita_ParameterPack.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
