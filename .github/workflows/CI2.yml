@@ -185,10 +185,10 @@ jobs:
           cmake --install build
       - name: Format Cabana
         if: ${{ matrix.distro == 'ubuntu:latest' }}
+        working-directory: build
         run: |
-             cd build
              make format
              git diff --exit-code
       - name: Upload Report to codecov.io
-        if: ${{ matrix.coverage }}
+        if: ${{ matrix.coverage == 'ON' }}
         uses: codecov/codecov-action@v1
