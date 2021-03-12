@@ -79,6 +79,13 @@ GlobalGrid<MeshType>::GlobalGrid(
         if ( dim_remainder[d] > _cart_rank[d] )
             ++_owned_num_cell[d];
     }
+
+    // Determine if a block is on the low or high boundaries.
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        _boundary_lo[d] = ( 0 == _cart_rank[d] );
+        _boundary_hi[d] = ( _ranks_per_dim[d] - 1 == _cart_rank[d] );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -111,6 +118,22 @@ template <class MeshType>
 bool GlobalGrid<MeshType>::isPeriodic( const int dim ) const
 {
     return _periodic[dim];
+}
+
+//---------------------------------------------------------------------------//
+// Determine if this block is on a low boundary in the given dimension.
+template <class MeshType>
+bool GlobalGrid<MeshType>::onLowBoundary( const int dim ) const
+{
+    return _boundary_lo[dim];
+}
+
+//---------------------------------------------------------------------------//
+// Determine if this block is on a high boundary in the given dimension.
+template <class MeshType>
+bool GlobalGrid<MeshType>::onHighBoundary( const int dim ) const
+{
+    return _boundary_hi[dim];
 }
 
 //---------------------------------------------------------------------------//

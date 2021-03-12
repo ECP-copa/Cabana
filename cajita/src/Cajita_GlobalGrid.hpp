@@ -61,6 +61,12 @@ class GlobalGrid
     // Get whether a given dimension is periodic.
     bool isPeriodic( const int dim ) const;
 
+    // Determine if this block is on a low boundary in the given dimension.
+    bool onLowBoundary( const int dim ) const;
+
+    // Determine if this block is on a high boundary in the given dimension.
+    bool onHighBoundary( const int dim ) const;
+
     // Get the number of blocks in each dimension in the global mesh.
     int dimNumBlock( const int dim ) const;
 
@@ -119,6 +125,8 @@ class GlobalGrid
     std::array<int, num_space_dim> _cart_rank;
     std::array<int, num_space_dim> _owned_num_cell;
     std::array<int, num_space_dim> _global_cell_offset;
+    std::array<bool, num_space_dim> _boundary_lo;
+    std::array<bool, num_space_dim> _boundary_hi;
 };
 
 //---------------------------------------------------------------------------//

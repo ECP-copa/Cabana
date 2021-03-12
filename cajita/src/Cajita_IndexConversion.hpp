@@ -96,9 +96,8 @@ struct L2G
         // Determine if a block is on the low or high boundaries.
         for ( std::size_t d = 0; d < num_space_dim; ++d )
         {
-            auto block = global_grid.dimBlockId( d );
-            boundary_lo[d] = ( 0 == block );
-            boundary_hi[d] = ( global_grid.dimNumBlock( d ) - 1 == block );
+            boundary_lo[d] = global_grid.onLowBoundary( d );
+            boundary_hi[d] = global_grid.onHighBoundary( d );
         }
     }
 

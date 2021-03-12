@@ -52,6 +52,10 @@ class LocalGrid
     // Get the number of cells in the halo.
     int haloCellWidth() const;
 
+    // Get the total number of local cells in a given dimension (owned +
+    // halo).
+    int totalNumCell( const int d ) const;
+
     // Given the relative offsets of a neighbor rank relative to this local
     // grid's indices get the of the neighbor. If the neighbor rank is out of
     // bounds return -1. Note that in the case of periodic boundaries out of
