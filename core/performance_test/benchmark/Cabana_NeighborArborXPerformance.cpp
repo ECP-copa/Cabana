@@ -44,7 +44,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
 
     // Declare the number of cutoff ratios (directly related to neighbors per
     // atom) to generate.
-    std::vector<double> cutoff_ratios = { 4.0, 6.0 };
+    std::vector<double> cutoff_ratios = { 3.0, 4.0 };
     int cutoff_ratios_size = cutoff_ratios.size();
 
     // Number of runs in the test loops.
