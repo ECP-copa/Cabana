@@ -26,7 +26,8 @@
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
-void performanceTest( std::ostream& stream, const std::string& test_prefix )
+void performanceTest( std::ostream& stream, const std::string& test_prefix,
+                      bool sort )
 {
     using exec_space = typename Device::execution_space;
     using memory_space = typename Device::memory_space;
@@ -71,18 +72,21 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
                                             min_dist );
         Cabana::deep_copy( aosoas[p], create_aosoa );
 
-        // Sort the particles to make them more realistic, e.g. in an MD
-        // simulation. They likely won't be randomly scattered about, but rather
-        // will be periodically sorted for spatial locality. Bin them in cells
-        // the size of the smallest cutoff distance.
-        double cutoff = cutoff_ratios.front() * min_dist;
-        double sort_delta[3] = { cutoff, cutoff, cutoff };
-        double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
-        double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
-        auto x = Cabana::slice<0>( aosoas[p], "position" );
-        Cabana::LinkedCellList<Device> linked_cell_list( x, sort_delta,
-                                                         grid_min, grid_max );
-        Cabana::permute( linked_cell_list, aosoas[p] );
+        if ( sort )
+        {
+            // Sort the particles to make them more realistic, e.g. in an MD
+            // simulation. They likely won't be randomly scattered about, but
+            // rather will be periodically sorted for spatial locality. Bin them
+            // in cells the size of the smallest cutoff distance.
+            double cutoff = cutoff_ratios.front() * min_dist;
+            double sort_delta[3] = { cutoff, cutoff, cutoff };
+            double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
+            double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
+            auto x = Cabana::slice<0>( aosoas[p], "position" );
+            Cabana::LinkedCellList<Device> linked_cell_list(
+                x, sort_delta, grid_min, grid_max );
+            Cabana::permute( linked_cell_list, aosoas[p] );
+        }
     }
 
     // Loop over number of ratios (neighbors per particle).
@@ -178,17 +182,17 @@ int main( int argc, char* argv[] )
     // Run the tests.
 #ifdef KOKKOS_ENABLE_SERIAL
     using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-    performanceTest<SerialDevice>( file, "serial_" );
+    performanceTest<SerialDevice>( file, "serial_", true );
 #endif
 
 #ifdef KOKKOS_ENABLE_OPENMP
     using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-    performanceTest<OpenMPDevice>( file, "openmp_" );
+    performanceTest<OpenMPDevice>( file, "openmp_", true );
 #endif
 
 #ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-    performanceTest<CudaDevice>( file, "cuda_" );
+    performanceTest<CudaDevice>( file, "cuda_", true );
 #endif
 
     // Close the output file on rank 0.
