@@ -15,7 +15,7 @@
 #include <Cajita_Array.hpp>
 #include <Cajita_IndexSpace.hpp>
 
-#include <Cabana_Core.hpp>
+#include <Cabana_ParameterPack.hpp>
 
 #include <Kokkos_Core.hpp>
 
