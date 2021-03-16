@@ -24,6 +24,7 @@ set(SERIAL_TESTS
   LinkedCellList
   NeighborList
   Parallel
+  ParameterPack
   Slice
   Sort
   Tuple

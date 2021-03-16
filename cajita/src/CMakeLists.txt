@@ -29,7 +29,6 @@ set(HEADERS_PUBLIC
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
   Cajita_Parallel.hpp
-  Cajita_ParameterPack.hpp
   Cajita_Partitioner.hpp
   Cajita_ReferenceStructuredSolver.hpp
   Cajita_Splines.hpp
@@ -52,6 +51,7 @@ endif()
 add_library(Cajita INTERFACE)
 
 target_link_libraries(Cajita INTERFACE
+  Cabana::cabanacore
   Kokkos::kokkos
   MPI::MPI_CXX
   )

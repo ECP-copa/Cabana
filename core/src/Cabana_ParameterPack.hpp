@@ -9,15 +9,15 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_PARAMETERPACK_HPP
-#define CAJITA_PARAMETERPACK_HPP
+#ifndef CABANA_PARAMETERPACK_HPP
+#define CABANA_PARAMETERPACK_HPP
 
 #include <Kokkos_Core.hpp>
 
 #include <type_traits>
 #include <utility>
 
-namespace Cajita
+namespace Cabana
 {
 //---------------------------------------------------------------------------//
 // Parameter pack device capture.
@@ -175,6 +175,6 @@ ParameterPack<Types...> makeParameterPack( const Types&... ts )
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Cajita
+} // end namespace Cabana
 
-#endif // end CAJITA_PARAMETERPACK_HPP
+#endif // end CABANA_PARAMETERPACK_HPP

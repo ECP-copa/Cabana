@@ -167,18 +167,16 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 ##---------------------------------------------------------------------------##
 ## Libraries and Examples
 ##---------------------------------------------------------------------------##
-option(Cabana_ENABLE_CAJITA "Build Cajita" ON)
+
+add_subdirectory(core)
+
+option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ON)
 if(Cabana_ENABLE_CAJITA)
   if(MPI_FOUND)
     add_subdirectory(cajita)
   else()
     message(FATAL_ERROR "Cajita requires MPI")
   endif()
-endif()
-
-option(Cabana_ENABLE_CORE "Build Core" ON)
-if(Cabana_ENABLE_CORE)
-  add_subdirectory(core)
 endif()
 
 option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
