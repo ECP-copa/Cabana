@@ -142,7 +142,8 @@ class IndexSpace
     {
         bool result = true;
         for ( long i = 0; i < N; ++i )
-            result = result && (_min[i] <= index[i]) && (index[i] < _max[i]);
+            result =
+                result && ( _min[i] <= index[i] ) && ( index[i] < _max[i] );
         return result;
     }
 

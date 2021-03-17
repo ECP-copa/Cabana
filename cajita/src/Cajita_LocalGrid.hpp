@@ -104,6 +104,29 @@ class LocalGrid
     sharedIndexSpace( DecompositionTag, EntityType, const int off_i,
                       const int off_j, const int halo_width = -1 ) const;
 
+    /*
+       Given the relative offsets of a boundary get the set of ghost entity
+       local indices are in that boundary region. Optionally provide a halo
+       width for the boundary space. This halo width must be less than or
+       equal to the halo width of the local grid. The default behavior is to
+       use the halo width of the local grid.
+    */
+    template <class EntityType>
+    IndexSpace<num_space_dim>
+    boundaryIndexSpace( EntityType,
+                        const std::array<int, num_space_dim>& off_ijk,
+                        const int halo_width = -1 ) const;
+
+    template <class EntityType, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<3>>
+    boundaryIndexSpace( EntityType, const int off_i, const int off_j,
+                        const int off_k, const int halo_width = -1 ) const;
+
+    template <class EntityType, std::size_t NSD = num_space_dim>
+    std::enable_if_t<2 == NSD, IndexSpace<2>>
+    boundaryIndexSpace( EntityType, const int off_i, const int off_j,
+                        const int halo_width = -1 ) const;
+
   private:
     // 3D and 2D entity types
     IndexSpace<num_space_dim> indexSpaceImpl( Own, Cell, Local ) const;
