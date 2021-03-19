@@ -97,11 +97,12 @@ auto LocalGrid<MeshType>::indexSpace( DecompositionTag t1, EntityType t2,
 }
 
 //---------------------------------------------------------------------------//
-// Given a relative set of indices of a neighbor get the set of local entity
-// indices shared with that neighbor in the given decomposition. Optionally
-// provide a halo width for the shared space. This halo width must be less
-// than or equal to the halo width of the local grid. The default behavior is
-// to use the halo width of the local grid.
+// Given the relative offsets of a neighbor rank relative to this local
+// grid's indices get the set of local entity indices shared with that
+// neighbor in the given decomposition. Optionally provide a halo width
+// for the shared space. This halo width must be less than or equal to the
+// halo width of the local grid. The default behavior is to use the halo
+// width of the local grid.
 template <class MeshType>
 template <class DecompositionTag, class EntityType>
 auto LocalGrid<MeshType>::sharedIndexSpace(
@@ -156,6 +157,74 @@ LocalGrid<MeshType>::sharedIndexSpace( DecompositionTag t1, EntityType t2,
 {
     std::array<int, 2> off_ijk = { off_i, off_j };
     return sharedIndexSpace( t1, t2, off_ijk, halo_width );
+}
+
+//---------------------------------------------------------------------------//
+// Given the relative offsets of a boundary relative to this local grid's
+// indices get the set of local entity indices associated with that boundary
+// in the given decomposition. Optionally provide a halo width for the shared
+// space. This halo width must be less than or equal to the halo width of the
+// local grid. The default behavior is to use the halo width of the local
+// grid. For example, if the Own decomposition is used, the interior entities
+// that would be affected by a boundary operation are provided whereas if the
+// Ghost decomposition is used the halo entities on the boundary are provided.
+template <class MeshType>
+template <class DecompositionTag, class EntityType>
+auto LocalGrid<MeshType>::boundaryIndexSpace(
+    DecompositionTag t1, EntityType t2,
+    const std::array<int, num_space_dim>& off_ijk, const int halo_width ) const
+    -> IndexSpace<num_space_dim>
+{
+    // If we got the default halo width of -1 this means we want to use the
+    // default of the entire halo.
+    int hw = ( -1 == halo_width ) ? _halo_cell_width : halo_width;
+
+    // Check that the offsets are valid.
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        if ( off_ijk[d] < -1 || 1 < off_ijk[d] )
+            throw std::logic_error( "Boundary indices out of bounds" );
+
+    // Check that the requested halo width is valid.
+    if ( hw > _halo_cell_width )
+        throw std::logic_error(
+            "Requested halo width larger than local grid halo" );
+
+    // Check to see if this is not a communication neighbor. If it is, return
+    // a boundary space of size 0 because there is no boundary.
+    if ( neighborRank( off_ijk ) >= 0 )
+    {
+        std::array<long, num_space_dim> zero_size;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+            zero_size[d] = 0;
+        return IndexSpace<num_space_dim>( zero_size, zero_size );
+    }
+
+    // The boundary index space is just the shared index space for the
+    // given offsets and decomposition.
+    return sharedIndexSpaceImpl( t1, t2, off_ijk, hw );
+}
+
+template <class MeshType>
+template <class DecompositionTag, class EntityType, std::size_t NSD>
+std::enable_if_t<3 == NSD, IndexSpace<3>>
+LocalGrid<MeshType>::boundaryIndexSpace( DecompositionTag t1, EntityType t2,
+                                         const int off_i, const int off_j,
+                                         const int off_k,
+                                         const int halo_width ) const
+{
+    std::array<int, 3> off_ijk = { off_i, off_j, off_k };
+    return boundaryIndexSpace( t1, t2, off_ijk, halo_width );
+}
+
+template <class MeshType>
+template <class DecompositionTag, class EntityType, std::size_t NSD>
+std::enable_if_t<2 == NSD, IndexSpace<2>>
+LocalGrid<MeshType>::boundaryIndexSpace( DecompositionTag t1, EntityType t2,
+                                         const int off_i, const int off_j,
+                                         const int halo_width ) const
+{
+    std::array<int, 2> off_ijk = { off_i, off_j };
+    return boundaryIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//

@@ -136,6 +136,17 @@ class IndexSpace
         return size;
     }
 
+    // Determine if a set of indices is within the range of the index space.
+    KOKKOS_INLINE_FUNCTION
+    bool inRange( const long index[N] ) const
+    {
+        bool result = true;
+        for ( long i = 0; i < N; ++i )
+            result =
+                result && ( _min[i] <= index[i] ) && ( index[i] < _max[i] );
+        return result;
+    }
+
   private:
     // Minimum index bounds.
     Kokkos::Array<long, Rank> _min;
