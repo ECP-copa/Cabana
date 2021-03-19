@@ -160,16 +160,20 @@ LocalGrid<MeshType>::sharedIndexSpace( DecompositionTag t1, EntityType t2,
 }
 
 //---------------------------------------------------------------------------//
-// Given the relative offsets of a boundary get the set of ghost entity
-// local indices are in that boundary region. Optionally provide a halo
-// width for the behavior space. This halo width must be less than or
-// equal to the halo width of the local grid. The default behavior is to
-// use the halo width of the local grid.
+// Given the relative offsets of a boundary relative to this local grid's
+// indices get the set of local entity indices associated with that boundary
+// in the given decomposition. Optionally provide a halo width for the shared
+// space. This halo width must be less than or equal to the halo width of the
+// local grid. The default behavior is to use the halo width of the local
+// grid. For example, if the Own decomposition is used, the interior entities
+// that would be affected by a boundary operation are provided whereas if the
+// Ghost decomposition is used the halo entities on the boundary are provided.
 template <class MeshType>
-template <class EntityType>
+template <class DecompositionTag, class EntityType>
 auto LocalGrid<MeshType>::boundaryIndexSpace(
-    EntityType entity, const std::array<int, num_space_dim>& off_ijk,
-    const int halo_width ) const -> IndexSpace<num_space_dim>
+    DecompositionTag t1, EntityType t2,
+    const std::array<int, num_space_dim>& off_ijk, const int halo_width ) const
+    -> IndexSpace<num_space_dim>
 {
     // If we got the default halo width of -1 this means we want to use the
     // default of the entire halo.
@@ -186,7 +190,7 @@ auto LocalGrid<MeshType>::boundaryIndexSpace(
             "Requested halo width larger than local grid halo" );
 
     // Check to see if this is not a communication neighbor. If it is, return
-    // a shared space of size 0 because there is no boundary.
+    // a boundary space of size 0 because there is no boundary.
     if ( neighborRank( off_ijk ) >= 0 )
     {
         std::array<long, num_space_dim> zero_size;
@@ -195,31 +199,32 @@ auto LocalGrid<MeshType>::boundaryIndexSpace(
         return IndexSpace<num_space_dim>( zero_size, zero_size );
     }
 
-    // The boundary index space is just the ghost shared index space for the
-    // given offsets.
-    return sharedIndexSpaceImpl( Ghost{}, entity, off_ijk, hw );
+    // The boundary index space is just the shared index space for the
+    // given offsets and decomposition.
+    return sharedIndexSpaceImpl( t1, t2, off_ijk, hw );
 }
 
 template <class MeshType>
-template <class EntityType, std::size_t NSD>
+template <class DecompositionTag, class EntityType, std::size_t NSD>
 std::enable_if_t<3 == NSD, IndexSpace<3>>
-LocalGrid<MeshType>::boundaryIndexSpace( EntityType entity, const int off_i,
-                                         const int off_j, const int off_k,
+LocalGrid<MeshType>::boundaryIndexSpace( DecompositionTag t1, EntityType t2,
+                                         const int off_i, const int off_j,
+                                         const int off_k,
                                          const int halo_width ) const
 {
     std::array<int, 3> off_ijk = { off_i, off_j, off_k };
-    return boundaryIndexSpace( entity, off_ijk, halo_width );
+    return boundaryIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 template <class MeshType>
-template <class EntityType, std::size_t NSD>
+template <class DecompositionTag, class EntityType, std::size_t NSD>
 std::enable_if_t<2 == NSD, IndexSpace<2>>
-LocalGrid<MeshType>::boundaryIndexSpace( EntityType entity, const int off_i,
-                                         const int off_j,
+LocalGrid<MeshType>::boundaryIndexSpace( DecompositionTag t1, EntityType t2,
+                                         const int off_i, const int off_j,
                                          const int halo_width ) const
 {
     std::array<int, 2> off_ijk = { off_i, off_j };
-    return boundaryIndexSpace( entity, off_ijk, halo_width );
+    return boundaryIndexSpace( t1, t2, off_ijk, halo_width );
 }
 
 //---------------------------------------------------------------------------//
