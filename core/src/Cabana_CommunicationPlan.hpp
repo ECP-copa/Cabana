@@ -114,31 +114,31 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
             KOKKOS_LAMBDA(
                 const typename Kokkos::TeamPolicy<execution_space>::member_type&
                     team ) {
+                // NOTE: `get_shmem` returns shared memory pointers *aligned to
+                // 8 bytes*, so if `comm_size` is odd we can get erroneously
+                // padded offsets if we call `get_shmem` separately for each
+                // shared memory intermediary. Acquiring all the needed scratch
+                // memory at once then computing pointer offsets by hand avoids
+                // this issue.
+                int* scratch = (int*)team.team_shmem().get_shmem(
+                    ( team.team_size() + 2 * comm_size ) * sizeof( int ), 0 );
+
                 // local neighbor_ids, gives the local offset relative to
-                // calculated global offset
-                int* local_neighbor_ids = (int*)team.team_shmem().get_shmem(
-                    team.team_size() * sizeof( int ), 0 );
-
+                // calculated global offset. Size team.team_size() * sizeof(int)
+                int* local_neighbor_ids = scratch;
                 // local histogram, `comm_size` in size
-                int* histo = (int*)team.team_shmem().get_shmem(
-                    comm_size * sizeof( int ), 0 );
-
+                int* histo = local_neighbor_ids + team.team_size();
                 // offset into global array, `comm_size` in size
-                int* global_offset = (int*)team.team_shmem().get_shmem(
-                    comm_size * sizeof( int ), 0 );
-
+                int* global_offset = histo + comm_size;
                 // overall element `tid`
-                const size_type tid =
+                const auto tid =
                     team.team_rank() + team.league_rank() * team.team_size();
-
                 // local element
                 const int local_id = team.team_rank();
-
                 // total number of elements, for convenience
-                const size_type num_elements = element_export_ranks.size();
-
+                const int num_elements = element_export_ranks.size();
                 // my element export rank
-                const auto my_element_export_rank =
+                const int my_element_export_rank =
                     ( tid < num_elements ? element_export_ranks( tid ) : -1 );
 
                 // cannot outright terminate early b/c threads share work
