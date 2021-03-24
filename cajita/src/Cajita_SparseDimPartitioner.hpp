@@ -217,7 +217,10 @@ class SparseDimPartitioner : public Partitioner
         int total_size = _workload_per_tile.extent( 0 ) *
                          _workload_per_tile.extent( 1 ) *
                          _workload_per_tile.extent( 2 );
-        printf( "total_size = %d\n", total_size );
+        printf( "total_size = %d, _wo_per_tile = %p, _workload_prefix_sum = "
+                "%p, MPI_INT = %p, MPI_SUM = %p, comm = %p \n",
+                total_size, _workload_per_tile.data(),
+                _workload_prefix_sum.data(), MPI_INT, MPI_SUM, comm );
         MPI_Allreduce( _workload_per_tile.data(), _workload_prefix_sum.data(),
                        total_size, MPI_INT, MPI_SUM, comm );
         printf( "finish allreduce\n" );
@@ -300,6 +303,7 @@ class SparseDimPartitioner : public Partitioner
             int dj = ( di + 1 ) % 3;
             int dk = ( di + 2 ) % 3;
 
+            // compute average workload
             Kokkos::View<int*, MemorySpace> ave_workload(
                 "ave_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
 
@@ -315,16 +319,6 @@ class SparseDimPartitioner : public Partitioner
                             ave_workload( jnk ) );
                 } );
 
-            int sum_ave_workload = 0;
-            Kokkos::parallel_reduce(
-                Kokkos::RangePolicy<ExecSpace>( 0, _ranks_per_dim[dj] *
-                                                       _ranks_per_dim[dk] ),
-                KOKKOS_LAMBDA( const int idx, int& update ) {
-                    update += ave_workload( idx );
-                },
-                sum_ave_workload );
-            printf( "sum_ave_workload = %d\n", sum_ave_workload );
-
             int point_i = 1;
             int last_point = 0;
             Kokkos::View<int*, MemorySpace> current_workload(
@@ -334,6 +328,7 @@ class SparseDimPartitioner : public Partitioner
                 int last_diff = __INT_MAX__;
                 while ( true )
                 {
+                    // compute current workload
                     Kokkos::parallel_for(
                         Kokkos::RangePolicy<ExecSpace>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
@@ -349,19 +344,37 @@ class SparseDimPartitioner : public Partitioner
                                     point_i, last_point, jnk,
                                     current_workload( jnk ) );
                         } );
-                    int sum_current_workload;
+                    // compute the (w_jk^ave - w_jk^{previ:i})
+                    Kokkos::parallel_for(
+                        Kokkos::RangePolicy<ExecSpace>(
+                            0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
+                        KOKKOS_LAMBDA( uint32_t jnk ) {
+                            int j =
+                                static_cast<int>( jnk / _ranks_per_dim[dk] );
+                            int k =
+                                static_cast<int>( jnk % _ranks_per_dim[dk] );
+                            auto wl =
+                                current_workload( jnk ) - ave_workload( jnk );
+                            wl *= wl;
+                            current_workload( jnk ) = wl;
+                            printf(
+                                "point_i = %d, last_point = %d, "
+                                "[cur_workload(%d)-ave_workload(%d)]^2 = %d\n",
+                                point_i, last_point, jnk, jnk,
+                                current_workload( jnk ) );
+                        } );
+
+                    int diff;
                     Kokkos::parallel_reduce(
                         Kokkos::RangePolicy<ExecSpace>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                         KOKKOS_LAMBDA( const int idx, int& update ) {
                             update += current_workload( idx );
                         },
-                        sum_current_workload );
+                        diff );
                     printf( "point_i = %d, last_point = %d, "
-                            "sum_current_workload= %d\n",
-                            point_i, last_point, sum_current_workload );
-                    auto diff =
-                        std::abs( sum_current_workload - sum_ave_workload );
+                            "diff_sqr = %d\n",
+                            point_i, last_point, diff );
                     if ( diff < last_diff )
                     {
                         printf( "new optimal: last_diff = %d, diff = %d, "
