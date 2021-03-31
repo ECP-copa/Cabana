@@ -152,10 +152,12 @@ reorderView( TargetView& target, const SourceView& source,
   \param time_step_index The index of the time step we are writing.
   \param time The current time
   \param array The array to write
+  \param gather_array Gather the array before writing to make parallel
+  consistent.
 */
 template <class Array_t>
 void writeTimeStep( const int time_step_index, const double time,
-                    const Array_t& array )
+                    const Array_t& array, const bool gather_array = true )
 {
     static_assert( isUniformMesh<typename Array_t::mesh_type>::value,
                    "ViSIT BOV writer can only be used with uniform mesh" );
@@ -214,14 +216,17 @@ void writeTimeStep( const int time_step_index, const double time,
     owned_extents[num_space_dim] = array.layout()->dofsPerEntity();
 
     // Gather halo data if any dimensions are periodic.
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    if ( gather_array )
     {
-        if ( global_grid.isPeriodic( d ) )
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
         {
-            auto halo =
-                createHalo( NodeHaloPattern<num_space_dim>(), 0, array );
-            halo->gather( execution_space(), array );
-            break;
+            if ( global_grid.isPeriodic( d ) )
+            {
+                auto halo =
+                    createHalo( NodeHaloPattern<num_space_dim>(), 0, array );
+                halo->gather( execution_space(), array );
+                break;
+            }
         }
     }
 
