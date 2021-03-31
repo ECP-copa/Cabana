@@ -1,8 +1,10 @@
 #include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
-
 #include <Kokkos_Core.hpp>
+
 #include <gtest/gtest.h>
+
+#include <mpi.h>
 
 using namespace Cajita;
 

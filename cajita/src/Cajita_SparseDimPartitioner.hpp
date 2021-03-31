@@ -15,7 +15,7 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 template <typename MemorySpace, typename ExecSpace,
           unsigned long long CellPerTileDim = 4>
-class SparseDimPartitioner : public Partitioner
+class SparseDimPartitioner : public BlockPartitioner<3>
 {
   public:
     //! Number of bits (per dimension) needed to index the cells inside a tile
@@ -133,9 +133,8 @@ class SparseDimPartitioner : public Partitioner
         return tiles_per_dim;
     }
 
-    std::array<int, 3>
-    ownedCellsPerDimension( MPI_Comm cart_comm,
-                            const std::array<int, 3>& ) const override
+    std::array<int, 3> ownedCellsPerDimension( MPI_Comm cart_comm,
+                                               const std::array<int, 3>& ) const
     {
         auto tiles_per_dim = ownedTilesPerDimension( cart_comm );
         for ( int i = 0; i < 3; ++i )
@@ -406,10 +405,10 @@ class SparseDimPartitioner : public Partitioner
                             current_workload( jnk ) = compute_sub_workload(
                                 di, last_point, point_i, dj, j, dk, k,
                                 rec_partition, prefix_sum );
-                            // printf( "point_i = %d, last_point = %d, "
-                            //         "cur_workload(%d) = %d\n",
-                            //         point_i, last_point, jnk,
-                            //         current_workload( jnk ) );
+                            //     printf( "point_i = %d, last_point = %d, "
+                            //             "cur_workload(%d) = %d\n",
+                            //             point_i, last_point, jnk,
+                            //             current_workload( jnk ) );
                         } );
                     // compute the (w_jk^ave - w_jk^{previ:i})
                     Kokkos::parallel_for(
@@ -457,8 +456,8 @@ class SparseDimPartitioner : public Partitioner
                     }
                     else
                     {
-                        // printf( "find optimal(+1): last_diff = %d, diff = %d,
-                        // "
+                        // printf( "find optimal(+1): last_diff = %d, diff =
+                        // %d,"
                         //         "point_i = %d, rank = %d\n",
                         //         last_diff, diff, point_i, rank );
                         rec_mirror( current_rank, di ) = point_i - 1;
@@ -504,9 +503,9 @@ class SparseDimPartitioner : public Partitioner
         // S[i-1][j-1][k]
         // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
         // printf(
-        //     "1 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d,
-        //     %d], " "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n",
-        //     dim_j, j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
+        //     "1 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d,%d],
+        //     " "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n", dim_j,
+        //     j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
         //     end[dim_i], end[dim_j], end[dim_k],
         //     prefix_sum( end[0], end[1], end[2] ),
         //     prefix_sum( start[0], end[1], end[2] ),
@@ -592,7 +591,7 @@ class SparseDimPartitioner : public Partitioner
     //! with form [p_1, ..., p_n, cell_num], n =
     //! rank-num-in-current-dimension partition in this dimension would be [0,
     //! p_1), [p_1, p_2) ... [p_n, cellNum] (unit: tile)
-    Kokkos::View<int*[3], MemorySpace> _rectangle_partition_dev;
+    Kokkos::View<int* [3], MemorySpace> _rectangle_partition_dev;
     //! 3d prefix sum of the workload of each cell on current
     // current pre-set size: global_tile_per_dim * global_tile_per_dim*
     // global_tile_per_dim

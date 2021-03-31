@@ -15,7 +15,6 @@ set(SERIAL_TESTS
   GlobalMesh
   IndexSpace
   SparseIndexSpace
-  SparseDimPartitioner
   Splines
   )
 
@@ -35,6 +34,7 @@ set(MPI_TESTS
   Interpolation2d
   BovWriter
   Parallel
+  SparseDimPartitioner
   )
 
 if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
