@@ -238,37 +238,37 @@ class SparseDimPartitioner : public Partitioner
         int total_size = _workload_per_tile.extent( 0 ) *
                          _workload_per_tile.extent( 1 ) *
                          _workload_per_tile.extent( 2 );
-        printf( "total_size = %d, _wo_per_tile = %p, _workload_prefix_sum = "
-                "%p, MPI_INT = %p, MPI_SUM = %p, comm = %p \n",
-                total_size, _workload_per_tile.data(),
-                _workload_prefix_sum.data(), MPI_INT, MPI_SUM, comm );
+        // printf( "total_size = %d, _wo_per_tile = %p, _workload_prefix_sum = "
+        //         "%p, MPI_INT = %p, MPI_SUM = %p, comm = %p \n",
+        //         total_size, _workload_per_tile.data(),
+        //         _workload_prefix_sum.data(), MPI_INT, MPI_SUM, comm );
         auto workload = _workload_per_tile;
         auto prefix_sum = _workload_prefix_sum;
         // for test
-        Kokkos::parallel_for(
-            Kokkos::RangePolicy<ExecSpace>( 0, 5 ),
-            KOKKOS_LAMBDA( uint32_t i ) {
-                for ( int j = 0; j < 5; ++j )
-                    for ( int k = 0; k < 5; ++k )
-                    {
-                        // printf( "_workload_per_tile(%d, %d, %d) = %d, "
-                        // "_workload_prefix_sum = %d\n",
-                        // i, j, k, _workload_per_tile( i, j, k ),
-                        // _workload_prefix_sum( i, j, k ) );
-                        printf( "_workload_per_tile(%d, %d, %d) = %d, "
-                                "_workload_prefix_sum = %d\n",
-                                i, j, k, workload( i, j, k ),
-                                prefix_sum( i, j, k ) );
-                    }
-            } );
-        printf( "== print ==\n" );
+        // Kokkos::parallel_for(
+        //     Kokkos::RangePolicy<ExecSpace>( 0, 5 ),
+        //     KOKKOS_LAMBDA( uint32_t i ) {
+        //         for ( int j = 0; j < 5; ++j )
+        //             for ( int k = 0; k < 5; ++k )
+        //             {
+        //                 // printf( "_workload_per_tile(%d, %d, %d) = %d, "
+        //                 // "_workload_prefix_sum = %d\n",
+        //                 // i, j, k, _workload_per_tile( i, j, k ),
+        //                 // _workload_prefix_sum( i, j, k ) );
+        //                 printf( "_workload_per_tile(%d, %d, %d) = %d, "
+        //                         "_workload_prefix_sum = %d\n",
+        //                         i, j, k, workload( i, j, k ),
+        //                         prefix_sum( i, j, k ) );
+        //             }
+        //     } );
+        // printf( "== print ==\n" );
         // for -test -only
         // MPI_Allreduce( _workload_per_tile.data(),
         // _workload_prefix_sum.data(),
         //    total_size, MPI_INT, MPI_SUM, comm );
         MPI_Allreduce( workload.data(), prefix_sum.data(), total_size, MPI_INT,
                        MPI_SUM, comm );
-        printf( "finish allreduce\n" );
+        // printf( "finish allreduce\n" );
 
         // for ( int i = 0; i < _workload_per_tile.extent( 0 ); ++i )
         //     for ( int j = 0; j < _workload_per_tile.extent( 1 ); ++j )
@@ -363,27 +363,29 @@ class SparseDimPartitioner : public Partitioner
             // compute average workload
             Kokkos::View<int*, MemorySpace> ave_workload(
                 "ave_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
-            printf( "In optimizePartition: before parallel_for\n" );
+            // printf( "In optimizePartition: before parallel_for\n" );
             Kokkos::parallel_for(
                 Kokkos::RangePolicy<ExecSpace>( 0, _ranks_per_dim[dj] *
                                                        _ranks_per_dim[dk] ),
                 KOKKOS_LAMBDA( uint32_t jnk ) {
-                    printf(
-                        "in parallel_for, before calling "
-                        "compute_sub_workload to compute ave_workload - 0\n" );
+                    // printf(
+                    //     "in parallel_for, before calling "
+                    //     "compute_sub_workload to compute ave_workload - 0\n"
+                    //     );
                     int j = static_cast<int>( jnk / rank_k );
                     int k = static_cast<int>( jnk % rank_k );
-                    printf(
-                        "in parallel_for, before calling "
-                        "compute_sub_workload to compute ave_workload - 1\n" );
+                    // printf(
+                    //     "in parallel_for, before calling "
+                    //     "compute_sub_workload to compute ave_workload - 1\n"
+                    //     );
                     ave_workload( jnk ) =
                         compute_sub_workload( dj, j, dk, k, rank, rec_partition,
                                               prefix_sum ) /
                         rank;
-                    printf( "ave_workload(%d) = %d\n", jnk,
-                            ave_workload( jnk ) );
+                    // printf( "ave_workload(%d) = %d\n", jnk,
+                    //         ave_workload( jnk ) );
                 } );
-            printf( "In optimizePartition: after parallel_for\n" );
+            // printf( "In optimizePartition: after parallel_for\n" );
 
             int point_i = 1;
             int last_point = 0;
@@ -404,10 +406,10 @@ class SparseDimPartitioner : public Partitioner
                             current_workload( jnk ) = compute_sub_workload(
                                 di, last_point, point_i, dj, j, dk, k,
                                 rec_partition, prefix_sum );
-                            printf( "point_i = %d, last_point = %d, "
-                                    "cur_workload(%d) = %d\n",
-                                    point_i, last_point, jnk,
-                                    current_workload( jnk ) );
+                            // printf( "point_i = %d, last_point = %d, "
+                            //         "cur_workload(%d) = %d\n",
+                            //         point_i, last_point, jnk,
+                            //         current_workload( jnk ) );
                         } );
                     // compute the (w_jk^ave - w_jk^{previ:i})
                     Kokkos::parallel_for(
@@ -422,11 +424,11 @@ class SparseDimPartitioner : public Partitioner
                                 current_workload( jnk ) - ave_workload( jnk );
                             wl *= wl;
                             current_workload( jnk ) = wl;
-                            printf(
-                                "point_i = %d, last_point = %d, "
-                                "[cur_workload(%d)-ave_workload(%d)]^2 = %d\n",
-                                point_i, last_point, jnk, jnk,
-                                current_workload( jnk ) );
+                            // printf(
+                            //     "point_i = %d, last_point = %d, "
+                            //     "[cur_workload(%d)-ave_workload(%d)]^2 =
+                            //     %d\n", point_i, last_point, jnk, jnk,
+                            //     current_workload( jnk ) );
                         } );
 
                     int diff;
@@ -437,14 +439,14 @@ class SparseDimPartitioner : public Partitioner
                             update += current_workload( idx );
                         },
                         diff );
-                    printf( "point_i = %d, last_point = %d, "
-                            "diff_sqr = %d\n",
-                            point_i, last_point, diff );
+                    // printf( "point_i = %d, last_point = %d, "
+                    //         "diff_sqr = %d\n",
+                    //         point_i, last_point, diff );
                     if ( diff < last_diff )
                     {
-                        printf( "new optimal: last_diff = %d, diff = %d, "
-                                "point_i = %d, rank = %d\n",
-                                last_diff, diff, point_i, rank );
+                        // printf( "new optimal: last_diff = %d, diff = %d, "
+                        //         "point_i = %d, rank = %d\n",
+                        //         last_diff, diff, point_i, rank );
                         if ( point_i == rec_mirror( rank, di ) )
                         {
                             rec_mirror( current_rank, di ) = point_i;
@@ -455,9 +457,10 @@ class SparseDimPartitioner : public Partitioner
                     }
                     else
                     {
-                        printf( "find optimal(+1): last_diff = %d, diff = %d, "
-                                "point_i = %d, rank = %d\n",
-                                last_diff, diff, point_i, rank );
+                        // printf( "find optimal(+1): last_diff = %d, diff = %d,
+                        // "
+                        //         "point_i = %d, rank = %d\n",
+                        //         last_diff, diff, point_i, rank );
                         rec_mirror( current_rank, di ) = point_i - 1;
                         last_point = point_i;
                         break;
@@ -480,7 +483,7 @@ class SparseDimPartitioner : public Partitioner
                           WorkloadView& prefix_sum )
     {
         // auto prefix_sum = _workload_prefix_sum;
-        printf( "Inside compute_sub_workload 1\n" );
+        // printf( "Inside compute_sub_workload 1\n" );
         // Kokkos::Array<int, 3> end, start;
         int end[3], start[3];
         int dim_i = 0;
@@ -500,19 +503,19 @@ class SparseDimPartitioner : public Partitioner
         // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] -
         // S[i-1][j-1][k]
         // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
-        printf(
-            "1 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d, %d], "
-            "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n",
-            dim_j, j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
-            end[dim_i], end[dim_j], end[dim_k],
-            prefix_sum( end[0], end[1], end[2] ),
-            prefix_sum( start[0], end[1], end[2] ),
-            prefix_sum( end[0], start[1], end[2] ),
-            prefix_sum( end[0], end[1], start[2] ),
-            prefix_sum( start[0], start[1], end[2] ),
-            prefix_sum( end[0], start[1], start[2] ),
-            prefix_sum( start[0], end[1], start[2] ),
-            prefix_sum( start[0], start[1], start[2] ) );
+        // printf(
+        //     "1 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d,
+        //     %d], " "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n",
+        //     dim_j, j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
+        //     end[dim_i], end[dim_j], end[dim_k],
+        //     prefix_sum( end[0], end[1], end[2] ),
+        //     prefix_sum( start[0], end[1], end[2] ),
+        //     prefix_sum( end[0], start[1], end[2] ),
+        //     prefix_sum( end[0], end[1], start[2] ),
+        //     prefix_sum( start[0], start[1], end[2] ),
+        //     prefix_sum( end[0], start[1], start[2] ),
+        //     prefix_sum( start[0], end[1], start[2] ),
+        //     prefix_sum( start[0], start[1], start[2] ) );
 
         return prefix_sum( end[0], end[1], end[2] )     //    S[i][j][k]
                - prefix_sum( start[0], end[1], end[2] ) //  S[i-1][j][k]
@@ -536,7 +539,7 @@ class SparseDimPartitioner : public Partitioner
                           WorkloadView& prefix_sum )
     {
         // auto prefix_sum = _workload_prefix_sum;
-        printf( "Inside compute_sub_workload 2\n" );
+        // printf( "Inside compute_sub_workload 2\n" );
         int end[3], start[3];
         // Kokkos::Array<int, 3> end, start;
         end[dim_i] = i_end;
@@ -551,19 +554,19 @@ class SparseDimPartitioner : public Partitioner
         // S[i-1][j-1][k]
         // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
 
-        printf(
-            "2 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d, %d], "
-            "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n",
-            dim_j, j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
-            end[dim_i], end[dim_j], end[dim_k],
-            prefix_sum( end[0], end[1], end[2] ),
-            prefix_sum( start[0], end[1], end[2] ),
-            prefix_sum( end[0], start[1], end[2] ),
-            prefix_sum( end[0], end[1], start[2] ),
-            prefix_sum( start[0], start[1], end[2] ),
-            prefix_sum( end[0], start[1], start[2] ),
-            prefix_sum( start[0], end[1], start[2] ),
-            prefix_sum( start[0], start[1], start[2] ) );
+        // printf(
+        //     "2 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d,
+        //     %d], " "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n",
+        //     dim_j, j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
+        //     end[dim_i], end[dim_j], end[dim_k],
+        //     prefix_sum( end[0], end[1], end[2] ),
+        //     prefix_sum( start[0], end[1], end[2] ),
+        //     prefix_sum( end[0], start[1], end[2] ),
+        //     prefix_sum( end[0], end[1], start[2] ),
+        //     prefix_sum( start[0], start[1], end[2] ),
+        //     prefix_sum( end[0], start[1], start[2] ),
+        //     prefix_sum( start[0], end[1], start[2] ),
+        //     prefix_sum( start[0], start[1], start[2] ) );
         return prefix_sum( end[0], end[1], end[2] )     // S[i][j][k]
                - prefix_sum( start[0], end[1], end[2] ) // S[i-1][j][k]
                - prefix_sum( end[0], start[1], end[2] ) // S[i][j-1][k]
