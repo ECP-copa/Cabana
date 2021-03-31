@@ -281,8 +281,11 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         //         }
 
         // compute the prefix sum
-        for ( int j = 0; j < _workload_prefix_sum.extent( 1 ); ++j )
-            for ( int k = 0; k < _workload_prefix_sum.extent( 2 ); ++k )
+        for ( int j = 0;
+              j < static_cast<int>( _workload_prefix_sum.extent( 1 ) ); ++j )
+            for ( int k = 0;
+                  k < static_cast<int>( _workload_prefix_sum.extent( 2 ) );
+                  ++k )
                 Kokkos::parallel_scan(
                     Kokkos::RangePolicy<ExecSpace>(
                         0, _workload_prefix_sum.extent( 0 ) ),
@@ -298,8 +301,11 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                         }
                     } );
 
-        for ( int i = 0; i < _workload_prefix_sum.extent( 0 ); ++i )
-            for ( int k = 0; k < _workload_prefix_sum.extent( 2 ); ++k )
+        for ( int i = 0;
+              i < static_cast<int>( _workload_prefix_sum.extent( 0 ) ); ++i )
+            for ( int k = 0;
+                  k < static_cast<int>( _workload_prefix_sum.extent( 2 ) );
+                  ++k )
                 Kokkos::parallel_scan(
                     Kokkos::RangePolicy<ExecSpace>(
                         0, _workload_prefix_sum.extent( 1 ) ),
@@ -315,8 +321,11 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                         }
                     } );
 
-        for ( int i = 0; i < _workload_prefix_sum.extent( 0 ); ++i )
-            for ( int j = 0; j < _workload_prefix_sum.extent( 1 ); ++j )
+        for ( int i = 0;
+              i < static_cast<int>( _workload_prefix_sum.extent( 0 ) ); ++i )
+            for ( int j = 0;
+                  j < static_cast<int>( _workload_prefix_sum.extent( 1 ) );
+                  ++j )
                 Kokkos::parallel_scan(
                     Kokkos::RangePolicy<ExecSpace>(
                         0, _workload_prefix_sum.extent( 2 ) ),
