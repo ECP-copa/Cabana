@@ -28,10 +28,12 @@ class SparseDimPartitioner : public BlockPartitioner<3>
 
     SparseDimPartitioner( MPI_Comm comm, float max_workload_coeff,
                           int particle_num, int num_step_rebalance,
+                          int max_optimize_iteration,
                           const std::array<int, 3>& global_cells_per_dim )
         : _workload_threshold(
               static_cast<int>( max_workload_coeff * particle_num ) )
         , _num_step_rebalance( num_step_rebalance )
+        , _max_optimize_iteration( max_optimize_iteration )
         , _workload_prefix_sum(
               "workload_prefix_sum",
               ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
@@ -58,12 +60,13 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     }
 
     SparseDimPartitioner( float max_workload_coeff, int particle_num,
-                          int num_step_rebalance,
+                          int num_step_rebalance, int max_optimize_iteration,
                           const std::array<int, 3>& ranks_per_dim,
                           const std::array<int, 3>& global_cells_per_dim )
         : _workload_threshold(
               static_cast<int>( max_workload_coeff * particle_num ) )
         , _num_step_rebalance( num_step_rebalance )
+        , _max_optimize_iteration( max_optimize_iteration )
         , _workload_prefix_sum(
               "workload_prefix_sum",
               ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
@@ -356,6 +359,18 @@ class SparseDimPartitioner : public BlockPartitioner<3>
 
     void optimizePartition()
     {
+        bool is_changed = false;
+        for ( int i = 0; i < _max_optimize_iteration; ++i )
+        {
+            optimizePartition( is_changed );
+            if ( !is_changed )
+                return;
+        }
+    }
+
+    void optimizePartition( bool& is_changed )
+    {
+        is_changed = false;
         for ( int di = 0; di < 3; ++di )
         {
             auto rank = _ranks_per_dim[di];
@@ -390,8 +405,9 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                         compute_sub_workload( dj, j, dk, k, rank, rec_partition,
                                               prefix_sum ) /
                         rank;
-                    // printf( "ave_workload(%d) = %d\n", jnk,
-                    //         ave_workload( jnk ) );
+                    // printf( "ave_workload(%d) = %d, di = %d, rank = %d\n",
+                    // jnk,
+                    //         ave_workload( jnk ), di, rank );
                 } );
             // printf( "In optimizePartition: after parallel_for\n" );
 
@@ -414,10 +430,10 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                             current_workload( jnk ) = compute_sub_workload(
                                 di, last_point, point_i, dj, j, dk, k,
                                 rec_partition, prefix_sum );
-                            //     printf( "point_i = %d, last_point = %d, "
-                            //             "cur_workload(%d) = %d\n",
-                            //             point_i, last_point, jnk,
-                            //             current_workload( jnk ) );
+                            // printf( "point_i = %d, last_point = %d, "
+                            //         "cur_workload(%d) = %d\n",
+                            //         point_i, last_point, jnk,
+                            //         current_workload( jnk ) );
                         } );
                     // compute the (w_jk^ave - w_jk^{previ:i})
                     Kokkos::parallel_for(
@@ -434,8 +450,8 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                             current_workload( jnk ) = wl;
                             // printf(
                             //     "point_i = %d, last_point = %d, "
-                            //     "[cur_workload(%d)-ave_workload(%d)]^2 =
-                            //     %d\n", point_i, last_point, jnk, jnk,
+                            //     "[cur_workload(%d)-ave_workload(%d)]^2 = %d\n
+                            //     ", point_i, last_point, jnk, jnk,
                             //     current_workload( jnk ) );
                         } );
 
@@ -450,7 +466,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                     // printf( "point_i = %d, last_point = %d, "
                     //         "diff_sqr = %d\n",
                     //         point_i, last_point, diff );
-                    if ( diff < last_diff )
+                    if ( diff <= last_diff )
                     {
                         // printf( "new optimal: last_diff = %d, diff = %d, "
                         //         "point_i = %d, rank = %d\n",
@@ -465,24 +481,29 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                     }
                     else
                     {
-                        // printf( "find optimal(+1): last_diff = %d, diff =
-                        // %d,"
-                        //         "point_i = %d, rank = %d\n",
-                        //         last_diff, diff, point_i, rank );
-                        rec_mirror( current_rank, di ) = point_i - 1;
+                        // printf( "find optimal(+1): di = %d, last_diff = %d, "
+                        //         "diff = %d,"
+                        //         "point_i = %d, rank = %d, "
+                        //         "rec_mirror(current_rank, di) = %d\n",
+                        //         di, last_diff, diff, point_i, rank,
+                        //         rec_mirror( current_rank, di ) );
+                        if ( rec_mirror( current_rank, di ) != point_i - 1 )
+                        {
+                            rec_mirror( current_rank, di ) = point_i - 1;
+                            is_changed = true;
+                        }
                         last_point = point_i;
                         break;
                     }
-                    Kokkos::deep_copy( rec_partition, rec_mirror );
                 } // end while
             }
+            Kokkos::deep_copy( _rectangle_partition_dev, rec_mirror );
         }
     }
 
     // void greedyPartition();
 
-    bool adaptive_load_balance();
-
+    // bool adaptive_load_balance();
   private:
     template <typename PartitionView, typename WorkloadView>
     KOKKOS_INLINE_FUNCTION int
@@ -596,6 +617,8 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     int _workload_threshold;
     //! default check point for re-balance
     int _num_step_rebalance;
+    //! max_optimize iterations
+    int _max_optimize_iteration;
     //! represent the rectangle partition in each dimension
     //! with form [p_1, ..., p_n, cell_num], n =
     //! rank-num-in-current-dimension partition in this dimension would be [0,
