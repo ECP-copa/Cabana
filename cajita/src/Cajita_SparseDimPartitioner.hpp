@@ -620,6 +620,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     //! with form [p_1, ..., p_n, cell_num], n =
     //! rank-num-in-current-dimension partition in this dimension would be [0,
     //! p_1), [p_1, p_2) ... [p_n, cellNum] (unit: tile)
+  public:
     Kokkos::View<int* [3], MemorySpace> _rectangle_partition_dev;
     //! 3d prefix sum of the workload of each cell on current
     // current pre-set size: global_tile_per_dim * global_tile_per_dim*
