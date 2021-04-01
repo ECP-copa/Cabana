@@ -237,9 +237,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     void computeFullPrefixSum( MPI_Comm comm )
     {
         // all reduce the _workload_per_cell => _workloard_prefix_sum
-        int total_size = _workload_per_tile.extent( 0 ) *
-                         _workload_per_tile.extent( 1 ) *
-                         _workload_per_tile.extent( 2 );
+        int total_size = _workload_per_tile.size();
         // printf( "total_size = %d, _wo_per_tile = %p, _workload_prefix_sum = "
         //         "%p, MPI_INT = %p, MPI_SUM = %p, comm = %p \n",
         //         total_size, _workload_per_tile.data(),
@@ -504,7 +502,6 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     // void greedyPartition();
 
     // bool adaptive_load_balance();
-  private:
     template <typename PartitionView, typename WorkloadView>
     KOKKOS_INLINE_FUNCTION int
     compute_sub_workload( int dim_j, int j, int dim_k, int k, int rank_i,
