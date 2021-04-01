@@ -201,6 +201,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     {
         auto workload = _workload_per_tile;
         Kokkos::parallel_for(
+            "compute_local_workload_parpos",
             Kokkos::RangePolicy<ExecSpace>( 0, particle_num ),
             KOKKOS_LAMBDA( const int i ) {
                 int ti = static_cast<int>( view( i, 0 ) / dx - 0.5 ) >>
@@ -221,6 +222,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     {
         auto workload = _workload_per_tile;
         Kokkos::parallel_for(
+            "compute_local_workload_sparsmap",
             Kokkos::RangePolicy<ExecSpace>( 0, sparseMap.capacity() ),
             KOKKOS_LAMBDA( uint32_t i ) {
                 if ( sparseMap.valid_at( i ) )
@@ -288,6 +290,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                   k < static_cast<int>( _workload_prefix_sum.extent( 2 ) );
                   ++k )
                 Kokkos::parallel_scan(
+                    "scan_prefix_sum_dim0",
                     Kokkos::RangePolicy<ExecSpace>(
                         0, _workload_prefix_sum.extent( 0 ) ),
                     KOKKOS_LAMBDA( const int i, int& update,
@@ -308,6 +311,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                   k < static_cast<int>( _workload_prefix_sum.extent( 2 ) );
                   ++k )
                 Kokkos::parallel_scan(
+                    "scan_prefix_sum_dim1",
                     Kokkos::RangePolicy<ExecSpace>(
                         0, _workload_prefix_sum.extent( 1 ) ),
                     KOKKOS_LAMBDA( const int j, int& update,
@@ -328,6 +332,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                   j < static_cast<int>( _workload_prefix_sum.extent( 1 ) );
                   ++j )
                 Kokkos::parallel_scan(
+                    "scan_prefix_sum_dim2",
                     Kokkos::RangePolicy<ExecSpace>(
                         0, _workload_prefix_sum.extent( 2 ) ),
                     KOKKOS_LAMBDA( const int k, int& update,
@@ -386,6 +391,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                 "ave_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
             // printf( "In optimizePartition: before parallel_for\n" );
             Kokkos::parallel_for(
+                "compute_average_workload",
                 Kokkos::RangePolicy<ExecSpace>( 0, _ranks_per_dim[dj] *
                                                        _ranks_per_dim[dk] ),
                 KOKKOS_LAMBDA( uint32_t jnk ) {
@@ -420,6 +426,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                 {
                     // compute current workload
                     Kokkos::parallel_for(
+                        "computer_current_workload",
                         Kokkos::RangePolicy<ExecSpace>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                         KOKKOS_LAMBDA( uint32_t jnk ) {
@@ -435,6 +442,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                         } );
                     // compute the (w_jk^ave - w_jk^{previ:i})
                     Kokkos::parallel_for(
+                        "compute_diff",
                         Kokkos::RangePolicy<ExecSpace>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                         KOKKOS_LAMBDA( uint32_t jnk ) {
@@ -455,6 +463,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
 
                     int diff;
                     Kokkos::parallel_reduce(
+                        "diff_reduce",
                         Kokkos::RangePolicy<ExecSpace>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                         KOKKOS_LAMBDA( const int idx, int& update ) {
@@ -506,7 +515,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     KOKKOS_INLINE_FUNCTION int
     compute_sub_workload( int dim_j, int j, int dim_k, int k, int rank_i,
                           PartitionView& rec_partition,
-                          WorkloadView& prefix_sum )
+                          WorkloadView& prefix_sum ) const
     {
         // auto prefix_sum = _workload_prefix_sum;
         // printf( "Inside compute_sub_workload 1\n" );
@@ -562,7 +571,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     KOKKOS_INLINE_FUNCTION int
     compute_sub_workload( int dim_i, int i_start, int i_end, int dim_j, int j,
                           int dim_k, int k, PartitionView& rec_partition,
-                          WorkloadView& prefix_sum )
+                          WorkloadView& prefix_sum ) const
     {
         // auto prefix_sum = _workload_prefix_sum;
         // printf( "Inside compute_sub_workload 2\n" );
