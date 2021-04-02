@@ -612,7 +612,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                                  start[2] ); // S[i-1][j-1][k-1]
         }
     };
-    
+
     // bool adaptive_load_balance();
 
   private:
