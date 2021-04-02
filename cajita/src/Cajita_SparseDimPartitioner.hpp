@@ -18,6 +18,8 @@ template <typename MemorySpace, typename ExecSpace,
 class SparseDimPartitioner : public BlockPartitioner<3>
 {
   public:
+    using workload_view = Kokkos::View<int***, MemorySpace>;
+    using partition_view = Kokkos::View<int* [3], MemorySpace>;
     //! Number of bits (per dimension) needed to index the cells inside a tile
     static constexpr unsigned long long cell_bits_per_tile_dim =
         bitCount( CellPerTileDim );
@@ -382,6 +384,9 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                 Kokkos::HostSpace(), _rectangle_partition_dev );
             auto prefix_sum = _workload_prefix_sum;
 
+            SubWorkloadFunctor compute_sub_workload = {
+                _rectangle_partition_dev, _workload_prefix_sum };
+
             int dj = ( di + 1 ) % 3;
             int dk = ( di + 2 ) % 3;
             auto rank_j = _ranks_per_dim[dj];
@@ -406,9 +411,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                     //     "compute_sub_workload to compute ave_workload - 1\n"
                     //     );
                     ave_workload( jnk ) =
-                        compute_sub_workload( dj, j, dk, k, rank, rec_partition,
-                                              prefix_sum ) /
-                        rank;
+                        compute_sub_workload( dj, j, dk, k, rank ) / rank;
                     // printf( "ave_workload(%d) = %d, di = %d, rank = %d\n",
                     // jnk,
                     //         ave_workload( jnk ), di, rank );
@@ -433,8 +436,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                             int j = static_cast<int>( jnk / rank_k );
                             int k = static_cast<int>( jnk % rank_k );
                             current_workload( jnk ) = compute_sub_workload(
-                                di, last_point, point_i, dj, j, dk, k,
-                                rec_partition, prefix_sum );
+                                di, last_point, point_i, dj, j, dk, k );
                             // printf( "point_i = %d, last_point = %d, "
                             //         "cur_workload(%d) = %d\n",
                             //         point_i, last_point, jnk,
@@ -509,112 +511,109 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     }
 
     // void greedyPartition();
-
-    // bool adaptive_load_balance();
-    template <typename PartitionView, typename WorkloadView>
-    KOKKOS_INLINE_FUNCTION int
-    compute_sub_workload( int dim_j, int j, int dim_k, int k, int rank_i,
-                          PartitionView& rec_partition,
-                          WorkloadView& prefix_sum ) const
+    struct SubWorkloadFunctor
     {
-        // auto prefix_sum = _workload_prefix_sum;
-        // printf( "Inside compute_sub_workload 1\n" );
-        // Kokkos::Array<int, 3> end, start;
-        int end[3], start[3];
-        int dim_i = 0;
-        while ( dim_i == dim_j || dim_i == dim_k )
+        partition_view rec_partition;
+        workload_view prefix_sum;
+
+        KOKKOS_INLINE_FUNCTION int operator()( int dim_j, int j, int dim_k,
+                                               int k, int rank_i ) const
         {
-            dim_i = ( dim_i + 1 ) % 3;
+            // auto prefix_sum = _workload_prefix_sum;
+            // printf( "Inside compute_sub_workload 1\n" );
+            // Kokkos::Array<int, 3> end, start;
+            int end[3], start[3];
+            int dim_i = 0;
+            while ( dim_i == dim_j || dim_i == dim_k )
+            {
+                dim_i = ( dim_i + 1 ) % 3;
+            }
+            end[dim_i] = rec_partition( rank_i, dim_i );
+            // end[dim_i] = rec_partition( _ranks_per_dim[dim_i], dim_i );
+            end[dim_j] = rec_partition( j + 1, dim_j );
+            end[dim_k] = rec_partition( k + 1, dim_k );
+
+            start[dim_i] = 0;
+            start[dim_j] = rec_partition( j, dim_j );
+            start[dim_k] = rec_partition( k, dim_k );
+
+            // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] -
+            // S[i-1][j-1][k]
+            // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
+            // printf(
+            //     "1 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d,
+            //     %d,%d], " "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d,
+            //     %d\n", dim_j, j, dim_k, k, start[dim_i], start[dim_j],
+            //     start[dim_k], end[dim_i], end[dim_j], end[dim_k], prefix_sum(
+            //     end[0], end[1], end[2] ), prefix_sum( start[0], end[1],
+            //     end[2] ), prefix_sum( end[0], start[1], end[2] ), prefix_sum(
+            //     end[0], end[1], start[2] ), prefix_sum( start[0], start[1],
+            //     end[2] ), prefix_sum( end[0], start[1], start[2] ),
+            //     prefix_sum( start[0], end[1], start[2] ),
+            //     prefix_sum( start[0], start[1], start[2] ) );
+
+            return prefix_sum( end[0], end[1], end[2] )     //    S[i][j][k]
+                   - prefix_sum( start[0], end[1], end[2] ) //  S[i-1][j][k]
+                   - prefix_sum( end[0], start[1], end[2] ) //  S[i][j-1][k]
+                   - prefix_sum( end[0], end[1], start[2] ) //  S[i][j][k-1]
+                   + prefix_sum( start[0], start[1],
+                                 end[2] ) // S[i-1][j-1][k]
+                   + prefix_sum( end[0], start[1],
+                                 start[2] ) // S[i][j-1][k-1]
+                   + prefix_sum( start[0], end[1],
+                                 start[2] ) // S[i-1][j][k-1]
+                   - prefix_sum( start[0], start[1],
+                                 start[2] ); // S[i-1][j-1][k-1]
+            // return _workload_prefix_sum( end[0], end[1], end[2] );
         }
-        end[dim_i] = rec_partition( rank_i, dim_i );
-        // end[dim_i] = rec_partition( _ranks_per_dim[dim_i], dim_i );
-        end[dim_j] = rec_partition( j + 1, dim_j );
-        end[dim_k] = rec_partition( k + 1, dim_k );
 
-        start[dim_i] = 0;
-        start[dim_j] = rec_partition( j, dim_j );
-        start[dim_k] = rec_partition( k, dim_k );
+        KOKKOS_INLINE_FUNCTION int operator()( int dim_i, int i_start,
+                                               int i_end, int dim_j, int j,
+                                               int dim_k, int k ) const
+        {
+            // auto prefix_sum = _workload_prefix_sum;
+            // printf( "Inside compute_sub_workload 2\n" );
+            int end[3], start[3];
+            // Kokkos::Array<int, 3> end, start;
+            end[dim_i] = i_end;
+            end[dim_j] = rec_partition( j + 1, dim_j );
+            end[dim_k] = rec_partition( k + 1, dim_k );
 
-        // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] -
-        // S[i-1][j-1][k]
-        // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
-        // printf(
-        //     "1 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d,%d],
-        //     " "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n", dim_j,
-        //     j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
-        //     end[dim_i], end[dim_j], end[dim_k],
-        //     prefix_sum( end[0], end[1], end[2] ),
-        //     prefix_sum( start[0], end[1], end[2] ),
-        //     prefix_sum( end[0], start[1], end[2] ),
-        //     prefix_sum( end[0], end[1], start[2] ),
-        //     prefix_sum( start[0], start[1], end[2] ),
-        //     prefix_sum( end[0], start[1], start[2] ),
-        //     prefix_sum( start[0], end[1], start[2] ),
-        //     prefix_sum( start[0], start[1], start[2] ) );
+            start[dim_i] = i_start;
+            start[dim_j] = rec_partition( j, dim_j );
+            start[dim_k] = rec_partition( k, dim_k );
 
-        return prefix_sum( end[0], end[1], end[2] )     //    S[i][j][k]
-               - prefix_sum( start[0], end[1], end[2] ) //  S[i-1][j][k]
-               - prefix_sum( end[0], start[1], end[2] ) //  S[i][j-1][k]
-               - prefix_sum( end[0], end[1], start[2] ) //  S[i][j][k-1]
-               + prefix_sum( start[0], start[1],
-                             end[2] ) // S[i-1][j-1][k]
-               + prefix_sum( end[0], start[1],
-                             start[2] ) // S[i][j-1][k-1]
-               + prefix_sum( start[0], end[1],
-                             start[2] ) // S[i-1][j][k-1]
-               - prefix_sum( start[0], start[1],
-                             start[2] ); // S[i-1][j-1][k-1]
-        // return _workload_prefix_sum( end[0], end[1], end[2] );
-    }
+            // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] -
+            // S[i-1][j-1][k]
+            // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
 
-    template <typename PartitionView, typename WorkloadView>
-    KOKKOS_INLINE_FUNCTION int
-    compute_sub_workload( int dim_i, int i_start, int i_end, int dim_j, int j,
-                          int dim_k, int k, PartitionView& rec_partition,
-                          WorkloadView& prefix_sum ) const
-    {
-        // auto prefix_sum = _workload_prefix_sum;
-        // printf( "Inside compute_sub_workload 2\n" );
-        int end[3], start[3];
-        // Kokkos::Array<int, 3> end, start;
-        end[dim_i] = i_end;
-        end[dim_j] = rec_partition( j + 1, dim_j );
-        end[dim_k] = rec_partition( k + 1, dim_k );
-
-        start[dim_i] = i_start;
-        start[dim_j] = rec_partition( j, dim_j );
-        start[dim_k] = rec_partition( k, dim_k );
-
-        // S[i][j][k] = S[i-1][j][k] + S[i][j-1][k] + S[i][j][k-1] -
-        // S[i-1][j-1][k]
-        // - S[i][j-1][k-1] - S[i-1][j][k-1] + S[i-1][j-1][k-1] + a[i][j][k]
-
-        // printf(
-        //     "2 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d,
-        //     %d], " "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d, %d\n",
-        //     dim_j, j, dim_k, k, start[dim_i], start[dim_j], start[dim_k],
-        //     end[dim_i], end[dim_j], end[dim_k],
-        //     prefix_sum( end[0], end[1], end[2] ),
-        //     prefix_sum( start[0], end[1], end[2] ),
-        //     prefix_sum( end[0], start[1], end[2] ),
-        //     prefix_sum( end[0], end[1], start[2] ),
-        //     prefix_sum( start[0], start[1], end[2] ),
-        //     prefix_sum( end[0], start[1], start[2] ),
-        //     prefix_sum( start[0], end[1], start[2] ),
-        //     prefix_sum( start[0], start[1], start[2] ) );
-        return prefix_sum( end[0], end[1], end[2] )     // S[i][j][k]
-               - prefix_sum( start[0], end[1], end[2] ) // S[i-1][j][k]
-               - prefix_sum( end[0], start[1], end[2] ) // S[i][j-1][k]
-               - prefix_sum( end[0], end[1], start[2] ) // S[i][j][k-1]
-               + prefix_sum( start[0], start[1],
-                             end[2] ) // S[i-1][j-1][k]
-               + prefix_sum( end[0], start[1],
-                             start[2] ) // S[i][j-1][k-1]
-               + prefix_sum( start[0], end[1],
-                             start[2] ) // S[i-1][j][k-1]
-               - prefix_sum( start[0], start[1],
-                             start[2] ); // S[i-1][j-1][k-1]
-    }
+            // printf(
+            //     "2 - dim_j = %d, j = %d, dim_k = %d, k = %d; start = [%d, %d,
+            //     %d], " "end = [%d, %d, %d]: %d, %d, %d, %d, %d, %d, %d,
+            //     %d\n", dim_j, j, dim_k, k, start[dim_i], start[dim_j],
+            //     start[dim_k], end[dim_i], end[dim_j], end[dim_k], prefix_sum(
+            //     end[0], end[1], end[2] ), prefix_sum( start[0], end[1],
+            //     end[2] ), prefix_sum( end[0], start[1], end[2] ), prefix_sum(
+            //     end[0], end[1], start[2] ), prefix_sum( start[0], start[1],
+            //     end[2] ), prefix_sum( end[0], start[1], start[2] ),
+            //     prefix_sum( start[0], end[1], start[2] ),
+            //     prefix_sum( start[0], start[1], start[2] ) );
+            return prefix_sum( end[0], end[1], end[2] )     // S[i][j][k]
+                   - prefix_sum( start[0], end[1], end[2] ) // S[i-1][j][k]
+                   - prefix_sum( end[0], start[1], end[2] ) // S[i][j-1][k]
+                   - prefix_sum( end[0], end[1], start[2] ) // S[i][j][k-1]
+                   + prefix_sum( start[0], start[1],
+                                 end[2] ) // S[i-1][j-1][k]
+                   + prefix_sum( end[0], start[1],
+                                 start[2] ) // S[i][j-1][k-1]
+                   + prefix_sum( start[0], end[1],
+                                 start[2] ) // S[i-1][j][k-1]
+                   - prefix_sum( start[0], start[1],
+                                 start[2] ); // S[i-1][j-1][k-1]
+        }
+    };
+    
+    // bool adaptive_load_balance();
 
   private:
     // ! workload_threshold_coeff
@@ -630,14 +629,14 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     //! rank-num-in-current-dimension partition in this dimension would be [0,
     //! p_1), [p_1, p_2) ... [p_n, cellNum] (unit: tile)
   public:
-    Kokkos::View<int* [3], MemorySpace> _rectangle_partition_dev;
+    partition_view _rectangle_partition_dev;
     //! 3d prefix sum of the workload of each cell on current
     // current pre-set size: global_tile_per_dim * global_tile_per_dim*
     // global_tile_per_dim
-    Kokkos::View<int***, MemorySpace> _workload_prefix_sum;
+    workload_view _workload_prefix_sum;
     // current pre-set size: global_tile_per_dim * global_tile_per_dim*
     // global_tile_per_dim
-    Kokkos::View<int***, MemorySpace> _workload_per_tile;
+    workload_view _workload_per_tile;
     // std::array<Kokkos::View<int***, MemorySpace>> _workload_buffer;
     //! ranks per dimension
     Kokkos::Array<int, 3> _ranks_per_dim;
