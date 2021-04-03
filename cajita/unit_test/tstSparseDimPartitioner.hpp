@@ -12,33 +12,35 @@ namespace Test
 {
 void uniform_distribution_automatic_rank()
 {
+    // define the domain size
     constexpr int size_tile_per_dim = 16;
     constexpr int cell_per_tile_dim = 4;
     constexpr int size_per_dim = size_tile_per_dim * cell_per_tile_dim;
     constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
 
+    // some settings for partitioner
     float max_workload_coeff = 1.5;
-    int particle_num = total_size;
+    int workload_num = total_size;
     int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
-
     std::array<int, 3> global_cells_per_dim = {
         size_tile_per_dim * cell_per_tile_dim,
         size_tile_per_dim * cell_per_tile_dim,
         size_tile_per_dim * cell_per_tile_dim };
 
-    SparseDimPartitioner<TEST_MEMSPACE, TEST_EXECSPACE, cell_per_tile_dim>
-        partitioner( MPI_COMM_WORLD, max_workload_coeff, particle_num,
-                     num_step_rebalance, max_optimize_iteration,
-                     global_cells_per_dim );
+    // partitioner
+    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
+        global_cells_per_dim, max_optimize_iteration );
 
+    // check the value of some pre-computed constants
     auto cbptd = partitioner.cell_bits_per_tile_dim;
     EXPECT_EQ( cbptd, 2 );
 
     auto cnptd = partitioner.cell_num_per_tile_dim;
     EXPECT_EQ( cnptd, 4 );
 
-    // ranks per dim test
+    // test ranks per dim
     auto ranks_per_dim =
         partitioner.ranksPerDimension( MPI_COMM_WORLD, global_cells_per_dim );
 
@@ -46,7 +48,7 @@ void uniform_distribution_automatic_rank()
     EXPECT_EQ( ranks_per_dim[1] >= 1, true );
     EXPECT_EQ( ranks_per_dim[2] >= 1, true );
 
-    // init partitions
+    // initialize partitions (averagely divide the whole domain)
     std::array<std::vector<int>, 3> rec_partitions;
     for ( int d = 0; d < 3; ++d )
     {
@@ -59,18 +61,20 @@ void uniform_distribution_automatic_rank()
         }
         rec_partitions[d].push_back( size_tile_per_dim );
     }
-    partitioner.initialize_rec_partition( rec_partitions[0], rec_partitions[1],
-                                          rec_partitions[2] );
+    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
+                                        rec_partitions[2] );
 
-    // test getCurrentPartition
+    // test getCurrentPartition function
     {
-        auto part = partitioner.get_current_partition();
+        auto part = partitioner.getCurrentPartition();
         for ( int d = 0; d < 3; ++d )
             for ( int id = 0; id < ranks_per_dim[d] + 1; id++ )
                 EXPECT_EQ( part[d][id], rec_partitions[d][id] );
     }
 
-    // test ownedCellsPerDimension
+    // test ownedCellsPerDimension function
+    // GT should be the average cell num in ranks (based on the inital
+    // partition)
     std::array<int, 3> cart_rank;
     std::array<int, 3> periodic_dims = { 0, 0, 0 };
     int reordered_cart_ranks = 1;
@@ -82,8 +86,7 @@ void uniform_distribution_automatic_rank()
     // make a new communicater with MPI_Cart_create
     MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
 
-    auto owned_cells_per_dim =
-        partitioner.ownedCellsPerDimension( cart_comm, global_cells_per_dim );
+    auto owned_cells_per_dim = partitioner.ownedCellsPerDimension( cart_comm );
     auto owned_tiles_per_dim = partitioner.ownedTilesPerDimension( cart_comm );
     for ( int d = 0; d < 3; ++d )
     {
@@ -95,7 +98,8 @@ void uniform_distribution_automatic_rank()
                                                cell_per_tile_dim );
     }
 
-    // init sparseMap
+    // initialize sparseMap, register every tile on every MPI rank
+    // basic settings for sparseMap
     double cell_size = 0.1;
     int pre_alloc_size = size_per_dim * size_per_dim;
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
@@ -105,7 +109,9 @@ void uniform_distribution_automatic_rank()
         global_low_corner[2] + cell_size * global_cells_per_dim[2] };
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_cells_per_dim );
+    // create a new sparseMap
     auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
+    // register tiles to the sparseMap
     Kokkos::parallel_for(
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, size_per_dim ),
         KOKKOS_LAMBDA( int i ) {
@@ -116,14 +122,13 @@ void uniform_distribution_automatic_rank()
                 }
         } );
 
-    // compute workload and do optimization
+    // compute workload and do partition optimization
     partitioner.computeLocalWorkLoad( sis );
     partitioner.computeFullPrefixSum( MPI_COMM_WORLD );
     partitioner.optimizePartition();
 
-    // check results
-    owned_cells_per_dim =
-        partitioner.ownedCellsPerDimension( cart_comm, global_cells_per_dim );
+    // check results (should be the same as the average partition)
+    owned_cells_per_dim = partitioner.ownedCellsPerDimension( cart_comm );
     for ( int d = 0; d < 3; ++d )
     {
         auto gt_tile = rec_partitions[d][cart_rank[d] + 1] -
@@ -138,25 +143,26 @@ void uniform_distribution_automatic_rank()
 void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
                                          std::array<int, 3> occupy_size )
 {
-
+    // define the domain size
     constexpr int size_tile_per_dim = 32;
     constexpr int cell_per_tile_dim = 4;
     constexpr int size_per_dim = size_tile_per_dim * cell_per_tile_dim;
     constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
 
+    // some settings for partitioner
     float max_workload_coeff = 1.5;
-    int particle_num = total_size;
+    int workload_num = total_size;
     int num_step_rebalance = 100;
     int max_optimize_iteration = 10;
-
     std::array<int, 3> global_cells_per_dim = { size_per_dim, size_per_dim,
                                                 size_per_dim };
 
-    SparseDimPartitioner<TEST_MEMSPACE, TEST_EXECSPACE, cell_per_tile_dim>
-        partitioner( MPI_COMM_WORLD, max_workload_coeff, particle_num,
-                     num_step_rebalance, max_optimize_iteration,
-                     global_cells_per_dim );
+    // partitioner
+    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
+        global_cells_per_dim, max_optimize_iteration );
 
+    // check the value of some pre-computed constants
     auto cbptd = partitioner.cell_bits_per_tile_dim;
     EXPECT_EQ( cbptd, 2 );
 
@@ -171,7 +177,7 @@ void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
     EXPECT_EQ( ranks_per_dim[1] >= 1, true );
     EXPECT_EQ( ranks_per_dim[2] >= 1, true );
 
-    // init partitions
+    // initialize partitions (averagely divide the whole domain)
     std::array<std::vector<int>, 3> rec_partitions;
     for ( int d = 0; d < 3; ++d )
     {
@@ -184,10 +190,12 @@ void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
         }
         rec_partitions[d].push_back( size_tile_per_dim );
     }
-    partitioner.initialize_rec_partition( rec_partitions[0], rec_partitions[1],
-                                          rec_partitions[2] );
+    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
+                                        rec_partitions[2] );
 
     // test ownedCellsPerDimension
+    // GT should be the average cell num in ranks (based on the inital
+    // partition)
     Kokkos::Array<int, 3> cart_rank;
     std::array<int, 3> periodic_dims = { 0, 0, 0 };
     int reordered_cart_ranks = 1;
@@ -199,8 +207,7 @@ void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
     // make a new communicater with MPI_Cart_create
     MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
 
-    auto owned_cells_per_dim =
-        partitioner.ownedCellsPerDimension( cart_comm, global_cells_per_dim );
+    auto owned_cells_per_dim = partitioner.ownedCellsPerDimension( cart_comm );
     auto owned_tiles_per_dim = partitioner.ownedTilesPerDimension( cart_comm );
     for ( int d = 0; d < 3; ++d )
     {
@@ -212,7 +219,10 @@ void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
                                                cell_per_tile_dim );
     }
 
-    // init sparseMap
+    // initialize sparseMap
+    // first averagely divide the occupied cube into parts, then each rank pick
+    // one part and register tiles in that part into sparseMap
+    // basic settings for sparseMap
     double cell_size = 0.1;
     int pre_alloc_size = size_per_dim * size_per_dim;
     std::array<double, 3> global_low_corner = { -1.2, -3.3, 2.8 };
@@ -222,8 +232,9 @@ void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
         global_low_corner[2] + cell_size * global_cells_per_dim[2] };
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_cells_per_dim );
+    // create a new sparseMap
     auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
-
+    // divide the occupied cube into sub-cubes
     Kokkos::Array<int, 3> rank_occupy_size;
     Kokkos::Array<int, 3> rank_occupy_start;
     for ( int d = 0; d < 3; ++d )
@@ -236,7 +247,7 @@ void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
         rank_occupy_start[d] +=
             ( cart_rank[d] < offset ) ? cart_rank[d] : offset;
     }
-
+    // register tiles in the sub-cube into the sparseMap
     Kokkos::parallel_for(
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, rank_occupy_size[0] ),
         KOKKOS_LAMBDA( int i ) {
@@ -249,12 +260,12 @@ void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
                 }
         } );
 
-    // compute workload and do optimization
+    // compute workload and do partition optimization
     partitioner.computeLocalWorkLoad( sis );
     partitioner.computeFullPrefixSum( MPI_COMM_WORLD );
     partitioner.optimizePartition();
 
-    // check results
+    // check results (difference to the average value should not exceed 1)
     owned_tiles_per_dim = partitioner.ownedTilesPerDimension( cart_comm );
     for ( int d = 0; d < 3; ++d )
     {
