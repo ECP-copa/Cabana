@@ -16,6 +16,10 @@ jobs:
     defaults:
       run:
         shell: bash
+    env:
+      CCACHE_DIR: "${{ github.workspace }}/.ccache"
+      CCACHE_MAXSIZE: "10G"
+      CCACHE_CPP2: "true"
     strategy:
       matrix:
         distro: ['ubuntu:latest']
@@ -155,6 +159,15 @@ jobs:
         run: |
           mkdir ~/Licenses
           curl https://dynamicinstaller.intel.com/api/v2/license > ~/Licenses/intel.lic
+      - name: Cache ccache
+        uses: actions/cache@v2
+        with:
+          path: ${{ env.CCACHE_DIR }}
+          key: ccache-${{ matrix.distro }}-${{github.run_id}}
+          restore-keys: ccache-${{ matrix.distro }}
+      - name: Zero ccache stats
+        run: |
+          ccache -z
       - name: Checkout kokkos
         uses: actions/checkout@v2.2.0
         with:
@@ -168,6 +181,7 @@ jobs:
             -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
             -DKokkos_ENABLE_OPENMP=${{ matrix.openmp }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DKokkos_ENABLE_HWLOC=ON \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
           cmake --build build --parallel 2
@@ -187,6 +201,7 @@ jobs:
             -DCMAKE_PREFIX_PATH=${HOME}/kokkos \
             -DCMAKE_INSTALL_PREFIX=$HOME/arborx \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
           cmake --build build --parallel 2
           cmake --install build
@@ -207,6 +222,7 @@ jobs:
             -DMKL_ROOT=/opt/intel/mkl \
             -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             ${heffte_cmake_opts}
           cmake --build build --parallel 2
@@ -220,6 +236,7 @@ jobs:
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
             -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_FLAGS="-Wall -pedantic" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
@@ -230,6 +247,9 @@ jobs:
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
+      - name: Show ccache stats
+        run: |
+          ccache -s
       - name: Format Cabana
         if: ${{ matrix.distro == 'ubuntu:latest' }}
         working-directory: build

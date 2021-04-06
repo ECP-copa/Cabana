@@ -5,6 +5,7 @@ ARG NPROCS=4
 
 RUN apt-get update && apt-get install -y \
         bc \
+        ccache \
         wget \
         openssh-client \
     && \
