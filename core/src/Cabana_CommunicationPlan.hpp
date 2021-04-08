@@ -59,6 +59,13 @@ struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Experimental::HIP>
     using type = CountSendsAndCreateSteeringAtomic;
 };
 #endif // end KOKKOS_ENABLE_HIP
+#ifdef KOKKOS_ENABLE_SYCL
+template <>
+struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Experimental::SYCL>
+{
+    using type = CountSendsAndCreateSteeringAtomic;
+};
+#endif // end KOKKOS_ENABLE_SYCL
 #ifdef KOKKOS_ENABLE_OPENMPTARGET
 template <>
 struct CountSendsAndCreateSteeringAlgorithm<Kokkos::Experimental::OpenMPTarget>

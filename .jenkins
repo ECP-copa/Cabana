@@ -90,6 +90,40 @@ pipeline {
                         }
                     }
                 }
+                stage('SYCL') {
+                    agent {
+                        dockerfile {
+                            filename "Dockerfile.sycl"
+                            dir "docker"
+                            args '-v /tmp/ccache.kokkos:/tmp/ccache'
+                            label 'NVIDIA_Tesla_V100-PCIE-32GB && nvidia-docker'
+                        }
+                    }
+                    steps {
+                        sh 'ccache --zero-stats'
+                        sh '''
+                            rm -rf build && mkdir -p build && cd build && \
+                            cmake \
+                              -D CMAKE_BUILD_TYPE=Debug \
+                              -D CMAKE_CXX_COMPILER=clang++ \
+                              -D CMAKE_CXX_COMPILER_LAUNCHER=ccache \
+                              -D CMAKE_CXX_FLAGS="-Wall -Wextra -Wpedantic -Wno-unknown-cuda-version -fsycl -fsycl-targets=nvptx64-nvidia-cuda-sycldevice" \
+                              -D CMAKE_PREFIX_PATH="$KOKKOS_DIR" \
+                              -D Cabana_REQUIRE_SYCL=ON \
+                              -D Cabana_ENABLE_TESTING=ON \
+                              -D Cabana_ENABLE_EXAMPLES=ON \
+                              -D Cabana_ENABLE_CAJITA=OFF \
+                            .. && \
+                            make -j8 && \
+                            ctest --output-on-failure
+                        '''
+                    }
+                    post {
+                        always {
+                            sh 'ccache --show-stats'
+                        }
+                    }
+                }
             }
         }
     }
