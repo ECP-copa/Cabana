@@ -505,7 +505,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                             rec_mirror( current_rank, di ) = point_i - 1;
                             is_changed = true;
                         }
-                        last_point = point_i;
+                        last_point = point_i - 1;
                         break;
                     }
                 } // end while (optimization for the current rank)
