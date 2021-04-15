@@ -197,25 +197,30 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                                  std::vector<int>& rec_partition_j,
                                  std::vector<int>& rec_partition_k )
     {
+
         int max_size = 0;
         for ( int d = 0; d < 3; ++d )
             max_size =
                 max_size < _ranks_per_dim[d] ? _ranks_per_dim[d] : max_size;
 
-        _rectangle_partition_dev = Kokkos::View<int* [3], memory_space>(
-            "_rectangle_partition_dev", max_size + 1 );
-        auto rec_mirror = Kokkos::create_mirror_view(
-            Kokkos::HostSpace(), _rectangle_partition_dev );
+        // auto rectangle_partition = Kokkos::View<int* [3], Kokkos::HostSpace>(
+        //     "rectangle_partition_host", max_size + 1 );
+
+        typedef typename execution_space::array_layout layout;
+        Kokkos::View<int* [3], layout, Kokkos::HostSpace> rectangle_partition(
+            "rectangle_partition_host", max_size + 1 );
+
         for ( int id = 0; id < _ranks_per_dim[0] + 1; ++id )
-            rec_mirror( id, 0 ) = rec_partition_i[id];
+            rectangle_partition( id, 0 ) = rec_partition_i[id];
 
         for ( int id = 0; id < _ranks_per_dim[1] + 1; ++id )
-            rec_mirror( id, 1 ) = rec_partition_j[id];
+            rectangle_partition( id, 1 ) = rec_partition_j[id];
 
         for ( int id = 0; id < _ranks_per_dim[2] + 1; ++id )
-            rec_mirror( id, 2 ) = rec_partition_k[id];
+            rectangle_partition( id, 2 ) = rec_partition_k[id];
 
-        Kokkos::deep_copy( _rectangle_partition_dev, rec_mirror );
+        _rectangle_partition_dev = Kokkos::create_mirror_view_and_copy(
+            memory_space(), rectangle_partition );
     }
 
     /*!
