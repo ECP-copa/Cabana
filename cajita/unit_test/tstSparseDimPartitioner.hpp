@@ -1,3 +1,14 @@
+/****************************************************************************
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * All rights reserved.                                                     *
+ *                                                                          *
+ * This file is part of the Cabana library. Cabana is distributed under a   *
+ * BSD 3-clause license. For the licensing terms see the LICENSE file in    *
+ * the top-level directory.                                                 *
+ *                                                                          *
+ * SPDX-License-Identifier: BSD-3-Clause                                    *
+ ****************************************************************************/
+
 #include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Kokkos_Core.hpp>
@@ -12,6 +23,11 @@ using namespace Cajita;
 
 namespace Test
 {
+
+/*!
+  \brief In this test, every cell in the whole domain is registered, so the GT
+  partition should be the average partition
+*/
 void uniform_distribution_automatic_rank()
 {
     // define the domain size
@@ -142,6 +158,12 @@ void uniform_distribution_automatic_rank()
     }
 }
 
+/*!
+  \brief In this test, every cell in the given domain is registered, so the GT
+  partition should be the average partition of the given domain
+  \param occupy_start the bottom-left point of the given domain
+  \param occupy_size the size of the given domain
+*/
 void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
                                          std::array<int, 3> occupy_size )
 {
@@ -281,14 +303,24 @@ void biased_distribution_automatic_rank( std::array<int, 3> occupy_start,
     }
 }
 
+/*!
+  \brief In this test, the GT partition is first randomly chosen, then a given
+  number of tiles are regiestered on each rank (the most bottom-left and
+  top-right tiles are always registered to ensure the uniqueness of the GT
+  partition )
+  \param occupy_tile_num_per_rank the tile number that will be registered on
+  each MPI rank
+*/
 void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
 {
+    // define the domain size
     constexpr int size_tile_per_dim = 32;
     constexpr int cell_per_tile_dim = 4;
     constexpr int size_per_dim = size_tile_per_dim * cell_per_tile_dim;
     constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
     srand( time( 0 ) );
 
+    // some settings for partitioner
     float max_workload_coeff = 1.5;
     int particle_num = total_size;
     int num_step_rebalance = 100;
@@ -297,10 +329,12 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
     std::array<int, 3> global_cells_per_dim = { size_per_dim, size_per_dim,
                                                 size_per_dim };
 
+    // partitioner
     SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, particle_num, num_step_rebalance,
         global_cells_per_dim, max_optimize_iteration );
 
+    // check the value of some pre-computed constants
     auto cbptd = partitioner.cell_bits_per_tile_dim;
     EXPECT_EQ( cbptd, 2 );
 
@@ -315,6 +349,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
     EXPECT_EQ( ranks_per_dim[1] >= 1, true );
     EXPECT_EQ( ranks_per_dim[2] >= 1, true );
 
+    // compute the rank ID
     Kokkos::Array<int, 3> cart_rank;
     std::array<int, 3> periodic_dims = { 0, 0, 0 };
     int reordered_cart_ranks = 1;
@@ -323,10 +358,9 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
                      periodic_dims.data(), reordered_cart_ranks, &cart_comm );
     int linear_rank;
     MPI_Comm_rank( cart_comm, &linear_rank );
-    // make a new communicater with MPI_Cart_create
     MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
 
-    // generate random ground truth partition
+    // generate random ground truth partition on the root rank
     std::array<std::set<int>, 3> gt_partition_set;
     std::array<std::vector<int>, 3> gt_partition;
     int world_rank, world_size;
@@ -357,6 +391,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
         }
     }
 
+    // broadcast the ground truth partition to all ranks
     for ( int d = 0; d < 3; ++d )
     {
         MPI_Barrier( MPI_COMM_WORLD );
@@ -365,7 +400,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
         MPI_Barrier( MPI_COMM_WORLD );
     }
 
-    // init partitions
+    // init partitions (average partition)
     std::array<std::vector<int>, 3> rec_partitions;
     for ( int d = 0; d < 3; ++d )
     {
@@ -383,6 +418,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
                                         rec_partitions[2] );
 
     // register valid tiles in each MPI rank
+    // compute the sub-domain size (divided by the GT partition)
     constexpr int area_size = size_tile_per_dim * size_tile_per_dim;
     occupy_tile_num_per_rank = occupy_tile_num_per_rank >= area_size
                                    ? area_size
@@ -396,10 +432,12 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
         size[d] = gt_partition[d][cart_rank[d] + 1] - start[d];
     }
 
-    // insert random tiles to a set
+    // insert the corner tiles to the set, to ensure the uniqueness of the GT
+    // partition
     tiles_set.insert( { start[0], start[1], start[2] } );
     tiles_set.insert( { start[0] + size[0] - 1, start[1] + size[1] - 1,
                         start[2] + size[2] - 1 } );
+    // insert random tiles to the set
     while ( tiles_set.size() < occupy_tile_num_per_rank )
     {
         int rand_offset[3];
@@ -423,7 +461,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
     Kokkos::View<int* [3], TEST_MEMSPACE> tiles_view =
         Kokkos::create_mirror_view_and_copy( TEST_MEMSPACE(), tiles_view_host );
 
-    // initialize sparseMap, register every tile on every MPI rank
+    // initialize sparseMap, register selected tiles on every MPI rank
     // basic settings for sparseMap
     double cell_size = 0.1;
     int pre_alloc_size = size_per_dim * size_per_dim;
