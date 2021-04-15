@@ -376,7 +376,8 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
         for ( int d = 0; d < 3; ++d )
         {
             gt_partition_set[d].insert( 0 );
-            while ( gt_partition_set[d].size() < ranks_per_dim[d] )
+            while ( static_cast<int>( gt_partition_set[d].size() ) <
+                    ranks_per_dim[d] )
             {
                 int rand_num = std::rand() % size_tile_per_dim;
                 gt_partition_set[d].insert( rand_num );
@@ -438,7 +439,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
     tiles_set.insert( { start[0] + size[0] - 1, start[1] + size[1] - 1,
                         start[2] + size[2] - 1 } );
     // insert random tiles to the set
-    while ( tiles_set.size() < occupy_tile_num_per_rank )
+    while ( static_cast<int>( tiles_set.size() ) < occupy_tile_num_per_rank )
     {
         int rand_offset[3];
         for ( int d = 0; d < 3; ++d )
