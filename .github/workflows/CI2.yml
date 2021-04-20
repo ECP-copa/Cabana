@@ -29,6 +29,7 @@ jobs:
         kokkos_ver: ['3.2.01', 'master', 'develop']
         arborx: ['NoArborX']
         heffte: ['NoheFFTe' ]
+        hypre: ['NoHYPRE']
         coverage: ['OFF']
         include:
           - distro: 'fedora:intel'
@@ -38,6 +39,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
@@ -46,6 +48,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
@@ -54,6 +57,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
@@ -62,6 +66,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'g++'
@@ -70,6 +75,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'clang++'
@@ -78,6 +84,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'g++'
@@ -86,6 +93,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'clang++'
@@ -94,6 +102,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'g++'
@@ -102,6 +111,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'clang++'
@@ -110,6 +120,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:rawhide'
             cxx: 'g++'
@@ -118,6 +129,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:rawhide'
             cxx: 'clang++'
@@ -126,6 +138,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
@@ -134,6 +147,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'ArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
@@ -142,7 +156,17 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'heFFTe_FFTW'
+            hypre: 'NoHYPRE'
             coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            openmp: 'ON'
+            cmake_build_type: 'Debug'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'HYPRE'
+            coverage: 'ON'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             openmp: 'ON'
@@ -150,6 +174,7 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'ArborX'
             heffte: 'heFFTe_FFTW'
+            hypre: 'HYPRE'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
@@ -227,6 +252,27 @@ jobs:
             ${heffte_cmake_opts}
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout hypre
+        if: ${{ matrix.hypre == 'HYPRE' }}
+        uses: actions/checkout@v2.2.0
+        with:
+          repository: hypre-space/hypre
+          ref: v2.18.2
+          path: hypre
+      - name: Build hypre
+        if: ${{ matrix.hypre == 'HYPRE' }}
+        working-directory: hypre/src
+        run: |
+          [[ ${{ matrix.openmp }} == 'ON' ]] && hypre_cmake_opts+=( -DHYPRE_WITH_OPENMP=ON )
+          cmake -B build \
+            -DHYPRE_INSTALL_PREFIX=$HOME/hypre \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DHYPRE_WITH_MPI=ON \
+            ${hypre_cmake_opts}
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
@@ -234,7 +280,7 @@ jobs:
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
-            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_FLAGS="-Wall -pedantic" \
