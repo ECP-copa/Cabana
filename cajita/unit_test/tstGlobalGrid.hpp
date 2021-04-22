@@ -33,7 +33,7 @@ void gridTest3d( const std::array<bool, 3>& is_dim_periodic )
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<int, 3> global_num_cell = { 47, 38, 53 };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
@@ -245,7 +245,7 @@ void gridTest2d( const std::array<bool, 2>& is_dim_periodic )
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 2> global_num_cell = { 101, 85 };
+    std::array<int, 2> global_num_cell = { 47, 38 };
     std::array<double, 2> global_low_corner = { 1.2, 3.3 };
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],

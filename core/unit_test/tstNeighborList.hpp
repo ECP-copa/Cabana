@@ -196,19 +196,19 @@ void testVerletListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
     NeighborListTestData test_data;
-    int num_ignore = 800;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Create the neighbor list.
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
                        BuildTag>
-        nlist( position, 0, num_ignore, test_data.test_radius,
+        nlist( position, 0, test_data.num_ignore, test_data.test_radius,
                test_data.cell_size_ratio, test_data.grid_min,
                test_data.grid_max );
 
     // Check the neighbor list.
     checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                       test_data.num_particle, num_ignore );
+                                       test_data.num_particle,
+                                       test_data.num_ignore );
 }
 
 //---------------------------------------------------------------------------//

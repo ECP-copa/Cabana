@@ -727,17 +727,25 @@ TEST( mesh, periodic_uniform_test )
     std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
+
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
+    if ( ranks_per_dim[0] != ranks_per_dim[1] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[1] );
+        uniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
+    if ( ranks_per_dim[0] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[2] );
+        uniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
+    if ( ranks_per_dim[1] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[1], ranks_per_dim[2] );
+        uniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -751,17 +759,25 @@ TEST( mesh, periodic_non_uniform_test )
     std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+    if ( ranks_per_dim[0] != ranks_per_dim[1] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[1] );
+        nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
+    if ( ranks_per_dim[0] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[2] );
+        nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
+    if ( ranks_per_dim[1] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[1], ranks_per_dim[2] );
+        nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -775,17 +791,25 @@ TEST( mesh, non_periodic_uniform_test )
     std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
+    uniformTest3d( ranks_per_dim, is_dim_periodic );
+
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    uniformTest3d( ranks_per_dim, is_dim_periodic );
+    if ( ranks_per_dim[0] != ranks_per_dim[1] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[1] );
+        uniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
+    if ( ranks_per_dim[0] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[2] );
+        uniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
+    if ( ranks_per_dim[1] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[1], ranks_per_dim[2] );
+        uniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -799,17 +823,25 @@ TEST( mesh, non_periodic_non_uniform_test )
     std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
+    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+    if ( ranks_per_dim[0] != ranks_per_dim[1] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[1] );
+        nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
+    if ( ranks_per_dim[0] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[2] );
+        nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
+    if ( ranks_per_dim[1] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[1], ranks_per_dim[2] );
+        nonUniformTest3d( ranks_per_dim, is_dim_periodic );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -821,17 +853,25 @@ TEST( mesh, irregular_non_uniform_test )
     std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
 
+    irregularTest3d( ranks_per_dim );
+
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    irregularTest3d( ranks_per_dim );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    irregularTest3d( ranks_per_dim );
-    std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-    irregularTest3d( ranks_per_dim );
-    std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-    irregularTest3d( ranks_per_dim );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    irregularTest3d( ranks_per_dim );
+    if ( ranks_per_dim[0] != ranks_per_dim[1] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[1] );
+        irregularTest3d( ranks_per_dim );
+    }
+    if ( ranks_per_dim[0] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[2] );
+        irregularTest3d( ranks_per_dim );
+    }
+    if ( ranks_per_dim[1] != ranks_per_dim[2] )
+    {
+        std::swap( ranks_per_dim[1], ranks_per_dim[2] );
+        irregularTest3d( ranks_per_dim );
+    }
 }
 
 //---------------------------------------------------------------------------//

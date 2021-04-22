@@ -40,7 +40,7 @@ void interpolationTest()
     // Create the global mesh.
     std::array<double, 3> low_corner = { -1.2, 0.1, 1.1 };
     std::array<double, 3> high_corner = { -0.3, 9.5, 2.3 };
-    double cell_size = 0.05;
+    double cell_size = 0.1;
     auto global_mesh =
         createUniformGlobalMesh( low_corner, high_corner, cell_size );
 

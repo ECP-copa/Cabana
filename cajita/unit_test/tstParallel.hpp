@@ -199,7 +199,7 @@ void parallelLocalGridTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<int, 3> global_num_cell = { 39, 42, 55 };
     std::array<bool, 3> is_dim_periodic = { true, true, true };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
