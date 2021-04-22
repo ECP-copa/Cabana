@@ -176,7 +176,7 @@ void testBlockSpace()
         cell_num_per_tile_dim * cell_num_per_tile_dim * cell_num_per_tile_dim;
     using key_type = uint64_t;
     using value_type = uint32_t;
-    constexpr int size = 64;
+    constexpr int size = 32;
     int pre_alloc_size = size * size;
     BlockMap<TEST_MEMSPACE, cell_bits_per_tile_dim, cell_num_per_tile_dim,
              cell_num_per_tile, HashType, key_type, value_type>
@@ -635,15 +635,27 @@ void testSparseMapReinsert()
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( sparse_grid, sparse_index_space_test )
+TEST( TEST_CATEGORY, atomic_test )
 {
     testAtomicOr();
     testAtomicOrPro();
+}
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, tile_space_test )
+{
     testTileSpace<2, 4>(); // tile size 4x4x4
     testTileSpace<1, 2>(); // tile size 2x2x2
     testTileSpace<3, 8>(); // tile size 8x8x8
+}
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, block_space_test )
+{
     testBlockSpace<HashTypes::Naive>();
     testBlockSpace<HashTypes::Morton>();
+}
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, sparse_map_space_test )
+{
     testSparseMapFullInsert();
     testSparseMapSparseInsert();
     testSparseMapReinsert();
