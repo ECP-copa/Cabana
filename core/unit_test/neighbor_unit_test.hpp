@@ -602,7 +602,8 @@ void checkSecondNeighborParallelReduce( const ListType& nlist,
 // Default test settings.
 struct NeighborListTestData
 {
-    int num_particle = 1e3;
+    int num_particle = 300;
+    int num_ignore = 100;
     double test_radius = 2.32;
     double box_min = -5.3 * test_radius;
     double box_max = 4.7 * test_radius;
