@@ -398,12 +398,16 @@ TEST( TEST_CATEGORY, not_periodic_test )
     // Boundaries are not periodic.
     std::array<bool, 2> is_dim_periodic = { false, false };
 
+    gatherScatterTest( partitioner, is_dim_periodic );
+
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
-    gatherScatterTest( partitioner, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    partitioner = ManualBlockPartitioner<2>( ranks_per_dim );
-    gatherScatterTest( partitioner, is_dim_periodic );
+    if ( ranks_per_dim[0] != ranks_per_dim[1] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[1] );
+        partitioner = ManualBlockPartitioner<2>( ranks_per_dim );
+        gatherScatterTest( partitioner, is_dim_periodic );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -419,14 +423,17 @@ TEST( TEST_CATEGORY, periodic_test )
     // Every boundary is periodic
     std::array<bool, 2> is_dim_periodic = { true, true };
 
+    gatherScatterTest( partitioner, is_dim_periodic );
+
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
     // gatherScatterTest( partitioner, is_dim_periodic );
-    std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-    std::cout << "RANKS " << ranks_per_dim[0] << " " << ranks_per_dim[1]
-              << std::endl;
-    partitioner = ManualBlockPartitioner<2>( ranks_per_dim );
-    gatherScatterTest( partitioner, is_dim_periodic );
+    if ( ranks_per_dim[0] != ranks_per_dim[1] )
+    {
+        std::swap( ranks_per_dim[0], ranks_per_dim[1] );
+        partitioner = ManualBlockPartitioner<2>( ranks_per_dim );
+        gatherScatterTest( partitioner, is_dim_periodic );
+    }
 }
 
 //---------------------------------------------------------------------------//
