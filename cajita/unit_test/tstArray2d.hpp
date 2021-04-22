@@ -38,7 +38,7 @@ void layoutTest()
 
     // Create the global .
     double cell_size = 0.23;
-    std::array<int, 2> global_num_cell = { 101, 85 };
+    std::array<int, 2> global_num_cell = { 37, 15 };
     std::array<bool, 2> is_dim_periodic = { true, true };
     std::array<double, 2> global_low_corner = { 1.2, 3.3 };
     std::array<double, 2> global_high_corner = {
@@ -187,7 +187,7 @@ void arrayTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 2> global_num_cell = { 101, 85 };
+    std::array<int, 2> global_num_cell = { 37, 15 };
     std::array<bool, 2> is_dim_periodic = { true, true };
     std::array<double, 2> global_low_corner = { 1.2, 3.3 };
     std::array<double, 2> global_high_corner = {
@@ -228,7 +228,7 @@ void arrayOpTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 2> global_num_cell = { 101, 85 };
+    std::array<int, 2> global_num_cell = { 37, 15 };
     std::array<bool, 2> is_dim_periodic = { true, true };
     std::array<double, 2> global_low_corner = { 1.2, 3.3 };
     std::array<double, 2> global_high_corner = {

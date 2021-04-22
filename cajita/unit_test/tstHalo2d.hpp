@@ -166,7 +166,7 @@ void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
 {
     // Create the global grid.
     double cell_size = 0.43;
-    std::array<int, 2> global_num_cell = { 32, 43 };
+    std::array<int, 2> global_num_cell = { 19, 27 };
     std::array<double, 2> global_low_corner = { 1.2, 3.3 };
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
@@ -322,7 +322,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
 {
     // Create the global grid.
     double cell_size = 0.43;
-    std::array<int, 2> global_num_cell = { 32, 43 };
+    std::array<int, 2> global_num_cell = { 19, 27 };
     std::array<double, 2> global_low_corner = { 1.2, 3.3 };
     std::array<double, 2> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
