@@ -430,19 +430,29 @@ int main( int argc, char* argv[] )
         file << "\n";
     }
 
-    // Device types.
+    // Do everything on the CPU.
+#ifdef KOKKOS_ENABLE_SERIAL
+    using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
+    performanceTest<SerialDevice, SerialDevice>( file, num_particle,
+                                                 "host_host_" );
+#endif
+#ifdef KOKKOS_ENABLE_OPENMP
+    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
+    performanceTest<OpenMPDevice, OpenMPDevice>( file, num_particle,
+                                                 "host_host_" );
+#endif
+
+#ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
     using CudaUVMDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaUVMSpace>;
-    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
 
     // Transfer GPU data to CPU, communication on CPU, and transfer back to
     // GPU.
+#ifdef KOKKOS_ENABLE_OPENMP
+    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
     performanceTest<CudaDevice, OpenMPDevice>( file, num_particle,
                                                "cuda_host_" );
-
-    // Do everything on the CPU.
-    performanceTest<OpenMPDevice, OpenMPDevice>( file, num_particle,
-                                                 "host_host_" );
+#endif
 
     // Do everything on the GPU with regular GPU memory.
     performanceTest<CudaDevice, CudaDevice>( file, num_particle, "cuda_cuda_" );
@@ -450,6 +460,7 @@ int main( int argc, char* argv[] )
     // Do everything on the GPU with UVM GPU memory.
     performanceTest<CudaUVMDevice, CudaUVMDevice>( file, num_particle,
                                                    "cudauvm_cudauvm_" );
+#endif
 
     // Close the output file on rank 0.
     if ( 0 == comm_rank )
