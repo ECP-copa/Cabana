@@ -255,6 +255,43 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     }
 
     /*!
+         \brief set all elements in _workload_per_tile and _workload_prefix_sum
+         matrix to 0
+       */
+    void resetWorkload()
+    {
+        // local copy
+        auto workload = _workload_per_tile;
+        auto prefix_sum = _workload_prefix_sum;
+        int total_size = _workload_per_tile.size();
+        int dim_12_size =
+            _workload_per_tile.extent( 1 ) * _workload_per_tile.extent( 2 );
+        int dim_2_size = _workload_per_tile.extent( 2 );
+
+        // reset _workload_per_tile
+        Kokkos::parallel_for(
+            "reset_workload_per_tile",
+            Kokkos::RangePolicy<execution_space>( 0, total_size ),
+            KOKKOS_LAMBDA( const int id ) {
+                int i = id / dim_12_size;
+                int j = ( id % dim_12_size ) / dim_2_size;
+                int k = ( id % dim_12_size ) % dim_2_size;
+                workload( i, j, k ) = 0;
+            } );
+
+        // reset _workload_prefix_sum
+        Kokkos::parallel_for(
+            "reset_workload_prefix_sum",
+            Kokkos::RangePolicy<execution_space>( 0, total_size ),
+            KOKKOS_LAMBDA( const int id ) {
+                int i = id / dim_12_size;
+                int j = ( id % dim_12_size ) / dim_2_size;
+                int k = ( id % dim_12_size ) % dim_2_size;
+                prefix_sum( i, j, k ) = 0;
+            } );
+    }
+
+    /*!
       \brief compute the workload in the current MPI rank from particle
       positions (each particle count for 1 workload value)
       \param view particle positions view
@@ -265,6 +302,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     void computeLocalWorkLoad( ParticlePosViewType& view, int particle_num,
                                CellUnit dx )
     {
+        resetWorkload();
         // make a local copy
         auto workload = _workload_per_tile;
         Kokkos::parallel_for(
@@ -289,6 +327,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     template <class SparseMapType>
     void computeLocalWorkLoad( const SparseMapType& sparseMap )
     {
+        resetWorkload();
         // make a local copy
         auto workload = _workload_per_tile;
         Kokkos::parallel_for(
@@ -454,7 +493,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                 {
                     // compute current workload between [last_point, point_i)
                     Kokkos::parallel_for(
-                        "computer_current_workload",
+                        "compute_current_workload",
                         Kokkos::RangePolicy<execution_space>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
                         KOKKOS_LAMBDA( uint32_t jnk ) {
