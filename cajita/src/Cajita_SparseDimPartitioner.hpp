@@ -67,12 +67,12 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         , _num_step_rebalance( num_step_rebalance )
         , _max_optimize_iteration( max_optimize_iteration )
         , _workload_per_tile(
-              "workload",
+              Kokkos::ViewAllocateWithoutInitializing( "workload" ),
               ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
               ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
               ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 )
         , _workload_prefix_sum(
-              "workload_prefix_sum",
+              Kokkos::ViewAllocateWithoutInitializing( "workload_prefix_sum" ),
               ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
               ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
               ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 )
@@ -103,12 +103,12 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         , _num_step_rebalance( num_step_rebalance )
         , _max_optimize_iteration( max_optimize_iteration )
         , _workload_per_tile(
-              "workload",
+              Kokkos::ViewAllocateWithoutInitializing( "workload" ),
               ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
               ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
               ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 )
         , _workload_prefix_sum(
-              "workload_prefix_sum",
+              Kokkos::ViewAllocateWithoutInitializing( "workload_prefix_sum" ),
               ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
               ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
               ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 )
@@ -257,35 +257,8 @@ class SparseDimPartitioner : public BlockPartitioner<3>
        */
     void resetWorkload()
     {
-        // local copy
-        auto workload = _workload_per_tile;
-        auto prefix_sum = _workload_prefix_sum;
-        int total_size = _workload_per_tile.size();
-        int dim_12_size =
-            _workload_per_tile.extent( 1 ) * _workload_per_tile.extent( 2 );
-        int dim_2_size = _workload_per_tile.extent( 2 );
-
-        // reset _workload_per_tile
-        Kokkos::parallel_for(
-            "reset_workload_per_tile",
-            Kokkos::RangePolicy<execution_space>( 0, total_size ),
-            KOKKOS_LAMBDA( const int id ) {
-                int i = id / dim_12_size;
-                int j = ( id % dim_12_size ) / dim_2_size;
-                int k = ( id % dim_12_size ) % dim_2_size;
-                workload( i, j, k ) = 0;
-            } );
-
-        // reset _workload_prefix_sum
-        Kokkos::parallel_for(
-            "reset_workload_prefix_sum",
-            Kokkos::RangePolicy<execution_space>( 0, total_size ),
-            KOKKOS_LAMBDA( const int id ) {
-                int i = id / dim_12_size;
-                int j = ( id % dim_12_size ) / dim_2_size;
-                int k = ( id % dim_12_size ) % dim_2_size;
-                prefix_sum( i, j, k ) = 0;
-            } );
+        Kokkos::deep_copy( _workload_per_tile, 0 );
+        Kokkos::deep_copy( _workload_prefix_sum, 0 );
     }
 
     /*!
@@ -581,6 +554,59 @@ class SparseDimPartitioner : public BlockPartitioner<3>
             }     // end for (all partition/rank in the optimized dimension)
             Kokkos::deep_copy( _rectangle_partition_dev, rec_mirror );
         } // end for (3 dimensions)
+    }
+
+    /*!
+      \brief compute the imbalance factor for the current partition
+      \param cart_comm MPI cartesian communicator
+      \return the imbalance factor = workload on current rank / ave_workload
+    */
+    float computeImbalanceFactor( MPI_Comm cart_comm )
+    {
+        auto rec_partition = _rectangle_partition_dev;
+        auto prefix_sum = _workload_prefix_sum;
+        // workload_record[0] = ave_workload
+        // workload_record[1] = current_workload
+        Kokkos::View<float[2], memory_space> workload_record(
+            "workload_record" );
+
+        // Get the Cartesian topology index of this rank.
+        Kokkos::Array<int, 3> cart_rank;
+        int linear_rank;
+        MPI_Comm_rank( cart_comm, &linear_rank );
+        MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
+
+        SubWorkloadFunctor compute_sub_workload = { _rectangle_partition_dev,
+                                                    _workload_prefix_sum };
+
+        int rank_0 = prefix_sum.extent( 0 );
+        int rank_1 = prefix_sum.extent( 1 );
+        int rank_2 = prefix_sum.extent( 2 );
+
+        Kokkos::parallel_for(
+            "compute_workload_record",
+            Kokkos::RangePolicy<execution_space>( 0, 2 ),
+            KOKKOS_LAMBDA( int id ) {
+                if ( id == 0 )
+                {
+                    workload_record( 0 ) = static_cast<float>(
+                        prefix_sum( rank_0 - 1, rank_1 - 1, rank_2 - 1 ) /
+                        ( _ranks_per_dim[0] * _ranks_per_dim[1] *
+                          _ranks_per_dim[2] ) );
+                }
+                else
+                {
+                    workload_record( 1 ) =
+                        static_cast<float>( compute_sub_workload(
+                            0, rec_partition( cart_rank[0], 0 ),
+                            rec_partition( cart_rank[0] + 1, 0 ), 1,
+                            cart_rank[1], 2, cart_rank[2] ) );
+                }
+            } );
+
+        auto record_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), workload_record );
+        return record_mirror[1] / record_mirror[0];
     }
 
     /*!

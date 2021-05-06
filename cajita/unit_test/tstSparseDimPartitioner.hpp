@@ -347,6 +347,9 @@ void random_distribution_automatic_rank( int occupy_tile_num_per_rank )
         for ( int id = 0; id < ranks_per_dim[d] + 1; id++ )
             EXPECT_EQ( part[d][id], gt_partition[d][id] );
     }
+
+    auto imbalance_factor = partitioner.computeImbalanceFactor( cart_comm );
+    EXPECT_EQ( imbalance_factor, 1.0f );
 }
 
 //---------------------------------------------------------------------------//
