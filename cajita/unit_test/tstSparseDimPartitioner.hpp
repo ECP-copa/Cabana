@@ -25,8 +25,8 @@ namespace Test
 {
 
 /*!
-  \brief In this test, every cell in the whole domain is registered, so the GT
-  partition should be the average partition
+  \brief In this test, every cell in the whole domain is registered, so the
+  ground truth partition should be the average partition
 */
 void uniform_distribution_automatic_rank()
 {
@@ -91,7 +91,7 @@ void uniform_distribution_automatic_rank()
     }
 
     // test ownedCellsPerDimension function
-    // GT should be the average cell num in ranks (based on the inital
+    // Ground truth should be the average cell num in ranks (based on the inital
     // partition)
     std::array<int, 3> cart_rank;
     std::array<int, 3> periodic_dims = { 0, 0, 0 };
@@ -131,6 +131,7 @@ void uniform_distribution_automatic_rank()
     auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
     // register tiles to the sparseMap
     Kokkos::parallel_for(
+        "insert_cell_to_sparse_map",
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, size_per_dim ),
         KOKKOS_LAMBDA( int i ) {
             for ( int j = 0; j < size_per_dim; j++ )
@@ -141,9 +142,7 @@ void uniform_distribution_automatic_rank()
         } );
 
     // compute workload and do partition optimization
-    partitioner.computeLocalWorkLoad( sis );
-    partitioner.computeFullPrefixSum( MPI_COMM_WORLD );
-    partitioner.optimizePartition();
+    partitioner.optimizePartition( sis, MPI_COMM_WORLD );
 
     // check results (should be the same as the average partition)
     owned_cells_per_dim = partitioner.ownedCellsPerDimension( cart_comm );
@@ -159,14 +158,13 @@ void uniform_distribution_automatic_rank()
 }
 
 /*!
-  \brief In this test, the GT partition is first randomly chosen, then a given
-  number of tiles are regiestered on each rank (the most bottom-left and
-  top-right tiles are always registered to ensure the uniqueness of the GT
-  partition )
-  \param occupy_tile_num_per_rank the tile number that will be registered on
-  each MPI rank
+  \brief In this test, the ground truth partition is first randomly chosen, then
+  a given number of tiles are regiestered on each rank (the most bottom-left and
+  top-right tiles are always registered to ensure the uniqueness of the ground
+  truth partition ) \param occupy_tile_num_per_rank the tile number that will be
+  registered on each MPI rank
 */
-void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
+void random_distribution_automatic_rank( int occupy_tile_num_per_rank )
 {
     // define the domain size
     constexpr int size_tile_per_dim = 32;
@@ -274,7 +272,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
                                         rec_partitions[2] );
 
     // register valid tiles in each MPI rank
-    // compute the sub-domain size (divided by the GT partition)
+    // compute the sub-domain size (divided by the ground truth partition)
     constexpr int area_size = size_tile_per_dim * size_tile_per_dim;
     occupy_tile_num_per_rank = occupy_tile_num_per_rank >= area_size
                                    ? area_size
@@ -288,8 +286,8 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
         size[d] = gt_partition[d][cart_rank[d] + 1] - start[d];
     }
 
-    // insert the corner tiles to the set, to ensure the uniqueness of the GT
-    // partition
+    // insert the corner tiles to the set, to ensure the uniqueness of the
+    // ground truth partition
     tiles_set.insert( { start[0], start[1], start[2] } );
     tiles_set.insert( { start[0] + size[0] - 1, start[1] + size[1] - 1,
                         start[2] + size[2] - 1 } );
@@ -332,6 +330,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
     auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
     // register tiles to the sparseMap
     Kokkos::parallel_for(
+        "insert_tile_to_sparse_map",
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, tiles_set.size() ),
         KOKKOS_LAMBDA( int id ) {
             sis.insertTile( tiles_view( id, 0 ), tiles_view( id, 1 ),
@@ -339,9 +338,7 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
         } );
 
     // compute workload and do partition optimization
-    partitioner.computeLocalWorkLoad( sis );
-    partitioner.computeFullPrefixSum( MPI_COMM_WORLD );
-    partitioner.optimizePartition();
+    partitioner.optimizePartition( sis, MPI_COMM_WORLD );
 
     // check results (should be the same as the gt_partition)
     auto part = partitioner.getCurrentPartition();
@@ -355,13 +352,15 @@ void random_distribuion_automatic_rank( int occupy_tile_num_per_rank )
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( sparse_dim_partitioner, sparse_dim_partitioner_test )
+TEST( sparse_dim_partitioner, sparse_dim_partitioner_uniform_test )
 {
     uniform_distribution_automatic_rank();
-    random_distribuion_automatic_rank( 32 );
-    random_distribuion_automatic_rank( 16 );
-    random_distribuion_automatic_rank( 100 );
 }
-
+TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_test )
+{
+    random_distribution_automatic_rank( 32 );
+    random_distribution_automatic_rank( 16 );
+    random_distribution_automatic_rank( 100 );
+}
 //---------------------------------------------------------------------------//
 } // end namespace Test
