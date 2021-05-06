@@ -6,6 +6,6 @@ ignore:
   - cmake/test_harness/
   - cajita/unit_test/
   - core/unit_test/
-  - core/performance_test/benchmark
   - core/performance_test/peakflops
   - example/tutorial
+  - benchmark/

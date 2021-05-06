@@ -12,5 +12,3 @@
 if(Kokkos_ENABLE_OPENMP)
   add_subdirectory(peakflops)
 endif()
-
-add_subdirectory(benchmark)
