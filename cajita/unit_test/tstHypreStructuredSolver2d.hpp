@@ -34,7 +34,7 @@ void poissonTest( const std::string& solver_type,
                   const std::string& precond_type )
 {
     // Create the global grid.
-    double cell_size = 0.1;
+    double cell_size = 0.2;
     std::array<bool, 2> is_dim_periodic = { false, false };
     std::array<double, 2> global_low_corner = { -1.0, -2.0 };
     std::array<double, 2> global_high_corner = { 1.0, 1.0 };
