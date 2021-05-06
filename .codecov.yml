@@ -7,5 +7,5 @@ ignore:
   - cajita/unit_test/
   - core/unit_test/
   - core/performance_test/peakflops
-  - example/tutorial
+  - example/
   - benchmark/

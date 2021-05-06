@@ -9,4 +9,5 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_subdirectory(tutorial)
+add_subdirectory(core_tutorial)
+add_subdirectory(cajita_tutorial)
