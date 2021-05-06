@@ -579,9 +579,13 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         SubWorkloadFunctor compute_sub_workload = { _rectangle_partition_dev,
                                                     _workload_prefix_sum };
 
-        int rank_0 = prefix_sum.extent( 0 );
-        int rank_1 = prefix_sum.extent( 1 );
-        int rank_2 = prefix_sum.extent( 2 );
+        int size_0 = prefix_sum.extent( 0 );
+        int size_1 = prefix_sum.extent( 1 );
+        int size_2 = prefix_sum.extent( 2 );
+
+        int rank_0 = _ranks_per_dim[0];
+        int rank_1 = _ranks_per_dim[1];
+        int rank_2 = _ranks_per_dim[2];
 
         Kokkos::parallel_for(
             "compute_workload_record",
@@ -590,9 +594,8 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                 if ( id == 0 )
                 {
                     workload_record( 0 ) = static_cast<float>(
-                        prefix_sum( rank_0 - 1, rank_1 - 1, rank_2 - 1 ) /
-                        ( _ranks_per_dim[0] * _ranks_per_dim[1] *
-                          _ranks_per_dim[2] ) );
+                        prefix_sum( size_0 - 1, size_1 - 1, size_2 - 1 ) /
+                        ( rank_0 * rank_1 * rank_2 ) );
                 }
                 else
                 {
