@@ -9,8 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_subdirectory(core_tutorial)
-
-if(Cabana_ENABLE_CAJITA)
-  add_subdirectory(cajita_tutorial)
-endif()
+add_executable(GlobalMesh global_mesh_example.cpp)
+target_link_libraries(GlobalMesh Cajita)
+add_test(NAME Cajita_tutorial_02 COMMAND ${NONMPI_PRECOMMAND} GlobalMesh)
