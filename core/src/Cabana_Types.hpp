@@ -70,8 +70,7 @@ struct is_memory_access_tag<AtomicAccessMemory> : public std::true_type
 };
 
 // Checks whether memory space is accessible from execution space.
-// This was taken from
-// https://github.com/arborx/ArborX/blob/c757ffcc0e7d2da4da2b4b4df8975365480e7bac/src/details/ArborX_DetailsKokkosExt.hpp#L33-L46
+// This was taken from <ArborX_DetailsKokkosExtAccessibilityTraits.hpp>
 template <typename MemorySpace, typename ExecutionSpace, typename = void>
 struct is_accessible_from : std::false_type
 {
@@ -80,10 +79,10 @@ struct is_accessible_from : std::false_type
 };
 
 template <typename MemorySpace, typename ExecutionSpace>
-struct is_accessible_from<
-    MemorySpace, ExecutionSpace,
-    typename std::enable_if<Kokkos::Impl::SpaceAccessibility<
-        ExecutionSpace, MemorySpace>::accessible>::type> : std::true_type
+struct is_accessible_from<MemorySpace, ExecutionSpace,
+                          std::enable_if_t<Kokkos::SpaceAccessibility<
+                              ExecutionSpace, MemorySpace>::accessible>>
+    : std::true_type
 {
 };
 
