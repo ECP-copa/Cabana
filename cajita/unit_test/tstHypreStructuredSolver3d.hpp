@@ -78,13 +78,13 @@ void poissonTest( const std::string& solver_type,
         "fill_matrix_entries",
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            entry_view( i, j, k, 0 ) = -6.0;
-            entry_view( i, j, k, 1 ) = 1.0;
-            entry_view( i, j, k, 2 ) = 1.0;
-            entry_view( i, j, k, 3 ) = 1.0;
-            entry_view( i, j, k, 4 ) = 1.0;
-            entry_view( i, j, k, 5 ) = 1.0;
-            entry_view( i, j, k, 6 ) = 1.0;
+            entry_view( i, j, k, 0 ) = 6.0;
+            entry_view( i, j, k, 1 ) = -1.0;
+            entry_view( i, j, k, 2 ) = -1.0;
+            entry_view( i, j, k, 3 ) = -1.0;
+            entry_view( i, j, k, 4 ) = -1.0;
+            entry_view( i, j, k, 5 ) = -1.0;
+            entry_view( i, j, k, 6 ) = -1.0;
         } );
 
     solver->setMatrixValues( *matrix_entries );
@@ -132,13 +132,13 @@ void poissonTest( const std::string& solver_type,
             int gi = i + global_space.min( Dim::I ) - owned_space.min( Dim::I );
             int gj = j + global_space.min( Dim::J ) - owned_space.min( Dim::J );
             int gk = k + global_space.min( Dim::K ) - owned_space.min( Dim::K );
-            matrix_view( i, j, k, 0 ) = -6.0;
-            matrix_view( i, j, k, 1 ) = ( gi - 1 >= 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 2 ) = ( gi + 1 < ncell_i ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 3 ) = ( gj - 1 >= 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 4 ) = ( gj + 1 < ncell_j ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 5 ) = ( gk - 1 >= 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, k, 6 ) = ( gk + 1 < ncell_k ) ? 1.0 : 0.0;
+            matrix_view( i, j, k, 0 ) = 6.0;
+            matrix_view( i, j, k, 1 ) = ( gi - 1 >= 0 ) ? -1.0 : 0.0;
+            matrix_view( i, j, k, 2 ) = ( gi + 1 < ncell_i ) ? -1.0 : 0.0;
+            matrix_view( i, j, k, 3 ) = ( gj - 1 >= 0 ) ? -1.0 : 0.0;
+            matrix_view( i, j, k, 4 ) = ( gj + 1 < ncell_j ) ? -1.0 : 0.0;
+            matrix_view( i, j, k, 5 ) = ( gk - 1 >= 0 ) ? -1.0 : 0.0;
+            matrix_view( i, j, k, 6 ) = ( gk + 1 < ncell_k ) ? -1.0 : 0.0;
         } );
 
     std::vector<std::array<int, 3>> diag_stencil = { { 0, 0, 0 } };
@@ -149,7 +149,7 @@ void poissonTest( const std::string& solver_type,
         "fill_preconditioner_entries",
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            preconditioner_view( i, j, k, 0 ) = -1.0 / 6.0;
+            preconditioner_view( i, j, k, 0 ) = 1.0 / 6.0;
         } );
 
     ref_solver->setTolerance( 1.0e-11 );
