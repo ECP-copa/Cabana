@@ -77,11 +77,11 @@ void poissonTest( const std::string& solver_type,
         "fill_matrix_entries",
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j ) {
-            entry_view( i, j, 0 ) = -4.0;
-            entry_view( i, j, 1 ) = 1.0;
-            entry_view( i, j, 2 ) = 1.0;
-            entry_view( i, j, 3 ) = 1.0;
-            entry_view( i, j, 4 ) = 1.0;
+            entry_view( i, j, 0 ) = 4.0;
+            entry_view( i, j, 1 ) = -1.0;
+            entry_view( i, j, 2 ) = -1.0;
+            entry_view( i, j, 3 ) = -1.0;
+            entry_view( i, j, 4 ) = -1.0;
         } );
 
     solver->setMatrixValues( *matrix_entries );
@@ -93,7 +93,7 @@ void poissonTest( const std::string& solver_type,
     solver->setMaxIter( 2000 );
 
     // Set the print level.
-    solver->setPrintLevel( 2 );
+    solver->setPrintLevel( 1 );
 
     // Create a preconditioner.
     if ( "none" != precond_type )
@@ -127,11 +127,11 @@ void poissonTest( const std::string& solver_type,
         KOKKOS_LAMBDA( const int i, const int j ) {
             int gi = i + global_space.min( Dim::I ) - owned_space.min( Dim::I );
             int gj = j + global_space.min( Dim::J ) - owned_space.min( Dim::J );
-            matrix_view( i, j, 0 ) = -4.0;
-            matrix_view( i, j, 1 ) = ( gi - 1 >= 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, 2 ) = ( gi + 1 < ncell_i ) ? 1.0 : 0.0;
-            matrix_view( i, j, 3 ) = ( gj - 1 >= 0 ) ? 1.0 : 0.0;
-            matrix_view( i, j, 4 ) = ( gj + 1 < ncell_j ) ? 1.0 : 0.0;
+            matrix_view( i, j, 0 ) = 4.0;
+            matrix_view( i, j, 1 ) = ( gi > 0 ) ? -1.0 : 0.0;
+            matrix_view( i, j, 2 ) = ( gi < ncell_i - 1 ) ? -1.0 : 0.0;
+            matrix_view( i, j, 3 ) = ( gj > 0 ) ? -1.0 : 0.0;
+            matrix_view( i, j, 4 ) = ( gj < ncell_j - 1 ) ? -1.0 : 0.0;
         } );
 
     std::vector<std::array<int, 2>> diag_stencil = { { 0, 0 } };
@@ -142,7 +142,7 @@ void poissonTest( const std::string& solver_type,
         "fill_preconditioner_entries",
         createExecutionPolicy( owned_space, TEST_EXECSPACE() ),
         KOKKOS_LAMBDA( const int i, const int j ) {
-            preconditioner_view( i, j, 0 ) = -1.0 / 4.0;
+            preconditioner_view( i, j, 0 ) = 1.0 / 4.0;
         } );
 
     ref_solver->setTolerance( 1.0e-11 );

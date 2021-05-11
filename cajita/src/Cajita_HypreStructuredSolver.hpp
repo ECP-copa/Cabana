@@ -442,9 +442,12 @@ class HypreStructuredSolver
     {
         if ( error > 0 )
         {
+            char error_msg[256];
+            HYPRE_DescribeError( error, error_msg );
             std::stringstream out;
             out << "HYPRE structured solver error: ";
-            out << error;
+            out << error << " " << error_msg;
+            HYPRE_ClearError( error );
             throw std::runtime_error( out.str() );
         }
     }
