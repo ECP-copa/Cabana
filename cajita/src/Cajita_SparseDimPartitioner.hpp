@@ -66,19 +66,10 @@ class SparseDimPartitioner : public BlockPartitioner<3>
               static_cast<int>( max_workload_coeff * workload_num ) )
         , _num_step_rebalance( num_step_rebalance )
         , _max_optimize_iteration( max_optimize_iteration )
-        , _workload_per_tile(
-              Kokkos::ViewAllocateWithoutInitializing( "workload" ),
-              ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
-              ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
-              ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 )
-        , _workload_prefix_sum(
-              Kokkos::ViewAllocateWithoutInitializing( "workload_prefix_sum" ),
-              ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
-              ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
-              ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 )
     {
         // compute the ranks_per_dim from MPI communicator
         ranksPerDimension( comm );
+        allocate( global_cells_per_dim );
     }
 
     /*!
@@ -102,19 +93,10 @@ class SparseDimPartitioner : public BlockPartitioner<3>
               static_cast<int>( max_workload_coeff * workload_num ) )
         , _num_step_rebalance( num_step_rebalance )
         , _max_optimize_iteration( max_optimize_iteration )
-        , _workload_per_tile(
-              Kokkos::ViewAllocateWithoutInitializing( "workload" ),
-              ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
-              ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
-              ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 )
-        , _workload_prefix_sum(
-              Kokkos::ViewAllocateWithoutInitializing( "workload_prefix_sum" ),
-              ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
-              ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
-              ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 )
     {
         std::copy( ranks_per_dim.begin(), ranks_per_dim.end(),
                    _ranks_per_dim.data() );
+        allocate( global_cells_per_dim );
     }
 
     /*!
@@ -669,7 +651,6 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     //! max_optimize iterations
     int _max_optimize_iteration;
 
-  public:
     //! represent the rectangle partition in each dimension
     //! with form [0, p_1, ..., p_n, cell_num], n = rank num in current
     //! dimension, partition in this dimension would be [0, p_1), [p_1, p_2) ...
@@ -681,6 +662,24 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     workload_view _workload_prefix_sum;
     //! ranks per dimension
     Kokkos::Array<int, 3> _ranks_per_dim;
+
+    void allocate( const std::array<int, 3>& global_cells_per_dim )
+    {
+
+        _workload_per_tile = workload_view(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing,
+                                "workload_per_tile" ),
+            ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
+            ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
+            ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 );
+
+        _workload_prefix_sum = workload_view(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing,
+                                "workload_prefix_sum" ),
+            ( global_cells_per_dim[0] >> cell_bits_per_tile_dim ) + 1,
+            ( global_cells_per_dim[1] >> cell_bits_per_tile_dim ) + 1,
+            ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 );
+    }
 };
 } // end namespace Cajita
 

@@ -349,7 +349,7 @@ void random_distribution_automatic_rank( int occupy_tile_num_per_rank )
     }
 
     auto imbalance_factor = partitioner.computeImbalanceFactor( cart_comm );
-    EXPECT_EQ( imbalance_factor, 1.0f );
+    EXPECT_FLOAT_EQ( imbalance_factor, 1.0f );
 }
 
 //---------------------------------------------------------------------------//
