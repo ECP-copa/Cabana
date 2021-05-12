@@ -14,7 +14,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// Types example.
+// Partitioner example.
 //---------------------------------------------------------------------------//
 void partitionerExample()
 {
@@ -33,51 +33,51 @@ void partitionerExample()
     }
 
     /*
-      The simpler Cajita partitioner, DimBlockPartitioner finds the
-      decomposition closest to uniform internally using MPI. It is templated on
-      spatial dimension.
+      The simpler Cajita partitioner, DimBlockPartitioner sets a uniform
+      decomposition internally using MPI. This partitioning is best only if the
+      global mesh is a uniform cube (square) and the particles within it are
+      evenly distributed. This partitioning may not produce the best results for
+      an elongated domain, for example (due to the communication surface area to
+      volume ratio). The DimBlockPartitioner is templated on spatial dimension.
     */
-    Cajita::DimBlockPartitioner<3> auto_partitioner;
+    Cajita::DimBlockPartitioner<3> dim_block_partitioner;
 
     /*
       Extract the MPI ranks per spatial dimension. The second argument, global
-      cells per dimension, is unused in this case.
+      cells per dimension, is unused in this case, but useful to make choices
+      about partition shapes within more complex strategies.
     */
-    std::array<int, 3> ranks_per_dim_3 =
-        auto_partitioner.ranksPerDimension( MPI_COMM_WORLD, { 0, 0, 0 } );
+    std::array<int, 3> ranks_per_dim_block =
+        dim_block_partitioner.ranksPerDimension( MPI_COMM_WORLD, { 0, 0, 0 } );
 
     // Print the created decomposition.
     if ( comm_rank == 0 )
     {
         std::cout << "Ranks per dimension (automatic): ";
         for ( int d = 0; d < 3; ++d )
-            std::cout << ranks_per_dim_3[d] << " ";
+            std::cout << ranks_per_dim_block[d] << " ";
         std::cout << std::endl;
     }
 
     /*
       Instead, the manual variant, ManualBlockPartitioner, accepts a user
-      decomposition (the number of MPI ranks per dimension).
+      decomposition (the number of MPI ranks per dimension). This is useful if
+      an efficient partitioning is known a priori.
 
-      Here, MPI is still used to set the initial ranks per dimension to ensure
-      it matches the available number of ranks.
+      Here, we use the total number of MPI ranks and partition only in X.
     */
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 2> input_ranks_per_dim = { 0, 0 };
-    MPI_Dims_create( comm_size, 2, input_ranks_per_dim.data() );
+    std::array<int, 2> input_ranks_per_dim = { comm_size, 1 };
 
-    // Swap the MPI created decomposition because you can.
-    std::swap( input_ranks_per_dim[0], input_ranks_per_dim[1] );
-
-    // Create the manual partitioner.
+    // Create the manual partitioner in 2D.
     Cajita::ManualBlockPartitioner<2> manual_partitioner( input_ranks_per_dim );
 
     /*
-      Extract the MPI ranks per spatial dimension. The second argument, global
-      cells per dimension, is unused in this case.
+      Extract the MPI ranks per spatial dimension. Again, the second argument,
+      global cells per dimension, is unused in this case.
     */
-    std::array<int, 2> ranks_per_dim_2 =
+    std::array<int, 2> ranks_per_dim_manual =
         manual_partitioner.ranksPerDimension( MPI_COMM_WORLD, { 0, 0 } );
 
     // Print the created decomposition.
@@ -85,7 +85,7 @@ void partitionerExample()
     {
         std::cout << "Ranks per dimension (manual): ";
         for ( int d = 0; d < 2; ++d )
-            std::cout << ranks_per_dim_2[d] << " ";
+            std::cout << ranks_per_dim_manual[d] << " ";
         std::cout << std::endl;
     }
 }

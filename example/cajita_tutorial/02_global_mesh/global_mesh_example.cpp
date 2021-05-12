@@ -14,15 +14,15 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// Types example.
+// Global Mesh example.
 //---------------------------------------------------------------------------//
 void globalMeshExample()
 {
     /*
       All meshes in Cajita are logically recitlinear: each mesh cell is either
       cubic or rectangular (either uniform or non-uniform) and can directly
-      index it's 26 nearest neighbors, even though they may not be directly
-      adjacent (sparse).
+      index it's 26 nearest neighbors (in 3D or 8 in 2D), even though they may
+      not be directly adjacent (e.g. if it is sparse).
     */
     std::cout << "Cajita Global Mesh Example\n" << std::endl;
 
@@ -54,13 +54,13 @@ void globalMeshExample()
     /*
       Now create the global mesh with the low and high corners and total cells.
     */
-    auto global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh_num_cell = Cajita::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
     /*
       Instead create the global mesh with the cell size.
     */
-    global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh_cell_size = Cajita::createUniformGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 
     /*
@@ -71,7 +71,7 @@ void globalMeshExample()
         global_low_corner[0] + cell_size_array[0] * global_num_cell[0],
         global_low_corner[1] + cell_size_array[1] * global_num_cell[1],
         global_low_corner[2] + cell_size_array[2] * global_num_cell[2] };
-    global_mesh = Cajita::createUniformGlobalMesh(
+    auto global_mesh_cell_size_array = Cajita::createUniformGlobalMesh(
         global_low_corner, global_high_corner_2, cell_size_array );
 
     /*
@@ -81,10 +81,11 @@ void globalMeshExample()
 
       Note that the mesh is returned as a shared pointer.
     */
-    double low_x = global_mesh->lowCorner( Cajita::Dim::I );
-    double high_z = global_mesh->highCorner( Cajita::Dim::K );
-    double extent_y = global_mesh->extent( Cajita::Dim::J );
-    double cells_y = global_mesh->globalNumCell( Cajita::Dim::J );
+    double low_x = global_mesh_cell_size_array->lowCorner( Cajita::Dim::I );
+    double high_z = global_mesh_cell_size_array->highCorner( Cajita::Dim::K );
+    double extent_y = global_mesh_cell_size_array->extent( Cajita::Dim::J );
+    double cells_y =
+        global_mesh_cell_size_array->globalNumCell( Cajita::Dim::J );
 
     std::cout << "Mesh created with low X corner " << low_x
               << " and high Z corner " << high_z << std::endl;
