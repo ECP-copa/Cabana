@@ -557,21 +557,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         auto prefix_sum_mirror = Kokkos::create_mirror_view_and_copy(
             Kokkos::HostSpace(), _workload_prefix_sum );
 
-        SubWorkloadFunctor<partition_view_host, workload_view_host>
-            compute_sub_workload_host( rec_mirror, prefix_sum_mirror );
-
-        // Get the Cartesian topology index of this rank.
-        Kokkos::Array<int, 3> cart_rank;
-        int linear_rank;
-        MPI_Comm_rank( cart_comm, &linear_rank );
-        MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
-
-        // compute total workload of the current rank
-        int workload_current_rank = compute_sub_workload_host(
-            0, rec_mirror( cart_rank[0], 0 ), rec_mirror( cart_rank[0] + 1, 0 ),
-            1, cart_rank[1], 2, cart_rank[2] );
-
-        return workload_current_rank;
+        return currentRankWorkload( cart_comm, rec_mirror, prefix_sum_mirror );
     }
 
     /*!
@@ -611,10 +597,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         auto prefix_sum_view = Kokkos::create_mirror_view_and_copy(
             Kokkos::HostSpace(), _workload_prefix_sum );
         // compute total workload of the current rank
-        return prefix_sum_view( prefix_sum_view.extent( 0 ) - 1,
-                                prefix_sum_view.extent( 1 ) - 1,
-                                prefix_sum_view.extent( 2 ) - 1 ) /
-               ( _ranks_per_dim[0] * _ranks_per_dim[1] * _ranks_per_dim[2] );
+        return averageRankWorkload( prefix_sum_view );
     }
 
     /*!
