@@ -182,9 +182,9 @@ void testMigrate( const int halo_width, const int test_halo_width,
     // Do the migration in-place.
     if ( test_type == 0 )
     {
-        Cajita::gridMigrate( local_grid, data_src,
-                             std::integral_constant<std::size_t, 1>(),
-                             test_halo_width, force_comm );
+        auto pos = Cabana::slice<1>( data_src );
+        Cajita::particleGridMigrate( local_grid, pos, data_src, test_halo_width,
+                                     force_comm );
 
         data_host.resize( data_src.size() );
         Cabana::deep_copy( data_host, data_src );
@@ -194,9 +194,9 @@ void testMigrate( const int halo_width, const int test_halo_width,
     {
         Cabana::AoSoA<DataTypes, TEST_MEMSPACE> data_dst( "data_dst",
                                                           num_data );
-        Cajita::gridMigrate( local_grid, data_src,
-                             std::integral_constant<std::size_t, 1>(), data_dst,
-                             test_halo_width, force_comm );
+        auto pos = Cabana::slice<1>( data_src );
+        Cajita::particleGridMigrate( local_grid, pos, data_src, data_dst,
+                                     test_halo_width, force_comm );
 
         data_host.resize( data_dst.size() );
         Cabana::deep_copy( data_host, data_dst );
@@ -216,7 +216,7 @@ void testMigrate( const int halo_width, const int test_halo_width,
         if ( force_comm || comm_count > 0 )
         {
             auto distributor =
-                Cajita::createGridDistributor( local_grid, pos_src );
+                Cajita::createParticleGridDistributor( local_grid, pos_src );
             Cabana::AoSoA<DataTypes, TEST_MEMSPACE> data_dst(
                 "data_dst", distributor.totalNumImport() );
             auto pos_dst = Cabana::slice<1>( data_dst );
@@ -397,8 +397,9 @@ void redistributeTest( const Cajita::ManualPartitioner& partitioner,
         Cabana::create_mirror_view_and_copy( TEST_DEVICE(), particles );
 
     // Redistribute the particles.
-    Cajita::gridMigrate( *block, particles_mirror,
-                         std::integral_constant<std::size_t, 0>(), 0, true );
+    auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
+    Cajita::particleGridMigrate( *block, coords_mirror, particles_mirror, 0,
+                                 true );
 
     // Copy back to check.
     particles = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -494,8 +495,9 @@ void localOnlyTest( const Cajita::ManualPartitioner& partitioner,
         Cabana::create_mirror_view_and_copy( TEST_DEVICE(), particles );
 
     // Redistribute the particles.
-    Cajita::gridMigrate( *block, particles_mirror,
-                         std::integral_constant<std::size_t, 0>(), 0, true );
+    auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
+    Cajita::particleGridMigrate( *block, coords_mirror, particles_mirror, 0,
+                                 true );
 
     // Copy back to check.
     particles = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
