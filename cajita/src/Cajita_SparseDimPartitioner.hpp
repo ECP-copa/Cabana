@@ -74,8 +74,8 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         , _max_optimize_iteration( max_optimize_iteration )
     {
         // compute the ranks_per_dim from MPI communicator
-        ranksPerDimension( comm );
         allocate( global_cells_per_dim );
+        ranksPerDimension( comm );
     }
 
     /*!
@@ -100,9 +100,9 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         , _num_step_rebalance( num_step_rebalance )
         , _max_optimize_iteration( max_optimize_iteration )
     {
+        allocate( global_cells_per_dim );
         std::copy( ranks_per_dim.begin(), ranks_per_dim.end(),
                    _ranks_per_dim.data() );
-        allocate( global_cells_per_dim );
     }
 
     /*!
@@ -644,8 +644,8 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     template <typename PartitionView, typename WorkloadView>
     struct SubWorkloadFunctor
     {
-        PartitionView& rec_partition;
-        WorkloadView& workload_prefix_sum;
+        PartitionView rec_partition;
+        WorkloadView workload_prefix_sum;
 
         SubWorkloadFunctor( PartitionView rec_par, WorkloadView pre_sum )
             : rec_partition( rec_par )
