@@ -36,6 +36,12 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     //! View type
     using workload_view = Kokkos::View<int***, memory_space>;
     using partition_view = Kokkos::View<int* [3], memory_space>;
+    using workload_view_host =
+        Kokkos::View<int***, typename execution_space::array_layout,
+                     Kokkos::HostSpace>;
+    using partition_view_host =
+        Kokkos::View<int* [3], typename execution_space::array_layout,
+                     Kokkos::HostSpace>;
 
     //! Number of bits (per dimension) needed to index the cells inside a tile
     static constexpr unsigned long long cell_bits_per_tile_dim =
@@ -442,8 +448,9 @@ class SparseDimPartitioner : public BlockPartitioner<3>
                 Kokkos::HostSpace(), _rectangle_partition_dev );
             auto rec_partition = _rectangle_partition_dev;
 
-            SubWorkloadFunctor compute_sub_workload = {
-                _rectangle_partition_dev, _workload_prefix_sum };
+            SubWorkloadFunctor<partition_view, workload_view>
+                compute_sub_workload( _rectangle_partition_dev,
+                                      _workload_prefix_sum );
 
             // compute average workload in the dimension di
             Kokkos::View<int*, memory_space> ave_workload(
@@ -539,18 +546,19 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     }
 
     /*!
-      \brief compute the imbalance factor for the current partition
+      \brief compute the total workload on the current MPI rank
       \param cart_comm MPI cartesian communicator
-      \return the imbalance factor = workload on current rank / ave_workload
+      \return total workload on current rank
     */
-    float computeImbalanceFactor( MPI_Comm cart_comm )
+    int currentRankWorkload( MPI_Comm cart_comm )
     {
-        auto rec_partition = _rectangle_partition_dev;
-        auto prefix_sum = _workload_prefix_sum;
-        // workload_record[0] = ave_workload
-        // workload_record[1] = current_workload
-        Kokkos::View<float[2], memory_space> workload_record(
-            "workload_record" );
+        auto rec_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _rectangle_partition_dev );
+        auto prefix_sum_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _workload_prefix_sum );
+
+        SubWorkloadFunctor<partition_view_host, workload_view_host>
+            compute_sub_workload_host( rec_mirror, prefix_sum_mirror );
 
         // Get the Cartesian topology index of this rank.
         Kokkos::Array<int, 3> cart_rank;
@@ -558,40 +566,90 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         MPI_Comm_rank( cart_comm, &linear_rank );
         MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
 
-        SubWorkloadFunctor compute_sub_workload = { _rectangle_partition_dev,
-                                                    _workload_prefix_sum };
+        // compute total workload of the current rank
+        int workload_current_rank = compute_sub_workload_host(
+            0, rec_mirror( cart_rank[0], 0 ), rec_mirror( cart_rank[0] + 1, 0 ),
+            1, cart_rank[1], 2, cart_rank[2] );
 
-        int size_0 = prefix_sum.extent( 0 );
-        int size_1 = prefix_sum.extent( 1 );
-        int size_2 = prefix_sum.extent( 2 );
+        return workload_current_rank;
+    }
 
-        int rank_0 = _ranks_per_dim[0];
-        int rank_1 = _ranks_per_dim[1];
-        int rank_2 = _ranks_per_dim[2];
+    /*!
+       \brief compute the total workload on the current MPI rank
+       \param cart_comm MPI cartesian communicator
+       \param rec_view Host mirror of _rec_partition_dev
+       \param prefix_sum_view Host mirror of _workload_prefix_sum
+       \return total workload on current rank
+     */
+    template <typename PartitionViewHost, typename WorkloadViewHost>
+    int currentRankWorkload( MPI_Comm cart_comm, PartitionViewHost& rec_view,
+                             WorkloadViewHost& prefix_sum_view )
+    {
+        SubWorkloadFunctor<PartitionViewHost, WorkloadViewHost>
+            compute_sub_workload_host( rec_view, prefix_sum_view );
 
-        Kokkos::parallel_for(
-            "compute_workload_record",
-            Kokkos::RangePolicy<execution_space>( 0, 2 ),
-            KOKKOS_LAMBDA( int id ) {
-                if ( id == 0 )
-                {
-                    workload_record( 0 ) = static_cast<float>(
-                        prefix_sum( size_0 - 1, size_1 - 1, size_2 - 1 ) /
-                        ( rank_0 * rank_1 * rank_2 ) );
-                }
-                else
-                {
-                    workload_record( 1 ) =
-                        static_cast<float>( compute_sub_workload(
-                            0, rec_partition( cart_rank[0], 0 ),
-                            rec_partition( cart_rank[0] + 1, 0 ), 1,
-                            cart_rank[1], 2, cart_rank[2] ) );
-                }
-            } );
+        // Get the Cartesian topology index of this rank.
+        Kokkos::Array<int, 3> cart_rank;
+        int linear_rank;
+        MPI_Comm_rank( cart_comm, &linear_rank );
+        MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
 
-        auto record_mirror = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), workload_record );
-        return record_mirror[1] / record_mirror[0];
+        // compute total workload of the current rank
+        int workload_current_rank = compute_sub_workload_host(
+            0, rec_view( cart_rank[0], 0 ), rec_view( cart_rank[0] + 1, 0 ), 1,
+            cart_rank[1], 2, cart_rank[2] );
+
+        return workload_current_rank;
+    }
+
+    /*!
+    \brief compute the average workload on each MPI rank
+    \return average workload on each rank
+    */
+    int averageRankWorkload()
+    {
+        auto prefix_sum_view = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _workload_prefix_sum );
+        // compute total workload of the current rank
+        return prefix_sum_view( prefix_sum_view.extent( 0 ) - 1,
+                                prefix_sum_view.extent( 1 ) - 1,
+                                prefix_sum_view.extent( 2 ) - 1 ) /
+               ( _ranks_per_dim[0] * _ranks_per_dim[1] * _ranks_per_dim[2] );
+    }
+
+    /*!
+    \brief compute the average workload on each MPI rank
+    \param prefix_sum_view Host mirror of _workload_prefix_sum
+    \return average workload on each rank
+    */
+    template <typename WorkloadViewHost>
+    int averageRankWorkload( WorkloadViewHost& prefix_sum_view )
+    {
+        // compute total workload of the current rank
+        return prefix_sum_view( prefix_sum_view.extent( 0 ) - 1,
+                                prefix_sum_view.extent( 1 ) - 1,
+                                prefix_sum_view.extent( 2 ) - 1 ) /
+               ( _ranks_per_dim[0] * _ranks_per_dim[1] * _ranks_per_dim[2] );
+    }
+
+    /*!
+      \brief compute the imbalance factor for the current partition
+      \param cart_comm MPI cartesian communicator
+      \return the imbalance factor = workload on current rank / ave_workload
+    */
+    float computeImbalanceFactor( MPI_Comm cart_comm )
+    {
+        auto rec_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _rectangle_partition_dev );
+        auto prefix_sum_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _workload_prefix_sum );
+
+        int workload_current_rank =
+            currentRankWorkload( cart_comm, rec_mirror, prefix_sum_mirror );
+        int workload_ave_rank = averageRankWorkload( prefix_sum_mirror );
+
+        return static_cast<float>( workload_current_rank ) /
+               static_cast<float>( workload_ave_rank );
     }
 
     /*!
@@ -600,10 +658,17 @@ class SparseDimPartitioner : public BlockPartitioner<3>
       \param rec_partition rectilinear partition
       \param prefix_sum workload prefix sum matrix
     */
+    template <typename PartitionView, typename WorkloadView>
     struct SubWorkloadFunctor
     {
-        partition_view rec_partition;
-        workload_view workload_prefix_sum;
+        PartitionView& rec_partition;
+        WorkloadView& workload_prefix_sum;
+
+        SubWorkloadFunctor( PartitionView rec_par, WorkloadView pre_sum )
+            : rec_partition( rec_par )
+            , workload_prefix_sum( pre_sum )
+        {
+        }
 
         // compute the workload in region rounded by:
         // [i_start, i_end) in dim_i
