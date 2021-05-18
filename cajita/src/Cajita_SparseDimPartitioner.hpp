@@ -256,22 +256,32 @@ class SparseDimPartitioner : public BlockPartitioner<3>
       \param particle_num total particle number
       \param dx cell dx size
     */
-    template <class ParticlePosViewType, typename CellUnit>
-    void computeLocalWorkLoad( ParticlePosViewType& view, int particle_num,
-                               CellUnit dx )
+    template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
+    void computeLocalWorkLoad( const ParticlePosViewType& view,
+                               const ArrayType& global_lower_corner,
+                               const CellUnit dx )
     {
         resetWorkload();
         // make a local copy
         auto workload = _workload_per_tile;
+        Kokkos::Array<CellUnit, 3> lower_corner;
+        for ( int d = 0; d < 3; ++d )
+        {
+            lower_corner[d] = global_lower_corner[d];
+        }
+
         Kokkos::parallel_for(
             "compute_local_workload_parpos",
-            Kokkos::RangePolicy<execution_space>( 0, particle_num ),
+            Kokkos::RangePolicy<execution_space>( 0, view.extent( 0 ) ),
             KOKKOS_LAMBDA( const int i ) {
-                int ti = static_cast<int>( view( i, 0 ) / dx - 0.5 ) >>
+                int ti = static_cast<int>(
+                             ( view( i, 0 ) - lower_corner[0] ) / dx - 0.5 ) >>
                          cell_bits_per_tile_dim;
-                int tj = static_cast<int>( view( i, 1 ) / dx - 0.5 ) >>
+                int tj = static_cast<int>(
+                             ( view( i, 1 ) - lower_corner[1] ) / dx - 0.5 ) >>
                          cell_bits_per_tile_dim;
-                int tz = static_cast<int>( view( i, 2 ) / dx - 0.5 ) >>
+                int tz = static_cast<int>(
+                             ( view( i, 2 ) - lower_corner[2] ) / dx - 0.5 ) >>
                          cell_bits_per_tile_dim;
                 Kokkos::atomic_increment( &workload( ti + 1, tj + 1, tz + 1 ) );
             } );
@@ -390,11 +400,12 @@ class SparseDimPartitioner : public BlockPartitioner<3>
       \param comm MPI communicator used for workload reduction
       \return iteration number
     */
-    template <class ParticlePosViewType, typename CellUnit>
-    int optimizePartition( ParticlePosViewType& view, int particle_num,
-                           CellUnit dx, MPI_Comm comm )
+    template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
+    int optimizePartition( const ParticlePosViewType& view,
+                           const ArrayType& global_lower_corner,
+                           const CellUnit dx, MPI_Comm comm )
     {
-        computeLocalWorkLoad( view, particle_num, dx );
+        computeLocalWorkLoad( view, global_lower_corner, dx );
         computeFullPrefixSum( comm );
         bool is_changed = false;
         for ( int i = 0; i < _max_optimize_iteration; ++i )

@@ -106,6 +106,7 @@ void uniform_distribution_automatic_rank()
 
     auto owned_cells_per_dim = partitioner.ownedCellsPerDimension( cart_comm );
     auto owned_tiles_per_dim = partitioner.ownedTilesPerDimension( cart_comm );
+    float gt_imbalance_factor = 1.0f;
     for ( int d = 0; d < 3; ++d )
     {
         auto gt_tile = rec_partitions[d][cart_rank[d] + 1] -
@@ -114,7 +115,12 @@ void uniform_distribution_automatic_rank()
         EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim *
                                                cell_per_tile_dim *
                                                cell_per_tile_dim );
+        gt_imbalance_factor *= gt_tile;
     }
+    gt_imbalance_factor /=
+        static_cast<float>( size_tile_per_dim * size_tile_per_dim *
+                            size_tile_per_dim ) /
+        ranks_per_dim[0] / ranks_per_dim[1] / ranks_per_dim[2];
 
     // initialize sparseMap, register every tile on every MPI rank
     // basic settings for sparseMap
@@ -155,16 +161,133 @@ void uniform_distribution_automatic_rank()
                                                cell_per_tile_dim *
                                                cell_per_tile_dim );
     }
+
+    auto imbalance_factor = partitioner.computeImbalanceFactor( cart_comm );
+    EXPECT_FLOAT_EQ( imbalance_factor, gt_imbalance_factor );
+}
+
+auto generate_random_tiles(
+    const std::array<std::vector<int>, 3>& gt_partition,
+    const Kokkos::Array<int, 3>& cart_rank, const int size_tile_per_dim,
+    int occupy_tile_num_per_rank ) -> Kokkos::View<int* [3], TEST_MEMSPACE> {
+    // register valid tiles in each MPI rank
+    // compute the sub-domain size (divided by the ground truth partition)
+    const int area_size = size_tile_per_dim * size_tile_per_dim;
+    occupy_tile_num_per_rank = occupy_tile_num_per_rank >= area_size
+                                   ? area_size
+                                   : occupy_tile_num_per_rank;
+    std::set<std::array<int, 3>> tiles_set;
+
+    int start[3], size[3];
+    for ( int d = 0; d < 3; ++d )
+    {
+        start[d] = gt_partition[d][cart_rank[d]];
+        size[d] = gt_partition[d][cart_rank[d] + 1] - start[d];
+    }
+
+    // insert the corner tiles to the set, to ensure the uniqueness of the
+    // ground truth partition
+    tiles_set.insert( { start[0], start[1], start[2] } );
+    tiles_set.insert( { start[0] + size[0] - 1, start[1] + size[1] - 1,
+                        start[2] + size[2] - 1 } );
+
+    // insert random tiles to the set
+    while ( static_cast<int>( tiles_set.size() ) < occupy_tile_num_per_rank )
+    {
+        int rand_offset[3];
+        for ( int d = 0; d < 3; ++d )
+            rand_offset[d] = std::rand() % size[d];
+        tiles_set.insert( { start[0] + rand_offset[0],
+                            start[1] + rand_offset[1],
+                            start[2] + rand_offset[2] } );
+    }
+
+    // tiles_set => tiles_view (host)
+    typedef typename TEST_EXECSPACE::array_layout layout;
+    Kokkos::View<int* [3], layout, Kokkos::HostSpace> tiles_view_host(
+        "tiles_view_host", tiles_set.size() );
+    int i = 0;
+    for ( auto it = tiles_set.begin(); it != tiles_set.end(); ++it )
+    {
+        for ( int d = 0; d < 3; ++d )
+            tiles_view_host( i, d ) = ( *it )[d];
+        i++;
+    }
+
+    // create tiles view on device
+    Kokkos::View<int* [3], TEST_MEMSPACE> tiles_view =
+        Kokkos::create_mirror_view_and_copy( TEST_MEMSPACE(), tiles_view_host );
+    return tiles_view;
+}
+
+auto generate_random_particles(
+    const std::array<std::vector<int>, 3>& gt_partition,
+    const Kokkos::Array<int, 3>& cart_rank, int occupy_par_num_per_rank,
+    const std::array<double, 3> global_low_corner, double dx,
+    int cell_num_per_tile_dim ) -> Kokkos::View<double* [3], TEST_MEMSPACE> {
+    std::set<std::array<double, 3>> par_set;
+
+    double start[3], size[3];
+    for ( int d = 0; d < 3; ++d )
+    {
+        start[d] =
+            ( gt_partition[d][cart_rank[d]] * cell_num_per_tile_dim + 0.5 ) *
+                dx +
+            global_low_corner[d];
+
+        size[d] =
+            ( ( gt_partition[d][cart_rank[d] + 1] * cell_num_per_tile_dim ) -
+              ( gt_partition[d][cart_rank[d]] * cell_num_per_tile_dim ) ) *
+            dx;
+    }
+    // insert the corner tiles to the set, to ensure the uniqueness of the
+    // ground truth partition
+    par_set.insert(
+        { start[0] + 0.01 * dx, start[1] + 0.01 * dx, start[2] + 0.01 * dx } );
+    par_set.insert( {
+        start[0] + size[0] - dx - 0.01 * dx,
+        start[1] + size[1] - dx - 0.01 * dx,
+        start[2] + size[2] - dx - 0.01 * dx,
+    } );
+
+    // insert random tiles to the set
+    while ( static_cast<int>( par_set.size() ) < occupy_par_num_per_rank )
+    {
+        double rand_offset[3];
+        for ( int d = 0; d < 3; ++d )
+            rand_offset[d] = (double)std::rand() / RAND_MAX;
+        par_set.insert( { start[0] + rand_offset[0] * ( size[0] - dx ),
+                          start[1] + rand_offset[1] * ( size[1] - dx ),
+                          start[2] + rand_offset[2] * ( size[2] - dx ) } );
+    }
+
+    // particle_set => particle view (host)
+    typedef typename TEST_EXECSPACE::array_layout layout;
+    Kokkos::View<double* [3], layout, Kokkos::HostSpace> par_view_host(
+        "particle_view_host", par_set.size() );
+    int i = 0;
+    for ( auto it = par_set.begin(); it != par_set.end(); ++it )
+    {
+        for ( int d = 0; d < 3; ++d )
+            par_view_host( i, d ) = ( *it )[d];
+        i++;
+    }
+
+    // create tiles view on device
+    Kokkos::View<double* [3], TEST_MEMSPACE> par_view =
+        Kokkos::create_mirror_view_and_copy( TEST_MEMSPACE(), par_view_host );
+    return par_view;
 }
 
 /*!
   \brief In this test, the ground truth partition is first randomly chosen, then
   a given number of tiles are regiestered on each rank (the most bottom-left and
   top-right tiles are always registered to ensure the uniqueness of the ground
-  truth partition ) \param occupy_tile_num_per_rank the tile number that will be
+  truth partition ) \param occupy_num_per_rank the tile number that will be
   registered on each MPI rank
 */
-void random_distribution_automatic_rank( int occupy_tile_num_per_rank )
+void random_distribution_automatic_rank( int occupy_num_per_rank,
+                                         bool use_tile2workload = true )
 {
     // define the domain size
     constexpr int size_tile_per_dim = 32;
@@ -271,50 +394,6 @@ void random_distribution_automatic_rank( int occupy_tile_num_per_rank )
     partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
                                         rec_partitions[2] );
 
-    // register valid tiles in each MPI rank
-    // compute the sub-domain size (divided by the ground truth partition)
-    constexpr int area_size = size_tile_per_dim * size_tile_per_dim;
-    occupy_tile_num_per_rank = occupy_tile_num_per_rank >= area_size
-                                   ? area_size
-                                   : occupy_tile_num_per_rank;
-    std::set<std::array<int, 3>> tiles_set;
-
-    int start[3], size[3];
-    for ( int d = 0; d < 3; ++d )
-    {
-        start[d] = gt_partition[d][cart_rank[d]];
-        size[d] = gt_partition[d][cart_rank[d] + 1] - start[d];
-    }
-
-    // insert the corner tiles to the set, to ensure the uniqueness of the
-    // ground truth partition
-    tiles_set.insert( { start[0], start[1], start[2] } );
-    tiles_set.insert( { start[0] + size[0] - 1, start[1] + size[1] - 1,
-                        start[2] + size[2] - 1 } );
-    // insert random tiles to the set
-    while ( static_cast<int>( tiles_set.size() ) < occupy_tile_num_per_rank )
-    {
-        int rand_offset[3];
-        for ( int d = 0; d < 3; ++d )
-            rand_offset[d] = std::rand() % size[d];
-        tiles_set.insert( { start[0] + rand_offset[0],
-                            start[1] + rand_offset[1],
-                            start[2] + rand_offset[2] } );
-    }
-
-    typedef typename TEST_EXECSPACE::array_layout layout;
-    Kokkos::View<int* [3], layout, Kokkos::HostSpace> tiles_view_host(
-        "tiles_view_host", tiles_set.size() );
-    int i = 0;
-    for ( auto it = tiles_set.begin(); it != tiles_set.end(); ++it )
-    {
-        for ( int d = 0; d < 3; ++d )
-            tiles_view_host( i, d ) = ( *it )[d];
-        i++;
-    }
-    Kokkos::View<int* [3], TEST_MEMSPACE> tiles_view =
-        Kokkos::create_mirror_view_and_copy( TEST_MEMSPACE(), tiles_view_host );
-
     // initialize sparseMap, register selected tiles on every MPI rank
     // basic settings for sparseMap
     double cell_size = 0.1;
@@ -324,21 +403,36 @@ void random_distribution_automatic_rank( int occupy_tile_num_per_rank )
         global_low_corner[0] + cell_size * global_cells_per_dim[0],
         global_low_corner[1] + cell_size * global_cells_per_dim[1],
         global_low_corner[2] + cell_size * global_cells_per_dim[2] };
-    auto global_mesh = createSparseGlobalMesh(
-        global_low_corner, global_high_corner, global_cells_per_dim );
-    // create a new sparseMap
-    auto sis = createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
-    // register tiles to the sparseMap
-    Kokkos::parallel_for(
-        "insert_tile_to_sparse_map",
-        Kokkos::RangePolicy<TEST_EXECSPACE>( 0, tiles_set.size() ),
-        KOKKOS_LAMBDA( int id ) {
-            sis.insertTile( tiles_view( id, 0 ), tiles_view( id, 1 ),
-                            tiles_view( id, 2 ) );
-        } );
 
-    // compute workload and do partition optimization
-    partitioner.optimizePartition( sis, MPI_COMM_WORLD );
+    if ( use_tile2workload )
+    {
+        auto tiles_view = generate_random_tiles(
+            gt_partition, cart_rank, size_tile_per_dim, occupy_num_per_rank );
+        auto global_mesh = createSparseGlobalMesh(
+            global_low_corner, global_high_corner, global_cells_per_dim );
+        // create a new sparseMap
+        auto sis =
+            createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
+        // register tiles to the sparseMap
+        Kokkos::parallel_for(
+            "insert_tile_to_sparse_map",
+            Kokkos::RangePolicy<TEST_EXECSPACE>( 0, tiles_view.extent( 0 ) ),
+            KOKKOS_LAMBDA( int id ) {
+                sis.insertTile( tiles_view( id, 0 ), tiles_view( id, 1 ),
+                                tiles_view( id, 2 ) );
+            } );
+
+        // compute workload and do partition optimization
+        partitioner.optimizePartition( sis, MPI_COMM_WORLD );
+    }
+    else
+    {
+        auto particle_view = generate_random_particles(
+            gt_partition, cart_rank, occupy_num_per_rank, global_low_corner,
+            cell_size, cell_per_tile_dim );
+        partitioner.optimizePartition( particle_view, global_low_corner,
+                                       cell_size, MPI_COMM_WORLD );
+    }
 
     // check results (should be the same as the gt_partition)
     auto part = partitioner.getCurrentPartition();
@@ -359,11 +453,13 @@ TEST( sparse_dim_partitioner, sparse_dim_partitioner_uniform_test )
 {
     uniform_distribution_automatic_rank();
 }
-TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_test )
+TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_tile_test )
 {
-    random_distribution_automatic_rank( 32 );
-    random_distribution_automatic_rank( 16 );
-    random_distribution_automatic_rank( 100 );
+    random_distribution_automatic_rank( 32, true );
+}
+TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_par_test )
+{
+    random_distribution_automatic_rank( 50, false );
 }
 //---------------------------------------------------------------------------//
 } // end namespace Test
