@@ -23,7 +23,7 @@ namespace Test
 //---------------------------------------------------------------------------//
 void testAtomicOr()
 {
-    constexpr int size = 64;
+    constexpr int size = 16;
 
     Kokkos::View<int*** [2], TEST_MEMSPACE> tile_insert_record(
         "hash_record", size, size, size );
@@ -176,7 +176,7 @@ void testBlockSpace()
         cell_num_per_tile_dim * cell_num_per_tile_dim * cell_num_per_tile_dim;
     using key_type = uint64_t;
     using value_type = uint32_t;
-    constexpr int size = 32;
+    constexpr int size = 8;
     int pre_alloc_size = size * size;
     BlockMap<TEST_MEMSPACE, cell_bits_per_tile_dim, cell_num_per_tile_dim,
              cell_num_per_tile, HashType, key_type, value_type>
@@ -250,7 +250,7 @@ void testBlockSpace()
 void testSparseMapFullInsert()
 {
     constexpr int dim_n = 3;
-    constexpr int size_tile_per_dim = 16;
+    constexpr int size_tile_per_dim = 4;
     constexpr int size_per_dim = size_tile_per_dim * 4;
 
     std::array<int, dim_n> size( { size_per_dim, size_per_dim, size_per_dim } );
@@ -351,7 +351,7 @@ void testSparseMapFullInsert()
 void testSparseMapSparseInsert()
 {
     constexpr int dim_n = 3;
-    constexpr int size_tile_per_dim = 16;
+    constexpr int size_tile_per_dim = 8;
     constexpr int size_per_dim = size_tile_per_dim * 4;
     constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
 
@@ -385,7 +385,7 @@ void testSparseMapSparseInsert()
     auto cnt = sis.cell_num_per_tile;
     EXPECT_EQ( cnt, 64 );
 
-    constexpr int insert_cell_num = 100;
+    constexpr int insert_cell_num = 20;
     Kokkos::View<int*, Kokkos::HostSpace> host_cell_1did( "cell_ids_1d",
                                                           insert_cell_num );
     std::map<int, int> cell_register;
@@ -473,7 +473,7 @@ void testSparseMapSparseInsert()
 void testSparseMapReinsert()
 {
     constexpr int dim_n = 3;
-    constexpr int size_tile_per_dim = 16;
+    constexpr int size_tile_per_dim = 8;
     constexpr int size_per_dim = size_tile_per_dim * 4;
     constexpr int total_size = size_per_dim * size_per_dim * size_per_dim;
 
@@ -644,8 +644,6 @@ TEST( TEST_CATEGORY, atomic_test )
 TEST( TEST_CATEGORY, tile_space_test )
 {
     testTileSpace<2, 4>(); // tile size 4x4x4
-    testTileSpace<1, 2>(); // tile size 2x2x2
-    testTileSpace<3, 8>(); // tile size 8x8x8
 }
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, block_space_test )
