@@ -319,7 +319,7 @@ jobs:
         if: ${{ matrix.doxygen == 'ON' }}
         working-directory: html
         run: |
-          rm -rf doxygein
+          rm -rf doxygen
           mv ../build/html doxygen
           git config --global user.name "Automatic Deployment (GitHub Action)";
           git config --global user.email "noreply@lanl.gov"
