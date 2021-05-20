@@ -1,0 +1,4 @@
+<map id="Cajita::Experimental::is_matching_array&lt; ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device, Scalar, typename std::enable_if&lt; std::is_same&lt; ArrayEntity, Entity &gt;::value &amp;&amp;std::is_same&lt; ArrayMesh, Mesh &gt;::value &amp;&amp;std::is_same&lt; ArrayDevice, Device &gt;::value &gt;::type &gt;" name="Cajita::Experimental::is_matching_array&lt; ArrayEntity, ArrayMesh, ArrayDevice, ArrayScalar, Entity, Mesh, Device, Scalar, typename std::enable_if&lt; std::is_same&lt; ArrayEntity, Entity &gt;::value &amp;&amp;std::is_same&lt; ArrayMesh, Mesh &gt;::value &amp;&amp;std::is_same&lt; ArrayDevice, Device &gt;::value &gt;::type &gt;">
+<area shape="rect" id="node1" title=" " alt="" coords="5,80,299,239"/>
+<area shape="rect" id="node2" title=" " alt="" coords="101,5,203,32"/>
+</map>

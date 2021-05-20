@@ -1,0 +1,5 @@
+<map id="Cabana::CommunicationPlan&lt; DeviceType &gt;" name="Cabana::CommunicationPlan&lt; DeviceType &gt;">
+<area shape="rect" id="node1" title="Communication plan base class." alt="" coords="72,5,263,47"/>
+<area shape="rect" id="node2" href="$classCabana_1_1Distributor.html" title="Distributor is a communication plan for migrating data from one uniquely&#45;owned decomposition to anoth..." alt="" coords="5,95,140,136"/>
+<area shape="rect" id="node3" href="$classCabana_1_1Halo.html" title="Halo communication plan for scattering and gathering of ghosted data." alt="" coords="165,102,359,129"/>
+</map>
