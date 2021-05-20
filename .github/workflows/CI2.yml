@@ -77,6 +77,7 @@ jobs:
             heffte: 'NoheFFTe'
             hypre: 'NoHYPRE'
             coverage: 'OFF'
+            doxygen: 'ON'
           - distro: 'fedora:latest'
             cxx: 'clang++'
             openmp: 'ON'
@@ -293,6 +294,9 @@ jobs:
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
+      - name: Build Doxygen
+        if: ${{ matrix.doxygen == 'ON' }}
+        run: cmake --build build --target doxygen
       - name: Show ccache stats
         run: |
           ccache -s
@@ -305,3 +309,23 @@ jobs:
       - name: Upload Report to codecov.io
         if: ${{ matrix.coverage == 'ON' }}
         uses: codecov/codecov-action@v1
+      - name: Checkout gh-pages
+        if: ${{ matrix.doxygen == 'ON' }}
+        uses: actions/checkout@v2
+        with:
+          ref: 'gh-pages'
+          path: 'html'
+      - name: update and commit to gh-pages branch
+        if: ${{ matrix.doxygen == 'ON' }}
+        working-directory: html
+        run: |
+          rm -rf doxygen
+          mv ../build/html doxygen
+          git config --global user.name "Automatic Deployment (GitHub Action)";
+          git config --global user.email "noreply@lanl.gov"
+          git add --all && git commit -m "Documentation Update"
+          if [[ "${GITHUB_REF}" == 'refs/heads/master' ]]; then
+            git push
+          else
+            git push --dry-run
+          fi
