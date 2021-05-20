@@ -283,8 +283,11 @@ auto generate_random_particles(
   \brief In this test, the ground truth partition is first randomly chosen, then
   a given number of tiles are regiestered on each rank (the most bottom-left and
   top-right tiles are always registered to ensure the uniqueness of the ground
-  truth partition ) \param occupy_num_per_rank the tile number that will be
-  registered on each MPI rank
+  truth partition )
+  \param occupy_num_per_rank the tile number that will be registered on each MPI
+  rank
+  \param use_tile2workload indicate the source to compute the workload on MPI
+  ranks, true if using tile occupation while false if using particle positions
 */
 void random_distribution_automatic_rank( int occupy_num_per_rank,
                                          bool use_tile2workload = true )
@@ -394,8 +397,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
     partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
                                         rec_partitions[2] );
 
-    // initialize sparseMap, register selected tiles on every MPI rank
-    // basic settings for sparseMap
+    // basic settings for domain size and position
     double cell_size = 0.1;
     int pre_alloc_size = size_per_dim * size_per_dim;
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
@@ -404,16 +406,18 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
         global_low_corner[1] + cell_size * global_cells_per_dim[1],
         global_low_corner[2] + cell_size * global_cells_per_dim[2] };
 
+    // use tile occupization info to compute the workload on MPI ranks
     if ( use_tile2workload )
     {
+        // randomly generate a fixed number of tiles on every MPI rank
         auto tiles_view = generate_random_tiles(
             gt_partition, cart_rank, size_tile_per_dim, occupy_num_per_rank );
+        // create a new sparseMap
         auto global_mesh = createSparseGlobalMesh(
             global_low_corner, global_high_corner, global_cells_per_dim );
-        // create a new sparseMap
         auto sis =
             createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
-        // register tiles to the sparseMap
+        // register selected tiles to the sparseMap
         Kokkos::parallel_for(
             "insert_tile_to_sparse_map",
             Kokkos::RangePolicy<TEST_EXECSPACE>( 0, tiles_view.extent( 0 ) ),
@@ -422,16 +426,20 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
                                 tiles_view( id, 2 ) );
             } );
 
-        // compute workload and do partition optimization
+        // compute workload from a sparseMap and do partition optimization
         partitioner.optimizePartition( sis, MPI_COMM_WORLD );
     }
+    // use particle positions to compute teh workload on MPI ranks
     else
     {
+        // randomly generate a fixed number of particles on each MPI rank
         auto particle_view = generate_random_particles(
             gt_partition, cart_rank, occupy_num_per_rank, global_low_corner,
             cell_size, cell_per_tile_dim );
-        partitioner.optimizePartition( particle_view, global_low_corner,
-                                       cell_size, MPI_COMM_WORLD );
+        // compute workload from a particle view and do partition optimization
+        partitioner.optimizePartition( particle_view, occupy_num_per_rank,
+                                       global_low_corner, cell_size,
+                                       MPI_COMM_WORLD );
     }
 
     // check results (should be the same as the gt_partition)

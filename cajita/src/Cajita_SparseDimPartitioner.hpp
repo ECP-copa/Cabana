@@ -254,10 +254,13 @@ class SparseDimPartitioner : public BlockPartitioner<3>
       positions (each particle count for 1 workload value)
       \param view particle positions view
       \param particle_num total particle number
+      \param global_lower_corner the coordinate of the domain global lower
+      corner
       \param dx cell dx size
     */
     template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
     void computeLocalWorkLoad( const ParticlePosViewType& view,
+                               int particle_num,
                                const ArrayType& global_lower_corner,
                                const CellUnit dx )
     {
@@ -272,7 +275,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
 
         Kokkos::parallel_for(
             "compute_local_workload_parpos",
-            Kokkos::RangePolicy<execution_space>( 0, view.extent( 0 ) ),
+            Kokkos::RangePolicy<execution_space>( 0, particle_num ),
             KOKKOS_LAMBDA( const int i ) {
                 int ti = static_cast<int>(
                              ( view( i, 0 ) - lower_corner[0] ) / dx - 0.5 ) >>
@@ -396,16 +399,18 @@ class SparseDimPartitioner : public BlockPartitioner<3>
       \brief iteratively optimize the partition
       \param view particle positions view
       \param particle_num total particle number
+      \param global_lower_corner the coordinate of the domain global lower
+      corner
       \param dx cell dx size
-      \param comm MPI communicator used for workload reduction
-      \return iteration number
+      \param comm MPI communicator used for
+      workload reduction \return iteration number
     */
     template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
-    int optimizePartition( const ParticlePosViewType& view,
+    int optimizePartition( const ParticlePosViewType& view, int particle_num,
                            const ArrayType& global_lower_corner,
                            const CellUnit dx, MPI_Comm comm )
     {
-        computeLocalWorkLoad( view, global_lower_corner, dx );
+        computeLocalWorkLoad( view, particle_num, global_lower_corner, dx );
         computeFullPrefixSum( comm );
         bool is_changed = false;
         for ( int i = 0; i < _max_optimize_iteration; ++i )
@@ -441,6 +446,8 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     /*!
       \brief optimize the partition in three dimensions seperately
       \param is_changed label if the partition is changed after the optimization
+      \param iter_seed seed number to choose the starting dimension of the
+      optimization
     */
     void optimizePartition( bool& is_changed, int iter_seed )
     {
