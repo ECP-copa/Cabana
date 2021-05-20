@@ -323,7 +323,8 @@ jobs:
           mv ../build/html doxygen
           git config --global user.name "Automatic Deployment (GitHub Action)";
           git config --global user.email "noreply@lanl.gov"
-          git add --all && git commit -m "Documentation Update"
+          git add --all
+          git diff --quiet HEAD || git commit -m "Documentation Update"
           if [[ "${GITHUB_REF}" == 'refs/heads/master' ]]; then
             git push
           else
