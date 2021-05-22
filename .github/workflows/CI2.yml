@@ -328,5 +328,5 @@ jobs:
           if [[ "${GITHUB_REF}" == 'refs/heads/master' ]]; then
             git push
           else
-            git push --dry-run
+            git show
           fi
