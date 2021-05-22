@@ -836,7 +836,7 @@ void g2p(
   Interpolates a scalar function from entities to points with a given
   multiplier such that:
 
-  f_p = multiplier * \sum_{ijk} weight_{pijk} * f_{ijk}
+  f_p = multiplier * \\sum_{ijk} weight_{pijk} * f_{ijk}
 */
 template <class ViewType>
 struct ScalarValueG2P
@@ -879,7 +879,7 @@ createScalarValueG2P( const ViewType& x,
   Interpolates a vector function from entities to points with a given
   multiplier such that:
 
-  f_{pd} = multiplier * \sum_{ijk} weight_{pijk} * f_{ijkd}
+  f_{pd} = multiplier * \\sum_{ijk} weight_{pijk} * f_{ijkd}
 */
 template <class ViewType>
 struct VectorValueG2P
@@ -923,7 +923,7 @@ createVectorValueG2P( const ViewType& x,
   Interpolates the gradient of a scalar function from entities to points with
   a given multiplier such that:
 
-  f_{pd} = multiplier * \sum_{ijk} grad_weight_{pijkd} * f_{ijk}
+  f_{pd} = multiplier * \\sum_{ijk} grad_weight_{pijkd} * f_{ijk}
 */
 template <class ViewType>
 struct ScalarGradientG2P
@@ -967,7 +967,7 @@ createScalarGradientG2P( const ViewType& x,
   Interpolates the gradient of a vector function from entities to points with
   a given multiplier such that:
 
-  f_{pmn} = multiplier * \sum_{ijk} grad_weight_{pijkm} * f_{ijkn}
+  f_{pmn} = multiplier * \\sum_{ijk} grad_weight_{pijkm} * f_{ijkn}
 */
 template <class ViewType>
 struct VectorGradientG2P
@@ -1013,7 +1013,7 @@ createVectorGradientG2P( const ViewType& x,
   Interpolates the divergence of a vector function from entities to points
   with a given multiplier such that:
 
-  f_p = multiplier * \sum_d \sum_{ijk} grad_weight_{pijkd} * f_{ijkd}
+  f_p = multiplier * \\sum_d \\sum_{ijk} grad_weight_{pijkd} * f_{ijkd}
 */
 template <class ViewType>
 struct VectorDivergenceG2P
@@ -1153,7 +1153,7 @@ void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
   Interpolates a scalar function from points to entities with a given
   multiplier such that:
 
-  f_ijk = multiplier * \sum_p weight_{pijk} * f_p
+  f_ijk = multiplier * \\sum_p weight_{pijk} * f_p
 */
 template <class ViewType>
 struct ScalarValueP2G
@@ -1195,7 +1195,7 @@ createScalarValueP2G( const ViewType& x,
   Interpolates a vector function from points to entities with a given
   multiplier such that:
 
-  f_{ijkd} = multiplier * \sum_p weight_{pijk} * f_{pd}
+  f_{ijkd} = multiplier * \\sum_p weight_{pijk} * f_{pd}
 */
 template <class ViewType>
 struct VectorValueP2G
@@ -1239,7 +1239,7 @@ createVectorValueP2G( const ViewType& x,
   Interpolates the gradient of a scalar function from points to entities with
   a given multiplier such that:
 
-  f_{ijkd} = multiplier * \sum_p grad_weight_{pijkd} * f_p
+  f_{ijkd} = multiplier * \\sum_p grad_weight_{pijkd} * f_p
 */
 template <class ViewType>
 struct ScalarGradientP2G
@@ -1281,7 +1281,7 @@ createScalarGradientP2G( const ViewType& x,
   Interpolates the divergence of a vector function from points to entities
   with a given multiplier such that:
 
-  f_ijk = multiplier * \sum_d \sum_p grad_weight_{pijkd} * f_{pd}
+  f_ijk = multiplier * \\sum_d \\sum_p grad_weight_{pijkd} * f_{pd}
 */
 template <class ViewType>
 struct VectorDivergenceP2G
@@ -1325,7 +1325,7 @@ createVectorDivergenceP2G( const ViewType& x,
   Interpolates the divergence of a tensor function from points to entities
   with a given multiplier such that:
 
-  f_ijkm = multiplier * \sum_n \sum_p grad_weight_{pijkn} * f_{pmn}
+  f_ijkm = multiplier * \\sum_n \\sum_p grad_weight_{pijkn} * f_{pmn}
 */
 template <class ViewType>
 struct TensorDivergenceP2G
