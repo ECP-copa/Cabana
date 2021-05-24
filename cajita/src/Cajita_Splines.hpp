@@ -80,9 +80,9 @@ struct Spline<0>
 
     /*!
       \brief Calculate the value of the spline at all knots.
-      \param x0 The coordinate at which to evaluate the spline in the logical
-      grid space.
-      \param values Basis values at the knots. Ordered from lowest to highest
+      \note x0 (unused) The coordinate at which to evaluate the spline in the
+      logical grid space.
+      \note values Basis values at the knots. Ordered from lowest to highest
       in terms of knot location.
     */
     template <typename Scalar>
@@ -96,10 +96,11 @@ struct Spline<0>
     /*!
       \brief Calculate the value of the gradient of the spline in the
       physical frame.
-      \param x0 The coordinate at which to evaluate the spline in the logical
-      grid space.
-      \param rdx The inverse of the physical distance between grid locations.
-      \param gradients Basis gradient values at the knots in the physical
+      \note x0 (unused) The coordinate at which to evaluate the spline in the
+      logical grid space.
+      \note rdx (unused) The inverse of the physical distance between grid
+      locations.
+      \note gradients Basis gradient values at the knots in the physical
       frame. Ordered from lowest to highest in terms of knot location.
     */
     template <typename Scalar>
@@ -189,10 +190,10 @@ struct Spline<1>
     /*!
       \brief Calculate the value of the gradient of the spline in the
       physical frame.
-      \param x0 The coordinate at which to evaluate the spline in the logical
-      grid space.
-      \param rdx The inverse of the physical distance between grid locations.
-      \param gradients Basis gradient values at the knots in the physical
+      \note x0 (unused) The coordinate at which to evaluate the spline in the
+      logical grid space.
+      \note rdx The inverse of the physical distance between grid locations.
+      \note gradients Basis gradient values at the knots in the physical
       frame. Ordered from lowest to highest in terms of knot location.
     */
     template <typename Scalar>
