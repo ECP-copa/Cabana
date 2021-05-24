@@ -12,7 +12,7 @@ on:
 jobs:
   CI:
     # FIXME: remove failing distributions here when passing
-    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:latest' || matrix.distro == 'fedora:intel' || matrix.distro == 'ubuntu:devel' }}
+    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:intel' }}
     defaults:
       run:
         shell: bash
