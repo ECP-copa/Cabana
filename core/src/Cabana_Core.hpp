@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \namespace Cabana
+  \brief Core: particle data structures and algorithms
+*/
 #ifndef CABANA_CORE_HPP
 #define CABANA_CORE_HPP
 
