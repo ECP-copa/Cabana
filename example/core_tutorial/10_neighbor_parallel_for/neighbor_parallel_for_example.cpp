@@ -120,10 +120,13 @@ void neighborParallelForExample()
       it, along with indexing and threading tags to an underlying
       Kokkos::parallel_for. This first kernel thus indexes directly
       over both the central particle i and neighbors j.
+
+      Note the atomic update to ensure multiple neighbors do not update the
+      central particle simultaneously if threading over neighbors.
      */
     auto first_neighbor_kernel = KOKKOS_LAMBDA( const int i, const int j )
     {
-        slice_i( i ) += slice_n( j );
+        Kokkos::atomic_add( &slice_i( i ), slice_n( j ) );
     };
 
     /*
@@ -195,12 +198,16 @@ void neighborParallelForExample()
 
     /*
       We define a new kernel for triplet interactions, indexing over central
-      atom i, neighbor j, and second neighbor k.
+      particle i, neighbor j, and second neighbor k.
+
+      Again, note the atomic update to ensure multiple neighbors do not update
+      the central particle simultaneously if threading over neighbors.
     */
     auto second_neighbor_kernel =
         KOKKOS_LAMBDA( const int i, const int j, const int k )
     {
-        slice_i( i ) += ( slice_n( j ) + slice_n( k ) ) / 2;
+        Kokkos::atomic_add( &slice_i( i ),
+                            ( slice_n( j ) + slice_n( k ) ) / 2 );
     };
 
     /*
