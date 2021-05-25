@@ -9,8 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_subdirectory(core_tutorial)
-
-if(Cabana_ENABLE_CAJITA)
-  add_subdirectory(cajita_tutorial)
-endif()
+add_executable(MeshTypes types_example.cpp)
+target_link_libraries(MeshTypes Cajita)
+add_test(NAME Cajita_tutorial_01 COMMAND ${NONMPI_PRECOMMAND} MeshTypes)

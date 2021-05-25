@@ -9,8 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_subdirectory(core_tutorial)
-
-if(Cabana_ENABLE_CAJITA)
-  add_subdirectory(cajita_tutorial)
-endif()
+add_executable(Partitioner partitioner_example.cpp)
+target_link_libraries(Partitioner Cajita)
+add_test(NAME Cajita_tutorial_03 COMMAND ${NONMPI_PRECOMMAND} Partitioner)
