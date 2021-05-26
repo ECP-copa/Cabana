@@ -23,6 +23,8 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 namespace Impl
 {
+//! \cond Impl
+
 /*!
   \class StructRange
 
@@ -62,6 +64,7 @@ class StructRange
     }
 };
 
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//

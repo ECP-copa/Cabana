@@ -68,9 +68,11 @@ struct FFTBackendMKL
 
 namespace Impl
 {
+//! \cond Impl
 struct FFTBackendDefault
 {
 };
+//! \endcond
 } // namespace Impl
 
 template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
@@ -320,6 +322,7 @@ class FastFourierTransform
 //---------------------------------------------------------------------------//
 namespace Impl
 {
+//! \cond Impl
 template <class ExecutionSpace, class BackendType>
 struct HeffteBackendTraits
 {
@@ -379,6 +382,7 @@ struct HeffteScalingTraits<FFTScaleSymmetric>
 {
     static const auto scaling_type = heffte::scale::symmetric;
 };
+//! \endcond
 } // namespace Impl
 
 //---------------------------------------------------------------------------//

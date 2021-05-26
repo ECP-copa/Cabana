@@ -30,6 +30,7 @@ namespace Cabana
 {
 namespace Impl
 {
+//! \cond Impl
 //---------------------------------------------------------------------------//
 // Count sends and create steering algorithm tags.
 struct CountSendsAndCreateSteeringDuplicated
@@ -350,7 +351,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 }
 
 //---------------------------------------------------------------------------//
-
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//

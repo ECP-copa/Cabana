@@ -160,7 +160,7 @@ struct is_distributor
 //---------------------------------------------------------------------------//
 namespace Impl
 {
-
+//! \cond Impl
 //---------------------------------------------------------------------------//
 // Synchronously move data between a source and destination AoSoA by executing
 // the forward communication plan.
@@ -296,7 +296,7 @@ void distributeData(
 }
 
 //---------------------------------------------------------------------------//
-
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//

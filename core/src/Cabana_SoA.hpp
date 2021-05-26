@@ -48,6 +48,8 @@ struct is_soa : public is_soa_impl<typename std::remove_cv<T>::type>::type
 
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // Given an array layout and a potentially multi dimensional type T along with
 // its rank, compose the inner array type.
@@ -158,6 +160,7 @@ typename SoA_t::template member_pointer_type<M> soaMemberPtr( SoA_t* p )
 
 //---------------------------------------------------------------------------//
 
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//

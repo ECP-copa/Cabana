@@ -39,6 +39,8 @@ using remove_cvref_t = typename remove_cvref<T>::type;
 
 namespace Impl
 {
+//! \cond Impl
+
 template <typename Slice,
           typename = std::enable_if_t<Cabana::is_slice<Slice>::value>>
 struct SubsliceAndRadius
@@ -63,6 +65,7 @@ auto makePredicates(
     return Impl::SubsliceAndRadius<stdcxx20::remove_cvref_t<Slice>>{
         std::forward<Slice>( slice ), first, last, radius };
 }
+//! \endcond
 } // namespace Impl
 } // namespace Experimental
 } // namespace Cabana
@@ -109,6 +112,7 @@ namespace Experimental
 {
 namespace Impl
 {
+//! \cond Impl
 
 template <typename Tag>
 struct CollisionFilter;
@@ -213,6 +217,7 @@ struct NeighborDiscriminatorCallback2D_SecondPass
 // NOTE** Taking advantage of the knowledge that one predicate is processed by a
 // single thread.  Count increment should be atomic otherwise.
 
+//! \endcond
 } // namespace Impl
 
 template <typename MemorySpace, typename Tag>

@@ -68,6 +68,8 @@ struct LayoutCabanaSlice
 //---------------------------------------------------------------------------//
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // View offset of LayoutCabanaSlice.
 template <class Dimension, int... LayoutDims>
@@ -345,6 +347,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
 
 //---------------------------------------------------------------------------//
 
+//! \endcond
 } // namespace Impl
 
 } // end namespace Kokkos
@@ -354,6 +357,8 @@ namespace Cabana
 {
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // Given a tuple member type T of the given rank get the Kokkos view
 // data layout parameters. The tuple index effectively introduces 2 new
@@ -462,6 +467,7 @@ struct KokkosViewWrapper
 
 //---------------------------------------------------------------------------//
 
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//
