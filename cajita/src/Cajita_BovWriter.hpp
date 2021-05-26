@@ -38,52 +38,67 @@ namespace BovWriter
 //---------------------------------------------------------------------------//
 // VisIt Brick-of-Values (BOV) grid field writer.
 //---------------------------------------------------------------------------//
-// BOV Format traits.
+
+//! BOV Format traits.
+//! \tparam Scalar type.
 template <typename T>
 struct BovFormat;
 
+//! BOV Format traits.
 template <>
 struct BovFormat<short>
 {
+    //! Get BOV value type.
     static std::string value() { return "SHORT"; }
 };
 
+//! BOV Format traits.
 template <>
 struct BovFormat<int>
 {
+    //! Get BOV value type.
     static std::string value() { return "INT"; }
 };
 
+//! BOV Format traits.
 template <>
 struct BovFormat<float>
 {
+    //! Get BOV value type.
     static std::string value() { return "FLOAT"; }
 };
 
+//! BOV Format traits.
 template <>
 struct BovFormat<double>
 {
+    //! Get BOV value type.
     static std::string value() { return "DOUBLE"; }
 };
 
-// BOV Centering
+//! BOV Centering
+//! \tparam Entity type.
 template <typename T>
 struct BovCentering;
 
+//! BOV Centering
 template <>
 struct BovCentering<Cell>
 {
+    //! Get BOV value type.
     static std::string value() { return "zonal"; }
 };
 
+//! BOV Centering
 template <>
 struct BovCentering<Node>
 {
+    //! Get BOV value type.
     static std::string value() { return "nodal"; }
 };
 
 //---------------------------------------------------------------------------//
-// Create the MPI subarray for the given array.
+//! Create the MPI subarray for the given array.
 template <class Array_t, std::size_t N>
 MPI_Datatype createSubarray( const Array_t& array,
                              const std::array<long, N>& owned_extents,
@@ -115,7 +130,7 @@ MPI_Datatype createSubarray( const Array_t& array,
 }
 
 //---------------------------------------------------------------------------//
-// Reorder a view to the required ordering for I/O
+//! Reorder a view to the required ordering for I/O
 template <class TargetView, class SourceView, class Indices, class ExecSpace>
 std::enable_if_t<4 == TargetView::rank, void>
 reorderView( TargetView& target, const SourceView& source,
@@ -129,6 +144,7 @@ reorderView( TargetView& target, const SourceView& source,
     exec_space.fence();
 }
 
+//! Reorder a view to the required ordering for I/O
 template <class TargetView, class SourceView, class Indices, class ExecSpace>
 std::enable_if_t<3 == TargetView::rank, void>
 reorderView( TargetView& target, const SourceView& source,

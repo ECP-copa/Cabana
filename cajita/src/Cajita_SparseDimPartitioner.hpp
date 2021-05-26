@@ -24,21 +24,31 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
+/*!
+  Sparse mesh block partitioner.
+  \tparam Device Kokkos device type.
+  \tparam CellPerTileDim Cells per tile per dimension.
+*/
 template <typename Device, unsigned long long CellPerTileDim = 4>
 class SparseDimPartitioner : public BlockPartitioner<3>
 {
   public:
-    //! Device type
+    //! Kokkos device type.
     using device_type = Device;
+    //! Kokkos memory space.
     using memory_space = typename Device::memory_space;
+    //! Kokkos execution space.
     using execution_space = typename Device::execution_space;
 
-    //! View type
+    //! Workload device view.
     using workload_view = Kokkos::View<int***, memory_space>;
+    //! Partition device view.
     using partition_view = Kokkos::View<int* [3], memory_space>;
+    //! Workload host view.
     using workload_view_host =
         Kokkos::View<int***, typename execution_space::array_layout,
                      Kokkos::HostSpace>;
+    //! Partition host view.
     using partition_view_host =
         Kokkos::View<int* [3], typename execution_space::array_layout,
                      Kokkos::HostSpace>;
@@ -656,25 +666,26 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     /*!
       \brief functor to compute the sub workload in a given region (from the
       prefix sum)
-      \param rec_partition rectilinear partition
-      \param prefix_sum workload prefix sum matrix
     */
     template <typename PartitionView, typename WorkloadView>
     struct SubWorkloadFunctor
     {
+        //! Rectilinear partition
         PartitionView rec_partition;
+        //! Workload prefix sum matrix
         WorkloadView workload_prefix_sum;
 
+        //! Constructor.
         SubWorkloadFunctor( PartitionView rec_par, WorkloadView pre_sum )
             : rec_partition( rec_par )
             , workload_prefix_sum( pre_sum )
         {
         }
 
-        // compute the workload in region rounded by:
-        // [i_start, i_end) in dim_i
-        // [partition[j], partition[j+1]) in dim_j
-        // [partition[k], partition[k+1]) in dim_k
+        //! compute the workload in region rounded by:
+        //! [i_start, i_end) in dim_i
+        //! [partition[j], partition[j+1]) in dim_j
+        //! [partition[k], partition[k+1]) in dim_k
         KOKKOS_INLINE_FUNCTION int operator()( int dim_i, int i_start,
                                                int i_end, int dim_j, int j,
                                                int dim_k, int k ) const
@@ -710,23 +721,23 @@ class SparseDimPartitioner : public BlockPartitioner<3>
     };
 
   private:
-    //! workload_threshold
+    // workload_threshold
     int _workload_threshold;
-    //! default check point for re-balance
+    // default check point for re-balance
     int _num_step_rebalance;
-    //! max_optimize iterations
+    // max_optimize iterations
     int _max_optimize_iteration;
 
-    //! represent the rectangle partition in each dimension
-    //! with form [0, p_1, ..., p_n, cell_num], n = rank num in current
-    //! dimension, partition in this dimension would be [0, p_1), [p_1, p_2) ...
-    //! [p_n, total_tile_num] (unit: tile)
+    // represent the rectangle partition in each dimension
+    // with form [0, p_1, ..., p_n, cell_num], n = rank num in current
+    // dimension, partition in this dimension would be [0, p_1), [p_1, p_2) ...
+    // [p_n, total_tile_num] (unit: tile)
     partition_view _rectangle_partition_dev;
-    //! the workload of each tile on current
+    // the workload of each tile on current
     workload_view _workload_per_tile;
-    //! 3d prefix sum of the workload of each tile on current
+    // 3d prefix sum of the workload of each tile on current
     workload_view _workload_prefix_sum;
-    //! ranks per dimension
+    // ranks per dimension
     Kokkos::Array<int, 3> _ranks_per_dim;
 
     void allocate( const std::array<int, 3>& global_cells_per_dim )

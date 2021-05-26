@@ -24,41 +24,41 @@ namespace Cajita
 namespace IndexConversion
 {
 //---------------------------------------------------------------------------//
-// Local-to-global indexer
+//! Local-to-global indexer
 template <class MeshType, class EntityType>
 struct L2G
 {
-    // Mesh type
+    //! Mesh type.
     using mesh_type = MeshType;
 
-    // Spatial dimension.
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
-    // Entity type.
+    //! Entity type.
     using entity_type = EntityType;
 
-    // Owned local indices minimum.
+    //! Owned local indices minimum.
     Kokkos::Array<int, num_space_dim> local_own_min;
 
-    // Owned local indices maximum.
+    //! Owned local indices maximum.
     Kokkos::Array<int, num_space_dim> local_own_max;
 
-    // Owned global indices minimum.
+    //! Owned global indices minimum.
     Kokkos::Array<int, num_space_dim> global_own_min;
 
-    // Global number of entities.
+    //! Global number of entities.
     Kokkos::Array<int, num_space_dim> global_num_entity;
 
-    // Periodicity.
+    //! Periodicity.
     Kokkos::Array<bool, num_space_dim> periodic;
 
-    // True if block is on low boundary.
+    //! True if block is on low boundary.
     Kokkos::Array<bool, num_space_dim> boundary_lo;
 
-    // True if block is on high boundary.
+    //! True if block is on high boundary.
     Kokkos::Array<bool, num_space_dim> boundary_hi;
 
-    // Constructor.
+    //! Constructor.
     L2G( const LocalGrid<MeshType>& local_grid )
     {
         // Local index set of owned entities.
@@ -101,7 +101,7 @@ struct L2G
         }
     }
 
-    // Convert local indices to global indices - general form.
+    //! Convert local indices to global indices - general form.
     KOKKOS_INLINE_FUNCTION
     void operator()( const int lijk[num_space_dim],
                      int gijk[num_space_dim] ) const
@@ -129,7 +129,7 @@ struct L2G
         }
     }
 
-    // Convert local indices to global indices - 3D.
+    //! Convert local indices to global indices - 3D.
     template <std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
     operator()( const int li, const int lj, const int lk, int& gi, int& gj,
@@ -143,7 +143,7 @@ struct L2G
         gk = gijk[2];
     }
 
-    // Convert local indices to global indices - 3D.
+    //! Convert local indices to global indices - 3D.
     template <std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
     operator()( const int li, const int lj, int& gi, int& gj ) const
@@ -157,7 +157,7 @@ struct L2G
 };
 
 //---------------------------------------------------------------------------//
-// Creation function.
+//! Creation function for local-to-global indexer.
 template <class MeshType, class EntityType>
 L2G<MeshType, EntityType> createL2G( const LocalGrid<MeshType>& local_grid,
                                      EntityType )

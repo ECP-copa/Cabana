@@ -21,10 +21,16 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Backwards compatibility wrapper
+/*!
+  \brief Backwards compatibility wrapper for 3D ManualBlockPartitioner
+*/
 class ManualPartitioner : public ManualBlockPartitioner<3>
 {
   public:
+    /*!
+      \brief Constructor
+      \param ranks_per_dim MPI ranks per dimension.
+    */
     ManualPartitioner( const std::array<int, 3>& ranks_per_dim )
         : ManualBlockPartitioner<3>( ranks_per_dim )
     {

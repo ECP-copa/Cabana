@@ -24,16 +24,18 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Local logical grid.
-//---------------------------------------------------------------------------//
+/*!
+  \brief Local logical grid.
+  \tparam MeshType Mesh type: UniformMesh, NonUniformMesh, or SparseMesh
+*/
 template <class MeshType>
 class LocalGrid
 {
   public:
-    // Mesh type.
+    //! Mesh type.
     using mesh_type = MeshType;
 
-    // Spatial dimension.
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
     /*!
@@ -46,97 +48,198 @@ class LocalGrid
     LocalGrid( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
                const int halo_cell_width );
 
-    // Get the global grid that owns the local grid.
+    //! \brief Get the global grid that owns the local grid.
     const GlobalGrid<MeshType>& globalGrid() const;
 
-    // Get the number of cells in the halo.
+    //! \brief Get the number of cells in the halo.
     int haloCellWidth() const;
 
-    // Get the total number of local cells in a given dimension (owned +
-    // halo).
+    //! \brief Get the total number of local cells per dimension (owned + halo).
+    //! \param d Spatial dimension.
     int totalNumCell( const int d ) const;
 
-    /*
-       Given the relative offsets of a neighbor rank relative to this local
-       grid's indices get the of the neighbor. If the neighbor rank is out of
-       bounds return -1. Note that in the case of periodic boundaries out of
-       bounds indices are allowed as the indices will be wrapped around the
-       periodic boundary.
+    /*!
+      \brief Get the global index of a neighbor given neighbor rank offsets
+      relative to this local grid.
+
+      \param off_ijk %Array of neighbor offset indices.
+
+      If the neighbor rank is out of bounds return -1. Note that in the case of
+      periodic boundaries out of bounds indices are allowed as the indices will
+      be wrapped around the periodic boundary.
     */
     int neighborRank( const std::array<int, num_space_dim>& off_ijk ) const;
 
+    /*!
+      \brief Get the global index of a neighbor given neighbor rank offsets
+      relative to this local grid.
+
+      \param off_i, off_j, off_k Neighbor offset index in a given dimension.
+
+      If the neighbor rank is out of bounds return -1. Note that in the case of
+      periodic boundaries out of bounds indices are allowed as the indices will
+      be wrapped around the periodic boundary.
+    */
     template <std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, int>
     neighborRank( const int off_i, const int off_j, const int off_k ) const;
 
+    /*!
+      \brief Get the global index of a neighbor given neighbor rank offsets
+      relative to this local grid.
+
+      \param off_i, off_j Neighbor offset index in a given dimension.
+
+      If the neighbor rank is out of bounds return -1. Note that in the case of
+      periodic boundaries out of bounds indices are allowed as the indices will
+      be wrapped around the periodic boundary.
+    */
     template <std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, int> neighborRank( const int off_i,
                                                   const int off_j ) const;
 
-    /*
-      Given a decomposition type, entity type, and index type, get the
+    /*!
+      \brief Given a decomposition type, entity type, and index type, get the
       contiguous set of indices that span the space of those entities in the
       local domain
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity type: Cell, Node, Edge, or Face
+      \param t3 Index type: Local or Global
     */
     template <class DecompositionTag, class EntityType, class IndexType>
-    IndexSpace<num_space_dim> indexSpace( DecompositionTag, EntityType,
-                                          IndexType ) const;
+    IndexSpace<num_space_dim> indexSpace( DecompositionTag t1, EntityType t2,
+                                          IndexType t3 ) const;
 
-    /*
-       Given the relative offsets of a neighbor rank relative to this local
-       grid's indices get the set of local entity indices shared with that
-       neighbor in the given decomposition. Optionally provide a halo width
-       for the shared space. This halo width must be less than or equal to the
-       halo width of the local grid. The default behavior is to use the halo
-       width of the local grid.
+    /*!
+      \brief Given the relative offsets of a neighbor rank relative to this
+      local grid's indices get the set of local entity indices shared with that
+      neighbor in the given decomposition.
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_ijk %Array of neighbor offset indices.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
     */
     template <class DecompositionTag, class EntityType>
     IndexSpace<num_space_dim>
-    sharedIndexSpace( DecompositionTag, EntityType,
+    sharedIndexSpace( DecompositionTag t1, EntityType t2,
                       const std::array<int, num_space_dim>& off_ijk,
                       const int halo_width = -1 ) const;
 
+    /*!
+      \brief Given the relative offsets of a neighbor rank relative to this
+      local grid's indices get the set of local entity indices shared with that
+      neighbor in the given decomposition.
+
+      \tparam DecompositionTag Decomposition type: Own or Ghost
+      \tparam EntityType Entity: Cell, Node, Edge, or Face
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_i, off_j, off_k Neighbor offset index in a given dimension.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+    */
     template <class DecompositionTag, class EntityType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, IndexSpace<3>>
-    sharedIndexSpace( DecompositionTag, EntityType, const int off_i,
+    sharedIndexSpace( DecompositionTag t1, EntityType t2, const int off_i,
                       const int off_j, const int off_k,
                       const int halo_width = -1 ) const;
 
+    /*!
+      \brief Given the relative offsets of a neighbor rank relative to this
+      local grid's indices get the set of local entity indices shared with that
+      neighbor in the given decomposition.
+
+      \tparam DecompositionTag Decomposition type: Own or Ghost
+      \tparam EntityType Entity: Cell, Node, Edge, or Face
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_i, off_j Neighbor offset index in a given dimension.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+    */
     template <class DecompositionTag, class EntityType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, IndexSpace<2>>
-    sharedIndexSpace( DecompositionTag, EntityType, const int off_i,
+    sharedIndexSpace( DecompositionTag t1, EntityType t2, const int off_i,
                       const int off_j, const int halo_width = -1 ) const;
 
-    /*
-       Given the relative offsets of a boundary relative to this local
-       grid's indices get the set of local entity indices associated with that
-       boundary in the given decomposition. Optionally provide a halo width
-       for the shared space. This halo width must be less than or equal to the
-       halo width of the local grid. The default behavior is to use the halo
-       width of the local grid. For example, if the Own decomposition is used,
-       the interior entities that would be affected by a boundary operation
-       are provided whereas if the Ghost decomposition is used the halo
-       entities on the boundary are provided.
+    /*!
+      \brief Given the relative offsets of a boundary relative to this local
+      grid's indices get the set of local entity indices associated with that
+      boundary in the given decomposition.
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_ijk %Array of neighbor offset indices.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+
+      For example, if the Own decomposition is used, the interior entities that
+      would be affected by a boundary operation are provided whereas if the
+      Ghost decomposition is used the halo entities on the boundary are
+      provided.
     */
     template <class DecompositionTag, class EntityType>
     IndexSpace<num_space_dim>
-    boundaryIndexSpace( DecompositionTag, EntityType,
+    boundaryIndexSpace( DecompositionTag t1, EntityType t2,
                         const std::array<int, num_space_dim>& off_ijk,
                         const int halo_width = -1 ) const;
 
+    /*!
+      \brief Given the relative offsets of a boundary relative to this local
+      grid's indices get the set of local entity indices associated with that
+      boundary in the given decomposition.
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_i, off_j, off_k Neighbor offset index in a given dimension.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+
+      For example, if the Own decomposition is used, the interior entities that
+      would be affected by a boundary operation are provided whereas if the
+      Ghost decomposition is used the halo entities on the boundary are
+      provided.
+    */
     template <class DecompositionTag, class EntityType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, IndexSpace<3>>
-    boundaryIndexSpace( DecompositionTag, EntityType, const int off_i,
+    boundaryIndexSpace( DecompositionTag t1, EntityType t2, const int off_i,
                         const int off_j, const int off_k,
                         const int halo_width = -1 ) const;
 
+    /*!
+      \brief Given the relative offsets of a boundary relative to this local
+      grid's indices get the set of local entity indices associated with that
+      boundary in the given decomposition.
+
+      \param t1 Decomposition type: Own or Ghost
+      \param t2 Entity: Cell, Node, Edge, or Face
+      \param off_i, off_j Neighbor offset index in a given dimension.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+
+      For example, if the Own decomposition is used, the interior entities that
+      would be affected by a boundary operation are provided whereas if the
+      Ghost decomposition is used the halo entities on the boundary are
+      provided.
+    */
     template <class DecompositionTag, class EntityType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, IndexSpace<2>>
-    boundaryIndexSpace( DecompositionTag, EntityType, const int off_i,
+    boundaryIndexSpace( DecompositionTag t1, EntityType t2, const int off_i,
                         const int off_j, const int halo_width = -1 ) const;
 
   private:

@@ -51,10 +51,7 @@ int LocalGrid<MeshType>::totalNumCell( const int d ) const
 
 //---------------------------------------------------------------------------//
 // Given the relative offsets of a neighbor rank relative to this local grid's
-// indices get the of the neighbor. If the neighbor rank is out of bounds
-// return -1. Note that in the case of periodic boundaries out of bounds
-// indices are allowed as the indices will be wrapped around the periodic
-// boundary.
+// indices get the of the neighbor.
 template <class MeshType>
 int LocalGrid<MeshType>::neighborRank(
     const std::array<int, num_space_dim>& off_ijk ) const
@@ -84,6 +81,7 @@ LocalGrid<MeshType>::neighborRank( const int off_i, const int off_j ) const
     return neighborRank( off_ijk );
 }
 
+//! \cond Impl
 //---------------------------------------------------------------------------//
 // Get the index space for a given combination of decomposition, entity, and
 // index types.
@@ -1167,6 +1165,7 @@ LocalGrid<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>,
 
     return IndexSpace<3>( min, max );
 }
+//! \endcond
 
 //---------------------------------------------------------------------------//
 

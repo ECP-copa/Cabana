@@ -30,24 +30,28 @@ template <class MeshType>
 class GlobalMesh;
 
 //---------------------------------------------------------------------------//
-// Global mesh partial specialization for uniform mesh. Uniform meshes are
-// rectilinear meshes where every cell in the mesh is identical. A cell is
-// described by its width in each dimension.
+/*!
+  \brief Global mesh partial specialization for uniform mesh.
+
+  Uniform meshes are rectilinear meshes where every cell in the mesh is
+  identical. A cell is described by its width in each dimension.
+
+  \tparam MeshType Mesh type: UniformMesh, SparseMesh
+*/
 template <class MeshType>
 class GlobalMesh
 {
   public:
-    // Mesh type.
+    //! Mesh type.
     using mesh_type = MeshType;
 
-    // Scalar type.
+    //! Scalar type.
     using scalar_type = typename mesh_type::scalar_type;
 
-    // Spatial dimension.
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
-    // Cell size constructor - special case where all cell dimensions are the
-    // same.
+    //! \brief Cell size constructor where all cell dimensions are the same.
     GlobalMesh(
         const std::array<scalar_type, num_space_dim>& global_low_corner,
         const std::array<scalar_type, num_space_dim>& global_high_corner,
@@ -69,7 +73,7 @@ class GlobalMesh
         }
     }
 
-    // Cell size constructor - each cell dimension can be different.
+    //! \brief Cell size constructor - each cell dimension can be different.
     GlobalMesh(
         const std::array<scalar_type, num_space_dim>& global_low_corner,
         const std::array<scalar_type, num_space_dim>& global_high_corner,
@@ -91,7 +95,7 @@ class GlobalMesh
         }
     }
 
-    // Number of global cells constructor.
+    //! \brief Number of global cells constructor.
     GlobalMesh(
         const std::array<scalar_type, num_space_dim>& global_low_corner,
         const std::array<scalar_type, num_space_dim>& global_high_corner,
@@ -122,25 +126,29 @@ class GlobalMesh
 
     // GLOBAL MESH INTERFACE
 
-    // Get the global low corner of the mesh.
+    //! \brief Get the global low corner of the mesh.
+    //! \param dim Spatial dimension.
     scalar_type lowCorner( const std::size_t dim ) const
     {
         return _global_low_corner[dim];
     }
 
-    // Get the global high corner of the mesh.
+    //! \brief Get the global high corner of the mesh.
+    //! \param dim Spatial dimension.
     scalar_type highCorner( const std::size_t dim ) const
     {
         return _global_high_corner[dim];
     }
 
-    // Get the extent of a given dimension.
+    //! \brief Get the extent of a given dimension.
+    //! \param dim Spatial dimension.
     scalar_type extent( const std::size_t dim ) const
     {
         return highCorner( dim ) - lowCorner( dim );
     }
 
-    // Get the global numer of cells in a given dimension.
+    //! \brief Get the global numer of cells in a given dimension.
+    //! \param dim Spatial dimension.
     int globalNumCell( const std::size_t dim ) const
     {
         return std::rint( extent( dim ) / _cell_size[dim] );
@@ -148,7 +156,8 @@ class GlobalMesh
 
     // UNIFORM MESH SPECIFIC
 
-    // Get the uniform cell size in a given dimension.
+    //! \brief Get the uniform cell size in a given dimension.
+    //! \param dim Spatial dimension.
     scalar_type cellSize( const std::size_t dim ) const
     {
         return _cell_size[dim];
@@ -160,7 +169,15 @@ class GlobalMesh
     std::array<scalar_type, num_space_dim> _cell_size;
 };
 
-// Creation function for Uniform Mesh.
+/*!
+  \brief Create uniform mesh with uniform cell size.
+
+  \tparam Scalar Mesh floating point type.
+  \tparam NumSpaceDim Spatial dimension.
+
+  \param global_low_corner, global_high_corner Location of the mesh corner.
+  \param cell_size Uniform cell size for every dimension.
+*/
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar, NumSpaceDim>>>
 createUniformGlobalMesh(
@@ -172,6 +189,15 @@ createUniformGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 }
 
+/*!
+  \brief Create uniform mesh with uniform cell size.
+
+  \tparam Scalar Mesh floating point type.
+  \tparam NumSpaceDim Spatial dimension.
+
+  \param global_low_corner, global_high_corner Location of the mesh corner.
+  \param cell_size %Array ofuniform cell size per dimension.
+*/
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar, NumSpaceDim>>>
 createUniformGlobalMesh(
@@ -183,6 +209,15 @@ createUniformGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 }
 
+/*!
+  \brief Create uniform mesh with total number of cells.
+
+  \tparam Scalar Mesh floating point type.
+  \tparam NumSpaceDim Spatial dimension.
+
+  \param global_low_corner, global_high_corner Location of the mesh corner.
+  \param global_num_cell %Array ofnumber of cells per dimension.
+*/
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<UniformMesh<Scalar, NumSpaceDim>>>
 createUniformGlobalMesh(
@@ -195,7 +230,15 @@ createUniformGlobalMesh(
 }
 
 //---------------------------------------------------------------------------//
-// Creation functions for Sparse Mesh.
+/*!
+  \brief Create sparse mesh with uniform cell size.
+
+  \tparam Scalar Mesh floating point type.
+  \tparam NumSpaceDim Spatial dimension.
+
+  \param global_low_corner, global_high_corner Location of the mesh corner.
+  \param cell_size Uniform cell size for every dimension.
+*/
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar, NumSpaceDim>>>
 createSparseGlobalMesh(
@@ -207,6 +250,15 @@ createSparseGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 }
 
+/*!
+  \brief Create sparse mesh with uniform cell size.
+
+  \tparam Scalar Mesh floating point type.
+  \tparam NumSpaceDim Spatial dimension.
+
+  \param global_low_corner, global_high_corner Location of the mesh corner.
+  \param cell_size %Array ofuniform cell size per dimension.
+*/
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar, NumSpaceDim>>>
 createSparseGlobalMesh(
@@ -218,6 +270,15 @@ createSparseGlobalMesh(
         global_low_corner, global_high_corner, cell_size );
 }
 
+/*!
+  \brief Create sparse mesh with total number of cells.
+
+  \tparam Scalar Mesh floating point type.
+  \tparam NumSpaceDim Spatial dimension.
+
+  \param global_low_corner, global_high_corner Location of the mesh corner.
+  \param global_num_cell %Array ofnumber of cells per dimension.
+*/
 template <class Scalar, std::size_t NumSpaceDim>
 std::shared_ptr<GlobalMesh<SparseMesh<Scalar, NumSpaceDim>>>
 createSparseGlobalMesh(
@@ -230,26 +291,30 @@ createSparseGlobalMesh(
 }
 
 //---------------------------------------------------------------------------//
-// Global mesh partial specialization for non-uniform mesh. Non-uniform
-// meshes have a list of node locations for each spatial dimension which
-// describe a rectilinear mesh that has arbitrary cell sizes - each cell can
-// possibly be different.
-//
-// 3D specialization
+/*!
+  \brief Global mesh partial specialization for 3D non-uniform mesh.
+
+  \tparam Scalar Mesh floating point type.
+
+  Non-uniform meshes have a list of node locations for each spatial dimension
+  which describe a rectilinear mesh that has arbitrary cell sizes - each cell
+  can possibly be different.
+*/
 template <class Scalar>
 class GlobalMesh<NonUniformMesh<Scalar, 3>>
 {
   public:
-    // Mesh type.
+    //! Mesh type.
     using mesh_type = NonUniformMesh<Scalar, 3>;
 
-    // Scalar type.
+    //! Scalar type.
     using scalar_type = Scalar;
 
-    // Spatial dimension.
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = 3;
 
-    // 3D constructor.
+    //! \brief 3D constructor.
+    //! \param i_edges, j_edges, k_edges List of edges in each dimension.
     GlobalMesh( const std::vector<Scalar>& i_edges,
                 const std::vector<Scalar>& j_edges,
                 const std::vector<Scalar>& k_edges )
@@ -259,25 +324,29 @@ class GlobalMesh<NonUniformMesh<Scalar, 3>>
 
     // GLOBAL MESH INTERFACE
 
-    // Get the global low corner of the mesh.
+    //! \brief Get the global low corner of the mesh.
+    //! \param dim Spatial dimension.
     Scalar lowCorner( const std::size_t dim ) const
     {
         return _edges[dim].front();
     }
 
-    // Get the global high corner of the mesh.
+    //! \brief Get the global high corner of the mesh.
+    //! \param dim Spatial dimension.
     Scalar highCorner( const std::size_t dim ) const
     {
         return _edges[dim].back();
     }
 
-    // Get the extent of a given dimension.
+    //! \brief Get the extent of a given dimension.
+    //! \param dim Spatial dimension.
     Scalar extent( const std::size_t dim ) const
     {
         return highCorner( dim ) - lowCorner( dim );
     }
 
-    // Get the global numer of cells in a given dimension.
+    //! \brief Get the global numer of cells in a given dimension.
+    //! \param dim Spatial dimension.
     int globalNumCell( const std::size_t dim ) const
     {
         return _edges[dim].size() - 1;
@@ -285,7 +354,8 @@ class GlobalMesh<NonUniformMesh<Scalar, 3>>
 
     // NON-UNIFORM MESH SPECIFIC
 
-    // Get the edge array in a given dimension.
+    //! \brief Get the edge array in a given dimension.
+    //! \param dim Spatial dimension.
     const std::vector<Scalar>& nonUniformEdge( const std::size_t dim ) const
     {
         return _edges[dim];
@@ -295,6 +365,11 @@ class GlobalMesh<NonUniformMesh<Scalar, 3>>
     std::array<std::vector<Scalar>, 3> _edges;
 };
 
+/*!
+  \brief Create a non-uniform 3D mesh.
+  \param i_edges, j_edges, k_edges List of edges defining the mesh in each
+  dimension.
+*/
 template <class Scalar>
 std::shared_ptr<GlobalMesh<NonUniformMesh<Scalar, 3>>>
 createNonUniformGlobalMesh( const std::vector<Scalar>& i_edges,
@@ -306,26 +381,30 @@ createNonUniformGlobalMesh( const std::vector<Scalar>& i_edges,
 }
 
 //---------------------------------------------------------------------------//
-// Global mesh partial specialization for non-uniform mesh. Non-uniform
-// meshes have a list of node locations for each spatial dimension which
-// describe a rectilinear mesh that has arbitrary cell sizes - each cell can
-// possibly be different.
-//
-// 2D specialization
+/*!
+  \brief Global mesh partial specialization for 2D non-uniform mesh.
+
+  \tparam Scalar Mesh floating point type.
+
+  Non-uniform meshes have a list of node locations for each spatial dimension
+  which describe a rectilinear mesh that has arbitrary cell sizes - each cell
+  can possibly be different.
+*/
 template <class Scalar>
 class GlobalMesh<NonUniformMesh<Scalar, 2>>
 {
   public:
-    // Mesh type.
+    //! Mesh type.
     using mesh_type = NonUniformMesh<Scalar, 2>;
 
-    // Scalar type.
+    //! Scalar type.
     using scalar_type = Scalar;
 
-    // Spatial dimension.
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = 2;
 
-    // 2D constructor.
+    //! \brief 2D constructor.
+    //! \param i_edges, j_edges List of edges in each dimension.
     GlobalMesh( const std::vector<Scalar>& i_edges,
                 const std::vector<Scalar>& j_edges )
         : _edges( { i_edges, j_edges } )
@@ -334,25 +413,29 @@ class GlobalMesh<NonUniformMesh<Scalar, 2>>
 
     // GLOBAL MESH INTERFACE
 
-    // Get the global low corner of the mesh.
+    //! \brief Get the global low corner of the mesh.
+    //! \param dim Spatial dimension.
     Scalar lowCorner( const std::size_t dim ) const
     {
         return _edges[dim].front();
     }
 
-    // Get the global high corner of the mesh.
+    //! \brief Get the global high corner of the mesh.
+    //! \param dim Spatial dimension.
     Scalar highCorner( const std::size_t dim ) const
     {
         return _edges[dim].back();
     }
 
-    // Get the extent of a given dimension.
+    //! \brief Get the extent of a given dimension.
+    //! \param dim Spatial dimension.
     Scalar extent( const std::size_t dim ) const
     {
         return highCorner( dim ) - lowCorner( dim );
     }
 
-    // Get the global numer of cells in a given dimension.
+    //! \brief Get the global numer of cells in a given dimension.
+    //! \param dim Spatial dimension.
     int globalNumCell( const std::size_t dim ) const
     {
         return _edges[dim].size() - 1;
@@ -360,7 +443,8 @@ class GlobalMesh<NonUniformMesh<Scalar, 2>>
 
     // NON-UNIFORM MESH SPECIFIC
 
-    // Get the edge array in a given dimension.
+    //! \brief Get the edge array in a given dimension.
+    //! \param dim Spatial dimension.
     const std::vector<Scalar>& nonUniformEdge( const std::size_t dim ) const
     {
         return _edges[dim];
@@ -370,6 +454,11 @@ class GlobalMesh<NonUniformMesh<Scalar, 2>>
     std::array<std::vector<Scalar>, 2> _edges;
 };
 
+/*!
+  \brief Create a non-uniform 2D mesh.
+  \tparam Scalar Mesh scalar type.
+  \param i_edges, j_edges List of edges defining the mesh in each dimension.
+*/
 template <class Scalar>
 std::shared_ptr<GlobalMesh<NonUniformMesh<Scalar, 2>>>
 createNonUniformGlobalMesh( const std::vector<Scalar>& i_edges,

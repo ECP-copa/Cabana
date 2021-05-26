@@ -136,7 +136,7 @@ class IndexSpace
         return size;
     }
 
-    // Determine if a set of indices is within the range of the index space.
+    //! Determine if a set of indices is within the range of the index space.
     KOKKOS_INLINE_FUNCTION
     bool inRange( const long index[N] ) const
     {
@@ -411,8 +411,10 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
 }
 
 //---------------------------------------------------------------------------//
-// Given an N-dimensional index space append an additional dimension with the
-// given size.
+/*!
+  Given an N-dimensional index space append an additional dimension with the
+  given size.
+*/
 template <long N>
 IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
                                    const long size )
@@ -431,8 +433,10 @@ IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
 }
 
 //---------------------------------------------------------------------------//
-// Given an N-dimensional index space append an additional dimension with the
-// given range.
+/*!
+  Given an N-dimensional index space append an additional dimension with the
+  given range.
+*/
 template <long N>
 IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
                                    const long min, const long max )

@@ -35,18 +35,24 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Reference preconditioned structured solver interface.
+//! Reference preconditioned structured solver interface.
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
 class ReferenceStructuredSolver
 {
   public:
-    // Types.
+    //! Entity type.
     using entity_type = EntityType;
+    //! Kokkos device type.
     using device_type = DeviceType;
+    //! Kokkos memory space.
     using memory_space = typename device_type::memory_space;
+    //! Kokkos execution space.
     using execution_space = typename device_type::execution_space;
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Array type.
     using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = MeshType::num_space_dim;
 
     // Destructor.
@@ -98,16 +104,16 @@ class ReferenceStructuredSolver
     */
     virtual const Array_t& getPreconditionerValues() = 0;
 
-    // Set convergence tolerance implementation.
+    //! Set convergence tolerance implementation.
     virtual void setTolerance( const double tol ) = 0;
 
-    // Set maximum iteration implementation.
+    //! Set maximum iteration implementation.
     virtual void setMaxIter( const int max_iter ) = 0;
 
-    // Set the output level.
+    //! Set the output level.
     virtual void setPrintLevel( const int print_level ) = 0;
 
-    // Setup the problem.
+    //! Setup the problem.
     virtual void setup() = 0;
 
     /*!
@@ -117,36 +123,46 @@ class ReferenceStructuredSolver
     */
     virtual void solve( const Array_t& b, Array_t& x ) = 0;
 
-    // Get the number of iterations taken on the last solve.
+    //! Get the number of iterations taken on the last solve.
     virtual int getNumIter() = 0;
 
-    // Get the relative residual norm achieved on the last solve.
+    //! Get the relative residual norm achieved on the last solve.
     virtual double getFinalRelativeResidualNorm() = 0;
 };
 
 //---------------------------------------------------------------------------//
-// Reference structured preconditioned block conjugate gradient implementation.
+//! Reference structured preconditioned block conjugate gradient implementation.
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
 class ReferenceConjugateGradient
     : public ReferenceStructuredSolver<Scalar, EntityType, MeshType, DeviceType>
 {
   public:
-    // Types.
+    //! Entity type.
     using entity_type = EntityType;
+    //! Kokkos device type.
     using device_type = DeviceType;
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Kokkos execution space.
     using execution_space = typename device_type::execution_space;
+    //! Kokkos memory space.
     using memory_space = typename device_type::memory_space;
+    //! Array type.
     using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = MeshType::num_space_dim;
 
-    // Array-like container to hold layout and data information.
+    //! Array-like container to hold layout and data information.
     template <class ScalarT, class MemorySpaceT, class ArrayLayoutT>
     struct LayoutContainer
     {
+        //! Scalar value type.
         using value_type = ScalarT;
+        //! Kokkos memory space.
         using memory_space = MemorySpaceT;
+        //! Array layout.
         const ArrayLayoutT& array_layout;
+        //! Get the array layout.
         const ArrayLayoutT* layout() const { return &array_layout; }
     };
 
@@ -218,19 +234,19 @@ class ReferenceConjugateGradient
     */
     const Array_t& getPreconditionerValues() override { return *_M; }
 
-    // Set convergence tolerance implementation.
+    //! Set convergence tolerance implementation.
     void setTolerance( const double tol ) override { _tol = tol; }
 
-    // Set maximum iteration implementation.
+    //! Set maximum iteration implementation.
     void setMaxIter( const int max_iter ) override { _max_iter = max_iter; }
 
-    // Set the output level.
+    //! Set the output level.
     void setPrintLevel( const int print_level ) override
     {
         _print_level = print_level;
     }
 
-    // Setup the problem.
+    //! Setup the problem.
     void setup() override {}
 
     /*!
@@ -419,13 +435,14 @@ class ReferenceConjugateGradient
             throw std::runtime_error( "CG solver did not converge" );
     }
 
-    // Get the number of iterations taken on the last solve.
+    //! Get the number of iterations taken on the last solve.
     int getNumIter() override { return _num_iter; }
 
-    // Get the relative residual norm achieved on the last solve.
+    //! Get the relative residual norm achieved on the last solve.
     double getFinalRelativeResidualNorm() override { return _residual_norm; }
 
   public:
+    //! \cond Impl
     template <class StencilA, class ViewA, class ViewOldP, class ViewB,
               class ViewOldR>
     struct ComputeR0
@@ -838,6 +855,7 @@ class ReferenceConjugateGradient
             A_stencil,  A_view,     x_view, r_new_view, r_old_view,
             p_new_view, p_old_view, z_view, q_view,     beta };
     }
+    //! \endcond
 
   private:
     // Set the stencil of a matrix.
@@ -922,6 +940,8 @@ class ReferenceConjugateGradient
 //---------------------------------------------------------------------------//
 // Builders.
 //---------------------------------------------------------------------------//
+//! Creation function for reference structured preconditioned block conjugate
+//! gradient.
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
 std::shared_ptr<
     ReferenceConjugateGradient<Scalar, EntityType, MeshType, DeviceType>>

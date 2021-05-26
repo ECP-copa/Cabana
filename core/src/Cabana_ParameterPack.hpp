@@ -26,7 +26,8 @@ namespace Cabana
 // packs in lambda functions hence we need to wrap them in something that can
 // be captured.
 //---------------------------------------------------------------------------//
-// Get the type at the given index of a paremeter pack.
+
+//! \cond Impl
 template <std::size_t N, typename T, typename... Types>
 struct PackTypeAtIndexImpl;
 
@@ -41,25 +42,28 @@ struct PackTypeAtIndexImpl
 {
     using type = typename PackTypeAtIndexImpl<N - 1, Types...>::type;
 };
+//! \endcond
 
+//! Get the type at the given index of a parameter pack.
 template <std::size_t N, typename... Types>
 struct PackTypeAtIndex
 {
+    //! Packed type.
     using type = typename PackTypeAtIndexImpl<N, Types...>::type;
     static_assert( N < sizeof...( Types ), "Type index out of bounds" );
 };
 
 //---------------------------------------------------------------------------//
-// Parameter pack element.
+//! Parameter pack element.
 template <std::size_t N, typename T>
 struct ParameterPackElement
 {
+    //! Packed element.
     T _m;
 };
 
 //---------------------------------------------------------------------------//
-// Capture a parameter pack. All parameter pack elements must be copyable to
-// device.
+//! \cond Impl
 template <typename Sequence, typename... Types>
 struct ParameterPackImpl;
 
@@ -68,20 +72,27 @@ struct ParameterPackImpl<std::index_sequence<Indices...>, Types...>
     : ParameterPackElement<Indices, Types>...
 {
 };
+//! \endcond
 
+//! Capture a parameter pack. All parameter pack elements must be copyable to
+//! device.
 template <typename... Types>
 struct ParameterPack
     : ParameterPackImpl<std::make_index_sequence<sizeof...( Types )>, Types...>
 {
+    //! Packed type.
     template <std::size_t N>
     using value_type = typename PackTypeAtIndex<N, Types...>::type;
 
+    //! Packed const type.
     template <std::size_t N>
     using const_value_type = typename std::add_const<value_type<N>>::type;
 
+    //! Packed element type.
     template <std::size_t N>
     using element_type = ParameterPackElement<N, value_type<N>>;
 
+    //! Pack size.
     static constexpr std::size_t size = sizeof...( Types );
 };
 
@@ -104,7 +115,7 @@ struct is_parameter_pack
 };
 
 //---------------------------------------------------------------------------//
-// Get an element from a parameter pack.
+//! Get an element from a parameter pack.
 template <std::size_t N, class ParameterPack_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_parameter_pack<ParameterPack_t>::value,
@@ -116,6 +127,7 @@ get( ParameterPack_t& pp )
         ._m;
 }
 
+//! Get an element from a parameter pack.
 template <std::size_t N, class ParameterPack_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_parameter_pack<ParameterPack_t>::value,
@@ -128,8 +140,7 @@ get( const ParameterPack_t& pp )
 }
 
 //---------------------------------------------------------------------------//
-// Fill a parameter pack. Note the indexing is such that the Nth element of a
-// parameter pack is the Nth element of the tuple.
+//! \cond Impl
 template <typename ParameterPack_t, typename T, typename... Types>
 void fillParameterPackImpl( ParameterPack_t& pp,
                             const std::integral_constant<std::size_t, 0>,
@@ -148,7 +159,10 @@ void fillParameterPackImpl( ParameterPack_t& pp,
     fillParameterPackImpl( pp, std::integral_constant<std::size_t, N - 1>(),
                            ts... );
 }
+//! \endcond
 
+//! Fill a parameter pack. Note the indexing is such that the Nth element of a
+//! parameter pack is the Nth element of the tuple.
 template <typename ParameterPack_t, typename... Types>
 void fillParameterPack( ParameterPack_t& pp, const Types&... ts )
 {
@@ -157,14 +171,14 @@ void fillParameterPack( ParameterPack_t& pp, const Types&... ts )
         ts... );
 }
 
-// Empty case.
+//! Empty case - fill a parameter pack.
 template <typename ParameterPack_t>
 void fillParameterPack( ParameterPack_t& )
 {
 }
 
 //---------------------------------------------------------------------------//
-// Create a parameter pack.
+//! Create a parameter pack.
 template <typename... Types>
 ParameterPack<Types...> makeParameterPack( const Types&... ts )
 {

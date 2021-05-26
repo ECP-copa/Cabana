@@ -18,10 +18,12 @@ namespace Cajita
 {
 
 //---------------------------------------------------------------------------//
-// Logical dimension index.
-//---------------------------------------------------------------------------//
+/*!
+  \brief Logical dimension index.
+*/
 struct Dim
 {
+    //! Spatial dimension.
     enum Values
     {
         I = 0,
@@ -34,63 +36,79 @@ struct Dim
 // Entity type tags.
 //---------------------------------------------------------------------------//
 
-// Mesh cell tag.
+/*!
+  \brief Mesh cell tag.
+*/
 struct Cell
 {
 };
 
-// Mesh node tag.
+/*!
+  \brief Mesh node tag.
+*/
 struct Node
 {
 };
 
-// Mesh face tags.
+/*!
+  \brief Mesh face tag.
+  \tparam D Dimension.
+*/
 template <int D>
 struct Face;
 
-// I-face tag.
+//! I-face tag.
 template <>
 struct Face<Dim::I>
 {
+    //! Spatial dimension.
     static constexpr int dim = Dim::I;
 };
 
-// J-face tag.
+//! J-face tag.
 template <>
 struct Face<Dim::J>
 {
+    //! Spatial dimension.
     static constexpr int dim = Dim::J;
 };
 
-// K-face tag.
+//! K-face tag.
 template <>
 struct Face<Dim::K>
 {
+    //! Spatial dimension.
     static constexpr int dim = Dim::K;
 };
 
-// Mesh edge tags.
+/*!
+  \brief Mesh edge tag.
+  \tparam D Dimension.
+*/
 template <int D>
 struct Edge;
 
-// I-edge tag.
+//! I-edge tag.
 template <>
 struct Edge<Dim::I>
 {
+    //! Spatial dimension.
     static constexpr int dim = Dim::I;
 };
 
-// J-edge tag.
+//! J-edge tag.
 template <>
 struct Edge<Dim::J>
 {
+    //! Spatial dimension.
     static constexpr int dim = Dim::J;
 };
 
-// K-edge tag.
+//! K-edge tag.
 template <>
 struct Edge<Dim::K>
 {
+    //! Spatial dimension.
     static constexpr int dim = Dim::K;
 };
 
@@ -159,12 +177,16 @@ struct isEdge<const Edge<Dir>> : public std::true_type
 // Decomposition tags.
 //---------------------------------------------------------------------------//
 
-// Owned decomposition tag.
+/*!
+  \brief Owned decomposition tag.
+*/
 struct Own
 {
 };
 
-// Ghosted decomposition tag.
+/*!
+  \brief Ghosted decomposition tag.
+*/
 struct Ghost
 {
 };
@@ -173,12 +195,16 @@ struct Ghost
 // Index type tags.
 //---------------------------------------------------------------------------//
 
-// Local index tag.
+/*!
+  \brief Local index tag.
+*/
 struct Local
 {
 };
 
-// Global index tag.
+/*!
+  \brief Global index tag.
+*/
 struct Global
 {
 };
@@ -187,36 +213,42 @@ struct Global
 // Mesh type tags.
 //---------------------------------------------------------------------------//
 
-// Uniform mesh tag.
+/*!
+  \brief Uniform mesh tag.
+*/
 template <class Scalar, std::size_t NumSpaceDim = 3>
 struct UniformMesh
 {
-    // Scalar type for mesh floating point operations.
+    //! Scalar type for mesh floating point operations.
     using scalar_type = Scalar;
 
-    // Number of spatial dimensions.
+    //! Number of spatial dimensions.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 };
 
-// Non-uniform mesh tag.
+/*!
+  \brief Non-uniform mesh tag.
+*/
 template <class Scalar, std::size_t NumSpaceDim = 3>
 struct NonUniformMesh
 {
-    // Scalar type for mesh floating point operations.
+    //! Scalar type for mesh floating point operations.
     using scalar_type = Scalar;
 
-    // Number of spatial dimensions.
+    //! Number of spatial dimensions.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 };
 
-// Sparse mesh tag
+/*!
+  \brief Sparse mesh tag.
+*/
 template <class Scalar, std::size_t NumSpaceDim = 3>
 struct SparseMesh
 {
-    // Scalar type for mesh floating point operations.
+    //! Scalar type for mesh floating point operations.
     using scalar_type = Scalar;
 
-    // Number of spatial dimensions.
+    //! Number of spatial dimensions.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 };
 

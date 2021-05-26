@@ -156,16 +156,23 @@ template <class EntityType, class MeshType, class Scalar, class DeviceType,
 class FastFourierTransform
 {
   public:
+    //! Array entity type.
     using entity_type = EntityType;
+    //! Mesh type.
     using mesh_type = MeshType;
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Kokkos device type.
     using device_type = DeviceType;
+    //! Kokkos execution space.
     using exec_space = typename device_type::execution_space;
 
-    // Spatial dimension.
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
+    //! Global high box corner.
     std::array<int, num_space_dim> global_high;
+    //! Global low box corner.
     std::array<int, num_space_dim> global_low;
 
     /*!
@@ -246,6 +253,9 @@ class FastFourierTransform
         static_cast<Derived*>( this )->reverseImpl( x, scaling );
     }
 
+    /*!
+      \brief Copy owned data for FFT.
+    */
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, void>
@@ -264,6 +274,9 @@ class FastFourierTransform
             } );
     }
 
+    /*!
+      \brief Copy owned data for FFT.
+    */
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, void>
@@ -281,6 +294,9 @@ class FastFourierTransform
             } );
     }
 
+    /*!
+      \brief Copy owned data back after FFT.
+    */
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, void>
@@ -299,6 +315,9 @@ class FastFourierTransform
             } );
     }
 
+    /*!
+      \brief Copy owned data back after FFT.
+    */
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, void>
@@ -399,14 +418,21 @@ class HeffteFastFourierTransform
                                      BackendType>>
 {
   public:
-    // Types.
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Kokkos device type.
     using device_type = DeviceType;
+    //! FFT backend type.
     using backend_type = BackendType;
+    //! Kokkos execution space.
     using exec_space = typename device_type::execution_space;
+    //! Mesh type.
     using mesh_type = MeshType;
+
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
+    //! heFFTe backend type.
     using heffte_backend_type =
         typename Impl::HeffteBackendTraits<exec_space,
                                            backend_type>::backend_type;
