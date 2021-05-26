@@ -406,6 +406,8 @@ void testSparseMapSparseInsert()
                                                    insert_cell_num );
     Kokkos::deep_copy( dev_cell_1did, host_cell_1did );
 
+    Kokkos::View<int*, TEST_DEVICE> qtkey_res( "query_tile_key",
+                                               insert_cell_num );
     Kokkos::View<int*, TEST_DEVICE> qtid_res( "query_tile_id",
                                               insert_cell_num );
 
@@ -427,19 +429,38 @@ void testSparseMapSparseInsert()
             int j = ( id / size_per_dim ) % size_per_dim;
             int i = ( id / size_per_dim / size_per_dim ) % size_per_dim;
             auto qid = sis.queryTile( i, j, k );
-            qtid_res( cell_idx ) = qid;
+            qtkey_res( cell_idx ) = qid;
+        } );
+
+    Kokkos::parallel_for(
+        "test_value_at",
+        Kokkos::RangePolicy<TEST_EXECSPACE>( 0, sis.capacity() ),
+        KOKKOS_LAMBDA( const int index ) {
+            if ( sis.valid_at( index ) )
+            {
+                auto tileKey = sis.key_at( index );
+                auto tileId = sis.value_at( index );
+                int ti, tj, tk;
+                sis.key2ijk( tileKey, ti, tj, tk );
+                int cell_idx = ti + tj + tk;
+                qtid_res( cell_idx ) = tileId;
+            }
         } );
 
     bool test[size_per_dim * size_per_dim * size_per_dim];
 
+    auto qtkey_mirror =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), qtkey_res );
     auto qtid_mirror =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), qtid_res );
+    for ( int i = 0; i < insert_cell_num; ++i )
+        EXPECT_EQ( qtid_mirror( i ) < insert_cell_num, true );
 
     for ( int i = 0; i < total_size; i++ )
         test[i] = false;
 
     for ( int i = 0; i < insert_cell_num; ++i )
-        test[qtid_mirror( i )] = true;
+        test[qtkey_mirror( i )] = true;
 
     int idx = 0;
     while ( idx < valid_cell_num )

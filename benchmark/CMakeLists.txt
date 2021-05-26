@@ -29,6 +29,14 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP)
     target_link_libraries(CommPerformance cabanacore)
   endif()
 
+  if (Cabana_ENABLE_CAJITA)
+    add_executable(SparseMapPerformance Cajita_SparseMapPerformance.cpp)
+    target_link_libraries(SparseMapPerformance Cajita)
+
+    add_executable(SparsePartitionerPerformance Cajita_SparsePartitionerPerformance.cpp)
+    target_link_libraries(SparsePartitionerPerformance Cajita)
+  endif()
+
   if(Cabana_ENABLE_TESTING)
     target_link_libraries(BinSortPerformance gtest)
     add_test(NAME Cabana_Performance_BinSort COMMAND ${NONMPI_PRECOMMAND} BinSortPerformance sort_output.txt)
