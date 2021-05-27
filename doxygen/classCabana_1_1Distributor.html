@@ -62,7 +62,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="classCabana_1_1Distributor.html">Distributor</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespaceCabana.html">Cabana</a></li><li class="navelem"><a class="el" href="classCabana_1_1Distributor.html">Distributor</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -242,14 +242,14 @@ template&lt;class ViewType &gt; </div>
 <p>Topology and export rank constructor. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">ViewType</td><td>The container type for the export element ranks. This container type can be either a Kokkos View or a Cabana <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>.</td></tr>
+    <tr><td class="paramname">ViewType</td><td>The container type for the export element ranks. This container type can be either a Kokkos View or a <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">comm</td><td>The MPI communicator over which the distributor is defined.</td></tr>
-    <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may be any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the distributor.</td></tr>
+    <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may be any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice in the same memory space as the distributor.</td></tr>
     <tr><td class="paramname">neighbor_ranks</td><td>List of ranks this rank will send to and receive from. This list can include the calling rank. This is effectively a description of the topology of the point-to-point communication plan. The elements in this list must be unique.</td></tr>
   </table>
   </dd>
@@ -299,14 +299,14 @@ template&lt;class ViewType &gt; </div>
 <p>Export rank constructor. Use this when you don't know who you will be receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">ViewType</td><td>The container type for the export element ranks. This container type can be either a Kokkos View or a Cabana <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>.</td></tr>
+    <tr><td class="paramname">ViewType</td><td>The container type for the export element ranks. This container type can be either a Kokkos View or a <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> <a class="el" href="classCabana_1_1Slice.html" title="A slice of an array-of-structs-of-arrays with data access to a single multidimensional member.">Slice</a>.</td></tr>
   </table>
   </dd>
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">comm</td><td>The MPI communicator over which the distributor is defined.</td></tr>
-    <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the distributor.</td></tr>
+    <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice in the same memory space as the distributor.</td></tr>
   </table>
   </dd>
 </dl>

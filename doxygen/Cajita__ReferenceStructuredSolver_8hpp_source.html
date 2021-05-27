@@ -104,7 +104,7 @@ $(function() {
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160; </div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">namespace </span>Cajita</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;{</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="comment">// Reference preconditioned structured solver interface.</span></div>
@@ -193,7 +193,7 @@ $(function() {
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    {</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;        <span class="comment">// Array layout for vectors (p_old,z,r_old,q,p_new,r_new).</span></div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;        <span class="keyword">auto</span> vector_layout =</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            createArrayLayout( layout.localGrid(), 6, EntityType() );</div>
+<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;            <a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( layout.localGrid(), 6, EntityType() );</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;        _vectors =</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;            createArray&lt;Scalar, DeviceType&gt;( <span class="stringliteral">&quot;cg_vectors&quot;</span>, vector_layout );</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;    }</div>
@@ -246,14 +246,14 @@ $(function() {
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;            local_grid-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), EntityType(), <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160; </div>
 <div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;        <span class="comment">// Subarrays.</span></div>
-<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="keyword">auto</span> p_old = createSubarray( *_vectors, 0, 1 );</div>
-<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="keyword">auto</span> z = createSubarray( *_vectors, 1, 2 );</div>
-<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keyword">auto</span> r_old = createSubarray( *_vectors, 2, 3 );</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="keyword">auto</span> q = createSubarray( *_vectors, 3, 4 );</div>
-<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keyword">auto</span> p_new = createSubarray( *_vectors, 4, 5 );</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <span class="keyword">auto</span> r_new = createSubarray( *_vectors, 5, 6 );</div>
-<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <span class="keyword">auto</span> A_halo_vectors = createSubarray( *_vectors, 0, 2 );</div>
-<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        <span class="keyword">auto</span> M_halo_vectors = createSubarray( *_vectors, 2, 4 );</div>
+<div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;        <span class="keyword">auto</span> p_old = <a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( *_vectors, 0, 1 );</div>
+<div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;        <span class="keyword">auto</span> z = <a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( *_vectors, 1, 2 );</div>
+<div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keyword">auto</span> r_old = <a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( *_vectors, 2, 3 );</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <span class="keyword">auto</span> q = <a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( *_vectors, 3, 4 );</div>
+<div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;        <span class="keyword">auto</span> p_new = <a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( *_vectors, 4, 5 );</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <span class="keyword">auto</span> r_new = <a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( *_vectors, 5, 6 );</div>
+<div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        <span class="keyword">auto</span> A_halo_vectors = <a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( *_vectors, 0, 2 );</div>
+<div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160;        <span class="keyword">auto</span> M_halo_vectors = <a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( *_vectors, 2, 4 );</div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160; </div>
 <div class="line"><a name="l00265"></a><span class="lineno">  265</span>&#160;        <span class="comment">// Views.</span></div>
 <div class="line"><a name="l00266"></a><span class="lineno">  266</span>&#160;        <span class="keyword">auto</span> x_view = x.<a class="code" href="classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4">view</a>();</div>
@@ -284,7 +284,7 @@ $(function() {
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        _residual_norm = 0.0;</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;        <span class="keyword">auto</span> compute_r0 = createComputeR0( _A_stencil, A_view, p_old_view,</div>
 <div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                                           b_view, r_old_view );</div>
-<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        grid_parallel_reduce(</div>
+<div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;        <a class="code" href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">grid_parallel_reduce</a>(</div>
 <div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;            <span class="stringliteral">&quot;compute_r0&quot;</span>, execution_space(), entity_space,</div>
 <div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;            std::integral_constant&lt;std::size_t, num_space_dim&gt;{}, compute_r0,</div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;            _residual_norm );</div>
@@ -309,7 +309,7 @@ $(function() {
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;        Scalar zTr_old = 0.0;</div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;        <span class="keyword">auto</span> compute_z0 = createComputeZ0( _M_stencil, M_view, p_old_view,</div>
 <div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;                                           p_new_view, r_old_view, z_view );</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        grid_parallel_reduce(</div>
+<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;        <a class="code" href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">grid_parallel_reduce</a>(</div>
 <div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;            <span class="stringliteral">&quot;compute_z0&quot;</span>, execution_space(), entity_space,</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;            std::integral_constant&lt;std::size_t, num_space_dim&gt;{}, compute_z0,</div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;            zTr_old );</div>
@@ -325,7 +325,7 @@ $(function() {
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;        Scalar pTAp = 0.0;</div>
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;        <span class="keyword">auto</span> compute_q0 =</div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;            createComputeQ0( _A_stencil, A_view, p_old_view, q_view );</div>
-<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        grid_parallel_reduce(</div>
+<div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;        <a class="code" href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">grid_parallel_reduce</a>(</div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;            <span class="stringliteral">&quot;compute_q0&quot;</span>, execution_space(), entity_space,</div>
 <div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;            std::integral_constant&lt;std::size_t, num_space_dim&gt;{}, compute_q0,</div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;            pTAp );</div>
@@ -350,7 +350,7 @@ $(function() {
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;            <span class="keyword">auto</span> cg_kernel_1 = createKernel1(</div>
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;                _M_stencil, M_view, x_view, r_new_view, r_old_view, p_new_view,</div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;                p_old_view, z_view, q_view, alpha );</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;            grid_parallel_reduce(</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;            <a class="code" href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">grid_parallel_reduce</a>(</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;                <span class="stringliteral">&quot;cg_kernel_1&quot;</span>, execution_space(), entity_space,</div>
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;                std::integral_constant&lt;std::size_t, num_space_dim&gt;{},</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;                cg_kernel_1, zTr_new );</div>
@@ -387,7 +387,7 @@ $(function() {
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;            <span class="keyword">auto</span> cg_kernel_2 = createKernel2(</div>
 <div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;                _A_stencil, A_view, x_view, r_new_view, r_old_view, p_new_view,</div>
 <div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;                p_old_view, z_view, q_view, beta );</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            grid_parallel_reduce(</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;            <a class="code" href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">grid_parallel_reduce</a>(</div>
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;                <span class="stringliteral">&quot;cg_kernel_2&quot;</span>, execution_space(), entity_space,</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;                std::integral_constant&lt;std::size_t, num_space_dim&gt;{},</div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;                cg_kernel_2, pTAp );</div>
@@ -883,14 +883,14 @@ $(function() {
 <div class="line"><a name="l00890"></a><span class="lineno">  890</span>&#160; </div>
 <div class="line"><a name="l00891"></a><span class="lineno">  891</span>&#160;        <span class="comment">// Build the halo. We put 2 entries as each operator application will</span></div>
 <div class="line"><a name="l00892"></a><span class="lineno">  892</span>&#160;        <span class="comment">// gather 2 vectors with fused kernels.</span></div>
-<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;        <span class="keyword">auto</span> halo_layout = createArrayLayout( local_grid, 2, EntityType() );</div>
+<div class="line"><a name="l00893"></a><span class="lineno">  893</span>&#160;        <span class="keyword">auto</span> halo_layout = <a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( local_grid, 2, EntityType() );</div>
 <div class="line"><a name="l00894"></a><span class="lineno">  894</span>&#160;        HaloPattern&lt;num_space_dim&gt; pattern;</div>
 <div class="line"><a name="l00895"></a><span class="lineno">  895</span>&#160;        pattern.setNeighbors( halo_neighbors );</div>
 <div class="line"><a name="l00896"></a><span class="lineno">  896</span>&#160;        halo = createHalo&lt;Scalar, DeviceType&gt;( *halo_layout, pattern, width );</div>
 <div class="line"><a name="l00897"></a><span class="lineno">  897</span>&#160; </div>
 <div class="line"><a name="l00898"></a><span class="lineno">  898</span>&#160;        <span class="comment">// Create a new layout.</span></div>
 <div class="line"><a name="l00899"></a><span class="lineno">  899</span>&#160;        <span class="keyword">auto</span> matrix_layout =</div>
-<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;            createArrayLayout( local_grid, stencil.size(), EntityType() );</div>
+<div class="line"><a name="l00900"></a><span class="lineno">  900</span>&#160;            <a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( local_grid, stencil.size(), EntityType() );</div>
 <div class="line"><a name="l00901"></a><span class="lineno">  901</span>&#160; </div>
 <div class="line"><a name="l00902"></a><span class="lineno">  902</span>&#160;        <span class="comment">// Allocate the matrix.</span></div>
 <div class="line"><a name="l00903"></a><span class="lineno">  903</span>&#160;        matrix = createArray&lt;Scalar, DeviceType&gt;( <span class="stringliteral">&quot;matrix&quot;</span>, matrix_layout );</div>
@@ -947,6 +947,10 @@ $(function() {
 <div class="ttc" id="aclassCajita_1_1ReferenceStructuredSolver_html_a95d9bf595f1df0cac0e339e5be7fdf89"><div class="ttname"><a href="classCajita_1_1ReferenceStructuredSolver.html#a95d9bf595f1df0cac0e339e5be7fdf89">Cajita::ReferenceStructuredSolver::solve</a></div><div class="ttdeci">virtual void solve(const Array_t &amp;b, Array_t &amp;x)=0</div><div class="ttdoc">Solve the problem Ax = b for x.</div></div>
 <div class="ttc" id="aclassCajita_1_1ReferenceStructuredSolver_html_aa561e1ba27e7e0dbd3a9229000d19929"><div class="ttname"><a href="classCajita_1_1ReferenceStructuredSolver.html#aa561e1ba27e7e0dbd3a9229000d19929">Cajita::ReferenceStructuredSolver::getPreconditionerValues</a></div><div class="ttdeci">virtual const Array_t &amp; getPreconditionerValues()=0</div><div class="ttdoc">Get the preconditioner values.</div></div>
 <div class="ttc" id="aclassCajita_1_1ReferenceStructuredSolver_html_af05575ec16416527f5d7133f03b3a016"><div class="ttname"><a href="classCajita_1_1ReferenceStructuredSolver.html#af05575ec16416527f5d7133f03b3a016">Cajita::ReferenceStructuredSolver::setMatrixStencil</a></div><div class="ttdeci">virtual void setMatrixStencil(const std::vector&lt; std::array&lt; int, num_space_dim &gt;&gt; &amp;stencil, const bool is_symmetric)=0</div><div class="ttdoc">Set the matrix stencil.</div></div>
+<div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
+<div class="ttc" id="anamespaceCajita_html_aa0bb56f113356a47470331f61420fb17"><div class="ttname"><a href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">Cajita::createSubarray</a></div><div class="ttdeci">std::shared_ptr&lt; Array&lt; Scalar, EntityType, MeshType, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_layout, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::device_type, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_memory_traits &gt; &gt; createSubarray(const Array&lt; Scalar, EntityType, MeshType, Params... &gt; &amp;array, const int dof_min, const int dof_max)</div><div class="ttdoc">Create a subarray of the given array over the given range of degrees of freedom.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:320</div></div>
+<div class="ttc" id="anamespaceCajita_html_abdd3b143d333ec6a5d5018c2caa38598"><div class="ttname"><a href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">Cajita::createArrayLayout</a></div><div class="ttdeci">std::shared_ptr&lt; ArrayLayout&lt; EntityType, MeshType &gt; &gt; createArrayLayout(const std::shared_ptr&lt; LocalGrid&lt; MeshType &gt;&gt; &amp;local_grid, const int dofs_per_entity, EntityType)</div><div class="ttdoc">Create an array layout over the entities of a local grid.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:150</div></div>
+<div class="ttc" id="anamespaceCajita_html_ac2a58a3b10046140ae6a75b252dbade6"><div class="ttname"><a href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">Cajita::grid_parallel_reduce</a></div><div class="ttdeci">void grid_parallel_reduce(const std::string &amp;label, const ExecutionSpace &amp;exec_space, const IndexSpace&lt; N &gt; &amp;index_space, const FunctorType &amp;functor, ReduceType &amp;reducer)</div><div class="ttdoc">Execute a reduction functor in parallel with a multidimensional execution policy specified by the giv...</div><div class="ttdef"><b>Definition:</b> Cajita_Parallel.hpp:414</div></div>
 <div class="ttc" id="astructCajita_1_1Local_html"><div class="ttname"><a href="structCajita_1_1Local.html">Cajita::Local</a></div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:178</div></div>
 <div class="ttc" id="astructCajita_1_1MpiTraits_html"><div class="ttname"><a href="structCajita_1_1MpiTraits.html">Cajita::MpiTraits</a></div><div class="ttdef"><b>Definition:</b> Cajita_MpiTraits.hpp:25</div></div>
 <div class="ttc" id="astructCajita_1_1Own_html"><div class="ttname"><a href="structCajita_1_1Own.html">Cajita::Own</a></div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:164</div></div>

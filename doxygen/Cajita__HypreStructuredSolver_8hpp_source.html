@@ -102,7 +102,7 @@ $(function() {
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">namespace </span>Cajita</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
 <div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;{</div>
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="comment">// Hypre structured solver interface for scalar fields.</span></div>
@@ -185,7 +185,7 @@ $(function() {
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;            }</div>
 <div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;            <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;num_space_dim&gt;</a> reorder_space( reorder_size );</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;            <span class="keyword">auto</span> vector_values =</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                createView&lt;HYPRE_Complex, Kokkos::LayoutRight,</div>
+<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                <a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>&lt;HYPRE_Complex, Kokkos::LayoutRight,</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;                           Kokkos::HostSpace&gt;( <span class="stringliteral">&quot;vector_values&quot;</span>, reorder_space );</div>
 <div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;            Kokkos::deep_copy( vector_values, 0.0 );</div>
 <div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160; </div>
@@ -307,7 +307,7 @@ $(function() {
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        <span class="keyword">auto</span> a_values =</div>
 <div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;            createView&lt;HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace&gt;(</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;                <span class="stringliteral">&quot;a_values&quot;</span>, reorder_space );</div>
-<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <span class="keyword">auto</span> values_mirror_subv = createSubview( values_mirror, owned_space );</div>
+<div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;        <span class="keyword">auto</span> values_mirror_subv = <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( values_mirror, owned_space );</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;        Kokkos::deep_copy( a_values, values_mirror_subv );</div>
 <div class="line"><a name="l00263"></a><span class="lineno">  263</span>&#160; </div>
 <div class="line"><a name="l00264"></a><span class="lineno">  264</span>&#160;        <span class="comment">// Insert values into the HYPRE matrix.</span></div>
@@ -408,7 +408,7 @@ $(function() {
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;        <span class="keyword">auto</span> vector_values =</div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;            createView&lt;HYPRE_Complex, Kokkos::LayoutRight, Kokkos::HostSpace&gt;(</div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                <span class="stringliteral">&quot;vector_values&quot;</span>, reorder_space );</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <span class="keyword">auto</span> b_mirror_subv = createSubview( b_mirror, owned_space );</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;        <span class="keyword">auto</span> b_mirror_subv = <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( b_mirror, owned_space );</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;        Kokkos::deep_copy( vector_values, b_mirror_subv );</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;        <span class="comment">// Insert b values into the HYPRE vector.</span></div>
@@ -431,7 +431,7 @@ $(function() {
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;            Kokkos::create_mirror_view( Kokkos::HostSpace(), x.view() );</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160; </div>
 <div class="line"><a name="l00389"></a><span class="lineno">  389</span>&#160;        <span class="comment">// Copy the HYPRE solution to the LHS.</span></div>
-<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        <span class="keyword">auto</span> x_mirror_subv = createSubview( x_mirror, owned_space );</div>
+<div class="line"><a name="l00390"></a><span class="lineno">  390</span>&#160;        <span class="keyword">auto</span> x_mirror_subv = <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( x_mirror, owned_space );</div>
 <div class="line"><a name="l00391"></a><span class="lineno">  391</span>&#160;        Kokkos::deep_copy( x_mirror_subv, vector_values );</div>
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160; </div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;        <span class="comment">// Copy back to the device.</span></div>
@@ -1521,6 +1521,9 @@ $(function() {
 <div class="ttc" id="aclassCajita_1_1HypreStructuredSolver_html_aad83d5f34d10076a13ed6187f3294de6"><div class="ttname"><a href="classCajita_1_1HypreStructuredSolver.html#aad83d5f34d10076a13ed6187f3294de6">Cajita::HypreStructuredSolver::solve</a></div><div class="ttdeci">void solve(const Array_t &amp;b, Array_t &amp;x)</div><div class="ttdoc">Solve the problem Ax = b for x.</div><div class="ttdef"><b>Definition:</b> Cajita_HypreStructuredSolver.hpp:321</div></div>
 <div class="ttc" id="aclassCajita_1_1HypreStructuredSolver_html_aae15302bfe62a4d87ec3baef999e3606"><div class="ttname"><a href="classCajita_1_1HypreStructuredSolver.html#aae15302bfe62a4d87ec3baef999e3606">Cajita::HypreStructuredSolver::isPreconditioner</a></div><div class="ttdeci">bool isPreconditioner() const</div><div class="ttdoc">Return if this solver is a preconditioner.</div><div class="ttdef"><b>Definition:</b> Cajita_HypreStructuredSolver.hpp:163</div></div>
 <div class="ttc" id="aclassCajita_1_1IndexSpace_html"><div class="ttname"><a href="classCajita_1_1IndexSpace.html">Cajita::IndexSpace</a></div><div class="ttdoc">Structured index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:30</div></div>
+<div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
+<div class="ttc" id="anamespaceCajita_html_a99d5b9427668544de95ae7e1754fbdf2"><div class="ttname"><a href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">Cajita::createView</a></div><div class="ttdeci">Kokkos::View&lt; Scalar *, Params... &gt; createView(const std::string &amp;label, const IndexSpace&lt; 1 &gt; &amp;index_space)</div><div class="ttdoc">Given an index space create a view over the extent of that index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:223</div></div>
+<div class="ttc" id="anamespaceCajita_html_afffd9f583a762bf067ff0d583b5e3498"><div class="ttname"><a href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">Cajita::createSubview</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION auto createSubview(const ViewType &amp;view, const IndexSpace&lt; 1 &gt; &amp;index_space) -&gt; decltype(Kokkos::subview(view, index_space.range(0)))</div><div class="ttdoc">Given a view create a subview over the given index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:350</div></div>
 <div class="ttc" id="astructCajita_1_1Global_html"><div class="ttname"><a href="structCajita_1_1Global.html">Cajita::Global</a></div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:183</div></div>
 <div class="ttc" id="astructCajita_1_1Local_html"><div class="ttname"><a href="structCajita_1_1Local.html">Cajita::Local</a></div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:178</div></div>
 <div class="ttc" id="astructCajita_1_1Own_html"><div class="ttname"><a href="structCajita_1_1Own.html">Cajita::Own</a></div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:164</div></div>

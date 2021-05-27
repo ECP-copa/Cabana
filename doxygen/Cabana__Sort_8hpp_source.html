@@ -93,7 +93,7 @@ $(function() {
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span>Cabana</div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCabana.html">Cabana</a></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> DeviceType&gt;</div>
@@ -262,7 +262,7 @@ $(function() {
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>KeyViewType, <span class="keyword">class </span>Comparator,</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> KeyViewType::device_type&gt;</div>
-<div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;BinningData&lt;DeviceType&gt; sortByKeyWithComparator(</div>
+<div class="line"><a name="l00242"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a74033479f79c2c5e1831bf9a88234ef9">  242</a></span>&#160;<a class="code" href="classCabana_1_1BinningData.html">BinningData&lt;DeviceType&gt;</a> <a class="code" href="namespaceCabana.html#a74033479f79c2c5e1831bf9a88234ef9">sortByKeyWithComparator</a>(</div>
 <div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;    KeyViewType keys, Comparator comp, <span class="keyword">const</span> std::size_t begin,</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;    <span class="keyword">const</span> std::size_t end,</div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( Kokkos::is_view&lt;KeyViewType&gt;::value ),</div>
@@ -276,7 +276,7 @@ $(function() {
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>KeyViewType, <span class="keyword">class </span>Comparator,</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> KeyViewType::device_type&gt;</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;BinningData&lt;DeviceType&gt; sortByKeyWithComparator(</div>
+<div class="line"><a name="l00272"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a7e7d211b39c3007dff87e7d9a03bd777">  272</a></span>&#160;<a class="code" href="classCabana_1_1BinningData.html">BinningData&lt;DeviceType&gt;</a> <a class="code" href="namespaceCabana.html#a74033479f79c2c5e1831bf9a88234ef9">sortByKeyWithComparator</a>(</div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    KeyViewType keys, Comparator comp,</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( Kokkos::is_view&lt;KeyViewType&gt;::value ),</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
@@ -288,7 +288,7 @@ $(function() {
 <div class="line"><a name="l00281"></a><span class="lineno">  281</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>KeyViewType, <span class="keyword">class </span>Comparator,</div>
 <div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> KeyViewType::device_type&gt;</div>
-<div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;BinningData&lt;DeviceType&gt; binByKeyWithComparator(</div>
+<div class="line"><a name="l00304"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a69aceca61e0460f10c38fa9ad329cd0d">  304</a></span>&#160;<a class="code" href="classCabana_1_1BinningData.html">BinningData&lt;DeviceType&gt;</a> <a class="code" href="namespaceCabana.html#a69aceca61e0460f10c38fa9ad329cd0d">binByKeyWithComparator</a>(</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    KeyViewType keys, Comparator comp, <span class="keyword">const</span> std::size_t begin,</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keyword">const</span> std::size_t end,</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( Kokkos::is_view&lt;KeyViewType&gt;::value ),</div>
@@ -301,7 +301,7 @@ $(function() {
 <div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00331"></a><span class="lineno">  331</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>KeyViewType, <span class="keyword">class </span>Comparator,</div>
 <div class="line"><a name="l00332"></a><span class="lineno">  332</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> KeyViewType::device_type&gt;</div>
-<div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;BinningData&lt;DeviceType&gt; binByKeyWithComparator(</div>
+<div class="line"><a name="l00333"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ad09392355b60acbaa717d5f26ab15873">  333</a></span>&#160;<a class="code" href="classCabana_1_1BinningData.html">BinningData&lt;DeviceType&gt;</a> <a class="code" href="namespaceCabana.html#a69aceca61e0460f10c38fa9ad329cd0d">binByKeyWithComparator</a>(</div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    KeyViewType keys, Comparator comp,</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( Kokkos::is_view&lt;KeyViewType&gt;::value ),</div>
 <div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
@@ -314,7 +314,7 @@ $(function() {
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>KeyViewType,</div>
 <div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> KeyViewType::device_type&gt;</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;BinningData&lt;DeviceType&gt;</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;sortByKey( KeyViewType keys, <span class="keyword">const</span> std::size_t begin, <span class="keyword">const</span> std::size_t end,</div>
+<div class="line"><a name="l00361"></a><span class="lineno"><a class="line" href="namespaceCabana.html#afb212c9d4bf5dd79dca6393dd5cd1d50">  361</a></span>&#160;<a class="code" href="namespaceCabana.html#afb212c9d4bf5dd79dca6393dd5cd1d50">sortByKey</a>( KeyViewType keys, <span class="keyword">const</span> std::size_t begin, <span class="keyword">const</span> std::size_t end,</div>
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;           <span class="keyword">typename</span> std::enable_if&lt;( Kokkos::is_view&lt;KeyViewType&gt;::value ),</div>
 <div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;                                   <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;{</div>
@@ -327,7 +327,7 @@ $(function() {
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>KeyViewType,</div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> KeyViewType::device_type&gt;</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;BinningData&lt;DeviceType&gt;</div>
-<div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;sortByKey( KeyViewType keys,</div>
+<div class="line"><a name="l00385"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ad5de120bd7e1dd83a15d85ac2121633b">  385</a></span>&#160;<a class="code" href="namespaceCabana.html#afb212c9d4bf5dd79dca6393dd5cd1d50">sortByKey</a>( KeyViewType keys,</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;           <span class="keyword">typename</span> std::enable_if&lt;( Kokkos::is_view&lt;KeyViewType&gt;::value ),</div>
 <div class="line"><a name="l00387"></a><span class="lineno">  387</span>&#160;                                   <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00388"></a><span class="lineno">  388</span>&#160;{</div>
@@ -338,7 +338,7 @@ $(function() {
 <div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>KeyViewType,</div>
 <div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> KeyViewType::device_type&gt;</div>
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;BinningData&lt;DeviceType&gt;</div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;binByKey( KeyViewType keys, <span class="keyword">const</span> <span class="keywordtype">int</span> nbin, <span class="keyword">const</span> std::size_t begin,</div>
+<div class="line"><a name="l00415"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a604397e80ba71af071611b748e0cecde">  415</a></span>&#160;<a class="code" href="namespaceCabana.html#a604397e80ba71af071611b748e0cecde">binByKey</a>( KeyViewType keys, <span class="keyword">const</span> <span class="keywordtype">int</span> nbin, <span class="keyword">const</span> std::size_t begin,</div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;          <span class="keyword">const</span> std::size_t end,</div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;          <span class="keyword">typename</span> std::enable_if&lt;( Kokkos::is_view&lt;KeyViewType&gt;::value ),</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;                                  <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
@@ -351,7 +351,7 @@ $(function() {
 <div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>KeyViewType,</div>
 <div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> KeyViewType::device_type&gt;</div>
 <div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;BinningData&lt;DeviceType&gt;</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;binByKey( KeyViewType keys, <span class="keyword">const</span> <span class="keywordtype">int</span> nbin,</div>
+<div class="line"><a name="l00442"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a298e4012225366d9a9fdf7b9a867f641">  442</a></span>&#160;<a class="code" href="namespaceCabana.html#a604397e80ba71af071611b748e0cecde">binByKey</a>( KeyViewType keys, <span class="keyword">const</span> <span class="keywordtype">int</span> nbin,</div>
 <div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;          <span class="keyword">typename</span> std::enable_if&lt;( Kokkos::is_view&lt;KeyViewType&gt;::value ),</div>
 <div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;                                  <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;{</div>
@@ -361,9 +361,9 @@ $(function() {
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160; </div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> SliceType, <span class="keyword">class</span> DeviceType = <span class="keyword">typename</span> SliceType::device_type&gt;</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;BinningData&lt;DeviceType&gt; sortByKey(</div>
+<div class="line"><a name="l00466"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a91a4311d29473e2ecdab7927aaff49ad">  466</a></span>&#160;<a class="code" href="classCabana_1_1BinningData.html">BinningData&lt;DeviceType&gt;</a> <a class="code" href="namespaceCabana.html#afb212c9d4bf5dd79dca6393dd5cd1d50">sortByKey</a>(</div>
 <div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;    SliceType slice, <span class="keyword">const</span> std::size_t begin, <span class="keyword">const</span> std::size_t end,</div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( is_slice&lt;SliceType&gt;::value ), <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;SliceType&gt;::value</a> ), <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;{</div>
 <div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;    <span class="keyword">auto</span> keys = Impl::copySliceToKeys&lt;SliceType, DeviceType&gt;( slice );</div>
 <div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;    <span class="keywordflow">return</span> sortByKey&lt;decltype( keys ), DeviceType&gt;( keys, begin, end );</div>
@@ -371,19 +371,19 @@ $(function() {
 <div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160; </div>
 <div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00484"></a><span class="lineno">  484</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> SliceType, <span class="keyword">class</span> DeviceType = <span class="keyword">typename</span> SliceType::device_type&gt;</div>
-<div class="line"><a name="l00485"></a><span class="lineno">  485</span>&#160;BinningData&lt;DeviceType&gt; sortByKey(</div>
+<div class="line"><a name="l00485"></a><span class="lineno"><a class="line" href="namespaceCabana.html#af95cdaf6584250a53d942bbe99e5e78e">  485</a></span>&#160;<a class="code" href="classCabana_1_1BinningData.html">BinningData&lt;DeviceType&gt;</a> <a class="code" href="namespaceCabana.html#afb212c9d4bf5dd79dca6393dd5cd1d50">sortByKey</a>(</div>
 <div class="line"><a name="l00486"></a><span class="lineno">  486</span>&#160;    SliceType slice,</div>
-<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( is_slice&lt;SliceType&gt;::value ), <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
+<div class="line"><a name="l00487"></a><span class="lineno">  487</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;SliceType&gt;::value</a> ), <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00488"></a><span class="lineno">  488</span>&#160;{</div>
 <div class="line"><a name="l00489"></a><span class="lineno">  489</span>&#160;    <span class="keywordflow">return</span> sortByKey&lt;SliceType, DeviceType&gt;( slice, 0, slice.size() );</div>
 <div class="line"><a name="l00490"></a><span class="lineno">  490</span>&#160;}</div>
 <div class="line"><a name="l00491"></a><span class="lineno">  491</span>&#160; </div>
 <div class="line"><a name="l00492"></a><span class="lineno">  492</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> SliceType, <span class="keyword">class</span> DeviceType = <span class="keyword">typename</span> SliceType::device_type&gt;</div>
-<div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;BinningData&lt;DeviceType&gt; binByKey(</div>
+<div class="line"><a name="l00511"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ad3e2eca356e99a00cf3f2f5848f5cf7a">  511</a></span>&#160;<a class="code" href="classCabana_1_1BinningData.html">BinningData&lt;DeviceType&gt;</a> <a class="code" href="namespaceCabana.html#a604397e80ba71af071611b748e0cecde">binByKey</a>(</div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;    SliceType slice, <span class="keyword">const</span> <span class="keywordtype">int</span> nbin, <span class="keyword">const</span> std::size_t begin,</div>
 <div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160;    <span class="keyword">const</span> std::size_t end,</div>
-<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( is_slice&lt;SliceType&gt;::value ), <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
+<div class="line"><a name="l00514"></a><span class="lineno">  514</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;SliceType&gt;::value</a> ), <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00515"></a><span class="lineno">  515</span>&#160;{</div>
 <div class="line"><a name="l00516"></a><span class="lineno">  516</span>&#160;    <span class="keyword">auto</span> keys = Impl::copySliceToKeys&lt;SliceType, DeviceType&gt;( slice );</div>
 <div class="line"><a name="l00517"></a><span class="lineno">  517</span>&#160;    <span class="keywordflow">return</span> binByKey&lt;decltype( keys ), DeviceType&gt;( keys, nbin, begin, end );</div>
@@ -391,9 +391,9 @@ $(function() {
 <div class="line"><a name="l00519"></a><span class="lineno">  519</span>&#160; </div>
 <div class="line"><a name="l00520"></a><span class="lineno">  520</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00533"></a><span class="lineno">  533</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> SliceType, <span class="keyword">class</span> DeviceType = <span class="keyword">typename</span> SliceType::device_type&gt;</div>
-<div class="line"><a name="l00534"></a><span class="lineno">  534</span>&#160;BinningData&lt;DeviceType&gt; binByKey(</div>
+<div class="line"><a name="l00534"></a><span class="lineno"><a class="line" href="namespaceCabana.html#aa3328dc23cbfede2bd40bcdd2fdd9074">  534</a></span>&#160;<a class="code" href="classCabana_1_1BinningData.html">BinningData&lt;DeviceType&gt;</a> <a class="code" href="namespaceCabana.html#a604397e80ba71af071611b748e0cecde">binByKey</a>(</div>
 <div class="line"><a name="l00535"></a><span class="lineno">  535</span>&#160;    SliceType slice, <span class="keyword">const</span> <span class="keywordtype">int</span> nbin,</div>
-<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( is_slice&lt;SliceType&gt;::value ), <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
+<div class="line"><a name="l00536"></a><span class="lineno">  536</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;SliceType&gt;::value</a> ), <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;{</div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    <span class="keywordflow">return</span> binByKey&lt;SliceType, DeviceType&gt;( slice, nbin, 0, slice.size() );</div>
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;}</div>
@@ -401,10 +401,10 @@ $(function() {
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>BinningDataType, <span class="keyword">class </span>AoSoA_t,</div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> BinningDataType::device_type&gt;</div>
-<div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;<span class="keywordtype">void</span> permute(</div>
+<div class="line"><a name="l00555"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a824f296314f00ca8e121e6a26e2846db">  555</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceCabana.html#a02c3a57c3cd27a75094bbfa1be56145b">permute</a>(</div>
 <div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    <span class="keyword">const</span> BinningDataType&amp; binning_data, AoSoA_t&amp; aosoa,</div>
-<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( is_binning_data&lt;BinningDataType&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;                              is_aosoa&lt;AoSoA_t&gt;::value ),</div>
+<div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__binning__data.html">is_binning_data&lt;BinningDataType&gt;::value</a> &amp;&amp;</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;                              <a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa&lt;AoSoA_t&gt;::value</a> ),</div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;{</div>
 <div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;    <span class="keyword">auto</span> begin = binning_data.rangeBegin();</div>
@@ -439,10 +439,10 @@ $(function() {
 <div class="line"><a name="l00590"></a><span class="lineno">  590</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00602"></a><span class="lineno">  602</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>BinningDataType, <span class="keyword">class </span>SliceType,</div>
 <div class="line"><a name="l00603"></a><span class="lineno">  603</span>&#160;          <span class="keyword">class </span>DeviceType = <span class="keyword">typename</span> BinningDataType::device_type&gt;</div>
-<div class="line"><a name="l00604"></a><span class="lineno">  604</span>&#160;<span class="keywordtype">void</span> permute(</div>
+<div class="line"><a name="l00604"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ab44a65c22331c71ed7cee721a41c54fc">  604</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceCabana.html#a02c3a57c3cd27a75094bbfa1be56145b">permute</a>(</div>
 <div class="line"><a name="l00605"></a><span class="lineno">  605</span>&#160;    <span class="keyword">const</span> BinningDataType&amp; binning_data, SliceType&amp; slice,</div>
-<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( is_binning_data&lt;BinningDataType&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;                              is_slice&lt;SliceType&gt;::value ),</div>
+<div class="line"><a name="l00606"></a><span class="lineno">  606</span>&#160;    <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__binning__data.html">is_binning_data&lt;BinningDataType&gt;::value</a> &amp;&amp;</div>
+<div class="line"><a name="l00607"></a><span class="lineno">  607</span>&#160;                              <a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;SliceType&gt;::value</a> ),</div>
 <div class="line"><a name="l00608"></a><span class="lineno">  608</span>&#160;                            <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00609"></a><span class="lineno">  609</span>&#160;{</div>
 <div class="line"><a name="l00610"></a><span class="lineno">  610</span>&#160; </div>
@@ -505,7 +505,15 @@ $(function() {
 <div class="ttc" id="aclassCabana_1_1BinningData_html_a888557843e3d212d26b68edfc20fc3ca"><div class="ttname"><a href="classCabana_1_1BinningData.html#a888557843e3d212d26b68edfc20fc3ca">Cabana::BinningData::rangeBegin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION std::size_t rangeBegin() const</div><div class="ttdoc">The beginning tuple index in the binning.</div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:100</div></div>
 <div class="ttc" id="aclassCabana_1_1BinningData_html_a93587f6a1f448cc88c0751e55e7fd7d1"><div class="ttname"><a href="classCabana_1_1BinningData.html#a93587f6a1f448cc88c0751e55e7fd7d1">Cabana::BinningData::binOffset</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION size_type binOffset(const size_type bin_id) const</div><div class="ttdoc">Given a bin get the tuple index at which it sorts.</div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:81</div></div>
 <div class="ttc" id="aclassCabana_1_1BinningData_html_aa41f11ed6f29782694961617b90f5bbe"><div class="ttname"><a href="classCabana_1_1BinningData.html#aa41f11ed6f29782694961617b90f5bbe">Cabana::BinningData::numBin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION int numBin() const</div><div class="ttdoc">Get the number of bins.</div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:65</div></div>
+<div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:31</div></div>
+<div class="ttc" id="anamespaceCabana_html_a02c3a57c3cd27a75094bbfa1be56145b"><div class="ttname"><a href="namespaceCabana.html#a02c3a57c3cd27a75094bbfa1be56145b">Cabana::permute</a></div><div class="ttdeci">void permute(const LinkedCellListType &amp;linked_cell_list, AoSoA_t &amp;aosoa, typename std::enable_if&lt;(is_linked_cell_list&lt; LinkedCellListType &gt;::value &amp;&amp;is_aosoa&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Given a linked cell list permute an AoSoA.</div><div class="ttdef"><b>Definition:</b> Cabana_LinkedCellList.hpp:365</div></div>
+<div class="ttc" id="anamespaceCabana_html_a604397e80ba71af071611b748e0cecde"><div class="ttname"><a href="namespaceCabana.html#a604397e80ba71af071611b748e0cecde">Cabana::binByKey</a></div><div class="ttdeci">BinningData&lt; DeviceType &gt; binByKey(KeyViewType keys, const int nbin, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Bin an AoSoA over a subset of its range based on the associated key values and number of bins....</div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:415</div></div>
+<div class="ttc" id="anamespaceCabana_html_a69aceca61e0460f10c38fa9ad329cd0d"><div class="ttname"><a href="namespaceCabana.html#a69aceca61e0460f10c38fa9ad329cd0d">Cabana::binByKeyWithComparator</a></div><div class="ttdeci">BinningData&lt; DeviceType &gt; binByKeyWithComparator(KeyViewType keys, Comparator comp, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Bin an AoSoA over a subset of its range using a general comparator over the given Kokkos View of keys...</div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:304</div></div>
+<div class="ttc" id="anamespaceCabana_html_a74033479f79c2c5e1831bf9a88234ef9"><div class="ttname"><a href="namespaceCabana.html#a74033479f79c2c5e1831bf9a88234ef9">Cabana::sortByKeyWithComparator</a></div><div class="ttdeci">BinningData&lt; DeviceType &gt; sortByKeyWithComparator(KeyViewType keys, Comparator comp, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Sort an AoSoA over a subset of its range using a general comparator over the given Kokkos View of key...</div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:242</div></div>
+<div class="ttc" id="anamespaceCabana_html_afb212c9d4bf5dd79dca6393dd5cd1d50"><div class="ttname"><a href="namespaceCabana.html#afb212c9d4bf5dd79dca6393dd5cd1d50">Cabana::sortByKey</a></div><div class="ttdeci">BinningData&lt; DeviceType &gt; sortByKey(KeyViewType keys, const std::size_t begin, const std::size_t end, typename std::enable_if&lt;(Kokkos::is_view&lt; KeyViewType &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Sort an AoSoA over a subset of its range based on the associated key values.</div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:361</div></div>
+<div class="ttc" id="astructCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:54</div></div>
 <div class="ttc" id="astructCabana_1_1is__binning__data_html"><div class="ttname"><a href="structCabana_1_1is__binning__data.html">Cabana::is_binning_data</a></div><div class="ttdef"><b>Definition:</b> Cabana_Sort.hpp:121</div></div>
+<div class="ttc" id="astructCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:827</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

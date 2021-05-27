@@ -62,7 +62,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>Cabana</b></li><li class="navelem"><a class="el" href="classCabana_1_1CommunicationPlan.html">CommunicationPlan</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespaceCabana.html">Cabana</a></li><li class="navelem"><a class="el" href="classCabana_1_1CommunicationPlan.html">CommunicationPlan</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -257,7 +257,7 @@ template&lt;class PackViewType , class RankViewType &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">neighbor_ids</td><td>The id of each element in the neighbor send buffers.</td></tr>
-    <tr><td class="paramname">element_export_ranks</td><td>The ranks to which we are exporting each element. We use this to build the steering vector. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan. </td></tr>
+    <tr><td class="paramname">element_export_ranks</td><td>The ranks to which we are exporting each element. We use this to build the steering vector. The input is expected to be a Kokkos view or <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice in the same memory space as the communication plan. </td></tr>
   </table>
   </dd>
 </dl>
@@ -313,8 +313,8 @@ template&lt;class PackViewType , class RankViewType , class IdViewType &gt; </di
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">neighbor_ids</td><td>The id of each element in the neighbor send buffers.</td></tr>
-    <tr><td class="paramname">element_export_ranks</td><td>The ranks to which we are exporting each element. We use this to build the steering vector. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan.</td></tr>
-    <tr><td class="paramname">element_export_ids</td><td>The local ids of the elements to be exported. This corresponds with the export ranks vector and must be the same length if defined. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan. </td></tr>
+    <tr><td class="paramname">element_export_ranks</td><td>The ranks to which we are exporting each element. We use this to build the steering vector. The input is expected to be a Kokkos view or <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice in the same memory space as the communication plan.</td></tr>
+    <tr><td class="paramname">element_export_ids</td><td>The local ids of the elements to be exported. This corresponds with the export ranks vector and must be the same length if defined. The input is expected to be a Kokkos view or <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice in the same memory space as the communication plan. </td></tr>
   </table>
   </dd>
 </dl>
@@ -362,7 +362,7 @@ template&lt;class ViewType &gt; </div>
 <p>Neighbor and export rank creator. Use this when you already know which ranks neighbor each other (i.e. every rank already knows who they will be sending and receiving from) as it will be more efficient. In this case you already know the topology of the point-to-point communication but not how much data to send to and receive from the neighbors. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may be any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan.</td></tr>
+    <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may be any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice in the same memory space as the communication plan.</td></tr>
     <tr><td class="paramname">neighbor_ranks</td><td>List of ranks this rank will send to and receive from. This list can include the calling rank. This is effectively a description of the topology of the point-to-point communication plan. Only the unique elements in this list are used.</td></tr>
   </table>
   </dd>
@@ -405,7 +405,7 @@ template&lt;class ViewType &gt; </div>
 <p>Export rank creator. Use this when you don't know who you will receiving from - only who you are sending to. This is less efficient than if we already knew who our neighbors were because we have to determine the topology of the point-to-point communication first. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or Cabana slice in the same memory space as the communication plan.</td></tr>
+    <tr><td class="paramname">element_export_ranks</td><td>The destination rank in the target decomposition of each locally owned element in the source decomposition. Each element will have one unique destination to which it will be exported. This export rank may any one of the listed neighbor ranks which can include the calling rank. An export rank of -1 will signal that this element is <em>not</em> to be exported and will be ignored in the data migration. The input is expected to be a Kokkos view or <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice in the same memory space as the communication plan.</td></tr>
   </table>
   </dd>
 </dl>

@@ -95,7 +95,7 @@ $(function() {
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span>Cajita</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">namespace </span>Experimental</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
@@ -252,7 +252,7 @@ $(function() {
 <div class="line"><a name="l00252"></a><span class="lineno">  252</span>&#160;    {</div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;        Kokkos::parallel_for(</div>
 <div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;            <span class="stringliteral">&quot;fft_copy_to_work&quot;</span>,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            createExecutionPolicy( own_space, exec_space() ),</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;            <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( own_space, exec_space() ),</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j, <span class="keyword">const</span> <span class="keywordtype">int</span> k ) {</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;                <span class="keyword">auto</span> iw = i - own_space.min( Dim::I );</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;                <span class="keyword">auto</span> jw = j - own_space.min( Dim::J );</div>
@@ -270,7 +270,7 @@ $(function() {
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;    {</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;        Kokkos::parallel_for(</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;            <span class="stringliteral">&quot;fft_copy_to_work&quot;</span>,</div>
-<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            createExecutionPolicy( own_space, exec_space() ),</div>
+<div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;            <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( own_space, exec_space() ),</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j ) {</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                <span class="keyword">auto</span> iw = i - own_space.min( Dim::I );</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160;                <span class="keyword">auto</span> jw = j - own_space.min( Dim::J );</div>
@@ -287,7 +287,7 @@ $(function() {
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;    {</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;        Kokkos::parallel_for(</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;            <span class="stringliteral">&quot;fft_copy_from_work&quot;</span>,</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            createExecutionPolicy( own_space, exec_space() ),</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;            <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( own_space, exec_space() ),</div>
 <div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j, <span class="keyword">const</span> <span class="keywordtype">int</span> k ) {</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;                <span class="keyword">auto</span> iw = i - own_space.min( Dim::I );</div>
 <div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160;                <span class="keyword">auto</span> jw = j - own_space.min( Dim::J );</div>
@@ -305,7 +305,7 @@ $(function() {
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    {</div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        Kokkos::parallel_for(</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;            <span class="stringliteral">&quot;fft_copy_from_work&quot;</span>,</div>
-<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            createExecutionPolicy( own_space, exec_space() ),</div>
+<div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;            <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( own_space, exec_space() ),</div>
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;            KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j ) {</div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;                <span class="keyword">auto</span> iw = i - own_space.min( Dim::I );</div>
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;                <span class="keyword">auto</span> jw = j - own_space.min( Dim::J );</div>
@@ -580,6 +580,8 @@ $(function() {
 <div class="ttc" id="aclassCajita_1_1Experimental_1_1HeffteFastFourierTransform_html_a279da649ad7aa7ae0f8d2ddfdb5281bc"><div class="ttname"><a href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a279da649ad7aa7ae0f8d2ddfdb5281bc">Cajita::Experimental::HeffteFastFourierTransform::HeffteFastFourierTransform</a></div><div class="ttdeci">HeffteFastFourierTransform(const ArrayLayout&lt; EntityType, MeshType &gt; &amp;layout, const FastFourierTransformParams &amp;params)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> Cajita_FastFourierTransform.hpp:415</div></div>
 <div class="ttc" id="aclassCajita_1_1Experimental_1_1HeffteFastFourierTransform_html_a6cd93413bc1fd2dbc0d75dba485b0c51"><div class="ttname"><a href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a6cd93413bc1fd2dbc0d75dba485b0c51">Cajita::Experimental::HeffteFastFourierTransform::reverseImpl</a></div><div class="ttdeci">void reverseImpl(const Array_t &amp;x, const ScaleType)</div><div class="ttdoc">Do a reverse FFT.</div><div class="ttdef"><b>Definition:</b> Cajita_FastFourierTransform.hpp:469</div></div>
 <div class="ttc" id="aclassCajita_1_1Experimental_1_1HeffteFastFourierTransform_html_a8fc03c1a0fb70fc99189b2409d2583fb"><div class="ttname"><a href="classCajita_1_1Experimental_1_1HeffteFastFourierTransform.html#a8fc03c1a0fb70fc99189b2409d2583fb">Cajita::Experimental::HeffteFastFourierTransform::compute</a></div><div class="ttdeci">void compute(const Array_t &amp;x, const int flag, const heffte::scale scale)</div><div class="ttdoc">Do the FFT.</div><div class="ttdef"><b>Definition:</b> Cajita_FastFourierTransform.hpp:481</div></div>
+<div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
+<div class="ttc" id="anamespaceCajita_html_a1d70326b11175c3b3111b3e544d002b3"><div class="ttname"><a href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">Cajita::createExecutionPolicy</a></div><div class="ttdeci">Kokkos::RangePolicy&lt; ExecutionSpace &gt; createExecutionPolicy(const IndexSpace&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;)</div><div class="ttdoc">Create a multi-dimensional execution policy over an index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:166</div></div>
 <div class="ttc" id="astructCajita_1_1Experimental_1_1FFTBackendFFTW_html"><div class="ttname"><a href="structCajita_1_1Experimental_1_1FFTBackendFFTW.html">Cajita::Experimental::FFTBackendFFTW</a></div><div class="ttdoc">Tag specifying FFTW backend for FFT (host default).</div><div class="ttdef"><b>Definition:</b> Cajita_FastFourierTransform.hpp:59</div></div>
 <div class="ttc" id="astructCajita_1_1Experimental_1_1FFTBackendMKL_html"><div class="ttname"><a href="structCajita_1_1Experimental_1_1FFTBackendMKL.html">Cajita::Experimental::FFTBackendMKL</a></div><div class="ttdoc">Tag specifying MKL backend for FFT.</div><div class="ttdef"><b>Definition:</b> Cajita_FastFourierTransform.hpp:66</div></div>
 <div class="ttc" id="astructCajita_1_1Experimental_1_1FFTScaleFull_html"><div class="ttname"><a href="structCajita_1_1Experimental_1_1FFTScaleFull.html">Cajita::Experimental::FFTScaleFull</a></div><div class="ttdoc">Tag for full scaling of FFT.</div><div class="ttdef"><b>Definition:</b> Cajita_FastFourierTransform.hpp:37</div></div>

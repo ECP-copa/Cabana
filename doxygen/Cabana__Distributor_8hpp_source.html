@@ -95,7 +95,7 @@ $(function() {
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;exception&gt;</span></div>
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160; </div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span>Cabana</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCabana.html">Cabana</a></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> DeviceType&gt;</div>
@@ -283,10 +283,10 @@ $(function() {
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160; </div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Distributor_t, <span class="keyword">class</span> AoSoA_t&gt;</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t&amp; distributor, <span class="keyword">const</span> AoSoA_t&amp; src,</div>
+<div class="line"><a name="l00324"></a><span class="lineno"><a class="line" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">  324</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">migrate</a>( <span class="keyword">const</span> Distributor_t&amp; distributor, <span class="keyword">const</span> AoSoA_t&amp; src,</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;              AoSoA_t&amp; dst,</div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( is_distributor&lt;Distributor_t&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                                        is_aosoa&lt;AoSoA_t&gt;::value ),</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__distributor.html">is_distributor&lt;Distributor_t&gt;::value</a> &amp;&amp;</div>
+<div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;                                        <a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa&lt;AoSoA_t&gt;::value</a> ),</div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;{</div>
 <div class="line"><a name="l00330"></a><span class="lineno">  330</span>&#160;    <span class="comment">// Check that src and dst are the right size.</span></div>
@@ -302,9 +302,9 @@ $(function() {
 <div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160; </div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Distributor_t, <span class="keyword">class</span> AoSoA_t&gt;</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t&amp; distributor, AoSoA_t&amp; aosoa,</div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( is_distributor&lt;Distributor_t&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                                        is_aosoa&lt;AoSoA_t&gt;::value ),</div>
+<div class="line"><a name="l00366"></a><span class="lineno"><a class="line" href="namespaceCabana.html#ab9cb44110c8a6215d2ca62406e8aed35">  366</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">migrate</a>( <span class="keyword">const</span> Distributor_t&amp; distributor, AoSoA_t&amp; aosoa,</div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__distributor.html">is_distributor&lt;Distributor_t&gt;::value</a> &amp;&amp;</div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                                        <a class="code" href="structCabana_1_1is__aosoa.html">is_aosoa&lt;AoSoA_t&gt;::value</a> ),</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;{</div>
 <div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    <span class="comment">// Check that the AoSoA is the right size.</span></div>
@@ -332,10 +332,10 @@ $(function() {
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160; </div>
 <div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Distributor_t, <span class="keyword">class</span> Slice_t&gt;</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;<span class="keywordtype">void</span> migrate( <span class="keyword">const</span> Distributor_t&amp; distributor, <span class="keyword">const</span> Slice_t&amp; src,</div>
+<div class="line"><a name="l00418"></a><span class="lineno"><a class="line" href="namespaceCabana.html#a82063f55f2d0c3d17d11ba6642fb7353">  418</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">migrate</a>( <span class="keyword">const</span> Distributor_t&amp; distributor, <span class="keyword">const</span> Slice_t&amp; src,</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;              Slice_t&amp; dst,</div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( is_distributor&lt;Distributor_t&gt;::value &amp;&amp;</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                                        is_slice&lt;Slice_t&gt;::value ),</div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;              <span class="keyword">typename</span> std::enable_if&lt;( <a class="code" href="structCabana_1_1is__distributor.html">is_distributor&lt;Distributor_t&gt;::value</a> &amp;&amp;</div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;                                        <a class="code" href="structCabana_1_1is__slice.html">is_slice&lt;Slice_t&gt;::value</a> ),</div>
 <div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;                                      <span class="keywordtype">int</span>&gt;::type* = 0 )</div>
 <div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;{</div>
 <div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    <span class="comment">// Check that src and dst are the right size.</span></div>
@@ -505,9 +505,12 @@ $(function() {
 <div class="ttc" id="aclassCabana_1_1Distributor_html"><div class="ttname"><a href="classCabana_1_1Distributor.html">Cabana::Distributor</a></div><div class="ttdoc">Distributor is a communication plan for migrating data from one uniquely-owned decomposition to anoth...</div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:60</div></div>
 <div class="ttc" id="aclassCabana_1_1Distributor_html_a679c99714bfe2cf3504420f853d914e3"><div class="ttname"><a href="classCabana_1_1Distributor.html#a679c99714bfe2cf3504420f853d914e3">Cabana::Distributor::Distributor</a></div><div class="ttdeci">Distributor(MPI_Comm comm, const ViewType &amp;element_export_ranks, const std::vector&lt; int &gt; &amp;neighbor_ranks)</div><div class="ttdoc">Topology and export rank constructor. Use this when you already know which ranks neighbor each other ...</div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:97</div></div>
 <div class="ttc" id="aclassCabana_1_1Distributor_html_aa221b0a8c531d7e2330f65486713cab0"><div class="ttname"><a href="classCabana_1_1Distributor.html#aa221b0a8c531d7e2330f65486713cab0">Cabana::Distributor::Distributor</a></div><div class="ttdeci">Distributor(MPI_Comm comm, const ViewType &amp;element_export_ranks)</div><div class="ttdoc">Export rank constructor. Use this when you don't know who you will be receiving from - only who you a...</div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:134</div></div>
+<div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:31</div></div>
+<div class="ttc" id="anamespaceCabana_html_adb10ac278624d871f6079c4e24ccb219"><div class="ttname"><a href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">Cabana::migrate</a></div><div class="ttdeci">void migrate(const Distributor_t &amp;distributor, const AoSoA_t &amp;src, AoSoA_t &amp;dst, typename std::enable_if&lt;(is_distributor&lt; Distributor_t &gt;::value &amp;&amp;is_aosoa&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Synchronously migrate data between two different decompositions using the distributor forward communi...</div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:324</div></div>
 <div class="ttc" id="astructCabana_1_1is__aosoa_html"><div class="ttname"><a href="structCabana_1_1is__aosoa.html">Cabana::is_aosoa</a></div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:54</div></div>
 <div class="ttc" id="astructCabana_1_1is__distributor__impl_html"><div class="ttname"><a href="structCabana_1_1is__distributor__impl.html">Cabana::is_distributor_impl</a></div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:146</div></div>
 <div class="ttc" id="astructCabana_1_1is__distributor_html"><div class="ttname"><a href="structCabana_1_1is__distributor.html">Cabana::is_distributor</a></div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:157</div></div>
+<div class="ttc" id="astructCabana_1_1is__slice_html"><div class="ttname"><a href="structCabana_1_1is__slice.html">Cabana::is_slice</a></div><div class="ttdef"><b>Definition:</b> Cabana_Slice.hpp:827</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

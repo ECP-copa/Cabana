@@ -98,7 +98,7 @@ $(function() {
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;mpi.h&gt;</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160; </div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">namespace </span>Cajita</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;{</div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">// Array layout.</span></div>
@@ -208,7 +208,7 @@ $(function() {
 <div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> EntityType, <span class="keyword">class</span> MeshType&gt;</div>
 <div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;std::shared_ptr&lt;ArrayLayout&lt;EntityType, MeshType&gt;&gt;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;createArrayLayout( <span class="keyword">const</span> std::shared_ptr&lt;<a class="code" href="classCajita_1_1LocalGrid.html">LocalGrid&lt;MeshType&gt;</a>&gt;&amp; local_grid,</div>
+<div class="line"><a name="l00150"></a><span class="lineno"><a class="line" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">  150</a></span>&#160;<a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( <span class="keyword">const</span> std::shared_ptr&lt;<a class="code" href="classCajita_1_1LocalGrid.html">LocalGrid&lt;MeshType&gt;</a>&gt;&amp; local_grid,</div>
 <div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;                   <span class="keyword">const</span> <span class="keywordtype">int</span> dofs_per_entity, EntityType )</div>
 <div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;{</div>
 <div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <span class="keywordflow">return</span> std::make_shared&lt;ArrayLayout&lt;EntityType, MeshType&gt;&gt;(</div>
@@ -218,12 +218,12 @@ $(function() {
 <div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> EntityType, <span class="keyword">class</span> MeshType&gt;</div>
 <div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;std::shared_ptr&lt;ArrayLayout&lt;EntityType, MeshType&gt;&gt;</div>
-<div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;createArrayLayout( <span class="keyword">const</span> std::shared_ptr&lt;GlobalGrid&lt;MeshType&gt;&gt;&amp; global_grid,</div>
+<div class="line"><a name="l00167"></a><span class="lineno"><a class="line" href="namespaceCajita.html#ae4862d96b1f56f8b0fc0a1a7fb7aff52">  167</a></span>&#160;<a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( <span class="keyword">const</span> std::shared_ptr&lt;<a class="code" href="classCajita_1_1GlobalGrid.html">GlobalGrid&lt;MeshType&gt;</a>&gt;&amp; global_grid,</div>
 <div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;                   <span class="keyword">const</span> <span class="keywordtype">int</span> halo_cell_width, <span class="keyword">const</span> <span class="keywordtype">int</span> dofs_per_entity,</div>
 <div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                   EntityType )</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;{</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160;    <span class="keywordflow">return</span> std::make_shared&lt;ArrayLayout&lt;EntityType, MeshType&gt;&gt;(</div>
-<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        createLocalGrid( global_grid, halo_cell_width ), dofs_per_entity );</div>
+<div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;        <a class="code" href="namespaceCajita.html#a42afc02f709623b8bc57b598dfec0d7c">createLocalGrid</a>( global_grid, halo_cell_width ), dofs_per_entity );</div>
 <div class="line"><a name="l00173"></a><span class="lineno">  173</span>&#160;}</div>
 <div class="line"><a name="l00174"></a><span class="lineno">  174</span>&#160; </div>
 <div class="line"><a name="l00175"></a><span class="lineno">  175</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
@@ -266,7 +266,7 @@ $(function() {
 <div class="line"><a name="l00218"></a><span class="lineno"><a class="line" href="classCajita_1_1Array.html#a72c5e4f802a383ebce3f28fe7315eaad">  218</a></span>&#160;    <a class="code" href="classCajita_1_1Array.html#a72c5e4f802a383ebce3f28fe7315eaad">Array</a>( <span class="keyword">const</span> std::string&amp; <a class="code" href="classCajita_1_1Array.html#a89f55b2eb65c85bee16a84eca8b6f993">label</a>,</div>
 <div class="line"><a name="l00219"></a><span class="lineno">  219</span>&#160;           <span class="keyword">const</span> std::shared_ptr&lt;array_layout&gt;&amp; <a class="code" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a> )</div>
 <div class="line"><a name="l00220"></a><span class="lineno">  220</span>&#160;        : _layout( <a class="code" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a> )</div>
-<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        , _data( createView&lt;value_type, Params...&gt;(</div>
+<div class="line"><a name="l00221"></a><span class="lineno">  221</span>&#160;        , _data( <a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>&lt;value_type, Params...&gt;(</div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;              <a class="code" href="classCajita_1_1Array.html#a89f55b2eb65c85bee16a84eca8b6f993">label</a>, <a class="code" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>-&gt;indexSpace( <a class="code" href="structCajita_1_1Ghost.html">Ghost</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ) ) )</div>
 <div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;    {</div>
 <div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;    }</div>
@@ -295,7 +295,7 @@ $(function() {
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="comment">// Subview types.</span></div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;    <span class="keyword">using</span> subview_type = decltype(</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        createSubview( _data, _layout-&gt;indexSpace( <a class="code" href="structCajita_1_1Ghost.html">Ghost</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ) ) );</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( _data, _layout-&gt;indexSpace( <a class="code" href="structCajita_1_1Ghost.html">Ghost</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ) ) );</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;    <span class="keyword">using</span> subview_layout = <span class="keyword">typename</span> subview_type::array_layout;</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;    <span class="keyword">using</span> subview_memory_traits = <span class="keyword">typename</span> subview_type::memory_traits;</div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;};</div>
@@ -326,7 +326,7 @@ $(function() {
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params, <span class="keyword">class </span>EntityType, <span class="keyword">class </span>MeshType&gt;</div>
 <div class="line"><a name="l00295"></a><span class="lineno">  295</span>&#160;std::shared_ptr&lt;<a class="code" href="classCajita_1_1Array.html">Array</a>&lt;Scalar, EntityType, MeshType, Params...&gt;&gt;</div>
-<div class="line"><a name="l00296"></a><span class="lineno">  296</span>&#160;createArray( <span class="keyword">const</span> std::string&amp; label,</div>
+<div class="line"><a name="l00296"></a><span class="lineno"><a class="line" href="namespaceCajita.html#aa5e3a9510cf15e741a56e55216dae684">  296</a></span>&#160;<a class="code" href="namespaceCajita.html#aa5e3a9510cf15e741a56e55216dae684">createArray</a>( <span class="keyword">const</span> std::string&amp; label,</div>
 <div class="line"><a name="l00297"></a><span class="lineno">  297</span>&#160;             <span class="keyword">const</span> std::shared_ptr&lt;<a class="code" href="classCajita_1_1ArrayLayout.html">ArrayLayout&lt;EntityType, MeshType&gt;</a>&gt;&amp; layout )</div>
 <div class="line"><a name="l00298"></a><span class="lineno">  298</span>&#160;{</div>
 <div class="line"><a name="l00299"></a><span class="lineno">  299</span>&#160;    <span class="keywordflow">return</span> std::make_shared&lt;<a class="code" href="classCajita_1_1Array.html">Array</a>&lt;Scalar, EntityType, MeshType, Params...&gt;&gt;(</div>
@@ -343,13 +343,13 @@ $(function() {
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;    <span class="keyword">typename</span> Array&lt;Scalar, EntityType, MeshType, Params...&gt;::device_type,</div>
 <div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;    <span class="keyword">typename</span> Array&lt;Scalar, EntityType, MeshType,</div>
 <div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;                   Params...&gt;::subview_memory_traits&gt;&gt;</div>
-<div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;createSubarray( <span class="keyword">const</span> Array&lt;Scalar, EntityType, MeshType, Params...&gt;&amp; array,</div>
+<div class="line"><a name="l00320"></a><span class="lineno"><a class="line" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">  320</a></span>&#160;<a class="code" href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">createSubarray</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1Array.html">Array&lt;Scalar, EntityType, MeshType, Params...&gt;</a>&amp; array,</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;                <span class="keyword">const</span> <span class="keywordtype">int</span> dof_min, <span class="keyword">const</span> <span class="keywordtype">int</span> dof_max )</div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;{</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">if</span> ( dof_min &lt; 0 || dof_max &gt; array.layout()-&gt;dofsPerEntity() )</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;    <span class="keywordflow">if</span> ( dof_min &lt; 0 || dof_max &gt; array.<a class="code" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>()-&gt;dofsPerEntity() )</div>
 <div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        <span class="keywordflow">throw</span> std::logic_error( <span class="stringliteral">&quot;Subarray dimensions out of bounds&quot;</span> );</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160; </div>
-<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="keyword">auto</span> space = array.layout()-&gt;indexSpace( Ghost(), Local() );</div>
+<div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160;    <span class="keyword">auto</span> space = array.<a class="code" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>()-&gt;indexSpace( <a class="code" href="structCajita_1_1Ghost.html">Ghost</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;    std::array&lt;long, MeshType::num_space_dim + 1&gt; min;</div>
 <div class="line"><a name="l00328"></a><span class="lineno">  328</span>&#160;    std::array&lt;long, MeshType::num_space_dim + 1&gt; max;</div>
 <div class="line"><a name="l00329"></a><span class="lineno">  329</span>&#160;    <span class="keywordflow">for</span> ( std::size_t d = 0; d &lt; MeshType::num_space_dim; ++d )</div>
@@ -359,15 +359,15 @@ $(function() {
 <div class="line"><a name="l00333"></a><span class="lineno">  333</span>&#160;    }</div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;    min.back() = dof_min;</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;    max.back() = dof_max;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    IndexSpace&lt;MeshType::num_space_dim + 1&gt; sub_space( min, max );</div>
-<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="keyword">auto</span> sub_view = createSubview( array.view(), sub_space );</div>
-<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keyword">auto</span> sub_layout = createArrayLayout( array.layout()-&gt;localGrid(),</div>
+<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;    <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;MeshType::num_space_dim + 1&gt;</a> sub_space( min, max );</div>
+<div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;    <span class="keyword">auto</span> sub_view = <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( array.<a class="code" href="classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4">view</a>(), sub_space );</div>
+<div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keyword">auto</span> sub_layout = <a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( array.<a class="code" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>()-&gt;localGrid(),</div>
 <div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;                                         dof_max - dof_min, EntityType() );</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordflow">return</span> std::make_shared&lt;Array&lt;</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;    <span class="keywordflow">return</span> std::make_shared&lt;<a class="code" href="classCajita_1_1Array.html">Array</a>&lt;</div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;        Scalar, EntityType, MeshType,</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        <span class="keyword">typename</span> Array&lt;Scalar, EntityType, MeshType, Params...&gt;::subview_layout,</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;        <span class="keyword">typename</span> Array&lt;Scalar, EntityType, MeshType, Params...&gt;::device_type,</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        <span class="keyword">typename</span> Array&lt;Scalar, EntityType, MeshType,</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;        <span class="keyword">typename</span> <a class="code" href="classCajita_1_1Array.html">Array</a>&lt;Scalar, EntityType, MeshType, Params...&gt;::subview_layout,</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;        <span class="keyword">typename</span> <a class="code" href="classCajita_1_1Array.html">Array</a>&lt;Scalar, EntityType, MeshType, Params...&gt;::device_type,</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;        <span class="keyword">typename</span> <a class="code" href="classCajita_1_1Array.html">Array</a>&lt;Scalar, EntityType, MeshType,</div>
 <div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                       Params...&gt;::subview_memory_traits&gt;&gt;( sub_layout,</div>
 <div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                                                            sub_view );</div>
 <div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;}</div>
@@ -382,7 +382,7 @@ $(function() {
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;std::shared_ptr&lt;Array&lt;Scalar, EntityType, MeshType, Params...&gt;&gt;</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;clone( <span class="keyword">const</span> Array&lt;Scalar, EntityType, MeshType, Params...&gt;&amp; array )</div>
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;{</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    <span class="keywordflow">return</span> createArray&lt;Scalar, Params...&gt;( array.label(), array.layout() );</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespaceCajita.html#aa5e3a9510cf15e741a56e55216dae684">createArray</a>&lt;Scalar, Params...&gt;( array.label(), array.layout() );</div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;}</div>
 <div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160; </div>
 <div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
@@ -391,7 +391,7 @@ $(function() {
 <div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160;             DecompositionTag tag )</div>
 <div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;{</div>
 <div class="line"><a name="l00378"></a><span class="lineno">  378</span>&#160;    static_assert( is_array&lt;Array_t&gt;::value, <span class="stringliteral">&quot;Cajita::Array required&quot;</span> );</div>
-<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="keyword">auto</span> subview = createSubview( array.view(),</div>
+<div class="line"><a name="l00379"></a><span class="lineno">  379</span>&#160;    <span class="keyword">auto</span> subview = <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( array.view(),</div>
 <div class="line"><a name="l00380"></a><span class="lineno">  380</span>&#160;                                  array.layout()-&gt;indexSpace( tag, Local() ) );</div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;    Kokkos::deep_copy( subview, alpha );</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;}</div>
@@ -406,7 +406,7 @@ $(function() {
 <div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="keyword">auto</span> view = array.view();</div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;        <span class="stringliteral">&quot;ArrayOp::scale&quot;</span>,</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        createExecutionPolicy( array.layout()-&gt;indexSpace( tag, Local() ),</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( array.layout()-&gt;indexSpace( tag, Local() ),</div>
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j, <span class="keyword">const</span> <span class="keywordtype">int</span> k, <span class="keyword">const</span> <span class="keywordtype">int</span> l ) {</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;            view( i, j, k, l ) *= alpha;</div>
@@ -422,7 +422,7 @@ $(function() {
 <div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    <span class="keyword">auto</span> view = array.view();</div>
 <div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        <span class="stringliteral">&quot;ArrayOp::scale&quot;</span>,</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        createExecutionPolicy( array.layout()-&gt;indexSpace( tag, Local() ),</div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( array.layout()-&gt;indexSpace( tag, Local() ),</div>
 <div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j, <span class="keyword">const</span> <span class="keywordtype">int</span> l ) {</div>
 <div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;            view( i, j, l ) *= alpha;</div>
@@ -449,7 +449,7 @@ $(function() {
 <div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;    <span class="keyword">auto</span> array_view = array.view();</div>
 <div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;        <span class="stringliteral">&quot;ArrayOp::scale&quot;</span>,</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;        createExecutionPolicy( array.layout()-&gt;indexSpace( tag, Local() ),</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( array.layout()-&gt;indexSpace( tag, Local() ),</div>
 <div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j, <span class="keyword">const</span> <span class="keywordtype">int</span> k, <span class="keyword">const</span> <span class="keywordtype">int</span> l ) {</div>
 <div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;            array_view( i, j, k, l ) *= alpha_view( l );</div>
@@ -475,7 +475,7 @@ $(function() {
 <div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;    <span class="keyword">auto</span> array_view = array.view();</div>
 <div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;        <span class="stringliteral">&quot;ArrayOp::scale&quot;</span>,</div>
-<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;        createExecutionPolicy( array.layout()-&gt;indexSpace( tag, Local() ),</div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( array.layout()-&gt;indexSpace( tag, Local() ),</div>
 <div class="line"><a name="l00479"></a><span class="lineno">  479</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00480"></a><span class="lineno">  480</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j, <span class="keyword">const</span> <span class="keywordtype">int</span> l ) {</div>
 <div class="line"><a name="l00481"></a><span class="lineno">  481</span>&#160;            array_view( i, j, l ) *= alpha_view( l );</div>
@@ -491,8 +491,8 @@ $(function() {
 <div class="line"><a name="l00498"></a><span class="lineno">  498</span>&#160;    <span class="keyword">auto</span> b_space = b.layout()-&gt;indexSpace( tag, Local() );</div>
 <div class="line"><a name="l00499"></a><span class="lineno">  499</span>&#160;    <span class="keywordflow">if</span> ( a_space != b_space )</div>
 <div class="line"><a name="l00500"></a><span class="lineno">  500</span>&#160;        <span class="keywordflow">throw</span> std::logic_error( <span class="stringliteral">&quot;Incompatible index spaces&quot;</span> );</div>
-<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;    <span class="keyword">auto</span> subview_a = createSubview( a.view(), a_space );</div>
-<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;    <span class="keyword">auto</span> subview_b = createSubview( b.view(), b_space );</div>
+<div class="line"><a name="l00501"></a><span class="lineno">  501</span>&#160;    <span class="keyword">auto</span> subview_a = <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( a.view(), a_space );</div>
+<div class="line"><a name="l00502"></a><span class="lineno">  502</span>&#160;    <span class="keyword">auto</span> subview_b = <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( b.view(), b_space );</div>
 <div class="line"><a name="l00503"></a><span class="lineno">  503</span>&#160;    Kokkos::deep_copy( subview_a, subview_b );</div>
 <div class="line"><a name="l00504"></a><span class="lineno">  504</span>&#160;}</div>
 <div class="line"><a name="l00505"></a><span class="lineno">  505</span>&#160; </div>
@@ -516,7 +516,7 @@ $(function() {
 <div class="line"><a name="l00537"></a><span class="lineno">  537</span>&#160;    <span class="keyword">auto</span> b_view = b.view();</div>
 <div class="line"><a name="l00538"></a><span class="lineno">  538</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00539"></a><span class="lineno">  539</span>&#160;        <span class="stringliteral">&quot;ArrayOp::update&quot;</span>,</div>
-<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;        createExecutionPolicy( a.layout()-&gt;indexSpace( tag, Local() ),</div>
+<div class="line"><a name="l00540"></a><span class="lineno">  540</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( a.layout()-&gt;indexSpace( tag, Local() ),</div>
 <div class="line"><a name="l00541"></a><span class="lineno">  541</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00542"></a><span class="lineno">  542</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i, <span class="keyword">const</span> <span class="keywordtype">int</span> j, <span class="keyword">const</span> <span class="keywordtype">int</span> k, <span class="keyword">const</span> <span class="keywordtype">int</span> l ) {</div>
 <div class="line"><a name="l00543"></a><span class="lineno">  543</span>&#160;            a_view( i, j, k, l ) =</div>
@@ -534,7 +534,7 @@ $(function() {
 <div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;    <span class="keyword">auto</span> b_view = b.view();</div>
 <div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;    Kokkos::parallel_for(</div>
 <div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;        <span class="stringliteral">&quot;ArrayOp::update&quot;</span>,</div>
-<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;        createExecutionPolicy( a.layout()-&gt;indexSpace( tag, Local() ),</div>
+<div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( a.layout()-&gt;indexSpace( tag, Local() ),</div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00560"></a><span class="lineno">  560</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">long</span> i, <span class="keyword">const</span> <span class="keywordtype">long</span> j, <span class="keyword">const</span> <span class="keywordtype">long</span> l ) {</div>
 <div class="line"><a name="l00561"></a><span class="lineno">  561</span>&#160;            a_view( i, j, l ) =</div>
@@ -607,7 +607,7 @@ $(function() {
 <div class="line"><a name="l00636"></a><span class="lineno">  636</span>&#160;        a.view(), b.view() );</div>
 <div class="line"><a name="l00637"></a><span class="lineno">  637</span>&#160;    Kokkos::parallel_reduce(</div>
 <div class="line"><a name="l00638"></a><span class="lineno">  638</span>&#160;        <span class="stringliteral">&quot;ArrayOp::dot&quot;</span>,</div>
-<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;        createExecutionPolicy( a.layout()-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ),</div>
+<div class="line"><a name="l00639"></a><span class="lineno">  639</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( a.layout()-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ),</div>
 <div class="line"><a name="l00640"></a><span class="lineno">  640</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00641"></a><span class="lineno">  641</span>&#160;        functor, products.data() );</div>
 <div class="line"><a name="l00642"></a><span class="lineno">  642</span>&#160; </div>
@@ -684,7 +684,7 @@ $(function() {
 <div class="line"><a name="l00719"></a><span class="lineno">  719</span>&#160;        array.view() );</div>
 <div class="line"><a name="l00720"></a><span class="lineno">  720</span>&#160;    Kokkos::parallel_reduce(</div>
 <div class="line"><a name="l00721"></a><span class="lineno">  721</span>&#160;        <span class="stringliteral">&quot;ArrayOp::normInf&quot;</span>,</div>
-<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;        createExecutionPolicy( array.layout()-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ),</div>
+<div class="line"><a name="l00722"></a><span class="lineno">  722</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( array.layout()-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ),</div>
 <div class="line"><a name="l00723"></a><span class="lineno">  723</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00724"></a><span class="lineno">  724</span>&#160;        functor, norms.data() );</div>
 <div class="line"><a name="l00725"></a><span class="lineno">  725</span>&#160; </div>
@@ -756,7 +756,7 @@ $(function() {
 <div class="line"><a name="l00797"></a><span class="lineno">  797</span>&#160;        array.view() );</div>
 <div class="line"><a name="l00798"></a><span class="lineno">  798</span>&#160;    Kokkos::parallel_reduce(</div>
 <div class="line"><a name="l00799"></a><span class="lineno">  799</span>&#160;        <span class="stringliteral">&quot;ArrayOp::norm1&quot;</span>,</div>
-<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;        createExecutionPolicy( array.layout()-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ),</div>
+<div class="line"><a name="l00800"></a><span class="lineno">  800</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( array.layout()-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ),</div>
 <div class="line"><a name="l00801"></a><span class="lineno">  801</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00802"></a><span class="lineno">  802</span>&#160;        functor, norms.data() );</div>
 <div class="line"><a name="l00803"></a><span class="lineno">  803</span>&#160; </div>
@@ -828,7 +828,7 @@ $(function() {
 <div class="line"><a name="l00875"></a><span class="lineno">  875</span>&#160;        array.view() );</div>
 <div class="line"><a name="l00876"></a><span class="lineno">  876</span>&#160;    Kokkos::parallel_reduce(</div>
 <div class="line"><a name="l00877"></a><span class="lineno">  877</span>&#160;        <span class="stringliteral">&quot;ArrayOp::norm2&quot;</span>,</div>
-<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;        createExecutionPolicy( array.layout()-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ),</div>
+<div class="line"><a name="l00878"></a><span class="lineno">  878</span>&#160;        <a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( array.layout()-&gt;indexSpace( <a class="code" href="structCajita_1_1Own.html">Own</a>(), <a class="code" href="structCajita_1_1Local.html">Local</a>() ),</div>
 <div class="line"><a name="l00879"></a><span class="lineno">  879</span>&#160;                               <span class="keyword">typename</span> Array_t::execution_space() ),</div>
 <div class="line"><a name="l00880"></a><span class="lineno">  880</span>&#160;        functor, norms.data() );</div>
 <div class="line"><a name="l00881"></a><span class="lineno">  881</span>&#160; </div>
@@ -856,7 +856,17 @@ $(function() {
 <div class="ttc" id="aclassCajita_1_1Array_html_a72c5e4f802a383ebce3f28fe7315eaad"><div class="ttname"><a href="classCajita_1_1Array.html#a72c5e4f802a383ebce3f28fe7315eaad">Cajita::Array::Array</a></div><div class="ttdeci">Array(const std::string &amp;label, const std::shared_ptr&lt; array_layout &gt; &amp;layout)</div><div class="ttdoc">Create an array with the given layout. Arrays are constructed over the ghosted index space of the lay...</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:218</div></div>
 <div class="ttc" id="aclassCajita_1_1Array_html_a89f55b2eb65c85bee16a84eca8b6f993"><div class="ttname"><a href="classCajita_1_1Array.html#a89f55b2eb65c85bee16a84eca8b6f993">Cajita::Array::label</a></div><div class="ttdeci">std::string label() const</div><div class="ttdoc">Get the array label.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:250</div></div>
 <div class="ttc" id="aclassCajita_1_1Array_html_aa5fe3e40a31d3ca1a507d5ef8c90d6de"><div class="ttname"><a href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">Cajita::Array::layout</a></div><div class="ttdeci">std::shared_ptr&lt; array_layout &gt; layout() const</div><div class="ttdoc">Get the layout of the array.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:244</div></div>
+<div class="ttc" id="aclassCajita_1_1GlobalGrid_html"><div class="ttname"><a href="classCajita_1_1GlobalGrid.html">Cajita::GlobalGrid</a></div><div class="ttdef"><b>Definition:</b> Cajita_GlobalGrid.hpp:31</div></div>
+<div class="ttc" id="aclassCajita_1_1IndexSpace_html"><div class="ttname"><a href="classCajita_1_1IndexSpace.html">Cajita::IndexSpace</a></div><div class="ttdoc">Structured index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:30</div></div>
 <div class="ttc" id="aclassCajita_1_1LocalGrid_html"><div class="ttname"><a href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a></div><div class="ttdef"><b>Definition:</b> Cajita_LocalGrid.hpp:31</div></div>
+<div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
+<div class="ttc" id="anamespaceCajita_html_a1d70326b11175c3b3111b3e544d002b3"><div class="ttname"><a href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">Cajita::createExecutionPolicy</a></div><div class="ttdeci">Kokkos::RangePolicy&lt; ExecutionSpace &gt; createExecutionPolicy(const IndexSpace&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;)</div><div class="ttdoc">Create a multi-dimensional execution policy over an index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:166</div></div>
+<div class="ttc" id="anamespaceCajita_html_a42afc02f709623b8bc57b598dfec0d7c"><div class="ttname"><a href="namespaceCajita.html#a42afc02f709623b8bc57b598dfec0d7c">Cajita::createLocalGrid</a></div><div class="ttdeci">std::shared_ptr&lt; LocalGrid&lt; MeshType &gt; &gt; createLocalGrid(const std::shared_ptr&lt; GlobalGrid&lt; MeshType &gt;&gt; &amp;global_grid, const int halo_cell_width)</div><div class="ttdoc">Create a local grid.</div><div class="ttdef"><b>Definition:</b> Cajita_LocalGrid.hpp:365</div></div>
+<div class="ttc" id="anamespaceCajita_html_a99d5b9427668544de95ae7e1754fbdf2"><div class="ttname"><a href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">Cajita::createView</a></div><div class="ttdeci">Kokkos::View&lt; Scalar *, Params... &gt; createView(const std::string &amp;label, const IndexSpace&lt; 1 &gt; &amp;index_space)</div><div class="ttdoc">Given an index space create a view over the extent of that index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:223</div></div>
+<div class="ttc" id="anamespaceCajita_html_aa0bb56f113356a47470331f61420fb17"><div class="ttname"><a href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">Cajita::createSubarray</a></div><div class="ttdeci">std::shared_ptr&lt; Array&lt; Scalar, EntityType, MeshType, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_layout, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::device_type, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_memory_traits &gt; &gt; createSubarray(const Array&lt; Scalar, EntityType, MeshType, Params... &gt; &amp;array, const int dof_min, const int dof_max)</div><div class="ttdoc">Create a subarray of the given array over the given range of degrees of freedom.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:320</div></div>
+<div class="ttc" id="anamespaceCajita_html_aa5e3a9510cf15e741a56e55216dae684"><div class="ttname"><a href="namespaceCajita.html#aa5e3a9510cf15e741a56e55216dae684">Cajita::createArray</a></div><div class="ttdeci">std::shared_ptr&lt; Array&lt; Scalar, EntityType, MeshType, Params... &gt; &gt; createArray(const std::string &amp;label, const std::shared_ptr&lt; ArrayLayout&lt; EntityType, MeshType &gt;&gt; &amp;layout)</div><div class="ttdoc">Create an array with the given array layout. Views are constructed over the ghosted index space of th...</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:296</div></div>
+<div class="ttc" id="anamespaceCajita_html_abdd3b143d333ec6a5d5018c2caa38598"><div class="ttname"><a href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">Cajita::createArrayLayout</a></div><div class="ttdeci">std::shared_ptr&lt; ArrayLayout&lt; EntityType, MeshType &gt; &gt; createArrayLayout(const std::shared_ptr&lt; LocalGrid&lt; MeshType &gt;&gt; &amp;local_grid, const int dofs_per_entity, EntityType)</div><div class="ttdoc">Create an array layout over the entities of a local grid.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:150</div></div>
+<div class="ttc" id="anamespaceCajita_html_afffd9f583a762bf067ff0d583b5e3498"><div class="ttname"><a href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">Cajita::createSubview</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION auto createSubview(const ViewType &amp;view, const IndexSpace&lt; 1 &gt; &amp;index_space) -&gt; decltype(Kokkos::subview(view, index_space.range(0)))</div><div class="ttdoc">Given a view create a subview over the given index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:350</div></div>
 <div class="ttc" id="astructCajita_1_1ArrayOp_1_1DotFunctor_html"><div class="ttname"><a href="structCajita_1_1ArrayOp_1_1DotFunctor.html">Cajita::ArrayOp::DotFunctor</a></div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:570</div></div>
 <div class="ttc" id="astructCajita_1_1ArrayOp_1_1Norm1Functor_html"><div class="ttname"><a href="structCajita_1_1ArrayOp_1_1Norm1Functor.html">Cajita::ArrayOp::Norm1Functor</a></div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:735</div></div>
 <div class="ttc" id="astructCajita_1_1ArrayOp_1_1Norm2Functor_html"><div class="ttname"><a href="structCajita_1_1ArrayOp_1_1Norm2Functor.html">Cajita::ArrayOp::Norm2Functor</a></div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:813</div></div>

@@ -99,7 +99,7 @@ $(function() {
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;vector&gt;</span></div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">namespace </span>Cajita</div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
 <div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
 <div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="comment">// Halo exchange patterns.</span></div>
@@ -964,7 +964,7 @@ $(function() {
 <div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160; </div>
 <div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00926"></a><span class="lineno">  926</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Pattern, <span class="keyword">class</span>... ArrayTypes&gt;</div>
-<div class="line"><a name="l00927"></a><span class="lineno">  927</span>&#160;<span class="keyword">auto</span> createHalo( <span class="keyword">const</span> Pattern&amp; pattern, <span class="keyword">const</span> <span class="keywordtype">int</span> width,</div>
+<div class="line"><a name="l00927"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">  927</a></span>&#160;<span class="keyword">auto</span> <a class="code" href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">createHalo</a>( <span class="keyword">const</span> Pattern&amp; pattern, <span class="keyword">const</span> <span class="keywordtype">int</span> width,</div>
 <div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;                 <span class="keyword">const</span> ArrayTypes&amp;... arrays )</div>
 <div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;{</div>
 <div class="line"><a name="l00930"></a><span class="lineno">  930</span>&#160;    <span class="keyword">using</span> memory_space = <span class="keyword">typename</span> <a class="code" href="structCajita_1_1ArrayPackMemorySpace.html">ArrayPackMemorySpace</a>&lt;ArrayTypes...&gt;::type;</div>
@@ -988,27 +988,27 @@ $(function() {
 <div class="line"><a name="l00948"></a><span class="lineno">  948</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00959"></a><span class="lineno">  959</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class </span>Device, <span class="keyword">class </span>EntityType, <span class="keyword">class </span>MeshType,</div>
 <div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160;          <span class="keyword">class </span>Pattern&gt;</div>
-<div class="line"><a name="l00961"></a><span class="lineno">  961</span>&#160;<span class="keyword">auto</span> createHalo( <span class="keyword">const</span> <a class="code" href="classCajita_1_1ArrayLayout.html">ArrayLayout&lt;EntityType, MeshType&gt;</a>&amp; layout,</div>
+<div class="line"><a name="l00961"></a><span class="lineno"><a class="line" href="namespaceCajita.html#abb8e3f33f12e80ce359f1d4840ee641c">  961</a></span>&#160;<span class="keyword">auto</span> <a class="code" href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">createHalo</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1ArrayLayout.html">ArrayLayout&lt;EntityType, MeshType&gt;</a>&amp; layout,</div>
 <div class="line"><a name="l00962"></a><span class="lineno">  962</span>&#160;                 <span class="keyword">const</span> Pattern&amp; pattern, <span class="keyword">const</span> <span class="keywordtype">int</span> width = -1 )</div>
 <div class="line"><a name="l00963"></a><span class="lineno">  963</span>&#160;{</div>
 <div class="line"><a name="l00964"></a><span class="lineno">  964</span>&#160;    <a class="code" href="structCajita_1_1LayoutAdapter.html">LayoutAdapter</a>&lt;Scalar, <span class="keyword">typename</span> Device::memory_space,</div>
 <div class="line"><a name="l00965"></a><span class="lineno">  965</span>&#160;                  <a class="code" href="classCajita_1_1ArrayLayout.html">ArrayLayout&lt;EntityType, MeshType&gt;</a>&gt;</div>
 <div class="line"><a name="l00966"></a><span class="lineno">  966</span>&#160;        adapter{ layout };</div>
-<div class="line"><a name="l00967"></a><span class="lineno">  967</span>&#160;    <span class="keywordflow">return</span> createHalo( pattern, width, adapter );</div>
+<div class="line"><a name="l00967"></a><span class="lineno">  967</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">createHalo</a>( pattern, width, adapter );</div>
 <div class="line"><a name="l00968"></a><span class="lineno">  968</span>&#160;}</div>
 <div class="line"><a name="l00969"></a><span class="lineno">  969</span>&#160; </div>
 <div class="line"><a name="l00970"></a><span class="lineno">  970</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00982"></a><span class="lineno">  982</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class </span>EntityType, <span class="keyword">class </span>MeshType, <span class="keyword">class </span>Pattern,</div>
 <div class="line"><a name="l00983"></a><span class="lineno">  983</span>&#160;          <span class="keyword">class</span>... Params&gt;</div>
-<div class="line"><a name="l00984"></a><span class="lineno">  984</span>&#160;<span class="keyword">auto</span> createHalo( <span class="keyword">const</span> Array&lt;Scalar, EntityType, MeshType, Params...&gt;&amp; array,</div>
+<div class="line"><a name="l00984"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a342119f5d5b011c689cc474e16cc70e5">  984</a></span>&#160;<span class="keyword">auto</span> <a class="code" href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">createHalo</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1Array.html">Array&lt;Scalar, EntityType, MeshType, Params...&gt;</a>&amp; array,</div>
 <div class="line"><a name="l00985"></a><span class="lineno">  985</span>&#160;                 <span class="keyword">const</span> Pattern&amp; pattern, <span class="keyword">const</span> <span class="keywordtype">int</span> width = -1 )</div>
 <div class="line"><a name="l00986"></a><span class="lineno">  986</span>&#160;{</div>
-<div class="line"><a name="l00987"></a><span class="lineno">  987</span>&#160;    LayoutAdapter&lt;</div>
+<div class="line"><a name="l00987"></a><span class="lineno">  987</span>&#160;    <a class="code" href="structCajita_1_1LayoutAdapter.html">LayoutAdapter</a>&lt;</div>
 <div class="line"><a name="l00988"></a><span class="lineno">  988</span>&#160;        Scalar,</div>
-<div class="line"><a name="l00989"></a><span class="lineno">  989</span>&#160;        <span class="keyword">typename</span> Array&lt;Scalar, EntityType, MeshType, Params...&gt;::memory_space,</div>
-<div class="line"><a name="l00990"></a><span class="lineno">  990</span>&#160;        <span class="keyword">typename</span> Array&lt;Scalar, EntityType, MeshType, Params...&gt;::array_layout&gt;</div>
-<div class="line"><a name="l00991"></a><span class="lineno">  991</span>&#160;        adapter{ *array.layout() };</div>
-<div class="line"><a name="l00992"></a><span class="lineno">  992</span>&#160;    <span class="keywordflow">return</span> createHalo( pattern, width, adapter );</div>
+<div class="line"><a name="l00989"></a><span class="lineno">  989</span>&#160;        <span class="keyword">typename</span> <a class="code" href="classCajita_1_1Array.html">Array</a>&lt;Scalar, EntityType, MeshType, Params...&gt;::memory_space,</div>
+<div class="line"><a name="l00990"></a><span class="lineno">  990</span>&#160;        <span class="keyword">typename</span> <a class="code" href="classCajita_1_1Array.html">Array</a>&lt;Scalar, EntityType, MeshType, Params...&gt;::array_layout&gt;</div>
+<div class="line"><a name="l00991"></a><span class="lineno">  991</span>&#160;        adapter{ *array.<a class="code" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>() };</div>
+<div class="line"><a name="l00992"></a><span class="lineno">  992</span>&#160;    <span class="keywordflow">return</span> <a class="code" href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">createHalo</a>( pattern, width, adapter );</div>
 <div class="line"><a name="l00993"></a><span class="lineno">  993</span>&#160;}</div>
 <div class="line"><a name="l00994"></a><span class="lineno">  994</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00995"></a><span class="lineno">  995</span>&#160; </div>
@@ -1016,6 +1016,8 @@ $(function() {
 <div class="line"><a name="l00997"></a><span class="lineno">  997</span>&#160; </div>
 <div class="line"><a name="l00998"></a><span class="lineno">  998</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_HALO_HPP</span></div>
 <div class="ttc" id="aclassCajita_1_1ArrayLayout_html"><div class="ttname"><a href="classCajita_1_1ArrayLayout.html">Cajita::ArrayLayout</a></div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:36</div></div>
+<div class="ttc" id="aclassCajita_1_1Array_html"><div class="ttname"><a href="classCajita_1_1Array.html">Cajita::Array</a></div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:180</div></div>
+<div class="ttc" id="aclassCajita_1_1Array_html_aa5fe3e40a31d3ca1a507d5ef8c90d6de"><div class="ttname"><a href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">Cajita::Array::layout</a></div><div class="ttdeci">std::shared_ptr&lt; array_layout &gt; layout() const</div><div class="ttdoc">Get the layout of the array.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:244</div></div>
 <div class="ttc" id="aclassCajita_1_1FaceHaloPattern_html"><div class="ttname"><a href="classCajita_1_1FaceHaloPattern.html">Cajita::FaceHaloPattern</a></div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:109</div></div>
 <div class="ttc" id="aclassCajita_1_1FullHaloPattern_html"><div class="ttname"><a href="classCajita_1_1FullHaloPattern.html">Cajita::FullHaloPattern</a></div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:140</div></div>
 <div class="ttc" id="aclassCajita_1_1HaloPattern_html"><div class="ttname"><a href="classCajita_1_1HaloPattern.html">Cajita::HaloPattern</a></div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:38</div></div>
@@ -1024,6 +1026,8 @@ $(function() {
 <div class="ttc" id="aclassCajita_1_1Halo_html_a5722978e7ea15b2be1f42c8d9ec25f83"><div class="ttname"><a href="classCajita_1_1Halo.html#a5722978e7ea15b2be1f42c8d9ec25f83">Cajita::Halo::gather</a></div><div class="ttdeci">void gather(const ExecutionSpace &amp;exec_space, const ArrayTypes &amp;... arrays) const</div><div class="ttdoc">Gather data into our ghosts from their owners.</div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:280</div></div>
 <div class="ttc" id="aclassCajita_1_1Halo_html_a84524a88f8058d684e42bd0e5c3a4bd7"><div class="ttname"><a href="classCajita_1_1Halo.html#a84524a88f8058d684e42bd0e5c3a4bd7">Cajita::Halo::scatter</a></div><div class="ttdeci">void scatter(const ExecutionSpace &amp;exec_space, const ReduceOp &amp;reduce_op, const ArrayTypes &amp;... arrays) const</div><div class="ttdoc">Scatter data from our ghosts to their owners using the given type of reduce operation.</div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:363</div></div>
 <div class="ttc" id="aclassCajita_1_1NodeHaloPattern_html"><div class="ttname"><a href="classCajita_1_1NodeHaloPattern.html">Cajita::NodeHaloPattern</a></div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:69</div></div>
+<div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
+<div class="ttc" id="anamespaceCajita_html_a047ee0472b03e9ef8798fc34f110c28d"><div class="ttname"><a href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">Cajita::createHalo</a></div><div class="ttdeci">auto createHalo(const Pattern &amp;pattern, const int width, const ArrayTypes &amp;... arrays)</div><div class="ttdoc">Array creation function.</div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:927</div></div>
 <div class="ttc" id="astructCabana_1_1ParameterPack_html"><div class="ttname"><a href="structCabana_1_1ParameterPack.html">Cabana::ParameterPack</a></div><div class="ttdef"><b>Definition:</b> Cabana_ParameterPack.hpp:75</div></div>
 <div class="ttc" id="astructCajita_1_1ArrayPackMemorySpace_html"><div class="ttname"><a href="structCajita_1_1ArrayPackMemorySpace.html">Cajita::ArrayPackMemorySpace</a></div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:915</div></div>
 <div class="ttc" id="astructCajita_1_1Ghost_html"><div class="ttname"><a href="structCajita_1_1Ghost.html">Cajita::Ghost</a></div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:169</div></div>

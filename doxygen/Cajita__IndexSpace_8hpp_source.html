@@ -90,7 +90,7 @@ $(function() {
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
 <div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;string&gt;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span>Cajita</div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
 <div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keywordtype">long</span> N&gt;</div>
@@ -202,26 +202,26 @@ $(function() {
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ExecutionSpace&gt;</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160;Kokkos::RangePolicy&lt;ExecutionSpace&gt;</div>
-<div class="line"><a name="l00166"></a><span class="lineno">  166</span>&#160;createExecutionPolicy( <span class="keyword">const</span> IndexSpace&lt;1&gt;&amp; index_space, <span class="keyword">const</span> ExecutionSpace&amp; )</div>
+<div class="line"><a name="l00166"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">  166</a></span>&#160;<a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;1&gt;</a>&amp; index_space, <span class="keyword">const</span> ExecutionSpace&amp; )</div>
 <div class="line"><a name="l00167"></a><span class="lineno">  167</span>&#160;{</div>
-<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">return</span> Kokkos::RangePolicy&lt;ExecutionSpace&gt;( index_space.min( 0 ),</div>
-<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                                                index_space.max( 0 ) );</div>
+<div class="line"><a name="l00168"></a><span class="lineno">  168</span>&#160;    <span class="keywordflow">return</span> Kokkos::RangePolicy&lt;ExecutionSpace&gt;( index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a05438c272980c409c0818889ef0ecc53">min</a>( 0 ),</div>
+<div class="line"><a name="l00169"></a><span class="lineno">  169</span>&#160;                                                index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a491404b92767e08181196c45f9450e15">max</a>( 0 ) );</div>
 <div class="line"><a name="l00170"></a><span class="lineno">  170</span>&#160;}</div>
 <div class="line"><a name="l00171"></a><span class="lineno">  171</span>&#160; </div>
 <div class="line"><a name="l00172"></a><span class="lineno">  172</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00178"></a><span class="lineno">  178</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ExecutionSpace, <span class="keyword">class</span> WorkTag&gt;</div>
 <div class="line"><a name="l00179"></a><span class="lineno">  179</span>&#160;Kokkos::RangePolicy&lt;ExecutionSpace, WorkTag&gt;</div>
-<div class="line"><a name="l00180"></a><span class="lineno">  180</span>&#160;createExecutionPolicy( <span class="keyword">const</span> IndexSpace&lt;1&gt;&amp; index_space, <span class="keyword">const</span> ExecutionSpace&amp;,</div>
+<div class="line"><a name="l00180"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a3d9a2b5e43eb54a1ddc81c0522ab25a4">  180</a></span>&#160;<a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;1&gt;</a>&amp; index_space, <span class="keyword">const</span> ExecutionSpace&amp;,</div>
 <div class="line"><a name="l00181"></a><span class="lineno">  181</span>&#160;                       <span class="keyword">const</span> WorkTag&amp; )</div>
 <div class="line"><a name="l00182"></a><span class="lineno">  182</span>&#160;{</div>
-<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordflow">return</span> Kokkos::RangePolicy&lt;ExecutionSpace, WorkTag&gt;( index_space.min( 0 ),</div>
-<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                                                         index_space.max( 0 ) );</div>
+<div class="line"><a name="l00183"></a><span class="lineno">  183</span>&#160;    <span class="keywordflow">return</span> Kokkos::RangePolicy&lt;ExecutionSpace, WorkTag&gt;( index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a05438c272980c409c0818889ef0ecc53">min</a>( 0 ),</div>
+<div class="line"><a name="l00184"></a><span class="lineno">  184</span>&#160;                                                         index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a491404b92767e08181196c45f9450e15">max</a>( 0 ) );</div>
 <div class="line"><a name="l00185"></a><span class="lineno">  185</span>&#160;}</div>
 <div class="line"><a name="l00186"></a><span class="lineno">  186</span>&#160; </div>
 <div class="line"><a name="l00187"></a><span class="lineno">  187</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00191"></a><span class="lineno">  191</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> IndexSpace_t, <span class="keyword">class</span> ExecutionSpace&gt;</div>
 <div class="line"><a name="l00192"></a><span class="lineno">  192</span>&#160;Kokkos::MDRangePolicy&lt;ExecutionSpace, Kokkos::Rank&lt;IndexSpace_t::Rank&gt;&gt;</div>
-<div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160;createExecutionPolicy( <span class="keyword">const</span> IndexSpace_t&amp; index_space, <span class="keyword">const</span> ExecutionSpace&amp; )</div>
+<div class="line"><a name="l00193"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a69fe7af159514bec736fc22fcda68bff">  193</a></span>&#160;<a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( <span class="keyword">const</span> IndexSpace_t&amp; index_space, <span class="keyword">const</span> ExecutionSpace&amp; )</div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;{</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    <span class="keywordflow">return</span> Kokkos::MDRangePolicy&lt;ExecutionSpace,</div>
 <div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;                                 Kokkos::Rank&lt;IndexSpace_t::Rank&gt;&gt;(</div>
@@ -231,7 +231,7 @@ $(function() {
 <div class="line"><a name="l00200"></a><span class="lineno">  200</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00205"></a><span class="lineno">  205</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> IndexSpace_t, <span class="keyword">class</span> ExecutionSpace, <span class="keyword">class</span> WorkTag&gt;</div>
 <div class="line"><a name="l00206"></a><span class="lineno">  206</span>&#160;Kokkos::MDRangePolicy&lt;ExecutionSpace, WorkTag, Kokkos::Rank&lt;IndexSpace_t::Rank&gt;&gt;</div>
-<div class="line"><a name="l00207"></a><span class="lineno">  207</span>&#160;createExecutionPolicy( <span class="keyword">const</span> IndexSpace_t&amp; index_space, <span class="keyword">const</span> ExecutionSpace&amp;,</div>
+<div class="line"><a name="l00207"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a6b37484bec59309a24f0b7feeecfbaa8">  207</a></span>&#160;<a class="code" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a>( <span class="keyword">const</span> IndexSpace_t&amp; index_space, <span class="keyword">const</span> ExecutionSpace&amp;,</div>
 <div class="line"><a name="l00208"></a><span class="lineno">  208</span>&#160;                       <span class="keyword">const</span> WorkTag&amp; )</div>
 <div class="line"><a name="l00209"></a><span class="lineno">  209</span>&#160;{</div>
 <div class="line"><a name="l00210"></a><span class="lineno">  210</span>&#160;    <span class="keywordflow">return</span> Kokkos::MDRangePolicy&lt;ExecutionSpace, WorkTag,</div>
@@ -241,88 +241,88 @@ $(function() {
 <div class="line"><a name="l00214"></a><span class="lineno">  214</span>&#160; </div>
 <div class="line"><a name="l00215"></a><span class="lineno">  215</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00222"></a><span class="lineno">  222</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params&gt;</div>
-<div class="line"><a name="l00223"></a><span class="lineno">  223</span>&#160;Kokkos::View&lt;Scalar*, Params...&gt; createView( <span class="keyword">const</span> std::string&amp; label,</div>
-<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                                             <span class="keyword">const</span> IndexSpace&lt;1&gt;&amp; index_space )</div>
+<div class="line"><a name="l00223"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">  223</a></span>&#160;Kokkos::View&lt;Scalar*, Params...&gt; <a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>( <span class="keyword">const</span> std::string&amp; label,</div>
+<div class="line"><a name="l00224"></a><span class="lineno">  224</span>&#160;                                             <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;1&gt;</a>&amp; index_space )</div>
 <div class="line"><a name="l00225"></a><span class="lineno">  225</span>&#160;{</div>
 <div class="line"><a name="l00226"></a><span class="lineno">  226</span>&#160;    <span class="keywordflow">return</span> Kokkos::View&lt;Scalar*, Params...&gt;(</div>
 <div class="line"><a name="l00227"></a><span class="lineno">  227</span>&#160;        Kokkos::ViewAllocateWithoutInitializing( label ),</div>
-<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        index_space.extent( 0 ) );</div>
+<div class="line"><a name="l00228"></a><span class="lineno">  228</span>&#160;        index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 0 ) );</div>
 <div class="line"><a name="l00229"></a><span class="lineno">  229</span>&#160;}</div>
 <div class="line"><a name="l00230"></a><span class="lineno">  230</span>&#160; </div>
 <div class="line"><a name="l00231"></a><span class="lineno">  231</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00238"></a><span class="lineno">  238</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params&gt;</div>
 <div class="line"><a name="l00239"></a><span class="lineno">  239</span>&#160;Kokkos::View&lt;Scalar*, Params..., Kokkos::MemoryUnmanaged&gt;</div>
-<div class="line"><a name="l00240"></a><span class="lineno">  240</span>&#160;createView( <span class="keyword">const</span> IndexSpace&lt;1&gt;&amp; index_space, Scalar* data )</div>
+<div class="line"><a name="l00240"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a9531df705fdc2660fb29dd3eb8714335">  240</a></span>&#160;<a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;1&gt;</a>&amp; index_space, Scalar* data )</div>
 <div class="line"><a name="l00241"></a><span class="lineno">  241</span>&#160;{</div>
 <div class="line"><a name="l00242"></a><span class="lineno">  242</span>&#160;    <span class="keywordflow">return</span> Kokkos::View&lt;Scalar*, Params..., Kokkos::MemoryUnmanaged&gt;(</div>
-<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        data, index_space.extent( 0 ) );</div>
+<div class="line"><a name="l00243"></a><span class="lineno">  243</span>&#160;        data, index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 0 ) );</div>
 <div class="line"><a name="l00244"></a><span class="lineno">  244</span>&#160;}</div>
 <div class="line"><a name="l00245"></a><span class="lineno">  245</span>&#160; </div>
 <div class="line"><a name="l00246"></a><span class="lineno">  246</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00253"></a><span class="lineno">  253</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params&gt;</div>
-<div class="line"><a name="l00254"></a><span class="lineno">  254</span>&#160;Kokkos::View&lt;Scalar**, Params...&gt; createView( <span class="keyword">const</span> std::string&amp; label,</div>
-<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                                              <span class="keyword">const</span> IndexSpace&lt;2&gt;&amp; index_space )</div>
+<div class="line"><a name="l00254"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a9bbf7e52233435ee3179f05461f4a38c">  254</a></span>&#160;Kokkos::View&lt;Scalar**, Params...&gt; <a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>( <span class="keyword">const</span> std::string&amp; label,</div>
+<div class="line"><a name="l00255"></a><span class="lineno">  255</span>&#160;                                              <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;2&gt;</a>&amp; index_space )</div>
 <div class="line"><a name="l00256"></a><span class="lineno">  256</span>&#160;{</div>
 <div class="line"><a name="l00257"></a><span class="lineno">  257</span>&#160;    <span class="keywordflow">return</span> Kokkos::View&lt;Scalar**, Params...&gt;(</div>
 <div class="line"><a name="l00258"></a><span class="lineno">  258</span>&#160;        Kokkos::ViewAllocateWithoutInitializing( label ),</div>
-<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        index_space.extent( 0 ), index_space.extent( 1 ) );</div>
+<div class="line"><a name="l00259"></a><span class="lineno">  259</span>&#160;        index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 0 ), index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 1 ) );</div>
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160;}</div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160; </div>
 <div class="line"><a name="l00262"></a><span class="lineno">  262</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params&gt;</div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;Kokkos::View&lt;Scalar**, Params..., Kokkos::MemoryUnmanaged&gt;</div>
-<div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;createView( <span class="keyword">const</span> IndexSpace&lt;2&gt;&amp; index_space, Scalar* data )</div>
+<div class="line"><a name="l00271"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a8398eaf0e455595702b01831c98bce5d">  271</a></span>&#160;<a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;2&gt;</a>&amp; index_space, Scalar* data )</div>
 <div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;{</div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;    <span class="keywordflow">return</span> Kokkos::View&lt;Scalar**, Params..., Kokkos::MemoryUnmanaged&gt;(</div>
-<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        data, index_space.extent( 0 ), index_space.extent( 1 ) );</div>
+<div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;        data, index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 0 ), index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 1 ) );</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;}</div>
 <div class="line"><a name="l00276"></a><span class="lineno">  276</span>&#160; </div>
 <div class="line"><a name="l00277"></a><span class="lineno">  277</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00284"></a><span class="lineno">  284</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params&gt;</div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;Kokkos::View&lt;Scalar***, Params...&gt;</div>
-<div class="line"><a name="l00286"></a><span class="lineno">  286</span>&#160;createView( <span class="keyword">const</span> std::string&amp; label, <span class="keyword">const</span> IndexSpace&lt;3&gt;&amp; index_space )</div>
+<div class="line"><a name="l00286"></a><span class="lineno"><a class="line" href="namespaceCajita.html#ac0660da3fcb7e7de7f8ae6277f325542">  286</a></span>&#160;<a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>( <span class="keyword">const</span> std::string&amp; label, <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;3&gt;</a>&amp; index_space )</div>
 <div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;{</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;    <span class="keywordflow">return</span> Kokkos::View&lt;Scalar***, Params...&gt;(</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;        Kokkos::ViewAllocateWithoutInitializing( label ),</div>
-<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        index_space.extent( 0 ), index_space.extent( 1 ),</div>
-<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        index_space.extent( 2 ) );</div>
+<div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;        index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 0 ), index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 1 ),</div>
+<div class="line"><a name="l00291"></a><span class="lineno">  291</span>&#160;        index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 2 ) );</div>
 <div class="line"><a name="l00292"></a><span class="lineno">  292</span>&#160;}</div>
 <div class="line"><a name="l00293"></a><span class="lineno">  293</span>&#160; </div>
 <div class="line"><a name="l00294"></a><span class="lineno">  294</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params&gt;</div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;Kokkos::View&lt;Scalar***, Params..., Kokkos::MemoryUnmanaged&gt;</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;createView( <span class="keyword">const</span> IndexSpace&lt;3&gt;&amp; index_space, Scalar* data )</div>
+<div class="line"><a name="l00303"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a54a42bef35610957e3f42e20cf99d308">  303</a></span>&#160;<a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;3&gt;</a>&amp; index_space, Scalar* data )</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;{</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160;    <span class="keywordflow">return</span> Kokkos::View&lt;Scalar***, Params..., Kokkos::MemoryUnmanaged&gt;(</div>
-<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        data, index_space.extent( 0 ), index_space.extent( 1 ),</div>
-<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        index_space.extent( 2 ) );</div>
+<div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;        data, index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 0 ), index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 1 ),</div>
+<div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160;        index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 2 ) );</div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;}</div>
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160; </div>
 <div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params&gt;</div>
 <div class="line"><a name="l00318"></a><span class="lineno">  318</span>&#160;Kokkos::View&lt;Scalar****, Params...&gt;</div>
-<div class="line"><a name="l00319"></a><span class="lineno">  319</span>&#160;createView( <span class="keyword">const</span> std::string&amp; label, <span class="keyword">const</span> IndexSpace&lt;4&gt;&amp; index_space )</div>
+<div class="line"><a name="l00319"></a><span class="lineno"><a class="line" href="namespaceCajita.html#ab8b7eb24eebb49037bcacf78dc726b3b">  319</a></span>&#160;<a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>( <span class="keyword">const</span> std::string&amp; label, <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;4&gt;</a>&amp; index_space )</div>
 <div class="line"><a name="l00320"></a><span class="lineno">  320</span>&#160;{</div>
 <div class="line"><a name="l00321"></a><span class="lineno">  321</span>&#160;    <span class="keywordflow">return</span> Kokkos::View&lt;Scalar****, Params...&gt;(</div>
 <div class="line"><a name="l00322"></a><span class="lineno">  322</span>&#160;        Kokkos::ViewAllocateWithoutInitializing( label ),</div>
-<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        index_space.extent( 0 ), index_space.extent( 1 ),</div>
-<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        index_space.extent( 2 ), index_space.extent( 3 ) );</div>
+<div class="line"><a name="l00323"></a><span class="lineno">  323</span>&#160;        index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 0 ), index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 1 ),</div>
+<div class="line"><a name="l00324"></a><span class="lineno">  324</span>&#160;        index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 2 ), index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 3 ) );</div>
 <div class="line"><a name="l00325"></a><span class="lineno">  325</span>&#160;}</div>
 <div class="line"><a name="l00326"></a><span class="lineno">  326</span>&#160; </div>
 <div class="line"><a name="l00327"></a><span class="lineno">  327</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00334"></a><span class="lineno">  334</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>Scalar, <span class="keyword">class</span>... Params&gt;</div>
 <div class="line"><a name="l00335"></a><span class="lineno">  335</span>&#160;Kokkos::View&lt;Scalar****, Params..., Kokkos::MemoryUnmanaged&gt;</div>
-<div class="line"><a name="l00336"></a><span class="lineno">  336</span>&#160;createView( <span class="keyword">const</span> IndexSpace&lt;4&gt;&amp; index_space, Scalar* data )</div>
+<div class="line"><a name="l00336"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a1300fe5c384cf540da45adcc844f5043">  336</a></span>&#160;<a class="code" href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">createView</a>( <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;4&gt;</a>&amp; index_space, Scalar* data )</div>
 <div class="line"><a name="l00337"></a><span class="lineno">  337</span>&#160;{</div>
 <div class="line"><a name="l00338"></a><span class="lineno">  338</span>&#160;    <span class="keywordflow">return</span> Kokkos::View&lt;Scalar****, Params..., Kokkos::MemoryUnmanaged&gt;(</div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        data, index_space.extent( 0 ), index_space.extent( 1 ),</div>
-<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        index_space.extent( 2 ), index_space.extent( 3 ) );</div>
+<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;        data, index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 0 ), index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 1 ),</div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;        index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 2 ), index_space.<a class="code" href="classCajita_1_1IndexSpace.html#a274119c4b1bb2295a46009a7b0d93672">extent</a>( 3 ) );</div>
 <div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;}</div>
 <div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160; </div>
 <div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ViewType&gt;</div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;KOKKOS_INLINE_FUNCTION <span class="keyword">auto</span> createSubview( <span class="keyword">const</span> ViewType&amp; view,</div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                                           <span class="keyword">const</span> IndexSpace&lt;1&gt;&amp; index_space )</div>
+<div class="line"><a name="l00350"></a><span class="lineno"><a class="line" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">  350</a></span>&#160;KOKKOS_INLINE_FUNCTION <span class="keyword">auto</span> <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( <span class="keyword">const</span> ViewType&amp; view,</div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;                                           <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;1&gt;</a>&amp; index_space )</div>
 <div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    -&gt; decltype( Kokkos::subview( view, index_space.range( 0 ) ) )</div>
 <div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;{</div>
 <div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;    static_assert( 1 == ViewType::Rank, <span class="stringliteral">&quot;Incorrect view rank&quot;</span> );</div>
@@ -331,8 +331,8 @@ $(function() {
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160; </div>
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ViewType&gt;</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;KOKKOS_INLINE_FUNCTION <span class="keyword">auto</span> createSubview( <span class="keyword">const</span> ViewType&amp; view,</div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                                           <span class="keyword">const</span> IndexSpace&lt;2&gt;&amp; index_space )</div>
+<div class="line"><a name="l00365"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a4594470daa8143fa9a8f65e5689c3ae7">  365</a></span>&#160;KOKKOS_INLINE_FUNCTION <span class="keyword">auto</span> <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( <span class="keyword">const</span> ViewType&amp; view,</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;                                           <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;2&gt;</a>&amp; index_space )</div>
 <div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    -&gt; decltype( Kokkos::subview( view, index_space.range( 0 ),</div>
 <div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;                                  index_space.range( 1 ) ) )</div>
 <div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;{</div>
@@ -343,8 +343,8 @@ $(function() {
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160; </div>
 <div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ViewType&gt;</div>
-<div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160;KOKKOS_INLINE_FUNCTION <span class="keyword">auto</span> createSubview( <span class="keyword">const</span> ViewType&amp; view,</div>
-<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;                                           <span class="keyword">const</span> IndexSpace&lt;3&gt;&amp; index_space )</div>
+<div class="line"><a name="l00382"></a><span class="lineno"><a class="line" href="namespaceCajita.html#aeb002d4e9b61930c1478eaf4f00d610f">  382</a></span>&#160;KOKKOS_INLINE_FUNCTION <span class="keyword">auto</span> <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( <span class="keyword">const</span> ViewType&amp; view,</div>
+<div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;                                           <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;3&gt;</a>&amp; index_space )</div>
 <div class="line"><a name="l00384"></a><span class="lineno">  384</span>&#160;    -&gt; decltype( Kokkos::subview( view, index_space.range( 0 ),</div>
 <div class="line"><a name="l00385"></a><span class="lineno">  385</span>&#160;                                  index_space.range( 1 ),</div>
 <div class="line"><a name="l00386"></a><span class="lineno">  386</span>&#160;                                  index_space.range( 2 ) ) )</div>
@@ -356,8 +356,8 @@ $(function() {
 <div class="line"><a name="l00392"></a><span class="lineno">  392</span>&#160; </div>
 <div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> ViewType&gt;</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;KOKKOS_INLINE_FUNCTION <span class="keyword">auto</span> createSubview( <span class="keyword">const</span> ViewType&amp; view,</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;                                           <span class="keyword">const</span> IndexSpace&lt;4&gt;&amp; index_space )</div>
+<div class="line"><a name="l00400"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a413c2645baa122d4cb8f079597e43fce">  400</a></span>&#160;KOKKOS_INLINE_FUNCTION <span class="keyword">auto</span> <a class="code" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>( <span class="keyword">const</span> ViewType&amp; view,</div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;                                           <span class="keyword">const</span> <a class="code" href="classCajita_1_1IndexSpace.html">IndexSpace&lt;4&gt;</a>&amp; index_space )</div>
 <div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    -&gt; decltype( Kokkos::subview( view, index_space.range( 0 ),</div>
 <div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;                                  index_space.range( 1 ),</div>
 <div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;                                  index_space.range( 2 ),</div>
@@ -431,6 +431,10 @@ $(function() {
 <div class="ttc" id="aclassCajita_1_1IndexSpace_html_adf26fe1f4615b8bb360b93b5f4e8a8a7"><div class="ttname"><a href="classCajita_1_1IndexSpace.html#adf26fe1f4615b8bb360b93b5f4e8a8a7">Cajita::IndexSpace::IndexSpace</a></div><div class="ttdeci">IndexSpace(const std::initializer_list&lt; long &gt; &amp;size)</div><div class="ttdoc">Initializer list size constructor.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:45</div></div>
 <div class="ttc" id="aclassCajita_1_1IndexSpace_html_ae3861bbcf60f8fe7c98039c32b9f7038"><div class="ttname"><a href="classCajita_1_1IndexSpace.html#ae3861bbcf60f8fe7c98039c32b9f7038">Cajita::IndexSpace::min</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION Kokkos::Array&lt; long, Rank &gt; min() const</div><div class="ttdoc">Get the minimum indices in all dimensions.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:104</div></div>
 <div class="ttc" id="aclassCajita_1_1IndexSpace_html_ae6a46d04379849fd6b2408df0a002d51"><div class="ttname"><a href="classCajita_1_1IndexSpace.html#ae6a46d04379849fd6b2408df0a002d51">Cajita::IndexSpace::operator!=</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION bool operator!=(const IndexSpace&lt; N &gt; &amp;rhs) const</div><div class="ttdoc">Comparison operator.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:93</div></div>
+<div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
+<div class="ttc" id="anamespaceCajita_html_a1d70326b11175c3b3111b3e544d002b3"><div class="ttname"><a href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">Cajita::createExecutionPolicy</a></div><div class="ttdeci">Kokkos::RangePolicy&lt; ExecutionSpace &gt; createExecutionPolicy(const IndexSpace&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;)</div><div class="ttdoc">Create a multi-dimensional execution policy over an index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:166</div></div>
+<div class="ttc" id="anamespaceCajita_html_a99d5b9427668544de95ae7e1754fbdf2"><div class="ttname"><a href="namespaceCajita.html#a99d5b9427668544de95ae7e1754fbdf2">Cajita::createView</a></div><div class="ttdeci">Kokkos::View&lt; Scalar *, Params... &gt; createView(const std::string &amp;label, const IndexSpace&lt; 1 &gt; &amp;index_space)</div><div class="ttdoc">Given an index space create a view over the extent of that index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:223</div></div>
+<div class="ttc" id="anamespaceCajita_html_afffd9f583a762bf067ff0d583b5e3498"><div class="ttname"><a href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">Cajita::createSubview</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION auto createSubview(const ViewType &amp;view, const IndexSpace&lt; 1 &gt; &amp;index_space) -&gt; decltype(Kokkos::subview(view, index_space.range(0)))</div><div class="ttdoc">Given a view create a subview over the given index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:350</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

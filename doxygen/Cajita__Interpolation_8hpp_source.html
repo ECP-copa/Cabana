@@ -96,7 +96,7 @@ $(function() {
 <div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="preprocessor">#include &lt;memory&gt;</span></div>
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">namespace </span>Cajita</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
 <div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;{</div>
 <div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment">// LOCAL INTERPOLATION</span></div>
@@ -1014,14 +1014,14 @@ $(function() {
 <div class="line"><a name="l01096"></a><span class="lineno"> 1096</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>PointEvalFunctor, <span class="keyword">class </span>PointCoordinates, <span class="keyword">class </span>ArrayScalar,</div>
 <div class="line"><a name="l01097"></a><span class="lineno"> 1097</span>&#160;          <span class="keyword">class </span>MeshScalar, std::size_t NumSpaceDim, <span class="keyword">class </span>EntityType,</div>
 <div class="line"><a name="l01098"></a><span class="lineno"> 1098</span>&#160;          <span class="keywordtype">int</span> SplineOrder, <span class="keyword">class </span>DeviceType, <span class="keyword">class</span>... ArrayParams&gt;</div>
-<div class="line"><a name="l01099"></a><span class="lineno"> 1099</span>&#160;<span class="keywordtype">void</span> p2g( <span class="keyword">const</span> PointEvalFunctor&amp; functor, <span class="keyword">const</span> PointCoordinates&amp; points,</div>
-<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;          <span class="keyword">const</span> std::size_t num_point, Spline&lt;SplineOrder&gt;,</div>
-<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;          <span class="keyword">const</span> Halo&lt;DeviceType&gt;&amp; halo,</div>
-<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;          Array&lt;ArrayScalar, EntityType, UniformMesh&lt;MeshScalar, NumSpaceDim&gt;,</div>
+<div class="line"><a name="l01099"></a><span class="lineno"><a class="line" href="namespaceCajita.html#af35c1fd6167a736a6a78cf742c2d6251"> 1099</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceCajita.html#af35c1fd6167a736a6a78cf742c2d6251">p2g</a>( <span class="keyword">const</span> PointEvalFunctor&amp; functor, <span class="keyword">const</span> PointCoordinates&amp; points,</div>
+<div class="line"><a name="l01100"></a><span class="lineno"> 1100</span>&#160;          <span class="keyword">const</span> std::size_t num_point, <a class="code" href="structCajita_1_1Spline.html">Spline&lt;SplineOrder&gt;</a>,</div>
+<div class="line"><a name="l01101"></a><span class="lineno"> 1101</span>&#160;          <span class="keyword">const</span> <a class="code" href="classCajita_1_1Halo.html">Halo&lt;DeviceType&gt;</a>&amp; halo,</div>
+<div class="line"><a name="l01102"></a><span class="lineno"> 1102</span>&#160;          <a class="code" href="classCajita_1_1Array.html">Array</a>&lt;ArrayScalar, EntityType, <a class="code" href="structCajita_1_1UniformMesh.html">UniformMesh&lt;MeshScalar, NumSpaceDim&gt;</a>,</div>
 <div class="line"><a name="l01103"></a><span class="lineno"> 1103</span>&#160;                ArrayParams...&gt;&amp; array )</div>
 <div class="line"><a name="l01104"></a><span class="lineno"> 1104</span>&#160;{</div>
 <div class="line"><a name="l01105"></a><span class="lineno"> 1105</span>&#160;    <span class="keyword">using</span> array_type =</div>
-<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;        Array&lt;ArrayScalar, EntityType, UniformMesh&lt;MeshScalar, NumSpaceDim&gt;,</div>
+<div class="line"><a name="l01106"></a><span class="lineno"> 1106</span>&#160;        <a class="code" href="classCajita_1_1Array.html">Array&lt;ArrayScalar, EntityType, UniformMesh&lt;MeshScalar, NumSpaceDim&gt;</a>,</div>
 <div class="line"><a name="l01107"></a><span class="lineno"> 1107</span>&#160;              ArrayParams...&gt;;</div>
 <div class="line"><a name="l01108"></a><span class="lineno"> 1108</span>&#160;    static_assert( std::is_same&lt;<span class="keyword">typename</span> Halo&lt;DeviceType&gt;::memory_space,</div>
 <div class="line"><a name="l01109"></a><span class="lineno"> 1109</span>&#160;                                <span class="keyword">typename</span> array_type::memory_space&gt;::value,</div>
@@ -1050,7 +1050,7 @@ $(function() {
 <div class="line"><a name="l01132"></a><span class="lineno"> 1132</span>&#160; </div>
 <div class="line"><a name="l01133"></a><span class="lineno"> 1133</span>&#160;            <span class="comment">// Create the local spline data.</span></div>
 <div class="line"><a name="l01134"></a><span class="lineno"> 1134</span>&#160;            <span class="keyword">using</span> sd_type =</div>
-<div class="line"><a name="l01135"></a><span class="lineno"> 1135</span>&#160;                SplineData&lt;MeshScalar, SplineOrder, NumSpaceDim, EntityType&gt;;</div>
+<div class="line"><a name="l01135"></a><span class="lineno"> 1135</span>&#160;                <a class="code" href="structCajita_1_1SplineData.html">SplineData&lt;MeshScalar, SplineOrder, NumSpaceDim, EntityType&gt;</a>;</div>
 <div class="line"><a name="l01136"></a><span class="lineno"> 1136</span>&#160;            sd_type sd;</div>
 <div class="line"><a name="l01137"></a><span class="lineno"> 1137</span>&#160;            evaluateSpline( local_mesh, px, sd );</div>
 <div class="line"><a name="l01138"></a><span class="lineno"> 1138</span>&#160; </div>
@@ -1061,7 +1061,7 @@ $(function() {
 <div class="line"><a name="l01143"></a><span class="lineno"> 1143</span>&#160; </div>
 <div class="line"><a name="l01144"></a><span class="lineno"> 1144</span>&#160;    <span class="comment">// Scatter interpolation contributions in the halo back to their owning</span></div>
 <div class="line"><a name="l01145"></a><span class="lineno"> 1145</span>&#160;    <span class="comment">// ranks.</span></div>
-<div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160;    halo.scatter( execution_space(), ScatterReduce::Sum(), array );</div>
+<div class="line"><a name="l01146"></a><span class="lineno"> 1146</span>&#160;    halo.<a class="code" href="classCajita_1_1Halo.html#a84524a88f8058d684e42bd0e5c3a4bd7">scatter</a>( execution_space(), <a class="code" href="structCajita_1_1ScatterReduce_1_1Sum.html">ScatterReduce::Sum</a>(), array );</div>
 <div class="line"><a name="l01147"></a><span class="lineno"> 1147</span>&#160;}</div>
 <div class="line"><a name="l01148"></a><span class="lineno"> 1148</span>&#160; </div>
 <div class="line"><a name="l01149"></a><span class="lineno"> 1149</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
@@ -1247,13 +1247,22 @@ $(function() {
 <div class="line"><a name="l01369"></a><span class="lineno"> 1369</span>&#160;} <span class="comment">// end namespace Cajita</span></div>
 <div class="line"><a name="l01370"></a><span class="lineno"> 1370</span>&#160; </div>
 <div class="line"><a name="l01371"></a><span class="lineno"> 1371</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_INTERPOLATION_HPP</span></div>
+<div class="ttc" id="aclassCajita_1_1Array_html"><div class="ttname"><a href="classCajita_1_1Array.html">Cajita::Array</a></div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:180</div></div>
+<div class="ttc" id="aclassCajita_1_1Halo_html"><div class="ttname"><a href="classCajita_1_1Halo.html">Cajita::Halo</a></div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:188</div></div>
+<div class="ttc" id="aclassCajita_1_1Halo_html_a84524a88f8058d684e42bd0e5c3a4bd7"><div class="ttname"><a href="classCajita_1_1Halo.html#a84524a88f8058d684e42bd0e5c3a4bd7">Cajita::Halo::scatter</a></div><div class="ttdeci">void scatter(const ExecutionSpace &amp;exec_space, const ReduceOp &amp;reduce_op, const ArrayTypes &amp;... arrays) const</div><div class="ttdoc">Scatter data from our ghosts to their owners using the given type of reduce operation.</div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:363</div></div>
+<div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
+<div class="ttc" id="anamespaceCajita_html_af35c1fd6167a736a6a78cf742c2d6251"><div class="ttname"><a href="namespaceCajita.html#af35c1fd6167a736a6a78cf742c2d6251">Cajita::p2g</a></div><div class="ttdeci">void p2g(const PointEvalFunctor &amp;functor, const PointCoordinates &amp;points, const std::size_t num_point, Spline&lt; SplineOrder &gt;, const Halo&lt; DeviceType &gt; &amp;halo, Array&lt; ArrayScalar, EntityType, UniformMesh&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array)</div><div class="ttdoc">Global Point-to-Grid interpolation.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:1099</div></div>
 <div class="ttc" id="astructCajita_1_1P2G_1_1is__scatter__view__impl_html"><div class="ttname"><a href="structCajita_1_1P2G_1_1is__scatter__view__impl.html">Cajita::P2G::is_scatter_view_impl</a></div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:371</div></div>
 <div class="ttc" id="astructCajita_1_1P2G_1_1is__scatter__view_html"><div class="ttname"><a href="structCajita_1_1P2G_1_1is__scatter__view.html">Cajita::P2G::is_scatter_view</a></div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:398</div></div>
 <div class="ttc" id="astructCajita_1_1ScalarGradientG2P_html"><div class="ttname"><a href="structCajita_1_1ScalarGradientG2P.html">Cajita::ScalarGradientG2P</a></div><div class="ttdoc">Grid-to-point scalar gradient functor.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:930</div></div>
 <div class="ttc" id="astructCajita_1_1ScalarGradientP2G_html"><div class="ttname"><a href="structCajita_1_1ScalarGradientP2G.html">Cajita::ScalarGradientP2G</a></div><div class="ttdoc">Point-to-grid scalar gradient functor.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:1246</div></div>
 <div class="ttc" id="astructCajita_1_1ScalarValueG2P_html"><div class="ttname"><a href="structCajita_1_1ScalarValueG2P.html">Cajita::ScalarValueG2P</a></div><div class="ttdoc">Grid-to-point scalar value functor.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:843</div></div>
 <div class="ttc" id="astructCajita_1_1ScalarValueP2G_html"><div class="ttname"><a href="structCajita_1_1ScalarValueP2G.html">Cajita::ScalarValueP2G</a></div><div class="ttdoc">Point-to-grid scalar value functor.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:1160</div></div>
+<div class="ttc" id="astructCajita_1_1ScatterReduce_1_1Sum_html"><div class="ttname"><a href="structCajita_1_1ScatterReduce_1_1Sum.html">Cajita::ScatterReduce::Sum</a></div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:151</div></div>
+<div class="ttc" id="astructCajita_1_1SplineData_html"><div class="ttname"><a href="structCajita_1_1SplineData.html">Cajita::SplineData</a></div><div class="ttdef"><b>Definition:</b> Cajita_Splines.hpp:546</div></div>
+<div class="ttc" id="astructCajita_1_1Spline_html"><div class="ttname"><a href="structCajita_1_1Spline.html">Cajita::Spline</a></div><div class="ttdef"><b>Definition:</b> Cajita_Splines.hpp:28</div></div>
 <div class="ttc" id="astructCajita_1_1TensorDivergenceP2G_html"><div class="ttname"><a href="structCajita_1_1TensorDivergenceP2G.html">Cajita::TensorDivergenceP2G</a></div><div class="ttdoc">Point-to-grid tensor divergence functor.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:1332</div></div>
+<div class="ttc" id="astructCajita_1_1UniformMesh_html"><div class="ttname"><a href="structCajita_1_1UniformMesh.html">Cajita::UniformMesh</a></div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:193</div></div>
 <div class="ttc" id="astructCajita_1_1VectorDivergenceG2P_html"><div class="ttname"><a href="structCajita_1_1VectorDivergenceG2P.html">Cajita::VectorDivergenceG2P</a></div><div class="ttdoc">Grid-to-point vector value functor.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:1020</div></div>
 <div class="ttc" id="astructCajita_1_1VectorDivergenceP2G_html"><div class="ttname"><a href="structCajita_1_1VectorDivergenceP2G.html">Cajita::VectorDivergenceP2G</a></div><div class="ttdoc">Point-to-grid vector divergence functor.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:1288</div></div>
 <div class="ttc" id="astructCajita_1_1VectorGradientG2P_html"><div class="ttname"><a href="structCajita_1_1VectorGradientG2P.html">Cajita::VectorGradientG2P</a></div><div class="ttdoc">Grid-to-point vector gradient functor.</div><div class="ttdef"><b>Definition:</b> Cajita_Interpolation.hpp:974</div></div>
