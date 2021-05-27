@@ -1354,9 +1354,10 @@ template&lt;class IndexType , class FunctorType , class NeighborListType &gt; </
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">neigh_functor</td><td>The neighbor functor to execute in parallel</td></tr>
+    <tr><td class="paramname">i</td><td>Particle index.</td></tr>
+    <tr><td class="paramname">neighbor_functor</td><td>The neighbor functor to execute in parallel.</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first neighbors. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1FirstNeighborsTag.html" title="Loop over particle neighbors.">FirstNeighborsTag</a></td><td>Tag indicating operations over particle first neighbors. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1420,9 +1421,11 @@ template&lt;class IndexType , class FunctorType , class NeighborListType , class
 </dl>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">neigh_functor</td><td>The neighbor functor to execute in parallel</td></tr>
+    <tr><td class="paramname">i</td><td>Particle index.</td></tr>
+    <tr><td class="paramname">team</td><td>Kokkos team.</td></tr>
+    <tr><td class="paramname">neighbor_functor</td><td>The neighbor functor to execute in parallel.</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first neighbors. </td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1FirstNeighborsTag.html" title="Loop over particle neighbors.">FirstNeighborsTag</a></td><td>Tag indicating operations over particle first neighbors. </td></tr>
   </table>
   </dd>
 </dl>
@@ -1782,8 +1785,8 @@ template&lt;class FunctorType , class NeighborListType , class... ExecParameters
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a serial loop strategy over neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1FirstNeighborsTag.html" title="Loop over particle neighbors.">FirstNeighborsTag</a></td><td>Tag indicating operations over particle first neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SerialOpTag.html" title="Neighbor operations are executed in serial on each particle thread.">SerialOpTag</a></td><td>Tag indicating a serial loop strategy over neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_for called by this code and can be used for identification and profiling purposes.</td></tr>
   </table>
   </dd>
@@ -1872,8 +1875,8 @@ template&lt;class FunctorType , class NeighborListType , class... ExecParameters
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a team parallel strategy over neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1FirstNeighborsTag.html" title="Loop over particle neighbors.">FirstNeighborsTag</a></td><td>Tag indicating operations over particle first neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1TeamOpTag.html" title="Neighbor operations are executed with team parallelism.">TeamOpTag</a></td><td>Tag indicating a team parallel strategy over neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_for called by this code and can be used for identification and profiling purposes.</td></tr>
   </table>
   </dd>
@@ -1962,8 +1965,8 @@ template&lt;class FunctorType , class NeighborListType , class... ExecParameters
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first and second neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a serial loop strategy over neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SecondNeighborsTag.html" title="Loop over particle neighbors (first) and neighbor&#39;s neighbors (second)">SecondNeighborsTag</a></td><td>Tag indicating operations over particle first and second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SerialOpTag.html" title="Neighbor operations are executed in serial on each particle thread.">SerialOpTag</a></td><td>Tag indicating a serial loop strategy over neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_for called by this code and can be used for identification and profiling purposes. </td></tr>
   </table>
   </dd>
@@ -2045,8 +2048,8 @@ template&lt;class FunctorType , class NeighborListType , class... ExecParameters
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first and second neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a team parallel strategy over particle first neighbors and serial execution over second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SecondNeighborsTag.html" title="Loop over particle neighbors (first) and neighbor&#39;s neighbors (second)">SecondNeighborsTag</a></td><td>Tag indicating operations over particle first and second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1TeamOpTag.html" title="Neighbor operations are executed with team parallelism.">TeamOpTag</a></td><td>Tag indicating a team parallel strategy over particle first neighbors and serial execution over second neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_for called by this code and can be used for identification and profiling purposes. </td></tr>
   </table>
   </dd>
@@ -2128,8 +2131,8 @@ template&lt;class FunctorType , class NeighborListType , class... ExecParameters
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first and second neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a team parallel strategy over particle first neighbors and vector parallel loop strategy over second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SecondNeighborsTag.html" title="Loop over particle neighbors (first) and neighbor&#39;s neighbors (second)">SecondNeighborsTag</a></td><td>Tag indicating operations over particle first and second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1TeamVectorOpTag.html" title="Neighbor operations are executed with team vector parallelism.">TeamVectorOpTag</a></td><td>Tag indicating a team parallel strategy over particle first neighbors and vector parallel loop strategy over second neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_for called by this code and can be used for identification and profiling purposes. </td></tr>
   </table>
   </dd>
@@ -2218,8 +2221,8 @@ template&lt;class FunctorType , class NeighborListType , class ReduceType , clas
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a serial loop strategy over particle neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1FirstNeighborsTag.html" title="Loop over particle neighbors.">FirstNeighborsTag</a></td><td>Tag indicating operations over particle first neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SerialOpTag.html" title="Neighbor operations are executed in serial on each particle thread.">SerialOpTag</a></td><td>Tag indicating a serial loop strategy over neighbors.</td></tr>
     <tr><td class="paramname">reduce_val</td><td>Scalar to be reduced across particles and neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_reduce called by this code and can be used for identification and profiling purposes. </td></tr>
   </table>
@@ -2309,8 +2312,8 @@ template&lt;class FunctorType , class NeighborListType , class ReduceType , clas
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a team parallel strategy over particle neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1FirstNeighborsTag.html" title="Loop over particle neighbors.">FirstNeighborsTag</a></td><td>Tag indicating operations over particle first neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1TeamOpTag.html" title="Neighbor operations are executed with team parallelism.">TeamOpTag</a></td><td>Tag indicating a team parallel strategy over particle neighbors.</td></tr>
     <tr><td class="paramname">reduce_val</td><td>Scalar to be reduced across particles and neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_reduce called by this code and can be used for identification and profiling purposes. </td></tr>
   </table>
@@ -2400,8 +2403,8 @@ template&lt;class FunctorType , class NeighborListType , class ReduceType , clas
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first and second neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a serial loop strategy over particle neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SecondNeighborsTag.html" title="Loop over particle neighbors (first) and neighbor&#39;s neighbors (second)">SecondNeighborsTag</a></td><td>Tag indicating operations over particle first and second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SerialOpTag.html" title="Neighbor operations are executed in serial on each particle thread.">SerialOpTag</a></td><td>Tag indicating a serial loop strategy over neighbors.</td></tr>
     <tr><td class="paramname">reduce_val</td><td>Scalar to be reduced across particles and neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_reduce called by this code and can be used for identification and profiling purposes. </td></tr>
   </table>
@@ -2491,8 +2494,8 @@ template&lt;class FunctorType , class NeighborListType , class ReduceType , clas
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first and second neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a team parallel strategy over particle first neighbors and serial loops over second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SecondNeighborsTag.html" title="Loop over particle neighbors (first) and neighbor&#39;s neighbors (second)">SecondNeighborsTag</a></td><td>Tag indicating operations over particle first and second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1TeamOpTag.html" title="Neighbor operations are executed with team parallelism.">TeamOpTag</a></td><td>Tag indicating a team parallel strategy over particle first neighbors and serial loops over second neighbors.</td></tr>
     <tr><td class="paramname">reduce_val</td><td>Scalar to be reduced across particles and neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_reduce called by this code and can be used for identification and profiling purposes. </td></tr>
   </table>
@@ -2582,8 +2585,8 @@ template&lt;class FunctorType , class NeighborListType , class ReduceType , clas
     <tr><td class="paramname">exec_policy</td><td>The policy over which to execute the functor.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute in parallel</td></tr>
     <tr><td class="paramname">list</td><td>The neighbor list over which to execute the neighbor operations.</td></tr>
-    <tr><td class="paramname">neighborstag</td><td>Iteration tag indicating operations over particle first and second neighbors.</td></tr>
-    <tr><td class="paramname">optag</td><td>Algorithm tag indicating a team parallel strategy over particle first neighbors and vector loops over second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1SecondNeighborsTag.html" title="Loop over particle neighbors (first) and neighbor&#39;s neighbors (second)">SecondNeighborsTag</a></td><td>Tag indicating operations over particle first and second neighbors.</td></tr>
+    <tr><td class="paramname"><a class="el" href="classCabana_1_1TeamVectorOpTag.html" title="Neighbor operations are executed with team vector parallelism.">TeamVectorOpTag</a></td><td>Tag indicating a team parallel strategy over particle first neighbors and vector loops over second neighbors.</td></tr>
     <tr><td class="paramname">reduce_val</td><td>Scalar to be reduced across particles and neighbors.</td></tr>
     <tr><td class="paramname">str</td><td>Optional name for the functor. Will be forwarded if non-empty to the Kokkos::parallel_reduce called by this code and can be used for identification and profiling purposes. </td></tr>
   </table>

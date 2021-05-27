@@ -548,9 +548,9 @@ template&lt;long N&gt; </td></tr>
 template&lt;long N&gt; </td></tr>
 <tr class="memitem:afc579f447afc9f267f9939f2e27fc80b"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; N+1 &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>appendDimension</b> (const <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; N &gt; &amp;index_space, const long min, const long max)</td></tr>
 <tr class="separator:afc579f447afc9f267f9939f2e27fc80b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46994b4aad6692cf5cdd9fff08c578d0"><td class="memTemplParams" colspan="2"><a id="a46994b4aad6692cf5cdd9fff08c578d0"></a>
-template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class DeviceType , class... ArrayParams&gt; </td></tr>
-<tr class="memitem:a46994b4aad6692cf5cdd9fff08c578d0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>g2p</b> (const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array, const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; DeviceType &gt; &amp;halo, const PointCoordinates &amp;points, const std::size_t num_point, <a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;, const PointEvalFunctor &amp;functor)</td></tr>
+<tr class="memitem:a46994b4aad6692cf5cdd9fff08c578d0"><td class="memTemplParams" colspan="2">template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class DeviceType , class... ArrayParams&gt; </td></tr>
+<tr class="memitem:a46994b4aad6692cf5cdd9fff08c578d0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a46994b4aad6692cf5cdd9fff08c578d0">g2p</a> (const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;array, const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; DeviceType &gt; &amp;halo, const PointCoordinates &amp;points, const std::size_t num_point, <a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;, const PointEvalFunctor &amp;functor)</td></tr>
+<tr class="memdesc:a46994b4aad6692cf5cdd9fff08c578d0"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html">Global</a> Grid-to-Point interpolation.  <a href="namespaceCajita.html#a46994b4aad6692cf5cdd9fff08c578d0">More...</a><br /></td></tr>
 <tr class="separator:a46994b4aad6692cf5cdd9fff08c578d0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a34151ac55b1a94763c5e253ea9783ba6"><td class="memTemplParams" colspan="2"><a id="a34151ac55b1a94763c5e253ea9783ba6"></a>
 template&lt;class ViewType &gt; </td></tr>
@@ -814,11 +814,13 @@ template&lt;class EntityType , class MeshType &gt; </div>
 <p>Create an array layout over the entities of a grid given local grid parameters. An intermediate local grid will be created and assigned to the layout. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">local_grid</td><td>The local grid over which to create the layout. </td></tr>
+    <tr><td class="paramname">global_grid</td><td>The local grid over which to create the layout. </td></tr>
+    <tr><td class="paramname">halo_cell_width</td><td>The number of halo cells surrounding the locally owned cells. </td></tr>
     <tr><td class="paramname">dofs_per_entity</td><td>The number of degrees-of-freedom per grid entity. </td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>EntityType The entity: <a class="el" href="structCajita_1_1Cell.html">Cell</a>, <a class="el" href="structCajita_1_1Node.html">Node</a>, <a class="el" href="structCajita_1_1Face.html">Face</a>, or <a class="el" href="structCajita_1_1Edge.html">Edge</a> </dd></dl>
 
 </div>
 </div>
@@ -864,6 +866,7 @@ template&lt;class EntityType , class MeshType &gt; </div>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd>EntityType The entity: <a class="el" href="structCajita_1_1Cell.html">Cell</a>, <a class="el" href="structCajita_1_1Node.html">Node</a>, <a class="el" href="structCajita_1_1Face.html">Face</a>, or <a class="el" href="structCajita_1_1Edge.html">Edge</a> </dd></dl>
 
 </div>
 </div>
@@ -1623,6 +1626,87 @@ template&lt;class Scalar , class... Params&gt; </div>
 
 </div>
 </div>
+<a id="a46994b4aad6692cf5cdd9fff08c578d0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46994b4aad6692cf5cdd9fff08c578d0">&#9670;&nbsp;</a></span>g2p()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar , class MeshScalar , class EntityType , int SplineOrder, std::size_t NumSpaceDim, class DeviceType , class... ArrayParams&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::g2p </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; ArrayScalar, EntityType, <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; MeshScalar, NumSpaceDim &gt;, ArrayParams... &gt; &amp;&#160;</td>
+          <td class="paramname"><em>array</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1Halo.html">Halo</a>&lt; DeviceType &gt; &amp;&#160;</td>
+          <td class="paramname"><em>halo</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const PointCoordinates &amp;&#160;</td>
+          <td class="paramname"><em>points</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>num_point</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Spline.html">Spline</a>&lt; SplineOrder &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const PointEvalFunctor &amp;&#160;</td>
+          <td class="paramname"><em>functor</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><a class="el" href="structCajita_1_1Global.html">Global</a> Grid-to-Point interpolation. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">PointEvalFunctor</td><td>Functor type used to evaluate the interpolated data for a given point at a given entity.</td></tr>
+    <tr><td class="paramname">PointCoordinates</td><td>Container type with view traits containing the point coordinates. Will be indexed as (point,dim).</td></tr>
+    <tr><td class="paramname">ArrayScalar</td><td>The scalar type used for the interpolated data.</td></tr>
+    <tr><td class="paramname">MeshScalar</td><td>The scalar type used for the geometry/interpolation data.</td></tr>
+    <tr><td class="paramname">NumSpaceDim</td><td>The spatial dimension of the mesh.</td></tr>
+    <tr><td class="paramname">EntityType</td><td>The entitytype to which the points will interpolate.</td></tr>
+    <tr><td class="paramname">SplineOrder</td><td>The order of spline interpolation to use.</td></tr>
+    <tr><td class="paramname">DeviceType</td><td>The device type to use for interplation</td></tr>
+    <tr><td class="paramname">ArrayParams</td><td>Parameters for the array type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">array</td><td>The grid array from which the point data will be interpolated.</td></tr>
+    <tr><td class="paramname">halo</td><td>The halo associated with the grid array. This hallo will be used to gather the array data before interpolation.</td></tr>
+    <tr><td class="paramname">points</td><td>The points over which to perform the interpolation. Will be indexed as (point,dim). The subset of indices in each point's interpolation stencil must be contained within the local grid that will be used for the interpolation</td></tr>
+    <tr><td class="paramname">num_point</td><td>The number of points. This is the size of the first dimension of points.</td></tr>
+    <tr><td class="paramname">functor</td><td>A functor that interpolates from a given entity to a given point.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="structCajita_1_1Spline.html">Spline</a> of SplineOrder passed for interpolation. </dd></dl>
+
+</div>
+</div>
 <a id="a1c57f5f0f71a9195f375410205a2df20"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a1c57f5f0f71a9195f375410205a2df20">&#9670;&nbsp;</a></span>grid_parallel_for() <span class="overload">[1/7]</span></h2>
 
@@ -1761,7 +1845,7 @@ template&lt;class FunctorType , class WorkTag , class ExecutionSpace , long N&gt
     <tr><td class="paramname">label</td><td>Parallel region label.</td></tr>
     <tr><td class="paramname">exec_space</td><td>An execution space instance.</td></tr>
     <tr><td class="paramname">index_space</td><td>The index space over which to loop.</td></tr>
-    <tr><td class="paramname">tag</td><td>The functor execution tag.</td></tr>
+    <tr><td class="paramname">work_tag</td><td>The functor execution tag.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute. </td></tr>
   </table>
   </dd>
@@ -2049,6 +2133,7 @@ template&lt;class FunctorType , class ExecutionSpace , class MeshType , class De
   <table class="params">
     <tr><td class="paramname">label</td><td>Parallel region label.</td></tr>
     <tr><td class="paramname">exec_space</td><td>An execution space instance.</td></tr>
+    <tr><td class="paramname">local_grid</td><td>The local grid to iterate over.</td></tr>
     <tr><td class="paramname">decomposition</td><td>The decomposition type of the entities (own,ghost).</td></tr>
     <tr><td class="paramname">entity_type</td><td>The entity type over which to loop.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute. </td></tr>
@@ -2138,8 +2223,10 @@ template&lt;class FunctorType , class WorkTag , class ExecutionSpace , class Mes
   <table class="params">
     <tr><td class="paramname">label</td><td>Parallel region label.</td></tr>
     <tr><td class="paramname">exec_space</td><td>An execution space instance.</td></tr>
+    <tr><td class="paramname">local_grid</td><td>The local grid to iterate over.</td></tr>
     <tr><td class="paramname">decomposition</td><td>The decomposition type of the entities (own,ghost).</td></tr>
     <tr><td class="paramname">entity_type</td><td>The entity type over which to loop.</td></tr>
+    <tr><td class="paramname">work_tag</td><td>The functor execution tag.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute. </td></tr>
   </table>
   </dd>
@@ -2300,7 +2387,7 @@ template&lt;class FunctorType , class WorkTag , class ExecutionSpace , long N, c
     <tr><td class="paramname">label</td><td>Parallel region label.</td></tr>
     <tr><td class="paramname">exec_space</td><td>An execution space instance.</td></tr>
     <tr><td class="paramname">index_space</td><td>The index space over which to loop.</td></tr>
-    <tr><td class="paramname">tag</td><td>The functor execution tag.</td></tr>
+    <tr><td class="paramname">work_tag</td><td>The functor execution tag.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute.</td></tr>
     <tr><td class="paramname">reducer</td><td>The parallel reduce result. </td></tr>
   </table>
@@ -2389,6 +2476,7 @@ template&lt;class FunctorType , class ExecutionSpace , class MeshType , class De
   <table class="params">
     <tr><td class="paramname">label</td><td>Parallel region label.</td></tr>
     <tr><td class="paramname">exec_space</td><td>An execution space instance.</td></tr>
+    <tr><td class="paramname">local_grid</td><td>The local grid to iterate over.</td></tr>
     <tr><td class="paramname">decomposition</td><td>The decomposition type of the entities (own,ghost).</td></tr>
     <tr><td class="paramname">entity_type</td><td>The entity type over which to loop.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute.</td></tr>
@@ -2487,7 +2575,9 @@ template&lt;class FunctorType , class WorkTag , class ExecutionSpace , class Mes
     <tr><td class="paramname">label</td><td>Parallel region label.</td></tr>
     <tr><td class="paramname">exec_space</td><td>An execution space instance.</td></tr>
     <tr><td class="paramname">decomposition</td><td>The decomposition type of the entities (own,ghost).</td></tr>
+    <tr><td class="paramname">local_grid</td><td>The local grid to iterate over.</td></tr>
     <tr><td class="paramname">entity_type</td><td>The entity type over which to loop.</td></tr>
+    <tr><td class="paramname">work_tag</td><td>The functor execution tag.</td></tr>
     <tr><td class="paramname">functor</td><td>The functor to execute.</td></tr>
     <tr><td class="paramname">reducer</td><td>The parallel reduce result. </td></tr>
   </table>
@@ -2568,12 +2658,12 @@ template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar 
     <tr><td class="paramname">functor</td><td>A functor that interpolates from a given point to a given entity.</td></tr>
     <tr><td class="paramname">points</td><td>The points over which to perform the interpolation. Will be indexed as (point,dim). The subset of indices in each point's interpolation stencil must be contained within the local grid that will be used for the interpolation</td></tr>
     <tr><td class="paramname">num_point</td><td>The number of points. This is the size of the first dimension of points.</td></tr>
-    <tr><td class="paramname"><a class="el" href="structCajita_1_1Spline.html">Spline</a></td><td>to use for interpolation.</td></tr>
     <tr><td class="paramname">halo</td><td>The halo associated with the grid array. This hallo will be used to scatter the interpolated data.</td></tr>
-    <tr><td class="paramname">array</td><td>The grid array to which the point data will be interpolated. </td></tr>
+    <tr><td class="paramname">array</td><td>The grid array to which the point data will be interpolated.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section note"><dt>Note</dt><dd><a class="el" href="structCajita_1_1Spline.html">Spline</a> of SplineOrder passed for interpolation. </dd></dl>
 
 </div>
 </div>

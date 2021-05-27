@@ -150,14 +150,11 @@ template&lt;typename Scalar &gt; </div>
 </div><div class="memdoc">
 
 <p>Calculate the value of the gradient of the spline in the physical frame. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">x0</td><td>The coordinate at which to evaluate the spline in the logical grid space. </td></tr>
-    <tr><td class="paramname">rdx</td><td>The inverse of the physical distance between grid locations. </td></tr>
-    <tr><td class="paramname">gradients</td><td>Basis gradient values at the knots in the physical frame. Ordered from lowest to highest in terms of knot location. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section note"><dt>Note</dt><dd>x0 (unused) The coordinate at which to evaluate the spline in the logical grid space. </dd>
+<dd>
+rdx (unused) The inverse of the physical distance between grid locations. </dd>
+<dd>
+gradients Basis gradient values at the knots in the physical frame. Ordered from lowest to highest in terms of knot location. </dd></dl>
 
 </div>
 </div>
@@ -303,13 +300,9 @@ template&lt;typename Scalar &gt; </div>
 </div><div class="memdoc">
 
 <p>Calculate the value of the spline at all knots. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">x0</td><td>The coordinate at which to evaluate the spline in the logical grid space. </td></tr>
-    <tr><td class="paramname">values</td><td>Basis values at the knots. Ordered from lowest to highest in terms of knot location. </td></tr>
-  </table>
-  </dd>
-</dl>
+<dl class="section note"><dt>Note</dt><dd>x0 (unused) The coordinate at which to evaluate the spline in the logical grid space. </dd>
+<dd>
+values Basis values at the knots. Ordered from lowest to highest in terms of knot location. </dd></dl>
 
 </div>
 </div>
