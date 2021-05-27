@@ -49,6 +49,7 @@ if(Cabana_ENABLE_HEFFTE)
 endif()
 
 add_library(Cajita INTERFACE)
+add_library(Cabana::Cajita ALIAS Cajita)
 
 target_link_libraries(Cajita INTERFACE
   Cabana::cabanacore
