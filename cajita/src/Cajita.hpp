@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \namespace Cajita
+  \brief Cajita: grid and particle-grid data structures and algorithms
+*/
 #ifndef CAJITA_HPP
 #define CAJITA_HPP
 
