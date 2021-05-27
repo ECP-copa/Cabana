@@ -144,6 +144,7 @@ struct is_array_layout<const ArrayLayout<EntityType, MeshType>>
   \brief Create an array layout over the entities of a local grid.
   \param local_grid The local grid over which to create the layout.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
+  \note EntityType The entity: Cell, Node, Face, or Edge
 */
 template <class EntityType, class MeshType>
 std::shared_ptr<ArrayLayout<EntityType, MeshType>>
@@ -159,8 +160,11 @@ createArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
   \brief Create an array layout over the entities of a grid given local grid
   parameters. An intermediate local grid will be created and assigned to the
   layout.
-  \param local_grid The local grid over which to create the layout.
+  \param global_grid The local grid over which to create the layout.
+  \param halo_cell_width The number of halo cells surrounding the locally owned
+  cells.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
+  \note EntityType The entity: Cell, Node, Face, or Edge
 */
 template <class EntityType, class MeshType>
 std::shared_ptr<ArrayLayout<EntityType, MeshType>>
