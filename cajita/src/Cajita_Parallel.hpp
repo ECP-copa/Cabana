@@ -69,7 +69,7 @@ inline void grid_parallel_for( const std::string& label,
 
   \param index_space The index space over which to loop.
 
-  \param tag The functor execution tag.
+  \param work_tag The functor execution tag.
 
   \param functor The functor to execute.
  */
@@ -99,6 +99,8 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
   \param label Parallel region label.
 
   \param exec_space An execution space instance.
+
+  \param local_grid The local grid to iterate over.
 
   \param decomposition The decomposition type of the entities (own,ghost).
 
@@ -137,9 +139,13 @@ grid_parallel_for( const std::string& label, const ExecutionSpace& exec_space,
 
   \param exec_space An execution space instance.
 
+  \param local_grid The local grid to iterate over.
+
   \param decomposition The decomposition type of the entities (own,ghost).
 
   \param entity_type The entity type over which to loop.
+
+  \param work_tag The functor execution tag.
 
   \param functor The functor to execute.
  */
@@ -443,7 +449,7 @@ inline void grid_parallel_reduce( const std::string& label,
 
   \param index_space The index space over which to loop.
 
-  \param tag The functor execution tag.
+  \param work_tag The functor execution tag.
 
   \param functor The functor to execute.
 
@@ -479,6 +485,8 @@ grid_parallel_reduce( const std::string& label,
   \param label Parallel region label.
 
   \param exec_space An execution space instance.
+
+  \param local_grid The local grid to iterate over.
 
   \param decomposition The decomposition type of the entities (own,ghost).
 
@@ -525,7 +533,11 @@ inline void grid_parallel_reduce( const std::string& label,
 
   \param decomposition The decomposition type of the entities (own,ghost).
 
+  \param local_grid The local grid to iterate over.
+
   \param entity_type The entity type over which to loop.
+
+  \param work_tag The functor execution tag.
 
   \param functor The functor to execute.
 

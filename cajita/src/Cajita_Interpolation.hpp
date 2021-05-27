@@ -737,7 +737,7 @@ KOKKOS_INLINE_FUNCTION
 //---------------------------------------------------------------------------//
 // Global grid-to-Point
 //---------------------------------------------------------------------------//
-/*
+/*!
  \brief Global Grid-to-Point interpolation.
 
   \tparam PointEvalFunctor Functor type used to evaluate the interpolated data
@@ -773,10 +773,10 @@ KOKKOS_INLINE_FUNCTION
   \param num_point The number of points. This is the size of the first
   dimension of points.
 
-  \param Spline to use for interpolation.
-
   \param functor A functor that interpolates from a given entity to a given
   point.
+
+  \note Spline of SplineOrder passed for interpolation.
 */
 template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
           class MeshScalar, class EntityType, int SplineOrder,
@@ -1086,12 +1086,12 @@ createVectorDivergenceG2P( const ViewType& x,
   \param num_point The number of points. This is the size of the first
   dimension of points.
 
-  \param Spline to use for interpolation.
-
   \param halo The halo associated with the grid array. This hallo will be used
   to scatter the interpolated data.
 
   \param array The grid array to which the point data will be interpolated.
+
+  \note Spline of SplineOrder passed for interpolation.
 */
 template <class PointEvalFunctor, class PointCoordinates, class ArrayScalar,
           class MeshScalar, std::size_t NumSpaceDim, class EntityType,
