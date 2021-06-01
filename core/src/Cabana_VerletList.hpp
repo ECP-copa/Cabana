@@ -37,23 +37,25 @@ struct VerletLayout2D
 //---------------------------------------------------------------------------//
 // Verlet List Data.
 //---------------------------------------------------------------------------//
-template <class DeviceType, class LayoutTag>
+template <class MemorySpace, class LayoutTag>
 struct VerletListData;
 
-template <class DeviceType>
-struct VerletListData<DeviceType, VerletLayoutCSR>
+template <class MemorySpace>
+struct VerletListData<MemorySpace, VerletLayoutCSR>
 {
-    // Device type.
-    using device_type = DeviceType;
+    // Kokkos memory space.
+    using memory_space = MemorySpace;
+    // Default Kokkos device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
 
     // Number of neighbors per particle.
-    Kokkos::View<int*, device_type> counts;
+    Kokkos::View<int*, memory_space> counts;
 
     // Offsets into the neighbor list.
-    Kokkos::View<int*, device_type> offsets;
+    Kokkos::View<int*, memory_space> offsets;
 
     // Neighbor list.
-    Kokkos::View<int*, device_type> neighbors;
+    Kokkos::View<int*, memory_space> neighbors;
 
     // Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
@@ -64,17 +66,19 @@ struct VerletListData<DeviceType, VerletLayoutCSR>
     }
 };
 
-template <class DeviceType>
-struct VerletListData<DeviceType, VerletLayout2D>
+template <class MemorySpace>
+struct VerletListData<MemorySpace, VerletLayout2D>
 {
-    // Device type
-    using device_type = DeviceType;
+    // Kokkos memory space.
+    using memory_space = MemorySpace;
+    // Default Kokkos device type.
+    using device_type [[deprecated]] = typename memory_space::device_type;
 
     // Number of neighbors per particle.
-    Kokkos::View<int*, device_type> counts;
+    Kokkos::View<int*, memory_space> counts;
 
     // Neighbor list.
-    Kokkos::View<int**, device_type> neighbors;
+    Kokkos::View<int**, memory_space> neighbors;
 
     // Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
@@ -200,7 +204,7 @@ struct VerletListBuilder
     using execution_space = typename device::execution_space;
 
     // List data.
-    VerletListData<device, LayoutTag> _data;
+    VerletListData<memory_space, LayoutTag> _data;
 
     // Neighbor cutoff.
     PositionValueType rsqr;
@@ -614,8 +618,7 @@ struct VerletListBuilder
   \brief Neighbor list implementation based on binning particles on a 3d
   Cartesian grid with cells of the same size as the interaction distance.
 
-  \tparam DeviceType The device type to use for building and storing the
-  neighbor list.
+  \tparam MemorySpace The Kokkos memory space for storing the neighbor list.
 
   \tparam AlgorithmTag Tag indicating whether to build a full or half neighbor
   list.
@@ -628,22 +631,24 @@ struct VerletListBuilder
   Neighbor list implementation most appropriate for somewhat regularly
   distributed particles due to the use of a Cartesian grid.
 */
-template <class DeviceType, class AlgorithmTag, class LayoutTag,
+template <class MemorySpace, class AlgorithmTag, class LayoutTag,
           class BuildTag = TeamVectorOpTag>
 class VerletList
 {
   public:
-    // Device type.
-    using device_type = DeviceType;
+    static_assert( Kokkos::is_memory_space<MemorySpace>::value, "" );
 
-    // The memory space in which the neighbor list data resides.
-    using memory_space = typename device_type::memory_space;
+    //! Kokkos memory space in which the neighbor list data resides.
+    using memory_space = MemorySpace;
 
-    // Execution space.
-    using execution_space = typename device_type::execution_space;
+    //! Kokkos default execution space for this memory space.
+    using execution_space = typename memory_space::execution_space;
 
-    // Verlet list data.
-    VerletListData<device_type, LayoutTag> _data;
+    //! Kokkos device type with the default execution_space.
+    using device_type [[deprecated]] = typename memory_space::device_type;
+
+    //! Verlet list data.
+    VerletListData<memory_space, LayoutTag> _data;
 
     /*!
       \brief Default constructor.
@@ -694,9 +699,46 @@ class VerletList
                 typename std::enable_if<( is_slice<PositionSlice>::value ),
                                         int>::type* = 0 )
     {
+        build( x, begin, end, neighborhood_radius, cell_size_ratio, grid_min,
+               grid_max, max_neigh );
+    };
+
+    /*!
+      \brief Given a list of particle positions and a neighborhood radius
+      calculate the neighbor list.
+    */
+    template <class PositionSlice>
+    void build( PositionSlice x, const std::size_t begin, const std::size_t end,
+                const typename PositionSlice::value_type neighborhood_radius,
+                const typename PositionSlice::value_type cell_size_ratio,
+                const typename PositionSlice::value_type grid_min[3],
+                const typename PositionSlice::value_type grid_max[3],
+                const std::size_t max_neigh = 0 )
+    {
+        // Use the default execution space.
+        build( execution_space{}, x, begin, end, neighborhood_radius,
+               cell_size_ratio, grid_min, grid_max, max_neigh );
+    }
+    /*!
+      \brief Given a list of particle positions and a neighborhood radius
+      calculate the neighbor list.
+    */
+    template <class PositionSlice, class ExecutionSpace>
+    void build( ExecutionSpace, PositionSlice x, const std::size_t begin,
+                const std::size_t end,
+                const typename PositionSlice::value_type neighborhood_radius,
+                const typename PositionSlice::value_type cell_size_ratio,
+                const typename PositionSlice::value_type grid_min[3],
+                const typename PositionSlice::value_type grid_max[3],
+                const std::size_t max_neigh = 0 )
+    {
+        static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
+        using device_type = Kokkos::Device<ExecutionSpace, memory_space>;
+
         // Create a builder functor.
         using builder_type =
-            Impl::VerletListBuilder<DeviceType, PositionSlice, AlgorithmTag,
+            Impl::VerletListBuilder<device_type, PositionSlice, AlgorithmTag,
                                     LayoutTag, BuildTag>;
         builder_type builder( x, begin, end, neighborhood_radius,
                               cell_size_ratio, grid_min, grid_max, max_neigh );
