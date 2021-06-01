@@ -512,6 +512,24 @@ class SparseMap
     */
     value_type size() const { return _block_id_space.validTileNumHost(); }
 
+    KOKKOS_INLINE_FUNCTION
+    bool valid_at( uint32_t index ) const
+    {
+        return _block_id_space.valid_at( index );
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    key_type key_at( uint32_t index ) const
+    {
+        return _block_id_space.key_at( index );
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
+    {
+        return _block_id_space.key2ijk( key, tile_i, tile_j, tile_k );
+    }
+
   private:
     //! block index space, map tile ijk to tile
     BlockMap<MemorySpace, cell_bits_per_tile_dim, cell_num_per_tile_dim,
@@ -639,6 +657,18 @@ class BlockMap
     uint32_t capacity() const
     {
         return _tile_table.capacity(); // hash_table capacity
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    bool valid_at( uint32_t index ) const
+    {
+        return _tile_table.valid_at( index );
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    key_type key_at( uint32_t index ) const
+    {
+        return _tile_table.key_at( index );
     }
 
     /*!

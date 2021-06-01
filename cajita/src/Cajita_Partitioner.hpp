@@ -13,6 +13,7 @@
 #define CAJITA_PARTITIONER_HPP
 
 #include <array>
+#include <stdexcept>
 
 #include <mpi.h>
 

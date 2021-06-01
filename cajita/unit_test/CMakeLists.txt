@@ -34,6 +34,7 @@ set(MPI_TESTS
   Interpolation2d
   BovWriter
   Parallel
+  SparseDimPartitioner
   )
 
 if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
