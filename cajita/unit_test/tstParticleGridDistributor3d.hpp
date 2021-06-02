@@ -38,9 +38,9 @@ using Cajita::Dim;
 
 //---------------------------------------------------------------------------//
 template <class GridType>
-void redistributeTest( const GridType global_grid, const double cell_size,
-                       const int data_halo_size, const int test_halo_size,
-                       const bool force_comm, const int test_type )
+void migrateTest( const GridType global_grid, const double cell_size,
+                  const int data_halo_size, const int test_halo_size,
+                  const bool force_comm, const int test_type )
 {
     // Create local block with varying halo size.
     auto block = Cajita::createLocalGrid( global_grid, data_halo_size );
@@ -170,9 +170,7 @@ void redistributeTest( const GridType global_grid, const double cell_size,
         }
         else
         {
-            // If only partially moving (test_halo_size < data_halo_size)
-            // particles are allowed outside the local domain (and with
-            // different rank id), but must be inside the test_halo_size.
+            // If nothing was outside the halo, nothing should have moved.
             for ( int d = 0; d < 3; ++d )
                 EXPECT_DOUBLE_EQ( coords( p, d ), coords_initial( p, d ) );
         }
@@ -282,56 +280,7 @@ auto createGrid( const Cajita::ManualPartitioner& partitioner,
     return global_grid;
 }
 
-//---------------------------------------------------------------------------//
-// RUN TESTS
-//---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, not_periodic_test )
-{
-    // Let MPI compute the partitioning for this test.
-    int comm_size;
-    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
-    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
-    Cajita::ManualPartitioner partitioner( ranks_per_dim );
-
-    // Boundaries are not periodic.
-    std::array<bool, 3> is_periodic = { false, false, false };
-
-    // Create global grid.
-    double cell_size = 0.23;
-    auto global_grid = createGrid( partitioner, is_periodic, cell_size );
-
-    // Test in-place and new AoSoA
-    for ( int t = 0; t < 2; t++ )
-        redistributeTest( global_grid, cell_size, 2, 2, false, t );
-
-    // Test with forced communication.
-    redistributeTest( global_grid, cell_size, 2, 2, true, 0 );
-
-    // Test with different block configurations to make sure all the
-    // dimensions get partitioned even at small numbers of ranks.
-    if ( ranks_per_dim[0] != ranks_per_dim[1] )
-    {
-        std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-        partitioner = Cajita::ManualPartitioner( ranks_per_dim );
-        redistributeTest( global_grid, cell_size, 2, 2, true, 0 );
-    }
-    if ( ranks_per_dim[0] != ranks_per_dim[2] )
-    {
-        std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-        partitioner = Cajita::ManualPartitioner( ranks_per_dim );
-        redistributeTest( global_grid, cell_size, 2, 2, true, 0 );
-    }
-    if ( ranks_per_dim[1] != ranks_per_dim[2] )
-    {
-        std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-        partitioner = Cajita::ManualPartitioner( ranks_per_dim );
-        redistributeTest( global_grid, cell_size, 2, 2, true, 0 );
-    }
-}
-
-//---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, periodic_test )
+void testParticleGridMigrate( const bool periodic )
 {
     // Let MPI compute the partitioning for this test.
     int comm_size;
@@ -341,7 +290,7 @@ TEST( TEST_CATEGORY, periodic_test )
     Cajita::ManualPartitioner partitioner( ranks_per_dim );
 
     // Every boundary is periodic
-    std::array<bool, 3> is_periodic = { true, true, true };
+    std::array<bool, 3> is_periodic = { periodic, periodic, periodic };
 
     // Create global grid.
     double cell_size = 0.23;
@@ -352,13 +301,13 @@ TEST( TEST_CATEGORY, periodic_test )
     for ( int i = 0; i < 3; i++ )
         // Test multiple minimum_halo_width
         for ( int j = 0; j < 3; j++ )
-            redistributeTest( global_grid, cell_size, 1, j, false, 0 );
+            migrateTest( global_grid, cell_size, i, j, false, 0 );
 
     // Retest with separate destination AoSoA.
-    redistributeTest( global_grid, cell_size, 2, 2, true, 1 );
+    migrateTest( global_grid, cell_size, 2, 2, true, 1 );
 
     // Test with forced communication.
-    redistributeTest( global_grid, cell_size, 2, 2, true, 0 );
+    migrateTest( global_grid, cell_size, 2, 2, true, 0 );
 
     // Test with different block configurations to make sure all the
     // dimensions get partitioned even at small numbers of ranks.
@@ -366,21 +315,29 @@ TEST( TEST_CATEGORY, periodic_test )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[1] );
         partitioner = Cajita::ManualPartitioner( ranks_per_dim );
-        redistributeTest( global_grid, cell_size, 2, 2, true, 0 );
+        migrateTest( global_grid, cell_size, 2, 2, true, 0 );
     }
     if ( ranks_per_dim[0] != ranks_per_dim[2] )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[2] );
         partitioner = Cajita::ManualPartitioner( ranks_per_dim );
-        redistributeTest( global_grid, cell_size, 2, 2, true, 0 );
+        migrateTest( global_grid, cell_size, 2, 2, true, 0 );
     }
     if ( ranks_per_dim[1] != ranks_per_dim[2] )
     {
         std::swap( ranks_per_dim[1], ranks_per_dim[2] );
         partitioner = Cajita::ManualPartitioner( ranks_per_dim );
-        redistributeTest( global_grid, cell_size, 2, 2, true, 0 );
+        migrateTest( global_grid, cell_size, 2, 2, true, 0 );
     }
 }
+
+//---------------------------------------------------------------------------//
+// RUN TESTS
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, not_periodic_test ) { testParticleGridMigrate( false ); }
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, periodic_test ) { testParticleGridMigrate( true ); }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, local_only_test )

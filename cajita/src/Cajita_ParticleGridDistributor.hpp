@@ -53,6 +53,12 @@ class ParticleGridDistributor
     int migrateCount( const PositionSliceType& positions,
                       const int minimum_halo_width )
     {
+        using mesh_type = typename grid_type::mesh_type;
+        using scalar_type = typename mesh_type::scalar_type;
+        using uniform_type = UniformMesh<scalar_type, num_space_dim>;
+        static_assert( std::is_same<mesh_type, uniform_type>::value,
+                       "Migrate count requires a uniform mesh." );
+
         using execution_space = typename PositionSliceType::execution_space;
 
         // Check within the halo width, within the ghosted domain.
