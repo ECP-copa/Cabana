@@ -27,10 +27,7 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class Halo
-
-  \brief Halo communication plan for scattering and gathering of ghosted
-  data.
+  \brief A communication plan for scattering and gathering of ghosted data.
 
   \tparam DeviceType Device type for which the data for this class will be
   allocated and where parallel execution occurs.

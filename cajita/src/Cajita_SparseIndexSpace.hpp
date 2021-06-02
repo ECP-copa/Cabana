@@ -164,7 +164,6 @@ template <typename Key, HashTypes HashT>
 struct HashKey2TileID;
 
 /*!
-  \struct TileID2HashKey
   \brief Compute the hash key from the 3D tile ijk
 
   Lexicographical order specialization
@@ -209,7 +208,6 @@ struct TileID2HashKey<Key, HashTypes::Naive>
 };
 
 /*!
-  \struct TileID2HashKey
   \brief Compute the hash key from the 3D tile ijk
 
   Morton code specialization
@@ -260,7 +258,6 @@ struct TileID2HashKey<Key, HashTypes::Morton>
 };
 
 /*!
-  \struct HashKey2TileID
   \brief Compute the 3D tile ijk from the hash key
 
   Lexicographical order specialization
@@ -306,7 +303,6 @@ struct HashKey2TileID<Key, HashTypes::Naive>
 };
 
 /*!
-  \struct HashKey2TileID
   \brief Compute the 3D tile ijk from the hash key
 
   Morton code specialization
@@ -375,7 +371,6 @@ template <int CBits, int CNumPerDim, int CNumPerTile>
 class TileMap;
 
 /*!
-  \class SparseMap
   \brief Sparse index space, with a hierarchical structure (cell->tile->block)
   \tparam MemorySpace Memory space to store the Map(Hash Table)
   \tparam CellPerTileDim Cell number inside each tile per dimension
@@ -582,7 +577,6 @@ SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value> createSparseMap(
 
 //---------------------------------------------------------------------------//
 /*!
-  \class BlockMap
   \brief Block index space, mapping tile ijks to tile No. through a hash table
   (Kokkos unordered map), note that the ijks should be global
   \tparam CBits Bits number (per dimension) neded to
@@ -789,7 +783,6 @@ class BlockMap
 
 //---------------------------------------------------------------------------//
 /*!
-  \class TileMap
   \brief Tile index space, inside each local tile, mapping cell ijks to cell
   No.(Lexicographical Order) \tparam CBits Bits number (per dimension) neded to
   index cells inside each tile

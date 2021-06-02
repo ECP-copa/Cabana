@@ -22,7 +22,6 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class IndexSpace
   \brief Structured index space.
  */
 template <long N>

@@ -29,39 +29,24 @@ namespace Experimental
 {
 //---------------------------------------------------------------------------//
 
-/*!
-  \class FFTScaleFull
-  \brief Tag for full scaling of FFT.
-*/
+//! Tag for full scaling of FFT.
 struct FFTScaleFull
 {
 };
-/*!
-  \class FFTScaleNone
-  \brief Tag for no scaling of FFT.
-*/
+//! Tag for no scaling of FFT.
 struct FFTScaleNone
 {
 };
-/*!
-  \class FFTScaleSymmetric
-  \brief Tag for symmetric scaling of FFT.
-*/
+//! Tag for symmetric scaling of FFT.
 struct FFTScaleSymmetric
 {
 };
 
-/*!
-  \class FFTBackendFFTW
-  \brief Tag specifying FFTW backend for FFT (host default).
-*/
+//! Tag specifying FFTW backend for FFT (host default).
 struct FFTBackendFFTW
 {
 };
-/*!
-  \class FFTBackendMKL
-  \brief Tag specifying MKL backend for FFT.
-*/
+//! Tag specifying MKL backend for FFT.
 struct FFTBackendMKL
 {
 };
@@ -102,7 +87,6 @@ struct is_matching_array<
 
 //---------------------------------------------------------------------------//
 /*!
-  \class FastFourierTransformParams
   \brief Parameters controlling details for fast Fourier transforms.
 */
 class FastFourierTransformParams
@@ -148,7 +132,6 @@ class FastFourierTransformParams
 
 //---------------------------------------------------------------------------//
 /*!
-  \class FastFourierTransform
   \brief 2D/3D distributed fast Fourier transform base implementation.
 */
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
@@ -406,7 +389,6 @@ struct HeffteScalingTraits<FFTScaleSymmetric>
 
 //---------------------------------------------------------------------------//
 /*!
-  \class HeffteFastFourierTransform
   \brief Interface to heFFTe fast Fourier transform library.
 */
 template <class EntityType, class MeshType, class Scalar, class DeviceType,

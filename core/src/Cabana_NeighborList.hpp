@@ -20,7 +20,6 @@ namespace Cabana
 // Neighbor List Interface
 //---------------------------------------------------------------------------//
 /*!
-  \class FullNeighborTag
   \brief Tag for full neighbor lists.
 
   In this case every particle has its neighbors stored in the list. So, if
@@ -33,7 +32,6 @@ class FullNeighborTag
 
 //---------------------------------------------------------------------------//
 /*!
-  \class HalfNeighborTag
   \brief Tag for half neighbor lists.
 
   In this case only half of the neighbors are stored and the inverse
@@ -47,8 +45,6 @@ class HalfNeighborTag
 
 //---------------------------------------------------------------------------//
 /*!
-  \class NeighborList
-
   \brief Neighbor list interface. Provides an interface callable at the
   functor level that gives access to neighbor data for particles.
 */

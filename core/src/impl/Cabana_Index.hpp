@@ -25,8 +25,6 @@ namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class Index
-
   \brief Class for converting between 1d and 2d aosoa indices.
 
   \tparam VectorLength The inner array size of the AoSoA.

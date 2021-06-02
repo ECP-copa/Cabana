@@ -80,11 +80,9 @@ slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
 
 //---------------------------------------------------------------------------//
 /*!
-  \class AoSoA
-
   \brief Array-of-Struct-of-Arrays
 
-  A AoSoA represents tuples and their data via an array-of-structs-of-arrays.
+  Represents tuples and their data via an array-of-structs-of-arrays.
 
   \tparam DataType (required) Specifically this must be an instance of
   \c MemberTypes with the data layout of the structs. For example:

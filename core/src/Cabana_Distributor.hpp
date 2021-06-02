@@ -27,10 +27,8 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class Distributor
-
-  \brief Distributor is a communication plan for migrating data from one
-  uniquely-owned decomposition to another uniquely owned decomposition.
+  \brief A communication plan for migrating data from one uniquely-owned
+  decomposition to another uniquely owned decomposition.
 
   \tparam DeviceType Device type for which the data for this class will be
   allocated and where parallel compuations will be executed.

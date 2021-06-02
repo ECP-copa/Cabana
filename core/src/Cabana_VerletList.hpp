@@ -619,7 +619,6 @@ struct VerletListBuilder
 
 //---------------------------------------------------------------------------//
 /*!
-  \class VerletList
   \brief Neighbor list implementation based on binning particles on a 3d
   Cartesian grid with cells of the same size as the interaction distance.
 

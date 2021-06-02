@@ -487,8 +487,6 @@ struct KokkosViewWrapper
 
 //---------------------------------------------------------------------------//
 /*!
-  \class Slice
-
   \brief A slice of an array-of-structs-of-arrays with data access to a single
   multidimensional member.
 */

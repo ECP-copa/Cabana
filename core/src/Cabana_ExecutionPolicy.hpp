@@ -26,8 +26,6 @@ namespace Impl
 //! \cond Impl
 
 /*!
-  \class StructRange
-
   \brief 2D loop outer index range giving struct index range bounds based on a
   1D range input.
 
@@ -69,7 +67,6 @@ class StructRange
 
 //---------------------------------------------------------------------------//
 /*!
-  \class SimdPolicy
   \brief Execution policy over a range of 2d indices.
 
   Gives 2D range of indices for executing a vectorized functor over the inner

@@ -23,7 +23,6 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class LinkedCellList
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
 */

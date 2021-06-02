@@ -356,8 +356,6 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 
 //---------------------------------------------------------------------------//
 /*!
-  \class CommunicationPlan
-
   \brief Communication plan base class.
 
   \tparam DeviceType Device type for which the data for this class will be

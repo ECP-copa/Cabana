@@ -25,7 +25,6 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class BinningData
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation.
 */
