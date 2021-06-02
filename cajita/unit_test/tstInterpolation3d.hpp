@@ -76,6 +76,9 @@ void interpolationTest()
             points( pid, Dim::K ) = x[Dim::K];
         } );
 
+    // Node space.
+    auto node_space = local_grid->indexSpace( Own(), Node(), Local() );
+
     // Create a scalar field on the grid.
     auto scalar_layout = createArrayLayout( local_grid, 1, Node() );
     auto scalar_grid_field =
@@ -123,11 +126,11 @@ void interpolationTest()
     p2g( scalar_p2g, points, num_point, Spline<1>(), *scalar_halo,
          *scalar_grid_field );
     Kokkos::deep_copy( scalar_grid_host, scalar_grid_field->view() );
-    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
-        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+    for ( int i = node_space.min( Dim::I ); i < node_space.max( Dim::I ); ++i )
+        for ( int j = node_space.min( Dim::J ); j < node_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
+            for ( int k = node_space.min( Dim::K );
+                  k < node_space.max( Dim::K ); ++k )
                 EXPECT_FLOAT_EQ( scalar_grid_host( i, j, k, 0 ), -1.75 );
 
     // Interpolate a vector point value to the grid.
@@ -136,11 +139,11 @@ void interpolationTest()
     p2g( vector_p2g, points, num_point, Spline<1>(), *vector_halo,
          *vector_grid_field );
     Kokkos::deep_copy( vector_grid_host, vector_grid_field->view() );
-    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
-        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+    for ( int i = node_space.min( Dim::I ); i < node_space.max( Dim::I ); ++i )
+        for ( int j = node_space.min( Dim::J ); j < node_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
+            for ( int k = node_space.min( Dim::K );
+                  k < node_space.max( Dim::K ); ++k )
                 for ( int d = 0; d < 3; ++d )
                     EXPECT_FLOAT_EQ( vector_grid_host( i, j, k, d ), -1.75 );
 
@@ -150,11 +153,11 @@ void interpolationTest()
     p2g( scalar_grad_p2g, points, num_point, Spline<1>(), *vector_halo,
          *vector_grid_field );
     Kokkos::deep_copy( vector_grid_host, vector_grid_field->view() );
-    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
-        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+    for ( int i = node_space.min( Dim::I ); i < node_space.max( Dim::I ); ++i )
+        for ( int j = node_space.min( Dim::J ); j < node_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
+            for ( int k = node_space.min( Dim::K );
+                  k < node_space.max( Dim::K ); ++k )
                 for ( int d = 0; d < 3; ++d )
                     EXPECT_FLOAT_EQ( vector_grid_host( i, j, k, d ) + 1.0,
                                      1.0 );
@@ -165,11 +168,11 @@ void interpolationTest()
     p2g( vector_div_p2g, points, num_point, Spline<1>(), *scalar_halo,
          *scalar_grid_field );
     Kokkos::deep_copy( scalar_grid_host, scalar_grid_field->view() );
-    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
-        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+    for ( int i = node_space.min( Dim::I ); i < node_space.max( Dim::I ); ++i )
+        for ( int j = node_space.min( Dim::J ); j < node_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
+            for ( int k = node_space.min( Dim::K );
+                  k < node_space.max( Dim::K ); ++k )
                 EXPECT_FLOAT_EQ( scalar_grid_host( i, j, k, 0 ) + 1.0, 1.0 );
 
     // Interpolate a tensor point divergence value to the grid.
@@ -178,11 +181,11 @@ void interpolationTest()
     p2g( tensor_div_p2g, points, num_point, Spline<1>(), *vector_halo,
          *vector_grid_field );
     Kokkos::deep_copy( vector_grid_host, vector_grid_field->view() );
-    for ( int i = cell_space.min( Dim::I ); i < cell_space.max( Dim::I ); ++i )
-        for ( int j = cell_space.min( Dim::J ); j < cell_space.max( Dim::J );
+    for ( int i = node_space.min( Dim::I ); i < node_space.max( Dim::I ); ++i )
+        for ( int j = node_space.min( Dim::J ); j < node_space.max( Dim::J );
               ++j )
-            for ( int k = cell_space.min( Dim::K );
-                  k < cell_space.max( Dim::K ); ++k )
+            for ( int k = node_space.min( Dim::K );
+                  k < node_space.max( Dim::K ); ++k )
                 for ( int d = 0; d < 3; ++d )
                     EXPECT_FLOAT_EQ( vector_grid_host( i, j, k, d ) + 1.0,
                                      1.0 );
