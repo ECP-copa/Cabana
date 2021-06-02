@@ -25,6 +25,7 @@ namespace Cabana
 {
 namespace Experimental
 {
+//! \cond Impl
 namespace stdcxx20
 {
 template <class T>
@@ -39,7 +40,6 @@ using remove_cvref_t = typename remove_cvref<T>::type;
 
 namespace Impl
 {
-//! \cond Impl
 
 template <typename Slice,
           typename = std::enable_if_t<Cabana::is_slice<Slice>::value>>
@@ -72,13 +72,18 @@ auto makePredicates(
 
 namespace ArborX
 {
+//! Neighbor access trait for Cabana slice.
 template <typename Slice>
 struct AccessTraits<Slice, PrimitivesTag,
                     std::enable_if_t<Cabana::is_slice<Slice>{}>>
 {
+    //! Kokkos memory space.
     using memory_space = typename Slice::memory_space;
+    //! Size type.
     using size_type = typename Slice::size_type;
+    //! Get number of particles in the slice.
     static KOKKOS_FUNCTION size_type size( Slice const& x ) { return x.size(); }
+    //! Get the particle at the index.
     static KOKKOS_FUNCTION Point get( Slice const& x, size_type i )
     {
         return { static_cast<float>( x( i, 0 ) ),
@@ -86,15 +91,20 @@ struct AccessTraits<Slice, PrimitivesTag,
                  static_cast<float>( x( i, 2 ) ) };
     }
 };
+//! Neighbor access trait.
 template <typename SliceLike>
 struct AccessTraits<SliceLike, PredicatesTag>
 {
+    //! Kokkos memory space.
     using memory_space = typename SliceLike::memory_space;
+    //! Size type.
     using size_type = typename SliceLike::size_type;
+    //! Get number of particles.
     static KOKKOS_FUNCTION size_type size( SliceLike const& x )
     {
         return x.last - x.first;
     }
+    //! Get the particle at the index.
     static KOKKOS_FUNCTION auto get( SliceLike const& x, size_type i )
     {
         assert( i < size( x ) );
@@ -220,15 +230,41 @@ struct NeighborDiscriminatorCallback2D_SecondPass
 //! \endcond
 } // namespace Impl
 
+//! 1d ArborX neighbor list storage layout.
 template <typename MemorySpace, typename Tag>
 struct CrsGraph
 {
+    //! Neighbor indices
     Kokkos::View<int*, MemorySpace> col_ind;
+    //! Neighbor offsets.
     Kokkos::View<int*, MemorySpace> row_ptr;
+    //! Neighbor offset shift.
     typename MemorySpace::size_type shift;
+    //! Total neighbors.
     typename MemorySpace::size_type total;
 };
 
+//---------------------------------------------------------------------------//
+/*!
+  \brief Neighbor list implementation using ArborX for particles within the
+  interaction distance with a 1D compressed layout for particles and neighbors.
+
+  \tparam Slice The position slice type.
+  \tparam DeviceType The device type to use for building and storing the
+  neighbor list.
+  \tparam AlgorithmTag Tag indicating whether to build a full or half neighbor
+  list.
+
+  \param coordinate_slice The slice containing the particle positions.
+  \param first The beginning particle index to compute neighbors for.
+  \param last The end particle index to compute neighbors for.
+  \param radius The radius of the neighborhood. Particles within this radius are
+  considered neighbors.
+  \param buffer_size Optional guess for maximum number of neighbors.
+
+  Neighbor list implementation most appropriate for highly varying particle
+  densities.
+*/
 template <typename DeviceType, typename Slice, typename Tag>
 auto makeNeighborList( Tag, Slice const& coordinate_slice,
                        typename Slice::size_type first,
@@ -256,15 +292,42 @@ auto makeNeighborList( Tag, Slice const& coordinate_slice,
                                        std::move( offset ), first, bvh.size() };
 }
 
+//! 2d ArborX neighbor list storage layout.
 template <typename MemorySpace, typename Tag>
 struct Dense
 {
+    //! Neighbor counts.
     Kokkos::View<int*, MemorySpace> cnt;
+    //! Neighbor indices.
     Kokkos::View<int**, MemorySpace> val;
+    //! Neighbor offset shift.
     typename MemorySpace::size_type shift;
+    //! Total neighbors.
     typename MemorySpace::size_type total;
 };
 
+//---------------------------------------------------------------------------//
+/*!
+  \brief Neighbor list implementation using ArborX for particles within the
+  interaction distance with a 2D layout for particles and neighbors.
+
+  \tparam Slice The position slice type.
+  \tparam DeviceType The device type to use for building and storing the
+  neighbor list.
+  \tparam AlgorithmTag Tag indicating whether to build a full or half neighbor
+  list.
+
+  \param coordinate_slice The slice containing the particle positions.
+  \param first The beginning particle index to compute neighbors for.
+  \param last The end particle index to compute neighbors for.
+  \param radius The radius of the neighborhood. Particles within this radius are
+  considered neighbors.
+  \param buffer_size Optional guess for maximum number of neighbors per
+  particle.
+
+  Neighbor list implementation most appropriate for highly varying particle
+  densities.
+*/
 template <typename DeviceType, typename Slice, typename Tag>
 auto make2DNeighborList( Tag, Slice const& coordinate_slice,
                          typename Slice::size_type first,
@@ -332,14 +395,19 @@ auto make2DNeighborList( Tag, Slice const& coordinate_slice,
 
 } // namespace Experimental
 
+//! 1d ArborX NeighborList interface.
 template <typename MemorySpace, typename Tag>
 class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
 {
+    //! Size type.
     using size_type = std::size_t;
+    //! Neighbor storage type.
     using crs_graph_type = Experimental::CrsGraph<MemorySpace, Tag>;
 
   public:
+    //! Kokkos memory space.
     using memory_space = MemorySpace;
+    //! Get the number of neighbors for a given particle index.
     static KOKKOS_FUNCTION size_type
     numNeighbor( crs_graph_type const& crs_graph, size_type p )
     {
@@ -349,6 +417,7 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
             return 0;
         return crs_graph.row_ptr( p + 1 ) - crs_graph.row_ptr( p );
     }
+    //! Get the id for a neighbor for a given particle index and neighbor index.
     static KOKKOS_FUNCTION size_type
     getNeighbor( crs_graph_type const& crs_graph, size_type p, size_type n )
     {
@@ -358,14 +427,19 @@ class NeighborList<Experimental::CrsGraph<MemorySpace, Tag>>
     }
 };
 
+//! 2d ArborX NeighborList interface.
 template <typename MemorySpace, typename Tag>
 class NeighborList<Experimental::Dense<MemorySpace, Tag>>
 {
+    //! Size type.
     using size_type = std::size_t;
+    //! Neighbor storage type.
     using specialization_type = Experimental::Dense<MemorySpace, Tag>;
 
   public:
+    //! Kokkos memory space.
     using memory_space = MemorySpace;
+    //! Get the number of neighbors for a given particle index.
     static KOKKOS_FUNCTION size_type numNeighbor( specialization_type const& d,
                                                   size_type p )
     {
@@ -375,6 +449,7 @@ class NeighborList<Experimental::Dense<MemorySpace, Tag>>
             return 0;
         return d.cnt( p );
     }
+    //! Get the id for a neighbor for a given particle index and neighbor index.
     static KOKKOS_FUNCTION size_type getNeighbor( specialization_type const& d,
                                                   size_type p, size_type n )
     {

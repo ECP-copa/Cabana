@@ -85,11 +85,16 @@ class SimdPolicy
     typedef Kokkos::Impl::PolicyTraits<Properties...> traits;
 
   public:
+    //! Work tag.
     using work_tag = typename traits::work_tag;
+    //! Kokkos execution space.
     using execution_space = typename traits::execution_space;
+    //! Kokkos team policy.
     using base_type =
         Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    //! Simd execution policy.
     using execution_policy = SimdPolicy<VectorLength, Properties...>;
+    //! Index type.
     using index_type = typename traits::index_type;
 
     /*!
@@ -132,7 +137,7 @@ class SimdPolicy
         return ( s == _struct_begin ) ? _array_begin : 0;
     }
 
-    // Given a struct id get the ending array index.
+    //! Given a struct id get the ending array index.
     KOKKOS_INLINE_FUNCTION index_type arrayEnd( const index_type s ) const
     {
         // If we are in the last unfilled struct then use the array

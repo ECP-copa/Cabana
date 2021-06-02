@@ -166,7 +166,7 @@ typename SoA_t::template member_pointer_type<M> soaMemberPtr( SoA_t* p )
 //---------------------------------------------------------------------------//
 // Get template helper.
 
-// Rank-0 non-const
+//! Get Rank-0 non-const
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
@@ -176,7 +176,7 @@ get( SoA_t& soa, const std::size_t a )
     return Impl::soaMemberCast<M>( soa )._data[a];
 }
 
-// Rank-0 const
+//! Get Rank-0 const
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
@@ -186,7 +186,7 @@ get( const SoA_t& soa, const std::size_t a )
     return Impl::soaMemberCast<M>( soa )._data[a];
 }
 
-// Rank-1 non-const
+//! Get Rank-1 non-const
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
@@ -196,7 +196,7 @@ get( SoA_t& soa, const std::size_t a, const std::size_t d0 )
     return Impl::soaMemberCast<M>( soa )._data[d0][a];
 }
 
-// Rank-1 const
+//! Get Rank-1 const
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
@@ -206,7 +206,7 @@ get( const SoA_t& soa, const std::size_t a, const std::size_t d0 )
     return Impl::soaMemberCast<M>( soa )._data[d0][a];
 }
 
-// Rank-2 non-const
+//! Get Rank-2 non-const
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
@@ -217,7 +217,7 @@ get( SoA_t& soa, const std::size_t a, const std::size_t d0,
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][a];
 }
 
-// Rank-2 const
+//! Get Rank-2 const
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
@@ -228,7 +228,7 @@ get( const SoA_t& soa, const std::size_t a, const std::size_t d0,
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][a];
 }
 
-// Rank-3 non-const
+//! Get Rank-3 non-const
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
@@ -239,7 +239,7 @@ get( SoA_t& soa, const std::size_t a, const std::size_t d0,
     return Impl::soaMemberCast<M>( soa )._data[d0][d1][d2][a];
 }
 
-// Rank-3 const
+//! Get Rank-3 const
 template <std::size_t M, class SoA_t>
 KOKKOS_FORCEINLINE_FUNCTION typename std::enable_if<
     is_soa<SoA_t>::value,
@@ -265,41 +265,41 @@ struct SoA<MemberTypes<Types...>, VectorLength>
     : Impl::SoAImpl<VectorLength, std::make_index_sequence<sizeof...( Types )>,
                     Types...>
 {
-    // Vector length
+    //! Vector length
     static constexpr int vector_length = VectorLength;
 
-    // Member data types.
+    //! Member data types.
     using member_types = MemberTypes<Types...>;
 
-    // Number of member types.
+    //! Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
 
-    // The maximum rank supported for member types.
+    //! The maximum rank supported for member types.
     static constexpr std::size_t max_supported_rank = 3;
 
-    // Member data type.
+    //! Member data type.
     template <std::size_t M>
     using member_data_type = typename MemberTypeAtIndex<M, member_types>::type;
 
-    // Value type at a given index M.
+    //! Value type at a given index M.
     template <std::size_t M>
     using member_value_type =
         typename std::remove_all_extents<member_data_type<M>>::type;
 
-    // Reference type at a given index M.
+    //! Reference type at a given index M.
     template <std::size_t M>
     using member_reference_type = member_value_type<M>&;
 
-    // Const reference type at a given index M.
+    //! Const reference type at a given index M.
     template <std::size_t M>
     using member_const_reference_type = member_value_type<M> const&;
 
-    // Pointer type at a given index M.
+    //! Pointer type at a given index M.
     template <std::size_t M>
     using member_pointer_type =
         typename std::add_pointer<member_value_type<M>>::type;
 
-    // Base type.
+    //! Base type.
     template <std::size_t M>
     using base = Impl::StructMember<M, vector_length, member_data_type<M>>;
 

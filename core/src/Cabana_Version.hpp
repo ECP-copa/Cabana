@@ -19,8 +19,10 @@
 namespace Cabana
 {
 
+//! Cabana version.
 inline std::string version() { return Cabana_VERSION_STRING; }
 
+//! Cabana git hash.
 inline std::string git_commit_hash() { return Cabana_GIT_COMMIT_HASH; }
 
 } // end namespace Cabana
