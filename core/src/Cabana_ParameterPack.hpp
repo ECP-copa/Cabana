@@ -97,7 +97,7 @@ struct ParameterPack
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <class>
 struct is_parameter_pack_impl : public std::false_type
 {
@@ -107,7 +107,9 @@ template <typename... Types>
 struct is_parameter_pack_impl<ParameterPack<Types...>> : public std::true_type
 {
 };
+//! \endcond
 
+//! ParameterPack static type checker.
 template <class T>
 struct is_parameter_pack
     : public is_parameter_pack_impl<typename std::remove_cv<T>::type>::type

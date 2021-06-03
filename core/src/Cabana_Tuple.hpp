@@ -28,7 +28,7 @@ template <typename DataTypes>
 struct Tuple;
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <class>
 struct is_tuple_impl : public std::false_type
 {
@@ -38,7 +38,9 @@ template <class DataTypes>
 struct is_tuple_impl<Tuple<DataTypes>> : public std::true_type
 {
 };
+//! \endcond
 
+//! Tuple static type checker.
 template <class T>
 struct is_tuple : public is_tuple_impl<typename std::remove_cv<T>::type>::type
 {

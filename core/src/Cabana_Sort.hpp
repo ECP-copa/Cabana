@@ -130,7 +130,7 @@ class BinningData
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_binning_data : public std::false_type
 {
@@ -140,7 +140,9 @@ template <typename DeviceType>
 struct is_binning_data<BinningData<DeviceType>> : public std::true_type
 {
 };
+//! \endcond
 
+//! BinningData static type checker.
 template <typename DeviceType>
 struct is_binning_data<const BinningData<DeviceType>> : public std::true_type
 {

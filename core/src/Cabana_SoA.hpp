@@ -28,7 +28,7 @@ template <typename Types, int VectorLength>
 struct SoA;
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <class>
 struct is_soa_impl : public std::false_type
 {
@@ -38,7 +38,9 @@ template <class DataTypes, int VectorLength>
 struct is_soa_impl<SoA<DataTypes, VectorLength>> : public std::true_type
 {
 };
+//! \endcond
 
+//! SoA static type checker.
 template <class T>
 struct is_soa : public is_soa_impl<typename std::remove_cv<T>::type>::type
 {

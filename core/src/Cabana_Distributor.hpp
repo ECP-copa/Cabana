@@ -138,7 +138,7 @@ class Distributor : public CommunicationPlan<DeviceType>
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_distributor_impl : public std::false_type
 {
@@ -148,7 +148,9 @@ template <typename DeviceType>
 struct is_distributor_impl<Distributor<DeviceType>> : public std::true_type
 {
 };
+//! \endcond
 
+//! Distributor static type checker.
 template <class T>
 struct is_distributor
     : public is_distributor_impl<typename std::remove_cv<T>::type>::type

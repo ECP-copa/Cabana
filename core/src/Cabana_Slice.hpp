@@ -830,7 +830,7 @@ class Slice
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_slice_impl : public std::false_type
 {
@@ -845,7 +845,9 @@ struct is_slice_impl<
     : public std::true_type
 {
 };
+//! \endcond
 
+//! Slice static type checker.
 template <class T>
 struct is_slice : public is_slice_impl<typename std::remove_cv<T>::type>::type
 {

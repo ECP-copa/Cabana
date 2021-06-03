@@ -36,7 +36,7 @@ template <class DataTypes, class DeviceType, int VectorLength,
 class AoSoA;
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <class>
 struct is_aosoa_impl : public std::false_type
 {
@@ -48,7 +48,9 @@ struct is_aosoa_impl<AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
     : public std::true_type
 {
 };
+//! \endcond
 
+//! AoSoA static type checker.
 template <class T>
 struct is_aosoa : public is_aosoa_impl<typename std::remove_cv<T>::type>::type
 {

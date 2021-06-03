@@ -148,18 +148,20 @@ class ArrayLayout
     int _dofs_per_entity;
 };
 
-// Static type checker.
+//! Array static type checker.
 template <class>
 struct is_array_layout : public std::false_type
 {
 };
 
+//! Array static type checker.
 template <class EntityType, class MeshType>
 struct is_array_layout<ArrayLayout<EntityType, MeshType>>
     : public std::true_type
 {
 };
 
+//! Array static type checker.
 template <class EntityType, class MeshType>
 struct is_array_layout<const ArrayLayout<EntityType, MeshType>>
     : public std::true_type

@@ -336,7 +336,7 @@ class LinkedCellList
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_linked_cell_list_impl : public std::false_type
 {
@@ -347,7 +347,9 @@ struct is_linked_cell_list_impl<LinkedCellList<DeviceType>>
     : public std::true_type
 {
 };
+//! \endcond
 
+//! LinkedCellList static type checker.
 template <class T>
 struct is_linked_cell_list
     : public is_linked_cell_list_impl<typename std::remove_cv<T>::type>::type

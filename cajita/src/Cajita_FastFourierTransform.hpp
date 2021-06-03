@@ -60,6 +60,7 @@ struct FFTBackendDefault
 //! \endcond
 } // namespace Impl
 
+//! Matching Array static type checker.
 template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
           class ArrayScalar, class Entity, class Mesh, class Device,
           class Scalar, typename SFINAE = void>
@@ -72,6 +73,8 @@ struct is_matching_array : public std::false_type
     static_assert( std::is_same<ArrayDevice, Device>::value,
                    "Array device type must match FFT device type." );
 };
+
+//! Matching Array static type checker.
 template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
           class ArrayScalar, class Entity, class Mesh, class Device,
           class Scalar>

@@ -365,7 +365,7 @@ KOKKOS_INLINE_FUNCTION
 namespace P2G
 {
 //---------------------------------------------------------------------------//
-// Scatter-View type checker.
+//! \cond Impl
 template <class T>
 struct is_scatter_view_impl : public std::false_type
 {
@@ -391,7 +391,9 @@ struct is_scatter_view_impl<Kokkos::Experimental::ScatterView<
 {
 };
 #endif
+//! \endcond
 
+//! Scatter-View static type checker.
 template <class T>
 struct is_scatter_view
     : public is_scatter_view_impl<typename std::remove_cv<T>::type>::type
