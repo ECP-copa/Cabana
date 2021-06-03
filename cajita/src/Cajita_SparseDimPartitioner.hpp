@@ -230,7 +230,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
             Kokkos::HostSpace(), _rectangle_partition_dev );
         for ( int d = 0; d < 3; ++d )
         {
-            rec_part[d].resize( _ranks_per_dim[d] );
+            rec_part[d].resize( _ranks_per_dim[d] + 1 );
             for ( int id = 0; id < _ranks_per_dim[d] + 1; ++id )
             {
                 rec_part[d][id] = rec_mirror( id, d );
