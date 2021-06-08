@@ -568,6 +568,60 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 }
 
 //---------------------------------------------------------------------------//
+/*!
+  \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  \param a The array that will be updated.
+  \param alpha The value to scale a by.
+  \param b The first array to add to a.
+  \param beta The value to scale b by.
+  \param c The second array to add to a.
+  \param gamma The value to scale b by.
+  \param tag The tag for the decomposition over which to perform the
+  operation.
+*/
+template <class Array_t, class DecompositionTag>
+std::enable_if_t<3 == Array_t::num_space_dim, void>
+update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
+        const typename Array_t::value_type beta, const Array_t& c,
+        const typename Array_t::value_type gamma, DecompositionTag tag )
+{
+    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    auto a_view = a.view();
+    auto b_view = b.view();
+    auto c_view = c.view();
+    Kokkos::parallel_for(
+        "ArrayOp::update",
+        createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
+                               typename Array_t::execution_space() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
+            a_view( i, j, k, l ) = alpha * a_view( i, j, k, l ) +
+                                   beta * b_view( i, j, k, l ) +
+                                   gamma * c_view( i, j, k, l );
+        } );
+}
+
+template <class Array_t, class DecompositionTag>
+std::enable_if_t<2 == Array_t::num_space_dim, void>
+update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
+        const typename Array_t::value_type beta, const Array_t& c,
+        const typename Array_t::value_type gamma, DecompositionTag tag )
+{
+    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    auto a_view = a.view();
+    auto b_view = b.view();
+    auto c_view = c.view();
+    Kokkos::parallel_for(
+        "ArrayOp::update",
+        createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
+                               typename Array_t::execution_space() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int l ) {
+            a_view( i, j, l ) = alpha * a_view( i, j, l ) +
+                                beta * b_view( i, j, l ) +
+                                gamma * c_view( i, j, l );
+        } );
+}
+
+//---------------------------------------------------------------------------//
 // Dot product
 template <class ViewType, std::size_t NumSpaceDim>
 struct DotFunctor

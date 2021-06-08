@@ -371,6 +371,21 @@ void arrayOpTest()
               ++j )
             for ( long l = 0; l < owned_space.extent( 2 ); ++l )
                 EXPECT_EQ( host_view( i, j, l ), 0.5 );
+
+    // Do a 3 vector update.
+    ArrayOp::assign( *array, 1.0, Ghost() );
+    ArrayOp::scale( *array, scales, Ghost() );
+    ArrayOp::assign( *array_2, 0.5, Ghost() );
+    ArrayOp::scale( *array_2, scales, Ghost() );
+    ArrayOp::assign( *array_3, 1.5, Ghost() );
+    ArrayOp::scale( *array_3, scales, Ghost() );
+    ArrayOp::update( *array, 3.0, *array_2, 2.0, *array_3, 4.0, Ghost() );
+    Kokkos::deep_copy( host_view, array->view() );
+    for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
+        for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
+            for ( long l = 0; l < ghosted_space.extent( 2 ); ++l )
+                EXPECT_EQ( host_view( i, j, l ),
+                           ( 3.0 + 1.0 + 6.0 ) * scales[l] );
 }
 
 //---------------------------------------------------------------------------//
