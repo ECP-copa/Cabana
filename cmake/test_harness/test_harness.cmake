@@ -9,6 +9,13 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
+include(FindPackageHandleStandardArgs)
+find_program(VALGRIND_EXECUTABLE valgrind)
+find_package_handle_standard_args(VALGRIND REQUIRED_VARS VALGRIND_EXECUTABLE)
+if(VALGRIND_FOUND)
+  set(VALGRIND_ARGS --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 --track-fds=yes --error-exitcode=1)
+endif()
+
 ##--------------------------------------------------------------------------##
 ## General tests.
 ##--------------------------------------------------------------------------##
@@ -19,6 +26,9 @@ macro(Cabana_add_tests_nobackend)
     add_executable(${_target} tst${_test}.cpp ${TEST_HARNESS_DIR}/unit_test_main.cpp)
     target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} gtest)
     add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
+    if(VALGRIND_FOUND)
+      add_test(NAME ${_target}_valgrind COMMAND ${NONMPI_PRECOMMAND} ${VALGRIND_EXECUTABLE} ${VALGRIND_ARGS} ${CMAKE_CURRENT_BINARY_DIR}/${_target} ${gtest_args})
+    endif()
   endforeach()
 endmacro()
 
@@ -87,9 +97,16 @@ macro(Cabana_add_tests)
           foreach(_thread ${CABANA_UNIT_TEST_NUMTHREADS})
             add_test(NAME ${_target}_nt_${_thread} COMMAND
               ${NONMPI_PRECOMMAND} ${_target} ${gtest_args} --kokkos-threads=${_thread})
+            if(VALGRIND_FOUND)
+              add_test(NAME ${_target}_nt_${_thread}_valgrind COMMAND
+                ${NONMPI_PRECOMMAND} ${VALGRIND_EXECUTABLE} ${VALGRIND_ARGS} ${CMAKE_CURRENT_BINARY_DIR}/${_target} ${gtest_args} --kokkos-threads=${_thread})
+            endif()
           endforeach()
         else()
-          add_test(NAME ${NONMPI_PRECOMMAND} ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
+          add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
+          if(VALGRIND_FOUND)
+            add_test(NAME ${_target}_valgrind COMMAND ${NONMPI_PRECOMMAND} ${VALGRIND_EXECUTABLE} ${VALGRIND_ARGS} ${CMAKE_CURRENT_BINARY_DIR}/${_target} ${gtest_args})
+          endif()
         endif()
       endif()
     endforeach()
