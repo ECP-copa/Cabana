@@ -30,180 +30,117 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 // Particle Grid Distributor
 //---------------------------------------------------------------------------//
-/*!
-  \brief Determine which particles need to be migrated using the grid
 
-  \tparam LocalGridType Cajita LocalGrid type.
-*/
-template <class LocalGridType>
-class ParticleGridDistributor
+namespace Impl
 {
-  public:
-    using grid_type = LocalGridType;
-    // Spatial dimension.
-    static constexpr std::size_t num_space_dim = grid_type::num_space_dim;
-
-    ParticleGridDistributor( const LocalGridType& local_grid )
-        : _local_grid( local_grid )
-    {
-    }
-
-    // Check for the number of particles that must be communicated
-    template <class PositionSliceType>
-    int migrateCount( const PositionSliceType& positions,
-                      const int minimum_halo_width )
-    {
-        using mesh_type = typename grid_type::mesh_type;
-        using scalar_type = typename mesh_type::scalar_type;
-        using uniform_type = UniformMesh<scalar_type, num_space_dim>;
-        static_assert( std::is_same<mesh_type, uniform_type>::value,
-                       "Migrate count requires a uniform mesh." );
-
-        using execution_space = typename PositionSliceType::execution_space;
-
-        // Check within the halo width, within the ghosted domain.
-        const auto& local_mesh =
-            Cajita::createLocalMesh<Kokkos::HostSpace>( _local_grid );
-
-        Kokkos::Array<double, num_space_dim> local_low{};
-        Kokkos::Array<double, num_space_dim> local_high{};
-        for ( std::size_t d = 0; d < num_space_dim; ++d )
-        {
-            auto dx = _local_grid.globalGrid().globalMesh().cellSize( d );
-            local_low[d] = local_mesh.lowCorner( Cajita::Ghost(), d ) +
-                           minimum_halo_width * dx;
-            local_high[d] = local_mesh.highCorner( Cajita::Ghost(), d ) -
-                            minimum_halo_width * dx;
-        }
-
-        int comm_count = 0;
-        Kokkos::parallel_reduce(
-            "redistribute_count",
-            Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
-            KOKKOS_LAMBDA( const int p, int& result ) {
-                for ( std::size_t d = 0; d < num_space_dim; ++d )
-                    if ( positions( p, d ) < local_low[d] ||
-                         positions( p, d ) > local_high[d] )
-                    {
-                        result += 1;
-                        break;
-                    }
-            },
-            comm_count );
-
-        MPI_Allreduce( MPI_IN_PLACE, &comm_count, 1, MPI_INT, MPI_SUM,
-                       _local_grid.globalGrid().comm() );
-
-        return comm_count;
-    }
-
-    // Build neighbor topology of 27 nearest 3D neighbors. Some of the ranks in
-    // this list may be invalid.
-    template <std::size_t NSD = num_space_dim>
-    std::enable_if_t<3 == NSD, std::vector<int>> getTopology()
-    {
-        std::vector<int> topology( 27, -1 );
-        int nr = 0;
-        for ( int k = -1; k < 2; ++k )
-            for ( int j = -1; j < 2; ++j )
-                for ( int i = -1; i < 2; ++i, ++nr )
-                    topology[nr] = _local_grid.neighborRank( i, j, k );
-        return topology;
-    }
-
-    // Build neighbor topology of 8 nearest 2D neighbors. Some of the ranks in
-    // this list may be invalid.
-    template <std::size_t NSD = num_space_dim>
-    std::enable_if_t<2 == NSD, std::vector<int>> getTopology()
-    {
-        std::vector<int> topology( 9, -1 );
-        int nr = 0;
+// Build neighbor topology of 27 nearest 3D neighbors. Some of the ranks in
+// this list may be invalid.
+template <class LocalGridType, std::size_t NSD = LocalGridType::num_space_dim>
+std::enable_if_t<3 == NSD, std::vector<int>>
+getTopology( const LocalGridType& local_grid )
+{
+    std::vector<int> topology( 27, -1 );
+    int nr = 0;
+    for ( int k = -1; k < 2; ++k )
         for ( int j = -1; j < 2; ++j )
             for ( int i = -1; i < 2; ++i, ++nr )
-                topology[nr] = _local_grid.neighborRank( i, j );
-        return topology;
-    }
+                topology[nr] = local_grid.neighborRank( i, j, k );
+    return topology;
+}
 
-    // Locate the particles in the local grid and get their destination rank.
-    // Particles are assumed to only migrate to a location in the nearest
-    // neighbor halo or stay on this rank. If the particle crosses a global
-    // periodic boundary, wrap it's coordinates back into the domain.
-    template <class PositionSliceType, class NeighborRankView,
-              class DestinationRankView>
-    void getMigrateDestinations( const NeighborRankView& neighbor_ranks,
-                                 DestinationRankView& destinations,
-                                 PositionSliceType& positions )
+// Build neighbor topology of 8 nearest 2D neighbors. Some of the ranks in
+// this list may be invalid.
+template <class LocalGridType, std::size_t NSD = LocalGridType::num_space_dim>
+std::enable_if_t<2 == NSD, std::vector<int>>
+getTopology( const LocalGridType& local_grid )
+{
+    std::vector<int> topology( 9, -1 );
+    int nr = 0;
+    for ( int j = -1; j < 2; ++j )
+        for ( int i = -1; i < 2; ++i, ++nr )
+            topology[nr] = local_grid.neighborRank( i, j );
+    return topology;
+}
+
+// Locate the particles in the local grid and get their destination rank.
+// Particles are assumed to only migrate to a location in the nearest
+// neighbor halo or stay on this rank. If the particle crosses a global
+// periodic boundary, wrap it's coordinates back into the domain.
+template <class LocalGridType, class PositionSliceType, class NeighborRankView,
+          class DestinationRankView>
+void getMigrateDestinations( const LocalGridType& local_grid,
+                             const NeighborRankView& neighbor_ranks,
+                             DestinationRankView& destinations,
+                             PositionSliceType& positions )
+{
+    static constexpr std::size_t num_space_dim = LocalGridType::num_space_dim;
+    using execution_space = typename PositionSliceType::execution_space;
+
+    // Check within the local domain.
+    const auto& local_mesh =
+        Cajita::createLocalMesh<Kokkos::HostSpace>( local_grid );
+
+    // Use global domain for periodicity.
+    const auto& global_grid = local_grid.globalGrid();
+    const auto& global_mesh = global_grid.globalMesh();
+
+    Kokkos::Array<double, num_space_dim> local_low{};
+    Kokkos::Array<double, num_space_dim> local_high{};
+    Kokkos::Array<bool, num_space_dim> periodic{};
+    Kokkos::Array<double, num_space_dim> global_low{};
+    Kokkos::Array<double, num_space_dim> global_high{};
+    Kokkos::Array<double, num_space_dim> global_extent{};
+
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
-        using execution_space = typename PositionSliceType::execution_space;
-
-        // Check within the local domain.
-        const auto& local_mesh =
-            Cajita::createLocalMesh<Kokkos::HostSpace>( _local_grid );
-
-        // Use global domain for periodicity.
-        const auto& global_grid = _local_grid.globalGrid();
-        const auto& global_mesh = global_grid.globalMesh();
-
-        Kokkos::Array<double, num_space_dim> local_low{};
-        Kokkos::Array<double, num_space_dim> local_high{};
-        Kokkos::Array<bool, num_space_dim> periodic{};
-        Kokkos::Array<double, num_space_dim> global_low{};
-        Kokkos::Array<double, num_space_dim> global_high{};
-        Kokkos::Array<double, num_space_dim> global_extent{};
-
-        for ( std::size_t d = 0; d < num_space_dim; ++d )
-        {
-            local_low[d] = local_mesh.lowCorner( Cajita::Own(), d );
-            local_high[d] = local_mesh.highCorner( Cajita::Own(), d );
-            periodic[d] = global_grid.isPeriodic( d );
-            global_low[d] = global_mesh.lowCorner( d );
-            global_high[d] = global_mesh.highCorner( d );
-            global_extent[d] = global_mesh.extent( d );
-        }
-
-        Kokkos::parallel_for(
-            "get_migrate_destinations",
-            Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
-            KOKKOS_LAMBDA( const int p ) {
-                // Compute the logical index of the neighbor we are sending to.
-                int nid[num_space_dim];
-                for ( std::size_t d = 0; d < num_space_dim; ++d )
-                {
-                    nid[d] = 1;
-                    if ( positions( p, d ) < local_low[d] )
-                        nid[d] = 0;
-                    else if ( positions( p, d ) > local_high[d] )
-                        nid[d] = 2;
-                }
-
-                // Compute the destination MPI rank [ni + 3*(nj + 3*nk) in 3d].
-                int neighbor_index = nid[0];
-                for ( std::size_t d = 1; d < num_space_dim; ++d )
-                {
-                    int npower = 1;
-                    for ( std::size_t dp = 1; dp <= d; ++dp )
-                        npower *= 3;
-                    neighbor_index += npower * nid[d];
-                }
-                destinations( p ) = neighbor_ranks( neighbor_index );
-
-                // Shift particles through periodic boundaries.
-                for ( std::size_t d = 0; d < num_space_dim; ++d )
-                {
-                    if ( periodic[d] )
-                    {
-                        if ( positions( p, d ) > global_high[d] )
-                            positions( p, d ) -= global_extent[d];
-                        else if ( positions( p, d ) < global_low[d] )
-                            positions( p, d ) += global_extent[d];
-                    }
-                }
-            } );
+        local_low[d] = local_mesh.lowCorner( Cajita::Own(), d );
+        local_high[d] = local_mesh.highCorner( Cajita::Own(), d );
+        periodic[d] = global_grid.isPeriodic( d );
+        global_low[d] = global_mesh.lowCorner( d );
+        global_high[d] = global_mesh.highCorner( d );
+        global_extent[d] = global_mesh.extent( d );
     }
 
-  private:
-    LocalGridType _local_grid;
-};
+    Kokkos::parallel_for(
+        "get_migrate_destinations",
+        Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
+        KOKKOS_LAMBDA( const int p ) {
+            // Compute the logical index of the neighbor we are sending to.
+            int nid[num_space_dim];
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+            {
+                nid[d] = 1;
+                if ( positions( p, d ) < local_low[d] )
+                    nid[d] = 0;
+                else if ( positions( p, d ) > local_high[d] )
+                    nid[d] = 2;
+            }
+
+            // Compute the destination MPI rank [ni + 3*(nj + 3*nk) in 3d].
+            int neighbor_index = nid[0];
+            for ( std::size_t d = 1; d < num_space_dim; ++d )
+            {
+                int npower = 1;
+                for ( std::size_t dp = 1; dp <= d; ++dp )
+                    npower *= 3;
+                neighbor_index += npower * nid[d];
+            }
+            destinations( p ) = neighbor_ranks( neighbor_index );
+
+            // Shift particles through periodic boundaries.
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+            {
+                if ( periodic[d] )
+                {
+                    if ( positions( p, d ) > global_high[d] )
+                        positions( p, d ) -= global_extent[d];
+                    else if ( positions( p, d ) < global_low[d] )
+                        positions( p, d ) += global_extent[d];
+                }
+            }
+        } );
+}
+} // namespace Impl
 
 //-----------------------------------------------------------------------//
 /*!
@@ -226,9 +163,50 @@ int migrateCount( const LocalGridType& local_grid,
                   const PositionSliceType& positions,
                   const int minimum_halo_width )
 {
-    ParticleGridDistributor<LocalGridType> pg_distributor( local_grid );
+    using grid_type = LocalGridType;
+    static constexpr std::size_t num_space_dim = grid_type::num_space_dim;
+    using mesh_type = typename grid_type::mesh_type;
+    using scalar_type = typename mesh_type::scalar_type;
+    using uniform_type = UniformMesh<scalar_type, num_space_dim>;
+    static_assert( std::is_same<mesh_type, uniform_type>::value,
+                   "Migrate count requires a uniform mesh." );
 
-    return pg_distributor.migrateCount( positions, minimum_halo_width );
+    using execution_space = typename PositionSliceType::execution_space;
+
+    // Check within the halo width, within the ghosted domain.
+    const auto& local_mesh =
+        Cajita::createLocalMesh<Kokkos::HostSpace>( local_grid );
+
+    Kokkos::Array<double, num_space_dim> local_low{};
+    Kokkos::Array<double, num_space_dim> local_high{};
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        auto dx = local_grid.globalGrid().globalMesh().cellSize( d );
+        local_low[d] = local_mesh.lowCorner( Cajita::Ghost(), d ) +
+                       minimum_halo_width * dx;
+        local_high[d] = local_mesh.highCorner( Cajita::Ghost(), d ) -
+                        minimum_halo_width * dx;
+    }
+
+    int comm_count = 0;
+    Kokkos::parallel_reduce(
+        "redistribute_count",
+        Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
+        KOKKOS_LAMBDA( const int p, int& result ) {
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
+                if ( positions( p, d ) < local_low[d] ||
+                     positions( p, d ) > local_high[d] )
+                {
+                    result += 1;
+                    break;
+                }
+        },
+        comm_count );
+
+    MPI_Allreduce( MPI_IN_PLACE, &comm_count, 1, MPI_INT, MPI_SUM,
+                   local_grid.globalGrid().comm() );
+
+    return comm_count;
 }
 
 //---------------------------------------------------------------------------//
@@ -255,10 +233,8 @@ createParticleGridDistributor( const LocalGridType& local_grid,
 {
     using device_type = typename PositionSliceType::device_type;
 
-    ParticleGridDistributor<LocalGridType> pg_distributor( local_grid );
-
     // Get all 26 neighbor ranks.
-    auto topology = pg_distributor.getTopology();
+    auto topology = Impl::getTopology( local_grid );
 
     Kokkos::View<int*, Kokkos::HostSpace, Kokkos::MemoryUnmanaged>
         topology_host( topology.data(), topology.size() );
@@ -270,8 +246,8 @@ createParticleGridDistributor( const LocalGridType& local_grid,
 
     // Determine destination ranks for all particles and wrap positions across
     // periodic boundaries.
-    pg_distributor.getMigrateDestinations( topology_mirror, destinations,
-                                           positions );
+    Impl::getMigrateDestinations( local_grid, topology_mirror, destinations,
+                                  positions );
 
     // Create the Cabana distributor.
     Cabana::Distributor<device_type> distributor(
