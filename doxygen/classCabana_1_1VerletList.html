@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cabana: Cabana::VerletList&lt; DeviceType, AlgorithmTag, LayoutTag, BuildTag &gt; Class Template Reference</title>
+<title>Cabana: Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt; Class Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -72,7 +72,7 @@ $(function() {
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classCabana_1_1VerletList-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::VerletList&lt; DeviceType, AlgorithmTag, LayoutTag, BuildTag &gt; Class Template Reference</div>  </div>
+<div class="title">Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
@@ -81,52 +81,66 @@ $(function() {
 
 <p><code>#include &lt;<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a>&gt;</code></p>
 <div class="dynheader">
-Collaboration diagram for Cabana::VerletList&lt; DeviceType, AlgorithmTag, LayoutTag, BuildTag &gt;:</div>
+Collaboration diagram for Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt;:</div>
 <div class="dyncontent">
-<div class="center"><img src="classCabana_1_1VerletList__coll__graph.png" border="0" usemap="#aCabana_1_1VerletList_3_01DeviceType_00_01AlgorithmTag_00_01LayoutTag_00_01BuildTag_01_4_coll__map" alt="Collaboration graph"/></div>
-<map name="aCabana_1_1VerletList_3_01DeviceType_00_01AlgorithmTag_00_01LayoutTag_00_01BuildTag_01_4_coll__map" id="aCabana_1_1VerletList_3_01DeviceType_00_01AlgorithmTag_00_01LayoutTag_00_01BuildTag_01_4_coll__map">
-<area shape="rect" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same..." alt="" coords="5,109,196,165"/>
-<area shape="rect" href="structCabana_1_1VerletListData.html" title=" " alt="" coords="9,5,192,47"/>
+<div class="center"><img src="classCabana_1_1VerletList__coll__graph.png" border="0" usemap="#aCabana_1_1VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01LayoutTag_00_01BuildTag_01_4_coll__map" alt="Collaboration graph"/></div>
+<map name="aCabana_1_1VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01LayoutTag_00_01BuildTag_01_4_coll__map" id="aCabana_1_1VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01LayoutTag_00_01BuildTag_01_4_coll__map">
+<area shape="rect" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same..." alt="" coords="5,109,212,165"/>
+<area shape="rect" href="structCabana_1_1VerletListData.html" title=" " alt="" coords="7,5,210,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:a683728d5f8deec8a755ee63654dd30e8"><td class="memItemLeft" align="right" valign="top"><a id="a683728d5f8deec8a755ee63654dd30e8"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
-<tr class="separator:a683728d5f8deec8a755ee63654dd30e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a97654201f426b5681e98d82ac7544dd8"><td class="memItemLeft" align="right" valign="top"><a id="a97654201f426b5681e98d82ac7544dd8"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename device_type::memory_space</td></tr>
-<tr class="separator:a97654201f426b5681e98d82ac7544dd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2437ab42e1b590c3fdb28b1e3170b4c"><td class="memItemLeft" align="right" valign="top"><a id="ac2437ab42e1b590c3fdb28b1e3170b4c"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename device_type::execution_space</td></tr>
-<tr class="separator:ac2437ab42e1b590c3fdb28b1e3170b4c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6ac257e1f36b26d53289aafabce417c5"><td class="memItemLeft" align="right" valign="top"><a id="a6ac257e1f36b26d53289aafabce417c5"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a6ac257e1f36b26d53289aafabce417c5">memory_space</a> = MemorySpace</td></tr>
+<tr class="memdesc:a6ac257e1f36b26d53289aafabce417c5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space in which the neighbor list data resides. <br /></td></tr>
+<tr class="separator:a6ac257e1f36b26d53289aafabce417c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4d10a11792cd8176cee811769aca363f"><td class="memItemLeft" align="right" valign="top"><a id="a4d10a11792cd8176cee811769aca363f"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a4d10a11792cd8176cee811769aca363f">execution_space</a> = typename memory_space::execution_space</td></tr>
+<tr class="memdesc:a4d10a11792cd8176cee811769aca363f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos default execution space for this memory space. <br /></td></tr>
+<tr class="separator:a4d10a11792cd8176cee811769aca363f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a961e675a3ecf0d6e28b37c8c5bb6dba5"><td class="memItemLeft" align="right" valign="top"><a id="a961e675a3ecf0d6e28b37c8c5bb6dba5"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a961e675a3ecf0d6e28b37c8c5bb6dba5">device_type</a> = typename memory_space::device_type</td></tr>
+<tr class="memdesc:a961e675a3ecf0d6e28b37c8c5bb6dba5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device type with the default execution_space. <br /></td></tr>
+<tr class="separator:a961e675a3ecf0d6e28b37c8c5bb6dba5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:aa72e8a61408b1051ed82b635542652a7"><td class="memItemLeft" align="right" valign="top"><a id="aa72e8a61408b1051ed82b635542652a7"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#aa72e8a61408b1051ed82b635542652a7">VerletList</a> ()</td></tr>
-<tr class="memdesc:aa72e8a61408b1051ed82b635542652a7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
-<tr class="separator:aa72e8a61408b1051ed82b635542652a7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a63f5812ca5c81dd0a885f7946b6b425b"><td class="memTemplParams" colspan="2">template&lt;class PositionSlice &gt; </td></tr>
-<tr class="memitem:a63f5812ca5c81dd0a885f7946b6b425b"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a63f5812ca5c81dd0a885f7946b6b425b">VerletList</a> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionSlice &gt;::value), int &gt;::type *=0)</td></tr>
-<tr class="memdesc:a63f5812ca5c81dd0a885f7946b6b425b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <a href="classCabana_1_1VerletList.html#a63f5812ca5c81dd0a885f7946b6b425b">More...</a><br /></td></tr>
-<tr class="separator:a63f5812ca5c81dd0a885f7946b6b425b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a992a936a7289b867e413b941b273e085"><td class="memItemLeft" align="right" valign="top"><a id="a992a936a7289b867e413b941b273e085"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a992a936a7289b867e413b941b273e085">VerletList</a> ()</td></tr>
+<tr class="memdesc:a992a936a7289b867e413b941b273e085"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="separator:a992a936a7289b867e413b941b273e085"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae2f8350cf0c3cefef9a4c3fd0cc31eb9"><td class="memTemplParams" colspan="2">template&lt;class PositionSlice &gt; </td></tr>
+<tr class="memitem:ae2f8350cf0c3cefef9a4c3fd0cc31eb9"><td class="memTemplItemLeft" align="right" valign="top">&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#ae2f8350cf0c3cefef9a4c3fd0cc31eb9">VerletList</a> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0, typename std::enable_if&lt;(<a class="el" href="structCabana_1_1is__slice.html">is_slice</a>&lt; PositionSlice &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memdesc:ae2f8350cf0c3cefef9a4c3fd0cc31eb9"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> constructor. Given a list of particle positions and a neighborhood radius calculate the neighbor list.  <a href="classCabana_1_1VerletList.html#ae2f8350cf0c3cefef9a4c3fd0cc31eb9">More...</a><br /></td></tr>
+<tr class="separator:ae2f8350cf0c3cefef9a4c3fd0cc31eb9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac5cbcf0f2260c928346dbc3cc9ed3228"><td class="memTemplParams" colspan="2"><a id="ac5cbcf0f2260c928346dbc3cc9ed3228"></a>
+template&lt;class PositionSlice &gt; </td></tr>
+<tr class="memitem:ac5cbcf0f2260c928346dbc3cc9ed3228"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#ac5cbcf0f2260c928346dbc3cc9ed3228">build</a> (PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0)</td></tr>
+<tr class="memdesc:ac5cbcf0f2260c928346dbc3cc9ed3228"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list. <br /></td></tr>
+<tr class="separator:ac5cbcf0f2260c928346dbc3cc9ed3228"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01978d70caaeffeff8deae1e2f494ab0"><td class="memTemplParams" colspan="2"><a id="a01978d70caaeffeff8deae1e2f494ab0"></a>
+template&lt;class PositionSlice , class ExecutionSpace &gt; </td></tr>
+<tr class="memitem:a01978d70caaeffeff8deae1e2f494ab0"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a01978d70caaeffeff8deae1e2f494ab0">build</a> (ExecutionSpace, PositionSlice x, const std::size_t begin, const std::size_t end, const typename PositionSlice::value_type neighborhood_radius, const typename PositionSlice::value_type cell_size_ratio, const typename PositionSlice::value_type grid_min[3], const typename PositionSlice::value_type grid_max[3], const std::size_t max_neigh=0)</td></tr>
+<tr class="memdesc:a01978d70caaeffeff8deae1e2f494ab0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a list of particle positions and a neighborhood radius calculate the neighbor list. <br /></td></tr>
+<tr class="separator:a01978d70caaeffeff8deae1e2f494ab0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a65d54dcbeee2fc5436d312a75bf9ef92"><td class="memItemLeft" align="right" valign="top"><a id="a65d54dcbeee2fc5436d312a75bf9ef92"></a>
-<a class="el" href="structCabana_1_1VerletListData.html">VerletListData</a>&lt; device_type, LayoutTag &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>_data</b></td></tr>
-<tr class="separator:a65d54dcbeee2fc5436d312a75bf9ef92"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1f451419f3150064b67a7cf1e69a17ff"><td class="memItemLeft" align="right" valign="top"><a id="a1f451419f3150064b67a7cf1e69a17ff"></a>
+<a class="el" href="structCabana_1_1VerletListData.html">VerletListData</a>&lt; <a class="el" href="classCabana_1_1VerletList.html#a6ac257e1f36b26d53289aafabce417c5">memory_space</a>, LayoutTag &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1VerletList.html#a1f451419f3150064b67a7cf1e69a17ff">_data</a></td></tr>
+<tr class="memdesc:a1f451419f3150064b67a7cf1e69a17ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verlet list data. <br /></td></tr>
+<tr class="separator:a1f451419f3150064b67a7cf1e69a17ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><h3>template&lt;class DeviceType, class AlgorithmTag, class LayoutTag, class BuildTag = TeamVectorOpTag&gt;<br />
-class Cabana::VerletList&lt; DeviceType, AlgorithmTag, LayoutTag, BuildTag &gt;</h3>
+<div class="textblock"><h3>template&lt;class MemorySpace, class AlgorithmTag, class LayoutTag, class BuildTag = TeamVectorOpTag&gt;<br />
+class Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt;</h3>
 
 <p>Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same size as the interaction distance. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">DeviceType</td><td>The device type to use for building and storing the neighbor list.</td></tr>
+    <tr><td class="paramname">MemorySpace</td><td>The Kokkos memory space for storing the neighbor list.</td></tr>
     <tr><td class="paramname">AlgorithmTag</td><td>Tag indicating whether to build a full or half neighbor list.</td></tr>
     <tr><td class="paramname">LayoutTag</td><td>Tag indicating whether to use a CSR or 2D data layout.</td></tr>
     <tr><td class="paramname">BuildTag</td><td>Tag indicating whether to use hierarchical team or team vector parallelism when building neighbor lists.</td></tr>
@@ -135,13 +149,13 @@ class Cabana::VerletList&lt; DeviceType, AlgorithmTag, LayoutTag, BuildTag &gt;<
 </dl>
 <p>Neighbor list implementation most appropriate for somewhat regularly distributed particles due to the use of a Cartesian grid. </p>
 </div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
-<a id="a63f5812ca5c81dd0a885f7946b6b425b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a63f5812ca5c81dd0a885f7946b6b425b">&#9670;&nbsp;</a></span>VerletList()</h2>
+<a id="ae2f8350cf0c3cefef9a4c3fd0cc31eb9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae2f8350cf0c3cefef9a4c3fd0cc31eb9">&#9670;&nbsp;</a></span>VerletList()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class DeviceType , class AlgorithmTag , class LayoutTag , class BuildTag  = TeamVectorOpTag&gt; </div>
+template&lt;class MemorySpace , class AlgorithmTag , class LayoutTag , class BuildTag  = TeamVectorOpTag&gt; </div>
 <div class="memtemplate">
 template&lt;class PositionSlice &gt; </div>
 <table class="mlabels">
@@ -149,7 +163,7 @@ template&lt;class PositionSlice &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classCabana_1_1VerletList.html">Cabana::VerletList</a>&lt; DeviceType, AlgorithmTag, LayoutTag, BuildTag &gt;::<a class="el" href="classCabana_1_1VerletList.html">VerletList</a> </td>
+          <td class="memname"><a class="el" href="classCabana_1_1VerletList.html">Cabana::VerletList</a>&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt;::<a class="el" href="classCabana_1_1VerletList.html">VerletList</a> </td>
           <td>(</td>
           <td class="paramtype">PositionSlice&#160;</td>
           <td class="paramname"><em>x</em>, </td>

@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.9.1"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Cabana: Cabana::VerletListData&lt; DeviceType, VerletLayout2D &gt; Struct Template Reference</title>
+<title>Cabana: Cabana::VerletListData&lt; MemorySpace, VerletLayoutCSR &gt; Struct Template Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -62,7 +62,7 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><a class="el" href="namespaceCabana.html">Cabana</a></li><li class="navelem"><a class="el" href="structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayout2D_01_4.html">VerletListData&lt; DeviceType, VerletLayout2D &gt;</a></li>  </ul>
+<li class="navelem"><a class="el" href="namespaceCabana.html">Cabana</a></li><li class="navelem"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html">VerletListData&lt; MemorySpace, VerletLayoutCSR &gt;</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
@@ -70,32 +70,38 @@ $(function() {
 <a href="#pub-types">Public Types</a> &#124;
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structCabana_1_1VerletListData_3_01DeviceType_00_01VerletLayout2D_01_4-members.html">List of all members</a>  </div>
+<a href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">Cabana::VerletListData&lt; DeviceType, VerletLayout2D &gt; Struct Template Reference</div>  </div>
+<div class="title">Cabana::VerletListData&lt; MemorySpace, VerletLayoutCSR &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:af2137cdc8f718f86ec76dc7b0624ea99"><td class="memItemLeft" align="right" valign="top"><a id="af2137cdc8f718f86ec76dc7b0624ea99"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
-<tr class="separator:af2137cdc8f718f86ec76dc7b0624ea99"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a38444407a5946a7b1a81ba44e98159cf"><td class="memItemLeft" align="right" valign="top"><a id="a38444407a5946a7b1a81ba44e98159cf"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+<tr class="separator:a38444407a5946a7b1a81ba44e98159cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a33651bd730a08cd9a9b19fd347b51fe1"><td class="memItemLeft" align="right" valign="top"><a id="a33651bd730a08cd9a9b19fd347b51fe1"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename memory_space::device_type</td></tr>
+<tr class="separator:a33651bd730a08cd9a9b19fd347b51fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a35bd74071fc5e3a9d1070ec04019a5e0"><td class="memItemLeft" align="right" valign="top"><a id="a35bd74071fc5e3a9d1070ec04019a5e0"></a>
+<tr class="memitem:a604662726440f3903ec0838305019902"><td class="memItemLeft" align="right" valign="top"><a id="a604662726440f3903ec0838305019902"></a>
 KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>addNeighbor</b> (const int pid, const int nid) const</td></tr>
-<tr class="separator:a35bd74071fc5e3a9d1070ec04019a5e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a604662726440f3903ec0838305019902"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:a737324ea3e56e42a7c891b3b2a8962b5"><td class="memItemLeft" align="right" valign="top"><a id="a737324ea3e56e42a7c891b3b2a8962b5"></a>
-Kokkos::View&lt; int *, device_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>counts</b></td></tr>
-<tr class="separator:a737324ea3e56e42a7c891b3b2a8962b5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae45a6db8ebc50a91d7fe0d7151982453"><td class="memItemLeft" align="right" valign="top"><a id="ae45a6db8ebc50a91d7fe0d7151982453"></a>
-Kokkos::View&lt; int **, device_type &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>neighbors</b></td></tr>
-<tr class="separator:ae45a6db8ebc50a91d7fe0d7151982453"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a47571be84132b59be0fcfa7df85380ff"><td class="memItemLeft" align="right" valign="top"><a id="a47571be84132b59be0fcfa7df85380ff"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>counts</b></td></tr>
+<tr class="separator:a47571be84132b59be0fcfa7df85380ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1b003066d94ac04af1aa93f9b1bdb464"><td class="memItemLeft" align="right" valign="top"><a id="a1b003066d94ac04af1aa93f9b1bdb464"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>offsets</b></td></tr>
+<tr class="separator:a1b003066d94ac04af1aa93f9b1bdb464"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adfcaf31b91a2dfdb354e20e9987cc6fe"><td class="memItemLeft" align="right" valign="top"><a id="adfcaf31b91a2dfdb354e20e9987cc6fe"></a>
+Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>neighbors</b></td></tr>
+<tr class="separator:adfcaf31b91a2dfdb354e20e9987cc6fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <hr/>The documentation for this struct was generated from the following file:<ul>
 <li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
