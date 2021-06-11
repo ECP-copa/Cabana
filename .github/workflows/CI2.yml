@@ -291,8 +291,7 @@ jobs:
             -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 \
             -DCabana_ENABLE_COVERAGE_BUILD=${{ matrix.coverage }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
-            -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS \
-            -DDOXYGEN_WARN_IF_UNDOCUMENTED=NO
+            -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
