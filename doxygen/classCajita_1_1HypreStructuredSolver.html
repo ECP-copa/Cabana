@@ -75,32 +75,40 @@ $(function() {
 <div class="title">Cajita::HypreStructuredSolver&lt; Scalar, EntityType, DeviceType &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Hypre structured solver interface for scalar fields.  
+ <a href="classCajita_1_1HypreStructuredSolver.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__HypreStructuredSolver_8hpp_source.html">Cajita_HypreStructuredSolver.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Cajita::HypreStructuredSolver&lt; Scalar, EntityType, DeviceType &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classCajita_1_1HypreStructuredSolver__inherit__graph.png" border="0" usemap="#aCajita_1_1HypreStructuredSolver_3_01Scalar_00_01EntityType_00_01DeviceType_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aCajita_1_1HypreStructuredSolver_3_01Scalar_00_01EntityType_00_01DeviceType_01_4_inherit__map" id="aCajita_1_1HypreStructuredSolver_3_01Scalar_00_01EntityType_00_01DeviceType_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,201,236,243"/>
-<area shape="rect" href="classCajita_1_1HypreStructBiCGSTAB.html" title=" " alt="" coords="284,5,515,47"/>
-<area shape="rect" href="classCajita_1_1HypreStructDiagonal.html" title=" " alt="" coords="284,71,515,112"/>
-<area shape="rect" href="classCajita_1_1HypreStructGMRES.html" title=" " alt="" coords="284,136,515,177"/>
-<area shape="rect" href="classCajita_1_1HypreStructJacobi.html" title=" " alt="" coords="284,201,515,243"/>
-<area shape="rect" href="classCajita_1_1HypreStructPCG.html" title=" " alt="" coords="319,267,479,323"/>
-<area shape="rect" href="classCajita_1_1HypreStructPFMG.html" title=" " alt="" coords="315,347,484,403"/>
-<area shape="rect" href="classCajita_1_1HypreStructSMG.html" title=" " alt="" coords="318,427,481,483"/>
+<area shape="rect" title="Hypre structured solver interface for scalar fields." alt="" coords="5,201,236,243"/>
+<area shape="rect" href="classCajita_1_1HypreStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="284,5,515,47"/>
+<area shape="rect" href="classCajita_1_1HypreStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="284,71,515,112"/>
+<area shape="rect" href="classCajita_1_1HypreStructGMRES.html" title="GMRES solver." alt="" coords="284,136,515,177"/>
+<area shape="rect" href="classCajita_1_1HypreStructJacobi.html" title="Jacobi solver." alt="" coords="284,201,515,243"/>
+<area shape="rect" href="classCajita_1_1HypreStructPCG.html" title="PCG solver." alt="" coords="319,267,479,323"/>
+<area shape="rect" href="classCajita_1_1HypreStructPFMG.html" title="PFMG solver." alt="" coords="315,347,484,403"/>
+<area shape="rect" href="classCajita_1_1HypreStructSMG.html" title="SMG solver." alt="" coords="318,427,481,483"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a6a1376b45b6568e4c2eec09c443a1504"><td class="memItemLeft" align="right" valign="top"><a id="a6a1376b45b6568e4c2eec09c443a1504"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = EntityType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a6a1376b45b6568e4c2eec09c443a1504">entity_type</a> = EntityType</td></tr>
+<tr class="memdesc:a6a1376b45b6568e4c2eec09c443a1504"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entity type. <br /></td></tr>
 <tr class="separator:a6a1376b45b6568e4c2eec09c443a1504"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad27529b2b3ab6ffa7106def3b62010bd"><td class="memItemLeft" align="right" valign="top"><a id="ad27529b2b3ab6ffa7106def3b62010bd"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#ad27529b2b3ab6ffa7106def3b62010bd">device_type</a> = DeviceType</td></tr>
+<tr class="memdesc:ad27529b2b3ab6ffa7106def3b62010bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device type. <br /></td></tr>
 <tr class="separator:ad27529b2b3ab6ffa7106def3b62010bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aed659dcbb4a1cd933e8a935785e49188"><td class="memItemLeft" align="right" valign="top"><a id="aed659dcbb4a1cd933e8a935785e49188"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = Scalar</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#aed659dcbb4a1cd933e8a935785e49188">value_type</a> = Scalar</td></tr>
+<tr class="memdesc:aed659dcbb4a1cd933e8a935785e49188"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar value type. <br /></td></tr>
 <tr class="separator:aed659dcbb4a1cd933e8a935785e49188"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -122,72 +130,95 @@ bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 <tr class="memdesc:a91a668f9982395e172002d0da6d5a28c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the matrix values.  <a href="classCajita_1_1HypreStructuredSolver.html#a91a668f9982395e172002d0da6d5a28c">More...</a><br /></td></tr>
 <tr class="separator:a91a668f9982395e172002d0da6d5a28c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9ccdf2e019f623743d624e4dae4695dc"><td class="memItemLeft" align="right" valign="top"><a id="a9ccdf2e019f623743d624e4dae4695dc"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setTolerance</b> (const double tol)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a9ccdf2e019f623743d624e4dae4695dc">setTolerance</a> (const double tol)</td></tr>
+<tr class="memdesc:a9ccdf2e019f623743d624e4dae4695dc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set convergence tolerance implementation. <br /></td></tr>
 <tr class="separator:a9ccdf2e019f623743d624e4dae4695dc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa83625f9b9a24d783a4970d160c5e1e8"><td class="memItemLeft" align="right" valign="top"><a id="aa83625f9b9a24d783a4970d160c5e1e8"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setMaxIter</b> (const int max_iter)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#aa83625f9b9a24d783a4970d160c5e1e8">setMaxIter</a> (const int max_iter)</td></tr>
+<tr class="memdesc:aa83625f9b9a24d783a4970d160c5e1e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set maximum iteration implementation. <br /></td></tr>
 <tr class="separator:aa83625f9b9a24d783a4970d160c5e1e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a32e6a20ec4b969c892f7f41544dbbaff"><td class="memItemLeft" align="right" valign="top"><a id="a32e6a20ec4b969c892f7f41544dbbaff"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setPrintLevel</b> (const int print_level)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a32e6a20ec4b969c892f7f41544dbbaff">setPrintLevel</a> (const int print_level)</td></tr>
+<tr class="memdesc:a32e6a20ec4b969c892f7f41544dbbaff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the output level. <br /></td></tr>
 <tr class="separator:a32e6a20ec4b969c892f7f41544dbbaff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5f98ecacc8a4f10c33c98d03c258037"><td class="memItemLeft" align="right" valign="top"><a id="ab5f98ecacc8a4f10c33c98d03c258037"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setPreconditioner</b> (const std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a>&lt; Scalar, EntityType, DeviceType &gt;&gt; &amp;preconditioner)</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#ab5f98ecacc8a4f10c33c98d03c258037">setPreconditioner</a> (const std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a>&lt; Scalar, EntityType, DeviceType &gt;&gt; &amp;preconditioner)</td></tr>
+<tr class="memdesc:ab5f98ecacc8a4f10c33c98d03c258037"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a preconditioner. <br /></td></tr>
 <tr class="separator:ab5f98ecacc8a4f10c33c98d03c258037"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b520d029dba1ee6cf508cedca903847"><td class="memItemLeft" align="right" valign="top"><a id="a5b520d029dba1ee6cf508cedca903847"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>setup</b> ()</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a5b520d029dba1ee6cf508cedca903847">setup</a> ()</td></tr>
+<tr class="memdesc:a5b520d029dba1ee6cf508cedca903847"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup the problem. <br /></td></tr>
 <tr class="separator:a5b520d029dba1ee6cf508cedca903847"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aad83d5f34d10076a13ed6187f3294de6"><td class="memTemplParams" colspan="2">template&lt;class Array_t &gt; </td></tr>
 <tr class="memitem:aad83d5f34d10076a13ed6187f3294de6"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#aad83d5f34d10076a13ed6187f3294de6">solve</a> (const Array_t &amp;b, Array_t &amp;x)</td></tr>
 <tr class="memdesc:aad83d5f34d10076a13ed6187f3294de6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solve the problem Ax = b for x.  <a href="classCajita_1_1HypreStructuredSolver.html#aad83d5f34d10076a13ed6187f3294de6">More...</a><br /></td></tr>
 <tr class="separator:aad83d5f34d10076a13ed6187f3294de6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab5abc9dcae0406d2575b7e717bdf4dca"><td class="memItemLeft" align="right" valign="top"><a id="ab5abc9dcae0406d2575b7e717bdf4dca"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>getNumIter</b> ()</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#ab5abc9dcae0406d2575b7e717bdf4dca">getNumIter</a> ()</td></tr>
+<tr class="memdesc:ab5abc9dcae0406d2575b7e717bdf4dca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of iterations taken on the last solve. <br /></td></tr>
 <tr class="separator:ab5abc9dcae0406d2575b7e717bdf4dca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1e5afd71b3565d8bc7ea2856d9f3d918"><td class="memItemLeft" align="right" valign="top"><a id="a1e5afd71b3565d8bc7ea2856d9f3d918"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><b>getFinalRelativeResidualNorm</b> ()</td></tr>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a1e5afd71b3565d8bc7ea2856d9f3d918">getFinalRelativeResidualNorm</a> ()</td></tr>
+<tr class="memdesc:a1e5afd71b3565d8bc7ea2856d9f3d918"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the relative residual norm achieved on the last solve. <br /></td></tr>
 <tr class="separator:a1e5afd71b3565d8bc7ea2856d9f3d918"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a76dbe552baf4710315e9164299a9823f"><td class="memItemLeft" align="right" valign="top"><a id="a76dbe552baf4710315e9164299a9823f"></a>
 virtual HYPRE_StructSolver&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a76dbe552baf4710315e9164299a9823f">getHypreSolver</a> () const =0</td></tr>
-<tr class="memdesc:a76dbe552baf4710315e9164299a9823f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Preconditioner implementation details. <br /></td></tr>
+<tr class="memdesc:a76dbe552baf4710315e9164299a9823f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the preconditioner. <br /></td></tr>
 <tr class="separator:a76dbe552baf4710315e9164299a9823f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad47db8faad5d2136e137b0c21b374480"><td class="memItemLeft" align="right" valign="top"><a id="ad47db8faad5d2136e137b0c21b374480"></a>
-virtual HYPRE_PtrToStructSolverFcn&#160;</td><td class="memItemRight" valign="bottom"><b>getHypreSetupFunction</b> () const =0</td></tr>
+virtual HYPRE_PtrToStructSolverFcn&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#ad47db8faad5d2136e137b0c21b374480">getHypreSetupFunction</a> () const =0</td></tr>
+<tr class="memdesc:ad47db8faad5d2136e137b0c21b374480"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the preconditioner setup function. <br /></td></tr>
 <tr class="separator:ad47db8faad5d2136e137b0c21b374480"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a460d4df6ac284881b259a0c98e42536e"><td class="memItemLeft" align="right" valign="top"><a id="a460d4df6ac284881b259a0c98e42536e"></a>
-virtual HYPRE_PtrToStructSolverFcn&#160;</td><td class="memItemRight" valign="bottom"><b>getHypreSolveFunction</b> () const =0</td></tr>
+virtual HYPRE_PtrToStructSolverFcn&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a460d4df6ac284881b259a0c98e42536e">getHypreSolveFunction</a> () const =0</td></tr>
+<tr class="memdesc:a460d4df6ac284881b259a0c98e42536e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the preconditioner solve function. <br /></td></tr>
 <tr class="separator:a460d4df6ac284881b259a0c98e42536e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-methods"></a>
 Protected Member Functions</h2></td></tr>
 <tr class="memitem:aa842965e68880dff7a74b9febeadae7e"><td class="memItemLeft" align="right" valign="top"><a id="aa842965e68880dff7a74b9febeadae7e"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setToleranceImpl</b> (const double tol)=0</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#aa842965e68880dff7a74b9febeadae7e">setToleranceImpl</a> (const double tol)=0</td></tr>
+<tr class="memdesc:aa842965e68880dff7a74b9febeadae7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set convergence tolerance implementation. <br /></td></tr>
 <tr class="separator:aa842965e68880dff7a74b9febeadae7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ba9d9bd7d7fb8184192941940c0bc7f"><td class="memItemLeft" align="right" valign="top"><a id="a1ba9d9bd7d7fb8184192941940c0bc7f"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setMaxIterImpl</b> (const int max_iter)=0</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a1ba9d9bd7d7fb8184192941940c0bc7f">setMaxIterImpl</a> (const int max_iter)=0</td></tr>
+<tr class="memdesc:a1ba9d9bd7d7fb8184192941940c0bc7f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set maximum iteration implementation. <br /></td></tr>
 <tr class="separator:a1ba9d9bd7d7fb8184192941940c0bc7f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac03d9c8f68f51646f9f28f383ef4f773"><td class="memItemLeft" align="right" valign="top"><a id="ac03d9c8f68f51646f9f28f383ef4f773"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setPrintLevelImpl</b> (const int print_level)=0</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#ac03d9c8f68f51646f9f28f383ef4f773">setPrintLevelImpl</a> (const int print_level)=0</td></tr>
+<tr class="memdesc:ac03d9c8f68f51646f9f28f383ef4f773"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set the output level. <br /></td></tr>
 <tr class="separator:ac03d9c8f68f51646f9f28f383ef4f773"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a07aef90849df643fcad028f2c15935f7"><td class="memItemLeft" align="right" valign="top"><a id="a07aef90849df643fcad028f2c15935f7"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setupImpl</b> (HYPRE_StructMatrix A, HYPRE_StructVector b, HYPRE_StructVector x)=0</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a07aef90849df643fcad028f2c15935f7">setupImpl</a> (HYPRE_StructMatrix A, HYPRE_StructVector b, HYPRE_StructVector x)=0</td></tr>
+<tr class="memdesc:a07aef90849df643fcad028f2c15935f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Setup implementation. <br /></td></tr>
 <tr class="separator:a07aef90849df643fcad028f2c15935f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae1f185a5837ed80e6bdd0c2da4778b0b"><td class="memItemLeft" align="right" valign="top"><a id="ae1f185a5837ed80e6bdd0c2da4778b0b"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>solveImpl</b> (HYPRE_StructMatrix A, HYPRE_StructVector b, HYPRE_StructVector x)=0</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#ae1f185a5837ed80e6bdd0c2da4778b0b">solveImpl</a> (HYPRE_StructMatrix A, HYPRE_StructVector b, HYPRE_StructVector x)=0</td></tr>
+<tr class="memdesc:ae1f185a5837ed80e6bdd0c2da4778b0b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Solver implementation. <br /></td></tr>
 <tr class="separator:ae1f185a5837ed80e6bdd0c2da4778b0b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a20d42b635784c07eb3270b053455f34a"><td class="memItemLeft" align="right" valign="top"><a id="a20d42b635784c07eb3270b053455f34a"></a>
-virtual int&#160;</td><td class="memItemRight" valign="bottom"><b>getNumIterImpl</b> ()=0</td></tr>
+virtual int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a20d42b635784c07eb3270b053455f34a">getNumIterImpl</a> ()=0</td></tr>
+<tr class="memdesc:a20d42b635784c07eb3270b053455f34a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of iterations taken on the last solve. <br /></td></tr>
 <tr class="separator:a20d42b635784c07eb3270b053455f34a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7de4c67dfedbd41efd98578d39ba4109"><td class="memItemLeft" align="right" valign="top"><a id="a7de4c67dfedbd41efd98578d39ba4109"></a>
-virtual double&#160;</td><td class="memItemRight" valign="bottom"><b>getFinalRelativeResidualNormImpl</b> ()=0</td></tr>
+virtual double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#a7de4c67dfedbd41efd98578d39ba4109">getFinalRelativeResidualNormImpl</a> ()=0</td></tr>
+<tr class="memdesc:a7de4c67dfedbd41efd98578d39ba4109"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the relative residual norm achieved on the last solve. <br /></td></tr>
 <tr class="separator:a7de4c67dfedbd41efd98578d39ba4109"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2aa54d6b92c5a1c09e1b8819df0d666"><td class="memItemLeft" align="right" valign="top"><a id="af2aa54d6b92c5a1c09e1b8819df0d666"></a>
-virtual void&#160;</td><td class="memItemRight" valign="bottom"><b>setPreconditionerImpl</b> (const <a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a>&lt; Scalar, EntityType, DeviceType &gt; &amp;preconditioner)=0</td></tr>
+virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#af2aa54d6b92c5a1c09e1b8819df0d666">setPreconditionerImpl</a> (const <a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a>&lt; Scalar, EntityType, DeviceType &gt; &amp;preconditioner)=0</td></tr>
+<tr class="memdesc:af2aa54d6b92c5a1c09e1b8819df0d666"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set a preconditioner. <br /></td></tr>
 <tr class="separator:af2aa54d6b92c5a1c09e1b8819df0d666"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5a5cf8fa75d164b0c6d0e3d517f4823"><td class="memItemLeft" align="right" valign="top"><a id="aa5a5cf8fa75d164b0c6d0e3d517f4823"></a>
-void&#160;</td><td class="memItemRight" valign="bottom"><b>checkHypreError</b> (const int error) const</td></tr>
+void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html#aa5a5cf8fa75d164b0c6d0e3d517f4823">checkHypreError</a> (const int error) const</td></tr>
+<tr class="memdesc:aa5a5cf8fa75d164b0c6d0e3d517f4823"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check a hypre error. <br /></td></tr>
 <tr class="separator:aa5a5cf8fa75d164b0c6d0e3d517f4823"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class Scalar, class EntityType, class DeviceType&gt;<br />
+class Cajita::HypreStructuredSolver&lt; Scalar, EntityType, DeviceType &gt;</h3>
+
+<p>Hypre structured solver interface for scalar fields. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a37c73d83a4b5ad4b795411d84eba65c2"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a37c73d83a4b5ad4b795411d84eba65c2">&#9670;&nbsp;</a></span>HypreStructuredSolver()</h2>
 

@@ -76,6 +76,8 @@ $(function() {
 <div class="title">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="Cajita__SparseDimPartitioner_8hpp_source.html">Cajita_SparseDimPartitioner.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;:</div>
 <div class="dyncontent">
@@ -105,26 +107,31 @@ Classes</h2></td></tr>
 Public Types</h2></td></tr>
 <tr class="memitem:a468487bc42e4267a105221a46a8dfee4"><td class="memItemLeft" align="right" valign="top"><a id="a468487bc42e4267a105221a46a8dfee4"></a>
 using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#a468487bc42e4267a105221a46a8dfee4">device_type</a> = Device</td></tr>
-<tr class="memdesc:a468487bc42e4267a105221a46a8dfee4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device type. <br /></td></tr>
+<tr class="memdesc:a468487bc42e4267a105221a46a8dfee4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device type. <br /></td></tr>
 <tr class="separator:a468487bc42e4267a105221a46a8dfee4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fda7944154dc9894d84972e446589fc"><td class="memItemLeft" align="right" valign="top"><a id="a8fda7944154dc9894d84972e446589fc"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename Device::memory_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#a8fda7944154dc9894d84972e446589fc">memory_space</a> = typename Device::memory_space</td></tr>
+<tr class="memdesc:a8fda7944154dc9894d84972e446589fc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
 <tr class="separator:a8fda7944154dc9894d84972e446589fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a656434015f6e438489d6cc9767ea32ba"><td class="memItemLeft" align="right" valign="top"><a id="a656434015f6e438489d6cc9767ea32ba"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename Device::execution_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#a656434015f6e438489d6cc9767ea32ba">execution_space</a> = typename Device::execution_space</td></tr>
+<tr class="memdesc:a656434015f6e438489d6cc9767ea32ba"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
 <tr class="separator:a656434015f6e438489d6cc9767ea32ba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acba0d2584d3295a8c4024e1b5bb32e3c"><td class="memItemLeft" align="right" valign="top"><a id="acba0d2584d3295a8c4024e1b5bb32e3c"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#acba0d2584d3295a8c4024e1b5bb32e3c">workload_view</a> = Kokkos::View&lt; int ***, memory_space &gt;</td></tr>
-<tr class="memdesc:acba0d2584d3295a8c4024e1b5bb32e3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">View type. <br /></td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#acba0d2584d3295a8c4024e1b5bb32e3c">workload_view</a> = Kokkos::View&lt; int ***, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a8fda7944154dc9894d84972e446589fc">memory_space</a> &gt;</td></tr>
+<tr class="memdesc:acba0d2584d3295a8c4024e1b5bb32e3c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Workload device view. <br /></td></tr>
 <tr class="separator:acba0d2584d3295a8c4024e1b5bb32e3c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a051be992b820f9e58957a67fc4a5eb37"><td class="memItemLeft" align="right" valign="top"><a id="a051be992b820f9e58957a67fc4a5eb37"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>partition_view</b> = Kokkos::View&lt; int *[3], memory_space &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#a051be992b820f9e58957a67fc4a5eb37">partition_view</a> = Kokkos::View&lt; int *[3], <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a8fda7944154dc9894d84972e446589fc">memory_space</a> &gt;</td></tr>
+<tr class="memdesc:a051be992b820f9e58957a67fc4a5eb37"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partition device view. <br /></td></tr>
 <tr class="separator:a051be992b820f9e58957a67fc4a5eb37"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af93aeaecbf62721d6acb6bec0859f8fd"><td class="memItemLeft" align="right" valign="top"><a id="af93aeaecbf62721d6acb6bec0859f8fd"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>workload_view_host</b> = Kokkos::View&lt; int ***, typename execution_space::array_layout, Kokkos::HostSpace &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#af93aeaecbf62721d6acb6bec0859f8fd">workload_view_host</a> = Kokkos::View&lt; int ***, typename execution_space::array_layout, Kokkos::HostSpace &gt;</td></tr>
+<tr class="memdesc:af93aeaecbf62721d6acb6bec0859f8fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Workload host view. <br /></td></tr>
 <tr class="separator:af93aeaecbf62721d6acb6bec0859f8fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af2182416012b32714a7f65fd3575a32d"><td class="memItemLeft" align="right" valign="top"><a id="af2182416012b32714a7f65fd3575a32d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>partition_view_host</b> = Kokkos::View&lt; int *[3], typename execution_space::array_layout, Kokkos::HostSpace &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#af2182416012b32714a7f65fd3575a32d">partition_view_host</a> = Kokkos::View&lt; int *[3], typename execution_space::array_layout, Kokkos::HostSpace &gt;</td></tr>
+<tr class="memdesc:af2182416012b32714a7f65fd3575a32d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Partition host view. <br /></td></tr>
 <tr class="separator:af2182416012b32714a7f65fd3575a32d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -214,10 +221,22 @@ Static Public Attributes</h2></td></tr>
 <tr class="separator:a87d6d71768cdb668802e6f584932b8ed"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_attribs_classCajita_1_1BlockPartitioner"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classCajita_1_1BlockPartitioner')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classCajita_1_1BlockPartitioner.html">Cajita::BlockPartitioner&lt; 3 &gt;</a></td></tr>
 <tr class="memitem:a4c67571ff5a952b1b64c10616d43838f inherit pub_static_attribs_classCajita_1_1BlockPartitioner"><td class="memItemLeft" align="right" valign="top"><a id="a4c67571ff5a952b1b64c10616d43838f"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b></td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a></td></tr>
+<tr class="memdesc:a4c67571ff5a952b1b64c10616d43838f inherit pub_static_attribs_classCajita_1_1BlockPartitioner"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:a4c67571ff5a952b1b64c10616d43838f inherit pub_static_attribs_classCajita_1_1BlockPartitioner"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename Device, unsigned long long CellPerTileDim = 4&gt;<br />
+class Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;</h3>
+
+<p>Sparse mesh block partitioner. </p><dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Device</td><td>Kokkos device type. </td></tr>
+    <tr><td class="paramname">CellPerTileDim</td><td>Cells per tile per dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a339632779d5c3af59a1a489e752f09bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a339632779d5c3af59a1a489e752f09bf">&#9670;&nbsp;</a></span>SparseDimPartitioner() <span class="overload">[1/2]</span></h2>
 
@@ -1109,7 +1128,7 @@ template&lt;typename Device , unsigned long long CellPerTileDim = 4&gt; </div>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">        <a class="code" href="namespaceCajita.html#ae9bb6915655919bf33f6128dc0cf62e8">bitCount</a>( CellPerTileDim )</div>
-<div class="ttc" id="anamespaceCajita_html_ae9bb6915655919bf33f6128dc0cf62e8"><div class="ttname"><a href="namespaceCajita.html#ae9bb6915655919bf33f6128dc0cf62e8">Cajita::bitCount</a></div><div class="ttdeci">constexpr KOKKOS_INLINE_FUNCTION Integer bitCount(Integer input_int) noexcept</div><div class="ttdoc">(Host/Device) Compute the lease bit number needed to index input integer</div><div class="ttdef"><b>Definition:</b> Cajita_SparseIndexSpace.hpp:67</div></div>
+<div class="ttc" id="anamespaceCajita_html_ae9bb6915655919bf33f6128dc0cf62e8"><div class="ttname"><a href="namespaceCajita.html#ae9bb6915655919bf33f6128dc0cf62e8">Cajita::bitCount</a></div><div class="ttdeci">constexpr KOKKOS_INLINE_FUNCTION Integer bitCount(Integer input_int) noexcept</div><div class="ttdoc">(Host/Device) Compute the lease bit number needed to index input integer</div><div class="ttdef"><b>Definition:</b> Cajita_SparseIndexSpace.hpp:66</div></div>
 </div><!-- fragment -->
 <p>Number of bits (per dimension) needed to index the cells inside a tile. </p>
 
@@ -1138,7 +1157,7 @@ template&lt;typename Device , unsigned long long CellPerTileDim = 4&gt; </div>
 </div><div class="memdoc">
 <b>Initial value:</b><div class="fragment"><div class="line">=</div>
 <div class="line">        1 &lt;&lt; <a class="code" href="classCajita_1_1SparseDimPartitioner.html#a9ad7cabca54d4e60f3983478a385114a">cell_bits_per_tile_dim</a></div>
-<div class="ttc" id="aclassCajita_1_1SparseDimPartitioner_html_a9ad7cabca54d4e60f3983478a385114a"><div class="ttname"><a href="classCajita_1_1SparseDimPartitioner.html#a9ad7cabca54d4e60f3983478a385114a">Cajita::SparseDimPartitioner::cell_bits_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile_dim</div><div class="ttdoc">Number of bits (per dimension) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition:</b> Cajita_SparseDimPartitioner.hpp:47</div></div>
+<div class="ttc" id="aclassCajita_1_1SparseDimPartitioner_html_a9ad7cabca54d4e60f3983478a385114a"><div class="ttname"><a href="classCajita_1_1SparseDimPartitioner.html#a9ad7cabca54d4e60f3983478a385114a">Cajita::SparseDimPartitioner::cell_bits_per_tile_dim</a></div><div class="ttdeci">static constexpr unsigned long long cell_bits_per_tile_dim</div><div class="ttdoc">Number of bits (per dimension) needed to index the cells inside a tile.</div><div class="ttdef"><b>Definition:</b> Cajita_SparseDimPartitioner.hpp:57</div></div>
 </div><!-- fragment --><p>Number of cells inside each tile (per dimension) Tile size reset to power of 2 </p>
 
 </div>

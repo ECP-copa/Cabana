@@ -76,52 +76,72 @@ $(function() {
 <div class="title">Cajita::ArrayOp::NormInfFunctor&lt; ViewType, NumSpaceDim &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Infinity norm functor.  
+ <a href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__Array_8hpp_source.html">Cajita_Array.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a64265fe28d34fb0ecafa8ba099512854"><td class="memItemLeft" align="right" valign="top"><a id="a64265fe28d34fb0ecafa8ba099512854"></a>
-typedef ViewType::value_type&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b>[]</td></tr>
+typedef ViewType::value_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a64265fe28d34fb0ecafa8ba099512854">value_type</a>[]</td></tr>
+<tr class="memdesc:a64265fe28d34fb0ecafa8ba099512854"><td class="mdescLeft">&#160;</td><td class="mdescRight">Value type. <br /></td></tr>
 <tr class="separator:a64265fe28d34fb0ecafa8ba099512854"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a56b70683cbddd21bf2535b0bdd0acd93"><td class="memItemLeft" align="right" valign="top"><a id="a56b70683cbddd21bf2535b0bdd0acd93"></a>
-typedef ViewType::size_type&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b></td></tr>
+typedef ViewType::size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a></td></tr>
+<tr class="memdesc:a56b70683cbddd21bf2535b0bdd0acd93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size type. <br /></td></tr>
 <tr class="separator:a56b70683cbddd21bf2535b0bdd0acd93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a0691de0566c75c21bd139d26c97d80af"><td class="memItemLeft" align="right" valign="top"><a id="a0691de0566c75c21bd139d26c97d80af"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>NormInfFunctor</b> (const ViewType &amp;view)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a0691de0566c75c21bd139d26c97d80af">NormInfFunctor</a> (const ViewType &amp;view)</td></tr>
+<tr class="memdesc:a0691de0566c75c21bd139d26c97d80af"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:a0691de0566c75c21bd139d26c97d80af"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afd4b6c09ff87b982c5d367c7bf94d5a5"><td class="memTemplParams" colspan="2"><a id="afd4b6c09ff87b982c5d367c7bf94d5a5"></a>
 template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:afd4b6c09ff87b982c5d367c7bf94d5a5"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const size_type i, const size_type j, const size_type k, const size_type l, value_type norm) const</td></tr>
+<tr class="memitem:afd4b6c09ff87b982c5d367c7bf94d5a5"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#afd4b6c09ff87b982c5d367c7bf94d5a5">operator()</a> (const <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a> i, const <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a> j, const <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a> k, const <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a> l, <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a64265fe28d34fb0ecafa8ba099512854">value_type</a> norm) const</td></tr>
+<tr class="memdesc:afd4b6c09ff87b982c5d367c7bf94d5a5"><td class="mdescLeft">&#160;</td><td class="mdescRight">3d infinity norm operation. <br /></td></tr>
 <tr class="separator:afd4b6c09ff87b982c5d367c7bf94d5a5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a901200addf1354a0d54086d2857e94de"><td class="memTemplParams" colspan="2"><a id="a901200addf1354a0d54086d2857e94de"></a>
 template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a901200addf1354a0d54086d2857e94de"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const size_type i, const size_type j, const size_type l, value_type norm) const</td></tr>
+<tr class="memitem:a901200addf1354a0d54086d2857e94de"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a901200addf1354a0d54086d2857e94de">operator()</a> (const <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a> i, const <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a> j, const <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a> l, <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a64265fe28d34fb0ecafa8ba099512854">value_type</a> norm) const</td></tr>
+<tr class="memdesc:a901200addf1354a0d54086d2857e94de"><td class="mdescLeft">&#160;</td><td class="mdescRight">2d infinity norm operation. <br /></td></tr>
 <tr class="separator:a901200addf1354a0d54086d2857e94de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bf2bfc1b6c9f158df81aa3dfb390122"><td class="memItemLeft" align="right" valign="top"><a id="a3bf2bfc1b6c9f158df81aa3dfb390122"></a>
-KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>join</b> (volatile value_type dst, const volatile value_type src) const</td></tr>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a3bf2bfc1b6c9f158df81aa3dfb390122">join</a> (volatile <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a64265fe28d34fb0ecafa8ba099512854">value_type</a> dst, const volatile <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a64265fe28d34fb0ecafa8ba099512854">value_type</a> src) const</td></tr>
+<tr class="memdesc:a3bf2bfc1b6c9f158df81aa3dfb390122"><td class="mdescLeft">&#160;</td><td class="mdescRight">Join operation. <br /></td></tr>
 <tr class="separator:a3bf2bfc1b6c9f158df81aa3dfb390122"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a36ab96a4e548206b50e6faf05120f167"><td class="memItemLeft" align="right" valign="top"><a id="a36ab96a4e548206b50e6faf05120f167"></a>
-KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>init</b> (value_type norm) const</td></tr>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a36ab96a4e548206b50e6faf05120f167">init</a> (<a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a64265fe28d34fb0ecafa8ba099512854">value_type</a> norm) const</td></tr>
+<tr class="memdesc:a36ab96a4e548206b50e6faf05120f167"><td class="mdescLeft">&#160;</td><td class="mdescRight">Zero initialization. <br /></td></tr>
 <tr class="separator:a36ab96a4e548206b50e6faf05120f167"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:ad97db834978328688c4287e003026ac8"><td class="memItemLeft" align="right" valign="top"><a id="ad97db834978328688c4287e003026ac8"></a>
-size_type&#160;</td><td class="memItemRight" valign="bottom"><b>value_count</b></td></tr>
+<a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a56b70683cbddd21bf2535b0bdd0acd93">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#ad97db834978328688c4287e003026ac8">value_count</a></td></tr>
+<tr class="memdesc:ad97db834978328688c4287e003026ac8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size of the array. <br /></td></tr>
 <tr class="separator:ad97db834978328688c4287e003026ac8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a638f14af94aa1fe3322e00693626b262"><td class="memItemLeft" align="right" valign="top"><a id="a638f14af94aa1fe3322e00693626b262"></a>
-ViewType&#160;</td><td class="memItemRight" valign="bottom"><b>_view</b></td></tr>
+ViewType&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a638f14af94aa1fe3322e00693626b262">_view</a></td></tr>
+<tr class="memdesc:a638f14af94aa1fe3322e00693626b262"><td class="mdescLeft">&#160;</td><td class="mdescRight">Array for the infinity norm. <br /></td></tr>
 <tr class="separator:a638f14af94aa1fe3322e00693626b262"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a8d346b7eb077546c40785f1d86b39a6d"><td class="memItemLeft" align="right" valign="top"><a id="a8d346b7eb077546c40785f1d86b39a6d"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = NumSpaceDim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a8d346b7eb077546c40785f1d86b39a6d">num_space_dim</a> = NumSpaceDim</td></tr>
+<tr class="memdesc:a8d346b7eb077546c40785f1d86b39a6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:a8d346b7eb077546c40785f1d86b39a6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class ViewType, std::size_t NumSpaceDim&gt;<br />
+struct Cajita::ArrayOp::NormInfFunctor&lt; ViewType, NumSpaceDim &gt;</h3>
+
+<p>Infinity norm functor. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>cajita/src/<a class="el" href="Cajita__Array_8hpp_source.html">Cajita_Array.hpp</a></li>
 </ul>
 </div><!-- contents -->

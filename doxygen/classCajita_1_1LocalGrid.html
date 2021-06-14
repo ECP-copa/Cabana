@@ -75,11 +75,17 @@ $(function() {
 <div class="title">Cajita::LocalGrid&lt; MeshType &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="structCajita_1_1Local.html" title="Local index tag.">Local</a> logical grid.  
+ <a href="classCajita_1_1LocalGrid.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__LocalGrid_8hpp_source.html">Cajita_LocalGrid.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:aacdf3893924bebdfdda172a8a108706d"><td class="memItemLeft" align="right" valign="top"><a id="aacdf3893924bebdfdda172a8a108706d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = MeshType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#aacdf3893924bebdfdda172a8a108706d">mesh_type</a> = MeshType</td></tr>
+<tr class="memdesc:aacdf3893924bebdfdda172a8a108706d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
 <tr class="separator:aacdf3893924bebdfdda172a8a108706d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -88,97 +94,75 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a7ad4b99add2460c3ed857c30f304f55f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classCajita_1_1LocalGrid.html#a7ad4b99add2460c3ed857c30f304f55f">More...</a><br /></td></tr>
 <tr class="separator:a7ad4b99add2460c3ed857c30f304f55f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acec6b15a27c27f844f86c4dc7c917698"><td class="memItemLeft" align="right" valign="top"><a id="acec6b15a27c27f844f86c4dc7c917698"></a>
-const <a class="el" href="classCajita_1_1GlobalGrid.html">GlobalGrid</a>&lt; MeshType &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><b>globalGrid</b> () const</td></tr>
+const <a class="el" href="classCajita_1_1GlobalGrid.html">GlobalGrid</a>&lt; MeshType &gt; &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#acec6b15a27c27f844f86c4dc7c917698">globalGrid</a> () const</td></tr>
+<tr class="memdesc:acec6b15a27c27f844f86c4dc7c917698"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the global grid that owns the local grid. <br /></td></tr>
 <tr class="separator:acec6b15a27c27f844f86c4dc7c917698"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aecf5c5de19915ff5c8c429d343c43893"><td class="memItemLeft" align="right" valign="top"><a id="aecf5c5de19915ff5c8c429d343c43893"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>haloCellWidth</b> () const</td></tr>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#aecf5c5de19915ff5c8c429d343c43893">haloCellWidth</a> () const</td></tr>
+<tr class="memdesc:aecf5c5de19915ff5c8c429d343c43893"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of cells in the halo. <br /></td></tr>
 <tr class="separator:aecf5c5de19915ff5c8c429d343c43893"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acdb638e9b242f079e3feb0e692918a24"><td class="memItemLeft" align="right" valign="top"><a id="acdb638e9b242f079e3feb0e692918a24"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>totalNumCell</b> (const int d) const</td></tr>
+<tr class="memitem:acdb638e9b242f079e3feb0e692918a24"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#acdb638e9b242f079e3feb0e692918a24">totalNumCell</a> (const int d) const</td></tr>
+<tr class="memdesc:acdb638e9b242f079e3feb0e692918a24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of local cells per dimension (owned + halo).  <a href="classCajita_1_1LocalGrid.html#acdb638e9b242f079e3feb0e692918a24">More...</a><br /></td></tr>
 <tr class="separator:acdb638e9b242f079e3feb0e692918a24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad5f92341d325a6dd8bf89ae13951f2ad"><td class="memItemLeft" align="right" valign="top"><a id="ad5f92341d325a6dd8bf89ae13951f2ad"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>neighborRank</b> (const std::array&lt; int, num_space_dim &gt; &amp;off_ijk) const</td></tr>
+<tr class="memitem:ad5f92341d325a6dd8bf89ae13951f2ad"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#ad5f92341d325a6dd8bf89ae13951f2ad">neighborRank</a> (const std::array&lt; int, <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt; &amp;off_ijk) const</td></tr>
+<tr class="memdesc:ad5f92341d325a6dd8bf89ae13951f2ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the global index of a neighbor given neighbor rank offsets relative to this local grid.  <a href="classCajita_1_1LocalGrid.html#ad5f92341d325a6dd8bf89ae13951f2ad">More...</a><br /></td></tr>
 <tr class="separator:ad5f92341d325a6dd8bf89ae13951f2ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a60d50e219fe182223b31eec1f2fb752d"><td class="memTemplParams" colspan="2"><a id="a60d50e219fe182223b31eec1f2fb752d"></a>
-template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a60d50e219fe182223b31eec1f2fb752d"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, int &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>neighborRank</b> (const int off_i, const int off_j, const int off_k) const</td></tr>
+<tr class="memitem:a60d50e219fe182223b31eec1f2fb752d"><td class="memTemplParams" colspan="2">template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a60d50e219fe182223b31eec1f2fb752d"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, int &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#a60d50e219fe182223b31eec1f2fb752d">neighborRank</a> (const int off_i, const int off_j, const int off_k) const</td></tr>
+<tr class="memdesc:a60d50e219fe182223b31eec1f2fb752d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the global index of a neighbor given neighbor rank offsets relative to this local grid.  <a href="classCajita_1_1LocalGrid.html#a60d50e219fe182223b31eec1f2fb752d">More...</a><br /></td></tr>
 <tr class="separator:a60d50e219fe182223b31eec1f2fb752d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac2669b333bc11ab58af699a61358be6a"><td class="memTemplParams" colspan="2"><a id="ac2669b333bc11ab58af699a61358be6a"></a>
-template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:ac2669b333bc11ab58af699a61358be6a"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, int &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>neighborRank</b> (const int off_i, const int off_j) const</td></tr>
+<tr class="memitem:ac2669b333bc11ab58af699a61358be6a"><td class="memTemplParams" colspan="2">template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:ac2669b333bc11ab58af699a61358be6a"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, int &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#ac2669b333bc11ab58af699a61358be6a">neighborRank</a> (const int off_i, const int off_j) const</td></tr>
+<tr class="memdesc:ac2669b333bc11ab58af699a61358be6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the global index of a neighbor given neighbor rank offsets relative to this local grid.  <a href="classCajita_1_1LocalGrid.html#ac2669b333bc11ab58af699a61358be6a">More...</a><br /></td></tr>
 <tr class="separator:ac2669b333bc11ab58af699a61358be6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a88c9bc5cc4f627b32d27cd4ae3274b1d"><td class="memTemplParams" colspan="2"><a id="a88c9bc5cc4f627b32d27cd4ae3274b1d"></a>
-template&lt;class DecompositionTag , class EntityType , class IndexType &gt; </td></tr>
-<tr class="memitem:a88c9bc5cc4f627b32d27cd4ae3274b1d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>indexSpace</b> (DecompositionTag, EntityType, IndexType) const</td></tr>
-<tr class="separator:a88c9bc5cc4f627b32d27cd4ae3274b1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad01447233f3ca3ca73f5c3975ccdae66"><td class="memTemplParams" colspan="2"><a id="ad01447233f3ca3ca73f5c3975ccdae66"></a>
-template&lt;class DecompositionTag , class EntityType &gt; </td></tr>
-<tr class="memitem:ad01447233f3ca3ca73f5c3975ccdae66"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>sharedIndexSpace</b> (DecompositionTag, EntityType, const std::array&lt; int, num_space_dim &gt; &amp;off_ijk, const int halo_width=-1) const</td></tr>
-<tr class="separator:ad01447233f3ca3ca73f5c3975ccdae66"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2968b2c3886d61f9677fe170012839fc"><td class="memTemplParams" colspan="2"><a id="a2968b2c3886d61f9677fe170012839fc"></a>
-template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a2968b2c3886d61f9677fe170012839fc"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 3 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>sharedIndexSpace</b> (DecompositionTag, EntityType, const int off_i, const int off_j, const int off_k, const int halo_width=-1) const</td></tr>
-<tr class="separator:a2968b2c3886d61f9677fe170012839fc"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8bd6305365e5f64c4d1d3e89e9877a69"><td class="memTemplParams" colspan="2"><a id="a8bd6305365e5f64c4d1d3e89e9877a69"></a>
-template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a8bd6305365e5f64c4d1d3e89e9877a69"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 2 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>sharedIndexSpace</b> (DecompositionTag, EntityType, const int off_i, const int off_j, const int halo_width=-1) const</td></tr>
-<tr class="separator:a8bd6305365e5f64c4d1d3e89e9877a69"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96205548381c282efd7d21e45cba33c2"><td class="memTemplParams" colspan="2"><a id="a96205548381c282efd7d21e45cba33c2"></a>
-template&lt;class DecompositionTag , class EntityType &gt; </td></tr>
-<tr class="memitem:a96205548381c282efd7d21e45cba33c2"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>boundaryIndexSpace</b> (DecompositionTag, EntityType, const std::array&lt; int, num_space_dim &gt; &amp;off_ijk, const int halo_width=-1) const</td></tr>
-<tr class="separator:a96205548381c282efd7d21e45cba33c2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abab81e2a3942f5a05a2f4b6399127b70"><td class="memTemplParams" colspan="2"><a id="abab81e2a3942f5a05a2f4b6399127b70"></a>
-template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:abab81e2a3942f5a05a2f4b6399127b70"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 3 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>boundaryIndexSpace</b> (DecompositionTag, EntityType, const int off_i, const int off_j, const int off_k, const int halo_width=-1) const</td></tr>
-<tr class="separator:abab81e2a3942f5a05a2f4b6399127b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adc26811b5fe38959965217a4e0dbc739"><td class="memTemplParams" colspan="2"><a id="adc26811b5fe38959965217a4e0dbc739"></a>
-template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:adc26811b5fe38959965217a4e0dbc739"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 2 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>boundaryIndexSpace</b> (DecompositionTag, EntityType, const int off_i, const int off_j, const int halo_width=-1) const</td></tr>
-<tr class="separator:adc26811b5fe38959965217a4e0dbc739"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2d68d50f7c2e7990dc5000c361aa6355"><td class="memTemplParams" colspan="2"><a id="a2d68d50f7c2e7990dc5000c361aa6355"></a>
-template&lt;class DecompositionTag , class EntityType , class IndexType &gt; </td></tr>
-<tr class="memitem:a2d68d50f7c2e7990dc5000c361aa6355"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>indexSpace</b> (DecompositionTag t1, EntityType t2, IndexType t3) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:a2d68d50f7c2e7990dc5000c361aa6355"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00c4789c434b81348c91233c9c379d24"><td class="memTemplParams" colspan="2"><a id="a00c4789c434b81348c91233c9c379d24"></a>
-template&lt;class DecompositionTag , class EntityType &gt; </td></tr>
-<tr class="memitem:a00c4789c434b81348c91233c9c379d24"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>sharedIndexSpace</b> (DecompositionTag t1, EntityType t2, const std::array&lt; int, num_space_dim &gt; &amp;off_ijk, const int halo_width) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:a00c4789c434b81348c91233c9c379d24"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a91d0f2463a4ab6569192d19dec97d662"><td class="memTemplParams" colspan="2"><a id="a91d0f2463a4ab6569192d19dec97d662"></a>
-template&lt;class DecompositionTag , class EntityType &gt; </td></tr>
-<tr class="memitem:a91d0f2463a4ab6569192d19dec97d662"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>boundaryIndexSpace</b> (DecompositionTag t1, EntityType t2, const std::array&lt; int, num_space_dim &gt; &amp;off_ijk, const int halo_width) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:a91d0f2463a4ab6569192d19dec97d662"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9ee7c31c568b3c850f1972918ebf9ac6"><td class="memTemplParams" colspan="2"><a id="a9ee7c31c568b3c850f1972918ebf9ac6"></a>
-template&lt;class EntityType &gt; </td></tr>
-<tr class="memitem:a9ee7c31c568b3c850f1972918ebf9ac6"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>globalIndexSpace</b> (<a class="el" href="structCajita_1_1Own.html">Own</a>, EntityType) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:a9ee7c31c568b3c850f1972918ebf9ac6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af2af25a26ee258961cbc0bdcca6b085e"><td class="memTemplParams" colspan="2"><a id="af2af25a26ee258961cbc0bdcca6b085e"></a>
-template&lt;int Dir&gt; </td></tr>
-<tr class="memitem:af2af25a26ee258961cbc0bdcca6b085e"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>faceIndexSpace</b> (<a class="el" href="structCajita_1_1Own.html">Own</a>, <a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, <a class="el" href="structCajita_1_1Local.html">Local</a>) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:af2af25a26ee258961cbc0bdcca6b085e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a214b17a9573d13df68ab1efa4604017e"><td class="memTemplParams" colspan="2"><a id="a214b17a9573d13df68ab1efa4604017e"></a>
-template&lt;int Dir&gt; </td></tr>
-<tr class="memitem:a214b17a9573d13df68ab1efa4604017e"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>faceIndexSpace</b> (<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>, <a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, <a class="el" href="structCajita_1_1Local.html">Local</a>) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:a214b17a9573d13df68ab1efa4604017e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a89efbc7618b1d25cc477b1a1fc0eabef"><td class="memTemplParams" colspan="2"><a id="a89efbc7618b1d25cc477b1a1fc0eabef"></a>
-template&lt;int Dir&gt; </td></tr>
-<tr class="memitem:a89efbc7618b1d25cc477b1a1fc0eabef"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>faceIndexSpace</b> (<a class="el" href="structCajita_1_1Own.html">Own</a> t1, <a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt; t2, <a class="el" href="structCajita_1_1Global.html">Global</a>) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:a89efbc7618b1d25cc477b1a1fc0eabef"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a62095cabdf420abec72a7002dcbff572"><td class="memTemplParams" colspan="2"><a id="a62095cabdf420abec72a7002dcbff572"></a>
-template&lt;int Dir&gt; </td></tr>
-<tr class="memitem:a62095cabdf420abec72a7002dcbff572"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>faceSharedIndexSpace</b> (<a class="el" href="structCajita_1_1Own.html">Own</a>, <a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, const std::array&lt; int, num_space_dim &gt; &amp;off_ijk, const int halo_width) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:a62095cabdf420abec72a7002dcbff572"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a00b230a15976d3aaaab36ded892b8d5c"><td class="memTemplParams" colspan="2"><a id="a00b230a15976d3aaaab36ded892b8d5c"></a>
-template&lt;int Dir&gt; </td></tr>
-<tr class="memitem:a00b230a15976d3aaaab36ded892b8d5c"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><b>faceSharedIndexSpace</b> (<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>, <a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, const std::array&lt; int, num_space_dim &gt; &amp;off_ijk, const int halo_width) const -&gt; <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; num_space_dim &gt;</td></tr>
-<tr class="separator:a00b230a15976d3aaaab36ded892b8d5c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8ce24b5fdd269912f09ffbf1a7391298"><td class="memTemplParams" colspan="2">template&lt;class DecompositionTag , class EntityType , class IndexType &gt; </td></tr>
+<tr class="memitem:a8ce24b5fdd269912f09ffbf1a7391298"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#a8ce24b5fdd269912f09ffbf1a7391298">indexSpace</a> (DecompositionTag t1, EntityType t2, IndexType t3) const</td></tr>
+<tr class="memdesc:a8ce24b5fdd269912f09ffbf1a7391298"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a decomposition type, entity type, and index type, get the contiguous set of indices that span the space of those entities in the local domain.  <a href="classCajita_1_1LocalGrid.html#a8ce24b5fdd269912f09ffbf1a7391298">More...</a><br /></td></tr>
+<tr class="separator:a8ce24b5fdd269912f09ffbf1a7391298"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af08496949d3c9dcaf72c9890e0c411b9"><td class="memTemplParams" colspan="2">template&lt;class DecompositionTag , class EntityType &gt; </td></tr>
+<tr class="memitem:af08496949d3c9dcaf72c9890e0c411b9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#af08496949d3c9dcaf72c9890e0c411b9">sharedIndexSpace</a> (DecompositionTag t1, EntityType t2, const std::array&lt; int, <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt; &amp;off_ijk, const int halo_width=-1) const</td></tr>
+<tr class="memdesc:af08496949d3c9dcaf72c9890e0c411b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the relative offsets of a neighbor rank relative to this local grid's indices get the set of local entity indices shared with that neighbor in the given decomposition.  <a href="classCajita_1_1LocalGrid.html#af08496949d3c9dcaf72c9890e0c411b9">More...</a><br /></td></tr>
+<tr class="separator:af08496949d3c9dcaf72c9890e0c411b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afc9c2aca8386c147d5afbac73e5e0942"><td class="memTemplParams" colspan="2">template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:afc9c2aca8386c147d5afbac73e5e0942"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 3 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#afc9c2aca8386c147d5afbac73e5e0942">sharedIndexSpace</a> (DecompositionTag t1, EntityType t2, const int off_i, const int off_j, const int off_k, const int halo_width=-1) const</td></tr>
+<tr class="memdesc:afc9c2aca8386c147d5afbac73e5e0942"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the relative offsets of a neighbor rank relative to this local grid's indices get the set of local entity indices shared with that neighbor in the given decomposition.  <a href="classCajita_1_1LocalGrid.html#afc9c2aca8386c147d5afbac73e5e0942">More...</a><br /></td></tr>
+<tr class="separator:afc9c2aca8386c147d5afbac73e5e0942"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4dab1de69f6f7669069bfc69aa0d617b"><td class="memTemplParams" colspan="2">template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a4dab1de69f6f7669069bfc69aa0d617b"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 2 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#a4dab1de69f6f7669069bfc69aa0d617b">sharedIndexSpace</a> (DecompositionTag t1, EntityType t2, const int off_i, const int off_j, const int halo_width=-1) const</td></tr>
+<tr class="memdesc:a4dab1de69f6f7669069bfc69aa0d617b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the relative offsets of a neighbor rank relative to this local grid's indices get the set of local entity indices shared with that neighbor in the given decomposition.  <a href="classCajita_1_1LocalGrid.html#a4dab1de69f6f7669069bfc69aa0d617b">More...</a><br /></td></tr>
+<tr class="separator:a4dab1de69f6f7669069bfc69aa0d617b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8151795076a32f988021b55f22384de"><td class="memTemplParams" colspan="2">template&lt;class DecompositionTag , class EntityType &gt; </td></tr>
+<tr class="memitem:ae8151795076a32f988021b55f22384de"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#ae8151795076a32f988021b55f22384de">boundaryIndexSpace</a> (DecompositionTag t1, EntityType t2, const std::array&lt; int, <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt; &amp;off_ijk, const int halo_width=-1) const</td></tr>
+<tr class="memdesc:ae8151795076a32f988021b55f22384de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the relative offsets of a boundary relative to this local grid's indices get the set of local entity indices associated with that boundary in the given decomposition.  <a href="classCajita_1_1LocalGrid.html#ae8151795076a32f988021b55f22384de">More...</a><br /></td></tr>
+<tr class="separator:ae8151795076a32f988021b55f22384de"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8ade1fca6bd1a0aceccf74c4ce7dded"><td class="memTemplParams" colspan="2">template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:ad8ade1fca6bd1a0aceccf74c4ce7dded"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 3 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#ad8ade1fca6bd1a0aceccf74c4ce7dded">boundaryIndexSpace</a> (DecompositionTag t1, EntityType t2, const int off_i, const int off_j, const int off_k, const int halo_width=-1) const</td></tr>
+<tr class="memdesc:ad8ade1fca6bd1a0aceccf74c4ce7dded"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the relative offsets of a boundary relative to this local grid's indices get the set of local entity indices associated with that boundary in the given decomposition.  <a href="classCajita_1_1LocalGrid.html#ad8ade1fca6bd1a0aceccf74c4ce7dded">More...</a><br /></td></tr>
+<tr class="separator:ad8ade1fca6bd1a0aceccf74c4ce7dded"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a28996ef07c82e7cfdbcbed30326ddf24"><td class="memTemplParams" colspan="2">template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a28996ef07c82e7cfdbcbed30326ddf24"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 2 &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#a28996ef07c82e7cfdbcbed30326ddf24">boundaryIndexSpace</a> (DecompositionTag t1, EntityType t2, const int off_i, const int off_j, const int halo_width=-1) const</td></tr>
+<tr class="memdesc:a28996ef07c82e7cfdbcbed30326ddf24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given the relative offsets of a boundary relative to this local grid's indices get the set of local entity indices associated with that boundary in the given decomposition.  <a href="classCajita_1_1LocalGrid.html#a28996ef07c82e7cfdbcbed30326ddf24">More...</a><br /></td></tr>
+<tr class="separator:a28996ef07c82e7cfdbcbed30326ddf24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a1d394b84065e8aae3c6312fc10f6747b"><td class="memItemLeft" align="right" valign="top"><a id="a1d394b84065e8aae3c6312fc10f6747b"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = mesh_type::num_space_dim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> = mesh_type::num_space_dim</td></tr>
+<tr class="memdesc:a1d394b84065e8aae3c6312fc10f6747b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:a1d394b84065e8aae3c6312fc10f6747b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class MeshType&gt;<br />
+class Cajita::LocalGrid&lt; MeshType &gt;</h3>
+
+<p><a class="el" href="structCajita_1_1Local.html" title="Local index tag.">Local</a> logical grid. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">MeshType</td><td>Mesh type: <a class="el" href="structCajita_1_1UniformMesh.html" title="Uniform mesh tag.">UniformMesh</a>, <a class="el" href="structCajita_1_1NonUniformMesh.html" title="Non-uniform mesh tag.">NonUniformMesh</a>, or <a class="el" href="structCajita_1_1SparseMesh.html" title="Sparse mesh tag.">SparseMesh</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a7ad4b99add2460c3ed857c30f304f55f"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7ad4b99add2460c3ed857c30f304f55f">&#9670;&nbsp;</a></span>LocalGrid()</h2>
 
@@ -212,6 +196,583 @@ template&lt;class MeshType &gt; </div>
   <table class="params">
     <tr><td class="paramname">global_grid</td><td>The global grid from which the local grid will be constructed. </td></tr>
     <tr><td class="paramname">halo_cell_width</td><td>The number of halo cells surrounding the locally owned cells. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
+<a id="a28996ef07c82e7cfdbcbed30326ddf24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a28996ef07c82e7cfdbcbed30326ddf24">&#9670;&nbsp;</a></span>boundaryIndexSpace() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if_t&lt;2 == NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt;2&gt; &gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::boundaryIndexSpace </td>
+          <td>(</td>
+          <td class="paramtype">DecompositionTag&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EntityType&#160;</td>
+          <td class="paramname"><em>t2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>halo_width</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given the relative offsets of a boundary relative to this local grid's indices get the set of local entity indices associated with that boundary in the given decomposition. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t1</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">t2</td><td>Entity: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> </td></tr>
+    <tr><td class="paramname">off_i,off_j</td><td>Neighbor offset index in a given dimension. </td></tr>
+    <tr><td class="paramname">halo_width</td><td>Optional depth of shared indices within the halo. Must be less than or equal to the halo width of the local grid. Default is to use the halo width of the local grid.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>For example, if the <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> decomposition is used, the interior entities that would be affected by a boundary operation are provided whereas if the <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> decomposition is used the halo entities on the boundary are provided. </p>
+
+</div>
+</div>
+<a id="ad8ade1fca6bd1a0aceccf74c4ce7dded"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8ade1fca6bd1a0aceccf74c4ce7dded">&#9670;&nbsp;</a></span>boundaryIndexSpace() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if_t&lt;3 == NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt;3&gt; &gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::boundaryIndexSpace </td>
+          <td>(</td>
+          <td class="paramtype">DecompositionTag&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EntityType&#160;</td>
+          <td class="paramname"><em>t2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>halo_width</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given the relative offsets of a boundary relative to this local grid's indices get the set of local entity indices associated with that boundary in the given decomposition. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t1</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">t2</td><td>Entity: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> </td></tr>
+    <tr><td class="paramname">off_i,off_j,off_k</td><td>Neighbor offset index in a given dimension. </td></tr>
+    <tr><td class="paramname">halo_width</td><td>Optional depth of shared indices within the halo. Must be less than or equal to the halo width of the local grid. Default is to use the halo width of the local grid.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>For example, if the <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> decomposition is used, the interior entities that would be affected by a boundary operation are provided whereas if the <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> decomposition is used the halo entities on the boundary are provided. </p>
+
+</div>
+</div>
+<a id="ae8151795076a32f988021b55f22384de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8151795076a32f988021b55f22384de">&#9670;&nbsp;</a></span>boundaryIndexSpace() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;class DecompositionTag , class EntityType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt;<a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a>&gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::boundaryIndexSpace </td>
+          <td>(</td>
+          <td class="paramtype">DecompositionTag&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EntityType&#160;</td>
+          <td class="paramname"><em>t2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; int, <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>off_ijk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>halo_width</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given the relative offsets of a boundary relative to this local grid's indices get the set of local entity indices associated with that boundary in the given decomposition. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t1</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">t2</td><td>Entity: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> </td></tr>
+    <tr><td class="paramname">off_ijk</td><td>Array of neighbor offset indices. </td></tr>
+    <tr><td class="paramname">halo_width</td><td>Optional depth of shared indices within the halo. Must be less than or equal to the halo width of the local grid. Default is to use the halo width of the local grid.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>For example, if the <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> decomposition is used, the interior entities that would be affected by a boundary operation are provided whereas if the <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> decomposition is used the halo entities on the boundary are provided. </p>
+
+</div>
+</div>
+<a id="a8ce24b5fdd269912f09ffbf1a7391298"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8ce24b5fdd269912f09ffbf1a7391298">&#9670;&nbsp;</a></span>indexSpace()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;class DecompositionTag , class EntityType , class IndexType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt;<a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a>&gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::indexSpace </td>
+          <td>(</td>
+          <td class="paramtype">DecompositionTag&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EntityType&#160;</td>
+          <td class="paramname"><em>t2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">IndexType&#160;</td>
+          <td class="paramname"><em>t3</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given a decomposition type, entity type, and index type, get the contiguous set of indices that span the space of those entities in the local domain. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t1</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">t2</td><td>Entity type: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> </td></tr>
+    <tr><td class="paramname">t3</td><td>Index type: <a class="el" href="structCajita_1_1Local.html" title="Local index tag.">Local</a> or <a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac2669b333bc11ab58af699a61358be6a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac2669b333bc11ab58af699a61358be6a">&#9670;&nbsp;</a></span>neighborRank() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;std::size_t NSD&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if_t&lt; 2==NSD, int &gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::neighborRank </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_j</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the global index of a neighbor given neighbor rank offsets relative to this local grid. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off_i,off_j</td><td>Neighbor offset index in a given dimension.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>If the neighbor rank is out of bounds return -1. Note that in the case of periodic boundaries out of bounds indices are allowed as the indices will be wrapped around the periodic boundary. </p>
+
+</div>
+</div>
+<a id="a60d50e219fe182223b31eec1f2fb752d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a60d50e219fe182223b31eec1f2fb752d">&#9670;&nbsp;</a></span>neighborRank() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;std::size_t NSD&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if_t&lt; 3==NSD, int &gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::neighborRank </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_k</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the global index of a neighbor given neighbor rank offsets relative to this local grid. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off_i,off_j,off_k</td><td>Neighbor offset index in a given dimension.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>If the neighbor rank is out of bounds return -1. Note that in the case of periodic boundaries out of bounds indices are allowed as the indices will be wrapped around the periodic boundary. </p>
+
+</div>
+</div>
+<a id="ad5f92341d325a6dd8bf89ae13951f2ad"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad5f92341d325a6dd8bf89ae13951f2ad">&#9670;&nbsp;</a></span>neighborRank() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::neighborRank </td>
+          <td>(</td>
+          <td class="paramtype">const std::array&lt; int, <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>off_ijk</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the global index of a neighbor given neighbor rank offsets relative to this local grid. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">off_ijk</td><td>Array of neighbor offset indices.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>If the neighbor rank is out of bounds return -1. Note that in the case of periodic boundaries out of bounds indices are allowed as the indices will be wrapped around the periodic boundary. </p>
+
+</div>
+</div>
+<a id="a4dab1de69f6f7669069bfc69aa0d617b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4dab1de69f6f7669069bfc69aa0d617b">&#9670;&nbsp;</a></span>sharedIndexSpace() <span class="overload">[1/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if_t&lt;2 == NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt;2&gt; &gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::sharedIndexSpace </td>
+          <td>(</td>
+          <td class="paramtype">DecompositionTag&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EntityType&#160;</td>
+          <td class="paramname"><em>t2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>halo_width</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given the relative offsets of a neighbor rank relative to this local grid's indices get the set of local entity indices shared with that neighbor in the given decomposition. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">DecompositionTag</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">EntityType</td><td>Entity: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t1</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">t2</td><td>Entity: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> </td></tr>
+    <tr><td class="paramname">off_i,off_j</td><td>Neighbor offset index in a given dimension. </td></tr>
+    <tr><td class="paramname">halo_width</td><td>Optional depth of shared indices within the halo. Must be less than or equal to the halo width of the local grid. Default is to use the halo width of the local grid. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="afc9c2aca8386c147d5afbac73e5e0942"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afc9c2aca8386c147d5afbac73e5e0942">&#9670;&nbsp;</a></span>sharedIndexSpace() <span class="overload">[2/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;class DecompositionTag , class EntityType , std::size_t NSD = num_space_dim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::enable_if_t&lt;3 == NSD, <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt;3&gt; &gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::sharedIndexSpace </td>
+          <td>(</td>
+          <td class="paramtype">DecompositionTag&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EntityType&#160;</td>
+          <td class="paramname"><em>t2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>off_k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>halo_width</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given the relative offsets of a neighbor rank relative to this local grid's indices get the set of local entity indices shared with that neighbor in the given decomposition. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">DecompositionTag</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">EntityType</td><td>Entity: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t1</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">t2</td><td>Entity: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> </td></tr>
+    <tr><td class="paramname">off_i,off_j,off_k</td><td>Neighbor offset index in a given dimension. </td></tr>
+    <tr><td class="paramname">halo_width</td><td>Optional depth of shared indices within the halo. Must be less than or equal to the halo width of the local grid. Default is to use the halo width of the local grid. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af08496949d3c9dcaf72c9890e0c411b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af08496949d3c9dcaf72c9890e0c411b9">&#9670;&nbsp;</a></span>sharedIndexSpace() <span class="overload">[3/3]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<div class="memtemplate">
+template&lt;class DecompositionTag , class EntityType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt;<a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a>&gt; <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::sharedIndexSpace </td>
+          <td>(</td>
+          <td class="paramtype">DecompositionTag&#160;</td>
+          <td class="paramname"><em>t1</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">EntityType&#160;</td>
+          <td class="paramname"><em>t2</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; int, <a class="el" href="classCajita_1_1LocalGrid.html#a1d394b84065e8aae3c6312fc10f6747b">num_space_dim</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>off_ijk</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>halo_width</em> = <code>-1</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Given the relative offsets of a neighbor rank relative to this local grid's indices get the set of local entity indices shared with that neighbor in the given decomposition. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t1</td><td>Decomposition type: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">t2</td><td>Entity: <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a>, <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>, <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a>, or <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> </td></tr>
+    <tr><td class="paramname">off_ijk</td><td>Array of neighbor offset indices. </td></tr>
+    <tr><td class="paramname">halo_width</td><td>Optional depth of shared indices within the halo. Must be less than or equal to the halo width of the local grid. Default is to use the halo width of the local grid. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="acdb638e9b242f079e3feb0e692918a24"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acdb638e9b242f079e3feb0e692918a24">&#9670;&nbsp;</a></span>totalNumCell()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a>&lt; MeshType &gt;::totalNumCell </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>d</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the total number of local cells per dimension (owned + halo). </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">d</td><td>Spatial dimension. </td></tr>
   </table>
   </dd>
 </dl>

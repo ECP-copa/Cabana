@@ -74,13 +74,15 @@ $(function() {
 <div class="title">Cabana::ParameterPack&lt; Types &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><code>#include &lt;<a class="el" href="Cabana__ParameterPack_8hpp_source.html">Cabana_ParameterPack.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Cabana::ParameterPack&lt; Types &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="structCabana_1_1ParameterPack__inherit__graph.png" border="0" usemap="#aCabana_1_1ParameterPack_3_01Types_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aCabana_1_1ParameterPack_3_01Types_01_4_inherit__map" id="aCabana_1_1ParameterPack_3_01Types_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="252,13,416,54"/>
-<area shape="rect" href="structCabana_1_1ParameterPackImpl.html" title=" " alt="" coords="5,5,204,61"/>
+<area shape="rect" title=" " alt="" coords="23,109,187,151"/>
+<area shape="rect" title=" " alt="" coords="5,5,204,61"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -88,8 +90,8 @@ Collaboration diagram for Cabana::ParameterPack&lt; Types &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="structCabana_1_1ParameterPack__coll__graph.png" border="0" usemap="#aCabana_1_1ParameterPack_3_01Types_01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="aCabana_1_1ParameterPack_3_01Types_01_4_coll__map" id="aCabana_1_1ParameterPack_3_01Types_01_4_coll__map">
-<area shape="rect" title=" " alt="" coords="252,13,416,54"/>
-<area shape="rect" href="structCabana_1_1ParameterPackImpl.html" title=" " alt="" coords="5,5,204,61"/>
+<area shape="rect" title=" " alt="" coords="23,109,187,151"/>
+<area shape="rect" title=" " alt="" coords="5,5,204,61"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -97,24 +99,33 @@ Collaboration diagram for Cabana::ParameterPack&lt; Types &gt;:</div>
 Public Types</h2></td></tr>
 <tr class="memitem:a1fc7957a9d59e18afcb405b1f0a72a24"><td class="memTemplParams" colspan="2"><a id="a1fc7957a9d59e18afcb405b1f0a72a24"></a>
 template&lt;std::size_t N&gt; </td></tr>
-<tr class="memitem:a1fc7957a9d59e18afcb405b1f0a72a24"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>value_type</b> = typename <a class="el" href="structCabana_1_1PackTypeAtIndex.html">PackTypeAtIndex</a>&lt; N, Types... &gt;::type</td></tr>
+<tr class="memitem:a1fc7957a9d59e18afcb405b1f0a72a24"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCabana_1_1ParameterPack.html#a1fc7957a9d59e18afcb405b1f0a72a24">value_type</a> = typename <a class="el" href="structCabana_1_1PackTypeAtIndex.html">PackTypeAtIndex</a>&lt; N, Types... &gt;::type</td></tr>
+<tr class="memdesc:a1fc7957a9d59e18afcb405b1f0a72a24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed type. <br /></td></tr>
 <tr class="separator:a1fc7957a9d59e18afcb405b1f0a72a24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac0e8ee39708e29b1db3ae605b69f9bff"><td class="memTemplParams" colspan="2"><a id="ac0e8ee39708e29b1db3ae605b69f9bff"></a>
 template&lt;std::size_t N&gt; </td></tr>
-<tr class="memitem:ac0e8ee39708e29b1db3ae605b69f9bff"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>const_value_type</b> = typename std::add_const&lt; value_type&lt; N &gt; &gt;::type</td></tr>
+<tr class="memitem:ac0e8ee39708e29b1db3ae605b69f9bff"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCabana_1_1ParameterPack.html#ac0e8ee39708e29b1db3ae605b69f9bff">const_value_type</a> = typename std::add_const&lt; <a class="el" href="structCabana_1_1ParameterPack.html#a1fc7957a9d59e18afcb405b1f0a72a24">value_type</a>&lt; N &gt; &gt;::type</td></tr>
+<tr class="memdesc:ac0e8ee39708e29b1db3ae605b69f9bff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed const type. <br /></td></tr>
 <tr class="separator:ac0e8ee39708e29b1db3ae605b69f9bff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a49aadbc6388755218aa1c1400075c6a4"><td class="memTemplParams" colspan="2"><a id="a49aadbc6388755218aa1c1400075c6a4"></a>
 template&lt;std::size_t N&gt; </td></tr>
-<tr class="memitem:a49aadbc6388755218aa1c1400075c6a4"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><b>element_type</b> = <a class="el" href="structCabana_1_1ParameterPackElement.html">ParameterPackElement</a>&lt; N, value_type&lt; N &gt; &gt;</td></tr>
+<tr class="memitem:a49aadbc6388755218aa1c1400075c6a4"><td class="memTemplItemLeft" align="right" valign="top">using&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCabana_1_1ParameterPack.html#a49aadbc6388755218aa1c1400075c6a4">element_type</a> = <a class="el" href="structCabana_1_1ParameterPackElement.html">ParameterPackElement</a>&lt; N, <a class="el" href="structCabana_1_1ParameterPack.html#a1fc7957a9d59e18afcb405b1f0a72a24">value_type</a>&lt; N &gt; &gt;</td></tr>
+<tr class="memdesc:a49aadbc6388755218aa1c1400075c6a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Packed element type. <br /></td></tr>
 <tr class="separator:a49aadbc6388755218aa1c1400075c6a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a101c29b7388754d1b506d87cb78e6a7c"><td class="memItemLeft" align="right" valign="top"><a id="a101c29b7388754d1b506d87cb78e6a7c"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> = sizeof...( Types )</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1ParameterPack.html#a101c29b7388754d1b506d87cb78e6a7c">size</a> = sizeof...( Types )</td></tr>
+<tr class="memdesc:a101c29b7388754d1b506d87cb78e6a7c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Pack size. <br /></td></tr>
 <tr class="separator:a101c29b7388754d1b506d87cb78e6a7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename... Types&gt;<br />
+struct Cabana::ParameterPack&lt; Types &gt;</h3>
+
+<p>Capture a parameter pack. All parameter pack elements must be copyable to device. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>core/src/<a class="el" href="Cabana__ParameterPack_8hpp_source.html">Cabana_ParameterPack.hpp</a></li>
 </ul>
 </div><!-- contents -->

@@ -74,26 +74,40 @@ $(function() {
 <div class="title">ArborX::AccessTraits&lt; Slice, PrimitivesTag, std::enable_if_t&lt; Cabana::is_slice&lt; Slice &gt;{}&gt; &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Neighbor access trait for <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice.  
+ <a href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cabana__Experimental__NeighborList_8hpp_source.html">Cabana_Experimental_NeighborList.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:ac005535b71f338cbab9d81b551d34205"><td class="memItemLeft" align="right" valign="top"><a id="ac005535b71f338cbab9d81b551d34205"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename Slice::memory_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html#ac005535b71f338cbab9d81b551d34205">memory_space</a> = typename Slice::memory_space</td></tr>
+<tr class="memdesc:ac005535b71f338cbab9d81b551d34205"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
 <tr class="separator:ac005535b71f338cbab9d81b551d34205"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae11215379c8c2ac1ef30c827eb45434d"><td class="memItemLeft" align="right" valign="top"><a id="ae11215379c8c2ac1ef30c827eb45434d"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename Slice::size_type</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html#ae11215379c8c2ac1ef30c827eb45434d">size_type</a> = typename Slice::size_type</td></tr>
+<tr class="memdesc:ae11215379c8c2ac1ef30c827eb45434d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Size type. <br /></td></tr>
 <tr class="separator:ae11215379c8c2ac1ef30c827eb45434d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a180361dd841bc663a713d1156c61a28b"><td class="memItemLeft" align="right" valign="top"><a id="a180361dd841bc663a713d1156c61a28b"></a>
-static KOKKOS_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><b>size</b> (Slice const &amp;x)</td></tr>
+static KOKKOS_FUNCTION <a class="el" href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html#ae11215379c8c2ac1ef30c827eb45434d">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html#a180361dd841bc663a713d1156c61a28b">size</a> (Slice const &amp;x)</td></tr>
+<tr class="memdesc:a180361dd841bc663a713d1156c61a28b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get number of particles in the slice. <br /></td></tr>
 <tr class="separator:a180361dd841bc663a713d1156c61a28b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab475f00efa43a09300dbd4bb7ae8a00f"><td class="memItemLeft" align="right" valign="top"><a id="ab475f00efa43a09300dbd4bb7ae8a00f"></a>
-static KOKKOS_FUNCTION Point&#160;</td><td class="memItemRight" valign="bottom"><b>get</b> (Slice const &amp;x, size_type i)</td></tr>
+static KOKKOS_FUNCTION Point&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html#ab475f00efa43a09300dbd4bb7ae8a00f">get</a> (Slice const &amp;x, <a class="el" href="structArborX_1_1AccessTraits_3_01Slice_00_01PrimitivesTag_00_01std_1_1enable__if__t_3_01Cabana_1ef47a426a60af478dedbc9e4b5fcf150.html#ae11215379c8c2ac1ef30c827eb45434d">size_type</a> i)</td></tr>
+<tr class="memdesc:ab475f00efa43a09300dbd4bb7ae8a00f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the particle at the index. <br /></td></tr>
 <tr class="separator:ab475f00efa43a09300dbd4bb7ae8a00f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename Slice&gt;<br />
+struct ArborX::AccessTraits&lt; Slice, PrimitivesTag, std::enable_if_t&lt; Cabana::is_slice&lt; Slice &gt;{}&gt; &gt;</h3>
+
+<p>Neighbor access trait for <a class="el" href="namespaceCabana.html" title="Core: particle data structures and algorithms.">Cabana</a> slice. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>core/src/<a class="el" href="Cabana__Experimental__NeighborList_8hpp_source.html">Cabana_Experimental_NeighborList.hpp</a></li>
 </ul>
 </div><!-- contents -->

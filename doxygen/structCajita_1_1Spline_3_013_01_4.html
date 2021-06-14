@@ -74,6 +74,11 @@ $(function() {
 <div class="title">Cajita::Spline&lt; 3 &gt; Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Cubic. Defined on the primal grid.  
+ <a href="structCajita_1_1Spline_3_013_01_4.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__Splines_8hpp_source.html">Cajita_Splines.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
@@ -81,32 +86,36 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a4ef288b19f8e2492a26e2ebe621c9ffb"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a4ef288b19f8e2492a26e2ebe621c9ffb">mapToLogicalGrid</a> (const Scalar xp, const Scalar rdx, const Scalar low_x)</td></tr>
 <tr class="memdesc:a4ef288b19f8e2492a26e2ebe621c9ffb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Map a physical location to the logical space of the primal grid in a single dimension.  <a href="structCajita_1_1Spline_3_013_01_4.html#a4ef288b19f8e2492a26e2ebe621c9ffb">More...</a><br /></td></tr>
 <tr class="separator:a4ef288b19f8e2492a26e2ebe621c9ffb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a397363ee032fb791f2b7bdf120042d34"><td class="memItemLeft" align="right" valign="top"><a id="a397363ee032fb791f2b7bdf120042d34"></a>
-static KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>offsets</b> (int indices[num_knot])</td></tr>
+<tr class="memitem:a397363ee032fb791f2b7bdf120042d34"><td class="memItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a397363ee032fb791f2b7bdf120042d34">offsets</a> (int indices[<a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a59b5be7a6d42af9ed996306292ddcbfb">num_knot</a>])</td></tr>
+<tr class="memdesc:a397363ee032fb791f2b7bdf120042d34"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the logical space stencil offsets of the spline. The stencil defines the offsets into a grid field about a logical coordinate.  <a href="structCajita_1_1Spline_3_013_01_4.html#a397363ee032fb791f2b7bdf120042d34">More...</a><br /></td></tr>
 <tr class="separator:a397363ee032fb791f2b7bdf120042d34"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a310eec7d544ddbff21ec73af950f5281"><td class="memTemplParams" colspan="2">template&lt;class Scalar &gt; </td></tr>
-<tr class="memitem:a310eec7d544ddbff21ec73af950f5281"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a310eec7d544ddbff21ec73af950f5281">stencil</a> (const Scalar x0, int indices[num_knot])</td></tr>
+<tr class="memitem:a310eec7d544ddbff21ec73af950f5281"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a310eec7d544ddbff21ec73af950f5281">stencil</a> (const Scalar x0, int indices[<a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a59b5be7a6d42af9ed996306292ddcbfb">num_knot</a>])</td></tr>
 <tr class="memdesc:a310eec7d544ddbff21ec73af950f5281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the stencil indices for a given logical space location.  <a href="structCajita_1_1Spline_3_013_01_4.html#a310eec7d544ddbff21ec73af950f5281">More...</a><br /></td></tr>
 <tr class="separator:a310eec7d544ddbff21ec73af950f5281"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4024a0bd996cb3848eb2ba902a325848"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
-<tr class="memitem:a4024a0bd996cb3848eb2ba902a325848"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a4024a0bd996cb3848eb2ba902a325848">value</a> (const Scalar x0, Scalar values[num_knot])</td></tr>
+<tr class="memitem:a4024a0bd996cb3848eb2ba902a325848"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a4024a0bd996cb3848eb2ba902a325848">value</a> (const Scalar x0, Scalar values[<a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a59b5be7a6d42af9ed996306292ddcbfb">num_knot</a>])</td></tr>
 <tr class="memdesc:a4024a0bd996cb3848eb2ba902a325848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the value of the spline at all knots.  <a href="structCajita_1_1Spline_3_013_01_4.html#a4024a0bd996cb3848eb2ba902a325848">More...</a><br /></td></tr>
 <tr class="separator:a4024a0bd996cb3848eb2ba902a325848"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae18512fee65985d266c2936831af4e85"><td class="memTemplParams" colspan="2">template&lt;typename Scalar &gt; </td></tr>
-<tr class="memitem:ae18512fee65985d266c2936831af4e85"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#ae18512fee65985d266c2936831af4e85">gradient</a> (const Scalar x0, const Scalar rdx, Scalar gradients[num_knot])</td></tr>
+<tr class="memitem:ae18512fee65985d266c2936831af4e85"><td class="memTemplItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#ae18512fee65985d266c2936831af4e85">gradient</a> (const Scalar x0, const Scalar rdx, Scalar gradients[<a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a59b5be7a6d42af9ed996306292ddcbfb">num_knot</a>])</td></tr>
 <tr class="memdesc:ae18512fee65985d266c2936831af4e85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Calculate the value of the gradient of the spline in the physical frame.  <a href="structCajita_1_1Spline_3_013_01_4.html#ae18512fee65985d266c2936831af4e85">More...</a><br /></td></tr>
 <tr class="separator:ae18512fee65985d266c2936831af4e85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:afd5ab7f4d72fa444b756eb06dddeb2db"><td class="memItemLeft" align="right" valign="top"><a id="afd5ab7f4d72fa444b756eb06dddeb2db"></a>
-static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>order</b> = 3</td></tr>
+static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#afd5ab7f4d72fa444b756eb06dddeb2db">order</a> = 3</td></tr>
+<tr class="memdesc:afd5ab7f4d72fa444b756eb06dddeb2db"><td class="mdescLeft">&#160;</td><td class="mdescRight">Order. <br /></td></tr>
 <tr class="separator:afd5ab7f4d72fa444b756eb06dddeb2db"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a59b5be7a6d42af9ed996306292ddcbfb"><td class="memItemLeft" align="right" valign="top"><a id="a59b5be7a6d42af9ed996306292ddcbfb"></a>
-static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><b>num_knot</b> = 4</td></tr>
+static constexpr int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline_3_013_01_4.html#a59b5be7a6d42af9ed996306292ddcbfb">num_knot</a> = 4</td></tr>
+<tr class="memdesc:a59b5be7a6d42af9ed996306292ddcbfb"><td class="mdescLeft">&#160;</td><td class="mdescRight">The number of non-zero knots in the spline. <br /></td></tr>
 <tr class="separator:a59b5be7a6d42af9ed996306292ddcbfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Cubic. Defined on the primal grid. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="ae18512fee65985d266c2936831af4e85"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae18512fee65985d266c2936831af4e85">&#9670;&nbsp;</a></span>gradient()</h2>
 
@@ -216,6 +225,40 @@ template&lt;class Scalar &gt; </div>
 <dl class="section note"><dt>Note</dt><dd>Casting this result to an integer yields the index at the center of the stencil. </dd>
 <dd>
 A cubic spline uses the primal grid. </dd></dl>
+
+</div>
+</div>
+<a id="a397363ee032fb791f2b7bdf120042d34"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a397363ee032fb791f2b7bdf120042d34">&#9670;&nbsp;</a></span>offsets()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static KOKKOS_INLINE_FUNCTION void <a class="el" href="structCajita_1_1Spline.html">Cajita::Spline</a>&lt; 3 &gt;::offsets </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>indices</em>[num_knot]</td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the logical space stencil offsets of the spline. The stencil defines the offsets into a grid field about a logical coordinate. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">indices</td><td>The stencil index offsets. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

@@ -75,6 +75,11 @@ $(function() {
 <div class="title">Cajita::TileID2HashKey&lt; Key, HashTypes::Morton &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Compute the hash key from the 3D tile ijk.  
+ <a href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__SparseIndexSpace_8hpp_source.html">Cajita_SparseIndexSpace.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
@@ -85,7 +90,8 @@ Public Types</h2></td></tr>
 <tr class="memdesc:afff6b331c283e46e13b0daac3a0a5804"><td class="mdescLeft">&#160;</td><td class="mdescRight">Page mask used for computing the morton code. <br /></td></tr>
 <tr class="separator:afff6b331c283e46e13b0daac3a0a5804"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6278ab29a7c5519cf0d34362dd7082ec"><td class="memItemLeft" align="right" valign="top"><a id="a6278ab29a7c5519cf0d34362dd7082ec"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>tid_to_key_type</b> = <a class="el" href="structCajita_1_1TileID2HashKey.html">TileID2HashKey</a>&lt; Key, HashTypes::Morton &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#a6278ab29a7c5519cf0d34362dd7082ec">tid_to_key_type</a> = <a class="el" href="structCajita_1_1TileID2HashKey.html">TileID2HashKey</a>&lt; Key, HashTypes::Morton &gt;</td></tr>
+<tr class="memdesc:a6278ab29a7c5519cf0d34362dd7082ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">ID to hash conversion type. <br /></td></tr>
 <tr class="separator:a6278ab29a7c5519cf0d34362dd7082ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -106,10 +112,17 @@ KOKKOS_INLINE_FUNCTION Key&#160;</td><td class="memItemRight" valign="bottom"><a
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a2425da0caf3d88d2509bf8377adbde1c"><td class="memItemLeft" align="right" valign="top"><a id="a2425da0caf3d88d2509bf8377adbde1c"></a>
-static constexpr HashTypes&#160;</td><td class="memItemRight" valign="bottom"><b>hash_type</b> = HashTypes::Morton</td></tr>
+static constexpr <a class="el" href="namespaceCajita.html#a2ec822f40e278e94dbe22325c2b4c824">HashTypes</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#a2425da0caf3d88d2509bf8377adbde1c">hash_type</a> = HashTypes::Morton</td></tr>
+<tr class="memdesc:a2425da0caf3d88d2509bf8377adbde1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hash type. <br /></td></tr>
 <tr class="separator:a2425da0caf3d88d2509bf8377adbde1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;typename Key&gt;<br />
+struct Cajita::TileID2HashKey&lt; Key, HashTypes::Morton &gt;</h3>
+
+<p>Compute the hash key from the 3D tile ijk. </p>
+<p>Morton code specialization </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>cajita/src/<a class="el" href="Cajita__SparseIndexSpace_8hpp_source.html">Cajita_SparseIndexSpace.hpp</a></li>
 </ul>
 </div><!-- contents -->

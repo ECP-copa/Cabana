@@ -75,106 +75,996 @@ $(function() {
 <div class="title">Cajita::LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> mesh partial specialization for non-uniform mesh.  
+ <a href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__LocalMesh_8hpp_source.html">Cajita_LocalMesh.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a88b7ac73c8462509d927cebc6b4b8fce"><td class="memItemLeft" align="right" valign="top"><a id="a88b7ac73c8462509d927cebc6b4b8fce"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a88b7ac73c8462509d927cebc6b4b8fce">mesh_type</a> = <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt;</td></tr>
+<tr class="memdesc:a88b7ac73c8462509d927cebc6b4b8fce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
 <tr class="separator:a88b7ac73c8462509d927cebc6b4b8fce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0503fddc38f457072ff19980b7049112"><td class="memItemLeft" align="right" valign="top"><a id="a0503fddc38f457072ff19980b7049112"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>scalar_type</b> = Scalar</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a0503fddc38f457072ff19980b7049112">scalar_type</a> = Scalar</td></tr>
+<tr class="memdesc:a0503fddc38f457072ff19980b7049112"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar type for geometric operations. <br /></td></tr>
 <tr class="separator:a0503fddc38f457072ff19980b7049112"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af1ab4b9a8e24ac4d7e6388b832fad104"><td class="memItemLeft" align="right" valign="top"><a id="af1ab4b9a8e24ac4d7e6388b832fad104"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = Device</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#af1ab4b9a8e24ac4d7e6388b832fad104">device_type</a> = Device</td></tr>
+<tr class="memdesc:af1ab4b9a8e24ac4d7e6388b832fad104"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device type. <br /></td></tr>
 <tr class="separator:af1ab4b9a8e24ac4d7e6388b832fad104"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:af8033a1a89642cd6c4f561205fdc381e"><td class="memItemLeft" align="right" valign="top"><a id="af8033a1a89642cd6c4f561205fdc381e"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename Device::memory_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#af8033a1a89642cd6c4f561205fdc381e">memory_space</a> = typename Device::memory_space</td></tr>
+<tr class="memdesc:af8033a1a89642cd6c4f561205fdc381e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
 <tr class="separator:af8033a1a89642cd6c4f561205fdc381e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a43a47ed8680d47dcc0cc2c0594ef5973"><td class="memItemLeft" align="right" valign="top"><a id="a43a47ed8680d47dcc0cc2c0594ef5973"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename Device::execution_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a43a47ed8680d47dcc0cc2c0594ef5973">execution_space</a> = typename Device::execution_space</td></tr>
+<tr class="memdesc:a43a47ed8680d47dcc0cc2c0594ef5973"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
 <tr class="separator:a43a47ed8680d47dcc0cc2c0594ef5973"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ad7ba75138c3d4ea3fecdf4defee5f3a1"><td class="memItemLeft" align="right" valign="top"><a id="ad7ba75138c3d4ea3fecdf4defee5f3a1"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>LocalMesh</b> (const <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, num_space_dim &gt;&gt; &amp;local_grid)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#ad7ba75138c3d4ea3fecdf4defee5f3a1">LocalMesh</a> (const <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, <a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a> &gt;&gt; &amp;local_grid)</td></tr>
+<tr class="memdesc:ad7ba75138c3d4ea3fecdf4defee5f3a1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:ad7ba75138c3d4ea3fecdf4defee5f3a1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a284d97d0d1bf0d375b7e0f4e916b1348"><td class="memItemLeft" align="right" valign="top"><a id="a284d97d0d1bf0d375b7e0f4e916b1348"></a>
-KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><b>isPeriodic</b> (const int dim) const</td></tr>
+<tr class="memitem:a284d97d0d1bf0d375b7e0f4e916b1348"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a284d97d0d1bf0d375b7e0f4e916b1348">isPeriodic</a> (const int dim) const</td></tr>
 <tr class="separator:a284d97d0d1bf0d375b7e0f4e916b1348"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a642ff94a0f24d455327e78651dff99b4"><td class="memItemLeft" align="right" valign="top"><a id="a642ff94a0f24d455327e78651dff99b4"></a>
-KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><b>onLowBoundary</b> (const int dim) const</td></tr>
+<tr class="memitem:a642ff94a0f24d455327e78651dff99b4"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a642ff94a0f24d455327e78651dff99b4">onLowBoundary</a> (const int dim) const</td></tr>
 <tr class="separator:a642ff94a0f24d455327e78651dff99b4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a42e24ee210efe334d96f99a2d9e6fba4"><td class="memItemLeft" align="right" valign="top"><a id="a42e24ee210efe334d96f99a2d9e6fba4"></a>
-KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><b>onHighBoundary</b> (const int dim) const</td></tr>
+<tr class="memitem:a42e24ee210efe334d96f99a2d9e6fba4"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a42e24ee210efe334d96f99a2d9e6fba4">onHighBoundary</a> (const int dim) const</td></tr>
 <tr class="separator:a42e24ee210efe334d96f99a2d9e6fba4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aba53fbb7aa0ceacf9ad11991c65fae08"><td class="memItemLeft" align="right" valign="top"><a id="aba53fbb7aa0ceacf9ad11991c65fae08"></a>
-KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><b>lowCorner</b> (<a class="el" href="structCajita_1_1Own.html">Own</a>, const int dim) const</td></tr>
+<tr class="memitem:aba53fbb7aa0ceacf9ad11991c65fae08"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aba53fbb7aa0ceacf9ad11991c65fae08">lowCorner</a> (<a class="el" href="structCajita_1_1Own.html">Own</a>, const int dim) const</td></tr>
 <tr class="separator:aba53fbb7aa0ceacf9ad11991c65fae08"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4cd3840634a8539a0c1d9131ccf0c2d"><td class="memItemLeft" align="right" valign="top"><a id="af4cd3840634a8539a0c1d9131ccf0c2d"></a>
-KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><b>lowCorner</b> (<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>, const int dim) const</td></tr>
+<tr class="memitem:af4cd3840634a8539a0c1d9131ccf0c2d"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#af4cd3840634a8539a0c1d9131ccf0c2d">lowCorner</a> (<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>, const int dim) const</td></tr>
 <tr class="separator:af4cd3840634a8539a0c1d9131ccf0c2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae7c604f630057ba9a3c150f98392303c"><td class="memItemLeft" align="right" valign="top"><a id="ae7c604f630057ba9a3c150f98392303c"></a>
-KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><b>highCorner</b> (<a class="el" href="structCajita_1_1Own.html">Own</a>, const int dim) const</td></tr>
+<tr class="memitem:ae7c604f630057ba9a3c150f98392303c"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#ae7c604f630057ba9a3c150f98392303c">highCorner</a> (<a class="el" href="structCajita_1_1Own.html">Own</a>, const int dim) const</td></tr>
 <tr class="separator:ae7c604f630057ba9a3c150f98392303c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e85d42e9982b50111665995a807abd4"><td class="memItemLeft" align="right" valign="top"><a id="a4e85d42e9982b50111665995a807abd4"></a>
-KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><b>highCorner</b> (<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>, const int dim) const</td></tr>
+<tr class="memitem:a4e85d42e9982b50111665995a807abd4"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a4e85d42e9982b50111665995a807abd4">highCorner</a> (<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>, const int dim) const</td></tr>
 <tr class="separator:a4e85d42e9982b50111665995a807abd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5b04f6728f32267da54ed6d91b78475"><td class="memTemplParams" colspan="2"><a id="aa5b04f6728f32267da54ed6d91b78475"></a>
-template&lt;typename Decomposition &gt; </td></tr>
-<tr class="memitem:aa5b04f6728f32267da54ed6d91b78475"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FUNCTION Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><b>extent</b> (Decomposition d, const int dim) const</td></tr>
+<tr class="memitem:aa5b04f6728f32267da54ed6d91b78475"><td class="memTemplParams" colspan="2">template&lt;typename Decomposition &gt; </td></tr>
+<tr class="memitem:aa5b04f6728f32267da54ed6d91b78475"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FUNCTION Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aa5b04f6728f32267da54ed6d91b78475">extent</a> (Decomposition d, const int dim) const</td></tr>
 <tr class="separator:aa5b04f6728f32267da54ed6d91b78475"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a46b538cec0ce75462fb27e82005cfa4e"><td class="memItemLeft" align="right" valign="top"><a id="a46b538cec0ce75462fb27e82005cfa4e"></a>
-KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>coordinates</b> (<a class="el" href="structCajita_1_1Cell.html">Cell</a>, const int index[num_space_dim], Scalar x[num_space_dim]) const</td></tr>
+<tr class="memitem:a46b538cec0ce75462fb27e82005cfa4e"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a46b538cec0ce75462fb27e82005cfa4e">coordinates</a> (<a class="el" href="structCajita_1_1Cell.html">Cell</a>, const int index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a>]) const</td></tr>
 <tr class="separator:a46b538cec0ce75462fb27e82005cfa4e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1d00725e1e02e1dc37cd9279a11c31eb"><td class="memItemLeft" align="right" valign="top"><a id="a1d00725e1e02e1dc37cd9279a11c31eb"></a>
-KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>coordinates</b> (<a class="el" href="structCajita_1_1Node.html">Node</a>, const int index[num_space_dim], Scalar x[num_space_dim]) const</td></tr>
+<tr class="memitem:a1d00725e1e02e1dc37cd9279a11c31eb"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a1d00725e1e02e1dc37cd9279a11c31eb">coordinates</a> (<a class="el" href="structCajita_1_1Node.html">Node</a>, const int index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a>]) const</td></tr>
 <tr class="separator:a1d00725e1e02e1dc37cd9279a11c31eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2fb3e1cdf37880a6e2d4924ea0f346da"><td class="memTemplParams" colspan="2"><a id="a2fb3e1cdf37880a6e2d4924ea0f346da"></a>
-template&lt;int Dir&gt; </td></tr>
-<tr class="memitem:a2fb3e1cdf37880a6e2d4924ea0f346da"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><b>coordinates</b> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, const int index[num_space_dim], Scalar x[num_space_dim]) const</td></tr>
+<tr class="memitem:a2fb3e1cdf37880a6e2d4924ea0f346da"><td class="memTemplParams" colspan="2">template&lt;int Dir&gt; </td></tr>
+<tr class="memitem:a2fb3e1cdf37880a6e2d4924ea0f346da"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a2fb3e1cdf37880a6e2d4924ea0f346da">coordinates</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, const int index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a>]) const</td></tr>
 <tr class="separator:a2fb3e1cdf37880a6e2d4924ea0f346da"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6bf43b3326c91f6c1bc2f6c5e4f70575"><td class="memTemplParams" colspan="2"><a id="a6bf43b3326c91f6c1bc2f6c5e4f70575"></a>
-template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a6bf43b3326c91f6c1bc2f6c5e4f70575"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>coordinates</b> (<a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;, const int index[3], Scalar x[3]) const</td></tr>
+<tr class="memitem:a6bf43b3326c91f6c1bc2f6c5e4f70575"><td class="memTemplParams" colspan="2">template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a6bf43b3326c91f6c1bc2f6c5e4f70575"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a6bf43b3326c91f6c1bc2f6c5e4f70575">coordinates</a> (<a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;, const int index[3], Scalar x[3]) const</td></tr>
 <tr class="separator:a6bf43b3326c91f6c1bc2f6c5e4f70575"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aad60dbcd26757db342ee2841c348ad64"><td class="memItemLeft" align="right" valign="top"><a id="aad60dbcd26757db342ee2841c348ad64"></a>
-KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><b>measure</b> (<a class="el" href="structCajita_1_1Node.html">Node</a>, const int[num_space_dim]) const</td></tr>
+<tr class="memitem:aad60dbcd26757db342ee2841c348ad64"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aad60dbcd26757db342ee2841c348ad64">measure</a> (<a class="el" href="structCajita_1_1Node.html">Node</a>, const int[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a>]) const</td></tr>
 <tr class="separator:aad60dbcd26757db342ee2841c348ad64"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa5bb729fb40e0ffaacf5b857f8ddb282"><td class="memTemplParams" colspan="2"><a id="aa5bb729fb40e0ffaacf5b857f8ddb282"></a>
-template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:aa5bb729fb40e0ffaacf5b857f8ddb282"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>measure</b> (<a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;, const int index[3]) const</td></tr>
+<tr class="memitem:aa5bb729fb40e0ffaacf5b857f8ddb282"><td class="memTemplParams" colspan="2">template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:aa5bb729fb40e0ffaacf5b857f8ddb282"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aa5bb729fb40e0ffaacf5b857f8ddb282">measure</a> (<a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;, const int index[3]) const</td></tr>
 <tr class="separator:aa5bb729fb40e0ffaacf5b857f8ddb282"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa761b410deca636eeb3d880a7bb5662"><td class="memTemplParams" colspan="2"><a id="aaa761b410deca636eeb3d880a7bb5662"></a>
-template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:aaa761b410deca636eeb3d880a7bb5662"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>measure</b> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::I &gt;, const int index[3]) const</td></tr>
+<tr class="memitem:aaa761b410deca636eeb3d880a7bb5662"><td class="memTemplParams" colspan="2">template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:aaa761b410deca636eeb3d880a7bb5662"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aaa761b410deca636eeb3d880a7bb5662">measure</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::I &gt;, const int index[3]) const</td></tr>
 <tr class="separator:aaa761b410deca636eeb3d880a7bb5662"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a34ce030f4016b34dad5d28d054f74c81"><td class="memTemplParams" colspan="2"><a id="a34ce030f4016b34dad5d28d054f74c81"></a>
-template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a34ce030f4016b34dad5d28d054f74c81"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>measure</b> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::J &gt;, const int index[3]) const</td></tr>
+<tr class="memitem:a34ce030f4016b34dad5d28d054f74c81"><td class="memTemplParams" colspan="2">template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a34ce030f4016b34dad5d28d054f74c81"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a34ce030f4016b34dad5d28d054f74c81">measure</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::J &gt;, const int index[3]) const</td></tr>
 <tr class="separator:a34ce030f4016b34dad5d28d054f74c81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae587b2de8e3c1dd6ece5ecd0b7ac46c5"><td class="memTemplParams" colspan="2"><a id="ae587b2de8e3c1dd6ece5ecd0b7ac46c5"></a>
-template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:ae587b2de8e3c1dd6ece5ecd0b7ac46c5"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>measure</b> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::K &gt;, const int index[3]) const</td></tr>
+<tr class="memitem:ae587b2de8e3c1dd6ece5ecd0b7ac46c5"><td class="memTemplParams" colspan="2">template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:ae587b2de8e3c1dd6ece5ecd0b7ac46c5"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#ae587b2de8e3c1dd6ece5ecd0b7ac46c5">measure</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::K &gt;, const int index[3]) const</td></tr>
 <tr class="separator:ae587b2de8e3c1dd6ece5ecd0b7ac46c5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a30b7ca9ba813891d9449c41e84fec2e8"><td class="memTemplParams" colspan="2"><a id="a30b7ca9ba813891d9449c41e84fec2e8"></a>
-template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a30b7ca9ba813891d9449c41e84fec2e8"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 2==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>measure</b> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::I &gt;, const int index[2]) const</td></tr>
+<tr class="memitem:a30b7ca9ba813891d9449c41e84fec2e8"><td class="memTemplParams" colspan="2">template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a30b7ca9ba813891d9449c41e84fec2e8"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 2==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a30b7ca9ba813891d9449c41e84fec2e8">measure</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::I &gt;, const int index[2]) const</td></tr>
 <tr class="separator:a30b7ca9ba813891d9449c41e84fec2e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af5d3d6cd69977ca41869c8ef47eb9ead"><td class="memTemplParams" colspan="2"><a id="af5d3d6cd69977ca41869c8ef47eb9ead"></a>
-template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:af5d3d6cd69977ca41869c8ef47eb9ead"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 2==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>measure</b> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::J &gt;, const int index[2]) const</td></tr>
+<tr class="memitem:af5d3d6cd69977ca41869c8ef47eb9ead"><td class="memTemplParams" colspan="2">template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:af5d3d6cd69977ca41869c8ef47eb9ead"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 2==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#af5d3d6cd69977ca41869c8ef47eb9ead">measure</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::J &gt;, const int index[2]) const</td></tr>
 <tr class="separator:af5d3d6cd69977ca41869c8ef47eb9ead"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4e010a8a52f8bc8f7f1f8c7b0de6c5b3"><td class="memItemLeft" align="right" valign="top"><a id="a4e010a8a52f8bc8f7f1f8c7b0de6c5b3"></a>
-KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><b>measure</b> (<a class="el" href="structCajita_1_1Cell.html">Cell</a>, const int index[num_space_dim]) const</td></tr>
+<tr class="memitem:a4e010a8a52f8bc8f7f1f8c7b0de6c5b3"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a4e010a8a52f8bc8f7f1f8c7b0de6c5b3">measure</a> (<a class="el" href="structCajita_1_1Cell.html">Cell</a>, const int index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a>]) const</td></tr>
 <tr class="separator:a4e010a8a52f8bc8f7f1f8c7b0de6c5b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:aac0f58dbf9e01285022d375570ba6341"><td class="memItemLeft" align="right" valign="top"><a id="aac0f58dbf9e01285022d375570ba6341"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = NumSpaceDim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aac0f58dbf9e01285022d375570ba6341">num_space_dim</a> = NumSpaceDim</td></tr>
+<tr class="memdesc:aac0f58dbf9e01285022d375570ba6341"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:aac0f58dbf9e01285022d375570ba6341"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class Scalar, class Device, std::size_t NumSpaceDim&gt;<br />
+class Cajita::LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;</h3>
+
+<p><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> mesh partial specialization for non-uniform mesh. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a46b538cec0ce75462fb27e82005cfa4e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a46b538cec0ce75462fb27e82005cfa4e">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[1/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION void <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::coordinates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Cell.html">Cell</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[num_space_dim], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Scalar&#160;</td>
+          <td class="paramname"><em>x</em>[num_space_dim]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the coordinates of a <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a> given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block, which correlates directly to local index spaces associated with the block. </td></tr>
+    <tr><td class="paramname">x</td><td>Calculated <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a> position </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a6bf43b3326c91f6c1bc2f6c5e4f70575"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6bf43b3326c91f6c1bc2f6c5e4f70575">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[2/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt;3 == NSD, void&gt; <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::coordinates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[3], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Scalar&#160;</td>
+          <td class="paramname"><em>x</em>[3]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the coordinates of a <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a> given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block. </td></tr>
+    <tr><td class="paramname">x</td><td>Calculated <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a> position </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a2fb3e1cdf37880a6e2d4924ea0f346da"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2fb3e1cdf37880a6e2d4924ea0f346da">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[3/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;int Dir&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION void <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::coordinates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[num_space_dim], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Scalar&#160;</td>
+          <td class="paramname"><em>x</em>[num_space_dim]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the coordinates of a <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block. </td></tr>
+    <tr><td class="paramname">x</td><td>Calculated <a class="el" href="structCajita_1_1Face.html" title="Mesh face tag.">Face</a> position </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1d00725e1e02e1dc37cd9279a11c31eb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1d00725e1e02e1dc37cd9279a11c31eb">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[4/4]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION void <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::coordinates </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Node.html">Node</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[num_space_dim], </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">Scalar&#160;</td>
+          <td class="paramname"><em>x</em>[num_space_dim]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the coordinates of a <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a> given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block. </td></tr>
+    <tr><td class="paramname">x</td><td>Calculated <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a> position </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa5b04f6728f32267da54ed6d91b78475"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5b04f6728f32267da54ed6d91b78475">&#9670;&nbsp;</a></span>extent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;typename Decomposition &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_FUNCTION Scalar <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::extent </td>
+          <td>(</td>
+          <td class="paramtype">Decomposition&#160;</td>
+          <td class="paramname"><em>d</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the physical length of the local grid of the given decomposition. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">d</td><td>Decomposition: <a class="el" href="structCajita_1_1Own.html" title="Owned decomposition tag.">Own</a> or <a class="el" href="structCajita_1_1Ghost.html" title="Ghosted decomposition tag.">Ghost</a> </td></tr>
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4e85d42e9982b50111665995a807abd4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e85d42e9982b50111665995a807abd4">&#9670;&nbsp;</a></span>highCorner() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION Scalar <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::highCorner </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Ghost.html">Ghost</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the physical coordinate of the high corner of the local grid including ghosts. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae7c604f630057ba9a3c150f98392303c"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae7c604f630057ba9a3c150f98392303c">&#9670;&nbsp;</a></span>highCorner() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION Scalar <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::highCorner </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Own.html">Own</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the physical coordinate of the high corner of the owned local grid. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a284d97d0d1bf0d375b7e0f4e916b1348"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a284d97d0d1bf0d375b7e0f4e916b1348">&#9670;&nbsp;</a></span>isPeriodic()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::isPeriodic </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Determine if the mesh is periodic in the given dimension. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af4cd3840634a8539a0c1d9131ccf0c2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af4cd3840634a8539a0c1d9131ccf0c2d">&#9670;&nbsp;</a></span>lowCorner() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION Scalar <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::lowCorner </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Ghost.html">Ghost</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the physical coordinate of the low corner of the local grid including ghosts. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aba53fbb7aa0ceacf9ad11991c65fae08"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba53fbb7aa0ceacf9ad11991c65fae08">&#9670;&nbsp;</a></span>lowCorner() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION Scalar <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::lowCorner </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Own.html">Own</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the physical coordinate of the low corner of the owned local grid. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4e010a8a52f8bc8f7f1f8c7b0de6c5b3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4e010a8a52f8bc8f7f1f8c7b0de6c5b3">&#9670;&nbsp;</a></span>measure() <span class="overload">[1/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION Scalar <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Cell.html">Cell</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[num_space_dim]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the measure of a <a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a> given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aa5bb729fb40e0ffaacf5b857f8ddb282"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa5bb729fb40e0ffaacf5b857f8ddb282">&#9670;&nbsp;</a></span>measure() <span class="overload">[2/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt;3 == NSD, Scalar&gt; <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[3]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the measure of a 3d <a class="el" href="structCajita_1_1Edge.html" title="Mesh edge tag.">Edge</a> given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a30b7ca9ba813891d9449c41e84fec2e8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a30b7ca9ba813891d9449c41e84fec2e8">&#9670;&nbsp;</a></span>measure() <span class="overload">[3/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;std::size_t NSD = num_space_dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt;2 == NSD, Scalar&gt; <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::I &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[2]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the measure of a 2d I-Face given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aaa761b410deca636eeb3d880a7bb5662"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa761b410deca636eeb3d880a7bb5662">&#9670;&nbsp;</a></span>measure() <span class="overload">[4/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;std::size_t NSD = num_space_dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt;3 == NSD, Scalar&gt; <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::I &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[3]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the measure of an 3d I-Face given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af5d3d6cd69977ca41869c8ef47eb9ead"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af5d3d6cd69977ca41869c8ef47eb9ead">&#9670;&nbsp;</a></span>measure() <span class="overload">[5/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;std::size_t NSD = num_space_dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt;2 == NSD, Scalar&gt; <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::J &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[2]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the measure of a 2d J-Face given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a34ce030f4016b34dad5d28d054f74c81"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a34ce030f4016b34dad5d28d054f74c81">&#9670;&nbsp;</a></span>measure() <span class="overload">[6/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;std::size_t NSD = num_space_dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt;3 == NSD, Scalar&gt; <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::J &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[3]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the measure of a 3d J-Face given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ae587b2de8e3c1dd6ece5ecd0b7ac46c5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae587b2de8e3c1dd6ece5ecd0b7ac46c5">&#9670;&nbsp;</a></span>measure() <span class="overload">[7/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;std::size_t NSD = num_space_dim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt;3 == NSD, Scalar&gt; <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dim::K &gt;&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>index</em>[3]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the measure of a 3d K-Face given the local index. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>Array of local indices relative to the ghosted decomposition of the mesh block </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="aad60dbcd26757db342ee2841c348ad64"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aad60dbcd26757db342ee2841c348ad64">&#9670;&nbsp;</a></span>measure() <span class="overload">[8/8]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION Scalar <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::measure </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="structCajita_1_1Node.html">Node</a>&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname">[num_space_dim]&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the measure of a <a class="el" href="structCajita_1_1Node.html" title="Mesh node tag.">Node</a>. </p>
+
+</div>
+</div>
+<a id="a42e24ee210efe334d96f99a2d9e6fba4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a42e24ee210efe334d96f99a2d9e6fba4">&#9670;&nbsp;</a></span>onHighBoundary()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::onHighBoundary </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Determine if this block is on a high boundary in the given dimension. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a642ff94a0f24d455327e78651dff99b4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a642ff94a0f24d455327e78651dff99b4">&#9670;&nbsp;</a></span>onLowBoundary()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCajita_1_1LocalMesh.html">Cajita::LocalMesh</a>&lt; Device, <a class="el" href="structCajita_1_1NonUniformMesh.html">NonUniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt;::onLowBoundary </td>
+          <td>(</td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Determine if this block is on a low boundary in the given dimension. </p><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>cajita/src/<a class="el" href="Cajita__LocalMesh_8hpp_source.html">Cajita_LocalMesh.hpp</a></li>
 </ul>

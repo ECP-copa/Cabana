@@ -126,7 +126,7 @@ $(function() {
 <div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;                   <span class="keyword">const</span> EntityType&amp; entity_type, <span class="keyword">const</span> FunctorType&amp; functor )</div>
 <div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;{</div>
 <div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    <span class="keyword">auto</span> index_space =</div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        local_grid.indexSpace( decomposition, entity_type, <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;        local_grid.<a class="code" href="classCajita_1_1LocalGrid.html#a8ce24b5fdd269912f09ffbf1a7391298">indexSpace</a>( decomposition, entity_type, <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
 <div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;    <a class="code" href="namespaceCajita.html#a1c57f5f0f71a9195f375410205a2df20">grid_parallel_for</a>( label, exec_space, index_space, functor );</div>
 <div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;}</div>
 <div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
@@ -141,7 +141,7 @@ $(function() {
 <div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;                   <span class="keyword">const</span> FunctorType&amp; functor )</div>
 <div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160;{</div>
 <div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;    <span class="keyword">auto</span> index_space =</div>
-<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        local_grid.indexSpace( decomposition, entity_type, <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160;        local_grid.<a class="code" href="classCajita_1_1LocalGrid.html#a8ce24b5fdd269912f09ffbf1a7391298">indexSpace</a>( decomposition, entity_type, <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
 <div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;    <a class="code" href="namespaceCajita.html#a1c57f5f0f71a9195f375410205a2df20">grid_parallel_for</a>( label, exec_space, index_space, work_tag, functor );</div>
 <div class="line"><a name="l00164"></a><span class="lineno">  164</span>&#160;}</div>
 <div class="line"><a name="l00165"></a><span class="lineno">  165</span>&#160; </div>
@@ -357,7 +357,7 @@ $(function() {
 <div class="line"><a name="l00507"></a><span class="lineno">  507</span>&#160;                                  ReduceType&amp; reducer )</div>
 <div class="line"><a name="l00508"></a><span class="lineno">  508</span>&#160;{</div>
 <div class="line"><a name="l00509"></a><span class="lineno">  509</span>&#160;    <span class="keyword">auto</span> index_space =</div>
-<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;        local_grid.indexSpace( decomposition, entity_type, <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
+<div class="line"><a name="l00510"></a><span class="lineno">  510</span>&#160;        local_grid.<a class="code" href="classCajita_1_1LocalGrid.html#a8ce24b5fdd269912f09ffbf1a7391298">indexSpace</a>( decomposition, entity_type, <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
 <div class="line"><a name="l00511"></a><span class="lineno">  511</span>&#160;    <a class="code" href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">grid_parallel_reduce</a>( label, exec_space, index_space, functor, reducer );</div>
 <div class="line"><a name="l00512"></a><span class="lineno">  512</span>&#160;}</div>
 <div class="line"><a name="l00513"></a><span class="lineno">  513</span>&#160; </div>
@@ -372,7 +372,7 @@ $(function() {
 <div class="line"><a name="l00553"></a><span class="lineno">  553</span>&#160;    <span class="keyword">const</span> WorkTag&amp; work_tag, <span class="keyword">const</span> FunctorType&amp; functor, ReduceType&amp; reducer )</div>
 <div class="line"><a name="l00554"></a><span class="lineno">  554</span>&#160;{</div>
 <div class="line"><a name="l00555"></a><span class="lineno">  555</span>&#160;    <span class="keyword">auto</span> index_space =</div>
-<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;        local_grid.indexSpace( decomposition, entity_type, <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
+<div class="line"><a name="l00556"></a><span class="lineno">  556</span>&#160;        local_grid.<a class="code" href="classCajita_1_1LocalGrid.html#a8ce24b5fdd269912f09ffbf1a7391298">indexSpace</a>( decomposition, entity_type, <a class="code" href="structCajita_1_1Local.html">Local</a>() );</div>
 <div class="line"><a name="l00557"></a><span class="lineno">  557</span>&#160;    <a class="code" href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">grid_parallel_reduce</a>( label, exec_space, index_space, work_tag, functor,</div>
 <div class="line"><a name="l00558"></a><span class="lineno">  558</span>&#160;                          reducer );</div>
 <div class="line"><a name="l00559"></a><span class="lineno">  559</span>&#160;}</div>
@@ -382,13 +382,14 @@ $(function() {
 <div class="line"><a name="l00563"></a><span class="lineno">  563</span>&#160;} <span class="comment">// end namespace Cajita</span></div>
 <div class="line"><a name="l00564"></a><span class="lineno">  564</span>&#160; </div>
 <div class="line"><a name="l00565"></a><span class="lineno">  565</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_PARALLEL_HPP</span></div>
-<div class="ttc" id="aclassCajita_1_1IndexSpace_html"><div class="ttname"><a href="classCajita_1_1IndexSpace.html">Cajita::IndexSpace</a></div><div class="ttdoc">Structured index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:30</div></div>
-<div class="ttc" id="aclassCajita_1_1LocalGrid_html"><div class="ttname"><a href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a></div><div class="ttdef"><b>Definition:</b> Cajita_LocalGrid.hpp:31</div></div>
+<div class="ttc" id="aclassCajita_1_1IndexSpace_html"><div class="ttname"><a href="classCajita_1_1IndexSpace.html">Cajita::IndexSpace</a></div><div class="ttdoc">Structured index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:29</div></div>
+<div class="ttc" id="aclassCajita_1_1LocalGrid_html"><div class="ttname"><a href="classCajita_1_1LocalGrid.html">Cajita::LocalGrid</a></div><div class="ttdoc">Local logical grid.</div><div class="ttdef"><b>Definition:</b> Cajita_LocalGrid.hpp:33</div></div>
+<div class="ttc" id="aclassCajita_1_1LocalGrid_html_a8ce24b5fdd269912f09ffbf1a7391298"><div class="ttname"><a href="classCajita_1_1LocalGrid.html#a8ce24b5fdd269912f09ffbf1a7391298">Cajita::LocalGrid::indexSpace</a></div><div class="ttdeci">IndexSpace&lt; num_space_dim &gt; indexSpace(DecompositionTag t1, EntityType t2, IndexType t3) const</div><div class="ttdoc">Given a decomposition type, entity type, and index type, get the contiguous set of indices that span ...</div></div>
 <div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
 <div class="ttc" id="anamespaceCajita_html_a1c57f5f0f71a9195f375410205a2df20"><div class="ttname"><a href="namespaceCajita.html#a1c57f5f0f71a9195f375410205a2df20">Cajita::grid_parallel_for</a></div><div class="ttdeci">void grid_parallel_for(const std::string &amp;label, const ExecutionSpace &amp;exec_space, const IndexSpace&lt; N &gt; &amp;index_space, const FunctorType &amp;functor)</div><div class="ttdoc">Execute a functor in parallel with a multidimensional execution policy specified by the given index s...</div><div class="ttdef"><b>Definition:</b> Cajita_Parallel.hpp:44</div></div>
-<div class="ttc" id="anamespaceCajita_html_a1d70326b11175c3b3111b3e544d002b3"><div class="ttname"><a href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">Cajita::createExecutionPolicy</a></div><div class="ttdeci">Kokkos::RangePolicy&lt; ExecutionSpace &gt; createExecutionPolicy(const IndexSpace&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;)</div><div class="ttdoc">Create a multi-dimensional execution policy over an index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:166</div></div>
+<div class="ttc" id="anamespaceCajita_html_a1d70326b11175c3b3111b3e544d002b3"><div class="ttname"><a href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">Cajita::createExecutionPolicy</a></div><div class="ttdeci">Kokkos::RangePolicy&lt; ExecutionSpace &gt; createExecutionPolicy(const IndexSpace&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;)</div><div class="ttdoc">Create a multi-dimensional execution policy over an index space.</div><div class="ttdef"><b>Definition:</b> Cajita_IndexSpace.hpp:165</div></div>
 <div class="ttc" id="anamespaceCajita_html_ac2a58a3b10046140ae6a75b252dbade6"><div class="ttname"><a href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">Cajita::grid_parallel_reduce</a></div><div class="ttdeci">void grid_parallel_reduce(const std::string &amp;label, const ExecutionSpace &amp;exec_space, const IndexSpace&lt; N &gt; &amp;index_space, const FunctorType &amp;functor, ReduceType &amp;reducer)</div><div class="ttdoc">Execute a reduction functor in parallel with a multidimensional execution policy specified by the giv...</div><div class="ttdef"><b>Definition:</b> Cajita_Parallel.hpp:420</div></div>
-<div class="ttc" id="astructCajita_1_1Local_html"><div class="ttname"><a href="structCajita_1_1Local.html">Cajita::Local</a></div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:178</div></div>
+<div class="ttc" id="astructCajita_1_1Local_html"><div class="ttname"><a href="structCajita_1_1Local.html">Cajita::Local</a></div><div class="ttdoc">Local index tag.</div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:202</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

@@ -74,18 +74,23 @@ $(function() {
 <div class="title">Cajita::BlockPartitioner&lt; NumSpaceDim &gt; Class Template Reference<span class="mlabels"><span class="mlabel">abstract</span></span></div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Block partitioner base class.  
+ <a href="classCajita_1_1BlockPartitioner.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__Partitioner_8hpp_source.html">Cajita_Partitioner.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Cajita::BlockPartitioner&lt; NumSpaceDim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classCajita_1_1BlockPartitioner__inherit__graph.png" border="0" usemap="#aCajita_1_1BlockPartitioner_3_01NumSpaceDim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aCajita_1_1BlockPartitioner_3_01NumSpaceDim_01_4_inherit__map" id="aCajita_1_1BlockPartitioner_3_01NumSpaceDim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,78,161,119"/>
+<area shape="rect" title="Block partitioner base class." alt="" coords="5,78,161,119"/>
 <area shape="rect" href="classCajita_1_1DimBlockPartitioner.html" title=" " alt="" coords="219,5,429,32"/>
 <area shape="rect" href="classCajita_1_1ManualBlockPartitioner.html" title=" " alt="" coords="209,56,439,83"/>
-<area shape="rect" href="classCajita_1_1DimBlockPartitioner.html" title=" " alt="" coords="234,107,414,149"/>
-<area shape="rect" href="classCajita_1_1ManualBlockPartitioner.html" title=" " alt="" coords="225,173,423,214"/>
-<area shape="rect" href="classCajita_1_1UniformDimPartitioner.html" title=" " alt="" coords="487,5,680,32"/>
-<area shape="rect" href="classCajita_1_1ManualPartitioner.html" title=" " alt="" coords="501,56,666,83"/>
+<area shape="rect" href="classCajita_1_1DimBlockPartitioner.html" title="Dimension&#45;only partitioner." alt="" coords="234,107,414,149"/>
+<area shape="rect" href="classCajita_1_1ManualBlockPartitioner.html" title="Manual block partitioner." alt="" coords="225,173,423,214"/>
+<area shape="rect" href="classCajita_1_1UniformDimPartitioner.html" title="Backwards compatibility wrapper for 3D DimBlockPartitioner." alt="" coords="487,5,680,32"/>
+<area shape="rect" href="classCajita_1_1ManualPartitioner.html" title="Backwards compatibility wrapper for 3D ManualBlockPartitioner." alt="" coords="501,56,666,83"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
@@ -98,10 +103,23 @@ Public Member Functions</h2></td></tr>
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a4c67571ff5a952b1b64c10616d43838f"><td class="memItemLeft" align="right" valign="top"><a id="a4c67571ff5a952b1b64c10616d43838f"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = NumSpaceDim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> = NumSpaceDim</td></tr>
+<tr class="memdesc:a4c67571ff5a952b1b64c10616d43838f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:a4c67571ff5a952b1b64c10616d43838f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Member Function Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;std::size_t NumSpaceDim&gt;<br />
+class Cajita::BlockPartitioner&lt; NumSpaceDim &gt;</h3>
+
+<p>Block partitioner base class. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">NumSpaceDim</td><td>Spatial dimension.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Given global mesh parameters, the block partitioner computes how many MPI ranks are assigned to each logical dimension. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a36cbd63a8eace775a4269bfc06714b0a"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a36cbd63a8eace775a4269bfc06714b0a">&#9670;&nbsp;</a></span>ranksPerDimension()</h2>
 

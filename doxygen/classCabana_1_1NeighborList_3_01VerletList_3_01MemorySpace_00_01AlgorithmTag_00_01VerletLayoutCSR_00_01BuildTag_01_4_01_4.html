@@ -74,28 +74,87 @@ $(function() {
 <div class="title">Cabana::NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag &gt; &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>CSR <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface.  
+ <a href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
-<tr class="memitem:af8210b67bd165f6aaf9ca79bec94c646"><td class="memItemLeft" align="right" valign="top"><a id="af8210b67bd165f6aaf9ca79bec94c646"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>list_type</b> = <a class="el" href="classCabana_1_1VerletList.html">VerletList</a>&lt; MemorySpace, AlgorithmTag, <a class="el" href="structCabana_1_1VerletLayoutCSR.html">VerletLayoutCSR</a>, BuildTag &gt;</td></tr>
-<tr class="separator:af8210b67bd165f6aaf9ca79bec94c646"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae3880d884a0e30ebcaf0c9fb85f446ad"><td class="memItemLeft" align="right" valign="top"><a id="ae3880d884a0e30ebcaf0c9fb85f446ad"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#ae3880d884a0e30ebcaf0c9fb85f446ad">memory_space</a> = MemorySpace</td></tr>
+<tr class="memdesc:ae3880d884a0e30ebcaf0c9fb85f446ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
 <tr class="separator:ae3880d884a0e30ebcaf0c9fb85f446ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af8210b67bd165f6aaf9ca79bec94c646"><td class="memItemLeft" align="right" valign="top"><a id="af8210b67bd165f6aaf9ca79bec94c646"></a>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#af8210b67bd165f6aaf9ca79bec94c646">list_type</a> = <a class="el" href="classCabana_1_1VerletList.html">VerletList</a>&lt; MemorySpace, AlgorithmTag, <a class="el" href="structCabana_1_1VerletLayoutCSR.html">VerletLayoutCSR</a>, BuildTag &gt;</td></tr>
+<tr class="memdesc:af8210b67bd165f6aaf9ca79bec94c646"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list type. <br /></td></tr>
+<tr class="separator:af8210b67bd165f6aaf9ca79bec94c646"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a6c0622fae469f290aafa0eb17815e1cc"><td class="memItemLeft" align="right" valign="top"><a id="a6c0622fae469f290aafa0eb17815e1cc"></a>
-static KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>maxNeighbor</b> (const <a class="el" href="classCabana_1_1VerletList.html">list_type</a> &amp;list)</td></tr>
+static KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#a6c0622fae469f290aafa0eb17815e1cc">maxNeighbor</a> (const <a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#af8210b67bd165f6aaf9ca79bec94c646">list_type</a> &amp;list)</td></tr>
+<tr class="memdesc:a6c0622fae469f290aafa0eb17815e1cc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the total number of neighbors (maximum size of CSR list). <br /></td></tr>
 <tr class="separator:a6c0622fae469f290aafa0eb17815e1cc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2ee5f6c34e0f0820e542d3fde856e7e5"><td class="memItemLeft" align="right" valign="top"><a id="a2ee5f6c34e0f0820e542d3fde856e7e5"></a>
-static KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>numNeighbor</b> (const <a class="el" href="classCabana_1_1VerletList.html">list_type</a> &amp;list, const std::size_t particle_index)</td></tr>
+static KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#a2ee5f6c34e0f0820e542d3fde856e7e5">numNeighbor</a> (const <a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#af8210b67bd165f6aaf9ca79bec94c646">list_type</a> &amp;list, const std::size_t particle_index)</td></tr>
+<tr class="memdesc:a2ee5f6c34e0f0820e542d3fde856e7e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of neighbors for a given particle index. <br /></td></tr>
 <tr class="separator:a2ee5f6c34e0f0820e542d3fde856e7e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adca85a70d56fa7707745c81e68e673b9"><td class="memItemLeft" align="right" valign="top"><a id="adca85a70d56fa7707745c81e68e673b9"></a>
-static KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>getNeighbor</b> (const <a class="el" href="classCabana_1_1VerletList.html">list_type</a> &amp;list, const std::size_t particle_index, const std::size_t neighbor_index)</td></tr>
+<tr class="memitem:adca85a70d56fa7707745c81e68e673b9"><td class="memItemLeft" align="right" valign="top">static KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#adca85a70d56fa7707745c81e68e673b9">getNeighbor</a> (const <a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#af8210b67bd165f6aaf9ca79bec94c646">list_type</a> &amp;list, const std::size_t particle_index, const std::size_t neighbor_index)</td></tr>
 <tr class="separator:adca85a70d56fa7707745c81e68e673b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class MemorySpace, class AlgorithmTag, class BuildTag&gt;<br />
+class Cabana::NeighborList&lt; VerletList&lt; MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag &gt; &gt;</h3>
+
+<p>CSR <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> <a class="el" href="classCabana_1_1NeighborList.html" title="Neighbor list interface. Provides an interface callable at the functor level that gives access to nei...">NeighborList</a> interface. </p>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="adca85a70d56fa7707745c81e68e673b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adca85a70d56fa7707745c81e68e673b9">&#9670;&nbsp;</a></span>getNeighbor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MemorySpace , class AlgorithmTag , class BuildTag &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static KOKKOS_INLINE_FUNCTION std::size_t <a class="el" href="classCabana_1_1NeighborList.html">Cabana::NeighborList</a>&lt; <a class="el" href="classCabana_1_1VerletList.html">VerletList</a>&lt; MemorySpace, AlgorithmTag, <a class="el" href="structCabana_1_1VerletLayoutCSR.html">VerletLayoutCSR</a>, BuildTag &gt; &gt;::getNeighbor </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1NeighborList_3_01VerletList_3_01MemorySpace_00_01AlgorithmTag_00_01VerletLayoutCSR_00_01BuildTag_01_4_01_4.html#af8210b67bd165f6aaf9ca79bec94c646">list_type</a> &amp;&#160;</td>
+          <td class="paramname"><em>list</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>particle_index</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>neighbor_index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>Get the id for a neighbor for a given particle index and the index of the neighbor relative to the particle. </p>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
 </ul>

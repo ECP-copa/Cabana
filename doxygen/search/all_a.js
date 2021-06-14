@@ -1,14 +1,4 @@
 var searchData=
 [
-  ['kernel1_274',['Kernel1',['../structCajita_1_1ReferenceConjugateGradient_1_1Kernel1.html',1,'Cajita::ReferenceConjugateGradient']]],
-  ['kernel2_275',['Kernel2',['../structCajita_1_1ReferenceConjugateGradient_1_1Kernel2.html',1,'Cajita::ReferenceConjugateGradient']]],
-  ['key2ijk_276',['key2ijk',['../classCajita_1_1BlockMap.html#a18a36518c0c426cd1b13b4ab6236c5ec',1,'Cajita::BlockMap']]],
-  ['key_5ftype_277',['key_type',['../classCajita_1_1SparseMap.html#ab0bdd0dd37676fc5d7b4349ab7d0f2a6',1,'Cajita::SparseMap::key_type()'],['../classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3',1,'Cajita::BlockMap::key_type()']]],
-  ['kokkosdatatype_278',['KokkosDataType',['../structCabana_1_1Impl_1_1KokkosDataType.html',1,'Cabana::Impl']]],
-  ['kokkosdatatypeimpl_279',['KokkosDataTypeImpl',['../structCabana_1_1Impl_1_1KokkosDataTypeImpl.html',1,'Cabana::Impl']]],
-  ['kokkosdatatypeimpl_3c_20t_2c_200_2c_20vectorlength_2c_20stride_20_3e_280',['KokkosDataTypeImpl&lt; T, 0, VectorLength, Stride &gt;',['../structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_010_00_01VectorLength_00_01Stride_01_4.html',1,'Cabana::Impl']]],
-  ['kokkosdatatypeimpl_3c_20t_2c_201_2c_20vectorlength_2c_20stride_20_3e_281',['KokkosDataTypeImpl&lt; T, 1, VectorLength, Stride &gt;',['../structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_011_00_01VectorLength_00_01Stride_01_4.html',1,'Cabana::Impl']]],
-  ['kokkosdatatypeimpl_3c_20t_2c_202_2c_20vectorlength_2c_20stride_20_3e_282',['KokkosDataTypeImpl&lt; T, 2, VectorLength, Stride &gt;',['../structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_012_00_01VectorLength_00_01Stride_01_4.html',1,'Cabana::Impl']]],
-  ['kokkosdatatypeimpl_3c_20t_2c_203_2c_20vectorlength_2c_20stride_20_3e_283',['KokkosDataTypeImpl&lt; T, 3, VectorLength, Stride &gt;',['../structCabana_1_1Impl_1_1KokkosDataTypeImpl_3_01T_00_013_00_01VectorLength_00_01Stride_01_4.html',1,'Cabana::Impl']]],
-  ['kokkosviewwrapper_284',['KokkosViewWrapper',['../structCabana_1_1Impl_1_1KokkosViewWrapper.html',1,'Cabana::Impl']]]
+  ['join_339',['join',['../structCajita_1_1ArrayOp_1_1DotFunctor.html#a8e350c960292e28f719a2733e3b56704',1,'Cajita::ArrayOp::DotFunctor::join()'],['../structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a3bf2bfc1b6c9f158df81aa3dfb390122',1,'Cajita::ArrayOp::NormInfFunctor::join()'],['../structCajita_1_1ArrayOp_1_1Norm1Functor.html#af09fd27b4e6c0f799de8398c5eecadb4',1,'Cajita::ArrayOp::Norm1Functor::join()'],['../structCajita_1_1ArrayOp_1_1Norm2Functor.html#a2bbd3b285ae7f7bf458df27f55b30f4a',1,'Cajita::ArrayOp::Norm2Functor::join()']]]
 ];

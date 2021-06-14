@@ -75,35 +75,51 @@ $(function() {
 <div class="title">Cabana::VerletListData&lt; MemorySpace, VerletLayoutCSR &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Store the <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> compressed sparse row (CSR) neighbor data.  
+ <a href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a38444407a5946a7b1a81ba44e98159cf"><td class="memItemLeft" align="right" valign="top"><a id="a38444407a5946a7b1a81ba44e98159cf"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = MemorySpace</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#a38444407a5946a7b1a81ba44e98159cf">memory_space</a> = MemorySpace</td></tr>
+<tr class="memdesc:a38444407a5946a7b1a81ba44e98159cf"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
 <tr class="separator:a38444407a5946a7b1a81ba44e98159cf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a33651bd730a08cd9a9b19fd347b51fe1"><td class="memItemLeft" align="right" valign="top"><a id="a33651bd730a08cd9a9b19fd347b51fe1"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename memory_space::device_type</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#a33651bd730a08cd9a9b19fd347b51fe1">device_type</a> = typename memory_space::device_type</td></tr>
+<tr class="memdesc:a33651bd730a08cd9a9b19fd347b51fe1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default Kokkos device type. <br /></td></tr>
 <tr class="separator:a33651bd730a08cd9a9b19fd347b51fe1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a604662726440f3903ec0838305019902"><td class="memItemLeft" align="right" valign="top"><a id="a604662726440f3903ec0838305019902"></a>
-KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>addNeighbor</b> (const int pid, const int nid) const</td></tr>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#a604662726440f3903ec0838305019902">addNeighbor</a> (const int pid, const int nid) const</td></tr>
+<tr class="memdesc:a604662726440f3903ec0838305019902"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add a neighbor to the list. <br /></td></tr>
 <tr class="separator:a604662726440f3903ec0838305019902"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a47571be84132b59be0fcfa7df85380ff"><td class="memItemLeft" align="right" valign="top"><a id="a47571be84132b59be0fcfa7df85380ff"></a>
-Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>counts</b></td></tr>
+Kokkos::View&lt; int *, <a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#a38444407a5946a7b1a81ba44e98159cf">memory_space</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#a47571be84132b59be0fcfa7df85380ff">counts</a></td></tr>
+<tr class="memdesc:a47571be84132b59be0fcfa7df85380ff"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of neighbors per particle. <br /></td></tr>
 <tr class="separator:a47571be84132b59be0fcfa7df85380ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1b003066d94ac04af1aa93f9b1bdb464"><td class="memItemLeft" align="right" valign="top"><a id="a1b003066d94ac04af1aa93f9b1bdb464"></a>
-Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>offsets</b></td></tr>
+Kokkos::View&lt; int *, <a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#a38444407a5946a7b1a81ba44e98159cf">memory_space</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#a1b003066d94ac04af1aa93f9b1bdb464">offsets</a></td></tr>
+<tr class="memdesc:a1b003066d94ac04af1aa93f9b1bdb464"><td class="mdescLeft">&#160;</td><td class="mdescRight">Offsets into the neighbor list. <br /></td></tr>
 <tr class="separator:a1b003066d94ac04af1aa93f9b1bdb464"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:adfcaf31b91a2dfdb354e20e9987cc6fe"><td class="memItemLeft" align="right" valign="top"><a id="adfcaf31b91a2dfdb354e20e9987cc6fe"></a>
-Kokkos::View&lt; int *, memory_space &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>neighbors</b></td></tr>
+Kokkos::View&lt; int *, <a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#a38444407a5946a7b1a81ba44e98159cf">memory_space</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCabana_1_1VerletListData_3_01MemorySpace_00_01VerletLayoutCSR_01_4.html#adfcaf31b91a2dfdb354e20e9987cc6fe">neighbors</a></td></tr>
+<tr class="memdesc:adfcaf31b91a2dfdb354e20e9987cc6fe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Neighbor list. <br /></td></tr>
 <tr class="separator:adfcaf31b91a2dfdb354e20e9987cc6fe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class MemorySpace&gt;<br />
+struct Cabana::VerletListData&lt; MemorySpace, VerletLayoutCSR &gt;</h3>
+
+<p>Store the <a class="el" href="classCabana_1_1VerletList.html" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same...">VerletList</a> compressed sparse row (CSR) neighbor data. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>core/src/<a class="el" href="Cabana__VerletList_8hpp_source.html">Cabana_VerletList.hpp</a></li>
 </ul>
 </div><!-- contents -->

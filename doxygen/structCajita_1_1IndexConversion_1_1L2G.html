@@ -76,64 +76,88 @@ $(function() {
 <div class="title">Cajita::IndexConversion::L2G&lt; MeshType, EntityType &gt; Struct Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Local-to-global indexer.  
+ <a href="structCajita_1_1IndexConversion_1_1L2G.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__IndexConversion_8hpp_source.html">Cajita_IndexConversion.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a271813f0b8e2323008674893d295e871"><td class="memItemLeft" align="right" valign="top"><a id="a271813f0b8e2323008674893d295e871"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = MeshType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a271813f0b8e2323008674893d295e871">mesh_type</a> = MeshType</td></tr>
+<tr class="memdesc:a271813f0b8e2323008674893d295e871"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
 <tr class="separator:a271813f0b8e2323008674893d295e871"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5cc74e92ac6eea740e246bbe0164dbfc"><td class="memItemLeft" align="right" valign="top"><a id="a5cc74e92ac6eea740e246bbe0164dbfc"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = EntityType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a5cc74e92ac6eea740e246bbe0164dbfc">entity_type</a> = EntityType</td></tr>
+<tr class="memdesc:a5cc74e92ac6eea740e246bbe0164dbfc"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entity type. <br /></td></tr>
 <tr class="separator:a5cc74e92ac6eea740e246bbe0164dbfc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a02ccb00f4dfcd66076ce37d727e98a53"><td class="memItemLeft" align="right" valign="top"><a id="a02ccb00f4dfcd66076ce37d727e98a53"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>L2G</b> (const <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; MeshType &gt; &amp;local_grid)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a02ccb00f4dfcd66076ce37d727e98a53">L2G</a> (const <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; MeshType &gt; &amp;local_grid)</td></tr>
+<tr class="memdesc:a02ccb00f4dfcd66076ce37d727e98a53"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:a02ccb00f4dfcd66076ce37d727e98a53"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a521e478bdf3f215a1085f9bdfeafb2e0"><td class="memItemLeft" align="right" valign="top"><a id="a521e478bdf3f215a1085f9bdfeafb2e0"></a>
-KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (const int lijk[num_space_dim], int gijk[num_space_dim]) const</td></tr>
+KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a521e478bdf3f215a1085f9bdfeafb2e0">operator()</a> (const int lijk[<a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a>], int gijk[<a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a>]) const</td></tr>
+<tr class="memdesc:a521e478bdf3f215a1085f9bdfeafb2e0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert local indices to global indices - general form. <br /></td></tr>
 <tr class="separator:a521e478bdf3f215a1085f9bdfeafb2e0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a788756ee7f52ee5dd1d1c9e3866934fd"><td class="memTemplParams" colspan="2"><a id="a788756ee7f52ee5dd1d1c9e3866934fd"></a>
 template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a788756ee7f52ee5dd1d1c9e3866934fd"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const int li, const int lj, const int lk, int &amp;gi, int &amp;gj, int &amp;gk) const</td></tr>
+<tr class="memitem:a788756ee7f52ee5dd1d1c9e3866934fd"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a788756ee7f52ee5dd1d1c9e3866934fd">operator()</a> (const int li, const int lj, const int lk, int &amp;gi, int &amp;gj, int &amp;gk) const</td></tr>
+<tr class="memdesc:a788756ee7f52ee5dd1d1c9e3866934fd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert local indices to global indices - 3D. <br /></td></tr>
 <tr class="separator:a788756ee7f52ee5dd1d1c9e3866934fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a04553ecbb2bb9f3527bf216dff95dcee"><td class="memTemplParams" colspan="2"><a id="a04553ecbb2bb9f3527bf216dff95dcee"></a>
 template&lt;std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a04553ecbb2bb9f3527bf216dff95dcee"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>operator()</b> (const int li, const int lj, int &amp;gi, int &amp;gj) const</td></tr>
+<tr class="memitem:a04553ecbb2bb9f3527bf216dff95dcee"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a04553ecbb2bb9f3527bf216dff95dcee">operator()</a> (const int li, const int lj, int &amp;gi, int &amp;gj) const</td></tr>
+<tr class="memdesc:a04553ecbb2bb9f3527bf216dff95dcee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert local indices to global indices - 3D. <br /></td></tr>
 <tr class="separator:a04553ecbb2bb9f3527bf216dff95dcee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:acd2dcfa6650f50215868f68c4e3bcbec"><td class="memItemLeft" align="right" valign="top"><a id="acd2dcfa6650f50215868f68c4e3bcbec"></a>
-Kokkos::Array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>local_own_min</b></td></tr>
+Kokkos::Array&lt; int, <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#acd2dcfa6650f50215868f68c4e3bcbec">local_own_min</a></td></tr>
+<tr class="memdesc:acd2dcfa6650f50215868f68c4e3bcbec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Owned local indices minimum. <br /></td></tr>
 <tr class="separator:acd2dcfa6650f50215868f68c4e3bcbec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3fd727a87d2bff1053b142ae44a9aca"><td class="memItemLeft" align="right" valign="top"><a id="ac3fd727a87d2bff1053b142ae44a9aca"></a>
-Kokkos::Array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>local_own_max</b></td></tr>
+Kokkos::Array&lt; int, <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#ac3fd727a87d2bff1053b142ae44a9aca">local_own_max</a></td></tr>
+<tr class="memdesc:ac3fd727a87d2bff1053b142ae44a9aca"><td class="mdescLeft">&#160;</td><td class="mdescRight">Owned local indices maximum. <br /></td></tr>
 <tr class="separator:ac3fd727a87d2bff1053b142ae44a9aca"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6a19695bf7188cee265d72929c392b6"><td class="memItemLeft" align="right" valign="top"><a id="aa6a19695bf7188cee265d72929c392b6"></a>
-Kokkos::Array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>global_own_min</b></td></tr>
+Kokkos::Array&lt; int, <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#aa6a19695bf7188cee265d72929c392b6">global_own_min</a></td></tr>
+<tr class="memdesc:aa6a19695bf7188cee265d72929c392b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Owned global indices minimum. <br /></td></tr>
 <tr class="separator:aa6a19695bf7188cee265d72929c392b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2f824c5d3124a1e79274334623a8481c"><td class="memItemLeft" align="right" valign="top"><a id="a2f824c5d3124a1e79274334623a8481c"></a>
-Kokkos::Array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>global_num_entity</b></td></tr>
+Kokkos::Array&lt; int, <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a2f824c5d3124a1e79274334623a8481c">global_num_entity</a></td></tr>
+<tr class="memdesc:a2f824c5d3124a1e79274334623a8481c"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> number of entities. <br /></td></tr>
 <tr class="separator:a2f824c5d3124a1e79274334623a8481c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a467de8ddb7856a73d2a6d2b8626b7bfe"><td class="memItemLeft" align="right" valign="top"><a id="a467de8ddb7856a73d2a6d2b8626b7bfe"></a>
-Kokkos::Array&lt; bool, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>periodic</b></td></tr>
+Kokkos::Array&lt; bool, <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a467de8ddb7856a73d2a6d2b8626b7bfe">periodic</a></td></tr>
+<tr class="memdesc:a467de8ddb7856a73d2a6d2b8626b7bfe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Periodicity. <br /></td></tr>
 <tr class="separator:a467de8ddb7856a73d2a6d2b8626b7bfe"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aadcac50fe1e166896b21dd1719a9c774"><td class="memItemLeft" align="right" valign="top"><a id="aadcac50fe1e166896b21dd1719a9c774"></a>
-Kokkos::Array&lt; bool, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>boundary_lo</b></td></tr>
+Kokkos::Array&lt; bool, <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#aadcac50fe1e166896b21dd1719a9c774">boundary_lo</a></td></tr>
+<tr class="memdesc:aadcac50fe1e166896b21dd1719a9c774"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if block is on low boundary. <br /></td></tr>
 <tr class="separator:aadcac50fe1e166896b21dd1719a9c774"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0e838eaf0e76d215c809b63683ac9de1"><td class="memItemLeft" align="right" valign="top"><a id="a0e838eaf0e76d215c809b63683ac9de1"></a>
-Kokkos::Array&lt; bool, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>boundary_hi</b></td></tr>
+Kokkos::Array&lt; bool, <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a0e838eaf0e76d215c809b63683ac9de1">boundary_hi</a></td></tr>
+<tr class="memdesc:a0e838eaf0e76d215c809b63683ac9de1"><td class="mdescLeft">&#160;</td><td class="mdescRight">True if block is on high boundary. <br /></td></tr>
 <tr class="separator:a0e838eaf0e76d215c809b63683ac9de1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:abc745d938ce2d8793dc13d2a173b1df4"><td class="memItemLeft" align="right" valign="top"><a id="abc745d938ce2d8793dc13d2a173b1df4"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = mesh_type::num_space_dim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#abc745d938ce2d8793dc13d2a173b1df4">num_space_dim</a> = mesh_type::num_space_dim</td></tr>
+<tr class="memdesc:abc745d938ce2d8793dc13d2a173b1df4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:abc745d938ce2d8793dc13d2a173b1df4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<hr/>The documentation for this struct was generated from the following file:<ul>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class MeshType, class EntityType&gt;<br />
+struct Cajita::IndexConversion::L2G&lt; MeshType, EntityType &gt;</h3>
+
+<p>Local-to-global indexer. </p>
+</div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>cajita/src/<a class="el" href="Cajita__IndexConversion_8hpp_source.html">Cajita_IndexConversion.hpp</a></li>
 </ul>
 </div><!-- contents -->

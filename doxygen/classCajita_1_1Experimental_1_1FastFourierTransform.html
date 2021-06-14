@@ -85,19 +85,24 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a5d6e192b25799cc7422773a83e5d673e"><td class="memItemLeft" align="right" valign="top"><a id="a5d6e192b25799cc7422773a83e5d673e"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = EntityType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5d6e192b25799cc7422773a83e5d673e">entity_type</a> = EntityType</td></tr>
+<tr class="memdesc:a5d6e192b25799cc7422773a83e5d673e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> entity type. <br /></td></tr>
 <tr class="separator:a5d6e192b25799cc7422773a83e5d673e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae5be35953343e489b1cd164348990701"><td class="memItemLeft" align="right" valign="top"><a id="ae5be35953343e489b1cd164348990701"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = MeshType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae5be35953343e489b1cd164348990701">mesh_type</a> = MeshType</td></tr>
+<tr class="memdesc:ae5be35953343e489b1cd164348990701"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
 <tr class="separator:ae5be35953343e489b1cd164348990701"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4aaa94b5256df2207a0eca444849365a"><td class="memItemLeft" align="right" valign="top"><a id="a4aaa94b5256df2207a0eca444849365a"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = Scalar</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4aaa94b5256df2207a0eca444849365a">value_type</a> = Scalar</td></tr>
+<tr class="memdesc:a4aaa94b5256df2207a0eca444849365a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar value type. <br /></td></tr>
 <tr class="separator:a4aaa94b5256df2207a0eca444849365a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac25a33408a80e78deed0c7288f882ba0"><td class="memItemLeft" align="right" valign="top"><a id="ac25a33408a80e78deed0c7288f882ba0"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ac25a33408a80e78deed0c7288f882ba0">device_type</a> = DeviceType</td></tr>
+<tr class="memdesc:ac25a33408a80e78deed0c7288f882ba0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device type. <br /></td></tr>
 <tr class="separator:ac25a33408a80e78deed0c7288f882ba0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5c0202628cafe0315528219def706385"><td class="memItemLeft" align="right" valign="top"><a id="a5c0202628cafe0315528219def706385"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>exec_space</b> = typename device_type::execution_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5c0202628cafe0315528219def706385">exec_space</a> = typename device_type::execution_space</td></tr>
+<tr class="memdesc:a5c0202628cafe0315528219def706385"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
 <tr class="separator:a5c0202628cafe0315528219def706385"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
@@ -109,43 +114,50 @@ Public Member Functions</h2></td></tr>
 <tr class="memdesc:a1d961cc096f29651800c6d3075a0db78"><td class="mdescLeft">&#160;</td><td class="mdescRight">Ensure the FFT compute array has the correct DoFs.  <a href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a1d961cc096f29651800c6d3075a0db78">More...</a><br /></td></tr>
 <tr class="separator:a1d961cc096f29651800c6d3075a0db78"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abcc749fe58374d9921c2d7eb38b539b2"><td class="memTemplParams" colspan="2">template&lt;class Array_t , class ScaleType &gt; </td></tr>
-<tr class="memitem:abcc749fe58374d9921c2d7eb38b539b2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#abcc749fe58374d9921c2d7eb38b539b2">forward</a> (const Array_t &amp;x, const ScaleType scaling, typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, entity_type, mesh_type, device_type, value_type &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memitem:abcc749fe58374d9921c2d7eb38b539b2"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#abcc749fe58374d9921c2d7eb38b539b2">forward</a> (const Array_t &amp;x, const ScaleType scaling, typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5d6e192b25799cc7422773a83e5d673e">entity_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae5be35953343e489b1cd164348990701">mesh_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ac25a33408a80e78deed0c7288f882ba0">device_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4aaa94b5256df2207a0eca444849365a">value_type</a> &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:abcc749fe58374d9921c2d7eb38b539b2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a forward FFT.  <a href="classCajita_1_1Experimental_1_1FastFourierTransform.html#abcc749fe58374d9921c2d7eb38b539b2">More...</a><br /></td></tr>
 <tr class="separator:abcc749fe58374d9921c2d7eb38b539b2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae33cfc6c8d8dc73b34155def55555db9"><td class="memTemplParams" colspan="2">template&lt;class Array_t , class ScaleType &gt; </td></tr>
-<tr class="memitem:ae33cfc6c8d8dc73b34155def55555db9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae33cfc6c8d8dc73b34155def55555db9">reverse</a> (const Array_t &amp;x, const ScaleType scaling, typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, entity_type, mesh_type, device_type, value_type &gt;::value), int &gt;::type *=0)</td></tr>
+<tr class="memitem:ae33cfc6c8d8dc73b34155def55555db9"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae33cfc6c8d8dc73b34155def55555db9">reverse</a> (const Array_t &amp;x, const ScaleType scaling, typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5d6e192b25799cc7422773a83e5d673e">entity_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae5be35953343e489b1cd164348990701">mesh_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ac25a33408a80e78deed0c7288f882ba0">device_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4aaa94b5256df2207a0eca444849365a">value_type</a> &gt;::value), int &gt;::type *=0)</td></tr>
 <tr class="memdesc:ae33cfc6c8d8dc73b34155def55555db9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Do a reverse FFT.  <a href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae33cfc6c8d8dc73b34155def55555db9">More...</a><br /></td></tr>
 <tr class="separator:ae33cfc6c8d8dc73b34155def55555db9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4ecee39cd79aa7039a76a461e62ee848"><td class="memTemplParams" colspan="2"><a id="a4ecee39cd79aa7039a76a461e62ee848"></a>
 template&lt;class IndexSpaceType , class LViewType , class LGViewType , std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a4ecee39cd79aa7039a76a461e62ee848"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyToLocal</b> (const IndexSpaceType own_space, LViewType &amp;l_view, const LGViewType lg_view)</td></tr>
+<tr class="memitem:a4ecee39cd79aa7039a76a461e62ee848"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4ecee39cd79aa7039a76a461e62ee848">copyToLocal</a> (const IndexSpaceType own_space, LViewType &amp;l_view, const LGViewType lg_view)</td></tr>
+<tr class="memdesc:a4ecee39cd79aa7039a76a461e62ee848"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data for FFT. <br /></td></tr>
 <tr class="separator:a4ecee39cd79aa7039a76a461e62ee848"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9637b0b672dd3d4c9faa47eadc43bbbd"><td class="memTemplParams" colspan="2"><a id="a9637b0b672dd3d4c9faa47eadc43bbbd"></a>
 template&lt;class IndexSpaceType , class LViewType , class LGViewType , std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a9637b0b672dd3d4c9faa47eadc43bbbd"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyToLocal</b> (const IndexSpaceType own_space, LViewType &amp;l_view, const LGViewType lg_view)</td></tr>
+<tr class="memitem:a9637b0b672dd3d4c9faa47eadc43bbbd"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a9637b0b672dd3d4c9faa47eadc43bbbd">copyToLocal</a> (const IndexSpaceType own_space, LViewType &amp;l_view, const LGViewType lg_view)</td></tr>
+<tr class="memdesc:a9637b0b672dd3d4c9faa47eadc43bbbd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data for FFT. <br /></td></tr>
 <tr class="separator:a9637b0b672dd3d4c9faa47eadc43bbbd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5d04ea96d048bd5b24050355d3416b1e"><td class="memTemplParams" colspan="2"><a id="a5d04ea96d048bd5b24050355d3416b1e"></a>
 template&lt;class IndexSpaceType , class LViewType , class LGViewType , std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a5d04ea96d048bd5b24050355d3416b1e"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyFromLocal</b> (const IndexSpaceType own_space, const LViewType l_view, LGViewType &amp;lg_view)</td></tr>
+<tr class="memitem:a5d04ea96d048bd5b24050355d3416b1e"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5d04ea96d048bd5b24050355d3416b1e">copyFromLocal</a> (const IndexSpaceType own_space, const LViewType l_view, LGViewType &amp;lg_view)</td></tr>
+<tr class="memdesc:a5d04ea96d048bd5b24050355d3416b1e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data back after FFT. <br /></td></tr>
 <tr class="separator:a5d04ea96d048bd5b24050355d3416b1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1ebfaf708b7090b2a7f3cc8c0c63bb93"><td class="memTemplParams" colspan="2"><a id="a1ebfaf708b7090b2a7f3cc8c0c63bb93"></a>
 template&lt;class IndexSpaceType , class LViewType , class LGViewType , std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a1ebfaf708b7090b2a7f3cc8c0c63bb93"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><b>copyFromLocal</b> (const IndexSpaceType own_space, const LViewType l_view, LGViewType &amp;lg_view)</td></tr>
+<tr class="memitem:a1ebfaf708b7090b2a7f3cc8c0c63bb93"><td class="memTemplItemLeft" align="right" valign="top">std::enable_if_t&lt; 2==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a1ebfaf708b7090b2a7f3cc8c0c63bb93">copyFromLocal</a> (const IndexSpaceType own_space, const LViewType l_view, LGViewType &amp;lg_view)</td></tr>
+<tr class="memdesc:a1ebfaf708b7090b2a7f3cc8c0c63bb93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Copy owned data back after FFT. <br /></td></tr>
 <tr class="separator:a1ebfaf708b7090b2a7f3cc8c0c63bb93"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a168f2780dbdc35c2e0c16615d51469ad"><td class="memItemLeft" align="right" valign="top"><a id="a168f2780dbdc35c2e0c16615d51469ad"></a>
-std::array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>global_high</b></td></tr>
+std::array&lt; int, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a786bee1b4855c40bcac8f54f2330091e">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a168f2780dbdc35c2e0c16615d51469ad">global_high</a></td></tr>
+<tr class="memdesc:a168f2780dbdc35c2e0c16615d51469ad"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> high box corner. <br /></td></tr>
 <tr class="separator:a168f2780dbdc35c2e0c16615d51469ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa6a88a6fe1562ff0eeb34768c4984eff"><td class="memItemLeft" align="right" valign="top"><a id="aa6a88a6fe1562ff0eeb34768c4984eff"></a>
-std::array&lt; int, num_space_dim &gt;&#160;</td><td class="memItemRight" valign="bottom"><b>global_low</b></td></tr>
+std::array&lt; int, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a786bee1b4855c40bcac8f54f2330091e">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#aa6a88a6fe1562ff0eeb34768c4984eff">global_low</a></td></tr>
+<tr class="memdesc:aa6a88a6fe1562ff0eeb34768c4984eff"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> low box corner. <br /></td></tr>
 <tr class="separator:aa6a88a6fe1562ff0eeb34768c4984eff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a786bee1b4855c40bcac8f54f2330091e"><td class="memItemLeft" align="right" valign="top"><a id="a786bee1b4855c40bcac8f54f2330091e"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = mesh_type::num_space_dim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a786bee1b4855c40bcac8f54f2330091e">num_space_dim</a> = mesh_type::num_space_dim</td></tr>
+<tr class="memdesc:a786bee1b4855c40bcac8f54f2330091e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:a786bee1b4855c40bcac8f54f2330091e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -255,7 +267,7 @@ template&lt;class Array_t , class ScaleType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, entity_type, mesh_type, device_type, value_type &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5d6e192b25799cc7422773a83e5d673e">entity_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae5be35953343e489b1cd164348990701">mesh_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ac25a33408a80e78deed0c7288f882ba0">device_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4aaa94b5256df2207a0eca444849365a">value_type</a> &gt;::value), int &gt;::type *&#160;</td>
           <td class="paramname"> = <code>0</code>&#160;</td>
         </tr>
         <tr>
@@ -310,7 +322,7 @@ template&lt;class Array_t , class ScaleType &gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, entity_type, mesh_type, device_type, value_type &gt;::value), int &gt;::type *&#160;</td>
+          <td class="paramtype">typename std::enable_if&lt;(<a class="el" href="structCajita_1_1is__array.html">is_array</a>&lt; Array_t &gt;::value &amp;&amp;<a class="el" href="structCajita_1_1Experimental_1_1is__matching__array.html">is_matching_array</a>&lt; typename Array_t::entity_type, typename Array_t::mesh_type, typename Array_t::device_type, typename Array_t::value_type, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a5d6e192b25799cc7422773a83e5d673e">entity_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ae5be35953343e489b1cd164348990701">mesh_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#ac25a33408a80e78deed0c7288f882ba0">device_type</a>, <a class="el" href="classCajita_1_1Experimental_1_1FastFourierTransform.html#a4aaa94b5256df2207a0eca444849365a">value_type</a> &gt;::value), int &gt;::type *&#160;</td>
           <td class="paramname"> = <code>0</code>&#160;</td>
         </tr>
         <tr>

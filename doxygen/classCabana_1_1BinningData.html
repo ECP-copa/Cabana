@@ -83,40 +83,50 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:a64b9d169a6bb4406b49af77784c3d998"><td class="memItemLeft" align="right" valign="top"><a id="a64b9d169a6bb4406b49af77784c3d998"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = DeviceType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a64b9d169a6bb4406b49af77784c3d998">device_type</a> = DeviceType</td></tr>
+<tr class="memdesc:a64b9d169a6bb4406b49af77784c3d998"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos device_type. <br /></td></tr>
 <tr class="separator:a64b9d169a6bb4406b49af77784c3d998"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab2213c380f06cd5539f8de91dcd5a5d9"><td class="memItemLeft" align="right" valign="top"><a id="ab2213c380f06cd5539f8de91dcd5a5d9"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename device_type::memory_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#ab2213c380f06cd5539f8de91dcd5a5d9">memory_space</a> = typename device_type::memory_space</td></tr>
+<tr class="memdesc:ab2213c380f06cd5539f8de91dcd5a5d9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos memory space. <br /></td></tr>
 <tr class="separator:ab2213c380f06cd5539f8de91dcd5a5d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa386df61ae1c0ee0125be67e36450e3a"><td class="memItemLeft" align="right" valign="top"><a id="aa386df61ae1c0ee0125be67e36450e3a"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename device_type::execution_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#aa386df61ae1c0ee0125be67e36450e3a">execution_space</a> = typename device_type::execution_space</td></tr>
+<tr class="memdesc:aa386df61ae1c0ee0125be67e36450e3a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Kokkos execution space. <br /></td></tr>
 <tr class="separator:aa386df61ae1c0ee0125be67e36450e3a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac3059535aa10d492e26650c0473bcaac"><td class="memItemLeft" align="right" valign="top"><a id="ac3059535aa10d492e26650c0473bcaac"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>size_type</b> = typename memory_space::size_type</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a> = typename memory_space::size_type</td></tr>
+<tr class="memdesc:ac3059535aa10d492e26650c0473bcaac"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space size type. <br /></td></tr>
 <tr class="separator:ac3059535aa10d492e26650c0473bcaac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a857e79f270818c2c2b80fe2c9e81a14c"><td class="memItemLeft" align="right" valign="top"><a id="a857e79f270818c2c2b80fe2c9e81a14c"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>CountView</b> = Kokkos::View&lt; const int *, device_type &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a857e79f270818c2c2b80fe2c9e81a14c">CountView</a> = Kokkos::View&lt; const int *, <a class="el" href="classCabana_1_1BinningData.html#a64b9d169a6bb4406b49af77784c3d998">device_type</a> &gt;</td></tr>
+<tr class="memdesc:a857e79f270818c2c2b80fe2c9e81a14c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Binning view type. <br /></td></tr>
 <tr class="separator:a857e79f270818c2c2b80fe2c9e81a14c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abe7e5b1cee395ab92a286d3d848cd259"><td class="memItemLeft" align="right" valign="top"><a id="abe7e5b1cee395ab92a286d3d848cd259"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>OffsetView</b> = Kokkos::View&lt; size_type *, device_type &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#abe7e5b1cee395ab92a286d3d848cd259">OffsetView</a> = Kokkos::View&lt; <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a> *, <a class="el" href="classCabana_1_1BinningData.html#a64b9d169a6bb4406b49af77784c3d998">device_type</a> &gt;</td></tr>
+<tr class="memdesc:abe7e5b1cee395ab92a286d3d848cd259"><td class="mdescLeft">&#160;</td><td class="mdescRight">Offset view type. <br /></td></tr>
 <tr class="separator:abe7e5b1cee395ab92a286d3d848cd259"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a4c19f1c90433aa62005f8d2412912ada"><td class="memItemLeft" align="right" valign="top"><a id="a4c19f1c90433aa62005f8d2412912ada"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>BinningData</b> (const std::size_t begin, const std::size_t end, CountView counts, OffsetView offsets, OffsetView permute_vector)</td></tr>
+<tr class="memitem:a9d379fcb21bbd5d216b73b92c6e544e8"><td class="memItemLeft" align="right" valign="top"><a id="a9d379fcb21bbd5d216b73b92c6e544e8"></a>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a9d379fcb21bbd5d216b73b92c6e544e8">BinningData</a> ()</td></tr>
+<tr class="memdesc:a9d379fcb21bbd5d216b73b92c6e544e8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Default constructor. <br /></td></tr>
+<tr class="separator:a9d379fcb21bbd5d216b73b92c6e544e8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c19f1c90433aa62005f8d2412912ada"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a4c19f1c90433aa62005f8d2412912ada">BinningData</a> (const std::size_t begin, const std::size_t end, <a class="el" href="classCabana_1_1BinningData.html#a857e79f270818c2c2b80fe2c9e81a14c">CountView</a> counts, <a class="el" href="classCabana_1_1BinningData.html#abe7e5b1cee395ab92a286d3d848cd259">OffsetView</a> offsets, <a class="el" href="classCabana_1_1BinningData.html#abe7e5b1cee395ab92a286d3d848cd259">OffsetView</a> permute_vector)</td></tr>
+<tr class="memdesc:a4c19f1c90433aa62005f8d2412912ada"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor initializing from Kokkos BinSort data.  <a href="classCabana_1_1BinningData.html#a4c19f1c90433aa62005f8d2412912ada">More...</a><br /></td></tr>
 <tr class="separator:a4c19f1c90433aa62005f8d2412912ada"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa41f11ed6f29782694961617b90f5bbe"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#aa41f11ed6f29782694961617b90f5bbe">numBin</a> () const</td></tr>
 <tr class="memdesc:aa41f11ed6f29782694961617b90f5bbe"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of bins.  <a href="classCabana_1_1BinningData.html#aa41f11ed6f29782694961617b90f5bbe">More...</a><br /></td></tr>
 <tr class="separator:aa41f11ed6f29782694961617b90f5bbe"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3a637eadda15342e26f343e494de0bd6"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a3a637eadda15342e26f343e494de0bd6">binSize</a> (const size_type bin_id) const</td></tr>
+<tr class="memitem:a3a637eadda15342e26f343e494de0bd6"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a3a637eadda15342e26f343e494de0bd6">binSize</a> (const <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a> bin_id) const</td></tr>
 <tr class="memdesc:a3a637eadda15342e26f343e494de0bd6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the number of tuples it contains.  <a href="classCabana_1_1BinningData.html#a3a637eadda15342e26f343e494de0bd6">More...</a><br /></td></tr>
 <tr class="separator:a3a637eadda15342e26f343e494de0bd6"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a93587f6a1f448cc88c0751e55e7fd7d1"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a93587f6a1f448cc88c0751e55e7fd7d1">binOffset</a> (const size_type bin_id) const</td></tr>
+<tr class="memitem:a93587f6a1f448cc88c0751e55e7fd7d1"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a93587f6a1f448cc88c0751e55e7fd7d1">binOffset</a> (const <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a> bin_id) const</td></tr>
 <tr class="memdesc:a93587f6a1f448cc88c0751e55e7fd7d1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a bin get the tuple index at which it sorts.  <a href="classCabana_1_1BinningData.html#a93587f6a1f448cc88c0751e55e7fd7d1">More...</a><br /></td></tr>
 <tr class="separator:a93587f6a1f448cc88c0751e55e7fd7d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3bc243700d37b13d90ec156f9da8283d"><td class="memItemLeft" align="right" valign="top"><a id="a3bc243700d37b13d90ec156f9da8283d"></a>
-KOKKOS_INLINE_FUNCTION size_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a3bc243700d37b13d90ec156f9da8283d">permutation</a> (const size_type tuple_id) const</td></tr>
+KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCabana_1_1BinningData.html#a3bc243700d37b13d90ec156f9da8283d">permutation</a> (const <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a> tuple_id) const</td></tr>
 <tr class="memdesc:a3bc243700d37b13d90ec156f9da8283d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Given a local tuple id in the binned layout, get the id of the tuple in the old (unbinned) layout. <br /></td></tr>
 <tr class="separator:a3bc243700d37b13d90ec156f9da8283d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a888557843e3d212d26b68edfc20fc3ca"><td class="memItemLeft" align="right" valign="top"><a id="a888557843e3d212d26b68edfc20fc3ca"></a>
@@ -133,7 +143,76 @@ KOKKOS_INLINE_FUNCTION std::size_t&#160;</td><td class="memItemRight" valign="bo
 class Cabana::BinningData&lt; DeviceType &gt;</h3>
 
 <p>Data describing the bin sizes and offsets resulting from a binning operation. </p>
-</div><h2 class="groupheader">Member Function Documentation</h2>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a4c19f1c90433aa62005f8d2412912ada"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c19f1c90433aa62005f8d2412912ada">&#9670;&nbsp;</a></span>BinningData()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class DeviceType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; DeviceType &gt;::<a class="el" href="classCabana_1_1BinningData.html">BinningData</a> </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>begin</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>end</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCabana_1_1BinningData.html#a857e79f270818c2c2b80fe2c9e81a14c">CountView</a>&#160;</td>
+          <td class="paramname"><em>counts</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCabana_1_1BinningData.html#abe7e5b1cee395ab92a286d3d848cd259">OffsetView</a>&#160;</td>
+          <td class="paramname"><em>offsets</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="classCabana_1_1BinningData.html#abe7e5b1cee395ab92a286d3d848cd259">OffsetView</a>&#160;</td>
+          <td class="paramname"><em>permute_vector</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor initializing from Kokkos BinSort data. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">begin</td><td>The beginning index of the range to sort. </td></tr>
+    <tr><td class="paramname">end</td><td>The end index of the range to sort. </td></tr>
+    <tr><td class="paramname">counts</td><td>Binning counts. </td></tr>
+    <tr><td class="paramname">offsets</td><td>Binning offsets. </td></tr>
+    <tr><td class="paramname">permute_vector</td><td>Permutation vector. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<h2 class="groupheader">Member Function Documentation</h2>
 <a id="a93587f6a1f448cc88c0751e55e7fd7d1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a93587f6a1f448cc88c0751e55e7fd7d1">&#9670;&nbsp;</a></span>binOffset()</h2>
 
@@ -146,9 +225,9 @@ template&lt;class DeviceType &gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">KOKKOS_INLINE_FUNCTION size_type <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; DeviceType &gt;::binOffset </td>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a> <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; DeviceType &gt;::binOffset </td>
           <td>(</td>
-          <td class="paramtype">const size_type&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a>&#160;</td>
           <td class="paramname"><em>bin_id</em></td><td>)</td>
           <td> const</td>
         </tr>
@@ -185,7 +264,7 @@ template&lt;class DeviceType &gt; </div>
         <tr>
           <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCabana_1_1BinningData.html">Cabana::BinningData</a>&lt; DeviceType &gt;::binSize </td>
           <td>(</td>
-          <td class="paramtype">const size_type&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCabana_1_1BinningData.html#ac3059535aa10d492e26650c0473bcaac">size_type</a>&#160;</td>
           <td class="paramname"><em>bin_id</em></td><td>)</td>
           <td> const</td>
         </tr>

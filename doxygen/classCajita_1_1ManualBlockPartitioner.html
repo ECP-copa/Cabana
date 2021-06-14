@@ -74,13 +74,18 @@ $(function() {
 <div class="title">Cajita::ManualBlockPartitioner&lt; NumSpaceDim &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p>Manual block partitioner.  
+ <a href="classCajita_1_1ManualBlockPartitioner.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__Partitioner_8hpp_source.html">Cajita_Partitioner.hpp</a>&gt;</code></p>
 <div class="dynheader">
 Inheritance diagram for Cajita::ManualBlockPartitioner&lt; NumSpaceDim &gt;:</div>
 <div class="dyncontent">
 <div class="center"><img src="classCajita_1_1ManualBlockPartitioner__inherit__graph.png" border="0" usemap="#aCajita_1_1ManualBlockPartitioner_3_01NumSpaceDim_01_4_inherit__map" alt="Inheritance graph"/></div>
 <map name="aCajita_1_1ManualBlockPartitioner_3_01NumSpaceDim_01_4_inherit__map" id="aCajita_1_1ManualBlockPartitioner_3_01NumSpaceDim_01_4_inherit__map">
-<area shape="rect" title=" " alt="" coords="5,95,204,136"/>
-<area shape="rect" href="classCajita_1_1BlockPartitioner.html" title=" " alt="" coords="27,5,183,47"/>
+<area shape="rect" title="Manual block partitioner." alt="" coords="5,95,204,136"/>
+<area shape="rect" href="classCajita_1_1BlockPartitioner.html" title="Block partitioner base class." alt="" coords="27,5,183,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <div class="dynheader">
@@ -88,30 +93,81 @@ Collaboration diagram for Cajita::ManualBlockPartitioner&lt; NumSpaceDim &gt;:</
 <div class="dyncontent">
 <div class="center"><img src="classCajita_1_1ManualBlockPartitioner__coll__graph.png" border="0" usemap="#aCajita_1_1ManualBlockPartitioner_3_01NumSpaceDim_01_4_coll__map" alt="Collaboration graph"/></div>
 <map name="aCajita_1_1ManualBlockPartitioner_3_01NumSpaceDim_01_4_coll__map" id="aCajita_1_1ManualBlockPartitioner_3_01NumSpaceDim_01_4_coll__map">
-<area shape="rect" title=" " alt="" coords="5,95,204,136"/>
-<area shape="rect" href="classCajita_1_1BlockPartitioner.html" title=" " alt="" coords="27,5,183,47"/>
+<area shape="rect" title="Manual block partitioner." alt="" coords="5,95,204,136"/>
+<area shape="rect" href="classCajita_1_1BlockPartitioner.html" title="Block partitioner base class." alt="" coords="27,5,183,47"/>
 </map>
 <center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a8666ca91299503d250e9e223724ca7bd"><td class="memItemLeft" align="right" valign="top"><a id="a8666ca91299503d250e9e223724ca7bd"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>ManualBlockPartitioner</b> (const std::array&lt; int, NumSpaceDim &gt; &amp;ranks_per_dim)</td></tr>
+<tr class="memitem:a8666ca91299503d250e9e223724ca7bd"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ManualBlockPartitioner.html#a8666ca91299503d250e9e223724ca7bd">ManualBlockPartitioner</a> (const std::array&lt; int, NumSpaceDim &gt; &amp;ranks_per_dim)</td></tr>
+<tr class="memdesc:a8666ca91299503d250e9e223724ca7bd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor.  <a href="classCajita_1_1ManualBlockPartitioner.html#a8666ca91299503d250e9e223724ca7bd">More...</a><br /></td></tr>
 <tr class="separator:a8666ca91299503d250e9e223724ca7bd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a757c6681acb588e3a9b76ef757cd4682"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, NumSpaceDim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">ranksPerDimension</a> (MPI_Comm comm, const std::array&lt; int, NumSpaceDim &gt; &amp;) const override</td></tr>
-<tr class="memdesc:a757c6681acb588e3a9b76ef757cd4682"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of MPI ranks in each dimension of the grid.  <a href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">More...</a><br /></td></tr>
+<tr class="memdesc:a757c6681acb588e3a9b76ef757cd4682"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the MPI ranks per dimension.  <a href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">More...</a><br /></td></tr>
 <tr class="separator:a757c6681acb588e3a9b76ef757cd4682"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:ab6265d84aead04bf951da1460a472a6a"><td class="memItemLeft" align="right" valign="top"><a id="ab6265d84aead04bf951da1460a472a6a"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = NumSpaceDim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">num_space_dim</a> = NumSpaceDim</td></tr>
+<tr class="memdesc:ab6265d84aead04bf951da1460a472a6a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:ab6265d84aead04bf951da1460a472a6a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="inherit_header pub_static_attribs_classCajita_1_1BlockPartitioner"><td colspan="2" onclick="javascript:toggleInherit('pub_static_attribs_classCajita_1_1BlockPartitioner')"><img src="closed.png" alt="-"/>&#160;Static Public Attributes inherited from <a class="el" href="classCajita_1_1BlockPartitioner.html">Cajita::BlockPartitioner&lt; NumSpaceDim &gt;</a></td></tr>
 <tr class="memitem:a4c67571ff5a952b1b64c10616d43838f inherit pub_static_attribs_classCajita_1_1BlockPartitioner"><td class="memItemLeft" align="right" valign="top"><a id="a4c67571ff5a952b1b64c10616d43838f"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = NumSpaceDim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> = NumSpaceDim</td></tr>
+<tr class="memdesc:a4c67571ff5a952b1b64c10616d43838f inherit pub_static_attribs_classCajita_1_1BlockPartitioner"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:a4c67571ff5a952b1b64c10616d43838f inherit pub_static_attribs_classCajita_1_1BlockPartitioner"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;std::size_t NumSpaceDim&gt;<br />
+class Cajita::ManualBlockPartitioner&lt; NumSpaceDim &gt;</h3>
+
+<p>Manual block partitioner. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">NumSpaceDim</td><td>Spatial dimension.</td></tr>
+  </table>
+  </dd>
+</dl>
+<p>Assign MPI blocks from a fixed user input. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a id="a8666ca91299503d250e9e223724ca7bd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8666ca91299503d250e9e223724ca7bd">&#9670;&nbsp;</a></span>ManualBlockPartitioner()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1ManualBlockPartitioner.html">Cajita::ManualBlockPartitioner</a>&lt; NumSpaceDim &gt;::<a class="el" href="classCajita_1_1ManualBlockPartitioner.html">ManualBlockPartitioner</a> </td>
+          <td>(</td>
+          <td class="paramtype">const std::array&lt; int, NumSpaceDim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>ranks_per_dim</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Constructor. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">ranks_per_dim</td><td>MPI ranks per dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <h2 class="groupheader">Member Function Documentation</h2>
 <a id="a757c6681acb588e3a9b76ef757cd4682"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a757c6681acb588e3a9b76ef757cd4682">&#9670;&nbsp;</a></span>ranksPerDimension()</h2>
@@ -134,7 +190,7 @@ template&lt;std::size_t NumSpaceDim&gt; </div>
           <td class="paramkey"></td>
           <td></td>
           <td class="paramtype">const std::array&lt; int, NumSpaceDim &gt; &amp;&#160;</td>
-          <td class="paramname"><em>global_cells_per_dim</em>&#160;</td>
+          <td class="paramname">&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -149,15 +205,13 @@ template&lt;std::size_t NumSpaceDim&gt; </div>
 </table>
 </div><div class="memdoc">
 
-<p>Get the number of MPI ranks in each dimension of the grid. </p>
+<p>Get the MPI ranks per dimension. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">comm</td><td>The communicator to use for the partitioning. </td></tr>
-    <tr><td class="paramname">global_cells_per_dim</td><td>The number of global cells in each dimension. </td></tr>
+    <tr><td class="paramname">comm</td><td>MPI communicator. </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>The number of MPI ranks in each dimension of the grid. </dd></dl>
 
 <p>Implements <a class="el" href="classCajita_1_1BlockPartitioner.html#a36cbd63a8eace775a4269bfc06714b0a">Cajita::BlockPartitioner&lt; NumSpaceDim &gt;</a>.</p>
 

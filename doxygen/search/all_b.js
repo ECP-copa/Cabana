@@ -1,20 +1,9 @@
 var searchData=
 [
-  ['l2g_285',['L2G',['../structCajita_1_1IndexConversion_1_1L2G.html',1,'Cajita::IndexConversion']]],
-  ['label_286',['label',['../classCajita_1_1Array.html#a89f55b2eb65c85bee16a84eca8b6f993',1,'Cajita::Array::label()'],['../classCabana_1_1Slice.html#af22a113cd1d1795e45fe2288d16ed85d',1,'Cabana::Slice::label()'],['../classCabana_1_1AoSoA.html#ae00f8e72faacf696043da28005c57ce5',1,'Cabana::AoSoA::label()']]],
-  ['layout_287',['layout',['../classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de',1,'Cajita::Array']]],
-  ['layoutadapter_288',['LayoutAdapter',['../structCajita_1_1LayoutAdapter.html',1,'Cajita']]],
-  ['layoutcabanaslice_289',['LayoutCabanaSlice',['../structKokkos_1_1LayoutCabanaSlice.html',1,'Kokkos']]],
-  ['layoutcontainer_290',['LayoutContainer',['../structCajita_1_1ReferenceConjugateGradient_1_1LayoutContainer.html',1,'Cajita::ReferenceConjugateGradient']]],
-  ['linkedcelllist_291',['LinkedCellList',['../classCabana_1_1LinkedCellList.html',1,'Cabana::LinkedCellList&lt; DeviceType &gt;'],['../classCabana_1_1LinkedCellList.html#a95fb544e9d7429aaf1a2805240fb87a0',1,'Cabana::LinkedCellList::LinkedCellList(SliceType positions, const std::size_t begin, const std::size_t end, const typename SliceType::value_type grid_delta[3], const typename SliceType::value_type grid_min[3], const typename SliceType::value_type grid_max[3], typename std::enable_if&lt;(is_slice&lt; SliceType &gt;::value), int &gt;::type *=0)'],['../classCabana_1_1LinkedCellList.html#aac212aff261f3bfea6f1683b96fc2d1a',1,'Cabana::LinkedCellList::LinkedCellList(SliceType positions, const typename SliceType::value_type grid_delta[3], const typename SliceType::value_type grid_min[3], const typename SliceType::value_type grid_max[3], typename std::enable_if&lt;(is_slice&lt; SliceType &gt;::value), int &gt;::type *=0)'],['../classCabana_1_1LinkedCellList.html#afeed5e939961f4e75597c9d258c9978b',1,'Cabana::LinkedCellList::LinkedCellList()']]],
-  ['linkedcelllist_3c_20device_20_3e_292',['LinkedCellList&lt; device &gt;',['../classCabana_1_1LinkedCellList.html',1,'Cabana']]],
-  ['linkedcellstencil_293',['LinkedCellStencil',['../structCabana_1_1Impl_1_1LinkedCellStencil.html',1,'Cabana::Impl']]],
-  ['linkedcellstencil_3c_20positionvaluetype_20_3e_294',['LinkedCellStencil&lt; PositionValueType &gt;',['../structCabana_1_1Impl_1_1LinkedCellStencil.html',1,'Cabana::Impl']]],
-  ['local_295',['Local',['../structCajita_1_1Local.html',1,'Cajita']]],
-  ['localgrid_296',['LocalGrid',['../classCajita_1_1LocalGrid.html',1,'Cajita::LocalGrid&lt; MeshType &gt;'],['../classCajita_1_1LocalGrid.html#a7ad4b99add2460c3ed857c30f304f55f',1,'Cajita::LocalGrid::LocalGrid()']]],
-  ['localmesh_297',['LocalMesh',['../classCajita_1_1LocalMesh.html',1,'Cajita']]],
-  ['localmesh_3c_20device_2c_20nonuniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_298',['LocalMesh&lt; Device, NonUniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01NonUniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]],
-  ['localmesh_3c_20device_2c_20uniformmesh_3c_20scalar_2c_20numspacedim_20_3e_20_3e_299',['LocalMesh&lt; Device, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt;',['../classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html',1,'Cajita']]],
-  ['logbase2_300',['LogBase2',['../structCabana_1_1Impl_1_1LogBase2.html',1,'Cabana::Impl']]],
-  ['logbase2_3c_201_20_3e_301',['LogBase2&lt; 1 &gt;',['../structCabana_1_1Impl_1_1LogBase2_3_011_01_4.html',1,'Cabana::Impl']]]
+  ['key2ijk_340',['key2ijk',['../classCajita_1_1SparseMap.html#a61e4bcbc0b530abe6ae3682cfb9f0f2b',1,'Cajita::SparseMap::key2ijk()'],['../classCajita_1_1BlockMap.html#a18a36518c0c426cd1b13b4ab6236c5ec',1,'Cajita::BlockMap::key2ijk()']]],
+  ['key_5fat_341',['key_at',['../classCajita_1_1SparseMap.html#ac21f0acbf87da9f7306a803710ffa913',1,'Cajita::SparseMap::key_at()'],['../classCajita_1_1BlockMap.html#ab373ab6ebe66918e8348769ec610d529',1,'Cajita::BlockMap::key_at()']]],
+  ['key_5fto_5ftid_5ftype_342',['key_to_tid_type',['../structCajita_1_1HashKey2TileID_3_01Key_00_01HashTypes_1_1Naive_01_4.html#ac74fcd0d6506d1fde6f5ef082258582c',1,'Cajita::HashKey2TileID&lt; Key, HashTypes::Naive &gt;::key_to_tid_type()'],['../structCajita_1_1HashKey2TileID_3_01Key_00_01HashTypes_1_1Morton_01_4.html#adb874d6ab88cd9e00e7e6ecda4e413b0',1,'Cajita::HashKey2TileID&lt; Key, HashTypes::Morton &gt;::key_to_tid_type()']]],
+  ['key_5ftype_343',['key_type',['../classCajita_1_1SparseMap.html#ab0bdd0dd37676fc5d7b4349ab7d0f2a6',1,'Cajita::SparseMap::key_type()'],['../classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3',1,'Cajita::BlockMap::key_type()']]],
+  ['kokkos_5fmemory_5ftraits_344',['kokkos_memory_traits',['../structCabana_1_1DefaultAccessMemory.html#a073271b58939601ceb7800c92bfcc29f',1,'Cabana::DefaultAccessMemory::kokkos_memory_traits()'],['../structCabana_1_1RandomAccessMemory.html#a97999de225e8d2a178f5cf936b124ea8',1,'Cabana::RandomAccessMemory::kokkos_memory_traits()'],['../structCabana_1_1AtomicAccessMemory.html#a5900606c4022248d570980974532038e',1,'Cabana::AtomicAccessMemory::kokkos_memory_traits()']]],
+  ['kokkos_5fview_345',['kokkos_view',['../classCabana_1_1Slice.html#a238cf73305ab909dc0737a0d2548a26c',1,'Cabana::Slice']]]
 ];

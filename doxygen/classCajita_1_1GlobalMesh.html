@@ -75,49 +75,253 @@ $(function() {
 <div class="title">Cajita::GlobalMesh&lt; MeshType &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> mesh partial specialization for uniform mesh.  
+ <a href="classCajita_1_1GlobalMesh.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__GlobalMesh_8hpp_source.html">Cajita_GlobalMesh.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:abe2fc236137044bd503a8724540e488c"><td class="memItemLeft" align="right" valign="top"><a id="abe2fc236137044bd503a8724540e488c"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = MeshType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#abe2fc236137044bd503a8724540e488c">mesh_type</a> = MeshType</td></tr>
+<tr class="memdesc:abe2fc236137044bd503a8724540e488c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
 <tr class="separator:abe2fc236137044bd503a8724540e488c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a7454f14a99049111c715d054bc2378ea"><td class="memItemLeft" align="right" valign="top"><a id="a7454f14a99049111c715d054bc2378ea"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>scalar_type</b> = typename mesh_type::scalar_type</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a> = typename mesh_type::scalar_type</td></tr>
+<tr class="memdesc:a7454f14a99049111c715d054bc2378ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Scalar type. <br /></td></tr>
 <tr class="separator:a7454f14a99049111c715d054bc2378ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:a1657b9e472a9816bc8a91af0ab647540"><td class="memItemLeft" align="right" valign="top"><a id="a1657b9e472a9816bc8a91af0ab647540"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GlobalMesh</b> (const std::array&lt; scalar_type, num_space_dim &gt; &amp;global_low_corner, const std::array&lt; scalar_type, num_space_dim &gt; &amp;global_high_corner, const scalar_type cell_size)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#a1657b9e472a9816bc8a91af0ab647540">GlobalMesh</a> (const std::array&lt; <a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>, <a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> &gt; &amp;global_low_corner, const std::array&lt; <a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>, <a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> &gt; &amp;global_high_corner, const <a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a> cell_size)</td></tr>
+<tr class="memdesc:a1657b9e472a9816bc8a91af0ab647540"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a> size constructor where all cell dimensions are the same. <br /></td></tr>
 <tr class="separator:a1657b9e472a9816bc8a91af0ab647540"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad139ebb49da0d8a48316c733afb1d30b"><td class="memItemLeft" align="right" valign="top"><a id="ad139ebb49da0d8a48316c733afb1d30b"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GlobalMesh</b> (const std::array&lt; scalar_type, num_space_dim &gt; &amp;global_low_corner, const std::array&lt; scalar_type, num_space_dim &gt; &amp;global_high_corner, const std::array&lt; scalar_type, num_space_dim &gt; &amp;cell_size)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#ad139ebb49da0d8a48316c733afb1d30b">GlobalMesh</a> (const std::array&lt; <a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>, <a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> &gt; &amp;global_low_corner, const std::array&lt; <a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>, <a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> &gt; &amp;global_high_corner, const std::array&lt; <a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>, <a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> &gt; &amp;cell_size)</td></tr>
+<tr class="memdesc:ad139ebb49da0d8a48316c733afb1d30b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a> size constructor - each cell dimension can be different. <br /></td></tr>
 <tr class="separator:ad139ebb49da0d8a48316c733afb1d30b"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6ff3e1f1a116a091112e5c7993b43345"><td class="memItemLeft" align="right" valign="top"><a id="a6ff3e1f1a116a091112e5c7993b43345"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>GlobalMesh</b> (const std::array&lt; scalar_type, num_space_dim &gt; &amp;global_low_corner, const std::array&lt; scalar_type, num_space_dim &gt; &amp;global_high_corner, const std::array&lt; int, num_space_dim &gt; &amp;global_num_cell)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#a6ff3e1f1a116a091112e5c7993b43345">GlobalMesh</a> (const std::array&lt; <a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>, <a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> &gt; &amp;global_low_corner, const std::array&lt; <a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>, <a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> &gt; &amp;global_high_corner, const std::array&lt; int, <a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> &gt; &amp;global_num_cell)</td></tr>
+<tr class="memdesc:a6ff3e1f1a116a091112e5c7993b43345"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of global cells constructor. <br /></td></tr>
 <tr class="separator:a6ff3e1f1a116a091112e5c7993b43345"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7114a8a8e78d26d8d0084e46af379195"><td class="memItemLeft" align="right" valign="top"><a id="a7114a8a8e78d26d8d0084e46af379195"></a>
-scalar_type&#160;</td><td class="memItemRight" valign="bottom"><b>lowCorner</b> (const std::size_t dim) const</td></tr>
+<tr class="memitem:a7114a8a8e78d26d8d0084e46af379195"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#a7114a8a8e78d26d8d0084e46af379195">lowCorner</a> (const std::size_t dim) const</td></tr>
+<tr class="memdesc:a7114a8a8e78d26d8d0084e46af379195"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the global low corner of the mesh.  <a href="classCajita_1_1GlobalMesh.html#a7114a8a8e78d26d8d0084e46af379195">More...</a><br /></td></tr>
 <tr class="separator:a7114a8a8e78d26d8d0084e46af379195"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a54070c3c25827ab06f0a4aab7621b3dd"><td class="memItemLeft" align="right" valign="top"><a id="a54070c3c25827ab06f0a4aab7621b3dd"></a>
-scalar_type&#160;</td><td class="memItemRight" valign="bottom"><b>highCorner</b> (const std::size_t dim) const</td></tr>
+<tr class="memitem:a54070c3c25827ab06f0a4aab7621b3dd"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#a54070c3c25827ab06f0a4aab7621b3dd">highCorner</a> (const std::size_t dim) const</td></tr>
+<tr class="memdesc:a54070c3c25827ab06f0a4aab7621b3dd"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the global high corner of the mesh.  <a href="classCajita_1_1GlobalMesh.html#a54070c3c25827ab06f0a4aab7621b3dd">More...</a><br /></td></tr>
 <tr class="separator:a54070c3c25827ab06f0a4aab7621b3dd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8e82e73a993ae7db092ba4a5cfdbb87d"><td class="memItemLeft" align="right" valign="top"><a id="a8e82e73a993ae7db092ba4a5cfdbb87d"></a>
-scalar_type&#160;</td><td class="memItemRight" valign="bottom"><b>extent</b> (const std::size_t dim) const</td></tr>
+<tr class="memitem:a8e82e73a993ae7db092ba4a5cfdbb87d"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#a8e82e73a993ae7db092ba4a5cfdbb87d">extent</a> (const std::size_t dim) const</td></tr>
+<tr class="memdesc:a8e82e73a993ae7db092ba4a5cfdbb87d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the extent of a given dimension.  <a href="classCajita_1_1GlobalMesh.html#a8e82e73a993ae7db092ba4a5cfdbb87d">More...</a><br /></td></tr>
 <tr class="separator:a8e82e73a993ae7db092ba4a5cfdbb87d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac01a379cbfa82b1b1d8fe2b2e4e6ee89"><td class="memItemLeft" align="right" valign="top"><a id="ac01a379cbfa82b1b1d8fe2b2e4e6ee89"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>globalNumCell</b> (const std::size_t dim) const</td></tr>
+<tr class="memitem:ac01a379cbfa82b1b1d8fe2b2e4e6ee89"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#ac01a379cbfa82b1b1d8fe2b2e4e6ee89">globalNumCell</a> (const std::size_t dim) const</td></tr>
+<tr class="memdesc:ac01a379cbfa82b1b1d8fe2b2e4e6ee89"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the global numer of cells in a given dimension.  <a href="classCajita_1_1GlobalMesh.html#ac01a379cbfa82b1b1d8fe2b2e4e6ee89">More...</a><br /></td></tr>
 <tr class="separator:ac01a379cbfa82b1b1d8fe2b2e4e6ee89"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae632acccf1dca60f6a20d9169c428702"><td class="memItemLeft" align="right" valign="top"><a id="ae632acccf1dca60f6a20d9169c428702"></a>
-scalar_type&#160;</td><td class="memItemRight" valign="bottom"><b>cellSize</b> (const std::size_t dim) const</td></tr>
+<tr class="memitem:ae632acccf1dca60f6a20d9169c428702"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#ae632acccf1dca60f6a20d9169c428702">cellSize</a> (const std::size_t dim) const</td></tr>
+<tr class="memdesc:ae632acccf1dca60f6a20d9169c428702"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the uniform cell size in a given dimension.  <a href="classCajita_1_1GlobalMesh.html#ae632acccf1dca60f6a20d9169c428702">More...</a><br /></td></tr>
 <tr class="separator:ae632acccf1dca60f6a20d9169c428702"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:ab90fbb6d8b40a3f1d2a6d7883f3dcd49"><td class="memItemLeft" align="right" valign="top"><a id="ab90fbb6d8b40a3f1d2a6d7883f3dcd49"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = mesh_type::num_space_dim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalMesh.html#ab90fbb6d8b40a3f1d2a6d7883f3dcd49">num_space_dim</a> = mesh_type::num_space_dim</td></tr>
+<tr class="memdesc:ab90fbb6d8b40a3f1d2a6d7883f3dcd49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:ab90fbb6d8b40a3f1d2a6d7883f3dcd49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class MeshType&gt;<br />
+class Cajita::GlobalMesh&lt; MeshType &gt;</h3>
+
+<p><a class="el" href="structCajita_1_1Global.html" title="Global index tag.">Global</a> mesh partial specialization for uniform mesh. </p>
+<p>Uniform meshes are rectilinear meshes where every cell in the mesh is identical. A cell is described by its width in each dimension.</p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">MeshType</td><td>Mesh type: <a class="el" href="structCajita_1_1UniformMesh.html" title="Uniform mesh tag.">UniformMesh</a>, <a class="el" href="structCajita_1_1SparseMesh.html" title="Sparse mesh tag.">SparseMesh</a> </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae632acccf1dca60f6a20d9169c428702"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae632acccf1dca60f6a20d9169c428702">&#9670;&nbsp;</a></span>cellSize()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a> <a class="el" href="classCajita_1_1GlobalMesh.html">Cajita::GlobalMesh</a>&lt; MeshType &gt;::cellSize </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the uniform cell size in a given dimension. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a8e82e73a993ae7db092ba4a5cfdbb87d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8e82e73a993ae7db092ba4a5cfdbb87d">&#9670;&nbsp;</a></span>extent()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a> <a class="el" href="classCajita_1_1GlobalMesh.html">Cajita::GlobalMesh</a>&lt; MeshType &gt;::extent </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the extent of a given dimension. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="ac01a379cbfa82b1b1d8fe2b2e4e6ee89"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac01a379cbfa82b1b1d8fe2b2e4e6ee89">&#9670;&nbsp;</a></span>globalNumCell()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">int <a class="el" href="classCajita_1_1GlobalMesh.html">Cajita::GlobalMesh</a>&lt; MeshType &gt;::globalNumCell </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the global numer of cells in a given dimension. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a54070c3c25827ab06f0a4aab7621b3dd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54070c3c25827ab06f0a4aab7621b3dd">&#9670;&nbsp;</a></span>highCorner()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a> <a class="el" href="classCajita_1_1GlobalMesh.html">Cajita::GlobalMesh</a>&lt; MeshType &gt;::highCorner </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the global high corner of the mesh. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a7114a8a8e78d26d8d0084e46af379195"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7114a8a8e78d26d8d0084e46af379195">&#9670;&nbsp;</a></span>lowCorner()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCajita_1_1GlobalMesh.html#a7454f14a99049111c715d054bc2378ea">scalar_type</a> <a class="el" href="classCajita_1_1GlobalMesh.html">Cajita::GlobalMesh</a>&lt; MeshType &gt;::lowCorner </td>
+          <td>(</td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>dim</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the global low corner of the mesh. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <hr/>The documentation for this class was generated from the following file:<ul>
 <li>cajita/src/<a class="el" href="Cajita__GlobalMesh_8hpp_source.html">Cajita_GlobalMesh.hpp</a></li>
 </ul>

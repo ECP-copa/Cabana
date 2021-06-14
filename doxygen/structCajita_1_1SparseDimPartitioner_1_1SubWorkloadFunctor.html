@@ -83,19 +83,21 @@ $(function() {
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ac4ae00381a7665bc684d21d7abe015b3"><td class="memItemLeft" align="right" valign="top"><a id="ac4ae00381a7665bc684d21d7abe015b3"></a>
-&#160;</td><td class="memItemRight" valign="bottom"><b>SubWorkloadFunctor</b> (PartitionView rec_par, WorkloadView pre_sum)</td></tr>
+&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#ac4ae00381a7665bc684d21d7abe015b3">SubWorkloadFunctor</a> (PartitionView rec_par, WorkloadView pre_sum)</td></tr>
+<tr class="memdesc:ac4ae00381a7665bc684d21d7abe015b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor. <br /></td></tr>
 <tr class="separator:ac4ae00381a7665bc684d21d7abe015b3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae991b34e44a5e7d5ca3e05233181f4f9"><td class="memItemLeft" align="right" valign="top"><a id="ae991b34e44a5e7d5ca3e05233181f4f9"></a>
-KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><b>operator()</b> (int dim_i, int i_start, int i_end, int dim_j, int j, int dim_k, int k) const</td></tr>
+<tr class="memitem:ae991b34e44a5e7d5ca3e05233181f4f9"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#ae991b34e44a5e7d5ca3e05233181f4f9">operator()</a> (int dim_i, int i_start, int i_end, int dim_j, int j, int dim_k, int k) const</td></tr>
 <tr class="separator:ae991b34e44a5e7d5ca3e05233181f4f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
 <tr class="memitem:a12c68d27b425b8d85c31d699716c9574"><td class="memItemLeft" align="right" valign="top"><a id="a12c68d27b425b8d85c31d699716c9574"></a>
-PartitionView&#160;</td><td class="memItemRight" valign="bottom"><b>rec_partition</b></td></tr>
+PartitionView&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a12c68d27b425b8d85c31d699716c9574">rec_partition</a></td></tr>
+<tr class="memdesc:a12c68d27b425b8d85c31d699716c9574"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rectilinear partition. <br /></td></tr>
 <tr class="separator:a12c68d27b425b8d85c31d699716c9574"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0ead344673c61cb0926bb57be3d9bbc3"><td class="memItemLeft" align="right" valign="top"><a id="a0ead344673c61cb0926bb57be3d9bbc3"></a>
-WorkloadView&#160;</td><td class="memItemRight" valign="bottom"><b>workload_prefix_sum</b></td></tr>
+WorkloadView&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a0ead344673c61cb0926bb57be3d9bbc3">workload_prefix_sum</a></td></tr>
+<tr class="memdesc:a0ead344673c61cb0926bb57be3d9bbc3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Workload prefix sum matrix. <br /></td></tr>
 <tr class="separator:a0ead344673c61cb0926bb57be3d9bbc3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
@@ -104,14 +106,79 @@ template&lt;typename PartitionView, typename WorkloadView&gt;<br />
 struct Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;::SubWorkloadFunctor&lt; PartitionView, WorkloadView &gt;</h3>
 
 <p>functor to compute the sub workload in a given region (from the prefix sum) </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">rec_partition</td><td>rectilinear partition </td></tr>
-    <tr><td class="paramname">prefix_sum</td><td>workload prefix sum matrix </td></tr>
-  </table>
-  </dd>
-</dl>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="ae991b34e44a5e7d5ca3e05233181f4f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae991b34e44a5e7d5ca3e05233181f4f9">&#9670;&nbsp;</a></span>operator()()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Device , unsigned long long CellPerTileDim = 4&gt; </div>
+<div class="memtemplate">
+template&lt;typename PartitionView , typename WorkloadView &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION int <a class="el" href="classCajita_1_1SparseDimPartitioner.html">Cajita::SparseDimPartitioner</a>&lt; Device, CellPerTileDim &gt;::<a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html">SubWorkloadFunctor</a>&lt; PartitionView, WorkloadView &gt;::operator() </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dim_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i_start</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>i_end</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dim_j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>dim_k</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>k</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+<p>compute the workload in region rounded by: [i_start, i_end) in dim_i [partition[j], partition[j+1]) in dim_j [partition[k], partition[k+1]) in dim_k </p>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>cajita/src/<a class="el" href="Cajita__SparseDimPartitioner_8hpp_source.html">Cajita_SparseDimPartitioner.hpp</a></li>
 </ul>
 </div><!-- contents -->

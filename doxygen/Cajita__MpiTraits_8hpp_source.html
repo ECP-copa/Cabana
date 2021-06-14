@@ -92,47 +92,51 @@ $(function() {
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
 <div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
 <div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">// Type traits</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
-<div class="line"><a name="l00025"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits.html">   25</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>;</div>
-<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160; </div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00028"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01char_01_4.html">   28</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;char&gt;</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;    <span class="keyword">static</span> MPI_Datatype type() { <span class="keywordflow">return</span> MPI_CHAR; }</div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;};</div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160; </div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00034"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01int_01_4.html">   34</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;int&gt;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;    <span class="keyword">static</span> MPI_Datatype type() { <span class="keywordflow">return</span> MPI_INT; }</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;};</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00040"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01long_01_4.html">   40</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;long&gt;</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;{</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    <span class="keyword">static</span> MPI_Datatype type() { <span class="keywordflow">return</span> MPI_LONG; }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;};</div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">typename</span> T&gt;</div>
+<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits.html">   26</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>;</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01char_01_4.html">   30</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;char&gt;</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
+<div class="line"><a name="l00033"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01char_01_4.html#ad78877b63152c967b246023f1306b618">   33</a></span>&#160;    <span class="keyword">static</span> MPI_Datatype <a class="code" href="structCajita_1_1MpiTraits_3_01char_01_4.html#ad78877b63152c967b246023f1306b618">type</a>() { <span class="keywordflow">return</span> MPI_CHAR; }</div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;};</div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00038"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01int_01_4.html">   38</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;int&gt;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;{</div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01int_01_4.html#af3c956195f5811b07e82dfd8bfbd04ff">   41</a></span>&#160;    <span class="keyword">static</span> MPI_Datatype <a class="code" href="structCajita_1_1MpiTraits_3_01int_01_4.html#af3c956195f5811b07e82dfd8bfbd04ff">type</a>() { <span class="keywordflow">return</span> MPI_INT; }</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;};</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
 <div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01float_01_4.html">   46</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;float&gt;</div>
+<div class="line"><a name="l00046"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01long_01_4.html">   46</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;long&gt;</div>
 <div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;{</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    <span class="keyword">static</span> MPI_Datatype type() { <span class="keywordflow">return</span> MPI_FLOAT; }</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;};</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01double_01_4.html">   52</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;double&gt;</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;{</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="keyword">static</span> MPI_Datatype type() { <span class="keywordflow">return</span> MPI_DOUBLE; }</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;};</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;} <span class="comment">// end namespace Cajita</span></div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_MPITRAITS_HPP</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01long_01_4.html#a59df8d0d66fd2051243c76ebc0bc648c">   49</a></span>&#160;    <span class="keyword">static</span> MPI_Datatype <a class="code" href="structCajita_1_1MpiTraits_3_01long_01_4.html#a59df8d0d66fd2051243c76ebc0bc648c">type</a>() { <span class="keywordflow">return</span> MPI_LONG; }</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;};</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01float_01_4.html">   54</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;float&gt;</div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;{</div>
+<div class="line"><a name="l00057"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01float_01_4.html#ae82ded71cd496c76768f12facae658a3">   57</a></span>&#160;    <span class="keyword">static</span> MPI_Datatype <a class="code" href="structCajita_1_1MpiTraits_3_01float_01_4.html#ae82ded71cd496c76768f12facae658a3">type</a>() { <span class="keywordflow">return</span> MPI_FLOAT; }</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;};</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01double_01_4.html">   62</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCajita_1_1MpiTraits.html">MpiTraits</a>&lt;double&gt;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
+<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="structCajita_1_1MpiTraits_3_01double_01_4.html#a918533cf4443be232bf0f6f21d1a7c1b">   65</a></span>&#160;    <span class="keyword">static</span> MPI_Datatype <a class="code" href="structCajita_1_1MpiTraits_3_01double_01_4.html#a918533cf4443be232bf0f6f21d1a7c1b">type</a>() { <span class="keywordflow">return</span> MPI_DOUBLE; }</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;} <span class="comment">// end namespace Cajita</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_MPITRAITS_HPP</span></div>
 <div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
-<div class="ttc" id="astructCajita_1_1MpiTraits_html"><div class="ttname"><a href="structCajita_1_1MpiTraits.html">Cajita::MpiTraits</a></div><div class="ttdef"><b>Definition:</b> Cajita_MpiTraits.hpp:25</div></div>
+<div class="ttc" id="astructCajita_1_1MpiTraits_3_01char_01_4_html_ad78877b63152c967b246023f1306b618"><div class="ttname"><a href="structCajita_1_1MpiTraits_3_01char_01_4.html#ad78877b63152c967b246023f1306b618">Cajita::MpiTraits&lt; char &gt;::type</a></div><div class="ttdeci">static MPI_Datatype type()</div><div class="ttdoc">MPI char type.</div><div class="ttdef"><b>Definition:</b> Cajita_MpiTraits.hpp:33</div></div>
+<div class="ttc" id="astructCajita_1_1MpiTraits_3_01double_01_4_html_a918533cf4443be232bf0f6f21d1a7c1b"><div class="ttname"><a href="structCajita_1_1MpiTraits_3_01double_01_4.html#a918533cf4443be232bf0f6f21d1a7c1b">Cajita::MpiTraits&lt; double &gt;::type</a></div><div class="ttdeci">static MPI_Datatype type()</div><div class="ttdoc">MPI double type.</div><div class="ttdef"><b>Definition:</b> Cajita_MpiTraits.hpp:65</div></div>
+<div class="ttc" id="astructCajita_1_1MpiTraits_3_01float_01_4_html_ae82ded71cd496c76768f12facae658a3"><div class="ttname"><a href="structCajita_1_1MpiTraits_3_01float_01_4.html#ae82ded71cd496c76768f12facae658a3">Cajita::MpiTraits&lt; float &gt;::type</a></div><div class="ttdeci">static MPI_Datatype type()</div><div class="ttdoc">MPI float type.</div><div class="ttdef"><b>Definition:</b> Cajita_MpiTraits.hpp:57</div></div>
+<div class="ttc" id="astructCajita_1_1MpiTraits_3_01int_01_4_html_af3c956195f5811b07e82dfd8bfbd04ff"><div class="ttname"><a href="structCajita_1_1MpiTraits_3_01int_01_4.html#af3c956195f5811b07e82dfd8bfbd04ff">Cajita::MpiTraits&lt; int &gt;::type</a></div><div class="ttdeci">static MPI_Datatype type()</div><div class="ttdoc">MPI int type.</div><div class="ttdef"><b>Definition:</b> Cajita_MpiTraits.hpp:41</div></div>
+<div class="ttc" id="astructCajita_1_1MpiTraits_3_01long_01_4_html_a59df8d0d66fd2051243c76ebc0bc648c"><div class="ttname"><a href="structCajita_1_1MpiTraits_3_01long_01_4.html#a59df8d0d66fd2051243c76ebc0bc648c">Cajita::MpiTraits&lt; long &gt;::type</a></div><div class="ttdeci">static MPI_Datatype type()</div><div class="ttdoc">MPI long type.</div><div class="ttdef"><b>Definition:</b> Cajita_MpiTraits.hpp:49</div></div>
+<div class="ttc" id="astructCajita_1_1MpiTraits_html"><div class="ttname"><a href="structCajita_1_1MpiTraits.html">Cajita::MpiTraits</a></div><div class="ttdef"><b>Definition:</b> Cajita_MpiTraits.hpp:26</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

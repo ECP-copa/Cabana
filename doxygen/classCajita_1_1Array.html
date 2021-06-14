@@ -75,57 +75,73 @@ $(function() {
 <div class="title">Cajita::Array&lt; Scalar, EntityType, MeshType, Params &gt; Class Template Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
+
+<p><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> of field data on the local mesh.  
+ <a href="classCajita_1_1Array.html#details">More...</a></p>
+
+<p><code>#include &lt;<a class="el" href="Cajita__Array_8hpp_source.html">Cajita_Array.hpp</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-types"></a>
 Public Types</h2></td></tr>
 <tr class="memitem:ad7d6f52655515dc066dec9ca9c007dc0"><td class="memItemLeft" align="right" valign="top"><a id="ad7d6f52655515dc066dec9ca9c007dc0"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>value_type</b> = Scalar</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#ad7d6f52655515dc066dec9ca9c007dc0">value_type</a> = Scalar</td></tr>
+<tr class="memdesc:ad7d6f52655515dc066dec9ca9c007dc0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Value type. <br /></td></tr>
 <tr class="separator:ad7d6f52655515dc066dec9ca9c007dc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ad1e45c33d34d42ea285d1cc370732b69"><td class="memItemLeft" align="right" valign="top"><a id="ad1e45c33d34d42ea285d1cc370732b69"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>entity_type</b> = EntityType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#ad1e45c33d34d42ea285d1cc370732b69">entity_type</a> = EntityType</td></tr>
+<tr class="memdesc:ad1e45c33d34d42ea285d1cc370732b69"><td class="mdescLeft">&#160;</td><td class="mdescRight">Entity type. <br /></td></tr>
 <tr class="separator:ad1e45c33d34d42ea285d1cc370732b69"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:add44c661c37840d9b2416141f3d2c1ea"><td class="memItemLeft" align="right" valign="top"><a id="add44c661c37840d9b2416141f3d2c1ea"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>mesh_type</b> = MeshType</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#add44c661c37840d9b2416141f3d2c1ea">mesh_type</a> = MeshType</td></tr>
+<tr class="memdesc:add44c661c37840d9b2416141f3d2c1ea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Mesh type. <br /></td></tr>
 <tr class="separator:add44c661c37840d9b2416141f3d2c1ea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a800799bb38bac0a00b752986135cbcee"><td class="memItemLeft" align="right" valign="top"><a id="a800799bb38bac0a00b752986135cbcee"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>array_layout</b> = <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; entity_type, mesh_type &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a800799bb38bac0a00b752986135cbcee">array_layout</a> = <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; <a class="el" href="classCajita_1_1Array.html#ad1e45c33d34d42ea285d1cc370732b69">entity_type</a>, <a class="el" href="classCajita_1_1Array.html#add44c661c37840d9b2416141f3d2c1ea">mesh_type</a> &gt;</td></tr>
+<tr class="memdesc:a800799bb38bac0a00b752986135cbcee"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> layout type. <br /></td></tr>
 <tr class="separator:a800799bb38bac0a00b752986135cbcee"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73d46b6b87ce132cf9ea774392747df5"><td class="memItemLeft" align="right" valign="top"><a id="a73d46b6b87ce132cf9ea774392747df5"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>view_type</b> = std::conditional_t&lt; 3==num_space_dim, Kokkos::View&lt; value_type ****, Params... &gt;, std::conditional_t&lt; 2==num_space_dim, Kokkos::View&lt; value_type ***, Params... &gt;, void &gt; &gt;</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a73d46b6b87ce132cf9ea774392747df5">view_type</a> = std::conditional_t&lt; 3==<a class="el" href="classCajita_1_1Array.html#a6e7be5b436c903bce896a2340ae76594">num_space_dim</a>, Kokkos::View&lt; <a class="el" href="classCajita_1_1Array.html#ad7d6f52655515dc066dec9ca9c007dc0">value_type</a> ****, Params... &gt;, std::conditional_t&lt; 2==<a class="el" href="classCajita_1_1Array.html#a6e7be5b436c903bce896a2340ae76594">num_space_dim</a>, Kokkos::View&lt; <a class="el" href="classCajita_1_1Array.html#ad7d6f52655515dc066dec9ca9c007dc0">value_type</a> ***, Params... &gt;, void &gt; &gt;</td></tr>
+<tr class="memdesc:a73d46b6b87ce132cf9ea774392747df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">View type. <br /></td></tr>
 <tr class="separator:a73d46b6b87ce132cf9ea774392747df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b404fa22bf11da2c2a18ba804fea218"><td class="memItemLeft" align="right" valign="top"><a id="a3b404fa22bf11da2c2a18ba804fea218"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>device_type</b> = typename view_type::device_type</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a3b404fa22bf11da2c2a18ba804fea218">device_type</a> = typename view_type::device_type</td></tr>
+<tr class="memdesc:a3b404fa22bf11da2c2a18ba804fea218"><td class="mdescLeft">&#160;</td><td class="mdescRight">Device type. <br /></td></tr>
 <tr class="separator:a3b404fa22bf11da2c2a18ba804fea218"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a275f927e9e9e2e416cba5e95141de685"><td class="memItemLeft" align="right" valign="top"><a id="a275f927e9e9e2e416cba5e95141de685"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>memory_space</b> = typename view_type::memory_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a275f927e9e9e2e416cba5e95141de685">memory_space</a> = typename view_type::memory_space</td></tr>
+<tr class="memdesc:a275f927e9e9e2e416cba5e95141de685"><td class="mdescLeft">&#160;</td><td class="mdescRight">Memory space. <br /></td></tr>
 <tr class="separator:a275f927e9e9e2e416cba5e95141de685"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2dca9cbbcc19e7965d605764a64d496f"><td class="memItemLeft" align="right" valign="top"><a id="a2dca9cbbcc19e7965d605764a64d496f"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>execution_space</b> = typename view_type::execution_space</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a2dca9cbbcc19e7965d605764a64d496f">execution_space</a> = typename view_type::execution_space</td></tr>
+<tr class="memdesc:a2dca9cbbcc19e7965d605764a64d496f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execution space. <br /></td></tr>
 <tr class="separator:a2dca9cbbcc19e7965d605764a64d496f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abc4f73d0d9183ee1e9cea66b6da7ba49"><td class="memItemLeft" align="right" valign="top"><a id="abc4f73d0d9183ee1e9cea66b6da7ba49"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>subview_type</b> = decltype(<a class="el" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>(_data, _layout-&gt;indexSpace(<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>(), <a class="el" href="structCajita_1_1Local.html">Local</a>())))</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#abc4f73d0d9183ee1e9cea66b6da7ba49">subview_type</a> = decltype(<a class="el" href="namespaceCajita.html#afffd9f583a762bf067ff0d583b5e3498">createSubview</a>(_data, _layout-&gt;indexSpace(<a class="el" href="structCajita_1_1Ghost.html">Ghost</a>(), <a class="el" href="structCajita_1_1Local.html">Local</a>())))</td></tr>
+<tr class="memdesc:abc4f73d0d9183ee1e9cea66b6da7ba49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subview type. <br /></td></tr>
 <tr class="separator:abc4f73d0d9183ee1e9cea66b6da7ba49"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa951a1ede8ef9375b1ed1d0013a5bcb8"><td class="memItemLeft" align="right" valign="top"><a id="aa951a1ede8ef9375b1ed1d0013a5bcb8"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>subview_layout</b> = typename subview_type::array_layout</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#aa951a1ede8ef9375b1ed1d0013a5bcb8">subview_layout</a> = typename subview_type::array_layout</td></tr>
+<tr class="memdesc:aa951a1ede8ef9375b1ed1d0013a5bcb8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subview array layout type. <br /></td></tr>
 <tr class="separator:aa951a1ede8ef9375b1ed1d0013a5bcb8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a936a63906dca7ea345abe36a9c597a27"><td class="memItemLeft" align="right" valign="top"><a id="a936a63906dca7ea345abe36a9c597a27"></a>
-using&#160;</td><td class="memItemRight" valign="bottom"><b>subview_memory_traits</b> = typename subview_type::memory_traits</td></tr>
+using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a936a63906dca7ea345abe36a9c597a27">subview_memory_traits</a> = typename subview_type::memory_traits</td></tr>
+<tr class="memdesc:a936a63906dca7ea345abe36a9c597a27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Subview memory traits. <br /></td></tr>
 <tr class="separator:a936a63906dca7ea345abe36a9c597a27"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a72c5e4f802a383ebce3f28fe7315eaad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a72c5e4f802a383ebce3f28fe7315eaad">Array</a> (const std::string &amp;<a class="el" href="classCajita_1_1Array.html#a89f55b2eb65c85bee16a84eca8b6f993">label</a>, const std::shared_ptr&lt; <a class="el" href="classCajita_1_1ArrayLayout.html">array_layout</a> &gt; &amp;<a class="el" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>)</td></tr>
+<tr class="memitem:a72c5e4f802a383ebce3f28fe7315eaad"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a72c5e4f802a383ebce3f28fe7315eaad">Array</a> (const std::string &amp;<a class="el" href="classCajita_1_1Array.html#a89f55b2eb65c85bee16a84eca8b6f993">label</a>, const std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html#a800799bb38bac0a00b752986135cbcee">array_layout</a> &gt; &amp;<a class="el" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>)</td></tr>
 <tr class="memdesc:a72c5e4f802a383ebce3f28fe7315eaad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array with the given layout. Arrays are constructed over the ghosted index space of the layout.  <a href="classCajita_1_1Array.html#a72c5e4f802a383ebce3f28fe7315eaad">More...</a><br /></td></tr>
 <tr class="separator:a72c5e4f802a383ebce3f28fe7315eaad"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50405a250b67033909fd3f743eea9b56"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a50405a250b67033909fd3f743eea9b56">Array</a> (const std::shared_ptr&lt; <a class="el" href="classCajita_1_1ArrayLayout.html">array_layout</a> &gt; &amp;<a class="el" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>, const view_type &amp;<a class="el" href="classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4">view</a>)</td></tr>
+<tr class="memitem:a50405a250b67033909fd3f743eea9b56"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a50405a250b67033909fd3f743eea9b56">Array</a> (const std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html#a800799bb38bac0a00b752986135cbcee">array_layout</a> &gt; &amp;<a class="el" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a>, const <a class="el" href="classCajita_1_1Array.html#a73d46b6b87ce132cf9ea774392747df5">view_type</a> &amp;<a class="el" href="classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4">view</a>)</td></tr>
 <tr class="memdesc:a50405a250b67033909fd3f743eea9b56"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create an array with the given layout and view. This view should match the array index spaces in size.  <a href="classCajita_1_1Array.html#a50405a250b67033909fd3f743eea9b56">More...</a><br /></td></tr>
 <tr class="separator:a50405a250b67033909fd3f743eea9b56"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa5fe3e40a31d3ca1a507d5ef8c90d6de"><td class="memItemLeft" align="right" valign="top"><a id="aa5fe3e40a31d3ca1a507d5ef8c90d6de"></a>
-std::shared_ptr&lt; <a class="el" href="classCajita_1_1ArrayLayout.html">array_layout</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a> () const</td></tr>
+std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html#a800799bb38bac0a00b752986135cbcee">array_layout</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#aa5fe3e40a31d3ca1a507d5ef8c90d6de">layout</a> () const</td></tr>
 <tr class="memdesc:aa5fe3e40a31d3ca1a507d5ef8c90d6de"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the layout of the array. <br /></td></tr>
 <tr class="separator:aa5fe3e40a31d3ca1a507d5ef8c90d6de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3a891184b75173bd18a60d6a6c1ceff4"><td class="memItemLeft" align="right" valign="top"><a id="a3a891184b75173bd18a60d6a6c1ceff4"></a>
-view_type&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4">view</a> () const</td></tr>
+<a class="el" href="classCajita_1_1Array.html#a73d46b6b87ce132cf9ea774392747df5">view_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a3a891184b75173bd18a60d6a6c1ceff4">view</a> () const</td></tr>
 <tr class="memdesc:a3a891184b75173bd18a60d6a6c1ceff4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get a view of the array data. <br /></td></tr>
 <tr class="separator:a3a891184b75173bd18a60d6a6c1ceff4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a89f55b2eb65c85bee16a84eca8b6f993"><td class="memItemLeft" align="right" valign="top"><a id="a89f55b2eb65c85bee16a84eca8b6f993"></a>
@@ -136,10 +152,25 @@ std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" hre
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
 <tr class="memitem:a6e7be5b436c903bce896a2340ae76594"><td class="memItemLeft" align="right" valign="top"><a id="a6e7be5b436c903bce896a2340ae76594"></a>
-static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><b>num_space_dim</b> = mesh_type::num_space_dim</td></tr>
+static constexpr std::size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1Array.html#a6e7be5b436c903bce896a2340ae76594">num_space_dim</a> = mesh_type::num_space_dim</td></tr>
+<tr class="memdesc:a6e7be5b436c903bce896a2340ae76594"><td class="mdescLeft">&#160;</td><td class="mdescRight">Spatial dimension. <br /></td></tr>
 <tr class="separator:a6e7be5b436c903bce896a2340ae76594"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><h3>template&lt;class Scalar, class EntityType, class MeshType, class... Params&gt;<br />
+class Cajita::Array&lt; Scalar, EntityType, MeshType, Params &gt;</h3>
+
+<p><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> of field data on the local mesh. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">Scalar</td><td>Scalar type. </td></tr>
+    <tr><td class="paramname">EntityType</td><td><a class="el" href="classCajita_1_1Array.html" title="Array of field data on the local mesh.">Array</a> entity type (node, cell, face, edge). </td></tr>
+    <tr><td class="paramname">MeshType</td><td>Mesh type (uniform, non-uniform, sparse). </td></tr>
+    <tr><td class="paramname">Params</td><td>Kokkos View parameters. </td></tr>
+  </table>
+  </dd>
+</dl>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a72c5e4f802a383ebce3f28fe7315eaad"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a72c5e4f802a383ebce3f28fe7315eaad">&#9670;&nbsp;</a></span>Array() <span class="overload">[1/2]</span></h2>
 
@@ -160,7 +191,7 @@ template&lt;class Scalar , class EntityType , class MeshType , class... Params&g
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classCajita_1_1ArrayLayout.html">array_layout</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html#a800799bb38bac0a00b752986135cbcee">array_layout</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>layout</em>&#160;</td>
         </tr>
         <tr>
@@ -201,13 +232,13 @@ template&lt;class Scalar , class EntityType , class MeshType , class... Params&g
         <tr>
           <td class="memname"><a class="el" href="classCajita_1_1Array.html">Cajita::Array</a>&lt; Scalar, EntityType, MeshType, Params &gt;::<a class="el" href="classCajita_1_1Array.html">Array</a> </td>
           <td>(</td>
-          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classCajita_1_1ArrayLayout.html">array_layout</a> &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classCajita_1_1Array.html#a800799bb38bac0a00b752986135cbcee">array_layout</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>layout</em>, </td>
         </tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const view_type &amp;&#160;</td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1Array.html#a73d46b6b87ce132cf9ea774392747df5">view_type</a> &amp;&#160;</td>
           <td class="paramname"><em>view</em>&#160;</td>
         </tr>
         <tr>
