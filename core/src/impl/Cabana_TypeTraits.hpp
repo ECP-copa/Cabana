@@ -20,6 +20,8 @@ namespace Cabana
 {
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // Checks if an integer is a power of two. N must be greater than 0.
 template <int N>
@@ -56,6 +58,7 @@ struct IsVectorLengthValid
 
 //---------------------------------------------------------------------------//
 
+//! \endcond
 } // end namespace Impl
 } // end namespace Cabana
 

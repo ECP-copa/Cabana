@@ -32,12 +32,12 @@ namespace Cajita
 //---------------------------------------------------------------------------//
 // Halo exchange patterns.
 //---------------------------------------------------------------------------//
-// Base class.
+//! Base halo exchange pattern class.
 template <std::size_t NumSpaceDim>
 class HaloPattern
 {
   public:
-    // Spatial dimension.
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 
     // Default constructor.
@@ -46,14 +46,14 @@ class HaloPattern
     // Destructor
     virtual ~HaloPattern() = default;
 
-    // Assign the neighbors that are in the halo pattern.
+    //! Assign the neighbors that are in the halo pattern.
     void
     setNeighbors( const std::vector<std::array<int, num_space_dim>>& neighbors )
     {
         _neighbors = neighbors;
     }
 
-    // Get the neighbors that are in the halo pattern.
+    //! Get the neighbors that are in the halo pattern.
     std::vector<std::array<int, num_space_dim>> getNeighbors() const
     {
         return _neighbors;
@@ -63,11 +63,13 @@ class HaloPattern
     std::vector<std::array<int, num_space_dim>> _neighbors;
 };
 
-// Halo with node connectivity. I.e. communicate with all neighbor ranks with
-// which I share a node.
+//! %Halo with node connectivity. I.e. communicate with all neighbor ranks with
+//! which I share a node.
 template <std::size_t NumSpaceDim>
 class NodeHaloPattern;
 
+//! 3d halo with node connectivity. I.e. communicate with all neighbor ranks
+//! with which I share a node.
 template <>
 class NodeHaloPattern<3> : public HaloPattern<3>
 {
@@ -86,6 +88,8 @@ class NodeHaloPattern<3> : public HaloPattern<3>
     }
 };
 
+//! 2d halo with node connectivity. I.e. communicate with all neighbor ranks
+//! with which I share a node.
 template <>
 class NodeHaloPattern<2> : public HaloPattern<2>
 {
@@ -103,11 +107,13 @@ class NodeHaloPattern<2> : public HaloPattern<2>
     }
 };
 
-// Halo with face connectivity. I.e. communicate with all neighbor ranks with
-// which I share a face.
+//! %Halo with face connectivity. I.e. communicate with all neighbor ranks with
+//! which I share a face.
 template <std::size_t NumSpaceDim>
 class FaceHaloPattern;
 
+//! 3d halo with face connectivity. I.e. communicate with all neighbor ranks
+//! with which I share a face.
 template <>
 class FaceHaloPattern<3> : public HaloPattern<3>
 {
@@ -122,6 +128,8 @@ class FaceHaloPattern<3> : public HaloPattern<3>
     }
 };
 
+//! 2d halo with face connectivity. I.e. communicate with all neighbor ranks
+//! with which I share a face.
 template <>
 class FaceHaloPattern<2> : public HaloPattern<2>
 {
@@ -135,7 +143,7 @@ class FaceHaloPattern<2> : public HaloPattern<2>
     }
 };
 
-// Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
+//! Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
 class FullHaloPattern : public NodeHaloPattern<3>
 {
 };
@@ -146,27 +154,27 @@ class FullHaloPattern : public NodeHaloPattern<3>
 namespace ScatterReduce
 {
 
-// Sum values from neighboring ranks into this rank's data.
+//! Sum values from neighboring ranks into this rank's data.
 struct Sum
 {
 };
 
-// Assign this rank's data to be the minimum of it and its neighbor ranks'
-// values.
+//! Assign this rank's data to be the minimum of it and its neighbor ranks'
+//! values.
 struct Min
 {
 };
 
-// Assign this rank's data to be the maximum of it and its neighbor ranks'
-// values.
+//! Assign this rank's data to be the maximum of it and its neighbor ranks'
+//! values.
 struct Max
 {
 };
 
-// Replace this rank's data with its neighbor ranks' values. Note that if
-// multiple ranks scatter back to the same grid locations then the value
-// assigned will be from one of the neighbors but it is undetermined from
-// which neighbor that value will come.
+//! Replace this rank's data with its neighbor ranks' values. Note that if
+//! multiple ranks scatter back to the same grid locations then the value
+//! assigned will be from one of the neighbors but it is undetermined from
+//! which neighbor that value will come.
 struct Replace
 {
 };
@@ -174,20 +182,23 @@ struct Replace
 } // end namespace ScatterReduce
 
 //---------------------------------------------------------------------------//
-// General multiple array halo communication plan for migrating shared data
-// between blocks. Arrays may be defined on different entity types and have
-// different data types.
-//
-// The halo operates on an arbitrary set of arrays. Each of these arrays must
-// be defined on the same local grid meaning they that share the same
-// communicator and halo size. The arrays must also reside in the same memory
-// space. These requirements are checked at construction.
+// Halo
 // ---------------------------------------------------------------------------//
+/*!
+  General multiple array halo communication plan for migrating shared data
+  between blocks. Arrays may be defined on different entity types and have
+  different data types.
+
+  The halo operates on an arbitrary set of arrays. Each of these arrays must
+  be defined on the same local grid meaning they that share the same
+  communicator and halo size. The arrays must also reside in the same memory
+  space. These requirements are checked at construction.
+*/
 template <class MemorySpace>
 class Halo
 {
   public:
-    // Memory space.
+    //! Memory space.
     using memory_space = MemorySpace;
 
     /*!
@@ -434,7 +445,7 @@ class Halo
     }
 
   public:
-    // Get the communicator and check to make sure all are the same.
+    //! Get the communicator and check to make sure all are the same.
     template <class Array_t>
     void getComm( const Array_t& array )
     {
@@ -443,6 +454,7 @@ class Halo
                       &_comm );
     }
 
+    //! Get the communicator and check to make sure all are the same.
     template <class Array_t, class... ArrayTypes>
     void getComm( const Array_t& array, const ArrayTypes&... arrays )
     {
@@ -458,14 +470,16 @@ class Halo
             throw std::runtime_error( "Arrays have different communicators" );
     }
 
-    // Get the local grid from the arrays. Check that the grids have the same
-    // halo size.
+    //! Get the local grid from the arrays. Check that the grids have the same
+    //! halo size.
     template <class Array_t>
     auto getLocalGrid( const Array_t& array )
     {
         return array.layout()->localGrid();
     }
 
+    //! Get the local grid from the arrays. Check that the grids have the same
+    //! halo size.
     template <class Array_t, class... ArrayTypes>
     auto getLocalGrid( const Array_t& array, const ArrayTypes&... arrays )
     {
@@ -482,7 +496,7 @@ class Halo
         return local_grid;
     }
 
-    // Build communication data.
+    //! Build communication data.
     template <class DecompositionTag, std::size_t NumSpaceDim,
               class... ArrayTypes>
     void
@@ -529,7 +543,7 @@ class Halo
                              buffer_num_element, steering );
     }
 
-    // Build 3d steering vector.
+    //! Build 3d steering vector.
     template <std::size_t NumArray>
     void buildSteeringVector(
         const std::array<IndexSpace<4>, NumArray>& spaces,
@@ -591,7 +605,7 @@ class Halo
         Kokkos::deep_copy( steering.back(), host_steering );
     }
 
-    // Build 2d steering vector.
+    //! Build 2d steering vector.
     template <std::size_t NumArray>
     void buildSteeringVector(
         const std::array<IndexSpace<3>, NumArray>& spaces,
@@ -648,8 +662,8 @@ class Halo
         Kokkos::deep_copy( steering.back(), host_steering );
     }
 
-    // Pack an element into the buffer. Pack by bytes to avoid casting across
-    // alignment boundaries.
+    //! Pack an element into the buffer. Pack by bytes to avoid casting across
+    //! alignment boundaries.
     template <class ArrayView>
     KOKKOS_INLINE_FUNCTION static std::enable_if_t<4 == ArrayView::rank, void>
     packElement( const Kokkos::View<char*, memory_space>& buffer,
@@ -666,6 +680,8 @@ class Halo
         }
     }
 
+    //! Pack an element into the buffer. Pack by bytes to avoid casting across
+    //! alignment boundaries.
     template <class ArrayView>
     KOKKOS_INLINE_FUNCTION static std::enable_if_t<3 == ArrayView::rank, void>
     packElement( const Kokkos::View<char*, memory_space>& buffer,
@@ -682,7 +698,7 @@ class Halo
         }
     }
 
-    // Pack an array into a buffer.
+    //! Pack an array into a buffer.
     template <class... ArrayViews>
     KOKKOS_INLINE_FUNCTION static void
     packArray( const Kokkos::View<char*, memory_space>& buffer,
@@ -697,7 +713,7 @@ class Halo
                          Cabana::get<0>( array_views ) );
     }
 
-    // Pack an array into a buffer.
+    //! Pack an array into a buffer.
     template <std::size_t N, class... ArrayViews>
     KOKKOS_INLINE_FUNCTION static void
     packArray( const Kokkos::View<char*, memory_space>& buffer,
@@ -719,7 +735,7 @@ class Halo
                    std::integral_constant<std::size_t, N - 1>(), array_views );
     }
 
-    // Pack arrays into a buffer.
+    //! Pack arrays into a buffer.
     template <class ExecutionSpace, class... ArrayViews>
     void packBuffer( const ExecutionSpace& exec_space,
                      const Kokkos::View<char*, memory_space>& buffer,
@@ -741,7 +757,7 @@ class Halo
         exec_space.fence();
     }
 
-    // Reduce an element into the buffer. Sum reduction.
+    //! Reduce an element into the buffer. Sum reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION static void
     unpackOp( ScatterReduce::Sum, const T& buffer_val, T& array_val )
@@ -749,7 +765,7 @@ class Halo
         array_val += buffer_val;
     }
 
-    // Reduce an element into the buffer. Min reduction.
+    //! Reduce an element into the buffer. Min reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION static void
     unpackOp( ScatterReduce::Min, const T& buffer_val, T& array_val )
@@ -758,7 +774,7 @@ class Halo
             array_val = buffer_val;
     }
 
-    // Reduce an element into the buffer. Max reduction.
+    //! Reduce an element into the buffer. Max reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION static void
     unpackOp( ScatterReduce::Max, const T& buffer_val, T& array_val )
@@ -767,7 +783,7 @@ class Halo
             array_val = buffer_val;
     }
 
-    // Reduce an element into the buffer. Replace reduction.
+    //! Reduce an element into the buffer. Replace reduction.
     template <class T>
     KOKKOS_INLINE_FUNCTION static void
     unpackOp( ScatterReduce::Replace, const T& buffer_val, T& array_val )
@@ -775,8 +791,8 @@ class Halo
         array_val = buffer_val;
     }
 
-    // Unpack an element from the buffer. Unpack by bytes to avoid casting
-    // across alignment boundaries.
+    //! Unpack an element from the buffer. Unpack by bytes to avoid casting
+    //! across alignment boundaries.
     template <class ReduceOp, class ArrayView>
     KOKKOS_INLINE_FUNCTION static std::enable_if_t<4 == ArrayView::rank, void>
     unpackElement( const ReduceOp& reduce_op,
@@ -798,6 +814,8 @@ class Halo
                               steering( element_idx, 5 ) ) );
     }
 
+    //! Unpack an element from the buffer. Unpack by bytes to avoid casting
+    //! across alignment boundaries.
     template <class ReduceOp, class ArrayView>
     KOKKOS_INLINE_FUNCTION static std::enable_if_t<3 == ArrayView::rank, void>
     unpackElement( const ReduceOp& reduce_op,
@@ -818,7 +836,7 @@ class Halo
                               steering( element_idx, 4 ) ) );
     }
 
-    // Unpack an array from a buffer.
+    //! Unpack an array from a buffer.
     template <class ReduceOp, class... ArrayViews>
     KOKKOS_INLINE_FUNCTION static void
     unpackArray( const ReduceOp& reduce_op,
@@ -834,7 +852,7 @@ class Halo
                            Cabana::get<0>( array_views ) );
     }
 
-    // Unpack an array from a buffer.
+    //! Unpack an array from a buffer.
     template <class ReduceOp, std::size_t N, class... ArrayViews>
     KOKKOS_INLINE_FUNCTION static void
     unpackArray( const ReduceOp reduce_op,
@@ -858,7 +876,7 @@ class Halo
                      array_views );
     }
 
-    // Unpack arrays from a buffer.
+    //! Unpack arrays from a buffer.
     template <class ExecutionSpace, class ReduceOp, class... ArrayViews>
     void unpackBuffer( const ReduceOp& reduce_op,
                        const ExecutionSpace& exec_space,
@@ -909,10 +927,11 @@ class Halo
 //---------------------------------------------------------------------------//
 // Creation function.
 //---------------------------------------------------------------------------//
-// Infer array memory space.
+//! Infer array memory space.
 template <class ArrayT, class... Types>
 struct ArrayPackMemorySpace
 {
+    //! Memory space.
     using type = typename ArrayT::memory_space;
 };
 
@@ -934,14 +953,18 @@ auto createHalo( const Pattern& pattern, const int width,
 //---------------------------------------------------------------------------//
 // Backwards-compatible single array creation functions.
 //---------------------------------------------------------------------------//
-// Array-like container adapter to hold layout and data information for
-// creating halos.
+//! Array-like container adapter to hold layout and data information for
+//! creating halos.
 template <class Scalar, class MemorySpace, class ArrayLayout>
 struct LayoutAdapter
 {
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Kokkos memory space.
     using memory_space = MemorySpace;
+    //! Array layout.
     const ArrayLayout& array_layout;
+    //! Get array layout.
     const ArrayLayout* layout() const { return &array_layout; }
 };
 

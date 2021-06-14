@@ -365,7 +365,7 @@ KOKKOS_INLINE_FUNCTION
 namespace P2G
 {
 //---------------------------------------------------------------------------//
-// Scatter-View type checker.
+//! \cond Impl
 template <class T>
 struct is_scatter_view_impl : public std::false_type
 {
@@ -391,7 +391,9 @@ struct is_scatter_view_impl<Kokkos::Experimental::ScatterView<
 {
 };
 #endif
+//! \endcond
 
+//! Scatter-View static type checker.
 template <class T>
 struct is_scatter_view
     : public is_scatter_view_impl<typename std::remove_cv<T>::type>::type
@@ -841,11 +843,15 @@ void g2p(
 template <class ViewType>
 struct ScalarValueG2P
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     ScalarValueG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -853,6 +859,7 @@ struct ScalarValueG2P
         static_assert( 1 == ViewType::Rank, "View must be of scalars" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -864,6 +871,7 @@ struct ScalarValueG2P
     }
 };
 
+//! Creation function for grid-to-point with scalar value.
 template <class ViewType>
 ScalarValueG2P<ViewType>
 createScalarValueG2P( const ViewType& x,
@@ -884,11 +892,15 @@ createScalarValueG2P( const ViewType& x,
 template <class ViewType>
 struct VectorValueG2P
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     VectorValueG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -896,6 +908,7 @@ struct VectorValueG2P
         static_assert( 2 == ViewType::Rank, "View must be of vectors" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -908,6 +921,7 @@ struct VectorValueG2P
     }
 };
 
+//! Creation function for grid-to-point with vector value.
 template <class ViewType>
 VectorValueG2P<ViewType>
 createVectorValueG2P( const ViewType& x,
@@ -928,11 +942,15 @@ createVectorValueG2P( const ViewType& x,
 template <class ViewType>
 struct ScalarGradientG2P
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     ScalarGradientG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -940,6 +958,7 @@ struct ScalarGradientG2P
         static_assert( 2 == ViewType::Rank, "View must be of vectors" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -952,6 +971,7 @@ struct ScalarGradientG2P
     }
 };
 
+//! Creation function for grid-to-point with scalar gradient.
 template <class ViewType>
 ScalarGradientG2P<ViewType>
 createScalarGradientG2P( const ViewType& x,
@@ -972,11 +992,15 @@ createScalarGradientG2P( const ViewType& x,
 template <class ViewType>
 struct VectorGradientG2P
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     VectorGradientG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -984,6 +1008,7 @@ struct VectorGradientG2P
         static_assert( 3 == ViewType::Rank, "View must be of tensors" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -998,6 +1023,7 @@ struct VectorGradientG2P
     }
 };
 
+//! Creation function for grid-to-point with vector gradient.
 template <class ViewType>
 VectorGradientG2P<ViewType>
 createVectorGradientG2P( const ViewType& x,
@@ -1018,11 +1044,15 @@ createVectorGradientG2P( const ViewType& x,
 template <class ViewType>
 struct VectorDivergenceG2P
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     VectorDivergenceG2P( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -1030,6 +1060,7 @@ struct VectorDivergenceG2P
         static_assert( 1 == ViewType::Rank, "View must be of scalars" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -1041,6 +1072,7 @@ struct VectorDivergenceG2P
     }
 };
 
+//! Creation function for grid-to-point with vector divergence.
 template <class ViewType>
 VectorDivergenceG2P<ViewType>
 createVectorDivergenceG2P( const ViewType& x,
@@ -1158,11 +1190,15 @@ void p2g( const PointEvalFunctor& functor, const PointCoordinates& points,
 template <class ViewType>
 struct ScalarValueP2G
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     ScalarValueP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -1170,6 +1206,7 @@ struct ScalarValueP2G
         static_assert( 1 == ViewType::Rank, "View must be of scalars" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -1180,6 +1217,7 @@ struct ScalarValueP2G
     }
 };
 
+//! Creation function for point-to-grid with scalar value.
 template <class ViewType>
 ScalarValueP2G<ViewType>
 createScalarValueP2G( const ViewType& x,
@@ -1200,11 +1238,15 @@ createScalarValueP2G( const ViewType& x,
 template <class ViewType>
 struct VectorValueP2G
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     VectorValueP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -1212,6 +1254,7 @@ struct VectorValueP2G
         static_assert( 2 == ViewType::Rank, "View must be of vectors" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -1224,6 +1267,7 @@ struct VectorValueP2G
     }
 };
 
+//! Creation function for point-to-grid with vector value.
 template <class ViewType>
 VectorValueP2G<ViewType>
 createVectorValueP2G( const ViewType& x,
@@ -1244,11 +1288,15 @@ createVectorValueP2G( const ViewType& x,
 template <class ViewType>
 struct ScalarGradientP2G
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     ScalarGradientP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -1256,6 +1304,7 @@ struct ScalarGradientP2G
         static_assert( 1 == ViewType::Rank, "View must be of scalars" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -1266,6 +1315,7 @@ struct ScalarGradientP2G
     }
 };
 
+//! Creation function for point-to-grid with scalar gradient.
 template <class ViewType>
 ScalarGradientP2G<ViewType>
 createScalarGradientP2G( const ViewType& x,
@@ -1286,11 +1336,15 @@ createScalarGradientP2G( const ViewType& x,
 template <class ViewType>
 struct VectorDivergenceP2G
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     VectorDivergenceP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -1298,6 +1352,7 @@ struct VectorDivergenceP2G
         static_assert( 2 == ViewType::Rank, "View must be of vectors" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -1310,6 +1365,7 @@ struct VectorDivergenceP2G
     }
 };
 
+//! Creation function for point-to-grid with vector divergence.
 template <class ViewType>
 VectorDivergenceP2G<ViewType>
 createVectorDivergenceP2G( const ViewType& x,
@@ -1330,11 +1386,15 @@ createVectorDivergenceP2G( const ViewType& x,
 template <class ViewType>
 struct TensorDivergenceP2G
 {
+    //! Scalar value type.
     using value_type = typename ViewType::value_type;
 
+    //! Spline evaluation locations.
     ViewType _x;
+    //! Scalar multiplier.
     value_type _multiplier;
 
+    //! Constructor
     TensorDivergenceP2G( const ViewType& x, const value_type multiplier )
         : _x( x )
         , _multiplier( multiplier )
@@ -1342,6 +1402,7 @@ struct TensorDivergenceP2G
         static_assert( 3 == ViewType::Rank, "View must be of tensors" );
     }
 
+    //! Apply spline interplation.
     template <class SplineDataType, class GridViewType>
     KOKKOS_INLINE_FUNCTION void operator()( const SplineDataType& sd,
                                             const int p,
@@ -1356,6 +1417,7 @@ struct TensorDivergenceP2G
     }
 };
 
+//! Creation function for point-to-grid with tensor divergence.
 template <class ViewType>
 TensorDivergenceP2G<ViewType>
 createTensorDivergenceP2G( const ViewType& x,

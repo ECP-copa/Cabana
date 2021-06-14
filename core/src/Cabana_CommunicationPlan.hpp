@@ -30,6 +30,7 @@ namespace Cabana
 {
 namespace Impl
 {
+//! \cond Impl
 //---------------------------------------------------------------------------//
 // Count sends and create steering algorithm tags.
 struct CountSendsAndCreateSteeringDuplicated
@@ -350,13 +351,11 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 }
 
 //---------------------------------------------------------------------------//
-
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class CommunicationPlan
-
   \brief Communication plan base class.
 
   \tparam DeviceType Device type for which the data for this class will be
@@ -385,16 +384,16 @@ template <class DeviceType>
 class CommunicationPlan
 {
   public:
-    // Device type.
+    //! Device type.
     using device_type = DeviceType;
 
-    // Memory space.
+    //! Memory space.
     using memory_space = typename device_type::memory_space;
 
-    // Execution space.
+    //! Execution space.
     using execution_space = typename device_type::execution_space;
 
-    // Size type.
+    //! Size type.
     using size_type = typename memory_space::size_type;
 
     /*!
@@ -866,6 +865,7 @@ class CommunicationPlan
                         element_export_ids );
     }
 
+    //! \cond Impl
     // Create the export steering vector.
     template <class PackViewType, class RankViewType, class IdViewType>
     void createSteering( const bool use_iota, const PackViewType& neighbor_ids,
@@ -913,6 +913,7 @@ class CommunicationPlan
             } );
         Kokkos::fence();
     }
+    //! \endcond
 
   private:
     std::shared_ptr<MPI_Comm> _comm_ptr;

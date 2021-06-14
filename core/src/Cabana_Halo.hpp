@@ -27,10 +27,7 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class Halo
-
-  \brief Halo communication plan for scattering and gathering of ghosted
-  data.
+  \brief A communication plan for scattering and gathering of ghosted data.
 
   \tparam DeviceType Device type for which the data for this class will be
   allocated and where parallel execution occurs.
@@ -183,7 +180,7 @@ class Halo : public CommunicationPlan<DeviceType>
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_halo_impl : public std::false_type
 {
@@ -193,7 +190,9 @@ template <typename DeviceType>
 struct is_halo_impl<Halo<DeviceType>> : public std::true_type
 {
 };
+//! \endcond
 
+//! Halo static type checker.
 template <class T>
 struct is_halo : public is_halo_impl<typename std::remove_cv<T>::type>::type
 {

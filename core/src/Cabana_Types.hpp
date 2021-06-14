@@ -21,6 +21,7 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 // Memory access tags.
 //---------------------------------------------------------------------------//
+//! Memory access type checker.
 template <class>
 struct is_memory_access_tag : public std::false_type
 {
@@ -30,12 +31,15 @@ struct is_memory_access_tag : public std::false_type
 //! the larger AoSoA memory block to allow for potential vectorization.
 struct DefaultAccessMemory
 {
+    //! Access type.
     using memory_access_type = DefaultAccessMemory;
+    //! Kokkos traits.
     using kokkos_memory_traits =
         Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
                              Kokkos::Restrict>;
 };
 
+//! Memory access type checker.
 template <>
 struct is_memory_access_tag<DefaultAccessMemory> : public std::true_type
 {
@@ -44,7 +48,9 @@ struct is_memory_access_tag<DefaultAccessMemory> : public std::true_type
 //! Random access memory. Read-only and const with limited spatial locality.
 struct RandomAccessMemory
 {
+    //! Access type.
     using memory_access_type = RandomAccessMemory;
+    //! Kokkos traits.
     using kokkos_memory_traits =
         Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
                              Kokkos::RandomAccess>;
@@ -58,7 +64,9 @@ struct is_memory_access_tag<RandomAccessMemory> : public std::true_type
 //! Atomic memory access. All reads and writes are atomic.
 struct AtomicAccessMemory
 {
+    //! Access type.
     using memory_access_type = AtomicAccessMemory;
+    //! Kokkos traits.
     using kokkos_memory_traits =
         Kokkos::MemoryTraits<Kokkos::Unmanaged | Kokkos::Aligned |
                              Kokkos::Atomic>;

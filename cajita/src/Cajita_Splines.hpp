@@ -22,20 +22,19 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// B-Spline interface for uniform grids.
-//---------------------------------------------------------------------------//
+//! B-Spline interface for uniform grids.
 template <int Order>
 struct Spline;
 
 //---------------------------------------------------------------------------//
-// Zero-order (Nearest Grid Point Interpolation). Defined on the dual grid.
+//! Zero-order (Nearest Grid Point Interpolation). Defined on the dual grid.
 template <>
 struct Spline<0>
 {
-    // Order.
+    //! Order.
     static constexpr int order = 0;
 
-    // The number of non-zero knots in the spline.
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = 1;
 
     /*!
@@ -58,7 +57,7 @@ struct Spline<0>
         return ( xp - low_x ) * rdx + 0.5;
     }
 
-    /*
+    /*!
       \brief Get the logical space stencil offsets of the spline. The stencil
       defines the offsets into a grid field about a logical coordinate.
       \param indices The stencil index offsets.
@@ -113,14 +112,14 @@ struct Spline<0>
 };
 
 //---------------------------------------------------------------------------//
-// Linear. Defined on the primal grid.
+//! Linear. Defined on the primal grid.
 template <>
 struct Spline<1>
 {
-    // Order.
+    //! Order.
     static constexpr int order = 1;
 
-    // The number of non-zero knots in the spline.
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = 2;
 
     /*!
@@ -143,7 +142,7 @@ struct Spline<1>
         return ( xp - low_x ) * rdx;
     }
 
-    /*
+    /*!
       \brief Get the logical space stencil offsets of the spline. The stencil
       defines the offsets into a grid field about a logical coordinate.
       \param indices The stencil index offsets.
@@ -209,14 +208,14 @@ struct Spline<1>
 };
 
 //---------------------------------------------------------------------------//
-// Quadratic. Defined on the dual grid.
+//! Quadratic. Defined on the dual grid.
 template <>
 struct Spline<2>
 {
-    // Order.
+    //! Order.
     static constexpr int order = 2;
 
-    // The number of non-zero knots in the spline.
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = 3;
 
     /*!
@@ -238,7 +237,7 @@ struct Spline<2>
         return ( xp - low_x ) * rdx + 0.5;
     }
 
-    /*
+    /*!
       \brief Get the logical space stencil offsets of the spline. The stencil
       defines the offsets into a grid field about a logical coordinate.
       \param indices The stencil index offsets.
@@ -320,14 +319,14 @@ struct Spline<2>
 };
 
 //---------------------------------------------------------------------------//
-// Cubic. Defined on the primal grid.
+//! Cubic. Defined on the primal grid.
 template <>
 struct Spline<3>
 {
-    // Order.
+    //! Order.
     static constexpr int order = 3;
 
-    // The number of non-zero knots in the spline.
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = 4;
 
     /*!
@@ -349,7 +348,7 @@ struct Spline<3>
         return ( xp - low_x ) * rdx;
     }
 
-    /*
+    /*!
       \brief Get the logical space stencil offsets of the spline. The stencil
       defines the offsets into a grid field about a logical coordinate.
       \param indices The stencil index offsets.
@@ -449,33 +448,38 @@ struct Spline<3>
 //---------------------------------------------------------------------------//
 // Spline Data
 //---------------------------------------------------------------------------//
-// Spline data tags.
+//! Spline data tag: physical cell size.
 struct SplinePhysicalCellSize
 {
 };
+//! Spline data tag: logical position.
 struct SplineLogicalPosition
 {
 };
+//! Spline data tag: physical distance.
 struct SplinePhysicalDistance
 {
 };
+//! Spline data tag: weight value.
 struct SplineWeightValues
 {
 };
+//! Spline data tag: physical gradient.
 struct SplineWeightPhysicalGradients
 {
 };
 
-// Data members holder
+//! Spline data members holder
 template <class... DataTags>
 struct SplineDataMemberTypes
 {
 };
 
-// Determine if a given tag is present.
+//! Determine if a given spline tag is present.
 template <typename T, typename SplineDataMemberTypes_t>
 struct has_spline_tag;
 
+//! \cond Impl
 template <typename T>
 struct has_spline_tag<T, SplineDataMemberTypes<>> : std::false_type
 {
@@ -491,62 +495,74 @@ template <typename T, typename... Tags>
 struct has_spline_tag<T, SplineDataMemberTypes<T, Tags...>> : std::true_type
 {
 };
+//! \endcond
 
-// Spline data members.
+//! Spline data member.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class Tag>
 struct SplineDataMember;
 
+//! Physical cell size spline data member.
 template <typename Scalar, int Order, std::size_t NumSpaceDim>
 struct SplineDataMember<Scalar, Order, NumSpaceDim, SplinePhysicalCellSize>
 {
-    // Physical cell size.
+    //! Physical cell size.
     Scalar dx[NumSpaceDim];
 };
 
+//! Logical position spline data member.
 template <typename Scalar, int Order, std::size_t NumSpaceDim>
 struct SplineDataMember<Scalar, Order, NumSpaceDim, SplineLogicalPosition>
 {
-    // Logical position.
+    //! Logical position.
     Scalar x[NumSpaceDim];
 };
 
+//! Physical distance spline data member.
 template <typename Scalar, int Order, std::size_t NumSpaceDim>
 struct SplineDataMember<Scalar, Order, NumSpaceDim, SplinePhysicalDistance>
 {
+    //! Spline type.
     using spline_type = Spline<Order>;
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = spline_type::num_knot;
 
-    // Physical distance.
+    //! Physical distance.
     Scalar d[NumSpaceDim][num_knot];
 };
 
+//! Weight values spline data member.
 template <typename Scalar, int Order, std::size_t NumSpaceDim>
 struct SplineDataMember<Scalar, Order, NumSpaceDim, SplineWeightValues>
 {
+    //! Spline type.
     using spline_type = Spline<Order>;
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = spline_type::num_knot;
 
-    // Weight values.
+    //! Weight values.
     Scalar w[NumSpaceDim][num_knot];
 };
 
+//! Weight physical gradients spline data member.
 template <typename Scalar, int Order, std::size_t NumSpaceDim>
 struct SplineDataMember<Scalar, Order, NumSpaceDim,
                         SplineWeightPhysicalGradients>
 {
+    //! Spline type.
     using spline_type = Spline<Order>;
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = spline_type::num_knot;
 
-    // Weight physical gradients.
+    //! Weight physical gradients.
     Scalar g[NumSpaceDim][num_knot];
 };
 
-// Spline data container.
+//! Spline data container.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class Tags = void>
 struct SplineData;
 
-// Default of void has all data members.
+//! Default of void has all data members.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType>
 struct SplineData<Scalar, Order, NumSpaceDim, EntityType, void>
     : SplineDataMember<Scalar, Order, NumSpaceDim, SplinePhysicalCellSize>,
@@ -556,55 +572,77 @@ struct SplineData<Scalar, Order, NumSpaceDim, EntityType, void>
       SplineDataMember<Scalar, Order, NumSpaceDim,
                        SplineWeightPhysicalGradients>
 {
+    //! Spline scalar type.
     using scalar_type = Scalar;
+    //! Spline order.
     static constexpr int order = Order;
+    //! Spline type.
     using spline_type = Spline<Order>;
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = spline_type::num_knot;
+    //! Entity type.
     using entity_type = EntityType;
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 
+    //! Physical cell size present.
     static constexpr bool has_physical_cell_size = true;
+    //! Logical position present.
     static constexpr bool has_logical_position = true;
+    //! Physical distance present.
     static constexpr bool has_physical_distance = true;
+    //! Weight values present.
     static constexpr bool has_weight_values = true;
+    //! Weight physical gradients present.
     static constexpr bool has_weight_physical_gradients = true;
 
-    // Local interpolation stencil.
+    //! Local interpolation stencil.
     int s[NumSpaceDim][num_knot];
 };
 
-// Specify each data member individually through tags.
+//! Specify each data member individually through tags.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class... Tags>
 struct SplineData<Scalar, Order, NumSpaceDim, EntityType,
                   SplineDataMemberTypes<Tags...>>
     : SplineDataMember<Scalar, Order, NumSpaceDim, Tags>...
 {
+    //! Spline scalar type.
     using scalar_type = Scalar;
+    //! Spline order.
     static constexpr int order = Order;
+    //! Spline type.
     using spline_type = Spline<Order>;
+    //! The number of non-zero knots in the spline.
     static constexpr int num_knot = spline_type::num_knot;
+    //! Entity type.
     using entity_type = EntityType;
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
 
+    //! Spline member types.
     using member_tags = SplineDataMemberTypes<Tags...>;
-
+    //! Is physical cell size present.
     static constexpr bool has_physical_cell_size =
         has_spline_tag<SplinePhysicalCellSize, member_tags>::value;
+    //! Is logical position present.
     static constexpr bool has_logical_position =
         has_spline_tag<SplineLogicalPosition, member_tags>::value;
+    //! Is physical distance present.
     static constexpr bool has_physical_distance =
         has_spline_tag<SplinePhysicalDistance, member_tags>::value;
+    //! Are weight values present.
     static constexpr bool has_weight_values =
         has_spline_tag<SplineWeightValues, member_tags>::value;
+    //! Are weight physical gradients present.
     static constexpr bool has_weight_physical_gradients =
         has_spline_tag<SplineWeightPhysicalGradients, member_tags>::value;
 
-    // Local interpolation stencil.
+    //! Local interpolation stencil.
     int s[NumSpaceDim][num_knot];
 };
 
-// Assign physical cell size to the spline data.
+//! Assign physical cell size to the spline data.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION
@@ -617,7 +655,7 @@ KOKKOS_INLINE_FUNCTION
 {
     data.dx[d] = dx;
 }
-
+//! Physical cell size spline data template helper.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION std::enable_if_t<!SplineData<
@@ -628,7 +666,7 @@ setSplineData( SplinePhysicalCellSize,
 {
 }
 
-// Assign logical position to the spline data.
+//! Assign logical position to the spline data.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION
@@ -641,7 +679,7 @@ KOKKOS_INLINE_FUNCTION
 {
     data.x[d] = x;
 }
-
+//! Logical position spline data template helper.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION std::enable_if_t<!SplineData<
@@ -652,7 +690,7 @@ setSplineData( SplineLogicalPosition,
 {
 }
 
-// Assign weight values to the spline data.
+//! Assign weight values to the spline data.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION
@@ -669,7 +707,7 @@ KOKKOS_INLINE_FUNCTION
     for ( std::size_t d = 0; d < NumSpaceDim; ++d )
         spline_type::value( x[d], data.w[d] );
 }
-
+//! Weight value spline data template helper.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION std::enable_if_t<!SplineData<
@@ -681,7 +719,7 @@ setSplineData( SplineWeightValues,
 {
 }
 
-// Assign weight physical gradients to the spline data.
+//! Assign weight physical gradients to the spline data.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION
@@ -698,7 +736,7 @@ KOKKOS_INLINE_FUNCTION
     for ( std::size_t d = 0; d < NumSpaceDim; ++d )
         spline_type::gradient( x[d], rdx[d], data.g[d] );
 }
-
+//! Weight physical gradients spline data template helper.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION
@@ -712,7 +750,7 @@ KOKKOS_INLINE_FUNCTION
 {
 }
 
-// Assign physical distance to the spline data.
+//! Assign physical distance to the spline data.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION
@@ -735,7 +773,7 @@ KOKKOS_INLINE_FUNCTION
             data.d[d][n] = offset + data.s[d][n] * dx[d];
     }
 }
-
+//! Physical distance spline data template helper.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class EntityType,
           class DataTags>
 KOKKOS_INLINE_FUNCTION std::enable_if_t<!SplineData<
@@ -748,7 +786,7 @@ setSplineData( SplinePhysicalDistance,
 }
 
 //---------------------------------------------------------------------------//
-// Evaluate spline data at a point in a uniform mesh.
+//! Evaluate spline data at a point in a uniform mesh.
 template <typename Scalar, int Order, std::size_t NumSpaceDim, class Device,
           class EntityType, class DataTags>
 KOKKOS_INLINE_FUNCTION void evaluateSpline(

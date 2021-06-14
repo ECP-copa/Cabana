@@ -22,7 +22,6 @@ namespace Impl
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class PerformanceTraits
   \brief Default settings for execution spaces.
 */
 template <class ExecutionSpace>

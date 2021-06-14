@@ -32,8 +32,7 @@ namespace Cajita
 {
 
 //---------------------------------------------------------------------------//
-// Hash table type tag.
-//---------------------------------------------------------------------------//
+//! Hash table type tag.
 enum class HashTypes : unsigned char
 {
     Naive = 0, // Lexicographical Order
@@ -165,7 +164,6 @@ template <typename Key, HashTypes HashT>
 struct HashKey2TileID;
 
 /*!
-  \struct TileID2HashKey
   \brief Compute the hash key from the 3D tile ijk
 
   Lexicographical order specialization
@@ -174,7 +172,9 @@ struct HashKey2TileID;
 template <typename Key>
 struct TileID2HashKey<Key, HashTypes::Naive>
 {
+    //! ID to hash conversion type.
     using tid_to_key_type = TileID2HashKey<Key, HashTypes::Naive>;
+    //! Hash type.
     static constexpr HashTypes hash_type = HashTypes::Naive;
 
     //! Constructor (Host) from a given initializer list
@@ -208,7 +208,6 @@ struct TileID2HashKey<Key, HashTypes::Naive>
 };
 
 /*!
-  \struct TileID2HashKey
   \brief Compute the hash key from the 3D tile ijk
 
   Morton code specialization
@@ -216,7 +215,9 @@ struct TileID2HashKey<Key, HashTypes::Naive>
 template <typename Key>
 struct TileID2HashKey<Key, HashTypes::Morton>
 {
+    //! ID to hash conversion type.
     using tid_to_key_type = TileID2HashKey<Key, HashTypes::Morton>;
+    //! Hash type.
     static constexpr HashTypes hash_type = HashTypes::Morton;
 
     //! Constructor (Host) from a given initializer list
@@ -257,7 +258,6 @@ struct TileID2HashKey<Key, HashTypes::Morton>
 };
 
 /*!
-  \struct HashKey2TileID
   \brief Compute the 3D tile ijk from the hash key
 
   Lexicographical order specialization
@@ -266,7 +266,9 @@ struct TileID2HashKey<Key, HashTypes::Morton>
 template <typename Key>
 struct HashKey2TileID<Key, HashTypes::Naive>
 {
+    //! ID to hash conversion type.
     using key_to_tid_type = HashKey2TileID<Key, HashTypes::Naive>;
+    //! Hash type.
     static constexpr HashTypes hash_type = HashTypes::Naive;
 
     //! Constructor (Host) from a given initializer list
@@ -301,7 +303,6 @@ struct HashKey2TileID<Key, HashTypes::Naive>
 };
 
 /*!
-  \struct HashKey2TileID
   \brief Compute the 3D tile ijk from the hash key
 
   Morton code specialization
@@ -309,7 +310,9 @@ struct HashKey2TileID<Key, HashTypes::Naive>
 template <typename Key>
 struct HashKey2TileID<Key, HashTypes::Morton>
 {
+    //! ID to hash conversion type.
     using key_to_tid_type = HashKey2TileID<Key, HashTypes::Morton>;
+    //! Hash type.
     static constexpr HashTypes hash_type = HashTypes::Morton;
 
     //! Constructor (Host) from a given initializer list
@@ -368,7 +371,6 @@ template <int CBits, int CNumPerDim, int CNumPerTile>
 class TileMap;
 
 /*!
-  \class SparseMap
   \brief Sparse index space, with a hierarchical structure (cell->tile->block)
   \tparam MemorySpace Memory space to store the Map(Hash Table)
   \tparam CellPerTileDim Cell number inside each tile per dimension
@@ -402,10 +404,12 @@ class SparseMap
     //! Number of cells (total) inside each tile
     static constexpr unsigned long long cell_num_per_tile =
         cell_num_per_tile_dim * cell_num_per_tile_dim * cell_num_per_tile_dim;
-    //! Types
-    using key_type = Key;                        // tile hash key
-    using value_type = Value;                    // tile No.
-    static constexpr HashTypes hash_type = Hash; // hash table
+    //! Tile hash key type.
+    using key_type = Key;
+    //! Tile number type.
+    using value_type = Value;
+    //! Hash table type.
+    static constexpr HashTypes hash_type = Hash;
 
     /*!
       \brief (Host) Constructor
@@ -512,18 +516,29 @@ class SparseMap
     */
     value_type size() const { return _block_id_space.validTileNumHost(); }
 
+    /*!
+      \brief (Device) Valid block at index.
+    */
     KOKKOS_INLINE_FUNCTION
     bool valid_at( uint32_t index ) const
     {
         return _block_id_space.valid_at( index );
     }
 
+    /*!
+      \brief (Device) Get block key at index.
+    */
     KOKKOS_INLINE_FUNCTION
     key_type key_at( uint32_t index ) const
     {
         return _block_id_space.key_at( index );
     }
 
+    /*!
+      \brief (Device) Transfer block hash key to block ijk
+      \param key Tile hash key
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
+    */
     KOKKOS_INLINE_FUNCTION
     void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
     {
@@ -544,7 +559,7 @@ class SparseMap
 };
 
 //---------------------------------------------------------------------------//
-// Creation function for SparseMap from GlobalMesh<SparseMesh>
+//! Creation function for SparseMap from GlobalMesh<SparseMesh>
 template <typename MemorySpace, class Scalar,
           unsigned long long CellPerTileDim = 4,
           HashTypes Hash = HashTypes::Naive, typename Key = uint64_t,
@@ -562,7 +577,6 @@ SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value> createSparseMap(
 
 //---------------------------------------------------------------------------//
 /*!
-  \class BlockMap
   \brief Block index space, mapping tile ijks to tile No. through a hash table
   (Kokkos unordered map), note that the ijks should be global
   \tparam CBits Bits number (per dimension) neded to
@@ -590,10 +604,13 @@ class BlockMap
     static constexpr unsigned long long cell_num_per_tile_dim = CNumPerDim;
     //! Number of cells (total) inside each tile
     static constexpr unsigned long long cell_num_per_tile = CNumPerTile;
-    //! Types
-    using key_type = Key;                        // tile hash key
-    using value_type = Value;                    // tile No.
-    static constexpr HashTypes hash_type = Hash; // hash table
+    //! Tile hash key type.
+    using key_type = Key;
+    //! Tile number type.
+    using value_type = Value;
+    //! Hash table type.
+    static constexpr HashTypes hash_type = Hash;
+    //! Self type.
     using bis_Type =
         BlockMap<MemorySpace, cell_bits_per_tile_dim, cell_num_per_tile_dim,
                  cell_num_per_tile, hash_type, key_type, value_type>; // itself
@@ -659,12 +676,18 @@ class BlockMap
         return _tile_table.capacity(); // hash_table capacity
     }
 
+    /*!
+      \brief (Device) Valid tile at index.
+    */
     KOKKOS_INLINE_FUNCTION
     bool valid_at( uint32_t index ) const
     {
         return _tile_table.valid_at( index );
     }
 
+    /*!
+      \brief (Device) Get tile key at index.
+    */
     KOKKOS_INLINE_FUNCTION
     key_type key_at( uint32_t index ) const
     {
@@ -738,9 +761,7 @@ class BlockMap
     /*!
       \brief (Device) Transfer tile hash key to tile ijk
       \param key Tile hash key
-      \param tile_i Tile Id in dim-x
-      \param tile_j Tile Id in dim-y
-      \param tile_k Tile Id in dim-z
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -762,7 +783,6 @@ class BlockMap
 
 //---------------------------------------------------------------------------//
 /*!
-  \class TileMap
   \brief Tile index space, inside each local tile, mapping cell ijks to cell
   No.(Lexicographical Order) \tparam CBits Bits number (per dimension) neded to
   index cells inside each tile

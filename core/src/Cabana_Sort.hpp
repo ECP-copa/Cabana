@@ -25,7 +25,6 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class BinningData
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation.
 */
@@ -33,18 +32,34 @@ template <class DeviceType>
 class BinningData
 {
   public:
+    //! Kokkos device_type.
     using device_type = DeviceType;
+    //! Kokkos memory space.
     using memory_space = typename device_type::memory_space;
+    //! Kokkos execution space.
     using execution_space = typename device_type::execution_space;
+    //! Memory space size type.
     using size_type = typename memory_space::size_type;
+    //! Binning view type.
     using CountView = Kokkos::View<const int*, device_type>;
+    //! Offset view type.
     using OffsetView = Kokkos::View<size_type*, device_type>;
 
+    //! Default constructor.
     BinningData()
         : _nbin( 0 )
     {
     }
 
+    /*!
+      \brief Constructor initializing from Kokkos BinSort data.
+
+      \param begin The beginning index of the range to sort.
+      \param end The end index of the range to sort.
+      \param counts Binning counts.
+      \param offsets Binning offsets.
+      \param permute_vector Permutation vector.
+    */
     BinningData( const std::size_t begin, const std::size_t end,
                  CountView counts, OffsetView offsets,
                  OffsetView permute_vector )
@@ -115,7 +130,7 @@ class BinningData
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_binning_data : public std::false_type
 {
@@ -125,7 +140,9 @@ template <typename DeviceType>
 struct is_binning_data<BinningData<DeviceType>> : public std::true_type
 {
 };
+//! \endcond
 
+//! BinningData static type checker.
 template <typename DeviceType>
 struct is_binning_data<const BinningData<DeviceType>> : public std::true_type
 {

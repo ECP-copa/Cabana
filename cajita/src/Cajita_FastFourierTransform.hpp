@@ -29,50 +29,38 @@ namespace Experimental
 {
 //---------------------------------------------------------------------------//
 
-/*!
-  \class FFTScaleFull
-  \brief Tag for full scaling of FFT.
-*/
+//! Tag for full scaling of FFT.
 struct FFTScaleFull
 {
 };
-/*!
-  \class FFTScaleNone
-  \brief Tag for no scaling of FFT.
-*/
+//! Tag for no scaling of FFT.
 struct FFTScaleNone
 {
 };
-/*!
-  \class FFTScaleSymmetric
-  \brief Tag for symmetric scaling of FFT.
-*/
+//! Tag for symmetric scaling of FFT.
 struct FFTScaleSymmetric
 {
 };
 
-/*!
-  \class FFTBackendFFTW
-  \brief Tag specifying FFTW backend for FFT (host default).
-*/
+//! Tag specifying FFTW backend for FFT (host default).
 struct FFTBackendFFTW
 {
 };
-/*!
-  \class FFTBackendMKL
-  \brief Tag specifying MKL backend for FFT.
-*/
+//! Tag specifying MKL backend for FFT.
 struct FFTBackendMKL
 {
 };
 
 namespace Impl
 {
+//! \cond Impl
 struct FFTBackendDefault
 {
 };
+//! \endcond
 } // namespace Impl
 
+//! Matching Array static type checker.
 template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
           class ArrayScalar, class Entity, class Mesh, class Device,
           class Scalar, typename SFINAE = void>
@@ -85,6 +73,8 @@ struct is_matching_array : public std::false_type
     static_assert( std::is_same<ArrayDevice, Device>::value,
                    "Array device type must match FFT device type." );
 };
+
+//! Matching Array static type checker.
 template <class ArrayEntity, class ArrayMesh, class ArrayDevice,
           class ArrayScalar, class Entity, class Mesh, class Device,
           class Scalar>
@@ -100,7 +90,6 @@ struct is_matching_array<
 
 //---------------------------------------------------------------------------//
 /*!
-  \class FastFourierTransformParams
   \brief Parameters controlling details for fast Fourier transforms.
 */
 class FastFourierTransformParams
@@ -146,7 +135,6 @@ class FastFourierTransformParams
 
 //---------------------------------------------------------------------------//
 /*!
-  \class FastFourierTransform
   \brief 2D/3D distributed fast Fourier transform base implementation.
 */
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
@@ -154,16 +142,23 @@ template <class EntityType, class MeshType, class Scalar, class DeviceType,
 class FastFourierTransform
 {
   public:
+    //! Array entity type.
     using entity_type = EntityType;
+    //! Mesh type.
     using mesh_type = MeshType;
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Kokkos device type.
     using device_type = DeviceType;
+    //! Kokkos execution space.
     using exec_space = typename device_type::execution_space;
 
-    // Spatial dimension.
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
+    //! Global high box corner.
     std::array<int, num_space_dim> global_high;
+    //! Global low box corner.
     std::array<int, num_space_dim> global_low;
 
     /*!
@@ -244,6 +239,9 @@ class FastFourierTransform
         static_cast<Derived*>( this )->reverseImpl( x, scaling );
     }
 
+    /*!
+      \brief Copy owned data for FFT.
+    */
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, void>
@@ -262,6 +260,9 @@ class FastFourierTransform
             } );
     }
 
+    /*!
+      \brief Copy owned data for FFT.
+    */
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, void>
@@ -279,6 +280,9 @@ class FastFourierTransform
             } );
     }
 
+    /*!
+      \brief Copy owned data back after FFT.
+    */
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<3 == NSD, void>
@@ -297,6 +301,9 @@ class FastFourierTransform
             } );
     }
 
+    /*!
+      \brief Copy owned data back after FFT.
+    */
     template <class IndexSpaceType, class LViewType, class LGViewType,
               std::size_t NSD = num_space_dim>
     std::enable_if_t<2 == NSD, void>
@@ -320,6 +327,7 @@ class FastFourierTransform
 //---------------------------------------------------------------------------//
 namespace Impl
 {
+//! \cond Impl
 template <class ExecutionSpace, class BackendType>
 struct HeffteBackendTraits
 {
@@ -379,11 +387,11 @@ struct HeffteScalingTraits<FFTScaleSymmetric>
 {
     static const auto scaling_type = heffte::scale::symmetric;
 };
+//! \endcond
 } // namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class HeffteFastFourierTransform
   \brief Interface to heFFTe fast Fourier transform library.
 */
 template <class EntityType, class MeshType, class Scalar, class DeviceType,
@@ -395,14 +403,21 @@ class HeffteFastFourierTransform
                                      BackendType>>
 {
   public:
-    // Types.
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Kokkos device type.
     using device_type = DeviceType;
+    //! FFT backend type.
     using backend_type = BackendType;
+    //! Kokkos execution space.
     using exec_space = typename device_type::execution_space;
+    //! Mesh type.
     using mesh_type = MeshType;
+
+    //! Spatial dimension.
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
+    //! heFFTe backend type.
     using heffte_backend_type =
         typename Impl::HeffteBackendTraits<exec_space,
                                            backend_type>::backend_type;

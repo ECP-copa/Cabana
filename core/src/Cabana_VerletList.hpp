@@ -40,24 +40,25 @@ struct VerletLayout2D
 template <class MemorySpace, class LayoutTag>
 struct VerletListData;
 
+//! Store the VerletList compressed sparse row (CSR) neighbor data.
 template <class MemorySpace>
 struct VerletListData<MemorySpace, VerletLayoutCSR>
 {
-    // Kokkos memory space.
+    //! Kokkos memory space.
     using memory_space = MemorySpace;
-    // Default Kokkos device type.
+    //! Default Kokkos device type.
     using device_type [[deprecated]] = typename memory_space::device_type;
 
-    // Number of neighbors per particle.
+    //! Number of neighbors per particle.
     Kokkos::View<int*, memory_space> counts;
 
-    // Offsets into the neighbor list.
+    //! Offsets into the neighbor list.
     Kokkos::View<int*, memory_space> offsets;
 
-    // Neighbor list.
+    //! Neighbor list.
     Kokkos::View<int*, memory_space> neighbors;
 
-    // Add a neighbor to the list.
+    //! Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
     void addNeighbor( const int pid, const int nid ) const
     {
@@ -66,21 +67,22 @@ struct VerletListData<MemorySpace, VerletLayoutCSR>
     }
 };
 
+//! Store the VerletList 2D neighbor data.
 template <class MemorySpace>
 struct VerletListData<MemorySpace, VerletLayout2D>
 {
-    // Kokkos memory space.
+    //! Kokkos memory space.
     using memory_space = MemorySpace;
-    // Default Kokkos device type.
+    //! Default Kokkos device type.
     using device_type [[deprecated]] = typename memory_space::device_type;
 
-    // Number of neighbors per particle.
+    //! Number of neighbors per particle.
     Kokkos::View<int*, memory_space> counts;
 
-    // Neighbor list.
+    //! Neighbor list.
     Kokkos::View<int**, memory_space> neighbors;
 
-    // Add a neighbor to the list.
+    //! Add a neighbor to the list.
     KOKKOS_INLINE_FUNCTION
     void addNeighbor( const int pid, const int nid ) const
     {
@@ -94,6 +96,8 @@ struct VerletListData<MemorySpace, VerletLayout2D>
 
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // Neighborhood discriminator.
 template <class Tag>
@@ -610,11 +614,11 @@ struct VerletListBuilder
 
 //---------------------------------------------------------------------------//
 
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class VerletList
   \brief Neighbor list implementation based on binning particles on a 3d
   Cartesian grid with cells of the same size as the interaction distance.
 
@@ -788,24 +792,26 @@ class VerletList
 //---------------------------------------------------------------------------//
 // Neighbor list interface implementation.
 //---------------------------------------------------------------------------//
-// CSR Data Layout
+//! CSR VerletList NeighborList interface.
 template <class MemorySpace, class AlgorithmTag, class BuildTag>
 class NeighborList<
     VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>>
 {
   public:
+    //! Kokkos memory space.
+    using memory_space = MemorySpace;
+    //! Neighbor list type.
     using list_type =
         VerletList<MemorySpace, AlgorithmTag, VerletLayoutCSR, BuildTag>;
-    using memory_space = MemorySpace;
 
-    // Get the total number of neighbors (maximum size of CSR list).
+    //! Get the total number of neighbors (maximum size of CSR list).
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
         return list._data.neighbors.extent( 0 );
     }
 
-    // Get the number of neighbors for a given particle index.
+    //! Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
     static std::size_t numNeighbor( const list_type& list,
                                     const std::size_t particle_index )
@@ -813,8 +819,8 @@ class NeighborList<
         return list._data.counts( particle_index );
     }
 
-    // Get the id for a neighbor for a given particle index and the index of
-    // the neighbor relative to the particle.
+    //! Get the id for a neighbor for a given particle index and the index of
+    //! the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
     static std::size_t getNeighbor( const list_type& list,
                                     const std::size_t particle_index,
@@ -826,24 +832,26 @@ class NeighborList<
 };
 
 //---------------------------------------------------------------------------//
-// 2D Data Layout
+//! 2D VerletList NeighborList interface.
 template <class MemorySpace, class AlgorithmTag, class BuildTag>
 class NeighborList<
     VerletList<MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag>>
 {
   public:
+    //! Kokkos memory space.
     using memory_space = MemorySpace;
+    //! Neighbor list type.
     using list_type =
         VerletList<MemorySpace, AlgorithmTag, VerletLayout2D, BuildTag>;
 
-    // Get the maximum number of neighbors per particle.
+    //! Get the maximum number of neighbors per particle.
     KOKKOS_INLINE_FUNCTION
     static std::size_t maxNeighbor( const list_type& list )
     {
         return list._data.neighbors.extent( 1 );
     }
 
-    // Get the number of neighbors for a given particle index.
+    //! Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
     static std::size_t numNeighbor( const list_type& list,
                                     const std::size_t particle_index )
@@ -851,8 +859,8 @@ class NeighborList<
         return list._data.counts( particle_index );
     }
 
-    // Get the id for a neighbor for a given particle index and the index of
-    // the neighbor relative to the particle.
+    //! Get the id for a neighbor for a given particle index and the index of
+    //! the neighbor relative to the particle.
     KOKKOS_INLINE_FUNCTION
     static std::size_t getNeighbor( const list_type& list,
                                     const std::size_t particle_index,

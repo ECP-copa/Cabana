@@ -23,7 +23,6 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class LinkedCellList
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
 */
@@ -31,11 +30,17 @@ template <class DeviceType>
 class LinkedCellList
 {
   public:
+    //! Kokkos device_type.
     using device_type = DeviceType;
+    //! Kokkos memory space.
     using memory_space = typename device_type::memory_space;
+    //! Kokkos execution space.
     using execution_space = typename device_type::execution_space;
+    //! Memory space size type.
     using size_type = typename memory_space::size_type;
+    //! Binning view type.
     using CountView = Kokkos::View<int*, device_type>;
+    //! Offset view type.
     using OffsetView = Kokkos::View<size_type*, device_type>;
 
     /*!
@@ -331,7 +336,7 @@ class LinkedCellList
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_linked_cell_list_impl : public std::false_type
 {
@@ -342,7 +347,9 @@ struct is_linked_cell_list_impl<LinkedCellList<DeviceType>>
     : public std::true_type
 {
 };
+//! \endcond
 
+//! LinkedCellList static type checker.
 template <class T>
 struct is_linked_cell_list
     : public is_linked_cell_list_impl<typename std::remove_cv<T>::type>::type
