@@ -33,6 +33,8 @@ namespace Cajita
 
 namespace Impl
 {
+//! \cond Impl
+
 // Build neighbor topology of 27 nearest 3D neighbors. Some of the ranks in
 // this list may be invalid.
 template <class LocalGridType, std::size_t NSD = LocalGridType::num_space_dim>
@@ -140,6 +142,7 @@ void getMigrateDestinations( const LocalGridType& local_grid,
             }
         } );
 }
+//! \endcond
 } // namespace Impl
 
 //-----------------------------------------------------------------------//
