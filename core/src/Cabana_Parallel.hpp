@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Parallel.hpp
+  \brief SIMD and neighbor extension of Kokkos parallel iteration
+*/
 #ifndef CABANA_PARALLEL_HPP
 #define CABANA_PARALLEL_HPP
 

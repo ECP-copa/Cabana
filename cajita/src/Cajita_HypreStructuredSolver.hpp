@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_HypreStructuredSolver.hpp
+  \brief HYPRE structured solver interface
+*/
 #ifndef CAJITA_HYPRESTRUCTUREDSOLVER_HPP
 #define CAJITA_HYPRESTRUCTUREDSOLVER_HPP
 

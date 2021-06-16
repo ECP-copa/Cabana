@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Splines.hpp
+  \brief Spline functions
+*/
 #ifndef CAJITA_SPLINES_HPP
 #define CAJITA_SPLINES_HPP
 

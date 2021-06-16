@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_PerformanceTraits.hpp
+  \brief Default settings for execution spaces.
+*/
 #ifndef CABANA_PERFORMANCETRAITS_HPP
 #define CABANA_PERFORMANCETRAITS_HPP
 

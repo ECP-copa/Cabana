@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_SoA.hpp
+  \brief Struct-of-Arrays for building AoSoA
+*/
 #ifndef CABANA_SOA_HPP
 #define CABANA_SOA_HPP
 

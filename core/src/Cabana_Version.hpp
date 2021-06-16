@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Version.hpp
+  \brief Cabana git version
+*/
 #ifndef CABANA_VERSION_HPP
 #define CABANA_VERSION_HPP
 

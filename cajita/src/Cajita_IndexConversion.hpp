@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_IndexConversion.hpp
+  \brief Local to global index conversion
+*/
 #ifndef CAJITA_INDEXCONVERSION_HPP
 #define CAJITA_INDEXCONVERSION_HPP
 

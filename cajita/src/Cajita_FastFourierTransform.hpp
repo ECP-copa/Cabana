@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_FastFourierTransform.hpp
+  \brief Fast Fourier transforms
+*/
 #ifndef CAJITA_FASTFOURIERTRANSFORM_HPP
 #define CAJITA_FASTFOURIERTRANSFORM_HPP
 

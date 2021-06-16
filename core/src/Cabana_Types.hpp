@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Types.hpp
+  \brief Memory access type checking
+*/
 #ifndef CABANA_TYPES_HPP
 #define CABANA_TYPES_HPP
 

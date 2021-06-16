@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_MemberTypes.hpp
+  \brief AoSoA tuple member types
+*/
 #ifndef CABANA_MEMBERTYPES_HPP
 #define CABANA_MEMBERTYPES_HPP
 

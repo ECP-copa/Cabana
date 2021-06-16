@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Sort.hpp
+  \brief Sorting and binning built on Kokkos BinSort
+*/
 #ifndef CABANA_SORT_HPP
 #define CABANA_SORT_HPP
 

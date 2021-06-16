@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Tuple.hpp
+  \brief Tuple of single particle information to build AoSoA
+*/
 #ifndef CABANA_TUPLE_HPP
 #define CABANA_TUPLE_HPP
 

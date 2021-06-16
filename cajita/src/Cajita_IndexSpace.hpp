@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_IndexSpace.hpp
+  \brief Logical grid indexing
+*/
 #ifndef CAJITA_INDEXSPACE_HPP
 #define CAJITA_INDEXSPACE_HPP
 

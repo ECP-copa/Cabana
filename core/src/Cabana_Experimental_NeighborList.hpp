@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Experimental_NeighborList.hpp
+  \brief ArborX tree-based neighbor lists
+*/
 #ifndef CABANA_EXPERIMENTAL_NEIGHBOR_LIST_HPP
 #define CABANA_EXPERIMENTAL_NEIGHBOR_LIST_HPP
 

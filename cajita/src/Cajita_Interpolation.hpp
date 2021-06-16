@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Interpolation.hpp
+  \brief Particle to grid and grid to particle interpolation
+*/
 #ifndef CAJITA_INTERPOLATION_HPP
 #define CAJITA_INTERPOLATION_HPP
 

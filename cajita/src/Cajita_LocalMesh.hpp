@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_LocalMesh.hpp
+  \brief Local mesh
+*/
 #ifndef CAJTIA_LOCALMESH_HPP
 #define CAJTIA_LOCALMESH_HPP
 

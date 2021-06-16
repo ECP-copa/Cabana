@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_BovWriter.hpp
+  \brief Brick of values (BOV) grid output
+*/
 #ifndef CAJITA_BOVWRITER_HPP
 #define CAJITA_BOVWRITER_HPP
 

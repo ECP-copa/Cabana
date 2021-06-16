@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_LinkedCellList.hpp
+  \brief Linked cell list binning and sorting
+*/
 #ifndef CABANA_LINKEDCELLLIST_HPP
 #define CABANA_LINKEDCELLLIST_HPP
 

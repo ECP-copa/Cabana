@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Array.hpp
+  \brief Grid field arrays
+*/
 #ifndef CAJITA_ARRAY_HPP
 #define CAJITA_ARRAY_HPP
 

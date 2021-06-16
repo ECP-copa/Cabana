@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_MpiTraits.hpp
+  \brief MPI traits
+*/
 #ifndef CAJITA_MPITRAITS_HPP
 #define CAJITA_MPITRAITS_HPP
 

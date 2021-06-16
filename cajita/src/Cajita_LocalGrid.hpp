@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_LocalGrid.hpp
+  \brief Local grid
+*/
 #ifndef CAJITA_LOCALGRID_HPP
 #define CAJITA_LOCALGRID_HPP
 

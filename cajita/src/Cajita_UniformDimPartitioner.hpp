@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_UniformDimPartitioner.hpp
+  \brief Uniform multi-node grid partitioner
+*/
 #ifndef CAJITA_UNIFORMDIMPARTITIONER_HPP
 #define CAJITA_UNIFORMDIMPARTITIONER_HPP
 
