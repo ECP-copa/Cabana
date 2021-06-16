@@ -30,6 +30,7 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 namespace Impl
 {
+//! \cond Impl
 
 // No work tag was provided so call without a tag argument.
 template <class WorkTag, class FunctorType, class... IndexTypes>
@@ -73,6 +74,7 @@ KOKKOS_FORCEINLINE_FUNCTION
     functor( t, std::forward<IndexTypes>( indices )..., reduce_val );
 }
 
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//

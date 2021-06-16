@@ -41,7 +41,7 @@ namespace G2P
 {
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate a scalar value to a point.
+  \brief Interpolate a scalar value to a point. 3D specialization.
   \param view A functor with view semantics of scalar grid data from which to
   interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
@@ -68,6 +68,13 @@ KOKKOS_INLINE_FUNCTION
                           sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.w[Dim::K][k];
 }
 
+/*!
+  \brief Interpolate a scalar value to a point. 2D specialization.
+  \param view A functor with view semantics of scalar grid data from which to
+  interpolate. A value_type type alias is required.
+  \param sd The spline data to use for the interpolation.
+  \param result The scalar value at the point.
+*/
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -89,10 +96,8 @@ KOKKOS_INLINE_FUNCTION
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate a vector value to a point.
+  \brief Interpolate a vector value to a point. 3D specialization.
   \param view A functor with view semantics of vector grid data from which to
-  interpolate.
-  \param view A functor with view semantics of scalar grid data from which to
   interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
   \param result The vector value at the point.
@@ -121,6 +126,13 @@ KOKKOS_INLINE_FUNCTION
                                  sd.w[Dim::K][k];
 }
 
+/*!
+  \brief Interpolate a vector value to a point. 2D specialization.
+  \param view A functor with view semantics of vector grid data from which to
+  interpolate. A value_type type alias is required.
+  \param sd The spline data to use for the interpolation.
+  \param result The vector value at the point.
+*/
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -144,7 +156,7 @@ KOKKOS_INLINE_FUNCTION
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate a scalar gradient to a point.
+  \brief Interpolate a scalar gradient to a point. 3D specialization.
   \param view A functor with view semantics of scalar grid data from which to
   interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
@@ -187,6 +199,13 @@ KOKKOS_INLINE_FUNCTION
             }
 }
 
+/*!
+  \brief Interpolate a scalar gradient to a point. 2D specialization.
+  \param view A functor with view semantics of scalar grid data from which to
+  interpolate. A value_type type alias is required.
+  \param sd The spline data to use for the interpolation.
+  \param result The scalar gradient at the point.
+*/
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -216,7 +235,7 @@ KOKKOS_INLINE_FUNCTION
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate a vector gradient to a point.
+  \brief Interpolate a vector gradient to a point. 3D specialization.
   \param view A functor with view semantics of vector grid data from which to
   interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
@@ -259,6 +278,13 @@ KOKKOS_INLINE_FUNCTION
             }
 }
 
+/*!
+  \brief Interpolate a vector gradient to a point. 2D specialization.
+  \param view A functor with view semantics of vector grid data from which to
+  interpolate. A value_type type alias is required.
+  \param sd The spline data to use for the interpolation.
+  \param result The vector gradient at the point.
+*/
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -295,7 +321,7 @@ KOKKOS_INLINE_FUNCTION
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate a vector divergence to a point.
+  \brief Interpolate a vector divergence to a point. 3D specialization.
   \param view A functor with view semantics of vector grid data from which to
   interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
@@ -334,6 +360,13 @@ KOKKOS_INLINE_FUNCTION
                         sd.w[Dim::I][i] * sd.w[Dim::J][j] * sd.g[Dim::K][k];
 }
 
+/*!
+  \brief Interpolate a vector divergence to a point. 2D specialization.
+  \param view A functor with view semantics of vector grid data from which to
+  interpolate. A value_type type alias is required.
+  \param sd The spline data to use for the interpolation.
+  \param result The vector divergence at the point.
+*/
 template <class ViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -406,7 +439,7 @@ struct is_scatter_view
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate a scalar value to the grid.
+  \brief Interpolate a scalar value to the grid. 3D specialization.
   \param point_data The scalar value to at the point interpolate to the grid.
   \param sd The spline data to use for the interpolation.
   \param view The scatter view of scalar grid data to interpolate to.
@@ -434,6 +467,12 @@ KOKKOS_INLINE_FUNCTION
                                     sd.w[Dim::J][j] * sd.w[Dim::K][k];
 }
 
+/*!
+  \brief Interpolate a scalar value to the grid. 2D specialization.
+  \param point_data The scalar value to at the point interpolate to the grid.
+  \param sd The spline data to use for the interpolation.
+  \param view The scatter view of scalar grid data to interpolate to.
+*/
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -457,8 +496,9 @@ KOKKOS_INLINE_FUNCTION
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate a vector value to the grid.
+  \brief Interpolate a vector value to the grid. 3D specialization.
   \param point_data The vector value at the point to interpolate to the grid.
+  interpolate. A value_type type alias is required.
   \param sd The spline data to use for the interpolation.
   \param view The scatter view of vector grid data to interpolate to.
 */
@@ -487,6 +527,13 @@ KOKKOS_INLINE_FUNCTION
                         sd.w[Dim::K][k];
 }
 
+/*!
+  \brief Interpolate a vector value to the grid. 2D specialization.
+  \param point_data The vector value at the point to interpolate to the grid.
+  interpolate. A value_type type alias is required.
+  \param sd The spline data to use for the interpolation.
+  \param view The scatter view of vector grid data to interpolate to.
+*/
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -511,12 +558,11 @@ KOKKOS_INLINE_FUNCTION
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate the gradient of a scalar to the grid.
+  \brief Interpolate the gradient of a scalar to the grid. 3D specialization.
   \param point_data The scalar at the point who's gradient to interpolate to
   the grid.
   \param sd The spline data to use for the interpolation.
-  \param view The scatter view of scalar gradient grid data to interpolate
-  to.
+  \param view The scatter view of scalar gradient grid data to interpolate to.
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION
@@ -551,6 +597,13 @@ KOKKOS_INLINE_FUNCTION
             }
 }
 
+/*!
+  \brief Interpolate the gradient of a scalar to the grid. 2D specialization.
+  \param point_data The scalar at the point who's gradient to interpolate to
+  the grid.
+  \param sd The spline data to use for the interpolation.
+  \param view The scatter view of scalar gradient grid data to interpolate to.
+*/
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -579,12 +632,11 @@ KOKKOS_INLINE_FUNCTION
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate the divergence of a vector to the grid.
+  \brief Interpolate the divergence of a vector to the grid. 3D specialization.
   \param point_data The vector at the point who's divergence to interpolate to
   the grid.
   \param sd The spline data to use for the interpolation.
-  \param view The scatter view of vector divergence grid data to interpolate
-  to.
+  \param view The scatter view of vector divergence grid data to interpolate to.
 */
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION
@@ -622,6 +674,13 @@ KOKKOS_INLINE_FUNCTION
             }
 }
 
+/*!
+  \brief Interpolate the divergence of a vector to the grid. 2D specialization.
+  \param point_data The vector at the point who's divergence to interpolate to
+  the grid.
+  \param sd The spline data to use for the interpolation.
+  \param view The scatter view of vector divergence grid data to interpolate to.
+*/
 template <class PointDataType, class ScatterViewType, class SplineDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>
@@ -654,12 +713,11 @@ KOKKOS_INLINE_FUNCTION
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Interpolate the divergence of a tensor to the grid.
+  \brief Interpolate the divergence of a tensor to the grid. 3D specialization.
   \param point_data The tensor at the point who's divergence to interpolate to
   the grid.
   \param sd The spline data to use for the interpolation.
-  \param view The scatter view of tensor divergence grid data to interpolate
-  to.
+  \param view The scatter view of tensor divergence grid data to interpolate to.
 */
 template <class ScatterViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION
@@ -698,6 +756,13 @@ KOKKOS_INLINE_FUNCTION
             }
 }
 
+/*!
+  \brief Interpolate the divergence of a tensor to the grid. 2D specialization.
+  \param point_data The tensor at the point who's divergence to interpolate to
+  the grid.
+  \param sd The spline data to use for the interpolation.
+  \param view The scatter view of tensor divergence grid data to interpolate to.
+*/
 template <class ScatterViewType, class SplineDataType, class PointDataType>
 KOKKOS_INLINE_FUNCTION
     std::enable_if_t<2 == SplineDataType::num_space_dim, void>

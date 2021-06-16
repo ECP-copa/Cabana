@@ -345,6 +345,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
 
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // Member element copy operators.
 //---------------------------------------------------------------------------//
@@ -455,6 +457,7 @@ tupleCopy( SoA<MemberTypes<Types...>, DstVectorLength>& dst,
 }
 
 //---------------------------------------------------------------------------//
+//! \endcond
 
 } // end namespace Impl
 } // end namespace Cabana
