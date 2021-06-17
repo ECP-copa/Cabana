@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Halo.hpp
+  \brief Multi-node particle scatter/gather
+*/
 #ifndef CABANA_HALO_HPP
 #define CABANA_HALO_HPP
 

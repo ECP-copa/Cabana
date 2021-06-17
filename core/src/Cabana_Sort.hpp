@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Sort.hpp
+  \brief Sorting and binning built on Kokkos BinSort
+*/
 #ifndef CABANA_SORT_HPP
 #define CABANA_SORT_HPP
 
@@ -151,8 +155,8 @@ struct is_binning_data<const BinningData<DeviceType>> : public std::true_type
 namespace Impl
 {
 //---------------------------------------------------------------------------//
-// Create a permutation vector over a range subset using a comparator over the
-// given Kokkos View of keys.
+//! Create a permutation vector over a range subset using a comparator over the
+//! given Kokkos View of keys.
 template <class KeyViewType, class Comparator,
           class DeviceType = typename KeyViewType::device_type>
 BinningData<DeviceType>
@@ -168,7 +172,7 @@ kokkosBinSort( KeyViewType keys, Comparator comp, const bool sort_within_bins,
 }
 
 //---------------------------------------------------------------------------//
-// Given a set of keys, find the minimum and maximum over the given range.
+//! Given a set of keys, find the minimum and maximum over the given range.
 template <class KeyViewType,
           class DeviceType = typename KeyViewType::device_type>
 Kokkos::MinMaxScalar<typename KeyViewType::non_const_value_type>
@@ -186,8 +190,8 @@ keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
 }
 
 //---------------------------------------------------------------------------//
-// Sort an AoSoA over a subset of its range using the given Kokkos View of
-// keys.
+//! Sort an AoSoA over a subset of its range using the given Kokkos View of
+//! keys.
 template <class KeyViewType,
           class DeviceType = typename KeyViewType::device_type>
 BinningData<DeviceType>
@@ -208,7 +212,7 @@ kokkosBinSort1d( KeyViewType keys, const int nbin, const bool sort_within_bins,
 }
 
 //---------------------------------------------------------------------------//
-// Copy the a 1D slice into a Kokkos view.
+//! Copy the a 1D slice into a Kokkos view.
 template <class SliceType, class DeviceType = typename SliceType::device_type>
 Kokkos::View<typename SliceType::value_type*, typename SliceType::device_type>
 copySliceToKeys( SliceType slice )

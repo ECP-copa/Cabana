@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_NeighborList.hpp
+  \brief Neighbor list interface
+*/
 #ifndef CABANA_NEIGHBORLIST_HPP
 #define CABANA_NEIGHBORLIST_HPP
 

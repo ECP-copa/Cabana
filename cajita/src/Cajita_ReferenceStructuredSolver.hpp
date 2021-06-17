@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_ReferenceStructuredSolver.hpp
+  \brief Reference structured solver
+*/
 #ifndef CAJITA_REFERENCESTRUCTUREDSOLVER_HPP
 #define CAJITA_REFERENCESTRUCTUREDSOLVER_HPP
 

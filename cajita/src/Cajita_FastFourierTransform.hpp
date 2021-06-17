@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_FastFourierTransform.hpp
+  \brief Fast Fourier transforms
+*/
 #ifndef CAJITA_FASTFOURIERTRANSFORM_HPP
 #define CAJITA_FASTFOURIERTRANSFORM_HPP
 
@@ -541,6 +545,9 @@ class HeffteFastFourierTransform
 //---------------------------------------------------------------------------//
 // heFFTe creation
 //---------------------------------------------------------------------------//
+//! Creation function for heFFTe FFT with explict FFT backend.
+//! \param layout FFT entity array
+//! \param params FFT parameters
 template <class Scalar, class DeviceType, class BackendType, class EntityType,
           class MeshType>
 auto createHeffteFastFourierTransform(
@@ -552,6 +559,9 @@ auto createHeffteFastFourierTransform(
                                                                  params );
 }
 
+//! Creation function for heFFTe FFT with default FFT backend.
+//! \param layout FFT entity array
+//! \param params FFT parameters
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
 auto createHeffteFastFourierTransform(
     const ArrayLayout<EntityType, MeshType>& layout,
@@ -562,6 +572,9 @@ auto createHeffteFastFourierTransform(
         layout, params );
 }
 
+//! Creation function for heFFTe FFT with explict FFT backend and default
+//! parameters.
+//! \param layout FFT entity array
 template <class Scalar, class DeviceType, class BackendType, class EntityType,
           class MeshType>
 auto createHeffteFastFourierTransform(
@@ -587,6 +600,9 @@ auto createHeffteFastFourierTransform(
                                                                  params );
 }
 
+//! Creation function for heFFTe FFT with default FFT backend and default
+//! parameters.
+//! \param layout FFT entity array
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
 auto createHeffteFastFourierTransform(
     const ArrayLayout<EntityType, MeshType>& layout )

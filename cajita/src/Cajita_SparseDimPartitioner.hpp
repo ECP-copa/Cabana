@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_SparseDimPartitioner.hpp
+  \brief Multi-node sparse grid partitioner
+*/
 #ifndef CAJITA_SPARSEDIMPARTITIONER_HPP
 #define CAJITA_SPARSEDIMPARTITIONER_HPP
 

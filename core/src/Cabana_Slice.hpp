@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Slice.hpp
+  \brief Slice a single particle property from an AoSoA
+*/
 #ifndef CABANA_SLICE_HPP
 #define CABANA_SLICE_HPP
 

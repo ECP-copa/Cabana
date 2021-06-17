@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_ParameterPack.hpp
+  \brief Pack variadic template parameters for device capture
+*/
 #ifndef CABANA_PARAMETERPACK_HPP
 #define CABANA_PARAMETERPACK_HPP
 

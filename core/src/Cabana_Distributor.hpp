@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Distributor.hpp
+  \brief Multi-node particle redistribution
+*/
 #ifndef CABANA_DISTRIBUTOR_HPP
 #define CABANA_DISTRIBUTOR_HPP
 

@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Partitioner.hpp
+  \brief Multi-node grid partitioner
+*/
 #ifndef CAJITA_PARTITIONER_HPP
 #define CAJITA_PARTITIONER_HPP
 

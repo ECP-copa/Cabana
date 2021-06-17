@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_SoA.hpp
+  \brief Struct-of-Arrays for building AoSoA
+*/
 #ifndef CABANA_SOA_HPP
 #define CABANA_SOA_HPP
 
@@ -341,6 +345,8 @@ struct SoA<MemberTypes<Types...>, VectorLength>
 
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // Member element copy operators.
 //---------------------------------------------------------------------------//
@@ -451,6 +457,7 @@ tupleCopy( SoA<MemberTypes<Types...>, DstVectorLength>& dst,
 }
 
 //---------------------------------------------------------------------------//
+//! \endcond
 
 } // end namespace Impl
 } // end namespace Cabana

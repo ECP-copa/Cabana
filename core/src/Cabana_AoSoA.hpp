@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_AoSoA.hpp
+  \brief Array-of-Struct-of-Arrays particle data structure
+*/
 #ifndef CABANA_AOSOA_HPP
 #define CABANA_AOSOA_HPP
 

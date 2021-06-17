@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Index.hpp
+  \brief AoSoA indexing
+*/
 #ifndef CABANA_INDEX_HPP
 #define CABANA_INDEX_HPP
 

@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Halo.hpp
+  \brief Multi-node grid scatter/gather
+*/
 #ifndef CAJITA_HALO_HPP
 #define CAJITA_HALO_HPP
 

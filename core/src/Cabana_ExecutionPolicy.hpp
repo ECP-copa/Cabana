@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_ExecutionPolicy.hpp
+  \brief SIMD execution policy
+*/
 #ifndef CABANA_EXECUTIONPOLICY_HPP
 #define CABANA_EXECUTIONPOLICY_HPP
 

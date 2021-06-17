@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Parallel.hpp
+  \brief Logical grid extension of Kokkos parallel iteration
+*/
 #ifndef CAJITA_PARALLEL_HPP
 #define CAJITA_PARALLEL_HPP
 

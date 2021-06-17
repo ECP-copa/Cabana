@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_VerletList.hpp
+  \brief Verlet grid-accelerated neighbor list
+*/
 #ifndef CABANA_VERLETLIST_HPP
 #define CABANA_VERLETLIST_HPP
 

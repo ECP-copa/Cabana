@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Array.hpp
+  \brief Grid field arrays
+*/
 #ifndef CAJITA_ARRAY_HPP
 #define CAJITA_ARRAY_HPP
 
@@ -411,8 +415,7 @@ clone( const Array<Scalar, EntityType, MeshType, Params...>& array )
   \brief Assign a scalar value to every element of an array.
   \param array The array to assign the value to.
   \param alpha The value to assign to the array.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
 void assign( Array_t& array, const typename Array_t::value_type alpha,
@@ -426,11 +429,10 @@ void assign( Array_t& array, const typename Array_t::value_type alpha,
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Scale every element of an array by a scalar value.
+  \brief Scale every element of an array by a scalar value. 3D specialization.
   \param array The array to scale.
   \param alpha The value to scale the array by.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
 std::enable_if_t<3 == Array_t::num_space_dim, void>
@@ -448,6 +450,12 @@ scale( Array_t& array, const typename Array_t::value_type alpha,
         } );
 }
 
+/*!
+  \brief Scale every element of an array by a scalar value. 2D specialization.
+  \param array The array to scale.
+  \param alpha The value to scale the array by.
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
 template <class Array_t, class DecompositionTag>
 std::enable_if_t<2 == Array_t::num_space_dim, void>
 scale( Array_t& array, const typename Array_t::value_type alpha,
@@ -466,12 +474,11 @@ scale( Array_t& array, const typename Array_t::value_type alpha,
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Scale every element of an array by a scalar
+  \brief Scale every element of an array by a scalar. 3D specialization.
   \param array The array to scale.
   \param alpha The values to scale the array by. A value must be provided for
   each entity degree-of-freedom in the array.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
 std::enable_if_t<3 == Array_t::num_space_dim, void>
@@ -499,6 +506,13 @@ scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
         } );
 }
 
+/*!
+  \brief Scale every element of an array by a scalar. 2D specialization.
+  \param array The array to scale.
+  \param alpha The values to scale the array by. A value must be provided for
+  each entity degree-of-freedom in the array.
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
 template <class Array_t, class DecompositionTag>
 std::enable_if_t<2 == Array_t::num_space_dim, void>
 scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
@@ -530,8 +544,7 @@ scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
   \brief Copy one array into another over the designated decomposition. A <- B
   \param a The array to which the data will be copied.
   \param b The array from which the data will be copied.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
 void copy( Array_t& a, const Array_t& b, DecompositionTag tag )
@@ -563,12 +576,12 @@ std::shared_ptr<Array_t> cloneCopy( const Array_t& array, DecompositionTag tag )
 //---------------------------------------------------------------------------//
 /*!
   \brief Update two vectors auch that a = alpha * a + beta * b.
+  3D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
   \param b The array to add to a.
   \param beta The value to scale b by.
   \param tag The tag for the decomposition over which to perform the operation.
-  3D overload
 */
 template <class Array_t, class DecompositionTag>
 std::enable_if_t<3 == Array_t::num_space_dim, void>
@@ -590,12 +603,12 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 
 /*!
   \brief Update two vectors auch that a = alpha * a + beta * b.
+  2D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
   \param b The array to add to a.
   \param beta The value to scale b by.
   \param tag The tag for the decomposition over which to perform the operation.
-  2D overload
 */
 template <class Array_t, class DecompositionTag>
 std::enable_if_t<2 == Array_t::num_space_dim, void>
@@ -618,14 +631,14 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 //---------------------------------------------------------------------------//
 /*!
   \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  3D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
   \param b The first array to add to a.
   \param beta The value to scale b by.
   \param c The second array to add to a.
   \param gamma The value to scale b by.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
 std::enable_if_t<3 == Array_t::num_space_dim, void>
@@ -648,6 +661,17 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
         } );
 }
 
+/*!
+  \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  2D specialization.
+  \param a The array that will be updated.
+  \param alpha The value to scale a by.
+  \param b The first array to add to a.
+  \param beta The value to scale b by.
+  \param c The second array to add to a.
+  \param gamma The value to scale b by.
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
 template <class Array_t, class DecompositionTag>
 std::enable_if_t<2 == Array_t::num_space_dim, void>
 update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,

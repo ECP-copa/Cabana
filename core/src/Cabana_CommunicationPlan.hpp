@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_CommunicationPlan.hpp
+  \brief Multi-node communication patterns
+*/
 #ifndef CABANA_COMMUNICATIONPLAN_HPP
 #define CABANA_COMMUNICATIONPLAN_HPP
 

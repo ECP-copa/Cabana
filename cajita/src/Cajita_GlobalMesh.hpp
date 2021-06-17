@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_GlobalMesh.hpp
+  \brief Global mesh
+*/
 #ifndef CAJTIA_GLOBALMESH_HPP
 #define CAJTIA_GLOBALMESH_HPP
 

@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Types.hpp
+  \brief Grid type tags
+*/
 #ifndef CAJITA_TYPES_HPP
 #define CAJITA_TYPES_HPP
 
