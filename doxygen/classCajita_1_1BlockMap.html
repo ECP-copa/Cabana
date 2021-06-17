@@ -112,13 +112,11 @@ void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="clas
 KOKKOS_INLINE_FUNCTION uint32_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a9e1ac0b455cc6b71890f4c969ec35be3">capacity</a> () const</td></tr>
 <tr class="memdesc:a9e1ac0b455cc6b71890f4c969ec35be3"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Host/Device) Require capacity of the index hash table <br /></td></tr>
 <tr class="separator:a9e1ac0b455cc6b71890f4c969ec35be3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1e18d522aa88fe37ee5b503e1573a255"><td class="memItemLeft" align="right" valign="top"><a id="a1e18d522aa88fe37ee5b503e1573a255"></a>
-KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a1e18d522aa88fe37ee5b503e1573a255">valid_at</a> (uint32_t index) const</td></tr>
-<tr class="memdesc:a1e18d522aa88fe37ee5b503e1573a255"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Valid tile at index. <br /></td></tr>
+<tr class="memitem:a1e18d522aa88fe37ee5b503e1573a255"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a1e18d522aa88fe37ee5b503e1573a255">valid_at</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:a1e18d522aa88fe37ee5b503e1573a255"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Valid tile at index.  <a href="classCajita_1_1BlockMap.html#a1e18d522aa88fe37ee5b503e1573a255">More...</a><br /></td></tr>
 <tr class="separator:a1e18d522aa88fe37ee5b503e1573a255"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab373ab6ebe66918e8348769ec610d529"><td class="memItemLeft" align="right" valign="top"><a id="ab373ab6ebe66918e8348769ec610d529"></a>
-KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#ab373ab6ebe66918e8348769ec610d529">key_at</a> (uint32_t index) const</td></tr>
-<tr class="memdesc:ab373ab6ebe66918e8348769ec610d529"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Get tile key at index. <br /></td></tr>
+<tr class="memitem:ab373ab6ebe66918e8348769ec610d529"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#ab373ab6ebe66918e8348769ec610d529">key_at</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:ab373ab6ebe66918e8348769ec610d529"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Get tile key at index.  <a href="classCajita_1_1BlockMap.html#ab373ab6ebe66918e8348769ec610d529">More...</a><br /></td></tr>
 <tr class="separator:ab373ab6ebe66918e8348769ec610d529"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b6328fc155621d34650afdb00694b02"><td class="memItemLeft" align="right" valign="top"><a id="a4b6328fc155621d34650afdb00694b02"></a>
 KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#af2c3974e7f69225ef7b09c3cfd4d9439">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a4b6328fc155621d34650afdb00694b02">validTileNumDev</a> () const</td></tr>
@@ -168,11 +166,7 @@ class Cajita::BlockMap&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Ke
 <p>Block index space, mapping tile ijks to tile No. through a hash table (Kokkos unordered map), note that the ijks should be global.</p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">CBits</td><td>Bits number (per dimension) neded to index cells inside each tile </td></tr>
-    <tr><td class="paramname">CNumPerDim</td><td><a class="el" href="structCajita_1_1Cell.html" title="Mesh cell tag.">Cell</a> number (per dimension) inside each tile </td></tr>
-    <tr><td class="paramname">CNumPerTile</td><td>Cel number (total) inside each tile </td></tr>
-    <tr><td class="paramname">MemorySpace</td><td>Mem space to store unordered map </td></tr>
-    <tr><td class="paramname">CBits</td><td>Number of bits (per dimension) needed to index the cells inside a tile </td></tr>
+    <tr><td class="paramname">CBits</td><td>Number of bits (per dimension) to index the cells inside a tile </td></tr>
     <tr><td class="paramname">CNumPerDim</td><td>Number of cells (per dimension) inside each tile </td></tr>
     <tr><td class="paramname">CNumPerTile</td><td>Number of cells (total) inside each tile </td></tr>
     <tr><td class="paramname">Hash</td><td>Hash type (lexicographical or morton) </td></tr>
@@ -233,9 +227,7 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 <p>(Host) Constructor </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">size_x</td><td>The size of the block (MPI rank) in dim-x (Unit: tile) </td></tr>
-    <tr><td class="paramname">size_y</td><td>The size of the block (MPI rank) in dim-y (Unit: tile) </td></tr>
-    <tr><td class="paramname">size_z</td><td>The size of the block (MPI rank) in dim-z (Unit: tile) </td></tr>
+    <tr><td class="paramname">size_x,size_y,size_z</td><td>The size of the block (MPI rank) in each dimension (Unit: tile) </td></tr>
     <tr><td class="paramname">pre_alloc_size</td><td>Expected capacity of the allocator to store the tiles when tile nums exceed the capcity </td></tr>
   </table>
   </dd>
@@ -289,9 +281,7 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 <p>(Device) Query the tile No. from the hash table </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tile_i</td><td>Tile Id in dim-x </td></tr>
-    <tr><td class="paramname">tile_j</td><td>Tile Id in dim-y </td></tr>
-    <tr><td class="paramname">tile_k</td><td>Tile Id in dim-z </td></tr>
+    <tr><td class="paramname">tile_i,tile_j,tile_k</td><td>Tile ID in each dimension </td></tr>
   </table>
   </dd>
 </dl>
@@ -343,9 +333,7 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 <p>(Device) Transfer tile ijk to tile hash key </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tile_i</td><td>Tile Id in dim-x </td></tr>
-    <tr><td class="paramname">tile_j</td><td>Tile Id in dim-y </td></tr>
-    <tr><td class="paramname">tile_k</td><td>Tile Id in dim-z </td></tr>
+    <tr><td class="paramname">tile_i,tile_j,tile_k</td><td>Tile ID in each dimension </td></tr>
   </table>
   </dd>
 </dl>
@@ -397,9 +385,7 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 <p>(Device) Insert a tile into the hash table </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">tile_i</td><td>Tile Id in dim-x </td></tr>
-    <tr><td class="paramname">tile_j</td><td>Tile Id in dim-y </td></tr>
-    <tr><td class="paramname">tile_k</td><td>Tile Id in dim-z </td></tr>
+    <tr><td class="paramname">tile_i,tile_j,tile_k</td><td>Tile ID in each dimension </td></tr>
   </table>
   </dd>
 </dl>
@@ -465,6 +451,42 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 
 </div>
 </div>
+<a id="ab373ab6ebe66918e8348769ec610d529"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab373ab6ebe66918e8348769ec610d529">&#9670;&nbsp;</a></span>key_at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long CNumPerDim, unsigned long long CNumPerTile, HashTypes Hash, typename Key , typename Value &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a> <a class="el" href="classCajita_1_1BlockMap.html">Cajita::BlockMap</a>&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;::key_at </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(Device) Get tile key at index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>index number in Kokkos unordered map </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="a875f52765f5cacac84e06c613eb3dbf7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a875f52765f5cacac84e06c613eb3dbf7">&#9670;&nbsp;</a></span>reserve()</h2>
 
@@ -495,6 +517,42 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">capacity</td><td>New capacity lower bound of the unordered map </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a1e18d522aa88fe37ee5b503e1573a255"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1e18d522aa88fe37ee5b503e1573a255">&#9670;&nbsp;</a></span>valid_at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long CNumPerDim, unsigned long long CNumPerTile, HashTypes Hash, typename Key , typename Value &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION bool <a class="el" href="classCajita_1_1BlockMap.html">Cajita::BlockMap</a>&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;::valid_at </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(Device) Valid tile at index. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>index number in Kokkos unordered map </td></tr>
   </table>
   </dd>
 </dl>

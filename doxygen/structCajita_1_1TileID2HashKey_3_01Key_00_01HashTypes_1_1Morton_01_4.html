@@ -104,9 +104,8 @@ Public Member Functions</h2></td></tr>
 &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#ac5360779da57f388e2ff2339fc5c9612">TileID2HashKey</a> (int i, int j, int k)</td></tr>
 <tr class="memdesc:ac5360779da57f388e2ff2339fc5c9612"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor (Host) from three integers. <br /></td></tr>
 <tr class="separator:ac5360779da57f388e2ff2339fc5c9612"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a86370cb5828dbfb7efe3e9135e104687"><td class="memItemLeft" align="right" valign="top"><a id="a86370cb5828dbfb7efe3e9135e104687"></a>
-KOKKOS_INLINE_FUNCTION Key&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#a86370cb5828dbfb7efe3e9135e104687">operator()</a> (int tile_i, int tile_j, int tile_k) const</td></tr>
-<tr class="memdesc:a86370cb5828dbfb7efe3e9135e104687"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Compute the 1D hash key of tile in a morton way <br /></td></tr>
+<tr class="memitem:a86370cb5828dbfb7efe3e9135e104687"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Key&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#a86370cb5828dbfb7efe3e9135e104687">operator()</a> (int tile_i, int tile_j, int tile_k) const</td></tr>
+<tr class="memdesc:a86370cb5828dbfb7efe3e9135e104687"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Compute the 1D hash key of tile in a morton way  <a href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#a86370cb5828dbfb7efe3e9135e104687">More...</a><br /></td></tr>
 <tr class="separator:a86370cb5828dbfb7efe3e9135e104687"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
@@ -122,7 +121,60 @@ struct Cajita::TileID2HashKey&lt; Key, HashTypes::Morton &gt;</h3>
 
 <p>Compute the hash key from the 3D tile ijk. </p>
 <p>Morton code specialization </p>
-</div><hr/>The documentation for this struct was generated from the following file:<ul>
+</div><h2 class="groupheader">Member Function Documentation</h2>
+<a id="a86370cb5828dbfb7efe3e9135e104687"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a86370cb5828dbfb7efe3e9135e104687">&#9670;&nbsp;</a></span>operator()()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename Key &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION Key <a class="el" href="structCajita_1_1TileID2HashKey.html">Cajita::TileID2HashKey</a>&lt; Key, HashTypes::Morton &gt;::operator() </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>tile_i</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>tile_j</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>tile_k</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(Device) Compute the 1D hash key of tile in a morton way </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">tile_i,tile_j,tile_k</td><td>Tile ID in each dimension </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<hr/>The documentation for this struct was generated from the following file:<ul>
 <li>cajita/src/<a class="el" href="Cajita__SparseIndexSpace_8hpp_source.html">Cajita_SparseIndexSpace.hpp</a></li>
 </ul>
 </div><!-- contents -->
