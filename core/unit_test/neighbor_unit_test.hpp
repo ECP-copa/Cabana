@@ -599,6 +599,98 @@ void checkSecondNeighborParallelReduce( const ListType& nlist,
 }
 
 //---------------------------------------------------------------------------//
+// Functor work tag for only assigning half the value.
+class DoubleValueWorkTag
+{
+};
+
+template <class ViewType>
+struct NeighParallelOp
+{
+    ViewType _result;
+
+    NeighParallelOp( const int num_particle )
+    {
+        _result = ViewType( "result", num_particle );
+    }
+
+    // tagged version that assigns double the value.
+    KOKKOS_INLINE_FUNCTION void operator()( const DoubleValueWorkTag&,
+                                            const int i, const int n ) const
+    {
+        Kokkos::atomic_add( &_result( i ), 2 * n );
+    }
+    KOKKOS_INLINE_FUNCTION void operator()( const int i, const int n ) const
+    {
+        Kokkos::atomic_add( &_result( i ), n );
+    }
+};
+
+template <class ListType, class TestListType>
+void checkFirstNeighborParallelForFunctor( const ListType& nlist,
+                                           const TestListType& N2_list_copy,
+                                           const int num_particle,
+                                           const bool use_tag )
+{
+    if ( use_tag )
+    {
+        Kokkos::RangePolicy<TEST_EXECSPACE, DoubleValueWorkTag> policy(
+            0, num_particle );
+        checkFirstNeighborParallelForFunctor( nlist, N2_list_copy, num_particle,
+                                              policy, 2 );
+    }
+    else
+    {
+        Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
+        checkFirstNeighborParallelForFunctor( nlist, N2_list_copy, num_particle,
+                                              policy, 1 );
+    }
+}
+
+template <class ListType, class TestListType, class PolicyType>
+void checkFirstNeighborParallelForFunctor( const ListType& nlist,
+                                           const TestListType& N2_list_copy,
+                                           const int num_particle,
+                                           const PolicyType policy,
+                                           const int multiplier )
+{
+    // Create Kokkos views for the write operation.
+    using memory_space = typename TEST_MEMSPACE::memory_space;
+    using view_type = Kokkos::View<int*, memory_space>;
+    Kokkos::View<int*, Kokkos::HostSpace> N2_result( "N2_result",
+                                                     num_particle );
+
+    // Test the list parallel operation by adding a value from each neighbor
+    // to the particle and compare to counts using a functor.
+    NeighParallelOp<view_type> serial_functor( num_particle );
+    NeighParallelOp<view_type> team_functor( num_particle );
+
+    Cabana::neighbor_parallel_for( policy, serial_functor, nlist,
+                                   Cabana::FirstNeighborsTag(),
+                                   Cabana::SerialOpTag(), "test_1st_serial" );
+    Cabana::neighbor_parallel_for( policy, team_functor, nlist,
+                                   Cabana::FirstNeighborsTag(),
+                                   Cabana::TeamOpTag(), "test_1st_team" );
+    Kokkos::fence();
+
+    // Use a full N^2 neighbor list to check against.
+    for ( int p = 0; p < num_particle; ++p )
+        for ( int n = 0; n < N2_list_copy.counts( p ); ++n )
+            N2_result( p ) += N2_list_copy.neighbors( p, n );
+
+    // Check the result.
+    auto serial_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), serial_functor._result );
+    auto team_mirror = Kokkos::create_mirror_view_and_copy(
+        Kokkos::HostSpace(), team_functor._result );
+    for ( int p = 0; p < num_particle; ++p )
+    {
+        EXPECT_EQ( N2_result( p ) * multiplier, serial_mirror( p ) );
+        EXPECT_EQ( N2_result( p ) * multiplier, team_mirror( p ) );
+    }
+}
+
+//---------------------------------------------------------------------------//
 // Default test settings.
 struct NeighborListTestData
 {

@@ -242,6 +242,11 @@ void testNeighborParallelFor()
 
     checkSplitFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
                                         test_data.num_particle );
+
+    checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                          test_data.num_particle, true );
+    checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                          test_data.num_particle, false );
 }
 
 //---------------------------------------------------------------------------//
