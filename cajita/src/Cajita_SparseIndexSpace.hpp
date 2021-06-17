@@ -207,10 +207,8 @@ struct TileID2HashKey<Key, HashTypes::Naive>
     }
 
     /*!
-    \brief (Device) Compute the 1D hash key of tile in a lexicographical way
-    \param tile_i tile id in i-th direction
-    \param tile_j tile id in j-th direction
-    \param tile_k tile id in k-th direction
+      \brief (Device) Compute the 1D hash key of tile in a lexicographical way
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     Key operator()( int tile_i, int tile_j, int tile_k ) const
@@ -259,10 +257,8 @@ struct TileID2HashKey<Key, HashTypes::Morton>
     };
 
     /*!
-    \brief (Device) Compute the 1D hash key of tile in a morton way
-    \param tile_i tile id in i-th direction
-    \param tile_j tile id in j-th direction
-    \param tile_k tile id in k-th direction
+      \brief (Device) Compute the 1D hash key of tile in a morton way
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     Key operator()( int tile_i, int tile_j, int tile_k ) const
@@ -306,11 +302,9 @@ struct HashKey2TileID<Key, HashTypes::Naive>
     }
 
     /*!
-    \brief (Device) Compute the tile ijk from the lexicographical tile hash key
-    \param tile_key input - tile hash key number
-    \param tile_i output - tile id in i-th direction
-    \param tile_j output - tile id in j-th direction
-    \param tile_k output -tile id in k-th direction
+      \brief (Device) Compute the tile ijk from the lexicographical hash key
+      \param tile_key input - tile hash key number
+      \param tile_i, tile_j, tile_k output - Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     void operator()( Key tile_key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -360,11 +354,9 @@ struct HashKey2TileID<Key, HashTypes::Morton>
     };
 
     /*!
-    \brief (Device) Compute the tile ijk from the lexicographical tile hash key
-    \param tile_key input - tile hash key number
-    \param tile_i output - tile id in i-th direction
-    \param tile_j output - tile id in j-th direction
-    \param tile_k output -tile id in k-th direction
+      \brief (Device) Compute the tile ijk from the lexicographical hash key
+      \param tile_key input - tile hash key number
+      \param tile_i, tile_j, tile_k output - Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     void operator()( Key tile_key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -457,11 +449,11 @@ class SparseMap
     }
 
     /*!
-      \brief (Device) Insert a cell (given a cell ijk, insert the tile where the
-      cell reside in to hash table; Note that the ijk should be global)
-      \param cell_i cell id in dim-x
-      \param cell_j cell id in dim-y
-      \param cell_k cell id in dim-z
+      \brief (Device) Insert a cell
+      \param cell_i, cell_j, cell_k Cell ID in each dimension
+
+      Given a cell ijk, insert the tile where the cell reside in to hash table;
+      Note that the ijk should be global
     */
     KOKKOS_INLINE_FUNCTION
     void insertCell( int cell_i, int cell_j, int cell_k ) const
@@ -474,9 +466,7 @@ class SparseMap
     /*!
       \brief (Device) Insert a tile (to hash table); Note that the tile ijk
       should be global
-      \param tile_i tile id in dim-x
-      \param tile_j tile id in dim-y
-      \param tile_k tile id in dim-z
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     void insertTile( int tile_i, int tile_j, int tile_k ) const
@@ -486,9 +476,7 @@ class SparseMap
 
     /*!
       \brief (Device) Query the 1D tile key from the 3D cell ijk
-      \param cell_i cell id in dim-x
-      \param cell_j cell id in dim-y
-      \param cell_k cell id in dim-z
+      \param cell_i, cell_j, cell_k Cell ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     value_type queryTile( int cell_i, int cell_j, int cell_k ) const
@@ -502,9 +490,7 @@ class SparseMap
 
     /*!
       \brief (Device) Query the 1D cell key from the 3D cell ijk
-      \param cell_i cell id in dim-x
-      \param cell_j cell id in dim-y
-      \param cell_k cell id in dim-z
+      \param cell_i, cell_j, cell_k Cell ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     value_type queryCell( int cell_i, int cell_j, int cell_k ) const
@@ -519,13 +505,12 @@ class SparseMap
     }
 
     /*!
-      \brief (Host) Clear tile hash table (Host, required by unordered map
-      clear())
+      \brief (Host) Clear tile hash table (required by unordered map clear())
     */
     void clear() { _block_id_space.clear(); }
 
     /*!
-      \brief Set new capacity lower bound on the unordered map (Host)
+      \brief (Host) Set new capacity lower bound on the unordered map
       \param capacity New capacity lower bound
     */
     bool reserve( const value_type capacity )
@@ -567,9 +552,7 @@ class SparseMap
     /*!
       \brief (Device) Transfer block hash key to block ijk
       \param key Tile hash key
-      \param tile_i Tile ID in ith dimension
-      \param tile_j Tile ID in jth dimension
-      \param tile_k Tile ID in kth dimension
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -611,14 +594,8 @@ SparseMap<MemorySpace, CellPerTileDim, Hash, Key, Value> createSparseMap(
 /*!
   \brief Block index space, mapping tile ijks to tile No. through a hash table
   (Kokkos unordered map), note that the ijks should be global
-  \tparam CBits Bits number (per dimension) neded to
-  index cells inside each tile
-  \tparam CNumPerDim Cell number (per dimension)
-  inside each tile
-  \tparam CNumPerTile Cel number (total) inside each tile
-  \tparam MemorySpace Mem space to store unordered map
-  \tparam CBits Number of bits (per dimension) needed to index the cells inside
-  a tile \tparam CNumPerDim Number of cells (per dimension) inside each tile
+  \tparam CBits Number of bits (per dimension) to index the cells inside a tile
+  \tparam CNumPerDim Number of cells (per dimension) inside each tile
   \tparam CNumPerTile Number of cells (total) inside each tile
   \tparam Hash Hash type (lexicographical or morton)
   \tparam Key Type of the tile/cell hash key
@@ -649,11 +626,10 @@ class BlockMap
 
     /*!
       \brief (Host) Constructor
-      \param size_x The size of the block (MPI rank) in dim-x (Unit: tile)
-      \param size_y The size of the block (MPI rank) in dim-y (Unit: tile)
-      \param size_z The size of the block (MPI rank) in dim-z (Unit: tile)
-      \param pre_alloc_size Expected capacity of the allocator to store the
-      tiles when tile nums exceed the capcity
+      \param size_x, size_y, size_z The size of the block (MPI rank) in each
+      dimension (Unit: tile)
+      \param pre_alloc_size Expected capacity of the
+      allocator to store the tiles when tile nums exceed the capcity
     */
     BlockMap( const int size_x, const int size_y, const int size_z,
               const value_type pre_alloc_size )
@@ -746,9 +722,7 @@ class BlockMap
 
     /*!
       \brief (Device) Insert a tile into the hash table
-      \param tile_i Tile Id in dim-x
-      \param tile_j Tile Id in dim-y
-      \param tile_k Tile Id in dim-z
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     void insert( int tile_i, int tile_j, int tile_k ) const
@@ -769,9 +743,7 @@ class BlockMap
 
     /*!
       \brief (Device) Query the tile No. from the hash table
-      \param tile_i Tile Id in dim-x
-      \param tile_j Tile Id in dim-y
-      \param tile_k Tile Id in dim-z
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     value_type find( int tile_i, int tile_j, int tile_k ) const
@@ -782,9 +754,7 @@ class BlockMap
 
     /*!
       \brief (Device) Transfer tile ijk to tile hash key
-      \param tile_i Tile Id in dim-x
-      \param tile_j Tile Id in dim-y
-      \param tile_k Tile Id in dim-z
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     key_type ijk2key( int tile_i, int tile_j, int tile_k ) const
@@ -795,9 +765,7 @@ class BlockMap
     /*!
       \brief (Device) Transfer tile hash key to tile ijk
       \param key Tile hash key
-      \param tile_i Tile ID in ith dimension
-      \param tile_j Tile ID in jth dimension
-      \param tile_k Tile ID in kth dimension
+      \param tile_i, tile_j, tile_k Tile ID in each dimension
     */
     KOKKOS_INLINE_FUNCTION
     void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -820,11 +788,11 @@ class BlockMap
 //---------------------------------------------------------------------------//
 /*!
   \brief Tile index space, inside each local tile, mapping cell ijks to cell
-  No.(Lexicographical Order) \tparam CBits Bits number (per dimension) neded to
-  index cells inside each tile
-  \tparam Cbits Number of bits (per dimension) needed to index the cells inside
-  a tile \tparam CNumPerDim Cell number (per dimension) inside each tile \tparam
-  CNumPerTile Cel number (total) inside each tile
+  No.(Lexicographical Order)
+  \tparam CBits Bits number (per dimension) to index cells inside each tile
+  \tparam Cbits Number of bits (per dimension) to index the cells inside a tile
+  \tparam CNumPerDim Cell number (per dimension) inside each tile
+  \tparam CNumPerTile Cel number (total) inside each tile
 */
 template <int CBits, int CNumPerDim, int CNumPerTile>
 class TileMap
