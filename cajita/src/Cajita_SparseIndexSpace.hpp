@@ -51,6 +51,7 @@ enum class HashTypes : unsigned char
 /*!
   \brief (Host/Device) Compute the least bit number/length needed to represent
   the given input integer
+  \param input_int integer that is going to be evaluated
 */
 template <typename Integer>
 KOKKOS_INLINE_FUNCTION constexpr Integer bitLength( Integer input_int ) noexcept
@@ -65,6 +66,7 @@ KOKKOS_INLINE_FUNCTION constexpr Integer bitLength( Integer input_int ) noexcept
 /*!
   \brief (Host/Device) Compute the lease bit number needed to index input
   integer
+  \param input_int integer that is going to be evaluated
 */
 template <typename Integer>
 KOKKOS_INLINE_FUNCTION constexpr Integer bitCount( Integer input_int ) noexcept
@@ -76,6 +78,8 @@ KOKKOS_INLINE_FUNCTION constexpr Integer bitCount( Integer input_int ) noexcept
 /*!
   \brief (Host/Device) Given a integer, reverse the corresponding binary string,
   return the resulting integer.
+  \param input_int integer that is going to be evaluated
+  \param loc location for next round reverse
 */
 template <typename Integer>
 KOKKOS_INLINE_FUNCTION constexpr Integer
@@ -91,6 +95,7 @@ binaryReverse( Integer input_int, char loc = sizeof( Integer ) * 8 - 1 )
 /*!
   \brief (Host/Device) Count the leading zeros in the corresponding binary
   string of the input integer
+  \param input_int integer that is going to be evaluated
 */
 template <typename Integer>
 KOKKOS_INLINE_FUNCTION constexpr unsigned countLeadingZeros( Integer input_int )
@@ -108,6 +113,8 @@ KOKKOS_INLINE_FUNCTION constexpr unsigned countLeadingZeros( Integer input_int )
 /*!
   \brief (Host/Device) Pack up the data bits where the corresponding bit of the
   mask is 1
+  \param mask mask value
+  \param data integer to be packed
 */
 KOKKOS_INLINE_FUNCTION
 constexpr int bitPack( const uint64_t mask, const uint64_t data )
@@ -140,6 +147,8 @@ constexpr int bitPack( const uint64_t mask, const uint64_t data )
 /*!
   \brief (Host/Device) Spread out the data bits where the corresponding bit of
   the mask is 1
+  \param mask mask value
+  \param data integer to be spreaded
 */
 KOKKOS_INLINE_FUNCTION
 constexpr uint64_t bitSpread( const uint64_t mask, const int data )
@@ -172,6 +181,7 @@ struct HashKey2TileID;
 
   Lexicographical order specialization
   Can be rewrite in a recursive way
+  \tparam Key key type
 */
 template <typename Key>
 struct TileID2HashKey<Key, HashTypes::Naive>
@@ -198,6 +208,9 @@ struct TileID2HashKey<Key, HashTypes::Naive>
 
     /*!
     \brief (Device) Compute the 1D hash key of tile in a lexicographical way
+    \param tile_i tile id in i-th direction
+    \param tile_j tile id in j-th direction
+    \param tile_k tile id in k-th direction
     */
     KOKKOS_INLINE_FUNCTION
     Key operator()( int tile_i, int tile_j, int tile_k ) const
@@ -247,6 +260,9 @@ struct TileID2HashKey<Key, HashTypes::Morton>
 
     /*!
     \brief (Device) Compute the 1D hash key of tile in a morton way
+    \param tile_i tile id in i-th direction
+    \param tile_j tile id in j-th direction
+    \param tile_k tile id in k-th direction
     */
     KOKKOS_INLINE_FUNCTION
     Key operator()( int tile_i, int tile_j, int tile_k ) const
@@ -291,6 +307,10 @@ struct HashKey2TileID<Key, HashTypes::Naive>
 
     /*!
     \brief (Device) Compute the tile ijk from the lexicographical tile hash key
+    \param tile_key input - tile hash key number
+    \param tile_i output - tile id in i-th direction
+    \param tile_j output - tile id in j-th direction
+    \param tile_k output -tile id in k-th direction
     */
     KOKKOS_INLINE_FUNCTION
     void operator()( Key tile_key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -341,6 +361,10 @@ struct HashKey2TileID<Key, HashTypes::Morton>
 
     /*!
     \brief (Device) Compute the tile ijk from the lexicographical tile hash key
+    \param tile_key input - tile hash key number
+    \param tile_i output - tile id in i-th direction
+    \param tile_j output - tile id in j-th direction
+    \param tile_k output -tile id in k-th direction
     */
     KOKKOS_INLINE_FUNCTION
     void operator()( Key tile_key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -521,7 +545,8 @@ class SparseMap
     value_type size() const { return _block_id_space.validTileNumHost(); }
 
     /*!
-      \brief (Device) Valid block at index.
+      \brief (Device) Valid block at index
+      \param index index number in Kokkos unordered_map
     */
     KOKKOS_INLINE_FUNCTION
     bool valid_at( uint32_t index ) const
@@ -530,7 +555,8 @@ class SparseMap
     }
 
     /*!
-      \brief (Device) Get block key at index.
+      \brief (Device) Get block key at index
+      \param index index number in Kokkos unordered_map
     */
     KOKKOS_INLINE_FUNCTION
     key_type key_at( uint32_t index ) const
@@ -541,7 +567,9 @@ class SparseMap
     /*!
       \brief (Device) Transfer block hash key to block ijk
       \param key Tile hash key
-      \param tile_i, tile_j, tile_k Tile ID in each dimension
+      \param tile_i Tile ID in ith dimension
+      \param tile_j Tile ID in jth dimension
+      \param tile_k Tile ID in kth dimension
     */
     KOKKOS_INLINE_FUNCTION
     void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -682,6 +710,7 @@ class BlockMap
 
     /*!
       \brief (Device) Valid tile at index.
+      \param index index number in Kokkos unordered map
     */
     KOKKOS_INLINE_FUNCTION
     bool valid_at( uint32_t index ) const
@@ -691,6 +720,7 @@ class BlockMap
 
     /*!
       \brief (Device) Get tile key at index.
+      \param index index number in Kokkos unordered map
     */
     KOKKOS_INLINE_FUNCTION
     key_type key_at( uint32_t index ) const
@@ -765,7 +795,9 @@ class BlockMap
     /*!
       \brief (Device) Transfer tile hash key to tile ijk
       \param key Tile hash key
-      \param tile_i, tile_j, tile_k Tile ID in each dimension
+      \param tile_i Tile ID in ith dimension
+      \param tile_j Tile ID in jth dimension
+      \param tile_k Tile ID in kth dimension
     */
     KOKKOS_INLINE_FUNCTION
     void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
@@ -810,6 +842,7 @@ class TileMap
     //! Cell ijk <=> Cell Id
     /*!
       \brief (Host/Device) Compute from coordinate to offset
+      \param coords coordinates used to compute the offset
     */
     template <typename... Coords>
     KOKKOS_INLINE_FUNCTION static constexpr auto
@@ -820,6 +853,8 @@ class TileMap
 
     /*!
       \brief (Host/Device) Compute from offset to coordinates
+      \param key The given single number
+      \param coords The output coordinates
     */
     template <typename Key, typename... Coords>
     KOKKOS_INLINE_FUNCTION static constexpr void
@@ -832,6 +867,8 @@ class TileMap
     //! Coord  <=> Offset Computations
     /*!
       \brief Transfer function: tile ijk to tile key
+      \param dim_no dimension id
+      \param i coordinate in dimension dim_no
     */
     struct Coord2OffsetDim
     {
@@ -849,6 +886,8 @@ class TileMap
 
     /*!
       \brief Transfer function: tile key to tile ijk
+      \param i coordinate to be computed
+      \param offset input offset number
     */
     struct Offset2CoordDim
     {
@@ -882,7 +921,8 @@ class TileMap
     /*!
       \brief Compute the coordinates from a given single number;
              The dimension of the coordinate is determined by the input param
-      number \tparam Func Transfer fuctions from the single number to coords
+      number
+      \tparam Func Transfer fuctions from the single number to coords
       \param key The given single number
       \param coords The output coordinates
     */
