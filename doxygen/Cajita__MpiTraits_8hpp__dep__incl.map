@@ -1,0 +1,11 @@
+<map id="cajita/src/Cajita_MpiTraits.hpp" name="cajita/src/Cajita_MpiTraits.hpp">
+<area shape="rect" id="node1" title="MPI traits." alt="" coords="163,5,361,32"/>
+<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="520,333,657,360"/>
+<area shape="rect" id="node3" href="$Cajita__Array_8hpp.html" title="Grid field arrays." alt="" coords="485,80,660,107"/>
+<area shape="rect" id="node4" href="$Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="845,251,1047,278"/>
+<area shape="rect" id="node8" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="301,244,479,285"/>
+<area shape="rect" id="node5" href="$Cajita__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="51,155,236,196"/>
+<area shape="rect" id="node6" href="$Cajita__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="549,162,719,189"/>
+<area shape="rect" id="node7" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="554,251,770,278"/>
+<area shape="rect" id="node9" href="$Cajita__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="261,155,474,196"/>
+</map>

@@ -70,7 +70,7 @@ $(function() {
 <div class="title">Cajita_Partitioner.hpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/****************************************************************************</span></div>
+<a href="Cajita__Partitioner_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/****************************************************************************</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright (c) 2018-2021 by the Cabana authors                            *</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * All rights reserved.                                                     *</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *                                                                          *</span></div>
@@ -81,99 +81,99 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * SPDX-License-Identifier: BSD-3-Clause                                    *</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> ****************************************************************************/</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef CAJITA_PARTITIONER_HPP</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define CAJITA_PARTITIONER_HPP</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160; </div>
-<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160;<span class="preprocessor">#include &lt;mpi.h&gt;</span></div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160; </div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;{</div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> NumSpaceDim&gt;</div>
-<div class="line"><a name="l00031"></a><span class="lineno"><a class="line" href="classCajita_1_1BlockPartitioner.html">   31</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;{</div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">   35</a></span>&#160;    <span class="keyword">static</span> constexpr std::size_t <a class="code" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> = NumSpaceDim;</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;    ~<a class="code" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>() = <span class="keywordflow">default</span>;</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno"><a class="line" href="classCajita_1_1BlockPartitioner.html#a36cbd63a8eace775a4269bfc06714b0a">   45</a></span>&#160;    <span class="keyword">virtual</span> std::array&lt;int, NumSpaceDim&gt; <a class="code" href="classCajita_1_1BlockPartitioner.html#a36cbd63a8eace775a4269bfc06714b0a">ranksPerDimension</a>(</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;        MPI_Comm comm,</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="keyword">const</span> std::array&lt;int, NumSpaceDim&gt;&amp; global_cells_per_dim ) <span class="keyword">const</span> = 0;</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;};</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> NumSpaceDim&gt;</div>
-<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="classCajita_1_1ManualBlockPartitioner.html">   58</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCajita_1_1ManualBlockPartitioner.html">ManualBlockPartitioner</a> : <span class="keyword">public</span> <a class="code" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>&lt;NumSpaceDim&gt;</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;{</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">   62</a></span>&#160;    <span class="keyword">static</span> constexpr std::size_t <a class="code" href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">num_space_dim</a> = NumSpaceDim;</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="classCajita_1_1ManualBlockPartitioner.html#a8666ca91299503d250e9e223724ca7bd">   68</a></span>&#160;    <a class="code" href="classCajita_1_1ManualBlockPartitioner.html#a8666ca91299503d250e9e223724ca7bd">ManualBlockPartitioner</a>( <span class="keyword">const</span> std::array&lt;int, NumSpaceDim&gt;&amp; ranks_per_dim )</div>
-<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;        : _ranks_per_dim( ranks_per_dim )</div>
-<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;    {</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;    }</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160; </div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    std::array&lt;int, NumSpaceDim&gt;</div>
-<div class="line"><a name="l00078"></a><span class="lineno"><a class="line" href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">   78</a></span>&#160;    <a class="code" href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">ranksPerDimension</a>( MPI_Comm comm,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;                       <span class="keyword">const</span> std::array&lt;int, NumSpaceDim&gt;&amp; )<span class="keyword"> const override</span></div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;        <span class="keywordtype">int</span> comm_size;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;        MPI_Comm_size( comm, &amp;comm_size );</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;        <span class="keywordtype">int</span> nrank = 1;</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;        <span class="keywordflow">for</span> ( std::size_t d = 0; d &lt; <a class="code" href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">num_space_dim</a>; ++d )</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;            nrank *= _ranks_per_dim[d];</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        <span class="keywordflow">if</span> ( comm_size != nrank )</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error(</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;                <span class="stringliteral">&quot;ManualPartitioner ranks do not match comm size&quot;</span> );</div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;        <span class="keywordflow">return</span> _ranks_per_dim;</div>
-<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    }</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160; </div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    std::array&lt;int, NumSpaceDim&gt; _ranks_per_dim;</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;};</div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#ifndef CAJITA_PARTITIONER_HPP</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#define CAJITA_PARTITIONER_HPP</span></div>
+<div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;array&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;<span class="preprocessor">#include &lt;stdexcept&gt;</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160; </div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="preprocessor">#include &lt;mpi.h&gt;</span></div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160; </div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCajita.html">Cajita</a></div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> NumSpaceDim&gt;</div>
+<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="classCajita_1_1BlockPartitioner.html">   35</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;{</div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">   39</a></span>&#160;    <span class="keyword">static</span> constexpr std::size_t <a class="code" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> = NumSpaceDim;</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;    ~<a class="code" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>() = <span class="keywordflow">default</span>;</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160; </div>
+<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="classCajita_1_1BlockPartitioner.html#a36cbd63a8eace775a4269bfc06714b0a">   49</a></span>&#160;    <span class="keyword">virtual</span> std::array&lt;int, NumSpaceDim&gt; <a class="code" href="classCajita_1_1BlockPartitioner.html#a36cbd63a8eace775a4269bfc06714b0a">ranksPerDimension</a>(</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        MPI_Comm comm,</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="keyword">const</span> std::array&lt;int, NumSpaceDim&gt;&amp; global_cells_per_dim ) <span class="keyword">const</span> = 0;</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;};</div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160; </div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> NumSpaceDim&gt;</div>
+<div class="line"><a name="l00062"></a><span class="lineno"><a class="line" href="classCajita_1_1ManualBlockPartitioner.html">   62</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCajita_1_1ManualBlockPartitioner.html">ManualBlockPartitioner</a> : <span class="keyword">public</span> <a class="code" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>&lt;NumSpaceDim&gt;</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;{</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00066"></a><span class="lineno"><a class="line" href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">   66</a></span>&#160;    <span class="keyword">static</span> constexpr std::size_t <a class="code" href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">num_space_dim</a> = NumSpaceDim;</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="classCajita_1_1ManualBlockPartitioner.html#a8666ca91299503d250e9e223724ca7bd">   72</a></span>&#160;    <a class="code" href="classCajita_1_1ManualBlockPartitioner.html#a8666ca91299503d250e9e223724ca7bd">ManualBlockPartitioner</a>( <span class="keyword">const</span> std::array&lt;int, NumSpaceDim&gt;&amp; ranks_per_dim )</div>
+<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;        : _ranks_per_dim( ranks_per_dim )</div>
+<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160;    {</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;    }</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160; </div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    std::array&lt;int, NumSpaceDim&gt;</div>
+<div class="line"><a name="l00082"></a><span class="lineno"><a class="line" href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">   82</a></span>&#160;    <a class="code" href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">ranksPerDimension</a>( MPI_Comm comm,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;                       <span class="keyword">const</span> std::array&lt;int, NumSpaceDim&gt;&amp; )<span class="keyword"> const override</span></div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;        <span class="keywordtype">int</span> comm_size;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;        MPI_Comm_size( comm, &amp;comm_size );</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;        <span class="keywordtype">int</span> nrank = 1;</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;        <span class="keywordflow">for</span> ( std::size_t d = 0; d &lt; <a class="code" href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">num_space_dim</a>; ++d )</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;            nrank *= _ranks_per_dim[d];</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;        <span class="keywordflow">if</span> ( comm_size != nrank )</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;            <span class="keywordflow">throw</span> std::runtime_error(</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                <span class="stringliteral">&quot;ManualPartitioner ranks do not match comm size&quot;</span> );</div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;        <span class="keywordflow">return</span> _ranks_per_dim;</div>
+<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;    }</div>
 <div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160; </div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> NumSpaceDim&gt;</div>
-<div class="line"><a name="l00110"></a><span class="lineno"><a class="line" href="classCajita_1_1DimBlockPartitioner.html">  110</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCajita_1_1DimBlockPartitioner.html">DimBlockPartitioner</a> : <span class="keyword">public</span> <a class="code" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>&lt;NumSpaceDim&gt;</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;{</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classCajita_1_1DimBlockPartitioner.html#affcf34475c3eea4e2e92e42adad86bf7">  114</a></span>&#160;    <span class="keyword">static</span> constexpr std::size_t <a class="code" href="classCajita_1_1DimBlockPartitioner.html#affcf34475c3eea4e2e92e42adad86bf7">num_space_dim</a> = NumSpaceDim;</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160; </div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    std::array&lt;int, NumSpaceDim&gt;</div>
-<div class="line"><a name="l00121"></a><span class="lineno"><a class="line" href="classCajita_1_1DimBlockPartitioner.html#ac172d397abcae54ee6a65f2311e97f9f">  121</a></span>&#160;    <a class="code" href="classCajita_1_1DimBlockPartitioner.html#ac172d397abcae54ee6a65f2311e97f9f">ranksPerDimension</a>( MPI_Comm comm,</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;                       <span class="keyword">const</span> std::array&lt;int, NumSpaceDim&gt;&amp; )<span class="keyword"> const override</span></div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;        <span class="keywordtype">int</span> comm_size;</div>
-<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        MPI_Comm_size( comm, &amp;comm_size );</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;        std::array&lt;int, NumSpaceDim&gt; ranks_per_dim;</div>
-<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <span class="keywordflow">for</span> ( std::size_t d = 0; d &lt; NumSpaceDim; ++d )</div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;            ranks_per_dim[d] = 0;</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        MPI_Dims_create( comm_size, NumSpaceDim, ranks_per_dim.data() );</div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160; </div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="keywordflow">return</span> ranks_per_dim;</div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;    }</div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;};</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    std::array&lt;int, NumSpaceDim&gt; _ranks_per_dim;</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;};</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160; </div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;std::<span class="keywordtype">size_t</span> NumSpaceDim&gt;</div>
+<div class="line"><a name="l00114"></a><span class="lineno"><a class="line" href="classCajita_1_1DimBlockPartitioner.html">  114</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCajita_1_1DimBlockPartitioner.html">DimBlockPartitioner</a> : <span class="keyword">public</span> <a class="code" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>&lt;NumSpaceDim&gt;</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;{</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00118"></a><span class="lineno"><a class="line" href="classCajita_1_1DimBlockPartitioner.html#affcf34475c3eea4e2e92e42adad86bf7">  118</a></span>&#160;    <span class="keyword">static</span> constexpr std::size_t <a class="code" href="classCajita_1_1DimBlockPartitioner.html#affcf34475c3eea4e2e92e42adad86bf7">num_space_dim</a> = NumSpaceDim;</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160; </div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;    std::array&lt;int, NumSpaceDim&gt;</div>
+<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="classCajita_1_1DimBlockPartitioner.html#ac172d397abcae54ee6a65f2311e97f9f">  125</a></span>&#160;    <a class="code" href="classCajita_1_1DimBlockPartitioner.html#ac172d397abcae54ee6a65f2311e97f9f">ranksPerDimension</a>( MPI_Comm comm,</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;                       <span class="keyword">const</span> std::array&lt;int, NumSpaceDim&gt;&amp; )<span class="keyword"> const override</span></div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00128"></a><span class="lineno">  128</span>&#160;        <span class="keywordtype">int</span> comm_size;</div>
+<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;        MPI_Comm_size( comm, &amp;comm_size );</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        std::array&lt;int, NumSpaceDim&gt; ranks_per_dim;</div>
+<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="keywordflow">for</span> ( std::size_t d = 0; d &lt; NumSpaceDim; ++d )</div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;            ranks_per_dim[d] = 0;</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        MPI_Dims_create( comm_size, NumSpaceDim, ranks_per_dim.data() );</div>
 <div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160; </div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;} <span class="comment">// end namespace Cajita</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="keywordflow">return</span> ranks_per_dim;</div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;    }</div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;};</div>
 <div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160; </div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_PARTITIONER_HPP</span></div>
-<div class="ttc" id="aclassCajita_1_1BlockPartitioner_html"><div class="ttname"><a href="classCajita_1_1BlockPartitioner.html">Cajita::BlockPartitioner</a></div><div class="ttdoc">Block partitioner base class.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:32</div></div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;} <span class="comment">// end namespace Cajita</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160; </div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_PARTITIONER_HPP</span></div>
+<div class="ttc" id="aclassCajita_1_1BlockPartitioner_html"><div class="ttname"><a href="classCajita_1_1BlockPartitioner.html">Cajita::BlockPartitioner</a></div><div class="ttdoc">Block partitioner base class.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:36</div></div>
 <div class="ttc" id="aclassCajita_1_1BlockPartitioner_html_a36cbd63a8eace775a4269bfc06714b0a"><div class="ttname"><a href="classCajita_1_1BlockPartitioner.html#a36cbd63a8eace775a4269bfc06714b0a">Cajita::BlockPartitioner::ranksPerDimension</a></div><div class="ttdeci">virtual std::array&lt; int, NumSpaceDim &gt; ranksPerDimension(MPI_Comm comm, const std::array&lt; int, NumSpaceDim &gt; &amp;global_cells_per_dim) const =0</div><div class="ttdoc">Get the number of MPI ranks in each dimension of the grid.</div></div>
-<div class="ttc" id="aclassCajita_1_1BlockPartitioner_html_a4c67571ff5a952b1b64c10616d43838f"><div class="ttname"><a href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">Cajita::BlockPartitioner::num_space_dim</a></div><div class="ttdeci">static constexpr std::size_t num_space_dim</div><div class="ttdoc">Spatial dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:35</div></div>
-<div class="ttc" id="aclassCajita_1_1DimBlockPartitioner_html"><div class="ttname"><a href="classCajita_1_1DimBlockPartitioner.html">Cajita::DimBlockPartitioner</a></div><div class="ttdoc">Dimension-only partitioner.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:111</div></div>
-<div class="ttc" id="aclassCajita_1_1DimBlockPartitioner_html_ac172d397abcae54ee6a65f2311e97f9f"><div class="ttname"><a href="classCajita_1_1DimBlockPartitioner.html#ac172d397abcae54ee6a65f2311e97f9f">Cajita::DimBlockPartitioner::ranksPerDimension</a></div><div class="ttdeci">std::array&lt; int, NumSpaceDim &gt; ranksPerDimension(MPI_Comm comm, const std::array&lt; int, NumSpaceDim &gt; &amp;) const override</div><div class="ttdoc">Get the MPI ranks per dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:121</div></div>
-<div class="ttc" id="aclassCajita_1_1DimBlockPartitioner_html_affcf34475c3eea4e2e92e42adad86bf7"><div class="ttname"><a href="classCajita_1_1DimBlockPartitioner.html#affcf34475c3eea4e2e92e42adad86bf7">Cajita::DimBlockPartitioner::num_space_dim</a></div><div class="ttdeci">static constexpr std::size_t num_space_dim</div><div class="ttdoc">Spatial dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:114</div></div>
-<div class="ttc" id="aclassCajita_1_1ManualBlockPartitioner_html"><div class="ttname"><a href="classCajita_1_1ManualBlockPartitioner.html">Cajita::ManualBlockPartitioner</a></div><div class="ttdoc">Manual block partitioner.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:59</div></div>
-<div class="ttc" id="aclassCajita_1_1ManualBlockPartitioner_html_a757c6681acb588e3a9b76ef757cd4682"><div class="ttname"><a href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">Cajita::ManualBlockPartitioner::ranksPerDimension</a></div><div class="ttdeci">std::array&lt; int, NumSpaceDim &gt; ranksPerDimension(MPI_Comm comm, const std::array&lt; int, NumSpaceDim &gt; &amp;) const override</div><div class="ttdoc">Get the MPI ranks per dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:78</div></div>
-<div class="ttc" id="aclassCajita_1_1ManualBlockPartitioner_html_a8666ca91299503d250e9e223724ca7bd"><div class="ttname"><a href="classCajita_1_1ManualBlockPartitioner.html#a8666ca91299503d250e9e223724ca7bd">Cajita::ManualBlockPartitioner::ManualBlockPartitioner</a></div><div class="ttdeci">ManualBlockPartitioner(const std::array&lt; int, NumSpaceDim &gt; &amp;ranks_per_dim)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:68</div></div>
-<div class="ttc" id="aclassCajita_1_1ManualBlockPartitioner_html_ab6265d84aead04bf951da1460a472a6a"><div class="ttname"><a href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">Cajita::ManualBlockPartitioner::num_space_dim</a></div><div class="ttdeci">static constexpr std::size_t num_space_dim</div><div class="ttdoc">Spatial dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:62</div></div>
+<div class="ttc" id="aclassCajita_1_1BlockPartitioner_html_a4c67571ff5a952b1b64c10616d43838f"><div class="ttname"><a href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">Cajita::BlockPartitioner::num_space_dim</a></div><div class="ttdeci">static constexpr std::size_t num_space_dim</div><div class="ttdoc">Spatial dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:39</div></div>
+<div class="ttc" id="aclassCajita_1_1DimBlockPartitioner_html"><div class="ttname"><a href="classCajita_1_1DimBlockPartitioner.html">Cajita::DimBlockPartitioner</a></div><div class="ttdoc">Dimension-only partitioner.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:115</div></div>
+<div class="ttc" id="aclassCajita_1_1DimBlockPartitioner_html_ac172d397abcae54ee6a65f2311e97f9f"><div class="ttname"><a href="classCajita_1_1DimBlockPartitioner.html#ac172d397abcae54ee6a65f2311e97f9f">Cajita::DimBlockPartitioner::ranksPerDimension</a></div><div class="ttdeci">std::array&lt; int, NumSpaceDim &gt; ranksPerDimension(MPI_Comm comm, const std::array&lt; int, NumSpaceDim &gt; &amp;) const override</div><div class="ttdoc">Get the MPI ranks per dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:125</div></div>
+<div class="ttc" id="aclassCajita_1_1DimBlockPartitioner_html_affcf34475c3eea4e2e92e42adad86bf7"><div class="ttname"><a href="classCajita_1_1DimBlockPartitioner.html#affcf34475c3eea4e2e92e42adad86bf7">Cajita::DimBlockPartitioner::num_space_dim</a></div><div class="ttdeci">static constexpr std::size_t num_space_dim</div><div class="ttdoc">Spatial dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:118</div></div>
+<div class="ttc" id="aclassCajita_1_1ManualBlockPartitioner_html"><div class="ttname"><a href="classCajita_1_1ManualBlockPartitioner.html">Cajita::ManualBlockPartitioner</a></div><div class="ttdoc">Manual block partitioner.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:63</div></div>
+<div class="ttc" id="aclassCajita_1_1ManualBlockPartitioner_html_a757c6681acb588e3a9b76ef757cd4682"><div class="ttname"><a href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">Cajita::ManualBlockPartitioner::ranksPerDimension</a></div><div class="ttdeci">std::array&lt; int, NumSpaceDim &gt; ranksPerDimension(MPI_Comm comm, const std::array&lt; int, NumSpaceDim &gt; &amp;) const override</div><div class="ttdoc">Get the MPI ranks per dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:82</div></div>
+<div class="ttc" id="aclassCajita_1_1ManualBlockPartitioner_html_a8666ca91299503d250e9e223724ca7bd"><div class="ttname"><a href="classCajita_1_1ManualBlockPartitioner.html#a8666ca91299503d250e9e223724ca7bd">Cajita::ManualBlockPartitioner::ManualBlockPartitioner</a></div><div class="ttdeci">ManualBlockPartitioner(const std::array&lt; int, NumSpaceDim &gt; &amp;ranks_per_dim)</div><div class="ttdoc">Constructor.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:72</div></div>
+<div class="ttc" id="aclassCajita_1_1ManualBlockPartitioner_html_ab6265d84aead04bf951da1460a472a6a"><div class="ttname"><a href="classCajita_1_1ManualBlockPartitioner.html#ab6265d84aead04bf951da1460a472a6a">Cajita::ManualBlockPartitioner::num_space_dim</a></div><div class="ttdeci">static constexpr std::size_t num_space_dim</div><div class="ttdoc">Spatial dimension.</div><div class="ttdef"><b>Definition:</b> Cajita_Partitioner.hpp:66</div></div>
 <div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->

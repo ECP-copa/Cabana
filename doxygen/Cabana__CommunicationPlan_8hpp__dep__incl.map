@@ -1,0 +1,5 @@
+<map id="core/src/Cabana_CommunicationPlan.hpp" name="core/src/Cabana_CommunicationPlan.hpp">
+<area shape="rect" id="node1" title="Multi&#45;node communication patterns." alt="" coords="111,5,325,47"/>
+<area shape="rect" id="node2" href="$Cabana__Distributor_8hpp.html" title="Multi&#45;node particle redistribution." alt="" coords="5,95,215,121"/>
+<area shape="rect" id="node3" href="$Cabana__Halo_8hpp.html" title="Multi&#45;node particle scatter/gather." alt="" coords="239,95,415,121"/>
+</map>

@@ -70,7 +70,7 @@ $(function() {
 <div class="title">Cabana_ExecutionPolicy.hpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/****************************************************************************</span></div>
+<a href="Cabana__ExecutionPolicy_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/****************************************************************************</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright (c) 2018-2021 by the Cabana authors                            *</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * All rights reserved.                                                     *</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *                                                                          *</span></div>
@@ -81,137 +81,138 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * SPDX-License-Identifier: BSD-3-Clause                                    *</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> ****************************************************************************/</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef CABANA_EXECUTIONPOLICY_HPP</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define CABANA_EXECUTIONPOLICY_HPP</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;impl/Cabana_Index.hpp&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;Kokkos_Core.hpp&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#ifndef CABANA_EXECUTIONPOLICY_HPP</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#define CABANA_EXECUTIONPOLICY_HPP</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Index_8hpp.html">impl/Cabana_Index.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCabana.html">Cabana</a></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;{</div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;<span class="keyword">namespace </span>Impl</div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;{</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160; </div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">class</span> IndexType&gt;</div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="keyword">class </span>StructRange</div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;{</div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;    <span class="keyword">static</span> constexpr IndexType structBegin( <span class="keyword">const</span> IndexType begin )</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;    {</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classCabana_1_1Impl_1_1Index.html#a40dfbcd0c1dc68facc73b301b0709cef">Index&lt;VectorLength&gt;::s</a>( begin );</div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    }</div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160; </div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;    <span class="keyword">static</span> constexpr IndexType structEnd( <span class="keyword">const</span> IndexType end )</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    {</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;        <span class="comment">// If the end is also at the front of an array that means the struct</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;        <span class="comment">// index of end is also the ending struct index. If not, we are not</span></div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;        <span class="comment">// iterating all the way through the arrays of the last struct. In</span></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;        <span class="comment">// this case we add 1 to ensure that the loop over structs loops</span></div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="comment">// through all structs with data.</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="keywordflow">return</span> ( 0 == <a class="code" href="classCabana_1_1Impl_1_1Index.html#ad9eedc8dcdaef53b7644daee91c5437e">Index&lt;VectorLength&gt;::a</a>( end ) )</div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;                   ? <a class="code" href="classCabana_1_1Impl_1_1Index.html#a40dfbcd0c1dc68facc73b301b0709cef">Index&lt;VectorLength&gt;::s</a>( end )</div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;                   : Index&lt;VectorLength&gt;::s( end ) + 1;</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    }</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160; </div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;    <span class="keyword">static</span> constexpr IndexType size( <span class="keyword">const</span> IndexType begin,</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;                                     <span class="keyword">const</span> IndexType end )</div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    {</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        <span class="keywordflow">return</span> structEnd( end ) - structBegin( begin );</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    }</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;};</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160; </div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;} <span class="comment">// end namespace Impl</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">class</span>... Properties&gt;</div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html">   76</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1SimdPolicy.html">SimdPolicy</a></div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;    : <span class="keyword">public</span> Kokkos::TeamPolicy&lt;</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;          typename Kokkos::Impl::PolicyTraits&lt;Properties...&gt;::execution_space,</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;          Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;</div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;{</div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;    <span class="keyword">typedef</span> Kokkos::Impl::PolicyTraits&lt;Properties...&gt; traits;</div>
-<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;  <span class="keyword">public</span>:</div>
-<div class="line"><a name="l00086"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a032ee58dc32b6d3f9698d498da5bc87b">   86</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#a032ee58dc32b6d3f9698d498da5bc87b">work_tag</a> = <span class="keyword">typename</span> traits::work_tag;</div>
-<div class="line"><a name="l00088"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#ac89724ac6bed6a17ba80372cd48f229d">   88</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ac89724ac6bed6a17ba80372cd48f229d">execution_space</a> = <span class="keyword">typename</span> traits::execution_space;</div>
-<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a5d59e3a66c8616bdd2a090b2b19b85d9">   90</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#a5d59e3a66c8616bdd2a090b2b19b85d9">base_type</a> =</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;        Kokkos::TeamPolicy&lt;execution_space, Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;;</div>
-<div class="line"><a name="l00093"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a2d567896f54e566bb180f2ce418051f9">   93</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html">execution_policy</a> = <a class="code" href="classCabana_1_1SimdPolicy.html">SimdPolicy</a>&lt;VectorLength, Properties...&gt;;</div>
-<div class="line"><a name="l00095"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">   95</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> = <span class="keyword">typename</span> traits::index_type;</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00104"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21">  104</a></span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21">SimdPolicy</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> begin, <span class="keyword">const</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> end )</div>
-<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;        : <a class="code" href="classCabana_1_1SimdPolicy.html#a5d59e3a66c8616bdd2a090b2b19b85d9">base_type</a>(</div>
-<div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;              Impl::StructRange&lt;VectorLength, <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a>&gt;::size( begin, end ),</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;              1, VectorLength )</div>
-<div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        , _struct_begin(</div>
-<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;              Impl::StructRange&lt;VectorLength, <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a>&gt;::<a class="code" href="classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511">structBegin</a>(</div>
-<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;                  begin ) )</div>
-<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;        , _struct_end(</div>
-<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;              Impl::StructRange&lt;VectorLength, <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a>&gt;::<a class="code" href="classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c">structEnd</a>( end ) )</div>
-<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;        , _array_begin( Impl::Index&lt;VectorLength&gt;::a( begin ) )</div>
-<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;        , _array_end( Impl::Index&lt;VectorLength&gt;::a( end ) )</div>
-<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;    {</div>
-<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;    }</div>
-<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160; </div>
-<div class="line"><a name="l00119"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511">  119</a></span>&#160;    KOKKOS_INLINE_FUNCTION <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> <a class="code" href="classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511">structBegin</a>()<span class="keyword"> const</span></div>
-<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160;        <span class="keywordflow">return</span> _struct_begin;</div>
-<div class="line"><a name="l00122"></a><span class="lineno">  122</span>&#160;    }</div>
-<div class="line"><a name="l00123"></a><span class="lineno">  123</span>&#160; </div>
-<div class="line"><a name="l00125"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c">  125</a></span>&#160;    KOKKOS_INLINE_FUNCTION <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> <a class="code" href="classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c">structEnd</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _struct_end; }</div>
-<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160; </div>
-<div class="line"><a name="l00128"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a9cfab3dc8c4ff755b91560a77516affc">  128</a></span>&#160;    KOKKOS_INLINE_FUNCTION <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> <a class="code" href="classCabana_1_1SimdPolicy.html#a9cfab3dc8c4ff755b91560a77516affc">arrayBegin</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> s )<span class="keyword"> const</span></div>
-<div class="line"><a name="l00129"></a><span class="lineno">  129</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160;        <span class="comment">// If the given struct index is also the index of the struct index in</span></div>
-<div class="line"><a name="l00131"></a><span class="lineno">  131</span>&#160;        <span class="comment">// begin, use the starting array index. If not, that means we have</span></div>
-<div class="line"><a name="l00132"></a><span class="lineno">  132</span>&#160;        <span class="comment">// passed the first struct and all subsequent structs start at array</span></div>
-<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;        <span class="comment">// index 0.</span></div>
-<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="keywordflow">return</span> ( s == _struct_begin ) ? _array_begin : 0;</div>
-<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;    }</div>
-<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160; </div>
-<div class="line"><a name="l00138"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a436d08f61136ca3d83b76e712058da39">  138</a></span>&#160;    KOKKOS_INLINE_FUNCTION <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> <a class="code" href="classCabana_1_1SimdPolicy.html#a436d08f61136ca3d83b76e712058da39">arrayEnd</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> s )<span class="keyword"> const</span></div>
-<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;<span class="keyword">    </span>{</div>
-<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160;        <span class="comment">// If we are in the last unfilled struct then use the array</span></div>
-<div class="line"><a name="l00141"></a><span class="lineno">  141</span>&#160;        <span class="comment">// index of end. If not, we are looping through the current array all</span></div>
-<div class="line"><a name="l00142"></a><span class="lineno">  142</span>&#160;        <span class="comment">// the way to the end so use the vector length.</span></div>
-<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;        <span class="keywordflow">return</span> ( ( s == _struct_end - 1 ) &amp;&amp; ( _array_end != 0 ) )</div>
-<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;                   ? _array_end</div>
-<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;                   : VectorLength;</div>
-<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;    }</div>
-<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160; </div>
-<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> _struct_begin;</div>
-<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> _struct_end;</div>
-<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> _array_begin;</div>
-<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> _array_end;</div>
-<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;};</div>
-<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160; </div>
-<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160; </div>
-<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;Kokkos_Core.hpp&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160; </div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCabana.html">Cabana</a></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;{</div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="keyword">namespace </span>Impl</div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;{</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160; </div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">class</span> IndexType&gt;</div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="keyword">class </span>StructRange</div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;{</div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;    <span class="keyword">static</span> constexpr IndexType structBegin( <span class="keyword">const</span> IndexType begin )</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;    {</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;        <span class="keywordflow">return</span> <a class="code" href="classCabana_1_1Impl_1_1Index.html#a40dfbcd0c1dc68facc73b301b0709cef">Index&lt;VectorLength&gt;::s</a>( begin );</div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;    }</div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;    <span class="keyword">static</span> constexpr IndexType structEnd( <span class="keyword">const</span> IndexType end )</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;    {</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;        <span class="comment">// If the end is also at the front of an array that means the struct</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;        <span class="comment">// index of end is also the ending struct index. If not, we are not</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;        <span class="comment">// iterating all the way through the arrays of the last struct. In</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;        <span class="comment">// this case we add 1 to ensure that the loop over structs loops</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        <span class="comment">// through all structs with data.</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;        <span class="keywordflow">return</span> ( 0 == <a class="code" href="classCabana_1_1Impl_1_1Index.html#ad9eedc8dcdaef53b7644daee91c5437e">Index&lt;VectorLength&gt;::a</a>( end ) )</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;                   ? <a class="code" href="classCabana_1_1Impl_1_1Index.html#a40dfbcd0c1dc68facc73b301b0709cef">Index&lt;VectorLength&gt;::s</a>( end )</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;                   : Index&lt;VectorLength&gt;::s( end ) + 1;</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;    }</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    KOKKOS_INLINE_FUNCTION</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;    <span class="keyword">static</span> constexpr IndexType size( <span class="keyword">const</span> IndexType begin,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;                                     <span class="keyword">const</span> IndexType end )</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;    {</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;        <span class="keywordflow">return</span> structEnd( end ) - structBegin( begin );</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;    }</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;};</div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;} <span class="comment">// end namespace Impl</span></div>
+<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160; </div>
+<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">class</span>... Properties&gt;</div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html">   80</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1SimdPolicy.html">SimdPolicy</a></div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    : <span class="keyword">public</span> Kokkos::TeamPolicy&lt;</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          typename Kokkos::Impl::PolicyTraits&lt;Properties...&gt;::execution_space,</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;</div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;{</div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">typedef</span> Kokkos::Impl::PolicyTraits&lt;Properties...&gt; traits;</div>
+<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keyword">public</span>:</div>
+<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a032ee58dc32b6d3f9698d498da5bc87b">   90</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#a032ee58dc32b6d3f9698d498da5bc87b">work_tag</a> = <span class="keyword">typename</span> traits::work_tag;</div>
+<div class="line"><a name="l00092"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#ac89724ac6bed6a17ba80372cd48f229d">   92</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ac89724ac6bed6a17ba80372cd48f229d">execution_space</a> = <span class="keyword">typename</span> traits::execution_space;</div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a5d59e3a66c8616bdd2a090b2b19b85d9">   94</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#a5d59e3a66c8616bdd2a090b2b19b85d9">base_type</a> =</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;        Kokkos::TeamPolicy&lt;execution_space, Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;;</div>
+<div class="line"><a name="l00097"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a2d567896f54e566bb180f2ce418051f9">   97</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html">execution_policy</a> = <a class="code" href="classCabana_1_1SimdPolicy.html">SimdPolicy</a>&lt;VectorLength, Properties...&gt;;</div>
+<div class="line"><a name="l00099"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">   99</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> = <span class="keyword">typename</span> traits::index_type;</div>
+<div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
+<div class="line"><a name="l00108"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21">  108</a></span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21">SimdPolicy</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> begin, <span class="keyword">const</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> end )</div>
+<div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        : <a class="code" href="classCabana_1_1SimdPolicy.html#a5d59e3a66c8616bdd2a090b2b19b85d9">base_type</a>(</div>
+<div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;              Impl::StructRange&lt;VectorLength, <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a>&gt;::size( begin, end ),</div>
+<div class="line"><a name="l00111"></a><span class="lineno">  111</span>&#160;              1, VectorLength )</div>
+<div class="line"><a name="l00112"></a><span class="lineno">  112</span>&#160;        , _struct_begin(</div>
+<div class="line"><a name="l00113"></a><span class="lineno">  113</span>&#160;              Impl::StructRange&lt;VectorLength, <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a>&gt;::<a class="code" href="classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511">structBegin</a>(</div>
+<div class="line"><a name="l00114"></a><span class="lineno">  114</span>&#160;                  begin ) )</div>
+<div class="line"><a name="l00115"></a><span class="lineno">  115</span>&#160;        , _struct_end(</div>
+<div class="line"><a name="l00116"></a><span class="lineno">  116</span>&#160;              Impl::StructRange&lt;VectorLength, <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a>&gt;::<a class="code" href="classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c">structEnd</a>( end ) )</div>
+<div class="line"><a name="l00117"></a><span class="lineno">  117</span>&#160;        , _array_begin( Impl::Index&lt;VectorLength&gt;::a( begin ) )</div>
+<div class="line"><a name="l00118"></a><span class="lineno">  118</span>&#160;        , _array_end( Impl::Index&lt;VectorLength&gt;::a( end ) )</div>
+<div class="line"><a name="l00119"></a><span class="lineno">  119</span>&#160;    {</div>
+<div class="line"><a name="l00120"></a><span class="lineno">  120</span>&#160;    }</div>
+<div class="line"><a name="l00121"></a><span class="lineno">  121</span>&#160; </div>
+<div class="line"><a name="l00123"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511">  123</a></span>&#160;    KOKKOS_INLINE_FUNCTION <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> <a class="code" href="classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511">structBegin</a>()<span class="keyword"> const</span></div>
+<div class="line"><a name="l00124"></a><span class="lineno">  124</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00125"></a><span class="lineno">  125</span>&#160;        <span class="keywordflow">return</span> _struct_begin;</div>
+<div class="line"><a name="l00126"></a><span class="lineno">  126</span>&#160;    }</div>
+<div class="line"><a name="l00127"></a><span class="lineno">  127</span>&#160; </div>
+<div class="line"><a name="l00129"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c">  129</a></span>&#160;    KOKKOS_INLINE_FUNCTION <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> <a class="code" href="classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c">structEnd</a>()<span class="keyword"> const </span>{ <span class="keywordflow">return</span> _struct_end; }</div>
+<div class="line"><a name="l00130"></a><span class="lineno">  130</span>&#160; </div>
+<div class="line"><a name="l00132"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a9cfab3dc8c4ff755b91560a77516affc">  132</a></span>&#160;    KOKKOS_INLINE_FUNCTION <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> <a class="code" href="classCabana_1_1SimdPolicy.html#a9cfab3dc8c4ff755b91560a77516affc">arrayBegin</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> s )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00133"></a><span class="lineno">  133</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00134"></a><span class="lineno">  134</span>&#160;        <span class="comment">// If the given struct index is also the index of the struct index in</span></div>
+<div class="line"><a name="l00135"></a><span class="lineno">  135</span>&#160;        <span class="comment">// begin, use the starting array index. If not, that means we have</span></div>
+<div class="line"><a name="l00136"></a><span class="lineno">  136</span>&#160;        <span class="comment">// passed the first struct and all subsequent structs start at array</span></div>
+<div class="line"><a name="l00137"></a><span class="lineno">  137</span>&#160;        <span class="comment">// index 0.</span></div>
+<div class="line"><a name="l00138"></a><span class="lineno">  138</span>&#160;        <span class="keywordflow">return</span> ( s == _struct_begin ) ? _array_begin : 0;</div>
+<div class="line"><a name="l00139"></a><span class="lineno">  139</span>&#160;    }</div>
+<div class="line"><a name="l00140"></a><span class="lineno">  140</span>&#160; </div>
+<div class="line"><a name="l00142"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a436d08f61136ca3d83b76e712058da39">  142</a></span>&#160;    KOKKOS_INLINE_FUNCTION <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> <a class="code" href="classCabana_1_1SimdPolicy.html#a436d08f61136ca3d83b76e712058da39">arrayEnd</a>( <span class="keyword">const</span> <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> s )<span class="keyword"> const</span></div>
+<div class="line"><a name="l00143"></a><span class="lineno">  143</span>&#160;<span class="keyword">    </span>{</div>
+<div class="line"><a name="l00144"></a><span class="lineno">  144</span>&#160;        <span class="comment">// If we are in the last unfilled struct then use the array</span></div>
+<div class="line"><a name="l00145"></a><span class="lineno">  145</span>&#160;        <span class="comment">// index of end. If not, we are looping through the current array all</span></div>
+<div class="line"><a name="l00146"></a><span class="lineno">  146</span>&#160;        <span class="comment">// the way to the end so use the vector length.</span></div>
+<div class="line"><a name="l00147"></a><span class="lineno">  147</span>&#160;        <span class="keywordflow">return</span> ( ( s == _struct_end - 1 ) &amp;&amp; ( _array_end != 0 ) )</div>
+<div class="line"><a name="l00148"></a><span class="lineno">  148</span>&#160;                   ? _array_end</div>
+<div class="line"><a name="l00149"></a><span class="lineno">  149</span>&#160;                   : VectorLength;</div>
+<div class="line"><a name="l00150"></a><span class="lineno">  150</span>&#160;    }</div>
+<div class="line"><a name="l00151"></a><span class="lineno">  151</span>&#160; </div>
+<div class="line"><a name="l00152"></a><span class="lineno">  152</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00153"></a><span class="lineno">  153</span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> _struct_begin;</div>
+<div class="line"><a name="l00154"></a><span class="lineno">  154</span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> _struct_end;</div>
+<div class="line"><a name="l00155"></a><span class="lineno">  155</span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> _array_begin;</div>
+<div class="line"><a name="l00156"></a><span class="lineno">  156</span>&#160;    <a class="code" href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">index_type</a> _array_end;</div>
+<div class="line"><a name="l00157"></a><span class="lineno">  157</span>&#160;};</div>
 <div class="line"><a name="l00158"></a><span class="lineno">  158</span>&#160; </div>
-<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CABANA_EXECUTIONPOLICY_HPP</span></div>
-<div class="ttc" id="aclassCabana_1_1Impl_1_1Index_html_a40dfbcd0c1dc68facc73b301b0709cef"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a40dfbcd0c1dc68facc73b301b0709cef">Cabana::Impl::Index::s</a></div><div class="ttdeci">static constexpr KOKKOS_FORCEINLINE_FUNCTION std::size_t s(const std::size_t i)</div><div class="ttdoc">Given a tuple index get the AoSoA struct index.</div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:58</div></div>
-<div class="ttc" id="aclassCabana_1_1Impl_1_1Index_html_ad9eedc8dcdaef53b7644daee91c5437e"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#ad9eedc8dcdaef53b7644daee91c5437e">Cabana::Impl::Index::a</a></div><div class="ttdeci">static constexpr KOKKOS_FORCEINLINE_FUNCTION std::size_t a(const std::size_t i)</div><div class="ttdoc">Given a tuple index get the AoSoA array index.</div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:73</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html">Cabana::SimdPolicy</a></div><div class="ttdoc">Execution policy over a range of 2d indices.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:80</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a032ee58dc32b6d3f9698d498da5bc87b"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a032ee58dc32b6d3f9698d498da5bc87b">Cabana::SimdPolicy::work_tag</a></div><div class="ttdeci">typename traits::work_tag work_tag</div><div class="ttdoc">Work tag.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:86</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a1402abf6d218b5bfeff58ee1ea5acc21"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21">Cabana::SimdPolicy::SimdPolicy</a></div><div class="ttdeci">SimdPolicy(const index_type begin, const index_type end)</div><div class="ttdoc">Range constructor.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:104</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a436d08f61136ca3d83b76e712058da39"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a436d08f61136ca3d83b76e712058da39">Cabana::SimdPolicy::arrayEnd</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type arrayEnd(const index_type s) const</div><div class="ttdoc">Given a struct id get the ending array index.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:138</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a5d59e3a66c8616bdd2a090b2b19b85d9"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a5d59e3a66c8616bdd2a090b2b19b85d9">Cabana::SimdPolicy::base_type</a></div><div class="ttdeci">Kokkos::TeamPolicy&lt; execution_space, Kokkos::Schedule&lt; Kokkos::Dynamic &gt; &gt; base_type</div><div class="ttdoc">Kokkos team policy.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:91</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a9cfab3dc8c4ff755b91560a77516affc"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a9cfab3dc8c4ff755b91560a77516affc">Cabana::SimdPolicy::arrayBegin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type arrayBegin(const index_type s) const</div><div class="ttdoc">Given a struct id get the beginning array index.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:128</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_ac89724ac6bed6a17ba80372cd48f229d"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#ac89724ac6bed6a17ba80372cd48f229d">Cabana::SimdPolicy::execution_space</a></div><div class="ttdeci">typename traits::execution_space execution_space</div><div class="ttdoc">Kokkos execution space.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:88</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_ad2f6d14dc0e8eb5e77a47272fd99d95c"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c">Cabana::SimdPolicy::structEnd</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type structEnd() const</div><div class="ttdoc">Get the ending struct index.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:125</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_ae8cd4f9268ade02241bf0015ba97ca03"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">Cabana::SimdPolicy::index_type</a></div><div class="ttdeci">typename traits::index_type index_type</div><div class="ttdoc">Index type.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:95</div></div>
-<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_afbcf44e041fbf251072b6f9b983a2511"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511">Cabana::SimdPolicy::structBegin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type structBegin() const</div><div class="ttdoc">Get the starting struct index.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:119</div></div>
-<div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:31</div></div>
+<div class="line"><a name="l00159"></a><span class="lineno">  159</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00160"></a><span class="lineno">  160</span>&#160; </div>
+<div class="line"><a name="l00161"></a><span class="lineno">  161</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00162"></a><span class="lineno">  162</span>&#160; </div>
+<div class="line"><a name="l00163"></a><span class="lineno">  163</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CABANA_EXECUTIONPOLICY_HPP</span></div>
+<div class="ttc" id="aCabana__Index_8hpp_html"><div class="ttname"><a href="Cabana__Index_8hpp.html">Cabana_Index.hpp</a></div><div class="ttdoc">AoSoA indexing.</div></div>
+<div class="ttc" id="aclassCabana_1_1Impl_1_1Index_html_a40dfbcd0c1dc68facc73b301b0709cef"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#a40dfbcd0c1dc68facc73b301b0709cef">Cabana::Impl::Index::s</a></div><div class="ttdeci">static constexpr KOKKOS_FORCEINLINE_FUNCTION std::size_t s(const std::size_t i)</div><div class="ttdoc">Given a tuple index get the AoSoA struct index.</div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:62</div></div>
+<div class="ttc" id="aclassCabana_1_1Impl_1_1Index_html_ad9eedc8dcdaef53b7644daee91c5437e"><div class="ttname"><a href="classCabana_1_1Impl_1_1Index.html#ad9eedc8dcdaef53b7644daee91c5437e">Cabana::Impl::Index::a</a></div><div class="ttdeci">static constexpr KOKKOS_FORCEINLINE_FUNCTION std::size_t a(const std::size_t i)</div><div class="ttdoc">Given a tuple index get the AoSoA array index.</div><div class="ttdef"><b>Definition:</b> Cabana_Index.hpp:77</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html">Cabana::SimdPolicy</a></div><div class="ttdoc">Execution policy over a range of 2d indices.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:84</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a032ee58dc32b6d3f9698d498da5bc87b"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a032ee58dc32b6d3f9698d498da5bc87b">Cabana::SimdPolicy::work_tag</a></div><div class="ttdeci">typename traits::work_tag work_tag</div><div class="ttdoc">Work tag.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:90</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a1402abf6d218b5bfeff58ee1ea5acc21"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a1402abf6d218b5bfeff58ee1ea5acc21">Cabana::SimdPolicy::SimdPolicy</a></div><div class="ttdeci">SimdPolicy(const index_type begin, const index_type end)</div><div class="ttdoc">Range constructor.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:108</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a436d08f61136ca3d83b76e712058da39"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a436d08f61136ca3d83b76e712058da39">Cabana::SimdPolicy::arrayEnd</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type arrayEnd(const index_type s) const</div><div class="ttdoc">Given a struct id get the ending array index.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:142</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a5d59e3a66c8616bdd2a090b2b19b85d9"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a5d59e3a66c8616bdd2a090b2b19b85d9">Cabana::SimdPolicy::base_type</a></div><div class="ttdeci">Kokkos::TeamPolicy&lt; execution_space, Kokkos::Schedule&lt; Kokkos::Dynamic &gt; &gt; base_type</div><div class="ttdoc">Kokkos team policy.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:95</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_a9cfab3dc8c4ff755b91560a77516affc"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#a9cfab3dc8c4ff755b91560a77516affc">Cabana::SimdPolicy::arrayBegin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type arrayBegin(const index_type s) const</div><div class="ttdoc">Given a struct id get the beginning array index.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:132</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_ac89724ac6bed6a17ba80372cd48f229d"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#ac89724ac6bed6a17ba80372cd48f229d">Cabana::SimdPolicy::execution_space</a></div><div class="ttdeci">typename traits::execution_space execution_space</div><div class="ttdoc">Kokkos execution space.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:92</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_ad2f6d14dc0e8eb5e77a47272fd99d95c"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#ad2f6d14dc0e8eb5e77a47272fd99d95c">Cabana::SimdPolicy::structEnd</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type structEnd() const</div><div class="ttdoc">Get the ending struct index.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:129</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_ae8cd4f9268ade02241bf0015ba97ca03"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#ae8cd4f9268ade02241bf0015ba97ca03">Cabana::SimdPolicy::index_type</a></div><div class="ttdeci">typename traits::index_type index_type</div><div class="ttdoc">Index type.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:99</div></div>
+<div class="ttc" id="aclassCabana_1_1SimdPolicy_html_afbcf44e041fbf251072b6f9b983a2511"><div class="ttname"><a href="classCabana_1_1SimdPolicy.html#afbcf44e041fbf251072b6f9b983a2511">Cabana::SimdPolicy::structBegin</a></div><div class="ttdeci">KOKKOS_INLINE_FUNCTION index_type structBegin() const</div><div class="ttdoc">Get the starting struct index.</div><div class="ttdef"><b>Definition:</b> Cabana_ExecutionPolicy.hpp:123</div></div>
+<div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:35</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

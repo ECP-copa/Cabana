@@ -70,7 +70,7 @@ $(function() {
 <div class="title">Cabana_Types.hpp</div>  </div>
 </div><!--header-->
 <div class="contents">
-<div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/****************************************************************************</span></div>
+<a href="Cabana__Types_8hpp.html">Go to the documentation of this file.</a><div class="fragment"><div class="line"><a name="l00001"></a><span class="lineno">    1</span>&#160;<span class="comment">/****************************************************************************</span></div>
 <div class="line"><a name="l00002"></a><span class="lineno">    2</span>&#160;<span class="comment"> * Copyright (c) 2018-2021 by the Cabana authors                            *</span></div>
 <div class="line"><a name="l00003"></a><span class="lineno">    3</span>&#160;<span class="comment"> * All rights reserved.                                                     *</span></div>
 <div class="line"><a name="l00004"></a><span class="lineno">    4</span>&#160;<span class="comment"> *                                                                          *</span></div>
@@ -81,93 +81,93 @@ $(function() {
 <div class="line"><a name="l00009"></a><span class="lineno">    9</span>&#160;<span class="comment"> * SPDX-License-Identifier: BSD-3-Clause                                    *</span></div>
 <div class="line"><a name="l00010"></a><span class="lineno">   10</span>&#160;<span class="comment"> ****************************************************************************/</span></div>
 <div class="line"><a name="l00011"></a><span class="lineno">   11</span>&#160; </div>
-<div class="line"><a name="l00012"></a><span class="lineno">   12</span>&#160;<span class="preprocessor">#ifndef CABANA_TYPES_HPP</span></div>
-<div class="line"><a name="l00013"></a><span class="lineno">   13</span>&#160;<span class="preprocessor">#define CABANA_TYPES_HPP</span></div>
-<div class="line"><a name="l00014"></a><span class="lineno">   14</span>&#160; </div>
-<div class="line"><a name="l00015"></a><span class="lineno">   15</span>&#160;<span class="preprocessor">#include &lt;Kokkos_Core.hpp&gt;</span></div>
-<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160; </div>
-<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a name="l00016"></a><span class="lineno">   16</span>&#160;<span class="preprocessor">#ifndef CABANA_TYPES_HPP</span></div>
+<div class="line"><a name="l00017"></a><span class="lineno">   17</span>&#160;<span class="preprocessor">#define CABANA_TYPES_HPP</span></div>
 <div class="line"><a name="l00018"></a><span class="lineno">   18</span>&#160; </div>
-<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCabana.html">Cabana</a></div>
-<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160;{</div>
-<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160;<span class="comment">// Memory access tags.</span></div>
-<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span>&gt;</div>
-<div class="line"><a name="l00026"></a><span class="lineno"><a class="line" href="structCabana_1_1is__memory__access__tag.html">   26</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag</a> : <span class="keyword">public</span> std::false_type</div>
-<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;{</div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;};</div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160; </div>
-<div class="line"><a name="l00032"></a><span class="lineno"><a class="line" href="structCabana_1_1DefaultAccessMemory.html">   32</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;{</div>
-<div class="line"><a name="l00035"></a><span class="lineno"><a class="line" href="structCabana_1_1DefaultAccessMemory.html#abc37411d2a9ca286bc90c843b3addac3">   35</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1DefaultAccessMemory.html">memory_access_type</a> = <a class="code" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>;</div>
-<div class="line"><a name="l00037"></a><span class="lineno"><a class="line" href="structCabana_1_1DefaultAccessMemory.html#a073271b58939601ceb7800c92bfcc29f">   37</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1DefaultAccessMemory.html#a073271b58939601ceb7800c92bfcc29f">kokkos_memory_traits</a> =</div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;        Kokkos::MemoryTraits&lt;Kokkos::Unmanaged | Kokkos::Aligned |</div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;                             Kokkos::Restrict&gt;;</div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;};</div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00044"></a><span class="lineno"><a class="line" href="structCabana_1_1is__memory__access__tag_3_01DefaultAccessMemory_01_4.html">   44</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag</a>&lt;<a class="code" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>&gt; : <span class="keyword">public</span> std::true_type</div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;{</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;};</div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno"><a class="line" href="structCabana_1_1RandomAccessMemory.html">   49</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a></div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;{</div>
-<div class="line"><a name="l00052"></a><span class="lineno"><a class="line" href="structCabana_1_1RandomAccessMemory.html#ae867704a61d56eb1a6151f847f97588c">   52</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1RandomAccessMemory.html">memory_access_type</a> = <a class="code" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a>;</div>
-<div class="line"><a name="l00054"></a><span class="lineno"><a class="line" href="structCabana_1_1RandomAccessMemory.html#a97999de225e8d2a178f5cf936b124ea8">   54</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1RandomAccessMemory.html#a97999de225e8d2a178f5cf936b124ea8">kokkos_memory_traits</a> =</div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;        Kokkos::MemoryTraits&lt;Kokkos::Unmanaged | Kokkos::Aligned |</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;                             Kokkos::RandomAccess&gt;;</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;};</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160; </div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00060"></a><span class="lineno"><a class="line" href="structCabana_1_1is__memory__access__tag_3_01RandomAccessMemory_01_4.html">   60</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag</a>&lt;<a class="code" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a>&gt; : <span class="keyword">public</span> std::true_type</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;{</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;};</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160; </div>
-<div class="line"><a name="l00065"></a><span class="lineno"><a class="line" href="structCabana_1_1AtomicAccessMemory.html">   65</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;{</div>
-<div class="line"><a name="l00068"></a><span class="lineno"><a class="line" href="structCabana_1_1AtomicAccessMemory.html#aea2ef8c374d1becd997a5fd8e941d1b8">   68</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1AtomicAccessMemory.html">memory_access_type</a> = <a class="code" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a>;</div>
-<div class="line"><a name="l00070"></a><span class="lineno"><a class="line" href="structCabana_1_1AtomicAccessMemory.html#a5900606c4022248d570980974532038e">   70</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1AtomicAccessMemory.html#a5900606c4022248d570980974532038e">kokkos_memory_traits</a> =</div>
-<div class="line"><a name="l00071"></a><span class="lineno">   71</span>&#160;        Kokkos::MemoryTraits&lt;Kokkos::Unmanaged | Kokkos::Aligned |</div>
-<div class="line"><a name="l00072"></a><span class="lineno">   72</span>&#160;                             Kokkos::Atomic&gt;;</div>
-<div class="line"><a name="l00073"></a><span class="lineno">   73</span>&#160;};</div>
-<div class="line"><a name="l00074"></a><span class="lineno">   74</span>&#160; </div>
-<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
-<div class="line"><a name="l00076"></a><span class="lineno"><a class="line" href="structCabana_1_1is__memory__access__tag_3_01AtomicAccessMemory_01_4.html">   76</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag</a>&lt;<a class="code" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a>&gt; : <span class="keyword">public</span> std::true_type</div>
-<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;{</div>
-<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160;};</div>
-<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160; </div>
-<div class="line"><a name="l00080"></a><span class="lineno">   80</span>&#160;<span class="comment">// Checks whether memory space is accessible from execution space.</span></div>
-<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;<span class="comment">// This was taken from &lt;ArborX_DetailsKokkosExtAccessibilityTraits.hpp&gt;</span></div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> MemorySpace, <span class="keyword">typename</span> ExecutionSpace, <span class="keyword">typename</span> = <span class="keywordtype">void</span>&gt;</div>
-<div class="line"><a name="l00083"></a><span class="lineno"><a class="line" href="structCabana_1_1is__accessible__from.html">   83</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__accessible__from.html">is_accessible_from</a> : std::false_type</div>
-<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;{</div>
-<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;    static_assert( Kokkos::is_memory_space&lt;MemorySpace&gt;::value, <span class="stringliteral">&quot;&quot;</span> );</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    static_assert( Kokkos::is_execution_space&lt;ExecutionSpace&gt;::value, <span class="stringliteral">&quot;&quot;</span> );</div>
-<div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160;};</div>
-<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160; </div>
-<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> MemorySpace, <span class="keyword">typename</span> ExecutionSpace&gt;</div>
-<div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="structCabana_1_1is__accessible__from_3_01MemorySpace_00_01ExecutionSpace_00_01std_1_1enable__if_96534d0f81e01b006272bb63cf2f3dd3.html">   90</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__accessible__from.html">is_accessible_from</a>&lt;MemorySpace, ExecutionSpace,</div>
-<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;                          std::enable_if_t&lt;Kokkos::SpaceAccessibility&lt;</div>
-<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160;                              ExecutionSpace, MemorySpace&gt;::accessible&gt;&gt;</div>
-<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;    : std::true_type</div>
-<div class="line"><a name="l00094"></a><span class="lineno">   94</span>&#160;{</div>
-<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;};</div>
-<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160; </div>
-<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160; </div>
-<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00019"></a><span class="lineno">   19</span>&#160;<span class="preprocessor">#include &lt;Kokkos_Core.hpp&gt;</span></div>
+<div class="line"><a name="l00020"></a><span class="lineno">   20</span>&#160; </div>
+<div class="line"><a name="l00021"></a><span class="lineno">   21</span>&#160;<span class="preprocessor">#include &lt;type_traits&gt;</span></div>
+<div class="line"><a name="l00022"></a><span class="lineno">   22</span>&#160; </div>
+<div class="line"><a name="l00023"></a><span class="lineno">   23</span>&#160;<span class="keyword">namespace </span><a class="code" href="namespaceCabana.html">Cabana</a></div>
+<div class="line"><a name="l00024"></a><span class="lineno">   24</span>&#160;{</div>
+<div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="comment">// Memory access tags.</span></div>
+<div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span>&gt;</div>
+<div class="line"><a name="l00030"></a><span class="lineno"><a class="line" href="structCabana_1_1is__memory__access__tag.html">   30</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag</a> : <span class="keyword">public</span> std::false_type</div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;{</div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;};</div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160; </div>
+<div class="line"><a name="l00036"></a><span class="lineno"><a class="line" href="structCabana_1_1DefaultAccessMemory.html">   36</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a></div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
+<div class="line"><a name="l00039"></a><span class="lineno"><a class="line" href="structCabana_1_1DefaultAccessMemory.html#abc37411d2a9ca286bc90c843b3addac3">   39</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1DefaultAccessMemory.html">memory_access_type</a> = <a class="code" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>;</div>
+<div class="line"><a name="l00041"></a><span class="lineno"><a class="line" href="structCabana_1_1DefaultAccessMemory.html#a073271b58939601ceb7800c92bfcc29f">   41</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1DefaultAccessMemory.html#a073271b58939601ceb7800c92bfcc29f">kokkos_memory_traits</a> =</div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;        Kokkos::MemoryTraits&lt;Kokkos::Unmanaged | Kokkos::Aligned |</div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;                             Kokkos::Restrict&gt;;</div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;};</div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="structCabana_1_1is__memory__access__tag_3_01DefaultAccessMemory_01_4.html">   48</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag</a>&lt;<a class="code" href="structCabana_1_1DefaultAccessMemory.html">DefaultAccessMemory</a>&gt; : <span class="keyword">public</span> std::true_type</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;{</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;};</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160; </div>
+<div class="line"><a name="l00053"></a><span class="lineno"><a class="line" href="structCabana_1_1RandomAccessMemory.html">   53</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;{</div>
+<div class="line"><a name="l00056"></a><span class="lineno"><a class="line" href="structCabana_1_1RandomAccessMemory.html#ae867704a61d56eb1a6151f847f97588c">   56</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1RandomAccessMemory.html">memory_access_type</a> = <a class="code" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a>;</div>
+<div class="line"><a name="l00058"></a><span class="lineno"><a class="line" href="structCabana_1_1RandomAccessMemory.html#a97999de225e8d2a178f5cf936b124ea8">   58</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1RandomAccessMemory.html#a97999de225e8d2a178f5cf936b124ea8">kokkos_memory_traits</a> =</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;        Kokkos::MemoryTraits&lt;Kokkos::Unmanaged | Kokkos::Aligned |</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;                             Kokkos::RandomAccess&gt;;</div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;};</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160; </div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00064"></a><span class="lineno"><a class="line" href="structCabana_1_1is__memory__access__tag_3_01RandomAccessMemory_01_4.html">   64</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag</a>&lt;<a class="code" href="structCabana_1_1RandomAccessMemory.html">RandomAccessMemory</a>&gt; : <span class="keyword">public</span> std::true_type</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;{</div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;};</div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno"><a class="line" href="structCabana_1_1AtomicAccessMemory.html">   69</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a></div>
+<div class="line"><a name="l00070"></a><span class="lineno">   70</span>&#160;{</div>
+<div class="line"><a name="l00072"></a><span class="lineno"><a class="line" href="structCabana_1_1AtomicAccessMemory.html#aea2ef8c374d1becd997a5fd8e941d1b8">   72</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1AtomicAccessMemory.html">memory_access_type</a> = <a class="code" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a>;</div>
+<div class="line"><a name="l00074"></a><span class="lineno"><a class="line" href="structCabana_1_1AtomicAccessMemory.html#a5900606c4022248d570980974532038e">   74</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="structCabana_1_1AtomicAccessMemory.html#a5900606c4022248d570980974532038e">kokkos_memory_traits</a> =</div>
+<div class="line"><a name="l00075"></a><span class="lineno">   75</span>&#160;        Kokkos::MemoryTraits&lt;Kokkos::Unmanaged | Kokkos::Aligned |</div>
+<div class="line"><a name="l00076"></a><span class="lineno">   76</span>&#160;                             Kokkos::Atomic&gt;;</div>
+<div class="line"><a name="l00077"></a><span class="lineno">   77</span>&#160;};</div>
+<div class="line"><a name="l00078"></a><span class="lineno">   78</span>&#160; </div>
+<div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="keyword">template</span> &lt;&gt;</div>
+<div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="structCabana_1_1is__memory__access__tag_3_01AtomicAccessMemory_01_4.html">   80</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__memory__access__tag.html">is_memory_access_tag</a>&lt;<a class="code" href="structCabana_1_1AtomicAccessMemory.html">AtomicAccessMemory</a>&gt; : <span class="keyword">public</span> std::true_type</div>
+<div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;{</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;};</div>
+<div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160; </div>
+<div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;<span class="comment">// Checks whether memory space is accessible from execution space.</span></div>
+<div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;<span class="comment">// This was taken from &lt;ArborX_DetailsKokkosExtAccessibilityTraits.hpp&gt;</span></div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> MemorySpace, <span class="keyword">typename</span> ExecutionSpace, <span class="keyword">typename</span> = <span class="keywordtype">void</span>&gt;</div>
+<div class="line"><a name="l00087"></a><span class="lineno"><a class="line" href="structCabana_1_1is__accessible__from.html">   87</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__accessible__from.html">is_accessible_from</a> : std::false_type</div>
+<div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;{</div>
+<div class="line"><a name="l00089"></a><span class="lineno">   89</span>&#160;    static_assert( Kokkos::is_memory_space&lt;MemorySpace&gt;::value, <span class="stringliteral">&quot;&quot;</span> );</div>
+<div class="line"><a name="l00090"></a><span class="lineno">   90</span>&#160;    static_assert( Kokkos::is_execution_space&lt;ExecutionSpace&gt;::value, <span class="stringliteral">&quot;&quot;</span> );</div>
+<div class="line"><a name="l00091"></a><span class="lineno">   91</span>&#160;};</div>
+<div class="line"><a name="l00092"></a><span class="lineno">   92</span>&#160; </div>
+<div class="line"><a name="l00093"></a><span class="lineno">   93</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">typename</span> MemorySpace, <span class="keyword">typename</span> ExecutionSpace&gt;</div>
+<div class="line"><a name="l00094"></a><span class="lineno"><a class="line" href="structCabana_1_1is__accessible__from_3_01MemorySpace_00_01ExecutionSpace_00_01std_1_1enable__if_96534d0f81e01b006272bb63cf2f3dd3.html">   94</a></span>&#160;<span class="keyword">struct </span><a class="code" href="structCabana_1_1is__accessible__from.html">is_accessible_from</a>&lt;MemorySpace, ExecutionSpace,</div>
+<div class="line"><a name="l00095"></a><span class="lineno">   95</span>&#160;                          std::enable_if_t&lt;Kokkos::SpaceAccessibility&lt;</div>
+<div class="line"><a name="l00096"></a><span class="lineno">   96</span>&#160;                              ExecutionSpace, MemorySpace&gt;::accessible&gt;&gt;</div>
+<div class="line"><a name="l00097"></a><span class="lineno">   97</span>&#160;    : std::true_type</div>
+<div class="line"><a name="l00098"></a><span class="lineno">   98</span>&#160;{</div>
+<div class="line"><a name="l00099"></a><span class="lineno">   99</span>&#160;};</div>
 <div class="line"><a name="l00100"></a><span class="lineno">  100</span>&#160; </div>
-<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CABANA_TYPES_HPP</span></div>
-<div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:31</div></div>
-<div class="ttc" id="astructCabana_1_1AtomicAccessMemory_html"><div class="ttname"><a href="structCabana_1_1AtomicAccessMemory.html">Cabana::AtomicAccessMemory</a></div><div class="ttdoc">Atomic memory access. All reads and writes are atomic.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:66</div></div>
-<div class="ttc" id="astructCabana_1_1AtomicAccessMemory_html_a5900606c4022248d570980974532038e"><div class="ttname"><a href="structCabana_1_1AtomicAccessMemory.html#a5900606c4022248d570980974532038e">Cabana::AtomicAccessMemory::kokkos_memory_traits</a></div><div class="ttdeci">Kokkos::MemoryTraits&lt; Kokkos::Unmanaged|Kokkos::Aligned|Kokkos::Atomic &gt; kokkos_memory_traits</div><div class="ttdoc">Kokkos traits.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:72</div></div>
-<div class="ttc" id="astructCabana_1_1DefaultAccessMemory_html"><div class="ttname"><a href="structCabana_1_1DefaultAccessMemory.html">Cabana::DefaultAccessMemory</a></div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:33</div></div>
-<div class="ttc" id="astructCabana_1_1DefaultAccessMemory_html_a073271b58939601ceb7800c92bfcc29f"><div class="ttname"><a href="structCabana_1_1DefaultAccessMemory.html#a073271b58939601ceb7800c92bfcc29f">Cabana::DefaultAccessMemory::kokkos_memory_traits</a></div><div class="ttdeci">Kokkos::MemoryTraits&lt; Kokkos::Unmanaged|Kokkos::Aligned|Kokkos::Restrict &gt; kokkos_memory_traits</div><div class="ttdoc">Kokkos traits.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:39</div></div>
-<div class="ttc" id="astructCabana_1_1RandomAccessMemory_html"><div class="ttname"><a href="structCabana_1_1RandomAccessMemory.html">Cabana::RandomAccessMemory</a></div><div class="ttdoc">Random access memory. Read-only and const with limited spatial locality.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:50</div></div>
-<div class="ttc" id="astructCabana_1_1RandomAccessMemory_html_a97999de225e8d2a178f5cf936b124ea8"><div class="ttname"><a href="structCabana_1_1RandomAccessMemory.html#a97999de225e8d2a178f5cf936b124ea8">Cabana::RandomAccessMemory::kokkos_memory_traits</a></div><div class="ttdeci">Kokkos::MemoryTraits&lt; Kokkos::Unmanaged|Kokkos::Aligned|Kokkos::RandomAccess &gt; kokkos_memory_traits</div><div class="ttdoc">Kokkos traits.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:56</div></div>
-<div class="ttc" id="astructCabana_1_1is__accessible__from_html"><div class="ttname"><a href="structCabana_1_1is__accessible__from.html">Cabana::is_accessible_from</a></div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:84</div></div>
-<div class="ttc" id="astructCabana_1_1is__memory__access__tag_html"><div class="ttname"><a href="structCabana_1_1is__memory__access__tag.html">Cabana::is_memory_access_tag</a></div><div class="ttdoc">Memory access type checker.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:27</div></div>
+<div class="line"><a name="l00101"></a><span class="lineno">  101</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00102"></a><span class="lineno">  102</span>&#160; </div>
+<div class="line"><a name="l00103"></a><span class="lineno">  103</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160; </div>
+<div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CABANA_TYPES_HPP</span></div>
+<div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:35</div></div>
+<div class="ttc" id="astructCabana_1_1AtomicAccessMemory_html"><div class="ttname"><a href="structCabana_1_1AtomicAccessMemory.html">Cabana::AtomicAccessMemory</a></div><div class="ttdoc">Atomic memory access. All reads and writes are atomic.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:70</div></div>
+<div class="ttc" id="astructCabana_1_1AtomicAccessMemory_html_a5900606c4022248d570980974532038e"><div class="ttname"><a href="structCabana_1_1AtomicAccessMemory.html#a5900606c4022248d570980974532038e">Cabana::AtomicAccessMemory::kokkos_memory_traits</a></div><div class="ttdeci">Kokkos::MemoryTraits&lt; Kokkos::Unmanaged|Kokkos::Aligned|Kokkos::Atomic &gt; kokkos_memory_traits</div><div class="ttdoc">Kokkos traits.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:76</div></div>
+<div class="ttc" id="astructCabana_1_1DefaultAccessMemory_html"><div class="ttname"><a href="structCabana_1_1DefaultAccessMemory.html">Cabana::DefaultAccessMemory</a></div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:37</div></div>
+<div class="ttc" id="astructCabana_1_1DefaultAccessMemory_html_a073271b58939601ceb7800c92bfcc29f"><div class="ttname"><a href="structCabana_1_1DefaultAccessMemory.html#a073271b58939601ceb7800c92bfcc29f">Cabana::DefaultAccessMemory::kokkos_memory_traits</a></div><div class="ttdeci">Kokkos::MemoryTraits&lt; Kokkos::Unmanaged|Kokkos::Aligned|Kokkos::Restrict &gt; kokkos_memory_traits</div><div class="ttdoc">Kokkos traits.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:43</div></div>
+<div class="ttc" id="astructCabana_1_1RandomAccessMemory_html"><div class="ttname"><a href="structCabana_1_1RandomAccessMemory.html">Cabana::RandomAccessMemory</a></div><div class="ttdoc">Random access memory. Read-only and const with limited spatial locality.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:54</div></div>
+<div class="ttc" id="astructCabana_1_1RandomAccessMemory_html_a97999de225e8d2a178f5cf936b124ea8"><div class="ttname"><a href="structCabana_1_1RandomAccessMemory.html#a97999de225e8d2a178f5cf936b124ea8">Cabana::RandomAccessMemory::kokkos_memory_traits</a></div><div class="ttdeci">Kokkos::MemoryTraits&lt; Kokkos::Unmanaged|Kokkos::Aligned|Kokkos::RandomAccess &gt; kokkos_memory_traits</div><div class="ttdoc">Kokkos traits.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:60</div></div>
+<div class="ttc" id="astructCabana_1_1is__accessible__from_html"><div class="ttname"><a href="structCabana_1_1is__accessible__from.html">Cabana::is_accessible_from</a></div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:88</div></div>
+<div class="ttc" id="astructCabana_1_1is__memory__access__tag_html"><div class="ttname"><a href="structCabana_1_1is__memory__access__tag.html">Cabana::is_memory_access_tag</a></div><div class="ttdoc">Memory access type checker.</div><div class="ttdef"><b>Definition:</b> Cabana_Types.hpp:31</div></div>
 </div><!-- fragment --></div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>
