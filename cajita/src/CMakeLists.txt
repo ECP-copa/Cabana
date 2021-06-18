@@ -29,6 +29,7 @@ set(HEADERS_PUBLIC
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
   Cajita_Parallel.hpp
+  Cajita_ParticleGridDistributor.hpp
   Cajita_Partitioner.hpp
   Cajita_ReferenceStructuredSolver.hpp
   Cajita_Splines.hpp
