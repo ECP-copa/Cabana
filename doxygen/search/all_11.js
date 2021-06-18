@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['querycell_515',['queryCell',['../classCajita_1_1SparseMap.html#ad131a6d96b6d8df9214b6cecff1ebd77',1,'Cajita::SparseMap']]],
-  ['querytile_516',['queryTile',['../classCajita_1_1SparseMap.html#a6469402b1300c34d407511a730f1d2ae',1,'Cajita::SparseMap']]]
+  ['querycell_518',['queryCell',['../classCajita_1_1SparseMap.html#ad131a6d96b6d8df9214b6cecff1ebd77',1,'Cajita::SparseMap']]],
+  ['querytile_519',['queryTile',['../classCajita_1_1SparseMap.html#a6469402b1300c34d407511a730f1d2ae',1,'Cajita::SparseMap']]]
 ];

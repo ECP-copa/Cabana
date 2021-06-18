@@ -737,6 +737,22 @@ template&lt;class Device , class MeshType &gt; </td></tr>
 <tr class="memitem:aa10581196134700af84ad9a4b73f2ed4"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aa10581196134700af84ad9a4b73f2ed4">grid_parallel_reduce</a> (const std::string &amp;label, const ExecutionSpace &amp;exec_space, const <a class="el" href="classCajita_1_1LocalGrid.html">LocalGrid</a>&lt; MeshType &gt; &amp;local_grid, const DecompositionType &amp;decomposition, const EntityType &amp;entity_type, const WorkTag &amp;work_tag, const FunctorType &amp;functor, ReduceType &amp;reducer)</td></tr>
 <tr class="memdesc:aa10581196134700af84ad9a4b73f2ed4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Execute a reduction functor with a work tag in parallel with a multidimensional execution policy specified by the given local grid, decomposition, and entity type. The loop indices are local.  <a href="namespaceCajita.html#aa10581196134700af84ad9a4b73f2ed4">More...</a><br /></td></tr>
 <tr class="separator:aa10581196134700af84ad9a4b73f2ed4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a583a9ee0c0e31310b730fa3ca3819721"><td class="memTemplParams" colspan="2">template&lt;class LocalGridType , class PositionSliceType &gt; </td></tr>
+<tr class="memitem:a583a9ee0c0e31310b730fa3ca3819721"><td class="memTemplItemLeft" align="right" valign="top">int&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a583a9ee0c0e31310b730fa3ca3819721">migrateCount</a> (const LocalGridType &amp;local_grid, const PositionSliceType &amp;positions, const int minimum_halo_width)</td></tr>
+<tr class="memdesc:a583a9ee0c0e31310b730fa3ca3819721"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check for the number of particles that must be communicated.  <a href="namespaceCajita.html#a583a9ee0c0e31310b730fa3ca3819721">More...</a><br /></td></tr>
+<tr class="separator:a583a9ee0c0e31310b730fa3ca3819721"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a20560d001972f0dd70ba665e9dcbef1d"><td class="memTemplParams" colspan="2">template&lt;class LocalGridType , class PositionSliceType &gt; </td></tr>
+<tr class="memitem:a20560d001972f0dd70ba665e9dcbef1d"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="classCabana_1_1Distributor.html">Cabana::Distributor</a>&lt; typename PositionSliceType::device_type &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a20560d001972f0dd70ba665e9dcbef1d">createParticleGridDistributor</a> (const LocalGridType &amp;local_grid, PositionSliceType &amp;positions)</td></tr>
+<tr class="memdesc:a20560d001972f0dd70ba665e9dcbef1d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Determine which data should be migrated from one uniquely-owned decomposition to another uniquely-owned decomposition, using bounds of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid and taking periodic boundaries into account.  <a href="namespaceCajita.html#a20560d001972f0dd70ba665e9dcbef1d">More...</a><br /></td></tr>
+<tr class="separator:a20560d001972f0dd70ba665e9dcbef1d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a27a15d0e5f51a41086538e27037a5262"><td class="memTemplParams" colspan="2">template&lt;class LocalGridType , class ParticlePositions , class ParticleContainer &gt; </td></tr>
+<tr class="memitem:a27a15d0e5f51a41086538e27037a5262"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a27a15d0e5f51a41086538e27037a5262">particleGridMigrate</a> (const LocalGridType &amp;local_grid, ParticlePositions &amp;positions, ParticleContainer &amp;particles, const int min_halo_width, const bool force_migrate=false)</td></tr>
+<tr class="memdesc:a27a15d0e5f51a41086538e27037a5262"><td class="mdescLeft">&#160;</td><td class="mdescRight">Migrate data from one uniquely-owned decomposition to another uniquely-owned decomposition, using the bounds and periodic boundaries of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid to determine which particles should be moved. In-place variant.  <a href="namespaceCajita.html#a27a15d0e5f51a41086538e27037a5262">More...</a><br /></td></tr>
+<tr class="separator:a27a15d0e5f51a41086538e27037a5262"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac90f9c62f86663fdbd45327ba8537016"><td class="memTemplParams" colspan="2">template&lt;class LocalGridType , class ParticlePositions , class ParticleContainer &gt; </td></tr>
+<tr class="memitem:ac90f9c62f86663fdbd45327ba8537016"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ac90f9c62f86663fdbd45327ba8537016">particleGridMigrate</a> (const LocalGridType &amp;local_grid, const ParticlePositions &amp;positions, const ParticleContainer &amp;src_particles, ParticleContainer &amp;dst_particles, const int min_halo_width, const bool force_migrate=false)</td></tr>
+<tr class="memdesc:ac90f9c62f86663fdbd45327ba8537016"><td class="mdescLeft">&#160;</td><td class="mdescRight">Migrate data from one uniquely-owned decomposition to another uniquely-owned decomposition, using the bounds and periodic boundaries of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid to determine which particles should be moved. Separate AoSoA variant.  <a href="namespaceCajita.html#ac90f9c62f86663fdbd45327ba8537016">More...</a><br /></td></tr>
+<tr class="separator:ac90f9c62f86663fdbd45327ba8537016"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9272dda2ab56f41f9dc931948fc24c5d"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class DeviceType , class EntityType , class MeshType &gt; </td></tr>
 <tr class="memitem:a9272dda2ab56f41f9dc931948fc24c5d"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html">ReferenceConjugateGradient</a>&lt; Scalar, EntityType, MeshType, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a9272dda2ab56f41f9dc931948fc24c5d">createReferenceConjugateGradient</a> (const <a class="el" href="classCajita_1_1ArrayLayout.html">ArrayLayout</a>&lt; EntityType, MeshType &gt; &amp;layout)</td></tr>
 <tr class="separator:a9272dda2ab56f41f9dc931948fc24c5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1712,6 +1728,53 @@ template&lt;class Scalar &gt; </div>
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<a id="a20560d001972f0dd70ba665e9dcbef1d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a20560d001972f0dd70ba665e9dcbef1d">&#9670;&nbsp;</a></span>createParticleGridDistributor()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class LocalGridType , class PositionSliceType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classCabana_1_1Distributor.html">Cabana::Distributor</a>&lt;typename PositionSliceType::device_type&gt; Cajita::createParticleGridDistributor </td>
+          <td>(</td>
+          <td class="paramtype">const LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PositionSliceType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Determine which data should be migrated from one uniquely-owned decomposition to another uniquely-owned decomposition, using bounds of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid and taking periodic boundaries into account. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">LocalGridType</td><td><a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> type.</td></tr>
+    <tr><td class="paramname">PositionSliceType</td><td>Position type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">local_grid</td><td>The local grid containing periodicity and system bound information.</td></tr>
+    <tr><td class="paramname">positions</td><td>The particle positions.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Distributor for later migration. </dd></dl>
 
 </div>
 </div>
@@ -3460,6 +3523,59 @@ template&lt;class FunctorType , class WorkTag , class ExecutionSpace , class Mes
 
 </div>
 </div>
+<a id="a583a9ee0c0e31310b730fa3ca3819721"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a583a9ee0c0e31310b730fa3ca3819721">&#9670;&nbsp;</a></span>migrateCount()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class LocalGridType , class PositionSliceType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">int Cajita::migrateCount </td>
+          <td>(</td>
+          <td class="paramtype">const LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const PositionSliceType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>minimum_halo_width</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Check for the number of particles that must be communicated. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">LocalGridType</td><td><a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> type.</td></tr>
+    <tr><td class="paramname">PositionSliceType</td><td>Particle position type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">local_grid</td><td>The local grid containing periodicity and system bound information.</td></tr>
+    <tr><td class="paramname">positions</td><td>The particle position container, either Slice or View.</td></tr>
+    <tr><td class="paramname">minimum_halo_width</td><td>Number of halo mesh widths to include for ghosting. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a id="af35c1fd6167a736a6a78cf742c2d6251"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#af35c1fd6167a736a6a78cf742c2d6251">&#9670;&nbsp;</a></span>p2g()</h2>
 
@@ -3538,6 +3654,149 @@ template&lt;class PointEvalFunctor , class PointCoordinates , class ArrayScalar 
   </dd>
 </dl>
 <dl class="section note"><dt>Note</dt><dd><a class="el" href="structCajita_1_1Spline.html" title="B-Spline interface for uniform grids.">Spline</a> of SplineOrder passed for interpolation. </dd></dl>
+
+</div>
+</div>
+<a id="ac90f9c62f86663fdbd45327ba8537016"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac90f9c62f86663fdbd45327ba8537016">&#9670;&nbsp;</a></span>particleGridMigrate() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class LocalGridType , class ParticlePositions , class ParticleContainer &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::particleGridMigrate </td>
+          <td>(</td>
+          <td class="paramtype">const LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ParticlePositions &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const ParticleContainer &amp;&#160;</td>
+          <td class="paramname"><em>src_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParticleContainer &amp;&#160;</td>
+          <td class="paramname"><em>dst_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>min_halo_width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>force_migrate</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Migrate data from one uniquely-owned decomposition to another uniquely-owned decomposition, using the bounds and periodic boundaries of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid to determine which particles should be moved. Separate AoSoA variant. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">LocalGridType</td><td><a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> type.</td></tr>
+    <tr><td class="paramname">ParticlePositions</td><td>Particle position type.</td></tr>
+    <tr><td class="paramname">ParticleContainer</td><td>AoSoA type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">local_grid</td><td>The local grid containing periodicity and system bounds.</td></tr>
+    <tr><td class="paramname">positions</td><td>Particle positions.</td></tr>
+    <tr><td class="paramname">src_particles</td><td>The source particle AoSoA.</td></tr>
+    <tr><td class="paramname">dst_particles</td><td>The destination particle AoSoA.</td></tr>
+    <tr><td class="paramname">min_halo_width</td><td>Number of halo mesh widths to allow particles before migrating.</td></tr>
+    <tr><td class="paramname">force_migrate</td><td>Migrate particles outside the local domain regardless of ghosted halo. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a27a15d0e5f51a41086538e27037a5262"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a27a15d0e5f51a41086538e27037a5262">&#9670;&nbsp;</a></span>particleGridMigrate() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class LocalGridType , class ParticlePositions , class ParticleContainer &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cajita::particleGridMigrate </td>
+          <td>(</td>
+          <td class="paramtype">const LocalGridType &amp;&#160;</td>
+          <td class="paramname"><em>local_grid</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParticlePositions &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">ParticleContainer &amp;&#160;</td>
+          <td class="paramname"><em>particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const int&#160;</td>
+          <td class="paramname"><em>min_halo_width</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const bool&#160;</td>
+          <td class="paramname"><em>force_migrate</em> = <code>false</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Migrate data from one uniquely-owned decomposition to another uniquely-owned decomposition, using the bounds and periodic boundaries of a <a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> grid to determine which particles should be moved. In-place variant. </p>
+<dl class="tparams"><dt>Template Parameters</dt><dd>
+  <table class="tparams">
+    <tr><td class="paramname">LocalGridType</td><td><a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> <a class="el" href="classCajita_1_1LocalGrid.html" title="Local logical grid.">LocalGrid</a> type.</td></tr>
+    <tr><td class="paramname">ParticlePositions</td><td>Particle position type.</td></tr>
+    <tr><td class="paramname">PositionContainer</td><td>AoSoA type.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">local_grid</td><td>The local grid containing periodicity and system bounds.</td></tr>
+    <tr><td class="paramname">positions</td><td>Particle positions.</td></tr>
+    <tr><td class="paramname">particles</td><td>The particle AoSoA.</td></tr>
+    <tr><td class="paramname">min_halo_width</td><td>Number of halo mesh widths to allow particles before migrating.</td></tr>
+    <tr><td class="paramname">force_migrate</td><td>Migrate particles outside the local domain regardless of ghosted halo. </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
