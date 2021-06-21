@@ -234,11 +234,11 @@ void testNeighborParallelFor()
                     test_data.cell_size_ratio, test_data.grid_min,
                     test_data.grid_max );
 
-    checkFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
-                                   test_data.num_particle );
+    checkFirstNeighborParallelForLambda( nlist, test_data.N2_list_copy,
+                                         test_data.num_particle );
 
-    checkSecondNeighborParallelFor( nlist, test_data.N2_list_copy,
-                                    test_data.num_particle );
+    checkSecondNeighborParallelForLambda( nlist, test_data.N2_list_copy,
+                                          test_data.num_particle );
 
     checkSplitFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
                                         test_data.num_particle );
@@ -247,6 +247,11 @@ void testNeighborParallelFor()
                                           test_data.num_particle, true );
     checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
                                           test_data.num_particle, false );
+
+    checkSecondNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                           test_data.num_particle, true );
+    checkSecondNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                           test_data.num_particle, false );
 }
 
 //---------------------------------------------------------------------------//
@@ -264,11 +269,21 @@ void testNeighborParallelReduce()
                     test_data.cell_size_ratio, test_data.grid_min,
                     test_data.grid_max );
 
-    checkFirstNeighborParallelReduce( nlist, test_data.N2_list_copy,
-                                      test_data.aosoa );
+    checkFirstNeighborParallelReduceLambda( nlist, test_data.N2_list_copy,
+                                            test_data.aosoa );
 
-    checkSecondNeighborParallelReduce( nlist, test_data.N2_list_copy,
-                                       test_data.aosoa );
+    checkSecondNeighborParallelReduceLambda( nlist, test_data.N2_list_copy,
+                                             test_data.aosoa );
+
+    checkFirstNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                             test_data.aosoa, true );
+    checkFirstNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                             test_data.aosoa, false );
+
+    checkSecondNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                              test_data.aosoa, true );
+    checkSecondNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                              test_data.aosoa, false );
 }
 
 //---------------------------------------------------------------------------//
