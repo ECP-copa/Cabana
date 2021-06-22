@@ -237,6 +237,11 @@ inline void neighbor_parallel_for(
 
     using memory_space = typename neighbor_list_traits::memory_space;
 
+    auto begin = exec_policy.begin();
+    auto end = exec_policy.end();
+    using linear_policy_type = Kokkos::RangePolicy<execution_space, void, void>;
+    linear_policy_type linear_exec_policy( begin, end );
+
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
     auto neigh_func = KOKKOS_LAMBDA( const index_type i )
@@ -249,9 +254,9 @@ inline void neighbor_parallel_for(
                     neighbor_list_traits::getNeighbor( list, i, n ) ) );
     };
     if ( str.empty() )
-        Kokkos::parallel_for( exec_policy, neigh_func );
+        Kokkos::parallel_for( linear_exec_policy, neigh_func );
     else
-        Kokkos::parallel_for( str, exec_policy, neigh_func );
+        Kokkos::parallel_for( str, linear_exec_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -292,6 +297,11 @@ inline void neighbor_parallel_for(
 
     using memory_space = typename neighbor_list_traits::memory_space;
 
+    auto begin = exec_policy.begin();
+    auto end = exec_policy.end();
+    using linear_policy_type = Kokkos::RangePolicy<execution_space, void, void>;
+    linear_policy_type linear_exec_policy( begin, end );
+
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
     auto neigh_func = KOKKOS_LAMBDA( const index_type i )
@@ -312,9 +322,9 @@ inline void neighbor_parallel_for(
         }
     };
     if ( str.empty() )
-        Kokkos::parallel_for( exec_policy, neigh_func );
+        Kokkos::parallel_for( linear_exec_policy, neigh_func );
     else
-        Kokkos::parallel_for( str, exec_policy, neigh_func );
+        Kokkos::parallel_for( str, linear_exec_policy, neigh_func );
 }
 
 //---------------------------------------------------------------------------//
@@ -590,6 +600,11 @@ inline void neighbor_parallel_reduce(
 
     using memory_space = typename neighbor_list_traits::memory_space;
 
+    auto begin = exec_policy.begin();
+    auto end = exec_policy.end();
+    using linear_policy_type = Kokkos::RangePolicy<execution_space, void, void>;
+    linear_policy_type linear_exec_policy( begin, end );
+
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
     auto neigh_reduce = KOKKOS_LAMBDA( const index_type i, ReduceType& ival )
@@ -603,9 +618,10 @@ inline void neighbor_parallel_reduce(
                 ival );
     };
     if ( str.empty() )
-        Kokkos::parallel_reduce( exec_policy, neigh_reduce, reduce_val );
+        Kokkos::parallel_reduce( linear_exec_policy, neigh_reduce, reduce_val );
     else
-        Kokkos::parallel_reduce( str, exec_policy, neigh_reduce, reduce_val );
+        Kokkos::parallel_reduce( str, linear_exec_policy, neigh_reduce,
+                                 reduce_val );
 }
 
 //---------------------------------------------------------------------------//
@@ -650,6 +666,11 @@ inline void neighbor_parallel_reduce(
 
     using memory_space = typename neighbor_list_traits::memory_space;
 
+    auto begin = exec_policy.begin();
+    auto end = exec_policy.end();
+    using linear_policy_type = Kokkos::RangePolicy<execution_space, void, void>;
+    linear_policy_type linear_exec_policy( begin, end );
+
     static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
 
     auto neigh_reduce = KOKKOS_LAMBDA( const index_type i, ReduceType& ival )
@@ -670,9 +691,10 @@ inline void neighbor_parallel_reduce(
         }
     };
     if ( str.empty() )
-        Kokkos::parallel_reduce( exec_policy, neigh_reduce, reduce_val );
+        Kokkos::parallel_reduce( linear_exec_policy, neigh_reduce, reduce_val );
     else
-        Kokkos::parallel_reduce( str, exec_policy, neigh_reduce, reduce_val );
+        Kokkos::parallel_reduce( str, linear_exec_policy, neigh_reduce,
+                                 reduce_val );
 }
 
 //---------------------------------------------------------------------------//
