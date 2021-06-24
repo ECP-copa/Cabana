@@ -356,7 +356,7 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 
 //---------------------------------------------------------------------------//
 // Return unique neighbor ranks, with the current rank first.
-std::vector<int> getUniqueTopology( std::vector<int> topology )
+inline std::vector<int> getUniqueTopology( std::vector<int> topology )
 {
     auto remove_end = std::remove( topology.begin(), topology.end(), -1 );
     std::sort( topology.begin(), remove_end );
