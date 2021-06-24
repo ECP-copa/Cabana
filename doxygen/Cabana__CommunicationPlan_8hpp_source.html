@@ -423,7 +423,7 @@ $(function() {
 <div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
 <div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;<span class="comment">// Return unique neighbor ranks, with the current rank first.</span></div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;std::vector&lt;int&gt; getUniqueTopology( std::vector&lt;int&gt; topology )</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;<span class="keyword">inline</span> std::vector&lt;int&gt; getUniqueTopology( std::vector&lt;int&gt; topology )</div>
 <div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;{</div>
 <div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;    <span class="keyword">auto</span> remove_end = std::remove( topology.begin(), topology.end(), -1 );</div>
 <div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    std::sort( topology.begin(), remove_end );</div>
