@@ -432,6 +432,10 @@ void checkFirstNeighborParallelForLambda( const ListType& nlist,
                                                     num_particle );
     Kokkos::View<int*, memory_space> team_result( "team_result", num_particle );
 
+    Kokkos::deep_copy( N2_result, 0.0 );
+    Kokkos::deep_copy( serial_result, 0.0 );
+    Kokkos::deep_copy( team_result, 0.0 );
+
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
     auto serial_count_op = KOKKOS_LAMBDA( const int i, const int n )
@@ -468,6 +472,10 @@ void checkSecondNeighborParallelForLambda( const ListType& nlist,
     Kokkos::View<int*, memory_space> team_result( "team_result", num_particle );
     Kokkos::View<int*, memory_space> vector_result( "vector_result",
                                                     num_particle );
+    Kokkos::deep_copy( N2_result, 0.0 );
+    Kokkos::deep_copy( serial_result, 0.0 );
+    Kokkos::deep_copy( team_result, 0.0 );
+    Kokkos::deep_copy( vector_result, 0.0 );
 
     // Test the list parallel operation by adding a value from each neighbor
     // to the particle and compare to counts.
@@ -517,6 +525,10 @@ void checkSplitFirstNeighborParallelFor( const ListType& nlist,
     Kokkos::View<int*, memory_space> serial_result( "serial_result",
                                                     num_particle );
     Kokkos::View<int*, memory_space> team_result( "team_result", num_particle );
+
+    Kokkos::deep_copy( N2_result, 0.0 );
+    Kokkos::deep_copy( serial_result, 0.0 );
+    Kokkos::deep_copy( team_result, 0.0 );
 
     Kokkos::RangePolicy<TEST_EXECSPACE> policy( 0, num_particle );
     const auto range_begin = policy.begin();
