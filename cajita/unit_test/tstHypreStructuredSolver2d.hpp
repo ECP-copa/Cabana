@@ -30,8 +30,20 @@ namespace Test
 {
 
 //---------------------------------------------------------------------------//
-void poissonTest( const std::string& solver_type,
-                  const std::string& precond_type )
+// FIXME: Only run test if HYPRE is compatible with the memory space. This
+// is currently written in this structure because HYPRE only has
+// compile-time switches for backends and hence only one can be used at a
+// time. Once they have a run-time switch we can use that instead.
+template <class MemorySpace>
+std::enable_if_t<!HypreIsCompatibleWithMemorySpace<MemorySpace>::value, void>
+poissonTest( const std::string&, const std::string&, MemorySpace )
+{
+}
+
+template <class MemorySpace>
+std::enable_if_t<HypreIsCompatibleWithMemorySpace<MemorySpace>::value, void>
+poissonTest( const std::string& solver_type, const std::string& precond_type,
+             MemorySpace )
 {
     // Create the global grid.
     double cell_size = 0.2;
@@ -52,15 +64,15 @@ void poissonTest( const std::string& solver_type,
 
     // Create the RHS.
     auto vector_layout = createArrayLayout( local_mesh, 1, Cell() );
-    auto rhs = createArray<double, TEST_DEVICE>( "rhs", vector_layout );
+    auto rhs = createArray<double, MemorySpace>( "rhs", vector_layout );
     ArrayOp::assign( *rhs, 1.0, Own() );
 
     // Create the LHS.
-    auto lhs = createArray<double, TEST_DEVICE>( "lhs", vector_layout );
+    auto lhs = createArray<double, MemorySpace>( "lhs", vector_layout );
     ArrayOp::assign( *lhs, 0.0, Own() );
 
     // Create a solver.
-    auto solver = createHypreStructuredSolver<double, TEST_DEVICE>(
+    auto solver = createHypreStructuredSolver<double, MemorySpace>(
         solver_type, *vector_layout );
 
     // Create a 5-point 2d laplacian stencil.
@@ -70,7 +82,7 @@ void poissonTest( const std::string& solver_type,
 
     // Create the matrix entries. The stencil is defined over cells.
     auto matrix_entry_layout = createArrayLayout( local_mesh, 5, Cell() );
-    auto matrix_entries = createArray<double, TEST_DEVICE>(
+    auto matrix_entries = createArray<double, MemorySpace>(
         "matrix_entries", matrix_entry_layout );
     auto entry_view = matrix_entries->view();
     Kokkos::parallel_for(
@@ -98,7 +110,7 @@ void poissonTest( const std::string& solver_type,
     // Create a preconditioner.
     if ( "none" != precond_type )
     {
-        auto preconditioner = createHypreStructuredSolver<double, TEST_DEVICE>(
+        auto preconditioner = createHypreStructuredSolver<double, MemorySpace>(
             precond_type, *vector_layout, true );
         solver->setPreconditioner( preconditioner );
     }
@@ -110,11 +122,11 @@ void poissonTest( const std::string& solver_type,
     solver->solve( *rhs, *lhs );
 
     // Create a solver reference for comparison.
-    auto lhs_ref = createArray<double, TEST_DEVICE>( "lhs_ref", vector_layout );
+    auto lhs_ref = createArray<double, MemorySpace>( "lhs_ref", vector_layout );
     ArrayOp::assign( *lhs_ref, 0.0, Own() );
 
     auto ref_solver =
-        createReferenceConjugateGradient<double, TEST_DEVICE>( *vector_layout );
+        createReferenceConjugateGradient<double, MemorySpace>( *vector_layout );
     ref_solver->setMatrixStencil( stencil );
     const auto& ref_entries = ref_solver->getMatrixValues();
     auto matrix_view = ref_entries.view();
@@ -189,39 +201,54 @@ void poissonTest( const std::string& solver_type,
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( structured_solver, pcg_none_test ) { poissonTest( "PCG", "none" ); }
+TEST( structured_solver, pcg_none_test )
+{
+    poissonTest( "PCG", "none", TEST_MEMSPACE{} );
+}
 
-TEST( structured_solver, gmres_none_test ) { poissonTest( "GMRES", "none" ); }
+TEST( structured_solver, gmres_none_test )
+{
+    poissonTest( "GMRES", "none", TEST_MEMSPACE{} );
+}
 
 TEST( structured_solver, bicgstab_none_test )
 {
-    poissonTest( "BiCGSTAB", "none" );
+    poissonTest( "BiCGSTAB", "none", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, pfmg_none_test ) { poissonTest( "PFMG", "none" ); }
+TEST( structured_solver, pfmg_none_test )
+{
+    poissonTest( "PFMG", "none", TEST_MEMSPACE{} );
+}
 
-TEST( structured_solver, pcg_diag_test ) { poissonTest( "PCG", "Diagonal" ); }
+TEST( structured_solver, pcg_diag_test )
+{
+    poissonTest( "PCG", "Diagonal", TEST_MEMSPACE{} );
+}
 
 TEST( structured_solver, gmres_diag_test )
 {
-    poissonTest( "GMRES", "Diagonal" );
+    poissonTest( "GMRES", "Diagonal", TEST_MEMSPACE{} );
 }
 
 TEST( structured_solver, bicgstab_diag_test )
 {
-    poissonTest( "BiCGSTAB", "Diagonal" );
+    poissonTest( "BiCGSTAB", "Diagonal", TEST_MEMSPACE{} );
 }
 
-TEST( structured_solver, pcg_jacobi_test ) { poissonTest( "PCG", "Jacobi" ); }
+TEST( structured_solver, pcg_jacobi_test )
+{
+    poissonTest( "PCG", "Jacobi", TEST_MEMSPACE{} );
+}
 
 TEST( structured_solver, gmres_jacobi_test )
 {
-    poissonTest( "GMRES", "Jacobi" );
+    poissonTest( "GMRES", "Jacobi", TEST_MEMSPACE{} );
 }
 
 TEST( structured_solver, bicgstab_jacobi_test )
 {
-    poissonTest( "BiCGSTAB", "Jacobi" );
+    poissonTest( "BiCGSTAB", "Jacobi", TEST_MEMSPACE{} );
 }
 
 //---------------------------------------------------------------------------//
