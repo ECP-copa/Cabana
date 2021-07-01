@@ -74,8 +74,8 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         x_max[p] = 1.3 * min_dist * std::pow( num_p, 1.0 / 3.0 );
         aosoas[p].resize( num_p );
         auto x_host = Cabana::slice<0>( create_aosoa, "position" );
-        Cabana::Benchmark::createParticles( x_host, x_min[p], x_max[p],
-                                            min_dist );
+        Cabana::Benchmark::createRandomNeighbors( x_host, x_min[p], x_max[p],
+                                                  min_dist );
         Cabana::deep_copy( aosoas[p], create_aosoa );
 
         if ( sort )

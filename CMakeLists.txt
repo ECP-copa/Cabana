@@ -94,29 +94,6 @@ endif()
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.0.0 )
 
 #------------------------------------------------------------------------------#
-# Tests and Documentation
-#------------------------------------------------------------------------------#
-# enable unit tests
-option(Cabana_ENABLE_TESTING "Build tests" OFF)
-if(Cabana_ENABLE_TESTING)
-  set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
-  add_subdirectory(cmake/test_harness)
-  enable_testing()
-endif()
-
-# enable performance tests
-option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
-if(Cabana_ENABLE_PERFORMANCE_TESTING)
-  add_subdirectory(benchmark)
-endif()
-
-# enable doxygen
-find_package(Doxygen)
-if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core/src cajita/src)
-endif()
-
-#------------------------------------------------------------------------------#
 # Architecture
 #------------------------------------------------------------------------------#
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
@@ -167,6 +144,23 @@ ELSE()
 ENDIF()
 MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 
+#------------------------------------------------------------------------------#
+# Tests and Documentation
+#------------------------------------------------------------------------------#
+# enable unit tests
+option(Cabana_ENABLE_TESTING "Build tests" OFF)
+if(Cabana_ENABLE_TESTING)
+  set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
+  add_subdirectory(cmake/test_harness)
+  enable_testing()
+endif()
+
+# enable doxygen
+find_package(Doxygen)
+if(Doxygen_FOUND)
+  doxygen_add_docs(doxygen core/src cajita/src)
+endif()
+
 ##---------------------------------------------------------------------------##
 ## Libraries and Examples
 ##---------------------------------------------------------------------------##
@@ -185,6 +179,12 @@ endif()
 option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
 if(Cabana_ENABLE_EXAMPLES)
   add_subdirectory(example)
+endif()
+
+# enable performance tests
+option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
+if(Cabana_ENABLE_PERFORMANCE_TESTING)
+  add_subdirectory(benchmark)
 endif()
 
 ##---------------------------------------------------------------------------##
