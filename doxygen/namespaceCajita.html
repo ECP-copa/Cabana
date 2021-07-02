@@ -134,6 +134,12 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1LayoutAdapter.html">LayoutAdapter</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1HypreIsCompatibleWithMemorySpace.html">HypreIsCompatibleWithMemorySpace</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hypre device compatibility check.  <a href="structCajita_1_1HypreIsCompatibleWithMemorySpace.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1HypreIsCompatibleWithMemorySpace_3_01Kokkos_1_1HostSpace_01_4.html">HypreIsCompatibleWithMemorySpace&lt; Kokkos::HostSpace &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hypre device compatibility check - host memory.  <a href="structCajita_1_1HypreIsCompatibleWithMemorySpace_3_01Kokkos_1_1HostSpace_01_4.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Hypre structured solver interface for scalar fields.  <a href="classCajita_1_1HypreStructuredSolver.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -515,45 +521,45 @@ Functions</h2></td></tr>
 <tr class="memitem:a342119f5d5b011c689cc474e16cc70e5"><td class="memTemplItemLeft" align="right" valign="top">auto&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a342119f5d5b011c689cc474e16cc70e5">createHalo</a> (const <a class="el" href="classCajita_1_1Array.html">Array</a>&lt; Scalar, EntityType, MeshType, Params... &gt; &amp;array, const Pattern &amp;pattern, const int width=-1)</td></tr>
 <tr class="memdesc:a342119f5d5b011c689cc474e16cc70e5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a halo.  <a href="namespaceCajita.html#a342119f5d5b011c689cc474e16cc70e5">More...</a><br /></td></tr>
 <tr class="separator:a342119f5d5b011c689cc474e16cc70e5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a03759b49b516c912f3108aeb3d11ade0"><td class="memTemplParams" colspan="2"><a id="a03759b49b516c912f3108aeb3d11ade0"></a>
-template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </td></tr>
-<tr class="memitem:a03759b49b516c912f3108aeb3d11ade0"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructPCG.html">HypreStructPCG</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a03759b49b516c912f3108aeb3d11ade0">createHypreStructPCG</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
-<tr class="memdesc:a03759b49b516c912f3108aeb3d11ade0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE PCG structured solver. <br /></td></tr>
-<tr class="separator:a03759b49b516c912f3108aeb3d11ade0"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aac421d2d99108d7470438ceed948f6eb"><td class="memTemplParams" colspan="2"><a id="aac421d2d99108d7470438ceed948f6eb"></a>
-template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </td></tr>
-<tr class="memitem:aac421d2d99108d7470438ceed948f6eb"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructGMRES.html">HypreStructGMRES</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aac421d2d99108d7470438ceed948f6eb">createHypreStructGMRES</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
-<tr class="memdesc:aac421d2d99108d7470438ceed948f6eb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE GMRES structured solver. <br /></td></tr>
-<tr class="separator:aac421d2d99108d7470438ceed948f6eb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adb1d47895ef07c56a5082a5ac3949ceb"><td class="memTemplParams" colspan="2"><a id="adb1d47895ef07c56a5082a5ac3949ceb"></a>
-template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </td></tr>
-<tr class="memitem:adb1d47895ef07c56a5082a5ac3949ceb"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructBiCGSTAB.html">HypreStructBiCGSTAB</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#adb1d47895ef07c56a5082a5ac3949ceb">createHypreStructBiCGSTAB</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
-<tr class="memdesc:adb1d47895ef07c56a5082a5ac3949ceb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE BiCGSTAB structured solver. <br /></td></tr>
-<tr class="separator:adb1d47895ef07c56a5082a5ac3949ceb"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a59bbcb5b3557e62add12162ac4f87aee"><td class="memTemplParams" colspan="2"><a id="a59bbcb5b3557e62add12162ac4f87aee"></a>
-template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </td></tr>
-<tr class="memitem:a59bbcb5b3557e62add12162ac4f87aee"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructPFMG.html">HypreStructPFMG</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a59bbcb5b3557e62add12162ac4f87aee">createHypreStructPFMG</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
-<tr class="memdesc:a59bbcb5b3557e62add12162ac4f87aee"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE PFMG structured solver. <br /></td></tr>
-<tr class="separator:a59bbcb5b3557e62add12162ac4f87aee"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2bd4e52a111925864c137af7821c7145"><td class="memTemplParams" colspan="2"><a id="a2bd4e52a111925864c137af7821c7145"></a>
-template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </td></tr>
-<tr class="memitem:a2bd4e52a111925864c137af7821c7145"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructSMG.html">HypreStructSMG</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a2bd4e52a111925864c137af7821c7145">createHypreStructSMG</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
-<tr class="memdesc:a2bd4e52a111925864c137af7821c7145"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE SMG structured solver. <br /></td></tr>
-<tr class="separator:a2bd4e52a111925864c137af7821c7145"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acd3770faac3cdb3d6692a32403fc4470"><td class="memTemplParams" colspan="2"><a id="acd3770faac3cdb3d6692a32403fc4470"></a>
-template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </td></tr>
-<tr class="memitem:acd3770faac3cdb3d6692a32403fc4470"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructJacobi.html">HypreStructJacobi</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#acd3770faac3cdb3d6692a32403fc4470">createHypreStructJacobi</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
-<tr class="memdesc:acd3770faac3cdb3d6692a32403fc4470"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE Jacobi structured solver. <br /></td></tr>
-<tr class="separator:acd3770faac3cdb3d6692a32403fc4470"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:abe761a08bb673496f478c4de5613082a"><td class="memTemplParams" colspan="2"><a id="abe761a08bb673496f478c4de5613082a"></a>
-template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </td></tr>
-<tr class="memitem:abe761a08bb673496f478c4de5613082a"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructDiagonal.html">HypreStructDiagonal</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#abe761a08bb673496f478c4de5613082a">createHypreStructDiagonal</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
-<tr class="memdesc:abe761a08bb673496f478c4de5613082a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE Diagonal structured solver. <br /></td></tr>
-<tr class="separator:abe761a08bb673496f478c4de5613082a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5ff497f49467eb13d3470b8b9f908d49"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </td></tr>
-<tr class="memitem:a5ff497f49467eb13d3470b8b9f908d49"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a5ff497f49467eb13d3470b8b9f908d49">createHypreStructuredSolver</a> (const std::string &amp;solver_type, const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
-<tr class="memdesc:a5ff497f49467eb13d3470b8b9f908d49"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE structured solver.  <a href="namespaceCajita.html#a5ff497f49467eb13d3470b8b9f908d49">More...</a><br /></td></tr>
-<tr class="separator:a5ff497f49467eb13d3470b8b9f908d49"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a574cd0b7a3a3aa8c0d986e923318f1f7"><td class="memTemplParams" colspan="2"><a id="a574cd0b7a3a3aa8c0d986e923318f1f7"></a>
+template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></tr>
+<tr class="memitem:a574cd0b7a3a3aa8c0d986e923318f1f7"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructPCG.html">HypreStructPCG</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a574cd0b7a3a3aa8c0d986e923318f1f7">createHypreStructPCG</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
+<tr class="memdesc:a574cd0b7a3a3aa8c0d986e923318f1f7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE PCG structured solver. <br /></td></tr>
+<tr class="separator:a574cd0b7a3a3aa8c0d986e923318f1f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a221456b40b7ff148b23d9a02ff28a91c"><td class="memTemplParams" colspan="2"><a id="a221456b40b7ff148b23d9a02ff28a91c"></a>
+template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></tr>
+<tr class="memitem:a221456b40b7ff148b23d9a02ff28a91c"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructGMRES.html">HypreStructGMRES</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a221456b40b7ff148b23d9a02ff28a91c">createHypreStructGMRES</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
+<tr class="memdesc:a221456b40b7ff148b23d9a02ff28a91c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE GMRES structured solver. <br /></td></tr>
+<tr class="separator:a221456b40b7ff148b23d9a02ff28a91c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acf857f7d6cc758205b43ded0b9898354"><td class="memTemplParams" colspan="2"><a id="acf857f7d6cc758205b43ded0b9898354"></a>
+template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></tr>
+<tr class="memitem:acf857f7d6cc758205b43ded0b9898354"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructBiCGSTAB.html">HypreStructBiCGSTAB</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#acf857f7d6cc758205b43ded0b9898354">createHypreStructBiCGSTAB</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
+<tr class="memdesc:acf857f7d6cc758205b43ded0b9898354"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE BiCGSTAB structured solver. <br /></td></tr>
+<tr class="separator:acf857f7d6cc758205b43ded0b9898354"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2681950720576219f689631e6d3f6c27"><td class="memTemplParams" colspan="2"><a id="a2681950720576219f689631e6d3f6c27"></a>
+template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></tr>
+<tr class="memitem:a2681950720576219f689631e6d3f6c27"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructPFMG.html">HypreStructPFMG</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a2681950720576219f689631e6d3f6c27">createHypreStructPFMG</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
+<tr class="memdesc:a2681950720576219f689631e6d3f6c27"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE PFMG structured solver. <br /></td></tr>
+<tr class="separator:a2681950720576219f689631e6d3f6c27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af9a3322645bb367b395fec9d2b86d1bb"><td class="memTemplParams" colspan="2"><a id="af9a3322645bb367b395fec9d2b86d1bb"></a>
+template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></tr>
+<tr class="memitem:af9a3322645bb367b395fec9d2b86d1bb"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructSMG.html">HypreStructSMG</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#af9a3322645bb367b395fec9d2b86d1bb">createHypreStructSMG</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
+<tr class="memdesc:af9a3322645bb367b395fec9d2b86d1bb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE SMG structured solver. <br /></td></tr>
+<tr class="separator:af9a3322645bb367b395fec9d2b86d1bb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17d1c8eba8a038b09b1f3a29d6b4295a"><td class="memTemplParams" colspan="2"><a id="a17d1c8eba8a038b09b1f3a29d6b4295a"></a>
+template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></tr>
+<tr class="memitem:a17d1c8eba8a038b09b1f3a29d6b4295a"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructJacobi.html">HypreStructJacobi</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a17d1c8eba8a038b09b1f3a29d6b4295a">createHypreStructJacobi</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
+<tr class="memdesc:a17d1c8eba8a038b09b1f3a29d6b4295a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE Jacobi structured solver. <br /></td></tr>
+<tr class="separator:a17d1c8eba8a038b09b1f3a29d6b4295a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad75643856ff65086f505a912a5361130"><td class="memTemplParams" colspan="2"><a id="ad75643856ff65086f505a912a5361130"></a>
+template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></tr>
+<tr class="memitem:ad75643856ff65086f505a912a5361130"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructDiagonal.html">HypreStructDiagonal</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#ad75643856ff65086f505a912a5361130">createHypreStructDiagonal</a> (const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
+<tr class="memdesc:ad75643856ff65086f505a912a5361130"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE Diagonal structured solver. <br /></td></tr>
+<tr class="separator:ad75643856ff65086f505a912a5361130"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aa51f1159278d5b5023615af31744bcf0"><td class="memTemplParams" colspan="2">template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </td></tr>
+<tr class="memitem:aa51f1159278d5b5023615af31744bcf0"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aa51f1159278d5b5023615af31744bcf0">createHypreStructuredSolver</a> (const std::string &amp;solver_type, const ArrayLayout_t &amp;layout, const bool is_preconditioner=false)</td></tr>
+<tr class="memdesc:aa51f1159278d5b5023615af31744bcf0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a HYPRE structured solver.  <a href="namespaceCajita.html#aa51f1159278d5b5023615af31744bcf0">More...</a><br /></td></tr>
+<tr class="separator:aa51f1159278d5b5023615af31744bcf0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1d70326b11175c3b3111b3e544d002b3"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace &gt; </td></tr>
 <tr class="memitem:a1d70326b11175c3b3111b3e544d002b3"><td class="memTemplItemLeft" align="right" valign="top">Kokkos::RangePolicy&lt; ExecutionSpace &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">createExecutionPolicy</a> (const <a class="el" href="classCajita_1_1IndexSpace.html">IndexSpace</a>&lt; 1 &gt; &amp;index_space, const ExecutionSpace &amp;)</td></tr>
 <tr class="memdesc:a1d70326b11175c3b3111b3e544d002b3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a multi-dimensional execution policy over an index space.  <a href="namespaceCajita.html#a1d70326b11175c3b3111b3e544d002b3">More...</a><br /></td></tr>
@@ -1558,16 +1564,16 @@ template&lt;class Pattern , class... ArrayTypes&gt; </div>
 
 </div>
 </div>
-<a id="a5ff497f49467eb13d3470b8b9f908d49"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5ff497f49467eb13d3470b8b9f908d49">&#9670;&nbsp;</a></span>createHypreStructuredSolver()</h2>
+<a id="aa51f1159278d5b5023615af31744bcf0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa51f1159278d5b5023615af31744bcf0">&#9670;&nbsp;</a></span>createHypreStructuredSolver()</h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
-template&lt;class Scalar , class DeviceType , class ArrayLayout_t &gt; </div>
+template&lt;class Scalar , class MemorySpace , class ArrayLayout_t &gt; </div>
       <table class="memname">
         <tr>
-          <td class="memname">std::shared_ptr&lt;<a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a>&lt; Scalar, typename ArrayLayout_t::entity_type, DeviceType&gt; &gt; Cajita::createHypreStructuredSolver </td>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classCajita_1_1HypreStructuredSolver.html">HypreStructuredSolver</a>&lt; Scalar, typename ArrayLayout_t::entity_type, MemorySpace&gt; &gt; Cajita::createHypreStructuredSolver </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>solver_type</em>, </td>
