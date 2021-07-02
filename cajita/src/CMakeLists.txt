@@ -60,7 +60,7 @@ target_link_libraries(Cajita INTERFACE
   )
 
 if(Cabana_ENABLE_HYPRE)
-  target_link_libraries(Cajita INTERFACE HYPRE::hypre)
+  target_link_libraries(Cajita INTERFACE HYPRE::HYPRE)
 endif()
 
 if(Cabana_ENABLE_HEFFTE)
