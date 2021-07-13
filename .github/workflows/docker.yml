@@ -72,4 +72,4 @@ jobs:
           context: ${{github.workspace}}
           file: cabana/.github/workflows/Dockerfile
           push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
-          tags: ecp-copa/cabana:${{ steps.prep.outputs.version }}
+          tags: ghcr.io/ecp-copa/cabana:${{ steps.prep.outputs.version }}
