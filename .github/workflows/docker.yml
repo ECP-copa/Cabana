@@ -1,0 +1,75 @@
+name: Docker
+on:
+  push:
+    branches:
+      - master
+    tags:
+      - v[0-9]*
+  pull_request:
+    branches:
+      - master
+  schedule:
+    - cron:  '0 8 * * FRI'
+
+jobs:
+  Build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout kokkos
+        uses: actions/checkout@v2.2.0
+        with:
+          repository: kokkos/kokkos
+          ref: master
+          path: kokkos
+      - name: Checkout arborx
+        uses: actions/checkout@v2.2.0
+        with:
+          repository: arborx/ArborX
+          ref: master
+          path: arborx
+      - name: Checkout heffte
+        # actions/checkout doesn't work for external repos yet
+        run: |
+          git clone --depth 1 --branch v2.0.0 https://bitbucket.org/icl/heffte.git heffte
+      - name: Checkout hypre
+        uses: actions/checkout@v2.2.0
+        with:
+          repository: hypre-space/hypre
+          ref: v2.20.0
+          path: hypre
+      - name: Checkout Cabana
+        uses: actions/checkout@v2.2.0
+        with:
+          path: cabana
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v1
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Prepare
+        id: prep
+        run: |
+          if [[ $GITHUB_REF == refs/tags/* ]]; then
+            VERSION=${GITHUB_REF#refs/tags/}
+          elif [[ $GITHUB_REF == refs/heads/* ]]; then
+            VERSION=$(echo ${GITHUB_REF#refs/heads/} | sed -r 's#/+#-#g')
+          elif [[ $GITHUB_REF == refs/pull/* ]]; then
+            VERSION=pr-${{ github.event.number }}
+          fi
+          if [[ $VERSION = master ]]; then
+            VERSION=latest
+          fi
+          echo VERSION=${VERSION}
+          echo ::set-output name=version::${VERSION}
+
+      - name: Build and Push Docker Image
+        id: docker_build
+        uses: docker/build-push-action@v2
+        with:
+          context: ${{github.workspace}}
+          file: cabana/.github/workflows/Dockerfile
+          push: ${{ github.event_name == 'push' ||  github.event_name == 'schedule' }}
+          tags: ecp-copa/cabana:${{ steps.prep.outputs.version }}
