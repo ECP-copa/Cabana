@@ -28,9 +28,14 @@ if(Cabana_ENABLE_CAJITA)
 endif()
 set(Cabana_ENABLE_HYPRE @Cabana_ENABLE_HYPRE@)
 if(Cabana_ENABLE_HYPRE)
-  find_dependency(HYPRE REQUIRED)
+  # FIXME: HYPRE workaround. Hypre is currently not exporting the find_package(
+  # MPI ) to find the MPI::MPI_C targets and therefore we add this here for now
+  # to ensure those targets are found for HYPRE:
+  # https://github.com/hypre-space/hypre/pull/423
+  enable_language( C )
+  find_dependency(HYPRE REQUIRED VERSION @HYPRE_VERSION@)
 endif()
 set(Cabana_ENABLE_HEFFTE @Cabana_ENABLE_HEFFTE@)
 if(Cabana_ENABLE_HEFFTE)
-  find_dependency(Heffte REQUIRED)
+  find_dependency(Heffte REQUIRED VERSION @Heffte_VERSION@)
 endif()
