@@ -298,7 +298,9 @@ jobs:
       - name: Test Cabana Export Target
         working-directory: example/core_tutorial/01_hello_world
         run: |
-          cmake -B build -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/Cabana"
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/Cabana" \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
           cmake --build build
       - name: Build Doxygen
         if: ${{ matrix.doxygen == 'ON' }}
