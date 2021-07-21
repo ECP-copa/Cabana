@@ -54,6 +54,13 @@ class GlobalGrid
                 const std::array<bool, num_space_dim>& periodic,
                 const BlockPartitioner<num_space_dim>& partitioner );
 
+    GlobalGrid( MPI_Comm comm,
+                const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+                const std::array<bool, num_space_dim>& periodic,
+                const BlockPartitioner<num_space_dim>& partitioner,
+                const std::array<int, num_space_dim>& local_offset,
+                const std::array<int, num_space_dim>& local_num_cell);
+
     // Destructor.
     ~GlobalGrid();
 
@@ -157,10 +164,21 @@ class GlobalGrid
     //! \param dim Spatial dimension.
     int ownedNumCell( const int dim ) const;
 
+    //! \brief Set the owned number of cells in a given dimension of this block.
+    //! \param dim Spatial dimension.
+    //! \param num_cell New number of owned cells.
+    void setOwnedNumCell( const int dim, const int num_cell );
+
     //! \brief Get the global offset in a given dimension. This is where our
     //! block starts in the global indexing scheme.
     //! \param dim Spatial dimension.
     int globalOffset( const int dim ) const;
+
+    //! \brief Set the global offset in a given dimension. This is where our
+    //! block start in the global indexing scheme.
+    //! \param dim Spatial dimension.
+    //! \param off New offset
+    void setGlobalOffset( const int dim, const int off );
 
   private:
     MPI_Comm _cart_comm;
@@ -193,6 +211,19 @@ createGlobalGrid( MPI_Comm comm,
 {
     return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
                                                    partitioner );
+}
+template <class MeshType>
+std::shared_ptr<GlobalGrid<MeshType>>
+createGlobalGrid( MPI_Comm comm,
+                  const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+                  const std::array<bool, MeshType::num_space_dim>& periodic,
+                  const BlockPartitioner<MeshType::num_space_dim>& partitioner,
+                  const std::array<int, MeshType::num_space_dim>& local_offset,
+                  const std::array<int, MeshType::num_space_dim>& local_num_cell)
+{
+    return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
+                                                   partitioner, local_offset,
+                                                   local_num_cell );
 }
 
 //---------------------------------------------------------------------------//

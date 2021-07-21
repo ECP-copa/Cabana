@@ -88,6 +88,49 @@ GlobalGrid<MeshType>::GlobalGrid(
     }
 }
 
+template <class MeshType>
+GlobalGrid<MeshType>::GlobalGrid(
+    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+    const std::array<bool, num_space_dim>& periodic,
+    const BlockPartitioner<num_space_dim>& partitioner,
+    const std::array<int, num_space_dim>& local_offset,
+    const std::array<int, num_space_dim>& local_num_cell)
+    : _global_mesh( global_mesh )
+    , _periodic( periodic )
+    , _owned_num_cell( local_num_cell )
+    , _global_cell_offset( local_offset )
+{
+    // Partition the problem.
+    std::array<int, num_space_dim> global_num_cell;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        global_num_cell[d] = _global_mesh->globalNumCell( d );
+    _ranks_per_dim = partitioner.ranksPerDimension( comm, global_num_cell );
+
+    // Extract the periodicity of the boundary as integers.
+    std::array<int, num_space_dim> periodic_dims;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        periodic_dims[d] = _periodic[d];
+
+    // Generate a communicator with a Cartesian topology.
+    int reorder_cart_ranks = 1;
+    MPI_Cart_create( comm, num_space_dim, _ranks_per_dim.data(),
+                     periodic_dims.data(), reorder_cart_ranks, &_cart_comm );
+
+    // Get the Cartesian topology index of this rank.
+    int linear_rank;
+    MPI_Comm_rank( _cart_comm, &linear_rank );
+    MPI_Cart_coords( _cart_comm, linear_rank, num_space_dim,
+                     _cart_rank.data() );
+
+    // todo(sschulz): Check if given local_offset and local_num_cell make sense
+
+    // Determine if a block is on the low or high boundaries.
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        _boundary_lo[d] = ( 0 == _cart_rank[d] );
+        _boundary_hi[d] = ( _ranks_per_dim[d] - 1 == _cart_rank[d] );
+    }
+}
 //---------------------------------------------------------------------------//
 // Destructor.
 template <class MeshType>
@@ -311,6 +354,14 @@ int GlobalGrid<MeshType>::ownedNumCell( const int dim ) const
 }
 
 //---------------------------------------------------------------------------//
+// Set the owned number of cells in a given dimension of this block.
+template <class MeshType>
+void GlobalGrid<MeshType>::setOwnedNumCell( const int dim, const int num_cell )
+{
+    _owned_num_cell[dim] = num_cell;
+}
+
+//---------------------------------------------------------------------------//
 // Get the global offset in a given dimension for the entity of a given
 // type. This is where our block starts in the global indexing scheme.
 template <class MeshType>
@@ -320,7 +371,17 @@ int GlobalGrid<MeshType>::globalOffset( const int dim ) const
 }
 
 //---------------------------------------------------------------------------//
+// Set the global offset in a given dimension. This is where our block start in
+// the global indexing scheme.
+template <class MeshType>
+void GlobalGrid<MeshType>::setGlobalOffset( const int dim, const int off )
+{
+    _global_cell_offset[dim] = off;
+}
 
+
+
+//---------------------------------------------------------------------------//
 } // end namespace Cajita
 
 #endif // end CAJITA_GLOBALGRID_IMPL_HPP
