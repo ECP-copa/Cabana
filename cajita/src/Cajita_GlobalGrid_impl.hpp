@@ -94,7 +94,7 @@ GlobalGrid<MeshType>::GlobalGrid(
     const std::array<bool, num_space_dim>& periodic,
     const BlockPartitioner<num_space_dim>& partitioner,
     const std::array<int, num_space_dim>& local_offset,
-    const std::array<int, num_space_dim>& local_num_cell)
+    const std::array<int, num_space_dim>& local_num_cell )
     : _global_mesh( global_mesh )
     , _periodic( periodic )
     , _owned_num_cell( local_num_cell )
@@ -378,8 +378,6 @@ void GlobalGrid<MeshType>::setGlobalOffset( const int dim, const int off )
 {
     _global_cell_offset[dim] = off;
 }
-
-
 
 //---------------------------------------------------------------------------//
 } // end namespace Cajita

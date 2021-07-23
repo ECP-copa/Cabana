@@ -59,7 +59,7 @@ class GlobalGrid
                 const std::array<bool, num_space_dim>& periodic,
                 const BlockPartitioner<num_space_dim>& partitioner,
                 const std::array<int, num_space_dim>& local_offset,
-                const std::array<int, num_space_dim>& local_num_cell);
+                const std::array<int, num_space_dim>& local_num_cell );
 
     // Destructor.
     ~GlobalGrid();
@@ -213,13 +213,12 @@ createGlobalGrid( MPI_Comm comm,
                                                    partitioner );
 }
 template <class MeshType>
-std::shared_ptr<GlobalGrid<MeshType>>
-createGlobalGrid( MPI_Comm comm,
-                  const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-                  const std::array<bool, MeshType::num_space_dim>& periodic,
-                  const BlockPartitioner<MeshType::num_space_dim>& partitioner,
-                  const std::array<int, MeshType::num_space_dim>& local_offset,
-                  const std::array<int, MeshType::num_space_dim>& local_num_cell)
+std::shared_ptr<GlobalGrid<MeshType>> createGlobalGrid(
+    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+    const std::array<bool, MeshType::num_space_dim>& periodic,
+    const BlockPartitioner<MeshType::num_space_dim>& partitioner,
+    const std::array<int, MeshType::num_space_dim>& local_offset,
+    const std::array<int, MeshType::num_space_dim>& local_num_cell )
 {
     return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
                                                    partitioner, local_offset,
