@@ -315,7 +315,7 @@ int GlobalGrid<MeshType>::ownedNumCell( const int dim ) const
 template <class MeshType>
 void GlobalGrid<MeshType>::setOwnedNumCell( const int dim, const int num_cell )
 {
-    _owned_num_cell[dim] = num_cell;
+    _owned_num_cell[dim] = num_cell + 1;
 }
 
 //---------------------------------------------------------------------------//
@@ -333,7 +333,7 @@ int GlobalGrid<MeshType>::globalOffset( const int dim ) const
 template <class MeshType>
 void GlobalGrid<MeshType>::setGlobalOffset( const int dim, const int off )
 {
-    _global_cell_offset[dim] = off;
+    _global_cell_offset[dim] = off + 1;
 }
 
 //---------------------------------------------------------------------------//
