@@ -368,17 +368,17 @@ void gridTest2d( const std::array<bool, 2>& is_dim_periodic )
             -1 );
 
     // Check setting of _owned_num_cell
-    for(std::size_t i=0; i<2; ++i)
+    for ( std::size_t i = 0; i < 2; ++i )
     {
-        global_grid->setOwnedNumCell(i, 314);
-        EXPECT_EQ( global_grid->ownedNumCell(i), 314 );
+        global_grid->setOwnedNumCell( i, 314 );
+        EXPECT_EQ( global_grid->ownedNumCell( i ), 314 );
     }
 
     // Check setting of _globa_cell_offset
-    for(std::size_t i=0; i<2; ++i)
+    for ( std::size_t i = 0; i < 2; ++i )
     {
-        global_grid->setGlobalOffset(i, 314);
-        EXPECT_EQ( global_grid->globalOffset(i), 314);
+        global_grid->setGlobalOffset( i, 314 );
+        EXPECT_EQ( global_grid->globalOffset( i ), 314 );
     }
 }
 

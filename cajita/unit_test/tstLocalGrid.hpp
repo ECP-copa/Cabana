@@ -3379,7 +3379,7 @@ void mutabilityTest()
 
     // Test mutability of mutGlobalGrid
     auto mutGlobalGrid = local_grid->mutGlobalGrid();
-    mutGlobalGrid.setGlobalOffset(0, 0);
+    mutGlobalGrid.setGlobalOffset( 0, 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -3397,10 +3397,7 @@ TEST( local_grid, 2d_api_test )
     notPeriodicTest2d();
 }
 
-TEST( local_grid, mutability_test )
-{
-    mutabilityTest();
-}
+TEST( local_grid, mutability_test ) { mutabilityTest(); }
 
 //---------------------------------------------------------------------------//
 
