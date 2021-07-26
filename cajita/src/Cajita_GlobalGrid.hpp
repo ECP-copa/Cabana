@@ -54,22 +54,6 @@ class GlobalGrid
                 const std::array<bool, num_space_dim>& periodic,
                 const BlockPartitioner<num_space_dim>& partitioner );
 
-    /*!
-     \brief Constructor.
-     \param comm The communicator over which to define the grid.
-     \param global_mesh The global mesh data.
-     \param periodic Whether each logical dimension is periodic.
-     \param partitioner The grid partitioner.
-     \param local_offset The offset of the local grid
-     \param local_num_cell The number of owned cells of the local grid
-    */
-    GlobalGrid( MPI_Comm comm,
-                const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-                const std::array<bool, num_space_dim>& periodic,
-                const BlockPartitioner<num_space_dim>& partitioner,
-                const std::array<int, num_space_dim>& local_offset,
-                const std::array<int, num_space_dim>& local_num_cell );
-
     // Destructor.
     ~GlobalGrid();
 
@@ -220,28 +204,6 @@ createGlobalGrid( MPI_Comm comm,
 {
     return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
                                                    partitioner );
-}
-
-/*!
-  \brief Create a global grid.
-  \param comm The communicator over which to define the grid.
-  \param global_mesh The global mesh data.
-  \param periodic Whether each logical dimension is periodic.
-  \param partitioner The grid partitioner.
-  \param local_offset The offset of the local grid
-  \param local_num_cell The number of owned cells of the local grid
-*/
-template <class MeshType>
-std::shared_ptr<GlobalGrid<MeshType>> createGlobalGrid(
-    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-    const std::array<bool, MeshType::num_space_dim>& periodic,
-    const BlockPartitioner<MeshType::num_space_dim>& partitioner,
-    const std::array<int, MeshType::num_space_dim>& local_offset,
-    const std::array<int, MeshType::num_space_dim>& local_num_cell )
-{
-    return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
-                                                   partitioner, local_offset,
-                                                   local_num_cell );
 }
 
 //---------------------------------------------------------------------------//
