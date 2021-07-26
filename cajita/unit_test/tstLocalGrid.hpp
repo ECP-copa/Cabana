@@ -3352,6 +3352,36 @@ void notPeriodicTest2d()
     MPI_Comm_free( &serial_comm );
 }
 
+void mutabilityTest()
+{
+    // Let MPI compute the partitioning for this test.
+    UniformDimPartitioner partitioner;
+
+    // Create the global mesh.
+    double cell_size = 0.23;
+    std::array<int, 3> global_num_cell = { 47, 38, 53 };
+    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
+    std::array<double, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    auto global_mesh = createUniformGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+
+    // Create the global grid.
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
+    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                         is_dim_periodic, partitioner );
+
+    // Create a local grid.
+    int halo_width = 2;
+    auto local_grid = createLocalGrid( global_grid, halo_width );
+
+    // Test mutability of mutGlobalGrid
+    auto mutGlobalGrid = local_grid->mutGlobalGrid();
+    mutGlobalGrid.setGlobalOffset(0, 0);
+}
+
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
@@ -3365,6 +3395,11 @@ TEST( local_grid, 2d_api_test )
 {
     periodicTest2d();
     notPeriodicTest2d();
+}
+
+TEST( local_grid, mutability_test )
+{
+    mutabilityTest();
 }
 
 //---------------------------------------------------------------------------//
