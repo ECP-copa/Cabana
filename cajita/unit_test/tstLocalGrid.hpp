@@ -3378,7 +3378,8 @@ void mutabilityTest()
     auto local_grid = createLocalGrid( global_grid, halo_width );
 
     // Test mutability of mutGlobalGrid
-    Cajita::GlobalGrid<Cajita::UniformMesh<double, 3>>& mutGlobalGrid = local_grid->mutGlobalGrid();
+    Cajita::GlobalGrid<Cajita::UniformMesh<double, 3>>& mutGlobalGrid =
+        local_grid->mutGlobalGrid();
     mutGlobalGrid.setGlobalOffset( 0, 0 );
 }
 
