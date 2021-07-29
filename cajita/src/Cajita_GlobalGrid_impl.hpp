@@ -339,6 +339,24 @@ void GlobalGrid<MeshType>::setGlobalOffset( const int dim, const int off )
 }
 
 //---------------------------------------------------------------------------//
+// Recompute _global_cell_offset according to _owned_num_cell and topology
+template <class MeshType>
+void GlobalGrid<MeshType>::computeGlobalOffset()
+{
+    std::array<int, num_space_dim> new_global_offset;
+    MPI_Exscan( _owned_num_cell.data(), new_global_offset.data(),
+                _owned_num_cell.size(), MPI_INT, MPI_SUM, _cart_comm );
+    int linear_rank;
+    MPI_Comm_rank( _cart_comm, &linear_rank );
+    // The global offset does not change for the first rank, so only update the
+    // remaining ones. For the first rank, new_global_offset is also undefined.
+    if ( linear_rank > 1 )
+        std::copy( std::begin( new_global_offset ),
+                   std::end( new_global_offset ),
+                   std::begin( _global_cell_offset ) );
+}
+
+//---------------------------------------------------------------------------//
 } // end namespace Cajita
 
 #endif // end CAJITA_GLOBALGRID_IMPL_HPP

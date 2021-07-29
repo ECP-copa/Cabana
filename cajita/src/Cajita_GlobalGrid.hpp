@@ -183,6 +183,9 @@ class GlobalGrid
     std::array<int, num_space_dim> _global_cell_offset;
     std::array<bool, num_space_dim> _boundary_lo;
     std::array<bool, num_space_dim> _boundary_hi;
+
+    //! \brief Recompute global offset according to topology and _owned_num_cell
+    void computeGlobalOffset();
 };
 
 //---------------------------------------------------------------------------//
