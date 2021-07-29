@@ -313,9 +313,11 @@ int GlobalGrid<MeshType>::ownedNumCell( const int dim ) const
 //---------------------------------------------------------------------------//
 // Set the owned number of cells in a given dimension of this block.
 template <class MeshType>
-void GlobalGrid<MeshType>::setOwnedNumCell( const int dim, const int num_cell )
+void GlobalGrid<MeshType>::setOwnedNumCell(
+    const std::array<int, num_space_dim>& num_cell )
 {
-    _owned_num_cell[dim] = num_cell;
+    std::copy( std::begin( num_cell ), std::end( num_cell ),
+               std::begin( _owned_num_cell ) );
 }
 
 //---------------------------------------------------------------------------//

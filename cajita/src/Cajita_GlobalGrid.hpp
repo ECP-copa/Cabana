@@ -160,7 +160,7 @@ class GlobalGrid
     //! \brief Set the owned number of cells in a given dimension of this block.
     //! \param dim Spatial dimension.
     //! \param num_cell New number of owned cells.
-    void setOwnedNumCell( const int dim, const int num_cell );
+    void setOwnedNumCell( const std::array<int, num_space_dim>& num_cell );
 
     //! \brief Get the global offset in a given dimension. This is where our
     //! block starts in the global indexing scheme.
