@@ -318,6 +318,7 @@ void GlobalGrid<MeshType>::setOwnedNumCell(
 {
     std::copy( std::begin( num_cell ), std::end( num_cell ),
                std::begin( _owned_num_cell ) );
+    computeGlobalOffset();
 }
 
 //---------------------------------------------------------------------------//
