@@ -157,20 +157,17 @@ class GlobalGrid
     //! \param dim Spatial dimension.
     int ownedNumCell( const int dim ) const;
 
-    //! \brief Set the owned number of cells for all dimensions of this block.
-    //! \param num_cell New number of owned cells for all dimensions.
-    void setOwnedNumCell( const std::array<int, num_space_dim>& num_cell );
-
     //! \brief Get the global offset in a given dimension. This is where our
     //! block starts in the global indexing scheme.
     //! \param dim Spatial dimension.
     int globalOffset( const int dim ) const;
 
-    //! \brief Set the global offset in a given dimension. This is where our
-    //! block start in the global indexing scheme.
-    //! \param dim Spatial dimension.
-    //! \param off New offset
-    void setGlobalOffset( const int dim, const int off );
+    //! \brief Set number of cells and offset of local part of the grid. Make
+    //! sure these are consistent across all ranks.
+    //! \param num_cell New number of owned cells for all dimensions.
+    //! \param offset New global offset for all dimensions.
+    void setNumCellAndOffset( const std::array<int, num_space_dim>& num_cell,
+                              const std::array<int, num_space_dim>& offset );
 
   private:
     MPI_Comm _cart_comm;
@@ -182,9 +179,6 @@ class GlobalGrid
     std::array<int, num_space_dim> _global_cell_offset;
     std::array<bool, num_space_dim> _boundary_lo;
     std::array<bool, num_space_dim> _boundary_hi;
-
-    //! \brief Recompute global offset according to topology and _owned_num_cell
-    void computeGlobalOffset();
 };
 
 //---------------------------------------------------------------------------//

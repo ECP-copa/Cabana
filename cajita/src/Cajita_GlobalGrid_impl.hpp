@@ -311,17 +311,6 @@ int GlobalGrid<MeshType>::ownedNumCell( const int dim ) const
 }
 
 //---------------------------------------------------------------------------//
-// Set the owned number of cells in a given dimension of this block.
-template <class MeshType>
-void GlobalGrid<MeshType>::setOwnedNumCell(
-    const std::array<int, num_space_dim>& num_cell )
-{
-    std::copy( std::begin( num_cell ), std::end( num_cell ),
-               std::begin( _owned_num_cell ) );
-    computeGlobalOffset();
-}
-
-//---------------------------------------------------------------------------//
 // Get the global offset in a given dimension for the entity of a given
 // type. This is where our block starts in the global indexing scheme.
 template <class MeshType>
@@ -331,30 +320,17 @@ int GlobalGrid<MeshType>::globalOffset( const int dim ) const
 }
 
 //---------------------------------------------------------------------------//
-// Set the global offset in a given dimension. This is where our block start in
-// the global indexing scheme.
+// Set the number of owned cells and global offset. Make sure this is
+// consistent across all ranks.
 template <class MeshType>
-void GlobalGrid<MeshType>::setGlobalOffset( const int dim, const int off )
+void GlobalGrid<MeshType>::setNumCellAndOffset(
+    const std::array<int, num_space_dim>& num_cell,
+    const std::array<int, num_space_dim>& offset )
 {
-    _global_cell_offset[dim] = off;
-}
-
-//---------------------------------------------------------------------------//
-// Recompute _global_cell_offset according to _owned_num_cell and topology
-template <class MeshType>
-void GlobalGrid<MeshType>::computeGlobalOffset()
-{
-    std::array<int, num_space_dim> new_global_offset;
-    MPI_Exscan( _owned_num_cell.data(), new_global_offset.data(),
-                _owned_num_cell.size(), MPI_INT, MPI_SUM, _cart_comm );
-    int linear_rank;
-    MPI_Comm_rank( _cart_comm, &linear_rank );
-    // The global offset does not change for the first rank, so only update the
-    // remaining ones. For the first rank, new_global_offset is also undefined.
-    if ( linear_rank > 1 )
-        std::copy( std::begin( new_global_offset ),
-                   std::end( new_global_offset ),
-                   std::begin( _global_cell_offset ) );
+    std::copy( std::begin( num_cell ), std::end( num_cell ),
+               std::begin( _owned_num_cell ) );
+    std::copy( std::begin( offset ), std::end( offset ),
+               std::begin( _global_cell_offset ) );
 }
 
 //---------------------------------------------------------------------------//

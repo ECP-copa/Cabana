@@ -3380,7 +3380,8 @@ void mutabilityTest()
     // Test mutability of mutGlobalGrid
     Cajita::GlobalGrid<Cajita::UniformMesh<double, 3>>& mutGlobalGrid =
         local_grid->globalGrid();
-    mutGlobalGrid.setGlobalOffset( 0, 0 );
+    std::array<int, 3> num_cell = { 0, 0, 0 };
+    mutGlobalGrid.setNumCellAndOffset( num_cell, num_cell );
 }
 
 //---------------------------------------------------------------------------//
