@@ -36,7 +36,7 @@ const GlobalGrid<MeshType>& LocalGrid<MeshType>::globalGrid() const
 //---------------------------------------------------------------------------//
 // Get a mutable version of the global grid that own the local grid.
 template <class MeshType>
-GlobalGrid<MeshType>& LocalGrid<MeshType>::mutGlobalGrid()
+GlobalGrid<MeshType>& LocalGrid<MeshType>::globalGrid()
 {
     return *_global_grid;
 }

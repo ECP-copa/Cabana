@@ -56,7 +56,7 @@ class LocalGrid
     const GlobalGrid<MeshType>& globalGrid() const;
 
     //! \brief Get a mutable version of the global grid that own the local grid
-    GlobalGrid<MeshType>& mutGlobalGrid();
+    GlobalGrid<MeshType>& globalGrid();
 
     //! \brief Get the number of cells in the halo.
     int haloCellWidth() const;
