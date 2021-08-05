@@ -17,10 +17,7 @@
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
-
-// TODO: bad include into Cajita
-// TODO: Sam said he had a plan to draw out some common cajita elements?
-#include <../cajita/src/Cajita_ParameterPack.hpp>
+#include <Cabana_ParameterPack.hpp>
 
 namespace Cabana
 {
@@ -31,7 +28,7 @@ template <class AoSoA, std::size_t... Indicies>
 auto makeSliceParameterPackImpl( const AoSoA& aosoa,
                                  std::index_sequence<Indicies...> )
 {
-    return Cajita::makeParameterPack( Cabana::slice<Indicies>( aosoa )... );
+    return Cabana::makeParameterPack( Cabana::slice<Indicies>( aosoa )... );
 }
 
 template <class AoSoA>
@@ -86,7 +83,7 @@ class BufferedAoSoA
         template member_slice_type<i>&
         get_slice()
     {
-        return Cajita::get<i>( cajita_tuple );
+        return Cabana::get<i>( cajita_tuple );
     }
 
     // Internal buffers which we use to buffer data back and forth, and also
