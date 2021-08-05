@@ -709,7 +709,7 @@ class VerletList
     {
         build( x, begin, end, neighborhood_radius, cell_size_ratio, grid_min,
                grid_max, max_neigh );
-    };
+    }
 
     /*!
       \brief Given a list of particle positions and a neighborhood radius

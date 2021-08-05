@@ -303,6 +303,8 @@ auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d ) - halo_width;
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -320,6 +322,8 @@ auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d );
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     return IndexSpace<num_space_dim>( min, max );
@@ -352,6 +356,8 @@ auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d );
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -369,6 +375,8 @@ auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d ) + halo_width;
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     return IndexSpace<num_space_dim>( min, max );
@@ -449,6 +457,9 @@ auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d ) - halo_width;
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -466,6 +477,9 @@ auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d );
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     return IndexSpace<num_space_dim>( min, max );
@@ -498,6 +512,9 @@ auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d );
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -515,6 +532,9 @@ auto LocalGrid<MeshType>::sharedIndexSpaceImpl(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d ) + halo_width + 1;
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     return IndexSpace<num_space_dim>( min, max );
@@ -927,6 +947,9 @@ auto LocalGrid<MeshType>::faceSharedIndexSpace(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d ) - halo_width;
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -945,6 +968,9 @@ auto LocalGrid<MeshType>::faceSharedIndexSpace(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d );
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     return IndexSpace<num_space_dim>( min, max );
@@ -980,6 +1006,9 @@ auto LocalGrid<MeshType>::faceSharedIndexSpace(
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d );
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -998,6 +1027,9 @@ auto LocalGrid<MeshType>::faceSharedIndexSpace(
         else if ( 1 == off_ijk[d] )
             max[d] = ( Dir == d ) ? owned_space.max( d ) + halo_width + 1
                                   : owned_space.max( d ) + halo_width;
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     return IndexSpace<num_space_dim>( min, max );
@@ -1099,6 +1131,9 @@ LocalGrid<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>,
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d ) - halo_width;
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -1117,6 +1152,9 @@ LocalGrid<MeshType>::edgeSharedIndexSpace( Own, Edge<Dir>,
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             max[d] = owned_space.max( d );
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     return IndexSpace<3>( min, max );
@@ -1151,6 +1189,9 @@ LocalGrid<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>,
         // Upper neighbor.
         else if ( 1 == off_ijk[d] )
             min[d] = owned_space.max( d );
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     // Compute the upper bound.
@@ -1169,6 +1210,9 @@ LocalGrid<MeshType>::edgeSharedIndexSpace( Ghost, Edge<Dir>,
         else if ( 1 == off_ijk[d] )
             max[d] = ( Dir == d ) ? owned_space.max( d ) + halo_width
                                   : owned_space.max( d ) + halo_width + 1;
+
+        else
+            throw std::runtime_error( "Neighbor offset must be 1, 0, or -1" );
     }
 
     return IndexSpace<3>( min, max );
