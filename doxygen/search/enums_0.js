@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['hashtypes_1454',['HashTypes',['../namespaceCajita.html#a2ec822f40e278e94dbe22325c2b4c824',1,'Cajita']]]
+  ['hashtypes_1457',['HashTypes',['../namespaceCajita.html#a2ec822f40e278e94dbe22325c2b4c824',1,'Cajita']]]
 ];

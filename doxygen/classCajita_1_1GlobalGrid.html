@@ -170,6 +170,9 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class
 <tr class="memitem:a53facb92d1cce43e9a06b82fe2635e8c"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalGrid.html#a53facb92d1cce43e9a06b82fe2635e8c">globalOffset</a> (const int dim) const</td></tr>
 <tr class="memdesc:a53facb92d1cce43e9a06b82fe2635e8c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the global offset in a given dimension. This is where our block starts in the global indexing scheme.  <a href="classCajita_1_1GlobalGrid.html#a53facb92d1cce43e9a06b82fe2635e8c">More...</a><br /></td></tr>
 <tr class="separator:a53facb92d1cce43e9a06b82fe2635e8c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:af73777633145817367cddcb2d48661a2"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1GlobalGrid.html#af73777633145817367cddcb2d48661a2">setNumCellAndOffset</a> (const std::array&lt; int, <a class="el" href="classCajita_1_1GlobalGrid.html#a452f6680e1dc28d3345eecf7a1e33c1b">num_space_dim</a> &gt; &amp;num_cell, const std::array&lt; int, <a class="el" href="classCajita_1_1GlobalGrid.html#a452f6680e1dc28d3345eecf7a1e33c1b">num_space_dim</a> &gt; &amp;offset)</td></tr>
+<tr class="memdesc:af73777633145817367cddcb2d48661a2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Set number of cells and offset of local part of the grid. Make sure these are consistent across all ranks.  <a href="classCajita_1_1GlobalGrid.html#af73777633145817367cddcb2d48661a2">More...</a><br /></td></tr>
+<tr class="separator:af73777633145817367cddcb2d48661a2"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -832,6 +835,45 @@ template&lt;class MeshType &gt; </div>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">dim</td><td>Spatial dimension. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="af73777633145817367cddcb2d48661a2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#af73777633145817367cddcb2d48661a2">&#9670;&nbsp;</a></span>setNumCellAndOffset()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class MeshType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void <a class="el" href="classCajita_1_1GlobalGrid.html">Cajita::GlobalGrid</a>&lt; MeshType &gt;::setNumCellAndOffset </td>
+          <td>(</td>
+          <td class="paramtype">const std::array&lt; int, <a class="el" href="classCajita_1_1GlobalGrid.html#a452f6680e1dc28d3345eecf7a1e33c1b">num_space_dim</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>num_cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; int, <a class="el" href="classCajita_1_1GlobalGrid.html#a452f6680e1dc28d3345eecf7a1e33c1b">num_space_dim</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>offset</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Set number of cells and offset of local part of the grid. Make sure these are consistent across all ranks. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">num_cell</td><td>New number of owned cells for all dimensions. </td></tr>
+    <tr><td class="paramname">offset</td><td>New global offset for all dimensions. </td></tr>
   </table>
   </dd>
 </dl>
