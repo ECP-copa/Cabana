@@ -235,6 +235,17 @@ void gridTest3d( const std::array<bool, 3>& is_dim_periodic )
         EXPECT_EQ(
             global_grid->blockRank( 0, 0, global_grid->dimNumBlock( Dim::K ) ),
             -1 );
+
+    // Check setNumCellAndOffset
+    // todo(sschulz): Need to have a more realistic change, since there might
+    // be some checking involved within the function.
+    std::array<int, 3> num_cell = { 314, 314, 314 };
+    global_grid->setNumCellAndOffset( num_cell, num_cell );
+    for ( std::size_t i = 0; i < 3; ++i )
+    {
+        EXPECT_EQ( global_grid->ownedNumCell( i ), num_cell[i] );
+        EXPECT_EQ( global_grid->globalOffset( i ), num_cell[i] );
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -366,6 +377,17 @@ void gridTest2d( const std::array<bool, 2>& is_dim_periodic )
         EXPECT_EQ(
             global_grid->blockRank( 0, global_grid->dimNumBlock( Dim::J ) ),
             -1 );
+
+    // Check setNumCellAndOffset
+    // todo(sschulz): Need to have a more realistic change, since there might
+    // be some checking involved within the function.
+    std::array<int, 2> num_cell = { 314, 314 };
+    global_grid->setNumCellAndOffset( num_cell, num_cell );
+    for ( std::size_t i = 0; i < 2; ++i )
+    {
+        EXPECT_EQ( global_grid->ownedNumCell( i ), num_cell[i] );
+        EXPECT_EQ( global_grid->globalOffset( i ), num_cell[i] );
+    }
 }
 
 //---------------------------------------------------------------------------//

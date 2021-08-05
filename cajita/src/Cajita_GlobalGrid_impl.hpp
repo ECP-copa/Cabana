@@ -320,7 +320,20 @@ int GlobalGrid<MeshType>::globalOffset( const int dim ) const
 }
 
 //---------------------------------------------------------------------------//
+// Set the number of owned cells and global offset. Make sure this is
+// consistent across all ranks.
+template <class MeshType>
+void GlobalGrid<MeshType>::setNumCellAndOffset(
+    const std::array<int, num_space_dim>& num_cell,
+    const std::array<int, num_space_dim>& offset )
+{
+    std::copy( std::begin( num_cell ), std::end( num_cell ),
+               std::begin( _owned_num_cell ) );
+    std::copy( std::begin( offset ), std::end( offset ),
+               std::begin( _global_cell_offset ) );
+}
 
+//---------------------------------------------------------------------------//
 } // end namespace Cajita
 
 #endif // end CAJITA_GLOBALGRID_IMPL_HPP

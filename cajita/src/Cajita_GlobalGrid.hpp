@@ -162,6 +162,13 @@ class GlobalGrid
     //! \param dim Spatial dimension.
     int globalOffset( const int dim ) const;
 
+    //! \brief Set number of cells and offset of local part of the grid. Make
+    //! sure these are consistent across all ranks.
+    //! \param num_cell New number of owned cells for all dimensions.
+    //! \param offset New global offset for all dimensions.
+    void setNumCellAndOffset( const std::array<int, num_space_dim>& num_cell,
+                              const std::array<int, num_space_dim>& offset );
+
   private:
     MPI_Comm _cart_comm;
     std::shared_ptr<GlobalMesh<MeshType>> _global_mesh;
