@@ -284,7 +284,7 @@ createParticleGridDistributor( const LocalGridType& local_grid,
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
 void particleGridMigrate( const LocalGridType& local_grid,
-                          ParticlePositions& positions,
+                          const ParticlePositions& positions,
                           ParticleContainer& particles,
                           const int min_halo_width,
                           const bool force_migrate = false )
