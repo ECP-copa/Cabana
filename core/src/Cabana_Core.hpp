@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \namespace Cabana
+  \brief Core: particle data structures and algorithms
+*/
 #ifndef CABANA_CORE_HPP
 #define CABANA_CORE_HPP
 
@@ -20,6 +24,7 @@
 #include <Cabana_MemberTypes.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Parallel.hpp>
+#include <Cabana_ParameterPack.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_SoA.hpp>
 #include <Cabana_Sort.hpp>

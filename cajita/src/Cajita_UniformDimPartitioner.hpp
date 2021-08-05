@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_UniformDimPartitioner.hpp
+  \brief Uniform multi-node grid partitioner
+*/
 #ifndef CAJITA_UNIFORMDIMPARTITIONER_HPP
 #define CAJITA_UNIFORMDIMPARTITIONER_HPP
 
@@ -21,12 +25,11 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-class UniformDimPartitioner : public Partitioner
+/*!
+  \brief Backwards compatibility wrapper for 3D DimBlockPartitioner
+*/
+class UniformDimPartitioner : public DimBlockPartitioner<3>
 {
-  public:
-    std::array<int, 3> ranksPerDimension(
-        MPI_Comm comm,
-        const std::array<int, 3>& global_cells_per_dim ) const override;
 };
 
 //---------------------------------------------------------------------------//

@@ -22,6 +22,7 @@ set(HEADERS_PUBLIC
   Cabana_MemberTypes.hpp
   Cabana_NeighborList.hpp
   Cabana_Parallel.hpp
+  Cabana_ParameterPack.hpp
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp
@@ -51,24 +52,20 @@ set(HEADERS_IMPL
   impl/Cabana_PerformanceTraits.hpp
   impl/Cabana_TypeTraits.hpp
   )
-set(SOURCES_IMPL
-  impl/Cabana_Version.cpp
-  )
 
-add_library(cabanacore ${SOURCES_IMPL})
+add_library(cabanacore INTERFACE)
 
-target_link_libraries(cabanacore Kokkos::kokkos)
+target_link_libraries(cabanacore INTERFACE Kokkos::kokkos)
 
 if(Cabana_ENABLE_ARBORX)
-  target_link_libraries(cabanacore ArborX::ArborX)
+  target_link_libraries(cabanacore INTERFACE ArborX::ArborX)
 endif()
 
 if(Cabana_ENABLE_MPI)
-  target_link_libraries(cabanacore MPI::MPI_CXX)
+  target_link_libraries(cabanacore INTERFACE MPI::MPI_CXX)
 endif()
 
-target_include_directories(cabanacore
-  PUBLIC
+target_include_directories(cabanacore INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

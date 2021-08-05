@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Distributor.hpp
+  \brief Multi-node particle redistribution
+*/
 #ifndef CABANA_DISTRIBUTOR_HPP
 #define CABANA_DISTRIBUTOR_HPP
 
@@ -27,10 +31,8 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class Distributor
-
-  \brief Distributor is a communication plan for migrating data from one
-  uniquely-owned decomposition to another uniquely owned decomposition.
+  \brief A communication plan for migrating data from one uniquely-owned
+  decomposition to another uniquely owned decomposition.
 
   \tparam DeviceType Device type for which the data for this class will be
   allocated and where parallel compuations will be executed.
@@ -140,7 +142,7 @@ class Distributor : public CommunicationPlan<DeviceType>
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_distributor_impl : public std::false_type
 {
@@ -150,7 +152,9 @@ template <typename DeviceType>
 struct is_distributor_impl<Distributor<DeviceType>> : public std::true_type
 {
 };
+//! \endcond
 
+//! Distributor static type checker.
 template <class T>
 struct is_distributor
     : public is_distributor_impl<typename std::remove_cv<T>::type>::type
@@ -160,7 +164,7 @@ struct is_distributor
 //---------------------------------------------------------------------------//
 namespace Impl
 {
-
+//! \cond Impl
 //---------------------------------------------------------------------------//
 // Synchronously move data between a source and destination AoSoA by executing
 // the forward communication plan.
@@ -296,7 +300,7 @@ void distributeData(
 }
 
 //---------------------------------------------------------------------------//
-
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//

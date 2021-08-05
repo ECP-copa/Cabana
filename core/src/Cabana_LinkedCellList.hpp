@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_LinkedCellList.hpp
+  \brief Linked cell list binning and sorting
+*/
 #ifndef CABANA_LINKEDCELLLIST_HPP
 #define CABANA_LINKEDCELLLIST_HPP
 
@@ -23,7 +27,6 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class LinkedCellList
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation on a 3d regular Cartesian grid.
 */
@@ -31,10 +34,17 @@ template <class DeviceType>
 class LinkedCellList
 {
   public:
+    //! Kokkos device_type.
     using device_type = DeviceType;
+    //! Kokkos memory space.
     using memory_space = typename device_type::memory_space;
+    //! Kokkos execution space.
     using execution_space = typename device_type::execution_space;
+    //! Memory space size type.
     using size_type = typename memory_space::size_type;
+    //! Binning view type.
+    using CountView = Kokkos::View<int*, device_type>;
+    //! Offset view type.
     using OffsetView = Kokkos::View<size_type*, device_type>;
 
     /*!
@@ -66,7 +76,9 @@ class LinkedCellList
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
     {
-        build( positions, 0, positions.size() );
+        std::size_t np = positions.size();
+        allocate( totalBins(), np );
+        build( positions, 0, np );
     }
 
     /*!
@@ -98,6 +110,7 @@ class LinkedCellList
                  grid_max[1], grid_max[2], grid_delta[0], grid_delta[1],
                  grid_delta[2] )
     {
+        allocate( totalBins(), end - begin );
         build( positions, begin, end );
     }
 
@@ -204,34 +217,45 @@ class LinkedCellList
     */
     BinningData<DeviceType> binningData() const { return _bin_data; }
 
-  public:
-    // This function should be private but we need to expose it as public to
-    // launch CUDA kernels with class data.
+    /*!
+      \brief Build the linked cell list with a subset of particles.
+
+      \tparam SliceType Slice type for positions.
+
+      \param positions Slice of positions.
+
+      \param begin The beginning index of the slice range to sort.
+
+      \param end The end index of the slice range to sort.
+    */
     template <class SliceType>
     void build( SliceType positions, const std::size_t begin,
                 const std::size_t end )
     {
-        // Allocate the binning data. Note that the permutation vector spans
+        // Resize the binning data. Note that the permutation vector spans
         // only the length of begin-end;
         std::size_t ncell = totalBins();
-        Kokkos::View<int*, memory_space> counts(
-            Kokkos::view_alloc( Kokkos::WithoutInitializing, "counts" ),
-            ncell );
-        OffsetView offsets(
-            Kokkos::view_alloc( Kokkos::WithoutInitializing, "offsets" ),
-            ncell );
-        OffsetView permute(
-            Kokkos::view_alloc( Kokkos::WithoutInitializing, "permute" ),
-            end - begin );
+        if ( _counts.extent( 0 ) != ncell )
+        {
+            Kokkos::resize( _counts, ncell );
+            Kokkos::resize( _offsets, ncell );
+        }
+        std::size_t nparticles = end - begin;
+        if ( _permutes.extent( 0 ) != nparticles )
+        {
+            Kokkos::resize( _permutes, nparticles );
+        }
 
-        // Get a local copy of the grid because it is class data and a lambda
-        // function will not capture it otherwise via CUDA.
+        // Get local copies of class data for lambda function capture.
         auto grid = _grid;
+        auto counts = _counts;
+        auto offsets = _offsets;
+        auto permutes = _permutes;
 
         // Count.
         Kokkos::RangePolicy<execution_space> particle_range( begin, end );
-        Kokkos::deep_copy( counts, 0 );
-        auto counts_sv = Kokkos::Experimental::create_scatter_view( counts );
+        Kokkos::deep_copy( _counts, 0 );
+        auto counts_sv = Kokkos::Experimental::create_scatter_view( _counts );
         auto cell_count = KOKKOS_LAMBDA( const std::size_t p )
         {
             int i, j, k;
@@ -243,7 +267,7 @@ class LinkedCellList
         Kokkos::parallel_for( "Cabana::LinkedCellList::build::cell_count",
                               particle_range, cell_count );
         Kokkos::fence();
-        Kokkos::Experimental::contribute( counts, counts_sv );
+        Kokkos::Experimental::contribute( _counts, counts_sv );
 
         // Compute offsets.
         Kokkos::RangePolicy<execution_space> cell_range( 0, ncell );
@@ -259,7 +283,7 @@ class LinkedCellList
         Kokkos::fence();
 
         // Reset counts.
-        Kokkos::deep_copy( counts, 0 );
+        Kokkos::deep_copy( _counts, 0 );
 
         // Compute the permutation vector.
         auto create_permute = KOKKOS_LAMBDA( const std::size_t p )
@@ -269,7 +293,7 @@ class LinkedCellList
                               positions( p, 2 ), i, j, k );
             auto cell_id = grid.cardinalCellIndex( i, j, k );
             int c = Kokkos::atomic_fetch_add( &counts( cell_id ), 1 );
-            permute( offsets( cell_id ) + c ) = p;
+            permutes( offsets( cell_id ) + c ) = p;
         };
         Kokkos::parallel_for( "Cabana::LinkedCellList::build::create_permute",
                               particle_range, create_permute );
@@ -277,16 +301,46 @@ class LinkedCellList
 
         // Create the binning data.
         _bin_data =
-            BinningData<DeviceType>( begin, end, counts, offsets, permute );
+            BinningData<DeviceType>( begin, end, _counts, _offsets, _permutes );
+    }
+
+    /*!
+      \brief Build the linked cell list with all particles.
+
+      \tparam SliceType Slice type for positions.
+
+      \param positions Slice of positions.
+    */
+    template <class SliceType>
+    void build( SliceType positions )
+    {
+        build( positions, 0, positions.size() );
     }
 
   private:
     BinningData<DeviceType> _bin_data;
     Impl::CartesianGrid<double> _grid;
+
+    CountView _counts;
+    OffsetView _offsets;
+    OffsetView _permutes;
+
+    void allocate( const int ncell, const int nparticles )
+    {
+        _counts = CountView(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing, "counts" ),
+            ncell );
+        _offsets = OffsetView(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing, "offsets" ),
+            ncell );
+        _permutes = OffsetView(
+            Kokkos::view_alloc( Kokkos::WithoutInitializing, "permutes" ),
+            nparticles );
+    }
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_linked_cell_list_impl : public std::false_type
 {
@@ -297,7 +351,9 @@ struct is_linked_cell_list_impl<LinkedCellList<DeviceType>>
     : public std::true_type
 {
 };
+//! \endcond
 
+//! LinkedCellList static type checker.
 template <class T>
 struct is_linked_cell_list
     : public is_linked_cell_list_impl<typename std::remove_cv<T>::type>::type

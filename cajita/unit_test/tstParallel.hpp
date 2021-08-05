@@ -199,7 +199,7 @@ void parallelLocalGridTest()
 
     // Create the global mesh.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 101, 85, 99 };
+    std::array<int, 3> global_num_cell = { 39, 42, 55 };
     std::array<bool, 3> is_dim_periodic = { true, true, true };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
@@ -272,11 +272,138 @@ void parallelLocalGridTest()
 }
 
 //---------------------------------------------------------------------------//
+void parallelMultiSpaceTest()
+{
+    // 2D
+    IndexSpace<2> is2_0( { 10, 10 } );
+    IndexSpace<2> is2_1( { 1, 1 }, { 4, 4 } );
+    IndexSpace<2> is2_2( { 9, 9 }, { 10, 10 } );
+
+    auto data_2d = createView<double, TEST_MEMSPACE>( "data_2d", is2_0 );
+    Kokkos::deep_copy( data_2d, 0.0 );
+
+    grid_parallel_for(
+        "multi_space_2d", TEST_EXECSPACE{},
+        Kokkos::Array<IndexSpace<2>, 2>{ is2_1, is2_2 },
+        KOKKOS_LAMBDA( const int s, const int i, const int j ) {
+            if ( 0 == s )
+                data_2d( i, j ) = 1.0;
+            else if ( 1 == s )
+                data_2d( i, j ) = 2.0;
+        } );
+
+    auto host_data_2d =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace{}, data_2d );
+
+    for ( int i = 0; i < is2_0.extent( Dim::I ); ++i )
+        for ( int j = 0; j < is2_0.extent( Dim::J ); ++j )
+        {
+            long idx[2] = { i, j };
+            if ( is2_1.inRange( idx ) )
+            {
+                EXPECT_EQ( 1.0, host_data_2d( i, j ) );
+            }
+            else if ( is2_2.inRange( idx ) )
+            {
+                EXPECT_EQ( 2.0, host_data_2d( i, j ) );
+            }
+            else
+            {
+                EXPECT_EQ( 0.0, host_data_2d( i, j ) );
+            }
+        }
+
+    // 3D
+    IndexSpace<3> is3_0( { 10, 10, 10 } );
+    IndexSpace<3> is3_1( { 1, 1, 1 }, { 4, 4, 4 } );
+    IndexSpace<3> is3_2( { 9, 9, 9 }, { 10, 10, 10 } );
+
+    auto data_3d = createView<double, TEST_MEMSPACE>( "data_3d", is3_0 );
+    Kokkos::deep_copy( data_3d, 0.0 );
+
+    grid_parallel_for(
+        "multi_space_3d", TEST_EXECSPACE{},
+        Kokkos::Array<IndexSpace<3>, 2>{ is3_1, is3_2 },
+        KOKKOS_LAMBDA( const int s, const int i, const int j, const int k ) {
+            if ( 0 == s )
+                data_3d( i, j, k ) = 1.0;
+            else if ( 1 == s )
+                data_3d( i, j, k ) = 2.0;
+        } );
+
+    auto host_data_3d =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace{}, data_3d );
+
+    for ( int i = 0; i < is3_0.extent( Dim::I ); ++i )
+        for ( int j = 0; j < is3_0.extent( Dim::J ); ++j )
+            for ( int k = 0; k < is3_0.extent( Dim::K ); ++k )
+            {
+                long idx[3] = { i, j, k };
+                if ( is3_1.inRange( idx ) )
+                {
+                    EXPECT_EQ( 1.0, host_data_3d( i, j, k ) );
+                }
+                else if ( is3_2.inRange( idx ) )
+                {
+                    EXPECT_EQ( 2.0, host_data_3d( i, j, k ) );
+                }
+                else
+                {
+                    EXPECT_EQ( 0.0, host_data_3d( i, j, k ) );
+                }
+            }
+
+    // 4D
+    IndexSpace<4> is4_0( { 10, 10, 10, 10 } );
+    IndexSpace<4> is4_1( { 1, 1, 1, 1 }, { 4, 4, 4, 4 } );
+    IndexSpace<4> is4_2( { 9, 9, 9, 9 }, { 10, 10, 10, 10 } );
+
+    auto data_4d = createView<double, TEST_MEMSPACE>( "data_4d", is4_0 );
+    Kokkos::deep_copy( data_4d, 0.0 );
+
+    grid_parallel_for(
+        "multi_space_4d", TEST_EXECSPACE{},
+        Kokkos::Array<IndexSpace<4>, 2>{ is4_1, is4_2 },
+        KOKKOS_LAMBDA( const int s, const int i, const int j, const int k,
+                       const int l ) {
+            if ( 0 == s )
+                data_4d( i, j, k, l ) = 1.0;
+            else if ( 1 == s )
+                data_4d( i, j, k, l ) = 2.0;
+        } );
+
+    auto host_data_4d =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace{}, data_4d );
+
+    for ( int i = 0; i < is4_0.extent( Dim::I ); ++i )
+        for ( int j = 0; j < is4_0.extent( Dim::J ); ++j )
+            for ( int k = 0; k < is4_0.extent( Dim::K ); ++k )
+                for ( int l = 0; l < is4_0.extent( 3 ); ++l )
+                {
+                    long idx[4] = { i, j, k, l };
+                    if ( is4_1.inRange( idx ) )
+                    {
+                        EXPECT_EQ( 1.0, host_data_4d( i, j, k, l ) );
+                    }
+                    else if ( is4_2.inRange( idx ) )
+                    {
+                        EXPECT_EQ( 2.0, host_data_4d( i, j, k, l ) );
+                    }
+                    else
+                    {
+                        EXPECT_EQ( 0.0, host_data_4d( i, j, k, l ) );
+                    }
+                }
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, parallel_index_space_test ) { parallelIndexSpaceTest(); }
 
 TEST( TEST_CATEGORY, parallel_local_grid_test ) { parallelLocalGridTest(); }
+
+TEST( TEST_CATEGORY, parallel_multispace_test ) { parallelMultiSpaceTest(); }
 
 //---------------------------------------------------------------------------//
 

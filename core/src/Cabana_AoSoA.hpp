@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_AoSoA.hpp
+  \brief Array-of-Struct-of-Arrays particle data structure
+*/
 #ifndef CABANA_AOSOA_HPP
 #define CABANA_AOSOA_HPP
 
@@ -36,7 +40,7 @@ template <class DataTypes, class DeviceType, int VectorLength,
 class AoSoA;
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <class>
 struct is_aosoa_impl : public std::false_type
 {
@@ -48,14 +52,24 @@ struct is_aosoa_impl<AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>>
     : public std::true_type
 {
 };
+//! \endcond
 
+//! AoSoA static type checker.
 template <class T>
 struct is_aosoa : public is_aosoa_impl<typename std::remove_cv<T>::type>::type
 {
 };
 
 //---------------------------------------------------------------------------//
-// Slice template helper.
+/*!
+  \brief Create a slice from an AoSoA.
+
+  \tparam M Slice index.
+  \tparam AoSoA_t AoSoA type.
+
+  \param aosoa AoSoA to slice from.
+  \param slice_label Optional slice label.
+*/
 template <std::size_t M, class AoSoA_t>
 typename AoSoA_t::template member_slice_type<M>
 slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
@@ -72,11 +86,9 @@ slice( const AoSoA_t& aosoa, const std::string& slice_label = "" )
 
 //---------------------------------------------------------------------------//
 /*!
-  \class AoSoA
-
   \brief Array-of-Struct-of-Arrays
 
-  A AoSoA represents tuples and their data via an array-of-structs-of-arrays.
+  Represents tuples and their data via an array-of-structs-of-arrays.
 
   \tparam DataType (required) Specifically this must be an instance of
   \c MemberTypes with the data layout of the structs. For example:
@@ -106,74 +118,74 @@ template <class DataTypes, class DeviceType,
 class AoSoA
 {
   public:
-    // AoSoA type.
+    //! AoSoA type.
     using aosoa_type = AoSoA<DataTypes, DeviceType, VectorLength, MemoryTraits>;
 
-    // Host mirror type.
+    //! Host mirror type.
     using host_mirror_type = AoSoA<DataTypes, Kokkos::HostSpace, VectorLength>;
 
-    // Member data types.
     static_assert( is_member_types<DataTypes>::value,
                    "AoSoA data types must be member types" );
     static_assert( CheckMemberTypes<DataTypes>::value,
                    "AoSoA data type failure" );
+    //! Member data types.
     using member_types = DataTypes;
 
-    // Device type.
+    //! Device type.
     using device_type = DeviceType;
 
-    // Memory space.
+    //! Memory space.
     using memory_space = typename device_type::memory_space;
 
-    // Execution space.
+    //! Execution space.
     using execution_space = typename device_type::execution_space;
 
-    // Vector length (size of the arrays held by the structs).
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
                    "Vector length must be valid" );
+    //! Vector length (size of the arrays held by the structs).
     static constexpr int vector_length = VectorLength;
 
-    // Memory traits type.
+    //! Memory traits type.
     using memory_traits = MemoryTraits;
 
-    // Size type.
+    //! Size type.
     using size_type = typename memory_space::size_type;
 
-    // SoA type.
+    //! SoA type.
     using soa_type = SoA<member_types, vector_length>;
 
-    // Managed data view.
+    //! Managed data view.
     using soa_view = Kokkos::View<soa_type*, device_type, memory_traits>;
 
-    // Number of member types.
+    //! Number of member types.
     static constexpr std::size_t number_of_members = member_types::size;
 
-    // The maximum rank supported for member types.
+    //! The maximum rank supported for member types.
     static constexpr std::size_t max_supported_rank = 3;
 
-    // Index type.
+    //! Index type.
     using index_type = Impl::Index<vector_length>;
 
-    // Tuple type.
+    //! Tuple type.
     using tuple_type = Tuple<member_types>;
 
-    // Member data type at a given index M. Note this is the user-defined
-    // member data type - not the potentially transformed type actually stored
-    // by the structs (SoAs) to achieve a given layout.
+    //! Member data type at a given index M. Note this is the user-defined
+    //! member data type - not the potentially transformed type actually stored
+    //! by the structs (SoAs) to achieve a given layout.
     template <std::size_t M>
     using member_data_type = typename MemberTypeAtIndex<M, member_types>::type;
 
-    // Struct member array element value type at a given index M.
+    //! Struct member array element value type at a given index M.
     template <std::size_t M>
     using member_value_type =
         typename std::remove_all_extents<member_data_type<M>>::type;
 
-    // Struct member array element pointer type at a given index M.
+    //! Struct member array element pointer type at a given index M.
     template <std::size_t M>
     using member_pointer_type =
         typename std::add_pointer<member_value_type<M>>::type;
 
-    // Member slice type at a given member index M.
+    //! Member slice type at a given member index M.
     template <std::size_t M>
     using member_slice_type =
         Slice<member_data_type<M>, device_type, DefaultAccessMemory,

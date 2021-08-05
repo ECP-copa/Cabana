@@ -14,38 +14,28 @@ configure_file(Cajita_Config.hpp.in Cajita_Config.hpp)
 set(HEADERS_PUBLIC
   Cajita.hpp
   Cajita_Array.hpp
-  Cajita_LocalGrid.hpp
   Cajita_BovWriter.hpp
   Cajita_GlobalGrid.hpp
+  Cajita_GlobalGrid_impl.hpp
   Cajita_GlobalMesh.hpp
   Cajita_Halo.hpp
   Cajita_IndexConversion.hpp
   Cajita_IndexSpace.hpp
   Cajita_SparseIndexSpace.hpp
   Cajita_Interpolation.hpp
+  Cajita_LocalGrid.hpp
+  Cajita_LocalGrid_impl.hpp
   Cajita_LocalMesh.hpp
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp
   Cajita_Parallel.hpp
-  Cajita_ParameterPack.hpp
+  Cajita_ParticleGridDistributor.hpp
   Cajita_Partitioner.hpp
   Cajita_ReferenceStructuredSolver.hpp
   Cajita_Splines.hpp
   Cajita_Types.hpp
   Cajita_UniformDimPartitioner.hpp
-  )
-
-if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
-  list(REMOVE_ITEM HEADERS_PUBLIC Cajita_Parallel.hpp)
-endif()
-
-set(SOURCES_PUBLIC
-  Cajita_LocalGrid.cpp
-  Cajita_GlobalGrid.cpp
-  Cajita_GlobalMesh.cpp
-  Cajita_IndexSpace.cpp
-  Cajita_ManualPartitioner.cpp
-  Cajita_UniformDimPartitioner.cpp
+  Cajita_SparseDimPartitioner.hpp
   )
 
 if(Cabana_ENABLE_HYPRE)
@@ -60,23 +50,25 @@ if(Cabana_ENABLE_HEFFTE)
     )
 endif()
 
-add_library(Cajita ${SOURCES_PUBLIC})
+add_library(Cajita INTERFACE)
+add_library(Cabana::Cajita ALIAS Cajita)
 
-target_link_libraries(Cajita PUBLIC
+target_link_libraries(Cajita INTERFACE
+  Cabana::cabanacore
   Kokkos::kokkos
   MPI::MPI_CXX
   )
 
 if(Cabana_ENABLE_HYPRE)
-  target_link_libraries(Cajita PUBLIC HYPRE::hypre)
+  target_link_libraries(Cajita INTERFACE HYPRE::HYPRE)
 endif()
 
 if(Cabana_ENABLE_HEFFTE)
-  target_link_libraries(Cajita PUBLIC Heffte::Heffte)
+  target_link_libraries(Cajita INTERFACE Heffte::Heffte)
 endif()
 
 target_include_directories(Cajita
-  PUBLIC
+  INTERFACE
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
   $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>
   $<INSTALL_INTERFACE:${CMAKE_INSTALL_INCLUDEDIR}>)

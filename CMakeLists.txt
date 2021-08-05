@@ -17,6 +17,12 @@ cmake_minimum_required(VERSION 3.9)
 project(Cabana LANGUAGES CXX)
 set(PROJECT_VERSION "1.0-dev")
 
+# FIXME: HYPRE workaround. Hypre is currently not exporting the find_package(
+# MPI ) to find the MPI::MPI_C targets and therefore we add this here for now
+# to ensure those targets are found for HYPRE:
+# https://github.com/hypre-space/hypre/pull/423
+enable_language( C )
+
 # If the user doesn't provide a build type default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
   #release comes with -O3 by default
@@ -45,7 +51,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(Kokkos 3.2 REQUIRED)
 
 # set supported kokkos devices
-set(CABANA_SUPPORTED_DEVICES SERIAL PTHREAD OPENMP CUDA HIP OPENMPTARGET)
+set(CABANA_SUPPORTED_DEVICES SERIAL PTHREAD OPENMP CUDA HIP SYCL OPENMPTARGET)
 
 # check user required kokkos device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
@@ -81,18 +87,13 @@ Cabana_add_dependency( PACKAGE MPI )
 Cabana_add_dependency( PACKAGE ArborX )
 
 # find Clang Format
-find_package( CLANG_FORMAT 10)
+find_package( CLANG_FORMAT 10 )
 
 # find hypre
-Cabana_add_dependency( PACKAGE HYPRE )
-if(HYPRE_FOUND)
-  install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHYPRE.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
-endif()
+Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.0 )
 
 # find heffte
-Cabana_add_dependency( PACKAGE Heffte VERSION 1.0.1 )
+Cabana_add_dependency( PACKAGE Heffte VERSION 2.0.0 )
 
 #------------------------------------------------------------------------------#
 # Tests and Documentation
@@ -100,16 +101,21 @@ Cabana_add_dependency( PACKAGE Heffte VERSION 1.0.1 )
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
+  set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
+  add_subdirectory(cmake/test_harness)
   enable_testing()
 endif()
 
 # enable performance tests
 option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
+if(Cabana_ENABLE_PERFORMANCE_TESTING)
+  add_subdirectory(benchmark)
+endif()
 
 # enable doxygen
 find_package(Doxygen)
 if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core/src)
+  doxygen_add_docs(doxygen core/src cajita/src)
 endif()
 
 #------------------------------------------------------------------------------#
@@ -166,18 +172,16 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 ##---------------------------------------------------------------------------##
 ## Libraries and Examples
 ##---------------------------------------------------------------------------##
-option(Cabana_ENABLE_CAJITA "Build Cajita" ON)
+
+add_subdirectory(core)
+
+option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ON)
 if(Cabana_ENABLE_CAJITA)
   if(MPI_FOUND)
     add_subdirectory(cajita)
   else()
     message(FATAL_ERROR "Cajita requires MPI")
   endif()
-endif()
-
-option(Cabana_ENABLE_CORE "Build Core" ON)
-if(Cabana_ENABLE_CORE)
-  add_subdirectory(core)
 endif()
 
 option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
@@ -204,7 +208,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp)
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
   add_custom_target(format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})

@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_IndexSpace.hpp
+  \brief Logical grid indexing
+*/
 #ifndef CAJITA_INDEXSPACE_HPP
 #define CAJITA_INDEXSPACE_HPP
 
@@ -22,7 +26,6 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class IndexSpace
   \brief Structured index space.
  */
 template <long N>
@@ -134,6 +137,17 @@ class IndexSpace
         for ( long d = 0; d < Rank; ++d )
             size *= extent( d );
         return size;
+    }
+
+    //! Determine if a set of indices is within the range of the index space.
+    KOKKOS_INLINE_FUNCTION
+    bool inRange( const long index[N] ) const
+    {
+        bool result = true;
+        for ( long i = 0; i < N; ++i )
+            result =
+                result && ( _min[i] <= index[i] ) && ( index[i] < _max[i] );
+        return result;
     }
 
   private:
@@ -400,8 +414,10 @@ KOKKOS_INLINE_FUNCTION auto createSubview( const ViewType& view,
 }
 
 //---------------------------------------------------------------------------//
-// Given an N-dimensional index space append an additional dimension with the
-// given size.
+/*!
+  Given an N-dimensional index space append an additional dimension with the
+  given size.
+*/
 template <long N>
 IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
                                    const long size )
@@ -420,8 +436,10 @@ IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
 }
 
 //---------------------------------------------------------------------------//
-// Given an N-dimensional index space append an additional dimension with the
-// given range.
+/*!
+  Given an N-dimensional index space append an additional dimension with the
+  given range.
+*/
 template <long N>
 IndexSpace<N + 1> appendDimension( const IndexSpace<N>& index_space,
                                    const long min, const long max )

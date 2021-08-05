@@ -1,4 +1,5 @@
-ARG BASE=rocm/dev-ubuntu-18.04:3.5
+# Use -complete to get both rocm and rocfft
+ARG BASE=rocm/dev-ubuntu-18.04:4.2-complete
 FROM $BASE
 
 ARG NPROCS=4
@@ -80,7 +81,7 @@ RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz
     tar -xf ${KOKKOS_ARCHIVE} -C kokkos --strip-components=1 && \
     cd kokkos && \
     mkdir -p build && cd build && \
-    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} -D CMAKE_CXX_COMPILER=hipcc ${KOKKOS_OPTIONS} .. && \
+    cmake -D CMAKE_BUILD_TYPE=Release -D CMAKE_INSTALL_PREFIX=${KOKKOS_DIR} -D CMAKE_CXX_STANDARD=14 -D CMAKE_CXX_COMPILER=hipcc ${KOKKOS_OPTIONS} .. && \
     make -j${NPROCS} install && \
     rm -rf ${SCRATCH_DIR}
 
@@ -104,3 +105,52 @@ RUN ARBORX_VERSION=4834bff44c23c9510c6ed93366638dcdf85ab217 && \
     .. && \
     make -j${NPROCS} install && \
     cd ../.. && rm -r arborx
+
+# Install fftw (double and single)
+ARG FFTW_VERSION=3.3.8
+ENV FFTW_DIR=/opt/fftw
+RUN FFTW_URL=http://www.fftw.org/fftw-${FFTW_VERSION}.tar.gz && \
+    FFTW_ARCHIVE=fftw.tar.gz && \
+    SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
+    wget --quiet ${FFTW_URL} --output-document=${FFTW_ARCHIVE} && \
+    mkdir -p fftw && \
+    tar -xf ${FFTW_ARCHIVE} -C fftw --strip-components=1 && \
+    cd fftw && \
+    mkdir -p build && cd build && \
+    cmake \
+      -D CMAKE_INSTALL_PREFIX=${FFTW_DIR} \
+      -D CMAKE_BUILD_TYPE=Debug \
+      -D ENABLE_FLOAT=ON \
+    .. && \
+    make -j${NPROCS} install && \
+    cmake \
+      -D CMAKE_INSTALL_PREFIX=${FFTW_DIR} \
+      -D CMAKE_BUILD_TYPE=Debug \
+      -D ENABLE_FLOAT=OFF \
+    .. && \
+    make -j${NPROCS} install && \
+    rm -rf ${SCRATCH_DIR}
+
+# Install heffte
+ARG HEFFTE_VERSION=2.0.0
+ENV HEFFTE_DIR=/opt/heffte
+RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz && \
+    HEFFTE_ARCHIVE=heffte.tar.gz && \
+    SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
+    wget --quiet ${HEFFTE_URL} --output-document=${HEFFTE_ARCHIVE} && \
+    mkdir -p heffte && \
+    tar -xf ${HEFFTE_ARCHIVE} -C heffte --strip-components=1 && \
+    cd heffte && \
+    mkdir -p build && cd build && \
+    cmake \
+      -D CMAKE_INSTALL_PREFIX=${HEFFTE_DIR} \
+      -D CMAKE_PREFIX_PATH="${FFTW_DIR}" \
+      -D CMAKE_BUILD_TYPE=Debug \
+      -D CMAKE_CXX_COMPILER=hipcc \
+      -D CMAKE_CXX_STANDARD=14 \
+      -D CMAKE_CXX_FLAGS="--amdgpu-target=gfx906" \
+      -D Heffte_ENABLE_ROCM=ON \
+      -D Heffte_ENABLE_FFTW=ON \
+    .. && \
+    make -j${NPROCS} install && \
+    rm -rf ${SCRATCH_DIR}

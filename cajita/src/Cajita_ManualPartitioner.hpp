@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_ManualPartitioner.hpp
+  \brief Manual multi-node grid partitioner
+*/
 #ifndef CAJITA_MANUALPARTITIONER_HPP
 #define CAJITA_MANUALPARTITIONER_HPP
 
@@ -21,17 +25,20 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-class ManualPartitioner : public Partitioner
+/*!
+  \brief Backwards compatibility wrapper for 3D ManualBlockPartitioner
+*/
+class ManualPartitioner : public ManualBlockPartitioner<3>
 {
   public:
-    ManualPartitioner( const std::array<int, 3>& ranks_per_dim );
-
-    std::array<int, 3> ranksPerDimension(
-        MPI_Comm comm,
-        const std::array<int, 3>& global_cells_per_dim ) const override;
-
-  private:
-    std::array<int, 3> _ranks_per_dim;
+    /*!
+      \brief Constructor
+      \param ranks_per_dim MPI ranks per dimension.
+    */
+    ManualPartitioner( const std::array<int, 3>& ranks_per_dim )
+        : ManualBlockPartitioner<3>( ranks_per_dim )
+    {
+    }
 };
 
 //---------------------------------------------------------------------------//

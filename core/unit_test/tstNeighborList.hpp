@@ -117,12 +117,20 @@ void testVerletListFull()
             nlist_full( position, 0, position.size(), test_data.test_radius,
                         test_data.cell_size_ratio, test_data.grid_min,
                         test_data.grid_max );
+        // Test default construction.
         Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
                            BuildTag>
             nlist;
 
         nlist = nlist_full;
 
+        checkFullNeighborList( nlist, test_data.N2_list_copy,
+                               test_data.num_particle );
+
+        // Test rebuild function with explict execution space.
+        nlist.build( TEST_EXECSPACE{}, position, 0, position.size(),
+                     test_data.test_radius, test_data.cell_size_ratio,
+                     test_data.grid_min, test_data.grid_max );
         checkFullNeighborList( nlist, test_data.N2_list_copy,
                                test_data.num_particle );
     }
@@ -196,19 +204,19 @@ void testVerletListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
     NeighborListTestData test_data;
-    int num_ignore = 800;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     // Create the neighbor list.
     Cabana::VerletList<TEST_MEMSPACE, Cabana::FullNeighborTag, LayoutTag,
                        BuildTag>
-        nlist( position, 0, num_ignore, test_data.test_radius,
+        nlist( position, 0, test_data.num_ignore, test_data.test_radius,
                test_data.cell_size_ratio, test_data.grid_min,
                test_data.grid_max );
 
     // Check the neighbor list.
     checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                       test_data.num_particle, num_ignore );
+                                       test_data.num_particle,
+                                       test_data.num_ignore );
 }
 
 //---------------------------------------------------------------------------//
@@ -226,11 +234,24 @@ void testNeighborParallelFor()
                     test_data.cell_size_ratio, test_data.grid_min,
                     test_data.grid_max );
 
-    checkFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
-                                   test_data.num_particle );
+    checkFirstNeighborParallelForLambda( nlist, test_data.N2_list_copy,
+                                         test_data.num_particle );
 
-    checkSecondNeighborParallelFor( nlist, test_data.N2_list_copy,
-                                    test_data.num_particle );
+    checkSecondNeighborParallelForLambda( nlist, test_data.N2_list_copy,
+                                          test_data.num_particle );
+
+    checkSplitFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                        test_data.num_particle );
+
+    checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                          test_data.num_particle, true );
+    checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                          test_data.num_particle, false );
+
+    checkSecondNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                           test_data.num_particle, true );
+    checkSecondNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                           test_data.num_particle, false );
 }
 
 //---------------------------------------------------------------------------//
@@ -248,11 +269,21 @@ void testNeighborParallelReduce()
                     test_data.cell_size_ratio, test_data.grid_min,
                     test_data.grid_max );
 
-    checkFirstNeighborParallelReduce( nlist, test_data.N2_list_copy,
-                                      test_data.aosoa );
+    checkFirstNeighborParallelReduceLambda( nlist, test_data.N2_list_copy,
+                                            test_data.aosoa );
 
-    checkSecondNeighborParallelReduce( nlist, test_data.N2_list_copy,
-                                       test_data.aosoa );
+    checkSecondNeighborParallelReduceLambda( nlist, test_data.N2_list_copy,
+                                             test_data.aosoa );
+
+    checkFirstNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                             test_data.aosoa, true );
+    checkFirstNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                             test_data.aosoa, false );
+
+    checkSecondNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                              test_data.aosoa, true );
+    checkSecondNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                              test_data.aosoa, false );
 }
 
 //---------------------------------------------------------------------------//

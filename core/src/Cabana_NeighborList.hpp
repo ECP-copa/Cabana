@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_NeighborList.hpp
+  \brief Neighbor list interface
+*/
 #ifndef CABANA_NEIGHBORLIST_HPP
 #define CABANA_NEIGHBORLIST_HPP
 
@@ -20,7 +24,6 @@ namespace Cabana
 // Neighbor List Interface
 //---------------------------------------------------------------------------//
 /*!
-  \class FullNeighborTag
   \brief Tag for full neighbor lists.
 
   In this case every particle has its neighbors stored in the list. So, if
@@ -33,7 +36,6 @@ class FullNeighborTag
 
 //---------------------------------------------------------------------------//
 /*!
-  \class HalfNeighborTag
   \brief Tag for half neighbor lists.
 
   In this case only half of the neighbors are stored and the inverse
@@ -47,8 +49,6 @@ class HalfNeighborTag
 
 //---------------------------------------------------------------------------//
 /*!
-  \class NeighborList
-
   \brief Neighbor list interface. Provides an interface callable at the
   functor level that gives access to neighbor data for particles.
 */
@@ -56,15 +56,15 @@ template <class NeighborListType>
 class NeighborList
 {
   public:
+    //! Kokkos memory space.
     using memory_space = typename NeighborListType::memory_space;
 
-    // Get the number of neighbors for a given particle index.
+    //! Get the number of neighbors for a given particle index.
     KOKKOS_INLINE_FUNCTION
     static std::size_t numNeighbor( const NeighborListType& list,
                                     const std::size_t particle_index );
 
-    // Get the id for a neighbor for a given particle index and the index of
-    // the neighbor relative to the particle.
+    //! Get the id for a neighbor for a given particle index and neighbor index.
     KOKKOS_INLINE_FUNCTION
     static std::size_t getNeighbor( const NeighborListType& list,
                                     const std::size_t particle_index,

@@ -21,6 +21,8 @@ namespace Cabana
 {
 namespace Impl
 {
+//! \cond Impl
+
 template <class Real, typename std::enable_if<
                           std::is_floating_point<Real>::value, int>::type = 0>
 class CartesianGrid
@@ -152,13 +154,17 @@ class CartesianGrid
     KOKKOS_INLINE_FUNCTION
     int cellsBetween( const Real max, const Real min, const Real rdelta ) const
     {
-#if !defined( __HIP_DEVICE_COMPILE__ )
+        // FIXME_SYCL (remove ifdef when newest Kokkos is required)
+#if ( defined __SYCL_DEVICE_ONLY__ )
+        using Kokkos::Experimental::floor;
+#elif !defined( __HIP_DEVICE_COMPILE__ )
         using std::floor;
 #endif
         return floor( ( max - min ) * rdelta );
     }
 };
 
+//! \endcond
 } // end namespace Impl
 } // end namespace Cabana
 

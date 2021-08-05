@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_DeepCopy.hpp
+  \brief AoSoA and slice extensions for Kokkos deep copy and mirrors
+*/
 #ifndef CABANA_DEEPCOPY_HPP
 #define CABANA_DEEPCOPY_HPP
 

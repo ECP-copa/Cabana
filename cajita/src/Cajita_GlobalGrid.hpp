@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_GlobalGrid.hpp
+  \brief Global grid
+*/
 #ifndef CAJITA_GLOBALGRID_HPP
 #define CAJITA_GLOBALGRID_HPP
 
@@ -24,14 +28,19 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Global logical grid.
-//---------------------------------------------------------------------------//
+/*!
+  \brief Global logical grid.
+  \tparam MeshType Mesh type (uniform, non-uniform, sparse)
+*/
 template <class MeshType>
 class GlobalGrid
 {
   public:
-    // Mesh type.
+    //! Mesh type.
     using mesh_type = MeshType;
+
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
     /*!
      \brief Constructor.
@@ -42,64 +51,134 @@ class GlobalGrid
     */
     GlobalGrid( MPI_Comm comm,
                 const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-                const std::array<bool, 3>& periodic,
-                const Partitioner& partitioner );
+                const std::array<bool, num_space_dim>& periodic,
+                const BlockPartitioner<num_space_dim>& partitioner );
 
     // Destructor.
     ~GlobalGrid();
 
-    // Get the communicator. This communicator was generated with a Cartesian
-    // topology.
+    //! \brief Get the communicator. This communicator was generated with a
+    //! Cartesian topology.
     MPI_Comm comm() const;
 
-    // Get the global mesh data.
+    //! \brief Get the global mesh data.
     const GlobalMesh<MeshType>& globalMesh() const;
 
-    // Get whether a given dimension is periodic.
+    //! \brief Get whether a given dimension is periodic.
     bool isPeriodic( const int dim ) const;
 
-    // Get the number of blocks in each dimension in the global mesh.
+    //! \brief Determine if this block is on a low boundary in this dimension.
+    //! \param dim Spatial dimension.
+    bool onLowBoundary( const int dim ) const;
+
+    //! \brief Determine if this block is on a high boundary in this dimension.
+    //! \param dim Spatial dimension.
+    bool onHighBoundary( const int dim ) const;
+
+    //! \brief Get the number of blocks in each dimension in the global mesh.
+    //! \param dim Spatial dimension.
     int dimNumBlock( const int dim ) const;
 
-    // Get the total number of blocks.
+    //! \brief Get the total number of blocks.
     int totalNumBlock() const;
 
-    // Get the id of this block in a given dimension.
+    //! \brief Get the id of this block in a given dimension.
+    //! \param dim Spatial dimension.
     int dimBlockId( const int dim ) const;
 
-    // Get the id of this block.
+    //! \brief Get the id of this block.
     int blockId() const;
 
-    // Get the MPI rank of a block with the given indices. If the rank is out
-    // of bounds and the boundary is not periodic, return -1 to indicate an
-    // invalid rank.
-    int blockRank( const int i, const int j, const int k ) const;
+    /*!
+      \brief Get the MPI rank of a block with the given indices. If the rank is
+      out of bounds and the boundary is not periodic, return -1 to indicate an
+      invalid rank.
 
-    // Get the global number of entities in a given dimension.
+      \param ijk %Array of block indices.
+    */
+    int blockRank( const std::array<int, num_space_dim>& ijk ) const;
+
+    /*!
+      \brief Get the MPI rank of a block with the given indices. If the rank is
+      out of bounds and the boundary is not periodic, return -1 to indicate an
+      invalid rank.
+
+      \param i,j,k Block index.
+    */
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> blockRank( const int i, const int j,
+                                               const int k ) const;
+
+    /*!
+      \brief Get the MPI rank of a block with the given indices. If the rank is
+      out of bounds and the boundary is not periodic, return -1 to indicate an
+      invalid rank.
+
+      \param i,j Block index.
+    */
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<2 == NSD, int> blockRank( const int i, const int j ) const;
+
+    //! \brief Get the global number of entities in a given dimension.
+    //! \param dim Spatial dimension.
     int globalNumEntity( Cell, const int dim ) const;
+    //! \brief Get the global number of entities in a given dimension.
+    //! \param dim Spatial dimension.
     int globalNumEntity( Node, const int dim ) const;
+    //! \brief Get the global number of entities in a given dimension.
+    //! \param dim Spatial dimension.
     int globalNumEntity( Face<Dim::I>, const int dim ) const;
+    //! \brief Get the global number of entities in a given dimension.
+    //! \param dim Spatial dimension.
     int globalNumEntity( Face<Dim::J>, const int dim ) const;
-    int globalNumEntity( Face<Dim::K>, const int dim ) const;
-    int globalNumEntity( Edge<Dim::I>, const int dim ) const;
-    int globalNumEntity( Edge<Dim::J>, const int dim ) const;
-    int globalNumEntity( Edge<Dim::K>, const int dim ) const;
 
-    // Get the owned number of cells in a given dimension of this block.
+    //! \brief Get the global number of entities in a given dimension.
+    //! \param dim Spatial dimension.
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> globalNumEntity( Face<Dim::K>,
+                                                     const int dim ) const;
+    //! \brief Get the global number of entities in a given dimension.
+    //! \param dim Spatial dimension.
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> globalNumEntity( Edge<Dim::I>,
+                                                     const int dim ) const;
+    //! \brief Get the global number of entities in a given dimension.
+    //! \param dim Spatial dimension.
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> globalNumEntity( Edge<Dim::J>,
+                                                     const int dim ) const;
+    //! \brief Get the global number of entities in a given dimension.
+    //! \param dim Spatial dimension.
+    template <std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, int> globalNumEntity( Edge<Dim::K>,
+                                                     const int dim ) const;
+
+    //! \brief Get the owned number of cells in a given dimension of this block.
+    //! \param dim Spatial dimension.
     int ownedNumCell( const int dim ) const;
 
-    // Get the global offset in a given dimension. This is where our block
-    // starts in the global indexing scheme.
+    //! \brief Get the global offset in a given dimension. This is where our
+    //! block starts in the global indexing scheme.
+    //! \param dim Spatial dimension.
     int globalOffset( const int dim ) const;
+
+    //! \brief Set number of cells and offset of local part of the grid. Make
+    //! sure these are consistent across all ranks.
+    //! \param num_cell New number of owned cells for all dimensions.
+    //! \param offset New global offset for all dimensions.
+    void setNumCellAndOffset( const std::array<int, num_space_dim>& num_cell,
+                              const std::array<int, num_space_dim>& offset );
 
   private:
     MPI_Comm _cart_comm;
     std::shared_ptr<GlobalMesh<MeshType>> _global_mesh;
-    std::array<bool, 3> _periodic;
-    std::array<int, 3> _ranks_per_dim;
-    std::array<int, 3> _cart_rank;
-    std::array<int, 3> _owned_num_cell;
-    std::array<int, 3> _global_cell_offset;
+    std::array<bool, num_space_dim> _periodic;
+    std::array<int, num_space_dim> _ranks_per_dim;
+    std::array<int, num_space_dim> _cart_rank;
+    std::array<int, num_space_dim> _owned_num_cell;
+    std::array<int, num_space_dim> _global_cell_offset;
+    std::array<bool, num_space_dim> _boundary_lo;
+    std::array<bool, num_space_dim> _boundary_hi;
 };
 
 //---------------------------------------------------------------------------//
@@ -113,9 +192,11 @@ class GlobalGrid
   \param partitioner The grid partitioner.
 */
 template <class MeshType>
-std::shared_ptr<GlobalGrid<MeshType>> createGlobalGrid(
-    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-    const std::array<bool, 3>& periodic, const Partitioner& partitioner )
+std::shared_ptr<GlobalGrid<MeshType>>
+createGlobalGrid( MPI_Comm comm,
+                  const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+                  const std::array<bool, MeshType::num_space_dim>& periodic,
+                  const BlockPartitioner<MeshType::num_space_dim>& partitioner )
 {
     return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
                                                    partitioner );
@@ -124,5 +205,13 @@ std::shared_ptr<GlobalGrid<MeshType>> createGlobalGrid(
 //---------------------------------------------------------------------------//
 
 } // end namespace Cajita
+
+//---------------------------------------------------------------------------//
+// Template implementation
+//---------------------------------------------------------------------------//
+
+#include <Cajita_GlobalGrid_impl.hpp>
+
+//---------------------------------------------------------------------------//
 
 #endif // end CAJITA_GLOBALGRID_HPP

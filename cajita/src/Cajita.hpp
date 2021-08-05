@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \namespace Cajita
+  \brief Cajita: grid and particle-grid data structures and algorithms
+*/
 #ifndef CAJITA_HPP
 #define CAJITA_HPP
 
@@ -26,14 +30,11 @@
 #include <Cajita_LocalMesh.hpp>
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_MpiTraits.hpp>
-
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 #include <Cajita_Parallel.hpp>
-#endif
-
-#include <Cajita_ParameterPack.hpp>
+#include <Cajita_ParticleGridDistributor.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
+#include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>

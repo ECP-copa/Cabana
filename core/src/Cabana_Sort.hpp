@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Sort.hpp
+  \brief Sorting and binning built on Kokkos BinSort
+*/
 #ifndef CABANA_SORT_HPP
 #define CABANA_SORT_HPP
 
@@ -25,7 +29,6 @@ namespace Cabana
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class BinningData
   \brief Data describing the bin sizes and offsets resulting from a binning
   operation.
 */
@@ -33,18 +36,34 @@ template <class DeviceType>
 class BinningData
 {
   public:
+    //! Kokkos device_type.
     using device_type = DeviceType;
+    //! Kokkos memory space.
     using memory_space = typename device_type::memory_space;
+    //! Kokkos execution space.
     using execution_space = typename device_type::execution_space;
+    //! Memory space size type.
     using size_type = typename memory_space::size_type;
+    //! Binning view type.
     using CountView = Kokkos::View<const int*, device_type>;
+    //! Offset view type.
     using OffsetView = Kokkos::View<size_type*, device_type>;
 
+    //! Default constructor.
     BinningData()
         : _nbin( 0 )
     {
     }
 
+    /*!
+      \brief Constructor initializing from Kokkos BinSort data.
+
+      \param begin The beginning index of the range to sort.
+      \param end The end index of the range to sort.
+      \param counts Binning counts.
+      \param offsets Binning offsets.
+      \param permute_vector Permutation vector.
+    */
     BinningData( const std::size_t begin, const std::size_t end,
                  CountView counts, OffsetView offsets,
                  OffsetView permute_vector )
@@ -115,7 +134,7 @@ class BinningData
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_binning_data : public std::false_type
 {
@@ -125,7 +144,9 @@ template <typename DeviceType>
 struct is_binning_data<BinningData<DeviceType>> : public std::true_type
 {
 };
+//! \endcond
 
+//! BinningData static type checker.
 template <typename DeviceType>
 struct is_binning_data<const BinningData<DeviceType>> : public std::true_type
 {
@@ -134,8 +155,8 @@ struct is_binning_data<const BinningData<DeviceType>> : public std::true_type
 namespace Impl
 {
 //---------------------------------------------------------------------------//
-// Create a permutation vector over a range subset using a comparator over the
-// given Kokkos View of keys.
+//! Create a permutation vector over a range subset using a comparator over the
+//! given Kokkos View of keys.
 template <class KeyViewType, class Comparator,
           class DeviceType = typename KeyViewType::device_type>
 BinningData<DeviceType>
@@ -151,7 +172,7 @@ kokkosBinSort( KeyViewType keys, Comparator comp, const bool sort_within_bins,
 }
 
 //---------------------------------------------------------------------------//
-// Given a set of keys, find the minimum and maximum over the given range.
+//! Given a set of keys, find the minimum and maximum over the given range.
 template <class KeyViewType,
           class DeviceType = typename KeyViewType::device_type>
 Kokkos::MinMaxScalar<typename KeyViewType::non_const_value_type>
@@ -169,8 +190,8 @@ keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
 }
 
 //---------------------------------------------------------------------------//
-// Sort an AoSoA over a subset of its range using the given Kokkos View of
-// keys.
+//! Sort an AoSoA over a subset of its range using the given Kokkos View of
+//! keys.
 template <class KeyViewType,
           class DeviceType = typename KeyViewType::device_type>
 BinningData<DeviceType>
@@ -191,7 +212,7 @@ kokkosBinSort1d( KeyViewType keys, const int nbin, const bool sort_within_bins,
 }
 
 //---------------------------------------------------------------------------//
-// Copy the a 1D slice into a Kokkos view.
+//! Copy the a 1D slice into a Kokkos view.
 template <class SliceType, class DeviceType = typename SliceType::device_type>
 Kokkos::View<typename SliceType::value_type*, typename SliceType::device_type>
 copySliceToKeys( SliceType slice )

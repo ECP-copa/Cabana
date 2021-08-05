@@ -5,6 +5,7 @@ ARG NPROCS=4
 
 RUN apt-get update && apt-get install -y \
         bc \
+        ccache \
         wget \
         openssh-client \
     && \
@@ -123,7 +124,7 @@ RUN FFTW_URL=http://www.fftw.org/fftw-${FFTW_VERSION}.tar.gz && \
     rm -rf ${SCRATCH_DIR}
 
 # Install heffte
-ARG HEFFTE_VERSION=1.0.1
+ARG HEFFTE_VERSION=2.0.0
 ENV HEFFTE_DIR=/opt/heffte
 RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz && \
     HEFFTE_ARCHIVE=heffte.tar.gz && \
@@ -142,3 +143,22 @@ RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz &&
     .. && \
     make -j${NPROCS} install && \
     rm -rf ${SCRATCH_DIR}
+
+# Install HYPRE
+ENV HYPRE_DIR=/opt/hypre
+RUN HYPRE_VERSION=v2.22.0 && \
+    HYPRE_URL=https://github.com/hypre-space/hypre/archive/${HYPRE_VERSION}.tar.gz && \
+    HYPRE_ARCHIVE=hypre.tar.gz && \
+    wget --quiet ${HYPRE_URL} --output-document=${HYPRE_ARCHIVE} && \
+    mkdir hypre && \
+    tar -xf ${HYPRE_ARCHIVE} -C hypre --strip-components=1 && \
+    cd hypre && \
+    mkdir -p build && cd build && \
+    cmake \
+      -D CMAKE_INSTALL_PREFIX=${HYPRE_DIR} \
+      -D CMAKE_BUILD_TYPE=Debug \
+      -D HYPRE_WITH_CUDA=ON \
+      -D HYPRE_WITH_MPI=ON \
+    ../src && \
+    make -j${NPROCS} install && \
+    cd ../.. && rm -r hypre

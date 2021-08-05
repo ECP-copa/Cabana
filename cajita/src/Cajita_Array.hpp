@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_Array.hpp
+  \brief Grid field arrays
+*/
 #ifndef CAJITA_ARRAY_HPP
 #define CAJITA_ARRAY_HPP
 
@@ -21,6 +25,7 @@
 
 #include <cmath>
 #include <memory>
+#include <type_traits>
 #include <vector>
 
 #include <mpi.h>
@@ -28,23 +33,30 @@
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Array layout.
-//---------------------------------------------------------------------------//
+/*!
+  \brief Entity layout for array data on the local mesh.
+
+  \tparam EntityType Array entity type: Cell, Node, Edge, or Face
+  \tparam MeshType Mesh type: UniformMesh, NonUniformMesh, SparseMesh
+*/
 template <class EntityType, class MeshType>
 class ArrayLayout
 {
   public:
-    // Entity type.
+    //! Entity type.
     using entity_type = EntityType;
 
-    // Mesh type.
+    //! Mesh type.
     using mesh_type = MeshType;
+
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
 
     /*!
       \brief Constructor.
       \param local_grid The local grid over which the layout will be
-      constructed. \param dofs_per_entity The number of degrees-of-freedom per
-      grid entity.
+      constructed.
+      \param dofs_per_entity The number of degrees-of-freedom per grid entity.
     */
     ArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
                  const int dofs_per_entity )
@@ -53,20 +65,20 @@ class ArrayLayout
     {
     }
 
-    // Get the local grid over which this layout is defined.
+    //! Get the local grid over which this layout is defined.
     const std::shared_ptr<LocalGrid<MeshType>> localGrid() const
     {
         return _local_grid;
     }
 
-    // Get the number of degrees-of-freedom on each grid entity.
+    //! Get the number of degrees-of-freedom on each grid entity.
     int dofsPerEntity() const { return _dofs_per_entity; }
 
-    // Get the index space of the array elements in the given
-    // decomposition.
+    //! Get the index space of the array elements in the given
+    //! decomposition.
     template <class DecompositionTag, class IndexType>
-    IndexSpace<4> indexSpace( DecompositionTag decomposition_tag,
-                              IndexType index_type ) const
+    IndexSpace<num_space_dim + 1>
+    indexSpace( DecompositionTag decomposition_tag, IndexType index_type ) const
     {
         return appendDimension( _local_grid->indexSpace( decomposition_tag,
                                                          EntityType(),
@@ -74,21 +86,65 @@ class ArrayLayout
                                 _dofs_per_entity );
     }
 
-    // Get the local index space of the array elements we shared with the
-    // given neighbor in the given decomposition. Optionally provide a halo
-    // width for the shared space. This halo width must be less than or equal
-    // to the halo width of the local grid. The default behavior is to use the
-    // halo width of the local grid.
+    /*!
+      Get the local index space of the array elements we shared with the
+      given neighbor in the given decomposition.
+
+      \param decomposition_tag Decomposition type: Own or Ghost
+      \param off_ijk %Array of neighbor offset indices.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+    */
     template <class DecompositionTag>
-    IndexSpace<4> sharedIndexSpace( DecompositionTag decomposition_tag,
-                                    const int off_i, const int off_j,
-                                    const int off_k,
-                                    const int halo_width = -1 ) const
+    IndexSpace<num_space_dim + 1>
+    sharedIndexSpace( DecompositionTag decomposition_tag,
+                      const std::array<int, num_space_dim>& off_ijk,
+                      const int halo_width = -1 ) const
     {
         return appendDimension(
             _local_grid->sharedIndexSpace( decomposition_tag, EntityType(),
-                                           off_i, off_j, off_k, halo_width ),
+                                           off_ijk, halo_width ),
             _dofs_per_entity );
+    }
+
+    /*!
+      Get the local index space of the array elements we shared with the
+      given neighbor in the given decomposition.
+
+      \param decomposition_tag Decomposition type: Own or Ghost
+      \param off_i, off_j, off_k Neighbor offset index in a given dimension.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+    */
+    template <class DecompositionTag, std::size_t NSD = num_space_dim>
+    std::enable_if_t<3 == NSD, IndexSpace<4>>
+    sharedIndexSpace( DecompositionTag decomposition_tag, const int off_i,
+                      const int off_j, const int off_k,
+                      const int halo_width = -1 ) const
+    {
+        std::array<int, 3> off_ijk = { off_i, off_j, off_k };
+        return sharedIndexSpace( decomposition_tag, off_ijk, halo_width );
+    }
+
+    /*!
+      Get the local index space of the array elements we shared with the
+      given neighbor in the given decomposition.
+
+      \param decomposition_tag Decomposition type: Own or Ghost
+      \param off_i, off_j Neighbor offset index in a given dimension.
+      \param halo_width Optional depth of shared indices within the halo. Must
+      be less than or equal to the halo width of the local grid. Default is to
+      use the halo width of the local grid.
+    */
+    template <class DecompositionTag, std::size_t NSD = num_space_dim>
+    std::enable_if_t<2 == NSD, IndexSpace<3>>
+    sharedIndexSpace( DecompositionTag decomposition_tag, const int off_i,
+                      const int off_j, const int halo_width = -1 ) const
+    {
+        std::array<int, 2> off_ijk = { off_i, off_j };
+        return sharedIndexSpace( decomposition_tag, off_ijk, halo_width );
     }
 
   private:
@@ -96,18 +152,20 @@ class ArrayLayout
     int _dofs_per_entity;
 };
 
-// Static type checker.
+//! Array static type checker.
 template <class>
 struct is_array_layout : public std::false_type
 {
 };
 
+//! Array static type checker.
 template <class EntityType, class MeshType>
 struct is_array_layout<ArrayLayout<EntityType, MeshType>>
     : public std::true_type
 {
 };
 
+//! Array static type checker.
 template <class EntityType, class MeshType>
 struct is_array_layout<const ArrayLayout<EntityType, MeshType>>
     : public std::true_type
@@ -121,6 +179,7 @@ struct is_array_layout<const ArrayLayout<EntityType, MeshType>>
   \brief Create an array layout over the entities of a local grid.
   \param local_grid The local grid over which to create the layout.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
+  \note EntityType The entity: Cell, Node, Face, or Edge
 */
 template <class EntityType, class MeshType>
 std::shared_ptr<ArrayLayout<EntityType, MeshType>>
@@ -136,8 +195,11 @@ createArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
   \brief Create an array layout over the entities of a grid given local grid
   parameters. An intermediate local grid will be created and assigned to the
   layout.
-  \param local_grid The local grid over which to create the layout.
+  \param global_grid The local grid over which to create the layout.
+  \param halo_cell_width The number of halo cells surrounding the locally owned
+  cells.
   \param dofs_per_entity The number of degrees-of-freedom per grid entity.
+  \note EntityType The entity: Cell, Node, Face, or Edge
 */
 template <class EntityType, class MeshType>
 std::shared_ptr<ArrayLayout<EntityType, MeshType>>
@@ -150,34 +212,46 @@ createArrayLayout( const std::shared_ptr<GlobalGrid<MeshType>>& global_grid,
 }
 
 //---------------------------------------------------------------------------//
-// Array
-//---------------------------------------------------------------------------//
+/*!
+  \brief Array of field data on the local mesh.
+
+  \tparam Scalar Scalar type.
+  \tparam EntityType Array entity type (node, cell, face, edge).
+  \tparam MeshType Mesh type (uniform, non-uniform, sparse).
+  \tparam Params Kokkos View parameters.
+*/
 template <class Scalar, class EntityType, class MeshType, class... Params>
 class Array
 {
   public:
-    // Value type.
+    //! Value type.
     using value_type = Scalar;
 
-    // Entity type.
+    //! Entity type.
     using entity_type = EntityType;
 
-    // Mesh type.
+    //! Mesh type.
     using mesh_type = MeshType;
 
-    // Array layout type.
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
+
+    //! Array layout type.
     using array_layout = ArrayLayout<entity_type, mesh_type>;
 
-    // View type.
-    using view_type = Kokkos::View<value_type****, Params...>;
+    //! View type.
+    using view_type = std::conditional_t<
+        3 == num_space_dim, Kokkos::View<value_type****, Params...>,
+        std::conditional_t<2 == num_space_dim,
+                           Kokkos::View<value_type***, Params...>, void>>;
 
-    // Device type.
+    //! Device type.
     using device_type = typename view_type::device_type;
 
-    // Memory space.
+    //! Memory space.
     using memory_space = typename view_type::memory_space;
 
-    // Execution space.
+    //! Execution space.
     using execution_space = typename view_type::execution_space;
 
     /*!
@@ -204,16 +278,11 @@ class Array
         : _layout( layout )
         , _data( view )
     {
-        if ( (long)view.extent( 0 ) !=
-                 layout->indexSpace( Ghost(), Local() ).extent( 0 ) ||
-             (long)view.extent( 1 ) !=
-                 layout->indexSpace( Ghost(), Local() ).extent( 1 ) ||
-             (long)view.extent( 2 ) !=
-                 layout->indexSpace( Ghost(), Local() ).extent( 2 ) ||
-             (long)view.extent( 3 ) !=
-                 layout->indexSpace( Ghost(), Local() ).extent( 3 ) )
-            throw std::runtime_error(
-                "Layout and view dimensions do not match" );
+        for ( std::size_t d = 0; d < num_space_dim + 1; ++d )
+            if ( (long)view.extent( d ) !=
+                 layout->indexSpace( Ghost(), Local() ).extent( d ) )
+                throw std::runtime_error(
+                    "Layout and view dimensions do not match" );
     }
 
     //! Get the layout of the array.
@@ -230,10 +299,12 @@ class Array
     view_type _data;
 
   public:
-    // Subview types.
+    //! Subview type.
     using subview_type = decltype(
         createSubview( _data, _layout->indexSpace( Ghost(), Local() ) ) );
+    //! Subview array layout type.
     using subview_layout = typename subview_type::array_layout;
+    //! Subview memory traits.
     using subview_memory_traits = typename subview_type::memory_traits;
 };
 
@@ -266,7 +337,7 @@ struct is_array<const Array<Scalar, EntityType, MeshType, Params...>>
   over the ghosted index space of the layout.
   \param label A label for the view.
   \param layout The array layout over which to construct the view.
- */
+*/
 template <class Scalar, class... Params, class EntityType, class MeshType>
 std::shared_ptr<Array<Scalar, EntityType, MeshType, Params...>>
 createArray( const std::string& label,
@@ -300,9 +371,16 @@ createSubarray( const Array<Scalar, EntityType, MeshType, Params...>& array,
         throw std::logic_error( "Subarray dimensions out of bounds" );
 
     auto space = array.layout()->indexSpace( Ghost(), Local() );
-    IndexSpace<4> sub_space(
-        { space.min( 0 ), space.min( 1 ), space.min( 2 ), dof_min },
-        { space.max( 0 ), space.max( 1 ), space.max( 2 ), dof_max } );
+    std::array<long, MeshType::num_space_dim + 1> min;
+    std::array<long, MeshType::num_space_dim + 1> max;
+    for ( std::size_t d = 0; d < MeshType::num_space_dim; ++d )
+    {
+        min[d] = space.min( d );
+        max[d] = space.max( d );
+    }
+    min.back() = dof_min;
+    max.back() = dof_max;
+    IndexSpace<MeshType::num_space_dim + 1> sub_space( min, max );
     auto sub_view = createSubview( array.view(), sub_space );
     auto sub_layout = createArrayLayout( array.layout()->localGrid(),
                                          dof_max - dof_min, EntityType() );
@@ -337,8 +415,7 @@ clone( const Array<Scalar, EntityType, MeshType, Params...>& array )
   \brief Assign a scalar value to every element of an array.
   \param array The array to assign the value to.
   \param alpha The value to assign to the array.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
 void assign( Array_t& array, const typename Array_t::value_type alpha,
@@ -352,15 +429,15 @@ void assign( Array_t& array, const typename Array_t::value_type alpha,
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Scale every element of an array by a scalar value.
+  \brief Scale every element of an array by a scalar value. 3D specialization.
   \param array The array to scale.
   \param alpha The value to scale the array by.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
-void scale( Array_t& array, const typename Array_t::value_type alpha,
-            DecompositionTag tag )
+std::enable_if_t<3 == Array_t::num_space_dim, void>
+scale( Array_t& array, const typename Array_t::value_type alpha,
+       DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     auto view = array.view();
@@ -373,19 +450,40 @@ void scale( Array_t& array, const typename Array_t::value_type alpha,
         } );
 }
 
+/*!
+  \brief Scale every element of an array by a scalar value. 2D specialization.
+  \param array The array to scale.
+  \param alpha The value to scale the array by.
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
+template <class Array_t, class DecompositionTag>
+std::enable_if_t<2 == Array_t::num_space_dim, void>
+scale( Array_t& array, const typename Array_t::value_type alpha,
+       DecompositionTag tag )
+{
+    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    auto view = array.view();
+    Kokkos::parallel_for(
+        "ArrayOp::scale",
+        createExecutionPolicy( array.layout()->indexSpace( tag, Local() ),
+                               typename Array_t::execution_space() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int l ) {
+            view( i, j, l ) *= alpha;
+        } );
+}
+
 //---------------------------------------------------------------------------//
 /*!
-  \brief Scale every element of an array by a scalar
+  \brief Scale every element of an array by a scalar. 3D specialization.
   \param array The array to scale.
   \param alpha The values to scale the array by. A value must be provided for
   each entity degree-of-freedom in the array.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
-void scale( Array_t& array,
-            const std::vector<typename Array_t::value_type>& alpha,
-            DecompositionTag tag )
+std::enable_if_t<3 == Array_t::num_space_dim, void>
+scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
+       DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     if ( alpha.size() !=
@@ -408,13 +506,45 @@ void scale( Array_t& array,
         } );
 }
 
+/*!
+  \brief Scale every element of an array by a scalar. 2D specialization.
+  \param array The array to scale.
+  \param alpha The values to scale the array by. A value must be provided for
+  each entity degree-of-freedom in the array.
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
+template <class Array_t, class DecompositionTag>
+std::enable_if_t<2 == Array_t::num_space_dim, void>
+scale( Array_t& array, const std::vector<typename Array_t::value_type>& alpha,
+       DecompositionTag tag )
+{
+    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    if ( alpha.size() !=
+         static_cast<unsigned>( array.layout()->dofsPerEntity() ) )
+        throw std::runtime_error( "Incorrect vector size" );
+
+    Kokkos::View<const typename Array_t::value_type*, Kokkos::HostSpace,
+                 Kokkos::MemoryUnmanaged>
+        alpha_view_host( alpha.data(), alpha.size() );
+    auto alpha_view = Kokkos::create_mirror_view_and_copy(
+        typename Array_t::device_type(), alpha_view_host );
+
+    auto array_view = array.view();
+    Kokkos::parallel_for(
+        "ArrayOp::scale",
+        createExecutionPolicy( array.layout()->indexSpace( tag, Local() ),
+                               typename Array_t::execution_space() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int l ) {
+            array_view( i, j, l ) *= alpha_view( l );
+        } );
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Copy one array into another over the designated decomposition. A <- B
   \param a The array to which the data will be copied.
   \param b The array from which the data will be copied.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
+  \param tag The tag for the decomposition over which to perform the operation.
 */
 template <class Array_t, class DecompositionTag>
 void copy( Array_t& a, const Array_t& b, DecompositionTag tag )
@@ -446,17 +576,17 @@ std::shared_ptr<Array_t> cloneCopy( const Array_t& array, DecompositionTag tag )
 //---------------------------------------------------------------------------//
 /*!
   \brief Update two vectors auch that a = alpha * a + beta * b.
+  3D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
   \param b The array to add to a.
   \param beta The value to scale b by.
-  \param tag The tag for the decomposition over which to perform the
-  operation.
- */
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
 template <class Array_t, class DecompositionTag>
-void update( Array_t& a, const typename Array_t::value_type alpha,
-             const Array_t& b, const typename Array_t::value_type beta,
-             DecompositionTag tag )
+std::enable_if_t<3 == Array_t::num_space_dim, void>
+update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
+        const typename Array_t::value_type beta, DecompositionTag tag )
 {
     static_assert( is_array<Array_t>::value, "Cajita::Array required" );
     auto a_view = a.view();
@@ -471,31 +601,143 @@ void update( Array_t& a, const typename Array_t::value_type alpha,
         } );
 }
 
+/*!
+  \brief Update two vectors auch that a = alpha * a + beta * b.
+  2D specialization.
+  \param a The array that will be updated.
+  \param alpha The value to scale a by.
+  \param b The array to add to a.
+  \param beta The value to scale b by.
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
+template <class Array_t, class DecompositionTag>
+std::enable_if_t<2 == Array_t::num_space_dim, void>
+update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
+        const typename Array_t::value_type beta, DecompositionTag tag )
+{
+    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    auto a_view = a.view();
+    auto b_view = b.view();
+    Kokkos::parallel_for(
+        "ArrayOp::update",
+        createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
+                               typename Array_t::execution_space() ),
+        KOKKOS_LAMBDA( const long i, const long j, const long l ) {
+            a_view( i, j, l ) =
+                alpha * a_view( i, j, l ) + beta * b_view( i, j, l );
+        } );
+}
+
 //---------------------------------------------------------------------------//
-// Dot product
-template <class ViewType>
+/*!
+  \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  3D specialization.
+  \param a The array that will be updated.
+  \param alpha The value to scale a by.
+  \param b The first array to add to a.
+  \param beta The value to scale b by.
+  \param c The second array to add to a.
+  \param gamma The value to scale b by.
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
+template <class Array_t, class DecompositionTag>
+std::enable_if_t<3 == Array_t::num_space_dim, void>
+update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
+        const typename Array_t::value_type beta, const Array_t& c,
+        const typename Array_t::value_type gamma, DecompositionTag tag )
+{
+    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    auto a_view = a.view();
+    auto b_view = b.view();
+    auto c_view = c.view();
+    Kokkos::parallel_for(
+        "ArrayOp::update",
+        createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
+                               typename Array_t::execution_space() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
+            a_view( i, j, k, l ) = alpha * a_view( i, j, k, l ) +
+                                   beta * b_view( i, j, k, l ) +
+                                   gamma * c_view( i, j, k, l );
+        } );
+}
+
+/*!
+  \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  2D specialization.
+  \param a The array that will be updated.
+  \param alpha The value to scale a by.
+  \param b The first array to add to a.
+  \param beta The value to scale b by.
+  \param c The second array to add to a.
+  \param gamma The value to scale b by.
+  \param tag The tag for the decomposition over which to perform the operation.
+*/
+template <class Array_t, class DecompositionTag>
+std::enable_if_t<2 == Array_t::num_space_dim, void>
+update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
+        const typename Array_t::value_type beta, const Array_t& c,
+        const typename Array_t::value_type gamma, DecompositionTag tag )
+{
+    static_assert( is_array<Array_t>::value, "Cajita::Array required" );
+    auto a_view = a.view();
+    auto b_view = b.view();
+    auto c_view = c.view();
+    Kokkos::parallel_for(
+        "ArrayOp::update",
+        createExecutionPolicy( a.layout()->indexSpace( tag, Local() ),
+                               typename Array_t::execution_space() ),
+        KOKKOS_LAMBDA( const int i, const int j, const int l ) {
+            a_view( i, j, l ) = alpha * a_view( i, j, l ) +
+                                beta * b_view( i, j, l ) +
+                                gamma * c_view( i, j, l );
+        } );
+}
+
+//---------------------------------------------------------------------------//
+//! Dot product functor
+template <class ViewType, std::size_t NumSpaceDim>
 struct DotFunctor
 {
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+    //! Value type.
     typedef typename ViewType::value_type value_type[];
+    //! Size type.
     typedef typename ViewType::size_type size_type;
+    //! Size of the array.
     size_type value_count;
+    //! The first array in the dot product.
     ViewType _a;
+    //! The second array in the dot product.
     ViewType _b;
 
+    //! Constructor.
     DotFunctor( const ViewType& a, const ViewType& b )
-        : value_count( a.extent( 3 ) )
+        : value_count( a.extent( NumSpaceDim ) )
         , _a( a )
         , _b( b )
     {
     }
 
-    KOKKOS_INLINE_FUNCTION
-    void operator()( const size_type i, const size_type j, const size_type k,
-                     const size_type l, value_type sum ) const
+    //! 3d dot product operation.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    operator()( const size_type i, const size_type j, const size_type k,
+                const size_type l, value_type sum ) const
     {
         sum[l] += _a( i, j, k, l ) * _b( i, j, k, l );
     }
 
+    //! 2d dot product operation.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    operator()( const size_type i, const size_type j, const size_type l,
+                value_type sum ) const
+    {
+        sum[l] += _a( i, j, l ) * _b( i, j, l );
+    }
+
+    //! Join operation.
     KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
@@ -503,6 +745,7 @@ struct DotFunctor
             dst[j] += src[j];
     }
 
+    //! Zero initialization.
     KOKKOS_INLINE_FUNCTION void init( value_type sum ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -518,7 +761,6 @@ struct DotFunctor
   array. This vector should be pre-sized to the number of degrees-of-freedom
   per entity.
 */
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 template <class Array_t>
 void dot( const Array_t& a, const Array_t& b,
           std::vector<typename Array_t::value_type>& products )
@@ -531,7 +773,8 @@ void dot( const Array_t& a, const Array_t& b,
     for ( auto& p : products )
         p = 0.0;
 
-    DotFunctor<typename Array_t::view_type> functor( a.view(), b.view() );
+    DotFunctor<typename Array_t::view_type, Array_t::num_space_dim> functor(
+        a.view(), b.view() );
     Kokkos::parallel_reduce(
         "ArrayOp::dot",
         createExecutionPolicy( a.layout()->indexSpace( Own(), Local() ),
@@ -542,33 +785,53 @@ void dot( const Array_t& a, const Array_t& b,
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
                    a.layout()->localGrid()->globalGrid().comm() );
 }
-#endif
 
 //---------------------------------------------------------------------------//
-// Infinity norm
-template <class ViewType>
+//! Infinity norm functor
+template <class ViewType, std::size_t NumSpaceDim>
 struct NormInfFunctor
 {
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+    //! Value type.
     typedef typename ViewType::value_type value_type[];
+    //! Size type.
     typedef typename ViewType::size_type size_type;
+    //! Size of the array.
     size_type value_count;
+    //! %Array for the infinity norm.
     ViewType _view;
 
+    //! Constructor.
     NormInfFunctor( const ViewType& view )
-        : value_count( view.extent( 3 ) )
+        : value_count( view.extent( NumSpaceDim ) )
         , _view( view )
     {
     }
 
-    KOKKOS_INLINE_FUNCTION
-    void operator()( const size_type i, const size_type j, const size_type k,
-                     const size_type l, value_type norm ) const
+    //! 3d infinity norm operation.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    operator()( const size_type i, const size_type j, const size_type k,
+                const size_type l, value_type norm ) const
     {
         auto v_abs = fabs( _view( i, j, k, l ) );
         if ( v_abs > norm[l] )
             norm[l] = v_abs;
     }
 
+    //! 2d infinity norm operation.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    operator()( const size_type i, const size_type j, const size_type l,
+                value_type norm ) const
+    {
+        auto v_abs = fabs( _view( i, j, l ) );
+        if ( v_abs > norm[l] )
+            norm[l] = v_abs;
+    }
+
+    //! Join operation.
     KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
@@ -577,6 +840,7 @@ struct NormInfFunctor
                 dst[j] = src[j];
     }
 
+    //! Zero initialization.
     KOKKOS_INLINE_FUNCTION void init( value_type norm ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -590,7 +854,6 @@ struct NormInfFunctor
   \param norms The norms for each degree-of-freedom in the array. This vector
   should be pre-sized to the number of degrees-of-freedom per entity.
 */
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 template <class Array_t>
 void normInf( const Array_t& array,
               std::vector<typename Array_t::value_type>& norms )
@@ -603,7 +866,8 @@ void normInf( const Array_t& array,
     for ( auto& n : norms )
         n = 0.0;
 
-    NormInfFunctor<typename Array_t::view_type> functor( array.view() );
+    NormInfFunctor<typename Array_t::view_type, Array_t::num_space_dim> functor(
+        array.view() );
     Kokkos::parallel_reduce(
         "ArrayOp::normInf",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
@@ -614,31 +878,49 @@ void normInf( const Array_t& array,
                    MpiTraits<typename Array_t::value_type>::type(), MPI_MAX,
                    array.layout()->localGrid()->globalGrid().comm() );
 }
-#endif
 
 //---------------------------------------------------------------------------//
-// One norm
-template <class ViewType>
+//! One norm functor
+template <class ViewType, std::size_t NumSpaceDim>
 struct Norm1Functor
 {
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+    //! Value type.
     typedef typename ViewType::value_type value_type[];
+    //! Size type.
     typedef typename ViewType::size_type size_type;
+    //! Size of the array.
     size_type value_count;
+    //! %Array for the one norm.
     ViewType _view;
 
+    //! Constructor.
     Norm1Functor( const ViewType& view )
-        : value_count( view.extent( 3 ) )
+        : value_count( view.extent( NumSpaceDim ) )
         , _view( view )
     {
     }
 
-    KOKKOS_INLINE_FUNCTION
-    void operator()( const size_type i, const size_type j, const size_type k,
-                     const size_type l, value_type norm ) const
+    //! 3d one norm operation.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    operator()( const size_type i, const size_type j, const size_type k,
+                const size_type l, value_type norm ) const
     {
         norm[l] += fabs( _view( i, j, k, l ) );
     }
 
+    //! 2d one norm operation.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    operator()( const size_type i, const size_type j, const size_type l,
+                value_type norm ) const
+    {
+        norm[l] += fabs( _view( i, j, l ) );
+    }
+
+    //! Join operation.
     KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
@@ -646,6 +928,7 @@ struct Norm1Functor
             dst[j] += src[j];
     }
 
+    //! Zero initialization.
     KOKKOS_INLINE_FUNCTION void init( value_type norm ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -659,7 +942,6 @@ struct Norm1Functor
   \param norms The norms for each degree-of-freedom in the array. This vector
   should be pre-sized to the number of degrees-of-freedom per entity.
 */
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
 template <class Array_t>
 void norm1( const Array_t& array,
             std::vector<typename Array_t::value_type>& norms )
@@ -672,7 +954,8 @@ void norm1( const Array_t& array,
     for ( auto& n : norms )
         n = 0.0;
 
-    Norm1Functor<typename Array_t::view_type> functor( array.view() );
+    Norm1Functor<typename Array_t::view_type, Array_t::num_space_dim> functor(
+        array.view() );
     Kokkos::parallel_reduce(
         "ArrayOp::norm1",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
@@ -683,31 +966,49 @@ void norm1( const Array_t& array,
                    MpiTraits<typename Array_t::value_type>::type(), MPI_SUM,
                    array.layout()->localGrid()->globalGrid().comm() );
 }
-#endif
 
 //---------------------------------------------------------------------------//
-// Two norm
-template <class ViewType>
+//! Two norm functor
+template <class ViewType, std::size_t NumSpaceDim>
 struct Norm2Functor
 {
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = NumSpaceDim;
+    //! Value type.
     typedef typename ViewType::value_type value_type[];
+    //! Size type.
     typedef typename ViewType::size_type size_type;
+    //! Size of the array.
     size_type value_count;
+    //! %Array for the two norm.
     ViewType _view;
 
+    //! Constructor.
     Norm2Functor( const ViewType& view )
-        : value_count( view.extent( 3 ) )
+        : value_count( view.extent( NumSpaceDim ) )
         , _view( view )
     {
     }
 
-    KOKKOS_INLINE_FUNCTION
-    void operator()( const size_type i, const size_type j, const size_type k,
-                     const size_type l, value_type norm ) const
+    //! 3d two norm operation.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
+    operator()( const size_type i, const size_type j, const size_type k,
+                const size_type l, value_type norm ) const
     {
         norm[l] += _view( i, j, k, l ) * _view( i, j, k, l );
     }
 
+    //! 2d two norm operation.
+    template <std::size_t NSD = num_space_dim>
+    KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, void>
+    operator()( const size_type i, const size_type j, const size_type l,
+                value_type norm ) const
+    {
+        norm[l] += _view( i, j, l ) * _view( i, j, l );
+    }
+
+    //! Join operation.
     KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
@@ -715,6 +1016,7 @@ struct Norm2Functor
             dst[j] += src[j];
     }
 
+    //! Zero initialization.
     KOKKOS_INLINE_FUNCTION void init( value_type norm ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -728,7 +1030,6 @@ struct Norm2Functor
   \param norms The norms for each entity degree-of-freedom in the array. This
   vector should be pre-sized to the number of degrees-of-freedom per entity.
 */
-#ifndef KOKKOS_ENABLE_OPENMPTARGET
 template <class Array_t>
 void norm2( const Array_t& array,
             std::vector<typename Array_t::value_type>& norms )
@@ -741,7 +1042,8 @@ void norm2( const Array_t& array,
     for ( auto& n : norms )
         n = 0.0;
 
-    Norm2Functor<typename Array_t::view_type> functor( array.view() );
+    Norm2Functor<typename Array_t::view_type, Array_t::num_space_dim> functor(
+        array.view() );
     Kokkos::parallel_reduce(
         "ArrayOp::norm2",
         createExecutionPolicy( array.layout()->indexSpace( Own(), Local() ),
@@ -755,7 +1057,6 @@ void norm2( const Array_t& array,
     for ( auto& n : norms )
         n = std::sqrt( n );
 }
-#endif
 //---------------------------------------------------------------------------//
 
 } // end namespace ArrayOp

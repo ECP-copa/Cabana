@@ -552,6 +552,39 @@ void defaultConstructorTest()
 }
 
 //---------------------------------------------------------------------------//
+void inRangeTest()
+{
+    IndexSpace<3> space( { 9, 2, 1 }, { 12, 16, 4 } );
+
+    long i0[3] = { 9, 2, 1 };
+    EXPECT_TRUE( space.inRange( i0 ) );
+
+    long i1[3] = { 10, 9, 3 };
+    EXPECT_TRUE( space.inRange( i1 ) );
+
+    long i2[3] = { 3, 9, 3 };
+    EXPECT_FALSE( space.inRange( i2 ) );
+
+    long i3[3] = { 10, 19, 3 };
+    EXPECT_FALSE( space.inRange( i3 ) );
+
+    long i4[3] = { 10, 9, 13 };
+    EXPECT_FALSE( space.inRange( i4 ) );
+
+    long i5[3] = { 3, 19, 3 };
+    EXPECT_FALSE( space.inRange( i5 ) );
+
+    long i6[3] = { 10, 19, 13 };
+    EXPECT_FALSE( space.inRange( i6 ) );
+
+    long i7[3] = { 3, 19, 13 };
+    EXPECT_FALSE( space.inRange( i7 ) );
+
+    long i8[3] = { 12, 16, 4 };
+    EXPECT_FALSE( space.inRange( i8 ) );
+}
+
+//---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, index_space_test )

@@ -36,7 +36,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
       - name: Run clang-format
         if: ${{ fromJSON(steps.issue_info.outputs.data).pull_request }}
-        run: find . -type f -regex ".*\.\(c\|h\|cc\|cpp\|hpp\)" -not -path "./gtest/*" -print0 | xargs -0 ${CLANG_FORMAT} -i -style=file
+        run: find . -type f -regex ".*\.\(c\|h\|cc\|cpp\|hpp\)" -print0 | xargs -0 ${CLANG_FORMAT} -i -style=file
       - name: Commit and push
         if: ${{ fromJSON(steps.issue_info.outputs.data).pull_request }}
         run: |

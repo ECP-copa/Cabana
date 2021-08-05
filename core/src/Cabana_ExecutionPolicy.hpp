@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_ExecutionPolicy.hpp
+  \brief SIMD execution policy
+*/
 #ifndef CABANA_EXECUTIONPOLICY_HPP
 #define CABANA_EXECUTIONPOLICY_HPP
 
@@ -23,9 +27,9 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 namespace Impl
 {
-/*!
-  \class StructRange
+//! \cond Impl
 
+/*!
   \brief 2D loop outer index range giving struct index range bounds based on a
   1D range input.
 
@@ -62,11 +66,11 @@ class StructRange
     }
 };
 
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class SimdPolicy
   \brief Execution policy over a range of 2d indices.
 
   Gives 2D range of indices for executing a vectorized functor over the inner
@@ -82,11 +86,16 @@ class SimdPolicy
     typedef Kokkos::Impl::PolicyTraits<Properties...> traits;
 
   public:
+    //! Work tag.
     using work_tag = typename traits::work_tag;
+    //! Kokkos execution space.
     using execution_space = typename traits::execution_space;
+    //! Kokkos team policy.
     using base_type =
         Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    //! Simd execution policy.
     using execution_policy = SimdPolicy<VectorLength, Properties...>;
+    //! Index type.
     using index_type = typename traits::index_type;
 
     /*!
@@ -129,7 +138,7 @@ class SimdPolicy
         return ( s == _struct_begin ) ? _array_begin : 0;
     }
 
-    // Given a struct id get the ending array index.
+    //! Given a struct id get the ending array index.
     KOKKOS_INLINE_FUNCTION index_type arrayEnd( const index_type s ) const
     {
         // If we are in the last unfilled struct then use the array

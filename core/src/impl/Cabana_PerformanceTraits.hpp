@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_PerformanceTraits.hpp
+  \brief Default settings for execution spaces.
+*/
 #ifndef CABANA_PERFORMANCETRAITS_HPP
 #define CABANA_PERFORMANCETRAITS_HPP
 
@@ -22,7 +26,6 @@ namespace Impl
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class PerformanceTraits
   \brief Default settings for execution spaces.
 */
 template <class ExecutionSpace>
@@ -80,6 +83,16 @@ class PerformanceTraits<Kokkos::Experimental::HIP>
   public:
     static constexpr int vector_length =
         Kokkos::Experimental::Impl::HIPTraits::WarpSize;
+};
+#endif
+
+//---------------------------------------------------------------------------//
+#if defined( KOKKOS_ENABLE_SYCL )
+template <>
+class PerformanceTraits<Kokkos::Experimental::SYCL>
+{
+  public:
+    static constexpr int vector_length = 16; // FIXME_SYCL
 };
 #endif
 

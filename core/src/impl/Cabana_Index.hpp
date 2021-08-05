@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Index.hpp
+  \brief AoSoA indexing
+*/
 #ifndef CABANA_INDEX_HPP
 #define CABANA_INDEX_HPP
 
@@ -25,8 +29,6 @@ namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class Index
-
   \brief Class for converting between 1d and 2d aosoa indices.
 
   \tparam VectorLength The inner array size of the AoSoA.
@@ -39,13 +41,13 @@ class Index
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
                    "Invalid vector length" );
 
-    // Inner array size.
+    //! Inner array size.
     static constexpr int vector_length = VectorLength;
 
-    // Array size offset.
+    //! Array size offset.
     static constexpr int vector_length_offset = ( vector_length - 1 );
 
-    // Number of binary bits needed to hold the array size.
+    //! Number of binary bits needed to hold the array size.
     static constexpr int vector_length_binary_bits =
         Impl::LogBase2<vector_length>::value;
 
