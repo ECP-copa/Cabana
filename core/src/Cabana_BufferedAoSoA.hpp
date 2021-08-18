@@ -23,6 +23,7 @@ namespace Cabana
 {
 namespace Experimental
 {
+//! \cond Impl
 
 template <class AoSoA, std::size_t... Indicies>
 auto makeSliceParameterPackImpl( const AoSoA& aosoa,
@@ -210,6 +211,7 @@ class BufferedAoSoA
   private:
 };
 
+//! \endcond
 } // end namespace Experimental
 } // end namespace Cabana
 

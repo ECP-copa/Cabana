@@ -408,15 +408,9 @@ inline void deep_copy( Slice_t& slice,
 
 //---------------------------------------------------------------------------//
 
-/**
- * @brief Copy a partial chunk from src into the destination array
- *
- * @param dst
- * @param src
- * @param start_from
- * @param end_from
- * @param start_to
- */
+/*!
+  @brief Copy a partial chunk from src into the destination array
+*/
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_src(
     DstAoSoA& dst, const SrcAoSoA& src,
@@ -506,15 +500,9 @@ inline void deep_copy_partial_src(
 
 // TODO: this can be DRYd with deep_copy_partial, but we need a
 // way to denote if src or dst is the partial
-/**
- * @brief Copy the full src array into a partial place in destination
- *
- * @param dst TODO
- * @param src
- * @param to_index
- * @param count
- * @param
- */
+/*!
+   @brief Copy the full src array into a partial place in destination
+*/
 template <class DstAoSoA, class SrcAoSoA>
 inline void deep_copy_partial_dst(
     DstAoSoA dst, const SrcAoSoA src,
