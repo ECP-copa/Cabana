@@ -258,7 +258,7 @@ jobs:
         uses: actions/checkout@v2.2.0
         with:
           repository: hypre-space/hypre
-          ref: v2.20.0
+          ref: v2.22.0
           path: hypre
       - name: Build hypre
         if: ${{ matrix.hypre == 'HYPRE' }}
@@ -284,7 +284,7 @@ jobs:
             -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_FLAGS="-Wall -pedantic" \
+            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
@@ -296,6 +296,13 @@ jobs:
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
+      - name: Test Cabana Export Target
+        working-directory: example/core_tutorial/01_hello_world
+        run: |
+          cmake -B build \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/Cabana" \
+            -DCMAKE_CXX_COMPILER=${{ matrix.cxx }}
+          cmake --build build
       - name: Build Doxygen
         if: ${{ matrix.doxygen == 'ON' }}
         run: cmake --build build --target doxygen

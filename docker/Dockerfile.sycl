@@ -57,8 +57,27 @@ RUN SYCL_VERSION=20210311 && \
     rm -rf ${SCRATCH_DIR}
 ENV PATH=${SYCL_DIR}/bin:$PATH
 
-# Install Kokkos (this commit is develop branch March 2021)
-ARG KOKKOS_VERSION=e31f52e54dc20c775cad7ea197f14c12cbe9b582
+# Install CUDA-aware Open MPI
+ENV OPENMPI_DIR=/opt/openmpi
+RUN OPENMPI_VERSION=4.0.2 && \
+    OPENMPI_VERSION_SHORT=4.0 && \
+    OPENMPI_SHA1=32ce3761288575fb8e4f6296c9105c3a25cf3235 && \
+    OPENMPI_URL=https://download.open-mpi.org/release/open-mpi/v${OPENMPI_VERSION_SHORT}/openmpi-${OPENMPI_VERSION}.tar.bz2 && \
+    OPENMPI_ARCHIVE=openmpi-${OPENMPI_VERSION}.tar.bz2 && \
+    [ ! -z "${CUDA_VERSION}" ] && CUDA_OPTIONS=--with-cuda || true && \
+    SCRATCH_DIR=/scratch && mkdir -p ${SCRATCH_DIR} && cd ${SCRATCH_DIR} && \
+    wget --quiet ${OPENMPI_URL} --output-document=${OPENMPI_ARCHIVE} && \
+    echo "${OPENMPI_SHA1} ${OPENMPI_ARCHIVE}" | sha1sum -c && \
+    mkdir -p openmpi && \
+    tar -xf ${OPENMPI_ARCHIVE} -C openmpi --strip-components=1 && \
+    mkdir -p build && cd build && \
+    ../openmpi/configure --prefix=${OPENMPI_DIR} ${CUDA_OPTIONS} CFLAGS=-w && \
+    make -j${NPROCS} install && \
+    rm -rf ${SCRATCH_DIR}
+ENV PATH=${OPENMPI_DIR}/bin:$PATH
+
+# Install Kokkos
+ARG KOKKOS_VERSION=3.4.01
 ARG KOKKOS_OPTIONS="-DKokkos_ENABLE_SYCL=ON -DCMAKE_CXX_FLAGS=-Wno-unknown-cuda-version -DKokkos_ENABLE_UNSUPPORTED_ARCHS=ON -DKokkos_ARCH_VOLTA70=ON -DCMAKE_CXX_STANDARD=17"
 ENV KOKKOS_DIR=/opt/kokkos
 RUN KOKKOS_URL=https://github.com/kokkos/kokkos/archive/${KOKKOS_VERSION}.tar.gz && \

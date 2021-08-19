@@ -355,6 +355,29 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
 }
 
 //---------------------------------------------------------------------------//
+// Return unique neighbor ranks, with the current rank first.
+inline std::vector<int> getUniqueTopology( std::vector<int> topology )
+{
+    auto remove_end = std::remove( topology.begin(), topology.end(), -1 );
+    std::sort( topology.begin(), remove_end );
+    auto unique_end = std::unique( topology.begin(), remove_end );
+    topology.resize( std::distance( topology.begin(), unique_end ) );
+
+    // Put this rank first.
+    int my_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &my_rank );
+    for ( auto& n : topology )
+    {
+        if ( n == my_rank )
+        {
+            std::swap( n, topology[0] );
+            break;
+        }
+    }
+    return topology;
+}
+
+//---------------------------------------------------------------------------//
 //! \endcond
 } // end namespace Impl
 
@@ -570,11 +593,8 @@ class CommunicationPlan
         // Store the number of export elements.
         _num_export_element = element_export_ranks.size();
 
-        // Store the unique neighbors.
-        _neighbors = neighbor_ranks;
-        std::sort( _neighbors.begin(), _neighbors.end() );
-        auto unique_end = std::unique( _neighbors.begin(), _neighbors.end() );
-        _neighbors.resize( std::distance( _neighbors.begin(), unique_end ) );
+        // Store the unique neighbors (this rank first).
+        _neighbors = Impl::getUniqueTopology( neighbor_ranks );
         int num_n = _neighbors.size();
 
         // Get the size of this communicator.
@@ -588,15 +608,6 @@ class CommunicationPlan
         // Pick an mpi tag for communication. This object has it's own
         // communication space so any mpi tag will do.
         const int mpi_tag = 1221;
-
-        // If we are sending to ourself put that one first in the neighbor
-        // list.
-        for ( auto& n : _neighbors )
-            if ( n == my_rank )
-            {
-                std::swap( n, _neighbors[0] );
-                break;
-            }
 
         // Initialize import/export sizes.
         _num_export.assign( num_n, 0 );
