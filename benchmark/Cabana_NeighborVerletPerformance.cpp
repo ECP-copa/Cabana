@@ -40,18 +40,18 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
     // Declare problem sizes.
     double min_dist = 1.0;
-    std::vector<int> problem_sizes = { 1000, 10000, 100000, 1000000 };
+    std::vector<int> problem_sizes = { 100, 1000 };
     int num_problem_size = problem_sizes.size();
     std::vector<double> x_min( num_problem_size );
     std::vector<double> x_max( num_problem_size );
 
     // Declare the number of cutoff ratios (directly related to neighbors per
     // atom) to generate.
-    std::vector<double> cutoff_ratios = { 3.0, 4.0 };
+    std::vector<double> cutoff_ratios = { 2.0, 3.0 };
     int cutoff_ratios_size = cutoff_ratios.size();
 
     // Declare the number of cell ratios to generate.
-    std::vector<double> cell_ratios = { 1.0, 1.5 };
+    std::vector<double> cell_ratios = { 1.0 };
     int cell_ratios_size = cell_ratios.size();
 
     // Number of runs in the test loops.
