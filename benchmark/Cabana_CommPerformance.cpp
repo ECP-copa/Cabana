@@ -445,7 +445,7 @@ int main( int argc, char* argv[] )
 #ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
     using CudaUVMDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaUVMSpace>;
-    using HostDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
+    using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
 
     // Transfer GPU data to CPU, communication on CPU, and transfer back to
     // GPU.
