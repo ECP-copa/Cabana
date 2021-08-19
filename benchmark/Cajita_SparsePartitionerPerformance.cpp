@@ -83,6 +83,9 @@ template <class Device>
 void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
                       const std::string& test_prefix )
 {
+    using exec_space = typename Device::execution_space;
+    using memory_space = typename Device::memory_space;
+
     // Get comm rank;
     int comm_rank;
     MPI_Comm_rank( comm, &comm_rank );
@@ -98,9 +101,9 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
     constexpr int cell_bits_per_tile_dim = 2;
 
     // Declare the total number of particles
-    std::vector<int> num_particles = { 100,    1000,   10000,
+    std::vector<int> problem_sizes = { 100,    1000,   10000,
                                        100000, 500000, 1000000 };
-    int num_particles_size = num_particles.size();
+    int num_problem_size = problem_sizes.size();
 
     // Declare the size (cell nums) of the domain
     std::vector<int> num_cells_per_dim = { 32, 64, 128, 256 };
@@ -115,14 +118,25 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
     int num_step_rebalance = 100;
 
     // compute the max number of particles handled by the current MPI rank
-    int max_par_num = num_particles.back() / comm_size +
-                      ( num_particles.back() % comm_size < comm_rank ? 1 : 0 );
+    int max_par_num = problem_sizes.back() / comm_size +
+                      ( problem_sizes.back() % comm_size < comm_rank ? 1 : 0 );
 
-    // Generate a random set of particles
-    auto poses_host = Cabana::Benchmark::createRandomParticles<float>(
-        max_par_num, global_low_corner, global_high_corner );
-    auto poses = Kokkos::create_mirror_view_and_copy(
-        typename Device::memory_space(), poses_host );
+    // Create random sets of particle positions.
+    using data_layout = typename exec_space::array_layout;
+    using position_type_host =
+        Kokkos::View<float* [3], data_layout, Kokkos::HostSpace>;
+    using position_type = Kokkos::View<float* [3], memory_space>;
+    std::vector<position_type> positions( num_problem_size );
+    for ( int p = 0; p < num_problem_size; ++p )
+    {
+        position_type_host pos(
+            Kokkos::ViewAllocateWithoutInitializing( "positions" ),
+            problem_sizes[p] );
+        Cabana::Benchmark::createRandomParticles( pos, global_low_corner[0],
+                                                  global_high_corner[0] );
+        positions[p] =
+            Kokkos::create_mirror_view_and_copy( memory_space(), pos );
+    }
 
     for ( int c = 0; c < num_cells_per_dim_size; ++c )
     {
@@ -145,30 +159,30 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
         local_workload_name << test_prefix << "compute_local_workload_"
                             << "domain_size(cell)_" << num_cells_per_dim[c];
         Cabana::Benchmark::Timer local_workload_timer(
-            local_workload_name.str(), num_particles_size );
+            local_workload_name.str(), num_problem_size );
 
         std::stringstream prefix_sum_name;
         prefix_sum_name << test_prefix << "compute_prefix_sum_"
                         << "domain_size(cell)_" << num_cells_per_dim[c];
         Cabana::Benchmark::Timer prefix_sum_timer( prefix_sum_name.str(),
-                                                   num_particles_size );
+                                                   num_problem_size );
 
         std::stringstream total_optimize_name;
         total_optimize_name << test_prefix << "total_optimize_"
                             << "domain_size(cell)_" << num_cells_per_dim[c];
         Cabana::Benchmark::Timer total_optimize_timer(
-            total_optimize_name.str(), num_particles_size );
+            total_optimize_name.str(), num_problem_size );
 
         // loop over all the particle numbers
-        for ( int p = 0; p < num_particles_size; ++p )
+        for ( int p = 0; p < num_problem_size; ++p )
         {
             // compute the number of particles handled by the current MPI rank
-            int par_num = num_particles[p] / comm_size +
-                          ( num_particles[p] % comm_size < comm_rank ? 1 : 0 );
+            int par_num = problem_sizes[p] / comm_size +
+                          ( problem_sizes[p] % comm_size < comm_rank ? 1 : 0 );
 
-            auto pos_view =
-                Kokkos::subview( poses, Kokkos::pair<int, int>( 0, par_num ),
-                                 Kokkos::pair<int, int>( 0, 3 ) );
+            auto pos_view = Kokkos::subview(
+                positions[p], Kokkos::pair<int, int>( 0, par_num ),
+                Kokkos::pair<int, int>( 0, 3 ) );
 
             // try for num_run times
             for ( int t = 0; t < num_run; ++t )
@@ -204,11 +218,11 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
             }
         }
         // Output results
-        outputResults( stream, "insert_tile_num", num_particles,
+        outputResults( stream, "insert_tile_num", problem_sizes,
                        local_workload_timer, comm );
-        outputResults( stream, "insert_tile_num", num_particles,
+        outputResults( stream, "insert_tile_num", problem_sizes,
                        prefix_sum_timer, comm );
-        outputResults( stream, "insert_tile_num", num_particles,
+        outputResults( stream, "insert_tile_num", problem_sizes,
                        total_optimize_timer, comm );
         stream << std::flush;
     }

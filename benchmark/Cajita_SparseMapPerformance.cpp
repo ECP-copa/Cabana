@@ -28,6 +28,8 @@ template <class Device>
 void performanceTest( std::ostream& stream, const std::string& test_prefix )
 {
     using exec_space = typename Device::execution_space;
+    using memory_space = typename Device::memory_space;
+
     // Domain size setup
     std::array<float, 3> global_low_corner = { 0.0, 0.0, 0.0 };
     std::array<float, 3> global_high_corner = { 1.0, 1.0, 1.0 };
@@ -35,19 +37,29 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
     constexpr int cell_bits_per_tile_dim = 2;
 
     // Declare the total number of particles to be inserted.
-    std::vector<int> num_particles = { 100, 1000, 10000, 1000000 };
-    int num_particles_size = num_particles.size();
+    std::vector<int> problem_sizes = { 100, 1000, 10000, 1000000 };
+    int num_problem_size = problem_sizes.size();
 
     // Declare the size (cell nums) of the domain
     std::vector<int> num_cells_per_dim = { 32, 64, 128, 256 };
     int num_cells_per_dim_size = num_cells_per_dim.size();
 
-    // Generate a random set of particles in domain [0.0, 1.0]
-    auto poses_host = Cabana::Benchmark::createRandomParticles<float>(
-        num_particles.back(), global_low_corner, global_high_corner );
-    auto poses = Kokkos::create_mirror_view_and_copy(
-        typename Device::memory_space(), poses_host );
-
+    // Create random sets of particle positions.
+    using data_layout = typename exec_space::array_layout;
+    using position_type_host =
+        Kokkos::View<float* [3], data_layout, Kokkos::HostSpace>;
+    using position_type = Kokkos::View<float* [3], memory_space>;
+    std::vector<position_type> positions( num_problem_size );
+    for ( int p = 0; p < num_problem_size; ++p )
+    {
+        position_type_host pos(
+            Kokkos::ViewAllocateWithoutInitializing( "positions" ),
+            problem_sizes[p] );
+        Cabana::Benchmark::createRandomParticles( pos, global_low_corner[0],
+                                                  global_high_corner[0] );
+        positions[p] =
+            Kokkos::create_mirror_view_and_copy( memory_space(), pos );
+    }
     // Number of runs in the test loops.
     int num_run = 10;
 
@@ -80,23 +92,24 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
         insert_time_name << test_prefix << "cell_insert_"
                          << "domain_size_" << num_cells_per_dim[c];
         Cabana::Benchmark::Timer insert_timer( insert_time_name.str(),
-                                               num_particles_size );
+                                               num_problem_size );
 
         std::stringstream query_time_name;
         query_time_name << test_prefix << "cell_query_"
                         << "domain_size_" << num_cells_per_dim[c];
         Cabana::Benchmark::Timer query_timer( query_time_name.str(),
-                                              num_particles_size );
+                                              num_problem_size );
 
         std::stringstream valid_tile_ijk_time_name;
         valid_tile_ijk_time_name << test_prefix << "get_valid_tile_ijk_"
                                  << "domain_size_" << num_cells_per_dim[c];
         Cabana::Benchmark::Timer valid_tile_ijk_timer(
-            valid_tile_ijk_time_name.str(), num_particles_size );
+            valid_tile_ijk_time_name.str(), num_problem_size );
 
-        for ( int p = 0; p < num_particles_size; ++p )
+        for ( int p = 0; p < num_problem_size; ++p )
         {
-            auto range = Kokkos::RangePolicy<exec_space>( 0, num_particles[p] );
+            auto pos = positions[p];
+            auto range = Kokkos::RangePolicy<exec_space>( 0, problem_sizes[p] );
             for ( int t = 0; t < num_run; ++t )
             {
                 // init helper views
@@ -105,15 +118,15 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
                 Kokkos::parallel_for(
                     "label_valid_cells", range,
                     KOKKOS_LAMBDA( const int par_id ) {
-                        int ti = static_cast<int>( poses( par_id, 0 ) /
-                                                   cell_size ) >>
-                                 cell_bits_per_tile_dim;
-                        int tj = static_cast<int>( poses( par_id, 1 ) /
-                                                   cell_size ) >>
-                                 cell_bits_per_tile_dim;
-                        int tk = static_cast<int>( poses( par_id, 2 ) /
-                                                   cell_size ) >>
-                                 cell_bits_per_tile_dim;
+                        int ti =
+                            static_cast<int>( pos( par_id, 0 ) / cell_size ) >>
+                            cell_bits_per_tile_dim;
+                        int tj =
+                            static_cast<int>( pos( par_id, 1 ) / cell_size ) >>
+                            cell_bits_per_tile_dim;
+                        int tk =
+                            static_cast<int>( pos( par_id, 2 ) / cell_size ) >>
+                            cell_bits_per_tile_dim;
                         is_tile_valid( ti, tj, tk ) = true;
                     } );
 
@@ -123,11 +136,11 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
                     "insert_cells_to_sparse_map", range,
                     KOKKOS_LAMBDA( const int par_id ) {
                         int ci =
-                            static_cast<int>( poses( par_id, 0 ) / cell_size );
+                            static_cast<int>( pos( par_id, 0 ) / cell_size );
                         int cj =
-                            static_cast<int>( poses( par_id, 1 ) / cell_size );
+                            static_cast<int>( pos( par_id, 1 ) / cell_size );
                         int ck =
-                            static_cast<int>( poses( par_id, 2 ) / cell_size );
+                            static_cast<int>( pos( par_id, 2 ) / cell_size );
                         sis.insertCell( ci, cj, ck );
                     } );
                 insert_timer.stop( p );
@@ -138,11 +151,11 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
                     "query_cell_ids_from_cell_ijk", range,
                     KOKKOS_LAMBDA( const int par_id ) {
                         int ci =
-                            static_cast<int>( poses( par_id, 0 ) / cell_size );
+                            static_cast<int>( pos( par_id, 0 ) / cell_size );
                         int cj =
-                            static_cast<int>( poses( par_id, 1 ) / cell_size );
+                            static_cast<int>( pos( par_id, 1 ) / cell_size );
                         int ck =
-                            static_cast<int>( poses( par_id, 2 ) / cell_size );
+                            static_cast<int>( pos( par_id, 2 ) / cell_size );
                         tile_ids( ci >> cell_bits_per_tile_dim,
                                   cj >> cell_bits_per_tile_dim,
                                   ck >> cell_bits_per_tile_dim ) =
@@ -168,9 +181,9 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
         }
 
         // Output results
-        outputResults( stream, "particle_num", num_particles, insert_timer );
-        outputResults( stream, "particle_num", num_particles, query_timer );
-        outputResults( stream, "particle_num", num_particles,
+        outputResults( stream, "particle_num", problem_sizes, insert_timer );
+        outputResults( stream, "particle_num", problem_sizes, query_timer );
+        outputResults( stream, "particle_num", problem_sizes,
                        valid_tile_ijk_timer );
         stream << std::flush;
     }
