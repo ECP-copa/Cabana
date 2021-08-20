@@ -278,6 +278,11 @@ jobs:
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
         run: |
+          if [[ $(( matrix.sanitizer )) == 'MSAN' ]]; then
+            cabana_cmake_opts+=( -DWITH_MSAN=ON )
+          else
+            cabana_cmake_opts+=( -DWITH_ASAN=ON )
+          fi
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
@@ -292,7 +297,8 @@ jobs:
             -DCabana_ENABLE_COVERAGE_BUILD=${{ matrix.coverage }} \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
             -DVALGRIND_EXECUTABLE=False \
-            -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS
+            -DDOXYGEN_WARN_AS_ERROR=FAIL_ON_WARNINGS \
+            ${cabana_cmake_opts}
           cmake --build build --parallel 2
           CTEST_OUTPUT_ON_FAILURE=1 cmake --build build --target test
           cmake --install build
