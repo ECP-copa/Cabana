@@ -17,12 +17,6 @@ cmake_minimum_required(VERSION 3.9)
 project(Cabana LANGUAGES CXX)
 set(PROJECT_VERSION "1.0-dev")
 
-# FIXME: HYPRE workaround. Hypre is currently not exporting the find_package(
-# MPI ) to find the MPI::MPI_C targets and therefore we add this here for now
-# to ensure those targets are found for HYPRE:
-# https://github.com/hypre-space/hypre/pull/423
-enable_language( C )
-
 # If the user doesn't provide a build type default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
   #release comes with -O3 by default
