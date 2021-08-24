@@ -146,7 +146,7 @@ RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz &&
 
 # Install HYPRE
 ENV HYPRE_DIR=/opt/hypre
-RUN HYPRE_VERSION=v2.22.0 && \
+RUN HYPRE_VERSION=v2.22.1 && \
     HYPRE_URL=https://github.com/hypre-space/hypre/archive/${HYPRE_VERSION}.tar.gz && \
     HYPRE_ARCHIVE=hypre.tar.gz && \
     wget --quiet ${HYPRE_URL} --output-document=${HYPRE_ARCHIVE} && \

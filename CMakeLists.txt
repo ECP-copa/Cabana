@@ -89,7 +89,7 @@ Cabana_add_dependency( PACKAGE ArborX )
 find_package( CLANG_FORMAT 10 )
 
 # find hypre
-Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.0 )
+Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
 
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.1.0 )
