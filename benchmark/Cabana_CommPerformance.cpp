@@ -445,14 +445,11 @@ int main( int argc, char* argv[] )
 #ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
     using CudaUVMDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaUVMSpace>;
+    using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
 
     // Transfer GPU data to CPU, communication on CPU, and transfer back to
     // GPU.
-#ifdef KOKKOS_ENABLE_OPENMP
-    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-    performanceTest<CudaDevice, OpenMPDevice>( file, num_particle,
-                                               "cuda_host_" );
-#endif
+    performanceTest<CudaDevice, HostDevice>( file, num_particle, "cuda_host_" );
 
     // Do everything on the GPU with regular GPU memory.
     performanceTest<CudaDevice, CudaDevice>( file, num_particle, "cuda_cuda_" );

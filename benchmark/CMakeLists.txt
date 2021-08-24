@@ -29,4 +29,24 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP)
     target_link_libraries(CommPerformance cabanacore)
   endif()
 
+  if(Cabana_ENABLE_TESTING)
+    target_link_libraries(BinSortPerformance gtest)
+    add_test(NAME Cabana_Performance_BinSort COMMAND ${NONMPI_PRECOMMAND} BinSortPerformance sort_output.txt)
+
+    target_link_libraries(NeighborVerletPerformance gtest)
+    add_test(NAME Cabana_Performance_NeighborVerlet COMMAND ${NONMPI_PRECOMMAND} NeighborVerletPerformance verlet_output.txt)
+
+    if(Cabana_ENABLE_ARBORX)
+      target_link_libraries(NeighborArborXPerformance gtest)
+      add_test(NAME Cabana_Performance_NeighborArborX COMMAND ${NONMPI_PRECOMMAND} NeighborArborXPerformance arborx_output.txt)
+    endif()
+
+    target_link_libraries(LinkedCellPerformance gtest)
+    add_test(NAME Cabana_Performance_LinkedCell COMMAND ${NONMPI_PRECOMMAND} LinkedCellPerformance lcl_output.txt)
+
+    if(Cabana_ENABLE_MPI)
+      target_link_libraries(CommPerformance gtest)
+      add_test(NAME Cabana_Performance_Comm COMMAND ${NONMPI_PRECOMMAND} CommPerformance 1000 comm_output.txt)
+    endif()
+  endif()
 endif()
