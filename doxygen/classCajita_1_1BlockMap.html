@@ -118,6 +118,9 @@ KOKKOS_INLINE_FUNCTION uint32_t&#160;</td><td class="memItemRight" valign="botto
 <tr class="memitem:ab373ab6ebe66918e8348769ec610d529"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#ab373ab6ebe66918e8348769ec610d529">key_at</a> (uint32_t index) const</td></tr>
 <tr class="memdesc:ab373ab6ebe66918e8348769ec610d529"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Get tile key at index.  <a href="classCajita_1_1BlockMap.html#ab373ab6ebe66918e8348769ec610d529">More...</a><br /></td></tr>
 <tr class="separator:ab373ab6ebe66918e8348769ec610d529"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4efdaaf55e2282f6fa307f1496ac64f9"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a4efdaaf55e2282f6fa307f1496ac64f9">value_at</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:a4efdaaf55e2282f6fa307f1496ac64f9"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) get block id value at index  <a href="classCajita_1_1BlockMap.html#a4efdaaf55e2282f6fa307f1496ac64f9">More...</a><br /></td></tr>
+<tr class="separator:a4efdaaf55e2282f6fa307f1496ac64f9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a4b6328fc155621d34650afdb00694b02"><td class="memItemLeft" align="right" valign="top"><a id="a4b6328fc155621d34650afdb00694b02"></a>
 KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#af2c3974e7f69225ef7b09c3cfd4d9439">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockMap.html#a4b6328fc155621d34650afdb00694b02">validTileNumDev</a> () const</td></tr>
 <tr class="memdesc:a4b6328fc155621d34650afdb00694b02"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Valid tile number inside current block (MPI rank) <br /></td></tr>
@@ -553,6 +556,42 @@ template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long 
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">index</td><td>index number in Kokkos unordered map </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4efdaaf55e2282f6fa307f1496ac64f9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4efdaaf55e2282f6fa307f1496ac64f9">&#9670;&nbsp;</a></span>value_at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename MemorySpace , unsigned long long CBits, unsigned long long CNumPerDim, unsigned long long CNumPerTile, HashTypes Hash, typename Key , typename Value &gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1BlockMap.html#a9dc48457a379832c3554689f0b0296e3">key_type</a> <a class="el" href="classCajita_1_1BlockMap.html">Cajita::BlockMap</a>&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;::value_at </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(Device) get block id value at index </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>index value in kokkos unordered map </td></tr>
   </table>
   </dd>
 </dl>

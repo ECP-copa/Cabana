@@ -130,6 +130,9 @@ KOKKOS_INLINE_FUNCTION uint32_t&#160;</td><td class="memItemRight" valign="botto
 <tr class="memitem:ac21f0acbf87da9f7306a803710ffa913"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1SparseMap.html#ab0bdd0dd37676fc5d7b4349ab7d0f2a6">key_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#ac21f0acbf87da9f7306a803710ffa913">key_at</a> (uint32_t index) const</td></tr>
 <tr class="memdesc:ac21f0acbf87da9f7306a803710ffa913"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Get block key at index  <a href="classCajita_1_1SparseMap.html#ac21f0acbf87da9f7306a803710ffa913">More...</a><br /></td></tr>
 <tr class="separator:ac21f0acbf87da9f7306a803710ffa913"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a65fe73eba28b0c3f1326a79a19d6ddba"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1SparseMap.html#ae876105276347260b96c58db6eb0b255">value_type</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#a65fe73eba28b0c3f1326a79a19d6ddba">value_at</a> (uint32_t index) const</td></tr>
+<tr class="memdesc:a65fe73eba28b0c3f1326a79a19d6ddba"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) get tile id value at index  <a href="classCajita_1_1SparseMap.html#a65fe73eba28b0c3f1326a79a19d6ddba">More...</a><br /></td></tr>
+<tr class="separator:a65fe73eba28b0c3f1326a79a19d6ddba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a61e4bcbc0b530abe6ae3682cfb9f0f2b"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html#a61e4bcbc0b530abe6ae3682cfb9f0f2b">key2ijk</a> (<a class="el" href="classCajita_1_1SparseMap.html#ab0bdd0dd37676fc5d7b4349ab7d0f2a6">key_type</a> &amp;key, int &amp;tile_i, int &amp;tile_j, int &amp;tile_k) const</td></tr>
 <tr class="memdesc:a61e4bcbc0b530abe6ae3682cfb9f0f2b"><td class="mdescLeft">&#160;</td><td class="mdescRight">(Device) Transfer block hash key to block ijk  <a href="classCajita_1_1SparseMap.html#a61e4bcbc0b530abe6ae3682cfb9f0f2b">More...</a><br /></td></tr>
 <tr class="separator:a61e4bcbc0b530abe6ae3682cfb9f0f2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -592,6 +595,42 @@ template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, HashTy
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">index</td><td>index number in Kokkos unordered_map </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a65fe73eba28b0c3f1326a79a19d6ddba"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a65fe73eba28b0c3f1326a79a19d6ddba">&#9670;&nbsp;</a></span>value_at()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;typename MemorySpace , unsigned long long CellPerTileDim = 4, HashTypes Hash = HashTypes::Naive, typename Key  = uint64_t, typename Value  = uint64_t&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">KOKKOS_INLINE_FUNCTION <a class="el" href="classCajita_1_1SparseMap.html#ae876105276347260b96c58db6eb0b255">value_type</a> <a class="el" href="classCajita_1_1SparseMap.html">Cajita::SparseMap</a>&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;::value_at </td>
+          <td>(</td>
+          <td class="paramtype">uint32_t&#160;</td>
+          <td class="paramname"><em>index</em></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>(Device) get tile id value at index </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">index</td><td>index value in kokkos unordered map </td></tr>
   </table>
   </dd>
 </dl>
