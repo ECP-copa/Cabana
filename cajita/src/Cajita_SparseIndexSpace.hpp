@@ -550,6 +550,16 @@ class SparseMap
     }
 
     /*!
+      \brief (Device) get tile id value at index
+      \param index index value in kokkos unordered map
+    */
+    KOKKOS_INLINE_FUNCTION
+    value_type value_at( uint32_t index ) const
+    {
+        return _block_id_space.value_at( index );
+    }
+
+    /*!
       \brief (Device) Transfer block hash key to block ijk
       \param key Tile hash key
       \param tile_i, tile_j, tile_k Tile ID in each dimension
@@ -702,6 +712,16 @@ class BlockMap
     key_type key_at( uint32_t index ) const
     {
         return _tile_table.key_at( index );
+    }
+
+    /*!
+      \brief (Device) get block id value at index
+      \param index index value in kokkos unordered map
+    */
+    KOKKOS_INLINE_FUNCTION
+    key_type value_at( uint32_t index ) const
+    {
+        return _tile_table.value_at( index );
     }
 
     /*!

@@ -184,8 +184,8 @@ void outputResults( std::ostream& stream, const std::string& data_point_name,
 //---------------------------------------------------------------------------//
 // Generate random particles.
 template <class Slice>
-void createParticles( Slice& x, const double x_min, const double x_max,
-                      const double min_dist )
+void createRandomNeighbors( Slice& x, const double x_min, const double x_max,
+                            const double min_dist )
 {
     auto num_particles = x.size();
     double min_dist_sqr = min_dist * min_dist;
@@ -276,6 +276,32 @@ void createParticles( Slice& x, const double x_min, const double x_max,
         }
     }
     std::cout << std::endl;
+}
+
+//---------------------------------------------------------------------------//
+// Generate random particles view.
+template <typename PositionType>
+void createRandomParticles( PositionType x, const double x_min,
+                            const double x_max )
+{
+    auto num_particles = x.extent( 0 );
+    using value_type = typename PositionType::value_type;
+
+    // compute position range
+    value_type x_range = x_max - x_min;
+
+    // compute generator range
+    std::minstd_rand0 generator( 3439203991 );
+    value_type generator_range =
+        static_cast<value_type>( generator.max() - generator.min() );
+
+    // generate random particles
+    for ( std::size_t n = 0; n < num_particles; ++n )
+        for ( std::size_t d = 0; d < 3; ++d )
+            x( n, d ) =
+                ( static_cast<value_type>( ( generator() - generator.min() ) ) *
+                  x_range / generator_range ) +
+                x_min;
 }
 
 } // end namespace Benchmark
