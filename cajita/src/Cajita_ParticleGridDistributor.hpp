@@ -283,8 +283,8 @@ createParticleGridDistributor( const LocalGridType& local_grid,
   ghosted halo.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
-void particleGridMigrate( const LocalGridType& local_grid,
-                          ParticlePositions& positions,
+bool particleGridMigrate( const LocalGridType& local_grid,
+                          const ParticlePositions& positions,
                           ParticleContainer& particles,
                           const int min_halo_width,
                           const bool force_migrate = false )
@@ -300,13 +300,14 @@ void particleGridMigrate( const LocalGridType& local_grid,
 
         // If we have no particles near the ghosted boundary, then exit.
         if ( 0 == comm_count )
-            return;
+            return false;
     }
 
     auto distributor = createParticleGridDistributor( local_grid, positions );
 
     // Redistribute the particles.
     migrate( distributor, particles );
+    return true;
 }
 
 //---------------------------------------------------------------------------//
@@ -337,7 +338,7 @@ void particleGridMigrate( const LocalGridType& local_grid,
   ghosted halo.
 */
 template <class LocalGridType, class ParticlePositions, class ParticleContainer>
-void particleGridMigrate( const LocalGridType& local_grid,
+bool particleGridMigrate( const LocalGridType& local_grid,
                           const ParticlePositions& positions,
                           const ParticleContainer& src_particles,
                           ParticleContainer& dst_particles,
@@ -357,7 +358,7 @@ void particleGridMigrate( const LocalGridType& local_grid,
         if ( 0 == comm_count )
         {
             Cabana::deep_copy( dst_particles, src_particles );
-            return;
+            return false;
         }
     }
 
@@ -368,6 +369,7 @@ void particleGridMigrate( const LocalGridType& local_grid,
 
     // Redistribute the particles.
     migrate( distributor, src_particles, dst_particles );
+    return true;
 }
 
 } // namespace Cajita
