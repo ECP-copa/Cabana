@@ -299,8 +299,8 @@ $(function() {
 <div class="line"><a name="l00260"></a><span class="lineno">  260</span>&#160; </div>
 <div class="line"><a name="l00261"></a><span class="lineno">  261</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00285"></a><span class="lineno">  285</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> LocalGr<span class="keywordtype">id</span>Type, <span class="keyword">class</span> ParticlePositions, <span class="keyword">class</span> ParticleContainer&gt;</div>
-<div class="line"><a name="l00286"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a27a15d0e5f51a41086538e27037a5262">  286</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceCajita.html#a27a15d0e5f51a41086538e27037a5262">particleGridMigrate</a>( <span class="keyword">const</span> LocalGridType&amp; local_grid,</div>
-<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                          ParticlePositions&amp; positions,</div>
+<div class="line"><a name="l00286"></a><span class="lineno"><a class="line" href="namespaceCajita.html#af4371257b756699167df4544e4f2de13">  286</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceCajita.html#af4371257b756699167df4544e4f2de13">particleGridMigrate</a>( <span class="keyword">const</span> LocalGridType&amp; local_grid,</div>
+<div class="line"><a name="l00287"></a><span class="lineno">  287</span>&#160;                          <span class="keyword">const</span> ParticlePositions&amp; positions,</div>
 <div class="line"><a name="l00288"></a><span class="lineno">  288</span>&#160;                          ParticleContainer&amp; particles,</div>
 <div class="line"><a name="l00289"></a><span class="lineno">  289</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">int</span> min_halo_width,</div>
 <div class="line"><a name="l00290"></a><span class="lineno">  290</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">bool</span> force_migrate = <span class="keyword">false</span> )</div>
@@ -316,53 +316,55 @@ $(function() {
 <div class="line"><a name="l00300"></a><span class="lineno">  300</span>&#160; </div>
 <div class="line"><a name="l00301"></a><span class="lineno">  301</span>&#160;        <span class="comment">// If we have no particles near the ghosted boundary, then exit.</span></div>
 <div class="line"><a name="l00302"></a><span class="lineno">  302</span>&#160;        <span class="keywordflow">if</span> ( 0 == comm_count )</div>
-<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            <span class="keywordflow">return</span>;</div>
+<div class="line"><a name="l00303"></a><span class="lineno">  303</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
 <div class="line"><a name="l00304"></a><span class="lineno">  304</span>&#160;    }</div>
 <div class="line"><a name="l00305"></a><span class="lineno">  305</span>&#160; </div>
 <div class="line"><a name="l00306"></a><span class="lineno">  306</span>&#160;    <span class="keyword">auto</span> distributor = <a class="code" href="namespaceCajita.html#a20560d001972f0dd70ba665e9dcbef1d">createParticleGridDistributor</a>( local_grid, positions );</div>
 <div class="line"><a name="l00307"></a><span class="lineno">  307</span>&#160; </div>
 <div class="line"><a name="l00308"></a><span class="lineno">  308</span>&#160;    <span class="comment">// Redistribute the particles.</span></div>
 <div class="line"><a name="l00309"></a><span class="lineno">  309</span>&#160;    <a class="code" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">migrate</a>( distributor, particles );</div>
-<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;}</div>
-<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
-<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00339"></a><span class="lineno">  339</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> LocalGr<span class="keywordtype">id</span>Type, <span class="keyword">class</span> ParticlePositions, <span class="keyword">class</span> ParticleContainer&gt;</div>
-<div class="line"><a name="l00340"></a><span class="lineno"><a class="line" href="namespaceCajita.html#ac90f9c62f86663fdbd45327ba8537016">  340</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="namespaceCajita.html#a27a15d0e5f51a41086538e27037a5262">particleGridMigrate</a>( <span class="keyword">const</span> LocalGridType&amp; local_grid,</div>
-<div class="line"><a name="l00341"></a><span class="lineno">  341</span>&#160;                          <span class="keyword">const</span> ParticlePositions&amp; positions,</div>
-<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                          <span class="keyword">const</span> ParticleContainer&amp; src_particles,</div>
-<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                          ParticleContainer&amp; dst_particles,</div>
-<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">int</span> min_halo_width,</div>
-<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">bool</span> force_migrate = <span class="keyword">false</span> )</div>
-<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;{</div>
-<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;    <span class="comment">// When false, this option checks that any particles are nearly outside the</span></div>
-<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="comment">// ghosted halo region (outside the  min_halo_width) before initiating</span></div>
-<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="comment">// migration. Otherwise, anything outside the local domain is migrated</span></div>
-<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="comment">// regardless of position in the halo.</span></div>
-<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="keywordflow">if</span> ( !force_migrate )</div>
-<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    {</div>
-<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;        <span class="comment">// Check to see if we need to communicate.</span></div>
-<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        <span class="keyword">auto</span> comm_count = <a class="code" href="namespaceCajita.html#a583a9ee0c0e31310b730fa3ca3819721">migrateCount</a>( local_grid, positions, min_halo_width );</div>
-<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160; </div>
-<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160;        <span class="comment">// If we have no particles near the ghosted boundary, copy, then exit.</span></div>
-<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        <span class="keywordflow">if</span> ( 0 == comm_count )</div>
-<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        {</div>
-<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;            <a class="code" href="namespaceCabana.html#a1932d2c9be351d64dfcb6e2d22fc68c8">Cabana::deep_copy</a>( dst_particles, src_particles );</div>
-<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;            <span class="keywordflow">return</span>;</div>
-<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;        }</div>
-<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;    }</div>
-<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160; </div>
-<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160;    <span class="keyword">auto</span> distributor = <a class="code" href="namespaceCajita.html#a20560d001972f0dd70ba665e9dcbef1d">createParticleGridDistributor</a>( local_grid, positions );</div>
-<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160; </div>
-<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160;    <span class="comment">// Resize as needed.</span></div>
-<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    dst_particles.resize( distributor.totalNumImport() );</div>
-<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160; </div>
-<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160;    <span class="comment">// Redistribute the particles.</span></div>
-<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <a class="code" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">migrate</a>( distributor, src_particles, dst_particles );</div>
-<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;}</div>
-<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160; </div>
-<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;} <span class="comment">// namespace Cajita</span></div>
+<div class="line"><a name="l00310"></a><span class="lineno">  310</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160;}</div>
+<div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160; </div>
+<div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00340"></a><span class="lineno">  340</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> LocalGr<span class="keywordtype">id</span>Type, <span class="keyword">class</span> ParticlePositions, <span class="keyword">class</span> ParticleContainer&gt;</div>
+<div class="line"><a name="l00341"></a><span class="lineno"><a class="line" href="namespaceCajita.html#adb928c073163bff90d4ca8a7d460fe18">  341</a></span>&#160;<span class="keywordtype">bool</span> <a class="code" href="namespaceCajita.html#af4371257b756699167df4544e4f2de13">particleGridMigrate</a>( <span class="keyword">const</span> LocalGridType&amp; local_grid,</div>
+<div class="line"><a name="l00342"></a><span class="lineno">  342</span>&#160;                          <span class="keyword">const</span> ParticlePositions&amp; positions,</div>
+<div class="line"><a name="l00343"></a><span class="lineno">  343</span>&#160;                          <span class="keyword">const</span> ParticleContainer&amp; src_particles,</div>
+<div class="line"><a name="l00344"></a><span class="lineno">  344</span>&#160;                          ParticleContainer&amp; dst_particles,</div>
+<div class="line"><a name="l00345"></a><span class="lineno">  345</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">int</span> min_halo_width,</div>
+<div class="line"><a name="l00346"></a><span class="lineno">  346</span>&#160;                          <span class="keyword">const</span> <span class="keywordtype">bool</span> force_migrate = <span class="keyword">false</span> )</div>
+<div class="line"><a name="l00347"></a><span class="lineno">  347</span>&#160;{</div>
+<div class="line"><a name="l00348"></a><span class="lineno">  348</span>&#160;    <span class="comment">// When false, this option checks that any particles are nearly outside the</span></div>
+<div class="line"><a name="l00349"></a><span class="lineno">  349</span>&#160;    <span class="comment">// ghosted halo region (outside the  min_halo_width) before initiating</span></div>
+<div class="line"><a name="l00350"></a><span class="lineno">  350</span>&#160;    <span class="comment">// migration. Otherwise, anything outside the local domain is migrated</span></div>
+<div class="line"><a name="l00351"></a><span class="lineno">  351</span>&#160;    <span class="comment">// regardless of position in the halo.</span></div>
+<div class="line"><a name="l00352"></a><span class="lineno">  352</span>&#160;    <span class="keywordflow">if</span> ( !force_migrate )</div>
+<div class="line"><a name="l00353"></a><span class="lineno">  353</span>&#160;    {</div>
+<div class="line"><a name="l00354"></a><span class="lineno">  354</span>&#160;        <span class="comment">// Check to see if we need to communicate.</span></div>
+<div class="line"><a name="l00355"></a><span class="lineno">  355</span>&#160;        <span class="keyword">auto</span> comm_count = <a class="code" href="namespaceCajita.html#a583a9ee0c0e31310b730fa3ca3819721">migrateCount</a>( local_grid, positions, min_halo_width );</div>
+<div class="line"><a name="l00356"></a><span class="lineno">  356</span>&#160; </div>
+<div class="line"><a name="l00357"></a><span class="lineno">  357</span>&#160;        <span class="comment">// If we have no particles near the ghosted boundary, copy, then exit.</span></div>
+<div class="line"><a name="l00358"></a><span class="lineno">  358</span>&#160;        <span class="keywordflow">if</span> ( 0 == comm_count )</div>
+<div class="line"><a name="l00359"></a><span class="lineno">  359</span>&#160;        {</div>
+<div class="line"><a name="l00360"></a><span class="lineno">  360</span>&#160;            <a class="code" href="namespaceCabana.html#a1932d2c9be351d64dfcb6e2d22fc68c8">Cabana::deep_copy</a>( dst_particles, src_particles );</div>
+<div class="line"><a name="l00361"></a><span class="lineno">  361</span>&#160;            <span class="keywordflow">return</span> <span class="keyword">false</span>;</div>
+<div class="line"><a name="l00362"></a><span class="lineno">  362</span>&#160;        }</div>
+<div class="line"><a name="l00363"></a><span class="lineno">  363</span>&#160;    }</div>
+<div class="line"><a name="l00364"></a><span class="lineno">  364</span>&#160; </div>
+<div class="line"><a name="l00365"></a><span class="lineno">  365</span>&#160;    <span class="keyword">auto</span> distributor = <a class="code" href="namespaceCajita.html#a20560d001972f0dd70ba665e9dcbef1d">createParticleGridDistributor</a>( local_grid, positions );</div>
+<div class="line"><a name="l00366"></a><span class="lineno">  366</span>&#160; </div>
+<div class="line"><a name="l00367"></a><span class="lineno">  367</span>&#160;    <span class="comment">// Resize as needed.</span></div>
+<div class="line"><a name="l00368"></a><span class="lineno">  368</span>&#160;    dst_particles.resize( distributor.totalNumImport() );</div>
+<div class="line"><a name="l00369"></a><span class="lineno">  369</span>&#160; </div>
+<div class="line"><a name="l00370"></a><span class="lineno">  370</span>&#160;    <span class="comment">// Redistribute the particles.</span></div>
+<div class="line"><a name="l00371"></a><span class="lineno">  371</span>&#160;    <a class="code" href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">migrate</a>( distributor, src_particles, dst_particles );</div>
+<div class="line"><a name="l00372"></a><span class="lineno">  372</span>&#160;    <span class="keywordflow">return</span> <span class="keyword">true</span>;</div>
+<div class="line"><a name="l00373"></a><span class="lineno">  373</span>&#160;}</div>
 <div class="line"><a name="l00374"></a><span class="lineno">  374</span>&#160; </div>
-<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CABANA_PARTICLEGRIDDISTRIBUTOR_HPP</span></div>
+<div class="line"><a name="l00375"></a><span class="lineno">  375</span>&#160;} <span class="comment">// namespace Cajita</span></div>
+<div class="line"><a name="l00376"></a><span class="lineno">  376</span>&#160; </div>
+<div class="line"><a name="l00377"></a><span class="lineno">  377</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CABANA_PARTICLEGRIDDISTRIBUTOR_HPP</span></div>
 <div class="ttc" id="aCabana__DeepCopy_8hpp_html"><div class="ttname"><a href="Cabana__DeepCopy_8hpp.html">Cabana_DeepCopy.hpp</a></div><div class="ttdoc">AoSoA and slice extensions for Kokkos deep copy and mirrors.</div></div>
 <div class="ttc" id="aCabana__Distributor_8hpp_html"><div class="ttname"><a href="Cabana__Distributor_8hpp.html">Cabana_Distributor.hpp</a></div><div class="ttdoc">Multi-node particle redistribution.</div></div>
 <div class="ttc" id="aCajita__GlobalGrid_8hpp_html"><div class="ttname"><a href="Cajita__GlobalGrid_8hpp.html">Cajita_GlobalGrid.hpp</a></div><div class="ttdoc">Global grid.</div></div>
@@ -375,8 +377,8 @@ $(function() {
 <div class="ttc" id="anamespaceCabana_html_adb10ac278624d871f6079c4e24ccb219"><div class="ttname"><a href="namespaceCabana.html#adb10ac278624d871f6079c4e24ccb219">Cabana::migrate</a></div><div class="ttdeci">void migrate(const Distributor_t &amp;distributor, const AoSoA_t &amp;src, AoSoA_t &amp;dst, typename std::enable_if&lt;(is_distributor&lt; Distributor_t &gt;::value &amp;&amp;is_aosoa&lt; AoSoA_t &gt;::value), int &gt;::type *=0)</div><div class="ttdoc">Synchronously migrate data between two different decompositions using the distributor forward communi...</div><div class="ttdef"><b>Definition:</b> Cabana_Distributor.hpp:328</div></div>
 <div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
 <div class="ttc" id="anamespaceCajita_html_a20560d001972f0dd70ba665e9dcbef1d"><div class="ttname"><a href="namespaceCajita.html#a20560d001972f0dd70ba665e9dcbef1d">Cajita::createParticleGridDistributor</a></div><div class="ttdeci">Cabana::Distributor&lt; typename PositionSliceType::device_type &gt; createParticleGridDistributor(const LocalGridType &amp;local_grid, PositionSliceType &amp;positions)</div><div class="ttdoc">Determine which data should be migrated from one uniquely-owned decomposition to another uniquely-own...</div><div class="ttdef"><b>Definition:</b> Cajita_ParticleGridDistributor.hpp:234</div></div>
-<div class="ttc" id="anamespaceCajita_html_a27a15d0e5f51a41086538e27037a5262"><div class="ttname"><a href="namespaceCajita.html#a27a15d0e5f51a41086538e27037a5262">Cajita::particleGridMigrate</a></div><div class="ttdeci">void particleGridMigrate(const LocalGridType &amp;local_grid, ParticlePositions &amp;positions, ParticleContainer &amp;particles, const int min_halo_width, const bool force_migrate=false)</div><div class="ttdoc">Migrate data from one uniquely-owned decomposition to another uniquely-owned decomposition,...</div><div class="ttdef"><b>Definition:</b> Cajita_ParticleGridDistributor.hpp:286</div></div>
 <div class="ttc" id="anamespaceCajita_html_a583a9ee0c0e31310b730fa3ca3819721"><div class="ttname"><a href="namespaceCajita.html#a583a9ee0c0e31310b730fa3ca3819721">Cajita::migrateCount</a></div><div class="ttdeci">int migrateCount(const LocalGridType &amp;local_grid, const PositionSliceType &amp;positions, const int minimum_halo_width)</div><div class="ttdoc">Check for the number of particles that must be communicated.</div><div class="ttdef"><b>Definition:</b> Cajita_ParticleGridDistributor.hpp:165</div></div>
+<div class="ttc" id="anamespaceCajita_html_af4371257b756699167df4544e4f2de13"><div class="ttname"><a href="namespaceCajita.html#af4371257b756699167df4544e4f2de13">Cajita::particleGridMigrate</a></div><div class="ttdeci">bool particleGridMigrate(const LocalGridType &amp;local_grid, const ParticlePositions &amp;positions, ParticleContainer &amp;particles, const int min_halo_width, const bool force_migrate=false)</div><div class="ttdoc">Migrate data from one uniquely-owned decomposition to another uniquely-owned decomposition,...</div><div class="ttdef"><b>Definition:</b> Cajita_ParticleGridDistributor.hpp:286</div></div>
 <div class="ttc" id="astructCajita_1_1Ghost_html"><div class="ttname"><a href="structCajita_1_1Ghost.html">Cajita::Ghost</a></div><div class="ttdoc">Ghosted decomposition tag.</div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:195</div></div>
 <div class="ttc" id="astructCajita_1_1Own_html"><div class="ttname"><a href="structCajita_1_1Own.html">Cajita::Own</a></div><div class="ttdoc">Owned decomposition tag.</div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:188</div></div>
 <div class="ttc" id="astructCajita_1_1UniformMesh_html"><div class="ttname"><a href="structCajita_1_1UniformMesh.html">Cajita::UniformMesh</a></div><div class="ttdoc">Uniform mesh tag.</div><div class="ttdef"><b>Definition:</b> Cajita_Types.hpp:225</div></div>
