@@ -37,11 +37,11 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
     constexpr int cell_bits_per_tile_dim = 2;
 
     // Declare the total number of particles to be inserted.
-    std::vector<int> problem_sizes = { 100, 1000, 10000, 1000000 };
+    std::vector<int> problem_sizes = { 1000, 10000 };
     int num_problem_size = problem_sizes.size();
 
     // Declare the size (cell nums) of the domain
-    std::vector<int> num_cells_per_dim = { 32, 64, 128, 256 };
+    std::vector<int> num_cells_per_dim = { 32, 64, 128 };
     int num_cells_per_dim_size = num_cells_per_dim.size();
 
     // Create random sets of particle positions.

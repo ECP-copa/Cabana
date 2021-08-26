@@ -29,7 +29,7 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP)
     target_link_libraries(CommPerformance cabanacore)
   endif()
 
-  if (Cabana_ENABLE_CAJITA)
+  if(Cabana_ENABLE_CAJITA)
     add_executable(SparseMapPerformance Cajita_SparseMapPerformance.cpp)
     target_link_libraries(SparseMapPerformance Cajita)
 
@@ -55,6 +55,14 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP)
     if(Cabana_ENABLE_MPI)
       target_link_libraries(CommPerformance gtest)
       add_test(NAME Cabana_Performance_Comm COMMAND ${NONMPI_PRECOMMAND} CommPerformance 1000 comm_output.txt)
+    endif()
+
+    if (Cabana_ENABLE_CAJITA)
+      target_link_libraries(SparseMapPerformance gtest)
+      add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} SparseMapPerformance sparsemap_output.txt)
+
+      target_link_libraries(SparsePartitionerPerformance gtest)
+      add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} SparsePartitionerPerformance sparsepartitioner_output.txt)
     endif()
   endif()
 endif()
