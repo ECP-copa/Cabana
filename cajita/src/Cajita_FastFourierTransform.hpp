@@ -440,8 +440,8 @@ class HeffteFastFourierTransform
                                          DeviceType, BackendType>>( layout )
     {
         // heFFTe correctly handles 2D or 3D domains within "box3d"
-        heffte::box3d inbox = { this->global_low, this->global_high };
-        heffte::box3d outbox = { this->global_low, this->global_high };
+        heffte::box3d<> inbox = { this->global_low, this->global_high };
+        heffte::box3d<> outbox = { this->global_low, this->global_high };
 
         heffte::plan_options heffte_params =
             heffte::default_options<heffte_backend_type>();
