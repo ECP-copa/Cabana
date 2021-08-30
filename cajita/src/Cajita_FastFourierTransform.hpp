@@ -354,6 +354,13 @@ struct HeffteBackendTraits<ExecutionSpace, FFTBackendMKL>
 {
     using backend_type = heffte::backend::mkl;
 };
+#ifndef Heffte_ENABLE_FFTW
+template <class ExecutionSpace>
+struct HeffteBackendTraits<ExecutionSpace, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::mkl;
+};
+#endif
 #endif
 #ifdef Heffte_ENABLE_CUDA
 #ifdef KOKKOS_ENABLE_CUDA
