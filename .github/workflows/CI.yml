@@ -91,6 +91,15 @@ jobs:
             heffte: 'heFFTe_MKL'
             hypre: 'NoHYPRE'
             coverage: 'OFF'
+          - distro: 'fedora:intel'
+            cxx: 'icpx'
+            backend: 'SYCL'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'heFFTe_MKL_ONEAPI'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'g++'
             backend: 'OPENMP'
@@ -250,6 +259,10 @@ jobs:
         run: |
           [[ ${{ matrix.backend }} == "OPENMP" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_OPENMP==ON )
           [[ ${{ matrix.backend }} == "THREADS" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_THREADS==ON )
+          if [[ ${{ matrix.backend }} == "SYCL" ]]; then
+            kokkos_cmake_opts=( "-DCMAKE_CXX_STANDARD=17 -DKokkos_ENABLE_SYCL=ON" )
+            source /opt/intel/oneapi/setvars.sh
+          fi
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
@@ -287,11 +300,13 @@ jobs:
         if: ${{ matrix.heffte != 'NoheFFTe' }}
         working-directory: heffte
         run: |
-          [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
-          [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
-          # FIXME: Remove MKL path below when we update heFFTe
+          [[ ${{ matrix.heffte }} == *"heFFTe_FFTW"* ]] && heffte_cmake_opts+=" -DHeffte_ENABLE_FFTW=ON"
+          [[ ${{ matrix.heffte }} == *"heFFTe_MKL"* ]] && heffte_cmake_opts+=" -DHeffte_ENABLE_MKL=ON"
+          if [[ ${{ matrix.heffte }} == *"ONEAPI"* ]]; then
+            heffte_cmake_opts+=" -DHeffte_ENABLE_ONEAPI=ON"
+            source /opt/intel/oneapi/setvars.sh
+          fi
           cmake -B build \
-            -DCMAKE_CXX_STANDARD="11" \
             -DBUILD_SHARED_LIBS=ON \
             -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
@@ -360,6 +375,7 @@ jobs:
           fi
           #FIXME: Run valgrind for all builds once fixed/suppressed
           [[ ${{ matrix.distro }} == 'ubuntu:latest' || ${{ matrix.distro }} == 'ubuntu:rolling' || ${{ matrix.backend }} == OPENMP || ${{ matrix.cmake_build_type }} == Release ]] && cabana_cmake_opts+=( -DVALGRIND_EXECUTABLE=False )
+          [[ ${{ matrix.heffte }} == *"ONEAPI"* ]] && source /opt/intel/oneapi/setvars.sh
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \

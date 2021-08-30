@@ -388,6 +388,16 @@ struct HeffteBackendTraits<Kokkos::Experimental::HIP, Impl::FFTBackendDefault>
 };
 #endif
 #endif
+#ifdef Heffte_ENABLE_ONEAPI
+#ifdef KOKKOS_ENABLE_SYCL
+template <>
+struct HeffteBackendTraits<Kokkos::Experimental::SYCL, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::onemkl;
+};
+#endif
+#endif
+
 template <class ScaleType>
 struct HeffteScalingTraits
 {
