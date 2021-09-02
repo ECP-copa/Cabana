@@ -92,7 +92,7 @@ find_package( CLANG_FORMAT 10 )
 Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.0 )
 
 # find heffte
-Cabana_add_dependency( PACKAGE Heffte VERSION 2.0.0 )
+Cabana_add_dependency( PACKAGE Heffte VERSION 2.1.0 )
 
 #------------------------------------------------------------------------------#
 # Architecture

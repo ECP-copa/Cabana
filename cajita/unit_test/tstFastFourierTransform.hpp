@@ -232,8 +232,8 @@ void forwardReverseTest2d( bool use_default, bool use_params )
 TEST( fast_fourier_transform, forward_reverse_3d_test )
 {
     // Dummy template argument.
-    forwardReverseTest3d<Experimental::FFTBackendFFTW>( true, true );
-    forwardReverseTest3d<Experimental::FFTBackendFFTW>( true, false );
+    forwardReverseTest3d<Experimental::Impl::FFTBackendDefault>( true, true );
+    forwardReverseTest3d<Experimental::Impl::FFTBackendDefault>( true, false );
 
 #ifdef Heffte_ENABLE_FFTW
     forwardReverseTest3d<Experimental::FFTBackendFFTW>( false, true );
@@ -248,8 +248,8 @@ TEST( fast_fourier_transform, forward_reverse_3d_test )
 TEST( fast_fourier_transform, forward_reverse_2d_test )
 {
     // Dummy template argument.
-    forwardReverseTest2d<Experimental::FFTBackendFFTW>( true, true );
-    forwardReverseTest2d<Experimental::FFTBackendFFTW>( true, false );
+    forwardReverseTest2d<Experimental::Impl::FFTBackendDefault>( true, true );
+    forwardReverseTest2d<Experimental::Impl::FFTBackendDefault>( true, false );
 
 #ifdef Heffte_ENABLE_FFTW
     forwardReverseTest2d<Experimental::FFTBackendFFTW>( false, true );

@@ -12,7 +12,7 @@ on:
 jobs:
   CI:
     # FIXME: remove failing distributions here when passing
-    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:intel' }}
+    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || (matrix.distro == 'fedora:intel' && matrix.openmp == 'OFF' && matrix.cmake_build_type == 'Release') }}
     defaults:
       run:
         shell: bash
@@ -66,6 +66,15 @@ jobs:
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            coverage: 'OFF'
+          - distro: 'fedora:intel'
+            cxx: 'icpc'
+            openmp: 'OFF'
+            cmake_build_type: 'Debug'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'heFFTe_MKL'
             hypre: 'NoHYPRE'
             coverage: 'OFF'
           - distro: 'fedora:latest'
@@ -235,21 +244,23 @@ jobs:
         if: ${{ matrix.heffte != 'NoheFFTe' }}
         # actions/checkout doesn't work for external repos yet
         run: |
-          git clone --depth 1 --branch v2.0.0 https://bitbucket.org/icl/heffte.git heffte
+          git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
       - name: Build heffte
         if: ${{ matrix.heffte != 'NoheFFTe' }}
         working-directory: heffte
         run: |
           [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
           [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
+          # FIXME: Remove MKL path below when we update heFFTe
           cmake -B build \
             -DCMAKE_CXX_STANDARD="11" \
             -DBUILD_SHARED_LIBS=ON \
-            -DMKL_ROOT=/opt/intel/mkl \
             -DCMAKE_INSTALL_PREFIX=$HOME/heffte \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            -DMKL_ROOT=/opt/intel/oneapi/mkl/latest \
+            -DHeffte_MKL_IOMP5=/opt/intel/oneapi/compiler/latest/linux/compiler/lib/intel64_lin/libiomp5.so \
             ${heffte_cmake_opts}
           cmake --build build --parallel 2
           cmake --install build

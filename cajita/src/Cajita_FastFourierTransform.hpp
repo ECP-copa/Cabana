@@ -354,6 +354,13 @@ struct HeffteBackendTraits<ExecutionSpace, FFTBackendMKL>
 {
     using backend_type = heffte::backend::mkl;
 };
+#ifndef Heffte_ENABLE_FFTW
+template <class ExecutionSpace>
+struct HeffteBackendTraits<ExecutionSpace, Impl::FFTBackendDefault>
+{
+    using backend_type = heffte::backend::mkl;
+};
+#endif
 #endif
 #ifdef Heffte_ENABLE_CUDA
 #ifdef KOKKOS_ENABLE_CUDA
@@ -364,6 +371,7 @@ struct HeffteBackendTraits<Kokkos::Cuda, Impl::FFTBackendDefault>
 };
 #endif
 #endif
+#ifdef Heffte_ENABLE_ROCM
 #ifdef KOKKOS_ENABLE_HIP
 template <>
 struct HeffteBackendTraits<Kokkos::Experimental::HIP, Impl::FFTBackendDefault>
@@ -371,7 +379,7 @@ struct HeffteBackendTraits<Kokkos::Experimental::HIP, Impl::FFTBackendDefault>
     using backend_type = heffte::backend::rocfft;
 };
 #endif
-
+#endif
 template <class ScaleType>
 struct HeffteScalingTraits
 {
@@ -439,8 +447,8 @@ class HeffteFastFourierTransform
                                          DeviceType, BackendType>>( layout )
     {
         // heFFTe correctly handles 2D or 3D domains within "box3d"
-        heffte::box3d inbox = { this->global_low, this->global_high };
-        heffte::box3d outbox = { this->global_low, this->global_high };
+        heffte::box3d<> inbox = { this->global_low, this->global_high };
+        heffte::box3d<> outbox = { this->global_low, this->global_high };
 
         heffte::plan_options heffte_params =
             heffte::default_options<heffte_backend_type>();
