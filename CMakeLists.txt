@@ -12,7 +12,7 @@
 #------------------------------------------------------------------------------#
 # Project settings
 #------------------------------------------------------------------------------#
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.16)
 
 project(Cabana LANGUAGES CXX)
 set(PROJECT_VERSION "1.0-dev")
