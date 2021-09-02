@@ -251,6 +251,7 @@ jobs:
         run: |
           [[ ${{ matrix.heffte }} == "heFFTe_FFTW" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_FFTW=ON )
           [[ ${{ matrix.heffte }} == "heFFTe_MKL" ]] && heffte_cmake_opts+=( -DHeffte_ENABLE_MKL=ON )
+          # FIXME: Remove MKL path below when we update heFFTe
           cmake -B build \
             -DCMAKE_CXX_STANDARD="11" \
             -DBUILD_SHARED_LIBS=ON \
