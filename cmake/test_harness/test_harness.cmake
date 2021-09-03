@@ -9,6 +9,13 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
+include(FindPackageHandleStandardArgs)
+find_program(VALGRIND_EXECUTABLE valgrind)
+find_package_handle_standard_args(VALGRIND REQUIRED_VARS VALGRIND_EXECUTABLE)
+if(VALGRIND_FOUND)
+  set(VALGRIND_ARGS --tool=memcheck --leak-check=yes --show-reachable=yes --num-callers=20 --track-fds=yes --error-exitcode=1)
+endif()
+
 ##--------------------------------------------------------------------------##
 ## General tests.
 ##--------------------------------------------------------------------------##
@@ -20,6 +27,10 @@ macro(Cabana_add_tests_nobackend)
     target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} gtest)
     add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
     set_property(TEST ${_target} PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
+    if(VALGRIND_FOUND)
+      add_test(NAME ${_target}_valgrind COMMAND ${NONMPI_PRECOMMAND} ${VALGRIND_EXECUTABLE} ${VALGRIND_ARGS} ${CMAKE_CURRENT_BINARY_DIR}/${_target} ${gtest_args})
+      set_property(TEST ${_target}_valgrind PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
+    endif()
   endforeach()
 endmacro()
 
@@ -91,11 +102,22 @@ macro(Cabana_add_tests)
               ${NONMPI_PRECOMMAND} ${_target} ${gtest_args} --kokkos-threads=${_thread})
             if(_device STREQUAL OPENMP)
               set_property(TEST ${_target}_nt_${_thread} PROPERTY ENVIRONMENT OMP_NUM_THREADS=${_thread})
-           endif()
+            endif()
+            if(VALGRIND_FOUND)
+              add_test(NAME ${_target}_nt_${_thread}_valgrind COMMAND
+                ${NONMPI_PRECOMMAND} ${VALGRIND_EXECUTABLE} ${VALGRIND_ARGS} ${CMAKE_CURRENT_BINARY_DIR}/${_target} ${gtest_args} --kokkos-threads=${_thread})
+              if(_device STREQUAL OPENMP)
+                set_property(TEST ${_target}_nt_${_thread}_valgrind PROPERTY ENVIRONMENT OMP_NUM_THREADS=${_thread})
+              endif()
+            endif()
           endforeach()
         else()
           add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
           set_property(TEST ${_target} PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
+          if(VALGRIND_FOUND)
+            add_test(NAME ${_target}_valgrind COMMAND ${NONMPI_PRECOMMAND} ${VALGRIND_EXECUTABLE} ${VALGRIND_ARGS} ${CMAKE_CURRENT_BINARY_DIR}/${_target} ${gtest_args})
+            set_property(TEST ${_target}_valgrind PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
+          endif()
         endif()
       endif()
     endforeach()
