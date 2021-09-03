@@ -269,7 +269,7 @@ jobs:
         uses: actions/checkout@v2.2.0
         with:
           repository: hypre-space/hypre
-          ref: v2.22.0
+          ref: v2.22.1
           path: hypre
       - name: Build hypre
         if: ${{ matrix.hypre == 'HYPRE' }}

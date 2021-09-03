@@ -12,16 +12,10 @@
 #------------------------------------------------------------------------------#
 # Project settings
 #------------------------------------------------------------------------------#
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.16)
 
 project(Cabana LANGUAGES CXX)
 set(PROJECT_VERSION "1.0-dev")
-
-# FIXME: HYPRE workaround. Hypre is currently not exporting the find_package(
-# MPI ) to find the MPI::MPI_C targets and therefore we add this here for now
-# to ensure those targets are found for HYPRE:
-# https://github.com/hypre-space/hypre/pull/423
-enable_language( C )
 
 # If the user doesn't provide a build type default to release
 if(NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CXX_FLAGS)
@@ -89,7 +83,7 @@ Cabana_add_dependency( PACKAGE ArborX )
 find_package( CLANG_FORMAT 10 )
 
 # find hypre
-Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.0 )
+Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
 
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.1.0 )

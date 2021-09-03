@@ -22,7 +22,7 @@ RUN KEYDUMP_URL=https://cloud.cees.ornl.gov/download && \
 
 # Install CMake
 ENV CMAKE_DIR=/opt/cmake
-RUN CMAKE_VERSION=3.13.4 && \
+RUN CMAKE_VERSION=3.16.9 && \
     CMAKE_KEY=2D2CEF1034921684 && \
     CMAKE_URL=https://github.com/Kitware/CMake/releases/download/v${CMAKE_VERSION} && \
     CMAKE_SCRIPT=cmake-${CMAKE_VERSION}-Linux-x86_64.sh && \
@@ -146,7 +146,7 @@ RUN HEFFTE_URL=https://bitbucket.org/icl/heffte/get/v${HEFFTE_VERSION}.tar.gz &&
 
 # Install HYPRE
 ENV HYPRE_DIR=/opt/hypre
-RUN HYPRE_VERSION=v2.22.0 && \
+RUN HYPRE_VERSION=v2.22.1 && \
     HYPRE_URL=https://github.com/hypre-space/hypre/archive/${HYPRE_VERSION}.tar.gz && \
     HYPRE_ARCHIVE=hypre.tar.gz && \
     wget --quiet ${HYPRE_URL} --output-document=${HYPRE_ARCHIVE} && \
