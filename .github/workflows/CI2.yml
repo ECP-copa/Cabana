@@ -291,9 +291,10 @@ jobs:
         env:
           SANITIZER: ${{ matrix.sanitizer }}
         run: |
+          # FIXME: Add sanitizer for fedora when fixed
           if [[ ${SANITIZER} == 'MSAN' ]]; then
             cabana_cmake_opts+=( -DWITH_MSAN=ON )
-          else
+          elif [[ ${{ matrix.distro }} != *"fedora"* ]]; then
             cabana_cmake_opts+=( -DWITH_ASAN=ON )
           fi
           cmake -B build \
