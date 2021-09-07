@@ -20,6 +20,7 @@ jobs:
       CCACHE_DIR: "${{ github.workspace }}/.ccache"
       CCACHE_MAXSIZE: "10G"
       CCACHE_CPP2: "true"
+      ASAN_OPTIONS: "detect_leaks=0"
     strategy:
       matrix:
         distro: ['ubuntu:latest']
