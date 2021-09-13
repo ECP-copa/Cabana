@@ -27,7 +27,9 @@
 // Performance test.
 template <class Device>
 void performanceTest( std::ostream& stream, const std::string& test_prefix,
-                      bool sort )
+                      std::vector<int> problem_sizes,
+                      std::vector<double> cutoff_ratios,
+                      std::vector<double> cell_ratios, bool sort = true )
 {
     using exec_space = typename Device::execution_space;
     using memory_space = typename Device::memory_space;
@@ -40,18 +42,15 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
     // Declare problem sizes.
     double min_dist = 1.0;
-    std::vector<int> problem_sizes = { 100, 1000 };
     int num_problem_size = problem_sizes.size();
     std::vector<double> x_min( num_problem_size );
     std::vector<double> x_max( num_problem_size );
 
     // Declare the number of cutoff ratios (directly related to neighbors per
     // atom) to generate.
-    std::vector<double> cutoff_ratios = { 2.0, 3.0 };
     int cutoff_ratios_size = cutoff_ratios.size();
 
     // Declare the number of cell ratios to generate.
-    std::vector<double> cell_ratios = { 1.0 };
     int cell_ratios_size = cell_ratios.size();
 
     // Number of runs in the test loops.
@@ -214,6 +213,7 @@ int main( int argc, char* argv[] )
     if ( argc < 2 )
         throw std::runtime_error( "Incorrect number of arguments. \n \
              First argument -  file name for output \n \
+             Optional second argument - run size (small or large) \n \
              \n \
              Example: \n \
              $/: ./NeighborVerletPerformance test_results.txt\n" );
@@ -221,24 +221,41 @@ int main( int argc, char* argv[] )
     // Get the name of the output file.
     std::string filename = argv[1];
 
+    // Define run sizes.
+    std::string run_type = "";
+    if ( argc > 2 )
+        run_type = argv[2];
+    std::vector<int> problem_sizes = { 100, 1000 };
+    std::vector<double> cutoff_ratios = { 2.0, 3.0 };
+    std::vector<double> cell_ratios = { 1.0 };
+    if ( run_type == "large" )
+    {
+        problem_sizes = { 1000, 10000, 100000, 1000000 };
+        cutoff_ratios = { 3.0, 4.0, 5.0 };
+        cell_ratios = { 1.0 };
+    }
+
     // Open the output file on rank 0.
     std::fstream file;
     file.open( filename, std::fstream::out );
 
-    // Run the tests.
+// Run the tests.
 #ifdef KOKKOS_ENABLE_SERIAL
     using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-    performanceTest<SerialDevice>( file, "serial_", true );
+    performanceTest<SerialDevice>( file, "serial_", problem_sizes,
+                                   cutoff_ratios, cell_ratios );
 #endif
 
 #ifdef KOKKOS_ENABLE_OPENMP
     using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-    performanceTest<OpenMPDevice>( file, "openmp_", true );
+    performanceTest<OpenMPDevice>( file, "openmp_", problem_sizes,
+                                   cutoff_ratios, cell_ratios );
 #endif
 
 #ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-    performanceTest<CudaDevice>( file, "cuda_", true );
+    performanceTest<CudaDevice>( file, "cuda_", problem_sizes, cutoff_ratios,
+                                 cell_ratios );
 #endif
 
     // Close the output file on rank 0.

@@ -31,7 +31,8 @@
 // Comm device type is the device we want to use for communication.
 template <class DataDevice, class CommDevice>
 void performanceTest( std::ostream& stream, const std::size_t num_particle,
-                      const std::string& test_prefix )
+                      const std::string& test_prefix,
+                      std::vector<double> comm_fraction )
 {
     // PROBLEM SETUP
     // -------------
@@ -103,8 +104,6 @@ void performanceTest( std::ostream& stream, const std::size_t num_particle,
     // Fraction of particles on each rank that will be communicated to the
     // neighbors. We will sweep through these fractions to get an indicator of
     // performance as a function of message size.
-    std::vector<double> comm_fraction = { 0.0001, 0.001, 0.005, 0.01,
-                                          0.05,   0.10,  0.25,  0.5 };
     int num_fraction = comm_fraction.size();
 
     // Number of bytes we will send to each neighbor.
@@ -430,16 +429,19 @@ int main( int argc, char* argv[] )
         file << "\n";
     }
 
+    std::vector<double> comm_fraction = { 0.0001, 0.001, 0.005, 0.01,
+                                          0.05,   0.10,  0.25,  0.5 };
+
     // Do everything on the CPU.
 #ifdef KOKKOS_ENABLE_SERIAL
     using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
     performanceTest<SerialDevice, SerialDevice>( file, num_particle,
-                                                 "host_host_" );
+                                                 "host_host_", comm_fraction );
 #endif
 #ifdef KOKKOS_ENABLE_OPENMP
     using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
     performanceTest<OpenMPDevice, OpenMPDevice>( file, num_particle,
-                                                 "host_host_" );
+                                                 "host_host_", comm_fraction );
 #endif
 
 #ifdef KOKKOS_ENABLE_CUDA
@@ -449,14 +451,16 @@ int main( int argc, char* argv[] )
 
     // Transfer GPU data to CPU, communication on CPU, and transfer back to
     // GPU.
-    performanceTest<CudaDevice, HostDevice>( file, num_particle, "cuda_host_" );
+    performanceTest<CudaDevice, HostDevice>( file, num_particle, "cuda_host_",
+                                             comm_fraction );
 
     // Do everything on the GPU with regular GPU memory.
-    performanceTest<CudaDevice, CudaDevice>( file, num_particle, "cuda_cuda_" );
+    performanceTest<CudaDevice, CudaDevice>( file, num_particle, "cuda_cuda_",
+                                             comm_fraction );
 
     // Do everything on the GPU with UVM GPU memory.
-    performanceTest<CudaUVMDevice, CudaUVMDevice>( file, num_particle,
-                                                   "cudauvm_cudauvm_" );
+    performanceTest<CudaUVMDevice, CudaUVMDevice>(
+        file, num_particle, "cudauvm_cudauvm_", comm_fraction );
 #endif
 
     // Close the output file on rank 0.

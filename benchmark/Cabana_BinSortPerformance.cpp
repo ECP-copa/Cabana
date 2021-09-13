@@ -27,10 +27,11 @@
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
-void performanceTest( std::ostream& stream, const std::string& test_prefix )
+void performanceTest( std::ostream& stream, const std::string& test_prefix,
+                      std::vector<int> problem_sizes,
+                      std::vector<int> num_bins )
 {
     // Declare problem sizes.
-    std::vector<int> problem_sizes = { 1000, 10000 };
     int num_problem_size = problem_sizes.size();
 
     // Generate a random set of keys
@@ -46,7 +47,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix )
     Kokkos::deep_copy( keys, host_keys );
 
     // Declare the number of bins to generate.
-    std::vector<int> num_bins = { 10, 100, 1000, 10000 };
     int num_bin_size = num_bins.size();
 
     // Number of runs in the test loops.
@@ -188,12 +188,25 @@ int main( int argc, char* argv[] )
     if ( argc < 2 )
         throw std::runtime_error( "Incorrect number of arguments. \n \
              First argument -  file name for output \n \
+             Optional second argument - run size (small or large) \n \
              \n \
              Example: \n \
-             $/: ./BinSortPerformance test_results.txt\n" );
+             $/: ./BinSortPerformance test_results.txt large\n" );
 
     // Get the name of the output file.
     std::string filename = argv[1];
+
+    // Define run sizes.
+    std::string run_type = "";
+    if ( argc > 2 )
+        run_type = argv[2];
+    std::vector<int> problem_sizes = { 1000, 10000 };
+    std::vector<int> num_bins = { 10, 100, 1000, 10000 };
+    if ( run_type == "large" )
+    {
+        problem_sizes = { 1000, 10000, 100000, 1000000, 10000000 };
+        num_bins = { 10, 100, 1000, 10000, 100000, 1000000, 10000000 };
+    }
 
     // Open the output file on rank 0.
     std::fstream file;
@@ -202,17 +215,17 @@ int main( int argc, char* argv[] )
     // Run the tests.
 #ifdef KOKKOS_ENABLE_SERIAL
     using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-    performanceTest<SerialDevice>( file, "serial_" );
+    performanceTest<SerialDevice>( file, "serial_", problem_sizes, num_bins );
 #endif
 
 #ifdef KOKKOS_ENABLE_OPENMP
     using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-    performanceTest<OpenMPDevice>( file, "openmp_" );
+    performanceTest<OpenMPDevice>( file, "openmp_", problem_sizes, num_bins );
 #endif
 
 #ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-    performanceTest<CudaDevice>( file, "cuda_" );
+    performanceTest<CudaDevice>( file, "cuda_", problem_sizes, num_bins );
 #endif
 
     // Close the output file on rank 0.
