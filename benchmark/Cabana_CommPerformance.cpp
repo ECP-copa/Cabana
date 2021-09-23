@@ -463,6 +463,21 @@ int main( int argc, char* argv[] )
         file, num_particle, "cudauvm_cudauvm_", comm_fraction );
 #endif
 
+#ifdef KOKKOS_ENABLE_HIP
+    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
+                                     Kokkos::Experimental::HIPSpace>;
+    using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
+
+    // Transfer GPU data to CPU, communication on CPU, and transfer back to
+    // GPU.
+    performanceTest<HipDevice, HostDevice>( file, num_particle, "hip_host_",
+                                            comm_fraction );
+
+    // Do everything on the GPU with regular GPU memory.
+    performanceTest<HipDevice, HipDevice>( file, num_particle, "hip_hip_",
+                                           comm_fraction );
+#endif
+
     // Close the output file on rank 0.
     if ( 0 == comm_rank )
         file.close();

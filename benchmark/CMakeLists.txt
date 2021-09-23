@@ -9,7 +9,7 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP)
+if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP OR Kokkos_ENABLE_HIP)
   add_executable(BinSortPerformance Cabana_BinSortPerformance.cpp)
   target_link_libraries(BinSortPerformance cabanacore)
 

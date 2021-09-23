@@ -466,6 +466,17 @@ int main( int argc, char* argv[] )
                                  num_cells_per_dim );
 #endif
 
+#ifdef KOKKOS_ENABLE_HIP
+    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
+                                     Kokkos::Experimental::HIPSpace>;
+    performanceTest<HipDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
+                                "hip_parWL_", problem_sizes,
+                                num_cells_per_dim );
+    performanceTest<HipDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
+                                "hip_smapWL_", occupy_fraction,
+                                num_cells_per_dim );
+#endif
+
     // Close the output file on rank 0.
     file.close();
 

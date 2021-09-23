@@ -258,6 +258,13 @@ int main( int argc, char* argv[] )
                                  cell_ratios );
 #endif
 
+#ifdef KOKKOS_ENABLE_HIP
+    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
+                                     Kokkos::Experimental::HIPSpace>;
+    performanceTest<HipDevice>( file, "hip_", problem_sizes, cutoff_ratios,
+                                cell_ratios );
+#endif
+
     // Close the output file on rank 0.
     file.close();
 
