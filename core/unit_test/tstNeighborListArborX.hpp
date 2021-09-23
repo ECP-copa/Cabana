@@ -159,7 +159,7 @@ void testArborXListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
     NeighborListTestData test_data;
-    int num_ignore = 800;
+    int num_ignore = 100;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
