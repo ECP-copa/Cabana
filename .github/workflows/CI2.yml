@@ -187,7 +187,9 @@ jobs:
             hypre: 'HYPRE'
             coverage: 'ON'
     runs-on: ubuntu-20.04
-    container: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
+    container: 
+      image: ghcr.io/ecp-copa/ci-containers/${{ matrix.distro }}
+      options: --security-opt seccomp=unconfined
     steps:
       - name: Cache ccache
         uses: actions/cache@v2
