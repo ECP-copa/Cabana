@@ -159,31 +159,32 @@ void testArborXListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
     NeighborListTestData test_data;
-    int num_ignore = 800;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-            Cabana::FullNeighborTag{}, position, 0, num_ignore,
+            Cabana::FullNeighborTag{}, position, 0, test_data.num_ignore,
             test_data.test_radius );
 
         // Check the neighbor list.
         checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                           test_data.num_particle, num_ignore );
+                                           test_data.num_particle,
+                                           test_data.num_ignore );
     }
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist =
             Cabana::Experimental::make2DNeighborList<device_type>(
-                Cabana::FullNeighborTag{}, position, 0, num_ignore,
+                Cabana::FullNeighborTag{}, position, 0, test_data.num_ignore,
                 test_data.test_radius );
 
         // Check the neighbor list.
         checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                           test_data.num_particle, num_ignore );
+                                           test_data.num_particle,
+                                           test_data.num_ignore );
     }
 }
 
