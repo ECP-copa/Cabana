@@ -81,7 +81,9 @@ std::array<std::vector<int>, 3> computeAveragePartition(
 // Performance test.
 template <class Device>
 void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
-                      const std::string& test_prefix )
+                      const std::string& test_prefix,
+                      std::vector<int> problem_sizes,
+                      std::vector<int> num_cells_per_dim )
 {
     using exec_space = typename Device::execution_space;
     using memory_space = typename Device::memory_space;
@@ -101,11 +103,9 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
     constexpr int cell_bits_per_tile_dim = 2;
 
     // Declare the total number of particles
-    std::vector<int> problem_sizes = { 1000, 10000 };
     int num_problem_size = problem_sizes.size();
 
     // Declare the size (cell nums) of the domain
-    std::vector<int> num_cells_per_dim = { 32, 64, 128 };
     int num_cells_per_dim_size = num_cells_per_dim.size();
 
     // Number of runs in the test loops.
@@ -229,7 +229,9 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
 
 template <class Device>
 void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
-                      const std::string& test_prefix )
+                      const std::string& test_prefix,
+                      std::vector<double> occupy_fraction,
+                      std::vector<int> num_cells_per_dim )
 {
     using exec_space = typename Device::execution_space;
     // Domain size setup
@@ -239,11 +241,9 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
     constexpr int cell_bits_per_tile_dim = 2;
 
     // Declare the fraction of occupied tiles in the whole domain
-    std::vector<double> occupy_fraction = { 0.01, 0.1, 0.5, 0.75, 1.0 };
     int occupy_fraction_size = occupy_fraction.size();
 
     // Declare the size (cell nums) of the domain
-    std::vector<int> num_cells_per_dim = { 32, 64, 128, 256 };
     int num_cells_per_dim_size = num_cells_per_dim.size();
 
     // Number of runs in the test loops.
@@ -375,9 +375,23 @@ int main( int argc, char* argv[] )
     if ( argc < 2 )
         throw std::runtime_error( "Incorrect number of arguments. \n \
              First argument - file name for output \n \
+             Optional second argument - run size (small or large) \n \
              \n \
              Example: \n \
              $/: ./SparseMapPerformance test_results.txt\n" );
+
+    // Define run sizes.
+    std::string run_type = "";
+    if ( argc > 2 )
+        run_type = argv[2];
+    std::vector<int> problem_sizes = { 1000, 10000 };
+    std::vector<int> num_cells_per_dim = { 32, 64 };
+    if ( run_type == "large" )
+    {
+        problem_sizes = { 1000, 10000, 100000, 1000000 };
+        num_cells_per_dim = { 32, 64, 128, 256 };
+    }
+    std::vector<double> occupy_fraction = { 0.01, 0.1, 0.5, 0.75, 1.0 };
 
     // Get the name of the output file.
     std::string filename = argv[1];
@@ -425,25 +439,42 @@ int main( int argc, char* argv[] )
 #ifdef KOKKOS_ENABLE_SERIAL
     using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
     performanceTest<SerialDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
-                                   "serial_parWL_" );
+                                   "serial_parWL_", problem_sizes,
+                                   num_cells_per_dim );
     performanceTest<SerialDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
-                                   "serial_smapWL_" );
+                                   "serial_smapWL_", occupy_fraction,
+                                   num_cells_per_dim );
 #endif
 
 #ifdef KOKKOS_ENABLE_OPENMP
     using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
     performanceTest<OpenMPDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
-                                   "openmp_parWL_" );
+                                   "openmp_parWL_", problem_sizes,
+                                   num_cells_per_dim );
     performanceTest<OpenMPDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
-                                   "openmp_smapWL_" );
+                                   "openmp_smapWL_", occupy_fraction,
+                                   num_cells_per_dim );
 #endif
 
 #ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
     performanceTest<CudaDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
-                                 "cuda_parWL_" );
+                                 "cuda_parWL_", problem_sizes,
+                                 num_cells_per_dim );
     performanceTest<CudaDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
-                                 "cuda_smapWL_" );
+                                 "cuda_smapWL_", occupy_fraction,
+                                 num_cells_per_dim );
+#endif
+
+#ifdef KOKKOS_ENABLE_HIP
+    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
+                                     Kokkos::Experimental::HIPSpace>;
+    performanceTest<HipDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
+                                "hip_parWL_", problem_sizes,
+                                num_cells_per_dim );
+    performanceTest<HipDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
+                                "hip_smapWL_", occupy_fraction,
+                                num_cells_per_dim );
 #endif
 
     // Close the output file on rank 0.

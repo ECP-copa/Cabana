@@ -26,18 +26,18 @@
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
-void performanceTest( std::ostream& stream, const std::string& test_prefix )
+void performanceTest( std::ostream& stream, const std::string& test_prefix,
+                      std::vector<int> problem_sizes,
+                      std::vector<double> cutoff_ratios )
 {
     // Declare problem sizes.
     double min_dist = 1.0;
-    std::vector<int> problem_sizes = { 1000, 10000 };
     int num_problem_size = problem_sizes.size();
     std::vector<double> x_min( num_problem_size );
     std::vector<double> x_max( num_problem_size );
 
     // Declare the number of cutoff ratios (directly related to neighbors per
     // atom) to generate.
-    std::vector<double> cutoff_ratios = { 3.0, 4.0 };
     int cutoff_ratios_size = cutoff_ratios.size();
 
     // Number of runs in the test loops.
@@ -133,6 +133,7 @@ int main( int argc, char* argv[] )
     if ( argc < 2 )
         throw std::runtime_error( "Incorrect number of arguments. \n \
              First argument -  file name for output \n \
+             Optional second argument - run size (small or large) \n \
              \n \
              Example: \n \
              $/: ./LinkedCellPerformance test_results.txt\n" );
@@ -140,24 +141,41 @@ int main( int argc, char* argv[] )
     // Get the name of the output file.
     std::string filename = argv[1];
 
+    // Define run sizes.
+    std::string run_type = "";
+    if ( argc > 2 )
+        run_type = argv[2];
+    std::vector<int> problem_sizes = { 1000, 10000 };
+    std::vector<double> cutoff_ratios = { 3.0, 4.0 };
+    if ( run_type == "large" )
+        problem_sizes = { 1000, 10000, 100000, 1000000 };
+
     // Open the output file on rank 0.
     std::fstream file;
     file.open( filename, std::fstream::out );
 
-    // Run the tests.
+// Run the tests.
 #ifdef KOKKOS_ENABLE_SERIAL
     using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-    performanceTest<SerialDevice>( file, "serial_" );
+    performanceTest<SerialDevice>( file, "serial_", problem_sizes,
+                                   cutoff_ratios );
 #endif
 
 #ifdef KOKKOS_ENABLE_OPENMP
     using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-    performanceTest<OpenMPDevice>( file, "openmp_" );
+    performanceTest<OpenMPDevice>( file, "openmp_", problem_sizes,
+                                   cutoff_ratios );
 #endif
 
 #ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-    performanceTest<CudaDevice>( file, "cuda_" );
+    performanceTest<CudaDevice>( file, "cuda_", problem_sizes, cutoff_ratios );
+#endif
+
+#ifdef KOKKOS_ENABLE_HIP
+    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
+                                     Kokkos::Experimental::HIPSpace>;
+    performanceTest<HipDevice>( file, "hip_", problem_sizes, cutoff_ratios );
 #endif
 
     // Close the output file on rank 0.
