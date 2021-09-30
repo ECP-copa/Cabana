@@ -384,17 +384,26 @@ int main( int argc, char* argv[] )
     // Check arguments.
     if ( argc < 3 )
         throw std::runtime_error( "Incorrect number of arguments. \n \
-             First argument - integer number of particles per MPI rank \n \
-             Second argument - file name for output \n \
+             First argument - file name for output \n \
+             Optional second argument - run size (small or large) \n \
              \n \
              Example: \n \
-             $/: ./CommPerformance 100000 test_results.txt\n" );
-
-    // Number of particles on this rank.
-    std::size_t num_particle = std::atoi( argv[1] );
+             $/: ./CommPerformance test_results.txt large\n" );
 
     // Get the name of the output file.
-    std::string filename = argv[2];
+    std::string filename = argv[1];
+
+    // Define run sizes.
+    std::string run_type = "";
+    if ( argc > 2 )
+        run_type = argv[2];
+    std::vector<int> problem_sizes = { 1000 };
+    std::vector<double> comm_fraction = { 0.0001, 0.001, 0.005, 0.01,
+                                          0.05,   0.10,  0.25,  0.5 };
+    if ( run_type == "large" )
+    {
+        problem_sizes = { 1000, 10000, 100000, 1000000 };
+    }
 
     // Barier before continuing.
     MPI_Barrier( MPI_COMM_WORLD );
@@ -407,81 +416,86 @@ int main( int argc, char* argv[] )
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
 
-    // Open the output file on rank 0.
-    std::fstream file;
-    if ( 0 == comm_rank )
-        file.open( filename, std::fstream::out );
-
-    // Output problem details.
-    if ( 0 == comm_rank )
+    int num_problem_size = problem_sizes.size();
+    for ( int p = 0; p < num_problem_size; ++p )
     {
-        std::size_t total_num_p = num_particle * comm_size;
-        file << "\n";
-        file << "Cabana Comm Performance Benchmark"
-             << "\n";
-        file << "----------------------------------------------"
-             << "\n";
-        file << "MPI Ranks: " << comm_size << "\n";
-        file << "Particle per MPI Rank/GPU: " << num_particle << "\n";
-        file << "Total number of particles: " << total_num_p << "\n";
-        file << "----------------------------------------------"
-             << "\n";
-        file << "\n";
-    }
+        int num_particle = problem_sizes[p];
 
-    std::vector<double> comm_fraction = { 0.0001, 0.001, 0.005, 0.01,
-                                          0.05,   0.10,  0.25,  0.5 };
+        // Open the output file on rank 0.
+        std::fstream file;
+        if ( 0 == comm_rank )
+            file.open( filename + "_" + std::to_string( comm_size ) + "_" +
+                           std::to_string( problem_sizes[p] ),
+                       std::fstream::out );
 
-    // Do everything on the CPU.
+        // Output problem details.
+        if ( 0 == comm_rank )
+        {
+            std::size_t total_num_p = num_particle * comm_size;
+            file << "\n";
+            file << "Cabana Comm Performance Benchmark"
+                 << "\n";
+            file << "----------------------------------------------"
+                 << "\n";
+            file << "MPI Ranks: " << comm_size << "\n";
+            file << "Particle per MPI Rank/GPU: " << num_particle << "\n";
+            file << "Total number of particles: " << total_num_p << "\n";
+            file << "----------------------------------------------"
+                 << "\n";
+            file << "\n";
+        }
+
+        // Do everything on the CPU.
 #ifdef KOKKOS_ENABLE_SERIAL
-    using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-    performanceTest<SerialDevice, SerialDevice>( file, num_particle,
-                                                 "host_host_", comm_fraction );
+        using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
+        performanceTest<SerialDevice, SerialDevice>(
+            file, num_particle, "host_host_", comm_fraction );
 #endif
 #ifdef KOKKOS_ENABLE_OPENMP
-    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-    performanceTest<OpenMPDevice, OpenMPDevice>( file, num_particle,
-                                                 "host_host_", comm_fraction );
+        using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
+        performanceTest<OpenMPDevice, OpenMPDevice>(
+            file, num_particle, "host_host_", comm_fraction );
 #endif
 
 #ifdef KOKKOS_ENABLE_CUDA
-    using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-    using CudaUVMDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaUVMSpace>;
-    using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
+        using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
+        using CudaUVMDevice =
+            Kokkos::Device<Kokkos::Cuda, Kokkos::CudaUVMSpace>;
+        using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
 
-    // Transfer GPU data to CPU, communication on CPU, and transfer back to
-    // GPU.
-    performanceTest<CudaDevice, HostDevice>( file, num_particle, "cuda_host_",
-                                             comm_fraction );
+        // Transfer GPU data to CPU, communication on CPU, and transfer back to
+        // GPU.
+        performanceTest<CudaDevice, HostDevice>( file, num_particle,
+                                                 "cuda_host_", comm_fraction );
 
-    // Do everything on the GPU with regular GPU memory.
-    performanceTest<CudaDevice, CudaDevice>( file, num_particle, "cuda_cuda_",
-                                             comm_fraction );
+        // Do everything on the GPU with regular GPU memory.
+        performanceTest<CudaDevice, CudaDevice>( file, num_particle,
+                                                 "cuda_cuda_", comm_fraction );
 
-    // Do everything on the GPU with UVM GPU memory.
-    performanceTest<CudaUVMDevice, CudaUVMDevice>(
-        file, num_particle, "cudauvm_cudauvm_", comm_fraction );
+        // Do everything on the GPU with UVM GPU memory.
+        performanceTest<CudaUVMDevice, CudaUVMDevice>(
+            file, num_particle, "cudauvm_cudauvm_", comm_fraction );
 #endif
 
 #ifdef KOKKOS_ENABLE_HIP
-    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
-                                     Kokkos::Experimental::HIPSpace>;
-    using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
+        using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
+                                         Kokkos::Experimental::HIPSpace>;
+        using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
 
-    // Transfer GPU data to CPU, communication on CPU, and transfer back to
-    // GPU.
-    performanceTest<HipDevice, HostDevice>( file, num_particle, "hip_host_",
-                                            comm_fraction );
+        // Transfer GPU data to CPU, communication on CPU, and transfer back to
+        // GPU.
+        performanceTest<HipDevice, HostDevice>( file, num_particle, "hip_host_",
+                                                comm_fraction );
 
-    // Do everything on the GPU with regular GPU memory.
-    performanceTest<HipDevice, HipDevice>( file, num_particle, "hip_hip_",
-                                           comm_fraction );
+        // Do everything on the GPU with regular GPU memory.
+        performanceTest<HipDevice, HipDevice>( file, num_particle, "hip_hip_",
+                                               comm_fraction );
 #endif
 
-    // Close the output file on rank 0.
-    if ( 0 == comm_rank )
-        file.close();
-
+        // Close the output file on rank 0.
+        if ( 0 == comm_rank )
+            file.close();
+    }
     // Finalize
     Kokkos::finalize();
     MPI_Finalize();
