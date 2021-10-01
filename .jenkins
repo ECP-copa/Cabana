@@ -79,6 +79,7 @@ pipeline {
                               -D Cabana_REQUIRE_HEFFTE=ON \
                               -D Cabana_REQUIRE_HIP=ON \
                               -D Cabana_ENABLE_TESTING=ON \
+                              -D Cabana_ENABLE_PERFORMANCE_TESTING=ON \
                               -D Cabana_ENABLE_EXAMPLES=ON \
                             .. && \
                             make -j8 && \
