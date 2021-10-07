@@ -23,6 +23,8 @@
 #include <Kokkos_Core.hpp>
 #include <Kokkos_ScatterView.hpp>
 
+#include <cassert>
+
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
@@ -232,6 +234,9 @@ class LinkedCellList
     void build( SliceType positions, const std::size_t begin,
                 const std::size_t end )
     {
+        assert( end >= begin );
+        assert( end <= positions.size() );
+
         // Resize the binning data. Note that the permutation vector spans
         // only the length of begin-end;
         std::size_t ncell = totalBins();

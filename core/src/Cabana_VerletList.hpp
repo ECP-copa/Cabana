@@ -23,6 +23,8 @@
 
 #include <Kokkos_Core.hpp>
 
+#include <cassert>
+
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
@@ -741,6 +743,9 @@ class VerletList
                 const std::size_t max_neigh = 0 )
     {
         static_assert( is_accessible_from<memory_space, ExecutionSpace>{}, "" );
+
+        assert( end >= begin );
+        assert( end <= x.size() );
 
         using device_type = Kokkos::Device<ExecutionSpace, memory_space>;
 
