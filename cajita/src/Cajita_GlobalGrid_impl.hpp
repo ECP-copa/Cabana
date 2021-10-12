@@ -9,19 +9,23 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#ifndef CAJITA_GLOBALGRID_IMPL_HPP
-#define CAJITA_GLOBALGRID_IMPL_HPP
+#ifndef CAJITA_GLOBALGRID_IMPL_NEW_HPP
+#define CAJITA_GLOBALGRID_IMPL_NEW_HPP
 
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
+
+#include <mpi.h>
 
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
+//--------------------------- GlobalGridBase --------------------------------//
 // Constructor.
 template <class MeshType>
-GlobalGrid<MeshType>::GlobalGrid(
+GlobalGridBase<MeshType>::GlobalGridBase(
     MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
     const std::array<bool, num_space_dim>& periodic,
     const BlockPartitioner<num_space_dim>& partitioner )
@@ -50,36 +54,6 @@ GlobalGrid<MeshType>::GlobalGrid(
     MPI_Cart_coords( _cart_comm, linear_rank, num_space_dim,
                      _cart_rank.data() );
 
-    // Get the cells per dimension and the remainder.
-    std::array<int, num_space_dim> cells_per_dim;
-    std::array<int, num_space_dim> dim_remainder;
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-    {
-        cells_per_dim[d] = global_num_cell[d] / _ranks_per_dim[d];
-        dim_remainder[d] = global_num_cell[d] % _ranks_per_dim[d];
-    }
-
-    // Compute the global cell offset and the local low corner on this rank by
-    // computing the starting global cell index via exclusive scan.
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-    {
-        _global_cell_offset[d] = 0;
-        for ( int r = 0; r < _cart_rank[d]; ++r )
-        {
-            _global_cell_offset[d] += cells_per_dim[d];
-            if ( dim_remainder[d] > r )
-                ++_global_cell_offset[d];
-        }
-    }
-
-    // Compute the number of local cells in this rank in each dimension.
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-    {
-        _owned_num_cell[d] = cells_per_dim[d];
-        if ( dim_remainder[d] > _cart_rank[d] )
-            ++_owned_num_cell[d];
-    }
-
     // Determine if a block is on the low or high boundaries.
     for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
@@ -91,7 +65,7 @@ GlobalGrid<MeshType>::GlobalGrid(
 //---------------------------------------------------------------------------//
 // Destructor.
 template <class MeshType>
-GlobalGrid<MeshType>::~GlobalGrid()
+GlobalGridBase<MeshType>::~GlobalGridBase()
 {
     MPI_Comm_free( &_cart_comm );
 }
@@ -99,7 +73,7 @@ GlobalGrid<MeshType>::~GlobalGrid()
 //---------------------------------------------------------------------------//
 // Get the grid communicator.
 template <class MeshType>
-MPI_Comm GlobalGrid<MeshType>::comm() const
+MPI_Comm GlobalGridBase<MeshType>::comm() const
 {
     return _cart_comm;
 }
@@ -107,7 +81,7 @@ MPI_Comm GlobalGrid<MeshType>::comm() const
 //---------------------------------------------------------------------------//
 // Get the global mesh data.
 template <class MeshType>
-const GlobalMesh<MeshType>& GlobalGrid<MeshType>::globalMesh() const
+const GlobalMesh<MeshType>& GlobalGridBase<MeshType>::globalMesh() const
 {
     return *_global_mesh;
 }
@@ -115,7 +89,7 @@ const GlobalMesh<MeshType>& GlobalGrid<MeshType>::globalMesh() const
 //---------------------------------------------------------------------------//
 // Get whether a given dimension is periodic.
 template <class MeshType>
-bool GlobalGrid<MeshType>::isPeriodic( const int dim ) const
+bool GlobalGridBase<MeshType>::isPeriodic( const int dim ) const
 {
     return _periodic[dim];
 }
@@ -123,7 +97,7 @@ bool GlobalGrid<MeshType>::isPeriodic( const int dim ) const
 //---------------------------------------------------------------------------//
 // Determine if this block is on a low boundary in the given dimension.
 template <class MeshType>
-bool GlobalGrid<MeshType>::onLowBoundary( const int dim ) const
+bool GlobalGridBase<MeshType>::onLowBoundary( const int dim ) const
 {
     return _boundary_lo[dim];
 }
@@ -131,7 +105,7 @@ bool GlobalGrid<MeshType>::onLowBoundary( const int dim ) const
 //---------------------------------------------------------------------------//
 // Determine if this block is on a high boundary in the given dimension.
 template <class MeshType>
-bool GlobalGrid<MeshType>::onHighBoundary( const int dim ) const
+bool GlobalGridBase<MeshType>::onHighBoundary( const int dim ) const
 {
     return _boundary_hi[dim];
 }
@@ -139,7 +113,7 @@ bool GlobalGrid<MeshType>::onHighBoundary( const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the number of blocks in each dimension in the global mesh.
 template <class MeshType>
-int GlobalGrid<MeshType>::dimNumBlock( const int dim ) const
+int GlobalGridBase<MeshType>::dimNumBlock( const int dim ) const
 {
     return _ranks_per_dim[dim];
 }
@@ -147,7 +121,7 @@ int GlobalGrid<MeshType>::dimNumBlock( const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the total number of blocks.
 template <class MeshType>
-int GlobalGrid<MeshType>::totalNumBlock() const
+int GlobalGridBase<MeshType>::totalNumBlock() const
 {
     int comm_size;
     MPI_Comm_size( _cart_comm, &comm_size );
@@ -157,7 +131,7 @@ int GlobalGrid<MeshType>::totalNumBlock() const
 //---------------------------------------------------------------------------//
 // Get the id of this block in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::dimBlockId( const int dim ) const
+int GlobalGridBase<MeshType>::dimBlockId( const int dim ) const
 {
     return _cart_rank[dim];
 }
@@ -165,7 +139,7 @@ int GlobalGrid<MeshType>::dimBlockId( const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the id of this block.
 template <class MeshType>
-int GlobalGrid<MeshType>::blockId() const
+int GlobalGridBase<MeshType>::blockId() const
 {
     int comm_rank;
     MPI_Comm_rank( _cart_comm, &comm_rank );
@@ -177,7 +151,7 @@ int GlobalGrid<MeshType>::blockId() const
 // of bounds and the boundary is not periodic, return -1 to indicate an
 // invalid rank.
 template <class MeshType>
-int GlobalGrid<MeshType>::blockRank(
+int GlobalGridBase<MeshType>::blockRank(
     const std::array<int, num_space_dim>& ijk ) const
 {
     // Check for invalid indices. An index is invalid if it is out of bounds
@@ -200,7 +174,8 @@ int GlobalGrid<MeshType>::blockRank(
 template <class MeshType>
 template <std::size_t NSD>
 std::enable_if_t<3 == NSD, int>
-GlobalGrid<MeshType>::blockRank( const int i, const int j, const int k ) const
+GlobalGridBase<MeshType>::blockRank( const int i, const int j,
+                                     const int k ) const
 {
     std::array<int, 3> cr = { i, j, k };
     return blockRank( cr );
@@ -213,7 +188,7 @@ GlobalGrid<MeshType>::blockRank( const int i, const int j, const int k ) const
 template <class MeshType>
 template <std::size_t NSD>
 std::enable_if_t<2 == NSD, int>
-GlobalGrid<MeshType>::blockRank( const int i, const int j ) const
+GlobalGridBase<MeshType>::blockRank( const int i, const int j ) const
 {
     std::array<int, 2> cr = { i, j };
     return blockRank( cr );
@@ -222,7 +197,7 @@ GlobalGrid<MeshType>::blockRank( const int i, const int j ) const
 //---------------------------------------------------------------------------//
 // Get the global number of cells in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::globalNumEntity( Cell, const int dim ) const
+int GlobalGridBase<MeshType>::globalNumEntity( Cell, const int dim ) const
 {
     return _global_mesh->globalNumCell( dim );
 }
@@ -230,7 +205,7 @@ int GlobalGrid<MeshType>::globalNumEntity( Cell, const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the global number of nodes in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::globalNumEntity( Node, const int dim ) const
+int GlobalGridBase<MeshType>::globalNumEntity( Node, const int dim ) const
 {
     // If this dimension is periodic that last node in the dimension is
     // repeated across the periodic boundary.
@@ -243,7 +218,8 @@ int GlobalGrid<MeshType>::globalNumEntity( Node, const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the global number of I-faces in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::globalNumEntity( Face<Dim::I>, const int dim ) const
+int GlobalGridBase<MeshType>::globalNumEntity( Face<Dim::I>,
+                                               const int dim ) const
 {
     return ( Dim::I == dim ) ? globalNumEntity( Node(), dim )
                              : globalNumEntity( Cell(), dim );
@@ -252,7 +228,8 @@ int GlobalGrid<MeshType>::globalNumEntity( Face<Dim::I>, const int dim ) const
 //---------------------------------------------------------------------------//
 // Get the global number of J-faces in a given dimension.
 template <class MeshType>
-int GlobalGrid<MeshType>::globalNumEntity( Face<Dim::J>, const int dim ) const
+int GlobalGridBase<MeshType>::globalNumEntity( Face<Dim::J>,
+                                               const int dim ) const
 {
     return ( Dim::J == dim ) ? globalNumEntity( Node(), dim )
                              : globalNumEntity( Cell(), dim );
@@ -263,7 +240,7 @@ int GlobalGrid<MeshType>::globalNumEntity( Face<Dim::J>, const int dim ) const
 template <class MeshType>
 template <std::size_t NSD>
 std::enable_if_t<3 == NSD, int>
-GlobalGrid<MeshType>::globalNumEntity( Face<Dim::K>, const int dim ) const
+GlobalGridBase<MeshType>::globalNumEntity( Face<Dim::K>, const int dim ) const
 {
     return ( Dim::K == dim ) ? globalNumEntity( Node(), dim )
                              : globalNumEntity( Cell(), dim );
@@ -274,7 +251,7 @@ GlobalGrid<MeshType>::globalNumEntity( Face<Dim::K>, const int dim ) const
 template <class MeshType>
 template <std::size_t NSD>
 std::enable_if_t<3 == NSD, int>
-GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::I>, const int dim ) const
+GlobalGridBase<MeshType>::globalNumEntity( Edge<Dim::I>, const int dim ) const
 {
     return ( Dim::I == dim ) ? globalNumEntity( Cell(), dim )
                              : globalNumEntity( Node(), dim );
@@ -285,7 +262,7 @@ GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::I>, const int dim ) const
 template <class MeshType>
 template <std::size_t NSD>
 std::enable_if_t<3 == NSD, int>
-GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::J>, const int dim ) const
+GlobalGridBase<MeshType>::globalNumEntity( Edge<Dim::J>, const int dim ) const
 {
     return ( Dim::J == dim ) ? globalNumEntity( Cell(), dim )
                              : globalNumEntity( Node(), dim );
@@ -296,10 +273,60 @@ GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::J>, const int dim ) const
 template <class MeshType>
 template <std::size_t NSD>
 std::enable_if_t<3 == NSD, int>
-GlobalGrid<MeshType>::globalNumEntity( Edge<Dim::K>, const int dim ) const
+GlobalGridBase<MeshType>::globalNumEntity( Edge<Dim::K>, const int dim ) const
 {
     return ( Dim::K == dim ) ? globalNumEntity( Cell(), dim )
                              : globalNumEntity( Node(), dim );
+}
+
+//---------------------------------------------------------------------------//
+//------------------------- GlobalGrid -- General ---------------------------//
+// Constructor.
+// template <class MeshType, class PartitionerType>
+template <class MeshType>
+GlobalGrid<MeshType>::GlobalGrid(
+    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+    const std::array<bool, num_space_dim>& periodic,
+    const BlockPartitioner<num_space_dim>& partitioner )
+    : GlobalGridBase<MeshType>( comm, global_mesh, periodic, partitioner )
+// const PartitionerType& partitioner )
+// , _partitioner( std::make_shared<PartitionerType>( partitioner ) )
+{
+    // Partition the problem.
+    std::array<int, num_space_dim> global_num_cell;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        global_num_cell[d] = this->globalMesh().globalNumCell( d );
+
+    // Get the cells per dimension and the remainder.
+    // Uniform Grid: initialize an average partition
+    std::array<int, num_space_dim> cells_per_dim;
+    std::array<int, num_space_dim> dim_remainder;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        cells_per_dim[d] = global_num_cell[d] / this->dimNumBlock( d );
+        dim_remainder[d] = global_num_cell[d] % this->dimNumBlock( d );
+    }
+
+    // Compute the global cell offset and the local low corner on this rank by
+    // computing the starting global cell index via exclusive scan.
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        _global_cell_offset[d] = 0;
+        for ( int r = 0; r < this->dimBlockId( d ); ++r )
+        {
+            _global_cell_offset[d] += cells_per_dim[d];
+            if ( dim_remainder[d] > r )
+                ++_global_cell_offset[d];
+        }
+    }
+
+    // Compute the number of local cells in this rank in each dimension.
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        _owned_num_cell[d] = cells_per_dim[d];
+        if ( dim_remainder[d] > this->dimBlockId( d ) )
+            ++_owned_num_cell[d];
+    }
 }
 
 //---------------------------------------------------------------------------//
@@ -334,6 +361,8 @@ void GlobalGrid<MeshType>::setNumCellAndOffset(
 }
 
 //---------------------------------------------------------------------------//
+//----------------------- GlobalGrid -- Sparse Grid -------------------------//
+
 } // end namespace Cajita
 
-#endif // end CAJITA_GLOBALGRID_IMPL_HPP
+#endif // !CAJITA_GLOBAL_GRID_IMPL_NEW_HPP

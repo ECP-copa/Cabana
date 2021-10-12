@@ -63,7 +63,7 @@ class ArrayLayout<EntityType, SparseMesh<Scalar, 3>>
         , _dofs_per_entity( _dofs_per_entity )
     {
     }
- 
+
     //! Get the local grid over which this layout is defined.
     const std::shared_ptr<LocalGrid<MeshType>> localGrid() const
     {
@@ -79,7 +79,6 @@ class ArrayLayout<EntityType, SparseMesh<Scalar, 3>>
     int _dofs_per_entity;
 
 }; // end class SparseArrayLayout
-
 
 } // end namespace Cajita
 

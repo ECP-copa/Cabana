@@ -13,16 +13,12 @@
   \file Cajita_GlobalGrid.hpp
   \brief Global grid
 */
-#ifndef CAJITA_GLOBALGRID_NEW_HPP
-#define CAJITA_GLOBALGRID_NEW_HPP
+#ifndef CAJITA_GLOBALGRID_HPP
+#define CAJITA_GLOBALGRID_HPP
 
 #include <Cajita_GlobalMesh.hpp>
-#include <Cajita_SparseIndexSpace.hpp>
-#include <Cajita_Types.hpp>
-
 #include <Cajita_Partitioner.hpp>
-#include <Cajita_SparseDimPartitioner.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
+#include <Cajita_Types.hpp>
 
 #include <array>
 #include <memory>
@@ -33,11 +29,11 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 /*!
-  \brief Global logical grid base, store global mesh, rank related information.
+  \brief Global logical grid.
   \tparam MeshType Mesh type (uniform, non-uniform, sparse)
 */
 template <class MeshType>
-class GlobalGridBase
+class GlobalGrid
 {
   public:
     //! Mesh type.
@@ -51,11 +47,12 @@ class GlobalGridBase
      \param comm The communicator over which to define the grid.
      \param global_mesh The global mesh data.
      \param periodic Whether each logical dimension is periodic.
+     \param partitioner The grid partitioner.
     */
-    GlobalGridBase(
-        MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-        const std::array<bool, num_space_dim>& periodic,
-        const std::shared_ptr<BlockPartitioner<num_space_dim>>& partitioner );
+    GlobalGrid( MPI_Comm comm,
+                const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+                const std::array<bool, num_space_dim>& periodic,
+                const BlockPartitioner<num_space_dim>& partitioner );
 
     // Destructor.
     ~GlobalGrid();
@@ -96,6 +93,7 @@ class GlobalGridBase
       \brief Get the MPI rank of a block with the given indices. If the rank is
       out of bounds and the boundary is not periodic, return -1 to indicate an
       invalid rank.
+
       \param ijk %Array of block indices.
     */
     int blockRank( const std::array<int, num_space_dim>& ijk ) const;
@@ -104,6 +102,7 @@ class GlobalGridBase
       \brief Get the MPI rank of a block with the given indices. If the rank is
       out of bounds and the boundary is not periodic, return -1 to indicate an
       invalid rank.
+
       \param i,j,k Block index.
     */
     template <std::size_t NSD = num_space_dim>
@@ -114,6 +113,7 @@ class GlobalGridBase
       \brief Get the MPI rank of a block with the given indices. If the rank is
       out of bounds and the boundary is not periodic, return -1 to indicate an
       invalid rank.
+
       \param i,j Block index.
     */
     template <std::size_t NSD = num_space_dim>
@@ -153,71 +153,56 @@ class GlobalGridBase
     std::enable_if_t<3 == NSD, int> globalNumEntity( Edge<Dim::K>,
                                                      const int dim ) const;
 
+    //! \brief Get the owned number of cells in a given dimension of this block.
+    //! \param dim Spatial dimension.
+    int ownedNumCell( const int dim ) const;
+
+    //! \brief Get the global offset in a given dimension. This is where our
+    //! block starts in the global indexing scheme.
+    //! \param dim Spatial dimension.
+    int globalOffset( const int dim ) const;
+
+    //! \brief Set number of cells and offset of local part of the grid. Make
+    //! sure these are consistent across all ranks.
+    //! \param num_cell New number of owned cells for all dimensions.
+    //! \param offset New global offset for all dimensions.
+    void setNumCellAndOffset( const std::array<int, num_space_dim>& num_cell,
+                              const std::array<int, num_space_dim>& offset );
+
   private:
     MPI_Comm _cart_comm;
     std::shared_ptr<GlobalMesh<MeshType>> _global_mesh;
     std::array<bool, num_space_dim> _periodic;
     std::array<int, num_space_dim> _ranks_per_dim;
     std::array<int, num_space_dim> _cart_rank;
+    std::array<int, num_space_dim> _owned_num_cell;
+    std::array<int, num_space_dim> _global_cell_offset;
     std::array<bool, num_space_dim> _boundary_lo;
     std::array<bool, num_space_dim> _boundary_hi;
 };
 
 //---------------------------------------------------------------------------//
-/*!
-  \brief Global logical grid for uniform and non-uniform grids
-  \tparam MeshType Mesh type (uniform, non-uniform)
-*/
-template <class MeshType>
-class GlobalGrid : GlobalGridBase<MeshType>
-{
-  public:
-    /*!
-       \brief Constructor.
-       \param comm The communicator over which to define the grid.
-       \param global_mesh The global mesh data.
-       \param periodic Whether each logical dimension is periodic.
-       \param partitioner The grid partitioner.
-    */
-    GlobalGrid( MPI_Comm comm,
-                const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
-                const std::array<bool, num_space_dim>& periodic,
-                std::shared_ptr<BlockPartitioner<num_space_dim>>& partitioner );
-
-  private:
-    std::array<int, num_space_dim> _owned_num_cell;
-    std::array<int, num_space_dim> _global_cell_offset;
-    std::shared_ptr<BlockPartitioner<num_space_dim>> _partitioner;
-};
-
+// Creation function.
 //---------------------------------------------------------------------------//
 /*!
-  \brief Global logical grid, specialization for sparse grids
-  \tparam Scalar Mesh floating point type.
-  \tparam NumSpaceDim Spatial dimension
+  \brief Create a global grid.
+  \param comm The communicator over which to define the grid.
+  \param global_mesh The global mesh data.
+  \param periodic Whether each logical dimension is periodic.
+  \param partitioner The grid partitioner.
 */
-template <typename Device, class Scalar, unsigned long long CellPerTileDim = 4,
-          std::size_t NumSpaceDim = 3>
-class GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>
-    : GlobalGridBase<SparseMesh<Scalar, NumSpaceDim>>
+template <class MeshType>
+std::shared_ptr<GlobalGrid<MeshType>>
+createGlobalGrid( MPI_Comm comm,
+                  const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+                  const std::array<bool, MeshType::num_space_dim>& periodic,
+                  const BlockPartitioner<MeshType::num_space_dim>& partitioner )
 {
-  public:
-    //! Kokkos device type.
-    using device_type = Device;
-    //! Number of bits (per dimension) needed to index the cells inside a tile
-    static constexpr unsigned long long cell_bits_per_tile_dim =
-        bitCount( CellPerTileDim );
-    //! Number of cells inside each tile (per dimension), tile size reset to
-    //! power of 2
-    static constexpr unsigned long long cell_num_per_tile_dim =
-        1 << cell_bits_per_tile_dim;
+    return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
+                                                   partitioner );
+}
 
-  private:
-    std::array<int, num_space_dim> _owned_num_cell;
-    std::array<int, num_space_dim> _global_cell_offset;
-    std::shared_ptr<SparseDimPartitioner<device_type, cell_num_per_tile_dim>>
-        _partitioner;
-};
+//---------------------------------------------------------------------------//
 
 } // end namespace Cajita
 
@@ -225,8 +210,8 @@ class GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>
 // Template implementation
 //---------------------------------------------------------------------------//
 
-#include <Cajita_GlobalGrid_impl_new.hpp>
+#include <Cajita_GlobalGrid_impl.hpp>
 
-//---------------------------------------------------------------------------//u
+//---------------------------------------------------------------------------//
 
-#endif // !CAJITA_GLOBALGRID_NEW_HPP
+#endif // end CAJITA_GLOBALGRID_HPP
