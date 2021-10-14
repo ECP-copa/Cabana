@@ -232,6 +232,9 @@ class GlobalSparseGrid : GlobalGridBase<SparseMesh<Scalar, NumSpaceDim>>
     //! Mesh type.
     using mesh_type = SparseMesh<Scalar, NumSpaceDim>;
 
+    //! scalar type
+    using scalar_type = Scalar;
+
     //! Spatial dimension
     using GlobalGridBase<mesh_type>::num_space_dim;
 
