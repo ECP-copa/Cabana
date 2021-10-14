@@ -362,6 +362,167 @@ void GlobalGrid<MeshType>::setNumCellAndOffset(
 
 //---------------------------------------------------------------------------//
 //----------------------- GlobalGrid -- Sparse Grid -------------------------//
+// Constructor.
+template <typename Device, class Scalar, unsigned long long CellPerTileDim,
+          std::size_t NumSpaceDim>
+GlobalSparseGrid<Device, Scalar, CellPerTileDim, NumSpaceDim>::GlobalGrid(
+    MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+    const std::array<bool, num_space_dim>& periodic,
+    partitioner_type& partitioner )
+    : GlobalGridBase<MeshType>( comm, global_mesh, periodic, partitioner )
+    , _partitioner( std::make_shared<partitioner_type>( partitioner ) )
+{
+    // Get the global tile number
+    // Ensure no residual cells by reseting the cell size in GlobalMesh
+    std::array<int, num_space_dim> global_num_tile;
+    for ( std::size_t d = 0; d < num_space_dim; d++ )
+    {
+        int cell_num = this->globalMesh().globalNumCell( d );
+        global_num_tile[d] =
+            static_cast<int>( cell_num + cell_num_per_tile_dim - 1 );
+        if ( cell_num != global_num_tile[d] * cell_num_per_tile_dim )
+        {
+            this->globalMesh().setCellSizeFromNum(
+                d, global_num_tile[d] * cell_num_per_tile_dim );
+        }
+    }
+
+    // Get the tiles per dimension and the remainder.
+    // Sparse Grid: initialize an average partition
+    std::array<int, num_space_dim> tiles_per_dim;
+    std::array<int, num_space_dim> dim_remainder;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        tiles_per_dim[d] = global_num_tile[d] / this->dimNumBlock( d );
+        dim_remainder[d] = global_num_tile[d] % this->dimNumBlock( d );
+    }
+
+    // Sparse Grid: compute global tile offest and do partition initialization
+    std::array<std::vector<int>, num_space_dim> rec_partitions;
+    std::array<int, num_space_dim> global_tile_offset;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        _global_cell_offset[d] = 0;
+        rec_partitions[d].push_back( _global_cell_offset[d] );
+        for ( int r = 0; r < this->dimNumBlock( d ); ++r )
+        {
+            global_tile_offset[d] += tiles_per_dim[d];
+            if ( dim_remainder[d] > r )
+                ++global_tile_offset[d];
+            rec_partitions[d].push_back( global_tile_offset[d] );
+        }
+        rec_partitions[d].push_back( gloabl_num_tile[d] );
+    }
+    _partitioner->initializeRecPartition( rec_partitions[0], rec_partitions[1],
+                                          rec_partitions[2] );
+
+    // Compute the global cell offset
+    // Compute the number of local cells in this rank in each dimension.
+    computeNumCellAndOffset( rec_partition );
+}
+
+//---------------------------------------------------------------------------//
+// Get the owned number of cells in a given dimension.
+template <typename Device, class Scalar, unsigned long long CellPerTileDim,
+          std::size_t NumSpaceDim>
+int GlobalSparseGrid<Device, Scalar, CellPerTileDim, NumSpaceDim>::ownedNumCell(
+    const int dim ) const
+{
+    return _owned_num_cell[dim];
+}
+
+//---------------------------------------------------------------------------//
+// Get the global offset in a given dimension for the entity of a given
+// type. This is where our block starts in the global indexing scheme.
+template <typename Device, class Scalar, unsigned long long CellPerTileDim,
+          std::szie_t NumSpaceDim>
+int GlobalSparseGrid<Device, Scalar, CellPerTileDim, NumSpaceDim>::globalOffset(
+    const int dim ) const
+{
+    return _global_cell_offset[dim];
+}
+
+//---------------------------------------------------------------------------//
+// Set the number of owned cells and global offset. Make sure this is
+// consistent across all ranks.
+template <typename Device, class Scalar, unsigned long long CellPerTileDim,
+          std::size_t NumSpaceDim>
+void GlobalSparseGrid<Device, Scalar, CellPerTileDim, NumSpaceDim>::
+    setPartition(
+        const std::array<std::vector<int>, num_space_dim> rec_partition )
+{
+    _partitioner->initializeRecPartition( rec_partitions[0], rec_partitions[1],
+                                          rec_partitions[2] );
+    // Compute the global cell offset
+    // Compute the number of local cells in this rank in each dimension.
+    std::array<int, num_space_dim>& num_cell;
+    std::array<int, num_space_dim>& offset;
+    computeNumCellAndOffset( num_cell, offset, rec_partition );
+    setNumCellAndOffset( num_cell, offset );
+}
+
+template <typename Device, class Scalar, unsigned long long CellPerTileDim,
+          std::size_t NumSpaceDim, class SparseMapType>
+int GlobalSparseGrid<Device, Scalar, CellPerTileDim, NumSpaceDim>::
+    optimizePartition( const SparseMapType& sparseMap, MPI_Comm comm )
+{
+    _partitioner->optimizePartition( sparseMap, comm );
+    auto rec_partition = _partitioner->getCurrentPartition();
+    computeNumCellAndOffset( rec_partition );
+}
+
+//---------------------------------------------------------------------------//
+// Set the number of owned cells and global offset. Make sure this is
+// consistent across all ranks.
+template <typename Device, class Scalar, unsigned long long CellPerTileDim,
+          std::size_t NumSpaceDim>
+void GlobalSparseGrid<Device, Scalar, CellPerTileDim, NumSpaceDim>::
+    computeNumCellAndOffset(
+        std::array<int, num_space_dim>& num_cell,
+        std::array<int, num_space_dim>& offset,
+        const std::array<std::vector<int>, num_space_dim> rec_partition )
+{
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        int rank_id = this->dimBlockId( d );
+        auto& rec_partition_dim = rec_partitions[d];
+        // local cell num in this rank
+        num_cell[d] =
+            ( rec_partition_dim[rank_id + 1] - rec_partition_dim[rank_id] ) *
+            cell_num_per_tile_dim;
+        // global cell offset
+        offset[d] = rec_partition_dim[rank_id] * cell_num_per_tile_dim;
+    }
+}
+
+//---------------------------------------------------------------------------//
+// Set the number of owned cells and global offset. Make sure this is
+// consistent across all ranks.
+template <typename Device, class Scalar, unsigned long long CellPerTileDim,
+          std::size_t NumSpaceDim>
+void GlobalSparseGrid<Device, Scalar, CellPerTileDim, NumSpaceDim>::
+    computeNumCellAndOffset(
+        const std::array<std::vector<int>, num_space_dim> rec_partition )
+{
+    computeNumCellAndOffset( _owned_num_cell, _global_cell_offset );
+}
+
+//---------------------------------------------------------------------------//
+// Set the number of owned cells and global offset. Make sure this is
+// consistent across all ranks.
+template <typename Device, class Scalar, unsigned long long CellPerTileDim,
+          std::size_t NumSpaceDim>
+void GlobalSparseGrid<Device, Scalar, CellPerTileDim, NumSpaceDim>::
+    setNumCellAndOffset( const std::array<int, num_space_dim>& num_cell,
+                         const std::array<int, num_space_dim>& offset )
+{
+    std::copy( std::begin( num_cell ), std::end( num_cell ),
+               std::begin( _owned_num_cell ) );
+    std::copy( std::begin( offset ), std::end( offset ),
+               std::begin( _global_cell_offset ) );
+}
+
+//---------------------------------------------------------------------------//
 
 } // end namespace Cajita
 

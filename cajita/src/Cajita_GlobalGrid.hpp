@@ -235,7 +235,7 @@ class GlobalSparseGrid : GlobalGridBase<SparseMesh<Scalar, NumSpaceDim>>
     //! Spatial dimension
     using GlobalGridBase<mesh_type>::num_space_dim;
 
-    //! Kokkos device type.
+    //! Kokkos device type
     using device_type = Device;
 
     //! Number of bits (per dimension) needed to index the cells inside a tile
@@ -247,16 +247,81 @@ class GlobalSparseGrid : GlobalGridBase<SparseMesh<Scalar, NumSpaceDim>>
     static constexpr unsigned long long cell_num_per_tile_dim =
         1 << cell_bits_per_tile_dim;
 
+    //! partitioner type
+    using partitioner_type =
+        SparseDimPartitioner<device_type, cell_num_per_tile_dim>;
+
+    /*!
+       \brief Constructor.
+       \param comm The communicator over which to define the grid.
+       \param global_mesh The global mesh data.
+       \param periodic Whether each logical dimension is periodic.
+       \param partitioner The sparse grid partitioner.
+    */
     GlobalSparseGrid( MPI_Comm comm,
                       const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
                       const std::array<bool, num_space_dim>& periodic,
-                      std::shared_ptr<SparseDimPartitioner<
-                          device_type, cell_num_per_tile_dim>>& partitioner );
+                      partitioner_type& partitioner );
+
+    //! \brief Get the owned number of cells in a given dimension of this
+    //! block. \param dim Spatial dimension.
+    int ownedNumCell( const int dim ) const;
+
+    //! \brief Get the global offset in a given dimension. This is where our
+    //! block starts in the global indexing scheme.
+    //! \param dim Spatial dimension.
+    int globalOffset( const int dim ) const;
+
+    //! \brief Set a given partition, also at the same time, set the number of
+    //! cells and offset of local part of the grid. Make sure these are
+    //! consistent across all ranks.
+    //! \param rec_partition New given partition
+    void setPartition(
+        const std::array<std::vector<int>, num_space_dim> rec_partition );
+
+    /*!
+      \brief Optimize the current partition on multiple MPI ranks. Update
+      related information in global grids as well.
+      \param sparseMap sparseMap in the current rank
+      \param comm MPI communicator used for workload reduction
+      \return iteration number
+    */
+    template <class SparseMapType>
+    int optimizePartition( const SparseMapType& sparseMap, MPI_Comm comm );
+
+    /*!
+      \brief iteratively optimize the partition
+      \param view particle positions view
+      \param particle_num total particle number
+      \param dx cell dx size
+      \param comm MPI communicator used for workload reduction
+      \return iteration number
+    */
+    template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
+    int optimizePartition( const ParticlePosViewType& view, int particle_num,
+                           const CellUnit dx, MPI_Comm comm );
+
+    void computeNumCellAndOffset(
+        std::array<int, num_space_dim>& num_cell,
+        std::array<int, num_space_dim>& offset,
+        const std::array<std::vector<int>, num_space_dim> rec_partition );
+
+    void computeNumCellAndOffset(
+        const std::array<std::vector<int>, num_space_dim> rec_partition );
+
+  private:
+    //! \brief Set number of cells and offset of local part of the grid. Make
+    //! sure these are consistent across all ranks.
+    //! \param num_cell New number of owned cells for all dimensions.
+    //! \param offset New global offset for all dimensions.
+    void setNumCellAndOffset( const std::array<int, num_space_dim>& num_cell,
+                              const std::array<int, num_space_dim>& offset );
 
   private:
     std::array<int, num_space_dim> _owned_num_cell;
     std::array<int, num_space_dim> _global_cell_offset;
-    SparseDimPartitioner<device_type, cell_num_per_tile_dim> _partitioner;
+    std::shared_ptr<SparseDimPartitioner<device_type, cell_num_per_tile_dim>>
+        _partitioner;
 };
 
 //---------------------------------------------------------------------------//

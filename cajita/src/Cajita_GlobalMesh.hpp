@@ -167,6 +167,22 @@ class GlobalMesh
         return _cell_size[dim];
     }
 
+    //! \brief Set the uniform cell size in a given dimension.
+    //! \param dim Spatial dimension.
+    //! \param cell_size New cell size value.
+    void setCellSize( const std::size_t dim, const scalar_type cell_size )
+    {
+        _cell_size[dim] = cell_size;
+    }
+
+    //! \brief Set the uniform cell size in a given dimension.
+    //! \param dim Spatial dimension.
+    //! \param cell_num New cell number in the given dimension.
+    void setCellSizeFromNum( const std::size_t dim, const int cell_num )
+    {
+        _cell_size[dim] = extent( dim ) / static_cast<scalar_type>( cell_num );
+    }
+
   private:
     std::array<scalar_type, num_space_dim> _global_low_corner;
     std::array<scalar_type, num_space_dim> _global_high_corner;
