@@ -20,6 +20,8 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 // Constructor.
+// template <class MeshType,
+//   std::enable_if_t<isSparseMesh<MeshType>::value, bool> = false>
 template <class MeshType>
 GlobalGrid<MeshType>::GlobalGrid(
     MPI_Comm comm, const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
@@ -86,6 +88,64 @@ GlobalGrid<MeshType>::GlobalGrid(
         _boundary_lo[d] = ( 0 == _cart_rank[d] );
         _boundary_hi[d] = ( _ranks_per_dim[d] - 1 == _cart_rank[d] );
     }
+}
+
+//---------------------------------------------------------------------------//
+template <typename MeshType>
+template <typename Device, unsigned long long CellPerTileDim>
+GlobalGrid<SparseMesh<MeshType::scalar_type, MeshType::num_space_dim>>::
+    GlobalGrid( MPI_Comm comm,
+                const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
+                const std::array<bool, num_space_dim>& periodic,
+                SparseDimPartitioner<Device, CellPerTileDim>& partitioner )
+{
+    // Get the global tile number
+    // Ensure no residual cells by reseting the cell size in GlobalMesh
+    std::array<int, num_space_dim> global_num_tile;
+    for ( std::size_t d = 0; d < num_space_dim; d++ )
+    {
+        int cell_num = this->globalMesh().globalNumCell( d );
+        global_num_tile[d] =
+            static_cast<int>( cell_num + cell_num_per_tile_dim - 1 );
+        if ( cell_num != global_num_tile[d] * cell_num_per_tile_dim )
+        {
+            this->globalMesh().setCellSizeFromNum(
+                d, global_num_tile[d] * cell_num_per_tile_dim );
+        }
+    }
+
+    // Get the tiles per dimension and the remainder.
+    // Sparse Grid: initialize an average partition
+    std::array<int, num_space_dim> tiles_per_dim;
+    std::array<int, num_space_dim> dim_remainder;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        tiles_per_dim[d] = global_num_tile[d] / this->dimNumBlock( d );
+        dim_remainder[d] = global_num_tile[d] % this->dimNumBlock( d );
+    }
+
+    // Sparse Grid: compute global tile offest and do partition initialization
+    std::array<std::vector<int>, num_space_dim> rec_partitions;
+    std::array<int, num_space_dim> global_tile_offset;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        _global_cell_offset[d] = 0;
+        rec_partitions[d].push_back( _global_cell_offset[d] );
+        for ( int r = 0; r < this->dimNumBlock( d ); ++r )
+        {
+            global_tile_offset[d] += tiles_per_dim[d];
+            if ( dim_remainder[d] > r )
+                ++global_tile_offset[d];
+            rec_partitions[d].push_back( global_tile_offset[d] );
+        }
+        rec_partitions[d].push_back( global_num_tile[d] );
+    }
+    partitioner.initializeRecPartition( rec_partitions[0], rec_partitions[1],
+                                        rec_partitions[2] );
+
+    // Compute the global cell offset
+    // Compute the number of local cells in this rank in each dimension.
+    computeNumCellAndOffsetFromTilePartition( rec_partitions );
 }
 
 //---------------------------------------------------------------------------//
@@ -331,6 +391,48 @@ void GlobalGrid<MeshType>::setNumCellAndOffset(
                std::begin( _owned_num_cell ) );
     std::copy( std::begin( offset ), std::end( offset ),
                std::begin( _global_cell_offset ) );
+}
+
+//---------------------------------------------------------------------------//
+// Set the number of owned cells and global offset from given TILE partition.
+// Make sure this is consistent across all ranks.
+template <class MeshType>
+void GlobalGrid<MeshType>::computeNumCellAndOffsetFromTilePartition(
+    const std::array<std::vector<int>, num_space_dim>& rec_tile_partition )
+{
+    std::array<std::vector<int>, num_space_dim> cell_partition;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        if ( rec_tile_partition[d].size() != dimNumBlock( d ) )
+            throw std::logic_error( "Tile partitioner size in each dim should "
+                                    "equal to rank_num+1" );
+        cell_partition[d].resize( rec_tile_partition[d].size() );
+        std::transform( rec_tile_partition.begin(), rec_tile_partition.end(),
+                        cell_partition.begin(), []( int i ) -> int {
+                            return i * cell_num_per_tile_dim;
+                        } );
+    }
+    computeNumCellAndOffsetFromCellPartition( cell_partition );
+}
+
+//---------------------------------------------------------------------------//
+// Set the number of owned cells and global offset from given CELL partition.
+// Make sure this is consistent across all ranks.
+template <class MeshType>
+void GlobalGrid<MeshType>::computeNumCellAndOffsetFromCellPartition(
+    const std::array<std::vector<int>, num_space_dim>& rec_cell_partition )
+{
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        if ( rec_cell_partition[d].size() != dimNumBlock( d ) )
+            throw std::logic_error( "Cell partitioner size in each dim should "
+                                    "equal to rank_num+1" );
+        int rank_id = dimBlockId( d );
+        auto& par_dim = rec_cell_partition[d];
+        // local cell num in this rank
+        _owned_num_cell[d] = par_dim[rank_id + 1] - par_dim[rank_id];
+        _global_cell_offset[d] = par_dim[rank_id + 1] - par_dim[rank_id];
+    }
 }
 
 //---------------------------------------------------------------------------//

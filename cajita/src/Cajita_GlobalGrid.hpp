@@ -18,6 +18,7 @@
 
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Partitioner.hpp>
+#include <Cajita_SparseDimPartitioner.hpp>
 #include <Cajita_Types.hpp>
 
 #include <array>
@@ -49,10 +50,20 @@ class GlobalGrid
      \param periodic Whether each logical dimension is periodic.
      \param partitioner The grid partitioner.
     */
+    // template <class MeshType,
+    // std::enable_if_t<isSparseMesh<MeshType>::value, bool> = false>
     GlobalGrid( MPI_Comm comm,
-                const std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+                const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
                 const std::array<bool, num_space_dim>& periodic,
                 const BlockPartitioner<num_space_dim>& partitioner );
+
+    // partitioner will be initialized!!!
+    template <typename Device, unsigned long long CellPerTileDim,
+              typename = std::enable_if_t<isSparseMesh<MeshType>::value>>
+    GlobalGrid( MPI_Comm comm,
+                const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
+                const std::array<bool, num_space_dim>& periodic,
+                SparseDimPartitioner<Device, CellPerTileDim>& partitioner );
 
     // Destructor.
     ~GlobalGrid();
@@ -168,6 +179,18 @@ class GlobalGrid
     //! \param offset New global offset for all dimensions.
     void setNumCellAndOffset( const std::array<int, num_space_dim>& num_cell,
                               const std::array<int, num_space_dim>& offset );
+
+    //! \brief Set number of cells and offset of local part of the grid from a
+    //! given partitioner. Make sure these are consistent across all ranks.
+    //! \param rec_tile_partition rectangle-partition information of tiles
+    void computeNumCellAndOffsetFromTilePartition(
+        const std::array<std::vector<int>, num_space_dim>& rec_tile_partition );
+
+    //! \brief Set number of cells and offset of local part of the grid from a
+    //! given partitioner. Make sure these are consistent across all ranks.
+    //! \param rec_cell_partition rectangle-partition information of cells
+    void computeNumCellAndOffsetFromCellPartition(
+        const std::array<std::vector<int>, num_space_dim>& rec_cell_partition );
 
   private:
     MPI_Comm _cart_comm;
