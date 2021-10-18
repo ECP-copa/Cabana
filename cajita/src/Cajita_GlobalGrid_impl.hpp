@@ -93,12 +93,12 @@ GlobalGrid<MeshType>::GlobalGrid(
 //---------------------------------------------------------------------------//
 template <typename MeshType>
 template <typename Device, unsigned long long CellPerTileDim>
-GlobalGrid<SparseMesh<MeshType::scalar_type, MeshType::num_space_dim>>::
-    GlobalGrid( MPI_Comm comm,
-                const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
-                const std::array<bool, num_space_dim>& periodic,
-                SparseDimPartitioner<Device, CellPerTileDim>& partitioner )
+GlobalGrid<MeshType>::GlobalGrid(
+    MPI_Comm comm, const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
+    const std::array<bool, num_space_dim>& periodic,
+    SparseDimPartitioner<Device, CellPerTileDim>& partitioner )
 {
+    static constexpr unsigned long long cell_num_per_tile_dim = CellPerTileDim;
     // Get the global tile number
     // Ensure no residual cells by reseting the cell size in GlobalMesh
     std::array<int, num_space_dim> global_num_tile;
@@ -398,7 +398,8 @@ void GlobalGrid<MeshType>::setNumCellAndOffset(
 // Make sure this is consistent across all ranks.
 template <class MeshType>
 void GlobalGrid<MeshType>::computeNumCellAndOffsetFromTilePartition(
-    const std::array<std::vector<int>, num_space_dim>& rec_tile_partition )
+    const std::array<std::vector<int>, num_space_dim>& rec_tile_partition,
+    const int cell_num_per_tile_dim )
 {
     std::array<std::vector<int>, num_space_dim> cell_partition;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
@@ -408,7 +409,7 @@ void GlobalGrid<MeshType>::computeNumCellAndOffsetFromTilePartition(
                                     "equal to rank_num+1" );
         cell_partition[d].resize( rec_tile_partition[d].size() );
         std::transform( rec_tile_partition.begin(), rec_tile_partition.end(),
-                        cell_partition.begin(), []( int i ) -> int {
+                        cell_partition.begin(), [&]( int i ) -> int {
                             return i * cell_num_per_tile_dim;
                         } );
     }

@@ -58,8 +58,7 @@ class GlobalGrid
                 const BlockPartitioner<num_space_dim>& partitioner );
 
     // partitioner will be initialized!!!
-    template <typename Device, unsigned long long CellPerTileDim,
-              typename = std::enable_if_t<isSparseMesh<MeshType>::value>>
+    template <typename Device, unsigned long long CellPerTileDim>
     GlobalGrid( MPI_Comm comm,
                 const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
                 const std::array<bool, num_space_dim>& periodic,
@@ -184,7 +183,8 @@ class GlobalGrid
     //! given partitioner. Make sure these are consistent across all ranks.
     //! \param rec_tile_partition rectangle-partition information of tiles
     void computeNumCellAndOffsetFromTilePartition(
-        const std::array<std::vector<int>, num_space_dim>& rec_tile_partition );
+        const std::array<std::vector<int>, num_space_dim>& rec_tile_partition,
+        const int cell_num_per_tile_dim );
 
     //! \brief Set number of cells and offset of local part of the grid from a
     //! given partitioner. Make sure these are consistent across all ranks.
