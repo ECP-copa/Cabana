@@ -94,10 +94,42 @@ GlobalGrid<MeshType>::GlobalGrid(
 template <typename MeshType>
 template <typename Device, unsigned long long CellPerTileDim>
 GlobalGrid<MeshType>::GlobalGrid(
-    MPI_Comm comm, const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
-    const std::array<bool, num_space_dim>& periodic,
-    SparseDimPartitioner<Device, CellPerTileDim>& partitioner )
+    SparseDimPartitioner<Device, CellPerTileDim>& partitioner, MPI_Comm comm,
+    std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
+    const std::array<bool, num_space_dim>& periodic )
+    : _global_mesh( global_mesh )
+    , _periodic( periodic )
 {
+
+    // Partition the problem.
+    std::array<int, num_space_dim> global_num_cell;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        global_num_cell[d] = _global_mesh->globalNumCell( d );
+    _ranks_per_dim = partitioner.ranksPerDimension( comm, global_num_cell );
+
+    // Extract the periodicity of the boundary as integers.
+    std::array<int, num_space_dim> periodic_dims;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+        periodic_dims[d] = _periodic[d];
+
+    // Generate a communicator with a Cartesian topology.
+    int reorder_cart_ranks = 1;
+    MPI_Cart_create( comm, num_space_dim, _ranks_per_dim.data(),
+                     periodic_dims.data(), reorder_cart_ranks, &_cart_comm );
+
+    // Get the Cartesian topology index of this rank.
+    int linear_rank;
+    MPI_Comm_rank( _cart_comm, &linear_rank );
+    MPI_Cart_coords( _cart_comm, linear_rank, num_space_dim,
+                     _cart_rank.data() );
+
+    // Determine if a block is on the low or high boundaries.
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        _boundary_lo[d] = ( 0 == _cart_rank[d] );
+        _boundary_hi[d] = ( _ranks_per_dim[d] - 1 == _cart_rank[d] );
+    }
+
     static constexpr unsigned long long cell_num_per_tile_dim = CellPerTileDim;
     // Get the global tile number
     // Ensure no residual cells by reseting the cell size in GlobalMesh
@@ -105,9 +137,10 @@ GlobalGrid<MeshType>::GlobalGrid(
     for ( std::size_t d = 0; d < num_space_dim; d++ )
     {
         int cell_num = this->globalMesh().globalNumCell( d );
-        global_num_tile[d] =
-            static_cast<int>( cell_num + cell_num_per_tile_dim - 1 );
-        if ( cell_num != global_num_tile[d] * cell_num_per_tile_dim )
+        global_num_tile[d] = static_cast<int>(
+            ( cell_num + cell_num_per_tile_dim - 1 ) / cell_num_per_tile_dim );
+        if ( cell_num !=
+             static_cast<int>( global_num_tile[d] * cell_num_per_tile_dim ) )
         {
             this->globalMesh().setCellSizeFromNum(
                 d, global_num_tile[d] * cell_num_per_tile_dim );
@@ -130,13 +163,13 @@ GlobalGrid<MeshType>::GlobalGrid(
     for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         _global_cell_offset[d] = 0;
-        rec_partitions[d].push_back( _global_cell_offset[d] );
+        global_tile_offset[d] = 0;
         for ( int r = 0; r < this->dimNumBlock( d ); ++r )
         {
+            rec_partitions[d].push_back( global_tile_offset[d] );
             global_tile_offset[d] += tiles_per_dim[d];
             if ( dim_remainder[d] > r )
                 ++global_tile_offset[d];
-            rec_partitions[d].push_back( global_tile_offset[d] );
         }
         rec_partitions[d].push_back( global_num_tile[d] );
     }
@@ -145,7 +178,8 @@ GlobalGrid<MeshType>::GlobalGrid(
 
     // Compute the global cell offset
     // Compute the number of local cells in this rank in each dimension.
-    computeNumCellAndOffsetFromTilePartition( rec_partitions );
+    computeNumCellAndOffsetFromTilePartition( rec_partitions,
+                                              cell_num_per_tile_dim );
 }
 
 //---------------------------------------------------------------------------//
@@ -167,7 +201,7 @@ MPI_Comm GlobalGrid<MeshType>::comm() const
 //---------------------------------------------------------------------------//
 // Get the global mesh data.
 template <class MeshType>
-const GlobalMesh<MeshType>& GlobalGrid<MeshType>::globalMesh() const
+GlobalMesh<MeshType>& GlobalGrid<MeshType>::globalMesh() const
 {
     return *_global_mesh;
 }
@@ -404,14 +438,15 @@ void GlobalGrid<MeshType>::computeNumCellAndOffsetFromTilePartition(
     std::array<std::vector<int>, num_space_dim> cell_partition;
     for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
-        if ( rec_tile_partition[d].size() != dimNumBlock( d ) )
+        if ( static_cast<int>( rec_tile_partition[d].size() ) !=
+             ( dimNumBlock( d ) + 1 ) )
             throw std::logic_error( "Tile partitioner size in each dim should "
                                     "equal to rank_num+1" );
         cell_partition[d].resize( rec_tile_partition[d].size() );
-        std::transform( rec_tile_partition.begin(), rec_tile_partition.end(),
-                        cell_partition.begin(), [&]( int i ) -> int {
-                            return i * cell_num_per_tile_dim;
-                        } );
+        std::transform(
+            rec_tile_partition[d].begin(), rec_tile_partition[d].end(),
+            cell_partition[d].begin(),
+            [&]( int i ) -> int { return i * cell_num_per_tile_dim; } );
     }
     computeNumCellAndOffsetFromCellPartition( cell_partition );
 }
@@ -425,14 +460,15 @@ void GlobalGrid<MeshType>::computeNumCellAndOffsetFromCellPartition(
 {
     for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
-        if ( rec_cell_partition[d].size() != dimNumBlock( d ) )
+        if ( static_cast<int>( rec_cell_partition[d].size() ) !=
+             ( dimNumBlock( d ) + 1 ) )
             throw std::logic_error( "Cell partitioner size in each dim should "
                                     "equal to rank_num+1" );
         int rank_id = dimBlockId( d );
         auto& par_dim = rec_cell_partition[d];
         // local cell num in this rank
         _owned_num_cell[d] = par_dim[rank_id + 1] - par_dim[rank_id];
-        _global_cell_offset[d] = par_dim[rank_id + 1] - par_dim[rank_id];
+        _global_cell_offset[d] = par_dim[rank_id];
     }
 }
 

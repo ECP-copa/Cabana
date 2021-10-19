@@ -50,19 +50,25 @@ class GlobalGrid
      \param periodic Whether each logical dimension is periodic.
      \param partitioner The grid partitioner.
     */
-    // template <class MeshType,
-    // std::enable_if_t<isSparseMesh<MeshType>::value, bool> = false>
     GlobalGrid( MPI_Comm comm,
                 const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
                 const std::array<bool, num_space_dim>& periodic,
                 const BlockPartitioner<num_space_dim>& partitioner );
 
-    // partitioner will be initialized!!!
+    /*!
+     \brief Constructor. From sparse partitioner.
+      Note: partitioner will be initialized to uniform partitioning
+     \param partitioner The sparse grid partitioner. will be initialized
+     \param global_mesh The global mesh data. cell_size will be adjusted to make
+     cell_num % tile_num==0
+     \param comm The communicator over which to define the grid.
+     \param periodic Whether each logical dimension is periodic.
+    */
     template <typename Device, unsigned long long CellPerTileDim>
-    GlobalGrid( MPI_Comm comm,
-                const std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
-                const std::array<bool, num_space_dim>& periodic,
-                SparseDimPartitioner<Device, CellPerTileDim>& partitioner );
+    GlobalGrid( SparseDimPartitioner<Device, CellPerTileDim>& partitioner,
+                MPI_Comm comm,
+                std::shared_ptr<GlobalMesh<mesh_type>>& global_mesh,
+                const std::array<bool, num_space_dim>& periodic );
 
     // Destructor.
     ~GlobalGrid();
@@ -72,7 +78,8 @@ class GlobalGrid
     MPI_Comm comm() const;
 
     //! \brief Get the global mesh data.
-    const GlobalMesh<MeshType>& globalMesh() const;
+    // const GlobalMesh<MeshType>& globalMesh() const;
+    GlobalMesh<MeshType>& globalMesh() const;
 
     //! \brief Get whether a given dimension is periodic.
     bool isPeriodic( const int dim ) const;
@@ -182,6 +189,7 @@ class GlobalGrid
     //! \brief Set number of cells and offset of local part of the grid from a
     //! given partitioner. Make sure these are consistent across all ranks.
     //! \param rec_tile_partition rectangle-partition information of tiles
+    //! \param cell_num_per_tile_dim cell number per tile in each dimension
     void computeNumCellAndOffsetFromTilePartition(
         const std::array<std::vector<int>, num_space_dim>& rec_tile_partition,
         const int cell_num_per_tile_dim );
@@ -223,6 +231,27 @@ createGlobalGrid( MPI_Comm comm,
 {
     return std::make_shared<GlobalGrid<MeshType>>( comm, global_mesh, periodic,
                                                    partitioner );
+}
+
+/*!
+  \brief Create a sparse global grid.
+  \param partitioner The sparse grid partitioner, will be initialized when
+  creating the global grid
+  \param comm The communicator over which to define the grid.
+  \param global_mesh The global mesh data, cell size will be reset if
+  cell_num != tile_num * cell_num_per_tile
+  \param periodic Whether each logical
+  dimension is periodic.
+*/
+template <class MeshType, typename Device, unsigned long long CellPerTileDim>
+std::shared_ptr<GlobalGrid<MeshType>>
+createGlobalGrid( SparseDimPartitioner<Device, CellPerTileDim>& partitioner,
+                  MPI_Comm comm,
+                  std::shared_ptr<GlobalMesh<MeshType>>& global_mesh,
+                  const std::array<bool, MeshType::num_space_dim>& periodic )
+{
+    return std::make_shared<GlobalGrid<MeshType>>( partitioner, comm,
+                                                   global_mesh, periodic );
 }
 
 //---------------------------------------------------------------------------//
