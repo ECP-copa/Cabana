@@ -193,7 +193,7 @@ class SparseDimPartitioner : public BlockPartitioner<3>
         for ( int i = 0; i < 3; ++i )
         {
             // compute cells_per_dim from tiles_per_dim
-            tiles_per_dim[i] <<= cell_bits_per_tile_dim * 3;
+            tiles_per_dim[i] <<= cell_bits_per_tile_dim;
         }
         return tiles_per_dim;
     }
