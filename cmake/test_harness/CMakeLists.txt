@@ -22,6 +22,14 @@ FetchContent_Declare(
   URL_MD5         ecd1fa65e7de707cd5c00bdac56022cd
   )
 
+# suppress all compiler warnings when building gtest
+if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+  # NOTE I haven't actually tested on MSVC
+  string(APPEND CMAKE_CXX_FLAGS " \w")
+else()
+  string(APPEND CMAKE_CXX_FLAGS " -w")
+endif()
+
 FetchContent_GetProperties(googletest)
 if(NOT googletest_POPULATED)
   FetchContent_Populate(googletest)
