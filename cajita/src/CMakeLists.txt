@@ -14,6 +14,7 @@ configure_file(Cajita_Config.hpp.in Cajita_Config.hpp)
 set(HEADERS_PUBLIC
   Cajita.hpp
   Cajita_Array.hpp
+  Cajita_SparseArray.hpp
   Cajita_BovWriter.hpp
   Cajita_GlobalGrid.hpp
   Cajita_GlobalGrid_impl.hpp
@@ -25,6 +26,8 @@ set(HEADERS_PUBLIC
   Cajita_Interpolation.hpp
   Cajita_LocalGrid.hpp
   Cajita_LocalGrid_impl.hpp
+  Cajita_SparseLocalGrid.hpp
+  Cajita_SparseLocalGrid_impl.hpp
   Cajita_LocalMesh.hpp
   Cajita_ManualPartitioner.hpp
   Cajita_MpiTraits.hpp

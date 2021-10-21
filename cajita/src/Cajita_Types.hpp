@@ -254,6 +254,13 @@ struct SparseMesh
 
     //! Number of spatial dimensions.
     static constexpr std::size_t num_space_dim = NumSpaceDim;
+
+    SparseMesh()
+    {
+        static_assert(
+            3 == num_space_dim,
+            "Sparse Mesh/Grid: support 3D instantiations only at this point" );
+    }
 };
 
 // Type checker.
