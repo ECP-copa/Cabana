@@ -17,8 +17,10 @@
 #define CABANA_PARALLEL_HPP
 
 #include <Cabana_ExecutionPolicy.hpp>
+#include <Cabana_LinkedCellList.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Types.hpp> // is_accessible_from
+#include <impl/Cabana_CartesianGrid.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -1057,6 +1059,217 @@ for_each_neighbor( const IndexType i, const TeamMemberType team,
                 static_cast<IndexType>(
                     neighbor_list_traits::getNeighbor( list, i, n ) ) );
         } );
+}
+
+//---------------------------------------------------------------------------//
+// Linked Cell Parallel For
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute functor in parallel according to the execution policy over
+  particles with thread-local serial loops over linked cell list bins and
+  particle first neighbors in those bins.
+
+  \tparam FunctorType The functor type to execute.
+  \tparam NeighborListType The neighbor list type.
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \param exec_policy The policy over which to execute the functor.
+  \param functor The functor to execute in parallel
+  \param list The linked cell list over which to execute neighbor operations.
+  \param cell_stencil Stencil of cell neighbors to iterate over.
+  \param FirstNeighborsTag Tag indicating operations over particle first
+  neighbors.
+  \param SerialOpTag Tag indicating a serial loop strategy over neighbors.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
+
+  A "functor" is a class containing the function to execute in parallel, data
+  needed for that execution, and an optional \c execution_space typedef.  Here
+  is an example functor for neighbor parallel_for:
+
+  \code
+  class FunctorType {
+  public:
+  typedef  ...  execution_space ;
+  void operator() ( const int particle_index, const int neighbor_index ) const ;
+  };
+  \endcode
+
+  In the above example, \c Index is a Cabana index to a given AoSoA element
+  for a particle and its neighbor. Its <tt>operator()</tt> method defines the
+  operation to parallelize, over the range of indices
+  <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
+  \c for loop.
+*/
+template <class FunctorType, class LinkedCellType, class StencilType,
+          class... ExecParameters>
+inline void linkedcell_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const LinkedCellType& list,
+    const StencilType& cell_stencil, const FirstNeighborsTag, const SerialOpTag,
+    const std::string& str = "" )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using index_type =
+        typename Kokkos::RangePolicy<ExecParameters...>::index_type;
+
+    using memory_space = typename LinkedCellType::device_type::memory_space;
+
+    NeighborDiscriminator<FullNeighborTag> discriminator;
+
+    auto begin = exec_policy.begin();
+    auto end = exec_policy.end();
+    using linear_policy_type = Kokkos::RangePolicy<execution_space, void, void>;
+    linear_policy_type linear_exec_policy( begin, end );
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    auto cell = list.cells( begin, end );
+    auto neigh_func = KOKKOS_LAMBDA( const index_type i )
+    {
+        int imin, imax, jmin, jmax, kmin, kmax;
+        cell_stencil.getCells( cell( i ), imin, imax, jmin, jmax, kmin, kmax );
+
+        // Loop over the cell stencil.
+        for ( int gi = imin; gi < imax; ++gi )
+            for ( int gj = jmin; gj < jmax; ++gj )
+                for ( int gk = kmin; gk < kmax; ++gk )
+                {
+                    // Check the particles in this bin to see if they are
+                    // neighbors.
+                    auto offset = list.binOffset( gi, gj, gk );
+                    auto size = list.binSize( gi, gj, gk );
+                    for ( std::size_t j = offset; j < offset + size; ++j )
+                    {
+                        // Avoid self interactions (dummy position args).
+                        if ( discriminator.isValid( i, 0, 0, 0, j, 0, 0, 0 ) )
+                        {
+                            // Get the true id of the candidate neighbor.
+                            // std::size_t jj = list.permutation( j );
+                            Impl::functorTagDispatch<work_tag>( functor, i, j );
+                        }
+                    }
+                }
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( linear_exec_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, linear_exec_policy, neigh_func );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Execute functor in parallel according to the execution policy over
+  particles with thread-local serial loops over linked cell list bins and
+  team threading over particle first neighbors in those bins.
+
+  \tparam FunctorType The functor type to execute.
+  \tparam NeighborListType The neighbor list type.
+  \tparam ExecParams The Kokkos range policy parameters.
+
+  \param exec_policy The policy over which to execute the functor.
+  \param functor The functor to execute in parallel
+  \param list The linked cell list over which to execute neighbor operations.
+  \param cell_stencil Stencil of cell neighbors to iterate over.
+  \param FirstNeighborsTag Tag indicating operations over particle first
+  neighbors.
+  \param TeamOpTag Tag indicating a team parallel strategy over particle
+  neighbors.
+  \param str Optional name for the functor. Will be forwarded if non-empty to
+  the Kokkos::parallel_for called by this code and can be used for
+  identification and profiling purposes.
+
+  A "functor" is a class containing the function to execute in parallel, data
+  needed for that execution, and an optional \c execution_space typedef.  Here
+  is an example functor for neighbor parallel_for:
+
+  \code
+  class FunctorType {
+  public:
+  typedef  ...  execution_space ;
+  void operator() ( const int particle_index, const int neighbor_index ) const ;
+  };
+  \endcode
+
+  In the above example, \c Index is a Cabana index to a given AoSoA element
+  for a particle and its neighbor. Its <tt>operator()</tt> method defines the
+  operation to parallelize, over the range of indices
+  <tt>idx=[begin,end]</tt>.  This compares to a single iteration \c idx of a
+  \c for loop.
+*/
+template <class FunctorType, class LinkedCellType, class StencilType,
+          class... ExecParameters>
+inline void linkedcell_parallel_for(
+    const Kokkos::RangePolicy<ExecParameters...>& exec_policy,
+    const FunctorType& functor, const LinkedCellType& list,
+    const StencilType& cell_stencil, const FirstNeighborsTag, const TeamOpTag,
+    const std::string& str = "" )
+{
+    using work_tag = typename Kokkos::RangePolicy<ExecParameters...>::work_tag;
+
+    using execution_space =
+        typename Kokkos::RangePolicy<ExecParameters...>::execution_space;
+
+    using kokkos_policy =
+        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
+    kokkos_policy team_policy( exec_policy.end() - exec_policy.begin(),
+                               Kokkos::AUTO );
+
+    using index_type = typename kokkos_policy::index_type;
+
+    using memory_space = typename LinkedCellType::device_type::memory_space;
+
+    NeighborDiscriminator<FullNeighborTag> discriminator;
+
+    auto begin = exec_policy.begin();
+    auto end = exec_policy.end();
+
+    static_assert( is_accessible_from<memory_space, execution_space>{}, "" );
+
+    auto cell = list.cells( begin, end );
+    auto neigh_func =
+        KOKKOS_LAMBDA( const typename kokkos_policy::member_type& team )
+    {
+        index_type i = team.league_rank() + begin;
+        int imin, imax, jmin, jmax, kmin, kmax;
+        cell_stencil.getCells( cell( i ), imin, imax, jmin, jmax, kmin, kmax );
+
+        // Loop over the cell stencil.
+        for ( int gi = imin; gi < imax; ++gi )
+            for ( int gj = jmin; gj < jmax; ++gj )
+                for ( int gk = kmin; gk < kmax; ++gk )
+                {
+                    // Check the particles in this bin to see if they
+                    // are neighbors.
+                    auto offset = list.binOffset( gi, gj, gk );
+                    auto size = list.binSize( gi, gj, gk );
+                    Kokkos::parallel_for(
+                        Kokkos::TeamThreadRange( team, offset, offset + size ),
+                        [&]( const index_type j )
+                        {
+                            // Avoid self interactions (dummy position args).
+                            if ( discriminator.isValid( i, 0, 0, 0, j, 0, 0,
+                                                        0 ) )
+                            {
+                                // Get the true id of the candidate neighbor.
+                                // std::size_t jj = list.permutation( j );
+                                Impl::functorTagDispatch<work_tag>( functor, i,
+                                                                    j );
+                            }
+                        } );
+                }
+    };
+    if ( str.empty() )
+        Kokkos::parallel_for( team_policy, neigh_func );
+    else
+        Kokkos::parallel_for( str, team_policy, neigh_func );
 }
 
 } // end namespace Cabana

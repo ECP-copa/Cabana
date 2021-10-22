@@ -976,6 +976,21 @@ struct NeighborListTestData
         auto N2_list = computeFullNeighborList( positions, test_radius );
         N2_list_copy = createTestListHostCopy( N2_list );
     }
+
+    void build()
+    {
+        for ( int d = 0; d < 3; ++d )
+        {
+            grid_min[d] = box_min;
+            grid_max[d] = box_max;
+        }
+        auto positions = Cabana::slice<0>( aosoa );
+        Cabana::createRandomParticles( positions, positions.size(), box_min,
+                                       box_max );
+        // Create a full N^2 neighbor list to check against.
+        auto N2_list = computeFullNeighborList( positions, test_radius );
+        N2_list_copy = createTestListHostCopy( N2_list );
+    }
 };
 
 //---------------------------------------------------------------------------//

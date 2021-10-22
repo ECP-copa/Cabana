@@ -32,8 +32,7 @@ void testLinkedCellStencil()
         double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
+        Cabana::LinkedCellStencil<double> stencil( radius, ratio, min, max );
 
         double xp = 4.5;
         double yp = 5.5;
@@ -57,8 +56,7 @@ void testLinkedCellStencil()
         double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
+        Cabana::LinkedCellStencil<double> stencil( radius, ratio, min, max );
 
         double xp = 0.5;
         double yp = 0.5;
@@ -82,8 +80,7 @@ void testLinkedCellStencil()
         double max[3] = { 10.0, 10.0, 10.0 };
         double radius = 1.0;
         double ratio = 1.0;
-        Cabana::Impl::LinkedCellStencil<double> stencil( radius, ratio, min,
-                                                         max );
+        Cabana::LinkedCellStencil<double> stencil( radius, ratio, min, max );
 
         double xp = 9.5;
         double yp = 9.5;
