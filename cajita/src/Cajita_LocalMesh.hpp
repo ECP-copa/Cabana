@@ -50,6 +50,9 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Kokkos execution space.
     using execution_space = typename Device::execution_space;
 
+    //! Default constructor.
+    LocalMesh() = default;
+
     //! Constructor.
     LocalMesh( const LocalGrid<UniformMesh<Scalar, num_space_dim>>& local_grid )
     {
