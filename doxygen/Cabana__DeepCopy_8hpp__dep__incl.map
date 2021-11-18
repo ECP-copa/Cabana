@@ -1,9 +1,9 @@
 <map id="core/src/Cabana_DeepCopy.hpp" name="core/src/Cabana_DeepCopy.hpp">
-<area shape="rect" id="node1" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="61,5,271,32"/>
-<area shape="rect" id="node2" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,333,183,360"/>
-<area shape="rect" id="node3" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="79,87,253,114"/>
-<area shape="rect" id="node6" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="289,80,453,121"/>
-<area shape="rect" id="node4" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="106,169,290,211"/>
-<area shape="rect" id="node5" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="157,259,359,285"/>
-<area shape="rect" id="node7" href="$Cajita_8hpp_source.html" title=" " alt="" coords="315,177,452,203"/>
+<area shape="rect" id="node1" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="67,5,294,32"/>
+<area shape="rect" id="node2" href="$Cabana__Core_8hpp_source.html" title=" " alt="" coords="5,333,196,360"/>
+<area shape="rect" id="node3" href="$Cabana__Sort_8hpp.html" title="Sorting and binning built on Kokkos BinSort." alt="" coords="87,87,274,114"/>
+<area shape="rect" id="node6" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="311,80,490,121"/>
+<area shape="rect" id="node4" href="$Cabana__LinkedCellList_8hpp.html" title="Linked cell list binning and sorting." alt="" coords="113,169,315,211"/>
+<area shape="rect" id="node5" href="$Cabana__VerletList_8hpp.html" title="Verlet grid&#45;accelerated neighbor list." alt="" coords="164,259,387,285"/>
+<area shape="rect" id="node7" href="$Cajita_8hpp_source.html" title=" " alt="" coords="339,177,489,203"/>
 </map>

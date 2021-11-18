@@ -1,7 +1,7 @@
 <map id="cajita/src/Cajita_LocalMesh.hpp" name="cajita/src/Cajita_LocalMesh.hpp">
-<area shape="rect" id="node1" title="Local mesh." alt="" coords="99,5,306,32"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="141,244,278,271"/>
-<area shape="rect" id="node3" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="29,162,245,189"/>
-<area shape="rect" id="node4" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="321,155,485,196"/>
-<area shape="rect" id="node5" href="$Cajita__Splines_8hpp.html" title="Spline functions." alt="" coords="175,80,361,107"/>
+<area shape="rect" id="node1" title="Local mesh." alt="" coords="107,5,334,32"/>
+<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="155,244,305,271"/>
+<area shape="rect" id="node3" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="31,162,272,189"/>
+<area shape="rect" id="node4" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="347,155,526,196"/>
+<area shape="rect" id="node5" href="$Cajita__Splines_8hpp.html" title="Spline functions." alt="" coords="189,80,394,107"/>
 </map>

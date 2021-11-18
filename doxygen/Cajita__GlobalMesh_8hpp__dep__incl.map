@@ -1,19 +1,19 @@
 <map id="cajita/src/Cajita_GlobalMesh.hpp" name="cajita/src/Cajita_GlobalMesh.hpp">
-<area shape="rect" id="node1" title="Global mesh." alt="" coords="669,5,825,47"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="706,512,843,539"/>
-<area shape="rect" id="node3" href="$Cajita__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="1007,95,1163,136"/>
-<area shape="rect" id="node13" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="43,333,207,375"/>
-<area shape="rect" id="node16" href="$Cajita__SparseIndexSpace_8hpp.html" title="Sparse grid mapping." alt="" coords="1803,333,1965,375"/>
-<area shape="rect" id="node4" href="$Cajita__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="1253,333,1467,375"/>
-<area shape="rect" id="node5" href="$Cajita__LocalGrid_8hpp.html" title="Local grid." alt="" coords="922,184,1121,211"/>
-<area shape="rect" id="node11" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="1101,423,1280,464"/>
-<area shape="rect" id="node6" href="$Cajita__Array_8hpp.html" title="Grid field arrays." alt="" coords="807,259,982,285"/>
-<area shape="rect" id="node12" href="$Cajita__LocalMesh_8hpp.html" title="Local mesh." alt="" coords="273,259,479,285"/>
-<area shape="rect" id="node15" href="$Cajita__Parallel_8hpp.html" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="1491,341,1677,367"/>
-<area shape="rect" id="node7" href="$Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="743,430,945,457"/>
-<area shape="rect" id="node8" href="$Cajita__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="942,333,1127,375"/>
-<area shape="rect" id="node9" href="$Cajita__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="747,341,917,367"/>
-<area shape="rect" id="node10" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="452,430,668,457"/>
-<area shape="rect" id="node14" href="$Cajita__Splines_8hpp.html" title="Spline functions." alt="" coords="283,341,469,367"/>
-<area shape="rect" id="node17" href="$Cajita__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="1854,423,2015,464"/>
+<area shape="rect" id="node1" title="Global mesh." alt="" coords="705,5,877,47"/>
+<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="745,512,895,539"/>
+<area shape="rect" id="node3" href="$Cajita__GlobalGrid_8hpp.html" title="Global grid." alt="" coords="1057,95,1229,136"/>
+<area shape="rect" id="node13" href="$Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="43,333,221,375"/>
+<area shape="rect" id="node16" href="$Cajita__SparseIndexSpace_8hpp.html" title="Sparse grid mapping." alt="" coords="1913,333,2087,375"/>
+<area shape="rect" id="node4" href="$Cajita__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="1319,333,1555,375"/>
+<area shape="rect" id="node5" href="$Cajita__LocalGrid_8hpp.html" title="Local grid." alt="" coords="965,184,1184,211"/>
+<area shape="rect" id="node11" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="1159,423,1353,464"/>
+<area shape="rect" id="node6" href="$Cajita__Array_8hpp.html" title="Grid field arrays." alt="" coords="845,259,1035,285"/>
+<area shape="rect" id="node12" href="$Cajita__LocalMesh_8hpp.html" title="Local mesh." alt="" coords="285,259,512,285"/>
+<area shape="rect" id="node15" href="$Cajita__Parallel_8hpp.html" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="1579,341,1786,367"/>
+<area shape="rect" id="node7" href="$Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="784,430,1005,457"/>
+<area shape="rect" id="node8" href="$Cajita__FastFourierTransform_8hpp.html" title="Fast Fourier transforms." alt="" coords="991,333,1193,375"/>
+<area shape="rect" id="node9" href="$Cajita__Halo_8hpp.html" title="Multi&#45;node grid scatter/gather." alt="" coords="779,341,967,367"/>
+<area shape="rect" id="node10" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="467,430,709,457"/>
+<area shape="rect" id="node14" href="$Cajita__Splines_8hpp.html" title="Spline functions." alt="" coords="296,341,501,367"/>
+<area shape="rect" id="node17" href="$Cajita__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="1963,423,2138,464"/>
 </map>
