@@ -54,8 +54,6 @@ template <class Array>
 void checkGather( const std::array<bool, 3>& is_dim_periodic,
                   const int halo_width, const Array& array )
 {
-    // FIXME Change back to fine grained EXPECT_EQ when passing on all distros
-    int pass_gather_test = 1;
     auto owned_space = array.layout()->indexSpace( Own(), Local() );
     auto ghosted_space = array.layout()->indexSpace( Ghost(), Local() );
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -95,10 +93,7 @@ void checkGather( const std::array<bool, 3>& is_dim_periodic,
                          in_boundary_max_halo( j, Dim::J ) ||
                          in_boundary_max_halo( k, Dim::K ) )
                     {
-                        if ( host_view( i, j, k, l ) != 0.0 )
-                        {
-                            pass_gather_test = 0;
-                        }
+                        EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), 0.0 );
                     }
                     else if ( i < owned_space.min( Dim::I ) - halo_width ||
                               i >= owned_space.max( Dim::I ) + halo_width +
@@ -110,19 +105,12 @@ void checkGather( const std::array<bool, 3>& is_dim_periodic,
                               k >= owned_space.max( Dim::K ) + halo_width +
                                        pad_k )
                     {
-                        if ( host_view( i, j, k, l ) != 0.0 )
-                        {
-                            pass_gather_test = 0;
-                        }
+                        EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), 0.0 );
                     }
                     else
                     {
-                        if ( host_view( i, j, k, l ) != 1.0 )
-                        {
-                            pass_gather_test = 0;
-                        }
+                        EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), 1.0 );
                     }
-    EXPECT_EQ( pass_gather_test, 1 );
 }
 
 //---------------------------------------------------------------------------//
