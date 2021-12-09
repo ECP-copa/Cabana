@@ -45,7 +45,7 @@ void captureTest()
     auto int_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), int_view );
 
-    EXPECT_EQ( dbl_host( 0 ), 3.14 );
+    EXPECT_DOUBLE_EQ( dbl_host( 0 ), 3.14 );
     EXPECT_EQ( int_host( 0, 0 ), 12 );
 }
 
