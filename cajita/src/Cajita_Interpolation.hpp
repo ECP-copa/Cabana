@@ -408,18 +408,6 @@ struct is_scatter_view_impl : public std::false_type
 {
 };
 
-#if ( KOKKOS_VERSION < 30200 )
-// FIXME: This is for Kokkos 3.1 and earlier
-template <typename DataType, typename Layout, typename ExecSpace, int Op,
-          int duplication, int contribution>
-struct is_scatter_view_impl<Kokkos::Experimental::ScatterView<
-    DataType, Layout, ExecSpace, Op, duplication, contribution>>
-    : public std::true_type
-{
-};
-
-#else
-// FIXME: This is for Kokkos 3.2 and later.
 template <typename DataType, typename Layout, typename ExecSpace, typename Op,
           typename duplication, typename contribution>
 struct is_scatter_view_impl<Kokkos::Experimental::ScatterView<
@@ -427,7 +415,6 @@ struct is_scatter_view_impl<Kokkos::Experimental::ScatterView<
     : public std::true_type
 {
 };
-#endif
 //! \endcond
 
 //! Scatter-View static type checker.
