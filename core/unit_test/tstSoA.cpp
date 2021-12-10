@@ -64,8 +64,8 @@ void testSoA()
     Cabana::get<5>( soa, 2, 1, 1, 1 ) = v2;
 
     // Check the data.
-    EXPECT_EQ( Cabana::get<0>( soa, 3 ), v1 );
-    EXPECT_EQ( Cabana::get<5>( soa, 2, 1, 1, 1 ), v2 );
+    EXPECT_DOUBLE_EQ( Cabana::get<0>( soa, 3 ), v1 );
+    EXPECT_FLOAT_EQ( Cabana::get<5>( soa, 2, 1, 1, 1 ), v2 );
 }
 
 //---------------------------------------------------------------------------//

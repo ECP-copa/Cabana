@@ -259,7 +259,7 @@ void arrayOpTest()
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
             for ( long l = 0; l < ghosted_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_view( i, j, l ), 2.0 );
+                EXPECT_DOUBLE_EQ( host_view( i, j, l ), 2.0 );
 
     // Scale the entire array with a single value.
     ArrayOp::scale( *array, 0.5, Ghost() );
@@ -267,7 +267,7 @@ void arrayOpTest()
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
             for ( long l = 0; l < ghosted_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_view( i, j, l ), 1.0 );
+                EXPECT_DOUBLE_EQ( host_view( i, j, l ), 1.0 );
 
     // Scale each array component by a different value.
     std::vector<double> scales = { 2.3, 1.5, 8.9, -12.1 };
@@ -276,7 +276,7 @@ void arrayOpTest()
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
             for ( long l = 0; l < ghosted_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_view( i, j, l ), scales[l] );
+                EXPECT_DOUBLE_EQ( host_view( i, j, l ), scales[l] );
 
     // Create another array and update.
     auto array_2 = createArray<double, TEST_DEVICE>( label, cell_layout );
@@ -286,7 +286,7 @@ void arrayOpTest()
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
             for ( long l = 0; l < ghosted_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_view( i, j, l ), 3.0 * scales[l] + 1.0 );
+                EXPECT_DOUBLE_EQ( host_view( i, j, l ), 3.0 * scales[l] + 1.0 );
 
     // Check the subarray.
     auto subarray = createSubarray( *array, 2, 4 );
@@ -301,7 +301,8 @@ void arrayOpTest()
     for ( long i = 0; i < sub_ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < sub_ghosted_space.extent( Dim::J ); ++j )
             for ( long l = 0; l < sub_ghosted_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_subview( i, j, l ), 3.0 * scales[l + 2] + 1.0 );
+                EXPECT_DOUBLE_EQ( host_subview( i, j, l ),
+                                  3.0 * scales[l + 2] + 1.0 );
 
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     // Compute the dot product of the two arrays.
@@ -349,7 +350,7 @@ void arrayOpTest()
         for ( long j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
               ++j )
             for ( long l = 0; l < owned_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_view( i, j, l ), 0.5 );
+                EXPECT_DOUBLE_EQ( host_view( i, j, l ), 0.5 );
 
     // Now make a clone and copy.
     auto array_3 = ArrayOp::clone( *array );
@@ -360,7 +361,7 @@ void arrayOpTest()
         for ( long j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
               ++j )
             for ( long l = 0; l < owned_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_view( i, j, l ), 0.5 );
+                EXPECT_DOUBLE_EQ( host_view( i, j, l ), 0.5 );
 
     // Test the fused clone copy.
     auto array_4 = ArrayOp::cloneCopy( *array, Own() );
@@ -370,7 +371,7 @@ void arrayOpTest()
         for ( long j = owned_space.min( Dim::J ); j < owned_space.max( Dim::J );
               ++j )
             for ( long l = 0; l < owned_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_view( i, j, l ), 0.5 );
+                EXPECT_DOUBLE_EQ( host_view( i, j, l ), 0.5 );
 
     // Do a 3 vector update.
     ArrayOp::assign( *array, 1.0, Ghost() );
@@ -384,8 +385,8 @@ void arrayOpTest()
     for ( long i = 0; i < ghosted_space.extent( Dim::I ); ++i )
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
             for ( long l = 0; l < ghosted_space.extent( 2 ); ++l )
-                EXPECT_EQ( host_view( i, j, l ),
-                           ( 3.0 + 1.0 + 6.0 ) * scales[l] );
+                EXPECT_DOUBLE_EQ( host_view( i, j, l ),
+                                  ( 3.0 + 1.0 + 6.0 ) * scales[l] );
 }
 
 //---------------------------------------------------------------------------//

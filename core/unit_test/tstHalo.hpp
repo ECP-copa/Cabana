@@ -105,12 +105,12 @@ void test1( const bool use_topology )
     for ( int i = 0; i < my_size; ++i )
     {
         EXPECT_EQ( slice_int_host( 2 * i ), my_rank + 1 );
-        EXPECT_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
-        EXPECT_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
 
         EXPECT_EQ( slice_int_host( 2 * i + 1 ), my_rank + 1 );
-        EXPECT_EQ( slice_dbl_host( 2 * i + 1, 0 ), my_rank + 1 );
-        EXPECT_EQ( slice_dbl_host( 2 * i + 1, 1 ), my_rank + 1.5 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 0 ), my_rank + 1 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 1 ), my_rank + 1.5 );
     }
 
     // Check that we got one element from everyone.
@@ -121,20 +121,20 @@ void test1( const bool use_topology )
         if ( send_rank == 0 )
         {
             EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
         }
         else if ( send_rank == my_rank )
         {
             EXPECT_EQ( slice_int_host( i ), 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 1.5 );
         }
         else
         {
             EXPECT_EQ( slice_int_host( i ), send_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
         }
     }
 
@@ -149,12 +149,13 @@ void test1( const bool use_topology )
     for ( int i = 0; i < my_size; ++i )
     {
         EXPECT_EQ( slice_int_host( 2 * i ), my_rank + 1 );
-        EXPECT_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
-        EXPECT_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
 
         EXPECT_EQ( slice_int_host( 2 * i + 1 ), 2 * ( my_rank + 1 ) );
-        EXPECT_EQ( slice_dbl_host( 2 * i + 1, 0 ), 2 * ( my_rank + 1 ) );
-        EXPECT_EQ( slice_dbl_host( 2 * i + 1, 1 ), 2 * ( my_rank + 1.5 ) );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 0 ), 2 * ( my_rank + 1 ) );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 1 ),
+                          2 * ( my_rank + 1.5 ) );
     }
 
     // Check that the ghost data didn't change.
@@ -165,20 +166,20 @@ void test1( const bool use_topology )
         if ( send_rank == 0 )
         {
             EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
         }
         else if ( send_rank == my_rank )
         {
             EXPECT_EQ( slice_int_host( i ), 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 1.5 );
         }
         else
         {
             EXPECT_EQ( slice_int_host( i ), send_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
         }
     }
 
@@ -191,12 +192,13 @@ void test1( const bool use_topology )
     for ( int i = 0; i < my_size; ++i )
     {
         EXPECT_EQ( slice_int_host( 2 * i ), my_rank + 1 );
-        EXPECT_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
-        EXPECT_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 0 ), my_rank + 1 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i, 1 ), my_rank + 1.5 );
 
         EXPECT_EQ( slice_int_host( 2 * i + 1 ), 2 * ( my_rank + 1 ) );
-        EXPECT_EQ( slice_dbl_host( 2 * i + 1, 0 ), 2 * ( my_rank + 1 ) );
-        EXPECT_EQ( slice_dbl_host( 2 * i + 1, 1 ), 2 * ( my_rank + 1.5 ) );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 0 ), 2 * ( my_rank + 1 ) );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( 2 * i + 1, 1 ),
+                          2 * ( my_rank + 1.5 ) );
     }
 
     // Check that the ghost data was updated.
@@ -207,20 +209,20 @@ void test1( const bool use_topology )
         if ( send_rank == 0 )
         {
             EXPECT_EQ( slice_int_host( i ), 2 * ( my_rank + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), 2 * ( my_rank + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), 2 * ( my_rank + 1.5 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 2 * ( my_rank + 1 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 2 * ( my_rank + 1.5 ) );
         }
         else if ( send_rank == my_rank )
         {
             EXPECT_EQ( slice_int_host( i ), 2 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), 2 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), 3 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 2 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 3 );
         }
         else
         {
             EXPECT_EQ( slice_int_host( i ), 2 * ( send_rank + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), 2 * ( send_rank + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), 2 * ( send_rank + 1.5 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 2 * ( send_rank + 1 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 2 * ( send_rank + 1.5 ) );
         }
     }
 }
@@ -300,8 +302,8 @@ void test2( const bool use_topology )
 
     // check that the local data didn't change.
     EXPECT_EQ( slice_int_host( 0 ), my_rank + 1 );
-    EXPECT_EQ( slice_dbl_host( 0, 0 ), my_rank + 1 );
-    EXPECT_EQ( slice_dbl_host( 0, 1 ), my_rank + 1.5 );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 0 ), my_rank + 1 );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 1 ), my_rank + 1.5 );
 
     // Check that we got one element from everyone.
     for ( int i = num_local; i < num_local + my_size; ++i )
@@ -311,20 +313,20 @@ void test2( const bool use_topology )
         if ( send_rank == 0 )
         {
             EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
         }
         else if ( send_rank == my_rank )
         {
             EXPECT_EQ( slice_int_host( i ), 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 1.5 );
         }
         else
         {
             EXPECT_EQ( slice_int_host( i ), send_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
         }
     }
 
@@ -336,8 +338,10 @@ void test2( const bool use_topology )
     // Check that the local data was updated. Every ghost was sent to all of
     // the ranks so the result should be multiplied by the number of ranks.
     EXPECT_EQ( slice_int_host( 0 ), ( my_size + 1 ) * ( my_rank + 1 ) );
-    EXPECT_EQ( slice_dbl_host( 0, 0 ), ( my_size + 1 ) * ( my_rank + 1 ) );
-    EXPECT_EQ( slice_dbl_host( 0, 1 ), ( my_size + 1 ) * ( my_rank + 1.5 ) );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 0 ),
+                      ( my_size + 1 ) * ( my_rank + 1 ) );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 1 ),
+                      ( my_size + 1 ) * ( my_rank + 1.5 ) );
 
     // Check that the ghost data didn't change.
     for ( int i = num_local; i < num_local + my_size; ++i )
@@ -347,20 +351,20 @@ void test2( const bool use_topology )
         if ( send_rank == 0 )
         {
             EXPECT_EQ( slice_int_host( i ), my_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), my_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), my_rank + 1.5 );
         }
         else if ( send_rank == my_rank )
         {
             EXPECT_EQ( slice_int_host( i ), 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 1.5 );
         }
         else
         {
             EXPECT_EQ( slice_int_host( i ), send_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), send_rank + 1 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), send_rank + 1.5 );
         }
     }
 
@@ -371,8 +375,10 @@ void test2( const bool use_topology )
 
     // Check that the local data remained unchanged.
     EXPECT_EQ( slice_int_host( 0 ), ( my_size + 1 ) * ( my_rank + 1 ) );
-    EXPECT_EQ( slice_dbl_host( 0, 0 ), ( my_size + 1 ) * ( my_rank + 1 ) );
-    EXPECT_EQ( slice_dbl_host( 0, 1 ), ( my_size + 1 ) * ( my_rank + 1.5 ) );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 0 ),
+                      ( my_size + 1 ) * ( my_rank + 1 ) );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 1 ),
+                      ( my_size + 1 ) * ( my_rank + 1.5 ) );
 
     // Check that the ghost data was updated.
     for ( int i = num_local; i < num_local + my_size; ++i )
@@ -382,25 +388,25 @@ void test2( const bool use_topology )
         if ( send_rank == 0 )
         {
             EXPECT_EQ( slice_int_host( i ), ( my_size + 1 ) * ( my_rank + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 0 ),
-                       ( my_size + 1 ) * ( my_rank + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 1 ),
-                       ( my_size + 1 ) * ( my_rank + 1.5 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
+                              ( my_size + 1 ) * ( my_rank + 1 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
+                              ( my_size + 1 ) * ( my_rank + 1.5 ) );
         }
         else if ( send_rank == my_rank )
         {
             EXPECT_EQ( slice_int_host( i ), ( my_size + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), ( my_size + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), ( my_size + 1 ) * 1.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), ( my_size + 1 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), ( my_size + 1 ) * 1.5 );
         }
         else
         {
             EXPECT_EQ( slice_int_host( i ),
                        ( my_size + 1 ) * ( send_rank + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 0 ),
-                       ( my_size + 1 ) * ( send_rank + 1 ) );
-            EXPECT_EQ( slice_dbl_host( i, 1 ),
-                       ( my_size + 1 ) * ( send_rank + 1.5 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
+                              ( my_size + 1 ) * ( send_rank + 1 ) );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
+                              ( my_size + 1 ) * ( send_rank + 1.5 ) );
         }
     }
 }

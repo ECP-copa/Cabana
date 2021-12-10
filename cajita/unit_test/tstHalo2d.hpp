@@ -48,8 +48,6 @@ template <class Array>
 void checkGather( const std::array<bool, 2>& is_dim_periodic,
                   const int halo_width, const Array& array )
 {
-    // FIXME Change back to fine grained EXPECT_EQ when passing on all distros
-    int pass_gather_test = 1;
     auto owned_space = array.layout()->indexSpace( Own(), Local() );
     auto ghosted_space = array.layout()->indexSpace( Ghost(), Local() );
     auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
@@ -85,29 +83,19 @@ void checkGather( const std::array<bool, 2>& is_dim_periodic,
                      in_boundary_max_halo( i, Dim::I ) ||
                      in_boundary_max_halo( j, Dim::J ) )
                 {
-                    if ( host_view( i, j, l ) != 0.0 )
-                    {
-                        pass_gather_test = 0;
-                    }
+                    EXPECT_DOUBLE_EQ( host_view( i, j, l ), 0.0 );
                 }
                 else if ( i < owned_space.min( Dim::I ) - halo_width ||
                           i >= owned_space.max( Dim::I ) + halo_width + pad_i ||
                           j < owned_space.min( Dim::J ) - halo_width ||
                           j >= owned_space.max( Dim::J ) + halo_width + pad_j )
                 {
-                    if ( host_view( i, j, l ) != 0.0 )
-                    {
-                        pass_gather_test = 0;
-                    }
+                    EXPECT_DOUBLE_EQ( host_view( i, j, l ), 0.0 );
                 }
                 else
                 {
-                    if ( host_view( i, j, l ) != 1.0 )
-                    {
-                        pass_gather_test = 0;
-                    }
+                    EXPECT_DOUBLE_EQ( host_view( i, j, l ), 1.0 );
                 }
-    EXPECT_EQ( pass_gather_test, 1 );
 }
 
 //---------------------------------------------------------------------------//
