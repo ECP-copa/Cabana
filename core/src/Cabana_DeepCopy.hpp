@@ -137,7 +137,7 @@ create_mirror_view_and_copy(
 
     Kokkos::deep_copy(
         typename decltype( dst )::soa_view( dst.data(), dst.numSoA() ),
-        typename decltype( src )::soa_view( src.data(), src.numSoA() ) );
+        typename SrcAoSoA::soa_view( src.data(), src.numSoA() ) );
 
     return dst;
 }
