@@ -100,7 +100,7 @@ class SimdPolicy
 
     /*!
       \brief Range constructor.
-      \param begin The begininning of the 1D range. This will be decomposed
+      \param begin The beginning of the 1D range. This will be decomposed
       into 2D indices.
       \param end The ending of the 1D range. This will be decomposed
       into 2D indices.
