@@ -77,26 +77,15 @@ class StructRange
   array index.
 */
 template <int VectorLength, class... Properties>
-class SimdPolicy
-    : public Kokkos::TeamPolicy<
-          typename Kokkos::TeamPolicy<Properties...>::execution_space,
-          Kokkos::Schedule<Kokkos::Dynamic>>
+class SimdPolicy : public Kokkos::TeamPolicy<Properties...,
+                                             Kokkos::Schedule<Kokkos::Dynamic>>
 {
-  private:
-    using traits = Kokkos::TeamPolicy<Properties...>;
-
   public:
-    //! Work tag.
-    using work_tag = typename traits::work_tag;
-    //! Kokkos execution space.
-    using execution_space = typename traits::execution_space;
     //! Kokkos team policy.
     using base_type =
-        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
-    //! Simd execution policy.
-    using execution_policy = SimdPolicy<VectorLength, Properties...>;
+        Kokkos::TeamPolicy<Properties..., Kokkos::Schedule<Kokkos::Dynamic>>;
     //! Index type.
-    using index_type = typename traits::index_type;
+    using index_type = typename base_type::index_type;
 
     /*!
       \brief Range constructor.

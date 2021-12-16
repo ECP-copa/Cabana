@@ -74,6 +74,54 @@ KOKKOS_FORCEINLINE_FUNCTION
     functor( t, std::forward<IndexTypes>( indices )..., reduce_val );
 }
 
+template <class ExecutionPolicy, class Functor>
+struct ParallelFor;
+
+template <class Functor, int VectorLength, class... Properties>
+struct ParallelFor<SimdPolicy<VectorLength, Properties...>, Functor>
+{
+    using simd_policy = SimdPolicy<VectorLength, Properties...>;
+    using team_policy = typename simd_policy::base_type;
+    using work_tag = typename team_policy::work_tag;
+    using index_type = typename team_policy::index_type;
+    using member_type = typename team_policy::member_type;
+
+    simd_policy exec_policy_;
+    Functor functor_;
+
+    ParallelFor( std::string label, simd_policy exec_policy, Functor functor )
+        : exec_policy_( std::move( exec_policy ) )
+        , functor_( std::move( functor ) )
+    {
+        if ( label.empty() )
+            Kokkos::parallel_for(
+                dynamic_cast<const team_policy&>( exec_policy_ ), *this );
+        else
+            Kokkos::parallel_for(
+                label, dynamic_cast<const team_policy&>( exec_policy_ ),
+                *this );
+    }
+
+    template <class WorkTag>
+    KOKKOS_FUNCTION std::enable_if_t<!std::is_void<WorkTag>::value &&
+                                     std::is_same<WorkTag, work_tag>::value>
+    operator()( WorkTag, member_type const& team ) const
+    {
+        this->operator()( team );
+    }
+
+    KOKKOS_FUNCTION void operator()( member_type const& team ) const
+    {
+        index_type s = team.league_rank() + exec_policy_.structBegin();
+        Kokkos::parallel_for(
+            Kokkos::ThreadVectorRange( team, exec_policy_.arrayBegin( s ),
+                                       exec_policy_.arrayEnd( s ) ),
+            [&]( index_type a ) {
+                Impl::functorTagDispatch<work_tag>( functor_, s, a );
+            } );
+    }
+};
+
 //! \endcond
 } // end namespace Impl
 
@@ -125,31 +173,8 @@ inline void simd_parallel_for(
     const SimdPolicy<VectorLength, ExecParameters...>& exec_policy,
     const FunctorType& functor, const std::string& str = "" )
 {
-    using simd_policy = SimdPolicy<VectorLength, ExecParameters...>;
-
-    using work_tag = typename simd_policy::work_tag;
-
-    using team_policy = typename simd_policy::base_type;
-
-    using index_type = typename team_policy::index_type;
-
-    auto simd_func =
-        KOKKOS_LAMBDA( const typename team_policy::member_type& team )
-    {
-        index_type s = team.league_rank() + exec_policy.structBegin();
-        Kokkos::parallel_for(
-            Kokkos::ThreadVectorRange( team, exec_policy.arrayBegin( s ),
-                                       exec_policy.arrayEnd( s ) ),
-            [&]( const index_type a ) {
-                Impl::functorTagDispatch<work_tag>( functor, s, a );
-            } );
-    };
-    if ( str.empty() )
-        Kokkos::parallel_for( dynamic_cast<const team_policy&>( exec_policy ),
-                              simd_func );
-    else
-        Kokkos::parallel_for(
-            str, dynamic_cast<const team_policy&>( exec_policy ), simd_func );
+    Impl::ParallelFor<SimdPolicy<VectorLength, ExecParameters...>, FunctorType>(
+        str, exec_policy, functor );
 }
 
 //---------------------------------------------------------------------------//
