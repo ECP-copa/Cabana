@@ -133,11 +133,11 @@ $(function() {
 <div class="line"><a name="l00079"></a><span class="lineno">   79</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keywordtype">int</span> VectorLength, <span class="keyword">class</span>... Properties&gt;</div>
 <div class="line"><a name="l00080"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html">   80</a></span>&#160;<span class="keyword">class </span><a class="code" href="classCabana_1_1SimdPolicy.html">SimdPolicy</a></div>
 <div class="line"><a name="l00081"></a><span class="lineno">   81</span>&#160;    : <span class="keyword">public</span> Kokkos::TeamPolicy&lt;</div>
-<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          typename Kokkos::Impl::PolicyTraits&lt;Properties...&gt;::execution_space,</div>
+<div class="line"><a name="l00082"></a><span class="lineno">   82</span>&#160;          typename Kokkos::TeamPolicy&lt;Properties...&gt;::execution_space,</div>
 <div class="line"><a name="l00083"></a><span class="lineno">   83</span>&#160;          Kokkos::Schedule&lt;Kokkos::Dynamic&gt;&gt;</div>
 <div class="line"><a name="l00084"></a><span class="lineno">   84</span>&#160;{</div>
 <div class="line"><a name="l00085"></a><span class="lineno">   85</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">typedef</span> Kokkos::Impl::PolicyTraits&lt;Properties...&gt; traits;</div>
+<div class="line"><a name="l00086"></a><span class="lineno">   86</span>&#160;    <span class="keyword">using</span> traits = Kokkos::TeamPolicy&lt;Properties...&gt;;</div>
 <div class="line"><a name="l00087"></a><span class="lineno">   87</span>&#160; </div>
 <div class="line"><a name="l00088"></a><span class="lineno">   88</span>&#160;  <span class="keyword">public</span>:</div>
 <div class="line"><a name="l00090"></a><span class="lineno"><a class="line" href="classCabana_1_1SimdPolicy.html#a032ee58dc32b6d3f9698d498da5bc87b">   90</a></span>&#160;    <span class="keyword">using</span> <a class="code" href="classCabana_1_1SimdPolicy.html#a032ee58dc32b6d3f9698d498da5bc87b">work_tag</a> = <span class="keyword">typename</span> traits::work_tag;</div>
