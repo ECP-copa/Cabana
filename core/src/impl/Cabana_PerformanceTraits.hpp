@@ -71,7 +71,7 @@ template <>
 class PerformanceTraits<Kokkos::Cuda>
 {
   public:
-    static constexpr int vector_length = Kokkos::Impl::CudaTraits::WarpSize;
+    static constexpr int vector_length = 32; // warp size
 };
 #endif
 
@@ -81,8 +81,7 @@ template <>
 class PerformanceTraits<Kokkos::Experimental::HIP>
 {
   public:
-    static constexpr int vector_length =
-        Kokkos::Experimental::Impl::HIPTraits::WarpSize;
+    static constexpr int vector_length = 64; // wavefront size
 };
 #endif
 
