@@ -330,9 +330,7 @@ class AoSoA
         // Update the sizes of the data. This is potentially different than
         // the amount of allocated data.
         _size = n;
-        _num_soa = std::floor( n / vector_length );
-        if ( 0 < n % vector_length )
-            ++_num_soa;
+        _num_soa = std::ceil( static_cast<double>( n ) / vector_length );
     }
 
     /*!
