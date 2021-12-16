@@ -165,11 +165,23 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                     {
                         Kokkos::MinMaxScalar<int> min_max;
                         Kokkos::MinMax<int> reducer( min_max );
+                        auto const& nlist_data_count =
+                            nlist._data.counts; // capture just the view
                         Kokkos::parallel_reduce(
                             "Cabana::countMinMax", policy,
-                            Kokkos::Impl::min_max_functor<
-                                Kokkos::View<int*, Device>>(
-                                nlist._data.counts ),
+                            KOKKOS_LAMBDA(
+                                const int p,
+                                Kokkos::MinMaxScalar<int>& local_minmax ) {
+                                auto const val = nlist_data_count( p );
+                                if ( val < local_minmax.min_val )
+                                {
+                                    local_minmax.min_val = val;
+                                }
+                                if ( val > local_minmax.max_val )
+                                {
+                                    local_minmax.max_val = val;
+                                }
+                            },
                             reducer );
                         Kokkos::fence();
                         std::cout << "List min neighbors: " << min_max.min_val
