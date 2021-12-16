@@ -44,15 +44,26 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(Kokkos 3.2 REQUIRED)
 
 # set supported kokkos devices
-set(CABANA_SUPPORTED_DEVICES SERIAL PTHREAD OPENMP CUDA HIP SYCL OPENMPTARGET)
+set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP SYCL OPENMPTARGET)
 
 # check user required kokkos device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
   option(Cabana_REQUIRE_${_device} "Build Cabana with required Kokkos ${device} support" OFF)
-  if( Cabana_REQUIRE_${_device} )
+  if( Cabana_REQUIRE_${_device} AND NOT _device STREQUAL THREADS)
     kokkos_check( DEVICES ${_device} )
   endif()
 endforeach()
+# Threads workaround can go when we require a minimum Kokkos version of 3.6
+if(Cabana_REQUIRE_PTHREAD)
+  message(DEPRECATION "Cabana_REQUIRE_PTHREAD is deprecated, use Cabana_REQUIRE_THREADS instead!")
+endif()
+if(Cabana_REQUIRE_PTHREAD OR Cabana_REQUIRE_THREADS)
+  kokkos_check(DEVICES PTHREAD RETURN_VALUE KOKKOS_CHECK_PTHREAD_RETURN_VALUE)
+  kokkos_check(DEVICES THREADS RETURN_VALUE KOKKOS_CHECK_THREADS_RETURN_VALUE)
+  if(NOT KOKKOS_CHECK_PTHREAD_RETURN_VALUE AND NOT KOKKOS_CHECK_THREADS_RETURN_VALUE)
+    message(FATAL_ERROR "Kokkos does not provide the Threads backend requested")
+  endif()
+endif()
 
 # ensure that we can use lambdas
 if(Kokkos_ENABLE_CUDA)
