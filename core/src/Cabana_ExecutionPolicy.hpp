@@ -79,11 +79,11 @@ class StructRange
 template <int VectorLength, class... Properties>
 class SimdPolicy
     : public Kokkos::TeamPolicy<
-          typename Kokkos::Impl::PolicyTraits<Properties...>::execution_space,
+          typename Kokkos::TeamPolicy<Properties...>::execution_space,
           Kokkos::Schedule<Kokkos::Dynamic>>
 {
   private:
-    typedef Kokkos::Impl::PolicyTraits<Properties...> traits;
+    using traits = Kokkos::TeamPolicy<Properties...>;
 
   public:
     //! Work tag.
