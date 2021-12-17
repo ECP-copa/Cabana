@@ -9,33 +9,38 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-##---------------------------------------------------------------------------##
-# Download and unpack googletest
-##---------------------------------------------------------------------------##
-set(GTEST_URL "https://github.com/google/googletest/archive/release-1.10.0.tar.gz" CACHE STRING "URL for GTest tarball")
-mark_as_advanced(GTEST_URL)
+find_package(GTest 1.10)
 
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL ${GTEST_URL}
-  URL_MD5         ecd1fa65e7de707cd5c00bdac56022cd
-  )
+if(NOT GTest_FOUND)
+  ##---------------------------------------------------------------------------##
+  # Download and unpack googletest
+  ##---------------------------------------------------------------------------##
+  set(GTEST_URL "https://github.com/google/googletest/archive/release-1.10.0.tar.gz" CACHE STRING "URL for GTest tarball")
+  mark_as_advanced(GTEST_URL)
 
-# suppress all compiler warnings when building gtest
-if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-  # NOTE I haven't actually tested on MSVC
-  string(APPEND CMAKE_CXX_FLAGS " \w")
-else()
-  string(APPEND CMAKE_CXX_FLAGS " -w")
+  include(FetchContent)
+  FetchContent_Declare(
+    googletest
+    URL ${GTEST_URL}
+    URL_MD5         ecd1fa65e7de707cd5c00bdac56022cd
+    )
+
+  # suppress all compiler warnings when building gtest
+  if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # NOTE I haven't actually tested on MSVC
+    string(APPEND CMAKE_CXX_FLAGS " \w")
+  else()
+    string(APPEND CMAKE_CXX_FLAGS " -w")
+  endif()
+
+  FetchContent_GetProperties(googletest)
+  if(NOT googletest_POPULATED)
+    FetchContent_Populate(googletest)
+    add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
+  endif()
+
+  # Prevent GoogleTest from overriding our compiler/linker options
+  # when building with Visual Studio
+  set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
 endif()
-
-FetchContent_GetProperties(googletest)
-if(NOT googletest_POPULATED)
-  FetchContent_Populate(googletest)
-  add_subdirectory(${googletest_SOURCE_DIR} ${googletest_BINARY_DIR})
-endif()
-
-# Prevent GoogleTest from overriding our compiler/linker options
-# when building with Visual Studio
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
