@@ -95,7 +95,7 @@ macro(Cabana_add_tests)
           set_property(TEST ${_target}_np_${_np} PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
         endforeach()
       else()
-        if(_device STREQUAL PTHREAD OR _device STREQUAL OPENMP)
+        if(_device STREQUAL THREADS OR _device STREQUAL OPENMP)
           foreach(_thread ${CABANA_UNIT_TEST_NUMTHREADS})
             add_test(NAME ${_target}_nt_${_thread} COMMAND
               ${NONMPI_PRECOMMAND} ${_target} ${gtest_args} --kokkos-threads=${_thread})
