@@ -35,6 +35,7 @@ jobs:
         arborx: ['NoArborX']
         heffte: ['NoheFFTe' ]
         hypre: ['NoHYPRE']
+        liball: ['NolibALL']
         coverage: ['OFF']
         include:
           - distro: 'fedora:intel'
@@ -176,6 +177,16 @@ jobs:
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            liball: 'libALL'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            openmp: 'ON'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -190,6 +201,7 @@ jobs:
             arborx: 'ArborX'
             heffte: 'heFFTe_FFTW'
             hypre: 'HYPRE'
+            liball: 'libALL'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container:
@@ -287,6 +299,17 @@ jobs:
             ${hypre_cmake_opts}
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout ALL
+        if: ${{ matrix.liball == 'libALL' }}
+        run: |
+          git clone --depth 1 --branch master https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing ALL
+      - name: Build ALL
+        if: ${{ matrix.liball == 'libALL' }}
+        working-directory: ALL
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/ALL
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
@@ -302,7 +325,7 @@ jobs:
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
-            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/ALL" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \

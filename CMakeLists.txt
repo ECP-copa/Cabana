@@ -90,6 +90,9 @@ Cabana_add_dependency( PACKAGE MPI )
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
 
+# find ALL
+Cabana_add_dependency( PACKAGE ALL )
+
 # find Clang Format
 find_package( CLANG_FORMAT 10 )
 

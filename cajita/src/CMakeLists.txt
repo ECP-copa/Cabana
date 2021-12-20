@@ -50,6 +50,12 @@ if(Cabana_ENABLE_HEFFTE)
     )
 endif()
 
+if(Cabana_ENABLE_ALL)
+  list(APPEND HEADERS_PUBLIC
+    Cajita_LoadBalancer.hpp
+    )
+endif()
+
 add_library(Cajita INTERFACE)
 add_library(Cabana::Cajita ALIAS Cajita)
 
@@ -65,6 +71,10 @@ endif()
 
 if(Cabana_ENABLE_HEFFTE)
   target_link_libraries(Cajita INTERFACE Heffte::Heffte)
+endif()
+
+if(Cabana_ENABLE_ALL)
+    target_link_libraries(Cajita INTERFACE ALL::ALL)
 endif()
 
 target_include_directories(Cajita
