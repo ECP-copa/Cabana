@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['cabana_949',['Cabana',['../namespaceCabana.html',1,'']]],
-  ['cajita_950',['Cajita',['../namespaceCajita.html',1,'']]]
+  ['cabana_958',['Cabana',['../namespaceCabana.html',1,'']]],
+  ['cajita_959',['Cajita',['../namespaceCajita.html',1,'']]]
 ];
