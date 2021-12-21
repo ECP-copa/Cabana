@@ -22,4 +22,6 @@
 
 #cmakedefine Cabana_ENABLE_ARBORX
 
+#cmakedefine Cabana_ENABLE_ALL
+
 #endif // CABANA_CORE_CONFIG_HPP

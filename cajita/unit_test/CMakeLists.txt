@@ -56,6 +56,12 @@ if(Cabana_ENABLE_HEFFTE)
     )
 endif()
 
+if(Cabana_ENABLE_ALL)
+  list(APPEND MPI_TESTS
+    LoadBalancer
+    )
+endif()
+
 Cabana_add_tests(PACKAGE Cajita NAMES ${SERIAL_TESTS})
 
 Cabana_add_tests(MPI PACKAGE Cajita NAMES ${MPI_TESTS})
