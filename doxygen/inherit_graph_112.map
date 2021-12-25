@@ -1,10 +1,10 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
-<area shape="rect" id="node1" href="$classCajita_1_1HypreStructuredSolver.html" title="Hypre structured solver interface for scalar fields." alt="" coords="5,201,273,243"/>
-<area shape="rect" id="node2" href="$classCajita_1_1HypreStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="321,5,589,47"/>
-<area shape="rect" id="node3" href="$classCajita_1_1HypreStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="321,71,589,112"/>
-<area shape="rect" id="node4" href="$classCajita_1_1HypreStructGMRES.html" title="GMRES solver." alt="" coords="321,136,589,177"/>
-<area shape="rect" id="node5" href="$classCajita_1_1HypreStructJacobi.html" title="Jacobi solver." alt="" coords="321,201,589,243"/>
-<area shape="rect" id="node6" href="$classCajita_1_1HypreStructPCG.html" title="PCG solver." alt="" coords="369,267,541,323"/>
-<area shape="rect" id="node7" href="$classCajita_1_1HypreStructPFMG.html" title="PFMG solver." alt="" coords="365,347,546,403"/>
-<area shape="rect" id="node8" href="$classCajita_1_1HypreStructSMG.html" title="SMG solver." alt="" coords="368,427,543,483"/>
+<area shape="rect" id="node1" href="$classCajita_1_1HypreStructuredSolver.html" title="Hypre structured solver interface for scalar fields." alt="" coords="5,201,275,243"/>
+<area shape="rect" id="node2" href="$classCajita_1_1HypreStructBiCGSTAB.html" title="BiCGSTAB solver." alt="" coords="323,5,592,47"/>
+<area shape="rect" id="node3" href="$classCajita_1_1HypreStructDiagonal.html" title="Diagonal preconditioner." alt="" coords="323,71,592,112"/>
+<area shape="rect" id="node4" href="$classCajita_1_1HypreStructGMRES.html" title="GMRES solver." alt="" coords="323,136,592,177"/>
+<area shape="rect" id="node5" href="$classCajita_1_1HypreStructJacobi.html" title="Jacobi solver." alt="" coords="323,201,592,243"/>
+<area shape="rect" id="node6" href="$classCajita_1_1HypreStructPCG.html" title="PCG solver." alt="" coords="371,267,543,323"/>
+<area shape="rect" id="node7" href="$classCajita_1_1HypreStructPFMG.html" title="PFMG solver." alt="" coords="366,347,549,403"/>
+<area shape="rect" id="node8" href="$classCajita_1_1HypreStructSMG.html" title="SMG solver." alt="" coords="370,427,545,483"/>
 </map>

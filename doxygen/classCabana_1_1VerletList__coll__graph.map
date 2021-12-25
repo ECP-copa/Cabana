@@ -1,4 +1,4 @@
 <map id="Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt;" name="Cabana::VerletList&lt; MemorySpace, AlgorithmTag, LayoutTag, BuildTag &gt;">
-<area shape="rect" id="node1" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same..." alt="" coords="5,109,232,165"/>
-<area shape="rect" id="node2" href="$structCabana_1_1VerletListData.html" title=" " alt="" coords="5,5,232,47"/>
+<area shape="rect" id="node1" title="Neighbor list implementation based on binning particles on a 3d Cartesian grid with cells of the same..." alt="" coords="5,109,233,165"/>
+<area shape="rect" id="node2" href="$structCabana_1_1VerletListData.html" title=" " alt="" coords="6,5,233,47"/>
 </map>

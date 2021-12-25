@@ -1,9 +1,9 @@
 <map id="core/src/Cabana_Tuple.hpp" name="core/src/Cabana_Tuple.hpp">
 <area shape="rect" id="node1" title="Tuple of single particle information to build AoSoA." alt="" coords="228,5,423,32"/>
-<area shape="rect" id="node2" href="$Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="24,155,220,181"/>
+<area shape="rect" id="node2" href="$Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="23,155,220,181"/>
 <area shape="rect" id="node3" title=" " alt="" coords="89,229,154,256"/>
 <area shape="rect" id="node4" title=" " alt="" coords="348,229,440,256"/>
 <area shape="rect" id="node5" href="$Cabana__SoA_8hpp.html" title="Struct&#45;of&#45;Arrays for building AoSoA." alt="" coords="260,80,391,107"/>
-<area shape="rect" id="node6" title=" " alt="" coords="432,155,566,181"/>
+<area shape="rect" id="node6" title=" " alt="" coords="431,155,564,181"/>
 <area shape="rect" id="node7" title=" " alt="" coords="296,155,356,181"/>
 </map>

@@ -1,6 +1,6 @@
 <map id="core/src/Cabana_AoSoA.hpp" name="core/src/Cabana_AoSoA.hpp">
 <area shape="rect" id="node1" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="648,5,851,32"/>
-<area shape="rect" id="node2" href="$Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="26,229,222,256"/>
+<area shape="rect" id="node2" href="$Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="25,229,223,256"/>
 <area shape="rect" id="node3" title=" " alt="" coords="227,304,293,331"/>
 <area shape="rect" id="node4" title=" " alt="" coords="629,304,721,331"/>
 <area shape="rect" id="node5" href="$Cabana__Slice_8hpp.html" title="Slice a single particle property from an AoSoA." alt="" coords="751,80,889,107"/>

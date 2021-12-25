@@ -1,9 +1,9 @@
 <map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
 <area shape="rect" id="node1" href="$classCajita_1_1BlockPartitioner.html" title="Block partitioner base class." alt="" coords="5,78,176,119"/>
-<area shape="rect" id="node2" href="$classCajita_1_1DimBlockPartitioner.html" title=" " alt="" coords="234,5,470,32"/>
-<area shape="rect" id="node4" href="$classCajita_1_1ManualBlockPartitioner.html" title=" " alt="" coords="224,56,480,83"/>
-<area shape="rect" id="node6" href="$classCajita_1_1DimBlockPartitioner.html" title="Dimension&#45;only partitioner." alt="" coords="253,107,451,149"/>
-<area shape="rect" id="node7" href="$classCajita_1_1ManualBlockPartitioner.html" title="Manual block partitioner." alt="" coords="243,173,461,214"/>
-<area shape="rect" id="node3" href="$classCajita_1_1UniformDimPartitioner.html" title="Backwards compatibility wrapper for 3D DimBlockPartitioner." alt="" coords="528,5,743,32"/>
-<area shape="rect" id="node5" href="$classCajita_1_1ManualPartitioner.html" title="Backwards compatibility wrapper for 3D ManualBlockPartitioner." alt="" coords="544,56,727,83"/>
+<area shape="rect" id="node2" href="$classCajita_1_1DimBlockPartitioner.html" title=" " alt="" coords="235,5,471,32"/>
+<area shape="rect" id="node4" href="$classCajita_1_1ManualBlockPartitioner.html" title=" " alt="" coords="224,56,481,83"/>
+<area shape="rect" id="node6" href="$classCajita_1_1DimBlockPartitioner.html" title="Dimension&#45;only partitioner." alt="" coords="253,107,452,149"/>
+<area shape="rect" id="node7" href="$classCajita_1_1ManualBlockPartitioner.html" title="Manual block partitioner." alt="" coords="243,173,462,214"/>
+<area shape="rect" id="node3" href="$classCajita_1_1UniformDimPartitioner.html" title="Backwards compatibility wrapper for 3D DimBlockPartitioner." alt="" coords="529,5,744,32"/>
+<area shape="rect" id="node5" href="$classCajita_1_1ManualPartitioner.html" title="Backwards compatibility wrapper for 3D ManualBlockPartitioner." alt="" coords="545,56,728,83"/>
 </map>

@@ -1,13 +1,13 @@
 <map id="core/src/Cabana_CommunicationPlan.hpp" name="core/src/Cabana_CommunicationPlan.hpp">
-<area shape="rect" id="node1" title="Multi&#45;node communication patterns." alt="" coords="631,5,867,47"/>
+<area shape="rect" id="node1" title="Multi&#45;node communication patterns." alt="" coords="629,5,865,47"/>
 <area shape="rect" id="node2" title=" " alt="" coords="5,95,180,121"/>
-<area shape="rect" id="node3" title=" " alt="" coords="204,95,339,121"/>
-<area shape="rect" id="node4" title=" " alt="" coords="363,95,545,121"/>
-<area shape="rect" id="node5" title=" " alt="" coords="569,95,627,121"/>
-<area shape="rect" id="node6" title=" " alt="" coords="651,95,737,121"/>
-<area shape="rect" id="node7" title=" " alt="" coords="761,95,848,121"/>
-<area shape="rect" id="node8" title=" " alt="" coords="873,95,950,121"/>
-<area shape="rect" id="node9" title=" " alt="" coords="974,95,1049,121"/>
-<area shape="rect" id="node10" title=" " alt="" coords="1073,95,1165,121"/>
-<area shape="rect" id="node11" title=" " alt="" coords="1189,95,1252,121"/>
+<area shape="rect" id="node3" title=" " alt="" coords="205,95,338,121"/>
+<area shape="rect" id="node4" title=" " alt="" coords="363,95,543,121"/>
+<area shape="rect" id="node5" title=" " alt="" coords="567,95,626,121"/>
+<area shape="rect" id="node6" title=" " alt="" coords="650,95,735,121"/>
+<area shape="rect" id="node7" title=" " alt="" coords="760,95,847,121"/>
+<area shape="rect" id="node8" title=" " alt="" coords="871,95,949,121"/>
+<area shape="rect" id="node9" title=" " alt="" coords="973,95,1047,121"/>
+<area shape="rect" id="node10" title=" " alt="" coords="1072,95,1164,121"/>
+<area shape="rect" id="node11" title=" " alt="" coords="1188,95,1251,121"/>
 </map>

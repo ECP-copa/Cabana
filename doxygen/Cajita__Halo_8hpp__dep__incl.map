@@ -1,7 +1,7 @@
 <map id="cajita/src/Cajita_Halo.hpp" name="cajita/src/Cajita_Halo.hpp">
-<area shape="rect" id="node1" title="Multi&#45;node grid scatter/gather." alt="" coords="174,5,362,32"/>
-<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="192,169,343,196"/>
-<area shape="rect" id="node3" href="$Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="29,87,250,114"/>
-<area shape="rect" id="node4" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="275,87,516,114"/>
-<area shape="rect" id="node5" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="541,80,736,121"/>
+<area shape="rect" id="node1" title="Multi&#45;node grid scatter/gather." alt="" coords="175,5,363,32"/>
+<area shape="rect" id="node2" href="$Cajita_8hpp_source.html" title=" " alt="" coords="194,169,344,196"/>
+<area shape="rect" id="node3" href="$Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="30,87,252,114"/>
+<area shape="rect" id="node4" href="$Cajita__Interpolation_8hpp.html" title="Particle to grid and grid to particle interpolation." alt="" coords="276,87,518,114"/>
+<area shape="rect" id="node5" href="$Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="542,80,738,121"/>
 </map>

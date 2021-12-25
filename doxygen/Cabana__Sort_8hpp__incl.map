@@ -1,12 +1,12 @@
 <map id="core/src/Cabana_Sort.hpp" name="core/src/Cabana_Sort.hpp">
-<area shape="rect" id="node1" title="Sorting and binning built on Kokkos BinSort." alt="" coords="905,5,1092,32"/>
+<area shape="rect" id="node1" title="Sorting and binning built on Kokkos BinSort." alt="" coords="907,5,1093,32"/>
 <area shape="rect" id="node2" href="$Cabana__AoSoA_8hpp.html" title="Array&#45;of&#45;Struct&#45;of&#45;Arrays particle data structure." alt="" coords="665,155,813,181"/>
 <area shape="rect" id="node5" title=" " alt="" coords="570,453,662,480"/>
 <area shape="rect" id="node6" href="$Cabana__Slice_8hpp.html" title="Slice a single particle property from an AoSoA." alt="" coords="801,229,938,256"/>
 <area shape="rect" id="node8" title=" " alt="" coords="1133,453,1267,480"/>
 <area shape="rect" id="node17" href="$Cabana__DeepCopy_8hpp.html" title="AoSoA and slice extensions for Kokkos deep copy and mirrors." alt="" coords="980,80,1151,107"/>
-<area shape="rect" id="node20" title=" " alt="" coords="1549,80,1680,107"/>
-<area shape="rect" id="node3" href="$Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="94,379,290,405"/>
+<area shape="rect" id="node20" title=" " alt="" coords="1550,80,1679,107"/>
+<area shape="rect" id="node3" href="$Cabana__MemberTypes_8hpp.html" title="AoSoA tuple member types." alt="" coords="93,379,291,405"/>
 <area shape="rect" id="node4" title=" " alt="" coords="23,453,89,480"/>
 <area shape="rect" id="node7" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="1126,304,1269,331"/>
 <area shape="rect" id="node9" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="774,304,949,331"/>
@@ -17,6 +17,6 @@
 <area shape="rect" id="node16" title=" " alt="" coords="662,229,725,256"/>
 <area shape="rect" id="node10" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="907,379,1111,405"/>
 <area shape="rect" id="node13" title=" " alt="" coords="467,379,527,405"/>
-<area shape="rect" id="node18" title=" " alt="" coords="1141,155,1313,181"/>
+<area shape="rect" id="node18" title=" " alt="" coords="1141,155,1312,181"/>
 <area shape="rect" id="node19" title=" " alt="" coords="1337,155,1423,181"/>
 </map>
