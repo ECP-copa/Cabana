@@ -21,6 +21,7 @@ set(HEADERS_PUBLIC
   Cabana_NeighborList.hpp
   Cabana_Parallel.hpp
   Cabana_ParameterPack.hpp
+  Cabana_SiloParticleOutput.hpp
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp
@@ -57,6 +58,10 @@ target_link_libraries(cabanacore INTERFACE Kokkos::kokkos)
 
 if(Cabana_ENABLE_ARBORX)
   target_link_libraries(cabanacore INTERFACE ArborX::ArborX)
+endif()
+
+if(Cabana_ENABLE_SILO)
+  target_link_libraries(cabanacore INTERFACE SILO::silo)
 endif()
 
 if(Cabana_ENABLE_MPI)

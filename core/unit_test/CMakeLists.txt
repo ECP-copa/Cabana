@@ -40,6 +40,10 @@ set(MPI_TESTS
   Halo
   )
 
+if(Cabana_ENABLE_SILO)
+  list(APPEND MPI_TESTS SiloParticleOutput)
+endif()
+
 Cabana_add_tests_nobackend(PACKAGE cabanacore NAMES ${NOBACKEND_TESTS})
 
 Cabana_add_tests(PACKAGE cabanacore NAMES ${SERIAL_TESTS})
