@@ -76,7 +76,7 @@ namespace Impl
 //---------------------------------------------------------------------------//
 // Rank-0 field
 template <class SliceType>
-void writeFieldsImpl(
+void writeFields(
     DBfile* silo_file, const std::string& mesh_name, const SliceType& slice,
     typename std::enable_if<
         2 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
@@ -104,7 +104,7 @@ void writeFieldsImpl(
 
 // Rank-1 field
 template <class SliceType>
-void writeFieldsImpl(
+void writeFields(
     DBfile* silo_file, const std::string& mesh_name, const SliceType& slice,
     typename std::enable_if<
         3 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
@@ -140,7 +140,7 @@ void writeFieldsImpl(
 
 // Rank-2 field
 template <class SliceType>
-void writeFieldsImpl(
+void writeFields(
     DBfile* silo_file, const std::string& mesh_name, const SliceType& slice,
     typename std::enable_if<
         4 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
@@ -184,14 +184,14 @@ template <class SliceType>
 void writeFields( DBfile* silo_file, const std::string& mesh_name,
                   const SliceType& slice )
 {
-    writeFieldsImpl( silo_file, mesh_name, slice );
+    Impl::writeFields( silo_file, mesh_name, slice );
 }
 
 template <class SliceType, class... FieldSliceTypes>
 void writeFields( DBfile* silo_file, const std::string& mesh_name,
                   const SliceType& slice, FieldSliceTypes&&... fields )
 {
-    writeFieldsImpl( silo_file, mesh_name, slice );
+    Impl::writeFields( silo_file, mesh_name, slice );
     writeFields( silo_file, mesh_name, fields... );
 }
 
@@ -238,30 +238,29 @@ namespace Impl
 //---------------------------------------------------------------------------//
 // Get field names.
 template <class SliceType>
-void getFieldNamesImpl( std::vector<std::string>& names,
-                        const SliceType& slice )
+void getFieldNames( std::vector<std::string>& names, const SliceType& slice )
 {
     names.push_back( slice.label() );
 }
 
 // Get field names.
 template <class SliceType, class... FieldSliceTypes>
-void getFieldNamesImpl( std::vector<std::string>& names, const SliceType& slice,
-                        FieldSliceTypes&&... fields )
+void getFieldNames( std::vector<std::string>& names, const SliceType& slice,
+                    FieldSliceTypes&&... fields )
 {
-    getFieldNamesImpl( names, slice );
-    getFieldNamesImpl( names, fields... );
+    getFieldNames( names, slice );
+    getFieldNames( names, fields... );
 }
+
+} // namespace Impl
 
 template <class... FieldSliceTypes>
 std::vector<std::string> getFieldNames( FieldSliceTypes&&... fields )
 {
     std::vector<std::string> names;
-    getFieldNamesImpl( names, fields... );
+    Impl::getFieldNames( names, fields... );
     return names;
 }
-
-} // namespace Impl
 
 //---------------------------------------------------------------------------//
 // Write a multimesh hierarchy.
@@ -369,29 +368,20 @@ void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
 
 //---------------------------------------------------------------------------//
 // Write a time step.
-template <class GlobalGridType, class CoordSliceType, class... FieldSliceTypes>
-void writeTimeStep( const GlobalGridType& global_grid,
+template <class CoordSliceType, class... FieldSliceTypes>
+void writeTimeStep( MPI_Comm comm, const int num_group,
                     const int time_step_index, const double time,
                     const CoordSliceType& coords, FieldSliceTypes&&... fields )
 {
-    // Pick a number of groups. We want to write approximately the N^3 blocks
-    // to N^2 groups. Pick the block dimension with the largest number of
-    // ranks as the number of groups. We may want to tweak this as an optional
-    // input later with this behavior as the default.
-    int num_group = 0;
-    for ( int d = 0; d < 3; ++d )
-        if ( global_grid.dimNumBlock( d ) > num_group )
-            num_group = global_grid.dimNumBlock( d );
-
     // Create the parallel baton.
     int mpi_tag = 1948;
     PMPIO_baton_t* baton =
-        PMPIO_Init( num_group, PMPIO_WRITE, global_grid.comm(), mpi_tag,
-                    createFile, openFile, closeFile, nullptr );
+        PMPIO_Init( num_group, PMPIO_WRITE, comm, mpi_tag, createFile, openFile,
+                    closeFile, nullptr );
 
     // Compose a data file name.
     int comm_rank;
-    MPI_Comm_rank( global_grid.comm(), &comm_rank );
+    MPI_Comm_rank( comm, &comm_rank );
     int group_rank = PMPIO_GroupRank( baton, comm_rank );
     std::stringstream file_name;
 
@@ -444,7 +434,7 @@ void writeTimeStep( const GlobalGridType& global_grid,
     // Root rank writes the global multimesh hierarchy for parallel
     // simulations.
     int comm_size;
-    MPI_Comm_size( global_grid.comm(), &comm_size );
+    MPI_Comm_size( comm, &comm_size );
     if ( 0 == comm_rank && comm_size > 1 )
         writeMultiMesh( baton, silo_file, comm_size, mesh_name, time_step_index,
                         time, fields... );

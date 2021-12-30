@@ -48,4 +48,8 @@
 #include <Cajita_FastFourierTransform.hpp>
 #endif
 
+#ifdef Cabana_ENABLE_SILO
+#include <Cajita_SiloParticleOutput.hpp>
+#endif
+
 #endif // end CAJITA_HPP

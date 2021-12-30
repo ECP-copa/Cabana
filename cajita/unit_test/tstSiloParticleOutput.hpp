@@ -20,8 +20,14 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include <Cajita_GlobalGrid.hpp>
+#include <Cajita_LocalGrid.hpp>
+#include <Cajita_LocalMesh.hpp>
+#include <Cajita_SiloParticleOutput.hpp>
+#include <Cajita_UniformDimPartitioner.hpp>
+
 #include <Cabana_AoSoA.hpp>
-#include <Cabana_SiloParticleOutput.hpp>
+#include <Cabana_DeepCopy.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -35,6 +41,9 @@
 
 namespace Test
 {
+
+using namespace Cajita;
+
 //---------------------------------------------------------------------------//
 void writeTest()
 {
@@ -114,7 +123,7 @@ void writeTest()
     // Write a time step to file.
     double time = 7.64;
     double step = 892;
-    Cabana::SiloParticleOutput::writeTimeStep( *global_grid, step, time, coords,
+    Cajita::SiloParticleOutput::writeTimeStep( *global_grid, step, time, coords,
                                                ids, matrix, vec );
 
     // Move the particles and write again.
@@ -125,7 +134,7 @@ void writeTest()
         for ( int d = 0; d < 3; ++d )
             coords_mirror( p, d ) += 1.32;
     Cabana::deep_copy( coords, coords_mirror );
-    Cabana::SiloParticleOutput::writeTimeStep( *global_grid, step, time, coords,
+    Cajita::SiloParticleOutput::writeTimeStep( *global_grid, step, time, coords,
                                                ids, matrix, vec );
 }
 

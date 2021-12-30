@@ -21,7 +21,6 @@ set(HEADERS_PUBLIC
   Cabana_NeighborList.hpp
   Cabana_Parallel.hpp
   Cabana_ParameterPack.hpp
-  Cabana_SiloParticleOutput.hpp
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp
@@ -43,6 +42,10 @@ if(Cabana_ENABLE_MPI)
     Cabana_Distributor.hpp
     Cabana_Halo.hpp
     )
+endif()
+
+if(Cabana_ENABLE_SILO)
+  list(APPEND HEADERS_PUBLIC Cabana_SiloParticleOutput.hpp)
 endif()
 
 set(HEADERS_IMPL
