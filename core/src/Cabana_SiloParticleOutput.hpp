@@ -197,7 +197,8 @@ void writeFields( DBfile* silo_file, const std::string& mesh_name,
 
 //---------------------------------------------------------------------------//
 // parallel i/o callbacks
-void* createFile( const char* file_name, const char* dir_name, void* user_data )
+inline void* createFile( const char* file_name, const char* dir_name,
+                         void* user_data )
 {
     std::ignore = user_data;
     DBfile* silo_file =
@@ -211,8 +212,8 @@ void* createFile( const char* file_name, const char* dir_name, void* user_data )
     return (void*)silo_file;
 }
 
-void* openFile( const char* file_name, const char* dir_name,
-                PMPIO_iomode_t io_mode, void* user_data )
+inline void* openFile( const char* file_name, const char* dir_name,
+                       PMPIO_iomode_t io_mode, void* user_data )
 {
     std::ignore = io_mode;
     std::ignore = user_data;
@@ -225,7 +226,7 @@ void* openFile( const char* file_name, const char* dir_name,
     return (void*)silo_file;
 }
 
-void closeFile( void* file, void* user_data )
+inline void closeFile( void* file, void* user_data )
 {
     std::ignore = user_data;
     DBfile* silo_file = (DBfile*)file;
