@@ -26,6 +26,8 @@
 
 namespace Cajita
 {
+namespace Experimental
+{
 namespace SiloParticleOutput
 {
 // Write a time step.
@@ -43,11 +45,12 @@ void writeTimeStep( const GlobalGridType& global_grid,
         if ( global_grid.dimNumBlock( d ) > num_group )
             num_group = global_grid.dimNumBlock( d );
 
-    Cabana::SiloParticleOutput::writeTimeStep( global_grid.comm(), num_group,
-                                               time_step_index, time, coords,
-                                               fields... );
+    Cabana::Experimental::SiloParticleOutput::writeTimeStep(
+        global_grid.comm(), num_group, time_step_index, time, coords,
+        fields... );
 }
 } // namespace SiloParticleOutput
+} // namespace Experimental
 } // namespace Cajita
 
 #endif // CAJITA_SILOPARTICLEOUTPUT_HPP

@@ -38,6 +38,8 @@
 
 namespace Cabana
 {
+namespace Experimental
+{
 namespace SiloParticleOutput
 {
 //---------------------------------------------------------------------------//
@@ -450,6 +452,7 @@ void writeTimeStep( MPI_Comm comm, const int num_group,
 //---------------------------------------------------------------------------//
 
 } // namespace SiloParticleOutput
+} // namespace Experimental
 } // end namespace Cabana
 
 #endif // CABANA_SILOPARTICLEOUTPUT_HPP
