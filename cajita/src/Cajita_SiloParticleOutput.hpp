@@ -9,6 +9,11 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_SiloParticleOutput.hpp
+  \brief Write particle output using the Silo format.
+*/
+
 #ifndef CAJITA_SILOPARTICLEOUTPUT_HPP
 #define CAJITA_SILOPARTICLEOUTPUT_HPP
 
@@ -30,7 +35,14 @@ namespace Experimental
 {
 namespace SiloParticleOutput
 {
-// Write a time step.
+/*!
+  \brief Write particle output in Silo format using mesh information.
+  \param global_grid Cajita global grid.
+  \param time_step_index Current simulation step index.
+  \param time Current simulation time.
+  \param coords Particle coordinates.
+  \param fields Variadic list of particle property fields.
+*/
 template <class GlobalGridType, class CoordSliceType, class... FieldSliceTypes>
 void writeTimeStep( const GlobalGridType& global_grid,
                     const int time_step_index, const double time,

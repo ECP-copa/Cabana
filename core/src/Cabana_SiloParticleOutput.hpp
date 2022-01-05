@@ -20,6 +20,11 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_SiloParticleOutput.hpp
+  \brief Write particle output using the Silo format.
+*/
+
 #ifndef CABANA_SILOPARTICLEOUTPUT_HPP
 #define CABANA_SILOPARTICLEOUTPUT_HPP
 
@@ -45,6 +50,7 @@ namespace SiloParticleOutput
 //---------------------------------------------------------------------------//
 // Silo Particle Field Output.
 //---------------------------------------------------------------------------//
+//! \cond Impl
 // Format traits.
 template <typename T>
 struct SiloTraits;
@@ -179,9 +185,10 @@ void writeFields(
                    SiloTraits<typename SliceType::value_type>::type(),
                    nullptr );
 }
-
+//! \endcond
 } // namespace Impl
 
+//! Write particle data to Silo output.
 template <class SliceType>
 void writeFields( DBfile* silo_file, const std::string& mesh_name,
                   const SliceType& slice )
@@ -189,6 +196,7 @@ void writeFields( DBfile* silo_file, const std::string& mesh_name,
     Impl::writeFields( silo_file, mesh_name, slice );
 }
 
+//! Write particle data to Silo output.
 template <class SliceType, class... FieldSliceTypes>
 void writeFields( DBfile* silo_file, const std::string& mesh_name,
                   const SliceType& slice, FieldSliceTypes&&... fields )
@@ -198,7 +206,7 @@ void writeFields( DBfile* silo_file, const std::string& mesh_name,
 }
 
 //---------------------------------------------------------------------------//
-// parallel i/o callbacks
+//! Create Silo output file.
 inline void* createFile( const char* file_name, const char* dir_name,
                          void* user_data )
 {
@@ -214,6 +222,7 @@ inline void* createFile( const char* file_name, const char* dir_name,
     return (void*)silo_file;
 }
 
+//! Open Silo output file.
 inline void* openFile( const char* file_name, const char* dir_name,
                        PMPIO_iomode_t io_mode, void* user_data )
 {
@@ -228,6 +237,7 @@ inline void* openFile( const char* file_name, const char* dir_name,
     return (void*)silo_file;
 }
 
+//! Close Silo output file.
 inline void closeFile( void* file, void* user_data )
 {
     std::ignore = user_data;
@@ -238,6 +248,7 @@ inline void closeFile( void* file, void* user_data )
 
 namespace Impl
 {
+//! \cond Impl
 //---------------------------------------------------------------------------//
 // Get field names.
 template <class SliceType>
@@ -254,9 +265,10 @@ void getFieldNames( std::vector<std::string>& names, const SliceType& slice,
     getFieldNames( names, slice );
     getFieldNames( names, fields... );
 }
-
+//! \endcond
 } // namespace Impl
 
+//! Get Silo output property field names.
 template <class... FieldSliceTypes>
 std::vector<std::string> getFieldNames( FieldSliceTypes&&... fields )
 {
@@ -266,7 +278,7 @@ std::vector<std::string> getFieldNames( FieldSliceTypes&&... fields )
 }
 
 //---------------------------------------------------------------------------//
-// Write a multimesh hierarchy.
+//! Write a Silo multimesh hierarchy.
 template <class... FieldSliceTypes>
 void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
                      const int comm_size, const std::string& mesh_name,
@@ -320,7 +332,6 @@ void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
             }
             else
             {
-
                 std::stringstream bname;
                 bname << "particles_" << time_step_index << "_group_"
                       << group_rank << ".silo:/rank_" << r << "/"
@@ -370,7 +381,15 @@ void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
 }
 
 //---------------------------------------------------------------------------//
-// Write a time step.
+/*!
+  \brief Write particle output in Silo format.
+  \param comm MPI communicator.
+  \param num_group Number of files to create in parallel.
+  \param time_step_index Current simulation step index.
+  \param time Current simulation time.
+  \param coords Particle coordinates.
+  \param fields Variadic list of particle property fields.
+*/
 template <class CoordSliceType, class... FieldSliceTypes>
 void writeTimeStep( MPI_Comm comm, const int num_group,
                     const int time_step_index, const double time,
