@@ -36,6 +36,7 @@ jobs:
         heffte: ['NoheFFTe' ]
         hypre: ['NoHYPRE']
         liball: ['NolibALL']
+        silo: ['NoSilo']
         coverage: ['OFF']
         include:
           - distro: 'fedora:intel'
@@ -198,10 +199,21 @@ jobs:
             openmp: 'ON'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            silo: 'Silo'
+            coverage: 'ON'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            openmp: 'ON'
+            cmake_build_type: 'Debug'
+            kokkos_ver: 'master'
             arborx: 'ArborX'
             heffte: 'heFFTe_FFTW'
             hypre: 'HYPRE'
             liball: 'libALL'
+            silo: 'Silo'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container:
@@ -315,7 +327,13 @@ jobs:
       - name: Build Cabana
         env:
           SANITIZER: ${{ matrix.sanitizer }}
+          SILO: ${{ matrix.silo }}
         run: |
+          if [[ ${SILO} == 'Silo' ]]; then
+            cabana_cmake_opts+=( -DCabana_REQUIRE_SILO=ON )
+          else
+            cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_SILO=ON )
+          fi
           # FIXME: Add sanitizer for fedora when fixed
           if [[ ${SANITIZER} == 'MSAN' ]]; then
             cabana_cmake_opts+=( -DWITH_MSAN=ON )
