@@ -32,6 +32,9 @@ if(NOT GTest_FOUND)
   else()
     string(APPEND CMAKE_CXX_FLAGS " -w")
   endif()
+  
+  # do not install gtest
+  set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
 
   FetchContent_GetProperties(googletest)
   if(NOT googletest_POPULATED)
