@@ -256,7 +256,7 @@ jobs:
           cmake --install build
       - name: Checkout heffte
         if: ${{ matrix.heffte != 'NoheFFTe' }}
-        # actions/checkout doesn't work for external repos yet
+        # actions/checkout doesn't work for external repos yet (actions/checkout#447)
         run: |
           git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
       - name: Build heffte
