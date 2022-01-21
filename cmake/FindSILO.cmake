@@ -2,7 +2,7 @@ find_package(PkgConfig QUIET)
 pkg_check_modules(PC_SILO silo QUIET)
 
 find_path(SILO_INCLUDE_DIR silo.h pmpio.h HINTS ${PC_SILO_INCLUDE_DIRS})
-find_library(SILO_LIBRARY NAMES silo HINTS ${PC_SILO_LIBRARY_DIRS})
+find_library(SILO_LIBRARY NAMES silo siloh5 HINTS ${PC_SILO_LIBRARY_DIRS})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(SILO DEFAULT_MSG SILO_INCLUDE_DIR SILO_LIBRARY)
