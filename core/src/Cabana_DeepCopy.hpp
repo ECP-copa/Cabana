@@ -21,7 +21,6 @@
 #include <impl/Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
-#include <Kokkos_ExecPolicy.hpp>
 
 #include <exception>
 #include <type_traits>
