@@ -145,7 +145,7 @@ int main( int argc, char* argv[] )
     std::string run_type = "";
     if ( argc > 2 )
         run_type = argv[2];
-    std::vector<int> problem_sizes = { 1000, 10000 };
+    std::vector<int> problem_sizes = { 100, 1000 };
     std::vector<double> cutoff_ratios = { 3.0, 4.0 };
     if ( run_type == "large" )
         problem_sizes = { 1000, 10000, 100000, 1000000 };
