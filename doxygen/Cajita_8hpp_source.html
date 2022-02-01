@@ -116,7 +116,11 @@ $(function() {
 <div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cajita__FastFourierTransform_8hpp.html">Cajita_FastFourierTransform.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#endif</span></div>
 <div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160; </div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_HPP</span></div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;<span class="preprocessor">#ifdef Cabana_ENABLE_SILO</span></div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cajita__SiloParticleOutput_8hpp.html">Cajita_SiloParticleOutput.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160; </div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_HPP</span></div>
 <div class="ttc" id="aCajita__Array_8hpp_html"><div class="ttname"><a href="Cajita__Array_8hpp.html">Cajita_Array.hpp</a></div><div class="ttdoc">Grid field arrays.</div></div>
 <div class="ttc" id="aCajita__BovWriter_8hpp_html"><div class="ttname"><a href="Cajita__BovWriter_8hpp.html">Cajita_BovWriter.hpp</a></div><div class="ttdoc">Brick of values (BOV) grid output.</div></div>
 <div class="ttc" id="aCajita__FastFourierTransform_8hpp_html"><div class="ttname"><a href="Cajita__FastFourierTransform_8hpp.html">Cajita_FastFourierTransform.hpp</a></div><div class="ttdoc">Fast Fourier transforms.</div></div>
@@ -134,6 +138,7 @@ $(function() {
 <div class="ttc" id="aCajita__Parallel_8hpp_html"><div class="ttname"><a href="Cajita__Parallel_8hpp.html">Cajita_Parallel.hpp</a></div><div class="ttdoc">Logical grid extension of Kokkos parallel iteration.</div></div>
 <div class="ttc" id="aCajita__Partitioner_8hpp_html"><div class="ttname"><a href="Cajita__Partitioner_8hpp.html">Cajita_Partitioner.hpp</a></div><div class="ttdoc">Multi-node grid partitioner.</div></div>
 <div class="ttc" id="aCajita__ReferenceStructuredSolver_8hpp_html"><div class="ttname"><a href="Cajita__ReferenceStructuredSolver_8hpp.html">Cajita_ReferenceStructuredSolver.hpp</a></div><div class="ttdoc">Reference structured solver.</div></div>
+<div class="ttc" id="aCajita__SiloParticleOutput_8hpp_html"><div class="ttname"><a href="Cajita__SiloParticleOutput_8hpp.html">Cajita_SiloParticleOutput.hpp</a></div><div class="ttdoc">Write particle output using the Silo format.</div></div>
 <div class="ttc" id="aCajita__SparseDimPartitioner_8hpp_html"><div class="ttname"><a href="Cajita__SparseDimPartitioner_8hpp.html">Cajita_SparseDimPartitioner.hpp</a></div><div class="ttdoc">Multi-node sparse grid partitioner.</div></div>
 <div class="ttc" id="aCajita__SparseIndexSpace_8hpp_html"><div class="ttname"><a href="Cajita__SparseIndexSpace_8hpp.html">Cajita_SparseIndexSpace.hpp</a></div><div class="ttdoc">Sparse grid mapping.</div></div>
 <div class="ttc" id="aCajita__Splines_8hpp_html"><div class="ttname"><a href="Cajita__Splines_8hpp.html">Cajita_Splines.hpp</a></div><div class="ttdoc">Spline functions.</div></div>
