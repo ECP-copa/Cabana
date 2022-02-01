@@ -102,6 +102,14 @@ Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.1.0 )
 
+# find Silo
+Cabana_add_dependency( PACKAGE SILO )
+if(SILO_FOUND)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSILO.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
+endif()
+
 #------------------------------------------------------------------------------#
 # Architecture
 #------------------------------------------------------------------------------#

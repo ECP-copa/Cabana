@@ -44,6 +44,10 @@ if(Cabana_ENABLE_MPI)
     )
 endif()
 
+if(Cabana_ENABLE_SILO)
+  list(APPEND HEADERS_PUBLIC Cabana_SiloParticleOutput.hpp)
+endif()
+
 set(HEADERS_IMPL
   impl/Cabana_CartesianGrid.hpp
   impl/Cabana_Index.hpp
@@ -57,6 +61,10 @@ target_link_libraries(cabanacore INTERFACE Kokkos::kokkos)
 
 if(Cabana_ENABLE_ARBORX)
   target_link_libraries(cabanacore INTERFACE ArborX::ArborX)
+endif()
+
+if(Cabana_ENABLE_SILO)
+  target_link_libraries(cabanacore INTERFACE SILO::silo)
 endif()
 
 if(Cabana_ENABLE_MPI)

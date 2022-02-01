@@ -62,6 +62,10 @@ if(Cabana_ENABLE_ALL)
     )
 endif()
 
+if(Cabana_ENABLE_SILO)
+  list(APPEND MPI_TESTS SiloParticleOutput)
+endif()
+
 Cabana_add_tests(PACKAGE Cajita NAMES ${SERIAL_TESTS})
 
 Cabana_add_tests(MPI PACKAGE Cajita NAMES ${MPI_TESTS})

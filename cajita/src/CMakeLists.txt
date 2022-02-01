@@ -56,6 +56,10 @@ if(Cabana_ENABLE_ALL)
     )
 endif()
 
+if(Cabana_ENABLE_SILO)
+  list(APPEND HEADERS_PUBLIC Cajita_SiloParticleOutput.hpp)
+endif()
+
 add_library(Cajita INTERFACE)
 add_library(Cabana::Cajita ALIAS Cajita)
 

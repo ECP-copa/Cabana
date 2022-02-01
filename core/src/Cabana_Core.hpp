@@ -42,4 +42,8 @@
 #include <Cabana_Experimental_NeighborList.hpp>
 #endif
 
+#ifdef Cabana_ENABLE_SILO
+#include <Cabana_SiloParticleOutput.hpp>
+#endif
+
 #endif // end CABANA_CORE_HPP
