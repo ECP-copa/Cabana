@@ -474,6 +474,9 @@ class HeffteFastFourierTransform
         _fft_work = Kokkos::View<Scalar*, DeviceType>(
             Kokkos::ViewAllocateWithoutInitializing( "fft_work" ),
             2 * fftsize );
+        _workspace = Kokkos::View<Scalar* [2], DeviceType>(
+            Kokkos::ViewAllocateWithoutInitializing( "workspace" ),
+            4 * fftsize );
     }
 
     /*!
@@ -525,6 +528,7 @@ class HeffteFastFourierTransform
             _fft->forward(
                 reinterpret_cast<std::complex<Scalar>*>( _fft_work.data() ),
                 reinterpret_cast<std::complex<Scalar>*>( _fft_work.data() ),
+                reinterpret_cast<std::complex<Scalar>*>( _workspace.data() ),
                 scale );
         }
         else if ( flag == -1 )
@@ -532,6 +536,7 @@ class HeffteFastFourierTransform
             _fft->backward(
                 reinterpret_cast<std::complex<Scalar>*>( _fft_work.data() ),
                 reinterpret_cast<std::complex<Scalar>*>( _fft_work.data() ),
+                reinterpret_cast<std::complex<Scalar>*>( _workspace.data() ),
                 scale );
         }
         else
@@ -548,6 +553,7 @@ class HeffteFastFourierTransform
     // heFFTe correctly handles 2D or 3D FFTs within "fft3d"
     std::shared_ptr<heffte::fft3d<heffte_backend_type>> _fft;
     Kokkos::View<Scalar*, DeviceType> _fft_work;
+    Kokkos::View<Scalar* [2], DeviceType> _workspace;
 };
 
 //---------------------------------------------------------------------------//
