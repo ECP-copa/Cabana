@@ -106,12 +106,18 @@ software for a simulation "motif" such as particles is increasingly important
 as hardware for scientific simulations continues to evolve, becoming more
 heterogeneous, requiring more effort to extract performance, and otherwise
 likely requiring separate versions of a single application (or kernel) for each
-vendor-specific API to utilize the multitude of available accelerators. To
-address this need, our objective is to provide scalable software services
-applicable to high-performance scientific codes across numerous application
-domains through general particle algorithms and data structures that are
-performant on a variety of distributed memory and accelerated architectures in
-a single implementation.
+vendor-specific API to utilize the multitude of available accelerators. We note
+that there are some well designed and broad featured general particle
+simulation libraries: `AutoPas` automatically chooses underlying particle
+algorithms and parallel options using performance tuning [@autopas] and
+`OpenFPM` includes both particle and particle-grid capabilities [@openfpm].
+However, the former does not currently support GPUs and the latter currently
+supports only `CUDA` (and does so internally, rather than through a separate
+library such as `Kokkos`). To address this need, our objective is to provide
+scalable software services applicable to high-performance scientific codes
+across numerous application domains through general particle algorithms and
+data structures that are performant on a variety of distributed memory and
+accelerated architectures in a single implementation.
 
 ## Particle capability
 
