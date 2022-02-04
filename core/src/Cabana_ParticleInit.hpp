@@ -24,22 +24,22 @@
 namespace Cabana
 {
 
-//! Generate random particles with minimum distance between neighbors. This
-// approximates many physical scenarios, e.g. atomic simulations. Kokkos
-// device version.
-template <class PositionType>
-void createRandomParticlesMinDistance( PositionType& positions,
+/*!
+  Generate random particles with minimum distance between neighbors. This
+  approximates many physical scenarios, e.g. atomic simulations. Kokkos
+  device version.
+*/
+template <class ExecutionSpace, class PositionType>
+void createRandomParticlesMinDistance( ExecutionSpace, PositionType& positions,
                                        const std::size_t num_particles,
                                        const double box_min,
                                        const double box_max,
                                        const double min_dist )
 {
-    using exec_space = typename PositionType::execution_space;
-
     double min_dist_sqr = min_dist * min_dist;
 
-    using PoolType = Kokkos::Random_XorShift64_Pool<exec_space>;
-    using RandomType = Kokkos::Random_XorShift64<exec_space>;
+    using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
+    using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
     PoolType pool( 342343901 );
     auto random_coord_op = KOKKOS_LAMBDA( const int p )
     {
@@ -74,14 +74,33 @@ void createRandomParticlesMinDistance( PositionType& positions,
             pool.free_state( gen );
         }
     };
-    Kokkos::RangePolicy<exec_space> exec_policy( 0, num_particles );
+    Kokkos::RangePolicy<ExecutionSpace> exec_policy( 0, num_particles );
     Kokkos::parallel_for( exec_policy, random_coord_op );
     Kokkos::fence();
 }
 
-//! Generate random particles with minimum distance between neighbors. This
-// approximates many physical scenarios, e.g. atomic simulations. Non-Kokkos
-// host version.
+/*!
+  Generate random particles with minimum distance between neighbors. This
+  approximates many physical scenarios, e.g. atomic simulations. Kokkos
+  device version with default execution space.
+*/
+template <class PositionType>
+void createRandomParticlesMinDistance( PositionType& positions,
+                                       const std::size_t num_particles,
+                                       const double box_min,
+                                       const double box_max,
+                                       const double min_dist )
+{
+    using exec_space = typename PositionType::execution_space;
+    createRandomParticlesMinDistance( exec_space{}, positions, num_particles,
+                                      box_min, box_max, min_dist );
+}
+
+/*!
+  Generate random particles with minimum distance between neighbors. This
+  approximates many physical scenarios, e.g. atomic simulations. Non-Kokkos
+  host version.
+*/
 template <class PositionType>
 void createRandomParticlesMinDistanceHost( PositionType& positions,
                                            const std::size_t num_particles,
@@ -136,15 +155,13 @@ void createRandomParticlesMinDistanceHost( PositionType& positions,
 }
 
 //! Generate random particles. Kokkos device version.
-template <class PositionType>
-void createRandomParticles( PositionType& positions,
+template <class ExecutionSpace, class PositionType>
+void createRandomParticles( ExecutionSpace, PositionType& positions,
                             const std::size_t num_particles,
                             const double box_min, const double box_max )
 {
-    using exec_space = typename PositionType::execution_space;
-
-    using PoolType = Kokkos::Random_XorShift64_Pool<exec_space>;
-    using RandomType = Kokkos::Random_XorShift64<exec_space>;
+    using PoolType = Kokkos::Random_XorShift64_Pool<ExecutionSpace>;
+    using RandomType = Kokkos::Random_XorShift64<ExecutionSpace>;
     PoolType pool( 342343901 );
     auto random_coord_op = KOKKOS_LAMBDA( const int p )
     {
@@ -154,9 +171,23 @@ void createRandomParticles( PositionType& positions,
                 Kokkos::rand<RandomType, double>::draw( gen, box_min, box_max );
         pool.free_state( gen );
     };
-    Kokkos::RangePolicy<exec_space> exec_policy( 0, num_particles );
+    Kokkos::RangePolicy<ExecutionSpace> exec_policy( 0, num_particles );
     Kokkos::parallel_for( exec_policy, random_coord_op );
     Kokkos::fence();
+}
+
+/*!
+  Generate random particles. Kokkos device version with default execution
+  space.
+*/
+template <class PositionType>
+void createRandomParticles( PositionType& positions,
+                            const std::size_t num_particles,
+                            const double box_min, const double box_max )
+{
+    using exec_space = typename PositionType::execution_space;
+    createRandomParticles( exec_space{}, positions, num_particles, box_min,
+                           box_max );
 }
 
 //---------------------------------------------------------------------------//
