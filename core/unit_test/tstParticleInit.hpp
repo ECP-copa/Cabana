@@ -74,23 +74,6 @@ void testRandomCreationMinDistance()
     checkRandomDistances( min_dist, host_positions );
 }
 
-void testRandomCreationMinDistanceHost()
-{
-    int num_particle = 2000;
-    Cabana::AoSoA<Cabana::MemberTypes<double[3]>, Kokkos::HostSpace> host_aosoa(
-        "random", num_particle );
-    auto host_positions = Cabana::slice<0>( host_aosoa );
-
-    double min_dist = 0.47;
-    double box_min = -9.5;
-    double box_max = 7.6;
-    Cabana::createRandomParticlesMinDistanceHost(
-        host_positions, host_positions.size(), box_min, box_max, min_dist );
-
-    checkRandomParticles( num_particle, box_min, box_max, host_positions );
-    checkRandomDistances( min_dist, host_positions );
-}
-
 void testRandomCreation()
 {
     int num_particle = 200;
@@ -109,25 +92,8 @@ void testRandomCreation()
     checkRandomParticles( num_particle, box_min, box_max, host_positions );
 }
 
-void testRandomCreationHost()
-{
-    int num_particle = 200;
-    Cabana::AoSoA<Cabana::MemberTypes<double[3]>, Kokkos::HostSpace> host_aosoa(
-        "random", num_particle );
-    auto host_positions = Cabana::slice<0>( host_aosoa );
-
-    double box_min = -9.5;
-    double box_max = 7.6;
-    Cabana::createRandomParticles( host_positions, host_positions.size(),
-                                   box_min, box_max );
-
-    checkRandomParticles( num_particle, box_min, box_max, host_positions );
-}
-
 TEST( TEST_CATEGORY, random_particle_creation_test )
 {
     testRandomCreationMinDistance();
-    testRandomCreationMinDistanceHost();
     testRandomCreation();
-    testRandomCreationHost();
 }

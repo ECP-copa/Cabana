@@ -96,64 +96,6 @@ void createRandomParticlesMinDistance( PositionType& positions,
                                       box_min, box_max, min_dist );
 }
 
-/*!
-  Generate random particles with minimum distance between neighbors. This
-  approximates many physical scenarios, e.g. atomic simulations. Non-Kokkos
-  host version.
-*/
-template <class PositionType>
-void createRandomParticlesMinDistanceHost( PositionType& positions,
-                                           const std::size_t num_particles,
-                                           const double box_min,
-                                           const double box_max,
-                                           const double min_dist )
-{
-    using memory_space = typename PositionType::memory_space;
-    static_assert( std::is_same<memory_space, Kokkos::HostSpace>::value,
-                   "Must use host space." );
-
-    double min_dist_sqr = min_dist * min_dist;
-    std::default_random_engine rand_gen;
-    std::uniform_real_distribution<double> rand_dist( box_min, box_max );
-
-    // Seed the distribution with a particle at the origin.
-    positions( 0, 0 ) = ( box_max - box_min ) / 2.0;
-    positions( 0, 1 ) = ( box_max - box_min ) / 2.0;
-    positions( 0, 2 ) = ( box_max - box_min ) / 2.0;
-
-    // Create particles. Only add particles that are outside a minimum
-    // distance from other particles.
-    for ( std::size_t p = 0; p < num_particles; ++p )
-    {
-        bool found_neighbor = true;
-
-        // Keep trying new random coordinates until we insert one that is
-        // not within the minimum distance of any other particle.
-        while ( found_neighbor )
-        {
-            found_neighbor = false;
-
-            // Create particle coordinates.
-            positions( p, 0 ) = rand_dist( rand_gen );
-            positions( p, 1 ) = rand_dist( rand_gen );
-            positions( p, 2 ) = rand_dist( rand_gen );
-
-            for ( std::size_t n = 0; n < p; n++ )
-            {
-                double dx = positions( n, 0 ) - positions( p, 0 );
-                double dy = positions( n, 1 ) - positions( p, 1 );
-                double dz = positions( n, 2 ) - positions( p, 2 );
-                double dist = dx * dx + dy * dy + dz * dz;
-                if ( dist < min_dist_sqr )
-                {
-                    found_neighbor = true;
-                    break;
-                }
-            }
-        }
-    }
-}
-
 //! Generate random particles. Kokkos device version.
 template <class ExecutionSpace, class PositionType>
 void createRandomParticles( ExecutionSpace, PositionType& positions,
@@ -188,36 +130,6 @@ void createRandomParticles( PositionType& positions,
     using exec_space = typename PositionType::execution_space;
     createRandomParticles( exec_space{}, positions, num_particles, box_min,
                            box_max );
-}
-
-//---------------------------------------------------------------------------//
-//! Generate random particles. Non-Kokkos host version.
-template <typename PositionType>
-void createRandomParticlesHost( PositionType& positions,
-                                const std::size_t num_particles,
-                                const double box_min, const double box_max )
-{
-    using memory_space = typename PositionType::memory_space;
-    static_assert( std::is_same<memory_space, Kokkos::HostSpace>::value,
-                   "Must use host space." );
-
-    using value_type = typename PositionType::value_type;
-
-    // compute position range
-    value_type box_range = box_max - box_min;
-
-    // compute generator range
-    std::minstd_rand0 generator( 3439203991 );
-    value_type generator_range =
-        static_cast<value_type>( generator.max() - generator.min() );
-
-    // generate random particles
-    for ( std::size_t n = 0; n < num_particles; ++n )
-        for ( std::size_t d = 0; d < 3; ++d )
-            positions( n, d ) =
-                ( static_cast<value_type>( ( generator() - generator.min() ) ) *
-                  box_range / generator_range ) +
-                box_min;
 }
 
 } // namespace Cabana
