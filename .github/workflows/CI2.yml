@@ -376,7 +376,7 @@ jobs:
         if: ${{ matrix.distro == 'ubuntu:latest' }}
         working-directory: build
         run: |
-             make format
+             make cabana-format
              git diff --exit-code
       - name: Upload Report to codecov.io
         if: ${{ matrix.coverage == 'ON' }}
