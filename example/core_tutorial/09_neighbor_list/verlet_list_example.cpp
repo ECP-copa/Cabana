@@ -36,7 +36,7 @@ void verletListExample()
     /*
       Next declare the data layout of the AoSoA. We use the host space here
       for the purposes of this example but all memory spaces, vector lengths,
-      and member type configurations are compatible with sorting.
+      and member type configurations are compatible with neighbor lists.
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;
