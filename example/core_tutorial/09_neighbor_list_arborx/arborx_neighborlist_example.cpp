@@ -19,7 +19,7 @@
 void arborxNeighborListExample()
 {
     /*
-      ArborX is a Kokko-based library for geometric search, included as an
+      ArborX is a Kokkos-based library for geometric search, included as an
       optional dependency in Cabana for building neighbor lists without a
       background acceleration grid, as with the Verlet list.
 
