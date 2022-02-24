@@ -175,7 +175,7 @@ $(function() {
 <div class="line"><a name="l00104"></a><span class="lineno">  104</span>&#160;    }</div>
 <div class="line"><a name="l00105"></a><span class="lineno">  105</span>&#160; </div>
 <div class="line"><a name="l00106"></a><span class="lineno">  106</span>&#160;    Kokkos::parallel_for(</div>
-<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="stringliteral">&quot;get_migrate_destinations&quot;</span>,</div>
+<div class="line"><a name="l00107"></a><span class="lineno">  107</span>&#160;        <span class="stringliteral">&quot;Cajita::ParticleGridMigrate::get_destinations&quot;</span>,</div>
 <div class="line"><a name="l00108"></a><span class="lineno">  108</span>&#160;        Kokkos::RangePolicy&lt;execution_space&gt;( 0, positions.size() ),</div>
 <div class="line"><a name="l00109"></a><span class="lineno">  109</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> p ) {</div>
 <div class="line"><a name="l00110"></a><span class="lineno">  110</span>&#160;            <span class="comment">// Compute the logical index of the neighbor we are sending to.</span></div>
@@ -248,7 +248,7 @@ $(function() {
 <div class="line"><a name="l00193"></a><span class="lineno">  193</span>&#160; </div>
 <div class="line"><a name="l00194"></a><span class="lineno">  194</span>&#160;    <span class="keywordtype">int</span> comm_count = 0;</div>
 <div class="line"><a name="l00195"></a><span class="lineno">  195</span>&#160;    Kokkos::parallel_reduce(</div>
-<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        <span class="stringliteral">&quot;redistribute_count&quot;</span>,</div>
+<div class="line"><a name="l00196"></a><span class="lineno">  196</span>&#160;        <span class="stringliteral">&quot;Cajita::ParticleGridMigrate::count&quot;</span>,</div>
 <div class="line"><a name="l00197"></a><span class="lineno">  197</span>&#160;        Kokkos::RangePolicy&lt;execution_space&gt;( 0, positions.size() ),</div>
 <div class="line"><a name="l00198"></a><span class="lineno">  198</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> p, <span class="keywordtype">int</span>&amp; result ) {</div>
 <div class="line"><a name="l00199"></a><span class="lineno">  199</span>&#160;            <span class="keywordflow">for</span> ( std::size_t d = 0; d &lt; num_space_dim; ++d )</div>
