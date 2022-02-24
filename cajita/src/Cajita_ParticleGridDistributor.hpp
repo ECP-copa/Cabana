@@ -104,7 +104,7 @@ void getMigrateDestinations( const LocalGridType& local_grid,
     }
 
     Kokkos::parallel_for(
-        "get_migrate_destinations",
+        "Cajita::ParticleGridMigrate::get_destinations",
         Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
         KOKKOS_LAMBDA( const int p ) {
             // Compute the logical index of the neighbor we are sending to.
@@ -193,7 +193,7 @@ int migrateCount( const LocalGridType& local_grid,
 
     int comm_count = 0;
     Kokkos::parallel_reduce(
-        "redistribute_count",
+        "Cajita::ParticleGridMigrate::count",
         Kokkos::RangePolicy<execution_space>( 0, positions.size() ),
         KOKKOS_LAMBDA( const int p, int& result ) {
             for ( std::size_t d = 0; d < num_space_dim; ++d )
