@@ -383,6 +383,7 @@ void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
 //---------------------------------------------------------------------------//
 /*!
   \brief Write particle output in Silo format.
+  \param prefix Filename prefix.
   \param comm MPI communicator.
   \param num_group Number of files to create in parallel.
   \param time_step_index Current simulation step index.
@@ -391,9 +392,10 @@ void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
   \param fields Variadic list of particle property fields.
 */
 template <class CoordSliceType, class... FieldSliceTypes>
-void writeTimeStep( MPI_Comm comm, const int num_group,
-                    const int time_step_index, const double time,
-                    const CoordSliceType& coords, FieldSliceTypes&&... fields )
+void writeTimeStep( const std::string& prefix, MPI_Comm comm,
+                    const int num_group, const int time_step_index,
+                    const double time, const CoordSliceType& coords,
+                    FieldSliceTypes&&... fields )
 {
     // Create the parallel baton.
     int mpi_tag = 1948;
@@ -409,11 +411,10 @@ void writeTimeStep( MPI_Comm comm, const int num_group,
 
     // Group 0 writes a master file for the time step.
     if ( 0 == group_rank )
-        file_name << "particles_" << time_step_index << ".silo";
-
+        file_name << prefix << "_" << time_step_index << ".silo";
     // The other groups write auxiliary files.
     else
-        file_name << "particles_" << time_step_index << "_group_" << group_rank
+        file_name << prefix << "_" << time_step_index << "_group_" << group_rank
                   << ".silo";
 
     // Compose a directory name.
