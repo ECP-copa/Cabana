@@ -124,7 +124,7 @@ void writeTest()
     double time = 7.64;
     double step = 892;
     Cajita::Experimental::SiloParticleOutput::writeTimeStep(
-        *global_grid, step, time, coords, ids, matrix, vec );
+        "particles", *global_grid, step, time, coords, ids, matrix, vec );
 
     // Move the particles and write again.
     double time_step_size = 0.32;
@@ -135,7 +135,7 @@ void writeTest()
             coords_mirror( p, d ) += 1.32;
     Cabana::deep_copy( coords, coords_mirror );
     Cajita::Experimental::SiloParticleOutput::writeTimeStep(
-        *global_grid, step, time, coords, ids, matrix, vec );
+        "particles", *global_grid, step, time, coords, ids, matrix, vec );
 }
 
 //---------------------------------------------------------------------------//

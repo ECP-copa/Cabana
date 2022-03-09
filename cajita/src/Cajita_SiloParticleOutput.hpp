@@ -37,6 +37,7 @@ namespace SiloParticleOutput
 {
 /*!
   \brief Write particle output in Silo format using mesh information.
+  \param label Particles label.
   \param global_grid Cajita global grid.
   \param time_step_index Current simulation step index.
   \param time Current simulation time.
@@ -44,7 +45,7 @@ namespace SiloParticleOutput
   \param fields Variadic list of particle property fields.
 */
 template <class GlobalGridType, class CoordSliceType, class... FieldSliceTypes>
-void writeTimeStep( const GlobalGridType& global_grid,
+void writeTimeStep( const std::string& label, const GlobalGridType& global_grid,
                     const int time_step_index, const double time,
                     const CoordSliceType& coords, FieldSliceTypes&&... fields )
 {
@@ -58,7 +59,7 @@ void writeTimeStep( const GlobalGridType& global_grid,
             num_group = global_grid.dimNumBlock( d );
 
     Cabana::Experimental::SiloParticleOutput::writeTimeStep(
-        global_grid.comm(), num_group, time_step_index, time, coords,
+        label, global_grid.comm(), num_group, time_step_index, time, coords,
         fields... );
 }
 } // namespace SiloParticleOutput
