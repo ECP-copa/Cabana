@@ -437,98 +437,98 @@ $(function() {
 <div class="line"><a name="l00381"></a><span class="lineno">  381</span>&#160;}</div>
 <div class="line"><a name="l00382"></a><span class="lineno">  382</span>&#160; </div>
 <div class="line"><a name="l00383"></a><span class="lineno">  383</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00393"></a><span class="lineno">  393</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>CoordSliceType, <span class="keyword">class</span>... FieldSliceTypes&gt;</div>
-<div class="line"><a name="l00394"></a><span class="lineno"><a class="line" href="Cabana__SiloParticleOutput_8hpp.html#a099d38f2e8b65c1e8b15e1fa2f17fce9">  394</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#a099d38f2e8b65c1e8b15e1fa2f17fce9">writeTimeStep</a>( MPI_Comm comm, <span class="keyword">const</span> <span class="keywordtype">int</span> num_group,</div>
-<div class="line"><a name="l00395"></a><span class="lineno">  395</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">int</span> time_step_index, <span class="keyword">const</span> <span class="keywordtype">double</span> time,</div>
-<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;                    <span class="keyword">const</span> CoordSliceType&amp; coords, FieldSliceTypes&amp;&amp;... fields )</div>
-<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;{</div>
-<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;    <span class="comment">// Create the parallel baton.</span></div>
-<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;    <span class="keywordtype">int</span> mpi_tag = 1948;</div>
-<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    PMPIO_baton_t* baton =</div>
-<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;        PMPIO_Init( num_group, PMPIO_WRITE, comm, mpi_tag, <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#a231a1cc46c0d2342a321b4707605f7d3">createFile</a>, <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#a97f1b5df5a047e69f45f2ca29ce3079e">openFile</a>,</div>
-<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;                    <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#a45f6b09a6c8da075fe8a420dc0b8aa21">closeFile</a>, <span class="keyword">nullptr</span> );</div>
-<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160; </div>
-<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;    <span class="comment">// Compose a data file name.</span></div>
-<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160;    <span class="keywordtype">int</span> comm_rank;</div>
-<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    MPI_Comm_rank( comm, &amp;comm_rank );</div>
-<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    <span class="keywordtype">int</span> group_rank = PMPIO_GroupRank( baton, comm_rank );</div>
-<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    std::stringstream file_name;</div>
-<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160; </div>
-<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    <span class="comment">// Group 0 writes a master file for the time step.</span></div>
-<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160;    <span class="keywordflow">if</span> ( 0 == group_rank )</div>
-<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;        file_name &lt;&lt; <span class="stringliteral">&quot;particles_&quot;</span> &lt;&lt; time_step_index &lt;&lt; <span class="stringliteral">&quot;.silo&quot;</span>;</div>
-<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160; </div>
-<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;    <span class="comment">// The other groups write auxiliary files.</span></div>
-<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    <span class="keywordflow">else</span></div>
-<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;        file_name &lt;&lt; <span class="stringliteral">&quot;particles_&quot;</span> &lt;&lt; time_step_index &lt;&lt; <span class="stringliteral">&quot;_group_&quot;</span> &lt;&lt; group_rank</div>
-<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;                  &lt;&lt; <span class="stringliteral">&quot;.silo&quot;</span>;</div>
-<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160; </div>
-<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160;    <span class="comment">// Compose a directory name.</span></div>
-<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    std::stringstream dir_name;</div>
-<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    dir_name &lt;&lt; <span class="stringliteral">&quot;rank_&quot;</span> &lt;&lt; comm_rank;</div>
-<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160; </div>
-<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160;    <span class="comment">// Wait for our turn to write to the file.</span></div>
-<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    DBfile* silo_file = (DBfile*)PMPIO_WaitForBaton(</div>
-<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;        baton, file_name.str().c_str(), dir_name.str().c_str() );</div>
-<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160; </div>
-<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160;    <span class="comment">// Reorder the coordinates in a blocked format.</span></div>
-<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> CoordSliceType::value_type**, Kokkos::LayoutLeft,</div>
-<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;                 <span class="keyword">typename</span> CoordSliceType::device_type&gt;</div>
-<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;        view( <span class="stringliteral">&quot;coords&quot;</span>, coords.size(), coords.extent( 2 ) );</div>
-<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;    Kokkos::parallel_for(</div>
-<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;        <span class="stringliteral">&quot;Cabana::SiloParticleOutput::writeCoords&quot;</span>,</div>
-<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;        Kokkos::RangePolicy&lt;typename CoordSliceType::execution_space&gt;(</div>
-<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;            0, coords.size() ),</div>
-<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>
-<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;            <span class="keywordflow">for</span> ( std::size_t d0 = 0; d0 &lt; coords.extent( 2 ); ++d0 )</div>
-<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;                view( i, d0 ) = coords( i, d0 );</div>
-<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;        } );</div>
-<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160; </div>
-<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160;    <span class="comment">// Mirror the coordinates to the host.</span></div>
-<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    <span class="keyword">auto</span> host_coords =</div>
-<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;        <a class="code" href="namespaceCabana.html#ab22f02b41130e19d3e1f071373ac69c9">Kokkos::create_mirror_view_and_copy</a>( Kokkos::HostSpace(), view );</div>
-<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160; </div>
-<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160;    <span class="comment">// Add the point mesh.</span></div>
-<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;    std::string mesh_name = <span class="stringliteral">&quot;particles&quot;</span>;</div>
-<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    <span class="keywordtype">double</span>* ptrs[3] = { &amp;host_coords( 0, 0 ), &amp;host_coords( 0, 1 ),</div>
-<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;                        &amp;host_coords( 0, 2 ) };</div>
-<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;    DBPutPointmesh( silo_file, mesh_name.c_str(), host_coords.extent( 1 ), ptrs,</div>
-<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;                    host_coords.extent( 0 ),</div>
-<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;                    SiloTraits&lt;typename CoordSliceType::value_type&gt;::type(),</div>
-<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;                    <span class="keyword">nullptr</span> );</div>
-<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160; </div>
-<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160;    <span class="comment">// Add variables.</span></div>
-<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#ae6b15f0c181717f63e233cc474ee3b15">writeFields</a>( silo_file, mesh_name, fields... );</div>
-<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160; </div>
-<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160;    <span class="comment">// Root rank writes the global multimesh hierarchy for parallel</span></div>
-<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    <span class="comment">// simulations.</span></div>
-<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;    <span class="keywordtype">int</span> comm_size;</div>
-<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    MPI_Comm_size( comm, &amp;comm_size );</div>
-<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    <span class="keywordflow">if</span> ( 0 == comm_rank &amp;&amp; comm_size &gt; 1 )</div>
-<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;        <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#ac641f820a71a0ce774ad6fe0754aa7f9">writeMultiMesh</a>( baton, silo_file, comm_size, mesh_name, time_step_index,</div>
-<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;                        time, fields... );</div>
-<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160; </div>
-<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160;    <span class="comment">// Hand off the baton.</span></div>
-<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;    PMPIO_HandOffBaton( baton, silo_file );</div>
-<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160; </div>
-<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160;    <span class="comment">// Finish.</span></div>
-<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    PMPIO_Finish( baton );</div>
-<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;}</div>
-<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160; </div>
-<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160; </div>
-<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160;} <span class="comment">// namespace SiloParticleOutput</span></div>
-<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;} <span class="comment">// namespace Experimental</span></div>
-<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
-<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160; </div>
-<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// CABANA_SILOPARTICLEOUTPUT_HPP</span></div>
-<div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html_a099d38f2e8b65c1e8b15e1fa2f17fce9"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html#a099d38f2e8b65c1e8b15e1fa2f17fce9">Cabana::Experimental::writeTimeStep</a></div><div class="ttdeci">void writeTimeStep(MPI_Comm comm, const int num_group, const int time_step_index, const double time, const CoordSliceType &amp;coords, FieldSliceTypes &amp;&amp;... fields)</div><div class="ttdoc">Write particle output in Silo format.</div><div class="ttdef"><b>Definition:</b> Cabana_SiloParticleOutput.hpp:394</div></div>
+<div class="line"><a name="l00394"></a><span class="lineno">  394</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class </span>CoordSliceType, <span class="keyword">class</span>... FieldSliceTypes&gt;</div>
+<div class="line"><a name="l00395"></a><span class="lineno"><a class="line" href="Cabana__SiloParticleOutput_8hpp.html#af0c50c27219a5a536bae5be8d6b6a50f">  395</a></span>&#160;<span class="keywordtype">void</span> <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#af0c50c27219a5a536bae5be8d6b6a50f">writeTimeStep</a>( <span class="keyword">const</span> std::string&amp; prefix, MPI_Comm comm,</div>
+<div class="line"><a name="l00396"></a><span class="lineno">  396</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">int</span> num_group, <span class="keyword">const</span> <span class="keywordtype">int</span> time_step_index,</div>
+<div class="line"><a name="l00397"></a><span class="lineno">  397</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">double</span> time, <span class="keyword">const</span> CoordSliceType&amp; coords,</div>
+<div class="line"><a name="l00398"></a><span class="lineno">  398</span>&#160;                    FieldSliceTypes&amp;&amp;... fields )</div>
+<div class="line"><a name="l00399"></a><span class="lineno">  399</span>&#160;{</div>
+<div class="line"><a name="l00400"></a><span class="lineno">  400</span>&#160;    <span class="comment">// Create the parallel baton.</span></div>
+<div class="line"><a name="l00401"></a><span class="lineno">  401</span>&#160;    <span class="keywordtype">int</span> mpi_tag = 1948;</div>
+<div class="line"><a name="l00402"></a><span class="lineno">  402</span>&#160;    PMPIO_baton_t* baton =</div>
+<div class="line"><a name="l00403"></a><span class="lineno">  403</span>&#160;        PMPIO_Init( num_group, PMPIO_WRITE, comm, mpi_tag, <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#a231a1cc46c0d2342a321b4707605f7d3">createFile</a>, <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#a97f1b5df5a047e69f45f2ca29ce3079e">openFile</a>,</div>
+<div class="line"><a name="l00404"></a><span class="lineno">  404</span>&#160;                    <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#a45f6b09a6c8da075fe8a420dc0b8aa21">closeFile</a>, <span class="keyword">nullptr</span> );</div>
+<div class="line"><a name="l00405"></a><span class="lineno">  405</span>&#160; </div>
+<div class="line"><a name="l00406"></a><span class="lineno">  406</span>&#160;    <span class="comment">// Compose a data file name.</span></div>
+<div class="line"><a name="l00407"></a><span class="lineno">  407</span>&#160;    <span class="keywordtype">int</span> comm_rank;</div>
+<div class="line"><a name="l00408"></a><span class="lineno">  408</span>&#160;    MPI_Comm_rank( comm, &amp;comm_rank );</div>
+<div class="line"><a name="l00409"></a><span class="lineno">  409</span>&#160;    <span class="keywordtype">int</span> group_rank = PMPIO_GroupRank( baton, comm_rank );</div>
+<div class="line"><a name="l00410"></a><span class="lineno">  410</span>&#160;    std::stringstream file_name;</div>
+<div class="line"><a name="l00411"></a><span class="lineno">  411</span>&#160; </div>
+<div class="line"><a name="l00412"></a><span class="lineno">  412</span>&#160;    <span class="comment">// Group 0 writes a master file for the time step.</span></div>
+<div class="line"><a name="l00413"></a><span class="lineno">  413</span>&#160;    <span class="keywordflow">if</span> ( 0 == group_rank )</div>
+<div class="line"><a name="l00414"></a><span class="lineno">  414</span>&#160;        file_name &lt;&lt; prefix &lt;&lt; <span class="stringliteral">&quot;_&quot;</span> &lt;&lt; time_step_index &lt;&lt; <span class="stringliteral">&quot;.silo&quot;</span>;</div>
+<div class="line"><a name="l00415"></a><span class="lineno">  415</span>&#160;    <span class="comment">// The other groups write auxiliary files.</span></div>
+<div class="line"><a name="l00416"></a><span class="lineno">  416</span>&#160;    <span class="keywordflow">else</span></div>
+<div class="line"><a name="l00417"></a><span class="lineno">  417</span>&#160;        file_name &lt;&lt; prefix &lt;&lt; <span class="stringliteral">&quot;_&quot;</span> &lt;&lt; time_step_index &lt;&lt; <span class="stringliteral">&quot;_group_&quot;</span> &lt;&lt; group_rank</div>
+<div class="line"><a name="l00418"></a><span class="lineno">  418</span>&#160;                  &lt;&lt; <span class="stringliteral">&quot;.silo&quot;</span>;</div>
+<div class="line"><a name="l00419"></a><span class="lineno">  419</span>&#160; </div>
+<div class="line"><a name="l00420"></a><span class="lineno">  420</span>&#160;    <span class="comment">// Compose a directory name.</span></div>
+<div class="line"><a name="l00421"></a><span class="lineno">  421</span>&#160;    std::stringstream dir_name;</div>
+<div class="line"><a name="l00422"></a><span class="lineno">  422</span>&#160;    dir_name &lt;&lt; <span class="stringliteral">&quot;rank_&quot;</span> &lt;&lt; comm_rank;</div>
+<div class="line"><a name="l00423"></a><span class="lineno">  423</span>&#160; </div>
+<div class="line"><a name="l00424"></a><span class="lineno">  424</span>&#160;    <span class="comment">// Wait for our turn to write to the file.</span></div>
+<div class="line"><a name="l00425"></a><span class="lineno">  425</span>&#160;    DBfile* silo_file = (DBfile*)PMPIO_WaitForBaton(</div>
+<div class="line"><a name="l00426"></a><span class="lineno">  426</span>&#160;        baton, file_name.str().c_str(), dir_name.str().c_str() );</div>
+<div class="line"><a name="l00427"></a><span class="lineno">  427</span>&#160; </div>
+<div class="line"><a name="l00428"></a><span class="lineno">  428</span>&#160;    <span class="comment">// Reorder the coordinates in a blocked format.</span></div>
+<div class="line"><a name="l00429"></a><span class="lineno">  429</span>&#160;    Kokkos::View&lt;<span class="keyword">typename</span> CoordSliceType::value_type**, Kokkos::LayoutLeft,</div>
+<div class="line"><a name="l00430"></a><span class="lineno">  430</span>&#160;                 <span class="keyword">typename</span> CoordSliceType::device_type&gt;</div>
+<div class="line"><a name="l00431"></a><span class="lineno">  431</span>&#160;        view( <span class="stringliteral">&quot;coords&quot;</span>, coords.size(), coords.extent( 2 ) );</div>
+<div class="line"><a name="l00432"></a><span class="lineno">  432</span>&#160;    Kokkos::parallel_for(</div>
+<div class="line"><a name="l00433"></a><span class="lineno">  433</span>&#160;        <span class="stringliteral">&quot;Cabana::SiloParticleOutput::writeCoords&quot;</span>,</div>
+<div class="line"><a name="l00434"></a><span class="lineno">  434</span>&#160;        Kokkos::RangePolicy&lt;typename CoordSliceType::execution_space&gt;(</div>
+<div class="line"><a name="l00435"></a><span class="lineno">  435</span>&#160;            0, coords.size() ),</div>
+<div class="line"><a name="l00436"></a><span class="lineno">  436</span>&#160;        KOKKOS_LAMBDA( <span class="keyword">const</span> <span class="keywordtype">int</span> i ) {</div>
+<div class="line"><a name="l00437"></a><span class="lineno">  437</span>&#160;            <span class="keywordflow">for</span> ( std::size_t d0 = 0; d0 &lt; coords.extent( 2 ); ++d0 )</div>
+<div class="line"><a name="l00438"></a><span class="lineno">  438</span>&#160;                view( i, d0 ) = coords( i, d0 );</div>
+<div class="line"><a name="l00439"></a><span class="lineno">  439</span>&#160;        } );</div>
+<div class="line"><a name="l00440"></a><span class="lineno">  440</span>&#160; </div>
+<div class="line"><a name="l00441"></a><span class="lineno">  441</span>&#160;    <span class="comment">// Mirror the coordinates to the host.</span></div>
+<div class="line"><a name="l00442"></a><span class="lineno">  442</span>&#160;    <span class="keyword">auto</span> host_coords =</div>
+<div class="line"><a name="l00443"></a><span class="lineno">  443</span>&#160;        <a class="code" href="namespaceCabana.html#ab22f02b41130e19d3e1f071373ac69c9">Kokkos::create_mirror_view_and_copy</a>( Kokkos::HostSpace(), view );</div>
+<div class="line"><a name="l00444"></a><span class="lineno">  444</span>&#160; </div>
+<div class="line"><a name="l00445"></a><span class="lineno">  445</span>&#160;    <span class="comment">// Add the point mesh.</span></div>
+<div class="line"><a name="l00446"></a><span class="lineno">  446</span>&#160;    std::string mesh_name = <span class="stringliteral">&quot;particles&quot;</span>;</div>
+<div class="line"><a name="l00447"></a><span class="lineno">  447</span>&#160;    <span class="keywordtype">double</span>* ptrs[3] = { &amp;host_coords( 0, 0 ), &amp;host_coords( 0, 1 ),</div>
+<div class="line"><a name="l00448"></a><span class="lineno">  448</span>&#160;                        &amp;host_coords( 0, 2 ) };</div>
+<div class="line"><a name="l00449"></a><span class="lineno">  449</span>&#160;    DBPutPointmesh( silo_file, mesh_name.c_str(), host_coords.extent( 1 ), ptrs,</div>
+<div class="line"><a name="l00450"></a><span class="lineno">  450</span>&#160;                    host_coords.extent( 0 ),</div>
+<div class="line"><a name="l00451"></a><span class="lineno">  451</span>&#160;                    SiloTraits&lt;typename CoordSliceType::value_type&gt;::type(),</div>
+<div class="line"><a name="l00452"></a><span class="lineno">  452</span>&#160;                    <span class="keyword">nullptr</span> );</div>
+<div class="line"><a name="l00453"></a><span class="lineno">  453</span>&#160; </div>
+<div class="line"><a name="l00454"></a><span class="lineno">  454</span>&#160;    <span class="comment">// Add variables.</span></div>
+<div class="line"><a name="l00455"></a><span class="lineno">  455</span>&#160;    <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#ae6b15f0c181717f63e233cc474ee3b15">writeFields</a>( silo_file, mesh_name, fields... );</div>
+<div class="line"><a name="l00456"></a><span class="lineno">  456</span>&#160; </div>
+<div class="line"><a name="l00457"></a><span class="lineno">  457</span>&#160;    <span class="comment">// Root rank writes the global multimesh hierarchy for parallel</span></div>
+<div class="line"><a name="l00458"></a><span class="lineno">  458</span>&#160;    <span class="comment">// simulations.</span></div>
+<div class="line"><a name="l00459"></a><span class="lineno">  459</span>&#160;    <span class="keywordtype">int</span> comm_size;</div>
+<div class="line"><a name="l00460"></a><span class="lineno">  460</span>&#160;    MPI_Comm_size( comm, &amp;comm_size );</div>
+<div class="line"><a name="l00461"></a><span class="lineno">  461</span>&#160;    <span class="keywordflow">if</span> ( 0 == comm_rank &amp;&amp; comm_size &gt; 1 )</div>
+<div class="line"><a name="l00462"></a><span class="lineno">  462</span>&#160;        <a class="code" href="Cabana__SiloParticleOutput_8hpp.html#ac641f820a71a0ce774ad6fe0754aa7f9">writeMultiMesh</a>( baton, silo_file, comm_size, mesh_name, time_step_index,</div>
+<div class="line"><a name="l00463"></a><span class="lineno">  463</span>&#160;                        time, fields... );</div>
+<div class="line"><a name="l00464"></a><span class="lineno">  464</span>&#160; </div>
+<div class="line"><a name="l00465"></a><span class="lineno">  465</span>&#160;    <span class="comment">// Hand off the baton.</span></div>
+<div class="line"><a name="l00466"></a><span class="lineno">  466</span>&#160;    PMPIO_HandOffBaton( baton, silo_file );</div>
+<div class="line"><a name="l00467"></a><span class="lineno">  467</span>&#160; </div>
+<div class="line"><a name="l00468"></a><span class="lineno">  468</span>&#160;    <span class="comment">// Finish.</span></div>
+<div class="line"><a name="l00469"></a><span class="lineno">  469</span>&#160;    PMPIO_Finish( baton );</div>
+<div class="line"><a name="l00470"></a><span class="lineno">  470</span>&#160;}</div>
+<div class="line"><a name="l00471"></a><span class="lineno">  471</span>&#160; </div>
+<div class="line"><a name="l00472"></a><span class="lineno">  472</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00473"></a><span class="lineno">  473</span>&#160; </div>
+<div class="line"><a name="l00474"></a><span class="lineno">  474</span>&#160;} <span class="comment">// namespace SiloParticleOutput</span></div>
+<div class="line"><a name="l00475"></a><span class="lineno">  475</span>&#160;} <span class="comment">// namespace Experimental</span></div>
+<div class="line"><a name="l00476"></a><span class="lineno">  476</span>&#160;} <span class="comment">// end namespace Cabana</span></div>
+<div class="line"><a name="l00477"></a><span class="lineno">  477</span>&#160; </div>
+<div class="line"><a name="l00478"></a><span class="lineno">  478</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// CABANA_SILOPARTICLEOUTPUT_HPP</span></div>
 <div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html_a231a1cc46c0d2342a321b4707605f7d3"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html#a231a1cc46c0d2342a321b4707605f7d3">Cabana::Experimental::createFile</a></div><div class="ttdeci">void * createFile(const char *file_name, const char *dir_name, void *user_data)</div><div class="ttdoc">Create Silo output file.</div><div class="ttdef"><b>Definition:</b> Cabana_SiloParticleOutput.hpp:210</div></div>
 <div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html_a45f6b09a6c8da075fe8a420dc0b8aa21"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html#a45f6b09a6c8da075fe8a420dc0b8aa21">Cabana::Experimental::closeFile</a></div><div class="ttdeci">void closeFile(void *file, void *user_data)</div><div class="ttdoc">Close Silo output file.</div><div class="ttdef"><b>Definition:</b> Cabana_SiloParticleOutput.hpp:241</div></div>
 <div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html_a97f1b5df5a047e69f45f2ca29ce3079e"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html#a97f1b5df5a047e69f45f2ca29ce3079e">Cabana::Experimental::openFile</a></div><div class="ttdeci">void * openFile(const char *file_name, const char *dir_name, PMPIO_iomode_t io_mode, void *user_data)</div><div class="ttdoc">Open Silo output file.</div><div class="ttdef"><b>Definition:</b> Cabana_SiloParticleOutput.hpp:226</div></div>
 <div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html_ac641f820a71a0ce774ad6fe0754aa7f9"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html#ac641f820a71a0ce774ad6fe0754aa7f9">Cabana::Experimental::writeMultiMesh</a></div><div class="ttdeci">void writeMultiMesh(PMPIO_baton_t *baton, DBfile *silo_file, const int comm_size, const std::string &amp;mesh_name, const int time_step_index, const double time, FieldSliceTypes &amp;&amp;... fields)</div><div class="ttdoc">Write a Silo multimesh hierarchy.</div><div class="ttdef"><b>Definition:</b> Cabana_SiloParticleOutput.hpp:283</div></div>
 <div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html_ada10a0a5d0001dc5bd8f469c9157fd2f"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html#ada10a0a5d0001dc5bd8f469c9157fd2f">Cabana::Experimental::getFieldNames</a></div><div class="ttdeci">std::vector&lt; std::string &gt; getFieldNames(FieldSliceTypes &amp;&amp;... fields)</div><div class="ttdoc">Get Silo output property field names.</div><div class="ttdef"><b>Definition:</b> Cabana_SiloParticleOutput.hpp:273</div></div>
 <div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html_ae6b15f0c181717f63e233cc474ee3b15"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html#ae6b15f0c181717f63e233cc474ee3b15">Cabana::Experimental::writeFields</a></div><div class="ttdeci">void writeFields(DBfile *silo_file, const std::string &amp;mesh_name, const SliceType &amp;slice)</div><div class="ttdoc">Write particle data to Silo output.</div><div class="ttdef"><b>Definition:</b> Cabana_SiloParticleOutput.hpp:193</div></div>
+<div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html_af0c50c27219a5a536bae5be8d6b6a50f"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html#af0c50c27219a5a536bae5be8d6b6a50f">Cabana::Experimental::writeTimeStep</a></div><div class="ttdeci">void writeTimeStep(const std::string &amp;prefix, MPI_Comm comm, const int num_group, const int time_step_index, const double time, const CoordSliceType &amp;coords, FieldSliceTypes &amp;&amp;... fields)</div><div class="ttdoc">Write particle output in Silo format.</div><div class="ttdef"><b>Definition:</b> Cabana_SiloParticleOutput.hpp:395</div></div>
 <div class="ttc" id="anamespaceCabana_html"><div class="ttname"><a href="namespaceCabana.html">Cabana</a></div><div class="ttdoc">Core: particle data structures and algorithms.</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:35</div></div>
 <div class="ttc" id="anamespaceCabana_html_ab22f02b41130e19d3e1f071373ac69c9"><div class="ttname"><a href="namespaceCabana.html#ab22f02b41130e19d3e1f071373ac69c9">Cabana::create_mirror_view_and_copy</a></div><div class="ttdeci">SrcAoSoA create_mirror_view_and_copy(const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</div><div class="ttdoc">Create a mirror view of the given AoSoA in the given memory space and copy the contents of the input ...</div><div class="ttdef"><b>Definition:</b> Cabana_DeepCopy.hpp:103</div></div>
 <div class="ttc" id="anamespaceCabana_html_ad6d068692acbf0642e84ce1f94b677c9"><div class="ttname"><a href="namespaceCabana.html#ad6d068692acbf0642e84ce1f94b677c9">Cabana::slice</a></div><div class="ttdeci">AoSoA_t::template member_slice_type&lt; M &gt; slice(const AoSoA_t &amp;aosoa, const std::string &amp;slice_label=&quot;&quot;)</div><div class="ttdoc">Create a slice from an AoSoA.</div><div class="ttdef"><b>Definition:</b> Cabana_AoSoA.hpp:75</div></div>

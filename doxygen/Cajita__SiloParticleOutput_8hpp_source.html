@@ -102,29 +102,29 @@ $(function() {
 <div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;{</div>
 <div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="keyword">namespace </span>SiloParticleOutput</div>
 <div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;{</div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>GlobalGridType, <span class="keyword">class </span>CoordSliceType, <span class="keyword">class</span>... FieldSliceTypes&gt;</div>
-<div class="line"><a name="l00047"></a><span class="lineno"><a class="line" href="Cajita__SiloParticleOutput_8hpp.html#a3a1f79e49d3c32d1516cee2d4f12cfef">   47</a></span>&#160;<span class="keywordtype">void</span> writeTimeStep( <span class="keyword">const</span> GlobalGridType&amp; global_grid,</div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">int</span> time_step_index, <span class="keyword">const</span> <span class="keywordtype">double</span> time,</div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                    <span class="keyword">const</span> CoordSliceType&amp; coords, FieldSliceTypes&amp;&amp;... fields )</div>
-<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;{</div>
-<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;    <span class="comment">// Pick a number of groups. We want to write approximately the N^3 blocks</span></div>
-<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="comment">// to N^2 groups. Pick the block dimension with the largest number of</span></div>
-<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">// ranks as the number of groups. We may want to tweak this as an optional</span></div>
-<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// input later with this behavior as the default.</span></div>
-<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="keywordtype">int</span> num_group = 0;</div>
-<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d = 0; d &lt; 3; ++d )</div>
-<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;        <span class="keywordflow">if</span> ( global_grid.dimNumBlock( d ) &gt; num_group )</div>
-<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;            num_group = global_grid.dimNumBlock( d );</div>
-<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160; </div>
-<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160;    Cabana::Experimental::SiloParticleOutput::writeTimeStep(</div>
-<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;        global_grid.comm(), num_group, time_step_index, time, coords,</div>
-<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        fields... );</div>
-<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;}</div>
-<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;} <span class="comment">// namespace SiloParticleOutput</span></div>
-<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;} <span class="comment">// namespace Experimental</span></div>
-<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;} <span class="comment">// namespace Cajita</span></div>
-<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160; </div>
-<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// CAJITA_SILOPARTICLEOUTPUT_HPP</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class </span>GlobalGridType, <span class="keyword">class </span>CoordSliceType, <span class="keyword">class</span>... FieldSliceTypes&gt;</div>
+<div class="line"><a name="l00048"></a><span class="lineno"><a class="line" href="Cajita__SiloParticleOutput_8hpp.html#ac841460627a2ab97f9f97ea407cb74ce">   48</a></span>&#160;<span class="keywordtype">void</span> writeTimeStep( <span class="keyword">const</span> std::string&amp; label, <span class="keyword">const</span> GlobalGridType&amp; global_grid,</div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;                    <span class="keyword">const</span> <span class="keywordtype">int</span> time_step_index, <span class="keyword">const</span> <span class="keywordtype">double</span> time,</div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;                    <span class="keyword">const</span> CoordSliceType&amp; coords, FieldSliceTypes&amp;&amp;... fields )</div>
+<div class="line"><a name="l00051"></a><span class="lineno">   51</span>&#160;{</div>
+<div class="line"><a name="l00052"></a><span class="lineno">   52</span>&#160;    <span class="comment">// Pick a number of groups. We want to write approximately the N^3 blocks</span></div>
+<div class="line"><a name="l00053"></a><span class="lineno">   53</span>&#160;    <span class="comment">// to N^2 groups. Pick the block dimension with the largest number of</span></div>
+<div class="line"><a name="l00054"></a><span class="lineno">   54</span>&#160;    <span class="comment">// ranks as the number of groups. We may want to tweak this as an optional</span></div>
+<div class="line"><a name="l00055"></a><span class="lineno">   55</span>&#160;    <span class="comment">// input later with this behavior as the default.</span></div>
+<div class="line"><a name="l00056"></a><span class="lineno">   56</span>&#160;    <span class="keywordtype">int</span> num_group = 0;</div>
+<div class="line"><a name="l00057"></a><span class="lineno">   57</span>&#160;    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d = 0; d &lt; 3; ++d )</div>
+<div class="line"><a name="l00058"></a><span class="lineno">   58</span>&#160;        <span class="keywordflow">if</span> ( global_grid.dimNumBlock( d ) &gt; num_group )</div>
+<div class="line"><a name="l00059"></a><span class="lineno">   59</span>&#160;            num_group = global_grid.dimNumBlock( d );</div>
+<div class="line"><a name="l00060"></a><span class="lineno">   60</span>&#160; </div>
+<div class="line"><a name="l00061"></a><span class="lineno">   61</span>&#160;    Cabana::Experimental::SiloParticleOutput::writeTimeStep(</div>
+<div class="line"><a name="l00062"></a><span class="lineno">   62</span>&#160;        label, global_grid.comm(), num_group, time_step_index, time, coords,</div>
+<div class="line"><a name="l00063"></a><span class="lineno">   63</span>&#160;        fields... );</div>
+<div class="line"><a name="l00064"></a><span class="lineno">   64</span>&#160;}</div>
+<div class="line"><a name="l00065"></a><span class="lineno">   65</span>&#160;} <span class="comment">// namespace SiloParticleOutput</span></div>
+<div class="line"><a name="l00066"></a><span class="lineno">   66</span>&#160;} <span class="comment">// namespace Experimental</span></div>
+<div class="line"><a name="l00067"></a><span class="lineno">   67</span>&#160;} <span class="comment">// namespace Cajita</span></div>
+<div class="line"><a name="l00068"></a><span class="lineno">   68</span>&#160; </div>
+<div class="line"><a name="l00069"></a><span class="lineno">   69</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// CAJITA_SILOPARTICLEOUTPUT_HPP</span></div>
 <div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html">Cabana_SiloParticleOutput.hpp</a></div><div class="ttdoc">Write particle output using the Silo format.</div></div>
 <div class="ttc" id="aCajita__GlobalGrid_8hpp_html"><div class="ttname"><a href="Cajita__GlobalGrid_8hpp.html">Cajita_GlobalGrid.hpp</a></div><div class="ttdoc">Global grid.</div></div>
 <div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>

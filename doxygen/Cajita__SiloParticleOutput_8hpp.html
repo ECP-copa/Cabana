@@ -121,16 +121,16 @@ Namespaces</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
-<tr class="memitem:a3a1f79e49d3c32d1516cee2d4f12cfef"><td class="memTemplParams" colspan="2">template&lt;class GlobalGridType , class CoordSliceType , class... FieldSliceTypes&gt; </td></tr>
-<tr class="memitem:a3a1f79e49d3c32d1516cee2d4f12cfef"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__SiloParticleOutput_8hpp.html#a3a1f79e49d3c32d1516cee2d4f12cfef">Cajita::Experimental::SiloParticleOutput::writeTimeStep</a> (const GlobalGridType &amp;global_grid, const int time_step_index, const double time, const CoordSliceType &amp;coords, FieldSliceTypes &amp;&amp;... fields)</td></tr>
-<tr class="memdesc:a3a1f79e49d3c32d1516cee2d4f12cfef"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write particle output in Silo format using mesh information.  <a href="Cajita__SiloParticleOutput_8hpp.html#a3a1f79e49d3c32d1516cee2d4f12cfef">More...</a><br /></td></tr>
-<tr class="separator:a3a1f79e49d3c32d1516cee2d4f12cfef"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac841460627a2ab97f9f97ea407cb74ce"><td class="memTemplParams" colspan="2">template&lt;class GlobalGridType , class CoordSliceType , class... FieldSliceTypes&gt; </td></tr>
+<tr class="memitem:ac841460627a2ab97f9f97ea407cb74ce"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="Cajita__SiloParticleOutput_8hpp.html#ac841460627a2ab97f9f97ea407cb74ce">Cajita::Experimental::SiloParticleOutput::writeTimeStep</a> (const std::string &amp;label, const GlobalGridType &amp;global_grid, const int time_step_index, const double time, const CoordSliceType &amp;coords, FieldSliceTypes &amp;&amp;... fields)</td></tr>
+<tr class="memdesc:ac841460627a2ab97f9f97ea407cb74ce"><td class="mdescLeft">&#160;</td><td class="mdescRight">Write particle output in Silo format using mesh information.  <a href="Cajita__SiloParticleOutput_8hpp.html#ac841460627a2ab97f9f97ea407cb74ce">More...</a><br /></td></tr>
+<tr class="separator:ac841460627a2ab97f9f97ea407cb74ce"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Write particle output using the Silo format. </p>
 </div><h2 class="groupheader">Function Documentation</h2>
-<a id="a3a1f79e49d3c32d1516cee2d4f12cfef"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3a1f79e49d3c32d1516cee2d4f12cfef">&#9670;&nbsp;</a></span>writeTimeStep()</h2>
+<a id="ac841460627a2ab97f9f97ea407cb74ce"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac841460627a2ab97f9f97ea407cb74ce">&#9670;&nbsp;</a></span>writeTimeStep()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -140,6 +140,12 @@ template&lt;class GlobalGridType , class CoordSliceType , class... FieldSliceTyp
         <tr>
           <td class="memname">void Cajita::Experimental::SiloParticleOutput::writeTimeStep </td>
           <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>label</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">const GlobalGridType &amp;&#160;</td>
           <td class="paramname"><em>global_grid</em>, </td>
         </tr>
@@ -178,6 +184,7 @@ template&lt;class GlobalGridType , class CoordSliceType , class... FieldSliceTyp
 <p>Write particle output in Silo format using mesh information. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">label</td><td>Particles label. </td></tr>
     <tr><td class="paramname">global_grid</td><td><a class="el" href="namespaceCajita.html" title="Cajita: grid and particle-grid data structures and algorithms.">Cajita</a> global grid. </td></tr>
     <tr><td class="paramname">time_step_index</td><td>Current simulation step index. </td></tr>
     <tr><td class="paramname">time</td><td>Current simulation time. </td></tr>
