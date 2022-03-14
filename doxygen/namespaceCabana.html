@@ -388,6 +388,20 @@ template&lt;typename... Types&gt; </td></tr>
 <tr class="memitem:a6f38e1ad9eb9a3e1c5cc2a04000551b9"><td class="memTemplItemLeft" align="right" valign="top"><a class="el" href="structCabana_1_1ParameterPack.html">ParameterPack</a>&lt; Types... &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a6f38e1ad9eb9a3e1c5cc2a04000551b9">makeParameterPack</a> (const Types &amp;... ts)</td></tr>
 <tr class="memdesc:a6f38e1ad9eb9a3e1c5cc2a04000551b9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a parameter pack. <br /></td></tr>
 <tr class="separator:a6f38e1ad9eb9a3e1c5cc2a04000551b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace85c21cdc66c52ead3d7dcf3d168ee8"><td class="memTemplParams" colspan="2">template&lt;class ExecutionSpace , class PositionType &gt; </td></tr>
+<tr class="memitem:ace85c21cdc66c52ead3d7dcf3d168ee8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ace85c21cdc66c52ead3d7dcf3d168ee8">createRandomParticlesMinDistance</a> (ExecutionSpace, PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max, const double min_dist)</td></tr>
+<tr class="separator:ace85c21cdc66c52ead3d7dcf3d168ee8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
+<tr class="memitem:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a9f0ca04a76c59609d5f9985bc5f0f87d">createRandomParticlesMinDistance</a> (PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max, const double min_dist)</td></tr>
+<tr class="separator:a9f0ca04a76c59609d5f9985bc5f0f87d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89fde813f3720b5946f711274368cd1a"><td class="memTemplParams" colspan="2"><a id="a89fde813f3720b5946f711274368cd1a"></a>
+template&lt;class ExecutionSpace , class PositionType &gt; </td></tr>
+<tr class="memitem:a89fde813f3720b5946f711274368cd1a"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a89fde813f3720b5946f711274368cd1a">createRandomParticles</a> (ExecutionSpace, PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max)</td></tr>
+<tr class="memdesc:a89fde813f3720b5946f711274368cd1a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate random particles. Kokkos device version. <br /></td></tr>
+<tr class="separator:a89fde813f3720b5946f711274368cd1a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab460bf0f1b72014755b0bd79426b9df8"><td class="memTemplParams" colspan="2">template&lt;class PositionType &gt; </td></tr>
+<tr class="memitem:ab460bf0f1b72014755b0bd79426b9df8"><td class="memTemplItemLeft" align="right" valign="top">void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#ab460bf0f1b72014755b0bd79426b9df8">createRandomParticles</a> (PositionType &amp;positions, const std::size_t num_particles, const double box_min, const double box_max)</td></tr>
+<tr class="separator:ab460bf0f1b72014755b0bd79426b9df8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0aab31b7d2fef61f7b49251c301d441d"><td class="memTemplParams" colspan="2"><a id="a0aab31b7d2fef61f7b49251c301d441d"></a>
 template&lt;std::size_t M, class SoA_t &gt; </td></tr>
 <tr class="memitem:a0aab31b7d2fef61f7b49251c301d441d"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FORCEINLINE_FUNCTION std::enable_if&lt; <a class="el" href="structCabana_1_1is__soa.html">is_soa</a>&lt; SoA_t &gt;::value, typename SoA_t::template member_reference_type&lt; M &gt; &gt;::type&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCabana.html#a0aab31b7d2fef61f7b49251c301d441d">get</a> (SoA_t &amp;soa, const std::size_t a)</td></tr>
@@ -1077,6 +1091,153 @@ template&lt;class Space , class SrcAoSoA &gt; </div>
 
 <p>Create a mirror of the given <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> in the given memory space and deep copy the <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> into the mirror. Different space specialization allocates a new <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> and performs the deep copy. </p>
 <dl class="section note"><dt>Note</dt><dd>Memory allocation will only occur if the requested mirror memory space is different from that of the input <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>. If they are the same, the original <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a> (e.g. a view of that <a class="el" href="classCabana_1_1AoSoA.html" title="Array-of-Struct-of-Arrays.">AoSoA</a>) is returned. </dd></dl>
+
+</div>
+</div>
+<a id="ab460bf0f1b72014755b0bd79426b9df8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab460bf0f1b72014755b0bd79426b9df8">&#9670;&nbsp;</a></span>createRandomParticles()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PositionType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::createRandomParticles </td>
+          <td>(</td>
+          <td class="paramtype">PositionType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>num_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>box_min</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>box_max</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Generate random particles. Kokkos device version with default execution space. </p>
+
+</div>
+</div>
+<a id="ace85c21cdc66c52ead3d7dcf3d168ee8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace85c21cdc66c52ead3d7dcf3d168ee8">&#9670;&nbsp;</a></span>createRandomParticlesMinDistance() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class ExecutionSpace , class PositionType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::createRandomParticlesMinDistance </td>
+          <td>(</td>
+          <td class="paramtype">ExecutionSpace&#160;</td>
+          <td class="paramname">, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">PositionType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>num_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>box_min</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>box_max</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>min_dist</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Generate random particles with minimum distance between neighbors. This approximates many physical scenarios, e.g. atomic simulations. Kokkos device version. </p>
+
+</div>
+</div>
+<a id="a9f0ca04a76c59609d5f9985bc5f0f87d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9f0ca04a76c59609d5f9985bc5f0f87d">&#9670;&nbsp;</a></span>createRandomParticlesMinDistance() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class PositionType &gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">void Cabana::createRandomParticlesMinDistance </td>
+          <td>(</td>
+          <td class="paramtype">PositionType &amp;&#160;</td>
+          <td class="paramname"><em>positions</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::size_t&#160;</td>
+          <td class="paramname"><em>num_particles</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>box_min</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>box_max</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const double&#160;</td>
+          <td class="paramname"><em>min_dist</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Generate random particles with minimum distance between neighbors. This approximates many physical scenarios, e.g. atomic simulations. Kokkos device version with default execution space. </p>
 
 </div>
 </div>

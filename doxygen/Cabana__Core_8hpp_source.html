@@ -93,28 +93,29 @@ $(function() {
 <div class="line"><a name="l00025"></a><span class="lineno">   25</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__NeighborList_8hpp.html">Cabana_NeighborList.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00026"></a><span class="lineno">   26</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Parallel_8hpp.html">Cabana_Parallel.hpp</a>&gt;</span></div>
 <div class="line"><a name="l00027"></a><span class="lineno">   27</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__ParameterPack_8hpp.html">Cabana_ParameterPack.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Slice_8hpp.html">Cabana_Slice.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__SoA_8hpp.html">Cabana_SoA.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Sort_8hpp.html">Cabana_Sort.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Tuple_8hpp.html">Cabana_Tuple.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Types_8hpp.html">Cabana_Types.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__VerletList_8hpp.html">Cabana_VerletList.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Version_8hpp.html">Cabana_Version.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160; </div>
-<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160;<span class="preprocessor">#ifdef Cabana_ENABLE_MPI</span></div>
-<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Distributor_8hpp.html">Cabana_Distributor.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Halo_8hpp.html">Cabana_Halo.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160; </div>
-<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160;<span class="preprocessor">#ifdef Cabana_ENABLE_ARBORX</span></div>
-<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Experimental__NeighborList_8hpp.html">Cabana_Experimental_NeighborList.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160; </div>
-<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160;<span class="preprocessor">#ifdef Cabana_ENABLE_SILO</span></div>
-<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__SiloParticleOutput_8hpp.html">Cabana_SiloParticleOutput.hpp</a>&gt;</span></div>
-<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#endif</span></div>
-<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160; </div>
-<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CABANA_CORE_HPP</span></div>
+<div class="line"><a name="l00028"></a><span class="lineno">   28</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__ParticleInit_8hpp.html">Cabana_ParticleInit.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00029"></a><span class="lineno">   29</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Slice_8hpp.html">Cabana_Slice.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00030"></a><span class="lineno">   30</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__SoA_8hpp.html">Cabana_SoA.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00031"></a><span class="lineno">   31</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Sort_8hpp.html">Cabana_Sort.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00032"></a><span class="lineno">   32</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Tuple_8hpp.html">Cabana_Tuple.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00033"></a><span class="lineno">   33</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Types_8hpp.html">Cabana_Types.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00034"></a><span class="lineno">   34</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__VerletList_8hpp.html">Cabana_VerletList.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00035"></a><span class="lineno">   35</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Version_8hpp.html">Cabana_Version.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00036"></a><span class="lineno">   36</span>&#160; </div>
+<div class="line"><a name="l00037"></a><span class="lineno">   37</span>&#160;<span class="preprocessor">#ifdef Cabana_ENABLE_MPI</span></div>
+<div class="line"><a name="l00038"></a><span class="lineno">   38</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Distributor_8hpp.html">Cabana_Distributor.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00039"></a><span class="lineno">   39</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Halo_8hpp.html">Cabana_Halo.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00040"></a><span class="lineno">   40</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00041"></a><span class="lineno">   41</span>&#160; </div>
+<div class="line"><a name="l00042"></a><span class="lineno">   42</span>&#160;<span class="preprocessor">#ifdef Cabana_ENABLE_ARBORX</span></div>
+<div class="line"><a name="l00043"></a><span class="lineno">   43</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__Experimental__NeighborList_8hpp.html">Cabana_Experimental_NeighborList.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00044"></a><span class="lineno">   44</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00045"></a><span class="lineno">   45</span>&#160; </div>
+<div class="line"><a name="l00046"></a><span class="lineno">   46</span>&#160;<span class="preprocessor">#ifdef Cabana_ENABLE_SILO</span></div>
+<div class="line"><a name="l00047"></a><span class="lineno">   47</span>&#160;<span class="preprocessor">#include &lt;<a class="code" href="Cabana__SiloParticleOutput_8hpp.html">Cabana_SiloParticleOutput.hpp</a>&gt;</span></div>
+<div class="line"><a name="l00048"></a><span class="lineno">   48</span>&#160;<span class="preprocessor">#endif</span></div>
+<div class="line"><a name="l00049"></a><span class="lineno">   49</span>&#160; </div>
+<div class="line"><a name="l00050"></a><span class="lineno">   50</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CABANA_CORE_HPP</span></div>
 <div class="ttc" id="aCabana__AoSoA_8hpp_html"><div class="ttname"><a href="Cabana__AoSoA_8hpp.html">Cabana_AoSoA.hpp</a></div><div class="ttdoc">Array-of-Struct-of-Arrays particle data structure.</div></div>
 <div class="ttc" id="aCabana__DeepCopy_8hpp_html"><div class="ttname"><a href="Cabana__DeepCopy_8hpp.html">Cabana_DeepCopy.hpp</a></div><div class="ttdoc">AoSoA and slice extensions for Kokkos deep copy and mirrors.</div></div>
 <div class="ttc" id="aCabana__Distributor_8hpp_html"><div class="ttname"><a href="Cabana__Distributor_8hpp.html">Cabana_Distributor.hpp</a></div><div class="ttdoc">Multi-node particle redistribution.</div></div>
@@ -125,6 +126,7 @@ $(function() {
 <div class="ttc" id="aCabana__NeighborList_8hpp_html"><div class="ttname"><a href="Cabana__NeighborList_8hpp.html">Cabana_NeighborList.hpp</a></div><div class="ttdoc">Neighbor list interface.</div></div>
 <div class="ttc" id="aCabana__Parallel_8hpp_html"><div class="ttname"><a href="Cabana__Parallel_8hpp.html">Cabana_Parallel.hpp</a></div><div class="ttdoc">SIMD and neighbor extension of Kokkos parallel iteration.</div></div>
 <div class="ttc" id="aCabana__ParameterPack_8hpp_html"><div class="ttname"><a href="Cabana__ParameterPack_8hpp.html">Cabana_ParameterPack.hpp</a></div><div class="ttdoc">Pack variadic template parameters for device capture.</div></div>
+<div class="ttc" id="aCabana__ParticleInit_8hpp_html"><div class="ttname"><a href="Cabana__ParticleInit_8hpp.html">Cabana_ParticleInit.hpp</a></div><div class="ttdoc">Particle creation utilities.</div></div>
 <div class="ttc" id="aCabana__SiloParticleOutput_8hpp_html"><div class="ttname"><a href="Cabana__SiloParticleOutput_8hpp.html">Cabana_SiloParticleOutput.hpp</a></div><div class="ttdoc">Write particle output using the Silo format.</div></div>
 <div class="ttc" id="aCabana__Slice_8hpp_html"><div class="ttname"><a href="Cabana__Slice_8hpp.html">Cabana_Slice.hpp</a></div><div class="ttdoc">Slice a single particle property from an AoSoA.</div></div>
 <div class="ttc" id="aCabana__SoA_8hpp_html"><div class="ttname"><a href="Cabana__SoA_8hpp.html">Cabana_SoA.hpp</a></div><div class="ttdoc">Struct-of-Arrays for building AoSoA.</div></div>
