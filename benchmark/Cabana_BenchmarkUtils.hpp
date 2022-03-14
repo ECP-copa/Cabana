@@ -16,7 +16,6 @@
 #include <cstdlib>
 #include <iostream>
 #include <numeric>
-#include <random>
 #include <string>
 #include <vector>
 
@@ -180,129 +179,6 @@ void outputResults( std::ostream& stream, const std::string& data_point_name,
 #endif
 
 //---------------------------------------------------------------------------//
-
-//---------------------------------------------------------------------------//
-// Generate random particles.
-template <class Slice>
-void createRandomNeighbors( Slice& x, const double x_min, const double x_max,
-                            const double min_dist )
-{
-    auto num_particles = x.size();
-    double min_dist_sqr = min_dist * min_dist;
-    std::default_random_engine rand_gen;
-    std::uniform_real_distribution<double> rand_dist( x_min, x_max );
-
-    // Create some coarse bins to accelerate construction.
-    int nbinx = 15;
-    int nbin = nbinx * nbinx * nbinx;
-    double bin_dx = ( x_max - x_min ) / nbinx;
-    std::vector<std::vector<int>> bins( nbin );
-    auto bin_id = [=]( const int i, const int j, const int k ) {
-        return k * nbinx * nbinx + j * nbinx + i;
-    };
-
-    // Seed the distribution with a particle at the origin.
-    x( 0, 0 ) = ( x_max - x_min ) / 2.0;
-    x( 0, 1 ) = ( x_max - x_min ) / 2.0;
-    x( 0, 2 ) = ( x_max - x_min ) / 2.0;
-    int p0_i = std::floor( ( x( 0, 0 ) - x_min ) / bin_dx );
-    int p0_j = std::floor( ( x( 0, 1 ) - x_min ) / bin_dx );
-    int p0_k = std::floor( ( x( 0, 2 ) - x_min ) / bin_dx );
-    bins[bin_id( p0_i, p0_j, p0_k )].push_back( 0 );
-
-    // Create particles. Only add particles that are outside a minimum
-    // distance from other particles.
-    for ( std::size_t p = 1; p < num_particles; ++p )
-    {
-        if ( 0 == ( p - 1 ) % ( num_particles / 4 ) )
-            std::cout << "Inserting " << p << " / " << num_particles
-                      << std::endl;
-
-        bool found_neighbor = true;
-
-        // Keep trying new random coordinates until we insert one that is not
-        // within the minimum distance of any other particle.
-        while ( found_neighbor )
-        {
-            found_neighbor = false;
-
-            // Create particle coordinates.
-            x( p, 0 ) = rand_dist( rand_gen );
-            x( p, 1 ) = rand_dist( rand_gen );
-            x( p, 2 ) = rand_dist( rand_gen );
-
-            // Figure out which bin we are in.
-            int bin_i = std::floor( ( x( p, 0 ) - x_min ) / bin_dx );
-            int bin_j = std::floor( ( x( p, 1 ) - x_min ) / bin_dx );
-            int bin_k = std::floor( ( x( p, 2 ) - x_min ) / bin_dx );
-            int i_min = ( 0 < bin_i ) ? bin_i - 1 : 0;
-            int j_min = ( 0 < bin_j ) ? bin_j - 1 : 0;
-            int k_min = ( 0 < bin_k ) ? bin_k - 1 : 0;
-            int i_max = ( nbinx > bin_i ) ? bin_i + 1 : nbinx;
-            int j_max = ( nbinx > bin_j ) ? bin_j + 1 : nbinx;
-            int k_max = ( nbinx > bin_k ) ? bin_k + 1 : nbinx;
-
-            // Search the adjacent bins for neighbors.
-            for ( int i = i_min; i < i_max; ++i )
-            {
-                for ( int j = j_min; j < j_max; ++j )
-                {
-                    for ( int k = k_min; k < k_max; ++k )
-                    {
-                        for ( auto& n : bins[bin_id( i, j, k )] )
-                        {
-                            double dx = x( n, 0 ) - x( p, 0 );
-                            double dy = x( n, 1 ) - x( p, 1 );
-                            double dz = x( n, 2 ) - x( p, 2 );
-                            double dist = dx * dx + dy * dy + dz * dz;
-
-                            if ( dist < min_dist_sqr )
-                            {
-                                found_neighbor = true;
-                                break;
-                            }
-                        }
-                    }
-                    if ( found_neighbor )
-                        break;
-                }
-                if ( found_neighbor )
-                    break;
-            }
-
-            // Add the particle to its bin if we didn't find any neighbors.
-            if ( !found_neighbor )
-                bins[bin_id( bin_i, bin_j, bin_k )].push_back( p );
-        }
-    }
-    std::cout << std::endl;
-}
-
-//---------------------------------------------------------------------------//
-// Generate random particles view.
-template <typename PositionType>
-void createRandomParticles( PositionType x, const double x_min,
-                            const double x_max )
-{
-    auto num_particles = x.extent( 0 );
-    using value_type = typename PositionType::value_type;
-
-    // compute position range
-    value_type x_range = x_max - x_min;
-
-    // compute generator range
-    std::minstd_rand0 generator( 3439203991 );
-    value_type generator_range =
-        static_cast<value_type>( generator.max() - generator.min() );
-
-    // generate random particles
-    for ( std::size_t n = 0; n < num_particles; ++n )
-        for ( std::size_t d = 0; d < 3; ++d )
-            x( n, d ) =
-                ( static_cast<value_type>( ( generator() - generator.min() ) ) *
-                  x_range / generator_range ) +
-                x_min;
-}
 
 } // end namespace Benchmark
 } // end namespace Cabana

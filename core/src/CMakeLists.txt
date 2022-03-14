@@ -21,6 +21,7 @@ set(HEADERS_PUBLIC
   Cabana_NeighborList.hpp
   Cabana_Parallel.hpp
   Cabana_ParameterPack.hpp
+  Cabana_ParticleInit.hpp
   Cabana_Slice.hpp
   Cabana_SoA.hpp
   Cabana_Sort.hpp

@@ -10,6 +10,7 @@
  ****************************************************************************/
 
 #include "Cabana_BenchmarkUtils.hpp"
+#include "Cabana_ParticleInit.hpp"
 
 #include <Cajita_SparseIndexSpace.hpp>
 
@@ -45,20 +46,16 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     int num_cells_per_dim_size = num_cells_per_dim.size();
 
     // Create random sets of particle positions.
-    using data_layout = typename exec_space::array_layout;
-    using position_type_host =
-        Kokkos::View<float* [3], data_layout, Kokkos::HostSpace>;
     using position_type = Kokkos::View<float* [3], memory_space>;
     std::vector<position_type> positions( num_problem_size );
     for ( int p = 0; p < num_problem_size; ++p )
     {
-        position_type_host pos(
+        positions[p] = position_type(
             Kokkos::ViewAllocateWithoutInitializing( "positions" ),
             problem_sizes[p] );
-        Cabana::Benchmark::createRandomParticles( pos, global_low_corner[0],
-                                                  global_high_corner[0] );
-        positions[p] =
-            Kokkos::create_mirror_view_and_copy( memory_space(), pos );
+        Cabana::createRandomParticles( positions[p], problem_sizes[p],
+                                       global_low_corner[0],
+                                       global_high_corner[0] );
     }
     // Number of runs in the test loops.
     int num_run = 10;
