@@ -16,7 +16,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// A couple of helper functions.
+// Helper function.
 //---------------------------------------------------------------------------//
 // Creates an artificial work for a rectangular domain according to a Gaussian
 // work density.
@@ -55,19 +55,30 @@ double workGauss( const std::array<double, 4>& verts,
 void loadBalancerExample()
 {
     /*
-     * The loadbalancer class generates a new GlobalGrid given the local work.
-     * Most is the same as in any other program using Cajita. The comments will
-     * be focused on the additions/changes due to including the loadbalancer.
+     * The LoadBalancer class generates a new GlobalGrid in order to minimize
+     * differences in the local work across MPI ranks. This capability relies on
+     * the optional ALL library dependency. Most is the same as in any
+     * application using Cajita without load balancing; the comments will be
+     * focused on the additions/changes due to including the load balancer.
      */
+    int comm_rank = -1;
+    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
+
+    if ( comm_rank == 0 )
+    {
+        std::cout << "Cajita Load Balancer Example" << std::endl;
+        std::cout << "    (intended to be run with MPI)\n" << std::endl;
+    }
+
     /*
      * The example system is 2D and its size based on the number of ranks. Every
      * rank will have the same initial 47 x 38 domain. The cell size is chosen
      * at arbitrarily as is the offset of the system (global_low_corner). The
      * system is non periodic. These choices are arbitrary with regards to the
-     * loadbalancer and were chosen for ease of use/consistency for different
+     * load balancer and were chosen for ease of use/consistency for different
      * number of ranks.
      *
-     * The partitioner, global mesh and (initial) global grid are set up as
+     * The partitioner, global mesh, and (initial) global grid are set up as
      * usual.
      */
     const Cajita::DimBlockPartitioner<2> partitioner;
@@ -88,11 +99,8 @@ void loadBalancerExample()
     auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                                  is_dim_periodic, partitioner );
 
-    int rank;
-    MPI_Comm_rank( MPI_COMM_WORLD, &rank );
-
     /*
-     * The loadbalancer is initialized using the global grid and MPI
+     * The load balancer is initialized using the global grid and MPI
      * communicator. The additional minimum domain size is optional and, if
      * given, can be a scalar value or array for each dimension. The domain
      * decomposition from the global grid is chosen as the starting point, which
@@ -102,22 +110,23 @@ void loadBalancerExample()
                                                     5 * cell_size };
     auto lb = Cajita::Experimental::createLoadBalancer(
         MPI_COMM_WORLD, global_grid, min_domain_size );
+
     /*
      * The vertices are retrieved in this example to calculate the work of a
-     * domain. Usually the work would be a measure or approximation of the
-     * workload of a domain. In particle simulations the number of particles, in
-     * particle-grid simulations a combination of both. It can also be the
-     * measured time taken for the calculations of the domain. Although it
-     * should not include time waiting for other processes. The work is the
-     * quantity that is balanced across processes.
+     * domain. The work is the quantity that is balanced across processes.
+     * Usually the work is a measure or approximation of the workload of a
+     * domain: in particle simulations the number of particles, in particle-grid
+     * simulations some combination of both. It can also be the measured time
+     * taken for the calculations of the domain, although this should not
+     * include time waiting for other processes.
      */
     std::array<double, 4> vertices = lb->getVertices();
-    for ( std::size_t step = 0; step < 50; ++step )
+    for ( std::size_t step = 0; step < 20; ++step )
     {
         /*
-         * During the simulation, every time the domains should be recreated,
-         * calculate the current work of the domain, then let the loadbalancer
-         * create a new global grid that is more balanced.
+         * During the simulation, every time the domains need to be recreated,
+         * calculate the current work of the domain, then let the load balancer
+         * create a new global grid that is more optimally balanced.
          */
         double work =
             workGauss( vertices, global_low_corner, global_high_corner );
@@ -129,12 +138,12 @@ void loadBalancerExample()
          * minimum and maximum work of a process.
          */
         double imbalance = lb->getImbalance();
-        if ( rank == 0 )
+        if ( comm_rank == 0 )
             printf( "LB Imbalance: %g\n", imbalance );
         /*
          * After the new global grid is created, all classes that depend on it
-         * or its dependents have to be recreated. Such as the local grid,
-         * local mesh, grid array layout, the grid arrays themselves etc.
+         * or its dependents have to be recreated, such as the local grid,
+         * local mesh, grid array layout, and the grid arrays themselves.
          */
     }
 }
@@ -145,11 +154,11 @@ void loadBalancerExample()
 int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
+    {
+        Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    Kokkos::ScopeGuard scope_guard( argc, argv );
-
-    loadBalancerExample();
-
+        loadBalancerExample();
+    }
     MPI_Finalize();
 
     return 0;
