@@ -25,12 +25,11 @@ void interpolationExample()
     */
     std::cout << "Cajita Interpolation Example\n" << std::endl;
 
-    /*******************************************************************
+    /*
       First, we need some setup to demonstrate the use of Cajita interpolation.
-      This includes the creation of a simple uniform mesh and various
-      fields on particles and the mesh.
+      This includes the creation of a simple uniform mesh and various fields on
+      particles and the mesh.
     */
-
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
 
     // Create the global mesh.
@@ -70,7 +69,7 @@ void interpolationExample()
             points( pid, Cajita::Dim::J ) = x[Cajita::Dim::J];
         } );
 
-    // Here, we use Cajita functionality to create grid data fields.
+    // Next, we use Cajita functionality to create grid data fields.
     // Create a scalar field on the grid. See the Array tutorial example for
     // information on these functions.
     auto scalar_layout =
@@ -114,37 +113,22 @@ void interpolationExample()
         num_point );
     auto tensor_point_host = Kokkos::create_mirror_view( tensor_point_field );
 
-    /*******************************************************************************
-     *
+    /***************************************************************************
+     * P2G
+     **************************************************************************/
+    /*
      * The Cajita::P2G namespace contains several methods for interpolating data
      * from particles to the grid. These interpolations are inherently scatter
      * operations for particle-based threading (a single particle maps to
      * several grid nodes), which requires an underlying Kokkos::ScatterView for
      * the data being interpolated. Of note, these methods perform
-     * interpolations for a single particle datum. They may
+     * interpolations for a single particle datum. They may ...
      *
-     * *****************************************************************************/
-
-    /*******************************************************************************
-     *
-     * In addition to P2G, The Cajita::G2P namespace contains several methods
-     * for interpolating data from the grid to particles. These interpolations
-     * are inherently gather operations for particle-based threading (multiple
-     * grid values are gathered to a single point).
-     *
-     * *****************************************************************************/
-
-    /*************************
      * Cajita also provides a convenience interface for defining field-based P2G
      * or G2P operators, by wrapping the single-particle interpolation methods
-     * above inside Kokkos-View based functors. These operators may be used in
-     * the provided generic global function evaluators Cajita::p2g() or
-     * Cajita::g2p().
-     * ************************/
+     * with loops over all particles inside: Cajita::p2g().
+     */
 
-    /*************************
-     * p2g()
-     * *************************/
     Kokkos::deep_copy( scalar_point_field, 3.5 );
     Kokkos::deep_copy( vector_point_field, 3.5 );
     Kokkos::deep_copy( tensor_point_field, 3.5 );
@@ -175,9 +159,18 @@ void interpolationExample()
     Cajita::p2g( tensor_div_p2g, points, num_point, Cajita::Spline<1>(),
                  *vector_halo, *vector_grid_field );
 
-    /***********************************
-     * g2p()
-     * **********************************/
+    /***************************************************************************
+     * G2P
+     **************************************************************************/
+    /*
+     * In addition to P2G, The Cajita::G2P namespace contains several methods
+     * for interpolating data from the grid to particles. These interpolations
+     * are inherently gather operations for particle-based threading (multiple
+     * grid values are gathered to a single point).
+     *
+     * Here we again focus on the Cajita::g2p() interface to interpolate from
+     * all grid points to particles.
+     */
 
     // Interpolate a scalar grid value to the points.
     Kokkos::deep_copy( scalar_point_field, 0.0 );
@@ -218,11 +211,11 @@ void interpolationExample()
 int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
+    {
+        Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    Kokkos::ScopeGuard scope_guard( argc, argv );
-
-    interpolationExample();
-
+        interpolationExample();
+    }
     MPI_Finalize();
 
     return 0;

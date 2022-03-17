@@ -15,7 +15,7 @@
 #include <iostream>
 
 //---------------------------------------------------------------------------//
-// Global Mesh example.
+// Spline example.
 //---------------------------------------------------------------------------//
 void splineExample()
 {
@@ -29,12 +29,12 @@ void splineExample()
     */
     std::cout << "Cajita Spline Example\n" << std::endl;
 
-    /*******************************************************************
+    /*
       First, we need some setup to facilitate the use of Cajita splines.
-      This includes the creation of a simple uniform mesh and a particle
+
+      This includes the creation of a simple uniform mesh and a single particle
       position.
     */
-
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
 
     // Create a 3-dimensional global uniform mesh
@@ -54,13 +54,12 @@ void splineExample()
     // Set up a uniform partitioner
     Cajita::DimBlockPartitioner<3> partitioner;
 
-    int halo_cell_width = 1;
-
     // Create the global grid.
     auto global_grid = Cajita::createGlobalGrid(
         MPI_COMM_WORLD, global_mesh, { false, false, false }, partitioner );
 
     // Get the local grid.
+    int halo_cell_width = 1;
     auto local_grid = Cajita::createLocalGrid( global_grid, halo_cell_width );
 
     // Get the local mesh for this rank.
@@ -70,31 +69,33 @@ void splineExample()
     double xp[3] = { 0.5, 2, 1.5 };
 
     /********************************************************************/
-
     /*
       There are two ways to use Cajita splines in practice.
-      In the first way, one constructs an object of type SplineData<Scalar,
-      Order, NumSpaceDim, class EntityType, class... Tags> where Scalar =
-      underlying scalar type Order = spline order NumSpaceDim = number of space
-      dimensions EntityType = geometric entity type over which the spline is
-      defined Tags = variadic list of desired SplineDataMember tags.
 
-        The available SplineDataMembers and their associated member names are
-          SplinePhysicalCellSize = dx[d]
-          SplineLogicalPosition = x[d]
-          SplinePhysicalDistance = d[d]
-          SplineWeightValues = w[d][num_knots]
-          SplineWeightPhysicalGradients g[d][num_knots]
+      In the first, one constructs an object of type:
+        SplineData<Scalar, Order, NumSpaceDim, EntityType, Tags...> where
+            Scalar is the underlying scalar type
+            Order = spline order
+            NumSpaceDim = number of spatial dimensions
+            EntityType = geometric entity type over which the spline is defined
+            Tags = variadic list of desired SplineDataMember tags.
 
-      By default, if <class... Tags> is omitted, all SplineDataMembers are
-      included. This design allows for customizing the relavant spline data for
-      a particular application.
+      The available SplineDataMembers and their associated member names are
+        SplinePhysicalCellSize = dx[d]
+        SplineLogicalPosition = x[d]
+        SplinePhysicalDistance = d[d]
+        SplineWeightValues = w[d][num_knots]
+        SplineWeightPhysicalGradients g[d][num_knots]
+
+      This design allows for customizing the relavant spline data for a
+      particular application. If all Tags are omitted, all SplineDataMembers are
+      included.
     */
     using value_type = double;
     constexpr int order = 2;     // quadratic B-spline
     constexpr int num_space = 3; // 3-dimensional
 
-    // This spline data type will be defined on grid nodes.
+    // This spline data type will be defined on grid nodes in this example.
     using SD = Cajita::SplineData<value_type, order, num_space, Cajita::Node>;
 
     SD sd_n; // Default construction
@@ -105,7 +106,6 @@ void splineExample()
 
     // The spline data by default contains all available SplineDataMembers,
     // whose values were all updated from the previous call to evaluateSpline()
-
     std::cout << "Spline weights:" << std::endl;
     for ( int d = 0; d < num_space; ++d )
     {
@@ -122,7 +122,6 @@ void splineExample()
       We can also use the Spline<Order> interface directly to evaluate
       specific spline data given basic information about the local grid.
     */
-
     double rdx = 1.0 / cell_size;
     double values[3]; // num_knots for a 2nd-order spline
     double x0[3];     // Logical position in primal grid
@@ -159,8 +158,8 @@ void splineExample()
     }
 
     // For a cubic B-spline, there are 4 knots, with offsets -1, 0, 1, 2.
-    // However, this number is also available as a static constexpr member for
-    // declaring arrays at compile-time.
+    // This number is available as a static constexpr member for declaring
+    // arrays at compile-time.
     int offsets_cubic[Cajita::Spline<3>::num_knot];
     std::cout << "Spline offsets (static interface) (cubic):" << std::endl;
     for ( int d = 0; d < num_space; ++d )
@@ -202,6 +201,11 @@ void splineExample()
         }
         std::cout << std::endl;
     }
+
+    /*
+      Splines are used extensively within the interpolation example for
+      particle-grid interactions.
+    */
 }
 
 //---------------------------------------------------------------------------//
@@ -209,12 +213,14 @@ void splineExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
+    // MPI only needed to create the grid/mesh. Not intended to be run with
+    // multiple ranks.
     MPI_Init( &argc, &argv );
+    {
+        Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    Kokkos::ScopeGuard scope_guard( argc, argv );
-
-    splineExample();
-
+        splineExample();
+    }
     MPI_Finalize();
 
     return 0;
