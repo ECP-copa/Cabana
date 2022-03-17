@@ -20,18 +20,15 @@
 void fastFourierTransformHeffteExample()
 {
     /*
-      This example shows how to perform a fast fourier transform with Cajita.
-      The current Cajita FFTs take advantage of the heFFTe library, though
-      in the future we plan to support more FFT libraries.
+      This example shows how to perform a fast Fourier transform with Cajita.
+      The current Cajita FFTs take advantage of the heFFTe library, with plans
+      to support more FFT libraries.
 
       The basic steps for performing FFTs in Cajita are:
-
       1. Create a mesh
-
       2. Create the complex data vector you would like to transform.
-
       3. Create the FFT and set any options you would like (detailed more below)
-*/
+    */
 
     int comm_rank = -1;
     MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
@@ -50,27 +47,14 @@ void fastFourierTransformHeffteExample()
        be found in previous Cajita examples
 
        Declare the device memory and execution space to use
-       In this example, we use the host space for execution with OpenMP
+       In this example, we use the host space for execution with the default
+       host execution space.
     */
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
     using DeviceType = Kokkos::Device<ExecutionSpace, MemorySpace>;
 
-    /*
-       Declare which FFT backend to use.
-       Cajita (through heFFTe) has the following backend FFT libraries
-       available:
-       FFTW (default for host execution)
-       cufft (default with Cuda execution)
-       mkl   (default with MKL execution)
-       rocfft (default with HIP execution)
-       In this example we use the default FFT backend type based on the
-       execution space and enabled heFFTe backends, but you could explicitly
-       set an appropriate backend such as Cajita::Experimental::FFTBackendFFTW
-    */
-    using FFTBackendType = Cajita::Experimental::Impl::FFTBackendDefault;
-
-    double cell_size = 0.1;
+    double cell_size = 0.5;
     std::array<bool, 3> is_dim_periodic = { true, true, true };
     std::array<double, 3> global_low_corner = { -1.0, -2.0, -1.0 };
     std::array<double, 3> global_high_corner = { 1.0, 1.0, 0.5 };
@@ -87,18 +71,19 @@ void fastFourierTransformHeffteExample()
     auto owned_space = local_grid->indexSpace( Cajita::Own(), Cajita::Cell(),
                                                Cajita::Local() );
 
-    // Create a random vector to transform.
-    // This is the vector of complex data on which we will perform FFTs
-    // Note that for every position there are two values. These correspond
-    // to the real (index 0) and imaginary (index 1) parts
+    /*
+       Create a random vector of complex data on which we will perform FFTs.
+
+       Note that for every position there are two values. These correspond to
+       the real (index 0) and imaginary (index 1) parts.
+
+       Also note that this is done on the host with standard library random
+       generation, but could also be done using Kokkos::Random
+    */
     auto vector_layout =
         Cajita::createArrayLayout( local_grid, 2, Cajita::Cell() );
     auto lhs = Cajita::createArray<double, DeviceType>( "lhs", vector_layout );
     auto lhs_view = lhs->view();
-    auto lhs_host =
-        Cajita::createArray<double, typename decltype( lhs_view )::array_layout,
-                            Kokkos::HostSpace>( "lhs_host", vector_layout );
-    auto lhs_host_view = Kokkos::create_mirror_view( lhs_view );
     const uint64_t seed =
         global_grid->blockId() + ( 19383747 % ( global_grid->blockId() + 1 ) );
     std::mt19937 gen( seed );
@@ -110,16 +95,22 @@ void fastFourierTransformHeffteExample()
             for ( int k = owned_space.min( Cajita::Dim::K );
                   k < owned_space.max( Cajita::Dim::K ); ++k )
             {
-                lhs_host_view( i, j, k, 0 ) = dis( gen );
-                lhs_host_view( i, j, k, 1 ) = dis( gen );
+                lhs_view( i, j, k, 0 ) = dis( gen );
+                lhs_view( i, j, k, 1 ) = dis( gen );
             }
 
-    // A deep_copy to the device would be needed
-    // if we were using a device instead. (shown here as example)
-    // Kokkos::deep_copy( lhs_view, lhs_host_view );
+    // Copy this initial state to compare later.
+    auto lhs_init = Cajita::ArrayOp::clone( *lhs );
+    Cajita::ArrayOp::copy( *lhs_init, *lhs, Cajita::Own() );
+    auto lhs_init_view = lhs_init->view();
 
-    // Create FFT options
-    // FFT options are set first, then passed to the FFT constructor.
+    /*
+      Create FFT options, which are set first, then passed to the FFT
+      constructor.
+
+      These options reflect those exposed by the heFFTe API and could grow or
+      changed based on additional FFT library support.
+    */
     Cajita::Experimental::FastFourierTransformParams params;
 
     // Set communication to use all-to-all MPI communication.
@@ -134,12 +125,27 @@ void fastFourierTransformHeffteExample()
     // transposition; false uses strided data with no transposition)
     params.setReorder( true );
 
-    // The three options set above are actually choosing the default
-    // parameters for Cajita FFTs, and are set just to provide an example.
+    /*
+      The three options set above are actually choosing the default
+      parameters for Cajita FFTs, and are set just to provide an example.
+    */
 
-    // Create the FFT with the set parameters
+    /*
+       Create the FFT with the set parameters
+
+       Cajita (through heFFTe) has the following FFT backends available:
+        - FFTW   (default for host execution)
+        - mkl    (optional host execution option)
+        - cufft  (default with Cuda execution)
+        - rocfft (default with HIP execution)
+
+       In this example we use the default FFT backend type based on the
+       execution space and enabled heFFTe backends, but you could explicitly
+       set an appropriate backend by adding an additional template parameter
+       (Cajita::Experimental::FFTBackendMKL in this case) to the constructor.
+    */
     auto fft = Cajita::Experimental::createHeffteFastFourierTransform<
-        double, DeviceType, FFTBackendType>( *vector_layout, params );
+        double, DeviceType>( *vector_layout, params );
 
     /*
       Now forward or reverse transforms can be performed via
@@ -160,11 +166,12 @@ void fastFourierTransformHeffteExample()
     // Perform a reverse transform with no scaling
     fft->reverse( *lhs, Cajita::Experimental::FFTScaleNone() );
 
-    // Print the results
-    // Given the scaling choices, we expect the results to be equal to the
-    // original values
-    auto lhs_result =
-        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), lhs->view() );
+    /*
+      Print the results. Given the scaling choices, we expect the results to be
+      equal to the original values.
+    */
+    std::cout << "Complex pairs:" << std::endl;
+    lhs_view = lhs->view();
     for ( int i = owned_space.min( Cajita::Dim::I );
           i < owned_space.max( Cajita::Dim::I ); ++i )
         for ( int j = owned_space.min( Cajita::Dim::J );
@@ -174,13 +181,12 @@ void fastFourierTransformHeffteExample()
             {
                 if ( comm_rank == 0 )
                 {
-                    std::cout << "position: (" << i << ", " << j << ", " << k
-                              << ") "
-                              << "original complex pair: ("
-                              << lhs_host_view( i, j, k, 0 ) << ", "
-                              << lhs_host_view( i, j, k, 1 ) << ")  result: ("
-                              << lhs_result( i, j, k, 0 ) << ", "
-                              << lhs_result( i, j, k, 1 ) << ")" << std::endl;
+                    std::cout
+                        << "index: (" << i << ", " << j << ", " << k << ") "
+                        << "initial: (" << lhs_init_view( i, j, k, 0 ) << ", "
+                        << lhs_init_view( i, j, k, 1 ) << ")  result: ("
+                        << lhs_view( i, j, k, 0 ) << ", "
+                        << lhs_view( i, j, k, 1 ) << ")" << std::endl;
                 }
             }
 }
