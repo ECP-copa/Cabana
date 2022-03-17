@@ -9,6 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_executable(FastFourierTransform fast_fourier_transform_example.cpp)
-target_link_libraries(FastFourierTransform Cajita)
-add_test(NAME Cajita_tutorial_05 COMMAND ${NONMPI_PRECOMMAND} FastFourierTransform)
+add_executable(HeffteFFT heffte_fast_fourier_transform_example.cpp)
+target_link_libraries(HeffteFFT Cajita)
+add_test(NAME Cajita_tutorial_10 COMMAND ${NONMPI_PRECOMMAND} HeffteFFT)

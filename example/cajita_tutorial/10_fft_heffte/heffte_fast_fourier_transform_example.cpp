@@ -15,9 +15,9 @@
 #include <random>
 
 //---------------------------------------------------------------------------//
-// Fast Fourier Transform example.
+// heFFTe Fast Fourier Transform example.
 //---------------------------------------------------------------------------//
-void FastFourierTransformExample()
+void fastFourierTransformHeffteExample()
 {
     /*
       This example shows how to perform a fast fourier transform with Cajita.
@@ -38,7 +38,8 @@ void FastFourierTransformExample()
 
     if ( comm_rank == 0 )
     {
-        std::cout << "Cajita Fast Fourier Transform Example\n" << std::endl;
+        std::cout << "Cajita heFFTE Fast Fourier Transform Example\n"
+                  << std::endl;
         std::cout << "    (intended to be run with MPI)\n" << std::endl;
     }
 
@@ -190,11 +191,11 @@ void FastFourierTransformExample()
 int main( int argc, char* argv[] )
 {
     MPI_Init( &argc, &argv );
+    {
+        Kokkos::ScopeGuard scope_guard( argc, argv );
 
-    Kokkos::ScopeGuard scope_guard( argc, argv );
-
-    FastFourierTransformExample();
-
+        fastFourierTransformHeffteExample();
+    }
     MPI_Finalize();
 
     return 0;
