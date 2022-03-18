@@ -29,16 +29,7 @@ void fastFourierTransformHeffteExample()
       2. Create the complex data vector you would like to transform.
       3. Create the FFT and set any options you would like (detailed more below)
     */
-
-    int comm_rank = -1;
-    MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-
-    if ( comm_rank == 0 )
-    {
-        std::cout << "Cajita heFFTE Fast Fourier Transform Example\n"
-                  << std::endl;
-        std::cout << "    (intended to be run with MPI)\n" << std::endl;
-    }
+    std::cout << "Cajita heFFTE Fast Fourier Transform Example\n" << std::endl;
 
     /*
        Create the global mesh.
@@ -179,15 +170,11 @@ void fastFourierTransformHeffteExample()
             for ( int k = owned_space.min( Cajita::Dim::K );
                   k < owned_space.max( Cajita::Dim::K ); ++k )
             {
-                if ( comm_rank == 0 )
-                {
-                    std::cout
-                        << "index: (" << i << ", " << j << ", " << k << ") "
-                        << "initial: (" << lhs_init_view( i, j, k, 0 ) << ", "
-                        << lhs_init_view( i, j, k, 1 ) << ")  result: ("
-                        << lhs_view( i, j, k, 0 ) << ", "
-                        << lhs_view( i, j, k, 1 ) << ")" << std::endl;
-                }
+                std::cout << "index: (" << i << ", " << j << ", " << k << ") "
+                          << "initial: (" << lhs_init_view( i, j, k, 0 ) << ", "
+                          << lhs_init_view( i, j, k, 1 ) << ")  result: ("
+                          << lhs_view( i, j, k, 0 ) << ", "
+                          << lhs_view( i, j, k, 1 ) << ")" << std::endl;
             }
 }
 
@@ -196,6 +183,8 @@ void fastFourierTransformHeffteExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
+    // MPI only needed to create the grid/mesh. Not intended to be run with
+    // multiple ranks.
     MPI_Init( &argc, &argv );
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
