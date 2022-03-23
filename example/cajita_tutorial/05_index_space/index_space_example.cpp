@@ -19,10 +19,11 @@
 void indexSpaceExample()
 {
     /*
-      Each index space holds the information on how to iterate over the grid
-      in parallel. It is generally used to thread over a local grid (discussed
-      in the following example) and used tightly coupled to the parallel
-      operations (also discussed in a later example).
+      Each index space represents a contiguous set of structured
+      multidimensional indices which is then used to describe how to iterate
+      over Cajita grids and arrays in parallel. It is generally used to thread
+      over a local grid (discussed in the following example) and used tightly
+      coupled to the parallel operations (also discussed in a later example).
     */
     std::cout << "Cajita Index Space Example\n" << std::endl;
 
@@ -31,7 +32,8 @@ void indexSpaceExample()
       dimensions on the grid or grid data. They can be constructed with
       initializer_lists or arrays.
 
-      In this very simple 1D case, the indices should got from 0-5
+      In this very simple 1D case we use the size constructor to build the index
+      space {0,1,2,3,4}:
     */
     Cajita::IndexSpace<1> is1( { 5 } );
     std::cout << "1D index space:\nMin: ";
@@ -39,7 +41,7 @@ void indexSpaceExample()
 
     /*
       Next, we set both the start and end values for the index space resulting
-      in 5-10.
+      in {5,6,7,8,9}.
     */
     std::cout << "1D index space:\nMin: ";
     Cajita::IndexSpace<1> is1_2( { 5 }, { 10 } );
@@ -59,8 +61,8 @@ void indexSpaceExample()
     std::cout << "\n" << std::endl;
 
     /*
-      For this 3D case, each dimension should again go from 0 to the value
-      given.
+      For this 3D case, each dimension should again go from zero to one less
+      than the value given (the value given is an exclusive upper bound).
     */
     Cajita::IndexSpace<3> is3( { 5, 4, 8 } );
     std::cout << "3D index space:\nMin: ";

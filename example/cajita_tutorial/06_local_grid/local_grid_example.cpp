@@ -24,7 +24,7 @@ void localGridExample()
 {
     /*
       The local grid is a subset of the global grid, determined by the
-      partioning of the total system. Just as the global grid defines
+      partitioning of the total system. Just as the global grid defines
       indexing for the entire domain, the local grid defines indexing for the
       local MPI rank only, as well as indexing of ghosted portions of the grid
       for MPI communication. The local grid is the "main" data class in the
@@ -47,13 +47,9 @@ void localGridExample()
     Cajita::ManualBlockPartitioner<3> partitioner( input_ranks_per_dim );
 
     // Create the global mesh.
-    double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 47, 38, 53 };
-    std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
-    std::array<double, 3> global_high_corner = {
-        global_low_corner[0] + cell_size * global_num_cell[0],
-        global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2] };
+    std::array<int, 3> global_num_cell = { 20, 10, 10 };
+    std::array<double, 3> global_low_corner = { -2.0, -1.0, 1.0 };
+    std::array<double, 3> global_high_corner = { 2.0, 0.0, 2.0 };
     auto global_mesh = Cajita::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
 
@@ -97,11 +93,15 @@ void localGridExample()
       All options are set by the type tags described in the Cajita Types
       example:
        - Own vs Ghost here determines whether ghosted cells from neighbor ranks
-         are included in the indexing
-       - All cell entities are usable in the interface (Cell, Node, Face, Edge)
+         are included in the indexing. Note that Ghost returns BOTH owned and
+         ghosted cells for a contiguous index space.
+       - All geometric mesh entities are usable in the interface (Cell, Node,
+         Face, Edge)
        - Local vs Global determines whether the indexing is relative (starting
         from zero in the current domain) or absolute (the current subset of the
-        global domain)
+        global domain). Local indices are useful for directly iterating over
+        local arrays, while global indices are useful for things like boundary
+        conditions.
     */
     auto own_local_cell_space = local_grid->indexSpace(
         Cajita::Own(), Cajita::Cell(), Cajita::Local() );
@@ -113,6 +113,11 @@ void localGridExample()
         std::cout << own_local_cell_space.max( d ) << " ";
     std::cout << "\n" << std::endl;
 
+    /*
+      Next we extract the owned and ghosted edges. Note here that for edges (as
+      well as for faces) there is a template dimension parameter - there is a
+      separate index space for each spatial dimension.
+    */
     auto ghost_local_edge_space = local_grid->indexSpace(
         Cajita::Own(), Cajita::Edge<Cajita::Dim::I>(), Cajita::Local() );
     std::cout << "Index space  (Own, I-Edge, Local):\nMin: ";
@@ -130,7 +135,7 @@ void localGridExample()
       considered in the global grid).
     */
     auto own_global_node_space = local_grid->indexSpace(
-        Cajita::Own(), Cajita::Edge<Cajita::Dim::I>(), Cajita::Global() );
+        Cajita::Own(), Cajita::Cell(), Cajita::Global() );
     std::cout << "Index space  (Own, I-Edge, Global):\nMin: ";
     for ( int d = 0; d < 3; ++d )
         std::cout << own_global_node_space.min( d ) << " ";
@@ -140,10 +145,16 @@ void localGridExample()
     std::cout << "\n" << std::endl;
 
     /*
+      It is possible to convert between local and global indicies if needed in
+      the IndexConversion namespace.
+    */
+
+    /*
       The local grid can also create index spaces describing the overlapped
       region between two subdomains (MPI neighbors) due to ghosted regions,
       shared index spaces. These have similar options to the previous, but
-      require an offset to a specific neighbor rank.
+      require an offset to a specific neighbor rank. Because it involves ghosted
+      entities, shared index spaces always use local indexing.
     */
     auto owned_shared_cell_space =
         local_grid->sharedIndexSpace( Cajita::Own(), Cajita::Cell(), -1, 0, 1 );
@@ -170,9 +181,25 @@ void localGridExample()
     std::cout << "\n" << std::endl;
 
     /*
+      Next, note the difference between a shared index space with owned entities
+      only (above) and owned + ghosted.
+    */
+    auto ghost_shared_cell_space = local_grid->sharedIndexSpace(
+        Cajita::Ghost(), Cajita::Cell(), -1, 0, 1 );
+    std::cout << "Shared index space (Ghost, Cell):\nMin: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << ghost_shared_cell_space.min( d ) << " ";
+    std::cout << std::endl << "Max: ";
+    for ( int d = 0; d < 3; ++d )
+        std::cout << ghost_shared_cell_space.max( d ) << " ";
+    std::cout << "\n" << std::endl;
+
+    /*
       Similarly, boundary index spaces enable iterating over only the boundary
       in a given direction. If the local subdomain is not on the boundary or the
       system is periodic (as in the example), the boundary index space is empty.
+      In other words, the boundary index space contains the entities on the
+      system boundaries that do not participate in halo communication.
     */
     auto boundary_cell_space = local_grid->boundaryIndexSpace(
         Cajita::Ghost(), Cajita::Cell(), -1, 0, 1 );

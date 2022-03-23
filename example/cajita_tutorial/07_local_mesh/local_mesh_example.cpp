@@ -24,10 +24,12 @@ void localMeshExample()
 {
     /*
       Just as the local grid describes the subdomain of the global grid, the
-      local mesh describes a subdomain of the global mesh. In contrast to the
-      global data structures, the local mesh is created using the local grid.
-      This is because the local indexing in required to correctly extract the
-      necessary information from the local mesh.
+      local mesh describes a subdomain of the global mesh. Again, the mesh
+      describes the physical geometry and size, while the grid defines only the
+      indexing. In contrast to the global data structures, the local mesh is
+      created using the local grid. This is because the local indexing is
+      required to correctly extract the correct subset of information for the
+      local mesh, including ghost information.
     */
 
     int comm_rank = -1;
@@ -67,7 +69,11 @@ void localMeshExample()
     int halo_width = 1;
     auto local_grid = Cajita::createLocalGrid( global_grid, halo_width );
 
-    // Create the local mesh from the local grid.
+    /*
+      Create the local mesh from the local grid. The device type template
+      parameter defines both the Kokkos memory and execution spaces that will be
+      able to access the resulting local mesh data.
+    */
     auto local_mesh = Cajita::createLocalMesh<device_type>( *local_grid );
 
     /*
@@ -106,7 +112,8 @@ void localMeshExample()
     /*
       The local mesh is most often useful to get information about individual
       cells within a kernel. Note this is done on the host here, but would most
-      often be in a Kokkos parallel kernel.
+      often be in a Kokkos parallel kernel. The local mesh is designed such that
+      it can be captured by value in Kokkos parallel kernels.
 
       This information includes the coordinates and the measure (size). The
       measure depends on the entity type used: Nodes return zero, Edges return
