@@ -188,7 +188,7 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
   set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
-  add_subdirectory(cmake/test_harness)
+  include(cmake/test_harness/setup_gtest.cmake)
   enable_testing()
 endif()
 

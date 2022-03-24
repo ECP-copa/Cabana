@@ -46,4 +46,6 @@ if(NOT GTest_FOUND)
   # when building with Visual Studio
   set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
 
+  add_library(GTest::gtest ALIAS gtest)
+
 endif()
