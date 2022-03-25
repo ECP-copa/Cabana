@@ -570,7 +570,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a vector divergence to a point. 3D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The vector divergence at the point. </td></tr>
   </table>
@@ -622,7 +622,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a vector divergence to a point. 2D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The vector divergence at the point. </td></tr>
   </table>
@@ -766,7 +766,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a scalar gradient to a point. 2D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of scalar grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of scalar grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The scalar gradient at the point. </td></tr>
   </table>
@@ -818,7 +818,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a vector gradient to a point. 2D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The vector gradient at the point. </td></tr>
   </table>
@@ -870,7 +870,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a scalar gradient to a point. 3D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of scalar grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of scalar grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The scalar gradient at the point. </td></tr>
   </table>
@@ -922,7 +922,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a vector gradient to a point. 3D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The vector gradient at the point. </td></tr>
   </table>
@@ -1078,7 +1078,7 @@ template&lt;class PointDataType , class ScatterViewType , class SplineDataType &
 <p>Interpolate a vector value to the grid. 2D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">point_data</td><td>The vector value at the point to interpolate to the grid. interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">point_data</td><td>The vector value at the point to interpolate to the grid. interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">view</td><td>The scatter view of vector grid data to interpolate to. </td></tr>
   </table>
@@ -1130,7 +1130,7 @@ template&lt;class PointDataType , class ScatterViewType , class SplineDataType &
 <p>Interpolate a vector value to the grid. 3D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">point_data</td><td>The vector value at the point to interpolate to the grid. interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">point_data</td><td>The vector value at the point to interpolate to the grid. interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">view</td><td>The scatter view of vector grid data to interpolate to. </td></tr>
   </table>
@@ -1182,7 +1182,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a scalar value to a point. 3D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of scalar grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of scalar grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The scalar value at the point. </td></tr>
   </table>
@@ -1234,7 +1234,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a scalar value to a point. 2D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of scalar grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of scalar grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The scalar value at the point. </td></tr>
   </table>
@@ -1286,7 +1286,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a vector value to a point. 2D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The vector value at the point. </td></tr>
   </table>
@@ -1338,7 +1338,7 @@ template&lt;class ViewType , class SplineDataType , class PointDataType &gt; </d
 <p>Interpolate a vector value to a point. 3D specialization. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. A value_type type alias is required. </td></tr>
+    <tr><td class="paramname">view</td><td>A functor with view semantics of vector grid data from which to interpolate. </td></tr>
     <tr><td class="paramname">sd</td><td>The spline data to use for the interpolation. </td></tr>
     <tr><td class="paramname">result</td><td>The vector value at the point. </td></tr>
   </table>

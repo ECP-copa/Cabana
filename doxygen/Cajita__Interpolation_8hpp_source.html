@@ -288,7 +288,7 @@ $(function() {
 <div class="line"><a name="l00269"></a><span class="lineno">  269</span>&#160; </div>
 <div class="line"><a name="l00270"></a><span class="lineno">  270</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d0 = 0; d0 &lt; 3; ++d0 )</div>
 <div class="line"><a name="l00271"></a><span class="lineno">  271</span>&#160;                {</div>
-<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                    <span class="keyword">typename</span> ViewType::value_type mg = rg[d0];</div>
+<div class="line"><a name="l00272"></a><span class="lineno">  272</span>&#160;                    <span class="keyword">auto</span> mg = rg[d0];</div>
 <div class="line"><a name="l00273"></a><span class="lineno">  273</span>&#160;                    <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d1 = 0; d1 &lt; 3; ++d1 )</div>
 <div class="line"><a name="l00274"></a><span class="lineno">  274</span>&#160;                        result[d0][d1] +=</div>
 <div class="line"><a name="l00275"></a><span class="lineno">  275</span>&#160;                            mg * view( sd.s[Dim::I][i], sd.s[Dim::J][j],</div>
@@ -323,7 +323,7 @@ $(function() {
 <div class="line"><a name="l00311"></a><span class="lineno">  311</span>&#160; </div>
 <div class="line"><a name="l00312"></a><span class="lineno">  312</span>&#160;            <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d0 = 0; d0 &lt; 2; ++d0 )</div>
 <div class="line"><a name="l00313"></a><span class="lineno">  313</span>&#160;            {</div>
-<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                <span class="keyword">typename</span> ViewType::value_type mg = rg[d0];</div>
+<div class="line"><a name="l00314"></a><span class="lineno">  314</span>&#160;                <span class="keyword">auto</span> mg = rg[d0];</div>
 <div class="line"><a name="l00315"></a><span class="lineno">  315</span>&#160;                <span class="keywordflow">for</span> ( <span class="keywordtype">int</span> d1 = 0; d1 &lt; 2; ++d1 )</div>
 <div class="line"><a name="l00316"></a><span class="lineno">  316</span>&#160;                    result[d0][d1] +=</div>
 <div class="line"><a name="l00317"></a><span class="lineno">  317</span>&#160;                        mg * view( sd.s[Dim::I][i], sd.s[Dim::J][j], d1 );</div>
