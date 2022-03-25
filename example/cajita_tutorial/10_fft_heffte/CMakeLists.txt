@@ -9,14 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_subdirectory(01_types)
-add_subdirectory(02_global_mesh)
-add_subdirectory(03_partitioner)
-add_subdirectory(04_global_grid)
-add_subdirectory(05_index_space)
-add_subdirectory(06_local_grid)
-add_subdirectory(07_local_mesh)
-add_subdirectory(08_array)
-if(Cabana_ENABLE_HEFFTE)
-    add_subdirectory(10_fft_heffte)
-endif()
+add_executable(HeffteFFT heffte_fast_fourier_transform_example.cpp)
+target_link_libraries(HeffteFFT Cajita)
+add_test(NAME Cajita_tutorial_10 COMMAND ${NONMPI_PRECOMMAND} HeffteFFT)
