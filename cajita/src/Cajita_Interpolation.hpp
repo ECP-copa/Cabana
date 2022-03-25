@@ -43,7 +43,7 @@ namespace G2P
 /*!
   \brief Interpolate a scalar value to a point. 3D specialization.
   \param view A functor with view semantics of scalar grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The scalar value at the point.
 */
@@ -71,7 +71,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a scalar value to a point. 2D specialization.
   \param view A functor with view semantics of scalar grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The scalar value at the point.
 */
@@ -98,7 +98,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a vector value to a point. 3D specialization.
   \param view A functor with view semantics of vector grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The vector value at the point.
 */
@@ -129,7 +129,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a vector value to a point. 2D specialization.
   \param view A functor with view semantics of vector grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The vector value at the point.
 */
@@ -158,7 +158,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a scalar gradient to a point. 3D specialization.
   \param view A functor with view semantics of scalar grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The scalar gradient at the point.
 */
@@ -202,7 +202,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a scalar gradient to a point. 2D specialization.
   \param view A functor with view semantics of scalar grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The scalar gradient at the point.
 */
@@ -237,7 +237,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a vector gradient to a point. 3D specialization.
   \param view A functor with view semantics of vector grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The vector gradient at the point.
 */
@@ -269,7 +269,7 @@ KOKKOS_INLINE_FUNCTION
 
                 for ( int d0 = 0; d0 < 3; ++d0 )
                 {
-                    typename ViewType::value_type mg = rg[d0];
+                    auto mg = rg[d0];
                     for ( int d1 = 0; d1 < 3; ++d1 )
                         result[d0][d1] +=
                             mg * view( sd.s[Dim::I][i], sd.s[Dim::J][j],
@@ -281,7 +281,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a vector gradient to a point. 2D specialization.
   \param view A functor with view semantics of vector grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The vector gradient at the point.
 */
@@ -311,7 +311,7 @@ KOKKOS_INLINE_FUNCTION
 
             for ( int d0 = 0; d0 < 2; ++d0 )
             {
-                typename ViewType::value_type mg = rg[d0];
+                auto mg = rg[d0];
                 for ( int d1 = 0; d1 < 2; ++d1 )
                     result[d0][d1] +=
                         mg * view( sd.s[Dim::I][i], sd.s[Dim::J][j], d1 );
@@ -323,7 +323,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a vector divergence to a point. 3D specialization.
   \param view A functor with view semantics of vector grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The vector divergence at the point.
 */
@@ -363,7 +363,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a vector divergence to a point. 2D specialization.
   \param view A functor with view semantics of vector grid data from which to
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param result The vector divergence at the point.
 */
@@ -498,7 +498,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a vector value to the grid. 3D specialization.
   \param point_data The vector value at the point to interpolate to the grid.
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param view The scatter view of vector grid data to interpolate to.
 */
@@ -530,7 +530,7 @@ KOKKOS_INLINE_FUNCTION
 /*!
   \brief Interpolate a vector value to the grid. 2D specialization.
   \param point_data The vector value at the point to interpolate to the grid.
-  interpolate. A value_type type alias is required.
+  interpolate.
   \param sd The spline data to use for the interpolation.
   \param view The scatter view of vector grid data to interpolate to.
 */
