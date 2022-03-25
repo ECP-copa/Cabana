@@ -187,8 +187,9 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
+  find_package(GTest 1.10 REQUIRED)
   set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
-  add_subdirectory(cmake/test_harness)
+  include(cmake/test_harness/test_harness.cmake)
   enable_testing()
 endif()
 
