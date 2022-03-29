@@ -30,6 +30,10 @@ authors:
     affiliation: 4
   - name: Aaron Scheinberg
     affiliation: 5
+  - name: Austin Isner
+    affiliation: 1
+  - name: Kwitae Chong
+    affiliation: 1
   - name: Stan Moore
     affiliation: 6
   - name: Timothy Germann
