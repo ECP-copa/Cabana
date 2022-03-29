@@ -11,4 +11,4 @@
 
 add_executable(GridParallel grid_parallel_example.cpp)
 target_link_libraries(GridParallel Cajita)
-add_test(NAME Cajita_tutorial_08 COMMAND ${NONMPI_PRECOMMAND} GridParallel)
+add_test(NAME Cajita_tutorial_09 COMMAND ${NONMPI_PRECOMMAND} GridParallel)

@@ -29,8 +29,8 @@ void gridParallelExample()
       directly, but there are additional options for using index spaces,
       including multiple index spaces.
 
-      All data structures (global mesh/grid, local grid/mesh, and array data) is
-      created first.
+      All data structures (global mesh/grid, local grid/mesh, and array data)
+      are created first.
     */
     std::cout << "Cajita Grid Parallel Example\n" << std::endl;
 
@@ -111,8 +111,10 @@ void gridParallelExample()
     */
     auto ghost_is = local_grid->indexSpace( Cajita::Ghost(), Cajita::Cell(),
                                             Cajita::Local() );
-    std::cout << "Total grid sum: " << sum << " (should be "
-              << 4 * ghost_is.size() << ")" << std::endl;
+    std::cout << "Local grid sum: " << sum << " (should be "
+              << 4 * ghost_is.size() << ")\n"
+              << std::endl;
+    //-----------------------------------------------------------------------//
 
     /*
       Grid parallel operations are also possible by directly using an index
@@ -129,7 +131,8 @@ void gridParallelExample()
         } );
 
     /*
-      Just as before we can do a grid reduction as well.
+      Just as before with the local grid we can do a grid reduction with the
+      index space as well.
     */
     double sum_is = 0.0;
     Cajita::grid_parallel_reduce(
@@ -143,8 +146,44 @@ void gridParallelExample()
       Now the total should be the negative of the total owned grid size, again
       times the four field values for each grid point.
     */
-    std::cout << "Total grid sum: " << sum_is << " (should be "
-              << -4 * own_is.size() << ")" << std::endl;
+    std::cout << "Index space grid sum: " << sum_is << " (should be "
+              << -4 * own_is.size() << ")\n"
+              << std::endl;
+    //-----------------------------------------------------------------------//
+
+    /*
+      An additional option in using the index space interface is using the index
+      space returned by the array layout. Note that the functor signature
+      changes here since the field dimension is included in the index space
+      (rather than looping in serial over the last dimension as in the previous
+      cases).
+
+      For this kernel we divide every entity by the total number of cells.
+    */
+    auto own_array_is =
+        cell_layout->indexSpace( Cajita::Own(), Cajita::Local() );
+    Cajita::grid_parallel_for(
+        "index_space_for", exec_space(), own_array_is,
+        KOKKOS_LAMBDA( const int i, const int j, const int k, const int l ) {
+            array_view( i, j, k, l ) /= sum_is;
+        } );
+
+    /*
+      Do another grid reduction to check the result.
+    */
+    double sum_layout_is = 0.0;
+    Cajita::grid_parallel_reduce(
+        "index_space_reduce", exec_space(), own_array_is,
+        KOKKOS_LAMBDA( const int i, const int j, const int k, const int l,
+                       double& result ) { result += array_view( i, j, k, l ); },
+        sum_layout_is );
+    /*
+      Now the total should be 1.
+    */
+    std::cout << "Array layout index space grid sum: " << sum_layout_is
+              << " (should be 1)\n"
+              << std::endl;
+    //-----------------------------------------------------------------------//
 
     /*
       One potentially useful extension of directly using index spaces is that
@@ -157,14 +196,19 @@ void gridParallelExample()
         Cajita::Own(), Cajita::Cell(), 1, 0, 0 );
     Cajita::grid_parallel_for(
         "multi_space_for", exec_space{},
-        Kokkos::Array<Cajita::IndexSpace<3>, 2>{ boundary_is, own_is },
+        Kokkos::Array<Cajita::IndexSpace<3>, 2>{ own_is, boundary_is },
+        // The first index in the functor signature is which index space is
+        // being used (from the array in the previous argument).
         KOKKOS_LAMBDA( const int s, const int i, const int j, const int k ) {
             for ( int l = 0; l < 4; ++l )
             {
+                // Now we can differentiate updates in kernel based on which
+                // index space we're using. We set the value for the owned space
+                // and increment (afterwards) only on the boundary.
                 if ( 0 == s )
-                    array_view( i, j, k, l ) = 5.0;
+                    array_view( i, j, k, l ) = 0.5;
                 else if ( 1 == s )
-                    array_view( i, j, k, l ) = 3.0;
+                    array_view( i, j, k, l ) += 1.0;
             }
         } );
     /*
@@ -172,18 +216,20 @@ void gridParallelExample()
     */
     double sum_bound = 0.0;
     Cajita::grid_parallel_reduce(
-        "boundary_space_reduce", exec_space(), boundary_is,
+        "boundary_space_reduce", exec_space(), own_is,
         KOKKOS_LAMBDA( const int i, const int j, const int k, double& result ) {
             for ( int l = 0; l < 4; ++l )
                 result += array_view( i, j, k, l );
         },
         sum_bound );
     /*
-      This total should be the size of the boundary, times the value, times the
-      four field values for each grid point.
+      This total should be the size of the owned space, times the value, times
+      the four field values for each grid point plus the boundary space size.
     */
-    std::cout << "Low-X-boundary grid sum: " << sum_bound << " (should be "
-              << 4 * 5 * boundary_is.size() << ")" << std::endl;
+    std::cout << "Multiple index space grid sum: " << sum_bound
+              << " (should be "
+              << 4 * 0.5 * own_is.size() + 4 * boundary_is.size() << ")\n"
+              << std::endl;
 }
 
 //---------------------------------------------------------------------------//
