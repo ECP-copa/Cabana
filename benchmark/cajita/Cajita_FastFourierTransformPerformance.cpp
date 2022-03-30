@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include "Cabana_BenchmarkUtils.hpp"
+#include "../Cabana_BenchmarkUtils.hpp"
 
 #include <Cajita.hpp>
 
