@@ -9,18 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_subdirectory(01_types)
-add_subdirectory(02_global_mesh)
-add_subdirectory(03_partitioner)
-add_subdirectory(04_global_grid)
-add_subdirectory(05_index_space)
-add_subdirectory(06_local_grid)
-add_subdirectory(07_local_mesh)
-add_subdirectory(08_array)
-if(Cabana_ENABLE_HEFFTE)
-    add_subdirectory(10_fft_heffte)
-endif()
-add_subdirectory(12_halo)
-if(Cabana_ENABLE_ALL)
-  add_subdirectory(13_all_loadbalancer)
-endif()
+add_executable(Halo halo_example.cpp)
+target_link_libraries(Halo Cajita)
+add_test(NAME Cajita_tutorial_12 COMMAND ${NONMPI_PRECOMMAND} Halo)
