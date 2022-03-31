@@ -18,9 +18,9 @@
 #include <array>
 
 //---------------------------------------------------------------------------//
-void gatherScatterExample( const Cajita::ManualBlockPartitioner<3>& partitioner,
-                           const std::array<bool, 3>& is_dim_periodic,
-                           const std::string test_name )
+// Grid Halo example.
+//---------------------------------------------------------------------------//
+void gridHaloExample()
 {
     /*
       The halo is a communication plan designed from halo exchange where some
@@ -30,7 +30,8 @@ void gatherScatterExample( const Cajita::ManualBlockPartitioner<3>& partitioner,
       uniquely-owned decomposition to the ghosted decomposition. In the
       reverse operation (the scatter), data is sent from the ghosted
       decomposition back to the uniquely-owned decomposition and collisions
-      are resolved.
+      are resolved. Grid halos in Cajita are relvatively simple because all
+      grids are logically rectilinear.
 
       In this example we will demonstrate building a halo communication
       plan and performing both scatter and gather operations.
@@ -41,17 +42,35 @@ void gatherScatterExample( const Cajita::ManualBlockPartitioner<3>& partitioner,
 
     if ( comm_rank == 0 )
     {
-        std::cout << "=======================\n";
-        std::cout << test_name << std::endl;
-        std::cout << "=======================\n";
+        std::cout << "Cajita Grid Halo Example" << std::endl;
+        std::cout << "    (intended to be run with MPI)\n" << std::endl;
     }
 
     using exec_space = Kokkos::DefaultHostExecutionSpace;
     using device_type = exec_space::device_type;
 
-    // Create the global grid.
+    // Use linear MPI partitioning to make this example simpler.
+    int comm_size;
+    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
+    std::array<int, 3> ranks_per_dim = { comm_size, 1, 1 };
+    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
+    Cajita::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
+
+    /*
+      Boundaries are not periodic in this example, thus ranks at system
+      boundaries do not communicate. Because of this the details printed from
+      rank 0 on the left side will never change as it is on the system boundary
+      (without an MPI neighbor).
+
+      Changing values here to true will show what happens for periodic grid
+      communication instead, where the left and right sides of the local domain
+      should then match.
+    */
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
+
+    // Create the mesh and grid structures as usual.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 16, 21, 21 };
+    std::array<int, 3> global_num_cell = { 26, 21, 21 };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
@@ -59,79 +78,101 @@ void gatherScatterExample( const Cajita::ManualBlockPartitioner<3>& partitioner,
         global_low_corner[2] + cell_size * global_num_cell[2] };
     auto global_mesh = Cajita::createUniformGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
-
-    // Create the global grid.
     auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
                                          is_dim_periodic, partitioner );
 
-    // Array parameters.
-    unsigned array_halo_width = 3;
+    /*
+      Here the halo width allocated for the system is not necessarily always
+      fully communicated - we can use any integer value from zero to the value
+      allocated.
+    */
+    unsigned allocated_halo_width = 3;
 
-    // Loop over halo sizes up to the size of the array halo width.
-    for ( unsigned halo_width = 1; halo_width <= array_halo_width;
+    // Now we loop over halo sizes up to the size allocated to compare.
+    for ( unsigned halo_width = 1; halo_width <= allocated_halo_width;
           ++halo_width )
     {
         if ( comm_rank == 0 )
-            std::cout << "halo width : " << halo_width << std::endl;
+            std::cout << "halo width: " << halo_width << std::endl;
 
         // Create a cell array.
-        auto layout = createArrayLayout( global_grid, array_halo_width, 4,
+        auto layout = createArrayLayout( global_grid, allocated_halo_width, 4,
                                          Cajita::Cell() );
         auto array =
             Cajita::createArray<double, device_type>( "array", layout );
 
-        // Assign the owned cells a value of 1 and the rest 0.
+        // Assign the owned cells a value of 1 and ghosted 0.
         Cajita::ArrayOp::assign( *array, 0.0, Cajita::Ghost() );
         Cajita::ArrayOp::assign( *array, 1.0, Cajita::Own() );
 
         // create host mirror view
-        auto host_view = Kokkos::create_mirror_view_and_copy(
-            Kokkos::HostSpace(), array->view() );
+        auto array_view = array->view();
         auto ghosted_space =
             array->layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
 
         /*
-           print out cell values along x-axis. Owned cell are 1 and ghosted cell
-           are 0
+           Print out cell values along a single slice of the x-axis (recalling
+           that the MPI decomposition is only along x). Owned cells should be 1
+           and ghosted cells 0.
         */
         if ( comm_rank == 0 )
         {
-            std::cout << "Array Values\n";
+            std::cout << "Array Values before communication\n";
             for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
-                std::cout << host_view( i, 13, 13, 0 ) << " ";
+                std::cout << array_view( i, 13, 13, 0 ) << " ";
             std::cout << std::endl;
         }
 
-        // Create a halo.
-        auto halo = createHalo( *array, Cajita::FullHaloPattern(), halo_width );
+        /*
+          Create a halo. Note that this is done with the array data and that no
+          communication has occured yet. The halo width (within the value
+          allocated) is also passed, together with options for the type of
+          communication:
+           - Node pattern communicates with 26 MPI neighbors in 3D (8 in 2D)
+           - Face pattern communicates with 6 MPI neighbors in 3D (4 in 2D)
+        */
+        auto halo =
+            createHalo( *array, Cajita::NodeHaloPattern<3>(), halo_width );
 
-        // Gather into the ghosts.
+        /*
+          Gather into the ghosts. This performs the grid communication from the
+          owning rank to surrounding neighbors for the field data selected. Note
+          that this can be done with any execution space that is compatible with
+          the array/halo memory space being used.
+        */
         halo->gather( exec_space(), *array );
 
         /*
-           print out cell values along x-axis. After gather, ghotsted cell
-           values are re-assigned with owned cell values of neighbors.
+           Print out cell values again along the x-axis after the gather.
+           Ghosted cell values are re-assigned with owned cell values of their
+           neighbors.
         */
         if ( comm_rank == 0 )
         {
-            std::cout << "Array Valueas after gather\n";
+            std::cout << "Array Values after gather\n";
             for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
-                std::cout << host_view( i, 13, 13, 0 ) << " ";
+                std::cout << array_view( i, 13, 13, 0 ) << " ";
             std::cout << std::endl;
         }
 
-        // Scatter from the ghosts back to owned.
+        /*
+          Now scatter back from the ghosts to the rank on which it is owned.
+          This is a similar interface as the gather operation, but here we can
+          specify different update operations: sum (used here), min, max, or
+          replace the value.
+        */
         halo->scatter( exec_space(), Cajita::ScatterReduce::Sum(), *array );
 
         /*
-           print out cell values along x-axis. After scatter, owned cell values
-           are reduced with ghost cell values of neighbors.
+          Print out cell values one more time along the x-axis after the
+          scatter. Now owned cell values near the boundary should be 2 (updated
+          from their ghost cells on MPI neighbors.
         */
         if ( comm_rank == 0 )
         {
-            std::cout << "Array Valueas after scatter\n";
+            std::cout << "Array Values after scatter\n";
             for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
-                std::cout << host_view( i, 13, 13, 0 ) << " ";
+                std::cout << array_view( i, 13, 13, 0 ) << " ";
             std::cout << std::endl << std::endl;
         }
     }
@@ -146,23 +187,7 @@ int main( int argc, char* argv[] )
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
 
-        // Let MPI compute the partitioning for this test.
-        int comm_size;
-        MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
-        std::array<int, 3> ranks_per_dim = { comm_size, 1, 1 };
-        MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
-        Cajita::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
-
-        // Boundaries are not periodic. Thus, halos at boundary does not
-        // commuicates
-        std::array<bool, 3> is_dim_periodic = { false, false, false };
-        gatherScatterExample( partitioner, is_dim_periodic,
-                              "non periodic test" );
-
-        // Boundaries are periodic. Thus, halos at boundarys communicate
-        // with its preriodic neighbors
-        is_dim_periodic = { true, true, true };
-        gatherScatterExample( partitioner, is_dim_periodic, "periodic test" );
+        gridHaloExample();
     }
     MPI_Finalize();
 
