@@ -34,10 +34,7 @@ set(MPI_TESTS
   SplineEvaluation2d
   Interpolation3d
   Interpolation2d
-<<<<<<< HEAD
   Hilbert
-=======
->>>>>>> upstream/master
   BovWriter
   Parallel
   SparseDimPartitioner
