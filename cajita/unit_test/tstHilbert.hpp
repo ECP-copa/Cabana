@@ -41,8 +41,8 @@ void LayoutHilbert3DSubviewTest()
     // Set dimensions
     int dim1 = 45;
     int dim2 = 51;
-    int dim3 = 1;
-    int dim4 = 2;
+    int dim3 = 13;
+    int dim4 = 4;
 
     // View Index Space
     auto view_space =
