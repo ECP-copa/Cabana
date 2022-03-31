@@ -1,5 +1,5 @@
 ############################################################################
-# Copyright (c) 2020 by the Cabana authors                                 #
+# Copyright (c) 2018-2021 by the Cabana authors                            #
 # All rights reserved.                                                     #
 #                                                                          #
 # This file is part of the Cabana library. Cabana is distributed under a   #
@@ -41,11 +41,11 @@ if(CLANG_FORMAT_EXECUTABLE)
                   OUTPUT_VARIABLE clang_format_version
                   ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
 
-  if(clang_format_version MATCHES "^clang-format version .*")
+  if(clang_format_version MATCHES "^.*clang-format version .*")
     # clang_format_version sample: "clang-format version 3.9.1-4ubuntu3~16.04.1
     # (tags/RELEASE_391/rc2)"
     string(REGEX
-           REPLACE "clang-format version ([.0-9]+).*"
+           REPLACE "^.*clang-format version ([.0-9]+).*"
                    "\\1"
                    CLANG_FORMAT_VERSION
                    "${clang_format_version}")

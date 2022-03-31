@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -284,9 +284,9 @@ void executionTest()
     for ( int i = 0; i < size_i; ++i )
     {
         if ( is1.min( 0 ) <= i && i < is1.max( 0 ) )
-            EXPECT_EQ( v1_mirror( i ), 1.0 );
+            EXPECT_DOUBLE_EQ( v1_mirror( i ), 1.0 );
         else
-            EXPECT_EQ( v1_mirror( i ), 0.0 );
+            EXPECT_DOUBLE_EQ( v1_mirror( i ), 0.0 );
     }
 
     // Rank-2
@@ -305,9 +305,9 @@ void executionTest()
         {
             if ( is2.min( 0 ) <= i && i < is2.max( 0 ) && is2.min( 1 ) <= j &&
                  j < is2.max( 1 ) )
-                EXPECT_EQ( v2_mirror( i, j ), 1.0 );
+                EXPECT_DOUBLE_EQ( v2_mirror( i, j ), 1.0 );
             else
-                EXPECT_EQ( v2_mirror( i, j ), 0.0 );
+                EXPECT_DOUBLE_EQ( v2_mirror( i, j ), 0.0 );
         }
 
     // Rank-3
@@ -330,9 +330,9 @@ void executionTest()
                 if ( is3.min( 0 ) <= i && i < is3.max( 0 ) &&
                      is3.min( 1 ) <= j && j < is3.max( 1 ) &&
                      is3.min( 2 ) <= k && k < is3.max( 2 ) )
-                    EXPECT_EQ( v3_mirror( i, j, k ), 1.0 );
+                    EXPECT_DOUBLE_EQ( v3_mirror( i, j, k ), 1.0 );
                 else
-                    EXPECT_EQ( v3_mirror( i, j, k ), 0.0 );
+                    EXPECT_DOUBLE_EQ( v3_mirror( i, j, k ), 0.0 );
             }
 
     // Rank-4
@@ -359,9 +359,9 @@ void executionTest()
                          is4.min( 1 ) <= j && j < is4.max( 1 ) &&
                          is4.min( 2 ) <= k && k < is4.max( 2 ) &&
                          is4.min( 3 ) <= l && l < is4.max( 3 ) )
-                        EXPECT_EQ( v4_mirror( i, j, k, l ), 1.0 );
+                        EXPECT_DOUBLE_EQ( v4_mirror( i, j, k, l ), 1.0 );
                     else
-                        EXPECT_EQ( v4_mirror( i, j, k, l ), 0.0 );
+                        EXPECT_DOUBLE_EQ( v4_mirror( i, j, k, l ), 0.0 );
                 }
 }
 
@@ -381,9 +381,9 @@ void subviewTest()
     for ( int i = 0; i < size_i; ++i )
     {
         if ( is1.range( 0 ).first <= i && i < is1.range( 0 ).second )
-            EXPECT_EQ( v1_mirror( i ), 1.0 );
+            EXPECT_DOUBLE_EQ( v1_mirror( i ), 1.0 );
         else
-            EXPECT_EQ( v1_mirror( i ), 0.0 );
+            EXPECT_DOUBLE_EQ( v1_mirror( i ), 0.0 );
     }
 
     // Rank-2
@@ -401,9 +401,9 @@ void subviewTest()
         {
             if ( is2.range( 0 ).first <= i && i < is2.range( 0 ).second &&
                  is2.range( 1 ).first <= j && j < is2.range( 1 ).second )
-                EXPECT_EQ( v2_mirror( i, j ), 1.0 );
+                EXPECT_DOUBLE_EQ( v2_mirror( i, j ), 1.0 );
             else
-                EXPECT_EQ( v2_mirror( i, j ), 0.0 );
+                EXPECT_DOUBLE_EQ( v2_mirror( i, j ), 0.0 );
         }
 
     // Rank-3
@@ -423,9 +423,9 @@ void subviewTest()
                 if ( is3.range( 0 ).first <= i && i < is3.range( 0 ).second &&
                      is3.range( 1 ).first <= j && j < is3.range( 1 ).second &&
                      is3.range( 2 ).first <= k && k < is3.range( 2 ).second )
-                    EXPECT_EQ( v3_mirror( i, j, k ), 1.0 );
+                    EXPECT_DOUBLE_EQ( v3_mirror( i, j, k ), 1.0 );
                 else
-                    EXPECT_EQ( v3_mirror( i, j, k ), 0.0 );
+                    EXPECT_DOUBLE_EQ( v3_mirror( i, j, k ), 0.0 );
             }
 
     // Rank-4
@@ -453,9 +453,9 @@ void subviewTest()
                          k < is4.range( 2 ).second &&
                          is4.range( 3 ).first <= l &&
                          l < is4.range( 3 ).second )
-                        EXPECT_EQ( v4_mirror( i, j, k, l ), 1.0 );
+                        EXPECT_DOUBLE_EQ( v4_mirror( i, j, k, l ), 1.0 );
                     else
-                        EXPECT_EQ( v4_mirror( i, j, k, l ), 0.0 );
+                        EXPECT_DOUBLE_EQ( v4_mirror( i, j, k, l ), 0.0 );
                 }
 }
 
@@ -549,6 +549,39 @@ void defaultConstructorTest()
     IndexSpace<3> is2( { 9, 2, 1 }, { 12, 16, 4 } );
     is1 = is2;
     EXPECT_TRUE( is1 == is2 );
+}
+
+//---------------------------------------------------------------------------//
+void inRangeTest()
+{
+    IndexSpace<3> space( { 9, 2, 1 }, { 12, 16, 4 } );
+
+    long i0[3] = { 9, 2, 1 };
+    EXPECT_TRUE( space.inRange( i0 ) );
+
+    long i1[3] = { 10, 9, 3 };
+    EXPECT_TRUE( space.inRange( i1 ) );
+
+    long i2[3] = { 3, 9, 3 };
+    EXPECT_FALSE( space.inRange( i2 ) );
+
+    long i3[3] = { 10, 19, 3 };
+    EXPECT_FALSE( space.inRange( i3 ) );
+
+    long i4[3] = { 10, 9, 13 };
+    EXPECT_FALSE( space.inRange( i4 ) );
+
+    long i5[3] = { 3, 19, 3 };
+    EXPECT_FALSE( space.inRange( i5 ) );
+
+    long i6[3] = { 10, 19, 13 };
+    EXPECT_FALSE( space.inRange( i6 ) );
+
+    long i7[3] = { 3, 19, 13 };
+    EXPECT_FALSE( space.inRange( i7 ) );
+
+    long i8[3] = { 12, 16, 4 };
+    EXPECT_FALSE( space.inRange( i8 ) );
 }
 
 //---------------------------------------------------------------------------//

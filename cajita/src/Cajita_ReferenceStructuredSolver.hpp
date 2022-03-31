@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_ReferenceStructuredSolver.hpp
+  \brief Reference structured solver
+*/
 #ifndef CAJITA_REFERENCESTRUCTUREDSOLVER_HPP
 #define CAJITA_REFERENCESTRUCTUREDSOLVER_HPP
 
@@ -18,6 +22,7 @@
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_MpiTraits.hpp>
+#include <Cajita_Parallel.hpp>
 #include <Cajita_Types.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -28,23 +33,31 @@
 #include <set>
 #include <sstream>
 #include <string>
+#include <type_traits>
 #include <vector>
 
 namespace Cajita
 {
 //---------------------------------------------------------------------------//
-// Reference preconditioned structured solver interface.
+//! Reference preconditioned structured solver interface.
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
 class ReferenceStructuredSolver
 {
   public:
-    // Types.
+    //! Entity type.
     using entity_type = EntityType;
+    //! Kokkos device type.
     using device_type = DeviceType;
+    //! Kokkos memory space.
     using memory_space = typename device_type::memory_space;
+    //! Kokkos execution space.
     using execution_space = typename device_type::execution_space;
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Array type.
     using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = MeshType::num_space_dim;
 
     // Destructor.
     virtual ~ReferenceStructuredSolver() {}
@@ -57,9 +70,9 @@ class ReferenceStructuredSolver
       stencil entries should only contain one entry from each symmetric
       component if this is true.
     */
-    virtual void
-    setMatrixStencil( const std::vector<std::array<int, 3>>& stencil,
-                      const bool is_symmetric ) = 0;
+    virtual void setMatrixStencil(
+        const std::vector<std::array<int, num_space_dim>>& stencil,
+        const bool is_symmetric ) = 0;
 
     /*!
       \brief Get the matrix values.
@@ -80,9 +93,9 @@ class ReferenceStructuredSolver
       symmetric. The stencil entries should only contain one entry from each
       symmetric component if this is true.
     */
-    virtual void
-    setPreconditionerStencil( const std::vector<std::array<int, 3>>& stencil,
-                              const bool is_symmetric ) = 0;
+    virtual void setPreconditionerStencil(
+        const std::vector<std::array<int, num_space_dim>>& stencil,
+        const bool is_symmetric ) = 0;
 
     /*!
       \brief Get the preconditioner values.
@@ -95,16 +108,16 @@ class ReferenceStructuredSolver
     */
     virtual const Array_t& getPreconditionerValues() = 0;
 
-    // Set convergence tolerance implementation.
+    //! Set convergence tolerance implementation.
     virtual void setTolerance( const double tol ) = 0;
 
-    // Set maximum iteration implementation.
+    //! Set maximum iteration implementation.
     virtual void setMaxIter( const int max_iter ) = 0;
 
-    // Set the output level.
+    //! Set the output level.
     virtual void setPrintLevel( const int print_level ) = 0;
 
-    // Setup the problem.
+    //! Setup the problem.
     virtual void setup() = 0;
 
     /*!
@@ -114,35 +127,46 @@ class ReferenceStructuredSolver
     */
     virtual void solve( const Array_t& b, Array_t& x ) = 0;
 
-    // Get the number of iterations taken on the last solve.
+    //! Get the number of iterations taken on the last solve.
     virtual int getNumIter() = 0;
 
-    // Get the relative residual norm achieved on the last solve.
+    //! Get the relative residual norm achieved on the last solve.
     virtual double getFinalRelativeResidualNorm() = 0;
 };
 
 //---------------------------------------------------------------------------//
-// Reference structured preconditioned block conjugate gradient implementation.
+//! Reference structured preconditioned block conjugate gradient implementation.
 template <class Scalar, class EntityType, class MeshType, class DeviceType>
 class ReferenceConjugateGradient
     : public ReferenceStructuredSolver<Scalar, EntityType, MeshType, DeviceType>
 {
   public:
-    // Types.
+    //! Entity type.
     using entity_type = EntityType;
+    //! Kokkos device type.
     using device_type = DeviceType;
+    //! Scalar value type.
     using value_type = Scalar;
+    //! Kokkos execution space.
     using execution_space = typename device_type::execution_space;
+    //! Kokkos memory space.
     using memory_space = typename device_type::memory_space;
+    //! Array type.
     using Array_t = Array<Scalar, EntityType, MeshType, DeviceType>;
+    //! Spatial dimension.
+    static constexpr std::size_t num_space_dim = MeshType::num_space_dim;
 
-    // Array-like container to hold layout and data information.
+    //! Array-like container to hold layout and data information.
     template <class ScalarT, class MemorySpaceT, class ArrayLayoutT>
     struct LayoutContainer
     {
+        //! Scalar value type.
         using value_type = ScalarT;
+        //! Kokkos memory space.
         using memory_space = MemorySpaceT;
+        //! Array layout.
         const ArrayLayoutT& array_layout;
+        //! Get the array layout.
         const ArrayLayoutT* layout() const { return &array_layout; }
     };
 
@@ -172,8 +196,9 @@ class ReferenceConjugateGradient
       stencil entries should only contain one entry from each symmetric
       component if this is true.
     */
-    void setMatrixStencil( const std::vector<std::array<int, 3>>& stencil,
-                           const bool is_symmetric = false ) override
+    void setMatrixStencil(
+        const std::vector<std::array<int, num_space_dim>>& stencil,
+        const bool is_symmetric = false ) override
     {
         setStencil( stencil, is_symmetric, _A_stencil, _A_halo, _A );
     }
@@ -196,9 +221,9 @@ class ReferenceConjugateGradient
       symmetric. The stencil entries should only contain one entry from each
       symmetric component if this is true.
     */
-    void
-    setPreconditionerStencil( const std::vector<std::array<int, 3>>& stencil,
-                              const bool is_symmetric = false ) override
+    void setPreconditionerStencil(
+        const std::vector<std::array<int, num_space_dim>>& stencil,
+        const bool is_symmetric = false ) override
     {
         setStencil( stencil, is_symmetric, _M_stencil, _M_halo, _M );
     }
@@ -213,19 +238,19 @@ class ReferenceConjugateGradient
     */
     const Array_t& getPreconditionerValues() override { return *_M; }
 
-    // Set convergence tolerance implementation.
+    //! Set convergence tolerance implementation.
     void setTolerance( const double tol ) override { _tol = tol; }
 
-    // Set maximum iteration implementation.
+    //! Set maximum iteration implementation.
     void setMaxIter( const int max_iter ) override { _max_iter = max_iter; }
 
-    // Set the output level.
+    //! Set the output level.
     void setPrintLevel( const int print_level ) override
     {
         _print_level = print_level;
     }
 
-    // Setup the problem.
+    //! Setup the problem.
     void setup() override {}
 
     /*!
@@ -284,32 +309,11 @@ class ReferenceConjugateGradient
 
         // Compute the initial residual and norm.
         _residual_norm = 0.0;
-        Kokkos::parallel_reduce(
-            "compute_r0",
-            createExecutionPolicy( entity_space, execution_space() ),
-            KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           Scalar& result ) {
-                // Compute the local contribution from matrix-vector
-                // multiplication. Note that we copied x into p for this
-                // operation to easily perform the gather. Only apply the
-                // stencil entry if it is greater than 0.
-                Scalar Ax = 0.0;
-                for ( unsigned c = 0; c < _A_stencil.extent( 0 ); ++c )
-                    if ( fabs( A_view( i, j, k, c ) ) > 0.0 )
-                        Ax += A_view( i, j, k, c ) *
-                              p_old_view( i + _A_stencil( c, Dim::I ),
-                                          j + _A_stencil( c, Dim::J ),
-                                          k + _A_stencil( c, Dim::K ), 0 );
-
-                // Compute the residual.
-                auto r_new = b_view( i, j, k, 0 ) - Ax;
-
-                // Assign the residual.
-                r_old_view( i, j, k, 0 ) = r_new;
-
-                // Contribute to the reduction.
-                result += r_new * r_new;
-            },
+        auto compute_r0 = createComputeR0( _A_stencil, A_view, p_old_view,
+                                           b_view, r_old_view );
+        grid_parallel_reduce(
+            "compute_r0", execution_space(), entity_space,
+            std::integral_constant<std::size_t, num_space_dim>{}, compute_r0,
             _residual_norm );
 
         // Finish the global norm reduction.
@@ -330,29 +334,11 @@ class ReferenceConjugateGradient
 
         // Compute the initial preconditioned residual.
         Scalar zTr_old = 0.0;
-        Kokkos::parallel_reduce(
-            "compute_z0",
-            createExecutionPolicy( entity_space, execution_space() ),
-            KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           Scalar& result ) {
-                // Compute the local contribution from matrix-vector
-                // multiplication. Only apply the stencil entry if it is
-                // greater than 0.
-                Scalar Mr = 0.0;
-                for ( unsigned c = 0; c < _M_stencil.extent( 0 ); ++c )
-                    if ( fabs( M_view( i, j, k, c ) ) > 0.0 )
-                        Mr += M_view( i, j, k, c ) *
-                              r_old_view( i + _M_stencil( c, Dim::I ),
-                                          j + _M_stencil( c, Dim::J ),
-                                          k + _M_stencil( c, Dim::K ), 0 );
-                // Write values.
-                z_view( i, j, k, 0 ) = Mr;
-                p_old_view( i, j, k, 0 ) = Mr;
-                p_new_view( i, j, k, 0 ) = Mr;
-
-                // Compute zTr
-                result += Mr * r_old_view( i, j, k, 0 );
-            },
+        auto compute_z0 = createComputeZ0( _M_stencil, M_view, p_old_view,
+                                           p_new_view, r_old_view, z_view );
+        grid_parallel_reduce(
+            "compute_z0", execution_space(), entity_space,
+            std::integral_constant<std::size_t, num_space_dim>{}, compute_z0,
             zTr_old );
 
         // Finish computation of zTr
@@ -364,29 +350,11 @@ class ReferenceConjugateGradient
 
         // Compute A*p and pT*A*p.
         Scalar pTAp = 0.0;
-        Kokkos::parallel_reduce(
-            "compute_q0",
-            createExecutionPolicy( entity_space, execution_space() ),
-            KOKKOS_LAMBDA( const int i, const int j, const int k,
-                           Scalar& result ) {
-                // Compute the local contribution from matrix-vector
-                // multiplication. This computes the updated p vector
-                // in-line to avoid another kernel launch. Only apply the
-                // stencil entry if it is greater than 0.
-                Scalar Ap = 0.0;
-                for ( unsigned c = 0; c < _A_stencil.extent( 0 ); ++c )
-                    if ( fabs( A_view( i, j, k, c ) ) > 0.0 )
-                        Ap += A_view( i, j, k, c ) *
-                              ( p_old_view( i + _A_stencil( c, Dim::I ),
-                                            j + _A_stencil( c, Dim::J ),
-                                            k + _A_stencil( c, Dim::K ), 0 ) );
-
-                // Write values.
-                q_view( i, j, k, 0 ) = Ap;
-
-                // Compute contribution to the dot product.
-                result += p_old_view( i, j, k, 0 ) * Ap;
-            },
+        auto compute_q0 =
+            createComputeQ0( _A_stencil, A_view, p_old_view, q_view );
+        grid_parallel_reduce(
+            "compute_q0", execution_space(), entity_space,
+            std::integral_constant<std::size_t, num_space_dim>{}, compute_q0,
             pTAp );
 
         // Finish the global reduction on pTAp.
@@ -406,48 +374,13 @@ class ReferenceConjugateGradient
             // Kernel 1: Compute x, r, residual norm, and zTr
             alpha = zTr_old / pTAp;
             zTr_new = 0.0;
-            Kokkos::parallel_reduce(
-                "cg_kernel_1",
-                createExecutionPolicy( entity_space, execution_space() ),
-                KOKKOS_LAMBDA( const int i, const int j, const int k,
-                               Scalar& result ) {
-                    // Compute the local contribution from matrix-vector
-                    // multiplication. This computes the updated q vector
-                    // in-line to avoid another kernel launch. Only apply the
-                    // stencil entry if it is greater than 0.
-                    Scalar Mr = 0.0;
-                    for ( unsigned c = 0; c < _M_stencil.extent( 0 ); ++c )
-                        if ( fabs( M_view( i, j, k, c ) ) > 0.0 )
-                            Mr +=
-                                M_view( i, j, k, c ) *
-                                ( r_old_view( i + _M_stencil( c, Dim::I ),
-                                              j + _M_stencil( c, Dim::J ),
-                                              k + _M_stencil( c, Dim::K ), 0 ) -
-                                  alpha * q_view( i + _M_stencil( c, Dim::I ),
-                                                  j + _M_stencil( c, Dim::J ),
-                                                  k + _M_stencil( c, Dim::K ),
-                                                  0 ) );
-
-                    // Compute the updated x.
-                    Scalar x_new =
-                        x_view( i, j, k, 0 ) + alpha * p_new_view( i, j, k, 0 );
-
-                    // Compute the updated residual.
-                    Scalar r_new =
-                        r_old_view( i, j, k, 0 ) - alpha * q_view( i, j, k, 0 );
-
-                    // Write to old p vector.
-                    p_old_view( i, j, k, 0 ) = p_new_view( i, j, k, 0 );
-
-                    // Write values.
-                    x_view( i, j, k, 0 ) = x_new;
-                    r_new_view( i, j, k, 0 ) = r_new;
-                    z_view( i, j, k, 0 ) = Mr;
-
-                    // Compute contribution to the zTr.
-                    result += Mr * r_new;
-                },
-                zTr_new );
+            auto cg_kernel_1 = createKernel1(
+                _M_stencil, M_view, x_view, r_new_view, r_old_view, p_new_view,
+                p_old_view, z_view, q_view, alpha );
+            grid_parallel_reduce(
+                "cg_kernel_1", execution_space(), entity_space,
+                std::integral_constant<std::size_t, num_space_dim>{},
+                cg_kernel_1, zTr_new );
 
             // Finish the global reduction on zTr and r_norm.
             MPI_Allreduce( MPI_IN_PLACE, &zTr_new, 1, MpiTraits<Scalar>::type(),
@@ -478,43 +411,13 @@ class ReferenceConjugateGradient
             // Kernel 2: Compute p, A*p, and p^T*A*p
             beta = zTr_new / zTr_old;
             pTAp = 0.0;
-            Kokkos::parallel_reduce(
-                "cg_kernel_2",
-                createExecutionPolicy( entity_space, execution_space() ),
-                KOKKOS_LAMBDA( const int i, const int j, const int k,
-                               Scalar& result ) {
-                    // Compute the local contribution from matrix-vector
-                    // multiplication. This computes the updated p vector
-                    // in-line to avoid another kernel launch. Only apply the
-                    // stencil entry if it is greater than 0.
-                    Scalar Ap = 0.0;
-                    for ( unsigned c = 0; c < _A_stencil.extent( 0 ); ++c )
-                        if ( fabs( A_view( i, j, k, c ) ) > 0.0 )
-                            Ap += A_view( i, j, k, c ) *
-                                  ( z_view( i + _A_stencil( c, Dim::I ),
-                                            j + _A_stencil( c, Dim::J ),
-                                            k + _A_stencil( c, Dim::K ), 0 ) +
-                                    beta *
-                                        p_old_view( i + _A_stencil( c, Dim::I ),
-                                                    j + _A_stencil( c, Dim::J ),
-                                                    k + _A_stencil( c, Dim::K ),
-                                                    0 ) );
-
-                    // Compute the updated p.
-                    Scalar p_new =
-                        z_view( i, j, k, 0 ) + beta * p_old_view( i, j, k, 0 );
-
-                    // Write to old residual.
-                    r_old_view( i, j, k, 0 ) = r_new_view( i, j, k, 0 );
-
-                    // Write values.
-                    q_view( i, j, k, 0 ) = Ap;
-                    p_new_view( i, j, k, 0 ) = p_new;
-
-                    // Compute contribution to the dot product.
-                    result += p_new * Ap;
-                },
-                pTAp );
+            auto cg_kernel_2 = createKernel2(
+                _A_stencil, A_view, x_view, r_new_view, r_old_view, p_new_view,
+                p_old_view, z_view, q_view, beta );
+            grid_parallel_reduce(
+                "cg_kernel_2", execution_space(), entity_space,
+                std::integral_constant<std::size_t, num_space_dim>{},
+                cg_kernel_2, pTAp );
 
             // Finish the global reduction on pTAp.
             MPI_Allreduce( MPI_IN_PLACE, &pTAp, 1, MpiTraits<Scalar>::type(),
@@ -536,19 +439,436 @@ class ReferenceConjugateGradient
             throw std::runtime_error( "CG solver did not converge" );
     }
 
-    // Get the number of iterations taken on the last solve.
+    //! Get the number of iterations taken on the last solve.
     int getNumIter() override { return _num_iter; }
 
-    // Get the relative residual norm achieved on the last solve.
+    //! Get the relative residual norm achieved on the last solve.
     double getFinalRelativeResidualNorm() override { return _residual_norm; }
+
+  public:
+    //! \cond Impl
+    template <class StencilA, class ViewA, class ViewOldP, class ViewB,
+              class ViewOldR>
+    struct ComputeR0
+    {
+        StencilA A_stencil;
+        ViewA A_view;
+        ViewOldP p_old_view;
+        ViewB b_view;
+        ViewOldR r_old_view;
+
+        using value_type = typename ViewB::value_type;
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 3>&, const int i,
+                    const int j, const int k, value_type& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. Note that we copied x into p for this
+            // operation to easily perform the gather. Only apply the
+            // stencil entry if it is greater than 0.
+            value_type Ax = 0.0;
+            for ( unsigned c = 0; c < A_stencil.extent( 0 ); ++c )
+                if ( fabs( A_view( i, j, k, c ) ) > 0.0 )
+                    Ax += A_view( i, j, k, c ) *
+                          p_old_view( i + A_stencil( c, Dim::I ),
+                                      j + A_stencil( c, Dim::J ),
+                                      k + A_stencil( c, Dim::K ), 0 );
+
+            // Compute the residual.
+            auto r_new = b_view( i, j, k, 0 ) - Ax;
+
+            // Assign the residual.
+            r_old_view( i, j, k, 0 ) = r_new;
+
+            // Contribute to the reduction.
+            result += r_new * r_new;
+        }
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 2>&, const int i,
+                    const int j, value_type& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. Note that we copied x into p for this
+            // operation to easily perform the gather. Only apply the
+            // stencil entry if it is greater than 0.
+            value_type Ax = 0.0;
+            for ( unsigned c = 0; c < A_stencil.extent( 0 ); ++c )
+                if ( fabs( A_view( i, j, c ) ) > 0.0 )
+                    Ax += A_view( i, j, c ) *
+                          p_old_view( i + A_stencil( c, Dim::I ),
+                                      j + A_stencil( c, Dim::J ), 0 );
+
+            // Compute the residual.
+            auto r_new = b_view( i, j, 0 ) - Ax;
+
+            // Assign the residual.
+            r_old_view( i, j, 0 ) = r_new;
+
+            // Contribute to the reduction.
+            result += r_new * r_new;
+        }
+    };
+
+    template <class StencilA, class ViewA, class ViewOldP, class ViewB,
+              class ViewOldR>
+    auto createComputeR0( const StencilA& A_stencil, const ViewA& A_view,
+                          const ViewOldP& p_old_view, const ViewB& b_view,
+                          const ViewOldR& r_old_view )
+    {
+        return ComputeR0<StencilA, ViewA, ViewOldP, ViewB, ViewOldR>{
+            A_stencil, A_view, p_old_view, b_view, r_old_view };
+    }
+
+    template <class StencilM, class ViewM, class ViewOldP, class ViewNewP,
+              class ViewOldR, class ViewZ>
+    struct ComputeZ0
+    {
+        StencilM M_stencil;
+        ViewM M_view;
+        ViewOldP p_old_view;
+        ViewNewP p_new_view;
+        ViewOldR r_old_view;
+        ViewZ z_view;
+
+        using value_type = typename ViewZ::value_type;
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 3>&, const int i,
+                    const int j, const int k, value_type& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. Only apply the stencil entry if it is
+            // greater than 0.
+            value_type Mr = 0.0;
+            for ( unsigned c = 0; c < M_stencil.extent( 0 ); ++c )
+                if ( fabs( M_view( i, j, k, c ) ) > 0.0 )
+                    Mr += M_view( i, j, k, c ) *
+                          r_old_view( i + M_stencil( c, Dim::I ),
+                                      j + M_stencil( c, Dim::J ),
+                                      k + M_stencil( c, Dim::K ), 0 );
+            // Write values.
+            z_view( i, j, k, 0 ) = Mr;
+            p_old_view( i, j, k, 0 ) = Mr;
+            p_new_view( i, j, k, 0 ) = Mr;
+
+            // Compute zTr
+            result += Mr * r_old_view( i, j, k, 0 );
+        }
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 2>&, const int i,
+                    const int j, value_type& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. Only apply the stencil entry if it is
+            // greater than 0.
+            value_type Mr = 0.0;
+            for ( unsigned c = 0; c < M_stencil.extent( 0 ); ++c )
+                if ( fabs( M_view( i, j, c ) ) > 0.0 )
+                    Mr += M_view( i, j, c ) *
+                          r_old_view( i + M_stencil( c, Dim::I ),
+                                      j + M_stencil( c, Dim::J ), 0 );
+            // Write values.
+            z_view( i, j, 0 ) = Mr;
+            p_old_view( i, j, 0 ) = Mr;
+            p_new_view( i, j, 0 ) = Mr;
+
+            // Compute zTr
+            result += Mr * r_old_view( i, j, 0 );
+        }
+    };
+
+    template <class StencilM, class ViewM, class ViewOldP, class ViewNewP,
+              class ViewOldR, class ViewZ>
+    auto createComputeZ0( const StencilM& M_stencil, const ViewM& M_view,
+                          const ViewOldP& p_old_view,
+                          const ViewNewP& p_new_view,
+                          const ViewOldR& r_old_view, const ViewZ& z_view )
+    {
+        return ComputeZ0<StencilM, ViewM, ViewOldP, ViewNewP, ViewOldR, ViewZ>{
+            M_stencil, M_view, p_old_view, p_new_view, r_old_view, z_view };
+    }
+
+    template <class StencilA, class ViewA, class ViewOldP, class ViewQ>
+    struct ComputeQ0
+    {
+        StencilA A_stencil;
+        ViewA A_view;
+        ViewOldP p_old_view;
+        ViewQ q_view;
+
+        using value_type = typename ViewQ::value_type;
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 3>&, const int i,
+                    const int j, const int k, value_type& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. This computes the updated p vector
+            // in-line to avoid another kernel launch. Only apply the
+            // stencil entry if it is greater than 0.
+            value_type Ap = 0.0;
+            for ( unsigned c = 0; c < A_stencil.extent( 0 ); ++c )
+                if ( fabs( A_view( i, j, k, c ) ) > 0.0 )
+                    Ap += A_view( i, j, k, c ) *
+                          ( p_old_view( i + A_stencil( c, Dim::I ),
+                                        j + A_stencil( c, Dim::J ),
+                                        k + A_stencil( c, Dim::K ), 0 ) );
+
+            // Write values.
+            q_view( i, j, k, 0 ) = Ap;
+
+            // Compute contribution to the dot product.
+            result += p_old_view( i, j, k, 0 ) * Ap;
+        }
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 2>&, const int i,
+                    const int j, value_type& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. This computes the updated p vector
+            // in-line to avoid another kernel launch. Only apply the
+            // stencil entry if it is greater than 0.
+            value_type Ap = 0.0;
+            for ( unsigned c = 0; c < A_stencil.extent( 0 ); ++c )
+                if ( fabs( A_view( i, j, c ) ) > 0.0 )
+                    Ap += A_view( i, j, c ) *
+                          ( p_old_view( i + A_stencil( c, Dim::I ),
+                                        j + A_stencil( c, Dim::J ), 0 ) );
+
+            // Write values.
+            q_view( i, j, 0 ) = Ap;
+
+            // Compute contribution to the dot product.
+            result += p_old_view( i, j, 0 ) * Ap;
+        }
+    };
+
+    template <class StencilA, class ViewA, class ViewOldP, class ViewQ>
+    auto createComputeQ0( const StencilA& A_stencil, const ViewA& A_view,
+                          const ViewOldP& p_old_view, const ViewQ& q_view )
+    {
+        return ComputeQ0<StencilA, ViewA, ViewOldP, ViewQ>{
+            A_stencil, A_view, p_old_view, q_view };
+    }
+
+    template <class StencilM, class ViewM, class ViewX, class ViewNewR,
+              class ViewOldR, class ViewOldP, class ViewNewP, class ViewZ,
+              class ViewQ, class ValueType>
+    struct Kernel1
+    {
+        StencilM M_stencil;
+        ViewM M_view;
+        ViewX x_view;
+        ViewNewR r_new_view;
+        ViewOldR r_old_view;
+        ViewNewP p_new_view;
+        ViewOldP p_old_view;
+        ViewZ z_view;
+        ViewQ q_view;
+        ValueType alpha;
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 3>&, const int i,
+                    const int j, const int k, ValueType& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. This computes the updated q vector
+            // in-line to avoid another kernel launch. Only apply the
+            // stencil entry if it is greater than 0.
+            ValueType Mr = 0.0;
+            for ( unsigned c = 0; c < M_stencil.extent( 0 ); ++c )
+                if ( fabs( M_view( i, j, k, c ) ) > 0.0 )
+                    Mr += M_view( i, j, k, c ) *
+                          ( r_old_view( i + M_stencil( c, Dim::I ),
+                                        j + M_stencil( c, Dim::J ),
+                                        k + M_stencil( c, Dim::K ), 0 ) -
+                            alpha * q_view( i + M_stencil( c, Dim::I ),
+                                            j + M_stencil( c, Dim::J ),
+                                            k + M_stencil( c, Dim::K ), 0 ) );
+
+            // Compute the updated x.
+            ValueType x_new =
+                x_view( i, j, k, 0 ) + alpha * p_new_view( i, j, k, 0 );
+
+            // Compute the updated residual.
+            ValueType r_new =
+                r_old_view( i, j, k, 0 ) - alpha * q_view( i, j, k, 0 );
+
+            // Write to old p vector.
+            p_old_view( i, j, k, 0 ) = p_new_view( i, j, k, 0 );
+
+            // Write values.
+            x_view( i, j, k, 0 ) = x_new;
+            r_new_view( i, j, k, 0 ) = r_new;
+            z_view( i, j, k, 0 ) = Mr;
+
+            // Compute contribution to the zTr.
+            result += Mr * r_new;
+        }
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 2>&, const int i,
+                    const int j, ValueType& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. This computes the updated q vector
+            // in-line to avoid another kernel launch. Only apply the
+            // stencil entry if it is greater than 0.
+            ValueType Mr = 0.0;
+            for ( unsigned c = 0; c < M_stencil.extent( 0 ); ++c )
+                if ( fabs( M_view( i, j, c ) ) > 0.0 )
+                    Mr += M_view( i, j, c ) *
+                          ( r_old_view( i + M_stencil( c, Dim::I ),
+                                        j + M_stencil( c, Dim::J ), 0 ) -
+                            alpha * q_view( i + M_stencil( c, Dim::I ),
+                                            j + M_stencil( c, Dim::J ), 0 ) );
+
+            // Compute the updated x.
+            ValueType x_new = x_view( i, j, 0 ) + alpha * p_new_view( i, j, 0 );
+
+            // Compute the updated residual.
+            ValueType r_new = r_old_view( i, j, 0 ) - alpha * q_view( i, j, 0 );
+
+            // Write to old p vector.
+            p_old_view( i, j, 0 ) = p_new_view( i, j, 0 );
+
+            // Write values.
+            x_view( i, j, 0 ) = x_new;
+            r_new_view( i, j, 0 ) = r_new;
+            z_view( i, j, 0 ) = Mr;
+
+            // Compute contribution to the zTr.
+            result += Mr * r_new;
+        }
+    };
+
+    template <class StencilM, class ViewM, class ViewX, class ViewNewR,
+              class ViewOldR, class ViewOldP, class ViewNewP, class ViewZ,
+              class ViewQ, class ValueType>
+    auto createKernel1( const StencilM& M_stencil, const ViewM& M_view,
+                        const ViewX& x_view, const ViewNewR& r_new_view,
+                        const ViewOldR& r_old_view, const ViewNewP& p_new_view,
+                        const ViewOldP& p_old_view, const ViewZ& z_view,
+                        const ViewQ& q_view, const ValueType& alpha )
+    {
+        return Kernel1<StencilM, ViewM, ViewX, ViewNewR, ViewOldR, ViewOldP,
+                       ViewNewP, ViewZ, ViewQ, ValueType>{
+            M_stencil,  M_view,     x_view, r_new_view, r_old_view,
+            p_new_view, p_old_view, z_view, q_view,     alpha };
+    }
+
+    template <class StencilA, class ViewA, class ViewX, class ViewNewR,
+              class ViewOldR, class ViewOldP, class ViewNewP, class ViewZ,
+              class ViewQ, class ValueType>
+    struct Kernel2
+    {
+        StencilA A_stencil;
+        ViewA A_view;
+        ViewX x_view;
+        ViewNewR r_new_view;
+        ViewOldR r_old_view;
+        ViewNewP p_new_view;
+        ViewOldP p_old_view;
+        ViewZ z_view;
+        ViewQ q_view;
+        ValueType beta;
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 3>&, const int i,
+                    const int j, const int k, ValueType& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. This computes the updated p vector
+            // in-line to avoid another kernel launch. Only apply the
+            // stencil entry if it is greater than 0.
+            ValueType Ap = 0.0;
+            for ( unsigned c = 0; c < A_stencil.extent( 0 ); ++c )
+                if ( fabs( A_view( i, j, k, c ) ) > 0.0 )
+                    Ap +=
+                        A_view( i, j, k, c ) *
+                        ( z_view( i + A_stencil( c, Dim::I ),
+                                  j + A_stencil( c, Dim::J ),
+                                  k + A_stencil( c, Dim::K ), 0 ) +
+                          beta * p_old_view( i + A_stencil( c, Dim::I ),
+                                             j + A_stencil( c, Dim::J ),
+                                             k + A_stencil( c, Dim::K ), 0 ) );
+
+            // Compute the updated p.
+            ValueType p_new =
+                z_view( i, j, k, 0 ) + beta * p_old_view( i, j, k, 0 );
+
+            // Write to old residual.
+            r_old_view( i, j, k, 0 ) = r_new_view( i, j, k, 0 );
+
+            // Write values.
+            q_view( i, j, k, 0 ) = Ap;
+            p_new_view( i, j, k, 0 ) = p_new;
+
+            // Compute contribution to the dot product.
+            result += p_new * Ap;
+        }
+
+        KOKKOS_INLINE_FUNCTION void
+        operator()( const std::integral_constant<std::size_t, 2>&, const int i,
+                    const int j, ValueType& result ) const
+        {
+            // Compute the local contribution from matrix-vector
+            // multiplication. This computes the updated p vector
+            // in-line to avoid another kernel launch. Only apply the
+            // stencil entry if it is greater than 0.
+            ValueType Ap = 0.0;
+            for ( unsigned c = 0; c < A_stencil.extent( 0 ); ++c )
+                if ( fabs( A_view( i, j, c ) ) > 0.0 )
+                    Ap +=
+                        A_view( i, j, c ) *
+                        ( z_view( i + A_stencil( c, Dim::I ),
+                                  j + A_stencil( c, Dim::J ), 0 ) +
+                          beta * p_old_view( i + A_stencil( c, Dim::I ),
+                                             j + A_stencil( c, Dim::J ), 0 ) );
+
+            // Compute the updated p.
+            ValueType p_new = z_view( i, j, 0 ) + beta * p_old_view( i, j, 0 );
+
+            // Write to old residual.
+            r_old_view( i, j, 0 ) = r_new_view( i, j, 0 );
+
+            // Write values.
+            q_view( i, j, 0 ) = Ap;
+            p_new_view( i, j, 0 ) = p_new;
+
+            // Compute contribution to the dot product.
+            result += p_new * Ap;
+        }
+    };
+
+    template <class StencilA, class ViewA, class ViewX, class ViewNewR,
+              class ViewOldR, class ViewOldP, class ViewNewP, class ViewZ,
+              class ViewQ, class ValueType>
+    auto createKernel2( const StencilA& A_stencil, const ViewA& A_view,
+                        const ViewX& x_view, const ViewNewR& r_new_view,
+                        const ViewOldR& r_old_view, const ViewNewP& p_new_view,
+                        const ViewOldP& p_old_view, const ViewZ& z_view,
+                        const ViewQ& q_view, const ValueType& beta )
+    {
+        return Kernel2<StencilA, ViewA, ViewX, ViewNewR, ViewOldR, ViewOldP,
+                       ViewNewP, ViewZ, ViewQ, ValueType>{
+            A_stencil,  A_view,     x_view, r_new_view, r_old_view,
+            p_new_view, p_old_view, z_view, q_view,     beta };
+    }
+    //! \endcond
 
   private:
     // Set the stencil of a matrix.
-    void setStencil( const std::vector<std::array<int, 3>>& stencil,
-                     const bool is_symmetric,
-                     Kokkos::View<int* [3], DeviceType>& device_stencil,
-                     std::shared_ptr<Halo<memory_space>>& halo,
-                     std::shared_ptr<Array_t>& matrix )
+    void
+    setStencil( const std::vector<std::array<int, num_space_dim>>& stencil,
+                const bool is_symmetric,
+                Kokkos::View<int* [num_space_dim], DeviceType>& device_stencil,
+                std::shared_ptr<Halo<memory_space>>& halo,
+                std::shared_ptr<Array_t>& matrix )
     {
         // For now we don't support symmetry.
         if ( is_symmetric )
@@ -559,40 +879,41 @@ class ReferenceConjugateGradient
         auto local_grid = _vectors->layout()->localGrid();
 
         // Copy stencil to the device.
-        device_stencil = Kokkos::View<int* [3], DeviceType>(
+        device_stencil = Kokkos::View<int* [num_space_dim], DeviceType>(
             Kokkos::ViewAllocateWithoutInitializing( "stencil" ),
             stencil.size() );
         auto stencil_mirror =
             Kokkos::create_mirror_view( Kokkos::HostSpace(), device_stencil );
         for ( unsigned s = 0; s < stencil.size(); ++s )
-            for ( int d = 0; d < 3; ++d )
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
                 stencil_mirror( s, d ) = stencil[s][d];
         Kokkos::deep_copy( device_stencil, stencil_mirror );
 
         // Compose the halo pattern and compute how wide the halo needs to be
         // to gather all elements accessed by the stencil.
-        std::set<std::array<int, 3>> neighbor_set;
-        std::array<int, 3> neighbor;
+        std::set<std::array<int, num_space_dim>> neighbor_set;
+        std::array<int, num_space_dim> neighbor;
         int width = 0;
         for ( auto s : stencil )
         {
             // Compse a set of the neighbor ranks based on the stencil.
-            for ( int d = 0; d < 3; ++d )
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
                 neighbor[d] = ( s[d] == 0 ) ? 0 : s[d] / std::abs( s[d] );
             neighbor_set.emplace( neighbor );
 
             // Compute the width of the halo needed to apply the stencil.
-            for ( int d = 0; d < 3; ++d )
+            for ( std::size_t d = 0; d < num_space_dim; ++d )
                 width = std::max( width, std::abs( s[d] ) );
         }
-        std::vector<std::array<int, 3>> halo_neighbors( neighbor_set.size() );
+        std::vector<std::array<int, num_space_dim>> halo_neighbors(
+            neighbor_set.size() );
         std::copy( neighbor_set.begin(), neighbor_set.end(),
                    halo_neighbors.begin() );
 
         // Build the halo. We put 2 entries as each operator application will
         // gather 2 vectors with fused kernels.
         auto halo_layout = createArrayLayout( local_grid, 2, EntityType() );
-        HaloPattern pattern;
+        HaloPattern<num_space_dim> pattern;
         pattern.setNeighbors( halo_neighbors );
         halo = createHalo<Scalar, DeviceType>( *halo_layout, pattern, width );
 
@@ -611,8 +932,8 @@ class ReferenceConjugateGradient
     int _num_iter;
     Scalar _residual_norm;
     int _diag_entry;
-    Kokkos::View<int* [3], DeviceType> _A_stencil;
-    Kokkos::View<int* [3], DeviceType> _M_stencil;
+    Kokkos::View<int* [num_space_dim], DeviceType> _A_stencil;
+    Kokkos::View<int* [num_space_dim], DeviceType> _M_stencil;
     std::shared_ptr<Halo<memory_space>> _A_halo;
     std::shared_ptr<Halo<memory_space>> _M_halo;
     std::shared_ptr<Array_t> _A;
@@ -623,6 +944,8 @@ class ReferenceConjugateGradient
 //---------------------------------------------------------------------------//
 // Builders.
 //---------------------------------------------------------------------------//
+//! Creation function for reference structured preconditioned block conjugate
+//! gradient.
 template <class Scalar, class DeviceType, class EntityType, class MeshType>
 std::shared_ptr<
     ReferenceConjugateGradient<Scalar, EntityType, MeshType, DeviceType>>

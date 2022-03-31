@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \namespace Cajita
+  \brief Cajita: grid and particle-grid data structures and algorithms
+*/
 #ifndef CAJITA_HPP
 #define CAJITA_HPP
 
@@ -28,9 +32,11 @@
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_Parallel.hpp>
-#include <Cajita_ParameterPack.hpp>
+#include <Cajita_ParticleGridDistributor.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
+#include <Cajita_SparseDimPartitioner.hpp>
+#include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>
 #include <Cajita_UniformDimPartitioner.hpp>
@@ -41,6 +47,10 @@
 
 #ifdef Cabana_ENABLE_HEFFTE
 #include <Cajita_FastFourierTransform.hpp>
+#endif
+
+#ifdef Cabana_ENABLE_SILO
+#include <Cajita_SiloParticleOutput.hpp>
 #endif
 
 #endif // end CAJITA_HPP

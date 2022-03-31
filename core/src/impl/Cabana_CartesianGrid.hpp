@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -21,6 +21,8 @@ namespace Cabana
 {
 namespace Impl
 {
+//! \cond Impl
+
 template <class Real, typename std::enable_if<
                           std::is_floating_point<Real>::value, int>::type = 0>
 class CartesianGrid
@@ -101,9 +103,14 @@ class CartesianGrid
     void locatePoint( const Real xp, const Real yp, const Real zp, int& ic,
                       int& jc, int& kc ) const
     {
+        // Since we use a floor function a point on the outer boundary
+        // will be found in the next cell, causing an out of bounds error
         ic = cellsBetween( xp, _min_x, _rdx );
+        ic = ( ic == _nx ) ? ic - 1 : ic;
         jc = cellsBetween( yp, _min_y, _rdy );
+        jc = ( jc == _ny ) ? jc - 1 : jc;
         kc = cellsBetween( zp, _min_z, _rdz );
+        kc = ( kc == _nz ) ? kc - 1 : kc;
     }
 
     // Given a position and a cell index get square of the minimum distance to
@@ -147,13 +154,17 @@ class CartesianGrid
     KOKKOS_INLINE_FUNCTION
     int cellsBetween( const Real max, const Real min, const Real rdelta ) const
     {
-#if !defined( __HIP_DEVICE_COMPILE__ )
+        // FIXME_SYCL (remove ifdef when newest Kokkos is required)
+#if ( defined __SYCL_DEVICE_ONLY__ )
+        using Kokkos::Experimental::floor;
+#elif !defined( __HIP_DEVICE_COMPILE__ )
         using std::floor;
 #endif
         return floor( ( max - min ) * rdelta );
     }
 };
 
+//! \endcond
 } // end namespace Impl
 } // end namespace Cabana
 

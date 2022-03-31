@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -20,6 +20,8 @@ namespace Cabana
 {
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // Checks if an integer is a power of two. N must be greater than 0.
 template <int N>
@@ -56,6 +58,7 @@ struct IsVectorLengthValid
 
 //---------------------------------------------------------------------------//
 
+//! \endcond
 } // end namespace Impl
 } // end namespace Cabana
 

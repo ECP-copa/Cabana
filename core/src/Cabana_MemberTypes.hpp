@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_MemberTypes.hpp
+  \brief AoSoA tuple member types
+*/
 #ifndef CABANA_MEMBERTYPES_HPP
 #define CABANA_MEMBERTYPES_HPP
 
@@ -18,18 +22,16 @@
 namespace Cabana
 {
 //---------------------------------------------------------------------------//
-/*!
- \class MemberTypes
- \brief General sequence of types for SoA and AoSoA member data.
-*/
+//! General sequence of types for SoA and AoSoA member data.
 template <typename... Types>
 struct MemberTypes
 {
+    //! Type size.
     static constexpr std::size_t size = sizeof...( Types );
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <class>
 struct is_member_types_impl : public std::false_type
 {
@@ -39,7 +41,9 @@ template <typename... Types>
 struct is_member_types_impl<MemberTypes<Types...>> : public std::true_type
 {
 };
+//! \endcond
 
+//! Static type checker.
 template <class T>
 struct is_member_types
     : public is_member_types_impl<typename std::remove_cv<T>::type>::type
@@ -47,10 +51,9 @@ struct is_member_types
 };
 
 //---------------------------------------------------------------------------//
-/*!
-  \class MemberTypeAtIndex
-  \brief Get the type of the member at a given index.
-*/
+// Get the type of the member at a given index.
+//---------------------------------------------------------------------------//
+//! \cond Impl
 template <std::size_t M, typename T, typename... Types>
 struct MemberTypeAtIndexImpl;
 
@@ -65,21 +68,24 @@ struct MemberTypeAtIndexImpl
 {
     using type = typename MemberTypeAtIndexImpl<M - 1, Types...>::type;
 };
+//! \endcond
 
+//! Get the type of the member at a given index.
 template <std::size_t M, typename... Types>
 struct MemberTypeAtIndex;
 
+//! Get the type of the member at a given index.
 template <std::size_t M, typename... Types>
 struct MemberTypeAtIndex<M, MemberTypes<Types...>>
 {
+    //! Member type.
     using type = typename MemberTypeAtIndexImpl<M, Types...>::type;
 };
 
 //---------------------------------------------------------------------------//
-/*!
-  \class CheckMemberTypes
-  \brief Check that member types are valied.
-*/
+// Check that member types are valid.
+//---------------------------------------------------------------------------//
+//! \cond Impl
 template <std::size_t M, typename T, typename... Types>
 struct CheckMemberTypesImpl;
 
@@ -111,14 +117,19 @@ struct CheckMemberTypesImpl
 
     static constexpr bool value = CheckMemberTypesImpl<M - 1, Types...>::value;
 };
+//! \endcond
 
+//! Check that member types are valid.
 template <typename... Types>
 struct CheckMemberTypes;
 
+//! Check that member types are valid.
 template <typename... Types>
 struct CheckMemberTypes<MemberTypes<Types...>>
 {
+    //! Type size.
     static constexpr int size = MemberTypes<Types...>::size;
+    //! Valid member type.
     static constexpr bool value =
         CheckMemberTypesImpl<size - 1, Types...>::value;
 };

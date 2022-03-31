@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Version.hpp
+  \brief Cabana git version
+*/
 #ifndef CABANA_VERSION_HPP
 #define CABANA_VERSION_HPP
 
@@ -19,9 +23,11 @@
 namespace Cabana
 {
 
-std::string version();
+//! Cabana version.
+inline std::string version() { return Cabana_VERSION_STRING; }
 
-std::string git_commit_hash();
+//! Cabana git hash.
+inline std::string git_commit_hash() { return Cabana_GIT_COMMIT_HASH; }
 
 } // end namespace Cabana
 

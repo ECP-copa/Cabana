@@ -58,18 +58,18 @@ struct LayoutHilbert3D
         : dimension{ N0, N1, N2, N3, N4, N5, N6, N7 }
     {
         // Force N0 and N1 to be 2^n for Square Hilbert Space
-        dimension[0] = static_cast<size_t>(
-            std::pow( static_cast<double>( 2 ),
-                      static_cast<double>( ceil(
-                          log( static_cast<double>( N0 ) ) / log( 2.0 ) ) ) ) );
-        dimension[1] = static_cast<size_t>(
-            std::pow( static_cast<double>( 2 ),
-                      static_cast<double>( ceil(
-                          log( static_cast<double>( N1 ) ) / log( 2.0 ) ) ) ) );
-        dimension[2] = static_cast<size_t>(
-            std::pow( static_cast<double>( 2 ),
-                      static_cast<double>( ceil(
-                          log( static_cast<double>( N2 ) ) / log( 2.0 ) ) ) ) );
+        dimension[0] = static_cast<size_t>( std::pow(
+            static_cast<double>( 2 ),
+            static_cast<double>( ceil( std::log( static_cast<double>( N0 ) ) /
+                                       std::log( 2.0 ) ) ) ) );
+        dimension[1] = static_cast<size_t>( std::pow(
+            static_cast<double>( 2 ),
+            static_cast<double>( ceil( std::log( static_cast<double>( N1 ) ) /
+                                       std::log( 2.0 ) ) ) ) );
+        dimension[2] = static_cast<size_t>( std::pow(
+            static_cast<double>( 2 ),
+            static_cast<double>( ceil( std::log( static_cast<double>( N2 ) ) /
+                                       std::log( 2.0 ) ) ) ) );
     }
 };
 
@@ -170,26 +170,17 @@ struct ViewOffset<Dimension, Kokkos::LayoutHilbert3D, void>
             int outright = mu >> dright;
 
             int bitright;
-            for ( int i = 0; i < dright; i++ )
+            for ( int j = 0; j < dright; j++ )
             {
-                bitright = ( mu & ( 1 << i ) ) >> i;
-                outright |= bitright << ( 3 + i - dright );
+                bitright = ( mu & ( 1 << j ) ) >> j;
+                outright |= bitright << ( 3 + j - dright );
             }
 
             mu = outright;
 
             // Right rotation
-            int x = ve;
             int d2 = vd + 1;
             d2 = d2 % 3;
-            int out2 = x >> d2;
-
-            int bit2;
-            for ( int i = 0; i < d2; i++ )
-            {
-                bit2 = ( x & ( 1 << i ) ) >> i;
-                out2 |= bit2 << ( 3 + i - d2 );
-            }
 
             // Summation
             int l0 = ( i0 & ( 1 << i ) ) >> i;

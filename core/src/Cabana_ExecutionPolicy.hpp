@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_ExecutionPolicy.hpp
+  \brief SIMD execution policy
+*/
 #ifndef CABANA_EXECUTIONPOLICY_HPP
 #define CABANA_EXECUTIONPOLICY_HPP
 
@@ -23,9 +27,9 @@ namespace Cabana
 //---------------------------------------------------------------------------//
 namespace Impl
 {
-/*!
-  \class StructRange
+//! \cond Impl
 
+/*!
   \brief 2D loop outer index range giving struct index range bounds based on a
   1D range input.
 
@@ -62,36 +66,30 @@ class StructRange
     }
 };
 
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class SimdPolicy
   \brief Execution policy over a range of 2d indices.
 
   Gives 2D range of indices for executing a vectorized functor over the inner
   array index.
 */
 template <int VectorLength, class... Properties>
-class SimdPolicy
-    : public Kokkos::TeamPolicy<
-          typename Kokkos::Impl::PolicyTraits<Properties...>::execution_space,
-          Kokkos::Schedule<Kokkos::Dynamic>>
+class SimdPolicy : public Kokkos::TeamPolicy<Properties...,
+                                             Kokkos::Schedule<Kokkos::Dynamic>>
 {
-  private:
-    typedef Kokkos::Impl::PolicyTraits<Properties...> traits;
-
   public:
-    using work_tag = typename traits::work_tag;
-    using execution_space = typename traits::execution_space;
+    //! Kokkos team policy.
     using base_type =
-        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
-    using execution_policy = SimdPolicy<VectorLength, Properties...>;
-    using index_type = typename traits::index_type;
+        Kokkos::TeamPolicy<Properties..., Kokkos::Schedule<Kokkos::Dynamic>>;
+    //! Index type.
+    using index_type = typename base_type::index_type;
 
     /*!
       \brief Range constructor.
-      \param begin The begininning of the 1D range. This will be decomposed
+      \param begin The beginning of the 1D range. This will be decomposed
       into 2D indices.
       \param end The ending of the 1D range. This will be decomposed
       into 2D indices.
@@ -129,7 +127,7 @@ class SimdPolicy
         return ( s == _struct_begin ) ? _array_begin : 0;
     }
 
-    // Given a struct id get the ending array index.
+    //! Given a struct id get the ending array index.
     KOKKOS_INLINE_FUNCTION index_type arrayEnd( const index_type s ) const
     {
         // If we are in the last unfilled struct then use the array

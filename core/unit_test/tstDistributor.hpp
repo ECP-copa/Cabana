@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -89,9 +89,10 @@ void test1( const bool use_topology )
     for ( int i = 0; i < num_data; ++i )
     {
         EXPECT_EQ( slice_int_dst_host( i ), my_rank + host_steering( i ) );
-        EXPECT_EQ( slice_dbl_dst_host( i, 0 ), my_rank + host_steering( i ) );
-        EXPECT_EQ( slice_dbl_dst_host( i, 1 ),
-                   my_rank + host_steering( i ) + 0.5 );
+        EXPECT_DOUBLE_EQ( slice_dbl_dst_host( i, 0 ),
+                          my_rank + host_steering( i ) );
+        EXPECT_DOUBLE_EQ( slice_dbl_dst_host( i, 1 ),
+                          my_rank + host_steering( i ) + 0.5 );
     }
 }
 
@@ -161,8 +162,10 @@ void test2( const bool use_topology )
     for ( int i = 0; i < num_data / 2; ++i )
     {
         EXPECT_EQ( slice_int_host( i ), my_rank + host_steering( i ) );
-        EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank + host_steering( i ) );
-        EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + host_steering( i ) + 0.5 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
+                          my_rank + host_steering( i ) );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
+                          my_rank + host_steering( i ) + 0.5 );
     }
 }
 
@@ -251,10 +254,10 @@ void test3( const bool use_topology )
     for ( int i = 0; i < num_data; ++i )
     {
         EXPECT_EQ( slice_int_dst_host( i ), inverse_rank + host_steering( i ) );
-        EXPECT_EQ( slice_dbl_dst_host( i, 0 ),
-                   inverse_rank + host_steering( i ) );
-        EXPECT_EQ( slice_dbl_dst_host( i, 1 ),
-                   inverse_rank + host_steering( i ) + 0.5 );
+        EXPECT_DOUBLE_EQ( slice_dbl_dst_host( i, 0 ),
+                          inverse_rank + host_steering( i ) );
+        EXPECT_DOUBLE_EQ( slice_dbl_dst_host( i, 1 ),
+                          inverse_rank + host_steering( i ) + 0.5 );
     }
 }
 
@@ -329,12 +332,12 @@ void test4( const bool use_topology )
 
     // self sends
     EXPECT_EQ( slice_int_dst_host( 0 ), my_rank );
-    EXPECT_EQ( slice_dbl_dst_host( 0, 0 ), my_rank );
-    EXPECT_EQ( slice_dbl_dst_host( 0, 1 ), my_rank + 0.5 );
+    EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 0, 0 ), my_rank );
+    EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 0, 1 ), my_rank + 0.5 );
 
     EXPECT_EQ( slice_int_dst_host( 1 ), my_rank );
-    EXPECT_EQ( slice_dbl_dst_host( 1, 0 ), my_rank );
-    EXPECT_EQ( slice_dbl_dst_host( 1, 1 ), my_rank + 0.5 );
+    EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 1, 0 ), my_rank );
+    EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 1, 1 ), my_rank + 0.5 );
 
     // others
     for ( int i = 1; i < my_size; ++i )
@@ -342,22 +345,22 @@ void test4( const bool use_topology )
         if ( i == my_rank )
         {
             EXPECT_EQ( slice_int_dst_host( 2 * i ), 0 );
-            EXPECT_EQ( slice_dbl_dst_host( 2 * i, 0 ), 0 );
-            EXPECT_EQ( slice_dbl_dst_host( 2 * i, 1 ), 0.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 2 * i, 0 ), 0 );
+            EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 2 * i, 1 ), 0.5 );
 
             EXPECT_EQ( slice_int_dst_host( 2 * i + 1 ), 0 );
-            EXPECT_EQ( slice_dbl_dst_host( 2 * i + 1, 0 ), 0 );
-            EXPECT_EQ( slice_dbl_dst_host( 2 * i + 1, 1 ), 0.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 2 * i + 1, 0 ), 0 );
+            EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 2 * i + 1, 1 ), 0.5 );
         }
         else
         {
             EXPECT_EQ( slice_int_dst_host( 2 * i ), i );
-            EXPECT_EQ( slice_dbl_dst_host( 2 * i, 0 ), i );
-            EXPECT_EQ( slice_dbl_dst_host( 2 * i, 1 ), i + 0.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 2 * i, 0 ), i );
+            EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 2 * i, 1 ), i + 0.5 );
 
             EXPECT_EQ( slice_int_dst_host( 2 * i + 1 ), i );
-            EXPECT_EQ( slice_dbl_dst_host( 2 * i + 1, 0 ), i );
-            EXPECT_EQ( slice_dbl_dst_host( 2 * i + 1, 1 ), i + 0.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 2 * i + 1, 0 ), i );
+            EXPECT_DOUBLE_EQ( slice_dbl_dst_host( 2 * i + 1, 1 ), i + 0.5 );
         }
     }
 }
@@ -435,8 +438,8 @@ void test5( const bool use_topology )
 
     // self sends
     EXPECT_EQ( slice_int_host( 0 ), my_rank );
-    EXPECT_EQ( slice_dbl_host( 0, 0 ), my_rank );
-    EXPECT_EQ( slice_dbl_host( 0, 1 ), my_rank + 0.5 );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 0 ), my_rank );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 1 ), my_rank + 0.5 );
 
     // others
     for ( int i = 1; i < my_size; ++i )
@@ -444,14 +447,14 @@ void test5( const bool use_topology )
         if ( i == my_rank )
         {
             EXPECT_EQ( slice_int_host( i ), 0 );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), 0 );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), 0.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), 0 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), 0.5 );
         }
         else
         {
             EXPECT_EQ( slice_int_host( i ), i );
-            EXPECT_EQ( slice_dbl_host( i, 0 ), i );
-            EXPECT_EQ( slice_dbl_host( i, 1 ), i + 0.5 );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), i );
+            EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), i + 0.5 );
         }
     }
 }
@@ -532,9 +535,10 @@ void test6( const bool use_topology )
     for ( std::size_t i = 0; i < distributor->totalNumImport(); ++i )
     {
         EXPECT_EQ( slice_int_host( i ), distributor->neighborRank( i ) );
-        EXPECT_EQ( slice_dbl_host( i, 0 ), distributor->neighborRank( i ) );
-        EXPECT_EQ( slice_dbl_host( i, 1 ),
-                   distributor->neighborRank( i ) + 0.5 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ),
+                          distributor->neighborRank( i ) );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ),
+                          distributor->neighborRank( i ) + 0.5 );
     }
 }
 
@@ -608,8 +612,8 @@ void test7( const bool use_topology )
     auto slice_dbl_host = Cabana::slice<1>( data_host );
     Cabana::deep_copy( data_host, data );
     EXPECT_EQ( slice_int_host( 0 ), my_rank );
-    EXPECT_EQ( slice_dbl_host( 0, 0 ), my_rank );
-    EXPECT_EQ( slice_dbl_host( 0, 1 ), my_rank + 0.5 );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 0 ), my_rank );
+    EXPECT_DOUBLE_EQ( slice_dbl_host( 0, 1 ), my_rank + 0.5 );
 }
 
 //---------------------------------------------------------------------------//
@@ -691,9 +695,62 @@ void test8( const bool use_topology )
     for ( unsigned i = 0; i < data.size(); ++i )
     {
         EXPECT_EQ( slice_int_host( i ), my_rank );
-        EXPECT_EQ( slice_dbl_host( i, 0 ), my_rank );
-        EXPECT_EQ( slice_dbl_host( i, 1 ), my_rank + 1 );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 0 ), my_rank );
+        EXPECT_DOUBLE_EQ( slice_dbl_host( i, 1 ), my_rank + 1 );
     }
+}
+
+//---------------------------------------------------------------------------//
+void test9( const bool use_topology )
+{
+    // Make a communication plan.
+    std::shared_ptr<Cabana::Distributor<TEST_MEMSPACE>> distributor;
+
+    // Edge case where all particles will be removed - nothing is kept, sent, or
+    // received.
+    int num_data = 2;
+    Kokkos::View<int*, TEST_MEMSPACE> export_ranks( "export_ranks", num_data );
+    auto fill_ranks = KOKKOS_LAMBDA( const int i ) { export_ranks( i ) = -1; };
+
+    Kokkos::RangePolicy<TEST_EXECSPACE> range_policy( 0, num_data );
+    Kokkos::parallel_for( range_policy, fill_ranks );
+    Kokkos::fence();
+
+    // Create the plan.
+    if ( use_topology )
+    {
+        std::vector<int> neighbor_ranks;
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, export_ranks, neighbor_ranks );
+    }
+    else
+    {
+        distributor = std::make_shared<Cabana::Distributor<TEST_MEMSPACE>>(
+            MPI_COMM_WORLD, export_ranks );
+    }
+
+    // Make empty data to migrate.
+    using DataTypes = Cabana::MemberTypes<int, double[2]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t data( "data", num_data );
+    auto slice_int = Cabana::slice<0>( data );
+
+    // Create empty slice to "copy" into.
+    AoSoA_t data_copy( "copy", 0 );
+    auto slice_int_copy = Cabana::slice<0>( data_copy );
+
+    // Do empty slice migration.
+    Cabana::migrate( *distributor, slice_int, slice_int_copy );
+
+    // Check entries were removed.
+    slice_int_copy = Cabana::slice<0>( data_copy );
+    EXPECT_EQ( slice_int_copy.size(), 0 );
+
+    // Do empty in-place migration.
+    Cabana::migrate( *distributor, data );
+
+    // Check entries were removed.
+    EXPECT_EQ( data.size(), 0 );
 }
 
 //---------------------------------------------------------------------------//
@@ -715,6 +772,8 @@ TEST( TEST_CATEGORY, distributor_test_7 ) { test7( true ); }
 
 TEST( TEST_CATEGORY, distributor_test_8 ) { test8( true ); }
 
+TEST( TEST_CATEGORY, distributor_test_9 ) { test9( true ); }
+
 TEST( TEST_CATEGORY, distributor_test_1_no_topo ) { test1( false ); }
 
 TEST( TEST_CATEGORY, distributor_test_2_no_topo ) { test2( false ); }
@@ -730,6 +789,8 @@ TEST( TEST_CATEGORY, distributor_test_6_no_topo ) { test6( false ); }
 TEST( TEST_CATEGORY, distributor_test_7_no_topo ) { test7( false ); }
 
 TEST( TEST_CATEGORY, distributor_test_8_no_topo ) { test8( false ); }
+
+TEST( TEST_CATEGORY, distributor_test_9_no_topo ) { test9( false ); }
 
 //---------------------------------------------------------------------------//
 

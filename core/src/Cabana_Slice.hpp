@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_Slice.hpp
+  \brief Slice a single particle property from an AoSoA
+*/
 #ifndef CABANA_SLICE_HPP
 #define CABANA_SLICE_HPP
 
@@ -26,34 +30,49 @@
 namespace Kokkos
 {
 //---------------------------------------------------------------------------//
-// Cabana Slice Layout
+//! Cabana Slice layout.
 template <int SOASTRIDE, int VLEN, int DIM0 = 0, int DIM1 = 0, int DIM2 = 0,
           int DIM3 = 0, int DIM4 = 0, int DIM5 = 0>
 struct LayoutCabanaSlice
 {
+    //! Slice array layout.
     typedef LayoutCabanaSlice array_layout;
-
+    //! Slice is extent constructible.
     enum
     {
         is_extent_constructible = true
     };
 
+    //! Slice SoA stride.
     static constexpr int Stride = SOASTRIDE;
+    //! Slice vectorlength.
     static constexpr int VectorLength = VLEN;
+    //! Slice zeroth dimension size.
     static constexpr int D0 = DIM0;
+    //! Slice first dimension size.
     static constexpr int D1 = DIM1;
+    //! Slice second dimension size.
     static constexpr int D2 = DIM2;
+    //! Slice third dimension size.
     static constexpr int D3 = DIM3;
+    //! Slice fourth dimension size.
     static constexpr int D4 = DIM4;
+    //! Slice fifth dimension size.
     static constexpr int D5 = DIM5;
 
+    //! Slice dimension.
     size_t dimension[ARRAY_LAYOUT_MAX_RANK];
 
+    //! Const copy constructor.
     LayoutCabanaSlice( LayoutCabanaSlice const& ) = default;
+    //! Copy constructor.
     LayoutCabanaSlice( LayoutCabanaSlice&& ) = default;
+    //! Const assignment operator.
     LayoutCabanaSlice& operator=( LayoutCabanaSlice const& ) = default;
+    //! Assignment operator.
     LayoutCabanaSlice& operator=( LayoutCabanaSlice&& ) = default;
 
+    //! Constructor.
     KOKKOS_INLINE_FUNCTION
     explicit constexpr LayoutCabanaSlice( size_t num_soa = 0,
                                           size_t vector_length = VectorLength,
@@ -68,6 +87,8 @@ struct LayoutCabanaSlice
 //---------------------------------------------------------------------------//
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // View offset of LayoutCabanaSlice.
 template <class Dimension, int... LayoutDims>
@@ -345,6 +366,7 @@ struct ViewOffset<Dimension, Kokkos::LayoutCabanaSlice<LayoutDims...>, void>
 
 //---------------------------------------------------------------------------//
 
+//! \endcond
 } // namespace Impl
 
 } // end namespace Kokkos
@@ -354,6 +376,8 @@ namespace Cabana
 {
 namespace Impl
 {
+//! \cond Impl
+
 //---------------------------------------------------------------------------//
 // Given a tuple member type T of the given rank get the Kokkos view
 // data layout parameters. The tuple index effectively introduces 2 new
@@ -462,12 +486,11 @@ struct KokkosViewWrapper
 
 //---------------------------------------------------------------------------//
 
+//! \endcond
 } // end namespace Impl
 
 //---------------------------------------------------------------------------//
 /*!
-  \class Slice
-
   \brief A slice of an array-of-structs-of-arrays with data access to a single
   multidimensional member.
 */
@@ -481,63 +504,68 @@ class Slice
     static_assert( Impl::IsVectorLengthValid<VectorLength>::value,
                    "Vector length must be valid" );
 
-    // Slice type.
+    //! Slice type.
     using slice_type =
         Slice<DataType, DeviceType, MemoryAccessType, VectorLength, Stride>;
 
-    // Device type
+    //! Device type
     using device_type = DeviceType;
 
-    // Memory space.
+    //! Memory space.
     using memory_space = typename device_type::memory_space;
 
-    // Execution space.
+    //! Execution space.
     using execution_space = typename device_type::execution_space;
 
-    // Memory access type.
     static_assert( is_memory_access_tag<MemoryAccessType>::value,
                    "Slice memory access type must be a Cabana access type" );
+    //! Memory access type.
     using memory_access_type = MemoryAccessType;
 
-    // Vector length.
+    //! Vector length.
     static constexpr int vector_length = VectorLength;
 
-    // SoA stride.
+    //! SoA stride.
     static constexpr int soa_stride = Stride;
 
-    // Size type.
+    //! Size type.
     using size_type = typename memory_space::size_type;
 
-    // Index type.
+    //! Index type.
     using index_type = Impl::Index<vector_length>;
 
-    // Maximum supported rank.
+    //! Maximum supported rank.
     static constexpr std::size_t max_supported_rank = 3;
 
-    // Maximum label length.
+    //! Maximum label length.
     static constexpr std::size_t max_label_length = 128;
 
-    // Kokkos view wrapper.
+    //! Kokkos view wrapper.
     using view_wrapper =
         Impl::KokkosViewWrapper<DataType, vector_length, soa_stride>;
 
-    // Kokkos view type.
+    //! Kokkos view type.
     using kokkos_view =
         Kokkos::View<typename view_wrapper::data_type,
                      typename view_wrapper::cabana_layout, DeviceType,
                      typename MemoryAccessType::kokkos_memory_traits>;
 
-    // View type aliases.
+    //! View reference type alias.
     using reference_type = typename kokkos_view::reference_type;
+    //! View value type alias.
     using value_type = typename kokkos_view::value_type;
+    //! View pointer type alias.
     using pointer_type = typename kokkos_view::pointer_type;
+    //! View array layout type alias.
     using view_layout = typename kokkos_view::array_layout;
 
-    // Compatible memory access slice types.
+    //! Default memory access slice type.
     using default_access_slice =
         Slice<DataType, DeviceType, DefaultAccessMemory, VectorLength, Stride>;
+    //! Atomic memory access slice type.
     using atomic_access_slice =
         Slice<DataType, DeviceType, AtomicAccessMemory, VectorLength, Stride>;
+    //! Random memory access slice type.
     using random_access_slice =
         Slice<DataType, DeviceType, RandomAccessMemory, VectorLength, Stride>;
 
@@ -654,7 +682,7 @@ class Slice
     // ------------
     // 2-D accessor
 
-    // Rank 0
+    //! 2d access for  Rank 0
     template <typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<( 0 == std::rank<U>::value &&
@@ -665,7 +693,7 @@ class Slice
         return _view( s, a );
     }
 
-    // Rank 1
+    //! 2d access for  Rank 1
     template <typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<( 1 == std::rank<U>::value &&
@@ -676,7 +704,7 @@ class Slice
         return _view( s, a, d0 );
     }
 
-    // Rank 2
+    //! 2d access for  Rank 2
     template <typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<( 2 == std::rank<U>::value &&
@@ -688,7 +716,7 @@ class Slice
         return _view( s, a, d0, d1 );
     }
 
-    // Rank 3
+    //! 2d access for  Rank 3
     template <typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<( 3 == std::rank<U>::value &&
@@ -703,7 +731,7 @@ class Slice
     // ------------
     // 1-D accessor
 
-    // Rank 0
+    //! 1d access for  Rank 0
     template <typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<( 0 == std::rank<U>::value &&
@@ -714,7 +742,7 @@ class Slice
         return access( index_type::s( i ), index_type::a( i ) );
     }
 
-    // Rank 1
+    //! 1d access for  Rank 1
     template <typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<( 1 == std::rank<U>::value &&
@@ -725,7 +753,7 @@ class Slice
         return access( index_type::s( i ), index_type::a( i ), d0 );
     }
 
-    // Rank 2
+    //! 1d access for  Rank 2
     template <typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<( 2 == std::rank<U>::value &&
@@ -737,7 +765,7 @@ class Slice
         return access( index_type::s( i ), index_type::a( i ), d0, d1 );
     }
 
-    // Rank 3
+    //! 1d access for  Rank 3
     template <typename U = DataType>
     KOKKOS_FORCEINLINE_FUNCTION
         typename std::enable_if<( 3 == std::rank<U>::value &&
@@ -806,7 +834,7 @@ class Slice
 };
 
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! \cond Impl
 template <typename>
 struct is_slice_impl : public std::false_type
 {
@@ -821,7 +849,9 @@ struct is_slice_impl<
     : public std::true_type
 {
 };
+//! \endcond
 
+//! Slice static type checker.
 template <class T>
 struct is_slice : public is_slice_impl<typename std::remove_cv<T>::type>::type
 {

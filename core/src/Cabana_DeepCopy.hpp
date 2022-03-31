@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_DeepCopy.hpp
+  \brief AoSoA and slice extensions for Kokkos deep copy and mirrors
+*/
 #ifndef CABANA_DEEPCOPY_HPP
 #define CABANA_DEEPCOPY_HPP
 
@@ -17,7 +21,6 @@
 #include <impl/Cabana_TypeTraits.hpp>
 
 #include <Kokkos_Core.hpp>
-#include <Kokkos_ExecPolicy.hpp>
 
 #include <exception>
 #include <type_traits>
@@ -131,10 +134,9 @@ create_mirror_view_and_copy(
 
     auto dst = create_mirror( space, src );
 
-    Kokkos::Impl::DeepCopy<typename Space::memory_space,
-                           typename SrcAoSoA::memory_space>(
-        dst.data(), src.data(),
-        src.numSoA() * sizeof( typename SrcAoSoA::soa_type ) );
+    Kokkos::deep_copy(
+        typename decltype( dst )::soa_view( dst.data(), dst.numSoA() ),
+        typename SrcAoSoA::soa_view( src.data(), src.numSoA() ) );
 
     return dst;
 }
@@ -201,8 +203,12 @@ deep_copy( DstAoSoA& dst, const SrcAoSoA& src,
     // of values then we can do a byte-wise copy directly.
     if ( std::is_same<dst_soa_type, src_soa_type>::value )
     {
-        Kokkos::Impl::DeepCopy<dst_memory_space, src_memory_space>(
-            dst_data, src_data, dst_num_soa * sizeof( dst_soa_type ) );
+        Kokkos::deep_copy( Kokkos::View<char*, dst_memory_space>(
+                               reinterpret_cast<char*>( dst.data() ),
+                               dst.numSoA() * sizeof( dst_soa_type ) ),
+                           Kokkos::View<char*, src_memory_space>(
+                               reinterpret_cast<char*>( src.data() ),
+                               src.numSoA() * sizeof( src_soa_type ) ) );
     }
 
     // Otherwise copy the data element-by-element because the data layout is

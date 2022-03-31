@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,6 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cabana_PerformanceTraits.hpp
+  \brief Default settings for execution spaces.
+*/
 #ifndef CABANA_PERFORMANCETRAITS_HPP
 #define CABANA_PERFORMANCETRAITS_HPP
 
@@ -22,7 +26,6 @@ namespace Impl
 {
 //---------------------------------------------------------------------------//
 /*!
-  \class PerformanceTraits
   \brief Default settings for execution spaces.
 */
 template <class ExecutionSpace>
@@ -68,7 +71,7 @@ template <>
 class PerformanceTraits<Kokkos::Cuda>
 {
   public:
-    static constexpr int vector_length = Kokkos::Impl::CudaTraits::WarpSize;
+    static constexpr int vector_length = 32; // warp size
 };
 #endif
 
@@ -78,8 +81,27 @@ template <>
 class PerformanceTraits<Kokkos::Experimental::HIP>
 {
   public:
-    static constexpr int vector_length =
-        Kokkos::Experimental::Impl::HIPTraits::WarpSize;
+    static constexpr int vector_length = 64; // wavefront size
+};
+#endif
+
+//---------------------------------------------------------------------------//
+#if defined( KOKKOS_ENABLE_SYCL )
+template <>
+class PerformanceTraits<Kokkos::Experimental::SYCL>
+{
+  public:
+    static constexpr int vector_length = 16; // FIXME_SYCL
+};
+#endif
+
+//---------------------------------------------------------------------------//
+#if defined( KOKKOS_ENABLE_OPENMPTARGET )
+template <>
+class PerformanceTraits<Kokkos::Experimental::OpenMPTarget>
+{
+  public:
+    static constexpr int vector_length = 16; // FIXME_OPENMPTARGET
 };
 #endif
 

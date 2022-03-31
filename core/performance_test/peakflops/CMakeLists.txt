@@ -1,8 +1,21 @@
+############################################################################
+# Copyright (c) 2018-2021 by the Cabana authors                            #
+# All rights reserved.                                                     #
+#                                                                          #
+# This file is part of the Cabana library. Cabana is distributed under a   #
+# BSD 3-clause license. For the licensing terms see the LICENSE file in    #
+# the top-level directory.                                                 #
+#                                                                          #
+# SPDX-License-Identifier: BSD-3-Clause                                    #
+############################################################################
+
 # It only makes sense to run this if testing is enabled, as we depend on gtest
 if(NOT Cabana_ENABLE_TESTING)
   message(WARNING "Cabana_ENABLE_TESTING disabled, skipping performance tests")
   return()
 endif()
+
+include(${TEST_HARNESS_DIR}/test_harness.cmake)
 
 # For intel haswell, broadwell: set expected flops/cycle = 32, veclength=8, iterations=2e6
 # For intel skylake           : set expected flops/cycle = 64, veclength=16, iterations=2e8
@@ -53,13 +66,10 @@ if (NOT HAVE_OMP_SIMD)
     return()
 endif()
 
-set(GTEST_SOURCE_DIR ${CMAKE_SOURCE_DIR}/gtest)
-
 foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
-  # TODO: tidy unit_test_main.cpp path
   set(test "${_test}_performance_test")
-  add_executable(${test} ${_test}.cpp ${CMAKE_SOURCE_DIR}/core/unit_test/unit_test_main.cpp)
-  target_include_directories(${test} PRIVATE ${GTEST_SOURCE_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
+  add_executable(${test} ${_test}.cpp ${TEST_HARNESS_DIR}/unit_test_main.cpp)
+  target_include_directories(${test} PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
   target_compile_definitions(${test} PRIVATE
     CABANA_PERFORMANCE_EXPECTED_FLOPS=${Cabana_PERFORMANCE_EXPECTED_FLOPS}
     CABANA_PERFORMANCE_ERROR_MARGIN=${Cabana_PERFORMANCE_ERROR_MARGIN}
@@ -67,7 +77,7 @@ foreach(_test 01_cpp_simple 02_kokkos_simple_view 03_Cabana_peakflops)
     CABANA_PERFORMANCE_ITERATIONS=${Cabana_PERFORMANCE_ITERATIONS}
     CABANA_PERFORMANCE_SEED=${Cabana_PERFORMANCE_SEED}
     )
-  target_link_libraries(${test} cabanacore cabana_core_gtest)
+  target_link_libraries(${test} cabanacore gtest)
   target_compile_options(${test} PRIVATE "-fopenmp")
   add_test(NAME ${test} COMMAND ${test})
   set_tests_properties(${test} PROPERTIES LABELS "PERFORMANCE" )

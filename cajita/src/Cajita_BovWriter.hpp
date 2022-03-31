@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,10 +9,15 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+/*!
+  \file Cajita_BovWriter.hpp
+  \brief Brick of values (BOV) grid output
+*/
 #ifndef CAJITA_BOVWRITER_HPP
 #define CAJITA_BOVWRITER_HPP
 
 #include <Cajita_Array.hpp>
+#include <Cajita_Halo.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_Types.hpp>
@@ -30,86 +35,131 @@
 
 namespace Cajita
 {
-namespace BovWriter
-{
 namespace Experimental
+{
+namespace BovWriter
 {
 //---------------------------------------------------------------------------//
 // VisIt Brick-of-Values (BOV) grid field writer.
 //---------------------------------------------------------------------------//
-// BOV Format traits.
+
+//! BOV Format traits.
+//! \tparam Scalar type.
 template <typename T>
 struct BovFormat;
 
+//! BOV Format traits.
 template <>
 struct BovFormat<short>
 {
+    //! Get BOV value type.
     static std::string value() { return "SHORT"; }
 };
 
+//! BOV Format traits.
 template <>
 struct BovFormat<int>
 {
+    //! Get BOV value type.
     static std::string value() { return "INT"; }
 };
 
+//! BOV Format traits.
 template <>
 struct BovFormat<float>
 {
+    //! Get BOV value type.
     static std::string value() { return "FLOAT"; }
 };
 
+//! BOV Format traits.
 template <>
 struct BovFormat<double>
 {
+    //! Get BOV value type.
     static std::string value() { return "DOUBLE"; }
 };
 
-// BOV Centering
+//! BOV Centering
+//! \tparam Entity type.
 template <typename T>
 struct BovCentering;
 
+//! BOV Centering
 template <>
 struct BovCentering<Cell>
 {
+    //! Get BOV value type.
     static std::string value() { return "zonal"; }
 };
 
+//! BOV Centering
 template <>
 struct BovCentering<Node>
 {
+    //! Get BOV value type.
     static std::string value() { return "nodal"; }
 };
 
 //---------------------------------------------------------------------------//
-// Create the MPI subarray for the given array.
-template <class Array_t>
+//! Create the MPI subarray for the given array.
+template <class Array_t, std::size_t N>
 MPI_Datatype createSubarray( const Array_t& array,
-                             const std::array<long, 4>& owned_extents,
-                             const std::array<long, 4>& global_extents )
+                             const std::array<long, N>& owned_extents,
+                             const std::array<long, N>& global_extents )
 {
     using value_type = typename Array_t::value_type;
     const auto& global_grid = array.layout()->localGrid()->globalGrid();
 
-    int local_start[4] = {
-        static_cast<int>( global_grid.globalOffset( Dim::K ) ),
-        static_cast<int>( global_grid.globalOffset( Dim::J ) ),
-        static_cast<int>( global_grid.globalOffset( Dim::I ) ), 0 };
-    int local_size[4] = { static_cast<int>( owned_extents[Dim::K] ),
-                          static_cast<int>( owned_extents[Dim::J] ),
-                          static_cast<int>( owned_extents[Dim::I] ),
-                          static_cast<int>( owned_extents[3] ) };
-    int global_size[4] = { static_cast<int>( global_extents[Dim::K] ),
-                           static_cast<int>( global_extents[Dim::J] ),
-                           static_cast<int>( global_extents[Dim::I] ),
-                           static_cast<int>( global_extents[3] ) };
+    std::array<int, N> local_start;
+    std::array<int, N> local_size;
+    std::array<int, N> global_size;
+    for ( std::size_t i = 0; i < N - 1; ++i )
+    {
+        local_start[i] =
+            static_cast<int>( global_grid.globalOffset( N - i - 2 ) );
+        local_size[i] = static_cast<int>( owned_extents[N - i - 2] );
+        global_size[i] = static_cast<int>( global_extents[N - i - 2] );
+    }
+    local_start.back() = 0;
+    local_size.back() = owned_extents.back();
+    global_size.back() = global_extents.back();
 
     MPI_Datatype subarray;
-    MPI_Type_create_subarray( 4, global_size, local_size, local_start,
-                              MPI_ORDER_C, MpiTraits<value_type>::type(),
-                              &subarray );
+    MPI_Type_create_subarray( N, global_size.data(), local_size.data(),
+                              local_start.data(), MPI_ORDER_C,
+                              MpiTraits<value_type>::type(), &subarray );
 
     return subarray;
+}
+
+//---------------------------------------------------------------------------//
+//! Reorder a view to the required ordering for I/O
+template <class TargetView, class SourceView, class Indices, class ExecSpace>
+std::enable_if_t<4 == TargetView::rank, void>
+reorderView( TargetView& target, const SourceView& source,
+             const Indices& index_space, const ExecSpace& exec_space )
+{
+    Kokkos::parallel_for(
+        "bov_reorder", createExecutionPolicy( index_space, exec_space ),
+        KOKKOS_LAMBDA( const int k, const int j, const int i, const int l ) {
+            target( k, j, i, l ) = source( i, j, k, l );
+        } );
+    exec_space.fence();
+}
+
+//! Reorder a view to the required ordering for I/O
+template <class TargetView, class SourceView, class Indices, class ExecSpace>
+std::enable_if_t<3 == TargetView::rank, void>
+reorderView( TargetView& target, const SourceView& source,
+             const Indices& index_space, const ExecSpace& exec_space )
+{
+    Kokkos::parallel_for(
+        "bov_reorder", createExecutionPolicy( index_space, exec_space ),
+        KOKKOS_LAMBDA( const int j, const int i, const int l ) {
+            target( j, i, l ) = source( i, j, l );
+        } );
+    exec_space.fence();
 }
 
 //---------------------------------------------------------------------------//
@@ -122,10 +172,12 @@ MPI_Datatype createSubarray( const Array_t& array,
   \param time_step_index The index of the time step we are writing.
   \param time The current time
   \param array The array to write
+  \param gather_array Gather the array before writing to make parallel
+  consistent.
 */
 template <class Array_t>
 void writeTimeStep( const int time_step_index, const double time,
-                    const Array_t& array )
+                    const Array_t& array, const bool gather_array = true )
 {
     static_assert( isUniformMesh<typename Array_t::mesh_type>::value,
                    "ViSIT BOV writer can only be used with uniform mesh" );
@@ -135,6 +187,7 @@ void writeTimeStep( const int time_step_index, const double time,
     using value_type = typename Array_t::value_type;
     using device_type = typename Array_t::device_type;
     using execution_space = typename device_type::execution_space;
+    const std::size_t num_space_dim = Array_t::num_space_dim;
 
     // Get the global grid.
     const auto& global_grid = array.layout()->localGrid()->globalGrid();
@@ -144,18 +197,27 @@ void writeTimeStep( const int time_step_index, const double time,
 
     // If this is a node field, determine periodicity so we can add the last
     // node back to the visualization if needed.
-    std::array<long, 4> global_extents = { -1, -1, -1, -1 };
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim + 1> global_extents;
+    for ( std::size_t i = 0; i < num_space_dim + 1; ++i )
+    {
+        global_extents[i] = -1;
+    }
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         if ( std::is_same<entity_type, Cell>::value )
             global_extents[d] = global_grid.globalNumEntity( Cell(), d );
         else if ( std::is_same<entity_type, Node>::value )
             global_extents[d] = global_grid.globalNumEntity( Cell(), d ) + 1;
     }
-    global_extents[3] = array.layout()->dofsPerEntity();
+    global_extents[num_space_dim] = array.layout()->dofsPerEntity();
+
     auto owned_index_space = array.layout()->indexSpace( Own(), Local() );
-    std::array<long, 4> owned_extents = { -1, -1, -1, -1 };
-    for ( int d = 0; d < 3; ++d )
+    std::array<long, num_space_dim + 1> owned_extents;
+    for ( std::size_t i = 0; i < num_space_dim + 1; ++i )
+    {
+        owned_extents[i] = -1;
+    }
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
     {
         if ( std::is_same<entity_type, Cell>::value )
         {
@@ -171,29 +233,48 @@ void writeTimeStep( const int time_step_index, const double time,
                 owned_extents[d] = owned_index_space.extent( d ) + 1;
         }
     }
-    owned_extents[3] = array.layout()->dofsPerEntity();
+    owned_extents[num_space_dim] = array.layout()->dofsPerEntity();
+
+    // Gather halo data if any dimensions are periodic.
+    if ( gather_array )
+    {
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            if ( global_grid.isPeriodic( d ) )
+            {
+                auto halo =
+                    createHalo( NodeHaloPattern<num_space_dim>(), 0, array );
+                halo->gather( execution_space(), array );
+                break;
+            }
+        }
+    }
 
     // Create a contiguous array of the owned array values. Note that we
     // reorder to KJI grid ordering to conform to the BOV format.
-    IndexSpace<4> local_space(
-        { owned_index_space.min( Dim::I ), owned_index_space.min( Dim::J ),
-          owned_index_space.min( Dim::K ), 0 },
-        { owned_index_space.min( Dim::I ) + owned_extents[Dim::I],
-          owned_index_space.min( Dim::J ) + owned_extents[Dim::J],
-          owned_index_space.min( Dim::K ) + owned_extents[Dim::K],
-          owned_extents[3] } );
+    std::array<long, num_space_dim + 1> local_space_min;
+    std::array<long, num_space_dim + 1> local_space_max;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        local_space_min[d] = owned_index_space.min( d );
+        local_space_max[d] = owned_index_space.min( d ) + owned_extents[d];
+    }
+    local_space_min.back() = 0;
+    local_space_max.back() = owned_extents.back();
+    IndexSpace<num_space_dim + 1> local_space( local_space_min,
+                                               local_space_max );
     auto owned_subview = createSubview( array.view(), local_space );
-    IndexSpace<4> reorder_space( { owned_extents[Dim::K], owned_extents[Dim::J],
-                                   owned_extents[Dim::I], owned_extents[3] } );
+
+    std::array<long, num_space_dim + 1> reorder_space_size;
+    for ( std::size_t d = 0; d < num_space_dim; ++d )
+    {
+        reorder_space_size[d] = owned_extents[num_space_dim - d - 1];
+    }
+    reorder_space_size.back() = owned_extents.back();
+    IndexSpace<num_space_dim + 1> reorder_space( reorder_space_size );
     auto owned_view = createView<value_type, Kokkos::LayoutRight, device_type>(
         array.label(), reorder_space );
-    Kokkos::parallel_for(
-        "bov_reorder",
-        createExecutionPolicy( reorder_space, execution_space() ),
-        KOKKOS_LAMBDA( const int k, const int j, const int i, const int l ) {
-            owned_view( k, j, i, l ) = owned_subview( i, j, k, l );
-        } );
-    Kokkos::fence();
+    reorderView( owned_view, owned_subview, reorder_space, execution_space() );
 
     // Compose a data file name prefix.
     std::stringstream file_name;
@@ -242,9 +323,16 @@ void writeTimeStep( const int time_step_index, const double time,
         header << "DATA_FILE: " << data_file_name << std::endl;
 
         // Global data size.
-        header << "DATA_SIZE: " << global_extents[Dim::I] << " "
-               << global_extents[Dim::J] << " " << global_extents[Dim::K]
-               << std::endl;
+        header << "DATA_SIZE: ";
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            header << global_extents[d] << " ";
+        }
+        for ( std::size_t d = num_space_dim; d < 3; ++d )
+        {
+            header << 1;
+        }
+        header << std::endl;
 
         // Data format.
         header << "DATA_FORMAT: " << BovFormat<value_type>::value()
@@ -261,25 +349,35 @@ void writeTimeStep( const int time_step_index, const double time,
                << std::endl;
 
         // Mesh low corner.
-        header << "BRICK_ORIGIN: " << global_mesh.lowCorner( Dim::I ) << " "
-               << global_mesh.lowCorner( Dim::J ) << " "
-               << global_mesh.lowCorner( Dim::K ) << std::endl;
+        header << "BRICK_ORIGIN: ";
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            header << global_mesh.lowCorner( d ) << " ";
+        }
+        for ( std::size_t d = num_space_dim; d < 3; ++d )
+        {
+            header << 0.0;
+        }
+        header << std::endl;
 
         // Mesh global width
-        header << "BRICK_SIZE: "
-               << global_grid.globalNumEntity( Cell(), Dim::I ) *
-                      global_mesh.cellSize( Dim::I )
-               << " "
-               << global_grid.globalNumEntity( Cell(), Dim::J ) *
-                      global_mesh.cellSize( Dim::J )
-               << " "
-               << global_grid.globalNumEntity( Cell(), Dim::K ) *
-                      global_mesh.cellSize( Dim::K )
-               << std::endl;
+        header << "BRICK_SIZE: ";
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            header << global_grid.globalNumEntity( Cell(), d ) *
+                          global_mesh.cellSize( d )
+                   << " ";
+        }
+        for ( std::size_t d = num_space_dim; d < 3; ++d )
+        {
+            header << 0.0;
+        }
+        header << std::endl;
 
         // Number of data components. Scalar and vector types are
         // supported.
-        header << "DATA_COMPONENTS: " << global_extents[3] << std::endl;
+        header << "DATA_COMPONENTS: " << global_extents[num_space_dim]
+               << std::endl;
 
         // Close the header.
         header.close();
@@ -288,8 +386,8 @@ void writeTimeStep( const int time_step_index, const double time,
 
 //---------------------------------------------------------------------------//
 
-} // end namespace Experimental
 } // end namespace BovWriter
+} // end namespace Experimental
 } // end namespace Cajita
 
 #endif // end CAJITA_BOVWRITER_HPP

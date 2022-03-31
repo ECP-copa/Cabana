@@ -77,26 +77,14 @@ void LayoutHilbert3DSubviewTest()
         } );
     view_type::execution_space().fence();
 
-    // Create copies on host to check
-    buff_type dev_view( "dev_view", hilbert_array.extent( 0 ),
-                        hilbert_array.extent( 1 ), hilbert_array.extent( 2 ),
-                        hilbert_array.extent( 3 ) );
-    auto host_view_hilbert = Kokkos::create_mirror( dev_view );
-
-    Kokkos::deep_copy( dev_view, hilbert_array );
-    Kokkos::deep_copy( host_view_hilbert, dev_view );
-
-    auto host_view_regular = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), regular_array );
-
     // Check that the Hilbert View has been assigned consistently with the
     // Regular Array
     for ( int i = 0; i < dim1; i++ )
         for ( int j = 0; j < dim2; j++ )
             for ( int k = 0; k < dim3; k++ )
                 for ( int l = 0; l < dim4; l++ )
-                    EXPECT_EQ( host_view_hilbert( i, j, k, l ),
-                               host_view_regular( i, j, k, l ) );
+                    EXPECT_EQ( hilbert_array( i, j, k, l ),
+                               regular_array( i, j, k, l ) );
 
     // Create subview index space - mimicking a halo subview of width 2
     Cajita::IndexSpace<4> space;
@@ -133,15 +121,6 @@ void LayoutHilbert3DSubviewTest()
     // Deep copy Small Regular View over to the Hilbert Subview
     Kokkos::deep_copy( hilbert_sub, regular_small );
 
-    // Create copy on host to check
-    buff_type dev_view_new(
-        "dev_view_new", hilbert_array.extent( 0 ), hilbert_array.extent( 1 ),
-        hilbert_array.extent( 2 ), hilbert_array.extent( 3 ) );
-    auto host_view_hilbert_new = Kokkos::create_mirror( dev_view_new );
-
-    Kokkos::deep_copy( dev_view_new, hilbert_array );
-    Kokkos::deep_copy( host_view_hilbert_new, dev_view_new );
-
     // Check that the replacement value got copied over correctly from the Small
     // Regular View, to the Hilbert Subview and hence the original Hilbert view
     for ( int i = 0; i < dim1; i++ )
@@ -152,10 +131,9 @@ void LayoutHilbert3DSubviewTest()
                          j >= space.min( 1 ) && j < space.max( 1 ) &&
                          k >= space.min( 2 ) && k < space.max( 2 ) &&
                          l >= space.min( 3 ) && l < space.max( 3 ) )
-                        EXPECT_EQ( host_view_hilbert_new( i, j, k, l ),
-                                   replace_val );
+                        EXPECT_EQ( hilbert_array( i, j, k, l ), replace_val );
                     else
-                        EXPECT_EQ( host_view_hilbert_new( i, j, k, l ),
+                        EXPECT_EQ( hilbert_array( i, j, k, l ),
                                    i + dim1 * ( j + dim2 * ( k + (dim3)*l ) ) );
 }
 
@@ -218,254 +196,6 @@ void LayoutHilbert3DArrayOpTest()
 }
 
 //---------------------------------------------------------------------------//
-void LayoutHilbert3DGatherTest( const Cajita::ManualPartitioner& partitioner,
-                                const std::array<bool, 3>& is_dim_periodic )
-{
-    // typedef
-    typedef
-        typename Kokkos::View<double****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
-            view_type;
-
-    // typedef
-    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
-
-    // Get rank
-    int rank;
-    MPI_Comm_rank( MPI_COMM_WORLD, &rank );
-
-    // Define Cell Size and Number of Halo Cells in Each Direction
-    double cell_size = 0.25;
-    int halo_width = 2;
-
-    // Set grid information
-    std::array<int, 3> global_num_cell = { 104, 104, 1 };
-    std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
-    std::array<double, 3> global_high_corner = {
-        global_low_corner[0] + cell_size * global_num_cell[0],
-        global_low_corner[1] + cell_size * global_num_cell[1],
-        global_low_corner[2] + cell_size * global_num_cell[2] };
-
-    // Create local grid
-    auto global_mesh = Cajita::createUniformGlobalMesh(
-        global_low_corner, global_high_corner, cell_size );
-    auto global_grid = Cajita::createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                                 is_dim_periodic, partitioner );
-    auto local_grid = Cajita::createLocalGrid( global_grid, halo_width );
-
-    // Create vector layout with 2 dofs
-    auto cell_vector_layout =
-        Cajita::createArrayLayout( local_grid, 2, Cajita::Cell() );
-
-    // Create array with LayoutHilbert3D
-    auto array =
-        Cajita::createArray<double, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
-            "array", cell_vector_layout );
-
-    // Create halo
-    auto halo = createHalo( Cajita::FullHaloPattern(), halo_width, *array );
-
-    // Get owned and ghosted index spaces
-    auto owned_space =
-        cell_vector_layout->indexSpace( Cajita::Own(), Cajita::Local() );
-    auto ghosted_space =
-        cell_vector_layout->indexSpace( Cajita::Ghost(), Cajita::Local() );
-
-    // Get underlying view for assignment
-    auto array_view = array->view();
-
-    // Generate Kokkos Views to store neighbor data for later use
-    Kokkos::View<unsigned int**, TEST_DEVICE> owned_shared_spaces(
-        "Owned_Shared_Spaces", 27, 6 );
-    Kokkos::View<unsigned int**, TEST_DEVICE> ghosted_shared_spaces(
-        "Ghosted_Shared_Spaces", 27, 6 );
-
-    // Create copies on host to populate
-    auto host_owned_shared_spaces = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), owned_shared_spaces );
-    auto host_ghosted_shared_spaces = Kokkos::create_mirror_view_and_copy(
-        Kokkos::HostSpace(), ghosted_shared_spaces );
-
-    int num_neighbors = 0;
-    // Loop over all possible neighbors
-    for ( int i = -1; i < 2; ++i )
-    {
-        for ( int j = -1; j < 2; ++j )
-        {
-            for ( int k = -1; k < 2; ++k )
-            {
-                if ( !( i == 0 && j == 0 && k == 0 ) )
-                {
-                    int neighbor = local_grid->neighborRank( i, j, k );
-                    // Only if neighbor exists
-                    if ( neighbor != -1 )
-                    {
-                        // Ghost cells we are receiving ( in our ghost space,
-                        // but in our neighbors owned space )
-                        auto shared_recv_cells = local_grid->sharedIndexSpace(
-                            Cajita::Ghost(), Cajita::Cell(), i, j, k );
-
-                        // Cells we are sending ( in our owned space, but in our
-                        // neighbors ghost space )
-                        auto shared_send_cells = local_grid->sharedIndexSpace(
-                            Cajita::Own(), Cajita::Cell(), i, j, k );
-
-                        // Add index spaces to host mirror views
-                        host_owned_shared_spaces( num_neighbors, 0 ) =
-                            shared_send_cells.min( 0 );
-                        host_owned_shared_spaces( num_neighbors, 1 ) =
-                            shared_send_cells.min( 1 );
-                        host_owned_shared_spaces( num_neighbors, 2 ) =
-                            shared_send_cells.min( 2 );
-                        host_owned_shared_spaces( num_neighbors, 3 ) =
-                            shared_send_cells.max( 0 );
-                        host_owned_shared_spaces( num_neighbors, 4 ) =
-                            shared_send_cells.max( 1 );
-                        host_owned_shared_spaces( num_neighbors, 5 ) =
-                            shared_send_cells.max( 2 );
-
-                        host_ghosted_shared_spaces( num_neighbors, 0 ) =
-                            shared_recv_cells.min( 0 );
-                        host_ghosted_shared_spaces( num_neighbors, 1 ) =
-                            shared_recv_cells.min( 1 );
-                        host_ghosted_shared_spaces( num_neighbors, 2 ) =
-                            shared_recv_cells.min( 2 );
-                        host_ghosted_shared_spaces( num_neighbors, 3 ) =
-                            shared_recv_cells.max( 0 );
-                        host_ghosted_shared_spaces( num_neighbors, 4 ) =
-                            shared_recv_cells.max( 1 );
-                        host_ghosted_shared_spaces( num_neighbors, 5 ) =
-                            shared_recv_cells.max( 2 );
-
-                        // Increase neighbor count
-                        num_neighbors++;
-                    }
-                }
-            }
-        }
-    }
-
-    // Deep copy from host to device
-    Kokkos::deep_copy( owned_shared_spaces, host_owned_shared_spaces );
-    Kokkos::deep_copy( ghosted_shared_spaces, host_ghosted_shared_spaces );
-
-    // Value to set to Cells we are sending ( in our owned space, but in our
-    // neighbors ghost space )
-    double shared_halo_value = 2.0;
-
-    // Set view values such that
-    // My ghost cells = 0.0
-    // Cells we are sending ( in our owned space, but in our neighbors ghost
-    // space ) = shared_halo_value Our remaining owned cells = 1.0 Loop over
-    // entire index space of local view ( owned + ghost cells )
-    Kokkos::parallel_for(
-        "HilbertInitialize",
-        Cajita::createExecutionPolicy( ghosted_space,
-                                       view_type::execution_space() ),
-        KOKKOS_LAMBDA( const unsigned i, const unsigned j, const unsigned k,
-                       const unsigned l ) {
-            // My ghost cells = 0.0
-            if ( i < owned_space.min( Cajita::Dim::I ) ||
-                 i >= owned_space.max( Cajita::Dim::I ) ||
-                 j < owned_space.min( Cajita::Dim::J ) ||
-                 j >= owned_space.max( Cajita::Dim::J ) ||
-                 k < owned_space.min( Cajita::Dim::K ) ||
-                 k >= owned_space.max( Cajita::Dim::K ) )
-                array_view( i, j, k, l ) = 0.0;
-            else
-            {
-                // Loop over all neighbors
-                for ( int n = 0; n < num_neighbors; n++ )
-                {
-                    // Get shared index space with current neighbor
-                    auto shared_min0 = owned_shared_spaces( n, 0 );
-                    auto shared_min1 = owned_shared_spaces( n, 1 );
-                    auto shared_min2 = owned_shared_spaces( n, 2 );
-                    auto shared_max0 = owned_shared_spaces( n, 3 );
-                    auto shared_max1 = owned_shared_spaces( n, 4 );
-                    auto shared_max2 = owned_shared_spaces( n, 5 );
-
-                    // Cells we are sending ( in our owned space, but in
-                    // our neighbors ghost space ) = shared_halo_value
-                    if ( i >= shared_min0 && i < shared_max0 &&
-                         j >= shared_min1 && j < shared_max1 &&
-                         k >= shared_min2 && k < shared_max2 )
-                        array_view( i, j, k, l ) = shared_halo_value;
-                }
-                // Our remaining owned cells = 1.0
-                if ( array_view( i, j, k, l ) != shared_halo_value )
-                    array_view( i, j, k, l ) = 1.0;
-            }
-        } );
-    view_type::execution_space().fence();
-
-    // Gather
-    halo->gather( TEST_EXECSPACE(), *array );
-
-    // Create copy on host to check
-    buff_type dev_view( "dev_view", array->view().extent( 0 ),
-                        array->view().extent( 1 ), array->view().extent( 2 ),
-                        array->view().extent( 3 ) );
-    auto host_view = Kokkos::create_mirror( dev_view );
-
-    Kokkos::deep_copy( dev_view, array->view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
-    // Test if Halo succeeded as expected
-    // Result should be:
-    // My ghost cells = shared_halo_value ( We check )
-    // Cells we are sending ( in our owned space, but in our neighbors ghost
-    // space ) = shared_halo_value ( We check ) Our remaining owned cells = 1.0
-    // ( We don't check ) Loop over entire index space of local view ( owned +
-    // ghost cells )
-    for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
-    {
-        for ( unsigned j = 0; j < ghosted_space.extent( 1 ); ++j )
-        {
-            for ( unsigned k = 0; k < ghosted_space.extent( 2 ); ++k )
-            {
-                for ( unsigned l = 0; l < ghosted_space.extent( 3 ); ++l )
-                {
-                    // My ghost cells = shared_halo_value
-                    if ( i < owned_space.min( Cajita::Dim::I ) ||
-                         i >= owned_space.max( Cajita::Dim::I ) ||
-                         j < owned_space.min( Cajita::Dim::J ) ||
-                         j >= owned_space.max( Cajita::Dim::J ) ||
-                         k < owned_space.min( Cajita::Dim::K ) ||
-                         k >= owned_space.max( Cajita::Dim::K ) )
-                    {
-                        EXPECT_EQ( host_view( i, j, k, l ), shared_halo_value );
-                    }
-                    else
-                    {
-                        // Loop over all neighbors
-                        for ( int n = 0; n < num_neighbors; n++ )
-                        {
-                            // Get shared index space with current neighbor
-                            auto shared_min0 = host_owned_shared_spaces( n, 0 );
-                            auto shared_min1 = host_owned_shared_spaces( n, 1 );
-                            auto shared_min2 = host_owned_shared_spaces( n, 2 );
-                            auto shared_max0 = host_owned_shared_spaces( n, 3 );
-                            auto shared_max1 = host_owned_shared_spaces( n, 4 );
-                            auto shared_max2 = host_owned_shared_spaces( n, 5 );
-
-                            // Cells we are sending ( in our owned space, but in
-                            // our neighbors ghost space ) = shared_halo_value
-                            if ( i >= shared_min0 && i < shared_max0 &&
-                                 j >= shared_min1 && j < shared_max1 &&
-                                 k >= shared_min2 && k < shared_max2 )
-                            {
-                                EXPECT_EQ( host_view( i, j, k, l ),
-                                           shared_halo_value );
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-}
-
-//---------------------------------------------------------------------------//
 // Halo padding in each dimension for different entity types.
 int haloPad( Cajita::Cell, int ) { return 0; }
 
@@ -487,44 +217,71 @@ int haloPad( Cajita::Edge<D>, int d )
 // Check initial array gather. We should get 1 everywhere in the array now
 // where there was ghost overlap. Otherwise there will still be 0.
 template <class Array>
-void checkGather( const int halo_width, const Array& array )
+void checkGather( const std::array<bool, 3>& is_dim_periodic,
+                  const int halo_width, const Array& array )
 {
-    // typedef
-    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
-
     auto owned_space =
         array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
     auto ghosted_space =
         array.layout()->indexSpace( Cajita::Ghost(), Cajita::Local() );
-
-    // Create copy on host to check
-    buff_type dev_view( "dev_view", array.view().extent( 0 ),
-                        array.view().extent( 1 ), array.view().extent( 2 ),
-                        array.view().extent( 3 ) );
-    auto host_view = Kokkos::create_mirror( dev_view );
-
-    Kokkos::deep_copy( dev_view, array.view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
+    auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                          array.view() );
     auto pad_i = haloPad( typename Array::entity_type(), Cajita::Dim::I );
     auto pad_j = haloPad( typename Array::entity_type(), Cajita::Dim::J );
     auto pad_k = haloPad( typename Array::entity_type(), Cajita::Dim::K );
+    const auto& global_grid = array.layout()->localGrid()->globalGrid();
+
+    // This function checks if an index is in the low boundary halo in the
+    // given dimension
+    auto in_boundary_min_halo = [&]( const int i, const int dim ) {
+        if ( is_dim_periodic[dim] || !global_grid.onLowBoundary( dim ) )
+            return false;
+        else
+            return ( i < owned_space.min( dim ) );
+    };
+
+    // This function checks if an index is in the high boundary halo of in the
+    // given dimension
+    auto in_boundary_max_halo = [&]( const int i, const int dim ) {
+        if ( is_dim_periodic[dim] || !global_grid.onHighBoundary( dim ) )
+            return false;
+        else
+            return ( i >= owned_space.max( dim ) );
+    };
+
+    // Check the gather.
     for ( unsigned i = 0; i < ghosted_space.extent( 0 ); ++i )
         for ( unsigned j = 0; j < ghosted_space.extent( 1 ); ++j )
             for ( unsigned k = 0; k < ghosted_space.extent( 2 ); ++k )
                 for ( unsigned l = 0; l < ghosted_space.extent( 3 ); ++l )
-                    if ( i < owned_space.min( Cajita::Dim::I ) - halo_width ||
-                         i >= owned_space.max( Cajita::Dim::I ) + halo_width +
-                                  pad_i ||
-                         j < owned_space.min( Cajita::Dim::J ) - halo_width ||
-                         j >= owned_space.max( Cajita::Dim::J ) + halo_width +
-                                  pad_j ||
-                         k < owned_space.min( Cajita::Dim::K ) - halo_width ||
-                         k >= owned_space.max( Cajita::Dim::K ) + halo_width +
-                                  pad_k )
-                        EXPECT_EQ( host_view( i, j, k, l ), 0.0 );
+                    if ( in_boundary_min_halo( i, Cajita::Dim::I ) ||
+                         in_boundary_min_halo( j, Cajita::Dim::J ) ||
+                         in_boundary_min_halo( k, Cajita::Dim::K ) ||
+                         in_boundary_max_halo( i, Cajita::Dim::I ) ||
+                         in_boundary_max_halo( j, Cajita::Dim::J ) ||
+                         in_boundary_max_halo( k, Cajita::Dim::K ) )
+                    {
+                        EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), 0.0 );
+                    }
+                    else if ( i < owned_space.min( Cajita::Dim::I ) -
+                                      halo_width ||
+                              i >= owned_space.max( Cajita::Dim::I ) +
+                                       halo_width + pad_i ||
+                              j < owned_space.min( Cajita::Dim::J ) -
+                                      halo_width ||
+                              j >= owned_space.max( Cajita::Dim::J ) +
+                                       halo_width + pad_j ||
+                              k < owned_space.min( Cajita::Dim::K ) -
+                                      halo_width ||
+                              k >= owned_space.max( Cajita::Dim::K ) +
+                                       halo_width + pad_k )
+                    {
+                        EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), 0.0 );
+                    }
                     else
-                        EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
+                    {
+                        EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), 1.0 );
+                    }
 }
 
 //---------------------------------------------------------------------------//
@@ -535,22 +292,11 @@ template <class Array>
 void checkScatter( const std::array<bool, 3>& is_dim_periodic,
                    const int halo_width, const Array& array )
 {
-    // typedef
-    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
-
     // Get data.
     auto owned_space =
         array.layout()->indexSpace( Cajita::Own(), Cajita::Local() );
-
-    // Create copy on host to check
-    buff_type dev_view( "dev_view", array.view().extent( 0 ),
-                        array.view().extent( 1 ), array.view().extent( 2 ),
-                        array.view().extent( 3 ) );
-    auto host_view = Kokkos::create_mirror( dev_view );
-
-    Kokkos::deep_copy( dev_view, array.view() );
-    Kokkos::deep_copy( host_view, dev_view );
-
+    auto host_view = Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                          array.view() );
     const auto& global_grid = array.layout()->localGrid()->globalGrid();
 
     // This function checks if an index is in the halo of a low neighbor in
@@ -597,12 +343,12 @@ void checkScatter( const std::array<bool, 3>& is_dim_periodic,
 }
 
 //---------------------------------------------------------------------------//
-void LayoutHilbert3DScatterTest( const Cajita::ManualPartitioner& partitioner,
-                                 const std::array<bool, 3>& is_dim_periodic )
+void gatherScatterTest( const Cajita::ManualBlockPartitioner<3>& partitioner,
+                        const std::array<bool, 3>& is_dim_periodic )
 {
     // Create the global grid.
     double cell_size = 0.23;
-    std::array<int, 3> global_num_cell = { 32, 23, 41 };
+    std::array<int, 3> global_num_cell = { 17, 20, 21 };
     std::array<double, 3> global_low_corner = { 1.2, 3.3, -2.8 };
     std::array<double, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
@@ -641,13 +387,129 @@ void LayoutHilbert3DScatterTest( const Cajita::ManualPartitioner& partitioner,
         halo->gather( TEST_EXECSPACE(), *array );
 
         // Check the gather.
-        checkGather( halo_width, *array );
+        checkGather( is_dim_periodic, halo_width, *array );
 
         // Scatter from the ghosts back to owned.
         halo->scatter( TEST_EXECSPACE(), Cajita::ScatterReduce::Sum(), *array );
 
         // Check the scatter.
         checkScatter( is_dim_periodic, halo_width, *array );
+    }
+
+    // Repeat the process but this time with multiple arrays in a Halo
+    for ( unsigned halo_width = 1; halo_width <= array_halo_width;
+          ++halo_width )
+    {
+        // Create arrays of different layouts and dof counts.
+        auto cell_layout = Cajita::createArrayLayout(
+            global_grid, array_halo_width, 4, Cajita::Cell() );
+        auto cell_array =
+            Cajita::createArray<double, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
+                "cell_array", cell_layout );
+
+        auto node_layout = Cajita::createArrayLayout(
+            global_grid, array_halo_width, 3, Cajita::Node() );
+        auto node_array =
+            Cajita::createArray<float, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
+                "node_array", node_layout );
+
+        auto face_i_layout = Cajita::createArrayLayout(
+            global_grid, array_halo_width, 4, Cajita::Face<Cajita::Dim::I>() );
+        auto face_i_array =
+            Cajita::createArray<double, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
+                "face_i_array", face_i_layout );
+
+        auto face_j_layout = Cajita::createArrayLayout(
+            global_grid, array_halo_width, 1, Cajita::Face<Cajita::Dim::J>() );
+        auto face_j_array =
+            Cajita::createArray<double, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
+                "face_j_array", face_j_layout );
+
+        auto face_k_layout = Cajita::createArrayLayout(
+            global_grid, array_halo_width, 2, Cajita::Face<Cajita::Dim::K>() );
+        auto face_k_array =
+            Cajita::createArray<float, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
+                "face_k_array", face_k_layout );
+
+        auto edge_i_layout = Cajita::createArrayLayout(
+            global_grid, array_halo_width, 3, Cajita::Edge<Cajita::Dim::I>() );
+        auto edge_i_array =
+            Cajita::createArray<float, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
+                "edge_i_array", edge_i_layout );
+
+        auto edge_j_layout = Cajita::createArrayLayout(
+            global_grid, array_halo_width, 2, Cajita::Edge<Cajita::Dim::J>() );
+        auto edge_j_array =
+            Cajita::createArray<float, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
+                "edge_j_array", edge_j_layout );
+
+        auto edge_k_layout = Cajita::createArrayLayout(
+            global_grid, array_halo_width, 1, Cajita::Edge<Cajita::Dim::K>() );
+        auto edge_k_array =
+            Cajita::createArray<double, Kokkos::LayoutHilbert3D, TEST_DEVICE>(
+                "edge_k_array", edge_k_layout );
+
+        // Assign the owned cells a value of 1 and the rest 0.
+        Cajita::ArrayOp::assign( *cell_array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *cell_array, 1.0, Cajita::Own() );
+
+        Cajita::ArrayOp::assign( *node_array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *node_array, 1.0, Cajita::Own() );
+
+        Cajita::ArrayOp::assign( *face_i_array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *face_i_array, 1.0, Cajita::Own() );
+
+        Cajita::ArrayOp::assign( *face_j_array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *face_j_array, 1.0, Cajita::Own() );
+
+        Cajita::ArrayOp::assign( *face_k_array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *face_k_array, 1.0, Cajita::Own() );
+
+        Cajita::ArrayOp::assign( *edge_i_array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *edge_i_array, 1.0, Cajita::Own() );
+
+        Cajita::ArrayOp::assign( *edge_j_array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *edge_j_array, 1.0, Cajita::Own() );
+
+        Cajita::ArrayOp::assign( *edge_k_array, 0.0, Cajita::Ghost() );
+        Cajita::ArrayOp::assign( *edge_k_array, 1.0, Cajita::Own() );
+
+        // Create a multihalo.
+        auto halo = Cajita::createHalo(
+            Cajita::FullHaloPattern(), halo_width, *cell_array, *node_array,
+            *face_i_array, *face_j_array, *face_k_array, *edge_i_array,
+            *edge_j_array, *edge_k_array );
+
+        // Gather into the ghosts.
+        halo->gather( TEST_EXECSPACE(), *cell_array, *node_array, *face_i_array,
+                      *face_j_array, *face_k_array, *edge_i_array,
+                      *edge_j_array, *edge_k_array );
+
+        // Check the gather.
+        checkGather( is_dim_periodic, halo_width, *cell_array );
+        checkGather( is_dim_periodic, halo_width, *node_array );
+        checkGather( is_dim_periodic, halo_width, *face_i_array );
+        checkGather( is_dim_periodic, halo_width, *face_j_array );
+        checkGather( is_dim_periodic, halo_width, *face_k_array );
+        checkGather( is_dim_periodic, halo_width, *edge_i_array );
+        checkGather( is_dim_periodic, halo_width, *edge_j_array );
+        checkGather( is_dim_periodic, halo_width, *edge_k_array );
+
+        // Scatter from the ghosts back to owned.
+        halo->scatter( TEST_EXECSPACE(), Cajita::ScatterReduce::Sum(),
+                       *cell_array, *node_array, *face_i_array, *face_j_array,
+                       *face_k_array, *edge_i_array, *edge_j_array,
+                       *edge_k_array );
+
+        // Check the scatter.
+        checkScatter( is_dim_periodic, halo_width, *cell_array );
+        checkScatter( is_dim_periodic, halo_width, *node_array );
+        checkScatter( is_dim_periodic, halo_width, *face_i_array );
+        checkScatter( is_dim_periodic, halo_width, *face_j_array );
+        checkScatter( is_dim_periodic, halo_width, *face_k_array );
+        checkScatter( is_dim_periodic, halo_width, *edge_i_array );
+        checkScatter( is_dim_periodic, halo_width, *edge_j_array );
+        checkScatter( is_dim_periodic, halo_width, *edge_k_array );
     }
 }
 
@@ -666,42 +528,35 @@ TEST( layout_hilbert, layout_hilbert_arrayop_test )
     LayoutHilbert3DArrayOpTest();
 }
 
-TEST( layout_hilbert, layout_hilbert_gather_test )
+TEST( TEST_CATEGORY, not_periodic_test )
 {
-    // Test Halo Gather Routine
     // Let MPI compute the partitioning for this test.
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
+    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
+    Cajita::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
 
-    // Perform a 2-D partitioning for now
-    int x_ranks = comm_size;
-    while ( x_ranks % 2 == 0 && x_ranks > 2 )
-    {
-        x_ranks /= 2;
-    }
-    int y_ranks = comm_size / x_ranks;
-    std::array<int, 3> ranks_per_dim = { x_ranks, y_ranks, 1 };
+    // Boundaries are not periodic.
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
 
-    // Create 2-D partitioner
-    Cajita::ManualPartitioner partitioner( ranks_per_dim );
+    gatherScatterTest( partitioner, is_dim_periodic );
+}
 
-    // Test the non-periodic case
-    std::array<bool, 3> dim_not_periodic = { false, false, false };
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, periodic_test )
+{
+    // Let MPI compute the partitioning for this test.
+    int comm_size;
+    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
+    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
+    Cajita::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
 
-    // Gather Test
-    LayoutHilbert3DGatherTest( partitioner, dim_not_periodic );
+    // Every boundary is periodic
+    std::array<bool, 3> is_dim_periodic = { true, true, true };
 
-    // Scatter Test
-    LayoutHilbert3DScatterTest( partitioner, dim_not_periodic );
-
-    // Test the periodic case
-    // std::array<bool, 3> dim_periodic = {true, true, true};
-
-    // Gather Test
-    // LayoutHilbert3DGatherTest( partitioner, dim_periodic );
-
-    // Scatter Test
-    // LayoutHilbert3DScatterTest( partitioner, dim_periodic );
+    gatherScatterTest( partitioner, is_dim_periodic );
 }
 
 //---------------------------------------------------------------------------//

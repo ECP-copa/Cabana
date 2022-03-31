@@ -1,10 +1,37 @@
 # Change Log
 
+## 0.4.0
+
+**New Features**
+
+- C++14 required
+- Updated minimum Kokkos dependency to version 3.2
+- AMD HIP support and continuous integration testing
+- Intel SYCL support and continuous integration testing
+- OpenMP-Target support (with some disabled features)
+- Hybrid particle-grid capability through the Cajita interfaces. Features include:
+    - 2D/3D structured grid data structures
+    - particle-grid interpolation
+    - particle-grid communication
+    - multidimensional distributed FFTs via heFFTe (including host, CUDA, and HIP)
+    - linear solvers and preconditions via HYPRE (including host and CUDA)
+
+**Bug Fixes and Improvements**
+
+- Removed deprecated portability macros in favor of Kokkos macros (e.g. KOKKOS_INLINE_FUNCTION)
+- General performance improvements including neighbor list and particle communication updates
+- Improved Doxygen coverage, wiki documentation, and tutorials
+
+**Experimental Features (subject to change in future releases)**
+
+- Sparse grids support in Cajita
+- Structured grid data I/O in Cajita
+
 ## 0.3.0
 
 **New Features**
 
-- Updated Kokkos dependency to version 3.1
+- Updated minimum Kokkos dependency to version 3.1
 - CUDA and HIP support and testing in continuous integration
 - Mirror view capability for AoSoA
 - New performance benchmarks for sorting, communication, and neighbor lists

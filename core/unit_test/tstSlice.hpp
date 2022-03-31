@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -75,19 +75,20 @@ void checkDataMembers( aosoa_type aosoa, const float fval, const double dval,
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
                 for ( int k = 0; k < dim_3; ++k )
-                    EXPECT_EQ( slice_0( idx, i, j, k ), fval * ( i + j + k ) );
+                    EXPECT_FLOAT_EQ( slice_0( idx, i, j, k ),
+                                     fval * ( i + j + k ) );
 
         // Member 1.
         EXPECT_EQ( slice_1( idx ), ival );
 
         // Member 2.
         for ( int i = 0; i < dim_1; ++i )
-            EXPECT_EQ( slice_2( idx, i ), dval * i );
+            EXPECT_DOUBLE_EQ( slice_2( idx, i ), dval * i );
 
         // Member 3.
         for ( int i = 0; i < dim_1; ++i )
             for ( int j = 0; j < dim_2; ++j )
-                EXPECT_EQ( slice_3( idx, i, j ), dval * ( i + j ) );
+                EXPECT_DOUBLE_EQ( slice_3( idx, i, j ), dval * ( i + j ) );
     }
 }
 

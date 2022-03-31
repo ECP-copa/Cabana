@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -159,31 +159,32 @@ void testArborXListFullPartialRange()
 {
     // Create the AoSoA and fill with random particle positions.
     NeighborListTestData test_data;
-    int num_ignore = 800;
     auto position = Cabana::slice<0>( test_data.aosoa );
 
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-            Cabana::FullNeighborTag{}, position, 0, num_ignore,
+            Cabana::FullNeighborTag{}, position, 0, test_data.num_ignore,
             test_data.test_radius );
 
         // Check the neighbor list.
         checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                           test_data.num_particle, num_ignore );
+                                           test_data.num_particle,
+                                           test_data.num_ignore );
     }
     {
         // Create the neighbor list.
         using device_type = TEST_MEMSPACE; // sigh...
         auto const nlist =
             Cabana::Experimental::make2DNeighborList<device_type>(
-                Cabana::FullNeighborTag{}, position, 0, num_ignore,
+                Cabana::FullNeighborTag{}, position, 0, test_data.num_ignore,
                 test_data.test_radius );
 
         // Check the neighbor list.
         checkFullNeighborListPartialRange( nlist, test_data.N2_list_copy,
-                                           test_data.num_particle, num_ignore );
+                                           test_data.num_particle,
+                                           test_data.num_ignore );
     }
 }
 
@@ -201,11 +202,24 @@ void testNeighborArborXParallelFor()
             Cabana::FullNeighborTag{}, position, 0, position.size(),
             test_data.test_radius );
 
-        checkFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
-                                       test_data.num_particle );
+        checkFirstNeighborParallelForLambda( nlist, test_data.N2_list_copy,
+                                             test_data.num_particle );
 
-        checkSecondNeighborParallelFor( nlist, test_data.N2_list_copy,
-                                        test_data.num_particle );
+        checkSecondNeighborParallelForLambda( nlist, test_data.N2_list_copy,
+                                              test_data.num_particle );
+
+        checkSplitFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                            test_data.num_particle );
+
+        checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                              test_data.num_particle, true );
+        checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                              test_data.num_particle, false );
+
+        checkSecondNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                               test_data.num_particle, true );
+        checkSecondNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                               test_data.num_particle, false );
     }
     {
         // Create the neighbor list.
@@ -215,11 +229,24 @@ void testNeighborArborXParallelFor()
                 Cabana::FullNeighborTag{}, position, 0, position.size(),
                 test_data.test_radius );
 
-        checkFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
-                                       test_data.num_particle );
+        checkFirstNeighborParallelForLambda( nlist, test_data.N2_list_copy,
+                                             test_data.num_particle );
 
-        checkSecondNeighborParallelFor( nlist, test_data.N2_list_copy,
-                                        test_data.num_particle );
+        checkSecondNeighborParallelForLambda( nlist, test_data.N2_list_copy,
+                                              test_data.num_particle );
+
+        checkSplitFirstNeighborParallelFor( nlist, test_data.N2_list_copy,
+                                            test_data.num_particle );
+
+        checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                              test_data.num_particle, true );
+        checkFirstNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                              test_data.num_particle, false );
+
+        checkSecondNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                               test_data.num_particle, true );
+        checkSecondNeighborParallelForFunctor( nlist, test_data.N2_list_copy,
+                                               test_data.num_particle, false );
     }
 }
 
@@ -237,11 +264,21 @@ void testNeighborArborXParallelReduce()
             Cabana::FullNeighborTag{}, position, 0, position.size(),
             test_data.test_radius );
 
-        checkFirstNeighborParallelReduce( nlist, test_data.N2_list_copy,
-                                          test_data.aosoa );
+        checkFirstNeighborParallelReduceLambda( nlist, test_data.N2_list_copy,
+                                                test_data.aosoa );
 
-        checkSecondNeighborParallelReduce( nlist, test_data.N2_list_copy,
-                                           test_data.aosoa );
+        checkSecondNeighborParallelReduceLambda( nlist, test_data.N2_list_copy,
+                                                 test_data.aosoa );
+
+        checkFirstNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                                 test_data.aosoa, true );
+        checkFirstNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                                 test_data.aosoa, false );
+
+        checkSecondNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                                  test_data.aosoa, true );
+        checkSecondNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                                  test_data.aosoa, false );
     }
     {
         // Create the neighbor list.
@@ -251,11 +288,21 @@ void testNeighborArborXParallelReduce()
                 Cabana::FullNeighborTag{}, position, 0, position.size(),
                 test_data.test_radius );
 
-        checkFirstNeighborParallelReduce( nlist, test_data.N2_list_copy,
-                                          test_data.aosoa );
+        checkFirstNeighborParallelReduceLambda( nlist, test_data.N2_list_copy,
+                                                test_data.aosoa );
 
-        checkSecondNeighborParallelReduce( nlist, test_data.N2_list_copy,
-                                           test_data.aosoa );
+        checkSecondNeighborParallelReduceLambda( nlist, test_data.N2_list_copy,
+                                                 test_data.aosoa );
+
+        checkFirstNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                                 test_data.aosoa, true );
+        checkFirstNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                                 test_data.aosoa, false );
+
+        checkSecondNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                                  test_data.aosoa, true );
+        checkSecondNeighborParallelReduceFunctor( nlist, test_data.N2_list_copy,
+                                                  test_data.aosoa, false );
     }
 }
 

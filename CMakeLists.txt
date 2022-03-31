@@ -1,7 +1,18 @@
+############################################################################
+# Copyright (c) 2018-2021 by the Cabana authors                            #
+# All rights reserved.                                                     #
+#                                                                          #
+# This file is part of the Cabana library. Cabana is distributed under a   #
+# BSD 3-clause license. For the licensing terms see the LICENSE file in    #
+# the top-level directory.                                                 #
+#                                                                          #
+# SPDX-License-Identifier: BSD-3-Clause                                    #
+############################################################################
+
 #------------------------------------------------------------------------------#
 # Project settings
 #------------------------------------------------------------------------------#
-cmake_minimum_required(VERSION 3.9)
+cmake_minimum_required(VERSION 3.16)
 
 project(Cabana LANGUAGES CXX)
 set(PROJECT_VERSION "1.0-dev")
@@ -30,18 +41,29 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # Dependencies
 #------------------------------------------------------------------------------#
 # find kokkos
-find_package(Kokkos 3.1 REQUIRED)
+find_package(Kokkos 3.2 REQUIRED)
 
 # set supported kokkos devices
-set(CABANA_SUPPORTED_DEVICES SERIAL PTHREAD OPENMP CUDA HIP)
+set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP SYCL OPENMPTARGET)
 
 # check user required kokkos device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
   option(Cabana_REQUIRE_${_device} "Build Cabana with required Kokkos ${device} support" OFF)
-  if( Cabana_REQUIRE_${_device} )
+  if( Cabana_REQUIRE_${_device} AND NOT _device STREQUAL THREADS)
     kokkos_check( DEVICES ${_device} )
   endif()
 endforeach()
+# Threads workaround can go when we require a minimum Kokkos version of 3.6
+if(Cabana_REQUIRE_PTHREAD)
+  message(DEPRECATION "Cabana_REQUIRE_PTHREAD is deprecated, use Cabana_REQUIRE_THREADS instead!")
+endif()
+if(Cabana_REQUIRE_PTHREAD OR Cabana_REQUIRE_THREADS)
+  kokkos_check(DEVICES PTHREAD RETURN_VALUE KOKKOS_CHECK_PTHREAD_RETURN_VALUE)
+  kokkos_check(DEVICES THREADS RETURN_VALUE KOKKOS_CHECK_THREADS_RETURN_VALUE)
+  if(NOT KOKKOS_CHECK_PTHREAD_RETURN_VALUE AND NOT KOKKOS_CHECK_THREADS_RETURN_VALUE)
+    message(FATAL_ERROR "Kokkos does not provide the Threads backend requested")
+  endif()
+endif()
 
 # ensure that we can use lambdas
 if(Kokkos_ENABLE_CUDA)
@@ -50,14 +72,14 @@ endif()
 
 # standard dependency macro
 macro(Cabana_add_dependency)
-  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE" "" ${ARGN})
-  find_package( ${CABANA_DEPENDENCY_PACKAGE} QUIET )
+  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION" "" ${ARGN})
+  find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} QUIET )
   string(TOUPPER "${CABANA_DEPENDENCY_PACKAGE}" CABANA_DEPENDENCY_OPTION )
   option(
     Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION}
     "Require Cabana to build with ${CABANA_DEPENDENCY_PACKAGE} support" ${CABANA_DEPENDENCY_PACKAGE}_FOUND)
   if(Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION})
-    find_package( ${CABANA_DEPENDENCY_PACKAGE} REQUIRED )
+    find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} REQUIRED )
   endif()
   set(Cabana_ENABLE_${CABANA_DEPENDENCY_OPTION} ${${CABANA_DEPENDENCY_PACKAGE}_FOUND})
 endmacro()
@@ -68,36 +90,24 @@ Cabana_add_dependency( PACKAGE MPI )
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
 
+# find ALL
+Cabana_add_dependency( PACKAGE ALL )
+
 # find Clang Format
-find_package( CLANG_FORMAT 10)
+find_package( CLANG_FORMAT 10 )
 
 # find hypre
-Cabana_add_dependency( PACKAGE HYPRE )
-if(HYPRE_FOUND)
-  install(FILES
-    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHYPRE.cmake
-    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
-endif()
+Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
 
 # find heffte
-Cabana_add_dependency( PACKAGE Heffte )
+Cabana_add_dependency( PACKAGE Heffte VERSION 2.1.0 )
 
-#------------------------------------------------------------------------------#
-# Tests and Documentation
-#------------------------------------------------------------------------------#
-# enable unit tests
-option(Cabana_ENABLE_TESTING "Build tests" OFF)
-if(Cabana_ENABLE_TESTING)
-  enable_testing()
-endif()
-
-# enable performance tests
-option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
-
-# enable doxygen
-find_package(Doxygen)
-if(Doxygen_FOUND)
-  doxygen_add_docs(doxygen core/src)
+# find Silo
+Cabana_add_dependency( PACKAGE SILO )
+if(SILO_FOUND)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSILO.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
 endif()
 
 #------------------------------------------------------------------------------#
@@ -136,6 +146,26 @@ if(Cabana_ENABLE_COVERAGE_BUILD)
   set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} --coverage")
 endif()
 
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  option(WITH_ASAN "Build with address sanitizer" OFF)
+endif()
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" AND NOT APPLE)
+  option(WITH_MSAN "Build with memory sanitizer (experimental; requires a memory-sanitized Python interpreter)" OFF)
+endif()
+
+if(WITH_ASAN AND WITH_MSAN)
+  message( FATAL_ERROR "Address sanitizer and memory sanitizer cannot be enabled simultaneously")
+endif()
+if(WITH_ASAN)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -fno-omit-frame-pointer")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=address")
+endif()
+
+if(WITH_MSAN)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=memory -fno-omit-frame-pointer")
+  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -fsanitize=memory")
+endif()
+
 ##---------------------------------------------------------------------------##
 ## Print the revision number to stdout
 ##---------------------------------------------------------------------------##
@@ -151,10 +181,30 @@ ELSE()
 ENDIF()
 MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 
+#------------------------------------------------------------------------------#
+# Tests and Documentation
+#------------------------------------------------------------------------------#
+# enable unit tests
+option(Cabana_ENABLE_TESTING "Build tests" OFF)
+if(Cabana_ENABLE_TESTING)
+  set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
+  add_subdirectory(cmake/test_harness)
+  enable_testing()
+endif()
+
+# enable doxygen
+find_package(Doxygen)
+if(Doxygen_FOUND)
+  doxygen_add_docs(doxygen core/src cajita/src)
+endif()
+
 ##---------------------------------------------------------------------------##
 ## Libraries and Examples
 ##---------------------------------------------------------------------------##
-option(Cabana_ENABLE_CAJITA "Build Cajita" ON)
+
+add_subdirectory(core)
+
+option(Cabana_ENABLE_CAJITA "Build Cajita (grid and particle-grid)" ON)
 if(Cabana_ENABLE_CAJITA)
   if(MPI_FOUND)
     add_subdirectory(cajita)
@@ -163,14 +213,15 @@ if(Cabana_ENABLE_CAJITA)
   endif()
 endif()
 
-option(Cabana_ENABLE_CORE "Build Core" ON)
-if(Cabana_ENABLE_CORE)
-  add_subdirectory(core)
-endif()
-
 option(Cabana_ENABLE_EXAMPLES "Build examples" OFF)
 if(Cabana_ENABLE_EXAMPLES)
   add_subdirectory(example)
+endif()
+
+# enable performance tests
+option(Cabana_ENABLE_PERFORMANCE_TESTING "Build Performance Tests" OFF)
+if(Cabana_ENABLE_PERFORMANCE_TESTING)
+  add_subdirectory(benchmark)
 endif()
 
 ##---------------------------------------------------------------------------##
@@ -192,8 +243,8 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ## Clang Format
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
-  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp)
-  add_custom_target(format
+  file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
+  add_custom_target(cabana-format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})
 endif()

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2020 by the Cabana authors                            *
+ * Copyright (c) 2018-2021 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -34,21 +34,23 @@ void checkDataMembers( view_type view, const float fval, const double dval,
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
                 for ( std::size_t k = 0; k < dim_3; ++k )
-                    EXPECT_EQ( Cabana::get<0>( mirror_view( idx ), i, j, k ),
-                               fval * ( i + j + k ) );
+                    EXPECT_FLOAT_EQ(
+                        Cabana::get<0>( mirror_view( idx ), i, j, k ),
+                        fval * ( i + j + k ) );
 
         // Member 1.
         EXPECT_EQ( Cabana::get<1>( mirror_view( idx ) ), ival );
 
         // Member 2.
         for ( std::size_t i = 0; i < dim_1; ++i )
-            EXPECT_EQ( Cabana::get<2>( mirror_view( idx ), i ), dval * i );
+            EXPECT_DOUBLE_EQ( Cabana::get<2>( mirror_view( idx ), i ),
+                              dval * i );
 
         // Member 3.
         for ( std::size_t i = 0; i < dim_1; ++i )
             for ( std::size_t j = 0; j < dim_2; ++j )
-                EXPECT_EQ( Cabana::get<3>( mirror_view( idx ), i, j ),
-                           dval * ( i + j ) );
+                EXPECT_DOUBLE_EQ( Cabana::get<3>( mirror_view( idx ), i, j ),
+                                  dval * ( i + j ) );
     }
 }
 
