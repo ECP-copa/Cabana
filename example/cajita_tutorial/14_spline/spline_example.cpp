@@ -17,6 +17,9 @@
 //---------------------------------------------------------------------------//
 // Spline example.
 //---------------------------------------------------------------------------//
+
+using namespace Cajita;
+
 void splineExample()
 {
     /*
@@ -87,7 +90,9 @@ void splineExample()
         SplineWeightValues = w[d][num_knots]
         SplineWeightPhysicalGradients g[d][num_knots]
 
-      This design allows for customizing the relavant spline data for a
+      where d indexes NumSpaceDim, and num_knots is SplineOrder + 1
+
+      This design allows for customizing the relevant spline data for a
       particular application. If all Tags are omitted, all SplineDataMembers are
       included.
     */
@@ -118,9 +123,40 @@ void splineExample()
     }
     std::cout << std::endl;
 
+    // Only a subset of specific SplineDataMember tags may be used instead of
+    // the full set by default:
+    using DataTags = Cajita::SplineDataMemberTypes<
+        SplinePhysicalCellSize, SplineLogicalPosition, SplinePhysicalDistance,
+        SplineWeightValues>;
+
+    // This is may be useful in reducing memory
+    // spline data type
+    using SD_t =
+        SplineData<value_type, order, num_space, Cajita::Node, DataTags>;
+
+    // Check members.
+    static_assert( SD_t::has_physical_cell_size,
+                   "spline data missing physical cell size" );
+    static_assert( SD_t::has_logical_position,
+                   "spline data missing logical position" );
+    static_assert( SD_t::has_physical_distance,
+                   "spline data missing physical distance" );
+    static_assert( SD_t::has_weight_values,
+                   "spline data missing weight values" );
+
+    // For example, the following line gives a compile-time error since the
+    // SplineWeightPhysicalGradients data tag was not included static_assert(
+    // SD_t::has_weight_physical_gradients,
+    //                "spline data missing weight physical gradients" );
+
     /*
       We can also use the Spline<Order> interface directly to evaluate
       specific spline data given basic information about the local grid.
+
+      This approach is useful if one needs to write their own particle-grid
+      operators. However, the built-in Cajita particle-grid operators in
+      Cajita_Interpolation.hpp does not require the use of these interfaces
+      except to construct the SplineData as above.
     */
     double rdx = 1.0 / cell_size;
     double values[3]; // num_knots for a 2nd-order spline
