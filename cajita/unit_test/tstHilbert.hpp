@@ -35,9 +35,6 @@ void LayoutHilbert3DSubviewTest()
         typename Kokkos::View<double****, Kokkos::LayoutHilbert3D, TEST_DEVICE>
             view_type;
 
-    // typedef
-    typedef typename Kokkos::View<double****, TEST_DEVICE> buff_type;
-
     // Set dimensions
     int dim1 = 45;
     int dim2 = 51;
