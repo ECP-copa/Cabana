@@ -23,6 +23,27 @@
 //---------------------------------------------------------------------------//
 void hypreStructuredSolverExample()
 {
+    /*
+      In this example we will demonstrate building a Hypre Structured Solver
+      that solve a Poisson equation with designiated solution tolerance,
+
+           Laplacian( lhs ) = rhs,
+
+      This is discretized at {i,j,k}
+
+           Laplacian( lhs )_{i,j,k} = rhs_{i,j,k},
+
+      which includes 7 stencils at current {i,j,k}
+
+           { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
+           { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 }
+
+      You can try one of the following solver type and preconditioner type
+
+        solver type : PCG, GMRES, BiCGSTAB, PFMG,
+        preconditioner type : none, Diagonal, Jacobi
+    */
+
     std::cout << "Cajita HYPRE Structured Solver Example\n" << std::endl;
 
     using MemorySpace = Kokkos::HostSpace;

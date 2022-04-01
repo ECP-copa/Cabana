@@ -23,6 +23,24 @@
 //---------------------------------------------------------------------------//
 void structuredSolverExample()
 {
+
+    /*
+      In this example we will demonstrate building a Cajita Reference Conjugate
+      Gradient Solver that solve a Poisson equation with designiated solution
+      tolerance,
+
+           Laplacian( lhs_ref ) = rhs,
+
+      This is discretized at {i,j,k}
+
+           Laplacian( lhs_ref )_{i,j,k} = rhs_{i,j,k},
+
+      which includes 7 stencils at current {i,j,k}
+
+           { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
+           { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 }
+    */
+
     std::cout << "Cajita Structured Solver Example\n" << std::endl;
 
     using MemorySpace = Kokkos::HostSpace;
@@ -55,6 +73,7 @@ void structuredSolverExample()
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
+
     // Create a solver reference for comparison.
     auto lhs_ref =
         Cajita::createArray<double, MemorySpace>( "lhs_ref", vector_layout );
@@ -74,6 +93,8 @@ void structuredSolverExample()
         global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::J );
     int ncell_k =
         global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::K );
+
+    // Flll out laplacian entries of reference solver
     Kokkos::parallel_for(
         "fill_ref_entries",
         createExecutionPolicy( owned_space, ExecutionSpace() ),
@@ -110,6 +131,7 @@ void structuredSolverExample()
     ref_solver->solve( *rhs, *lhs_ref );
 
     // Compute another reference solution.
+    Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
     Cajita::ArrayOp::assign( *lhs_ref, 0.0, Cajita::Own() );
     ref_solver->solve( *rhs, *lhs_ref );
 }
