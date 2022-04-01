@@ -19,11 +19,11 @@
 #include <vector>
 
 //---------------------------------------------------------------------------//
-// Structured Solver Example
+// HYPRE Structured Solver Example
 //---------------------------------------------------------------------------//
-void structuredSolverExample()
+void hypreStructuredSolverExample()
 {
-    std::cout << "Cajita Structured Solver Example\n" << std::endl;
+    std::cout << "Cajita HYPRE Structured Solver Example\n" << std::endl;
 
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
@@ -51,67 +51,71 @@ void structuredSolverExample()
     auto rhs = Cajita::createArray<double, MemorySpace>( "rhs", vector_layout );
     Cajita::ArrayOp::assign( *rhs, 1.0, Cajita::Own() );
 
+    // Create the LHS.
+    auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
+    Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
+
+    // Create a solver.
+    auto solver = Cajita::createHypreStructuredSolver<double, MemorySpace>(
+        "PCG", *vector_layout );
+
     // Create a 7-point 3d laplacian stencil.
     std::vector<std::array<int, 3>> stencil = {
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
-    // Create a solver reference for comparison.
-    auto lhs_ref =
-        Cajita::createArray<double, MemorySpace>( "lhs_ref", vector_layout );
-    Cajita::ArrayOp::assign( *lhs_ref, 0.0, Cajita::Own() );
+    solver->setMatrixStencil( stencil );
 
-    auto ref_solver =
-        Cajita::createReferenceConjugateGradient<double, MemorySpace>(
-            *vector_layout );
-    ref_solver->setMatrixStencil( stencil );
-    const auto& ref_entries = ref_solver->getMatrixValues();
-    auto matrix_view = ref_entries.view();
-    auto global_space = local_mesh->indexSpace( Cajita::Own(), Cajita::Cell(),
-                                                Cajita::Global() );
-    int ncell_i =
-        global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::I );
-    int ncell_j =
-        global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::J );
-    int ncell_k =
-        global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::K );
+    // Create the matrix entries. The stencil is defined over cells.
+    auto matrix_entry_layout =
+        createArrayLayout( local_mesh, 7, Cajita::Cell() );
+    auto matrix_entries = Cajita::createArray<double, MemorySpace>(
+        "matrix_entries", matrix_entry_layout );
+    auto entry_view = matrix_entries->view();
     Kokkos::parallel_for(
-        "fill_ref_entries",
+        "fill_matrix_entries",
         createExecutionPolicy( owned_space, ExecutionSpace() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            int gi = i + global_space.min( Cajita::Dim::I ) -
-                     owned_space.min( Cajita::Dim::I );
-            int gj = j + global_space.min( Cajita::Dim::J ) -
-                     owned_space.min( Cajita::Dim::J );
-            int gk = k + global_space.min( Cajita::Dim::K ) -
-                     owned_space.min( Cajita::Dim::K );
-            matrix_view( i, j, k, 0 ) = 6.0;
-            matrix_view( i, j, k, 1 ) = ( gi - 1 >= 0 ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 2 ) = ( gi + 1 < ncell_i ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 3 ) = ( gj - 1 >= 0 ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 4 ) = ( gj + 1 < ncell_j ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 5 ) = ( gk - 1 >= 0 ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 6 ) = ( gk + 1 < ncell_k ) ? -1.0 : 0.0;
+            entry_view( i, j, k, 0 ) = 6.0;
+            entry_view( i, j, k, 1 ) = -1.0;
+            entry_view( i, j, k, 2 ) = -1.0;
+            entry_view( i, j, k, 3 ) = -1.0;
+            entry_view( i, j, k, 4 ) = -1.0;
+            entry_view( i, j, k, 5 ) = -1.0;
+            entry_view( i, j, k, 6 ) = -1.0;
         } );
 
-    std::vector<std::array<int, 3>> diag_stencil = { { 0, 0, 0 } };
-    ref_solver->setPreconditionerStencil( diag_stencil );
-    const auto& preconditioner_entries = ref_solver->getPreconditionerValues();
-    auto preconditioner_view = preconditioner_entries.view();
-    Kokkos::parallel_for(
-        "fill_preconditioner_entries",
-        createExecutionPolicy( owned_space, ExecutionSpace() ),
-        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            preconditioner_view( i, j, k, 0 ) = 1.0 / 6.0;
-        } );
+    solver->setMatrixValues( *matrix_entries );
 
-    ref_solver->setTolerance( 1.0e-11 );
-    ref_solver->setPrintLevel( 2 );
-    ref_solver->setup();
-    ref_solver->solve( *rhs, *lhs_ref );
+    // Set the tolerance.
+    solver->setTolerance( 1.0e-9 );
 
-    // Compute another reference solution.
-    Cajita::ArrayOp::assign( *lhs_ref, 0.0, Cajita::Own() );
-    ref_solver->solve( *rhs, *lhs_ref );
+    // Set the maximum iterations.
+    solver->setMaxIter( 2000 );
+
+    // Set the print level.
+    solver->setPrintLevel( 2 );
+
+    // Create a preconditioner.
+    std::string precond_type = "Jacobi";
+    auto preconditioner =
+        Cajita::createHypreStructuredSolver<double, MemorySpace>(
+            precond_type, *vector_layout, true );
+    solver->setPreconditioner( preconditioner );
+
+    // Setup the problem.
+    solver->setup();
+
+    // Solve the problem.
+    solver->solve( *rhs, *lhs );
+
+    // Setup the problem again. We would need to do this if we
+    // changed the matrix entries.
+    solver->setup();
+
+    // Solve the problem again
+    Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
+    Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
+    solver->solve( *rhs, *lhs );
 }
 
 //---------------------------------------------------------------------------//
@@ -125,7 +129,7 @@ int main( int argc, char* argv[] )
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
 
-        structuredSolverExample();
+        hypreStructuredSolverExample();
     }
     MPI_Finalize();
 
