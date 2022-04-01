@@ -43,19 +43,19 @@ authors:
   - name: Susan Mniszewski
     affiliation: 2
 affiliations:
-  - name: Oak Ridge National Laboratory
+  - name: Oak Ridge National Laboratory, Oak Ridge, TN, USA
     index: 1
-  - name: Los Alamos National Laboratory
+  - name: Los Alamos National Laboratory, Los Alamos, NM, USA
     index: 2
-  - name: University of California, Los Angeles
+  - name: University of California, Los Angeles, Los Angeles, CA, USA
     index: 3
-  - name: Julich Supercomputing Centre
+  - name: Jülich Supercomputing Centre, Jülich, Germany
     index: 4
-  - name: Jubilee Development
+  - name: Jubilee Development, Cambridge, MA, USA
     index: 5
-  - name: Sandia National Laboratories
+  - name: Sandia National Laboratories, Albuquerque, NM, USA
     index: 6
-  - name: Lawrence Livermore National Laboratory
+  - name: Lawrence Livermore National Laboratory, Livermore, CA, USA
     index: 7
 date: 15 December 2021
 bibliography: paper.bib
