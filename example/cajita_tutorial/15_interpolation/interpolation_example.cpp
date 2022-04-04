@@ -210,6 +210,7 @@ void interpolationExample()
         num_point );
     auto tensor_point_host = Kokkos::create_mirror_view( tensor_point_field );
 
+    std::cout << "Invididual grid points before interpolation: "
     /***************************************************************************
      * P2G
      **************************************************************************/
@@ -217,9 +218,9 @@ void interpolationExample()
      * The Cajita::P2G namespace contains several methods for interpolating data
      * from particles to the grid. These interpolations are inherently scatter
      * operations for particle-based threading (a single particle maps to
-     * several grid nodes), which requires an underlying Kokkos::ScatterView for
-     * the data being interpolated. Of note, a thread-level interface provides
-     * methods to perform interpolations for a single particle datum to
+     * several grid points), which requires an underlying Kokkos::ScatterView
+     * for the data being interpolated. Of note, a thread-level interface
+     * provides methods to perform interpolations for a single particle datum to
      * neighboring mesh entitites.
      *
      * Cajita also provides a convenience interface for defining field-based P2G
@@ -256,44 +257,60 @@ void interpolationExample()
     Kokkos::deep_copy( vector_point_field, 3.5 );
     Kokkos::deep_copy( tensor_point_field, 3.5 );
 
-    // Interpolate a scalar point value to the grid.
+    // Reset the grid to zero.
     Cajita::ArrayOp::assign( *scalar_grid_field, 0.0, Cajita::Ghost() );
+    // Interpolate a scalar point value to the grid.
     auto scalar_p2g = Cajita::createScalarValueP2G( scalar_point_field, -0.5 );
     Cajita::p2g( scalar_p2g, points, num_point, Cajita::Spline<1>(),
                  *scalar_halo, *scalar_grid_field );
+    auto scalar_view = scalar_grid_field->view();
+    // Print out a random grid point.
+    std::cout << scalar_view( 5, 5, 5 );
 
-    // Interpolate a vector point value to the grid.
+    // Reset the grid to zero.
     Cajita::ArrayOp::assign( *vector_grid_field, 0.0, Cajita::Ghost() );
+    // Interpolate a vector point value to the grid.
     auto vector_p2g = Cajita::createVectorValueP2G( vector_point_field, -0.5 );
     Cajita::p2g( vector_p2g, points, num_point, Cajita::Spline<1>(),
                  *vector_halo, *vector_grid_field );
+    auto vector_view = vector_grid_field->view();
+    // Print out a random grid point.
+    std::cout << vector_grid_field->view()( 5, 5, 5 );
 
-    // Interpolate a scalar point gradient value to the grid.
+    // Reset the grid to zero.
     Cajita::ArrayOp::assign( *vector_grid_field, 0.0, Cajita::Ghost() );
+    // Interpolate a scalar point gradient value to the grid.
     auto scalar_grad_p2g =
         Cajita::createScalarGradientP2G( scalar_point_field, -0.5 );
     Cajita::p2g( scalar_grad_p2g, points, num_point, Cajita::Spline<1>(),
                  *vector_halo, *vector_grid_field );
+    // Print out a random grid point.
+    std::cout << vector_view( 5, 5, 5 );
 
-    // Interpolate a tensor point divergence value to the grid.
+    // Reset the grid to zero.
     Cajita::ArrayOp::assign( *vector_grid_field, 0.0, Cajita::Ghost() );
+    // Interpolate a tensor point divergence value to the grid.
     auto tensor_div_p2g =
         Cajita::createTensorDivergenceP2G( tensor_point_field, -0.5 );
     Cajita::p2g( tensor_div_p2g, points, num_point, Cajita::Spline<1>(),
                  *vector_halo, *vector_grid_field );
+    // Print out a random grid point.
+    std::cout << vector_view( 5, 5, 5 );
 
     /***************************************************************************
-     * User-defined thread-level functors may be used instead of the built-in
-     * functors provided. Here, the definition of P2GExampleFunctor directly
-     * uses the thread-level interpolation interface to perform basic
-     * Cajita::P2G:: interpolations.
+     * User-defined thread-level functors may be used instead of
+     * the built-in functors provided. Here, the definition of
+     * P2GExampleFunctor directly uses the thread-level
+     * interpolation interface to perform basic Cajita::P2G::
+     * interpolations.
      *
-     * The P2GExampleFunctor is initialized with both a scalar point field and a
-     * vector point field.
+     * The P2GExampleFunctor is initialized with both a scalar
+     * point field and a vector point field.
      *
-     * Whereas this example still passes the user-defined functor to
-     * Cajita::p2g(), more advanced usages with kernel fusion and multiple
-     * aggregated fields will be considered in another example.
+     * Whereas this example still passes the user-defined functor
+     * to Cajita::p2g(), more advanced usages with kernel fusion
+     * and multiple aggregated fields will be considered in another
+     * example.
      * ************************************************************************/
 
     P2GExampleFunctor<Kokkos::View<double*, ExecutionSpace>,
@@ -306,20 +323,22 @@ void interpolationExample()
      * G2P
      **************************************************************************/
     /*
-     * In addition to P2G, The Cajita::G2P namespace contains several
-     * methods for interpolating data from the grid to particles. These
-     * interpolations are inherently gather operations for particle-based
-     * threading (multiple grid values are gathered to a single point).
+     * In addition to P2G, The Cajita::G2P namespace contains
+     * several methods for interpolating data from the grid to
+     * particles. These interpolations are inherently gather
+     * operations for particle-based threading (multiple grid
+     * values are gathered to a single point).
      *
-     * Here we again focus on the Cajita::g2p() interface to interpolate
-     * from all grid points to particles.
+     * Here we again focus on the Cajita::g2p() interface to
+     * interpolate from all grid points to particles.
      */
 
     /***************************************************************************
-     * Cajita also provides a basic set of G2P functors and corresponding
-     * creation routines. The following examples demonstrate the use of these
-     * built-in functors in combination with Cajita::g2p() to perform
-     * interpolations of grid data of various ranks.
+     * Cajita also provides a basic set of G2P functors and
+     * corresponding creation routines. The following examples
+     * demonstrate the use of these built-in functors in
+     * combination with Cajita::g2p() to perform interpolations of
+     * grid data of various ranks.
      * *************************************************************************/
 
     // Interpolate a scalar grid value to the points.
@@ -329,6 +348,8 @@ void interpolationExample()
     Cajita::g2p( *scalar_grid_field, *scalar_halo, points, num_point,
                  Cajita::Spline<1>(), scalar_value_g2p );
     Kokkos::deep_copy( scalar_point_host, scalar_point_field );
+    // Print out a random particle.
+    std::cout << scalar_point_field( 127 );
 
     // Interpolate a vector grid value to the points.
     Kokkos::deep_copy( vector_point_field, 0.0 );
@@ -337,6 +358,8 @@ void interpolationExample()
     Cajita::g2p( *vector_grid_field, *vector_halo, points, num_point,
                  Cajita::Spline<1>(), vector_value_g2p );
     Kokkos::deep_copy( vector_point_host, vector_point_field );
+    // Print out a random particle.
+    std::cout << vector_point_field( 127, 0 );
 
     // Interpolate a scalar grid gradient to the points.
     Kokkos::deep_copy( vector_point_field, 0.0 );
@@ -345,6 +368,8 @@ void interpolationExample()
     Cajita::g2p( *scalar_grid_field, *scalar_halo, points, num_point,
                  Cajita::Spline<1>(), scalar_gradient_g2p );
     Kokkos::deep_copy( vector_point_host, vector_point_field );
+    // Print out a random particle.
+    std::cout << vector_point_field( 127, 0 );
 
     // Interpolate a vector grid divergence to the points.
     Kokkos::deep_copy( scalar_point_field, 0.0 );
@@ -353,7 +378,15 @@ void interpolationExample()
     Cajita::g2p( *vector_grid_field, *vector_halo, points, num_point,
                  Cajita::Spline<1>(), vector_div_g2p );
     Kokkos::deep_copy( scalar_point_host, scalar_point_field );
+    // Print out a random particle.
+    std::cout << vector_point_field( 127, 0 );
 
+    /***************************************************************************
+     * User-defined thread-level functors can again be used instead, just as
+     * above with P2G. This user-defined functor is again passed to the overall
+     * interpolation function, but is also useful when combined in fused kernel
+     * operations.
+     * *************************************************************************/
     G2PExampleFunctor<Kokkos::View<double*, ExecutionSpace>,
                       Kokkos::View<double* [2][2], ExecutionSpace>>
         example_g2p{ scalar_point_field, tensor_point_field };
@@ -366,6 +399,8 @@ void interpolationExample()
 //---------------------------------------------------------------------------//
 int main( int argc, char* argv[] )
 {
+    // MPI only needed to create the grid/mesh. Not intended to be run with
+    // multiple ranks.
     MPI_Init( &argc, &argv );
     {
         Kokkos::ScopeGuard scope_guard( argc, argv );
