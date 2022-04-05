@@ -133,7 +133,7 @@ $(function() {
 </li>
 <li>cell_bits_per_tile_dim
 : <a class="el" href="classCajita_1_1BlockMap.html#af5119249a33826e541359382bdd9c393">Cajita::BlockMap&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;</a>
-, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a9ad7cabca54d4e60f3983478a385114a">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;</a>
+, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#abeffdd20e2001506d8c2b7257dc67a6b">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
 , <a class="el" href="classCajita_1_1SparseMap.html#ad6a263120f27d94ae9ae2a667072c44a">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 , <a class="el" href="classCajita_1_1TileMap.html#ab1f19fb695ca37c53f59333c89904385">Cajita::TileMap&lt; CBits, CNumPerDim, CNumPerTile &gt;</a>
 </li>
@@ -147,7 +147,7 @@ $(function() {
 </li>
 <li>cell_num_per_tile_dim
 : <a class="el" href="classCajita_1_1BlockMap.html#a42b5341edb7c865ef233dd9b9b9c7a09">Cajita::BlockMap&lt; MemorySpace, CBits, CNumPerDim, CNumPerTile, Hash, Key, Value &gt;</a>
-, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a87d6d71768cdb668802e6f584932b8ed">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;</a>
+, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a48f75e292caa057b5ff2bab858af6359">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
 , <a class="el" href="classCajita_1_1SparseMap.html#acf44a8b191093462d5a4f22c3f1ea0cc">Cajita::SparseMap&lt; MemorySpace, CellPerTileDim, Hash, Key, Value &gt;</a>
 , <a class="el" href="classCajita_1_1TileMap.html#a2f5367ce7a7af300c2fd9adfdcc219ad">Cajita::TileMap&lt; CBits, CNumPerDim, CNumPerTile &gt;</a>
 </li>
@@ -317,6 +317,7 @@ $(function() {
 , <a class="el" href="structCajita_1_1NonUniformMesh.html#ab4e0f3db6f9cf2f4ecf4ad6c8502f5fc">Cajita::NonUniformMesh&lt; Scalar, NumSpaceDim &gt;</a>
 , <a class="el" href="classCajita_1_1ReferenceConjugateGradient.html#a58fa7831a4f8e58a40fed035e79a1819">Cajita::ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, DeviceType &gt;</a>
 , <a class="el" href="classCajita_1_1ReferenceStructuredSolver.html#a23c6158f39f25627c61479ac7fac6106">Cajita::ReferenceStructuredSolver&lt; Scalar, EntityType, MeshType, DeviceType &gt;</a>
+, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a652ee3297ac5b29c8b88e6042442aa6f">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
 , <a class="el" href="structCajita_1_1SparseMesh.html#aceefb1c3cb6fdd1fbb274a72bd3bcf82">Cajita::SparseMesh&lt; Scalar, NumSpaceDim &gt;</a>
 , <a class="el" href="structCajita_1_1SplineData_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01EntityType_00_01SplineDatdd11f66e3f203bad116bc3594e5b35d6.html#a802e1683ebed6cbd9f25d4d9331e0d92">Cajita::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, SplineDataMemberTypes&lt; Tags... &gt; &gt;</a>
 , <a class="el" href="structCajita_1_1SplineData_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01EntityType_00_01void_01_4.html#a07b6f74605ca32e4807d182384c8a0da">Cajita::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, void &gt;</a>
@@ -360,7 +361,7 @@ $(function() {
 , <a class="el" href="classCajita_1_1TileMap.html#a1fc8ae60b8b132ee9d5db71e7a82e686">Cajita::TileMap&lt; CBits, CNumPerDim, CNumPerTile &gt;</a>
 </li>
 <li>rec_partition
-: <a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a12c68d27b425b8d85c31d699716c9574">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;::SubWorkloadFunctor&lt; PartitionView, WorkloadView &gt;</a>
+: <a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a63c0e0ce3ffa6743eda5809c9b4acb07">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;::SubWorkloadFunctor&lt; PartitionView, WorkloadView &gt;</a>
 </li>
 <li>row_ptr
 : <a class="el" href="structCabana_1_1Experimental_1_1CrsGraph.html#a0e036e7a7cfa14753ea15e2f843729c5">Cabana::Experimental::CrsGraph&lt; MemorySpace, Tag &gt;</a>
@@ -435,7 +436,7 @@ $(function() {
 : <a class="el" href="structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightValues_01_4.html#a28cd8136a08f7b90c8295bb43a6a86fd">Cajita::SplineDataMember&lt; Scalar, Order, NumSpaceDim, SplineWeightValues &gt;</a>
 </li>
 <li>workload_prefix_sum
-: <a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a0ead344673c61cb0926bb57be3d9bbc3">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;::SubWorkloadFunctor&lt; PartitionView, WorkloadView &gt;</a>
+: <a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#a6e404714b157f7db41e50563c553c566">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;::SubWorkloadFunctor&lt; PartitionView, WorkloadView &gt;</a>
 </li>
 </ul>
 

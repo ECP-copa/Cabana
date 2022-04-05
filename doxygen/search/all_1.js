@@ -19,5 +19,5 @@ var searchData=
   ['assign_23',['assign',['../Cajita__Array_8hpp.html#a7d4e05954c93f91f59bebeabd73e3b72',1,'Cajita::ArrayOp']]],
   ['atomic_5faccess_5fslice_24',['atomic_access_slice',['../classCabana_1_1Slice.html#a8373336422b4edf6d253d064c22541d9',1,'Cabana::Slice']]],
   ['atomicaccessmemory_25',['AtomicAccessMemory',['../structCabana_1_1AtomicAccessMemory.html',1,'Cabana']]],
-  ['averagerankworkload_26',['averageRankWorkload',['../classCajita_1_1SparseDimPartitioner.html#a60105dcf044748284d584a24e86ceef5',1,'Cajita::SparseDimPartitioner::averageRankWorkload()'],['../classCajita_1_1SparseDimPartitioner.html#a8d8875b9ae8cddf641c251fdeba9bb24',1,'Cajita::SparseDimPartitioner::averageRankWorkload(WorkloadViewHost &amp;prefix_sum_view)']]]
+  ['averagerankworkload_26',['averageRankWorkload',['../classCajita_1_1SparseDimPartitioner.html#add6b2aef303123d5bdce3a4757c4a9bc',1,'Cajita::SparseDimPartitioner::averageRankWorkload()'],['../classCajita_1_1SparseDimPartitioner.html#a51dfc55970b2c7f08225c3a163847bdd',1,'Cajita::SparseDimPartitioner::averageRankWorkload(WorkloadViewHost &amp;prefix_sum_view)']]]
 ];

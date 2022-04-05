@@ -96,8 +96,8 @@ $(function() {
 : <a class="el" href="classCabana_1_1Slice.html#a822824d2492b6f6da330e60f5689874f">Cabana::Slice&lt; DataType, DeviceType, MemoryAccessType, VectorLength, Stride &gt;</a>
 , <a class="el" href="structCajita_1_1ArrayOp_1_1DotFunctor.html#a733d2f41db62887f8f23045a3b8d9b76">Cajita::ArrayOp::DotFunctor&lt; ViewType, NumSpaceDim &gt;</a>
 , <a class="el" href="structCajita_1_1ArrayOp_1_1Norm1Functor.html#a20a5c9568d4df3536e5297b832f0959b">Cajita::ArrayOp::Norm1Functor&lt; ViewType, NumSpaceDim &gt;</a>
-, <a class="el" href="structCajita_1_1ArrayOp_1_1Norm2Functor.html#a445d6cdc5a2f5809ee9334ca76e8ca6f">Cajita::ArrayOp::Norm2Functor&lt; ViewType, NumSpaceDim &gt;</a>
-, <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#a901200addf1354a0d54086d2857e94de">Cajita::ArrayOp::NormInfFunctor&lt; ViewType, NumSpaceDim &gt;</a>
+, <a class="el" href="structCajita_1_1ArrayOp_1_1Norm2Functor.html#af3747b306207f1eb944c84c578fe7cf1">Cajita::ArrayOp::Norm2Functor&lt; ViewType, NumSpaceDim &gt;</a>
+, <a class="el" href="structCajita_1_1ArrayOp_1_1NormInfFunctor.html#afd4b6c09ff87b982c5d367c7bf94d5a5">Cajita::ArrayOp::NormInfFunctor&lt; ViewType, NumSpaceDim &gt;</a>
 , <a class="el" href="structCajita_1_1HashKey2TileID_3_01Key_00_01HashTypes_1_1Morton_01_4.html#ac4ad88cfaef8c75f14789d6e1ab3f99b">Cajita::HashKey2TileID&lt; Key, HashTypes::Morton &gt;</a>
 , <a class="el" href="structCajita_1_1HashKey2TileID_3_01Key_00_01HashTypes_1_1Naive_01_4.html#aca0d451e7ef5ad2edd24d27fe92b245f">Cajita::HashKey2TileID&lt; Key, HashTypes::Naive &gt;</a>
 , <a class="el" href="structCajita_1_1IndexConversion_1_1L2G.html#a521e478bdf3f215a1085f9bdfeafb2e0">Cajita::IndexConversion::L2G&lt; MeshType, EntityType &gt;</a>
@@ -105,7 +105,7 @@ $(function() {
 , <a class="el" href="structCajita_1_1ScalarGradientP2G.html#aeaaccba18297e77a7c99aa43732311f3">Cajita::ScalarGradientP2G&lt; ViewType &gt;</a>
 , <a class="el" href="structCajita_1_1ScalarValueG2P.html#ae6040fbac9d2b53350253ffb19cd464e">Cajita::ScalarValueG2P&lt; ViewType &gt;</a>
 , <a class="el" href="structCajita_1_1ScalarValueP2G.html#ac327f24adab1c2871200a531b0d2e477">Cajita::ScalarValueP2G&lt; ViewType &gt;</a>
-, <a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#ae991b34e44a5e7d5ca3e05233181f4f9">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;::SubWorkloadFunctor&lt; PartitionView, WorkloadView &gt;</a>
+, <a class="el" href="structCajita_1_1SparseDimPartitioner_1_1SubWorkloadFunctor.html#aa49a52a2a468578450fa229bd2406f26">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;::SubWorkloadFunctor&lt; PartitionView, WorkloadView &gt;</a>
 , <a class="el" href="structCajita_1_1TensorDivergenceP2G.html#a0e0a280af345fb1ede6c40231f94a350">Cajita::TensorDivergenceP2G&lt; ViewType &gt;</a>
 , <a class="el" href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Morton_01_4.html#a86370cb5828dbfb7efe3e9135e104687">Cajita::TileID2HashKey&lt; Key, HashTypes::Morton &gt;</a>
 , <a class="el" href="structCajita_1_1TileID2HashKey_3_01Key_00_01HashTypes_1_1Naive_01_4.html#af1504447565a40371a89bb517f0b7f41">Cajita::TileID2HashKey&lt; Key, HashTypes::Naive &gt;</a>
@@ -124,7 +124,7 @@ $(function() {
 : <a class="el" href="classCajita_1_1IndexSpace.html#a1854edb25a93d049285694d976a99d90">Cajita::IndexSpace&lt; N &gt;</a>
 </li>
 <li>optimizePartition()
-: <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a8fceae05ab045a8532ccef902b495a2d">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;</a>
+: <a class="el" href="classCajita_1_1SparseDimPartitioner.html#af0c1e99bbd57d2964aa89fb1eef465b3">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
 </li>
 <li>order
 : <a class="el" href="structCajita_1_1Spline_3_010_01_4.html#abd544092ee4f447089584f411fba11a8">Cajita::Spline&lt; 0 &gt;</a>
@@ -134,14 +134,25 @@ $(function() {
 , <a class="el" href="structCajita_1_1SplineData_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01EntityType_00_01SplineDatdd11f66e3f203bad116bc3594e5b35d6.html#aa905c5f4192b3484b6e0c1ef5436c696">Cajita::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, SplineDataMemberTypes&lt; Tags... &gt; &gt;</a>
 , <a class="el" href="structCajita_1_1SplineData_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01EntityType_00_01void_01_4.html#a04526fb6ab6268a71136493cb7dd997f">Cajita::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, void &gt;</a>
 </li>
+<li>ownedCellInfo()
+: <a class="el" href="classCajita_1_1BlockPartitioner.html#a7e99a76336956b983abd2bc2a0b7e2f1">Cajita::BlockPartitioner&lt; NumSpaceDim &gt;</a>
+, <a class="el" href="classCajita_1_1DimBlockPartitioner.html#acdb78cb798e9727a7e709d46268d3309">Cajita::DimBlockPartitioner&lt; NumSpaceDim &gt;</a>
+, <a class="el" href="classCajita_1_1ManualBlockPartitioner.html#a4be54fe4e13947d09cb1768063de8f14">Cajita::ManualBlockPartitioner&lt; NumSpaceDim &gt;</a>
+, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a0f1ccee3a257e7c0164bd31a62391473">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
+</li>
 <li>ownedCellsPerDimension()
-: <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a3a21a47809a1d51dc806703a8d74c516">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;</a>
+: <a class="el" href="classCajita_1_1DimBlockPartitioner.html#a622a6950228c806da6cd978587a2ef1f">Cajita::DimBlockPartitioner&lt; NumSpaceDim &gt;</a>
+, <a class="el" href="classCajita_1_1ManualBlockPartitioner.html#a801d1a6d9eb55c0047798a28a52999c9">Cajita::ManualBlockPartitioner&lt; NumSpaceDim &gt;</a>
+, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a2de4b75cfd8ae87ce76c223d0a6aa2a2">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
 </li>
 <li>ownedNumCell()
 : <a class="el" href="classCajita_1_1GlobalGrid.html#a4a973ee23730611c01d9cc5acdea7a8f">Cajita::GlobalGrid&lt; MeshType &gt;</a>
 </li>
+<li>ownedTileInfo()
+: <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a16438a4249d049575d7b2a76f1965490">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
+</li>
 <li>ownedTilesPerDimension()
-: <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a3a20b3b44ad443ec2663bdbb004d48e3">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim &gt;</a>
+: <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a1e3c5f54f8fe08ec2ec88aefb8415bb7">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>
 </li>
 </ul>
 </div><!-- contents -->

@@ -96,9 +96,12 @@ Inheritance diagram for Cajita::BlockPartitioner&lt; NumSpaceDim &gt;:</div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a36cbd63a8eace775a4269bfc06714b0a"><td class="memItemLeft" align="right" valign="top">virtual std::array&lt; int, NumSpaceDim &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockPartitioner.html#a36cbd63a8eace775a4269bfc06714b0a">ranksPerDimension</a> (MPI_Comm comm, const std::array&lt; int, NumSpaceDim &gt; &amp;global_cells_per_dim) const =0</td></tr>
-<tr class="memdesc:a36cbd63a8eace775a4269bfc06714b0a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of MPI ranks in each dimension of the grid.  <a href="classCajita_1_1BlockPartitioner.html#a36cbd63a8eace775a4269bfc06714b0a">More...</a><br /></td></tr>
-<tr class="separator:a36cbd63a8eace775a4269bfc06714b0a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a54106083fa8a0de33f9546df38ab4c93"><td class="memItemLeft" align="right" valign="top">virtual std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockPartitioner.html#a54106083fa8a0de33f9546df38ab4c93">ranksPerDimension</a> (MPI_Comm comm, const std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt; &amp;global_cells_per_dim) const =0</td></tr>
+<tr class="memdesc:a54106083fa8a0de33f9546df38ab4c93"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the number of MPI ranks in each dimension of the grid.  <a href="classCajita_1_1BlockPartitioner.html#a54106083fa8a0de33f9546df38ab4c93">More...</a><br /></td></tr>
+<tr class="separator:a54106083fa8a0de33f9546df38ab4c93"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e99a76336956b983abd2bc2a0b7e2f1"><td class="memItemLeft" align="right" valign="top">virtual void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1BlockPartitioner.html#a7e99a76336956b983abd2bc2a0b7e2f1">ownedCellInfo</a> (MPI_Comm cart_comm, const std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt; &amp;global_cells_per_dim, std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt; &amp;owned_num_cell, std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt; &amp;global_cell_offset) const =0</td></tr>
+<tr class="memdesc:a7e99a76336956b983abd2bc2a0b7e2f1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the owned number of cells and global cell offset of the current MPI rank.  <a href="classCajita_1_1BlockPartitioner.html#a7e99a76336956b983abd2bc2a0b7e2f1">More...</a><br /></td></tr>
+<tr class="separator:a7e99a76336956b983abd2bc2a0b7e2f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -114,14 +117,13 @@ class Cajita::BlockPartitioner&lt; NumSpaceDim &gt;</h3>
 <p>Block partitioner base class. </p>
 <dl class="tparams"><dt>Template Parameters</dt><dd>
   <table class="tparams">
-    <tr><td class="paramname">NumSpaceDim</td><td>Spatial dimension.</td></tr>
+    <tr><td class="paramname">NumSpaceDim</td><td>Spatial dimension. Given global mesh parameters, the block partitioner computes how many MPI ranks are assigned to each logical dimension. </td></tr>
   </table>
   </dd>
 </dl>
-<p>Given global mesh parameters, the block partitioner computes how many MPI ranks are assigned to each logical dimension. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a36cbd63a8eace775a4269bfc06714b0a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a36cbd63a8eace775a4269bfc06714b0a">&#9670;&nbsp;</a></span>ranksPerDimension()</h2>
+<a id="a7e99a76336956b983abd2bc2a0b7e2f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e99a76336956b983abd2bc2a0b7e2f1">&#9670;&nbsp;</a></span>ownedCellInfo()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -132,7 +134,70 @@ template&lt;std::size_t NumSpaceDim&gt; </div>
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname">virtual std::array&lt;int, NumSpaceDim&gt; <a class="el" href="classCajita_1_1BlockPartitioner.html">Cajita::BlockPartitioner</a>&lt; NumSpaceDim &gt;::ranksPerDimension </td>
+          <td class="memname">virtual void <a class="el" href="classCajita_1_1BlockPartitioner.html">Cajita::BlockPartitioner</a>&lt; NumSpaceDim &gt;::ownedCellInfo </td>
+          <td>(</td>
+          <td class="paramtype">MPI_Comm&#160;</td>
+          <td class="paramname"><em>cart_comm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>global_cells_per_dim</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>owned_num_cell</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>global_cell_offset</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">pure virtual</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Get the owned number of cells and global cell offset of the current MPI rank. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">cart_comm</td><td>The MPI Cartesian communicator for the partitioning. </td></tr>
+    <tr><td class="paramname">global_cells_per_dim</td><td>The number of global cells in each dimension. </td></tr>
+    <tr><td class="paramname">owned_num_cell</td><td>(Return) The owned number of cells of the current MPI rank in each dimension. </td></tr>
+    <tr><td class="paramname">global_cell_offset</td><td>(Return) The global cell offset of the current MPI rank in each dimension </td></tr>
+  </table>
+  </dd>
+</dl>
+
+<p>Implemented in <a class="el" href="classCajita_1_1DimBlockPartitioner.html#acdb78cb798e9727a7e709d46268d3309">Cajita::DimBlockPartitioner&lt; NumSpaceDim &gt;</a>, <a class="el" href="classCajita_1_1DimBlockPartitioner.html#acdb78cb798e9727a7e709d46268d3309">Cajita::DimBlockPartitioner&lt; 3 &gt;</a>, <a class="el" href="classCajita_1_1ManualBlockPartitioner.html#a4be54fe4e13947d09cb1768063de8f14">Cajita::ManualBlockPartitioner&lt; NumSpaceDim &gt;</a>, <a class="el" href="classCajita_1_1ManualBlockPartitioner.html#a4be54fe4e13947d09cb1768063de8f14">Cajita::ManualBlockPartitioner&lt; 3 &gt;</a>, and <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a0f1ccee3a257e7c0164bd31a62391473">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>.</p>
+
+</div>
+</div>
+<a id="a54106083fa8a0de33f9546df38ab4c93"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a54106083fa8a0de33f9546df38ab4c93">&#9670;&nbsp;</a></span>ranksPerDimension()</h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;std::size_t NumSpaceDim&gt; </div>
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">virtual std::array&lt;int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a>&gt; <a class="el" href="classCajita_1_1BlockPartitioner.html">Cajita::BlockPartitioner</a>&lt; NumSpaceDim &gt;::ranksPerDimension </td>
           <td>(</td>
           <td class="paramtype">MPI_Comm&#160;</td>
           <td class="paramname"><em>comm</em>, </td>
@@ -140,7 +205,7 @@ template&lt;std::size_t NumSpaceDim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const std::array&lt; int, NumSpaceDim &gt; &amp;&#160;</td>
+          <td class="paramtype">const std::array&lt; int, <a class="el" href="classCajita_1_1BlockPartitioner.html#a4c67571ff5a952b1b64c10616d43838f">num_space_dim</a> &gt; &amp;&#160;</td>
           <td class="paramname"><em>global_cells_per_dim</em>&#160;</td>
         </tr>
         <tr>
@@ -166,7 +231,7 @@ template&lt;std::size_t NumSpaceDim&gt; </div>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>The number of MPI ranks in each dimension of the grid. </dd></dl>
 
-<p>Implemented in <a class="el" href="classCajita_1_1DimBlockPartitioner.html#ac172d397abcae54ee6a65f2311e97f9f">Cajita::DimBlockPartitioner&lt; NumSpaceDim &gt;</a>, <a class="el" href="classCajita_1_1DimBlockPartitioner.html#ac172d397abcae54ee6a65f2311e97f9f">Cajita::DimBlockPartitioner&lt; 3 &gt;</a>, <a class="el" href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">Cajita::ManualBlockPartitioner&lt; NumSpaceDim &gt;</a>, and <a class="el" href="classCajita_1_1ManualBlockPartitioner.html#a757c6681acb588e3a9b76ef757cd4682">Cajita::ManualBlockPartitioner&lt; 3 &gt;</a>.</p>
+<p>Implemented in <a class="el" href="classCajita_1_1SparseDimPartitioner.html#af68f61d079af0ca032d44a1d43e2069a">Cajita::SparseDimPartitioner&lt; Device, CellPerTileDim, NumSpaceDim &gt;</a>.</p>
 
 </div>
 </div>
