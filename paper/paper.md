@@ -171,8 +171,8 @@ data between particles and grids. While this is most relevant to PIC methods
 and long-range MD algorithms, grid structures are useful even in simulations
 which are generally "mesh-free" (e.g. short-range MD), for accelerating
 neighbor list generation and multi-node spatial decomposition. In addition,
-support for sparse grids has been added, only allocating and iterating over the
-grid where particles exist.
+support for sparse grids is in progress to enable only allocating and iterating
+over the grid where particles exist.
 
 As with the core particle package, `Cajita` includes interfaces to separate
 libraries for complex particle-grid related motifs. This includes distributed,
@@ -389,6 +389,6 @@ Energy's National Nuclear Security Administration under contract number
 DE-NA-0003525.
 
 This research used resources of the Oak Ridge Leadership Computing Facility
-(OLCF),supported by DOE under contract DE-AC05-00OR22725.
+(OLCF), supported by DOE under contract DE-AC05-00OR22725.
 
 # References
