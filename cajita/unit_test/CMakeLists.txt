@@ -37,6 +37,7 @@ set(MPI_TESTS
   BovWriter
   Parallel
   SparseDimPartitioner
+  Partitioner
   )
 
 if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET

@@ -112,9 +112,7 @@ void uniform_distribution_automatic_rank()
         auto gt_tile = rec_partitions[d][cart_rank[d] + 1] -
                        rec_partitions[d][cart_rank[d]];
         EXPECT_EQ( owned_tiles_per_dim[d], gt_tile );
-        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim *
-                                               cell_per_tile_dim *
-                                               cell_per_tile_dim );
+        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim );
         gt_imbalance_factor *= gt_tile;
     }
     gt_imbalance_factor /=
@@ -157,9 +155,7 @@ void uniform_distribution_automatic_rank()
         auto gt_tile = rec_partitions[d][cart_rank[d] + 1] -
                        rec_partitions[d][cart_rank[d]];
 
-        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim *
-                                               cell_per_tile_dim *
-                                               cell_per_tile_dim );
+        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim );
     }
 
     auto imbalance_factor = partitioner.computeImbalanceFactor( cart_comm );
