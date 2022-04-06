@@ -87,31 +87,19 @@ void structuredSolverExample()
     auto matrix_view = ref_entries.view();
     auto global_space = local_mesh->indexSpace( Cajita::Own(), Cajita::Cell(),
                                                 Cajita::Global() );
-    int ncell_i =
-        global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::I );
-    int ncell_j =
-        global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::J );
-    int ncell_k =
-        global_grid->globalNumEntity( Cajita::Cell(), Cajita::Dim::K );
 
     // Flll out laplacian entries of reference solver
     Kokkos::parallel_for(
         "fill_ref_entries",
         createExecutionPolicy( owned_space, ExecutionSpace() ),
         KOKKOS_LAMBDA( const int i, const int j, const int k ) {
-            int gi = i + global_space.min( Cajita::Dim::I ) -
-                     owned_space.min( Cajita::Dim::I );
-            int gj = j + global_space.min( Cajita::Dim::J ) -
-                     owned_space.min( Cajita::Dim::J );
-            int gk = k + global_space.min( Cajita::Dim::K ) -
-                     owned_space.min( Cajita::Dim::K );
             matrix_view( i, j, k, 0 ) = 6.0;
-            matrix_view( i, j, k, 1 ) = ( gi - 1 >= 0 ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 2 ) = ( gi + 1 < ncell_i ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 3 ) = ( gj - 1 >= 0 ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 4 ) = ( gj + 1 < ncell_j ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 5 ) = ( gk - 1 >= 0 ) ? -1.0 : 0.0;
-            matrix_view( i, j, k, 6 ) = ( gk + 1 < ncell_k ) ? -1.0 : 0.0;
+            matrix_view( i, j, k, 1 ) = -1.0;
+            matrix_view( i, j, k, 2 ) = -1.0;
+            matrix_view( i, j, k, 3 ) = -1.0;
+            matrix_view( i, j, k, 4 ) = -1.0;
+            matrix_view( i, j, k, 5 ) = -1.0;
+            matrix_view( i, j, k, 6 ) = -1.0;
         } );
 
     std::vector<std::array<int, 3>> diag_stencil = { { 0, 0, 0 } };
