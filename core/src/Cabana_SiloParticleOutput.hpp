@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -10,7 +10,7 @@
  ****************************************************************************/
 
 /****************************************************************************
- * Copyright (c) 2021 by the Picasso authors                                *
+ * Copyright (c) 2022 by the Picasso authors                                *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Picasso library. Picasso is distributed under a *
