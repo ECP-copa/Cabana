@@ -24,8 +24,8 @@
 void hypreStructuredSolverExample()
 {
     /*
-      In this example we will demonstrate building a Hypre Structured Solver
-      that solve a Poisson equation with designiated solution tolerance,
+      In this example we will demonstrate building a HYPRE Structured Solver
+      that solve a Poisson equation with designated solution tolerance,
 
            Laplacian( lhs ) = rhs,
 
@@ -46,6 +46,10 @@ void hypreStructuredSolverExample()
 
     std::cout << "Cajita HYPRE Structured Solver Example\n" << std::endl;
 
+    /*
+      As with all Cajita examples, we start by defining everything from the
+      global mesh to the local grid.
+    */
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
 
@@ -66,6 +70,8 @@ void hypreStructuredSolverExample()
     auto local_mesh = createLocalGrid( global_grid, 1 );
     auto owned_space = local_mesh->indexSpace( Cajita::Own(), Cajita::Cell(),
                                                Cajita::Local() );
+
+    /************************************************************************/
 
     // Create the RHS.
     auto vector_layout = createArrayLayout( local_mesh, 1, Cajita::Cell() );
@@ -107,33 +113,40 @@ void hypreStructuredSolverExample()
 
     solver->setMatrixValues( *matrix_entries );
 
-    // Set the tolerance.
+    // The desired tolerance must be set for each solve.
     solver->setTolerance( 1.0e-9 );
 
     // Set the maximum iterations.
     solver->setMaxIter( 2000 );
 
-    // Set the print level.
+    /*
+      The print level defines the information output from HYPRE during the solve
+    */
     solver->setPrintLevel( 2 );
 
-    // Create a preconditioner.
+    /*
+      Create a preconditioner - in this case we use Jacobi (other available
+      options are shown above).
+    */
     std::string precond_type = "Jacobi";
     auto preconditioner =
         Cajita::createHypreStructuredSolver<double, MemorySpace>(
             precond_type, *vector_layout, true );
     solver->setPreconditioner( preconditioner );
 
-    // Setup the problem.
+    // Setup the problem - this is necessary before solving.
     solver->setup();
 
-    // Solve the problem.
+    // Now solve the problem.
     solver->solve( *rhs, *lhs );
 
-    // Setup the problem again. We would need to do this if we
-    // changed the matrix entries.
+    /*
+      Setup the problem again. We would need to do this if we changed the matrix
+      entries, but in this case we just leave it unchanged.
+    */
     solver->setup();
 
-    // Solve the problem again
+    // Reset to the same initial condition and solve the problem again.
     Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
     Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
     solver->solve( *rhs, *lhs );

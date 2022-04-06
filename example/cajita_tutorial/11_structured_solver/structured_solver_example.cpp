@@ -26,14 +26,14 @@ void structuredSolverExample()
 
     /*
       In this example we will demonstrate building a Cajita Reference Conjugate
-      Gradient Solver that solve a Poisson equation with designiated solution
+      Gradient Solver that solves a Poisson equation with designated solution
       tolerance,
 
-           Laplacian( lhs_ref ) = rhs,
+           Laplacian( lhs ) = rhs,
 
       This is discretized at {i,j,k}
 
-           Laplacian( lhs_ref )_{i,j,k} = rhs_{i,j,k},
+           Laplacian( lhs )_{i,j,k} = rhs_{i,j,k},
 
       which includes 7 stencils at current {i,j,k}
 
@@ -43,6 +43,10 @@ void structuredSolverExample()
 
     std::cout << "Cajita Structured Solver Example\n" << std::endl;
 
+    /*
+      As with all Cajita examples, we start by defining everything necessary to
+      create the local grid.
+    */
     using MemorySpace = Kokkos::HostSpace;
     using ExecutionSpace = Kokkos::DefaultHostExecutionSpace;
 
@@ -64,6 +68,8 @@ void structuredSolverExample()
     auto owned_space = local_mesh->indexSpace( Cajita::Own(), Cajita::Cell(),
                                                Cajita::Local() );
 
+    /************************************************************************/
+
     // Create the RHS.
     auto vector_layout = createArrayLayout( local_mesh, 1, Cajita::Cell() );
     auto rhs = Cajita::createArray<double, MemorySpace>( "rhs", vector_layout );
@@ -74,11 +80,15 @@ void structuredSolverExample()
         { 0, 0, 0 }, { -1, 0, 0 }, { 1, 0, 0 }, { 0, -1, 0 },
         { 0, 1, 0 }, { 0, 0, -1 }, { 0, 0, 1 } };
 
-    // Create a solver reference for comparison.
-    auto lhs_ref =
-        Cajita::createArray<double, MemorySpace>( "lhs_ref", vector_layout );
-    Cajita::ArrayOp::assign( *lhs_ref, 0.0, Cajita::Own() );
+    // Create an array and initialze to zero.
+    auto lhs = Cajita::createArray<double, MemorySpace>( "lhs", vector_layout );
+    Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
 
+    /*
+      Now we create the solver. Cajita implements a conjugate gradient solver,
+      but more options are available through an interface to HYPRE (see the next
+      example).
+    */
     auto ref_solver =
         Cajita::createReferenceConjugateGradient<double, MemorySpace>(
             *vector_layout );
@@ -86,7 +96,7 @@ void structuredSolverExample()
     const auto& ref_entries = ref_solver->getMatrixValues();
     auto matrix_view = ref_entries.view();
 
-    // Flll out laplacian entries of reference solver
+    // Fill out laplacian entries of the solver
     Kokkos::parallel_for(
         "fill_ref_entries",
         createExecutionPolicy( owned_space, ExecutionSpace() ),
@@ -111,15 +121,36 @@ void structuredSolverExample()
             preconditioner_view( i, j, k, 0 ) = 1.0 / 6.0;
         } );
 
+    // The desired tolerance must be set for each solve.
     ref_solver->setTolerance( 1.0e-11 );
-    ref_solver->setPrintLevel( 2 );
-    ref_solver->setup();
-    ref_solver->solve( *rhs, *lhs_ref );
 
-    // Compute another reference solution.
+    // Set the maximum iterations.
+    ref_solver->setMaxIter( 2000 );
+
+    /*
+      The print level defines the information output during the solve:
+        - 0: no solver output
+        - 1: final solver output
+        - 2: solver output each step
+    */
+    ref_solver->setPrintLevel( 2 );
+
+    // Setup the problem - this is necessary before solving.
+    ref_solver->setup();
+
+    // Now solve the problem.
+    ref_solver->solve( *rhs, *lhs );
+
+    /*
+      Setup the problem again. We would need to do this if we changed the matrix
+      entries, but in this case we just leave it unchanged.
+    */
+    ref_solver->setup();
+
+    // Reset to the same initial condition and solve the problem again.
     Cajita::ArrayOp::assign( *rhs, 2.0, Cajita::Own() );
-    Cajita::ArrayOp::assign( *lhs_ref, 0.0, Cajita::Own() );
-    ref_solver->solve( *rhs, *lhs_ref );
+    Cajita::ArrayOp::assign( *lhs, 0.0, Cajita::Own() );
+    ref_solver->solve( *rhs, *lhs );
 }
 
 //---------------------------------------------------------------------------//
