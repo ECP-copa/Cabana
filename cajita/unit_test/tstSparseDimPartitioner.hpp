@@ -144,6 +144,7 @@ void uniform_distribution_automatic_rank()
                     sis.insertCell( i, j, k );
                 }
         } );
+    Kokkos::fence();
 
     // compute workload and do partition optimization
     partitioner.optimizePartition( sis, MPI_COMM_WORLD );
@@ -421,6 +422,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
                 sis.insertTile( tiles_view( id, 0 ), tiles_view( id, 1 ),
                                 tiles_view( id, 2 ) );
             } );
+        Kokkos::fence();
 
         // compute workload from a sparseMap and do partition optimization
         partitioner.optimizePartition( sis, MPI_COMM_WORLD );
