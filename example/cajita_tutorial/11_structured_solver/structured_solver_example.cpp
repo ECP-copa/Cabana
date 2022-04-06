@@ -85,8 +85,6 @@ void structuredSolverExample()
     ref_solver->setMatrixStencil( stencil );
     const auto& ref_entries = ref_solver->getMatrixValues();
     auto matrix_view = ref_entries.view();
-    auto global_space = local_mesh->indexSpace( Cajita::Own(), Cajita::Cell(),
-                                                Cajita::Global() );
 
     // Flll out laplacian entries of reference solver
     Kokkos::parallel_for(
