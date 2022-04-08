@@ -15,8 +15,10 @@ authors:
     orcid: 0000-0002-4250-9476
     affiliation: 1
   - name: Christoph Junghans
+    orcid: 0000-0003-0925-1458
     affiliation: 2
   - name: Damien Lebrun-Grandié
+    orcid: 0000-0003-1952-7219
     affiliation: 1
   - name: Robert Bird
     affiliation: 2
