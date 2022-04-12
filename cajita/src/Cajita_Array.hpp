@@ -739,6 +739,14 @@ struct DotFunctor
 
     //! Join operation.
     KOKKOS_INLINE_FUNCTION
+    void join( value_type dst, const value_type src ) const
+    {
+        for ( size_type j = 0; j < value_count; ++j )
+            dst[j] += src[j];
+    }
+
+    //! Join operation.
+    KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -833,6 +841,15 @@ struct NormInfFunctor
 
     //! Join operation.
     KOKKOS_INLINE_FUNCTION
+    void join( value_type dst, const value_type src ) const
+    {
+        for ( size_type j = 0; j < value_count; ++j )
+            if ( src[j] > dst[j] )
+                dst[j] = src[j];
+    }
+
+    //! Join operation.
+    KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -922,6 +939,14 @@ struct Norm1Functor
 
     //! Join operation.
     KOKKOS_INLINE_FUNCTION
+    void join( value_type dst, const value_type src ) const
+    {
+        for ( size_type j = 0; j < value_count; ++j )
+            dst[j] += src[j];
+    }
+
+    //! Join operation.
+    KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -1006,6 +1031,14 @@ struct Norm2Functor
                 value_type norm ) const
     {
         norm[l] += _view( i, j, l ) * _view( i, j, l );
+    }
+
+    //! Join operation.
+    KOKKOS_INLINE_FUNCTION
+    void join( value_type dst, const value_type src ) const
+    {
+        for ( size_type j = 0; j < value_count; ++j )
+            dst[j] += src[j];
     }
 
     //! Join operation.
