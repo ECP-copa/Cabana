@@ -309,7 +309,7 @@ class Array
 };
 
 //---------------------------------------------------------------------------//
-// Scatic type checker.
+// Static type checker.
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
@@ -575,7 +575,7 @@ std::shared_ptr<Array_t> cloneCopy( const Array_t& array, DecompositionTag tag )
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Update two vectors auch that a = alpha * a + beta * b.
+  \brief Update two vectors such that a = alpha * a + beta * b.
   3D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
@@ -602,7 +602,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 }
 
 /*!
-  \brief Update two vectors auch that a = alpha * a + beta * b.
+  \brief Update two vectors such that a = alpha * a + beta * b.
   2D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
@@ -630,7 +630,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  \brief Update three vectors such that a = alpha * a + beta * b + gamma * c.
   3D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
@@ -662,7 +662,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 }
 
 /*!
-  \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  \brief Update three vectors such that a = alpha * a + beta * b + gamma * c.
   2D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
