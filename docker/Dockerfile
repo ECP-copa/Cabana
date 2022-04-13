@@ -1,4 +1,4 @@
-ARG BASE=nvidia/cuda:10.2-devel
+ARG BASE=nvidia/cuda:11.0-devel-ubuntu20.04
 FROM $BASE
 
 ARG NPROCS=4
@@ -8,6 +8,7 @@ RUN apt-get update && apt-get install -y \
         ccache \
         wget \
         openssh-client \
+        libgtest-dev \
     && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

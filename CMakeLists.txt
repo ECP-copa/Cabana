@@ -187,8 +187,17 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
+  find_package(GTest 1.10 REQUIRED)
+  # Workaround for FindGTest module in CMake older than 3.20
+  if(TARGET GTest::gtest)
+    set(gtest_target GTest::gtest)
+  elseif(TARGET GTest::GTest)
+    set(gtest_target GTest::GTest)
+  else()
+    message(FATAL_ERROR "bug in GTest find module workaround")
+  endif()
   set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
-  add_subdirectory(cmake/test_harness)
+  include(cmake/test_harness/test_harness.cmake)
   enable_testing()
 endif()
 
