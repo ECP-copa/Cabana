@@ -382,7 +382,7 @@ int main( int argc, char* argv[] )
     Kokkos::initialize( argc, argv );
 
     // Check arguments.
-    if ( argc < 3 )
+    if ( argc < 2 )
         throw std::runtime_error( "Incorrect number of arguments. \n \
              First argument - file name for output \n \
              Optional second argument - run size (small or large) \n \

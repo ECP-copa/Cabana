@@ -46,7 +46,7 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP OR Kokkos_
 
     if(Cabana_ENABLE_MPI)
       target_link_libraries(CommPerformance gtest)
-      add_test(NAME Cabana_Performance_Comm COMMAND ${NONMPI_PRECOMMAND} CommPerformance 1000 comm_output.txt)
+      add_test(NAME Cabana_Performance_Comm COMMAND ${NONMPI_PRECOMMAND} CommPerformance comm_output.txt)
     endif()
   endif()
 endif()
