@@ -139,26 +139,30 @@ template&lt;typename Decomposition &gt; </td></tr>
 <tr class="memitem:ad3d7de26c088998d0fde42742fc1e281"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_FUNCTION Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#ad3d7de26c088998d0fde42742fc1e281">extent</a> (Decomposition d, const int dim) const</td></tr>
 <tr class="memdesc:ad3d7de26c088998d0fde42742fc1e281"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the extent of a given dimension. <br /></td></tr>
 <tr class="separator:ad3d7de26c088998d0fde42742fc1e281"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a7fd6225837d4895a3e348f8d84000a79"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a7fd6225837d4895a3e348f8d84000a79">coordinates</a> (<a class="el" href="structCajita_1_1Cell.html">Cell</a>, const int index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
-<tr class="separator:a7fd6225837d4895a3e348f8d84000a79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a944ec5dd688fa401060f5e479e075fac"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a944ec5dd688fa401060f5e479e075fac">coordinates</a> (<a class="el" href="structCajita_1_1Node.html">Node</a>, const int index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
-<tr class="separator:a944ec5dd688fa401060f5e479e075fac"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad3400e29696a1e3196dac5edfee53b54"><td class="memTemplParams" colspan="2">template&lt;int Dir&gt; </td></tr>
-<tr class="memitem:ad3400e29696a1e3196dac5edfee53b54"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#ad3400e29696a1e3196dac5edfee53b54">coordinates</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, const int index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
-<tr class="separator:ad3400e29696a1e3196dac5edfee53b54"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d20d4318b36dfce327ba05ef0b25a5f"><td class="memTemplParams" colspan="2">template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:a5d20d4318b36dfce327ba05ef0b25a5f"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a5d20d4318b36dfce327ba05ef0b25a5f">coordinates</a> (<a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;, const int index[3], Scalar x[3]) const</td></tr>
-<tr class="separator:a5d20d4318b36dfce327ba05ef0b25a5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65a1940a2999864832321d5cf7aa7c12"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a65a1940a2999864832321d5cf7aa7c12">measure</a> (<a class="el" href="structCajita_1_1Node.html">Node</a>, const int[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
-<tr class="separator:a65a1940a2999864832321d5cf7aa7c12"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ad1cd80546539bc9f81d1a61f6fe139c9"><td class="memTemplParams" colspan="2">template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </td></tr>
-<tr class="memitem:ad1cd80546539bc9f81d1a61f6fe139c9"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#ad1cd80546539bc9f81d1a61f6fe139c9">measure</a> (<a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;, const int[3]) const</td></tr>
-<tr class="separator:ad1cd80546539bc9f81d1a61f6fe139c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9663618797d51cdc6bf188126adb313d"><td class="memTemplParams" colspan="2">template&lt;int Dir&gt; </td></tr>
-<tr class="memitem:a9663618797d51cdc6bf188126adb313d"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a9663618797d51cdc6bf188126adb313d">measure</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, const int[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
-<tr class="separator:a9663618797d51cdc6bf188126adb313d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a68aa279fbd509e945fc1b9a01425fedf"><td class="memItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a68aa279fbd509e945fc1b9a01425fedf">measure</a> (<a class="el" href="structCajita_1_1Cell.html">Cell</a>, const int[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
-<tr class="separator:a68aa279fbd509e945fc1b9a01425fedf"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a218cff249fe0e1b4641b6af09fde992f"><td class="memTemplParams" colspan="2">template&lt;class Integer &gt; </td></tr>
+<tr class="memitem:a218cff249fe0e1b4641b6af09fde992f"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a218cff249fe0e1b4641b6af09fde992f">coordinates</a> (<a class="el" href="structCajita_1_1Cell.html">Cell</a>, const Integer index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
+<tr class="separator:a218cff249fe0e1b4641b6af09fde992f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3cd5d0a864478112313a62d195398808"><td class="memTemplParams" colspan="2">template&lt;class Integer &gt; </td></tr>
+<tr class="memitem:a3cd5d0a864478112313a62d195398808"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a3cd5d0a864478112313a62d195398808">coordinates</a> (<a class="el" href="structCajita_1_1Node.html">Node</a>, const Integer index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
+<tr class="separator:a3cd5d0a864478112313a62d195398808"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:abdd1502b113b1f4733ffde6dc16509a0"><td class="memTemplParams" colspan="2">template&lt;int Dir, class Integer &gt; </td></tr>
+<tr class="memitem:abdd1502b113b1f4733ffde6dc16509a0"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION void&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#abdd1502b113b1f4733ffde6dc16509a0">coordinates</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, const Integer index[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>], Scalar x[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
+<tr class="separator:abdd1502b113b1f4733ffde6dc16509a0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a477bf74f71e7b3900fcc504e3e273829"><td class="memTemplParams" colspan="2">template&lt;int Dir, class Integer , std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a477bf74f71e7b3900fcc504e3e273829"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, void &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a477bf74f71e7b3900fcc504e3e273829">coordinates</a> (<a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;, const Integer index[3], Scalar x[3]) const</td></tr>
+<tr class="separator:a477bf74f71e7b3900fcc504e3e273829"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad8f4b282c8d7ffc90f5275a5e7fc8e27"><td class="memTemplParams" colspan="2">template&lt;class Integer &gt; </td></tr>
+<tr class="memitem:ad8f4b282c8d7ffc90f5275a5e7fc8e27"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#ad8f4b282c8d7ffc90f5275a5e7fc8e27">measure</a> (<a class="el" href="structCajita_1_1Node.html">Node</a>, const Integer[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
+<tr class="separator:ad8f4b282c8d7ffc90f5275a5e7fc8e27"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a522e9a5bac5898339c0870b42b766bfb"><td class="memTemplParams" colspan="2">template&lt;int Dir, class Integer , std::size_t NSD = num_space_dim&gt; </td></tr>
+<tr class="memitem:a522e9a5bac5898339c0870b42b766bfb"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION std::enable_if_t&lt; 3==NSD, Scalar &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a522e9a5bac5898339c0870b42b766bfb">measure</a> (<a class="el" href="structCajita_1_1Edge.html">Edge</a>&lt; Dir &gt;, const Integer[3]) const</td></tr>
+<tr class="separator:a522e9a5bac5898339c0870b42b766bfb"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aed94510bed0150358ebf159dc75194ee"><td class="memTemplParams" colspan="2">template&lt;int Dir, class Integer &gt; </td></tr>
+<tr class="memitem:aed94510bed0150358ebf159dc75194ee"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aed94510bed0150358ebf159dc75194ee">measure</a> (<a class="el" href="structCajita_1_1Face.html">Face</a>&lt; Dir &gt;, const Integer[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
+<tr class="separator:aed94510bed0150358ebf159dc75194ee"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4cf43e5d3505bd767e8f2223dadeea4f"><td class="memTemplParams" colspan="2">template&lt;class Integer &gt; </td></tr>
+<tr class="memitem:a4cf43e5d3505bd767e8f2223dadeea4f"><td class="memTemplItemLeft" align="right" valign="top">KOKKOS_INLINE_FUNCTION Scalar&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#a4cf43e5d3505bd767e8f2223dadeea4f">measure</a> (<a class="el" href="structCajita_1_1Cell.html">Cell</a>, const Integer[<a class="el" href="classCajita_1_1LocalMesh_3_01Device_00_01UniformMesh_3_01Scalar_00_01NumSpaceDim_01_4_01_4.html#aced4201af228404b09af9cbaabe80d69">num_space_dim</a>]) const</td></tr>
+<tr class="separator:a4cf43e5d3505bd767e8f2223dadeea4f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-attribs"></a>
 Static Public Attributes</h2></td></tr>
@@ -173,13 +177,15 @@ class Cajita::LocalMesh&lt; Device, UniformMesh&lt; Scalar, NumSpaceDim &gt; &gt
 
 <p><a class="el" href="structCajita_1_1Local.html" title="Local index tag.">Local</a> mesh partial specialization for uniform mesh. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
-<a id="a7fd6225837d4895a3e348f8d84000a79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a7fd6225837d4895a3e348f8d84000a79">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[1/4]</span></h2>
+<a id="a218cff249fe0e1b4641b6af09fde992f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a218cff249fe0e1b4641b6af09fde992f">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;class Integer &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -193,7 +199,7 @@ template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">const Integer&#160;</td>
           <td class="paramname"><em>index</em>[num_space_dim], </td>
         </tr>
         <tr>
@@ -218,15 +224,15 @@ template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
 
 </div>
 </div>
-<a id="a5d20d4318b36dfce327ba05ef0b25a5f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d20d4318b36dfce327ba05ef0b25a5f">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[2/4]</span></h2>
+<a id="a477bf74f71e7b3900fcc504e3e273829"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a477bf74f71e7b3900fcc504e3e273829">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
 <div class="memtemplate">
-template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </div>
+template&lt;int Dir, class Integer , std::size_t NSD = num_space_dim&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -240,7 +246,7 @@ template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">const Integer&#160;</td>
           <td class="paramname"><em>index</em>[3], </td>
         </tr>
         <tr>
@@ -265,15 +271,15 @@ template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </div>
 
 </div>
 </div>
-<a id="ad3400e29696a1e3196dac5edfee53b54"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad3400e29696a1e3196dac5edfee53b54">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[3/4]</span></h2>
+<a id="abdd1502b113b1f4733ffde6dc16509a0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#abdd1502b113b1f4733ffde6dc16509a0">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
 <div class="memtemplate">
-template&lt;int Dir&gt; </div>
+template&lt;int Dir, class Integer &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -287,7 +293,7 @@ template&lt;int Dir&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">const Integer&#160;</td>
           <td class="paramname"><em>index</em>[num_space_dim], </td>
         </tr>
         <tr>
@@ -312,13 +318,15 @@ template&lt;int Dir&gt; </div>
 
 </div>
 </div>
-<a id="a944ec5dd688fa401060f5e479e075fac"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a944ec5dd688fa401060f5e479e075fac">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[4/4]</span></h2>
+<a id="a3cd5d0a864478112313a62d195398808"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3cd5d0a864478112313a62d195398808">&#9670;&nbsp;</a></span>coordinates() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;class Integer &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -332,7 +340,7 @@ template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
+          <td class="paramtype">const Integer&#160;</td>
           <td class="paramname"><em>index</em>[num_space_dim], </td>
         </tr>
         <tr>
@@ -533,13 +541,15 @@ template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
 
 </div>
 </div>
-<a id="a68aa279fbd509e945fc1b9a01425fedf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a68aa279fbd509e945fc1b9a01425fedf">&#9670;&nbsp;</a></span>measure() <span class="overload">[1/4]</span></h2>
+<a id="a4cf43e5d3505bd767e8f2223dadeea4f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4cf43e5d3505bd767e8f2223dadeea4f">&#9670;&nbsp;</a></span>measure() <span class="overload">[1/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;class Integer &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -553,8 +563,8 @@ template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname">[num_space_dim]&#160;</td>
+          <td class="paramtype">const&#160;</td>
+          <td class="paramname"><em>Integer</em>[num_space_dim]&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -572,15 +582,15 @@ template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
 
 </div>
 </div>
-<a id="ad1cd80546539bc9f81d1a61f6fe139c9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ad1cd80546539bc9f81d1a61f6fe139c9">&#9670;&nbsp;</a></span>measure() <span class="overload">[2/4]</span></h2>
+<a id="a522e9a5bac5898339c0870b42b766bfb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a522e9a5bac5898339c0870b42b766bfb">&#9670;&nbsp;</a></span>measure() <span class="overload">[2/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
 <div class="memtemplate">
-template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </div>
+template&lt;int Dir, class Integer , std::size_t NSD = num_space_dim&gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -594,8 +604,8 @@ template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname">[3]&#160;</td>
+          <td class="paramtype">const&#160;</td>
+          <td class="paramname"><em>Integer</em>[3]&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -613,15 +623,15 @@ template&lt;int Dir, std::size_t NSD = num_space_dim&gt; </div>
 
 </div>
 </div>
-<a id="a9663618797d51cdc6bf188126adb313d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a9663618797d51cdc6bf188126adb313d">&#9670;&nbsp;</a></span>measure() <span class="overload">[3/4]</span></h2>
+<a id="aed94510bed0150358ebf159dc75194ee"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aed94510bed0150358ebf159dc75194ee">&#9670;&nbsp;</a></span>measure() <span class="overload">[3/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
 <div class="memtemplate">
-template&lt;int Dir&gt; </div>
+template&lt;int Dir, class Integer &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -635,8 +645,8 @@ template&lt;int Dir&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname">[num_space_dim]&#160;</td>
+          <td class="paramtype">const&#160;</td>
+          <td class="paramname"><em>Integer</em>[num_space_dim]&#160;</td>
         </tr>
         <tr>
           <td></td>
@@ -654,13 +664,15 @@ template&lt;int Dir&gt; </div>
 
 </div>
 </div>
-<a id="a65a1940a2999864832321d5cf7aa7c12"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a65a1940a2999864832321d5cf7aa7c12">&#9670;&nbsp;</a></span>measure() <span class="overload">[4/4]</span></h2>
+<a id="ad8f4b282c8d7ffc90f5275a5e7fc8e27"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad8f4b282c8d7ffc90f5275a5e7fc8e27">&#9670;&nbsp;</a></span>measure() <span class="overload">[4/4]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
 <div class="memtemplate">
 template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
+<div class="memtemplate">
+template&lt;class Integer &gt; </div>
 <table class="mlabels">
   <tr>
   <td class="mlabels-left">
@@ -674,8 +686,8 @@ template&lt;class Scalar , class Device , std::size_t NumSpaceDim&gt; </div>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">const int&#160;</td>
-          <td class="paramname">[num_space_dim]&#160;</td>
+          <td class="paramtype">const&#160;</td>
+          <td class="paramname"><em>Integer</em>[num_space_dim]&#160;</td>
         </tr>
         <tr>
           <td></td>
