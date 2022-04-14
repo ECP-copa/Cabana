@@ -139,9 +139,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:ad7ad6c77a89dcdb20c164daddd6f7e44"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#ad7ad6c77a89dcdb20c164daddd6f7e44">SparseDimPartitioner</a> (MPI_Comm comm, float max_workload_coeff, int workload_num, int num_step_rebalance, const std::array&lt; int, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a652ee3297ac5b29c8b88e6042442aa6f">num_space_dim</a> &gt; &amp;global_cells_per_dim, int max_optimize_iteration=10)</td></tr>
 <tr class="memdesc:ad7ad6c77a89dcdb20c164daddd6f7e44"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor - automatically compute ranks_per_dim from MPI communicator.  <a href="classCajita_1_1SparseDimPartitioner.html#ad7ad6c77a89dcdb20c164daddd6f7e44">More...</a><br /></td></tr>
 <tr class="separator:ad7ad6c77a89dcdb20c164daddd6f7e44"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adee830f4bd8da48044e4fdfbc6c01620"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#adee830f4bd8da48044e4fdfbc6c01620">SparseDimPartitioner</a> (float max_workload_coeff, int workload_num, int num_step_rebalance, const std::array&lt; int, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a652ee3297ac5b29c8b88e6042442aa6f">num_space_dim</a> &gt; &amp;ranks_per_dim, const std::array&lt; int, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a652ee3297ac5b29c8b88e6042442aa6f">num_space_dim</a> &gt; &amp;global_cells_per_dim, int max_optimize_iteration=10)</td></tr>
-<tr class="memdesc:adee830f4bd8da48044e4fdfbc6c01620"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor - user-defined ranks_per_dim communicator.  <a href="classCajita_1_1SparseDimPartitioner.html#adee830f4bd8da48044e4fdfbc6c01620">More...</a><br /></td></tr>
-<tr class="separator:adee830f4bd8da48044e4fdfbc6c01620"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1802f0699c5729a38c9512713057efcb"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#a1802f0699c5729a38c9512713057efcb">SparseDimPartitioner</a> (MPI_Comm comm, float max_workload_coeff, int workload_num, int num_step_rebalance, const std::array&lt; int, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a652ee3297ac5b29c8b88e6042442aa6f">num_space_dim</a> &gt; &amp;ranks_per_dim, const std::array&lt; int, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a652ee3297ac5b29c8b88e6042442aa6f">num_space_dim</a> &gt; &amp;global_cells_per_dim, int max_optimize_iteration=10)</td></tr>
+<tr class="memdesc:a1802f0699c5729a38c9512713057efcb"><td class="mdescLeft">&#160;</td><td class="mdescRight">Constructor - user-defined ranks_per_dim communicator.  <a href="classCajita_1_1SparseDimPartitioner.html#a1802f0699c5729a38c9512713057efcb">More...</a><br /></td></tr>
+<tr class="separator:a1802f0699c5729a38c9512713057efcb"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2a7a673396816fd06d2b026f26c036c9"><td class="memItemLeft" align="right" valign="top">std::array&lt; int, <a class="el" href="classCajita_1_1SparseDimPartitioner.html#a652ee3297ac5b29c8b88e6042442aa6f">num_space_dim</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseDimPartitioner.html#a2a7a673396816fd06d2b026f26c036c9">ranksPerDimension</a> (MPI_Comm comm)</td></tr>
 <tr class="memdesc:a2a7a673396816fd06d2b026f26c036c9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Compute the number of MPI ranks in each dimension of the grid from the given MPI communicator.  <a href="classCajita_1_1SparseDimPartitioner.html#a2a7a673396816fd06d2b026f26c036c9">More...</a><br /></td></tr>
 <tr class="separator:a2a7a673396816fd06d2b026f26c036c9"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -307,7 +307,7 @@ template&lt;typename Device , unsigned long long CellPerTileDim = 4, std::size_t
 <p>Constructor - automatically compute ranks_per_dim from MPI communicator. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">comm</td><td>MPI communicator to decide the rank nums in each dimention </td></tr>
+    <tr><td class="paramname">comm</td><td>MPI communicator to decide the rank nums in each dimension </td></tr>
     <tr><td class="paramname">max_workload_coeff</td><td>threshold factor for re-partition </td></tr>
     <tr><td class="paramname">workload_num</td><td>total workload(particle/tile) number, used to compute workload_threshold </td></tr>
     <tr><td class="paramname">num_step_rebalance</td><td>the simulation step number after which one should check if repartition is needed </td></tr>
@@ -319,8 +319,8 @@ template&lt;typename Device , unsigned long long CellPerTileDim = 4, std::size_t
 
 </div>
 </div>
-<a id="adee830f4bd8da48044e4fdfbc6c01620"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adee830f4bd8da48044e4fdfbc6c01620">&#9670;&nbsp;</a></span>SparseDimPartitioner() <span class="overload">[2/2]</span></h2>
+<a id="a1802f0699c5729a38c9512713057efcb"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1802f0699c5729a38c9512713057efcb">&#9670;&nbsp;</a></span>SparseDimPartitioner() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -333,6 +333,12 @@ template&lt;typename Device , unsigned long long CellPerTileDim = 4, std::size_t
         <tr>
           <td class="memname"><a class="el" href="classCajita_1_1SparseDimPartitioner.html">Cajita::SparseDimPartitioner</a>&lt; Device, CellPerTileDim, NumSpaceDim &gt;::<a class="el" href="classCajita_1_1SparseDimPartitioner.html">SparseDimPartitioner</a> </td>
           <td>(</td>
+          <td class="paramtype">MPI_Comm&#160;</td>
+          <td class="paramname"><em>comm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
           <td class="paramtype">float&#160;</td>
           <td class="paramname"><em>max_workload_coeff</em>, </td>
         </tr>
@@ -382,10 +388,11 @@ template&lt;typename Device , unsigned long long CellPerTileDim = 4, std::size_t
 <p>Constructor - user-defined ranks_per_dim communicator. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
+    <tr><td class="paramname">comm</td><td>MPI communicator to decide the rank nums in each dimension </td></tr>
     <tr><td class="paramname">max_workload_coeff</td><td>threshold factor for re-partition </td></tr>
     <tr><td class="paramname">workload_num</td><td>total workload(particle/tile) number, used to compute workload_threshold </td></tr>
     <tr><td class="paramname">num_step_rebalance</td><td>the simulation step number after which one should check if repartition is needed </td></tr>
-    <tr><td class="paramname">ranks_per_dim</td><td>3D array, user-defined MPI ranks in per dimension </td></tr>
+    <tr><td class="paramname">ranks_per_dim</td><td>3D array, user-defined MPI rank constrains in per dimension </td></tr>
     <tr><td class="paramname">global_cells_per_dim</td><td>3D array, global cells in each dimension </td></tr>
     <tr><td class="paramname">max_optimize_iteration</td><td>max iteration number to run the optimization </td></tr>
   </table>
