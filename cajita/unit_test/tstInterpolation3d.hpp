@@ -83,7 +83,8 @@ void interpolationTest()
     auto scalar_layout = createArrayLayout( local_grid, 1, Node() );
     auto scalar_grid_field =
         createArray<double, TEST_DEVICE>( "scalar_grid_field", scalar_layout );
-    auto scalar_halo = createHalo( *scalar_grid_field, FullHaloPattern() );
+    auto scalar_halo =
+        createHalo( NodeHaloPattern<3>(), halo_width, *scalar_grid_field );
     auto scalar_grid_host =
         Kokkos::create_mirror_view( scalar_grid_field->view() );
 
@@ -91,7 +92,8 @@ void interpolationTest()
     auto vector_layout = createArrayLayout( local_grid, 3, Node() );
     auto vector_grid_field =
         createArray<double, TEST_DEVICE>( "vector_grid_field", vector_layout );
-    auto vector_halo = createHalo( *vector_grid_field, FullHaloPattern() );
+    auto vector_halo =
+        createHalo( NodeHaloPattern<3>(), halo_width, *vector_grid_field );
     auto vector_grid_host =
         Kokkos::create_mirror_view( vector_grid_field->view() );
 

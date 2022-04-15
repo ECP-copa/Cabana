@@ -17,8 +17,8 @@
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
-#include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_ParticleGridDistributor.hpp>
+#include <Cajita_Partitioner.hpp>
 #include <Cajita_Types.hpp>
 
 #include <Kokkos_Core.hpp>

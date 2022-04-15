@@ -183,7 +183,7 @@ void gatherScatterTest( const ManualBlockPartitioner<2>& partitioner,
         ArrayOp::assign( *array, 1.0, Own() );
 
         // Create a halo.
-        auto halo = createHalo( *array, NodeHaloPattern<2>(), halo_width );
+        auto halo = createHalo( NodeHaloPattern<2>(), halo_width, *array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *array );
@@ -345,7 +345,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
     pattern.setNeighbors( neighbors );
 
     // Create a halo.
-    auto halo = createHalo( *array, pattern );
+    auto halo = createHalo( pattern, array_halo_width, *array );
 
     // Scatter.
     halo->scatter( TEST_EXECSPACE(), reduce, *array );

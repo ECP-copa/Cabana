@@ -23,8 +23,8 @@
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
+#include <Cajita_Partitioner.hpp>
 #include <Cajita_SiloParticleOutput.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
 
 #include <Cabana_AoSoA.hpp>
 #include <Cabana_DeepCopy.hpp>
@@ -48,7 +48,7 @@ using namespace Cajita;
 void writeTest()
 {
     // Let MPI compute the partitioning for this test.
-    Cajita::UniformDimPartitioner partitioner;
+    DimBlockPartitioner<3> partitioner;
 
     // Create the global grid.
     double cell_size = 0.23;

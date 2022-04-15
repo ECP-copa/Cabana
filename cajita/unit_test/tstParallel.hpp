@@ -15,8 +15,8 @@
 #include <Cajita_IndexSpace.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_Parallel.hpp>
+#include <Cajita_Partitioner.hpp>
 #include <Cajita_Types.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
 
 #include <Kokkos_Core.hpp>
 
@@ -195,7 +195,7 @@ void parallelIndexSpaceTest()
 void parallelLocalGridTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
+    DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;

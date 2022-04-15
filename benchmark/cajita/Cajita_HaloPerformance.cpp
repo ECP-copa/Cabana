@@ -100,7 +100,7 @@ void performanceTest( std::ostream& stream,
             // create halo
             halo_create_timer.start( halo_width );
             auto halo =
-                createHalo( *array, Cajita::NodeHaloPattern<3>(), halo_width );
+                createHalo( Cajita::NodeHaloPattern<3>(), halo_width, *array );
             halo_create_timer.stop( halo_width );
 
             // gather

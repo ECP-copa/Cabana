@@ -910,19 +910,17 @@ class ReferenceConjugateGradient
         std::copy( neighbor_set.begin(), neighbor_set.end(),
                    halo_neighbors.begin() );
 
-        // Build the halo. We put 2 entries as each operator application will
-        // gather 2 vectors with fused kernels.
-        auto halo_layout = createArrayLayout( local_grid, 2, EntityType() );
-        HaloPattern<num_space_dim> pattern;
-        pattern.setNeighbors( halo_neighbors );
-        halo = createHalo<Scalar, DeviceType>( *halo_layout, pattern, width );
-
         // Create a new layout.
         auto matrix_layout =
             createArrayLayout( local_grid, stencil.size(), EntityType() );
 
         // Allocate the matrix.
         matrix = createArray<Scalar, DeviceType>( "matrix", matrix_layout );
+
+        // Build the halo.
+        HaloPattern<num_space_dim> pattern;
+        pattern.setNeighbors( halo_neighbors );
+        halo = createHalo( pattern, width, *matrix );
     }
 
   private:

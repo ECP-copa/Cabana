@@ -38,7 +38,7 @@ void gridParallelExample()
     using device_type = exec_space::device_type;
 
     // Let MPI compute the partitioning for this example.
-    Cajita::UniformDimPartitioner partitioner;
+    Cajita::DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;

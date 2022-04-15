@@ -84,7 +84,8 @@ void testConversion3d( const std::array<bool, 3>& is_dim_periodic )
         } );
 
     // Gather to get the ghosted global indices.
-    auto halo = createHalo( *global_index_array, NodeHaloPattern<3>() );
+    auto halo =
+        createHalo( NodeHaloPattern<3>(), halo_width, *global_index_array );
     halo->gather( TEST_EXECSPACE(), *global_index_array );
 
     // Do a loop over ghosted local indices and fill with the index
@@ -178,7 +179,8 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
         } );
 
     // Gather to get the ghosted global indices.
-    auto halo = createHalo( *global_index_array, NodeHaloPattern<2>() );
+    auto halo =
+        createHalo( NodeHaloPattern<2>(), halo_width, *global_index_array );
     halo->gather( TEST_EXECSPACE(), *global_index_array );
 
     // Do a loop over ghosted local indices and fill with the index
