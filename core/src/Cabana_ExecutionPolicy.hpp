@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -77,30 +77,19 @@ class StructRange
   array index.
 */
 template <int VectorLength, class... Properties>
-class SimdPolicy
-    : public Kokkos::TeamPolicy<
-          typename Kokkos::Impl::PolicyTraits<Properties...>::execution_space,
-          Kokkos::Schedule<Kokkos::Dynamic>>
+class SimdPolicy : public Kokkos::TeamPolicy<Properties...,
+                                             Kokkos::Schedule<Kokkos::Dynamic>>
 {
-  private:
-    typedef Kokkos::Impl::PolicyTraits<Properties...> traits;
-
   public:
-    //! Work tag.
-    using work_tag = typename traits::work_tag;
-    //! Kokkos execution space.
-    using execution_space = typename traits::execution_space;
     //! Kokkos team policy.
     using base_type =
-        Kokkos::TeamPolicy<execution_space, Kokkos::Schedule<Kokkos::Dynamic>>;
-    //! Simd execution policy.
-    using execution_policy = SimdPolicy<VectorLength, Properties...>;
+        Kokkos::TeamPolicy<Properties..., Kokkos::Schedule<Kokkos::Dynamic>>;
     //! Index type.
-    using index_type = typename traits::index_type;
+    using index_type = typename base_type::index_type;
 
     /*!
       \brief Range constructor.
-      \param begin The begininning of the 1D range. This will be decomposed
+      \param begin The beginning of the 1D range. This will be decomposed
       into 2D indices.
       \param end The ending of the 1D range. This will be decomposed
       into 2D indices.

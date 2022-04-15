@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -36,7 +36,7 @@ void verletListExample()
     /*
       Next declare the data layout of the AoSoA. We use the host space here
       for the purposes of this example but all memory spaces, vector lengths,
-      and member type configurations are compatible with sorting.
+      and member type configurations are compatible with neighbor lists.
     */
     const int VectorLength = 8;
     using MemorySpace = Kokkos::HostSpace;

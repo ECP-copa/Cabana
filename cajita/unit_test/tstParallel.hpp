@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -106,9 +106,9 @@ void parallelIndexSpaceTest()
     for ( int i = 0; i < size_i; ++i )
     {
         if ( is1.min( 0 ) <= i && i < is1.max( 0 ) )
-            EXPECT_EQ( v1_mirror( i ), 1.0 );
+            EXPECT_DOUBLE_EQ( v1_mirror( i ), 1.0 );
         else
-            EXPECT_EQ( v1_mirror( i ), 0.0 );
+            EXPECT_DOUBLE_EQ( v1_mirror( i ), 0.0 );
     }
 
     // check reduction.
@@ -127,9 +127,9 @@ void parallelIndexSpaceTest()
     for ( int i = 0; i < size_i; ++i )
     {
         if ( is1.min( 0 ) <= i && i < is1.max( 0 ) )
-            EXPECT_EQ( v1_mirror( i ), 2.0 );
+            EXPECT_DOUBLE_EQ( v1_mirror( i ), 2.0 );
         else
-            EXPECT_EQ( v1_mirror( i ), 0.0 );
+            EXPECT_DOUBLE_EQ( v1_mirror( i ), 0.0 );
     }
 
     // check reduction.
@@ -154,9 +154,9 @@ void parallelIndexSpaceTest()
         {
             if ( is2.min( 0 ) <= i && i < is2.max( 0 ) && is2.min( 1 ) <= j &&
                  j < is2.max( 1 ) )
-                EXPECT_EQ( v2_mirror( i, j ), 1.0 );
+                EXPECT_DOUBLE_EQ( v2_mirror( i, j ), 1.0 );
             else
-                EXPECT_EQ( v2_mirror( i, j ), 0.0 );
+                EXPECT_DOUBLE_EQ( v2_mirror( i, j ), 0.0 );
         }
 
     // check reduction.
@@ -179,9 +179,9 @@ void parallelIndexSpaceTest()
         {
             if ( is2.min( 0 ) <= i && i < is2.max( 0 ) && is2.min( 1 ) <= j &&
                  j < is2.max( 1 ) )
-                EXPECT_EQ( v2_mirror( i, j ), 2.0 );
+                EXPECT_DOUBLE_EQ( v2_mirror( i, j ), 2.0 );
             else
-                EXPECT_EQ( v2_mirror( i, j ), 0.0 );
+                EXPECT_DOUBLE_EQ( v2_mirror( i, j ), 0.0 );
         }
 
     // check reduction.
@@ -239,7 +239,7 @@ void parallelLocalGridTest()
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
             for ( long k = 0; k < ghosted_space.extent( Dim::K ); ++k )
                 for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 1.0 );
+                    EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), 1.0 );
 
     // check reduction.
     double sum = 0.0;
@@ -262,7 +262,7 @@ void parallelLocalGridTest()
         for ( long j = 0; j < ghosted_space.extent( Dim::J ); ++j )
             for ( long k = 0; k < ghosted_space.extent( Dim::K ); ++k )
                 for ( long l = 0; l < ghosted_space.extent( 3 ); ++l )
-                    EXPECT_EQ( host_view( i, j, k, l ), 2.0 );
+                    EXPECT_DOUBLE_EQ( host_view( i, j, k, l ), 2.0 );
 
     // check reduction.
     double sum_tag = 0.0;
@@ -301,15 +301,15 @@ void parallelMultiSpaceTest()
             long idx[2] = { i, j };
             if ( is2_1.inRange( idx ) )
             {
-                EXPECT_EQ( 1.0, host_data_2d( i, j ) );
+                EXPECT_DOUBLE_EQ( 1.0, host_data_2d( i, j ) );
             }
             else if ( is2_2.inRange( idx ) )
             {
-                EXPECT_EQ( 2.0, host_data_2d( i, j ) );
+                EXPECT_DOUBLE_EQ( 2.0, host_data_2d( i, j ) );
             }
             else
             {
-                EXPECT_EQ( 0.0, host_data_2d( i, j ) );
+                EXPECT_DOUBLE_EQ( 0.0, host_data_2d( i, j ) );
             }
         }
 
@@ -341,15 +341,15 @@ void parallelMultiSpaceTest()
                 long idx[3] = { i, j, k };
                 if ( is3_1.inRange( idx ) )
                 {
-                    EXPECT_EQ( 1.0, host_data_3d( i, j, k ) );
+                    EXPECT_DOUBLE_EQ( 1.0, host_data_3d( i, j, k ) );
                 }
                 else if ( is3_2.inRange( idx ) )
                 {
-                    EXPECT_EQ( 2.0, host_data_3d( i, j, k ) );
+                    EXPECT_DOUBLE_EQ( 2.0, host_data_3d( i, j, k ) );
                 }
                 else
                 {
-                    EXPECT_EQ( 0.0, host_data_3d( i, j, k ) );
+                    EXPECT_DOUBLE_EQ( 0.0, host_data_3d( i, j, k ) );
                 }
             }
 
@@ -383,15 +383,15 @@ void parallelMultiSpaceTest()
                     long idx[4] = { i, j, k, l };
                     if ( is4_1.inRange( idx ) )
                     {
-                        EXPECT_EQ( 1.0, host_data_4d( i, j, k, l ) );
+                        EXPECT_DOUBLE_EQ( 1.0, host_data_4d( i, j, k, l ) );
                     }
                     else if ( is4_2.inRange( idx ) )
                     {
-                        EXPECT_EQ( 2.0, host_data_4d( i, j, k, l ) );
+                        EXPECT_DOUBLE_EQ( 2.0, host_data_4d( i, j, k, l ) );
                     }
                     else
                     {
-                        EXPECT_EQ( 0.0, host_data_4d( i, j, k, l ) );
+                        EXPECT_DOUBLE_EQ( 0.0, host_data_4d( i, j, k, l ) );
                     }
                 }
 }

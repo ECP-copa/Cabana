@@ -1,5 +1,5 @@
 ############################################################################
-# Copyright (c) 2018-2021 by the Cabana authors                            #
+# Copyright (c) 2018-2022 by the Cabana authors                            #
 # All rights reserved.                                                     #
 #                                                                          #
 # This file is part of the Cabana library. Cabana is distributed under a   #
@@ -44,15 +44,26 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 find_package(Kokkos 3.4 REQUIRED)
 
 # set supported kokkos devices
-set(CABANA_SUPPORTED_DEVICES SERIAL PTHREAD OPENMP CUDA HIP SYCL OPENMPTARGET)
+set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP SYCL OPENMPTARGET)
 
 # check user required kokkos device types
 foreach(_device ${CABANA_SUPPORTED_DEVICES})
   option(Cabana_REQUIRE_${_device} "Build Cabana with required Kokkos ${device} support" OFF)
-  if( Cabana_REQUIRE_${_device} )
+  if( Cabana_REQUIRE_${_device} AND NOT _device STREQUAL THREADS)
     kokkos_check( DEVICES ${_device} )
   endif()
 endforeach()
+# Threads workaround can go when we require a minimum Kokkos version of 3.6
+if(Cabana_REQUIRE_PTHREAD)
+  message(DEPRECATION "Cabana_REQUIRE_PTHREAD is deprecated, use Cabana_REQUIRE_THREADS instead!")
+endif()
+if(Cabana_REQUIRE_PTHREAD OR Cabana_REQUIRE_THREADS)
+  kokkos_check(DEVICES PTHREAD RETURN_VALUE KOKKOS_CHECK_PTHREAD_RETURN_VALUE)
+  kokkos_check(DEVICES THREADS RETURN_VALUE KOKKOS_CHECK_THREADS_RETURN_VALUE)
+  if(NOT KOKKOS_CHECK_PTHREAD_RETURN_VALUE AND NOT KOKKOS_CHECK_THREADS_RETURN_VALUE)
+    message(FATAL_ERROR "Kokkos does not provide the Threads backend requested")
+  endif()
+endif()
 
 # ensure that we can use lambdas
 if(Kokkos_ENABLE_CUDA)
@@ -79,6 +90,9 @@ Cabana_add_dependency( PACKAGE MPI )
 # find ArborX
 Cabana_add_dependency( PACKAGE ArborX )
 
+# find ALL
+Cabana_add_dependency( PACKAGE ALL )
+
 # find Clang Format
 find_package( CLANG_FORMAT 10 )
 
@@ -87,6 +101,14 @@ Cabana_add_dependency( PACKAGE HYPRE VERSION 2.22.1 )
 
 # find heffte
 Cabana_add_dependency( PACKAGE Heffte VERSION 2.1.0 )
+
+# find Silo
+Cabana_add_dependency( PACKAGE SILO )
+if(SILO_FOUND)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSILO.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
+endif()
 
 #------------------------------------------------------------------------------#
 # Architecture
@@ -165,8 +187,17 @@ MESSAGE(STATUS "Cabana Revision = '${Cabana_GIT_COMMIT_HASH}'")
 # enable unit tests
 option(Cabana_ENABLE_TESTING "Build tests" OFF)
 if(Cabana_ENABLE_TESTING)
+  find_package(GTest 1.10 REQUIRED)
+  # Workaround for FindGTest module in CMake older than 3.20
+  if(TARGET GTest::gtest)
+    set(gtest_target GTest::gtest)
+  elseif(TARGET GTest::GTest)
+    set(gtest_target GTest::GTest)
+  else()
+    message(FATAL_ERROR "bug in GTest find module workaround")
+  endif()
   set(TEST_HARNESS_DIR ${CMAKE_SOURCE_DIR}/cmake/test_harness)
-  add_subdirectory(cmake/test_harness)
+  include(cmake/test_harness/test_harness.cmake)
   enable_testing()
 endif()
 
@@ -222,7 +253,7 @@ install(FILES "${CMAKE_CURRENT_BINARY_DIR}/CabanaConfig.cmake" "${CMAKE_CURRENT_
 ##---------------------------------------------------------------------------##
 if(CLANG_FORMAT_FOUND)
   file(GLOB_RECURSE FORMAT_SOURCES core/*.cpp core/*.hpp cajita/*hpp cajita/*cpp example/*cpp example/*hpp cmake/*cpp cmake/*hpp benchmark/*cpp benchmark/*hpp)
-  add_custom_target(format
+  add_custom_target(cabana-format
     COMMAND ${CLANG_FORMAT_EXECUTABLE} -i -style=file ${FORMAT_SOURCES}
     DEPENDS ${FORMAT_SOURCES})
 endif()

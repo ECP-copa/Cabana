@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -25,6 +25,7 @@
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Parallel.hpp>
 #include <Cabana_ParameterPack.hpp>
+#include <Cabana_ParticleInit.hpp>
 #include <Cabana_Slice.hpp>
 #include <Cabana_SoA.hpp>
 #include <Cabana_Sort.hpp>
@@ -40,6 +41,10 @@
 
 #ifdef Cabana_ENABLE_ARBORX
 #include <Cabana_Experimental_NeighborList.hpp>
+#endif
+
+#ifdef Cabana_ENABLE_SILO
+#include <Cabana_SiloParticleOutput.hpp>
 #endif
 
 #endif // end CABANA_CORE_HPP

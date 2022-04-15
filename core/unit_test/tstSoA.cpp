@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -64,8 +64,8 @@ void testSoA()
     Cabana::get<5>( soa, 2, 1, 1, 1 ) = v2;
 
     // Check the data.
-    EXPECT_EQ( Cabana::get<0>( soa, 3 ), v1 );
-    EXPECT_EQ( Cabana::get<5>( soa, 2, 1, 1, 1 ), v2 );
+    EXPECT_DOUBLE_EQ( Cabana::get<0>( soa, 3 ), v1 );
+    EXPECT_FLOAT_EQ( Cabana::get<5>( soa, 2, 1, 1, 1 ), v2 );
 }
 
 //---------------------------------------------------------------------------//

@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include "Cabana_BenchmarkUtils.hpp"
+#include "../Cabana_BenchmarkUtils.hpp"
 
 #include <Cabana_Core.hpp>
 
@@ -382,7 +382,7 @@ int main( int argc, char* argv[] )
     Kokkos::initialize( argc, argv );
 
     // Check arguments.
-    if ( argc < 3 )
+    if ( argc < 2 )
         throw std::runtime_error( "Incorrect number of arguments. \n \
              First argument - file name for output \n \
              Optional second argument - run size (small or large) \n \

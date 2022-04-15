@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -309,7 +309,7 @@ class Array
 };
 
 //---------------------------------------------------------------------------//
-// Scatic type checker.
+// Static type checker.
 //---------------------------------------------------------------------------//
 // Static type checker.
 template <class>
@@ -575,7 +575,7 @@ std::shared_ptr<Array_t> cloneCopy( const Array_t& array, DecompositionTag tag )
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Update two vectors auch that a = alpha * a + beta * b.
+  \brief Update two vectors such that a = alpha * a + beta * b.
   3D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
@@ -602,7 +602,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 }
 
 /*!
-  \brief Update two vectors auch that a = alpha * a + beta * b.
+  \brief Update two vectors such that a = alpha * a + beta * b.
   2D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
@@ -630,7 +630,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 
 //---------------------------------------------------------------------------//
 /*!
-  \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  \brief Update three vectors such that a = alpha * a + beta * b + gamma * c.
   3D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
@@ -662,7 +662,7 @@ update( Array_t& a, const typename Array_t::value_type alpha, const Array_t& b,
 }
 
 /*!
-  \brief Update three vectors auch that a = alpha * a + beta * b + gamma * c.
+  \brief Update three vectors such that a = alpha * a + beta * b + gamma * c.
   2D specialization.
   \param a The array that will be updated.
   \param alpha The value to scale a by.
@@ -735,6 +735,14 @@ struct DotFunctor
                 value_type sum ) const
     {
         sum[l] += _a( i, j, l ) * _b( i, j, l );
+    }
+
+    //! Join operation.
+    KOKKOS_INLINE_FUNCTION
+    void join( value_type dst, const value_type src ) const
+    {
+        for ( size_type j = 0; j < value_count; ++j )
+            dst[j] += src[j];
     }
 
     //! Join operation.
@@ -833,6 +841,15 @@ struct NormInfFunctor
 
     //! Join operation.
     KOKKOS_INLINE_FUNCTION
+    void join( value_type dst, const value_type src ) const
+    {
+        for ( size_type j = 0; j < value_count; ++j )
+            if ( src[j] > dst[j] )
+                dst[j] = src[j];
+    }
+
+    //! Join operation.
+    KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -922,6 +939,14 @@ struct Norm1Functor
 
     //! Join operation.
     KOKKOS_INLINE_FUNCTION
+    void join( value_type dst, const value_type src ) const
+    {
+        for ( size_type j = 0; j < value_count; ++j )
+            dst[j] += src[j];
+    }
+
+    //! Join operation.
+    KOKKOS_INLINE_FUNCTION
     void join( volatile value_type dst, const volatile value_type src ) const
     {
         for ( size_type j = 0; j < value_count; ++j )
@@ -1006,6 +1031,14 @@ struct Norm2Functor
                 value_type norm ) const
     {
         norm[l] += _view( i, j, l ) * _view( i, j, l );
+    }
+
+    //! Join operation.
+    KOKKOS_INLINE_FUNCTION
+    void join( value_type dst, const value_type src ) const
+    {
+        for ( size_type j = 0; j < value_count; ++j )
+            dst[j] += src[j];
     }
 
     //! Join operation.

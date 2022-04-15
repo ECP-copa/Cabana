@@ -35,6 +35,8 @@ jobs:
         arborx: ['NoArborX']
         heffte: ['NoheFFTe' ]
         hypre: ['NoHYPRE']
+        liball: ['NolibALL']
+        silo: ['NoSilo']
         coverage: ['OFF']
         include:
           - distro: 'fedora:intel'
@@ -176,6 +178,16 @@ jobs:
           - distro: 'ubuntu:latest'
             cxx: 'g++'
             openmp: 'ON'
+            cmake_build_type: 'Release'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            liball: 'libALL'
+            coverage: 'OFF'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            openmp: 'ON'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -187,9 +199,21 @@ jobs:
             openmp: 'ON'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            silo: 'Silo'
+            coverage: 'ON'
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            openmp: 'ON'
+            cmake_build_type: 'Debug'
+            kokkos_ver: 'master'
             arborx: 'ArborX'
             heffte: 'heFFTe_FFTW'
             hypre: 'HYPRE'
+            liball: 'libALL'
+            silo: 'Silo'
             coverage: 'ON'
     runs-on: ubuntu-20.04
     container:
@@ -244,7 +268,7 @@ jobs:
           cmake --install build
       - name: Checkout heffte
         if: ${{ matrix.heffte != 'NoheFFTe' }}
-        # actions/checkout doesn't work for external repos yet
+        # actions/checkout doesn't work for external repos yet (actions/checkout#447)
         run: |
           git clone --depth 1 --branch v2.1.0 https://bitbucket.org/icl/heffte.git heffte
       - name: Build heffte
@@ -287,12 +311,29 @@ jobs:
             ${hypre_cmake_opts}
           cmake --build build --parallel 2
           cmake --install build
+      - name: Checkout ALL
+        if: ${{ matrix.liball == 'libALL' }}
+        run: |
+          git clone --depth 1 --branch master https://gitlab.jsc.fz-juelich.de/SLMS/loadbalancing ALL
+      - name: Build ALL
+        if: ${{ matrix.liball == 'libALL' }}
+        working-directory: ALL
+        run: |
+          cmake -B build -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=$HOME/ALL
+          cmake --build build --parallel 2
+          cmake --install build
       - name: Checkout Cabana
         uses: actions/checkout@v2.2.0
       - name: Build Cabana
         env:
           SANITIZER: ${{ matrix.sanitizer }}
+          SILO: ${{ matrix.silo }}
         run: |
+          if [[ ${SILO} == 'Silo' ]]; then
+            cabana_cmake_opts+=( -DCabana_REQUIRE_SILO=ON )
+          else
+            cabana_cmake_opts+=( -DCMAKE_DISABLE_FIND_PACKAGE_SILO=ON )
+          fi
           # FIXME: Add sanitizer for fedora when fixed
           if [[ ${SANITIZER} == 'MSAN' ]]; then
             cabana_cmake_opts+=( -DWITH_MSAN=ON )
@@ -302,7 +343,7 @@ jobs:
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
             -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
-            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre" \
+            -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/ALL" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror" \
@@ -335,7 +376,7 @@ jobs:
         if: ${{ matrix.distro == 'ubuntu:latest' }}
         working-directory: build
         run: |
-             make format
+             make cabana-format
              git diff --exit-code
       - name: Upload Report to codecov.io
         if: ${{ matrix.coverage == 'ON' }}

@@ -1,5 +1,5 @@
 ############################################################################
-# Copyright (c) 2018-2021 by the Cabana authors                            #
+# Copyright (c) 2018-2022 by the Cabana authors                            #
 # All rights reserved.                                                     #
 #                                                                          #
 # This file is part of the Cabana library. Cabana is distributed under a   #
@@ -37,6 +37,7 @@ set(MPI_TESTS
   BovWriter
   Parallel
   SparseDimPartitioner
+  Partitioner
   )
 
 if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
@@ -54,6 +55,16 @@ if(Cabana_ENABLE_HEFFTE)
   list(APPEND MPI_TESTS
     FastFourierTransform
     )
+endif()
+
+if(Cabana_ENABLE_ALL)
+  list(APPEND MPI_TESTS
+    LoadBalancer
+    )
+endif()
+
+if(Cabana_ENABLE_SILO)
+  list(APPEND MPI_TESTS SiloParticleOutput)
 endif()
 
 Cabana_add_tests(PACKAGE Cajita NAMES ${SERIAL_TESTS})

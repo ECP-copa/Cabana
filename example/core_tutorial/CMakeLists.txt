@@ -1,5 +1,5 @@
 ############################################################################
-# Copyright (c) 2018-2021 by the Cabana authors                            #
+# Copyright (c) 2018-2022 by the Cabana authors                            #
 # All rights reserved.                                                     #
 #                                                                          #
 # This file is part of the Cabana library. Cabana is distributed under a   #
@@ -19,7 +19,10 @@ if(Kokkos_ENABLE_SERIAL)
   add_subdirectory(05_slice)
   add_subdirectory(07_sorting)
   add_subdirectory(08_linked_cell_list)
-  add_subdirectory(09_verlet_list)
+  add_subdirectory(09_neighbor_list)
+  if(Cabana_ENABLE_ARBORX)
+    add_subdirectory(09_neighbor_list_arborx)
+  endif()
   if(Kokkos_ENABLE_CUDA)
     add_subdirectory(06_deep_copy)
   endif()

@@ -4,6 +4,35 @@
 
 - Updated minimum Kokkos dependency to version 3.4
 
+## 0.5.0
+
+**New Features**
+
+- Particle migration using Cajita grid added
+- Random particle generation added
+- Complete Cajita tutorial examples added
+- Cajita performance benchmarks added
+
+**Bug Fixes and Improvements**
+
+- Remove all uses of `Kokkos::Impl`
+- Redesign `SimdPolicy` to not modify the underlying `Kokkos::TeamPolicy`
+- Rename `Cabana_REQUIRE_`{`PTHREAD` -> `THREADS`}
+- Rename clang-format build rule `format` -> `cabana-format`
+- Improved Doxygen coverage
+- Improved wiki documentation
+
+**Minimum dependency version updates**
+
+- CMake minimum 3.16 required (previously 3.9)
+- Optional dependency heFFTe minimum 2.1 (previously 2.0)
+- Optional dependency HYPRE minimum 2.22.1 (previously 2.22.0)
+
+**Experimental Features (subject to change in future releases)**
+
+- Distributed particle output with SILO library interface
+- Cajita load balancing added through ALL library interface
+
 ## 0.4.0
 
 **New Features**

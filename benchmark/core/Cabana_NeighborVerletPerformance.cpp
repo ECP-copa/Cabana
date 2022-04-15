@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include "Cabana_BenchmarkUtils.hpp"
+#include "../Cabana_BenchmarkUtils.hpp"
 
 #include <Cabana_Core.hpp>
 
@@ -59,23 +59,20 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     // Define the aosoa.
     using member_types = Cabana::MemberTypes<double[3]>;
     using aosoa_type = Cabana::AoSoA<member_types, Device>;
-    using aosoa_host_type = Cabana::AoSoA<member_types, Kokkos::HostSpace>;
     std::vector<aosoa_type> aosoas( num_problem_size );
 
     // Create aosoas.
     for ( int p = 0; p < num_problem_size; ++p )
     {
         int num_p = problem_sizes[p];
-        aosoa_host_type create_aosoa( "host_aosoa", num_p );
 
         // Define problem grid.
         x_min[p] = 0.0;
         x_max[p] = 1.3 * min_dist * std::pow( num_p, 1.0 / 3.0 );
         aosoas[p].resize( num_p );
-        auto x_host = Cabana::slice<0>( create_aosoa, "position" );
-        Cabana::Benchmark::createRandomNeighbors( x_host, x_min[p], x_max[p],
-                                                  min_dist );
-        Cabana::deep_copy( aosoas[p], create_aosoa );
+        auto x = Cabana::slice<0>( aosoas[p], "position" );
+        Cabana::createRandomParticlesMinDistance( x, x.size(), x_min[p],
+                                                  x_max[p], min_dist );
 
         if ( sort )
         {
@@ -87,7 +84,6 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             double sort_delta[3] = { cutoff, cutoff, cutoff };
             double grid_min[3] = { x_min[p], x_min[p], x_min[p] };
             double grid_max[3] = { x_max[p], x_max[p], x_max[p] };
-            auto x = Cabana::slice<0>( aosoas[p], "position" );
             Cabana::LinkedCellList<Device> linked_cell_list(
                 x, sort_delta, grid_min, grid_max );
             Cabana::permute( linked_cell_list, aosoas[p] );
@@ -165,11 +161,23 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                     {
                         Kokkos::MinMaxScalar<int> min_max;
                         Kokkos::MinMax<int> reducer( min_max );
+                        auto const& nlist_data_count =
+                            nlist._data.counts; // capture just the view
                         Kokkos::parallel_reduce(
                             "Cabana::countMinMax", policy,
-                            Kokkos::Impl::min_max_functor<
-                                Kokkos::View<int*, Device>>(
-                                nlist._data.counts ),
+                            KOKKOS_LAMBDA(
+                                const int p,
+                                Kokkos::MinMaxScalar<int>& local_minmax ) {
+                                auto const val = nlist_data_count( p );
+                                if ( val < local_minmax.min_val )
+                                {
+                                    local_minmax.min_val = val;
+                                }
+                                if ( val > local_minmax.max_val )
+                                {
+                                    local_minmax.max_val = val;
+                                }
+                            },
                             reducer );
                         Kokkos::fence();
                         std::cout << "List min neighbors: " << min_max.min_val

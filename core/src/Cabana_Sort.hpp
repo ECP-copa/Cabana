@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -178,13 +178,24 @@ template <class KeyViewType,
 Kokkos::MinMaxScalar<typename KeyViewType::non_const_value_type>
 keyMinMax( KeyViewType keys, const std::size_t begin, const std::size_t end )
 {
-    Kokkos::MinMaxScalar<typename KeyViewType::non_const_value_type> result;
-    Kokkos::MinMax<typename KeyViewType::non_const_value_type> reducer(
-        result );
+    using KeyValueType = typename KeyViewType::non_const_value_type;
+    Kokkos::MinMaxScalar<KeyValueType> result;
+    Kokkos::MinMax<KeyValueType> reducer( result );
     Kokkos::parallel_reduce(
         "Cabana::keyMinMax",
         Kokkos::RangePolicy<typename DeviceType::execution_space>( begin, end ),
-        Kokkos::Impl::min_max_functor<KeyViewType>( keys ), reducer );
+        KOKKOS_LAMBDA( std::size_t i, decltype( result )& local_minmax ) {
+            auto const val = keys( i );
+            if ( val < local_minmax.min_val )
+            {
+                local_minmax.min_val = val;
+            }
+            if ( val > local_minmax.max_val )
+            {
+                local_minmax.max_val = val;
+            }
+        },
+        reducer );
     Kokkos::fence();
     return result;
 }

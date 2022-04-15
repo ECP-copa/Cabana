@@ -1,5 +1,5 @@
 ############################################################################
-# Copyright (c) 2018-2021 by the Cabana authors                            #
+# Copyright (c) 2018-2022 by the Cabana authors                            #
 # All rights reserved.                                                     #
 #                                                                          #
 # This file is part of the Cabana library. Cabana is distributed under a   #
@@ -9,6 +9,6 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-  add_executable(VerletList verlet_list_example.cpp)
-  target_link_libraries(VerletList cabanacore)
-  add_test(NAME Core_tutorial_09 COMMAND ${NONMPI_PRECOMMAND} VerletList)
+add_executable(Spline spline_example.cpp)
+target_link_libraries(Spline Cajita)
+add_test(NAME Cajita_tutorial_14 COMMAND ${NONMPI_PRECOMMAND} Spline)

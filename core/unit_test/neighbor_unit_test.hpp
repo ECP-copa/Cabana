@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -13,13 +13,12 @@
 #include <Cabana_DeepCopy.hpp>
 #include <Cabana_NeighborList.hpp>
 #include <Cabana_Parallel.hpp>
+#include <Cabana_ParticleInit.hpp>
 
 #include <Kokkos_Core.hpp>
-#include <Kokkos_Random.hpp>
 
 #include <gtest/gtest.h>
 
-#include <algorithm>
 #include <vector>
 
 namespace Test
@@ -68,46 +67,6 @@ copyListToHost( const ListType& list, const int num_particle, const int max_n )
         } );
     Kokkos::fence();
     return createTestListHostCopy( list_copy );
-}
-
-//---------------------------------------------------------------------------//
-// Create particles.
-Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE>
-createParticles( const int num_particle, const double box_min,
-                 const double box_max )
-{
-#ifdef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
-    using RandomMemSpace = Kokkos::HostSpace;
-    using RandomExecSpace = Kokkos::DefaultHostExecutionSpace;
-#else
-    using RandomMemSpace = TEST_MEMSPACE;
-    using RandomExecSpace = TEST_EXECSPACE;
-#endif
-
-    using DataTypes = Cabana::MemberTypes<double[3]>;
-    using AoSoA_t_r = Cabana::AoSoA<DataTypes, RandomMemSpace>;
-    AoSoA_t_r aosoa_random( "random", num_particle );
-
-    auto position = Cabana::slice<0>( aosoa_random );
-    using PoolType = Kokkos::Random_XorShift64_Pool<RandomExecSpace>;
-    using RandomType = Kokkos::Random_XorShift64<RandomExecSpace>;
-    PoolType pool( 342343901 );
-    auto random_coord_op = KOKKOS_LAMBDA( const int p )
-    {
-        auto gen = pool.get_state();
-        for ( int d = 0; d < 3; ++d )
-            position( p, d ) =
-                Kokkos::rand<RandomType, double>::draw( gen, box_min, box_max );
-        pool.free_state( gen );
-    };
-    Kokkos::RangePolicy<RandomExecSpace> exec_policy( 0, num_particle );
-    Kokkos::parallel_for( exec_policy, random_coord_op );
-    Kokkos::fence();
-
-    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
-    AoSoA_t aosoa( "aosoa", num_particle );
-    Cabana::deep_copy( aosoa, aosoa_random );
-    return aosoa;
 }
 
 //---------------------------------------------------------------------------//
@@ -986,18 +945,35 @@ struct NeighborListTestData
     double grid_min[3] = { box_min, box_min, box_min };
     double grid_max[3] = { box_max, box_max, box_max };
 
-    Cabana::AoSoA<Cabana::MemberTypes<double[3]>, TEST_MEMSPACE> aosoa;
+    using DataTypes = Cabana::MemberTypes<double[3]>;
+    using AoSoA_t = Cabana::AoSoA<DataTypes, TEST_MEMSPACE>;
+    AoSoA_t aosoa;
+
     TestNeighborList<typename TEST_EXECSPACE::array_layout, Kokkos::HostSpace>
         N2_list_copy;
 
     NeighborListTestData()
     {
         // Create the AoSoA and fill with random particle positions.
-        aosoa = createParticles( num_particle, box_min, box_max );
+        aosoa = AoSoA_t( "random", num_particle );
+
+#ifdef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
+        using AoSoA_copy = Cabana::AoSoA<DataTypes, Kokkos::HostSpace>;
+        AoSoA_copy aosoa_copy( "aosoa", num_particle );
+        auto positions = Cabana::slice<0>( aosoa_copy );
+#else
+        auto positions = Cabana::slice<0>( aosoa );
+#endif
+
+        Cabana::createRandomParticles( positions, positions.size(), box_min,
+                                       box_max );
+
+#ifdef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
+        Cabana::deep_copy( aosoa, aosoa_copy );
+#endif
 
         // Create a full N^2 neighbor list to check against.
-        auto N2_list =
-            computeFullNeighborList( Cabana::slice<0>( aosoa ), test_radius );
+        auto N2_list = computeFullNeighborList( positions, test_radius );
         N2_list_copy = createTestListHostCopy( N2_list );
     }
 };

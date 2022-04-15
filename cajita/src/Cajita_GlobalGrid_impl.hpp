@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -51,34 +51,8 @@ GlobalGrid<MeshType>::GlobalGrid(
                      _cart_rank.data() );
 
     // Get the cells per dimension and the remainder.
-    std::array<int, num_space_dim> cells_per_dim;
-    std::array<int, num_space_dim> dim_remainder;
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-    {
-        cells_per_dim[d] = global_num_cell[d] / _ranks_per_dim[d];
-        dim_remainder[d] = global_num_cell[d] % _ranks_per_dim[d];
-    }
-
-    // Compute the global cell offset and the local low corner on this rank by
-    // computing the starting global cell index via exclusive scan.
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-    {
-        _global_cell_offset[d] = 0;
-        for ( int r = 0; r < _cart_rank[d]; ++r )
-        {
-            _global_cell_offset[d] += cells_per_dim[d];
-            if ( dim_remainder[d] > r )
-                ++_global_cell_offset[d];
-        }
-    }
-
-    // Compute the number of local cells in this rank in each dimension.
-    for ( std::size_t d = 0; d < num_space_dim; ++d )
-    {
-        _owned_num_cell[d] = cells_per_dim[d];
-        if ( dim_remainder[d] > _cart_rank[d] )
-            ++_owned_num_cell[d];
-    }
+    partitioner.ownedCellInfo( _cart_comm, global_num_cell, _owned_num_cell,
+                               _global_cell_offset );
 
     // Determine if a block is on the low or high boundaries.
     for ( std::size_t d = 0; d < num_space_dim; ++d )

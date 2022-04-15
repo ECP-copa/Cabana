@@ -1,5 +1,5 @@
 ############################################################################
-# Copyright (c) 2018-2021 by the Cabana authors                            #
+# Copyright (c) 2018-2022 by the Cabana authors                            #
 # All rights reserved.                                                     #
 #                                                                          #
 # This file is part of the Cabana library. Cabana is distributed under a   #
@@ -24,7 +24,7 @@ macro(Cabana_add_tests_nobackend)
   foreach(_test ${CABANA_UNIT_TEST_NAMES})
     set(_target Cabana_${_test}_test)
     add_executable(${_target} tst${_test}.cpp ${TEST_HARNESS_DIR}/unit_test_main.cpp)
-    target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} gtest)
+    target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} ${gtest_target})
     add_test(NAME ${_target} COMMAND ${NONMPI_PRECOMMAND} ${_target} ${gtest_args})
     set_property(TEST ${_target} PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
     if(VALGRIND_FOUND)
@@ -86,7 +86,7 @@ macro(Cabana_add_tests)
       add_executable(${_target} ${_file} ${CABANA_UNIT_TEST_MAIN})
       target_include_directories(${_target} PRIVATE ${_dir}
         ${TEST_HARNESS_DIR} ${CMAKE_CURRENT_SOURCE_DIR})
-      target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} gtest)
+      target_link_libraries(${_target} PRIVATE ${CABANA_UNIT_TEST_PACKAGE} ${gtest_target})
       if(CABANA_UNIT_TEST_MPI)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
           add_test(NAME ${_target}_np_${_np} COMMAND
@@ -95,7 +95,7 @@ macro(Cabana_add_tests)
           set_property(TEST ${_target}_np_${_np} PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
         endforeach()
       else()
-        if(_device STREQUAL PTHREAD OR _device STREQUAL OPENMP)
+        if(_device STREQUAL THREADS OR _device STREQUAL OPENMP)
           foreach(_thread ${CABANA_UNIT_TEST_NUMTHREADS})
             add_test(NAME ${_target}_nt_${_thread} COMMAND
               ${NONMPI_PRECOMMAND} ${_target} ${gtest_args} --kokkos-threads=${_thread})

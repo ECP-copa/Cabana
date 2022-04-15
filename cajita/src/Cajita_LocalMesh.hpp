@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -172,9 +172,10 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Local indexing is relative to the ghosted decomposition of the mesh
     //! block, which correlates directly to local index spaces associated with
     //! the block.
-    KOKKOS_INLINE_FUNCTION
-    void coordinates( Cell, const int index[num_space_dim],
-                      Scalar x[num_space_dim] ) const
+    template <class Integer>
+    KOKKOS_INLINE_FUNCTION void coordinates( Cell,
+                                             const Integer index[num_space_dim],
+                                             Scalar x[num_space_dim] ) const
     {
         for ( std::size_t d = 0; d < num_space_dim; ++d )
             x[d] = _ghost_low_corner[d] +
@@ -185,9 +186,10 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Local indexing is relative to the ghosted decomposition of the mesh
     //! block, which correlates directly to local index spaces associated with
     //! the block.
-    KOKKOS_INLINE_FUNCTION
-    void coordinates( Node, const int index[num_space_dim],
-                      Scalar x[num_space_dim] ) const
+    template <class Integer>
+    KOKKOS_INLINE_FUNCTION void coordinates( Node,
+                                             const Integer index[num_space_dim],
+                                             Scalar x[num_space_dim] ) const
     {
         for ( std::size_t d = 0; d < num_space_dim; ++d )
             x[d] = _ghost_low_corner[d] + Scalar( index[d] ) * _cell_size[d];
@@ -197,9 +199,9 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Local indexing is relative to the ghosted decomposition of the mesh
     //! block, which correlates directly to local index spaces associated with
     //! the block.
-    template <int Dir>
+    template <int Dir, class Integer>
     KOKKOS_INLINE_FUNCTION void coordinates( Face<Dir>,
-                                             const int index[num_space_dim],
+                                             const Integer index[num_space_dim],
                                              Scalar x[num_space_dim] ) const
     {
         static_assert( Dir < num_space_dim, "Face dimension out of bounds" );
@@ -216,9 +218,9 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Local indexing is relative to the ghosted decomposition of the mesh
     //! block, which correlates directly to local index spaces associated with
     //! the block.
-    template <int Dir, std::size_t NSD = num_space_dim>
+    template <int Dir, class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
-    coordinates( Edge<Dir>, const int index[3], Scalar x[3] ) const
+    coordinates( Edge<Dir>, const Integer index[3], Scalar x[3] ) const
     {
         for ( std::size_t d = 0; d < 3; ++d )
             if ( Dir == d )
@@ -233,16 +235,20 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Local indexing is relative to the ghosted decomposition of the mesh
     //! block and correlates directly to local index spaces associated with the
     //! block.
-    KOKKOS_INLINE_FUNCTION
-    Scalar measure( Node, const int[num_space_dim] ) const { return 0.0; }
+    template <class Integer>
+    KOKKOS_INLINE_FUNCTION Scalar measure( Node,
+                                           const Integer[num_space_dim] ) const
+    {
+        return 0.0;
+    }
 
     //! Get the measure of an Edge at the given index.
     //! Local indexing is relative to the ghosted decomposition of the mesh
     //! block and correlates directly to local index spaces associated with the
     //! block.
-    template <int Dir, std::size_t NSD = num_space_dim>
+    template <int Dir, class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
-    measure( Edge<Dir>, const int[3] ) const
+    measure( Edge<Dir>, const Integer[3] ) const
     {
         return _cell_size[Dir];
     }
@@ -251,9 +257,9 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Local indexing is relative to the ghosted decomposition of the mesh
     //! block and correlates directly to local index spaces associated with the
     //! block.
-    template <int Dir>
+    template <int Dir, class Integer>
     KOKKOS_INLINE_FUNCTION Scalar measure( Face<Dir>,
-                                           const int[num_space_dim] ) const
+                                           const Integer[num_space_dim] ) const
     {
         static_assert( Dir < num_space_dim, "Face dimension out of bounds" );
         return _face_area[Dir];
@@ -263,8 +269,9 @@ class LocalMesh<Device, UniformMesh<Scalar, NumSpaceDim>>
     //! Local indexing is relative to the ghosted decomposition of the mesh
     //! block and correlates directly to local index spaces associated with the
     //! block.
-    KOKKOS_INLINE_FUNCTION
-    Scalar measure( Cell, const int[num_space_dim] ) const
+    template <class Integer>
+    KOKKOS_INLINE_FUNCTION Scalar measure( Cell,
+                                           const Integer[num_space_dim] ) const
     {
         return _cell_volume;
     }
@@ -576,9 +583,10 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       local index spaces associated with the block.
       \param x Calculated Cell position
     */
-    KOKKOS_INLINE_FUNCTION
-    void coordinates( Cell, const int index[num_space_dim],
-                      Scalar x[num_space_dim] ) const
+    template <class Integer>
+    KOKKOS_INLINE_FUNCTION void coordinates( Cell,
+                                             const Integer index[num_space_dim],
+                                             Scalar x[num_space_dim] ) const
     {
         for ( std::size_t d = 0; d < num_space_dim; ++d )
             x[d] = ( _local_edges[d]( index[d] + 1 ) +
@@ -592,9 +600,10 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       ghosted decomposition of the mesh block.
       \param x Calculated Node position
     */
-    KOKKOS_INLINE_FUNCTION
-    void coordinates( Node, const int index[num_space_dim],
-                      Scalar x[num_space_dim] ) const
+    template <class Integer>
+    KOKKOS_INLINE_FUNCTION void coordinates( Node,
+                                             const Integer index[num_space_dim],
+                                             Scalar x[num_space_dim] ) const
     {
         for ( std::size_t d = 0; d < num_space_dim; ++d )
             x[d] = _local_edges[d]( index[d] );
@@ -606,9 +615,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       ghosted decomposition of the mesh block.
       \param x Calculated Face position
     */
-    template <int Dir>
+    template <int Dir, class Integer>
     KOKKOS_INLINE_FUNCTION void coordinates( Face<Dir>,
-                                             const int index[num_space_dim],
+                                             const Integer index[num_space_dim],
                                              Scalar x[num_space_dim] ) const
     {
         static_assert( Dir < num_space_dim, "Face dimension out of bounds" );
@@ -628,9 +637,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       ghosted decomposition of the mesh block.
       \param x Calculated Edge position
     */
-    template <int Dir, std::size_t NSD = num_space_dim>
+    template <int Dir, class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, void>
-    coordinates( Edge<Dir>, const int index[3], Scalar x[3] ) const
+    coordinates( Edge<Dir>, const Integer index[3], Scalar x[3] ) const
     {
         for ( std::size_t d = 0; d < 3; ++d )
             if ( Dir == d )
@@ -644,17 +653,21 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
     /*!
       Get the measure of a Node.
     */
-    KOKKOS_INLINE_FUNCTION
-    Scalar measure( Node, const int[num_space_dim] ) const { return 0.0; }
+    template <class Integer>
+    KOKKOS_INLINE_FUNCTION Scalar measure( Node,
+                                           const Integer[num_space_dim] ) const
+    {
+        return 0.0;
+    }
 
     /*!
       Get the measure of a 3d Edge given the local index.
       \param index %Array of local indices relative to the
       ghosted decomposition of the mesh block
     */
-    template <int Dir, std::size_t NSD = num_space_dim>
+    template <int Dir, class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
-    measure( Edge<Dir>, const int index[3] ) const
+    measure( Edge<Dir>, const Integer index[3] ) const
     {
         return _local_edges[Dir][index[Dir] + 1] -
                _local_edges[Dir][index[Dir]];
@@ -665,9 +678,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       \param index %Array of local indices relative to the
       ghosted decomposition of the mesh block
     */
-    template <std::size_t NSD = num_space_dim>
+    template <class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
-    measure( Face<Dim::I>, const int index[3] ) const
+    measure( Face<Dim::I>, const Integer index[3] ) const
     {
         return measure( Edge<Dim::J>(), index ) *
                measure( Edge<Dim::K>(), index );
@@ -678,9 +691,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       \param index %Array of local indices relative to the
       ghosted decomposition of the mesh block
     */
-    template <std::size_t NSD = num_space_dim>
+    template <class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
-    measure( Face<Dim::J>, const int index[3] ) const
+    measure( Face<Dim::J>, const Integer index[3] ) const
     {
         return measure( Edge<Dim::I>(), index ) *
                measure( Edge<Dim::K>(), index );
@@ -691,9 +704,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       \param index %Array of local indices relative to the
       ghosted decomposition of the mesh block
     */
-    template <std::size_t NSD = num_space_dim>
+    template <class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<3 == NSD, Scalar>
-    measure( Face<Dim::K>, const int index[3] ) const
+    measure( Face<Dim::K>, const Integer index[3] ) const
     {
         return measure( Edge<Dim::I>(), index ) *
                measure( Edge<Dim::J>(), index );
@@ -704,9 +717,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       \param index %Array of local indices relative to the
       ghosted decomposition of the mesh block
     */
-    template <std::size_t NSD = num_space_dim>
+    template <class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, Scalar>
-    measure( Face<Dim::I>, const int index[2] ) const
+    measure( Face<Dim::I>, const Integer index[2] ) const
     {
         return _local_edges[Dim::J][index[Dim::J] + 1] -
                _local_edges[Dim::J][index[Dim::J]];
@@ -717,9 +730,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       \param index %Array of local indices relative to the
       ghosted decomposition of the mesh block
     */
-    template <std::size_t NSD = num_space_dim>
+    template <class Integer, std::size_t NSD = num_space_dim>
     KOKKOS_INLINE_FUNCTION std::enable_if_t<2 == NSD, Scalar>
-    measure( Face<Dim::J>, const int index[2] ) const
+    measure( Face<Dim::J>, const Integer index[2] ) const
     {
         return _local_edges[Dim::I][index[Dim::I] + 1] -
                _local_edges[Dim::I][index[Dim::I]];
@@ -730,8 +743,9 @@ class LocalMesh<Device, NonUniformMesh<Scalar, NumSpaceDim>>
       \param index %Array of local indices relative to the
       ghosted decomposition of the mesh block
     */
-    KOKKOS_INLINE_FUNCTION
-    Scalar measure( Cell, const int index[num_space_dim] ) const
+    template <class Integer>
+    KOKKOS_INLINE_FUNCTION Scalar
+    measure( Cell, const Integer index[num_space_dim] ) const
     {
         Scalar m = 1.0;
         for ( std::size_t d = 0; d < num_space_dim; ++d )

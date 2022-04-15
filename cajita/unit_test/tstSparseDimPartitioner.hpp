@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -112,9 +112,7 @@ void uniform_distribution_automatic_rank()
         auto gt_tile = rec_partitions[d][cart_rank[d] + 1] -
                        rec_partitions[d][cart_rank[d]];
         EXPECT_EQ( owned_tiles_per_dim[d], gt_tile );
-        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim *
-                                               cell_per_tile_dim *
-                                               cell_per_tile_dim );
+        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim );
         gt_imbalance_factor *= gt_tile;
     }
     gt_imbalance_factor /=
@@ -146,6 +144,7 @@ void uniform_distribution_automatic_rank()
                     sis.insertCell( i, j, k );
                 }
         } );
+    Kokkos::fence();
 
     // compute workload and do partition optimization
     partitioner.optimizePartition( sis, MPI_COMM_WORLD );
@@ -157,9 +156,7 @@ void uniform_distribution_automatic_rank()
         auto gt_tile = rec_partitions[d][cart_rank[d] + 1] -
                        rec_partitions[d][cart_rank[d]];
 
-        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim *
-                                               cell_per_tile_dim *
-                                               cell_per_tile_dim );
+        EXPECT_EQ( owned_cells_per_dim[d], gt_tile * cell_per_tile_dim );
     }
 
     auto imbalance_factor = partitioner.computeImbalanceFactor( cart_comm );
@@ -425,6 +422,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
                 sis.insertTile( tiles_view( id, 0 ), tiles_view( id, 1 ),
                                 tiles_view( id, 2 ) );
             } );
+        Kokkos::fence();
 
         // compute workload from a sparseMap and do partition optimization
         partitioner.optimizePartition( sis, MPI_COMM_WORLD );

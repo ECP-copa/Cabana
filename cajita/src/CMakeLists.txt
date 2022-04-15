@@ -1,5 +1,5 @@
 ############################################################################
-# Copyright (c) 2018-2021 by the Cabana authors                            #
+# Copyright (c) 2018-2022 by the Cabana authors                            #
 # All rights reserved.                                                     #
 #                                                                          #
 # This file is part of the Cabana library. Cabana is distributed under a   #
@@ -50,6 +50,16 @@ if(Cabana_ENABLE_HEFFTE)
     )
 endif()
 
+if(Cabana_ENABLE_ALL)
+  list(APPEND HEADERS_PUBLIC
+    Cajita_LoadBalancer.hpp
+    )
+endif()
+
+if(Cabana_ENABLE_SILO)
+  list(APPEND HEADERS_PUBLIC Cajita_SiloParticleOutput.hpp)
+endif()
+
 add_library(Cajita INTERFACE)
 add_library(Cabana::Cajita ALIAS Cajita)
 
@@ -65,6 +75,10 @@ endif()
 
 if(Cabana_ENABLE_HEFFTE)
   target_link_libraries(Cajita INTERFACE Heffte::Heffte)
+endif()
+
+if(Cabana_ENABLE_ALL)
+    target_link_libraries(Cajita INTERFACE ALL::ALL)
 endif()
 
 target_include_directories(Cajita

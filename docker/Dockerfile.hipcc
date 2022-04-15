@@ -1,10 +1,10 @@
 # Use -complete to get both rocm and rocfft
-ARG BASE=rocm/dev-ubuntu-18.04:4.2-complete
+ARG BASE=rocm/dev-ubuntu-20.04:4.5-complete
 FROM $BASE
 
 ARG NPROCS=4
 
-RUN apt-get update && apt-get install -y \
+RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y \
         build-essential \
         bc \
         file \
@@ -20,6 +20,7 @@ RUN apt-get update && apt-get install -y \
         libicu-dev \
         python-dev \
         autotools-dev \
+        libgtest-dev \
         && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*

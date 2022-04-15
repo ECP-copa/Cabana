@@ -1,5 +1,5 @@
 ############################################################################
-# Copyright (c) 2018-2021 by the Cabana authors                            #
+# Copyright (c) 2018-2022 by the Cabana authors                            #
 # All rights reserved.                                                     #
 #                                                                          #
 # This file is part of the Cabana library. Cabana is distributed under a   #
@@ -33,4 +33,12 @@ endif()
 set(Cabana_ENABLE_HEFFTE @Cabana_ENABLE_HEFFTE@)
 if(Cabana_ENABLE_HEFFTE)
   find_dependency(Heffte @Heffte_VERSION@ REQUIRED)
+endif()
+set(Cabana_ENABLE_ALL @Cabana_ENABLE_ALL@)
+if(Cabana_ENABLE_ALL)
+  find_dependency(ALL @ALL_VERSION@ REQUIRED)
+endif()
+set(Cabana_ENABLE_SILO @Cabana_ENABLE_SILO@)
+if(Cabana_ENABLE_SILO)
+  find_dependency(SILO @SILO_VERSION@ REQUIRED)
 endif()

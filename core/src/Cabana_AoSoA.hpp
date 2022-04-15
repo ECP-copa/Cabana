@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -330,9 +330,7 @@ class AoSoA
         // Update the sizes of the data. This is potentially different than
         // the amount of allocated data.
         _size = n;
-        _num_soa = std::floor( n / vector_length );
-        if ( 0 < n % vector_length )
-            ++_num_soa;
+        _num_soa = std::ceil( static_cast<double>( n ) / vector_length );
     }
 
     /*!

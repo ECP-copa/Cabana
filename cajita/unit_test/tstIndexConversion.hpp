@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -107,8 +107,6 @@ void testConversion3d( const std::array<bool, 3>& is_dim_periodic )
         } );
 
     // Compare the results.
-    // FIXME Change back to fine grained EXPECT_EQ when passing on all distros
-    int pass_index_conversion_test = 1;
     auto index_view_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), index_view );
     auto l2g_view_host =
@@ -119,9 +117,8 @@ void testConversion3d( const std::array<bool, 3>& is_dim_periodic )
                 for ( int k = space.min( Dim::K ); k < space.max( Dim::K );
                       ++k )
                     for ( int d = 0; d < 3; ++d )
-                        if ( l2g_view_host( i, j, k, d ) !=
-                             index_view_host( i, j, k, d ) )
-                            pass_index_conversion_test = 0;
+                        EXPECT_EQ( l2g_view_host( i, j, k, d ),
+                                   index_view_host( i, j, k, d ) );
     };
     check_results( own_local_space );
     for ( int i = -1; i < 2; ++i )
@@ -130,7 +127,6 @@ void testConversion3d( const std::array<bool, 3>& is_dim_periodic )
                 if ( local_grid->neighborRank( i, j, k ) >= 0 )
                     check_results( local_grid->sharedIndexSpace(
                         Ghost(), EntityType(), i, j, k ) );
-    EXPECT_EQ( pass_index_conversion_test, 1 );
 }
 
 //---------------------------------------------------------------------------//
@@ -204,8 +200,6 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
         } );
 
     // Compare the results.
-    // FIXME Change back to fine grained EXPECT_EQ when passing on all distros
-    int pass_index_conversion_test = 1;
     auto index_view_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), index_view );
     auto l2g_view_host =
@@ -214,9 +208,8 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
         for ( int i = space.min( Dim::I ); i < space.max( Dim::I ); ++i )
             for ( int j = space.min( Dim::J ); j < space.max( Dim::J ); ++j )
                 for ( int d = 0; d < 2; ++d )
-                    if ( l2g_view_host( i, j, d ) !=
-                         index_view_host( i, j, d ) )
-                        pass_index_conversion_test = 0;
+                    EXPECT_EQ( l2g_view_host( i, j, d ),
+                               index_view_host( i, j, d ) );
     };
     check_results( own_local_space );
     for ( int i = -1; i < 2; ++i )
@@ -224,7 +217,6 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
             if ( local_grid->neighborRank( i, j ) >= 0 )
                 check_results( local_grid->sharedIndexSpace(
                     Ghost(), EntityType(), i, j ) );
-    EXPECT_EQ( pass_index_conversion_test, 1 );
 }
 
 //---------------------------------------------------------------------------//

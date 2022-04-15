@@ -1,5 +1,5 @@
 /****************************************************************************
- * Copyright (c) 2018-2021 by the Cabana authors                            *
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
  * All rights reserved.                                                     *
  *                                                                          *
  * This file is part of the Cabana library. Cabana is distributed under a   *
@@ -243,6 +243,50 @@ void uniformLocalMeshTest2d( const LocalMeshType& local_mesh,
                 EXPECT_FLOAT_EQ( loc_y_m( i, j ),
                                  ghost_lc_m( Dim::J ) + cell_size * j );
                 EXPECT_FLOAT_EQ( measure_m( i, j ), cell_size );
+            }
+    }
+
+    // Extra check for using local mesh functions with shared index space.
+    auto shared_cell_space =
+        local_grid.sharedIndexSpace( Cajita::Own(), Cajita::Cell(), 0, 1 );
+    std::cout << shared_cell_space.extent( 0 ) << " "
+              << shared_cell_space.extent( 1 ) << std::endl;
+    {
+        auto measure = createView<double, TEST_DEVICE>( "measure", cell_space );
+        auto loc_x = createView<double, TEST_DEVICE>( "loc_x", cell_space );
+        auto loc_y = createView<double, TEST_DEVICE>( "loc_y", cell_space );
+        std::cout << loc_x.extent( 0 ) << " " << loc_x.extent( 1 ) << std::endl;
+        Kokkos::parallel_for(
+            "get_cell_coord",
+            createExecutionPolicy( shared_cell_space, TEST_EXECSPACE() ),
+            KOKKOS_LAMBDA( const int i, const int j ) {
+                Kokkos::Array<double, 2> loc;
+                // Passing this index to the local mesh is the relevant check.
+                auto idx = shared_cell_space.min();
+                local_mesh.coordinates( Cell(), idx.data(), loc.data() );
+                loc_x( i, j ) = loc[Dim::I];
+                loc_y( i, j ) = loc[Dim::J];
+                measure( i, j ) = local_mesh.measure( Cell(), idx.data() );
+            } );
+        auto measure_m =
+            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), measure );
+        auto loc_x_m =
+            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), loc_x );
+        auto loc_y_m =
+            Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), loc_y );
+        for ( int i = 0; i < shared_cell_space.extent( Dim::I ); ++i )
+            for ( int j = 0; j < shared_cell_space.extent( Dim::J ); ++j )
+            {
+                int i_shared = shared_cell_space.min( Dim::I ) + i;
+                int j_shared = shared_cell_space.min( Dim::J ) + j;
+
+                // This is specific to the neighbor chosen above at (0,1).
+                EXPECT_FLOAT_EQ( loc_x_m( i_shared, j_shared ),
+                                 own_lc_m( Dim::I ) + cell_size * 0.5 );
+                EXPECT_FLOAT_EQ( loc_y_m( i_shared, j_shared ),
+                                 own_hc_m( Dim::J ) - cell_size * 0.5 );
+                EXPECT_FLOAT_EQ( measure_m( i_shared, j_shared ),
+                                 cell_size * cell_size );
             }
     }
 }
