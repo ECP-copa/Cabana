@@ -1,5 +1,9 @@
 # Change Log
 
+## (dev)
+
+- Updated minimum Kokkos dependency to version 3.4
+
 ## 0.5.0
 
 **New Features**

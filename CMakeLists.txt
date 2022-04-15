@@ -41,7 +41,7 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 # Dependencies
 #------------------------------------------------------------------------------#
 # find kokkos
-find_package(Kokkos 3.2 REQUIRED)
+find_package(Kokkos 3.4 REQUIRED)
 
 # set supported kokkos devices
 set(CABANA_SUPPORTED_DEVICES SERIAL THREADS OPENMP CUDA HIP SYCL OPENMPTARGET)
