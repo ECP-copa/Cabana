@@ -22,14 +22,11 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP OR Kokkos_
     endif()
 
   if(Cabana_ENABLE_TESTING)
-    target_link_libraries(SparseMapPerformance gtest)
     add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} SparseMapPerformance sparsemap_output.txt)
 
-    target_link_libraries(SparsePartitionerPerformance gtest)
     add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} SparsePartitionerPerformance sparsepartitioner_output.txt)
 
     if (Cabana_ENABLE_HEFFTE)
-      target_link_libraries(FastFourierTransformPerformance gtest)
       add_test(NAME Cajita_FastFourierTransformPerformance COMMAND ${NONMPI_PRECOMMAND} FastFourierTransformPerformance fastfouriertransform_output.txt)
     endif()
   endif()
