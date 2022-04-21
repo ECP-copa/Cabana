@@ -15,6 +15,9 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP OR Kokkos_
 
     add_executable(SparsePartitionerPerformance Cajita_SparsePartitionerPerformance.cpp)
     target_link_libraries(SparsePartitionerPerformance Cajita)
+  
+    add_executable(HaloPerformance Cajita_HaloPerformance.cpp)
+    target_link_libraries(HaloPerformance Cajita)
 
     if(Cabana_ENABLE_HEFFTE)
       add_executable(FastFourierTransformPerformance Cajita_FastFourierTransformPerformance.cpp)
@@ -25,6 +28,8 @@ if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP OR Kokkos_
     add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} SparseMapPerformance sparsemap_output.txt)
 
     add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} SparsePartitionerPerformance sparsepartitioner_output.txt)
+
+    add_test(NAME Cajita_HaloPerformance COMMAND ${NONMPI_PRECOMMAND} HaloPerformance halo_output.txt)
 
     if (Cabana_ENABLE_HEFFTE)
       add_test(NAME Cajita_FastFourierTransformPerformance COMMAND ${NONMPI_PRECOMMAND} FastFourierTransformPerformance fastfouriertransform_output.txt)
