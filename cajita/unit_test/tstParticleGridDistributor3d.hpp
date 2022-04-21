@@ -17,8 +17,8 @@
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_LocalGrid.hpp>
 #include <Cajita_LocalMesh.hpp>
-#include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_ParticleGridDistributor.hpp>
+#include <Cajita_Partitioner.hpp>
 #include <Cajita_Types.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -262,7 +262,7 @@ void localOnlyTest( const GridType global_grid, const double cell_size )
         }
 }
 
-auto createGrid( const Cajita::ManualPartitioner& partitioner,
+auto createGrid( const Cajita::ManualBlockPartitioner<3>& partitioner,
                  const std::array<bool, 3>& is_periodic,
                  const double cell_size )
 {
@@ -287,7 +287,7 @@ void testParticleGridMigrate( const bool periodic )
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
     std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
-    Cajita::ManualPartitioner partitioner( ranks_per_dim );
+    Cajita::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
 
     // Every boundary is periodic
     std::array<bool, 3> is_periodic = { periodic, periodic, periodic };
@@ -314,19 +314,19 @@ void testParticleGridMigrate( const bool periodic )
     if ( ranks_per_dim[0] != ranks_per_dim[1] )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[1] );
-        partitioner = Cajita::ManualPartitioner( ranks_per_dim );
+        partitioner = Cajita::ManualBlockPartitioner<3>( ranks_per_dim );
         migrateTest( global_grid, cell_size, 2, 2, true, 0 );
     }
     if ( ranks_per_dim[0] != ranks_per_dim[2] )
     {
         std::swap( ranks_per_dim[0], ranks_per_dim[2] );
-        partitioner = Cajita::ManualPartitioner( ranks_per_dim );
+        partitioner = Cajita::ManualBlockPartitioner<3>( ranks_per_dim );
         migrateTest( global_grid, cell_size, 2, 2, true, 0 );
     }
     if ( ranks_per_dim[1] != ranks_per_dim[2] )
     {
         std::swap( ranks_per_dim[1], ranks_per_dim[2] );
-        partitioner = Cajita::ManualPartitioner( ranks_per_dim );
+        partitioner = Cajita::ManualBlockPartitioner<3>( ranks_per_dim );
         migrateTest( global_grid, cell_size, 2, 2, true, 0 );
     }
 }
@@ -347,7 +347,7 @@ TEST( TEST_CATEGORY, local_only_test )
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
     std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
     MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
-    Cajita::ManualPartitioner partitioner( ranks_per_dim );
+    Cajita::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
 
     // Every boundary is periodic
     std::array<bool, 3> is_periodic = { true, true, true };

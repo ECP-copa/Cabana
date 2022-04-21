@@ -12,8 +12,8 @@
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_LocalGrid.hpp>
+#include <Cajita_Partitioner.hpp>
 #include <Cajita_Types.hpp>
-#include <Cajita_UniformDimPartitioner.hpp>
 
 #include <gtest/gtest.h>
 
@@ -31,7 +31,7 @@ namespace Test
 void periodicTest3d()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
+    DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -1839,7 +1839,7 @@ void notPeriodicTest3d()
     MPI_Comm_split( MPI_COMM_WORLD, comm_rank, 0, &serial_comm );
 
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
+    DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;
@@ -3355,7 +3355,7 @@ void notPeriodicTest2d()
 void mutabilityTest()
 {
     // Let MPI compute the partitioning for this test.
-    UniformDimPartitioner partitioner;
+    DimBlockPartitioner<3> partitioner;
 
     // Create the global mesh.
     double cell_size = 0.23;

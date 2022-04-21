@@ -206,7 +206,7 @@ void gatherScatterTest( const ManualBlockPartitioner<3>& partitioner,
         ArrayOp::assign( *array, 1.0, Own() );
 
         // Create a halo.
-        auto halo = createHalo( *array, FullHaloPattern(), halo_width );
+        auto halo = createHalo( NodeHaloPattern<3>(), halo_width, *array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *array );
@@ -292,10 +292,10 @@ void gatherScatterTest( const ManualBlockPartitioner<3>& partitioner,
         ArrayOp::assign( *edge_k_array, 1.0, Own() );
 
         // Create a multihalo.
-        auto halo =
-            createHalo( FullHaloPattern(), halo_width, *cell_array, *node_array,
-                        *face_i_array, *face_j_array, *face_k_array,
-                        *edge_i_array, *edge_j_array, *edge_k_array );
+        auto halo = createHalo( NodeHaloPattern<3>(), halo_width, *cell_array,
+                                *node_array, *face_i_array, *face_j_array,
+                                *face_k_array, *edge_i_array, *edge_j_array,
+                                *edge_k_array );
 
         // Gather into the ghosts.
         halo->gather( TEST_EXECSPACE(), *cell_array, *node_array, *face_i_array,
@@ -414,7 +414,7 @@ void scatterReduceTest( const ReduceFunc& reduce )
     pattern.setNeighbors( neighbors );
 
     // Create a halo.
-    auto halo = createHalo( *array, pattern );
+    auto halo = createHalo( pattern, array_halo_width, *array );
 
     // Scatter.
     halo->scatter( TEST_EXECSPACE(), reduce, *array );

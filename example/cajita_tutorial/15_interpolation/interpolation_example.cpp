@@ -178,16 +178,16 @@ void interpolationExample()
 
     // Create a halo for scatter operations. This concept is discussed in more
     // detail in the Halo tutorial example.
-    auto scalar_halo =
-        Cajita::createHalo( *scalar_grid_field, Cajita::NodeHaloPattern<2>() );
+    auto scalar_halo = Cajita::createHalo( Cajita::NodeHaloPattern<2>(),
+                                           halo_width, *scalar_grid_field );
 
     // Create a vector field on the grid.
     auto vector_layout =
         Cajita::createArrayLayout( local_grid, 2, Cajita::Node() );
     auto vector_grid_field = Cajita::createArray<double, ExecutionSpace>(
         "vector_grid_field", vector_layout );
-    auto vector_halo =
-        Cajita::createHalo( *vector_grid_field, Cajita::NodeHaloPattern<2>() );
+    auto vector_halo = Cajita::createHalo( Cajita::NodeHaloPattern<2>(),
+                                           halo_width, *vector_grid_field );
 
     // Simple Kokkos::Views may be used to represent particle data.
     // Create a scalar point field.

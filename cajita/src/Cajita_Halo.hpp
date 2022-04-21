@@ -148,9 +148,7 @@ class FaceHaloPattern<2> : public HaloPattern<2>
 };
 
 //! Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
-class FullHaloPattern : public NodeHaloPattern<3>
-{
-};
+class [[deprecated]] FullHaloPattern : public NodeHaloPattern<3>{};
 
 //---------------------------------------------------------------------------//
 // Scatter reduction.
@@ -957,8 +955,13 @@ auto createHalo( const Pattern& pattern, const int width,
 //---------------------------------------------------------------------------//
 // Backwards-compatible single array creation functions.
 //---------------------------------------------------------------------------//
-//! Array-like container adapter to hold layout and data information for
-//! creating halos.
+/*!
+  Array-like container adapter to hold layout and data information for
+  creating halos.
+
+  NOTE: This struct is only used in deprecated functions, but does not include
+  a deprecation tag to avoid nested deprecation warnings.
+*/
 template <class Scalar, class MemorySpace, class ArrayLayout>
 struct LayoutAdapter
 {
@@ -985,8 +988,8 @@ struct LayoutAdapter
 */
 template <class Scalar, class Device, class EntityType, class MeshType,
           class Pattern>
-auto createHalo( const ArrayLayout<EntityType, MeshType>& layout,
-                 const Pattern& pattern, const int width = -1 )
+[[deprecated]] auto createHalo( const ArrayLayout<EntityType, MeshType>& layout,
+                                const Pattern& pattern, const int width = -1 )
 {
     LayoutAdapter<Scalar, typename Device::memory_space,
                   ArrayLayout<EntityType, MeshType>>
@@ -1008,8 +1011,9 @@ auto createHalo( const ArrayLayout<EntityType, MeshType>& layout,
 */
 template <class Scalar, class EntityType, class MeshType, class Pattern,
           class... Params>
-auto createHalo( const Array<Scalar, EntityType, MeshType, Params...>& array,
-                 const Pattern& pattern, const int width = -1 )
+[[deprecated]] auto
+createHalo( const Array<Scalar, EntityType, MeshType, Params...>& array,
+            const Pattern& pattern, const int width = -1 )
 {
     LayoutAdapter<
         Scalar,

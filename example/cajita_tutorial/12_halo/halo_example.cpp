@@ -132,7 +132,7 @@ void gridHaloExample()
            - Face pattern communicates with 6 MPI neighbors in 3D (4 in 2D)
         */
         auto halo =
-            createHalo( *array, Cajita::NodeHaloPattern<3>(), halo_width );
+            createHalo( Cajita::NodeHaloPattern<3>(), halo_width, *array );
 
         /*
           Gather into the ghosts. This performs the grid communication from the
