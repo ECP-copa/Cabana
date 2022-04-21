@@ -955,10 +955,15 @@ auto createHalo( const Pattern& pattern, const int width,
 //---------------------------------------------------------------------------//
 // Backwards-compatible single array creation functions.
 //---------------------------------------------------------------------------//
-//! Array-like container adapter to hold layout and data information for
-//! creating halos.
+/*!
+  Array-like container adapter to hold layout and data information for
+  creating halos.
+
+  NOTE: This struct is only used in deprecated functions, but does not include
+  a deprecation tag to avoid nested deprecation warnings.
+*/
 template <class Scalar, class MemorySpace, class ArrayLayout>
-struct [[deprecated]] LayoutAdapter
+struct LayoutAdapter
 {
     //! Scalar value type.
     using value_type = Scalar;
