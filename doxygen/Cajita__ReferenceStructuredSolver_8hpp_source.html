@@ -864,56 +864,54 @@ $(function() {
 <div class="line"><a name="l00910"></a><span class="lineno">  910</span>&#160;        std::copy( neighbor_set.begin(), neighbor_set.end(),</div>
 <div class="line"><a name="l00911"></a><span class="lineno">  911</span>&#160;                   halo_neighbors.begin() );</div>
 <div class="line"><a name="l00912"></a><span class="lineno">  912</span>&#160; </div>
-<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;        <span class="comment">// Build the halo. We put 2 entries as each operator application will</span></div>
-<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;        <span class="comment">// gather 2 vectors with fused kernels.</span></div>
-<div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;        <span class="keyword">auto</span> halo_layout = <a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( local_grid, 2, EntityType() );</div>
-<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160;        HaloPattern&lt;num_space_dim&gt; pattern;</div>
-<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;        pattern.setNeighbors( halo_neighbors );</div>
-<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;        halo = createHalo&lt;Scalar, DeviceType&gt;( *halo_layout, pattern, width );</div>
+<div class="line"><a name="l00913"></a><span class="lineno">  913</span>&#160;        <span class="comment">// Create a new layout.</span></div>
+<div class="line"><a name="l00914"></a><span class="lineno">  914</span>&#160;        <span class="keyword">auto</span> matrix_layout =</div>
+<div class="line"><a name="l00915"></a><span class="lineno">  915</span>&#160;            <a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( local_grid, stencil.size(), EntityType() );</div>
+<div class="line"><a name="l00916"></a><span class="lineno">  916</span>&#160; </div>
+<div class="line"><a name="l00917"></a><span class="lineno">  917</span>&#160;        <span class="comment">// Allocate the matrix.</span></div>
+<div class="line"><a name="l00918"></a><span class="lineno">  918</span>&#160;        matrix = createArray&lt;Scalar, DeviceType&gt;( <span class="stringliteral">&quot;matrix&quot;</span>, matrix_layout );</div>
 <div class="line"><a name="l00919"></a><span class="lineno">  919</span>&#160; </div>
-<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160;        <span class="comment">// Create a new layout.</span></div>
-<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160;        <span class="keyword">auto</span> matrix_layout =</div>
-<div class="line"><a name="l00922"></a><span class="lineno">  922</span>&#160;            <a class="code" href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">createArrayLayout</a>( local_grid, stencil.size(), EntityType() );</div>
-<div class="line"><a name="l00923"></a><span class="lineno">  923</span>&#160; </div>
-<div class="line"><a name="l00924"></a><span class="lineno">  924</span>&#160;        <span class="comment">// Allocate the matrix.</span></div>
-<div class="line"><a name="l00925"></a><span class="lineno">  925</span>&#160;        matrix = createArray&lt;Scalar, DeviceType&gt;( <span class="stringliteral">&quot;matrix&quot;</span>, matrix_layout );</div>
-<div class="line"><a name="l00926"></a><span class="lineno">  926</span>&#160;    }</div>
-<div class="line"><a name="l00927"></a><span class="lineno">  927</span>&#160; </div>
-<div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;  <span class="keyword">private</span>:</div>
-<div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;    Scalar _tol;</div>
-<div class="line"><a name="l00930"></a><span class="lineno">  930</span>&#160;    <span class="keywordtype">int</span> _max_iter;</div>
-<div class="line"><a name="l00931"></a><span class="lineno">  931</span>&#160;    <span class="keywordtype">int</span> _print_level;</div>
-<div class="line"><a name="l00932"></a><span class="lineno">  932</span>&#160;    <span class="keywordtype">int</span> _num_iter;</div>
-<div class="line"><a name="l00933"></a><span class="lineno">  933</span>&#160;    Scalar _residual_norm;</div>
-<div class="line"><a name="l00934"></a><span class="lineno">  934</span>&#160;    <span class="keywordtype">int</span> _diag_entry;</div>
-<div class="line"><a name="l00935"></a><span class="lineno">  935</span>&#160;    Kokkos::View&lt;int* [num_space_dim], DeviceType&gt; _A_stencil;</div>
-<div class="line"><a name="l00936"></a><span class="lineno">  936</span>&#160;    Kokkos::View&lt;int* [num_space_dim], DeviceType&gt; _M_stencil;</div>
-<div class="line"><a name="l00937"></a><span class="lineno">  937</span>&#160;    std::shared_ptr&lt;Halo&lt;memory_space&gt;&gt; _A_halo;</div>
-<div class="line"><a name="l00938"></a><span class="lineno">  938</span>&#160;    std::shared_ptr&lt;Halo&lt;memory_space&gt;&gt; _M_halo;</div>
-<div class="line"><a name="l00939"></a><span class="lineno">  939</span>&#160;    std::shared_ptr&lt;Array_t&gt; _A;</div>
-<div class="line"><a name="l00940"></a><span class="lineno">  940</span>&#160;    std::shared_ptr&lt;Array_t&gt; _M;</div>
-<div class="line"><a name="l00941"></a><span class="lineno">  941</span>&#160;    std::shared_ptr&lt;Array_t&gt; _vectors;</div>
-<div class="line"><a name="l00942"></a><span class="lineno">  942</span>&#160;};</div>
-<div class="line"><a name="l00943"></a><span class="lineno">  943</span>&#160; </div>
+<div class="line"><a name="l00920"></a><span class="lineno">  920</span>&#160;        <span class="comment">// Build the halo.</span></div>
+<div class="line"><a name="l00921"></a><span class="lineno">  921</span>&#160;        HaloPattern&lt;num_space_dim&gt; pattern;</div>
+<div class="line"><a name="l00922"></a><span class="lineno">  922</span>&#160;        pattern.setNeighbors( halo_neighbors );</div>
+<div class="line"><a name="l00923"></a><span class="lineno">  923</span>&#160;        halo = <a class="code" href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">createHalo</a>( pattern, width, *matrix );</div>
+<div class="line"><a name="l00924"></a><span class="lineno">  924</span>&#160;    }</div>
+<div class="line"><a name="l00925"></a><span class="lineno">  925</span>&#160; </div>
+<div class="line"><a name="l00926"></a><span class="lineno">  926</span>&#160;  <span class="keyword">private</span>:</div>
+<div class="line"><a name="l00927"></a><span class="lineno">  927</span>&#160;    Scalar _tol;</div>
+<div class="line"><a name="l00928"></a><span class="lineno">  928</span>&#160;    <span class="keywordtype">int</span> _max_iter;</div>
+<div class="line"><a name="l00929"></a><span class="lineno">  929</span>&#160;    <span class="keywordtype">int</span> _print_level;</div>
+<div class="line"><a name="l00930"></a><span class="lineno">  930</span>&#160;    <span class="keywordtype">int</span> _num_iter;</div>
+<div class="line"><a name="l00931"></a><span class="lineno">  931</span>&#160;    Scalar _residual_norm;</div>
+<div class="line"><a name="l00932"></a><span class="lineno">  932</span>&#160;    <span class="keywordtype">int</span> _diag_entry;</div>
+<div class="line"><a name="l00933"></a><span class="lineno">  933</span>&#160;    Kokkos::View&lt;int* [num_space_dim], DeviceType&gt; _A_stencil;</div>
+<div class="line"><a name="l00934"></a><span class="lineno">  934</span>&#160;    Kokkos::View&lt;int* [num_space_dim], DeviceType&gt; _M_stencil;</div>
+<div class="line"><a name="l00935"></a><span class="lineno">  935</span>&#160;    std::shared_ptr&lt;Halo&lt;memory_space&gt;&gt; _A_halo;</div>
+<div class="line"><a name="l00936"></a><span class="lineno">  936</span>&#160;    std::shared_ptr&lt;Halo&lt;memory_space&gt;&gt; _M_halo;</div>
+<div class="line"><a name="l00937"></a><span class="lineno">  937</span>&#160;    std::shared_ptr&lt;Array_t&gt; _A;</div>
+<div class="line"><a name="l00938"></a><span class="lineno">  938</span>&#160;    std::shared_ptr&lt;Array_t&gt; _M;</div>
+<div class="line"><a name="l00939"></a><span class="lineno">  939</span>&#160;    std::shared_ptr&lt;Array_t&gt; _vectors;</div>
+<div class="line"><a name="l00940"></a><span class="lineno">  940</span>&#160;};</div>
+<div class="line"><a name="l00941"></a><span class="lineno">  941</span>&#160; </div>
+<div class="line"><a name="l00942"></a><span class="lineno">  942</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00943"></a><span class="lineno">  943</span>&#160;<span class="comment">// Builders.</span></div>
 <div class="line"><a name="l00944"></a><span class="lineno">  944</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00945"></a><span class="lineno">  945</span>&#160;<span class="comment">// Builders.</span></div>
-<div class="line"><a name="l00946"></a><span class="lineno">  946</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
-<div class="line"><a name="l00949"></a><span class="lineno">  949</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Scalar, <span class="keyword">class</span> DeviceType, <span class="keyword">class</span> EntityType, <span class="keyword">class</span> MeshType&gt;</div>
-<div class="line"><a name="l00950"></a><span class="lineno">  950</span>&#160;std::shared_ptr&lt;</div>
-<div class="line"><a name="l00951"></a><span class="lineno">  951</span>&#160;    ReferenceConjugateGradient&lt;Scalar, EntityType, MeshType, DeviceType&gt;&gt;</div>
-<div class="line"><a name="l00952"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a9272dda2ab56f41f9dc931948fc24c5d">  952</a></span>&#160;<a class="code" href="namespaceCajita.html#a9272dda2ab56f41f9dc931948fc24c5d">createReferenceConjugateGradient</a>(</div>
-<div class="line"><a name="l00953"></a><span class="lineno">  953</span>&#160;    <span class="keyword">const</span> <a class="code" href="classCajita_1_1ArrayLayout.html">ArrayLayout&lt;EntityType, MeshType&gt;</a>&amp; layout )</div>
-<div class="line"><a name="l00954"></a><span class="lineno">  954</span>&#160;{</div>
-<div class="line"><a name="l00955"></a><span class="lineno">  955</span>&#160;    <span class="keywordflow">return</span> std::make_shared&lt;</div>
-<div class="line"><a name="l00956"></a><span class="lineno">  956</span>&#160;        <a class="code" href="classCajita_1_1ReferenceConjugateGradient.html">ReferenceConjugateGradient&lt;Scalar, EntityType, MeshType, DeviceType&gt;</a>&gt;(</div>
-<div class="line"><a name="l00957"></a><span class="lineno">  957</span>&#160;        layout );</div>
-<div class="line"><a name="l00958"></a><span class="lineno">  958</span>&#160;}</div>
+<div class="line"><a name="l00947"></a><span class="lineno">  947</span>&#160;<span class="comment"></span><span class="keyword">template</span> &lt;<span class="keyword">class</span> Scalar, <span class="keyword">class</span> DeviceType, <span class="keyword">class</span> EntityType, <span class="keyword">class</span> MeshType&gt;</div>
+<div class="line"><a name="l00948"></a><span class="lineno">  948</span>&#160;std::shared_ptr&lt;</div>
+<div class="line"><a name="l00949"></a><span class="lineno">  949</span>&#160;    ReferenceConjugateGradient&lt;Scalar, EntityType, MeshType, DeviceType&gt;&gt;</div>
+<div class="line"><a name="l00950"></a><span class="lineno"><a class="line" href="namespaceCajita.html#a9272dda2ab56f41f9dc931948fc24c5d">  950</a></span>&#160;<a class="code" href="namespaceCajita.html#a9272dda2ab56f41f9dc931948fc24c5d">createReferenceConjugateGradient</a>(</div>
+<div class="line"><a name="l00951"></a><span class="lineno">  951</span>&#160;    <span class="keyword">const</span> <a class="code" href="classCajita_1_1ArrayLayout.html">ArrayLayout&lt;EntityType, MeshType&gt;</a>&amp; layout )</div>
+<div class="line"><a name="l00952"></a><span class="lineno">  952</span>&#160;{</div>
+<div class="line"><a name="l00953"></a><span class="lineno">  953</span>&#160;    <span class="keywordflow">return</span> std::make_shared&lt;</div>
+<div class="line"><a name="l00954"></a><span class="lineno">  954</span>&#160;        <a class="code" href="classCajita_1_1ReferenceConjugateGradient.html">ReferenceConjugateGradient&lt;Scalar, EntityType, MeshType, DeviceType&gt;</a>&gt;(</div>
+<div class="line"><a name="l00955"></a><span class="lineno">  955</span>&#160;        layout );</div>
+<div class="line"><a name="l00956"></a><span class="lineno">  956</span>&#160;}</div>
+<div class="line"><a name="l00957"></a><span class="lineno">  957</span>&#160; </div>
+<div class="line"><a name="l00958"></a><span class="lineno">  958</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
 <div class="line"><a name="l00959"></a><span class="lineno">  959</span>&#160; </div>
-<div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160;<span class="comment">//---------------------------------------------------------------------------//</span></div>
+<div class="line"><a name="l00960"></a><span class="lineno">  960</span>&#160;} <span class="comment">// end namespace Cajita</span></div>
 <div class="line"><a name="l00961"></a><span class="lineno">  961</span>&#160; </div>
-<div class="line"><a name="l00962"></a><span class="lineno">  962</span>&#160;} <span class="comment">// end namespace Cajita</span></div>
-<div class="line"><a name="l00963"></a><span class="lineno">  963</span>&#160; </div>
-<div class="line"><a name="l00964"></a><span class="lineno">  964</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_REFERENCESTRUCTUREDSOLVER_HPP</span></div>
+<div class="line"><a name="l00962"></a><span class="lineno">  962</span>&#160;<span class="preprocessor">#endif </span><span class="comment">// end CAJITA_REFERENCESTRUCTUREDSOLVER_HPP</span></div>
 <div class="ttc" id="aCajita__Array_8hpp_html"><div class="ttname"><a href="Cajita__Array_8hpp.html">Cajita_Array.hpp</a></div><div class="ttdoc">Grid field arrays.</div></div>
 <div class="ttc" id="aCajita__GlobalGrid_8hpp_html"><div class="ttname"><a href="Cajita__GlobalGrid_8hpp.html">Cajita_GlobalGrid.hpp</a></div><div class="ttdoc">Global grid.</div></div>
 <div class="ttc" id="aCajita__Halo_8hpp_html"><div class="ttname"><a href="Cajita__Halo_8hpp.html">Cajita_Halo.hpp</a></div><div class="ttdoc">Multi-node grid scatter/gather.</div></div>
@@ -964,7 +962,8 @@ $(function() {
 <div class="ttc" id="anamespaceCabana_html_a1932d2c9be351d64dfcb6e2d22fc68c8"><div class="ttname"><a href="namespaceCabana.html#a1932d2c9be351d64dfcb6e2d22fc68c8">Cabana::deep_copy</a></div><div class="ttdeci">void deep_copy(DstAoSoA &amp;dst, const SrcAoSoA &amp;src, typename std::enable_if&lt;(is_aosoa&lt; DstAoSoA &gt;::value &amp;&amp;is_aosoa&lt; SrcAoSoA &gt;::value)&gt;::type *=0)</div><div class="ttdoc">Deep copy data between compatible AoSoA objects.</div><div class="ttdef"><b>Definition:</b> Cabana_DeepCopy.hpp:157</div></div>
 <div class="ttc" id="anamespaceCabana_html_a682f288aa48e84e44856d1a0b2239b43"><div class="ttname"><a href="namespaceCabana.html#a682f288aa48e84e44856d1a0b2239b43">Cabana::create_mirror_view</a></div><div class="ttdeci">SrcAoSoA create_mirror_view(const Space &amp;, const SrcAoSoA &amp;src, typename std::enable_if&lt;(std::is_same&lt; typename SrcAoSoA::memory_space, typename Space::memory_space &gt;::value)&gt;::type *=0)</div><div class="ttdoc">Create a mirror view of the given AoSoA in the given space. Same space specialization returns the inp...</div><div class="ttdef"><b>Definition:</b> Cabana_DeepCopy.hpp:59</div></div>
 <div class="ttc" id="anamespaceCajita_html"><div class="ttname"><a href="namespaceCajita.html">Cajita</a></div><div class="ttdoc">Cajita: grid and particle-grid data structures and algorithms.</div></div>
-<div class="ttc" id="anamespaceCajita_html_a9272dda2ab56f41f9dc931948fc24c5d"><div class="ttname"><a href="namespaceCajita.html#a9272dda2ab56f41f9dc931948fc24c5d">Cajita::createReferenceConjugateGradient</a></div><div class="ttdeci">std::shared_ptr&lt; ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, DeviceType &gt; &gt; createReferenceConjugateGradient(const ArrayLayout&lt; EntityType, MeshType &gt; &amp;layout)</div><div class="ttdef"><b>Definition:</b> Cajita_ReferenceStructuredSolver.hpp:952</div></div>
+<div class="ttc" id="anamespaceCajita_html_a047ee0472b03e9ef8798fc34f110c28d"><div class="ttname"><a href="namespaceCajita.html#a047ee0472b03e9ef8798fc34f110c28d">Cajita::createHalo</a></div><div class="ttdeci">auto createHalo(const Pattern &amp;pattern, const int width, const ArrayTypes &amp;... arrays)</div><div class="ttdoc">Array creation function.</div><div class="ttdef"><b>Definition:</b> Cajita_Halo.hpp:948</div></div>
+<div class="ttc" id="anamespaceCajita_html_a9272dda2ab56f41f9dc931948fc24c5d"><div class="ttname"><a href="namespaceCajita.html#a9272dda2ab56f41f9dc931948fc24c5d">Cajita::createReferenceConjugateGradient</a></div><div class="ttdeci">std::shared_ptr&lt; ReferenceConjugateGradient&lt; Scalar, EntityType, MeshType, DeviceType &gt; &gt; createReferenceConjugateGradient(const ArrayLayout&lt; EntityType, MeshType &gt; &amp;layout)</div><div class="ttdef"><b>Definition:</b> Cajita_ReferenceStructuredSolver.hpp:950</div></div>
 <div class="ttc" id="anamespaceCajita_html_aa0bb56f113356a47470331f61420fb17"><div class="ttname"><a href="namespaceCajita.html#aa0bb56f113356a47470331f61420fb17">Cajita::createSubarray</a></div><div class="ttdeci">std::shared_ptr&lt; Array&lt; Scalar, EntityType, MeshType, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_layout, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::device_type, typename Array&lt; Scalar, EntityType, MeshType, Params... &gt;::subview_memory_traits &gt; &gt; createSubarray(const Array&lt; Scalar, EntityType, MeshType, Params... &gt; &amp;array, const int dof_min, const int dof_max)</div><div class="ttdoc">Create a subarray of the given array over the given range of degrees of freedom.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:367</div></div>
 <div class="ttc" id="anamespaceCajita_html_abdd3b143d333ec6a5d5018c2caa38598"><div class="ttname"><a href="namespaceCajita.html#abdd3b143d333ec6a5d5018c2caa38598">Cajita::createArrayLayout</a></div><div class="ttdeci">std::shared_ptr&lt; ArrayLayout&lt; EntityType, MeshType &gt; &gt; createArrayLayout(const std::shared_ptr&lt; LocalGrid&lt; MeshType &gt;&gt; &amp;local_grid, const int dofs_per_entity, EntityType)</div><div class="ttdoc">Create an array layout over the entities of a local grid.</div><div class="ttdef"><b>Definition:</b> Cajita_Array.hpp:186</div></div>
 <div class="ttc" id="anamespaceCajita_html_ac2a58a3b10046140ae6a75b252dbade6"><div class="ttname"><a href="namespaceCajita.html#ac2a58a3b10046140ae6a75b252dbade6">Cajita::grid_parallel_reduce</a></div><div class="ttdeci">void grid_parallel_reduce(const std::string &amp;label, const ExecutionSpace &amp;exec_space, const IndexSpace&lt; N &gt; &amp;index_space, const FunctorType &amp;functor, ReduceType &amp;reducer)</div><div class="ttdoc">Execute a reduction functor in parallel with a multidimensional execution policy specified by the giv...</div><div class="ttdef"><b>Definition:</b> Cajita_Parallel.hpp:424</div></div>
