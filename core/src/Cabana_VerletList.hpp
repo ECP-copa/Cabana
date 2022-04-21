@@ -52,8 +52,6 @@ struct VerletListData<MemorySpace, VerletLayoutCSR>
 {
     //! Kokkos memory space.
     using memory_space = MemorySpace;
-    //! Default Kokkos device type.
-    using device_type [[deprecated]] = typename memory_space::device_type;
 
     //! Number of neighbors per particle.
     Kokkos::View<int*, memory_space> counts;
@@ -79,8 +77,6 @@ struct VerletListData<MemorySpace, VerletLayout2D>
 {
     //! Kokkos memory space.
     using memory_space = MemorySpace;
-    //! Default Kokkos device type.
-    using device_type [[deprecated]] = typename memory_space::device_type;
 
     //! Number of neighbors per particle.
     Kokkos::View<int*, memory_space> counts;
@@ -653,9 +649,6 @@ class VerletList
 
     //! Kokkos default execution space for this memory space.
     using execution_space = typename memory_space::execution_space;
-
-    //! Kokkos device type with the default execution_space.
-    using device_type [[deprecated]] = typename memory_space::device_type;
 
     //! Verlet list data.
     VerletListData<memory_space, LayoutTag> _data;
