@@ -102,8 +102,6 @@ class HypreStructuredSolver
     using entity_type = EntityType;
     //! Kokkos memory space..
     using memory_space = MemorySpace;
-    //! Default Kokkos device type.
-    using device_type [[deprecated]] = typename memory_space::device_type;
     //! Scalar value type.
     using value_type = Scalar;
     //! Hypre memory space compatibility check.
