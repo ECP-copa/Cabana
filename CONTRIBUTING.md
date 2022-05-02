@@ -7,8 +7,8 @@ repository](https://github.com/ECP-copa/Cabana) and allow edits from
 maintainers in the pull request.
 
 Your pull request must pass Cabana's tests, which includes using the coding
-style from `.clang-format` (tested with clang-10), and be reviewed by at least
-one Cabana developer.
+style from `.clang-format` (enforced with clang-format-14), and be reviewed by
+at least one Cabana developer.
 
 Other coding style includes:
 * Camel case template parameters (`NewTemplateType`)
