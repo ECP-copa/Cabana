@@ -1040,7 +1040,7 @@ auto LocalGrid<MeshType>::faceSharedIndexSpace(
 template <class MeshType>
 template <int Dir, std::size_t NSD>
 std::enable_if_t<3 == NSD, IndexSpace<3>>
-    LocalGrid<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
+LocalGrid<MeshType>::edgeIndexSpace( Own, Edge<Dir>, Local ) const
 {
     // Compute the lower bound.
     std::array<long, 3> min;
@@ -1073,7 +1073,7 @@ std::enable_if_t<3 == NSD, IndexSpace<3>>
 template <class MeshType>
 template <int Dir, std::size_t NSD>
 std::enable_if_t<3 == NSD, IndexSpace<3>>
-    LocalGrid<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>, Local ) const
+LocalGrid<MeshType>::edgeIndexSpace( Ghost, Edge<Dir>, Local ) const
 {
     // Compute the size.
     std::array<long, 3> size;

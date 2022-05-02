@@ -112,7 +112,8 @@ void testConversion3d( const std::array<bool, 3>& is_dim_periodic )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), index_view );
     auto l2g_view_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), l2g_view );
-    auto check_results = [&]( const IndexSpace<3>& space ) {
+    auto check_results = [&]( const IndexSpace<3>& space )
+    {
         for ( int i = space.min( Dim::I ); i < space.max( Dim::I ); ++i )
             for ( int j = space.min( Dim::J ); j < space.max( Dim::J ); ++j )
                 for ( int k = space.min( Dim::K ); k < space.max( Dim::K );
@@ -206,7 +207,8 @@ void testConversion2d( const std::array<bool, 2>& is_dim_periodic )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), index_view );
     auto l2g_view_host =
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), l2g_view );
-    auto check_results = [&]( const IndexSpace<2>& space ) {
+    auto check_results = [&]( const IndexSpace<2>& space )
+    {
         for ( int i = space.min( Dim::I ); i < space.max( Dim::I ); ++i )
             for ( int j = space.min( Dim::J ); j < space.max( Dim::J ); ++j )
                 for ( int d = 0; d < 2; ++d )

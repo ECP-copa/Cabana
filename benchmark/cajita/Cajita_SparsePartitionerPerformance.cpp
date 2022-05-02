@@ -42,7 +42,8 @@ int current = 0;
 int uniqueNumber() { return current++; }
 
 Kokkos::View<int* [3], Kokkos::HostSpace>
-generateRandomTileSequence( int tiles_per_dim ) {
+generateRandomTileSequence( int tiles_per_dim )
+{
     Kokkos::View<int* [3], Kokkos::HostSpace> tiles_host(
         "random_tile_sequence_host",
         tiles_per_dim * tiles_per_dim * tiles_per_dim );
