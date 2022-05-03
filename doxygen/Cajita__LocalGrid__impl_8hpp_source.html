@@ -1111,7 +1111,7 @@ $(function() {
 <div class="line"><a name="l01040"></a><span class="lineno"> 1040</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> MeshType&gt;</div>
 <div class="line"><a name="l01041"></a><span class="lineno"> 1041</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> Dir, std::<span class="keywordtype">size_t</span> NSD&gt;</div>
 <div class="line"><a name="l01042"></a><span class="lineno"> 1042</span>&#160;std::enable_if_t&lt;3 == NSD, IndexSpace&lt;3&gt;&gt;</div>
-<div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160;    LocalGrid&lt;MeshType&gt;::edgeIndexSpace( Own, Edge&lt;Dir&gt;, Local )<span class="keyword"> const</span></div>
+<div class="line"><a name="l01043"></a><span class="lineno"> 1043</span>&#160;LocalGrid&lt;MeshType&gt;::edgeIndexSpace( Own, Edge&lt;Dir&gt;, Local )<span class="keyword"> const</span></div>
 <div class="line"><a name="l01044"></a><span class="lineno"> 1044</span>&#160;<span class="keyword"></span>{</div>
 <div class="line"><a name="l01045"></a><span class="lineno"> 1045</span>&#160;    <span class="comment">// Compute the lower bound.</span></div>
 <div class="line"><a name="l01046"></a><span class="lineno"> 1046</span>&#160;    std::array&lt;long, 3&gt; min;</div>
@@ -1144,7 +1144,7 @@ $(function() {
 <div class="line"><a name="l01073"></a><span class="lineno"> 1073</span>&#160;<span class="keyword">template</span> &lt;<span class="keyword">class</span> MeshType&gt;</div>
 <div class="line"><a name="l01074"></a><span class="lineno"> 1074</span>&#160;<span class="keyword">template</span> &lt;<span class="keywordtype">int</span> Dir, std::<span class="keywordtype">size_t</span> NSD&gt;</div>
 <div class="line"><a name="l01075"></a><span class="lineno"> 1075</span>&#160;std::enable_if_t&lt;3 == NSD, IndexSpace&lt;3&gt;&gt;</div>
-<div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;    LocalGrid&lt;MeshType&gt;::edgeIndexSpace( Ghost, Edge&lt;Dir&gt;, Local )<span class="keyword"> const</span></div>
+<div class="line"><a name="l01076"></a><span class="lineno"> 1076</span>&#160;LocalGrid&lt;MeshType&gt;::edgeIndexSpace( Ghost, Edge&lt;Dir&gt;, Local )<span class="keyword"> const</span></div>
 <div class="line"><a name="l01077"></a><span class="lineno"> 1077</span>&#160;<span class="keyword"></span>{</div>
 <div class="line"><a name="l01078"></a><span class="lineno"> 1078</span>&#160;    <span class="comment">// Compute the size.</span></div>
 <div class="line"><a name="l01079"></a><span class="lineno"> 1079</span>&#160;    std::array&lt;long, 3&gt; size;</div>
