@@ -148,7 +148,9 @@ class FaceHaloPattern<2> : public HaloPattern<2>
 };
 
 //! Full 3d halo with all 26 adjacent blocks. Backwards compatibility wrapper.
-class [[deprecated]] FullHaloPattern : public NodeHaloPattern<3>{};
+class [[deprecated]] FullHaloPattern : public NodeHaloPattern<3>
+{
+};
 
 //---------------------------------------------------------------------------//
 // Scatter reduction.
@@ -226,7 +228,8 @@ class Halo
         auto local_grid = getLocalGrid( arrays... );
 
         // Function to get the local id of the neighbor.
-        auto neighbor_id = []( const std::array<int, num_space_dim>& ijk ) {
+        auto neighbor_id = []( const std::array<int, num_space_dim>& ijk )
+        {
             int id = ijk[0];
             for ( std::size_t d = 1; d < num_space_dim; ++d )
                 id += num_space_dim * id + ijk[d];
@@ -235,7 +238,8 @@ class Halo
 
         // Neighbor id flip function. This lets us compute what neighbor we
         // are relative to a given neighbor.
-        auto flip_id = [=]( const std::array<int, num_space_dim>& ijk ) {
+        auto flip_id = [=]( const std::array<int, num_space_dim>& ijk )
+        {
             std::array<int, num_space_dim> flip_ijk;
             for ( std::size_t d = 0; d < num_space_dim; ++d )
                 flip_ijk[d] = -ijk[d];

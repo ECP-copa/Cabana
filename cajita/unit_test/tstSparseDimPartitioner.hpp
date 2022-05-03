@@ -163,10 +163,12 @@ void uniform_distribution_automatic_rank()
     EXPECT_FLOAT_EQ( imbalance_factor, gt_imbalance_factor );
 }
 
-auto generate_random_tiles(
-    const std::array<std::vector<int>, 3>& gt_partition,
-    const Kokkos::Array<int, 3>& cart_rank, const int size_tile_per_dim,
-    int occupy_tile_num_per_rank ) -> Kokkos::View<int* [3], TEST_MEMSPACE> {
+auto generate_random_tiles( const std::array<std::vector<int>, 3>& gt_partition,
+                            const Kokkos::Array<int, 3>& cart_rank,
+                            const int size_tile_per_dim,
+                            int occupy_tile_num_per_rank )
+    -> Kokkos::View<int* [3], TEST_MEMSPACE>
+{
     // register valid tiles in each MPI rank
     // compute the sub-domain size (divided by the ground truth partition)
     const int area_size = size_tile_per_dim * size_tile_per_dim;
@@ -221,7 +223,8 @@ auto generate_random_particles(
     const std::array<std::vector<int>, 3>& gt_partition,
     const Kokkos::Array<int, 3>& cart_rank, int occupy_par_num_per_rank,
     const std::array<double, 3> global_low_corner, double dx,
-    int cell_num_per_tile_dim ) -> Kokkos::View<double* [3], TEST_MEMSPACE> {
+    int cell_num_per_tile_dim ) -> Kokkos::View<double* [3], TEST_MEMSPACE>
+{
     std::set<std::array<double, 3>> par_set;
 
     double start[3], size[3];

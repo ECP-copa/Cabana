@@ -300,8 +300,8 @@ class Array
 
   public:
     //! Subview type.
-    using subview_type = decltype(
-        createSubview( _data, _layout->indexSpace( Ghost(), Local() ) ) );
+    using subview_type = decltype( createSubview(
+        _data, _layout->indexSpace( Ghost(), Local() ) ) );
     //! Subview array layout type.
     using subview_layout = typename subview_type::array_layout;
     //! Subview memory traits.

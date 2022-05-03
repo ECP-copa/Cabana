@@ -28,7 +28,9 @@ namespace Cajita
 /*!
   \brief Backwards compatibility wrapper for 3D DimBlockPartitioner
 */
-class [[deprecated]] UniformDimPartitioner : public DimBlockPartitioner<3>{};
+class [[deprecated]] UniformDimPartitioner : public DimBlockPartitioner<3>
+{
+};
 
 //---------------------------------------------------------------------------//
 

@@ -179,7 +179,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
                 // reserve space in global array via a loop over neighbor counts
                 Kokkos::parallel_for(
                     Kokkos::TeamThreadRange( team, comm_size ),
-                    [&]( const int i ) {
+                    [&]( const int i )
+                    {
                         // global memory atomic add, reserves space
                         global_offset[i] = Kokkos::atomic_fetch_add(
                             &neighbor_counts( i ), histo[i] );
@@ -294,9 +295,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
             Kokkos::parallel_reduce(
                 Kokkos::TeamThreadRange( team,
                                          neighbor_counts_dup.extent( 0 ) ),
-                [&]( const index_type thread_id, int& result ) {
-                    result += neighbor_counts_dup( thread_id, i );
-                },
+                [&]( const index_type thread_id, int& result )
+                { result += neighbor_counts_dup( thread_id, i ); },
                 thread_counts );
             neighbor_counts( i ) = thread_counts;
         } );
@@ -321,7 +321,8 @@ auto countSendsAndCreateSteering( const ExportRankView element_export_ranks,
                 Kokkos::parallel_reduce(
                     Kokkos::TeamThreadRange( team,
                                              neighbor_ids_dup.extent( 0 ) ),
-                    [&]( const index_type thread_id, index_type& result ) {
+                    [&]( const index_type thread_id, index_type& result )
+                    {
                         if ( neighbor_ids_dup( thread_id, i ) > 0 )
                             result += thread_id;
                     },
@@ -435,13 +436,15 @@ class CommunicationPlan
         _comm_ptr.reset(
             // Duplicate the communicator and store in a std::shared_ptr so that
             // all copies point to the same object
-            [comm]() {
+            [comm]()
+            {
                 auto p = std::make_unique<MPI_Comm>();
                 MPI_Comm_dup( comm, p.get() );
                 return p.release();
             }(),
             // Custom deleter to mark the communicator for deallocation
-            []( MPI_Comm* p ) {
+            []( MPI_Comm* p )
+            {
                 MPI_Comm_free( p );
                 delete p;
             } );

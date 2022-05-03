@@ -3,6 +3,9 @@ FROM $BASE
 
 ARG NPROCS=4
 
+RUN DISTRO=ubuntu2004 && \
+    apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/$DISTRO/x86_64/3bf863cc.pub
+
 RUN apt-get update && apt-get install -y \
         bc \
         ccache \

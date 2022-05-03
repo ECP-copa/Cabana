@@ -300,7 +300,8 @@ struct VerletListBuilder
         std::size_t b_offset = bin_data_1d.binOffset( cell );
         Kokkos::parallel_for(
             Kokkos::TeamThreadRange( team, 0, bin_data_1d.binSize( cell ) ),
-            [&]( const int bi ) {
+            [&]( const int bi )
+            {
                 // Get the true particle id. The binned particle index is the
                 // league rank of the team.
                 std::size_t pid = linked_cell_list.permutation( bi + b_offset );
@@ -338,9 +339,8 @@ struct VerletListBuilder
                                     stencil_count += cell_count;
                                 }
                             }
-                    Kokkos::single( Kokkos::PerThread( team ), [&]() {
-                        _data.counts( pid ) = stencil_count;
-                    } );
+                    Kokkos::single( Kokkos::PerThread( team ), [&]()
+                                    { _data.counts( pid ) = stencil_count; } );
                 }
             } );
     }
@@ -516,7 +516,8 @@ struct VerletListBuilder
         std::size_t b_offset = bin_data_1d.binOffset( cell );
         Kokkos::parallel_for(
             Kokkos::TeamThreadRange( team, 0, bin_data_1d.binSize( cell ) ),
-            [&]( const int bi ) {
+            [&]( const int bi )
+            {
                 // Get the true particle id. The binned particle index is the
                 // league rank of the team.
                 std::size_t pid = linked_cell_list.permutation( bi + b_offset );
@@ -561,9 +562,8 @@ struct VerletListBuilder
                   TeamVectorOpTag ) const
     {
         Kokkos::parallel_for(
-            Kokkos::ThreadVectorRange( team, num_n ), [&]( const int n ) {
-                neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n );
-            } );
+            Kokkos::ThreadVectorRange( team, num_n ), [&]( const int n )
+            { neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n ); } );
     }
 
     // Neighbor fill serial loop.
@@ -574,9 +574,9 @@ struct VerletListBuilder
                        const int num_n, TeamOpTag ) const
     {
         for ( int n = 0; n < num_n; n++ )
-            Kokkos::single( Kokkos::PerThread( team ), [&]() {
-                neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n );
-            } );
+            Kokkos::single(
+                Kokkos::PerThread( team ),
+                [&]() { neighbor_kernel( pid, x_p, y_p, z_p, n_offset, n ); } );
     }
 
     // Neighbor fill kernel.
