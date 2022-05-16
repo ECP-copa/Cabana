@@ -51,6 +51,10 @@ if(Cabana_ENABLE_SILO)
   list(APPEND HEADERS_PUBLIC Cabana_SiloParticleOutput.hpp)
 endif()
 
+if(Cabana_ENABLE_HDF5)
+  list(APPEND HEADERS_PUBLIC Cabana_HDF5ParticleOutput.hpp)
+endif()
+
 set(HEADERS_IMPL
   impl/Cabana_CartesianGrid.hpp
   impl/Cabana_Index.hpp
@@ -71,6 +75,10 @@ endif()
 
 if(Cabana_ENABLE_SILO)
   target_link_libraries(cabanacore INTERFACE SILO::silo)
+endif()
+
+if(Cabana_ENABLE_HDF5)
+  target_link_libraries(cabanacore INTERFACE HDF5::hdf5)
 endif()
 
 if(Cabana_ENABLE_MPI)

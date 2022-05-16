@@ -67,14 +67,14 @@ endif()
 
 # standard dependency macro
 macro(Cabana_add_dependency)
-  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION" "" ${ARGN})
-  find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} QUIET )
+  cmake_parse_arguments(CABANA_DEPENDENCY "" "PACKAGE;VERSION;COMPONENTS" "" ${ARGN})
+  find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} QUIET COMPONENTS ${CABANA_DEPENDENCY_COMPONENTS} )
   string(TOUPPER "${CABANA_DEPENDENCY_PACKAGE}" CABANA_DEPENDENCY_OPTION )
   option(
     Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION}
     "Require Cabana to build with ${CABANA_DEPENDENCY_PACKAGE} support" ${CABANA_DEPENDENCY_PACKAGE}_FOUND)
   if(Cabana_REQUIRE_${CABANA_DEPENDENCY_OPTION})
-    find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} REQUIRED )
+    find_package( ${CABANA_DEPENDENCY_PACKAGE} ${CABANA_DEPENDENCY_VERSION} REQUIRED COMPONENTS ${CABANA_DEPENDENCY_COMPONENTS} )
   endif()
   set(Cabana_ENABLE_${CABANA_DEPENDENCY_OPTION} ${${CABANA_DEPENDENCY_PACKAGE}_FOUND})
 endmacro()
@@ -103,6 +103,18 @@ if(SILO_FOUND)
   install(FILES
     ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindSILO.cmake
     DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
+endif()
+
+# find HDF5 (XDMF)
+Cabana_add_dependency( PACKAGE HDF5 COMPONENTS C )
+if(HDF5_FOUND)
+  install(FILES
+    ${CMAKE_CURRENT_SOURCE_DIR}/cmake/FindHDF5.cmake
+    DESTINATION ${CMAKE_INSTALL_LIBDIR}/cmake/Cabana )
+endif()
+
+if(Cabana_ENABLE_HDF5 AND NOT Cabana_ENABLE_MPI)
+  message(FATAL_ERROR "Cabana HDF5 support requires MPI.")
 endif()
 
 #------------------------------------------------------------------------------#
