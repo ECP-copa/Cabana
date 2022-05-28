@@ -14,6 +14,7 @@
 #include <Cajita.hpp>
 
 #include <Kokkos_Core.hpp>
+#include <Kokkos_Random.hpp>
 
 #include <mpi.h>
 
@@ -24,7 +25,7 @@ using namespace Cajita;
 template <class Device>
 void performanceTest( std::ostream& stream, const std::string& test_prefix,
                       std::vector<int> cells_per_dim,
-                      std::vector<int> particles_per_cell_dim )
+                      std::vector<int> particles_per_cell )
 {
     using exec_space = typename Device::execution_space;
     using memory_space = typename Device::memory_space;
@@ -42,7 +43,7 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         Cabana::MemberTypes<double[3][3], double[3], double[3], double>;
     using aosoa_type = Cabana::AoSoA<member_types, Device>;
 
-    int num_particles_per_cell_dim = particles_per_cell_dim.size();
+    int num_particles_per_cell = particles_per_cell.size();
 
     for ( int n = 0; n < num_problem_size; ++n )
     {
@@ -61,96 +62,94 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         auto local_grid = createLocalGrid( global_grid, halo_width );
         auto local_mesh = createLocalMesh<exec_space>( *local_grid );
         auto owned_cells = local_grid->indexSpace( Own(), Cell(), Local() );
-
         int num_cells = owned_cells.size();
 
-        std::vector<aosoa_type> aosoas( num_particles_per_cell_dim );
+        // Create a random number generator.
+        uint64_t seed = 1938347;
+        Kokkos::Random_XorShift64_Pool<exec_space> pool;
+        pool.init( seed, num_cells );
+
+        std::vector<aosoa_type> aosoas( num_particles_per_cell );
 
         // Create p2g value timers.
         std::stringstream p2g_scalar_value_time_name;
         p2g_scalar_value_time_name << test_prefix << "p2g_scalar_value_"
                                    << cells_per_dim[n];
         Cabana::Benchmark::Timer p2g_scalar_value_timer(
-            p2g_scalar_value_time_name.str(), num_particles_per_cell_dim );
+            p2g_scalar_value_time_name.str(), num_particles_per_cell );
 
         std::stringstream p2g_vector_value_time_name;
         p2g_vector_value_time_name << test_prefix << "p2g_vector_value_"
                                    << cells_per_dim[n];
         Cabana::Benchmark::Timer p2g_vector_value_timer(
-            p2g_vector_value_time_name.str(), num_particles_per_cell_dim );
+            p2g_vector_value_time_name.str(), num_particles_per_cell );
 
         // Create p2g gradient timers.
         std::stringstream p2g_scalar_gradient_time_name;
         p2g_scalar_gradient_time_name << test_prefix << "p2g_scalar_gradient_"
                                       << cells_per_dim[n];
         Cabana::Benchmark::Timer p2g_scalar_gradient_timer(
-            p2g_scalar_gradient_time_name.str(), num_particles_per_cell_dim );
+            p2g_scalar_gradient_time_name.str(), num_particles_per_cell );
 
         // Create p2g divergence timers.
         std::stringstream p2g_vector_divergence_time_name;
         p2g_vector_divergence_time_name
             << test_prefix << "p2g_vector_divergence_" << cells_per_dim[n];
         Cabana::Benchmark::Timer p2g_vector_divergence_timer(
-            p2g_vector_divergence_time_name.str(), num_particles_per_cell_dim );
+            p2g_vector_divergence_time_name.str(), num_particles_per_cell );
 
         std::stringstream p2g_tensor_divergence_time_name;
         p2g_tensor_divergence_time_name
             << test_prefix << "p2g_tensor_divergence_" << cells_per_dim[n];
         Cabana::Benchmark::Timer p2g_tensor_divergence_timer(
-            p2g_tensor_divergence_time_name.str(), num_particles_per_cell_dim );
+            p2g_tensor_divergence_time_name.str(), num_particles_per_cell );
 
         // Create g2p value timers.
         std::stringstream g2p_scalar_value_time_name;
         g2p_scalar_value_time_name << test_prefix << "g2p_scalar_value_"
                                    << cells_per_dim[n];
         Cabana::Benchmark::Timer g2p_scalar_value_timer(
-            g2p_scalar_value_time_name.str(), num_particles_per_cell_dim );
+            g2p_scalar_value_time_name.str(), num_particles_per_cell );
 
         std::stringstream g2p_vector_value_time_name;
         g2p_vector_value_time_name << test_prefix << "g2p_vector_value_"
                                    << cells_per_dim[n];
         Cabana::Benchmark::Timer g2p_vector_value_timer(
-            g2p_vector_value_time_name.str(), num_particles_per_cell_dim );
+            g2p_vector_value_time_name.str(), num_particles_per_cell );
 
         // Create g2p gradient timers.
         std::stringstream g2p_scalar_gradient_time_name;
         g2p_scalar_gradient_time_name << test_prefix << "g2p_scalar_gradient_"
                                       << cells_per_dim[n];
         Cabana::Benchmark::Timer g2p_scalar_gradient_timer(
-            g2p_scalar_gradient_time_name.str(), num_particles_per_cell_dim );
+            g2p_scalar_gradient_time_name.str(), num_particles_per_cell );
 
         std::stringstream g2p_vector_gradient_time_name;
         g2p_vector_gradient_time_name << test_prefix << "g2p_vector_gradient_"
                                       << cells_per_dim[n];
         Cabana::Benchmark::Timer g2p_vector_gradient_timer(
-            g2p_vector_gradient_time_name.str(), num_particles_per_cell_dim );
+            g2p_vector_gradient_time_name.str(), num_particles_per_cell );
 
         // Create g2p divergence timers.
         std::stringstream g2p_vector_divergence_time_name;
         g2p_vector_divergence_time_name
             << test_prefix << "g2p_vector_divergence_" << cells_per_dim[n];
         Cabana::Benchmark::Timer g2p_vector_divergence_timer(
-            g2p_vector_divergence_time_name.str(), num_particles_per_cell_dim );
+            g2p_vector_divergence_time_name.str(), num_particles_per_cell );
 
-        for ( int ppc = 0; ppc < num_particles_per_cell_dim; ++ppc )
+        for ( int ppc = 0; ppc < num_particles_per_cell; ++ppc )
         {
-            int particles_per_cell = particles_per_cell_dim[ppc];
-            int num_particles_per_cell =
-                particles_per_cell * particles_per_cell * particles_per_cell;
+            int num_ppc = particles_per_cell[ppc];
 
-            aosoas[ppc] =
-                aosoa_type( "aosoa", num_particles_per_cell * num_cells );
-
-            auto range =
-                Cajita::createExecutionPolicy( owned_cells, exec_space() );
+            aosoas[ppc] = aosoa_type( "aosoa", num_ppc * num_cells );
 
             auto tensor = Cabana::slice<0>( aosoas[ppc], "tensor" );
             auto vector = Cabana::slice<1>( aosoas[ppc], "vector" );
             auto position = Cabana::slice<2>( aosoas[ppc], "position" );
             auto scalar = Cabana::slice<3>( aosoas[ppc], "scalar" );
 
-            Kokkos::parallel_for(
-                "particles_init", range,
+            Cajita::grid_parallel_for(
+                "particles_init", exec_space{}, *local_grid, Own(), Cell(),
                 KOKKOS_LAMBDA( const int i, const int j, const int k ) {
                     int i_own = i - owned_cells.min( Dim::I );
                     int j_own = j - owned_cells.min( Dim::J );
@@ -159,6 +158,9 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                         i_own +
                         owned_cells.extent( Dim::I ) *
                             ( j_own + k_own * owned_cells.extent( Dim::J ) );
+
+                    // Random number generator.
+                    auto rand = pool.get_state( cell_id );
 
                     // Get the coordinates of the low cell node.
                     int low_node[3] = { i, j, k };
@@ -172,46 +174,26 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                     local_mesh.coordinates( Cajita::Node(), high_node,
                                             high_coords );
 
-                    // Compute the particle spacing in each dimension.
-                    double spacing[3] = {
-                        ( high_coords[Dim::I] - low_coords[Dim::I] ) /
-                            particles_per_cell,
-                        ( high_coords[Dim::J] - low_coords[Dim::J] ) /
-                            particles_per_cell,
-                        ( high_coords[Dim::K] - low_coords[Dim::K] ) /
-                            particles_per_cell };
+                    for ( int ip = 0; ip < num_ppc; ++ip )
+                    {
+                        // Local particle id.
+                        int pid = cell_id * num_ppc + ip;
 
-                    for ( int ip = 0; ip < particles_per_cell; ++ip )
-                        for ( int jp = 0; jp < particles_per_cell; ++jp )
-                            for ( int kp = 0; kp < particles_per_cell; ++kp )
+                        for ( int d = 0; d < 3; ++d )
+                            position( pid, d ) =
+                                Kokkos::rand<decltype( rand ), double>::draw(
+                                    rand, low_coords[d], high_coords[d] );
+
+                        scalar( pid ) = 0.5;
+                        for ( int ii = 0; ii < 3; ++ii )
+                        {
+                            vector( pid, ii ) = 0.25;
+                            for ( int jj = 0; jj < 3; ++jj )
                             {
-                                // Local particle id.
-                                int pid = cell_id * num_particles_per_cell +
-                                          ip +
-                                          particles_per_cell *
-                                              ( jp + particles_per_cell * kp );
-
-                                scalar( pid ) = 0.5;
-
-                                position( pid, Dim::I ) =
-                                    0.5 * spacing[Dim::I] +
-                                    ip * spacing[Dim::I] + low_coords[Dim::I];
-                                position( pid, Dim::J ) =
-                                    0.5 * spacing[Dim::J] +
-                                    jp * spacing[Dim::J] + low_coords[Dim::J];
-                                position( pid, Dim::K ) =
-                                    0.5 * spacing[Dim::K] +
-                                    kp * spacing[Dim::K] + low_coords[Dim::K];
-
-                                for ( int ii = 0; ii < 3; ++ii )
-                                {
-                                    vector( pid, ii ) = 0.25;
-                                    for ( int jj = 0; jj < 3; ++jj )
-                                    {
-                                        tensor( pid, ii, jj ) = 0.3;
-                                    }
-                                }
+                                tensor( pid, ii, jj ) = 0.3;
                             }
+                        }
+                    }
                 } );
 
             // Now perform the p2g and g2p interpolations and time them.
@@ -312,25 +294,25 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         }
 
         // Output results
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        p2g_scalar_value_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        p2g_vector_value_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        p2g_scalar_gradient_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        p2g_vector_divergence_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        p2g_tensor_divergence_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        g2p_scalar_value_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        g2p_vector_value_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        g2p_scalar_gradient_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        g2p_vector_gradient_timer );
-        outputResults( stream, "particle_num", particles_per_cell_dim,
+        outputResults( stream, "particle_num", particles_per_cell,
                        g2p_vector_divergence_timer );
 
         stream << std::flush;
@@ -362,10 +344,12 @@ int main( int argc, char* argv[] )
     if ( argc > 2 )
         run_type = argv[2];
     std::vector<int> cells_per_dim = { 16, 32 };
-    std::vector<int> particles_per_cell_dim = { 1, 2, 4, 8 };
+    std::vector<int> particles_per_cell = { 1, 4 };
     if ( run_type == "large" )
+    {
         cells_per_dim = { 16, 32, 64, 128 };
-
+        particles_per_cell = { 1, 8, 16 };
+    }
     // Open the output file on rank 0.
     std::fstream file;
     file.open( filename, std::fstream::out );
@@ -374,26 +358,26 @@ int main( int argc, char* argv[] )
 #ifdef KOKKOS_ENABLE_SERIAL
     using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
     performanceTest<SerialDevice>( file, "serial_", cells_per_dim,
-                                   particles_per_cell_dim );
+                                   particles_per_cell );
 #endif
 
 #ifdef KOKKOS_ENABLE_OPENMP
     using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
     performanceTest<OpenMPDevice>( file, "openmp_", cells_per_dim,
-                                   particles_per_cell_dim );
+                                   particles_per_cell );
 #endif
 
 #ifdef KOKKOS_ENABLE_CUDA
     using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
     performanceTest<CudaDevice>( file, "cuda_", cells_per_dim,
-                                 particles_per_cell_dim );
+                                 particles_per_cell );
 #endif
 
 #ifdef KOKKOS_ENABLE_HIP
     using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
                                      Kokkos::Experimental::HIPSpace>;
     performanceTest<HipDevice>( file, "hip_", cells_per_dim,
-                                particles_per_cell_dim );
+                                particles_per_cell );
 #endif
 
     // Close the output file on rank 0.
