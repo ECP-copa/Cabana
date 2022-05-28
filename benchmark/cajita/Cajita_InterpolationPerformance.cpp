@@ -203,21 +203,21 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             auto scalar_grid_field = createArray<double, memory_space>(
                 "scalar_grid_field", scalar_layout );
             auto scalar_halo =
-                createHalo( *scalar_grid_field, FullHaloPattern() );
+                createHalo( NodeHaloPattern<3>{}, -1, *scalar_grid_field );
 
             // Create a vector field on the grid.
             auto vector_layout = createArrayLayout( local_grid, 3, Node() );
             auto vector_grid_field = createArray<double, memory_space>(
                 "vector_grid_field", vector_layout );
             auto vector_halo =
-                createHalo( *vector_grid_field, FullHaloPattern() );
+                createHalo( NodeHaloPattern<3>{}, -1, *vector_grid_field );
 
             // Create a tensor field on the grid
             auto tensor_layout = createArrayLayout( local_grid, 9, Node() );
             auto tensor_grid_field = createArray<double, memory_space>(
                 "tensor_grid_field", tensor_layout );
             auto tensor_halo =
-                createHalo( *tensor_grid_field, FullHaloPattern() );
+                createHalo( NodeHaloPattern<3>{}, -1, *tensor_grid_field );
 
             // Interpolate a scalar point value to the grid.
             ArrayOp::assign( *scalar_grid_field, 0.0, Ghost() );
