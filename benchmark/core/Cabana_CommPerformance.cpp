@@ -445,52 +445,26 @@ int main( int argc, char* argv[] )
             file << "\n";
         }
 
-        // Do everything on the CPU.
-#ifdef KOKKOS_ENABLE_SERIAL
-        using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-        performanceTest<SerialDevice, SerialDevice>(
+        // Do everything on the default CPU.
+        using host_exec_space = Kokkos::DefaultHostExecutionSpace;
+        using host_device_type = host_exec_space::device_type;
+        // Do everything on the default device with default memory.
+        using exec_space = Kokkos::DefaultExecutionSpace;
+        using device_type = exec_space::device_type;
+
+        // Don't run three times on the CPU if only host enabled.
+        if ( !std::is_same<device_type, host_device_type>{} )
+        {
+            performanceTest<device_type, device_type>(
+                file, num_particle, "device_device_", comm_fraction );
+
+            // Transfer GPU data to CPU, communication on CPU, and transfer back
+            // to GPU.
+            performanceTest<device_type, host_device_type>(
+                file, num_particle, "device_host_", comm_fraction );
+        }
+        performanceTest<host_device_type, host_device_type>(
             file, num_particle, "host_host_", comm_fraction );
-#endif
-#ifdef KOKKOS_ENABLE_OPENMP
-        using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-        performanceTest<OpenMPDevice, OpenMPDevice>(
-            file, num_particle, "host_host_", comm_fraction );
-#endif
-
-#ifdef KOKKOS_ENABLE_CUDA
-        using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-        using CudaUVMDevice =
-            Kokkos::Device<Kokkos::Cuda, Kokkos::CudaUVMSpace>;
-        using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
-
-        // Transfer GPU data to CPU, communication on CPU, and transfer back to
-        // GPU.
-        performanceTest<CudaDevice, HostDevice>( file, num_particle,
-                                                 "cuda_host_", comm_fraction );
-
-        // Do everything on the GPU with regular GPU memory.
-        performanceTest<CudaDevice, CudaDevice>( file, num_particle,
-                                                 "cuda_cuda_", comm_fraction );
-
-        // Do everything on the GPU with UVM GPU memory.
-        performanceTest<CudaUVMDevice, CudaUVMDevice>(
-            file, num_particle, "cudauvm_cudauvm_", comm_fraction );
-#endif
-
-#ifdef KOKKOS_ENABLE_HIP
-        using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
-                                         Kokkos::Experimental::HIPSpace>;
-        using HostDevice = Kokkos::DefaultHostExecutionSpace::device_type;
-
-        // Transfer GPU data to CPU, communication on CPU, and transfer back to
-        // GPU.
-        performanceTest<HipDevice, HostDevice>( file, num_particle, "hip_host_",
-                                                comm_fraction );
-
-        // Do everything on the GPU with regular GPU memory.
-        performanceTest<HipDevice, HipDevice>( file, num_particle, "hip_hip_",
-                                               comm_fraction );
-#endif
 
         // Close the output file on rank 0.
         if ( 0 == comm_rank )

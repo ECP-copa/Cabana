@@ -432,47 +432,30 @@ int main( int argc, char* argv[] )
         file << std::flush;
     }
 
-    // Run the tests.
-#ifdef KOKKOS_ENABLE_SERIAL
-    using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-    performanceTest<SerialDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
-                                   "serial_parWL_", problem_sizes,
-                                   num_cells_per_dim );
-    performanceTest<SerialDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
-                                   "serial_smapWL_", occupy_fraction,
-                                   num_cells_per_dim );
-#endif
+    // Do everything on the default CPU.
+    using host_exec_space = Kokkos::DefaultHostExecutionSpace;
+    using host_device_type = host_exec_space::device_type;
+    // Do everything on the default device with default memory.
+    using exec_space = Kokkos::DefaultExecutionSpace;
+    using device_type = exec_space::device_type;
 
-#ifdef KOKKOS_ENABLE_OPENMP
-    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-    performanceTest<OpenMPDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
-                                   "openmp_parWL_", problem_sizes,
-                                   num_cells_per_dim );
-    performanceTest<OpenMPDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
-                                   "openmp_smapWL_", occupy_fraction,
-                                   num_cells_per_dim );
-#endif
-
-#ifdef KOKKOS_ENABLE_CUDA
-    using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-    performanceTest<CudaDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
-                                 "cuda_parWL_", problem_sizes,
-                                 num_cells_per_dim );
-    performanceTest<CudaDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
-                                 "cuda_smapWL_", occupy_fraction,
-                                 num_cells_per_dim );
-#endif
-
-#ifdef KOKKOS_ENABLE_HIP
-    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
-                                     Kokkos::Experimental::HIPSpace>;
-    performanceTest<HipDevice>( ParticleWorkloadTag(), file, MPI_COMM_WORLD,
-                                "hip_parWL_", problem_sizes,
-                                num_cells_per_dim );
-    performanceTest<HipDevice>( SparseMapTag(), file, MPI_COMM_WORLD,
-                                "hip_smapWL_", occupy_fraction,
-                                num_cells_per_dim );
-#endif
+    // Don't run twice on the CPU if only host enabled.
+    // Don't rerun on the CPU if already done or if turned off.
+    if ( !std::is_same<device_type, host_device_type>{} )
+    {
+        performanceTest<device_type>( ParticleWorkloadTag(), file,
+                                      MPI_COMM_WORLD, "device_particleWL_",
+                                      problem_sizes, num_cells_per_dim );
+        performanceTest<device_type>( SparseMapTag(), file, MPI_COMM_WORLD,
+                                      "device_sparsemapWL_", occupy_fraction,
+                                      num_cells_per_dim );
+    }
+    performanceTest<host_device_type>( ParticleWorkloadTag(), file,
+                                       MPI_COMM_WORLD, "host_particleWL_",
+                                       problem_sizes, num_cells_per_dim );
+    performanceTest<host_device_type>( SparseMapTag(), file, MPI_COMM_WORLD,
+                                       "host_sparsemapWL_", occupy_fraction,
+                                       num_cells_per_dim );
 
     // Close the output file on rank 0.
     file.close();

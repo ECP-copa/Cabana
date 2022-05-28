@@ -160,11 +160,9 @@ int main( int argc, char* argv[] )
     // Barier before continuing.
     MPI_Barrier( MPI_COMM_WORLD );
 
-    // Get comm rank;
+    // Get comm rank and size;
     int comm_rank;
     MPI_Comm_rank( MPI_COMM_WORLD, &comm_rank );
-
-    // Get comm size;
     int comm_size;
     MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
 
@@ -204,35 +202,23 @@ int main( int argc, char* argv[] )
             file << "\n";
         }
 
-        // Do everything on the CPU.
-#ifdef KOKKOS_ENABLE_SERIAL
-        using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-        performanceTest<SerialDevice>(
-            file, partitioner, problem_global_cells_per_dim[p], "serial_",
-            problem_halo_width, MPI_COMM_WORLD );
-#endif
-#ifdef KOKKOS_ENABLE_OPENMP
-        using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-        performanceTest<OpenMPDevice>(
-            file, partitioner, problem_global_cells_per_dim[p], "openmp_",
-            problem_halo_width, MPI_COMM_WORLD );
-#endif
+        // Do everything on the default CPU.
+        using host_exec_space = Kokkos::DefaultHostExecutionSpace;
+        using host_device_type = host_exec_space::device_type;
+        // Do everything on the default device with default memory.
+        using exec_space = Kokkos::DefaultExecutionSpace;
+        using device_type = exec_space::device_type;
 
-#ifdef KOKKOS_ENABLE_CUDA
-        using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-        // Do everything on the GPU with regular GPU memory.
-        performanceTest<CudaDevice>( file, partitioner,
-                                     problem_global_cells_per_dim[p], "cuda_",
-                                     problem_halo_width, MPI_COMM_WORLD );
-#endif
-
-#ifdef KOKKOS_ENABLE_HIP
-        using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
-                                         Kokkos::Experimental::HIPSpace>;
-        performanceTest<HipDevice>( file, partitioner,
-                                    problem_global_cells_per_dim[p], "hip_",
-                                    problem_halo_width, MPI_COMM_WORLD );
-#endif
+        // Don't run twice on the CPU if only host enabled.
+        if ( !std::is_same<device_type, host_device_type>{} )
+        {
+            performanceTest<device_type>(
+                file, partitioner, problem_global_cells_per_dim[p], "device_",
+                problem_halo_width, MPI_COMM_WORLD );
+        }
+        performanceTest<host_device_type>(
+            file, partitioner, problem_global_cells_per_dim[p], "host_",
+            problem_halo_width, MPI_COMM_WORLD );
     }
     // Finalize
     Kokkos::finalize();
