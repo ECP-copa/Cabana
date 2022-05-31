@@ -30,6 +30,9 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     using exec_space = typename Device::execution_space;
     using memory_space = typename Device::memory_space;
 
+    // Ensemble size.
+    int num_runs = 10;
+
     // Domain size setup
     std::array<double, 3> global_low_corner = { 0.0, 0.0, 0.0 };
     std::array<double, 3> global_high_corner = { 1.0, 1.0, 1.0 };
@@ -222,75 +225,81 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             // Interpolate a scalar point value to the grid.
             ArrayOp::assign( *scalar_grid_field, 0.0, Ghost() );
 
-            // P2G scalar value
-            auto scalar_p2g = createScalarValueP2G( scalar, -0.5 );
-            p2g_scalar_value_timer.start( n );
-            p2g( scalar_p2g, position, position.size(), Spline<1>(),
-                 *scalar_halo, *scalar_grid_field );
-            p2g_scalar_value_timer.stop( n );
+            // Run tests and time the ensemble.
+            for ( int t = 0; t < num_runs; ++t )
+            {
+                // P2G scalar value
+                auto scalar_p2g = createScalarValueP2G( scalar, -0.5 );
+                p2g_scalar_value_timer.start( n );
+                p2g( scalar_p2g, position, position.size(), Spline<1>(),
+                     *scalar_halo, *scalar_grid_field );
+                p2g_scalar_value_timer.stop( n );
 
-            // P2G vector value
-            auto vector_p2g = createVectorValueP2G( vector, -0.5 );
-            p2g_vector_value_timer.start( n );
-            p2g( vector_p2g, position, position.size(), Spline<1>(),
-                 *vector_halo, *vector_grid_field );
-            p2g_vector_value_timer.stop( n );
+                // P2G vector value
+                auto vector_p2g = createVectorValueP2G( vector, -0.5 );
+                p2g_vector_value_timer.start( n );
+                p2g( vector_p2g, position, position.size(), Spline<1>(),
+                     *vector_halo, *vector_grid_field );
+                p2g_vector_value_timer.stop( n );
 
-            // P2G scalar gradient
-            auto scalar_grad_p2g = createScalarGradientP2G( scalar, -0.5 );
-            p2g_scalar_gradient_timer.start( n );
-            p2g( scalar_grad_p2g, position, position.size(), Spline<1>(),
-                 *vector_halo, *vector_grid_field );
-            p2g_scalar_gradient_timer.stop( n );
+                // P2G scalar gradient
+                auto scalar_grad_p2g = createScalarGradientP2G( scalar, -0.5 );
+                p2g_scalar_gradient_timer.start( n );
+                p2g( scalar_grad_p2g, position, position.size(), Spline<1>(),
+                     *vector_halo, *vector_grid_field );
+                p2g_scalar_gradient_timer.stop( n );
 
-            // P2G vector divergence
-            auto vector_div_p2g = createVectorDivergenceP2G( vector, -0.5 );
-            p2g_vector_divergence_timer.start( n );
-            p2g( vector_div_p2g, position, position.size(), Spline<1>(),
-                 *scalar_halo, *scalar_grid_field );
-            p2g_vector_divergence_timer.stop( n );
+                // P2G vector divergence
+                auto vector_div_p2g = createVectorDivergenceP2G( vector, -0.5 );
+                p2g_vector_divergence_timer.start( n );
+                p2g( vector_div_p2g, position, position.size(), Spline<1>(),
+                     *scalar_halo, *scalar_grid_field );
+                p2g_vector_divergence_timer.stop( n );
 
-            // P2G tensor divergence
-            auto tensor_div_p2g = createTensorDivergenceP2G( tensor, -0.5 );
-            p2g_tensor_divergence_timer.start( n );
-            p2g( tensor_div_p2g, position, position.size(), Spline<1>(),
-                 *vector_halo, *vector_grid_field );
-            p2g_tensor_divergence_timer.stop( n );
+                // P2G tensor divergence
+                auto tensor_div_p2g = createTensorDivergenceP2G( tensor, -0.5 );
+                p2g_tensor_divergence_timer.start( n );
+                p2g( tensor_div_p2g, position, position.size(), Spline<1>(),
+                     *vector_halo, *vector_grid_field );
+                p2g_tensor_divergence_timer.stop( n );
 
-            // G2P scalar value
-            auto scalar_value_g2p = createScalarValueG2P( scalar, -0.5 );
-            g2p_scalar_value_timer.start( n );
-            g2p( *scalar_grid_field, *scalar_halo, position, position.size(),
-                 Spline<1>(), scalar_value_g2p );
-            g2p_scalar_value_timer.stop( n );
+                // G2P scalar value
+                auto scalar_value_g2p = createScalarValueG2P( scalar, -0.5 );
+                g2p_scalar_value_timer.start( n );
+                g2p( *scalar_grid_field, *scalar_halo, position,
+                     position.size(), Spline<1>(), scalar_value_g2p );
+                g2p_scalar_value_timer.stop( n );
 
-            // G2P vector value
-            auto vector_value_g2p = createVectorValueG2P( vector, -0.5 );
-            g2p_vector_value_timer.start( n );
-            g2p( *vector_grid_field, *vector_halo, position, position.size(),
-                 Spline<1>(), vector_value_g2p );
-            g2p_vector_value_timer.stop( n );
+                // G2P vector value
+                auto vector_value_g2p = createVectorValueG2P( vector, -0.5 );
+                g2p_vector_value_timer.start( n );
+                g2p( *vector_grid_field, *vector_halo, position,
+                     position.size(), Spline<1>(), vector_value_g2p );
+                g2p_vector_value_timer.stop( n );
 
-            // G2P scalar gradient
-            auto scalar_gradient_g2p = createScalarGradientG2P( vector, -0.5 );
-            g2p_scalar_gradient_timer.start( n );
-            g2p( *scalar_grid_field, *scalar_halo, position, position.size(),
-                 Spline<1>(), scalar_gradient_g2p );
-            g2p_scalar_gradient_timer.stop( n );
+                // G2P scalar gradient
+                auto scalar_gradient_g2p =
+                    createScalarGradientG2P( vector, -0.5 );
+                g2p_scalar_gradient_timer.start( n );
+                g2p( *scalar_grid_field, *scalar_halo, position,
+                     position.size(), Spline<1>(), scalar_gradient_g2p );
+                g2p_scalar_gradient_timer.stop( n );
 
-            // G2P vector gradient
-            auto vector_gradient_g2p = createVectorGradientG2P( tensor, -0.5 );
-            g2p_vector_gradient_timer.start( n );
-            g2p( *vector_grid_field, *vector_halo, position, position.size(),
-                 Spline<1>(), vector_gradient_g2p );
-            g2p_vector_gradient_timer.stop( n );
+                // G2P vector gradient
+                auto vector_gradient_g2p =
+                    createVectorGradientG2P( tensor, -0.5 );
+                g2p_vector_gradient_timer.start( n );
+                g2p( *vector_grid_field, *vector_halo, position,
+                     position.size(), Spline<1>(), vector_gradient_g2p );
+                g2p_vector_gradient_timer.stop( n );
 
-            // G2P vector divergence
-            auto vector_div_g2p = createVectorDivergenceG2P( scalar, -0.5 );
-            g2p_vector_divergence_timer.start( n );
-            g2p( *vector_grid_field, *vector_halo, position, position.size(),
-                 Spline<1>(), vector_div_g2p );
-            g2p_vector_divergence_timer.stop( n );
+                // G2P vector divergence
+                auto vector_div_g2p = createVectorDivergenceG2P( scalar, -0.5 );
+                g2p_vector_divergence_timer.start( n );
+                g2p( *vector_grid_field, *vector_halo, position,
+                     position.size(), Spline<1>(), vector_div_g2p );
+                g2p_vector_divergence_timer.stop( n );
+            }
         }
 
         // Output results
