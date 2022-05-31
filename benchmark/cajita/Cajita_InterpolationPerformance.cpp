@@ -35,118 +35,118 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
     std::array<double, 3> global_high_corner = { 1.0, 1.0, 1.0 };
     std::array<bool, 3> is_dim_periodic = { false, false, false };
 
-    // System size
+    // System sizes
     int num_problem_size = cells_per_dim.size();
+    int num_particles_per_cell = particles_per_cell.size();
 
-    // Define the particle aosoas.
+    // Define the particle types.
     using member_types =
         Cabana::MemberTypes<double[3][3], double[3], double[3], double>;
     using aosoa_type = Cabana::AoSoA<member_types, Device>;
 
-    int num_particles_per_cell = particles_per_cell.size();
+    // Define properties that do not depend on mesh size.
+    Cajita::DimBlockPartitioner<3> partitioner;
+    int halo_width = 1;
+    uint64_t seed = 1938347;
 
-    for ( int n = 0; n < num_problem_size; ++n )
+    for ( int ppc = 0; ppc < num_particles_per_cell; ++ppc )
     {
-        // Create the global grid
-        double cell_size = 1.0 / cells_per_dim[n];
-        auto global_mesh = createUniformGlobalMesh(
-            global_low_corner, global_high_corner, cell_size );
-
-        Cajita::DimBlockPartitioner<3> partitioner;
-        auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
-                                             is_dim_periodic, partitioner );
-
-        // Create a local grid and local mesh
-        int halo_width = 1;
-
-        auto local_grid = createLocalGrid( global_grid, halo_width );
-        auto local_mesh = createLocalMesh<exec_space>( *local_grid );
-        auto owned_cells = local_grid->indexSpace( Own(), Cell(), Local() );
-        int num_cells = owned_cells.size();
-
-        // Create a random number generator.
-        uint64_t seed = 1938347;
-        Kokkos::Random_XorShift64_Pool<exec_space> pool;
-        pool.init( seed, num_cells );
-
-        std::vector<aosoa_type> aosoas( num_particles_per_cell );
-
         // Create p2g value timers.
         std::stringstream p2g_scalar_value_time_name;
         p2g_scalar_value_time_name << test_prefix << "p2g_scalar_value_"
-                                   << cells_per_dim[n];
+                                   << particles_per_cell[ppc];
         Cabana::Benchmark::Timer p2g_scalar_value_timer(
-            p2g_scalar_value_time_name.str(), num_particles_per_cell );
+            p2g_scalar_value_time_name.str(), num_problem_size );
 
         std::stringstream p2g_vector_value_time_name;
         p2g_vector_value_time_name << test_prefix << "p2g_vector_value_"
-                                   << cells_per_dim[n];
+                                   << particles_per_cell[ppc];
         Cabana::Benchmark::Timer p2g_vector_value_timer(
-            p2g_vector_value_time_name.str(), num_particles_per_cell );
+            p2g_vector_value_time_name.str(), num_problem_size );
 
         // Create p2g gradient timers.
         std::stringstream p2g_scalar_gradient_time_name;
         p2g_scalar_gradient_time_name << test_prefix << "p2g_scalar_gradient_"
-                                      << cells_per_dim[n];
+                                      << particles_per_cell[ppc];
         Cabana::Benchmark::Timer p2g_scalar_gradient_timer(
-            p2g_scalar_gradient_time_name.str(), num_particles_per_cell );
+            p2g_scalar_gradient_time_name.str(), num_problem_size );
 
         // Create p2g divergence timers.
         std::stringstream p2g_vector_divergence_time_name;
-        p2g_vector_divergence_time_name
-            << test_prefix << "p2g_vector_divergence_" << cells_per_dim[n];
+        p2g_vector_divergence_time_name << test_prefix
+                                        << "p2g_vector_divergence_"
+                                        << particles_per_cell[ppc];
         Cabana::Benchmark::Timer p2g_vector_divergence_timer(
-            p2g_vector_divergence_time_name.str(), num_particles_per_cell );
+            p2g_vector_divergence_time_name.str(), num_problem_size );
 
         std::stringstream p2g_tensor_divergence_time_name;
-        p2g_tensor_divergence_time_name
-            << test_prefix << "p2g_tensor_divergence_" << cells_per_dim[n];
+        p2g_tensor_divergence_time_name << test_prefix
+                                        << "p2g_tensor_divergence_"
+                                        << particles_per_cell[ppc];
         Cabana::Benchmark::Timer p2g_tensor_divergence_timer(
-            p2g_tensor_divergence_time_name.str(), num_particles_per_cell );
+            p2g_tensor_divergence_time_name.str(), num_problem_size );
 
         // Create g2p value timers.
         std::stringstream g2p_scalar_value_time_name;
         g2p_scalar_value_time_name << test_prefix << "g2p_scalar_value_"
-                                   << cells_per_dim[n];
+                                   << particles_per_cell[ppc];
         Cabana::Benchmark::Timer g2p_scalar_value_timer(
-            g2p_scalar_value_time_name.str(), num_particles_per_cell );
+            g2p_scalar_value_time_name.str(), num_problem_size );
 
         std::stringstream g2p_vector_value_time_name;
         g2p_vector_value_time_name << test_prefix << "g2p_vector_value_"
-                                   << cells_per_dim[n];
+                                   << particles_per_cell[ppc];
         Cabana::Benchmark::Timer g2p_vector_value_timer(
-            g2p_vector_value_time_name.str(), num_particles_per_cell );
+            g2p_vector_value_time_name.str(), num_problem_size );
 
         // Create g2p gradient timers.
         std::stringstream g2p_scalar_gradient_time_name;
         g2p_scalar_gradient_time_name << test_prefix << "g2p_scalar_gradient_"
-                                      << cells_per_dim[n];
+                                      << particles_per_cell[ppc];
         Cabana::Benchmark::Timer g2p_scalar_gradient_timer(
-            g2p_scalar_gradient_time_name.str(), num_particles_per_cell );
+            g2p_scalar_gradient_time_name.str(), num_problem_size );
 
         std::stringstream g2p_vector_gradient_time_name;
         g2p_vector_gradient_time_name << test_prefix << "g2p_vector_gradient_"
-                                      << cells_per_dim[n];
+                                      << particles_per_cell[ppc];
         Cabana::Benchmark::Timer g2p_vector_gradient_timer(
-            g2p_vector_gradient_time_name.str(), num_particles_per_cell );
+            g2p_vector_gradient_time_name.str(), num_problem_size );
 
         // Create g2p divergence timers.
         std::stringstream g2p_vector_divergence_time_name;
-        g2p_vector_divergence_time_name
-            << test_prefix << "g2p_vector_divergence_" << cells_per_dim[n];
+        g2p_vector_divergence_time_name << test_prefix
+                                        << "g2p_vector_divergence_"
+                                        << particles_per_cell[ppc];
         Cabana::Benchmark::Timer g2p_vector_divergence_timer(
-            g2p_vector_divergence_time_name.str(), num_particles_per_cell );
+            g2p_vector_divergence_time_name.str(), num_problem_size );
 
-        for ( int ppc = 0; ppc < num_particles_per_cell; ++ppc )
+        for ( int n = 0; n < num_problem_size; ++n )
         {
+            // Create the global grid
+            double cell_size = 1.0 / cells_per_dim[n];
+            auto global_mesh = createUniformGlobalMesh(
+                global_low_corner, global_high_corner, cell_size );
+            auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                                 is_dim_periodic, partitioner );
+
+            // Create a local grid and local mesh
+            auto local_grid = createLocalGrid( global_grid, halo_width );
+            auto local_mesh = createLocalMesh<exec_space>( *local_grid );
+            auto owned_cells = local_grid->indexSpace( Own(), Cell(), Local() );
+            int num_cells = owned_cells.size();
+
+            // Create a random number generator.
+            Kokkos::Random_XorShift64_Pool<exec_space> pool;
+            pool.init( seed, num_cells );
+
+            // Create the particles.
             int num_ppc = particles_per_cell[ppc];
+            aosoa_type aosoa( "aosoa", num_ppc * num_cells );
 
-            aosoas[ppc] = aosoa_type( "aosoa", num_ppc * num_cells );
-
-            auto tensor = Cabana::slice<0>( aosoas[ppc], "tensor" );
-            auto vector = Cabana::slice<1>( aosoas[ppc], "vector" );
-            auto position = Cabana::slice<2>( aosoas[ppc], "position" );
-            auto scalar = Cabana::slice<3>( aosoas[ppc], "scalar" );
+            auto tensor = Cabana::slice<0>( aosoa, "tensor" );
+            auto vector = Cabana::slice<1>( aosoa, "vector" );
+            auto position = Cabana::slice<2>( aosoa, "position" );
+            auto scalar = Cabana::slice<3>( aosoa, "scalar" );
 
             Cajita::grid_parallel_for(
                 "particles_init", exec_space{}, *local_grid, Own(), Cell(),
@@ -224,95 +224,95 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
 
             // P2G scalar value
             auto scalar_p2g = createScalarValueP2G( scalar, -0.5 );
-            p2g_scalar_value_timer.start( ppc );
+            p2g_scalar_value_timer.start( n );
             p2g( scalar_p2g, position, position.size(), Spline<1>(),
                  *scalar_halo, *scalar_grid_field );
-            p2g_scalar_value_timer.stop( ppc );
+            p2g_scalar_value_timer.stop( n );
 
             // P2G vector value
             auto vector_p2g = createVectorValueP2G( vector, -0.5 );
-            p2g_vector_value_timer.start( ppc );
+            p2g_vector_value_timer.start( n );
             p2g( vector_p2g, position, position.size(), Spline<1>(),
                  *vector_halo, *vector_grid_field );
-            p2g_vector_value_timer.stop( ppc );
+            p2g_vector_value_timer.stop( n );
 
             // P2G scalar gradient
             auto scalar_grad_p2g = createScalarGradientP2G( scalar, -0.5 );
-            p2g_scalar_gradient_timer.start( ppc );
+            p2g_scalar_gradient_timer.start( n );
             p2g( scalar_grad_p2g, position, position.size(), Spline<1>(),
                  *vector_halo, *vector_grid_field );
-            p2g_scalar_gradient_timer.stop( ppc );
+            p2g_scalar_gradient_timer.stop( n );
 
             // P2G vector divergence
             auto vector_div_p2g = createVectorDivergenceP2G( vector, -0.5 );
-            p2g_vector_divergence_timer.start( ppc );
+            p2g_vector_divergence_timer.start( n );
             p2g( vector_div_p2g, position, position.size(), Spline<1>(),
                  *scalar_halo, *scalar_grid_field );
-            p2g_vector_divergence_timer.stop( ppc );
+            p2g_vector_divergence_timer.stop( n );
 
             // P2G tensor divergence
             auto tensor_div_p2g = createTensorDivergenceP2G( tensor, -0.5 );
-            p2g_tensor_divergence_timer.start( ppc );
+            p2g_tensor_divergence_timer.start( n );
             p2g( tensor_div_p2g, position, position.size(), Spline<1>(),
                  *vector_halo, *vector_grid_field );
-            p2g_tensor_divergence_timer.stop( ppc );
+            p2g_tensor_divergence_timer.stop( n );
 
             // G2P scalar value
             auto scalar_value_g2p = createScalarValueG2P( scalar, -0.5 );
-            g2p_scalar_value_timer.start( ppc );
+            g2p_scalar_value_timer.start( n );
             g2p( *scalar_grid_field, *scalar_halo, position, position.size(),
                  Spline<1>(), scalar_value_g2p );
-            g2p_scalar_value_timer.stop( ppc );
+            g2p_scalar_value_timer.stop( n );
 
             // G2P vector value
             auto vector_value_g2p = createVectorValueG2P( vector, -0.5 );
-            g2p_vector_value_timer.start( ppc );
+            g2p_vector_value_timer.start( n );
             g2p( *vector_grid_field, *vector_halo, position, position.size(),
                  Spline<1>(), vector_value_g2p );
-            g2p_vector_value_timer.stop( ppc );
+            g2p_vector_value_timer.stop( n );
 
             // G2P scalar gradient
             auto scalar_gradient_g2p = createScalarGradientG2P( vector, -0.5 );
-            g2p_scalar_gradient_timer.start( ppc );
+            g2p_scalar_gradient_timer.start( n );
             g2p( *scalar_grid_field, *scalar_halo, position, position.size(),
                  Spline<1>(), scalar_gradient_g2p );
-            g2p_scalar_gradient_timer.stop( ppc );
+            g2p_scalar_gradient_timer.stop( n );
 
             // G2P vector gradient
             auto vector_gradient_g2p = createVectorGradientG2P( tensor, -0.5 );
-            g2p_vector_gradient_timer.start( ppc );
+            g2p_vector_gradient_timer.start( n );
             g2p( *vector_grid_field, *vector_halo, position, position.size(),
                  Spline<1>(), vector_gradient_g2p );
-            g2p_vector_gradient_timer.stop( ppc );
+            g2p_vector_gradient_timer.stop( n );
 
             // G2P vector divergence
             auto vector_div_g2p = createVectorDivergenceG2P( scalar, -0.5 );
-            g2p_vector_divergence_timer.start( ppc );
+            g2p_vector_divergence_timer.start( n );
             g2p( *vector_grid_field, *vector_halo, position, position.size(),
                  Spline<1>(), vector_div_g2p );
-            g2p_vector_divergence_timer.stop( ppc );
+            g2p_vector_divergence_timer.stop( n );
         }
 
         // Output results
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        p2g_scalar_value_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        p2g_vector_value_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        p2g_scalar_gradient_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        p2g_vector_divergence_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        p2g_tensor_divergence_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        g2p_scalar_value_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        g2p_vector_value_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        g2p_scalar_gradient_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        g2p_vector_gradient_timer );
-        outputResults( stream, "particle_num", particles_per_cell,
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        g2p_vector_divergence_timer );
 
         stream << std::flush;
