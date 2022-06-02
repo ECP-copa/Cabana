@@ -39,6 +39,16 @@ jobs:
         silo: ['NoSilo']
         coverage: ['OFF']
         include:
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'THREADS'
+            cmake_build_type: 'Debug'
+            kokkos_ver: 'master'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            silo: 'NoSilo'
+            coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
             backend: 'OPENMP'
@@ -239,6 +249,7 @@ jobs:
         working-directory: kokkos
         run: |
           [[ ${{ matrix.backend }} == "OPENMP" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_OPENMP==ON )
+          [[ ${{ matrix.backend }} == "THREADS" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_THREADS==ON )
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
