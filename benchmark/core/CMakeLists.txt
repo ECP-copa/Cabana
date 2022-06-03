@@ -9,39 +9,37 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-if(Kokkos_ENABLE_SERIAL OR Kokkos_ENABLE_CUDA OR Kokkos_ENABLE_OPENMP OR Kokkos_ENABLE_HIP)
-  add_executable(BinSortPerformance Cabana_BinSortPerformance.cpp)
-  target_link_libraries(BinSortPerformance cabanacore)
+add_executable(BinSortPerformance Cabana_BinSortPerformance.cpp)
+target_link_libraries(BinSortPerformance cabanacore)
 
-  add_executable(NeighborVerletPerformance Cabana_NeighborVerletPerformance.cpp)
-  target_link_libraries(NeighborVerletPerformance cabanacore)
+add_executable(NeighborVerletPerformance Cabana_NeighborVerletPerformance.cpp)
+target_link_libraries(NeighborVerletPerformance cabanacore)
+
+if(Cabana_ENABLE_ARBORX)
+add_executable(NeighborArborXPerformance Cabana_NeighborArborXPerformance.cpp)
+target_link_libraries(NeighborArborXPerformance cabanacore)
+endif()
+
+add_executable(LinkedCellPerformance Cabana_LinkedCellPerformance.cpp)
+target_link_libraries(LinkedCellPerformance cabanacore)
+
+if(Cabana_ENABLE_MPI)
+add_executable(CommPerformance Cabana_CommPerformance.cpp)
+target_link_libraries(CommPerformance cabanacore)
+endif()
+
+if(Cabana_ENABLE_TESTING)
+  add_test(NAME Cabana_Performance_BinSort COMMAND ${NONMPI_PRECOMMAND} BinSortPerformance sort_output.txt)
+
+  add_test(NAME Cabana_Performance_NeighborVerlet COMMAND ${NONMPI_PRECOMMAND} NeighborVerletPerformance verlet_output.txt)
 
   if(Cabana_ENABLE_ARBORX)
-    add_executable(NeighborArborXPerformance Cabana_NeighborArborXPerformance.cpp)
-    target_link_libraries(NeighborArborXPerformance cabanacore)
+    add_test(NAME Cabana_Performance_NeighborArborX COMMAND ${NONMPI_PRECOMMAND} NeighborArborXPerformance arborx_output.txt)
   endif()
 
-  add_executable(LinkedCellPerformance Cabana_LinkedCellPerformance.cpp)
-  target_link_libraries(LinkedCellPerformance cabanacore)
+  add_test(NAME Cabana_Performance_LinkedCell COMMAND ${NONMPI_PRECOMMAND} LinkedCellPerformance lcl_output.txt)
 
   if(Cabana_ENABLE_MPI)
-    add_executable(CommPerformance Cabana_CommPerformance.cpp)
-    target_link_libraries(CommPerformance cabanacore)
-  endif()
-
-  if(Cabana_ENABLE_TESTING)
-    add_test(NAME Cabana_Performance_BinSort COMMAND ${NONMPI_PRECOMMAND} BinSortPerformance sort_output.txt)
-
-    add_test(NAME Cabana_Performance_NeighborVerlet COMMAND ${NONMPI_PRECOMMAND} NeighborVerletPerformance verlet_output.txt)
-
-    if(Cabana_ENABLE_ARBORX)
-      add_test(NAME Cabana_Performance_NeighborArborX COMMAND ${NONMPI_PRECOMMAND} NeighborArborXPerformance arborx_output.txt)
-    endif()
-
-    add_test(NAME Cabana_Performance_LinkedCell COMMAND ${NONMPI_PRECOMMAND} LinkedCellPerformance lcl_output.txt)
-
-    if(Cabana_ENABLE_MPI)
-      add_test(NAME Cabana_Performance_Comm COMMAND ${NONMPI_PRECOMMAND} CommPerformance comm_output.txt)
-    endif()
+    add_test(NAME Cabana_Performance_Comm COMMAND ${NONMPI_PRECOMMAND} CommPerformance comm_output.txt)
   endif()
 endif()

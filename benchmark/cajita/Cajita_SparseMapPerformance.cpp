@@ -221,31 +221,21 @@ int main( int argc, char* argv[] )
     std::fstream file;
     file.open( filename, std::fstream::out );
 
-    // Run the tests.
-#ifdef KOKKOS_ENABLE_SERIAL
-    using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-    performanceTest<SerialDevice>( file, "serial_", problem_sizes,
-                                   num_cells_per_dim );
-#endif
+    // Do everything on the default CPU.
+    using host_exec_space = Kokkos::DefaultHostExecutionSpace;
+    using host_device_type = host_exec_space::device_type;
+    // Do everything on the default device with default memory.
+    using exec_space = Kokkos::DefaultExecutionSpace;
+    using device_type = exec_space::device_type;
 
-#ifdef KOKKOS_ENABLE_OPENMP
-    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-    performanceTest<OpenMPDevice>( file, "openmp_", problem_sizes,
-                                   num_cells_per_dim );
-#endif
-
-#ifdef KOKKOS_ENABLE_CUDA
-    using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-    performanceTest<CudaDevice>( file, "cuda_", problem_sizes,
-                                 num_cells_per_dim );
-#endif
-
-#ifdef KOKKOS_ENABLE_HIP
-    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
-                                     Kokkos::Experimental::HIPSpace>;
-    performanceTest<HipDevice>( file, "hip_", problem_sizes,
-                                num_cells_per_dim );
-#endif
+    // Don't run twice on the CPU if only host enabled.
+    if ( !std::is_same<device_type, host_device_type>{} )
+    {
+        performanceTest<device_type>( file, "device_", problem_sizes,
+                                      num_cells_per_dim );
+    }
+    performanceTest<host_device_type>( file, "host_", problem_sizes,
+                                       num_cells_per_dim );
 
     // Close the output file on rank 0.
     file.close();

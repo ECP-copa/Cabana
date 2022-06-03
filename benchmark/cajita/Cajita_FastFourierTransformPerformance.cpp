@@ -29,7 +29,7 @@ using namespace Cajita;
 
 //---------------------------------------------------------------------------//
 // Performance test.
-template <class Device, class HostBackendType>
+template <class Device>
 void performanceTest( std::ostream& stream,
                       std::vector<double> grid_sizes_per_dim, MPI_Comm comm,
                       const std::string& test_prefix )
@@ -100,8 +100,9 @@ void performanceTest( std::ostream& stream,
         // Create FFT options
         Experimental::FastFourierTransformParams params;
 
-        auto fft = Experimental::createHeffteFastFourierTransform<
-            double, Device, HostBackendType>( *vector_layout, params );
+        auto fft =
+            Experimental::createHeffteFastFourierTransform<double, Device>(
+                *vector_layout, params );
 
         setup_timer.stop( p );
 
@@ -183,46 +184,21 @@ int main( int argc, char* argv[] )
         file << std::flush;
     }
 
-    // Run the tests.
-#ifdef KOKKOS_ENABLE_SERIAL
-    using SerialDevice = Kokkos::Device<Kokkos::Serial, Kokkos::HostSpace>;
-#ifdef Heffte_ENABLE_FFTW
-    performanceTest<SerialDevice, Experimental::FFTBackendFFTW>(
-        file, grid_sizes_per_dim, MPI_COMM_WORLD, "serial_fftw_" );
-#endif
-#ifdef Heffte_ENABLE_MKL
-    performanceTest<SerialDevice, Experimental::FFTBackendMKL>(
-        file, grid_sizes_per_dim, MPI_COMM_WORLD, "serial_mkl_" );
-#endif
-#endif
-#ifdef KOKKOS_ENABLE_OPENMP
-    using OpenMPDevice = Kokkos::Device<Kokkos::OpenMP, Kokkos::HostSpace>;
-#ifdef Heffte_ENABLE_FFTW
-    performanceTest<OpenMPDevice, Experimental::FFTBackendFFTW>(
-        file, grid_sizes_per_dim, MPI_COMM_WORLD, "openmp_fftw_" );
-#endif
-#ifdef Heffte_ENABLE_MKL
-    performanceTest<OpenMPDevice, Experimental::FFTBackendMKL>(
-        file, grid_sizes_per_dim, MPI_COMM_WORLD, "openmp_mkl_" );
-#endif
-#endif
+    // Do everything on the default CPU.
+    using host_exec_space = Kokkos::DefaultHostExecutionSpace;
+    using host_device_type = host_exec_space::device_type;
+    // Do everything on the default device with default memory.
+    using exec_space = Kokkos::DefaultExecutionSpace;
+    using device_type = exec_space::device_type;
 
-#ifdef KOKKOS_ENABLE_CUDA
-    using CudaDevice = Kokkos::Device<Kokkos::Cuda, Kokkos::CudaSpace>;
-#ifdef Heffte_ENABLE_CUDA
-    performanceTest<CudaDevice, Experimental::Impl::FFTBackendDefault>(
-        file, grid_sizes_per_dim, MPI_COMM_WORLD, "cuda_" );
-#endif
-#endif
-
-#ifdef KOKKOS_ENABLE_HIP
-    using HipDevice = Kokkos::Device<Kokkos::Experimental::HIP,
-                                     Kokkos::Experimental::HIPSpace>;
-#ifdef Heffte_ENABLE_ROCM
-    performanceTest<HipDevice, Experimental::Impl::FFTBackendDefault>(
-        file, grid_sizes_per_dim, MPI_COMM_WORLD, "hip_" );
-#endif
-#endif
+    // Don't run twice on the CPU if only host enabled.
+    if ( !std::is_same<device_type, host_device_type>{} )
+    {
+        performanceTest<device_type>( file, grid_sizes_per_dim, MPI_COMM_WORLD,
+                                      "device_default_" );
+    }
+    performanceTest<host_device_type>( file, grid_sizes_per_dim, MPI_COMM_WORLD,
+                                       "host_default_" );
 
     // Close the output file on rank 0.
     file.close();
