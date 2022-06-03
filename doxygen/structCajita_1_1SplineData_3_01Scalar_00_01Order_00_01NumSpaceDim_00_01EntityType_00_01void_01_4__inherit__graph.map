@@ -1,8 +1,8 @@
 <map id="Cajita::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, void &gt;" name="Cajita::SplineData&lt; Scalar, Order, NumSpaceDim, EntityType, void &gt;">
-<area shape="rect" id="node1" title="Default of void has all data members." alt="" coords="296,165,527,221"/>
-<area shape="rect" id="node2" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalCellSize_01_4.html" title="Physical cell size spline data member." alt="" coords="11,5,242,61"/>
-<area shape="rect" id="node3" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineLogicalPosition_01_4.html" title="Logical position spline data member." alt="" coords="11,85,242,141"/>
-<area shape="rect" id="node4" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html" title="Physical distance spline data member." alt="" coords="11,165,242,221"/>
-<area shape="rect" id="node5" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightValues_01_4.html" title="Weight values spline data member." alt="" coords="11,245,242,301"/>
-<area shape="rect" id="node6" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4.html" title="Weight physical gradients spline data member." alt="" coords="5,325,248,381"/>
+<area shape="rect" id="node1" title="Default of void has all data members." alt="" coords="279,165,488,221"/>
+<area shape="rect" id="node2" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalCellSize_01_4.html" title="Physical cell size spline data member." alt="" coords="13,5,223,61"/>
+<area shape="rect" id="node3" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineLogicalPosition_01_4.html" title="Logical position spline data member." alt="" coords="13,85,223,141"/>
+<area shape="rect" id="node4" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplinePhysicalDistance_01_4.html" title="Physical distance spline data member." alt="" coords="13,165,223,221"/>
+<area shape="rect" id="node5" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightValues_01_4.html" title="Weight values spline data member." alt="" coords="13,245,223,301"/>
+<area shape="rect" id="node6" href="$structCajita_1_1SplineDataMember_3_01Scalar_00_01Order_00_01NumSpaceDim_00_01SplineWeightPhysicalGradients_01_4.html" title="Weight physical gradients spline data member." alt="" coords="5,325,231,381"/>
 </map>

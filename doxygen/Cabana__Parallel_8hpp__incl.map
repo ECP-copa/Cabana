@@ -1,11 +1,11 @@
 <map id="core/src/Cabana_Parallel.hpp" name="core/src/Cabana_Parallel.hpp">
-<area shape="rect" id="node1" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="273,5,483,32"/>
-<area shape="rect" id="node2" href="$Cabana__ExecutionPolicy_8hpp.html" title="SIMD execution policy." alt="" coords="328,80,535,107"/>
-<area shape="rect" id="node5" title=" " alt="" coords="133,304,266,331"/>
-<area shape="rect" id="node6" title=" " alt="" coords="597,304,689,331"/>
-<area shape="rect" id="node7" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="28,155,216,181"/>
-<area shape="rect" id="node8" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="183,229,325,256"/>
-<area shape="rect" id="node9" title=" " alt="" coords="783,80,848,107"/>
-<area shape="rect" id="node3" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="380,155,555,181"/>
-<area shape="rect" id="node4" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="401,229,605,256"/>
+<area shape="rect" id="node1" title="SIMD and neighbor extension of Kokkos parallel iteration." alt="" coords="266,5,465,32"/>
+<area shape="rect" id="node2" href="$Cabana__ExecutionPolicy_8hpp.html" title="SIMD execution policy." alt="" coords="319,80,514,107"/>
+<area shape="rect" id="node5" title=" " alt="" coords="128,304,257,331"/>
+<area shape="rect" id="node6" title=" " alt="" coords="578,304,665,331"/>
+<area shape="rect" id="node7" href="$Cabana__NeighborList_8hpp.html" title="Neighbor list interface." alt="" coords="27,155,208,181"/>
+<area shape="rect" id="node8" href="$Cabana__Types_8hpp.html" title="Memory access type checking." alt="" coords="177,229,314,256"/>
+<area shape="rect" id="node9" title=" " alt="" coords="760,80,822,107"/>
+<area shape="rect" id="node3" href="$Cabana__Index_8hpp.html" title="AoSoA indexing." alt="" coords="369,155,536,181"/>
+<area shape="rect" id="node4" href="$Cabana__TypeTraits_8hpp_source.html" title=" " alt="" coords="390,229,584,256"/>
 </map>
