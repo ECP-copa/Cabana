@@ -262,6 +262,79 @@ void localOnlyTest( const GridType global_grid, const double cell_size )
         }
 }
 
+//---------------------------------------------------------------------------//
+// The objective of this test is to verify that particles outside the grid are
+// removed correctly if outside the global domain. In this case no particles
+// should remain in the system since they are all created outside (destination
+// rank is set to -1 if not inside the system).
+template <class GridType>
+void removeOutsideTest( const GridType global_grid )
+{
+    // Get the local block with a halo of 2.
+    const int data_halo_size = 2;
+    auto block = Cajita::createLocalGrid( global_grid, data_halo_size );
+    auto local_mesh = Cajita::createLocalMesh<Kokkos::HostSpace>( *block );
+
+    // Allocate particles
+    using MemberTypes = Cabana::MemberTypes<double[3], int>;
+    using ParticleContainer = Cabana::AoSoA<MemberTypes, Kokkos::HostSpace>;
+    int num_particle = 0;
+    ParticleContainer particles( "particles", num_particle );
+
+    // Put particles outside the global boundary in each direction of each
+    // dimension.
+    int pid = 0;
+    for ( int d = 0; d < 3; d++ )
+        for ( int dir = -1; dir < 2; dir += 2 )
+        {
+            std::array<int, 3> plane = { 0, 0, 0 };
+            plane[d] = dir;
+            auto boundary_space = block->boundaryIndexSpace(
+                Cajita::Ghost(), Cajita::Cell(), plane, -1 );
+            num_particle += boundary_space.size();
+            particles.resize( num_particle );
+            auto coords = Cabana::slice<0>( particles, "coords" );
+
+            // Iterate over the boundary index space to fill the surface in this
+            // dimension.
+            for ( int k = boundary_space.min( Dim::K );
+                  k < boundary_space.max( Dim::K ); ++k )
+                for ( int j = boundary_space.min( Dim::J );
+                      j < boundary_space.max( Dim::J ); ++j )
+                    for ( int i = boundary_space.min( Dim::I );
+                          i < boundary_space.max( Dim::I ); ++i )
+                    {
+                        // Use the location of this cell to set the particle
+                        // position.
+                        int index[3] = { i, j, k };
+                        double cell_coord[3];
+                        local_mesh.coordinates( Cajita::Cell(), index,
+                                                cell_coord );
+
+                        for ( int x = 0; x < 3; x++ )
+                            coords( pid, x ) = cell_coord[x];
+                        // Increment the particle count.
+                        ++pid;
+                    }
+        }
+    particles.resize( pid );
+
+    // Copy to the device space.
+    auto particles_mirror =
+        Cabana::create_mirror_view_and_copy( TEST_DEVICE(), particles );
+
+    // Check particles were created.
+    EXPECT_GT( particles_mirror.size(), 0 );
+
+    // Redistribute the particles.
+    auto coords_mirror = Cabana::slice<0>( particles_mirror, "coords" );
+    Cajita::particleGridMigrate( *block, coords_mirror, particles_mirror, 0,
+                                 true );
+
+    // Check that all particles were removed.
+    EXPECT_EQ( particles_mirror.size(), 0 );
+}
+
 auto createGrid( const Cajita::ManualBlockPartitioner<3>& partitioner,
                  const std::array<bool, 3>& is_periodic,
                  const double cell_size )
@@ -357,6 +430,27 @@ TEST( TEST_CATEGORY, local_only_test )
     auto global_grid = createGrid( partitioner, is_periodic, cell_size );
 
     localOnlyTest( global_grid, cell_size );
+}
+//---------------------------------------------------------------------------//
+
+//---------------------------------------------------------------------------//
+TEST( TEST_CATEGORY, remove_outside_domain_test )
+{
+    // Let MPI compute the partitioning for this test.
+    int comm_size;
+    MPI_Comm_size( MPI_COMM_WORLD, &comm_size );
+    std::array<int, 3> ranks_per_dim = { 0, 0, 0 };
+    MPI_Dims_create( comm_size, 3, ranks_per_dim.data() );
+    Cajita::ManualBlockPartitioner<3> partitioner( ranks_per_dim );
+
+    // Every boundary is non-periodic.
+    std::array<bool, 3> is_periodic = { false, false, false };
+
+    // Create global grid.
+    double cell_size = 0.23;
+    auto global_grid = createGrid( partitioner, is_periodic, cell_size );
+
+    removeOutsideTest( global_grid );
 }
 //---------------------------------------------------------------------------//
 
