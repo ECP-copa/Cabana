@@ -452,7 +452,12 @@ class HeffteFastFourierTransform
 
         heffte::plan_options heffte_params =
             heffte::default_options<heffte_backend_type>();
-        heffte_params.use_alltoall = params.getAllToAll();
+        // TODO: use all three heffte options for algorithm
+        bool alltoall = params.getAllToAll();
+        if ( alltoall )
+            heffte_params.algorithm = heffte::reshape_algorithm::alltoallv;
+        else
+            heffte_params.algorithm = heffte::reshape_algorithm::p2p;
         heffte_params.use_pencils = params.getPencils();
         heffte_params.use_reorder = params.getReorder();
 
@@ -605,7 +610,8 @@ auto createHeffteFastFourierTransform(
     const heffte::plan_options heffte_params =
         heffte::default_options<heffte_backend_type>();
     FastFourierTransformParams params;
-    params.setAllToAll( heffte_params.use_alltoall );
+    // TODO: set appropriate default for AllToAll
+    params.setAllToAll( true );
     params.setPencils( heffte_params.use_pencils );
     params.setReorder( heffte_params.use_reorder );
 
