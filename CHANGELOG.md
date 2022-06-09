@@ -3,6 +3,7 @@
 ## (dev)
 
 - Updated minimum Kokkos dependency to version 3.6
+- Updated heFFTe version from 2.1 to 2.2
 
 ## 0.5.0
 
