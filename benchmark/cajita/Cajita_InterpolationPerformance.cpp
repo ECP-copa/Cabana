@@ -20,6 +20,159 @@
 
 using namespace Cajita;
 
+// This is an example fused kernel version of p2g. It is not intended to be
+// physical, but only to compare performance.
+template <class ScalarValue, class VectorValue, class ScalarGrad,
+          class VectorDiv, class TensorDiv, class Coordinates, class DeviceType,
+          class ScalarArrayType, class VectorArrayType>
+void fused_p2g( const ScalarValue& scalar_value,
+                const VectorValue& vector_value, const ScalarGrad& scalar_grad,
+                const VectorDiv& vector_div, const TensorDiv& tensor_div,
+                const Coordinates& points, const std::size_t num_point,
+                const Halo<DeviceType>& halo, ScalarArrayType& scalar_array,
+                VectorArrayType& vector_array )
+{
+    using execution_space = typename DeviceType::execution_space;
+
+    // Create the local mesh.
+    auto local_mesh =
+        createLocalMesh<DeviceType>( *( scalar_array.layout()->localGrid() ) );
+
+    // Create a scatter view of the arrays.
+    auto scalar_view = scalar_array.view();
+    auto scalar_sv = Kokkos::Experimental::create_scatter_view( scalar_view );
+    auto vector_view = vector_array.view();
+    auto vector_sv = Kokkos::Experimental::create_scatter_view( vector_view );
+
+    // Loop over points and interpolate to the grid.
+    Kokkos::parallel_for(
+        "p2g_fused", Kokkos::RangePolicy<execution_space>( 0, num_point ),
+        KOKKOS_LAMBDA( const int p ) {
+            // Get the point coordinates.
+            double px[3];
+            for ( std::size_t d = 0; d < 3; ++d )
+            {
+                px[d] = points( p, d );
+            }
+
+            // Create the local spline data (hardcoded).
+            using sd_type = SplineData<double, 1, 3, Node>;
+            sd_type sd;
+            evaluateSpline( local_mesh, px, sd );
+
+            // Evaluate all functors.
+            scalar_value( sd, p, scalar_sv );
+            vector_value( sd, p, vector_sv );
+            scalar_grad( sd, p, vector_sv );
+            vector_div( sd, p, scalar_sv );
+            tensor_div( sd, p, vector_sv );
+        } );
+    Kokkos::Experimental::contribute( scalar_view, scalar_sv );
+    Kokkos::Experimental::contribute( vector_view, vector_sv );
+
+    // Scatter interpolation contributions in the halo back to their owning
+    // ranks.
+    halo.scatter( execution_space(), ScatterReduce::Sum(), scalar_array,
+                  vector_array );
+}
+
+// This is an example fused kernel version of g2p. It is not intended to be
+// physical, but only to compare performance.
+template <class ScalarArrayType, class VectorArrayType, class Coordinates,
+          class DeviceType, class ScalarValue, class VectorValue,
+          class ScalarGrad, class VectorGrad, class VectorDiv>
+void fused_g2p( ScalarArrayType& scalar_array, VectorArrayType& vector_array,
+                const Halo<DeviceType>& halo, const Coordinates& points,
+                const std::size_t num_point, const ScalarValue& scalar_value,
+                const VectorValue& vector_value, const ScalarGrad& scalar_grad,
+                const VectorGrad& vector_grad, const VectorDiv& vector_div )
+{
+    using execution_space = typename DeviceType::execution_space;
+
+    // Create the local mesh.
+    auto local_mesh =
+        createLocalMesh<DeviceType>( *( scalar_array.layout()->localGrid() ) );
+
+    // Gather data into the halo before interpolating.
+    halo.gather( execution_space(), scalar_array );
+    halo.gather( execution_space(), vector_array );
+
+    // Get views of the arrays.
+    auto scalar_view = scalar_array.view();
+    auto vector_view = vector_array.view();
+
+    // Loop over points and interpolate from the grid.
+    Kokkos::parallel_for(
+        "g2p_fused", Kokkos::RangePolicy<execution_space>( 0, num_point ),
+        KOKKOS_LAMBDA( const int p ) {
+            // Get the point coordinates.
+            double px[3];
+            for ( std::size_t d = 0; d < 3; ++d )
+            {
+                px[d] = points( p, d );
+            }
+
+            // Create the local spline data (hardcoded).
+            using sd_type = SplineData<double, 1, 3, Node>;
+            sd_type sd;
+            evaluateSpline( local_mesh, px, sd );
+
+            // Evaluate all functors.
+            scalar_value( sd, p, scalar_view );
+            vector_value( sd, p, vector_view );
+            scalar_grad( sd, p, scalar_view );
+            vector_grad( sd, p, vector_view );
+            vector_div( sd, p, vector_view );
+        } );
+}
+
+// This is an example fused kernel scalar g2p2g.
+template <class ScalarValueP2GType, class Coordinates, class DeviceType,
+          class ScalarArrayType, class ScalarValueG2PType>
+void g2p2g( const ScalarValueP2GType& scalar_p2g, const Coordinates& points,
+            const std::size_t num_point, const Halo<DeviceType>& halo,
+            ScalarArrayType& scalar_array, ScalarValueG2PType& scalar_g2p )
+{
+    using execution_space = typename DeviceType::execution_space;
+
+    // Create the local mesh.
+    auto local_mesh =
+        createLocalMesh<DeviceType>( *( scalar_array.layout()->localGrid() ) );
+
+    // Gather data into the halo before interpolating.
+    halo.gather( execution_space(), scalar_array );
+
+    // Create a scatter view of the arrays.
+    auto scalar_view = scalar_array.view();
+    auto scalar_sv = Kokkos::Experimental::create_scatter_view( scalar_view );
+
+    // Loop over points and interpolate to the grid.
+    Kokkos::parallel_for(
+        "g2p2g", Kokkos::RangePolicy<execution_space>( 0, num_point ),
+        KOKKOS_LAMBDA( const int p ) {
+            // Get the point coordinates.
+            double px[3];
+            for ( std::size_t d = 0; d < 3; ++d )
+            {
+                px[d] = points( p, d );
+            }
+
+            // Create the local spline data (hardcoded).
+            using sd_type = SplineData<double, 1, 3, Node>;
+            sd_type sd;
+            evaluateSpline( local_mesh, px, sd );
+
+            // Do G2P followed by P2G.
+            scalar_g2p( sd, p, scalar_view );
+            scalar_p2g( sd, p, scalar_sv );
+        } );
+    Kokkos::Experimental::contribute( scalar_view, scalar_sv );
+
+    // Scatter interpolation contributions in the halo back to their owning
+    // ranks.
+    halo.scatter( execution_space(), ScatterReduce::Sum(), scalar_array );
+}
+
 //---------------------------------------------------------------------------//
 // Performance test.
 template <class Device>
@@ -123,6 +276,25 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
         Cabana::Benchmark::Timer g2p_vector_divergence_timer(
             g2p_vector_divergence_time_name.str(), num_problem_size );
 
+        // Create fused timers.
+        std::stringstream p2g_fused_time_name;
+        p2g_fused_time_name << test_prefix << "p2g_fused_"
+                            << particles_per_cell[ppc];
+        Cabana::Benchmark::Timer p2g_fused_timer( p2g_fused_time_name.str(),
+                                                  num_problem_size );
+
+        std::stringstream g2p_fused_time_name;
+        g2p_fused_time_name << test_prefix << "g2p_fused_"
+                            << particles_per_cell[ppc];
+        Cabana::Benchmark::Timer g2p_fused_timer( g2p_fused_time_name.str(),
+                                                  num_problem_size );
+
+        std::stringstream g2p2g_fused_time_name;
+        g2p2g_fused_time_name << test_prefix << "g2p2g_fused_"
+                              << particles_per_cell[ppc];
+        Cabana::Benchmark::Timer g2p2g_fused_timer( g2p2g_fused_time_name.str(),
+                                                    num_problem_size );
+
         for ( int n = 0; n < num_problem_size; ++n )
         {
             // Create the global grid
@@ -222,6 +394,11 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             auto tensor_halo =
                 createHalo( NodeHaloPattern<3>{}, -1, *tensor_grid_field );
 
+            // Create fused halo.
+            auto fused_halo =
+                createHalo( NodeHaloPattern<3>{}, -1, *scalar_grid_field,
+                            *vector_grid_field, *tensor_grid_field );
+
             // Interpolate a scalar point value to the grid.
             ArrayOp::assign( *scalar_grid_field, 0.0, Ghost() );
 
@@ -229,16 +406,16 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
             for ( int t = 0; t < num_runs; ++t )
             {
                 // P2G scalar value
-                auto scalar_p2g = createScalarValueP2G( scalar, -0.5 );
+                auto scalar_value_p2g = createScalarValueP2G( scalar, -0.5 );
                 p2g_scalar_value_timer.start( n );
-                p2g( scalar_p2g, position, position.size(), Spline<1>(),
+                p2g( scalar_value_p2g, position, position.size(), Spline<1>(),
                      *scalar_halo, *scalar_grid_field );
                 p2g_scalar_value_timer.stop( n );
 
                 // P2G vector value
-                auto vector_p2g = createVectorValueP2G( vector, -0.5 );
+                auto vector_value_p2g = createVectorValueP2G( vector, -0.5 );
                 p2g_vector_value_timer.start( n );
-                p2g( vector_p2g, position, position.size(), Spline<1>(),
+                p2g( vector_value_p2g, position, position.size(), Spline<1>(),
                      *vector_halo, *vector_grid_field );
                 p2g_vector_value_timer.stop( n );
 
@@ -299,6 +476,28 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                 g2p( *vector_grid_field, *vector_halo, position,
                      position.size(), Spline<1>(), vector_div_g2p );
                 g2p_vector_divergence_timer.stop( n );
+
+                // All P2G
+                p2g_fused_timer.start( n );
+                fused_p2g( scalar_value_p2g, vector_value_p2g, scalar_grad_p2g,
+                           vector_div_p2g, tensor_div_p2g, position,
+                           position.size(), *fused_halo, *scalar_grid_field,
+                           *vector_grid_field );
+                p2g_fused_timer.stop( n );
+
+                // All G2P
+                g2p_fused_timer.start( n );
+                fused_g2p( *scalar_grid_field, *vector_grid_field, *fused_halo,
+                           position, position.size(), scalar_value_g2p,
+                           vector_value_g2p, scalar_gradient_g2p,
+                           vector_gradient_g2p, vector_div_g2p );
+                g2p_fused_timer.stop( n );
+
+                // G2P2G
+                g2p2g_fused_timer.start( n );
+                g2p2g( scalar_value_p2g, position, position.size(),
+                       *scalar_halo, *scalar_grid_field, scalar_value_g2p );
+                g2p2g_fused_timer.stop( n );
             }
         }
 
@@ -323,6 +522,12 @@ void performanceTest( std::ostream& stream, const std::string& test_prefix,
                        g2p_vector_gradient_timer );
         outputResults( stream, "grid_size_per_dim", cells_per_dim,
                        g2p_vector_divergence_timer );
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
+                       p2g_fused_timer );
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
+                       g2p_fused_timer );
+        outputResults( stream, "grid_size_per_dim", cells_per_dim,
+                       g2p2g_fused_timer );
 
         stream << std::flush;
     }
