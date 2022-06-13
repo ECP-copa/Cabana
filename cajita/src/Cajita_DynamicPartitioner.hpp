@@ -521,7 +521,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
                     random_dim_id = std::rand() % num_space_dim;
 
                 bool is_dim_changed = false; // record changes in current dim
-                optimizePartition( is_dim_changed, random_dim_id );
+                optimizePartitionAlongDim( random_dim_id, is_dim_changed );
 
                 // update control info
                 is_changed = is_changed || is_dim_changed;
@@ -560,7 +560,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
                     random_dim_id = std::rand() % num_space_dim;
 
                 bool is_dim_changed = false; // record changes in current dim
-                optimizePartition( is_dim_changed, random_dim_id );
+                optimizePartitionAlongDim( random_dim_id, is_dim_changed );
 
                 // update control info
                 is_changed = is_changed || is_dim_changed;
@@ -575,11 +575,11 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
 
     /*!
       \brief optimize the partition in three dimensions seperately
-      \param is_changed label if the partition is changed after the optimization
       \param iter_seed seed number to choose the starting dimension of the
       optimization
+      \param is_changed label if the partition is changed after the optimization
     */
-    void optimizePartition( bool& is_changed, int iter_seed )
+    void optimizePartitionAlongDim( int iter_seed, bool& is_changed )
     {
         is_changed = false;
         // loop over three dimensions, optimize the partition in dimension di
