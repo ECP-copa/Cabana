@@ -125,6 +125,13 @@ void writeTest()
     double step = 892;
     Cajita::Experimental::SiloParticleOutput::writeTimeStep(
         "particles", *global_grid, step, time, coords, ids, matrix, vec );
+    // Write a partial range of particles.
+    const double ignore_fraction = 0.1;
+    std::size_t begin = num_particle * ignore_fraction;
+    std::size_t end = num_particle - num_particle * ignore_fraction;
+    Cajita::Experimental::SiloParticleOutput::writePartialRangeTimeStep(
+        "particles", *global_grid, step, time, begin, end, coords, ids, matrix,
+        vec );
 
     // Move the particles and write again.
     double time_step_size = 0.32;

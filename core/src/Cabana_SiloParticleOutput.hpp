@@ -30,6 +30,8 @@
 
 #include <Kokkos_Core.hpp>
 
+#include <Cabana_Slice.hpp>
+
 #include <silo.h>
 
 #include <mpi.h>
@@ -85,19 +87,20 @@ namespace Impl
 // Rank-0 field
 template <class SliceType>
 void writeFields(
-    DBfile* silo_file, const std::string& mesh_name, const SliceType& slice,
+    DBfile* silo_file, const std::string& mesh_name, const std::size_t begin,
+    const std::size_t end, const SliceType& slice,
+
     typename std::enable_if<
         2 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
 {
     // Reorder in a contiguous blocked format.
     Kokkos::View<typename SliceType::value_type*,
                  typename SliceType::device_type>
-        view( "field", slice.size() );
+        view( "field", end - begin );
     Kokkos::parallel_for(
         "Cabana::SiloParticleOutput::writeFieldRank0",
-        Kokkos::RangePolicy<typename SliceType::execution_space>(
-            0, slice.size() ),
-        KOKKOS_LAMBDA( const int i ) { view( i ) = slice( i ); } );
+        Kokkos::RangePolicy<typename SliceType::execution_space>( begin, end ),
+        KOKKOS_LAMBDA( const int i ) { view( i - begin ) = slice( i ); } );
 
     // Mirror the field to the host.
     auto host_view =
@@ -113,21 +116,21 @@ void writeFields(
 // Rank-1 field
 template <class SliceType>
 void writeFields(
-    DBfile* silo_file, const std::string& mesh_name, const SliceType& slice,
+    DBfile* silo_file, const std::string& mesh_name, const std::size_t begin,
+    const std::size_t end, const SliceType& slice,
     typename std::enable_if<
         3 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
 {
     // Reorder in a contiguous blocked format.
     Kokkos::View<typename SliceType::value_type**, Kokkos::LayoutLeft,
                  typename SliceType::device_type>
-        view( "field", slice.size(), slice.extent( 2 ) );
+        view( "field", end - begin, slice.extent( 2 ) );
     Kokkos::parallel_for(
         "Cabana::SiloParticleOutput::writeFieldRank1",
-        Kokkos::RangePolicy<typename SliceType::execution_space>(
-            0, slice.size() ),
+        Kokkos::RangePolicy<typename SliceType::execution_space>( begin, end ),
         KOKKOS_LAMBDA( const int i ) {
             for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
-                view( i, d0 ) = slice( i, d0 );
+                view( i - begin, d0 ) = slice( i, d0 );
         } );
 
     // Mirror the field to the host.
@@ -149,22 +152,22 @@ void writeFields(
 // Rank-2 field
 template <class SliceType>
 void writeFields(
-    DBfile* silo_file, const std::string& mesh_name, const SliceType& slice,
+    DBfile* silo_file, const std::string& mesh_name, const std::size_t begin,
+    const std::size_t end, const SliceType& slice,
     typename std::enable_if<
         4 == SliceType::kokkos_view::traits::dimension::rank, int*>::type = 0 )
 {
     // Reorder in a contiguous blocked format.
     Kokkos::View<typename SliceType::value_type***, Kokkos::LayoutLeft,
                  typename SliceType::device_type>
-        view( "field", slice.size(), slice.extent( 2 ), slice.extent( 3 ) );
+        view( "field", end - begin, slice.extent( 2 ), slice.extent( 3 ) );
     Kokkos::parallel_for(
         "Cabana::SiloParticleOutput::writeFieldRank2",
-        Kokkos::RangePolicy<typename SliceType::execution_space>(
-            0, slice.size() ),
+        Kokkos::RangePolicy<typename SliceType::execution_space>( begin, end ),
         KOKKOS_LAMBDA( const int i ) {
             for ( std::size_t d0 = 0; d0 < slice.extent( 2 ); ++d0 )
                 for ( std::size_t d1 = 0; d1 < slice.extent( 3 ); ++d1 )
-                    view( i, d0, d1 ) = slice( i, d0, d1 );
+                    view( i - begin, d0, d1 ) = slice( i, d0, d1 );
         } );
 
     // Mirror the field to the host.
@@ -185,24 +188,35 @@ void writeFields(
                    SiloTraits<typename SliceType::value_type>::type(),
                    nullptr );
 }
+
+// Output full slice range for any rank field.
+template <class SliceType>
+void writeFields( DBfile* silo_file, const std::string& mesh_name,
+                  const SliceType& slice )
+{
+    writeFields( silo_file, mesh_name, slice, 0, slice.size() );
+}
+
 //! \endcond
 } // namespace Impl
 
 //! Write particle data to Silo output.
 template <class SliceType>
 void writeFields( DBfile* silo_file, const std::string& mesh_name,
+                  const std::size_t begin, const std::size_t end,
                   const SliceType& slice )
 {
-    Impl::writeFields( silo_file, mesh_name, slice );
+    Impl::writeFields( silo_file, mesh_name, begin, end, slice );
 }
 
 //! Write particle data to Silo output.
 template <class SliceType, class... FieldSliceTypes>
 void writeFields( DBfile* silo_file, const std::string& mesh_name,
+                  const std::size_t begin, const std::size_t end,
                   const SliceType& slice, FieldSliceTypes&&... fields )
 {
-    Impl::writeFields( silo_file, mesh_name, slice );
-    writeFields( silo_file, mesh_name, fields... );
+    Impl::writeFields( silo_file, mesh_name, begin, end, slice );
+    writeFields( silo_file, mesh_name, begin, end, fields... );
 }
 
 //---------------------------------------------------------------------------//
@@ -388,14 +402,18 @@ void writeMultiMesh( PMPIO_baton_t* baton, DBfile* silo_file,
   \param num_group Number of files to create in parallel.
   \param time_step_index Current simulation step index.
   \param time Current simulation time.
+  \param begin The first particle index to output.
+  \param end The final particle index to output.
   \param coords Particle coordinates.
   \param fields Variadic list of particle property fields.
 */
 template <class CoordSliceType, class... FieldSliceTypes>
-void writeTimeStep( const std::string& prefix, MPI_Comm comm,
-                    const int num_group, const int time_step_index,
-                    const double time, const CoordSliceType& coords,
-                    FieldSliceTypes&&... fields )
+void writePartialRangeTimeStep( const std::string& prefix, MPI_Comm comm,
+                                const int num_group, const int time_step_index,
+                                const double time, const std::size_t begin,
+                                const std::size_t end,
+                                const CoordSliceType& coords,
+                                FieldSliceTypes&&... fields )
 {
     // Create the parallel baton.
     int mpi_tag = 1948;
@@ -428,14 +446,14 @@ void writeTimeStep( const std::string& prefix, MPI_Comm comm,
     // Reorder the coordinates in a blocked format.
     Kokkos::View<typename CoordSliceType::value_type**, Kokkos::LayoutLeft,
                  typename CoordSliceType::device_type>
-        view( "coords", coords.size(), coords.extent( 2 ) );
+        view( "coords", end - begin, coords.extent( 2 ) );
     Kokkos::parallel_for(
         "Cabana::SiloParticleOutput::writeCoords",
-        Kokkos::RangePolicy<typename CoordSliceType::execution_space>(
-            0, coords.size() ),
+        Kokkos::RangePolicy<typename CoordSliceType::execution_space>( begin,
+                                                                       end ),
         KOKKOS_LAMBDA( const int i ) {
             for ( std::size_t d0 = 0; d0 < coords.extent( 2 ); ++d0 )
-                view( i, d0 ) = coords( i, d0 );
+                view( i - begin, d0 ) = coords( i, d0 );
         } );
 
     // Mirror the coordinates to the host.
@@ -452,7 +470,7 @@ void writeTimeStep( const std::string& prefix, MPI_Comm comm,
                     nullptr );
 
     // Add variables.
-    writeFields( silo_file, mesh_name, fields... );
+    writeFields( silo_file, mesh_name, begin, end, fields... );
 
     // Root rank writes the global multimesh hierarchy for parallel
     // simulations.
@@ -467,6 +485,26 @@ void writeTimeStep( const std::string& prefix, MPI_Comm comm,
 
     // Finish.
     PMPIO_Finish( baton );
+}
+
+/*!
+  \brief Write output in Silo format for all particles.
+  \param prefix Filename prefix.
+  \param comm MPI communicator.
+  \param num_group Number of files to create in parallel.
+  \param time_step_index Current simulation step index.
+  \param time Current simulation time.
+  \param coords Particle coordinates.
+  \param fields Variadic list of particle property fields.
+*/
+template <class CoordSliceType, class... FieldSliceTypes>
+void writeTimeStep( const std::string& prefix, MPI_Comm comm,
+                    const int num_group, const int time_step_index,
+                    const double time, const CoordSliceType& coords,
+                    FieldSliceTypes&&... fields )
+{
+    writePartialRangeTimeStep( prefix, comm, num_group, time_step_index, time,
+                               0, coords.size(), coords, fields... );
 }
 
 //---------------------------------------------------------------------------//
