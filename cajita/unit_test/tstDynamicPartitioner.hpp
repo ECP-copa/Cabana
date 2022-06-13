@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_SparseDimPartitioner.hpp>
+#include <Cajita_DynamicPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Kokkos_Core.hpp>
 
@@ -47,7 +47,7 @@ void uniform_distribution_automatic_rank()
         size_tile_per_dim * cell_per_tile_dim };
 
     // partitioner
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
         global_cells_per_dim, max_optimize_iteration );
 
@@ -309,7 +309,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
                                                 size_per_dim };
 
     // partitioner
-    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, particle_num, num_step_rebalance,
         global_cells_per_dim, max_optimize_iteration );
 

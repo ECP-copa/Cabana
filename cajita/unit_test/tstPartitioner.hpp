@@ -12,7 +12,7 @@
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_ManualPartitioner.hpp>
 #include <Cajita_Partitioner.hpp>
-#include <Cajita_SparseDimPartitioner.hpp>
+#include <Cajita_DynamicPartitioner.hpp>
 #include <Kokkos_Core.hpp>
 
 #include <ctime>

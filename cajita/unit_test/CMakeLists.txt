@@ -37,7 +37,7 @@ set(MPI_TESTS
   Interpolation2d
   BovWriter
   Parallel
-  SparseDimPartitioner
+  DynamicPartitioner
   Partitioner
   SparseArray
   )

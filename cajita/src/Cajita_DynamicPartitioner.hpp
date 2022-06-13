@@ -10,11 +10,11 @@
  ****************************************************************************/
 
 /*!
-  \file Cajita_SparseDimPartitioner.hpp
-  \brief Multi-node sparse grid partitioner
+  \file Cajita_DynamicPartitioner.hpp
+  \brief Multi-node dynamic grid partitioner
 */
-#ifndef CAJITA_SPARSEDIMPARTITIONER_HPP
-#define CAJITA_SPARSEDIMPARTITIONER_HPP
+#ifndef CAJITA_DYNAMICPARTITIONER_HPP
+#define CAJITA_DYNAMICPARTITIONER_HPP
 
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
@@ -29,14 +29,14 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 /*!
-  Sparse mesh block partitioner. (Current Version: Support 3D only)
+  Dynamic mesh block partitioner. (Current Version: Support 3D only)
   \tparam Device Kokkos device type.
   \tparam CellPerTileDim Cells per tile per dimension.
   \tparam NumSpaceDim Dimemsion (The current version support 3D only)
 */
 template <typename Device, unsigned long long CellPerTileDim = 4,
           std::size_t NumSpaceDim = 3>
-class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
+class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
 {
   public:
     //! dimension
@@ -82,7 +82,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
       \param global_cells_per_dim 3D array, global cells in each dimension
       \param max_optimize_iteration max iteration number to run the optimization
     */
-    SparseDimPartitioner(
+    DynamicPartitioner(
         MPI_Comm comm, float max_workload_coeff, int workload_num,
         int num_step_rebalance,
         const std::array<int, num_space_dim>& global_cells_per_dim,
@@ -111,7 +111,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
       \param global_cells_per_dim 3D array, global cells in each dimension
       \param max_optimize_iteration max iteration number to run the optimization
     */
-    SparseDimPartitioner(
+    DynamicPartitioner(
         MPI_Comm comm, float max_workload_coeff, int workload_num,
         int num_step_rebalance,
         const std::array<int, num_space_dim>& ranks_per_dim,
@@ -171,7 +171,7 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
             nrank *= _ranks_per_dim[d];
         if ( comm_size != nrank )
             throw std::runtime_error(
-                "SparsePartitioner ranks do not match comm size" );
+                "DynamicPartitioner ranks do not match comm size" );
         return ranks_per_dim;
     }
 
@@ -905,4 +905,4 @@ class SparseDimPartitioner : public BlockPartitioner<NumSpaceDim>
 };
 } // end namespace Cajita
 
-#endif // end CAJITA_SPARSEDIMPARTITIONER_HPP
+#endif // end CAJITA_DYNAMICPARTITIONER_HPP
