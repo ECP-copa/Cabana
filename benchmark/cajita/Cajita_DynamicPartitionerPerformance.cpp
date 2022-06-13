@@ -189,9 +189,10 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( p );
-                partitioner.computeLocalWorkLoad( pos_view, par_num,
-                                                  global_low_corner,
-                                                  1.0f / num_cells_per_dim[c] );
+                partitioner.setLocalWorkloadByParticles( pos_view, par_num,
+                                                         global_low_corner,
+                                                         1.0f / num_cells_per_dim[c],
+                                                         comm );
                 local_workload_timer.stop( p );
 
                 // compute prefix sum matrix
@@ -205,8 +206,8 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
                 total_optimize_timer.start( p );
                 for ( int i = 0; i < max_optimize_iteration; ++i )
                 {
-                    partitioner.optimizePartition( is_changed,
-                                                   std::rand() % 3 );
+                    partitioner.optimizePartitionAlongDim( is_changed,
+                                                           std::rand() % 3 );
                     if ( !is_changed )
                         break;
                 }
@@ -326,7 +327,7 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( frac );
-                partitioner.computeLocalWorkLoad( sis );
+                partitioner.setLocalWorkloadBySparseMap( sis, comm );
                 local_workload_timer.stop( frac );
 
                 // compute prefix sum matrix
@@ -340,8 +341,8 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
                 total_optimize_timer.start( frac );
                 for ( int i = 0; i < max_optimize_iteration; ++i )
                 {
-                    partitioner.optimizePartition( is_changed,
-                                                   std::rand() % 3 );
+                    partitioner.optimizePartitionAlongDim( is_changed,
+                                                           std::rand() % 3 );
                     if ( !is_changed )
                         break;
                 }

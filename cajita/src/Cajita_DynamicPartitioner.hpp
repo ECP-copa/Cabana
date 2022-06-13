@@ -343,12 +343,13 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
       \param global_lower_corner the coordinate of the domain global lower
       corner
       \param dx cell dx size
+      \param comm MPI communicator used for workload reduction
     */
     template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
-    void computeLocalWorkLoad( const ParticlePosViewType& view,
-                               int particle_num,
-                               const ArrayType& global_lower_corner,
-                               const CellUnit dx )
+    void setLocalWorkloadByParticles( const ParticlePosViewType& view,
+                           int particle_num,
+                           const ArrayType& global_lower_corner,
+                           const CellUnit dx, MPI_Comm comm )
     {
         resetWorkload();
         // make a local copy
@@ -375,15 +376,18 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
                 Kokkos::atomic_increment( &workload( ti + 1, tj + 1, tz + 1 ) );
             } );
         Kokkos::fence();
+        // Wait for other ranks' workload to be ready
+        MPI_Barrier( comm );
     }
 
     /*!
       \brief compute the workload in the current MPI rank from sparseMap
       (the workload of a tile is 1 if the tile is occupied, 0 otherwise)
       \param sparseMap sparseMap in the current rank
+      \param comm MPI communicator used for workload reduction
     */
     template <class SparseMapType>
-    void computeLocalWorkLoad( const SparseMapType& sparseMap )
+    void setLocalWorkloadBySparseMap( const SparseMapType& sparseMap, MPI_Comm comm )
     {
         resetWorkload();
         // make a local copy
@@ -402,6 +406,8 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
                 }
             } );
         Kokkos::fence();
+        // Wait for other ranks' workload to be ready
+        MPI_Barrier( comm );
     }
 
     /*!
@@ -489,66 +495,16 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
 
     /*!
       \brief iteratively optimize the partition
-      \param view particle positions view
-      \param particle_num total particle number
-      \param global_lower_corner the coordinate of the domain global lower
-      corner
-      \param dx cell dx size
       \param comm MPI communicator used for workload reduction
       \return iteration number
     */
-    template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
-    int optimizePartition( const ParticlePosViewType& view, int particle_num,
-                           const ArrayType& global_lower_corner,
-                           const CellUnit dx, MPI_Comm comm )
+    int optimizePartition( MPI_Comm comm )
     {
-        computeLocalWorkLoad( view, particle_num, global_lower_corner, dx );
-        MPI_Barrier( comm );
-
         computeFullPrefixSum( comm );
         MPI_Barrier( comm );
 
         // each iteration covers partitioner optization in all three dimensions
         // (with a random dim sequence)
-        for ( int i = 0; i < _max_optimize_iteration; ++i )
-        {
-            bool is_changed = false; // record changes in current iteration
-            bool dim_covered[3] = { false, false, false };
-            for ( int d = 0; d < 3; ++d )
-            {
-                int random_dim_id = std::rand() % num_space_dim;
-                while ( dim_covered[random_dim_id] )
-                    random_dim_id = std::rand() % num_space_dim;
-
-                bool is_dim_changed = false; // record changes in current dim
-                optimizePartitionAlongDim( random_dim_id, is_dim_changed );
-
-                // update control info
-                is_changed = is_changed || is_dim_changed;
-                dim_covered[random_dim_id] = true;
-            }
-            // return if the current partition is optimal
-            if ( !is_changed )
-                return i;
-        }
-        return _max_optimize_iteration;
-    }
-
-    /*!
-      \brief iteratively optimize the partition
-      \param sparseMap sparseMap in the current rank
-      \param comm MPI communicator used for workload reduction
-      \return iteration number
-    */
-    template <class SparseMapType>
-    int optimizePartition( const SparseMapType& sparseMap, MPI_Comm comm )
-    {
-        computeLocalWorkLoad( sparseMap );
-        MPI_Barrier( comm );
-
-        computeFullPrefixSum( comm );
-        MPI_Barrier( comm );
-
         for ( int i = 0; i < _max_optimize_iteration; ++i )
         {
             bool is_changed = false; // record changes in current iteration
