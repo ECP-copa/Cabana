@@ -12,8 +12,8 @@
 add_executable(SparseMapPerformance Cajita_SparseMapPerformance.cpp)
 target_link_libraries(SparseMapPerformance Cajita)
 
-add_executable(SparsePartitionerPerformance Cajita_SparsePartitionerPerformance.cpp)
-target_link_libraries(SparsePartitionerPerformance Cajita)
+add_executable(DynamicPartitionerPerformance Cajita_DynamicPartitionerPerformance.cpp)
+target_link_libraries(DynamicPartitionerPerformance Cajita)
 
 add_executable(HaloPerformance Cajita_HaloPerformance.cpp)
 target_link_libraries(HaloPerformance Cajita)
@@ -29,7 +29,7 @@ endif()
 if(Cabana_ENABLE_TESTING)
   add_test(NAME Cajita_SparseMapPerformance COMMAND ${NONMPI_PRECOMMAND} SparseMapPerformance sparsemap_output.txt)
 
-  add_test(NAME Cajita_SparsePartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} SparsePartitionerPerformance sparsepartitioner_output.txt)
+  add_test(NAME Cajita_DynamicPartitionerPerformance COMMAND ${NONMPI_PRECOMMAND} DynamicPartitionerPerformance dynamicpartitioner_output.txt)
 
   add_test(NAME Cajita_HaloPerformance COMMAND ${NONMPI_PRECOMMAND} HaloPerformance halo_output.txt)
 
