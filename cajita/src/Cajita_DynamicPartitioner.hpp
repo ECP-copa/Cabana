@@ -586,51 +586,28 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
             // last_point: the opimized position for the lask partition
             int last_point = 0;
             // current_workload: the workload between [last_point, point_i)
-            Kokkos::View<int*, memory_space> current_workload(
-                "current_workload", _ranks_per_dim[dj] * _ranks_per_dim[dk] );
             for ( int current_rank = 1; current_rank < rank; current_rank++ )
             {
                 int last_diff = __INT_MAX__;
                 while ( true )
                 {
-                    // compute current workload between [last_point, point_i)
-                    Kokkos::parallel_for(
-                        "compute_current_workload",
-                        Kokkos::RangePolicy<execution_space>(
-                            0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
-                        KOKKOS_LAMBDA( uint32_t jnk ) {
-                            int j = static_cast<int>( jnk / rank_k );
-                            int k = static_cast<int>( jnk % rank_k );
-                            current_workload( jnk ) = compute_sub_workload(
-                                di, last_point, point_i, dj, j, dk, k );
-                        } );
-                    Kokkos::fence();
-
-                    // compute the (w_jk^ave - w_jk^{last_point:point_i})
-                    Kokkos::parallel_for(
-                        "compute_diff",
-                        Kokkos::RangePolicy<execution_space>(
-                            0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
-                        KOKKOS_LAMBDA( uint32_t jnk ) {
-                            auto wl =
-                                current_workload( jnk ) - ave_workload( jnk );
-                            // compute absolute diff (rather than squares to
-                            // avoid potential overflow)
-                            // TODO: update when Kokkos::abs() available
-                            wl = wl > 0 ? wl : -wl;
-                            current_workload( jnk ) = wl;
-                        } );
-                    Kokkos::fence();
-
-                    // compute the sum of the difference in all rank_j*rank_k
-                    // regions
                     int diff;
                     Kokkos::parallel_reduce(
                         "diff_reduce",
                         Kokkos::RangePolicy<execution_space>(
                             0, _ranks_per_dim[dj] * _ranks_per_dim[dk] ),
-                        KOKKOS_LAMBDA( const int idx, int& update ) {
-                            update += current_workload( idx );
+                        KOKKOS_LAMBDA( const int jnk, int& update ) {
+                            int j = static_cast<int>( jnk / rank_k );
+                            int k = static_cast<int>( jnk % rank_k );
+                            int current_workload = compute_sub_workload(
+                                di, last_point, point_i, dj, j, dk, k );
+                            auto wl =
+                                current_workload - ave_workload( jnk );
+                            // compute absolute diff (rather than squares to
+                            // avoid potential overflow)
+                            // TODO: update when Kokkos::abs() available
+                            wl = wl > 0 ? wl : -wl;
+                            update += wl;
                         },
                         diff );
                     Kokkos::fence();
