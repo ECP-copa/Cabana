@@ -43,7 +43,8 @@ jobs:
             cxx: 'g++'
             backend: 'THREADS'
             cmake_build_type: 'Debug'
-            kokkos_ver: 'master'
+            # FIXME: switch to master when available: https://github.com/kokkos/kokkos/pull/5109
+            kokkos_ver: 'develop'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
             hypre: 'NoHYPRE'
