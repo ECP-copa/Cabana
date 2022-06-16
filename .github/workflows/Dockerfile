@@ -29,5 +29,5 @@ COPY cabana/ /home/kokkos/src/cabana
 RUN sudo chown -R kokkos:kokkos cabana
 RUN cmake -S cabana -B cabana/build -DCMAKE_BUILD_TYPE=Release -DCabana_ENABLE_TESTING=ON -DCabana_ENABLE_EXAMPLES=ON -DCabana_ENABLE_PERFORMANCE_TESTING=ON -DCabana_PERFORMANCE_EXPECTED_FLOPS=0 -DVALGRIND_EXECUTABLE=False
 RUN cmake --build cabana/build -j2
-RUN cmake --build cabana/build --target test
+RUN CTEST_OUTPUT_ON_FAILURE=yes cmake --build cabana/build --target test
 RUN sudo cmake --install cabana/build
