@@ -375,14 +375,22 @@ jobs:
           fi
           #FIXME: Run valgrind for all builds once fixed/suppressed
           [[ ${{ matrix.distro }} == 'ubuntu:latest' || ${{ matrix.distro }} == 'ubuntu:rolling' || ${{ matrix.backend }} == OPENMP || ${{ matrix.cmake_build_type }} == Release ]] && cabana_cmake_opts+=( -DVALGRIND_EXECUTABLE=False )
+          [[ ${{ matrix.cxx }} == icpx ]] && cabana_cmake_opts+=( -DCMAKE_CXX_FLAGS_DEBUG="-g -O0" )
           [[ ${{ matrix.heffte }} == *"ONEAPI"* ]] && source /opt/intel/oneapi/setvars.sh
+          if [[ ${{ matrix.backend }} == "SYCL" ]]; then
+            cabana_cxx_flags=( "-Wall -Wextra -pedantic" )
+            source /opt/intel/oneapi/setvars.sh
+            cabana_cmake_opts+=(-DMPIEXEC_MAX_NUMPROCS=1)
+          else
+            cabana_cxx_flags=( "-Wall -Wextra -pedantic -Werror" )
+            cabana_cmake_opts+=(-DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe")
+          fi
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/Cabana \
-            -DMPIEXEC_MAX_NUMPROCS=2 -DMPIEXEC_PREFLAGS="--oversubscribe" \
             -DCMAKE_PREFIX_PATH="$HOME/kokkos;$HOME/arborx;$HOME/heffte;$HOME/hypre;$HOME/ALL" \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_CXX_FLAGS="-Wall -Wextra -pedantic -Werror $([[ ${{ matrix.cxx }} == icpx ]] && echo -DCMAKE_CXX_FLAGS_DEBUG="-g -O0")" \
+            -DCMAKE_CXX_FLAGS="${cabana_cxx_flags[@]}" \
             -DCabana_ENABLE_TESTING=ON \
             -DCabana_ENABLE_EXAMPLES=ON \
             -DCabana_ENABLE_PERFORMANCE_TESTING=ON \
