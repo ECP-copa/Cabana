@@ -9,11 +9,13 @@
 # SPDX-License-Identifier: BSD-3-Clause                                    #
 ############################################################################
 
-add_executable(SparseMapPerformance Cajita_SparseMapPerformance.cpp)
-target_link_libraries(SparseMapPerformance Cajita)
+if(NOT Kokkos_ENABLE_SYCL) #FIXME_SYCL
+  add_executable(SparseMapPerformance Cajita_SparseMapPerformance.cpp)
+  target_link_libraries(SparseMapPerformance Cajita)
 
-add_executable(SparsePartitionerPerformance Cajita_SparsePartitionerPerformance.cpp)
-target_link_libraries(SparsePartitionerPerformance Cajita)
+  add_executable(SparsePartitionerPerformance Cajita_SparsePartitionerPerformance.cpp)
+  target_link_libraries(SparsePartitionerPerformance Cajita)
+endif()
 
 add_executable(HaloPerformance Cajita_HaloPerformance.cpp)
 target_link_libraries(HaloPerformance Cajita)

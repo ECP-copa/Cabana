@@ -16,6 +16,10 @@
 #ifndef CAJITA_SPARSE_INDEXSPACE_HPP
 #define CAJITA_SPARSE_INDEXSPACE_HPP
 
+#ifdef KOKKOS_ENABLE_SYCL
+#error Not supported with the Kokkos SYCL backend (device recursion)
+#endif
+
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_IndexSpace.hpp>
 #include <Kokkos_Core.hpp>

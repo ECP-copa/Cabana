@@ -21,7 +21,6 @@ set(SERIAL_TESTS
 set(MPI_TESTS
   GlobalGrid
   LocalGrid
-  SparseLocalGrid
   IndexConversion
   LocalMesh3d
   LocalMesh2d
@@ -37,10 +36,16 @@ set(MPI_TESTS
   Interpolation2d
   BovWriter
   Parallel
-  SparseDimPartitioner
   Partitioner
   SparseArray
+  SparseDimPartitioner
+  SparseLocalGrid
   )
+
+if(Kokkos_ENABLE_SYCL) #FIXME_SYCL
+  list(REMOVE_ITEM SERIAL_TESTS SparseIndexSpace)
+  list(REMOVE_ITEM MPI_TESTS SparseDimPartitioner SparseLocalGrid SparseArray)
+endif()
 
 if(Kokkos_ENABLE_OPENMPTARGET) #FIXME_OPENMPTARGET
   list(REMOVE_ITEM MPI_TESTS Parallel)
