@@ -16,7 +16,7 @@ concurrency:
 jobs:
   CI:
     # FIXME: remove failing distributions here when passing
-    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:rawhide' || (matrix.distro == 'fedora:intel' && matrix.openmp == 'OFF' && matrix.cmake_build_type == 'Release') }}
+    continue-on-error: ${{ matrix.kokkos_ver == 'develop' || matrix.distro == 'fedora:rawhide' || (matrix.distro == 'fedora:intel' && matrix.backend == 'SERIAL' && matrix.cmake_build_type == 'Release') }}
     defaults:
       run:
         shell: bash
@@ -29,7 +29,7 @@ jobs:
       matrix:
         distro: ['ubuntu:latest']
         cxx: ['g++', 'clang++']
-        openmp: ['ON', 'OFF']
+        backend: ['OPENMP', 'SERIAL']
         cmake_build_type: ['Debug', 'Release']
         kokkos_ver: ['3.4.00', 'master', 'develop']
         arborx: ['NoArborX']
@@ -39,9 +39,20 @@ jobs:
         silo: ['NoSilo']
         coverage: ['OFF']
         include:
+          - distro: 'ubuntu:latest'
+            cxx: 'g++'
+            backend: 'THREADS'
+            cmake_build_type: 'Debug'
+            # FIXME: switch to master when available: https://github.com/kokkos/kokkos/pull/5109
+            kokkos_ver: 'develop'
+            arborx: 'NoArborX'
+            heffte: 'NoheFFTe'
+            hypre: 'NoHYPRE'
+            silo: 'NoSilo'
+            coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -50,7 +61,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -59,7 +70,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
-            openmp: 'OFF'
+            backend: 'SERIAL'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -68,7 +79,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
-            openmp: 'OFF'
+            backend: 'SERIAL'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -77,7 +88,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'fedora:intel'
             cxx: 'icpc'
-            openmp: 'OFF'
+            backend: 'SERIAL'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -86,7 +97,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'fedora:latest'
             cxx: 'g++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -96,7 +107,7 @@ jobs:
             doxygen: 'ON'
           - distro: 'fedora:latest'
             cxx: 'clang++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -106,7 +117,7 @@ jobs:
           - distro: 'opensuse:latest'
             cxx: 'g++'
             cmake_build_type: 'Release'
-            openmp: 'ON'
+            backend: 'OPENMP'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
@@ -114,7 +125,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'opensuse:latest'
             cxx: 'clang++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -124,7 +135,7 @@ jobs:
           - distro: 'ubuntu:rolling'
             cxx: 'g++'
             cmake_build_type: 'Release'
-            openmp: 'ON'
+            backend: 'OPENMP'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
@@ -132,7 +143,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'ubuntu:rolling'
             cxx: 'clang++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -142,7 +153,7 @@ jobs:
           - distro: 'fedora:rawhide'
             cxx: 'g++'
             cmake_build_type: 'Release'
-            openmp: 'ON'
+            backend: 'OPENMP'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
             heffte: 'NoheFFTe'
@@ -150,7 +161,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'fedora:rawhide'
             cxx: 'clang++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -159,7 +170,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'ArborX'
@@ -168,7 +179,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -177,7 +188,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Release'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -187,7 +198,7 @@ jobs:
             coverage: 'OFF'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -196,7 +207,7 @@ jobs:
             coverage: 'ON'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'NoArborX'
@@ -206,7 +217,7 @@ jobs:
             coverage: 'ON'
           - distro: 'ubuntu:latest'
             cxx: 'g++'
-            openmp: 'ON'
+            backend: 'OPENMP'
             cmake_build_type: 'Debug'
             kokkos_ver: 'master'
             arborx: 'ArborX'
@@ -238,13 +249,15 @@ jobs:
       - name: Build kokkos
         working-directory: kokkos
         run: |
+          [[ ${{ matrix.backend }} == "OPENMP" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_OPENMP==ON )
+          [[ ${{ matrix.backend }} == "THREADS" ]] && kokkos_cmake_opts+=( -DKokkos_ENABLE_THREADS==ON )
           cmake -B build \
             -DCMAKE_INSTALL_PREFIX=$HOME/kokkos \
-            -DKokkos_ENABLE_OPENMP=${{ matrix.openmp }} \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
             -DKokkos_ENABLE_HWLOC=ON \
-            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }}
+            -DCMAKE_BUILD_TYPE=${{ matrix.cmake_build_type }} \
+            ${kokkos_cmake_opts}
           cmake --build build --parallel 2
           cmake --install build
       - name: Checkout arborx
@@ -301,7 +314,7 @@ jobs:
         if: ${{ matrix.hypre == 'HYPRE' }}
         working-directory: hypre/src
         run: |
-          [[ ${{ matrix.openmp }} == 'ON' ]] && hypre_cmake_opts+=( -DHYPRE_WITH_OPENMP=ON )
+          [[ ${{ matrix.backend }} == 'OPENMP' ]] && hypre_cmake_opts+=( -DHYPRE_WITH_OPENMP=ON )
           cmake -B build \
             -DHYPRE_INSTALL_PREFIX=$HOME/hypre \
             -DCMAKE_CXX_COMPILER=${{ matrix.cxx }} \
