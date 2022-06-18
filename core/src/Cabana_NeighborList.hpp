@@ -48,9 +48,151 @@ class HalfNeighborTag
 };
 
 //---------------------------------------------------------------------------//
+// Neighbor List Memory Layout Tag.
+//---------------------------------------------------------------------------//
+//! CSR (compressed sparse row) neighbor list layout.
+struct NeighborLayoutCSR
+{
+};
+
+//! 2D array neighbor list layout.
+struct NeighborLayout2D
+{
+};
+
+//! CSR (compressed sparse row) neighbor list layout (planned to be deprecated).
+struct VerletLayoutCSR
+{
+};
+
+//! 2D array neighbor list layout (planned to be deprecated).
+struct VerletLayout2D
+{
+};
+
+//---------------------------------------------------------------------------//
+// Neighbor List Data.
+//---------------------------------------------------------------------------//
+template <class MemorySpace, class LayoutTag>
+struct NeighborListData;
+
+//! Store the NeighborList compressed sparse row (CSR) neighbor data.
+template <class MemorySpace>
+struct NeighborListData<MemorySpace, NeighborLayoutCSR>
+{
+    //! Kokkos memory space.
+    using memory_space = MemorySpace;
+
+    //! Number of neighbors per particle.
+    Kokkos::View<int*, memory_space> counts;
+
+    //! Offsets into the neighbor list.
+    Kokkos::View<int*, memory_space> offsets;
+
+    //! Neighbor list.
+    Kokkos::View<int*, memory_space> neighbors;
+
+    //! Add a neighbor to the list.
+    KOKKOS_INLINE_FUNCTION
+    void addNeighbor( const int pid, const int nid ) const
+    {
+        neighbors( offsets( pid ) +
+                   Kokkos::atomic_fetch_add( &counts( pid ), 1 ) ) = nid;
+    }
+};
+
+//! Store the NeighborList 2D neighbor data.
+template <class MemorySpace>
+struct NeighborListData<MemorySpace, NeighborLayout2D>
+{
+    //! Kokkos memory space.
+    using memory_space = MemorySpace;
+
+    //! Number of neighbors per particle.
+    Kokkos::View<int*, memory_space> counts;
+
+    //! Neighbor list.
+    Kokkos::View<int**, memory_space> neighbors;
+
+    //! Add a neighbor to the list.
+    KOKKOS_INLINE_FUNCTION
+    void addNeighbor( const int pid, const int nid ) const
+    {
+        std::size_t count = Kokkos::atomic_fetch_add( &counts( pid ), 1 );
+        if ( count < neighbors.extent( 1 ) )
+            neighbors( pid, count ) = nid;
+    }
+};
+
+template <class MemorySpace>
+struct NeighborListData<MemorySpace, VerletLayoutCSR>
+    : public NeighborListData<MemorySpace, NeighborLayoutCSR>
+{
+};
+
+template <class MemorySpace>
+struct NeighborListData<MemorySpace, VerletLayout2D>
+    : public NeighborListData<MemorySpace, NeighborLayout2D>
+{
+};
+
+//---------------------------------------------------------------------------//
+//! Neighborhood discriminator.
+template <class Tag>
+class NeighborDiscriminator;
+
+//! Full list neighborhood discriminator.
+template <>
+class NeighborDiscriminator<FullNeighborTag>
+{
+  public:
+    /*!
+      \brief Full neighbor lists count and store the neighbors of all particles.
+
+      The only criteria for a potentially valid neighbor is that the particle
+      does not neighbor itself (i.e. the particle index "p" is not the same as
+      the neighbor index "n").
+   */
+    KOKKOS_INLINE_FUNCTION
+    static bool isValid( const std::size_t p, const double, const double,
+                         const double, const std::size_t n, const double,
+                         const double, const double )
+    {
+        return ( p != n );
+    }
+};
+
+//! Half list neighborhood discriminator.
+template <>
+class NeighborDiscriminator<HalfNeighborTag>
+{
+  public:
+    /*!
+      \brief Half neighbor lists only store half of the neighbors.
+
+      This is done by eliminating duplicate pairs such that the fact that
+      particle "p" neighbors particle "n" is stored in the list but "n"
+      neighboring "p" is not stored but rather implied. We discriminate by only
+      storing neighbors who's coordinates are greater in the x direction. If
+      they are the same then the y direction is checked next and finally the z
+      direction if the y coordinates are the same.
+    */
+    KOKKOS_INLINE_FUNCTION
+    static bool isValid( const std::size_t p, const double xp, const double yp,
+                         const double zp, const std::size_t n, const double xn,
+                         const double yn, const double zn )
+    {
+        return ( ( p != n ) &&
+                 ( ( xn > xp ) ||
+                   ( ( xn == xp ) &&
+                     ( ( yn > yp ) || ( ( yn == yp ) && ( zn > zp ) ) ) ) ) );
+    }
+};
+
+//---------------------------------------------------------------------------//
 /*!
-  \brief Neighbor list interface. Provides an interface callable at the
-  functor level that gives access to neighbor data for particles.
+  \brief Neighbor list interface. Provides an interface callable at the functor
+  level that gives access to neighbor data for particles.
 */
 template <class NeighborListType>
 class NeighborList
