@@ -206,8 +206,8 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
                 total_optimize_timer.start( p );
                 for ( int i = 0; i < max_optimize_iteration; ++i )
                 {
-                    partitioner.optimizePartitionAlongDim( is_changed,
-                                                           std::rand() % 3 );
+                    partitioner.optimizePartitionAlongDim( std::rand() % 3,
+                                                           is_changed );
                     if ( !is_changed )
                         break;
                 }
@@ -341,8 +341,8 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
                 total_optimize_timer.start( frac );
                 for ( int i = 0; i < max_optimize_iteration; ++i )
                 {
-                    partitioner.optimizePartitionAlongDim( is_changed,
-                                                           std::rand() % 3 );
+                    partitioner.optimizePartitionAlongDim( std::rand() % 3,
+                                                           is_changed );
                     if ( !is_changed )
                         break;
                 }
