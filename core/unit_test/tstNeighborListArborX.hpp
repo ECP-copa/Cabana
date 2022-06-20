@@ -111,17 +111,17 @@ void testArborXListHalf()
     // Check CSR again, building with a large array allocation guess.
     {
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            Cabana::HalfNeighborTag{}, position, 0, position.size(),
             test_data.test_radius, 100 );
-        checkFullNeighborList( nlist, test_data.N2_list_copy,
+        checkHalfNeighborList( nlist, test_data.N2_list_copy,
                                test_data.num_particle );
     }
     // Check CSR again, building with a small array allocation guess.
     {
         auto const nlist = Cabana::Experimental::makeNeighborList<device_type>(
-            Cabana::FullNeighborTag{}, position, 0, position.size(),
+            Cabana::HalfNeighborTag{}, position, 0, position.size(),
             test_data.test_radius, 2 );
-        checkFullNeighborList( nlist, test_data.N2_list_copy,
+        checkHalfNeighborList( nlist, test_data.N2_list_copy,
                                test_data.num_particle );
     }
 
@@ -309,16 +309,13 @@ void testNeighborArborXParallelReduce()
 //---------------------------------------------------------------------------//
 // TESTS
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, verlet_list_full_test ) { testArborXListFull(); }
+TEST( TEST_CATEGORY, full_test ) { testArborXListFull(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, verlet_list_half_test ) { testArborXListHalf(); }
+TEST( TEST_CATEGORY, half_test ) { testArborXListHalf(); }
 
 //---------------------------------------------------------------------------//
-TEST( TEST_CATEGORY, verlet_list_full_range_test )
-{
-    testArborXListFullPartialRange();
-}
+TEST( TEST_CATEGORY, full_range_test ) { testArborXListFullPartialRange(); }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, parallel_for_test ) { testNeighborArborXParallelFor(); }
