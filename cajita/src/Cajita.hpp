@@ -20,6 +20,7 @@
 
 #include <Cajita_Array.hpp>
 #include <Cajita_BovWriter.hpp>
+#include <Cajita_DynamicPartitioner.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Halo.hpp>
@@ -34,7 +35,6 @@
 #include <Cajita_ParticleGridDistributor.hpp>
 #include <Cajita_Partitioner.hpp>
 #include <Cajita_ReferenceStructuredSolver.hpp>
-#include <Cajita_DynamicPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Cajita_Splines.hpp>
 #include <Cajita_Types.hpp>

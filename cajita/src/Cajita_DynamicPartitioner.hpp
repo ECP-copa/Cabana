@@ -29,10 +29,11 @@ namespace Cajita
 {
 //---------------------------------------------------------------------------//
 /*!
-  Dynamic mesh block partitioner. (Current Version: Support 3D only)
-  \tparam Device Kokkos device type.
-  \tparam CellPerTileDim Cells per tile per dimension.
-  \tparam NumSpaceDim Dimemsion (The current version support 3D only)
+  Dynamic mesh block partitioner. (Current Version: Support 3D only) There
+  should be no instantiation for this class without implementing any workload
+  computation. \tparam Device Kokkos device type. \tparam CellPerTileDim Cells
+  per tile per dimension. \tparam NumSpaceDim Dimemsion (The current version
+  support 3D only)
 */
 template <typename Device, unsigned long long CellPerTileDim = 4,
           std::size_t NumSpaceDim = 3>
@@ -336,81 +337,6 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
     }
 
     /*!
-      \brief compute the workload in the current MPI rank from particle
-      positions (each particle count for 1 workload value)
-      \param view particle positions view
-      \param particle_num total particle number
-      \param global_lower_corner the coordinate of the domain global lower
-      corner
-      \param dx cell dx size
-      \param comm MPI communicator used for workload reduction
-    */
-    template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
-    void setLocalWorkloadByParticles( const ParticlePosViewType& view,
-                           int particle_num,
-                           const ArrayType& global_lower_corner,
-                           const CellUnit dx, MPI_Comm comm )
-    {
-        resetWorkload();
-        // make a local copy
-        auto workload = _workload_per_tile;
-        Kokkos::Array<CellUnit, num_space_dim> lower_corner;
-        for ( std::size_t d = 0; d < num_space_dim; ++d )
-        {
-            lower_corner[d] = global_lower_corner[d];
-        }
-
-        Kokkos::parallel_for(
-            "compute_local_workload_parpos",
-            Kokkos::RangePolicy<execution_space>( 0, particle_num ),
-            KOKKOS_LAMBDA( const int i ) {
-                int ti = static_cast<int>(
-                             ( view( i, 0 ) - lower_corner[0] ) / dx - 0.5 ) >>
-                         cell_bits_per_tile_dim;
-                int tj = static_cast<int>(
-                             ( view( i, 1 ) - lower_corner[1] ) / dx - 0.5 ) >>
-                         cell_bits_per_tile_dim;
-                int tz = static_cast<int>(
-                             ( view( i, 2 ) - lower_corner[2] ) / dx - 0.5 ) >>
-                         cell_bits_per_tile_dim;
-                Kokkos::atomic_increment( &workload( ti + 1, tj + 1, tz + 1 ) );
-            } );
-        Kokkos::fence();
-        // Wait for other ranks' workload to be ready
-        MPI_Barrier( comm );
-    }
-
-    /*!
-      \brief compute the workload in the current MPI rank from sparseMap
-      (the workload of a tile is 1 if the tile is occupied, 0 otherwise)
-      \param sparseMap sparseMap in the current rank
-      \param comm MPI communicator used for workload reduction
-    */
-    template <class SparseMapType>
-    void setLocalWorkloadBySparseMap( const SparseMapType& sparseMap, MPI_Comm comm )
-    {
-        resetWorkload();
-        // make a local copy
-        auto workload = _workload_per_tile;
-        Kokkos::parallel_for(
-            "compute_local_workload_sparsmap",
-            Kokkos::RangePolicy<execution_space>( 0, sparseMap.capacity() ),
-            KOKKOS_LAMBDA( uint32_t i ) {
-                if ( sparseMap.valid_at( i ) )
-                {
-                    auto key = sparseMap.key_at( i );
-                    int ti, tj, tk;
-                    sparseMap.key2ijk( key, ti, tj, tk );
-                    Kokkos::atomic_increment(
-                        &workload( ti + 1, tj + 1, tk + 1 ) );
-                }
-            } );
-        Kokkos::fence();
-        // Wait for other ranks' workload to be ready
-        MPI_Barrier( comm );
-    }
-
-    /*!
       \brief 1. reduce the total workload in all MPI ranks; 2. compute the
       workload prefix sum matrix for all MPI ranks
       \param comm MPI communicator used for workload reduction
@@ -601,8 +527,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
                             int k = static_cast<int>( jnk % rank_k );
                             int current_workload = compute_sub_workload(
                                 di, last_point, point_i, dj, j, dk, k );
-                            auto wl =
-                                current_workload - ave_workload( jnk );
+                            auto wl = current_workload - ave_workload( jnk );
                             // compute absolute diff (rather than squares to
                             // avoid potential overflow)
                             // TODO: update when Kokkos::abs() available
@@ -806,6 +731,7 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
     // max_optimize iterations
     int _max_optimize_iteration;
 
+  protected:
     // represent the rectangle partition in each dimension
     // with form [0, p_1, ..., p_n, cell_num], n = rank num in current
     // dimension, partition in this dimension would be [0, p_1), [p_1, p_2) ...
@@ -836,6 +762,225 @@ class DynamicPartitioner : public BlockPartitioner<NumSpaceDim>
             ( global_cells_per_dim[2] >> cell_bits_per_tile_dim ) + 1 );
     }
 };
+
+/*!
+  Dynamic mesh block partitioner. (Current Version: Support 3D only) Workload
+  are computed from particle distribution.
+
+  \tparam Device Kokkos device type.
+  \tparam CellPerTileDim Cells per tile per dimension.
+  \tparam NumSpaceDim Dimemsion (The current version support 3D only)
+*/
+template <typename Device, unsigned long long CellPerTileDim = 4,
+          std::size_t NumSpaceDim = 3>
+class ParticleDynamicPartitioner
+    : public DynamicPartitioner<Device, CellPerTileDim, NumSpaceDim>
+{
+    using base = DynamicPartitioner<Device, CellPerTileDim, NumSpaceDim>;
+
+  protected:
+    using base::_workload_per_tile;
+
+  public:
+    using base::cell_bits_per_tile_dim;
+    using base::num_space_dim;
+    using typename base::execution_space;
+
+    /*!
+      \brief Constructor - automatically compute ranks_per_dim from MPI
+      communicator
+      \param comm MPI communicator to decide the rank nums in each dimension
+      \param max_workload_coeff threshold factor for re-partition
+      \param workload_num total workload(particle/tile) number, used to compute
+      workload_threshold
+      \param num_step_rebalance the simulation step number after which one
+      should check if repartition is needed
+      \param global_cells_per_dim 3D array, global cells in each dimension
+      \param max_optimize_iteration max iteration number to run the optimization
+    */
+    ParticleDynamicPartitioner(
+        MPI_Comm comm, float max_workload_coeff, int workload_num,
+        int num_step_rebalance,
+        const std::array<int, num_space_dim>& global_cells_per_dim,
+        int max_optimize_iteration = 10 )
+        : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
+                global_cells_per_dim, max_optimize_iteration )
+    {
+    }
+
+    /*!
+      \brief Constructor - user-defined ranks_per_dim
+      communicator
+      \param comm MPI communicator to decide the rank nums in each dimension
+      \param max_workload_coeff threshold factor for re-partition
+      \param workload_num total workload(particle/tile) number, used to compute
+      workload_threshold
+      \param num_step_rebalance the simulation step number after which one
+      should check if repartition is needed
+      \param ranks_per_dim 3D array, user-defined MPI rank constrains in per
+      dimension
+      \param global_cells_per_dim 3D array, global cells in each dimension
+      \param max_optimize_iteration max iteration number to run the optimization
+    */
+    ParticleDynamicPartitioner(
+        MPI_Comm comm, float max_workload_coeff, int workload_num,
+        int num_step_rebalance,
+        const std::array<int, num_space_dim>& ranks_per_dim,
+        const std::array<int, num_space_dim>& global_cells_per_dim,
+        int max_optimize_iteration = 10 )
+        : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
+                max_optimize_iteration )
+    {
+    }
+
+    /*!
+      \brief compute the workload in the current MPI rank from particle
+      positions (each particle count for 1 workload value). This function must
+      be called before running optimizePartition() \param view particle
+      positions view \param particle_num total particle number \param
+      global_lower_corner the coordinate of the domain global lower corner
+      \param dx cell dx size
+      \param comm MPI communicator used for workload reduction
+    */
+    template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
+    void setLocalWorkloadByParticles( const ParticlePosViewType& view,
+                                      int particle_num,
+                                      const ArrayType& global_lower_corner,
+                                      const CellUnit dx, MPI_Comm comm )
+    {
+        base::resetWorkload();
+        // make a local copy
+        auto workload = _workload_per_tile;
+        Kokkos::Array<CellUnit, num_space_dim> lower_corner;
+        for ( std::size_t d = 0; d < num_space_dim; ++d )
+        {
+            lower_corner[d] = global_lower_corner[d];
+        }
+
+        Kokkos::parallel_for(
+            "compute_local_workload_parpos",
+            Kokkos::RangePolicy<execution_space>( 0, particle_num ),
+            KOKKOS_LAMBDA( const int i ) {
+                int ti = static_cast<int>(
+                             ( view( i, 0 ) - lower_corner[0] ) / dx - 0.5 ) >>
+                         cell_bits_per_tile_dim;
+                int tj = static_cast<int>(
+                             ( view( i, 1 ) - lower_corner[1] ) / dx - 0.5 ) >>
+                         cell_bits_per_tile_dim;
+                int tz = static_cast<int>(
+                             ( view( i, 2 ) - lower_corner[2] ) / dx - 0.5 ) >>
+                         cell_bits_per_tile_dim;
+                Kokkos::atomic_increment( &workload( ti + 1, tj + 1, tz + 1 ) );
+            } );
+        Kokkos::fence();
+        // Wait for other ranks' workload to be ready
+        MPI_Barrier( comm );
+    }
+};
+
+/*!
+  Dynamic mesh block partitioner. (Current Version: Support 3D only) Workload
+  are computed from sparse map occupancy.
+
+  \tparam Device Kokkos device type.
+  \tparam CellPerTileDim Cells per tile per dimension.
+  \tparam NumSpaceDim Dimemsion (The current version support 3D only)
+*/
+template <typename Device, unsigned long long CellPerTileDim = 4,
+          std::size_t NumSpaceDim = 3>
+class SparseMapDynamicPartitioner
+    : public DynamicPartitioner<Device, CellPerTileDim, NumSpaceDim>
+{
+    using base = DynamicPartitioner<Device, CellPerTileDim, NumSpaceDim>;
+
+  protected:
+    using base::_workload_per_tile;
+
+  public:
+    using base::cell_bits_per_tile_dim;
+    using base::num_space_dim;
+    using typename base::execution_space;
+
+    /*!
+      \brief Constructor - automatically compute ranks_per_dim from MPI
+      communicator
+      \param comm MPI communicator to decide the rank nums in each dimension
+      \param max_workload_coeff threshold factor for re-partition
+      \param workload_num total workload(particle/tile) number, used to compute
+      workload_threshold
+      \param num_step_rebalance the simulation step number after which one
+      should check if repartition is needed
+      \param global_cells_per_dim 3D array, global cells in each dimension
+      \param max_optimize_iteration max iteration number to run the optimization
+    */
+    SparseMapDynamicPartitioner(
+        MPI_Comm comm, float max_workload_coeff, int workload_num,
+        int num_step_rebalance,
+        const std::array<int, num_space_dim>& global_cells_per_dim,
+        int max_optimize_iteration = 10 )
+        : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
+                global_cells_per_dim, max_optimize_iteration )
+    {
+    }
+
+    /*!
+      \brief Constructor - user-defined ranks_per_dim
+      communicator
+      \param comm MPI communicator to decide the rank nums in each dimension
+      \param max_workload_coeff threshold factor for re-partition
+      \param workload_num total workload(particle/tile) number, used to compute
+      workload_threshold
+      \param num_step_rebalance the simulation step number after which one
+      should check if repartition is needed
+      \param ranks_per_dim 3D array, user-defined MPI rank constrains in per
+      dimension
+      \param global_cells_per_dim 3D array, global cells in each dimension
+      \param max_optimize_iteration max iteration number to run the optimization
+    */
+    SparseMapDynamicPartitioner(
+        MPI_Comm comm, float max_workload_coeff, int workload_num,
+        int num_step_rebalance,
+        const std::array<int, num_space_dim>& ranks_per_dim,
+        const std::array<int, num_space_dim>& global_cells_per_dim,
+        int max_optimize_iteration = 10 )
+        : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
+                max_optimize_iteration )
+    {
+    }
+
+    /*!
+      \brief compute the workload in the current MPI rank from sparseMap
+      (the workload of a tile is 1 if the tile is occupied, 0 otherwise). This
+      function must be called before running optimizePartition() \param
+      sparseMap sparseMap in the current rank \param comm MPI communicator used
+      for workload reduction
+    */
+    template <class SparseMapType>
+    void setLocalWorkloadBySparseMap( const SparseMapType& sparseMap,
+                                      MPI_Comm comm )
+    {
+        base::resetWorkload();
+        // make a local copy
+        auto workload = _workload_per_tile;
+        Kokkos::parallel_for(
+            "compute_local_workload_sparsmap",
+            Kokkos::RangePolicy<execution_space>( 0, sparseMap.capacity() ),
+            KOKKOS_LAMBDA( uint32_t i ) {
+                if ( sparseMap.valid_at( i ) )
+                {
+                    auto key = sparseMap.key_at( i );
+                    int ti, tj, tk;
+                    sparseMap.key2ijk( key, ti, tj, tk );
+                    Kokkos::atomic_increment(
+                        &workload( ti + 1, tj + 1, tk + 1 ) );
+                }
+            } );
+        Kokkos::fence();
+        // Wait for other ranks' workload to be ready
+        MPI_Barrier( comm );
+    }
+};
+
 } // end namespace Cajita
 
 #endif // end CAJITA_DYNAMICPARTITIONER_HPP

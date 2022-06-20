@@ -47,7 +47,7 @@ void uniform_distribution_automatic_rank()
         size_tile_per_dim * cell_per_tile_dim };
 
     // partitioner
-    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+    SparseMapDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
         MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
         global_cells_per_dim, max_optimize_iteration );
 
@@ -287,11 +287,9 @@ auto generate_random_particles(
   truth partition )
   \param occupy_num_per_rank the tile number that will be registered on each MPI
   rank
-  \param use_tile2workload indicate the source to compute the workload on MPI
-  ranks, true if using tile occupation while false if using particle positions
 */
-void random_distribution_automatic_rank( int occupy_num_per_rank,
-                                         bool use_tile2workload = true )
+template <bool use_tile2workload>
+void random_distribution_automatic_rank( int occupy_num_per_rank )
 {
     // define the domain size
     constexpr int size_tile_per_dim = 32;
@@ -310,9 +308,13 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
                                                 size_per_dim };
 
     // partitioner
-    DynamicPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
-        MPI_COMM_WORLD, max_workload_coeff, particle_num, num_step_rebalance,
-        global_cells_per_dim, max_optimize_iteration );
+    typename std::conditional<
+        use_tile2workload,
+        SparseMapDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>,
+        ParticleDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>>::type
+        partitioner( MPI_COMM_WORLD, max_workload_coeff, particle_num,
+                     num_step_rebalance, global_cells_per_dim,
+                     max_optimize_iteration );
 
     // check the value of some pre-computed constants
     auto cbptd = partitioner.cell_bits_per_tile_dim;
@@ -429,7 +431,10 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
         Kokkos::fence();
 
         // compute workload from a sparseMap and do partition optimization
-        partitioner.setLocalWorkloadBySparseMap( sis, MPI_COMM_WORLD );
+        reinterpret_cast<
+            SparseMapDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>&>(
+            partitioner )
+            .setLocalWorkloadBySparseMap( sis, MPI_COMM_WORLD );
         partitioner.optimizePartition( MPI_COMM_WORLD );
     }
     // use particle positions to compute teh workload on MPI ranks
@@ -440,9 +445,12 @@ void random_distribution_automatic_rank( int occupy_num_per_rank,
             gt_partition, cart_rank, occupy_num_per_rank, global_low_corner,
             cell_size, cell_per_tile_dim );
         // compute workload from a particle view and do partition optimization
-        partitioner.setLocalWorkloadByParticles( particle_view, occupy_num_per_rank,
-                                                 global_low_corner, cell_size,
-                                                 MPI_COMM_WORLD );
+        reinterpret_cast<
+            ParticleDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>&>(
+            partitioner )
+            .setLocalWorkloadByParticles( particle_view, occupy_num_per_rank,
+                                          global_low_corner, cell_size,
+                                          MPI_COMM_WORLD );
         partitioner.optimizePartition( MPI_COMM_WORLD );
     }
 
@@ -467,11 +475,11 @@ TEST( sparse_dim_partitioner, sparse_dim_partitioner_uniform_test )
 }
 TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_tile_test )
 {
-    random_distribution_automatic_rank( 32, true );
+    random_distribution_automatic_rank<true>( 32 );
 }
 TEST( sparse_dim_partitioner, sparse_dim_partitioner_random_par_test )
 {
-    random_distribution_automatic_rank( 50, false );
+    random_distribution_automatic_rank<false>( 50 );
 }
 //---------------------------------------------------------------------------//
 } // end namespace Test

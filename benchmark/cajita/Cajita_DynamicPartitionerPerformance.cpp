@@ -142,9 +142,10 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
         int num_tiles_per_dim = num_cells_per_dim[c] >> cell_bits_per_tile_dim;
 
         // set up partitioner
-        Cajita::DynamicPartitioner<Device, cell_num_per_tile_dim> partitioner(
-            comm, max_workload_coeff, max_par_num, num_step_rebalance,
-            global_num_cell, max_optimize_iteration );
+        Cajita::ParticleDynamicPartitioner<Device, cell_num_per_tile_dim>
+            partitioner( comm, max_workload_coeff, max_par_num,
+                         num_step_rebalance, global_num_cell,
+                         max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =
@@ -189,10 +190,9 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( p );
-                partitioner.setLocalWorkloadByParticles( pos_view, par_num,
-                                                         global_low_corner,
-                                                         1.0f / num_cells_per_dim[c],
-                                                         comm );
+                partitioner.setLocalWorkloadByParticles(
+                    pos_view, par_num, global_low_corner,
+                    1.0f / num_cells_per_dim[c], comm );
                 local_workload_timer.stop( p );
 
                 // compute prefix sum matrix
@@ -274,9 +274,10 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
         // set up partitioner
         auto total_num =
             num_tiles_per_dim * num_tiles_per_dim * num_tiles_per_dim;
-        Cajita::DynamicPartitioner<Device, cell_num_per_tile_dim> partitioner(
-            comm, max_workload_coeff, total_num, num_step_rebalance,
-            global_num_cell, max_optimize_iteration );
+        Cajita::SparseMapDynamicPartitioner<Device, cell_num_per_tile_dim>
+            partitioner( comm, max_workload_coeff, total_num,
+                         num_step_rebalance, global_num_cell,
+                         max_optimize_iteration );
         auto ranks_per_dim =
             partitioner.ranksPerDimension( comm, global_num_cell );
         auto ave_partition =
