@@ -9,10 +9,10 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include <Cajita_DynamicPartitioner.hpp>
 #include <Cajita_GlobalGrid.hpp>
 #include <Cajita_GlobalMesh.hpp>
 #include <Cajita_Partitioner.hpp>
-#include <Cajita_DynamicPartitioner.hpp>
 #include <Cajita_Types.hpp>
 
 #include <gtest/gtest.h>
