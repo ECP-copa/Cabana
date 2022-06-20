@@ -255,16 +255,17 @@ TEST( TEST_CATEGORY, verlet_list_half_test )
 TEST( TEST_CATEGORY, verlet_list_full_range_test )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
-    testVerletListFullPartialRange<Cabana::VerletLayoutCSR,
+    testVerletListFullPartialRange<Cabana::NeighborLayoutCSR,
                                    Cabana::TeamOpTag>();
 #endif
-    testVerletListFullPartialRange<Cabana::VerletLayout2D, Cabana::TeamOpTag>();
+    testVerletListFullPartialRange<Cabana::NeighborLayout2D,
+                                   Cabana::TeamOpTag>();
 
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
-    testVerletListFullPartialRange<Cabana::VerletLayoutCSR,
+    testVerletListFullPartialRange<Cabana::NeighborLayoutCSR,
                                    Cabana::TeamVectorOpTag>();
 #endif
-    testVerletListFullPartialRange<Cabana::VerletLayout2D,
+    testVerletListFullPartialRange<Cabana::NeighborLayout2D,
                                    Cabana::TeamVectorOpTag>();
 }
 

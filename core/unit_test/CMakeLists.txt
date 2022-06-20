@@ -22,6 +22,7 @@ set(SERIAL_TESTS
   AoSoA
   DeepCopy
   LinkedCellList
+  NeighborListN2
   NeighborList
   Parallel
   ParameterPack

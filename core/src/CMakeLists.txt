@@ -18,6 +18,7 @@ set(HEADERS_PUBLIC
   Cabana_ExecutionPolicy.hpp
   Cabana_LinkedCellList.hpp
   Cabana_MemberTypes.hpp
+  Cabana_N2NeighborList.hpp
   Cabana_NeighborList.hpp
   Cabana_Parallel.hpp
   Cabana_ParameterPack.hpp
