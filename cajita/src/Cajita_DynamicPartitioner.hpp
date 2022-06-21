@@ -829,7 +829,7 @@ class ParticleDynamicPartitioner
         const std::array<int, num_space_dim>& global_cells_per_dim,
         int max_optimize_iteration = 10 )
         : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
-                max_optimize_iteration )
+                ranks_per_dim, global_cells_per_dim, max_optimize_iteration )
     {
     }
 
@@ -944,7 +944,7 @@ class SparseMapDynamicPartitioner
         const std::array<int, num_space_dim>& global_cells_per_dim,
         int max_optimize_iteration = 10 )
         : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
-                max_optimize_iteration )
+                ranks_per_dim, global_cells_per_dim, max_optimize_iteration )
     {
     }
 
