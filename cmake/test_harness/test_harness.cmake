@@ -95,7 +95,7 @@ macro(Cabana_add_tests)
         foreach(_np ${CABANA_UNIT_TEST_MPIEXEC_NUMPROCS})
           add_test(NAME ${_target}_np_${_np} COMMAND
             ${MPIEXEC_EXECUTABLE} ${MPIEXEC_NUMPROC_FLAG} ${_np} ${MPIEXEC_PREFLAGS}
-            ${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
+            ${CMAKE_CURRENT_BINARY_DIR}/${_target} ${MPIEXEC_POSTFLAGS} ${gtest_args})
           set_property(TEST ${_target}_np_${_np} PROPERTY ENVIRONMENT OMP_NUM_THREADS=1)
         endforeach()
       else()
