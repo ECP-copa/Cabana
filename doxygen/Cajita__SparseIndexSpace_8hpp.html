@@ -79,6 +79,7 @@ $(function() {
 <p>Sparse grid mapping.  
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &lt;<a class="el" href="Cajita__GlobalMesh_8hpp_source.html">Cajita_GlobalMesh.hpp</a>&gt;</code><br />
+<code>#include &lt;<a class="el" href="Cajita__IndexSpace_8hpp_source.html">Cajita_IndexSpace.hpp</a>&gt;</code><br />
 <code>#include &lt;Kokkos_Core.hpp&gt;</code><br />
 <code>#include &lt;Kokkos_UnorderedMap.hpp&gt;</code><br />
 <code>#include &lt;array&gt;</code><br />
@@ -89,19 +90,21 @@ Include dependency graph for Cajita_SparseIndexSpace.hpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cajita__SparseIndexSpace_8hpp__incl.png" border="0" usemap="#acajita_2src_2Cajita__SparseIndexSpace_8hpp" alt=""/></div>
 <map name="acajita_2src_2Cajita__SparseIndexSpace_8hpp" id="acajita_2src_2Cajita__SparseIndexSpace_8hpp">
-<area shape="rect" title="Sparse grid mapping." alt="" coords="444,5,605,47"/>
-<area shape="rect" href="Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="274,95,437,121"/>
-<area shape="rect" title=" " alt="" coords="5,169,60,196"/>
-<area shape="rect" title=" " alt="" coords="643,169,718,196"/>
-<area shape="rect" title=" " alt="" coords="512,95,641,121"/>
-<area shape="rect" title=" " alt="" coords="666,95,861,121"/>
-<area shape="rect" title=" " alt="" coords="885,95,943,121"/>
-<area shape="rect" href="Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="85,169,210,196"/>
-<area shape="rect" title=" " alt="" coords="153,244,240,271"/>
-<area shape="rect" title=" " alt="" coords="285,169,345,196"/>
-<area shape="rect" title=" " alt="" coords="369,169,424,196"/>
-<area shape="rect" title=" " alt="" coords="449,169,531,196"/>
-<area shape="rect" title=" " alt="" coords="556,169,619,196"/>
+<area shape="rect" title="Sparse grid mapping." alt="" coords="339,5,500,47"/>
+<area shape="rect" href="Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="515,95,678,121"/>
+<area shape="rect" title=" " alt="" coords="349,169,404,196"/>
+<area shape="rect" title=" " alt="" coords="987,169,1062,196"/>
+<area shape="rect" href="Cajita__IndexSpace_8hpp.html" title="Logical grid indexing." alt="" coords="171,95,331,121"/>
+<area shape="rect" title=" " alt="" coords="5,169,135,196"/>
+<area shape="rect" title=" " alt="" coords="266,169,325,196"/>
+<area shape="rect" title=" " alt="" coords="753,95,947,121"/>
+<area shape="rect" href="Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="702,169,827,196"/>
+<area shape="rect" title=" " alt="" coords="771,244,857,271"/>
+<area shape="rect" title=" " alt="" coords="903,169,963,196"/>
+<area shape="rect" title=" " alt="" coords="428,169,483,196"/>
+<area shape="rect" title=" " alt="" coords="507,169,590,196"/>
+<area shape="rect" title=" " alt="" coords="615,169,677,196"/>
+<area shape="rect" title=" " alt="" coords="159,169,242,196"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -109,9 +112,10 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cajita__SparseIndexSpace_8hpp__dep__incl.png" border="0" usemap="#acajita_2src_2Cajita__SparseIndexSpace_8hppdep" alt=""/></div>
 <map name="acajita_2src_2Cajita__SparseIndexSpace_8hppdep" id="acajita_2src_2Cajita__SparseIndexSpace_8hppdep">
-<area shape="rect" title="Sparse grid mapping." alt="" coords="5,5,167,47"/>
-<area shape="rect" href="Cajita_8hpp_source.html" title=" " alt="" coords="15,184,157,211"/>
-<area shape="rect" href="Cajita__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="65,95,227,136"/>
+<area shape="rect" title="Sparse grid mapping." alt="" coords="55,5,217,47"/>
+<area shape="rect" href="Cajita_8hpp_source.html" title=" " alt="" coords="5,184,147,211"/>
+<area shape="rect" href="Cajita__SparseDimPartitioner_8hpp.html" title="Multi&#45;node sparse grid partitioner." alt="" coords="55,95,217,136"/>
+<area shape="rect" href="Cajita__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="241,95,402,136"/>
 </map>
 </div>
 </div>
@@ -139,6 +143,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1TileMap.html">Cajita::TileMap&lt; CBits, CNumPerDim, CNumPerTile &gt;</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Declaration of <a class="el" href="classCajita_1_1TileMap.html" title="Declaration of TileMap.">TileMap</a>.  <a href="classCajita_1_1TileMap.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1TileIndexSpace.html">Cajita::TileIndexSpace&lt; N, cellBitsPerTileDim, &gt;</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index space with tile as unit; _min and _max forms the tile range. Note this is for sparse grid only, mainly used in sparse halo impl.  <a href="classCajita_1_1TileIndexSpace.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="namespaces"></a>

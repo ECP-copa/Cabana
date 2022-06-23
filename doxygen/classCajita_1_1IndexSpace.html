@@ -69,6 +69,7 @@ $(function() {
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
 <a href="#pub-static-attribs">Static Public Attributes</a> &#124;
+<a href="#pro-attribs">Protected Attributes</a> &#124;
 <a href="classCajita_1_1IndexSpace-members.html">List of all members</a>  </div>
   <div class="headertitle">
 <div class="title">Cajita::IndexSpace&lt; N &gt; Class Template Reference</div>  </div>
@@ -79,6 +80,15 @@ $(function() {
  <a href="classCajita_1_1IndexSpace.html#details">More...</a></p>
 
 <p><code>#include &lt;<a class="el" href="Cajita__IndexSpace_8hpp_source.html">Cajita_IndexSpace.hpp</a>&gt;</code></p>
+<div class="dynheader">
+Inheritance diagram for Cajita::IndexSpace&lt; N &gt;:</div>
+<div class="dyncontent">
+<div class="center"><img src="classCajita_1_1IndexSpace__inherit__graph.png" border="0" usemap="#aCajita_1_1IndexSpace_3_01N_01_4_inherit__map" alt="Inheritance graph"/></div>
+<map name="aCajita_1_1IndexSpace_3_01N_01_4_inherit__map" id="aCajita_1_1IndexSpace_3_01N_01_4_inherit__map">
+<area shape="rect" title="Structured index space." alt="" coords="10,5,177,32"/>
+<area shape="rect" href="classCajita_1_1TileIndexSpace.html" title="Index space with tile as unit; _min and _max forms the tile range. Note this is for sparse grid only,..." alt="" coords="5,80,181,121"/>
+</map>
+<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
@@ -153,6 +163,17 @@ Static Public Attributes</h2></td></tr>
 static constexpr long&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1IndexSpace.html#a4036ba5f6174df84d804a882413e4e36">Rank</a> = N</td></tr>
 <tr class="memdesc:a4036ba5f6174df84d804a882413e4e36"><td class="mdescLeft">&#160;</td><td class="mdescRight">Number of dimensions. <br /></td></tr>
 <tr class="separator:a4036ba5f6174df84d804a882413e4e36"><td class="memSeparator" colspan="2">&#160;</td></tr>
+</table><table class="memberdecls">
+<tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pro-attribs"></a>
+Protected Attributes</h2></td></tr>
+<tr class="memitem:ab417bcab40890442132851e82a49467c"><td class="memItemLeft" align="right" valign="top"><a id="ab417bcab40890442132851e82a49467c"></a>
+Kokkos::Array&lt; long, <a class="el" href="classCajita_1_1IndexSpace.html#a4036ba5f6174df84d804a882413e4e36">Rank</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1IndexSpace.html#ab417bcab40890442132851e82a49467c">_min</a></td></tr>
+<tr class="memdesc:ab417bcab40890442132851e82a49467c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Minimum index bounds. <br /></td></tr>
+<tr class="separator:ab417bcab40890442132851e82a49467c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a273194fb3816c5a62d3fd36820a8f2aa"><td class="memItemLeft" align="right" valign="top"><a id="a273194fb3816c5a62d3fd36820a8f2aa"></a>
+Kokkos::Array&lt; long, <a class="el" href="classCajita_1_1IndexSpace.html#a4036ba5f6174df84d804a882413e4e36">Rank</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1IndexSpace.html#a273194fb3816c5a62d3fd36820a8f2aa">_max</a></td></tr>
+<tr class="memdesc:a273194fb3816c5a62d3fd36820a8f2aa"><td class="mdescLeft">&#160;</td><td class="mdescRight">Maximum index bounds. <br /></td></tr>
+<tr class="separator:a273194fb3816c5a62d3fd36820a8f2aa"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><h3>template&lt;long N&gt;<br />

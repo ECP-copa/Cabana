@@ -270,6 +270,9 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1SparseMap.html">SparseMap</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sparse index space, with a hierarchical structure (cell-&gt;tile-&gt;block)  <a href="classCajita_1_1SparseMap.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classCajita_1_1TileIndexSpace.html">TileIndexSpace</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Index space with tile as unit; _min and _max forms the tile range. Note this is for sparse grid only, mainly used in sparse halo impl.  <a href="classCajita_1_1TileIndexSpace.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structCajita_1_1Spline.html">Spline</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">B-Spline interface for uniform grids.  <a href="structCajita_1_1Spline.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -477,6 +480,10 @@ Functions</h2></td></tr>
 <tr class="memitem:aa06dbf84ec637409b417a596ec6a6ca9"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalGrid.html">GlobalGrid</a>&lt; MeshType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aa06dbf84ec637409b417a596ec6a6ca9">createGlobalGrid</a> (MPI_Comm comm, const std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalMesh.html">GlobalMesh</a>&lt; MeshType &gt;&gt; &amp;global_mesh, const std::array&lt; bool, MeshType::num_space_dim &gt; &amp;periodic, const <a class="el" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>&lt; MeshType::num_space_dim &gt; &amp;partitioner)</td></tr>
 <tr class="memdesc:aa06dbf84ec637409b417a596ec6a6ca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a global grid.  <a href="namespaceCajita.html#aa06dbf84ec637409b417a596ec6a6ca9">More...</a><br /></td></tr>
 <tr class="separator:aa06dbf84ec637409b417a596ec6a6ca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b25f6703877713696291543bb12b1b1"><td class="memTemplParams" colspan="2">template&lt;class Scalar , std::size_t NumSpaceDim&gt; </td></tr>
+<tr class="memitem:a4b25f6703877713696291543bb12b1b1"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalGrid.html">GlobalGrid</a>&lt; <a class="el" href="structCajita_1_1SparseMesh.html">SparseMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a4b25f6703877713696291543bb12b1b1">createGlobalGrid</a> (MPI_Comm comm, const std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalMesh.html">GlobalMesh</a>&lt; <a class="el" href="structCajita_1_1SparseMesh.html">SparseMesh</a>&lt; Scalar, NumSpaceDim &gt;&gt;&gt; &amp;global_mesh, const std::array&lt; bool, <a class="el" href="structCajita_1_1SparseMesh.html">SparseMesh</a>&lt; Scalar, NumSpaceDim &gt;::num_space_dim &gt; &amp;periodic, const <a class="el" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>&lt; <a class="el" href="structCajita_1_1SparseMesh.html">SparseMesh</a>&lt; Scalar, NumSpaceDim &gt;::num_space_dim &gt; &amp;partitioner)</td></tr>
+<tr class="memdesc:a4b25f6703877713696291543bb12b1b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a sparse global grid.  <a href="namespaceCajita.html#a4b25f6703877713696291543bb12b1b1">More...</a><br /></td></tr>
+<tr class="separator:a4b25f6703877713696291543bb12b1b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f262a89b1f8f46287b3fdff3e4af246"><td class="memTemplParams" colspan="2">template&lt;class Scalar , std::size_t NumSpaceDim&gt; </td></tr>
 <tr class="memitem:a6f262a89b1f8f46287b3fdff3e4af246"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalMesh.html">GlobalMesh</a>&lt; <a class="el" href="structCajita_1_1UniformMesh.html">UniformMesh</a>&lt; Scalar, NumSpaceDim &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a6f262a89b1f8f46287b3fdff3e4af246">createUniformGlobalMesh</a> (const std::array&lt; Scalar, NumSpaceDim &gt; &amp;global_low_corner, const std::array&lt; Scalar, NumSpaceDim &gt; &amp;global_high_corner, const Scalar cell_size)</td></tr>
 <tr class="memdesc:a6f262a89b1f8f46287b3fdff3e4af246"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create uniform mesh with uniform cell size.  <a href="namespaceCajita.html#a6f262a89b1f8f46287b3fdff3e4af246">More...</a><br /></td></tr>
@@ -1372,7 +1379,7 @@ template&lt;class ExecutionSpace , class WorkTag &gt; </div>
 </div>
 </div>
 <a id="aa06dbf84ec637409b417a596ec6a6ca9"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa06dbf84ec637409b417a596ec6a6ca9">&#9670;&nbsp;</a></span>createGlobalGrid()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#aa06dbf84ec637409b417a596ec6a6ca9">&#9670;&nbsp;</a></span>createGlobalGrid() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1412,6 +1419,59 @@ template&lt;class MeshType &gt; </div>
 </div><div class="memdoc">
 
 <p>Create a global grid. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">comm</td><td>The communicator over which to define the grid. </td></tr>
+    <tr><td class="paramname">global_mesh</td><td>The global mesh data. </td></tr>
+    <tr><td class="paramname">periodic</td><td>Whether each logical dimension is periodic. </td></tr>
+    <tr><td class="paramname">partitioner</td><td>The grid partitioner. </td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a id="a4b25f6703877713696291543bb12b1b1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4b25f6703877713696291543bb12b1b1">&#9670;&nbsp;</a></span>createGlobalGrid() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<div class="memtemplate">
+template&lt;class Scalar , std::size_t NumSpaceDim&gt; </div>
+      <table class="memname">
+        <tr>
+          <td class="memname">std::shared_ptr&lt;<a class="el" href="classCajita_1_1GlobalGrid.html">GlobalGrid</a>&lt;<a class="el" href="structCajita_1_1SparseMesh.html">SparseMesh</a>&lt;Scalar, NumSpaceDim&gt; &gt; &gt; Cajita::createGlobalGrid </td>
+          <td>(</td>
+          <td class="paramtype">MPI_Comm&#160;</td>
+          <td class="paramname"><em>comm</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::shared_ptr&lt; <a class="el" href="classCajita_1_1GlobalMesh.html">GlobalMesh</a>&lt; <a class="el" href="structCajita_1_1SparseMesh.html">SparseMesh</a>&lt; Scalar, NumSpaceDim &gt;&gt;&gt; &amp;&#160;</td>
+          <td class="paramname"><em>global_mesh</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::array&lt; bool, <a class="el" href="structCajita_1_1SparseMesh.html">SparseMesh</a>&lt; Scalar, NumSpaceDim &gt;::num_space_dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>periodic</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const <a class="el" href="classCajita_1_1BlockPartitioner.html">BlockPartitioner</a>&lt; <a class="el" href="structCajita_1_1SparseMesh.html">SparseMesh</a>&lt; Scalar, NumSpaceDim &gt;::num_space_dim &gt; &amp;&#160;</td>
+          <td class="paramname"><em>partitioner</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Create a sparse global grid. </p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">comm</td><td>The communicator over which to define the grid. </td></tr>

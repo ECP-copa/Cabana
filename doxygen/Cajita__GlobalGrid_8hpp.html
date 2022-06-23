@@ -110,15 +110,16 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="Cajita__GlobalGrid_8hpp__dep__incl.png" border="0" usemap="#acajita_2src_2Cajita__GlobalGrid_8hppdep" alt=""/></div>
 <map name="acajita_2src_2Cajita__GlobalGrid_8hppdep" id="acajita_2src_2Cajita__GlobalGrid_8hppdep">
-<area shape="rect" title="Global grid." alt="" coords="915,5,1074,47"/>
+<area shape="rect" title="Global grid." alt="" coords="1191,5,1350,47"/>
 <area shape="rect" href="Cajita_8hpp_source.html" title=" " alt="" coords="791,437,932,464"/>
 <area shape="rect" href="Cajita__HypreStructuredSolver_8hpp.html" title="HYPRE structured solver interface." alt="" coords="550,259,773,300"/>
-<area shape="rect" href="Cajita__LoadBalancer_8hpp.html" title="Load Balancer." alt="" coords="1734,102,1962,129"/>
-<area shape="rect" href="Cajita__LocalGrid_8hpp.html" title="Local grid." alt="" coords="892,102,1097,129"/>
+<area shape="rect" href="Cajita__LoadBalancer_8hpp.html" title="Load Balancer." alt="" coords="1659,102,1887,129"/>
+<area shape="rect" href="Cajita__LocalGrid_8hpp.html" title="Local grid." alt="" coords="1099,102,1304,129"/>
 <area shape="rect" href="Cajita__ReferenceStructuredSolver_8hpp.html" title="Reference structured solver." alt="" coords="1315,348,1498,389"/>
 <area shape="rect" href="Cajita__ParticleGridDistributor_8hpp_source.html" title=" " alt="" coords="360,259,525,300"/>
-<area shape="rect" href="Cajita__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="1987,95,2173,136"/>
-<area shape="rect" href="Cajita__Array_8hpp.html" title="Grid field arrays." alt="" coords="905,184,1085,211"/>
+<area shape="rect" href="Cajita__SiloParticleOutput_8hpp.html" title="Write particle output using the Silo format." alt="" coords="1912,95,2099,136"/>
+<area shape="rect" href="Cajita__SparseLocalGrid_8hpp.html" title="Sparse Local grid and related implementations." alt="" coords="2123,95,2285,136"/>
+<area shape="rect" href="Cajita__Array_8hpp.html" title="Grid field arrays." alt="" coords="971,184,1151,211"/>
 <area shape="rect" href="Cajita__LocalMesh_8hpp.html" title="Local mesh." alt="" coords="217,184,429,211"/>
 <area shape="rect" href="Cajita__Parallel_8hpp.html" title="Logical grid extension of Kokkos parallel iteration." alt="" coords="1467,266,1658,293"/>
 <area shape="rect" href="Cajita__BovWriter_8hpp.html" title="Brick of values (BOV) grid output." alt="" coords="1008,355,1216,382"/>
@@ -149,6 +150,10 @@ Functions</h2></td></tr>
 <tr class="memitem:aa06dbf84ec637409b417a596ec6a6ca9"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; GlobalGrid&lt; MeshType &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#aa06dbf84ec637409b417a596ec6a6ca9">Cajita::createGlobalGrid</a> (MPI_Comm comm, const std::shared_ptr&lt; GlobalMesh&lt; MeshType &gt;&gt; &amp;global_mesh, const std::array&lt; bool, MeshType::num_space_dim &gt; &amp;periodic, const BlockPartitioner&lt; MeshType::num_space_dim &gt; &amp;partitioner)</td></tr>
 <tr class="memdesc:aa06dbf84ec637409b417a596ec6a6ca9"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a global grid.  <a href="namespaceCajita.html#aa06dbf84ec637409b417a596ec6a6ca9">More...</a><br /></td></tr>
 <tr class="separator:aa06dbf84ec637409b417a596ec6a6ca9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b25f6703877713696291543bb12b1b1"><td class="memTemplParams" colspan="2">template&lt;class Scalar , std::size_t NumSpaceDim&gt; </td></tr>
+<tr class="memitem:a4b25f6703877713696291543bb12b1b1"><td class="memTemplItemLeft" align="right" valign="top">std::shared_ptr&lt; GlobalGrid&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt; &gt; &gt;&#160;</td><td class="memTemplItemRight" valign="bottom"><a class="el" href="namespaceCajita.html#a4b25f6703877713696291543bb12b1b1">Cajita::createGlobalGrid</a> (MPI_Comm comm, const std::shared_ptr&lt; GlobalMesh&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt;&gt;&gt; &amp;global_mesh, const std::array&lt; bool, SparseMesh&lt; Scalar, NumSpaceDim &gt;::num_space_dim &gt; &amp;periodic, const BlockPartitioner&lt; SparseMesh&lt; Scalar, NumSpaceDim &gt;::num_space_dim &gt; &amp;partitioner)</td></tr>
+<tr class="memdesc:a4b25f6703877713696291543bb12b1b1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a sparse global grid.  <a href="namespaceCajita.html#a4b25f6703877713696291543bb12b1b1">More...</a><br /></td></tr>
+<tr class="separator:a4b25f6703877713696291543bb12b1b1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Global grid. </p>

@@ -1,15 +1,17 @@
 <map id="cajita/src/Cajita_SparseIndexSpace.hpp" name="cajita/src/Cajita_SparseIndexSpace.hpp">
-<area shape="rect" id="node1" title="Sparse grid mapping." alt="" coords="444,5,605,47"/>
-<area shape="rect" id="node2" href="$Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="274,95,437,121"/>
-<area shape="rect" id="node5" title=" " alt="" coords="5,169,60,196"/>
-<area shape="rect" id="node8" title=" " alt="" coords="643,169,718,196"/>
-<area shape="rect" id="node11" title=" " alt="" coords="512,95,641,121"/>
-<area shape="rect" id="node12" title=" " alt="" coords="666,95,861,121"/>
-<area shape="rect" id="node13" title=" " alt="" coords="885,95,943,121"/>
-<area shape="rect" id="node3" href="$Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="85,169,210,196"/>
-<area shape="rect" id="node4" title=" " alt="" coords="153,244,240,271"/>
-<area shape="rect" id="node6" title=" " alt="" coords="285,169,345,196"/>
-<area shape="rect" id="node7" title=" " alt="" coords="369,169,424,196"/>
-<area shape="rect" id="node9" title=" " alt="" coords="449,169,531,196"/>
-<area shape="rect" id="node10" title=" " alt="" coords="556,169,619,196"/>
+<area shape="rect" id="node1" title="Sparse grid mapping." alt="" coords="339,5,500,47"/>
+<area shape="rect" id="node2" href="$Cajita__GlobalMesh_8hpp.html" title="Global mesh." alt="" coords="515,95,678,121"/>
+<area shape="rect" id="node5" title=" " alt="" coords="349,169,404,196"/>
+<area shape="rect" id="node8" title=" " alt="" coords="987,169,1062,196"/>
+<area shape="rect" id="node11" href="$Cajita__IndexSpace_8hpp.html" title="Logical grid indexing." alt="" coords="171,95,331,121"/>
+<area shape="rect" id="node12" title=" " alt="" coords="5,169,135,196"/>
+<area shape="rect" id="node14" title=" " alt="" coords="266,169,325,196"/>
+<area shape="rect" id="node15" title=" " alt="" coords="753,95,947,121"/>
+<area shape="rect" id="node3" href="$Cajita__Types_8hpp.html" title="Grid type tags." alt="" coords="702,169,827,196"/>
+<area shape="rect" id="node4" title=" " alt="" coords="771,244,857,271"/>
+<area shape="rect" id="node6" title=" " alt="" coords="903,169,963,196"/>
+<area shape="rect" id="node7" title=" " alt="" coords="428,169,483,196"/>
+<area shape="rect" id="node9" title=" " alt="" coords="507,169,590,196"/>
+<area shape="rect" id="node10" title=" " alt="" coords="615,169,677,196"/>
+<area shape="rect" id="node13" title=" " alt="" coords="159,169,242,196"/>
 </map>
