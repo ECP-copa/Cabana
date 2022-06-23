@@ -9,6 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
+#include <Cajita_IndexSpace.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 
 #include <Kokkos_Core.hpp>
@@ -653,6 +654,65 @@ void testSparseMapReinsert()
     }
 }
 
+void tileIndexSpaceTest()
+{
+    int t0_max = 4;
+    int t1_max = 6;
+    int t2_max = 3;
+    constexpr unsigned long long cell_bits_per_tile_dim = 2;
+    constexpr unsigned long long cell_nums_per_tile_dim = 4;
+    constexpr std::size_t N = 3;
+    std::array<long, N> s = { (long)t0_max, (long)t1_max, (long)t2_max };
+    TileIndexSpace<N, cell_bits_per_tile_dim> tis1( s );
+    EXPECT_EQ( tis1.min( 0 ), 0 );
+    EXPECT_EQ( tis1.max( 0 ), t0_max );
+    EXPECT_EQ( tis1.min( 1 ), 0 );
+    EXPECT_EQ( tis1.max( 1 ), t1_max );
+    EXPECT_EQ( tis1.min( 2 ), 0 );
+    EXPECT_EQ( tis1.max( 2 ), t2_max );
+
+    EXPECT_EQ( tis1.sizeTile(), t0_max * t1_max * t2_max );
+    EXPECT_EQ( tis1.sizeCell(),
+               t0_max * t1_max * t2_max * cell_nums_per_tile_dim *
+                   cell_nums_per_tile_dim * cell_nums_per_tile_dim );
+
+    EXPECT_EQ( tis1.tileInRange( 2, 3, 1 ), true );
+    EXPECT_EQ( tis1.tileInRange( 6, 3, 1 ), false );
+
+    EXPECT_EQ( tis1.cellInRange( 6, 3, 1 ), true );
+    EXPECT_EQ( tis1.cellInRange( 106, 3, 1 ), false );
+
+    int t0_min = 2;
+    int t1_min = 3;
+    int t2_min = 1;
+    TileIndexSpace<N, cell_bits_per_tile_dim> tis2(
+        { (long)t0_min, (long)t1_min, (long)t2_min },
+        { (long)t0_max, (long)t1_max, (long)t2_max } );
+    EXPECT_EQ( tis2.min( 0 ), t0_min );
+    EXPECT_EQ( tis2.max( 0 ), t0_max );
+    EXPECT_EQ( tis2.min( 1 ), t1_min );
+    EXPECT_EQ( tis2.max( 1 ), t1_max );
+    EXPECT_EQ( tis2.min( 2 ), t2_min );
+    EXPECT_EQ( tis2.max( 2 ), t2_max );
+
+    auto tile_size_gt =
+        ( t0_max - t0_min ) * ( t1_max - t1_min ) * ( t2_max - t2_min );
+    EXPECT_EQ( tis2.sizeTile(), tile_size_gt );
+    EXPECT_EQ( tis2.sizeCell(), tile_size_gt * cell_nums_per_tile_dim *
+                                    cell_nums_per_tile_dim *
+                                    cell_nums_per_tile_dim );
+
+    EXPECT_EQ( tis2.tileInRange( 2, 3, 1 ), true );
+    EXPECT_EQ( tis2.tileInRange( 3, 4, 2 ), true );
+    EXPECT_EQ( tis2.tileInRange( 0, 2, 1 ), false );
+    EXPECT_EQ( tis2.tileInRange( 6, 3, 1 ), false );
+
+    EXPECT_EQ( tis2.cellInRange( 8, 12, 4 ), true );
+    EXPECT_EQ( tis2.cellInRange( 13, 17, 9 ), true );
+    EXPECT_EQ( tis2.cellInRange( 0, 2, 1 ), false );
+    EXPECT_EQ( tis2.cellInRange( 106, 3, 1 ), false );
+}
+
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
@@ -680,6 +740,7 @@ TEST( TEST_CATEGORY, sparse_map_space_test )
     testSparseMapReinsert();
 }
 
+TEST( TEST_CATEGORY, tile_index_space_test ) { tileIndexSpaceTest(); }
 //---------------------------------------------------------------------------//
 
 } // end namespace Test
