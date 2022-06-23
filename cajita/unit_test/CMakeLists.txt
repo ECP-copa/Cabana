@@ -21,6 +21,7 @@ set(SERIAL_TESTS
 set(MPI_TESTS
   GlobalGrid
   LocalGrid
+  SparseLocalGrid
   IndexConversion
   LocalMesh3d
   LocalMesh2d
