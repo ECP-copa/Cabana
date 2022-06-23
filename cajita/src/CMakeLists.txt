@@ -36,6 +36,7 @@ set(HEADERS_PUBLIC
   Cajita_Types.hpp
   Cajita_UniformDimPartitioner.hpp
   Cajita_SparseDimPartitioner.hpp
+  Cajita_SparseArray.hpp
   )
 
 if(Cabana_ENABLE_HYPRE)
