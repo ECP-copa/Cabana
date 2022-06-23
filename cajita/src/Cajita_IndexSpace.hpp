@@ -150,11 +150,11 @@ class IndexSpace
         return result;
     }
 
-  private:
-    // Minimum index bounds.
+  protected:
+    //! Minimum index bounds.
     Kokkos::Array<long, Rank> _min;
 
-    // Maximum index bounds.
+    //! Maximum index bounds.
     Kokkos::Array<long, Rank> _max;
 };
 

@@ -17,6 +17,7 @@
 #define CAJITA_SPARSE_INDEXSPACE_HPP
 
 #include <Cajita_GlobalMesh.hpp>
+#include <Cajita_IndexSpace.hpp>
 #include <Kokkos_Core.hpp>
 #include <Kokkos_UnorderedMap.hpp>
 
@@ -983,6 +984,99 @@ class TileMap
         auto new_key = Func()( i, std::forward<Key>( key ) );
         if ( dim_no + 1 < rank )
             toCoordImpl<Func>( dim_no + 1, new_key, is... );
+    }
+};
+
+template <long N>
+class IndexSpace;
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Index space with tile as unit; _min and _max forms the tile range.
+         Note this is for sparse grid only, mainly used in sparse halo impl.
+*/
+template <std::size_t N, unsigned long long cellBitsPerTileDim,
+          typename std::enable_if_t<( N == 3 ), bool> = true>
+class TileIndexSpace : public IndexSpace<N>
+{
+  public:
+    //! dimension
+    static constexpr std::size_t Rank = N;
+    //! number of bits to represent the local cell id in each tile in each
+    //! dimension
+    static constexpr unsigned long long cell_bits_per_tile_dim =
+        cellBitsPerTileDim;
+    //! number of local cells in each tile in each dimension
+    static constexpr unsigned long long cell_num_per_tile =
+        1 << ( cell_bits_per_tile_dim * Rank );
+
+    //! brief Default constructor.
+    TileIndexSpace()
+        : IndexSpace<N>()
+    {
+    }
+
+    //! Other constructors.
+    TileIndexSpace( const std::initializer_list<long>& size )
+        : IndexSpace<N>( size )
+    {
+    }
+
+    //! Other constructors.
+    TileIndexSpace( const std::initializer_list<long>& min,
+                    const std::initializer_list<long>& max )
+        : IndexSpace<N>( min, max )
+    {
+    }
+
+    //! Other constructors.
+    template <typename... Params>
+    TileIndexSpace( Params&&... pars )
+        : IndexSpace<N>( std::forward<Params>( pars )... )
+    {
+    }
+
+    //! Get the minimum index in a given dimension.
+    KOKKOS_INLINE_FUNCTION
+    long min( const long dim ) const { return IndexSpace<N>::min( dim ); }
+
+    //! Get the maximum index in a given dimension.
+    KOKKOS_INLINE_FUNCTION
+    long max( const long dim ) const { return IndexSpace<N>::max( dim ); }
+
+    //! Get the minimum indices in all dimensions.
+    KOKKOS_INLINE_FUNCTION
+    Kokkos::Array<long, Rank> min() const { return IndexSpace<N>::min(); }
+
+    //! Get the maximum indices in all dimensions.
+    KOKKOS_INLINE_FUNCTION
+    Kokkos::Array<long, Rank> max() const { return IndexSpace<N>::max(); }
+
+    //! Get the total number of tiles of the index space.
+    KOKKOS_FORCEINLINE_FUNCTION
+    long sizeTile() const { return IndexSpace<N>::size(); }
+
+    //! Get the total number of cells of the index space.
+    KOKKOS_FORCEINLINE_FUNCTION
+    long sizeCell() const { return ( sizeTile() * cell_num_per_tile ); }
+
+    //! Determine if given tile indices is within the range of the index space.
+    template <int NSD = N>
+    KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t<3 == NSD, bool>
+    tileInRange( const long tile_i, const long tile_j, const long tile_k ) const
+    {
+        long index[N] = { tile_i, tile_j, tile_k };
+        return IndexSpace<N>::inRange( index );
+    }
+
+    //! Determine if given cell indices is within the range of the index space.
+    template <int NSD = N>
+    KOKKOS_FORCEINLINE_FUNCTION std::enable_if_t<3 == NSD, bool>
+    cellInRange( const long cell_i, const long cell_j, const long cell_k ) const
+    {
+        return tileInRange( cell_i >> cell_bits_per_tile_dim,
+                            cell_j >> cell_bits_per_tile_dim,
+                            cell_k >> cell_bits_per_tile_dim );
     }
 };
 

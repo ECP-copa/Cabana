@@ -202,6 +202,31 @@ createGlobalGrid( MPI_Comm comm,
                                                    partitioner );
 }
 
+/*!
+  \brief Create a sparse global grid.
+  \param comm The communicator over which to define the grid.
+  \param global_mesh The global mesh data.
+  \param periodic Whether each logical dimension is periodic.
+  \param partitioner The grid partitioner.
+*/
+template <class Scalar, std::size_t NumSpaceDim>
+std::shared_ptr<GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>> createGlobalGrid(
+    MPI_Comm comm,
+    const std::shared_ptr<GlobalMesh<SparseMesh<Scalar, NumSpaceDim>>>&
+        global_mesh,
+    const std::array<bool, SparseMesh<Scalar, NumSpaceDim>::num_space_dim>&
+        periodic,
+    const BlockPartitioner<SparseMesh<Scalar, NumSpaceDim>::num_space_dim>&
+        partitioner )
+{
+    for ( long unsigned int d = 0; d < NumSpaceDim; ++d )
+        if ( periodic[d] )
+            std::runtime_error(
+                "Sparse grid doesn't support periodic BC so far!" );
+    return std::make_shared<GlobalGrid<SparseMesh<Scalar, NumSpaceDim>>>(
+        comm, global_mesh, periodic, partitioner );
+}
+
 //---------------------------------------------------------------------------//
 
 } // end namespace Cajita
