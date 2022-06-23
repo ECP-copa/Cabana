@@ -431,10 +431,10 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
         Kokkos::fence();
 
         // compute workload from a sparseMap and do partition optimization
-        reinterpret_cast<
-            SparseMapDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>&>(
-            partitioner )
-            .setLocalWorkloadBySparseMap( sis, MPI_COMM_WORLD );
+        dynamic_cast<
+            SparseMapDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>*>(
+            &partitioner )
+            ->setLocalWorkloadBySparseMap( sis, MPI_COMM_WORLD );
         partitioner.optimizePartition( MPI_COMM_WORLD );
     }
     // use particle positions to compute teh workload on MPI ranks
@@ -445,10 +445,10 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
             gt_partition, cart_rank, occupy_num_per_rank, global_low_corner,
             cell_size, cell_per_tile_dim );
         // compute workload from a particle view and do partition optimization
-        reinterpret_cast<
-            ParticleDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>&>(
-            partitioner )
-            .setLocalWorkloadByParticles( particle_view, occupy_num_per_rank,
+        dynamic_cast<
+            ParticleDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>*>(
+            &partitioner )
+            ->setLocalWorkloadByParticles( particle_view, occupy_num_per_rank,
                                           global_low_corner, cell_size,
                                           MPI_COMM_WORLD );
         partitioner.optimizePartition( MPI_COMM_WORLD );
