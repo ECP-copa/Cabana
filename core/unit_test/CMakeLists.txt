@@ -23,7 +23,7 @@ set(SERIAL_TESTS
   DeepCopy
   LinkedCellList
   NeighborListN2
-  NeighborList
+  NeighborListVerlet
   Parallel
   ParameterPack
   ParticleInit
