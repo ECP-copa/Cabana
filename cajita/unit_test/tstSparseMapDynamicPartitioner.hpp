@@ -9,7 +9,7 @@
  * SPDX-License-Identifier: BSD-3-Clause                                    *
  ****************************************************************************/
 
-#include <Cajita_DynamicPartitioner.hpp>
+#include <Cajita_SparseMapDynamicPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
 #include <Kokkos_Core.hpp>
 
