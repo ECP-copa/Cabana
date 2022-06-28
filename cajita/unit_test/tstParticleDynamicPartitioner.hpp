@@ -211,8 +211,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
     dynamic_cast<ParticleDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>*>(
         &partitioner )
         ->setLocalWorkload( particle_view, occupy_num_per_rank,
-                                       global_low_corner, cell_size,
-                                       MPI_COMM_WORLD );
+                            global_low_corner, cell_size, MPI_COMM_WORLD );
     partitioner.optimizePartition( MPI_COMM_WORLD );
 
     // check results (should be the same as the gt_partition)

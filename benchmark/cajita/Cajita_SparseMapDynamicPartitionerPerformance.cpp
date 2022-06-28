@@ -12,8 +12,8 @@
 #include "../Cabana_BenchmarkUtils.hpp"
 #include "Cabana_ParticleInit.hpp"
 
-#include <Cajita_SparseMapDynamicPartitioner.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
+#include <Cajita_SparseMapDynamicPartitioner.hpp>
 
 #include <Kokkos_Core.hpp>
 
