@@ -777,6 +777,7 @@ class ParticleDynamicPartitioner
     : public DynamicPartitioner<Device, CellPerTileDim, NumSpaceDim>
 {
     using base = DynamicPartitioner<Device, CellPerTileDim, NumSpaceDim>;
+    using base::base;
 
   protected:
     using base::_workload_per_tile;
@@ -785,53 +786,6 @@ class ParticleDynamicPartitioner
     using base::cell_bits_per_tile_dim;
     using base::num_space_dim;
     using typename base::execution_space;
-
-    /*!
-      \brief Constructor - automatically compute ranks_per_dim from MPI
-      communicator
-      \param comm MPI communicator to decide the rank nums in each dimension
-      \param max_workload_coeff threshold factor for re-partition
-      \param workload_num total workload(particle/tile) number, used to compute
-      workload_threshold
-      \param num_step_rebalance the simulation step number after which one
-      should check if repartition is needed
-      \param global_cells_per_dim 3D array, global cells in each dimension
-      \param max_optimize_iteration max iteration number to run the optimization
-    */
-    ParticleDynamicPartitioner(
-        MPI_Comm comm, float max_workload_coeff, int workload_num,
-        int num_step_rebalance,
-        const std::array<int, num_space_dim>& global_cells_per_dim,
-        int max_optimize_iteration = 10 )
-        : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
-                global_cells_per_dim, max_optimize_iteration )
-    {
-    }
-
-    /*!
-      \brief Constructor - user-defined ranks_per_dim
-      communicator
-      \param comm MPI communicator to decide the rank nums in each dimension
-      \param max_workload_coeff threshold factor for re-partition
-      \param workload_num total workload(particle/tile) number, used to compute
-      workload_threshold
-      \param num_step_rebalance the simulation step number after which one
-      should check if repartition is needed
-      \param ranks_per_dim 3D array, user-defined MPI rank constrains in per
-      dimension
-      \param global_cells_per_dim 3D array, global cells in each dimension
-      \param max_optimize_iteration max iteration number to run the optimization
-    */
-    ParticleDynamicPartitioner(
-        MPI_Comm comm, float max_workload_coeff, int workload_num,
-        int num_step_rebalance,
-        const std::array<int, num_space_dim>& ranks_per_dim,
-        const std::array<int, num_space_dim>& global_cells_per_dim,
-        int max_optimize_iteration = 10 )
-        : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
-                ranks_per_dim, global_cells_per_dim, max_optimize_iteration )
-    {
-    }
 
     /*!
       \brief compute the workload in the current MPI rank from particle
@@ -892,6 +846,7 @@ class SparseMapDynamicPartitioner
     : public DynamicPartitioner<Device, CellPerTileDim, NumSpaceDim>
 {
     using base = DynamicPartitioner<Device, CellPerTileDim, NumSpaceDim>;
+    using base::base;
 
   protected:
     using base::_workload_per_tile;
@@ -900,53 +855,6 @@ class SparseMapDynamicPartitioner
     using base::cell_bits_per_tile_dim;
     using base::num_space_dim;
     using typename base::execution_space;
-
-    /*!
-      \brief Constructor - automatically compute ranks_per_dim from MPI
-      communicator
-      \param comm MPI communicator to decide the rank nums in each dimension
-      \param max_workload_coeff threshold factor for re-partition
-      \param workload_num total workload(particle/tile) number, used to compute
-      workload_threshold
-      \param num_step_rebalance the simulation step number after which one
-      should check if repartition is needed
-      \param global_cells_per_dim 3D array, global cells in each dimension
-      \param max_optimize_iteration max iteration number to run the optimization
-    */
-    SparseMapDynamicPartitioner(
-        MPI_Comm comm, float max_workload_coeff, int workload_num,
-        int num_step_rebalance,
-        const std::array<int, num_space_dim>& global_cells_per_dim,
-        int max_optimize_iteration = 10 )
-        : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
-                global_cells_per_dim, max_optimize_iteration )
-    {
-    }
-
-    /*!
-      \brief Constructor - user-defined ranks_per_dim
-      communicator
-      \param comm MPI communicator to decide the rank nums in each dimension
-      \param max_workload_coeff threshold factor for re-partition
-      \param workload_num total workload(particle/tile) number, used to compute
-      workload_threshold
-      \param num_step_rebalance the simulation step number after which one
-      should check if repartition is needed
-      \param ranks_per_dim 3D array, user-defined MPI rank constrains in per
-      dimension
-      \param global_cells_per_dim 3D array, global cells in each dimension
-      \param max_optimize_iteration max iteration number to run the optimization
-    */
-    SparseMapDynamicPartitioner(
-        MPI_Comm comm, float max_workload_coeff, int workload_num,
-        int num_step_rebalance,
-        const std::array<int, num_space_dim>& ranks_per_dim,
-        const std::array<int, num_space_dim>& global_cells_per_dim,
-        int max_optimize_iteration = 10 )
-        : base( comm, max_workload_coeff, workload_num, num_step_rebalance,
-                ranks_per_dim, global_cells_per_dim, max_optimize_iteration )
-    {
-    }
 
     /*!
       \brief compute the workload in the current MPI rank from sparseMap
