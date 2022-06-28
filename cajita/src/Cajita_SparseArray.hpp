@@ -159,9 +159,10 @@ class SparseArrayLayout
       \param cell_i, cell_j, cell_k Cell ID in each dimension
     */
     KOKKOS_FORCEINLINE_FUNCTION
-    value_type queryTile( const int i, const int j, const int k ) const
+    value_type queryTile( const int cell_i, const int cell_j,
+                          const int cell_k ) const
     {
-        return _map.queryTile( i, j, k );
+        return _map.queryTile( cell_i, cell_j, cell_k );
     }
 
     /*!
@@ -172,7 +173,7 @@ class SparseArrayLayout
     value_type queryTileFromTileId( const int tile_i, const int tile_j,
                                     const int tile_k ) const
     {
-        return _map.queryTileFromTileId( i, j, k );
+        return _map.queryTileFromTileId( tile_i, tile_j, tile_k );
     }
 
     /*!
@@ -355,7 +356,7 @@ class SparseArray
     using aosoa_type = Cabana::AoSoA<member_types, memory_space, vector_length>;
     //! SoA Type
     using soa_type = Cabana::SoA<member_types, vector_length>;
-    //！ AoSoA tuple type
+    //！AoSoA tuple type
     using tuple_type = Cabana::Tuple<member_types>;
 
     //! Sparse array layout type
@@ -377,7 +378,10 @@ class SparseArray
     // AoSoA-related interfaces
     //! Get AoSoA reference
     aosoa_type& aosoa() { return _data; }
-    //！Get array label (description)
+    /*!
+      \brief Get array label (description)
+      \return Array label (description)
+    */
     std::string label() const { return _data.label(); }
     //! Get array layout reference
     array_layout& layout() { return _layout; }
@@ -596,6 +600,7 @@ class SparseArray
       indices
       \param tile_id the 1D Tile ID
       \param cell_id the 1D Local Cell ID
+      \param ids Ids to access channels inside a data member/element
     */
     template <std::size_t M, typename... Indices>
     KOKKOS_FORCEINLINE_FUNCTION
