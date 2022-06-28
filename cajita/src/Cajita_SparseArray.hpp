@@ -19,43 +19,14 @@ namespace Cajita
 namespace Experimental
 {
 //---------------------------------------------------------------------------//
-// Indexing type tags
-//---------------------------------------------------------------------------//
-// H - Hierachical
-// T_C: indexing manner: tile ijk - cell ijk
-struct Index_H_T_C
-{
-    // access cell (channel) by
-    // (tile i, tile j, tile k, local_cell i, local_cell j, local_cell k)
-    // Or
-    // (tile i, tile j, tile k, local_cell i, local_cell j, local_cell k,
-    // channel id)
-};
+/*!
+  \brief Entity layout for sparse array data on the local sparse mesh.
 
-// C: indexing matter: cell ijk
-struct Index_H_C
-{
-    // access cell (channel) by
-    // (global_cell i, global_cell j, global_cell k)
-    // Or
-    // (global_cell i, global_cell j, global_cell k)
-};
-
-// ID: real array id
-struct Index_H_ID_C
-{
-    // access cell (channel) by
-    // (array_id (1D tile_id), local_cell i, local_cell j, local_cell k)
-    // Or
-    // (array_id (1D tile_id), local_cell i, local_cell j, local_cell k, channel
-    // id)
-};
-
-struct Index_ID
-{
-};
-
-//---------------------------------------------------------------------------//
+  \tparam DataTypes Array memeber types (Cabana::MemberTypes)
+  \tparam EntityType Array entity type: Cell, Node, Edge, or Face
+  \tparam MeshType Mesh type: SparseMesh
+  \tparam SparseMapType: sparse map type
+*/
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
 class SparseArrayLayout
@@ -69,7 +40,7 @@ class SparseArrayLayout
 
     //! Entity Type
     using entity_type = EntityType;
-    //! Data Type, such as float or double
+    //! Array memeber types, such as Cabana::MemberTypes<double, float[3]>
     using member_types = DataTypes;
 
     //! Abbreviation for Sparse Map Type
@@ -133,7 +104,8 @@ class SparseArrayLayout
 
     //! register valid grids in sparse map according to input particle positions
     template <class ExecSpace, class PositionSliceType>
-    void registerSparseMap( PositionSliceType& positions )
+    void registerSparseMap( PositionSliceType& positions,
+                            const int p2g_radius = 1 )
     {
         using scalar_type = typename mesh_type::scalar_type;
         // get references
@@ -150,13 +122,17 @@ class SparseArrayLayout
                 scalar_type pos[3] = { positions( pid, 0 ), positions( pid, 1 ),
                                        positions( pid, 2 ) };
                 int grid_base[3] = {
-                    static_cast<int>( std::lround( pos[0] * dx_inv[0] ) - 1 ),
-                    static_cast<int>( std::lround( pos[1] * dx_inv[1] ) - 1 ),
-                    static_cast<int>( std::lround( pos[2] * dx_inv[2] ) - 1 ) };
+                    static_cast<int>( std::lround( pos[0] * dx_inv[0] ) -
+                                      p2g_radius ),
+                    static_cast<int>( std::lround( pos[1] * dx_inv[1] ) -
+                                      p2g_radius ),
+                    static_cast<int>( std::lround( pos[2] * dx_inv[2] ) -
+                                      p2g_radius ) };
                 // register grids that will have data transfer with the particle
-                for ( int i = 0; i <= 2; ++i )
-                    for ( int j = 0; j <= 2; ++j )
-                        for ( int k = 0; k <= 2; ++k )
+                const int p2g_size = p2g_radius * 2;
+                for ( int i = 0; i <= p2g_size; ++i )
+                    for ( int j = 0; j <= p2g_size; ++j )
+                        for ( int k = 0; k <= p2g_size; ++k )
                         {
                             int cell_id[3] = { grid_base[0] + i,
                                                grid_base[1] + j,
@@ -283,13 +259,13 @@ class SparseArrayLayout
     sparse_map_type _map;
 }; // end class SparseArrayLayout
 
-//! Array static type checker.
+//! Sparse array layout static type checker.
 template <class>
 struct is_sparse_array_layout : public std::false_type
 {
 };
 
-//! Array static type checker.
+//! Sparse array layout static type checker.
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
 struct is_sparse_array_layout<
@@ -298,7 +274,7 @@ struct is_sparse_array_layout<
 {
 };
 
-//! Array static type checker.
+//! Sparse array layout static type checker.
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
 struct is_sparse_array_layout<
@@ -310,6 +286,13 @@ struct is_sparse_array_layout<
 //---------------------------------------------------------------------------//
 // Array layout creation.
 //---------------------------------------------------------------------------//
+/*!
+  \brief Create sparse array layout over the entities of a sparse local grid.
+  \param local_grid The sparse local grid over which to create the layout.
+  \param sparse_map The reference to a pre-created sparse map.
+  \param EntityType The entity: Cell, Node, Face, or Edge.
+  \param bc_factor Factor used to increase allocation size for special entities.
+*/
 template <class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
 SparseArrayLayout<DataTypes, EntityType, MeshType, SparseMapType>
@@ -322,40 +305,67 @@ createSparseArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
 }
 
 //---------------------------------------------------------------------------//
-//---------------------------------------------------------------------------//
+/*!
+  \brief Sparse array of field data on the local sparse mesh; Array data is
+  stored in AoSoA manner, with each tile being the SoA element
 
+  \tparam DataTypes Data types (Cabana::MemberTypes).
+  \tparam DeviceType Device type.
+  \tparam EntityType Array entity type (node, cell, face, edge).
+  \tparam MeshType Mesh type (sparse mesh).
+  \tparam SparseMapType Sparse map type.
+*/
 template <class DataTypes, class DeviceType, class EntityType, class MeshType,
           class SparseMapType>
 class SparseArray
 {
   public:
+    //! self type
     using sparse_array_type =
         SparseArray<DataTypes, DeviceType, EntityType, MeshType, SparseMapType>;
-    // Device Types
+    //! Device type
     using device_type = DeviceType;
+    //! Memory space type
     using memory_space = typename device_type::memory_space;
+    //! Execution space type
     using execution_space = typename device_type::execution_space;
+    //! Memory space size type
     using size_type = typename memory_space::size_type;
-    // Other types
+    //! Array entity type (node, cell, face, edge).
     using entity_type = EntityType;
+    //! Mesh type
     using mesh_type = MeshType;
+    //! Sparse map type
     using sparse_map_type = SparseMapType;
+    //! Dimension number
     static constexpr std::size_t num_space_dim = mesh_type::num_space_dim;
+    //! Least bits required to represent all cells inside a tile
     static constexpr unsigned long long cell_bits_per_tile =
         sparse_map_type::cell_bits_per_tile;
+    //! Cell mask, get local 1D cell ID when operate on global 1D cell ID
     static constexpr unsigned long long cell_mask_per_tile =
         sparse_map_type::cell_mask_per_tile;
 
     // AoSoA related types
+    //! DataTypes Data types (Cabana::MemberTypes).
     using member_types = DataTypes;
+    //! AoSoA vector length = cell number in each tile
     static constexpr int vector_length = sparse_map_type::cell_num_per_tile;
+    //! AosoA type
     using aosoa_type = Cabana::AoSoA<member_types, memory_space, vector_length>;
+    //! SoA Type
     using soa_type = Cabana::SoA<member_types, vector_length>;
+    //！ AoSoA tuple type
     using tuple_type = Cabana::Tuple<member_types>;
 
+    //! Sparse array layout type
     using array_layout = SparseArrayLayout<member_types, entity_type, mesh_type,
                                            sparse_map_type>;
-    // Constructor
+    /*!
+      \brief (Host) Constructor
+      \param label array description
+      \param layout sparse array layout
+    */
     SparseArray( const std::string label, array_layout& layout )
         : _layout( std::forward<array_layout>( layout ) )
         , _data( label )
@@ -364,183 +374,257 @@ class SparseArray
     }
 
     // ------------------------------------------------------------------------
-    // AoSoA interfaces
+    // AoSoA-related interfaces
+    //! Get AoSoA reference
     aosoa_type& aosoa() { return _data; }
+    //！Get array label (description)
     std::string label() const { return _data.label(); }
+    //! Get array layout reference
     array_layout& layout() { return _layout; }
 
+    /*!
+      \brief Resize the AoSoA array according to the input.
+      \param n Target size.
+    */
     inline void resize( const size_type n ) { _data.resize( n ); }
+    /*!
+      \brief Reserve the AoSoA array according to the input.
+      \param n Target reserved size.
+    */
     inline void reserve( const size_type n ) { _data.reserve( n ); }
+    //! Shrink allocation to fit the valid size
     inline void shrinkToFit() { _data.shrinkToFit(); }
+    //! Clear sparse array, including resize valid AoSoA size to 0 and clear
+    //! sparse layout
     inline void clear()
     {
         resize( 0 );
         _layout.clear();
     };
 
-    template <class PositionSliceType>
-    void register_sparse_grid( PositionSliceType& positions )
-    {
-        _layout.template registerSparseMap<execution_space, PositionSliceType>(
-            positions );
-        this->resize( _layout.sparseMap().sizeCell() );
-    }
-
+    //! Get AoSoA capacity
     KOKKOS_FUNCTION
     size_type capacity() { return _data.capacity(); }
+    //! Get AoSoA size (valid number of elements)
     KOKKOS_FUNCTION
     size_type size() const { return _data.size(); }
+    //! Test if the AoSoA arary is empty
     KOKKOS_FUNCTION
     bool empty() const { return ( size() == 0 ); }
-
+    //! Get the number of SoA inside an AoSoA structure
     KOKKOS_FORCEINLINE_FUNCTION
     size_type numSoA() const { return _data.numSoA(); }
-
+    //! Get data array size at a given struct member index
     KOKKOS_FORCEINLINE_FUNCTION
     size_type arraySize( const size_type s ) const
     {
         return _data.arraySize( s );
     }
 
+    /*!
+      \brief Register valid grids in sparse map according to input particle
+      positions.
+      \param positions Input particle positions.
+      \param p2g_radius The half range of grids that will be influenced by each
+      particle, depending on the interpolation kernel
+    */
+    template <class PositionSliceType>
+    void register_sparse_grid( PositionSliceType& positions,
+                               const int p2g_radius = 1 )
+    {
+        _layout.template registerSparseMap<execution_space, PositionSliceType>(
+            positions, p2g_radius );
+        this->resize( _layout.sparseMap().sizeCell() );
+    }
+
     // ------------------------------------------------------------------------
     // data access
     // access soa
+    /*!
+      \brief (Device) Access tile SoA from tile-related information
+      \param tile_i, tile_j, tile_k Tile index in each dimension
+    */
     KOKKOS_FORCEINLINE_FUNCTION
-    soa_type& access_tile_FT( const int tile_i, const int tile_j,
-                              const int tile_k ) const
+    soa_type& access_tile_from_tile( const int tile_i, const int tile_j,
+                                     const int tile_k ) const
     {
         auto tile_id = _layout.queryTileFromTileId( tile_i, tile_j, tile_k );
         return _data.access( tile_id );
     }
 
+    /*!
+      \brief (Device) Access tile SoA from tile-related information
+      \param tile_id 1D Tile ID (registered ID in sparse map, which is also the
+      real allocation Id inside the AoS)
+    */
+    template <typename Value>
+    KOKKOS_FORCEINLINE_FUNCTION soa_type&
+    access_tile_from_tile( const Value tile_id ) const
+    {
+        return _data.access( tile_id );
+    }
+
+    /*!
+      \brief (Device) Access tile SoA from cell-related information
+      \param cell_i, cell_j, cell_k Cell index in each dimension
+    */
     KOKKOS_FORCEINLINE_FUNCTION
-    soa_type& access_tile( const int cell_i, const int cell_j,
-                           const int cell_k ) const
+    soa_type& access_tile_from_cell( const int cell_i, const int cell_j,
+                                     const int cell_k ) const
     {
         auto tile_id = _layout.queryTile( cell_i, cell_j, cell_k );
         return _data.access( tile_id );
     }
 
-    template <typename Value>
-    KOKKOS_FORCEINLINE_FUNCTION soa_type&
-    access_tile( const Value tile_id ) const
-    {
-        return _data.access( tile_id );
-    }
-
-    KOKKOS_FORCEINLINE_FUNCTION
-    tuple_type getTuple( const int cell_i, const int cell_j,
-                         const int cell_k ) const
-    {
-        auto cell_id = _layout.queryCell( cell_i, cell_j, cell_k );
-        return _data.getTuple( cell_id );
-    }
-
-    template <typename Key>
-    KOKKOS_FORCEINLINE_FUNCTION tuple_type
-    getTuple( const Key tile_key, const int cell_local_id ) const
-    {
-        auto tile_id = _layout.queryTileFromTileKey( tile_key );
-        return _data.getTuple( ( tile_id << cell_bits_per_tile ) |
-                               ( cell_local_id & cell_mask_per_tile ) );
-    }
-
+    // ------------------------------------------------------------------------
+    // data access
+    // aceess element
+    /*!
+      \brief Access element from cell IJK, access correponding element's
+      channels with extra indices
+      \param cell_ijk Cell ID in each dimension
+      \param ids Ids to access channels inside a data member/element
+    */
     template <std::size_t M, typename... Indices>
     KOKKOS_FORCEINLINE_FUNCTION
         typename soa_type::template member_reference_type<M>
-        get( Index_H_C, const int cell_i, const int cell_j, const int cell_k,
-             Indices&&... ids ) const
+        get( const Kokkos::Array<int, 3> cell_ijk, Indices&&... ids ) const
     {
-        auto& soa = access_tile( cell_i, cell_j, cell_k );
-        auto array_index = _layout.cell_local_id( cell_i, cell_j, cell_k );
+        auto& soa =
+            access_tile_from_cell( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
+        auto array_index =
+            _layout.cell_local_id( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
         return Cabana::get<M>( soa, array_index, ids... );
     }
 
+    /*!
+      \brief Access element from cell IJK
+      \param cell_ijk Cell ID in each dimension
+    */
     template <std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
         typename soa_type::template member_reference_type<M>
-        get( Index_H_C, const int cell_i, const int cell_j,
-             const int cell_k ) const
+        get( const Kokkos::Array<int, 3> cell_ijk ) const
     {
-        auto& soa = access_tile( cell_i, cell_j, cell_k );
-        auto array_index = _layout.cell_local_id( cell_i, cell_j, cell_k );
+        auto& soa =
+            access_tile_from_cell( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
+        auto array_index =
+            _layout.cell_local_id( cell_ijk[0], cell_ijk[1], cell_ijk[2] );
         return Cabana::get<M>( soa, array_index );
     }
 
+    /*!
+      \brief Access element in a hierarchical manner, from tile IJK and then
+      local cell IJK, access correponding element's channels with extra indices
+      \param tile_ijk Tile ID in each dimension
+      \param local_cell_ijk Local Cell ID in each dimension
+      \param ids Ids to access channels inside a data member/element
+    */
     template <std::size_t M, typename... Indices>
     KOKKOS_FORCEINLINE_FUNCTION
         typename soa_type::template member_reference_type<M>
-        get( Index_H_T_C, const int tile_i, const int tile_j, const int tile_k,
-             const int local_cell_i, const int local_cell_j,
-             const int local_cell_k, Indices&&... ids ) const
+        get( const Kokkos::Array<int, 3> tile_ijk,
+             const Kokkos::Array<int, 3> local_cell_ijk,
+             Indices&&... ids ) const
     {
-        auto& soa = access_tile_FT( tile_i, tile_j, tile_k );
-        auto array_index =
-            _layout.cell_local_id( local_cell_i, local_cell_j, local_cell_k );
+        auto& soa =
+            access_tile_from_tile( tile_ijk[0], tile_ijk[1], tile_ijk[2] );
+        auto array_index = _layout.cell_local_id(
+            local_cell_ijk[0], local_cell_ijk[1], local_cell_ijk[2] );
         return Cabana::get<M>( soa, array_index, ids... );
     }
 
+    /*!
+      \brief Access element in a hierarchical manner, from tile IJK and then
+      local cell IJK
+      \param tile_ijk Tile ID in each dimension
+      \param local_cell_ijk Local Cell ID in each dimension
+    */
     template <std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
         typename soa_type::template member_reference_type<M>
-        get( Index_H_T_C, const int tile_i, const int tile_j, const int tile_k,
-             const int local_cell_i, const int local_cell_j,
-             const int local_cell_k ) const
+        get( const Kokkos::Array<int, 3> tile_ijk,
+             const Kokkos::Array<int, 3> local_cell_ijk ) const
     {
-        auto& soa = access_tile_FT( tile_i, tile_j, tile_k );
-        auto array_index =
-            _layout.cell_local_id( local_cell_i, local_cell_j, local_cell_k );
+        auto& soa =
+            access_tile_from_tile( tile_ijk[0], tile_ijk[1], tile_ijk[2] );
+        auto array_index = _layout.cell_local_id(
+            local_cell_ijk[0], local_cell_ijk[1], local_cell_ijk[2] );
         return Cabana::get<M>( soa, array_index );
     }
 
+    /*!
+      \brief Access element in a hierarchical manner, from 1D tile ID and then
+      local cell IJK, access correponding element's channels with extra indices
+      \param tile_id the 1D Tile ID
+      \param local_cell_ijk Local Cell ID in each dimension
+      \param ids Ids to access channels inside a data member/element
+    */
     template <std::size_t M, typename... Indices>
     KOKKOS_FORCEINLINE_FUNCTION
         typename soa_type::template member_reference_type<M>
-        get( Index_H_ID_C, const int array_id, const int local_cell_i,
-             const int local_cell_j, const int local_cell_k,
+        get( const int tile_id, const Kokkos::Array<int, 3> local_cell_ijk,
              Indices&&... ids ) const
     {
-        auto& soa = _data.access( array_id );
-        auto cell_id =
-            _layout.cell_local_id( local_cell_i, local_cell_j, local_cell_k );
-        return Cabana::get<M>( soa, cell_id, ids... );
+        auto& soa = _data.access( tile_id );
+        auto array_index = _layout.cell_local_id(
+            local_cell_ijk[0], local_cell_ijk[1], local_cell_ijk[2] );
+        return Cabana::get<M>( soa, array_index, ids... );
     }
 
+    /*!
+      \brief Access element in a hierarchical manner, from 1D tile ID and then
+      local cell IJK
+      \param tile_id the 1D Tile ID
+      \param local_cell_ijk Local Cell ID in each dimension
+    */
     template <std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
         typename soa_type::template member_reference_type<M>
-        get( Index_H_ID_C, const int array_id, const int local_cell_i,
-             const int local_cell_j, const int local_cell_k ) const
+        get( const int tile_id,
+             const Kokkos::Array<int, 3> local_cell_ijk ) const
     {
-        auto& soa = _data.access( array_id );
-        auto cell_id =
-            _layout.cell_local_id( local_cell_i, local_cell_j, local_cell_k );
-        return Cabana::get<M>( soa, cell_id );
+        auto& soa = _data.access( tile_id );
+        auto array_index = _layout.cell_local_id(
+            local_cell_ijk[0], local_cell_ijk[1], local_cell_ijk[2] );
+        return Cabana::get<M>( soa, array_index );
     }
 
+    /*!
+      \brief Access element in a hierarchical manner, from 1D tile ID and then
+      1D local cell ID, access correponding element's channels with extra
+      indices
+      \param tile_id the 1D Tile ID
+      \param cell_id the 1D Local Cell ID
+    */
     template <std::size_t M, typename... Indices>
     KOKKOS_FORCEINLINE_FUNCTION
         typename soa_type::template member_reference_type<M>
-        get( Index_ID, const int array_id, const int cell_id,
-             Indices&&... ids ) const
+        get( const int tile_id, const int cell_id, Indices&&... ids ) const
     {
-        auto& soa = _data.access( array_id );
+        auto& soa = _data.access( tile_id );
         return Cabana::get<M>( soa, cell_id, ids... );
     }
 
+    /*!
+      \brief Access element in a hierarchical manner, from 1D tile ID and then
+      1D local cell ID
+      \param tile_id the 1D Tile ID
+      \param cell_id the 1D Local Cell ID
+    */
     template <std::size_t M>
     KOKKOS_FORCEINLINE_FUNCTION
         typename soa_type::template member_reference_type<M>
-        get( Index_ID, const int array_id, const int cell_id ) const
+        get( const int tile_id, const int cell_id ) const
     {
         auto& soa = _data.access( array_id );
         return Cabana::get<M>( soa, cell_id );
     }
-    // should add more data access interfaces
-    // such as slices, or index based data accessing
 
   private:
+    //! Sparse array layout
     array_layout _layout;
+    //! AoSoA sparse grid data
     aosoa_type _data;
 
 }; // end class SparseArray
@@ -548,12 +632,13 @@ class SparseArray
 //---------------------------------------------------------------------------//
 // Scatic type checker.
 //---------------------------------------------------------------------------//
-// Static type checker.
+//! Sparse array static type checker.
 template <class>
 struct is_sparse_array : public std::false_type
 {
 };
 
+//! Sparse array static type checker.
 template <class DataTypes, class DeviceType, class EntityType, class MeshType,
           class SparseMapType>
 struct is_sparse_array<
@@ -562,6 +647,7 @@ struct is_sparse_array<
 {
 };
 
+//! Sparse array static type checker.
 template <class DataTypes, class DeviceType, class EntityType, class MeshType,
           class SparseMapType>
 struct is_sparse_array<const SparseArray<DataTypes, DeviceType, EntityType,
@@ -573,6 +659,11 @@ struct is_sparse_array<const SparseArray<DataTypes, DeviceType, EntityType,
 //---------------------------------------------------------------------------//
 // Array creation.
 //---------------------------------------------------------------------------//
+/*!
+  \brief Create sparse array based on the sparse array layout
+  \param label The sparse array data description.
+  \param layout The sparse array layout.
+*/
 template <class DeviceType, class DataTypes, class EntityType, class MeshType,
           class SparseMapType>
 SparseArray<DataTypes, DeviceType, EntityType, MeshType, SparseMapType>
@@ -583,11 +674,6 @@ createSparseArray(
     return SparseArray<DataTypes, DeviceType, EntityType, MeshType,
                        SparseMapType>( label, layout );
 }
-
-namespace SparseArrayOp
-{
-
-}; // end namespace SparseArrayOp
 
 } // namespace Experimental
 } // end namespace Cajita
