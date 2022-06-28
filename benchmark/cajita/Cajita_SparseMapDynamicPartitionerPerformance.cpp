@@ -181,7 +181,7 @@ void performanceTest( SparseMapTag, std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( frac );
-                partitioner.setLocalWorkloadBySparseMap( sis, comm );
+                partitioner.setLocalWorkload( sis, comm );
                 local_workload_timer.stop( frac );
 
                 // compute prefix sum matrix

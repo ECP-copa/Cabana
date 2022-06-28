@@ -164,7 +164,7 @@ void performanceTest( ParticleWorkloadTag, std::ostream& stream, MPI_Comm comm,
 
                 // compute local workload
                 local_workload_timer.start( p );
-                partitioner.setLocalWorkloadByParticles(
+                partitioner.setLocalWorkload(
                     pos_view, par_num, global_low_corner,
                     1.0f / num_cells_per_dim[c], comm );
                 local_workload_timer.stop( p );

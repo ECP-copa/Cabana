@@ -210,7 +210,7 @@ void random_distribution_automatic_rank( int occupy_num_per_rank )
     // compute workload from a particle view and do partition optimization
     dynamic_cast<ParticleDynamicPartitioner<TEST_DEVICE, cell_per_tile_dim>*>(
         &partitioner )
-        ->setLocalWorkloadByParticles( particle_view, occupy_num_per_rank,
+        ->setLocalWorkload( particle_view, occupy_num_per_rank,
                                        global_low_corner, cell_size,
                                        MPI_COMM_WORLD );
     partitioner.optimizePartition( MPI_COMM_WORLD );

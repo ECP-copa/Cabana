@@ -62,7 +62,7 @@ class ParticleDynamicPartitioner
       \param comm MPI communicator used for workload reduction
     */
     template <class ParticlePosViewType, typename ArrayType, typename CellUnit>
-    void setLocalWorkloadByParticles( const ParticlePosViewType& view,
+    void setLocalWorkload( const ParticlePosViewType& view,
                                       int particle_num,
                                       const ArrayType& global_lower_corner,
                                       const CellUnit dx, MPI_Comm comm )

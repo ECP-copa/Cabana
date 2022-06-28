@@ -60,7 +60,7 @@ class SparseMapDynamicPartitioner
       for workload reduction
     */
     template <class SparseMapType>
-    void setLocalWorkloadBySparseMap( const SparseMapType& sparseMap,
+    void setLocalWorkload( const SparseMapType& sparseMap,
                                       MPI_Comm comm )
     {
         base::resetWorkload();
