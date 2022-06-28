@@ -31,8 +31,12 @@ namespace Cajita
 /*!
   Dynamic mesh block partitioner. (Current Version: Support 3D only) There
   should be no instantiation for this class without implementing any workload
-  computation. \tparam Device Kokkos device type. \tparam CellPerTileDim Cells
-  per tile per dimension. \tparam NumSpaceDim Dimemsion (The current version
+  computation.
+
+  \tparam Device Kokkos device type.
+  \tparam CellPerTileDim Cells
+  per tile per dimension.
+  \tparam NumSpaceDim Dimemsion (The current version
   support 3D only)
 */
 template <typename Device, unsigned long long CellPerTileDim = 4,
