@@ -382,8 +382,8 @@ struct N2NeighborListBuilder
 
   \tparam LayoutTag Tag indicating whether to use a CSR or 2D data layout.
 
-  \tparam BuildTag Tag indicating whether to use hierarchical team or team
-  vector parallelism when building neighbor lists.
+  \tparam BuildTag Tag indicating whether to use serial or team parallelism when
+  building neighbor lists.
 */
 template <class MemorySpace, class AlgorithmTag, class LayoutTag,
           class BuildTag = TeamOpTag>

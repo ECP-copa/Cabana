@@ -101,7 +101,7 @@ void testN2NeighborParallelFor()
     // Create the neighbor list.
     using ListType =
         Cabana::N2NeighborList<TEST_MEMSPACE, Cabana::FullNeighborTag,
-                               LayoutTag, Cabana::TeamOpTag>;
+                               LayoutTag, Cabana::SerialOpTag>;
     ListType nlist( position, 0, position.size(), test_data.test_radius );
 
     checkNeighborParallelFor( nlist, test_data.N2_list_copy,
@@ -118,7 +118,7 @@ void testN2NeighborParallelReduce()
     // Create the neighbor list.
     using ListType =
         Cabana::N2NeighborList<TEST_MEMSPACE, Cabana::FullNeighborTag,
-                               LayoutTag, Cabana::TeamOpTag>;
+                               LayoutTag, Cabana::SerialOpTag>;
     ListType nlist( position, 0, position.size(), test_data.test_radius );
 
     checkNeighborParallelReduce( nlist, test_data.N2_list_copy,
@@ -132,17 +132,17 @@ TEST( TEST_CATEGORY, n2_list_full_test )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testN2List<Cabana::FullNeighborTag, Cabana::NeighborLayoutCSR,
-               Cabana::TeamOpTag>();
+               Cabana::SerialOpTag>();
 #endif
     testN2List<Cabana::FullNeighborTag, Cabana::NeighborLayout2D,
-               Cabana::TeamOpTag>();
+               Cabana::SerialOpTag>();
 
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testN2List<Cabana::FullNeighborTag, Cabana::NeighborLayoutCSR,
-               Cabana::TeamVectorOpTag>();
+               Cabana::TeamOpTag>();
 #endif
     testN2List<Cabana::FullNeighborTag, Cabana::NeighborLayout2D,
-               Cabana::TeamVectorOpTag>();
+               Cabana::TeamOpTag>();
 }
 
 //---------------------------------------------------------------------------//
@@ -150,33 +150,32 @@ TEST( TEST_CATEGORY, n2_list_half_test )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testN2List<Cabana::FullNeighborTag, Cabana::NeighborLayoutCSR,
-               Cabana::TeamOpTag>();
+               Cabana::SerialOpTag>();
 #endif
     testN2List<Cabana::FullNeighborTag, Cabana::NeighborLayout2D,
-               Cabana::TeamOpTag>();
+               Cabana::SerialOpTag>();
 
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testN2List<Cabana::FullNeighborTag, Cabana::NeighborLayoutCSR,
-               Cabana::TeamVectorOpTag>();
+               Cabana::TeamOpTag>();
 #endif
     testN2List<Cabana::FullNeighborTag, Cabana::NeighborLayout2D,
-               Cabana::TeamVectorOpTag>();
+               Cabana::TeamOpTag>();
 }
 
 //---------------------------------------------------------------------------//
 TEST( TEST_CATEGORY, n2_list_full_range_test )
 {
 #ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
+    testN2ListFullPartialRange<Cabana::NeighborLayoutCSR,
+                               Cabana::SerialOpTag>();
+#endif
+    testN2ListFullPartialRange<Cabana::NeighborLayout2D, Cabana::SerialOpTag>();
+
+#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
     testN2ListFullPartialRange<Cabana::NeighborLayoutCSR, Cabana::TeamOpTag>();
 #endif
     testN2ListFullPartialRange<Cabana::NeighborLayout2D, Cabana::TeamOpTag>();
-
-#ifndef KOKKOS_ENABLE_OPENMPTARGET // FIXME_OPENMPTARGET
-    testN2ListFullPartialRange<Cabana::NeighborLayoutCSR,
-                               Cabana::TeamVectorOpTag>();
-#endif
-    testN2ListFullPartialRange<Cabana::NeighborLayout2D,
-                               Cabana::TeamVectorOpTag>();
 }
 
 //---------------------------------------------------------------------------//
