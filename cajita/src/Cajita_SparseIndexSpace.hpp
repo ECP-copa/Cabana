@@ -551,6 +551,39 @@ class SparseMap
     value_type size() const { return _block_id_space.validTileNumHost(); }
 
     /*!
+      \brief (Host) Valid tile number inside current block (MPI rank)
+    */
+    inline value_type sizeTile() const { return size(); }
+
+    /*!
+      \brief (Host) Valid cell number inside current block (MPI rank)
+    */
+    inline value_type sizeCell() const
+    {
+        return sizeTile() << cell_bits_per_tile;
+    }
+
+    /*!
+      \brief (Host) Reserved tile number inside current block (MPI rank)
+      \param factor scale up the real size as reserved space
+    */
+    template <typename T>
+    inline value_type reservedTileSize( T factor ) const
+    {
+        return _block_id_space.reservedTileNumHost( factor );
+    }
+
+    /*!
+      \brief (Host) Reserved cell number inside current block (MPI rank)
+      \param factor scale up the real size as reserved space
+    */
+    template <typename T>
+    inline value_type reservedCellSize( T factor ) const
+    {
+        return reservedTileSize( factor ) << cell_bits_per_tile;
+    }
+
+    /*!
       \brief (Device) Valid block at index
       \param index index number in Kokkos unordered_map
     */
@@ -773,6 +806,20 @@ class BlockMap
         auto tile_table_info_mirror = Kokkos::create_mirror_view_and_copy(
             Kokkos::HostSpace(), _tile_table_info );
         return tile_table_info_mirror( 0 );
+    }
+
+    /*!
+      \brief (Host) Reserved tile number inside current block (MPI rank)
+    */
+    template <typename T>
+    inline value_type reservedTileNumHost( T factor ) const
+    {
+        auto tile_table_info_mirror = Kokkos::create_mirror_view_and_copy(
+            Kokkos::HostSpace(), _tile_table_info );
+        value_type num = tile_table_info_mirror( 0 ) * factor;
+        tile_table_info_mirror( 1 ) = num;
+        Kokkos::deep_copy( _tile_table_info, tile_table_info_mirror );
+        return num;
     }
 
     /*!

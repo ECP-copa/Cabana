@@ -85,19 +85,22 @@ class SparseArrayLayout
     SparseMapType& sparseMap() { return _map; }
 
     //! array size in cell
-    inline uint64_t arraySizeCell() const
-    {
-        return arraySizeCellImpl( entity_type() );
-    }
+    inline uint64_t sizeCell() const { return _map.sizeCell(); }
 
     //! array size in tile
-    inline uint64_t arraySizeTile() const
+    inline uint64_t sizeTile() const { return _map.sizeTile(); }
+
+    /*!
+      \brief array reservation size in cell
+      \param factor scale up the real size as reserved space
+    */
+    inline uint64_t sizeCellReserve( float factor ) const
     {
-        return arraySizeTileImpl( entity_type() );
+        return reservedCellSize( factor );
     }
 
     //! Array size in cell (default size measurse: cell)
-    inline uint64_t arraySize() const { return arraySizeCell(); }
+    inline uint64_t arraySize() const { return sizeCell(); }
 
     //! clear valid info inside array layout; i.e. clear sparse map
     inline void clear() { _map.clear(); }
@@ -196,59 +199,6 @@ class SparseArrayLayout
                               const int cell_k ) const
     {
         return _map.cell_local_id( cell_i, cell_j, cell_k );
-    }
-
-  private:
-    // Array size (in cell) for Cell entity
-    inline uint64_t arraySizeCellImpl( Cell ) const
-    {
-        return static_cast<uint64_t>( _map.reservedCellSize() );
-    }
-
-    // Array size (in cell) for Node entity
-    inline uint64_t arraySizeCellImpl( Node ) const
-    {
-        return static_cast<uint64_t>( _map.reservedCellSize() );
-    }
-
-    // Array size (in cell) for Face entity
-    template <int dim>
-    inline uint64_t arraySizeCellImpl( Face<dim> ) const
-    {
-        return static_cast<uint64_t>( _map.reservedCellSize() * _bc_factor );
-    }
-
-    // Array size (in cell) for Edge entity
-    template <int dim>
-    inline uint64_t arraySizeCellImpl( Edge<dim> ) const
-    {
-        return static_cast<uint64_t>( _map.reservedCellSize() * _bc_factor );
-    }
-
-    // Array size (in tile) for Cell entity
-    inline uint64_t arraySizeTileImpl( Cell ) const
-    {
-        return static_cast<uint64_t>( _map.reservedTileSize() );
-    }
-
-    // Array size (in tile) for Node entity
-    inline uint64_t arraySizeTileImpl( Node ) const
-    {
-        return static_cast<uint64_t>( _map.reservedTileSize() );
-    }
-
-    // Array size (in tile) for Face entity
-    template <int dim>
-    inline uint64_t arraySizeTileImpl( Face<dim> ) const
-    {
-        return static_cast<uint64_t>( _map.reservedTileSize() * _bc_factor );
-    }
-
-    // Array size (in tile) for Edge entity
-    template <int dim>
-    inline uint64_t arraySizeTileImpl( Edge<dim> ) const
-    {
-        return static_cast<uint64_t>( _map.reservedTileSize() * _bc_factor );
     }
 
   private:
@@ -371,7 +321,6 @@ class SparseArray
         : _layout( std::forward<array_layout>( layout ) )
         , _data( label )
     {
-        reserve( _layout.arraySizeCell() );
     }
 
     // ------------------------------------------------------------------------
@@ -391,11 +340,27 @@ class SparseArray
       \param n Target size.
     */
     inline void resize( const size_type n ) { _data.resize( n ); }
+
+    /*!
+      \brief Reserve the AoSoA array according to the sparse map info in layout.
+    */
+    inline void resize() { resize( _layout.sizeCell() ); }
+
     /*!
       \brief Reserve the AoSoA array according to the input.
       \param n Target reserved size.
     */
     inline void reserve( const size_type n ) { _data.reserve( n ); }
+
+    /*!
+      \brief Reserve the AoSoA array according to the sparse map info in layout.
+      \param factor scale up the real size as reserved space
+    */
+    inline void reserve( const double factor = 1.2 )
+    {
+        reserve( _layout.sizeCellReserve( factor ) );
+    }
+
     //! Shrink allocation to fit the valid size
     inline void shrinkToFit() { _data.shrinkToFit(); }
     //! Clear sparse array, including resize valid AoSoA size to 0 and clear
