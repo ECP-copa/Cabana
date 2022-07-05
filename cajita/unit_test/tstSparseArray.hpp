@@ -302,7 +302,7 @@ void sparse_array_test( int par_num, EntityType e )
         Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), qtid_res );
     for ( int i = 0; i < cell_num; ++i )
     {
-        EXPECT_EQ( qtid_mirror( i ) < test_array.numSoA(), true );
+        EXPECT_EQ( qtid_mirror( i ) < (int)test_array.numSoA(), true );
         EXPECT_EQ( qtid_mirror( i ) >= 0, true );
     }
 
