@@ -204,6 +204,128 @@ struct is_halo : public is_halo_impl<typename std::remove_cv<T>::type>::type
 
 //---------------------------------------------------------------------------//
 /*!
+  \brief Routine to pre-allocate send and receive buffer for synchronous
+  gathers; see the AoSoA version of gather below.
+
+  \tparam Halo_t Halo type - must be a Halo.
+
+  \tparam AoSoA_t AoSoA type - must be an AoSoA.
+
+  \param halo The halo that will be used for the gather. Used to query import
+  and export sizes.
+
+  \param aosoa The AoSoA on which to perform the gather. Used to query the
+  type of the returned Kokkos view.
+
+  \param overallocation An overallocation factor, which oversizes the
+  gather/scatter buffers, potentially avoiding frequent reallocations at the
+  expense of external bookkeeping.
+
+  \return An `std::pair` containing the gather and scatter Views.
+*/
+template <class Halo_t, class AoSoA_t>
+auto gather_preallocate_send_buffer(
+    const Halo_t& halo, AoSoA_t& aosoa, const double overallocation = 1.,
+    typename std::enable_if<
+        ( is_halo<Halo_t>::value && is_aosoa<AoSoA_t>::value ), int>::type* =
+        0 ) -> Kokkos::View<typename AoSoA_t::tuple_type*,
+                            typename Halo_t::memory_space>
+{
+    // Check that the AoSoA is the right size.
+    if ( aosoa.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "AoSoA is the wrong size for gather!" );
+
+    // Allocate a send buffer.
+    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
+        send_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
+            halo.totalNumExport() * overallocation );
+
+    return send_buffer;
+}
+
+template <class Halo_t, class AoSoA_t>
+auto gather_preallocate_recv_buffer(
+    const Halo_t& halo, AoSoA_t& aosoa, const double overallocation = 1.,
+    typename std::enable_if<
+        ( is_halo<Halo_t>::value && is_aosoa<AoSoA_t>::value ), int>::type* =
+        0 ) -> Kokkos::View<typename AoSoA_t::tuple_type*,
+                            typename Halo_t::memory_space>
+{
+    // Check that the AoSoA is the right size.
+    if ( aosoa.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "AoSoA is the wrong size for gather!" );
+
+    // Allocate a receive buffer.
+    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
+        recv_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
+            halo.totalNumImport() * overallocation );
+
+    return recv_buffer;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Routine to ensure pre-allocated send buffers are large
+  enough for gather
+
+  \tparam Halo_t Halo type - must be a Halo.
+
+  \tparam View_t View type - must be a View.
+
+  \param halo The halo that will be used for the gather. Used to query import
+  and export sizes.
+
+  \param aosoa The AoSoA on which to perform the gather. Used to query the
+  type of the returned Kokkos view.
+
+
+  \return An `std::pair` containing the gather and scatter Views.
+*/
+template <class Halo_t, class View_t>
+bool gather_check_send_buffer(
+    const Halo_t& halo, const View_t& send_buffer,
+    typename std::enable_if<( is_halo<Halo_t>::value &&
+                              Kokkos::is_view<View_t>::value ),
+                            int>::type* = 0 )
+{
+    return ( send_buffer.extent( 0 ) >= halo.totalNumExport() );
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Routine to ensure pre-allocated receive buffers are large
+  enough for gather
+
+  \tparam Halo_t Halo type - must be a Halo.
+
+  \tparam View_t View type - must be a View.
+
+  \param halo The halo that will be used for the gather. Used to query import
+  and export sizes.
+
+  \param aosoa The AoSoA on which to perform the gather. Used to query the
+  type of the returned Kokkos view.
+
+  \param overallocation An overallocation factor, which oversizes the
+  gather/scatter buffers, potentially avoiding frequent reallocations at the
+  expense of external bookkeeping.
+
+  \return An `std::pair` containing the gather and scatter Views.
+*/
+template <class Halo_t, class View_t>
+bool gather_check_recv_buffer(
+    const Halo_t& halo, const View_t& recv_buffer,
+    typename std::enable_if<( is_halo<Halo_t>::value &&
+                              Kokkos::is_view<View_t>::value ),
+                            int>::type* = 0 )
+{
+    return ( recv_buffer.extent( 0 ) >= halo.totalNumImport() );
+}
+
+//---------------------------------------------------------------------------//
+/*!
   \brief Synchronously gather data from the local decomposition to the ghosts
   using the halo forward communication plan. AoSoA version. This is a
   uniquely-owned to multiply-owned communication.
@@ -225,22 +347,38 @@ struct is_halo : public is_halo_impl<typename std::remove_cv<T>::type>::type
   elements are expected to appear first (i.e. in the first halo.numLocal()
   elements) and the ghosted elements are expected to appear second (i.e. in
   the next halo.numGhost() elements()).
+
+  \param buffer_pair A std::pair of send and receive buffers to use for send and
+  receive exchanges
 */
-template <class Halo_t, class AoSoA_t>
-void gather( const Halo_t& halo, AoSoA_t& aosoa,
-             typename std::enable_if<( is_halo<Halo_t>::value &&
-                                       is_aosoa<AoSoA_t>::value ),
-                                     int>::type* = 0 )
+template <class Halo_t, class AoSoA_t, class View_t>
+void gather( const Halo_t& halo, AoSoA_t& aosoa, View_t& send_buffer,
+             View_t& recv_buffer,
+             typename std::enable_if<
+                 ( is_halo<Halo_t>::value && is_aosoa<AoSoA_t>::value &&
+                   Kokkos::is_view<View_t>::value &&
+                   View_t::Rank == 1 ), // add checks to make sure types are
+                                        // self-consistent...
+                 int>::type* = 0 )
 {
     // Check that the AoSoA is the right size.
     if ( aosoa.size() != halo.numLocal() + halo.numGhost() )
         throw std::runtime_error( "AoSoA is the wrong size for gather!" );
 
+    if ( !gather_check_send_buffer( halo, send_buffer ) )
+        throw std::runtime_error(
+            "Send buffer is not large enough for gather!" );
+
+    if ( !gather_check_recv_buffer( halo, recv_buffer ) )
+        throw std::runtime_error(
+            "Receive buffer is not large enough for gather!" );
+
     // Allocate a send buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
-        send_buffer(
-            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
-            halo.totalNumExport() );
+    // Kokkos::View<typename AoSoA_t::tuple_type*, typename
+    // Halo_t::memory_space>
+    //    send_buffer(
+    //        Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
+    //        halo.totalNumExport() );
 
     // Get the steering vector for the sends.
     auto steering = halo.getExportSteering();
@@ -257,10 +395,11 @@ void gather( const Halo_t& halo, AoSoA_t& aosoa,
     Kokkos::fence();
 
     // Allocate a receive buffer.
-    Kokkos::View<typename AoSoA_t::tuple_type*, typename Halo_t::memory_space>
-        recv_buffer(
-            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
-            halo.totalNumImport() );
+    // Kokkos::View<typename AoSoA_t::tuple_type*, typename
+    // Halo_t::memory_space>
+    //    recv_buffer(
+    //        Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
+    //        halo.totalNumImport() );
 
     // The halo has it's own communication space so choose any mpi tag.
     const int mpi_tag = 2345;
@@ -326,6 +465,104 @@ void gather( const Halo_t& halo, AoSoA_t& aosoa,
 //---------------------------------------------------------------------------//
 /*!
   \brief Synchronously gather data from the local decomposition to the ghosts
+  using the halo forward communication plan. AoSoA version. This is a
+  uniquely-owned to multiply-owned communication.
+
+  This routine allocates send and receive buffers internally and passes
+  them to the gather routine.
+
+  \tparam Halo_t Halo type - must be a Halo.
+
+  \tparam AoSoA_t AoSoA type - must be an AoSoA.
+
+  \param halo The halo to use for the gather.
+
+  \param aosoa The AoSoA on which to perform the gather. The AoSoA should have
+  a size equivalent to halo.numGhost() + halo.numLocal(). The locally owned
+  elements are expected to appear first (i.e. in the first halo.numLocal()
+  elements) and the ghosted elements are expected to appear second (i.e. in
+  the next halo.numGhost() elements()).
+*/
+template <class Halo_t, class AoSoA_t>
+void gather( const Halo_t& halo, AoSoA_t& aosoa,
+             typename std::enable_if<( is_halo<Halo_t>::value &&
+                                       is_aosoa<AoSoA_t>::value ),
+                                     int>::type* = 0 )
+{
+    // Check that the AoSoA is the right size.
+    if ( aosoa.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "AoSoA is the wrong size for gather!" );
+
+    // Allocate a pair of buffers of exactly the right size
+    auto send_buffer = gather_preallocate_send_buffer( halo, aosoa );
+    auto recv_buffer = gather_preallocate_recv_buffer( halo, aosoa );
+
+    // Pass to gather routine
+    gather( halo, aosoa, send_buffer, recv_buffer );
+}
+
+/********
+ * SLICE *
+ ********/
+
+template <class Halo_t, class Slice_t>
+auto gather_preallocate_send_buffer(
+    const Halo_t& halo, Slice_t& slice, const double overallocation = 1.,
+    typename std::enable_if<
+        ( is_halo<Halo_t>::value && is_slice<Slice_t>::value ), int>::type* =
+        0 ) -> Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+                            typename Halo_t::memory_space>
+{
+    // Check that the AoSoA is the right size.
+    if ( slice.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "Slice is the wrong size for gather!" );
+
+    // Get the number of components in the slice.
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
+        num_comp *= slice.extent( d );
+
+    // Allocate a send buffer. Note this one is layout right so the
+    // components are consecutive.
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+                 typename Halo_t::memory_space>
+        send_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
+            halo.totalNumExport() * overallocation, num_comp );
+
+    return send_buffer;
+}
+
+template <class Halo_t, class Slice_t>
+auto gather_preallocate_recv_buffer(
+    const Halo_t& halo, Slice_t& slice, const double overallocation = 1.,
+    typename std::enable_if<
+        ( is_halo<Halo_t>::value && is_slice<Slice_t>::value ), int>::type* =
+        0 ) -> Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+                            typename Halo_t::memory_space>
+{
+    // Check that the AoSoA is the right size.
+    if ( slice.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "Slice is the wrong size for gather!" );
+
+    // Get the number of components in the slice.
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
+        num_comp *= slice.extent( d );
+
+    // Allocate a receive buffer.
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+                 typename Halo_t::memory_space>
+        recv_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
+            halo.totalNumImport() * overallocation, num_comp );
+
+    return recv_buffer;
+}
+
+//---------------------------------------------------------------------------//
+/*!
+  \brief Synchronously gather data from the local decomposition to the ghosts
   using the halo forward communication plan. Slice version. This is a
   uniquely-owned to multiply-owned communication.
 
@@ -347,15 +584,25 @@ void gather( const Halo_t& halo, AoSoA_t& aosoa,
   elements) and the ghosted elements are expected to appear second (i.e. in
   the next halo.numGhost() elements()).
 */
-template <class Halo_t, class Slice_t>
-void gather( const Halo_t& halo, Slice_t& slice,
-             typename std::enable_if<( is_halo<Halo_t>::value &&
-                                       is_slice<Slice_t>::value ),
-                                     int>::type* = 0 )
+template <class Halo_t, class Slice_t, class View_t>
+void gather( const Halo_t& halo, Slice_t& slice, View_t& send_buffer,
+             View_t& recv_buffer,
+             typename std::enable_if<
+                 ( is_halo<Halo_t>::value && is_slice<Slice_t>::value &&
+                   Kokkos::is_view<View_t>::value && View_t::Rank == 2 ),
+                 int>::type* = 0 )
 {
     // Check that the Slice is the right size.
     if ( slice.size() != halo.numLocal() + halo.numGhost() )
         throw std::runtime_error( "Slice is the wrong size for gather!" );
+
+    if ( !gather_check_send_buffer( halo, send_buffer ) )
+        throw std::runtime_error(
+            "Send buffer is not large enough for gather!" );
+
+    if ( !gather_check_recv_buffer( halo, recv_buffer ) )
+        throw std::runtime_error(
+            "Receive buffer is not large enough for gather!" );
 
     // Get the number of components in the slice.
     std::size_t num_comp = 1;
@@ -367,11 +614,11 @@ void gather( const Halo_t& halo, Slice_t& slice,
 
     // Allocate a send buffer. Note this one is layout right so the components
     // are consecutive.
-    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
-                 typename Halo_t::memory_space>
-        send_buffer(
-            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
-            halo.totalNumExport(), num_comp );
+    // Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+    //             typename Halo_t::memory_space>
+    //    send_buffer(
+    //        Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
+    //        halo.totalNumExport(), num_comp );
 
     // Get the steering vector for the sends.
     auto steering = halo.getExportSteering();
@@ -394,11 +641,11 @@ void gather( const Halo_t& halo, Slice_t& slice,
 
     // Allocate a receive buffer. Note this one is layout right so the
     // components are consecutive.
-    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
-                 typename Halo_t::memory_space>
-        recv_buffer(
-            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
-            halo.totalNumImport(), num_comp );
+    // Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+    //             typename Halo_t::memory_space>
+    //    recv_buffer(
+    //        Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
+    //        halo.totalNumImport(), num_comp );
 
     // The halo has it's own communication space so choose any mpi tag.
     const int mpi_tag = 2345;
@@ -468,6 +715,103 @@ void gather( const Halo_t& halo, Slice_t& slice,
     MPI_Barrier( halo.comm() );
 }
 
+template <class Halo_t, class Slice_t>
+void gather( const Halo_t& halo, Slice_t& slice,
+             typename std::enable_if<( is_halo<Halo_t>::value &&
+                                       is_slice<Slice_t>::value ),
+                                     int>::type* = 0 )
+{
+    // Check that the AoSoA is the right size.
+    if ( slice.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "Slice is the wrong size for gather!" );
+
+    // Allocate a pair of buffers of exactly the right size
+    auto send_buffer = gather_preallocate_send_buffer( halo, slice );
+    auto recv_buffer = gather_preallocate_recv_buffer( halo, slice );
+
+    // Pass to gather routine
+    gather( halo, slice, send_buffer, recv_buffer );
+}
+
+/**********
+ * SCATTER *
+ **********/
+
+template <class Halo_t, class Slice_t>
+auto scatter_preallocate_send_buffer(
+    const Halo_t& halo, Slice_t& slice, const double overallocation = 1.,
+    typename std::enable_if<
+        ( is_halo<Halo_t>::value && is_slice<Slice_t>::value ), int>::type* =
+        0 ) -> Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+                            typename Halo_t::memory_space>
+{
+    // Check that the AoSoA is the right size.
+    if ( slice.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "Slice is the wrong size for scatter!" );
+
+    // Get the number of components in the slice.
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
+        num_comp *= slice.extent( d );
+
+    // Allocate a send buffer. Note this one is layout right so the
+    // components are consecutive.
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+                 typename Halo_t::memory_space>
+        send_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
+            halo.totalNumImport() * overallocation, num_comp );
+
+    return send_buffer;
+}
+
+template <class Halo_t, class Slice_t>
+auto scatter_preallocate_recv_buffer(
+    const Halo_t& halo, Slice_t& slice, const double overallocation = 1.,
+    typename std::enable_if<
+        ( is_halo<Halo_t>::value && is_slice<Slice_t>::value ), int>::type* =
+        0 ) -> Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+                            typename Halo_t::memory_space>
+{
+    // Check that the AoSoA is the right size.
+    if ( slice.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "Slice is the wrong size for scatter!" );
+
+    // Get the number of components in the slice.
+    std::size_t num_comp = 1;
+    for ( std::size_t d = 2; d < slice.rank(); ++d )
+        num_comp *= slice.extent( d );
+
+    // Allocate a receive buffer.
+    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+                 typename Halo_t::memory_space>
+        recv_buffer(
+            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
+            halo.totalNumExport() * overallocation, num_comp );
+
+    return recv_buffer;
+}
+
+template <class Halo_t, class View_t>
+bool scatter_check_send_buffer(
+    const Halo_t& halo, const View_t& send_buffer,
+    typename std::enable_if<( is_halo<Halo_t>::value &&
+                              Kokkos::is_view<View_t>::value ),
+                            int>::type* = 0 )
+{
+    return ( send_buffer.extent( 0 ) >= halo.totalNumImport() );
+}
+
+template <class Halo_t, class View_t>
+bool scatter_check_recv_buffer(
+    const Halo_t& halo, const View_t& recv_buffer,
+    typename std::enable_if<( is_halo<Halo_t>::value &&
+                              Kokkos::is_view<View_t>::value ),
+                            int>::type* = 0 )
+{
+    return ( recv_buffer.extent( 0 ) >= halo.totalNumExport() );
+}
+
 //---------------------------------------------------------------------------//
 /*!
   \brief Synchronously scatter data from the ghosts to the local decomposition
@@ -492,15 +836,26 @@ void gather( const Halo_t& halo, Slice_t& slice,
   elements) and the ghosted elements are expected to appear second (i.e. in
   the next halo.numGhost() elements()).
 */
-template <class Halo_t, class Slice_t>
-void scatter( const Halo_t& halo, Slice_t& slice,
-              typename std::enable_if<( is_halo<Halo_t>::value &&
-                                        is_slice<Slice_t>::value ),
-                                      int>::type* = 0 )
+
+template <class Halo_t, class Slice_t, class View_t>
+void scatter( const Halo_t& halo, Slice_t& slice, View_t& send_buffer,
+              View_t& recv_buffer,
+              typename std::enable_if<
+                  ( is_halo<Halo_t>::value && is_slice<Slice_t>::value &&
+                    Kokkos::is_view<View_t>::value && View_t::Rank == 2 ),
+                  int>::type* = 0 )
 {
     // Check that the Slice is the right size.
     if ( slice.size() != halo.numLocal() + halo.numGhost() )
         throw std::runtime_error( "Slice is the wrong size for scatter!" );
+
+    if ( !scatter_check_send_buffer( halo, send_buffer ) )
+        throw std::runtime_error(
+            "Send buffer is not large enough for scatter!" );
+
+    if ( !scatter_check_recv_buffer( halo, recv_buffer ) )
+        throw std::runtime_error(
+            "Receive buffer is not large enough for scatter!" );
 
     // Get the number of components in the slice.
     std::size_t num_comp = 1;
@@ -515,11 +870,11 @@ void scatter( const Halo_t& halo, Slice_t& slice,
 
     // Allocate a send buffer. Note this one is layout right so the components
     // are consecutive.
-    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
-                 typename Halo_t::memory_space>
-        send_buffer(
-            Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
-            halo.totalNumImport(), num_comp );
+    // Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+    //             typename Halo_t::memory_space>
+    //    send_buffer(
+    //        Kokkos::ViewAllocateWithoutInitializing( "halo_send_buffer" ),
+    //        halo.totalNumImport(), num_comp );
 
     // Extract the send buffer from the ghosted elements.
     std::size_t num_local = halo.numLocal();
@@ -542,11 +897,11 @@ void scatter( const Halo_t& halo, Slice_t& slice,
 
     // Allocate a receive buffer. Note this one is layout right so the
     // components are consecutive.
-    Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
-                 typename Halo_t::memory_space>
-        recv_buffer(
-            Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
-            halo.totalNumExport(), num_comp );
+    // Kokkos::View<typename Slice_t::value_type**, Kokkos::LayoutRight,
+    //             typename Halo_t::memory_space>
+    //    recv_buffer(
+    //        Kokkos::ViewAllocateWithoutInitializing( "halo_recv_buffer" ),
+    //        halo.totalNumExport(), num_comp );
 
     // The halo has it's own communication space so choose any mpi tag.
     const int mpi_tag = 2345;
@@ -616,6 +971,24 @@ void scatter( const Halo_t& halo, Slice_t& slice,
 
     // Barrier before completing to ensure synchronization.
     MPI_Barrier( halo.comm() );
+}
+
+template <class Halo_t, class Slice_t>
+void scatter( const Halo_t& halo, Slice_t& slice,
+              typename std::enable_if<( is_halo<Halo_t>::value &&
+                                        is_slice<Slice_t>::value ),
+                                      int>::type* = 0 )
+{
+    // Check that the AoSoA is the right size.
+    if ( slice.size() != halo.numLocal() + halo.numGhost() )
+        throw std::runtime_error( "Slice is the wrong size for scatter!" );
+
+    // Allocate a pair of buffers of exactly the right size
+    auto send_buffer = scatter_preallocate_send_buffer( halo, slice );
+    auto recv_buffer = scatter_preallocate_recv_buffer( halo, slice );
+
+    // Pass to gather routine
+    scatter( halo, slice, send_buffer, recv_buffer );
 }
 
 //---------------------------------------------------------------------------//
