@@ -126,7 +126,14 @@ class SparseArrayLayout
     //! clear valid info inside array layout; i.e. clear sparse map
     inline void clear() { _map.clear(); }
 
-    //! register valid grids in sparse map according to input particle positions
+    /*!
+      \brief Register valid grids in sparse map according to input particle
+      positions.
+      \param positions Input particle positions.
+      \param particle_num Number of valid particles inside positions
+      \param p2g_radius The half range of grids that will be influenced by each
+      particle, depending on the interpolation kernel
+    */
     template <class ExecSpace, class PositionSliceType>
     void registerSparseMap( PositionSliceType& positions,
                             const int particle_num, const int p2g_radius = 1 )
@@ -414,6 +421,7 @@ class SparseArray
       \brief Register valid grids in sparse map according to input particle
       positions.
       \param positions Input particle positions.
+      \param particle_num Number of valid particles inside positions
       \param p2g_radius The half range of grids that will be influenced by each
       particle, depending on the interpolation kernel
     */

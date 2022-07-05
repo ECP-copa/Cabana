@@ -306,14 +306,14 @@ void sparse_array_test( int par_num, EntityType e )
         EXPECT_EQ( qtid_mirror( i ) >= 0, true );
     }
 
-    // insert value
+    // assign value
     auto& map = test_layout.sparseMap();
     // tile ijk, cell ijk, tile key
     Kokkos::View<int* [7], TEST_DEVICE> info(
         Kokkos::ViewAllocateWithoutInitializing( "tile_cell_info" ),
         test_array.size() );
     Kokkos::parallel_for(
-        "insert_value_to_sparse_cells",
+        "assign_value_to_sparse_cells",
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, map.capacity() ),
         KOKKOS_LAMBDA( const int index ) {
             if ( map.valid_at( index ) )
@@ -407,12 +407,226 @@ void sparse_array_test( int par_num, EntityType e )
     EXPECT_EQ( test_layout.sparseMap().sizeTile(), 0 );
 }
 
+template <typename EntityType>
+void full_occupy_test( EntityType e )
+{
+    // basic senario information
+    constexpr int size_tile_per_dim = 8;
+    constexpr int cell_per_tile_dim = 4;
+    constexpr int cell_per_tile =
+        cell_per_tile_dim * cell_per_tile_dim * cell_per_tile_dim;
+    constexpr int size_per_dim = size_tile_per_dim * cell_per_tile_dim;
+
+    int pre_alloc_size = size_per_dim * size_per_dim;
+
+    using T = float;
+    // Create global mesh
+    T cell_size = 0.1f;
+    std::array<int, 3> global_num_cell(
+        { size_per_dim, size_per_dim, size_per_dim } );
+    // global low corners: random numbuers
+    std::array<T, 3> global_low_corner = { .15f, -1.7f, 3.1f };
+    std::array<T, 3> global_high_corner = {
+        global_low_corner[0] + cell_size * global_num_cell[0],
+        global_low_corner[1] + cell_size * global_num_cell[1],
+        global_low_corner[2] + cell_size * global_num_cell[2] };
+    std::array<bool, 3> is_dim_periodic = { false, false, false };
+
+    // sparse partitioner
+    T max_workload_coeff = 1.5;
+    int workload_num = size_per_dim * size_per_dim * size_per_dim;
+    int num_step_rebalance = 200;
+    int max_optimize_iteration = 10;
+    SparseDimPartitioner<TEST_DEVICE, cell_per_tile_dim> partitioner(
+        MPI_COMM_WORLD, max_workload_coeff, workload_num, num_step_rebalance,
+        global_num_cell, max_optimize_iteration );
+
+    // rank-related information
+    Kokkos::Array<int, 3> cart_rank;
+    std::array<int, 3> periodic_dims = { 0, 0, 0 };
+    int reordered_cart_ranks = 1;
+    MPI_Comm cart_comm;
+    int linear_rank;
+
+    // MPI rank topo and rank ID
+    auto ranks_per_dim =
+        partitioner.ranksPerDimension( MPI_COMM_WORLD, global_num_cell );
+    MPI_Cart_create( MPI_COMM_WORLD, 3, ranks_per_dim.data(),
+                     periodic_dims.data(), reordered_cart_ranks, &cart_comm );
+    MPI_Comm_rank( cart_comm, &linear_rank );
+    MPI_Cart_coords( cart_comm, linear_rank, 3, cart_rank.data() );
+
+    // scene initialization
+    auto gt_partitions =
+        generate_random_partition( ranks_per_dim, size_tile_per_dim );
+    partitioner.initializeRecPartition( gt_partitions[0], gt_partitions[1],
+                                        gt_partitions[2] );
+
+    // mesh/grid related initilization
+    auto global_mesh = createSparseGlobalMesh(
+        global_low_corner, global_high_corner, global_num_cell );
+
+    auto global_grid = createGlobalGrid( MPI_COMM_WORLD, global_mesh,
+                                         is_dim_periodic, partitioner );
+    int halo_width = 2;
+    auto local_grid =
+        createSparseLocalGrid( global_grid, halo_width, cell_per_tile_dim );
+
+    auto sparse_map =
+        createSparseMap<TEST_EXECSPACE>( global_mesh, pre_alloc_size );
+
+    // def test sparse array
+    // first int[3] tile i,j,k; second float[3] 0.1*cell i,j,k; third: tilekey,
+    // tid
+    using DataTypes = Cabana::MemberTypes<int[3], float[3], int[2]>;
+    auto test_layout =
+        createSparseArrayLayout<DataTypes>( local_grid, sparse_map, e );
+    auto test_array = createSparseArray<TEST_DEVICE>(
+        std::string( "test_sparse_grid" ), test_layout );
+
+    // valid tile range
+    Kokkos::Array<int, 3> start = {
+        gt_partitions[0][cart_rank[0]] * cell_per_tile_dim,
+        gt_partitions[1][cart_rank[1]] * cell_per_tile_dim,
+        gt_partitions[2][cart_rank[2]] * cell_per_tile_dim };
+    Kokkos::Array<int, 3> end = {
+        gt_partitions[0][cart_rank[0] + 1] * cell_per_tile_dim,
+        gt_partitions[1][cart_rank[1] + 1] * cell_per_tile_dim,
+        gt_partitions[2][cart_rank[2] + 1] * cell_per_tile_dim };
+    Kokkos::Array<int, 3> start_tile = { gt_partitions[0][cart_rank[0]],
+                                         gt_partitions[1][cart_rank[1]],
+                                         gt_partitions[2][cart_rank[2]] };
+    Kokkos::Array<int, 3> end_tile = { gt_partitions[0][cart_rank[0] + 1],
+                                       gt_partitions[1][cart_rank[1] + 1],
+                                       gt_partitions[2][cart_rank[2] + 1] };
+
+    // fully insert
+    auto& map = test_layout.sparseMap();
+    Kokkos::parallel_for(
+        "sparse_grid_fully_insert",
+        Kokkos::MDRangePolicy<TEST_EXECSPACE, Kokkos::Rank<3>>( start, end ),
+        KOKKOS_LAMBDA( const int i, const int j, const int k ) {
+            map.insertCell( i, j, k );
+        } );
+    test_array.resize( map.sizeCell() );
+
+    // assign value
+    Kokkos::View<int*** [2], TEST_DEVICE> info(
+        Kokkos::ViewAllocateWithoutInitializing( "tile_cell_info" ),
+        size_tile_per_dim, size_tile_per_dim, size_tile_per_dim );
+
+    Kokkos::parallel_for(
+        "assign_value_fully_occupy_grid",
+        Kokkos::RangePolicy<TEST_EXECSPACE>( 0, map.capacity() ),
+        KOKKOS_LAMBDA( const int index ) {
+            if ( map.valid_at( index ) )
+            {
+                auto tid = map.value_at( index );
+                auto tkey = map.key_at( index );
+                int ti, tj, tk;
+                map.key2ijk( tkey, ti, tj, tk );
+
+                for ( int ci = 0; ci < cell_per_tile_dim; ci++ )
+                    for ( int cj = 0; cj < cell_per_tile_dim; cj++ )
+                        for ( int ck = 0; ck < cell_per_tile_dim; ck++ )
+                        {
+                            // indices
+                            int cid = map.cell_local_id( ci, cj, ck );
+                            Kokkos::Array<int, 3> cell_ijk(
+                                { ti * cell_per_tile_dim + ci,
+                                  tj * cell_per_tile_dim + cj,
+                                  tk * cell_per_tile_dim + ck } );
+                            Kokkos::Array<int, 3> tile_ijk( { ti, tj, tk } );
+                            Kokkos::Array<int, 3> local_cell_ijk(
+                                { ci, cj, ck } );
+
+                            // access: cell ijk (- channel id)
+                            test_array.template get<0>( cell_ijk, 0 ) = ti;
+                            test_array.template get<0>( cell_ijk, 1 ) = tj;
+                            test_array.template get<0>( cell_ijk, 2 ) = tk;
+
+                            // access: tile ijk - cell ijk (- channel id)
+                            test_array.template get<1>(
+                                tile_ijk, local_cell_ijk, 0 ) = ci * 0.1;
+                            test_array.template get<1>(
+                                tile_ijk, local_cell_ijk, 1 ) = cj * 0.1;
+                            // access: tile id - cell ijk (- channel id)
+                            test_array.template get<1>( tid, local_cell_ijk,
+                                                        2 ) = ck * 0.1;
+
+                            // access: tile id - cell id (- channel id)
+                            test_array.template get<2>( tid, cid, 0 ) =
+                                (int)tkey;
+                            test_array.template get<2>( tid, cid, 1 ) =
+                                (int)tid;
+
+                            // record info
+                            info( ti, tj, tk, 0 ) = (int)tid;
+                            info( ti, tj, tk, 1 ) = (int)tkey;
+                        }
+            }
+        } );
+
+    // insert end
+
+    // check value
+    auto mirror = Cabana::create_mirror_view_and_copy( Kokkos::HostSpace(),
+                                                       test_array.aosoa() );
+    auto info_mirror =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), info );
+    auto slice_0 = Cabana::slice<0>( mirror );
+    auto slice_1 = Cabana::slice<1>( mirror );
+    auto slice_2 = Cabana::slice<2>( mirror );
+
+    for ( int ci = start[0]; ci < end[0]; ci++ )
+        for ( int cj = start[1]; cj < end[1]; cj++ )
+            for ( int ck = start[2]; ck < end[2]; ck++ )
+            {
+                int ti = ci / cell_per_tile_dim;
+                int local_ci = ci % cell_per_tile_dim;
+
+                int tj = cj / cell_per_tile_dim;
+                int local_cj = cj % cell_per_tile_dim;
+
+                int tk = ck / cell_per_tile_dim;
+                int local_ck = ck % cell_per_tile_dim;
+
+                // compute the real array_id of the current cell
+                int cid = info_mirror( ti, tj, tk, 0 ) * cell_per_tile +
+                          local_ck * cell_per_tile_dim * cell_per_tile_dim +
+                          local_cj * cell_per_tile_dim + local_ci;
+
+                EXPECT_EQ( slice_0( cid, 0 ), ti );
+                EXPECT_EQ( slice_0( cid, 1 ), tj );
+                EXPECT_EQ( slice_0( cid, 2 ), tk );
+
+                EXPECT_FLOAT_EQ( slice_1( cid, 0 ), local_ci * 0.1 );
+                EXPECT_FLOAT_EQ( slice_1( cid, 1 ), local_cj * 0.1 );
+                EXPECT_FLOAT_EQ( slice_1( cid, 2 ), local_ck * 0.1 );
+
+                EXPECT_EQ( slice_2( cid, 0 ), info_mirror( ti, tj, tk, 1 ) );
+                EXPECT_EQ( slice_2( cid, 1 ), info_mirror( ti, tj, tk, 0 ) );
+
+                cid++;
+            }
+
+    test_array.clear();
+    EXPECT_EQ( test_array.size(), 0 );
+    EXPECT_EQ( test_layout.sparseMap().sizeTile(), 0 );
+}
+
 //---------------------------------------------------------------------------//
 // RUN TESTS
 //---------------------------------------------------------------------------//
-TEST( sparse_array, 3d_sparse_array )
+TEST( sparse_array, 3d_sparse_array_sparse_occupy )
 {
     sparse_array_test( 100, Cajita::Node() );
+    sparse_array_test( 20, Cajita::Cell() );
+}
+
+TEST( sparse_array, 3d_sparse_array_full_occupy )
+{
+    full_occupy_test( Cajita::Node() );
 }
 
 //---------------------------------------------------------------------------//
