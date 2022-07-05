@@ -442,8 +442,10 @@ class AoSoA
     KOKKOS_INLINE_FUNCTION
     size_type arraySize( const size_type s ) const
     {
-        return ( (size_type)s < _num_soa - 1 ) ? vector_length
-                                               : ( _size % vector_length );
+        return ( ( (size_type)s < _num_soa - 1 ) ||
+                 ( _size % vector_length == 0 ) )
+                   ? vector_length
+                   : ( _size % vector_length );
     }
 
     /*!
