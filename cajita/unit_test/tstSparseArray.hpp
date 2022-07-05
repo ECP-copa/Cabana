@@ -117,10 +117,10 @@ void generate_random_particles( const int particle_number,
         // 1.01 cell_size offset compared to the real partition to ensure
         // all the activated tiles sit inside the valid partition range
         start[d] = global_low_corner[d] +
-                   cell_size * ( 1.01f + cell_per_tile_dim * (T)part_start[d] );
+                   cell_size * ( 2.01f + cell_per_tile_dim * (T)part_start[d] );
         size[d] =
             cell_size *
-            ( cell_per_tile_dim * (T)( part_end[d] - part_start[d] ) - 2.02f );
+            ( cell_per_tile_dim * (T)( part_end[d] - part_start[d] ) - 4.02f );
     }
 
     // insert random particles to the set
@@ -134,17 +134,6 @@ void generate_random_particles( const int particle_number,
                                      start[2] + rand_offset[2] };
         auto old_size = par_pos_set.size();
         par_pos_set.insert( new_pos );
-        if ( old_size == par_pos_set.size() )
-        {
-            printf( "repeated pos (%f, %f, %f)\n", new_pos[0], new_pos[1],
-                    new_pos[2] );
-            continue;
-        }
-        // else
-        // {
-        //     printf( "new particle position (%f, %f, %f)\n", new_pos[0],
-        //             new_pos[1], new_pos[2] );
-        // }
 
         std::array<int, 3> grid_base;
         for ( int d = 0; d < 3; ++d )
@@ -165,7 +154,6 @@ void generate_random_particles( const int particle_number,
                         ( grid_base[2] + k ) / cell_per_tile_dim,
                     } );
                 }
-        // printf( "current size: %d\n", (int)par_pos_set.size() );
     }
 }
 template <typename EntityType>
@@ -186,7 +174,7 @@ void sparse_array_test( int par_num, EntityType e )
     std::array<int, 3> global_num_cell(
         { size_per_dim, size_per_dim, size_per_dim } );
     // global low corners: random numbuers
-    std::array<T, 3> global_low_corner = { 0.0f, 0.0f, 0.0f };
+    std::array<T, 3> global_low_corner = { 1.0f, -1.0f, 0.0f };
     std::array<T, 3> global_high_corner = {
         global_low_corner[0] + cell_size * global_num_cell[0],
         global_low_corner[1] + cell_size * global_num_cell[1],
@@ -237,14 +225,6 @@ void sparse_array_test( int par_num, EntityType e )
     auto tile_view = set2view( tile_set );
     auto par_view = set2view( par_pos_set );
 
-    // DEBUG [TODO]
-    // printf( "rank %d (%d, %d, %d), par_num = %d, par_pos_set size = %llu, "
-    //         "tile_set_size = %llu\n",
-    //         linear_rank, cart_rank[0], cart_rank[1], cart_rank[2], par_num,
-    //         (unsigned long long)par_pos_set.size(),
-    //         (unsigned long long)tile_set.size() );
-    // END [TODO]
-
     // mesh/grid related initilization
     auto global_mesh = createSparseGlobalMesh(
         global_low_corner, global_high_corner, global_num_cell );
@@ -288,16 +268,19 @@ void sparse_array_test( int par_num, EntityType e )
 
     // check particle insertion results
     int cell_num = par_view.extent( 0 ) * 27;
-    Kokkos::View<int*, TEST_DEVICE> qtkey_res(
-        Kokkos::ViewAllocateWithoutInitializing( "query_tile_key" ), cell_num );
+    Kokkos::View<int*, TEST_DEVICE> qtid_res(
+        Kokkos::ViewAllocateWithoutInitializing( "query_tile_id" ), cell_num );
 
     T dx_inv = 1.0f / cell_size;
+    Kokkos::Array<T, 3> low_corner = {
+        global_low_corner[0], global_low_corner[1], global_low_corner[2] };
     Kokkos::parallel_for(
         "insert_check",
         Kokkos::RangePolicy<TEST_EXECSPACE>( 0, par_view.extent( 0 ) ),
         KOKKOS_LAMBDA( const int id ) {
-            T pos[3] = { par_view( id, 0 ), par_view( id, 1 ),
-                         par_view( id, 2 ) };
+            T pos[3] = { par_view( id, 0 ) - low_corner[0],
+                         par_view( id, 1 ) - low_corner[1],
+                         par_view( id, 2 ) - low_corner[2] };
             int grid_base[3] = {
                 static_cast<int>( std::lround( pos[0] * dx_inv ) - 1 ),
                 static_cast<int>( std::lround( pos[1] * dx_inv ) - 1 ),
@@ -311,17 +294,17 @@ void sparse_array_test( int par_num, EntityType e )
                                            grid_base[2] + k };
                         auto tid = sparse_map.queryTile( cell_id[0], cell_id[1],
                                                          cell_id[2] );
-                        qtkey_res( id * 27 + offset ) = tid;
+                        qtid_res( id * 27 + offset ) = tid;
                         offset++;
                     }
         } );
     // check if all reuiqred cell are registered
-    auto qtkey_mirror =
-        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), qtkey_res );
+    auto qtid_mirror =
+        Kokkos::create_mirror_view_and_copy( Kokkos::HostSpace(), qtid_res );
     for ( int i = 0; i < cell_num; ++i )
     {
-        EXPECT_EQ( qtkey_mirror( i ) < test_array.numSoA(), true );
-        EXPECT_EQ( qtkey_mirror( i ) >= 0, true );
+        EXPECT_EQ( qtid_mirror( i ) < test_array.numSoA(), true );
+        EXPECT_EQ( qtid_mirror( i ) >= 0, true );
     }
 
     // insert value
@@ -340,14 +323,6 @@ void sparse_array_test( int par_num, EntityType e )
                 auto tkey = map.key_at( index );
                 int ti, tj, tk;
                 map.key2ijk( tkey, ti, tj, tk );
-                auto ttid = map.queryTileFromTileId( ti, tj, tk );
-                auto ttkey = map.ijk2key( ti, tj, tk );
-                if ( tkey != ttkey )
-                {
-                    printf(
-                        "ERROR! tkey (%d) != ttey (%d), tid (%d), ttid(%d)\n",
-                        (int)tkey, (int)ttkey, (int)tid, (int)ttid );
-                }
 
                 for ( int ci = 0; ci < cell_per_tile_dim; ci++ )
                     for ( int cj = 0; cj < cell_per_tile_dim; cj++ )
@@ -425,15 +400,6 @@ void sparse_array_test( int par_num, EntityType e )
 
         EXPECT_EQ( slice_3( cid, 0 ), info_mirror( cid, 6 ) );
         EXPECT_EQ( slice_3( cid, 1 ), tid );
-        // printf( "cid = %d, tid = %d, local_cid = %d, info_mirror = (%d, %d, "
-        //         "%d, %d, %d, %d, %d), slice_0 = (%d, %d, %d), slice_1 = (%f),
-        //         " "slice_2 = (%f, %f, %f)," "slice_3 = (%d, %d)\n", (int)cid,
-        //         tid, local_cid, info_mirror( cid, 0 ), info_mirror( cid, 1 ),
-        //         info_mirror( cid, 2 ), info_mirror( cid, 3 ), info_mirror(
-        //         cid, 4 ), info_mirror( cid, 5 ), info_mirror( cid, 6 ),
-        //         slice_0( cid, 0 ), slice_0( cid, 1 ), slice_0( cid, 2 ),
-        //         slice_1( cid ), slice_2( cid, 0 ), slice_2( cid, 1 ),
-        //         slice_2( cid, 2 ), slice_3( cid, 0 ), slice_3( cid, 1 ) );
     }
     // check value end
 
