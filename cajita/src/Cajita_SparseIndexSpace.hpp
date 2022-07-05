@@ -431,6 +431,8 @@ class SparseMap
     using value_type = Value;
     //! Hash table type.
     static constexpr HashTypes hash_type = Hash;
+    //! memory space
+    using memory_space = MemorySpace;
 
     /*!
       \brief (Host) Constructor
@@ -622,6 +624,12 @@ class SparseMap
     void key2ijk( key_type& key, int& tile_i, int& tile_j, int& tile_k ) const
     {
         return _block_id_space.key2ijk( key, tile_i, tile_j, tile_k );
+    }
+
+    KOKKOS_INLINE_FUNCTION
+    key_type ijk2key( int tile_i, int tile_j, int tile_k ) const
+    {
+        return _block_id_space.ijk2key( tile_i, tile_j, tile_k );
     }
 
     /*!

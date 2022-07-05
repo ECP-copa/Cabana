@@ -1,5 +1,24 @@
+/****************************************************************************
+ * Copyright (c) 2018-2022 by the Cabana authors                            *
+ * All rights reserved.                                                     *
+ *                                                                          *
+ * This file is part of the Cabana library. Cabana is distributed under a   *
+ * BSD 3-clause license. For the licensing terms see the LICENSE file in    *
+ * the top-level directory.                                                 *
+ *                                                                          *
+ * SPDX-License-Identifier: BSD-3-Clause                                    *
+ ****************************************************************************/
+
+/*!
+  \file Cabana_AoSoA.hpp
+  \brief Array-of-Struct-of-Arrays particle data structure
+*/
+#ifndef CAJITA_SPARSE_ARRAY_HPP
+#define CAJITA_SPARSE_ARRAY_HPP
+
 #include <Cajita_MpiTraits.hpp>
 #include <Cajita_SparseIndexSpace.hpp>
+#include <Cajita_SparseLocalGrid.hpp>
 #include <Cajita_Types.hpp>
 
 #include <Cabana_AoSoA.hpp>
@@ -34,6 +53,8 @@ class SparseArrayLayout
   public:
     //! Mesh Type, should be SparseMesh
     using mesh_type = MeshType;
+    //! Scalar Type
+    using scalar_type = typename mesh_type::scalar_type;
     // check if mesh_type is SparseMesh
     static_assert( isSparseMesh<MeshType>::value,
                    "[SparesArrayLayout] Support only SparseMesh" );
@@ -70,15 +91,15 @@ class SparseArrayLayout
     SparseArrayLayout( const std::shared_ptr<LocalGrid<MeshType>>& local_grid,
                        SparseMapType& sparse_map, const float bc_factor )
         : _bc_factor( bc_factor )
-        , _local_grid_ptr( local_grid )
         , _map( std::forward<sparse_map_type>( sparse_map ) )
     {
-    }
-
-    //! get local grid shared pointer
-    const std::shared_ptr<LocalGrid<MeshType>> localGrid() const
-    {
-        return _local_grid_ptr;
+        auto sparse_mesh = local_grid->globalGrid().globalMesh();
+        _cell_size[0] = sparse_mesh.cellSize( 0 );
+        _cell_size[1] = sparse_mesh.cellSize( 1 );
+        _cell_size[2] = sparse_mesh.cellSize( 2 );
+        _global_low_corner[0] = sparse_mesh.lowCorner( 0 );
+        _global_low_corner[1] = sparse_mesh.lowCorner( 1 );
+        _global_low_corner[2] = sparse_mesh.lowCorner( 2 );
     }
 
     //! get reference of sparse map
@@ -96,7 +117,7 @@ class SparseArrayLayout
     */
     inline uint64_t sizeCellReserve( float factor ) const
     {
-        return reservedCellSize( factor );
+        return _map.reservedCellSize( factor );
     }
 
     //! Array size in cell (default size measurse: cell)
@@ -108,22 +129,22 @@ class SparseArrayLayout
     //! register valid grids in sparse map according to input particle positions
     template <class ExecSpace, class PositionSliceType>
     void registerSparseMap( PositionSliceType& positions,
-                            const int p2g_radius = 1 )
+                            const int particle_num, const int p2g_radius = 1 )
     {
-        using scalar_type = typename mesh_type::scalar_type;
         // get references
-        auto& sparse_mesh = _local_grid_ptr->globalGrid().globalMesh();
         Kokkos::Array<scalar_type, 3> dx_inv = {
-            1.0 / sparse_mesh.cellSize( 0 ), 1.0 / sparse_mesh.cellSize( 1 ),
-            1.0 / sparse_mesh.cellSize( 2 ) };
+            (scalar_type)1.0 / _cell_size[0], (scalar_type)1.0 / _cell_size[1],
+            (scalar_type)1.0 / _cell_size[2] };
         auto& map = _map;
+        auto& low_corner = _global_low_corner;
         // register sparse map in sparse array layout
         Kokkos::parallel_for(
             "register sparse map in sparse array layout",
-            Kokkos::RangePolicy<ExecSpace>( 0, positions.size() ),
+            Kokkos::RangePolicy<ExecSpace>( 0, particle_num ),
             KOKKOS_LAMBDA( const int pid ) {
-                scalar_type pos[3] = { positions( pid, 0 ), positions( pid, 1 ),
-                                       positions( pid, 2 ) };
+                scalar_type pos[3] = { positions( pid, 0 ) - low_corner[0],
+                                       positions( pid, 1 ) - low_corner[1],
+                                       positions( pid, 2 ) - low_corner[2] };
                 int grid_base[3] = {
                     static_cast<int>( std::lround( pos[0] * dx_inv[0] ) -
                                       p2g_radius ),
@@ -204,8 +225,10 @@ class SparseArrayLayout
   private:
     //! factor to increase array size for special grid entities
     float _bc_factor;
-    //! local grid pointer
-    std::shared_ptr<LocalGrid<MeshType>> _local_grid_ptr;
+    //! cell size
+    Kokkos::Array<scalar_type, 3> _cell_size;
+    //! global low corner
+    Kokkos::Array<scalar_type, 3> _global_low_corner;
     //！ sparse map
     sparse_map_type _map;
 }; // end class SparseArrayLayout
@@ -356,7 +379,7 @@ class SparseArray
       \brief Reserve the AoSoA array according to the sparse map info in layout.
       \param factor scale up the real size as reserved space
     */
-    inline void reserve( const double factor = 1.2 )
+    inline void reserve_cell( const double factor = 1.2 )
     {
         reserve( _layout.sizeCellReserve( factor ) );
     }
@@ -398,11 +421,11 @@ class SparseArray
       particle, depending on the interpolation kernel
     */
     template <class PositionSliceType>
-    void register_sparse_grid( PositionSliceType& positions,
+    void register_sparse_grid( PositionSliceType& positions, int particle_num,
                                const int p2g_radius = 1 )
     {
         _layout.template registerSparseMap<execution_space, PositionSliceType>(
-            positions, p2g_radius );
+            positions, particle_num, p2g_radius );
         this->resize( _layout.sparseMap().sizeCell() );
     }
 
@@ -587,7 +610,7 @@ class SparseArray
         typename soa_type::template member_reference_type<M>
         get( const int tile_id, const int cell_id ) const
     {
-        auto& soa = _data.access( array_id );
+        auto& soa = _data.access( tile_id );
         return Cabana::get<M>( soa, cell_id );
     }
 
