@@ -316,9 +316,6 @@ class SparseArray
     //! Least bits required to represent all cells inside a tile
     static constexpr unsigned long long cell_bits_per_tile =
         sparse_map_type::cell_bits_per_tile;
-    //! Cell mask, get local 1D cell ID when operate on global 1D cell ID
-    static constexpr unsigned long long cell_mask_per_tile =
-        sparse_map_type::cell_mask_per_tile;
 
     // AoSoA related types
     //! DataTypes Data types (Cabana::MemberTypes).

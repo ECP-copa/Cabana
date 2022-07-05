@@ -132,7 +132,6 @@ void generate_random_particles( const int particle_number,
         std::array<T, 3> new_pos = { start[0] + rand_offset[0],
                                      start[1] + rand_offset[1],
                                      start[2] + rand_offset[2] };
-        auto old_size = par_pos_set.size();
         par_pos_set.insert( new_pos );
 
         std::array<int, 3> grid_base;
