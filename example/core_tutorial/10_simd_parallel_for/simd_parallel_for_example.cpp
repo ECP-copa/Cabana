@@ -174,7 +174,7 @@ void simdParallelForExample()
       existing Kokkos execution policies and the parallel for.
      */
     Kokkos::RangePolicy<ExecutionSpace> linear_policy( 2, num_tuple - 2 );
-    Kokkos::parallel_for( linear_policy, rand_kernel, "rand_op" );
+    Kokkos::parallel_for( "rand_op", linear_policy, rand_kernel );
     Kokkos::fence();
 
     /*
