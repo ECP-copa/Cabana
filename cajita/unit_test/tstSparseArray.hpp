@@ -493,12 +493,6 @@ void full_occupy_test( EntityType e )
         gt_partitions[0][cart_rank[0] + 1] * cell_per_tile_dim,
         gt_partitions[1][cart_rank[1] + 1] * cell_per_tile_dim,
         gt_partitions[2][cart_rank[2] + 1] * cell_per_tile_dim };
-    Kokkos::Array<int, 3> start_tile = { gt_partitions[0][cart_rank[0]],
-                                         gt_partitions[1][cart_rank[1]],
-                                         gt_partitions[2][cart_rank[2]] };
-    Kokkos::Array<int, 3> end_tile = { gt_partitions[0][cart_rank[0] + 1],
-                                       gt_partitions[1][cart_rank[1] + 1],
-                                       gt_partitions[2][cart_rank[2] + 1] };
 
     // fully insert
     auto& map = test_layout.sparseMap();
