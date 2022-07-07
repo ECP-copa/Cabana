@@ -233,6 +233,16 @@ void testAoSoA()
     EXPECT_EQ( aosoa.arraySize( 0 ), int( 16 ) );
     EXPECT_EQ( aosoa.arraySize( 1 ), int( 16 ) );
     EXPECT_EQ( aosoa.arraySize( 2 ), int( 15 ) );
+
+    // Now resize to numSoA*vector_length
+    // Make sure it works when all SoA structures are fully occupied
+    aosoa.resize( 48 );
+    EXPECT_EQ( aosoa.size(), int( 48 ) );
+    EXPECT_EQ( aosoa.capacity(), int( 48 ) );
+    EXPECT_EQ( aosoa.numSoA(), int( 3 ) );
+    EXPECT_EQ( aosoa.arraySize( 0 ), int( 16 ) );
+    EXPECT_EQ( aosoa.arraySize( 1 ), int( 16 ) );
+    EXPECT_EQ( aosoa.arraySize( 2 ), int( 16 ) );
 }
 
 //---------------------------------------------------------------------------//

@@ -442,8 +442,13 @@ class AoSoA
     KOKKOS_INLINE_FUNCTION
     size_type arraySize( const size_type s ) const
     {
-        return ( (size_type)s < _num_soa - 1 ) ? vector_length
-                                               : ( _size % vector_length );
+        // the SoA struct size should be full size, i.e. vector_length if:
+        // 1) s is not the last SoA struct
+        // or 2) if _size = _num_soa * vector_length
+        return ( ( (size_type)s < _num_soa - 1 ) ||
+                 ( _size % vector_length == 0 ) )
+                   ? vector_length              // if s is a full SoA struct
+                   : ( _size % vector_length ); // if s is the last SoA struct
     }
 
     /*!
